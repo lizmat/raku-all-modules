@@ -1,6 +1,8 @@
 
 use Getopt::Advance;
 
+unit module App::snippet::Common;
+
 sub commonOptionSet(Str $std, @compiler, $default-compiler) is export {
     my $optset = OptionSet.new;
     $optset.append(

@@ -1,15 +1,17 @@
 
 use App::snippet;
 
-class App::snippet::Compiler::Clang does Compiler is export {
-    method name() {
-        "clang";
-    }
+unit class App::snippet::Compiler::Clang does App::snippet::Compiler is export;
 
-    method supports() {
-        return [
-            Support.new(lang => Language::C, bin => 'clang'),
-            Support.new(lang => Language::CXX, bin => 'clang++'),
-        ];
-    }
+method name() {
+    "clang";
 }
+
+method supports() {
+    return [
+        App::snippet::Support.new(lang => Language::C, bin => 'clang'),
+        App::snippet::Support.new(lang => Language::CXX, bin => 'clang++'),
+    ];
+}
+
+

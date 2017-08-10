@@ -2,17 +2,19 @@
 use Readline;
 use File::Which;
 
-enum TargetAction (
+unit module App::snippet;
+
+enum TargetAction is export (
 	:RUN(1),
 	:SAY(2),
 );
 
-enum Language(
+enum Language is export (
 	:C("c"),
 	:CXX("c++"),
 );
 
-enum CompileMode (
+enum CompileMode is export (
 	:COMPILE("-c"),
 	:PREPROCESS("-E"),
 	:ASSEMBLE("-S"),
@@ -28,12 +30,16 @@ role Target {
 	has @.args = [];
 	has $.want-clean;
 
+	method hasTarget() {
+		$!target.defined;
+	}
+
 	method setArgs(@args) {
 		@!args = @args;
 	}
 
 	method chmod() {
-		chmod 0o755, $!target;
+		chmod 0o755, $!target if self.hasTarget;
 	}
 
 	method run() {
@@ -61,12 +67,6 @@ role Target {
 	method clean() {
 		unlink $!target if $!want-clean;
 	}
-}
-
-class Result {
-	has $.target;
-	has $.stdout;
-	has $.stderr;
 }
 
 class Support {
@@ -107,42 +107,61 @@ role Compiler {
 		$!compiler = $compiler;
 	}
 
-    method compileCode(@codes, $output, :$out, :$err) {
-        my @realargs = @!args;
+	multi method compile(@args, @codes, :$out, :$err) {
+		my $promise;
+		my $proc = Proc::Async.new(:w, $!compiler, @args);
+		$proc.stdout.tap(&print) if $out;
+		$proc.stderr.tap(&print) if $err;
+		$promise = $proc.start;
+		$proc.say($_) for @codes;
+		$proc.close-stdin;
+		$promise;	
+	}
 
-		{ @realargs.push("-l{$_}") for @!library  } if $!mode eq CompileMode::LINK;
+	multi method compile(@args, :$out, :$err) {
+		my $promise;
+		my $proc = Proc::Async.new($!compiler, @args);
+		$proc.stdout.tap(&print) if $out;
+		$proc.stderr.tap(&print) if $err;
+		$promise = $proc.start;
+		$promise;
+	}
+
+	method compileCode(@codes, $output, :$out, :$err) {
+		my @realargs = @!args;
+
+		if $!mode eq CompileMode::LINK {
+			@realargs.push("-l{$_}") for @!library
+			
+		}
 		@realargs.push($!mode.Str) if $!mode.Str ne "";
-        @realargs.append("-o", $output, "-x{$!lang}", "-");
-        try {
-            my $proc = run $!compiler, @realargs, :in, :$out, :$err;
+		@realargs.append("-o", $output, "-x{$!lang}", "-");
+		try {
+			await self.compile(@realargs, @codes, :$out, :$err);
+			return Target.new(target => $output);
+			CATCH {
+				default {
+					return Target.new;	
+				}	
+			}
+		}
+	}
 
-            $proc.in.say($_) for @codes;
-            $proc.in.close();
-            return &fetchMessage($proc, $output, :$out, :$err);
-            CATCH {
-                default {
-					.resume;
-                }
-            }
-        }
-    }
-
-    method compileFile($file, $output, :$out, :$err) {
-        my @realargs = @!args;
+	method compileFile($file, $output, :$out, :$err) {
+		my @realargs = @!args;
 
 		@realargs.push($!mode.Str) if $!mode.Str ne "";
-        @realargs.append("-o", $output, $file);
-        try {
-            my $proc = run $!compiler, @realargs, :$out, :$err;
-
-            return &fetchMessage($proc, $output, :$out, :$err);
-            CATCH {
-                default {
-                    .resume;
-                }
-            }
-        }
-    }
+		@realargs.append("-o", $output, $file);
+		try {
+			await self.compile(@realargs, :$out, :$err);
+			return Target.new(target => $output);
+			CATCH {
+				default {
+					return Target.new;	
+				}	
+			}	
+		}
+	}
 
 	method linkObject(@objects, $output, :$out, :$err) {
 		my @realargs = [];
@@ -151,17 +170,17 @@ role Compiler {
 		@realargs.push($!mode.Str) if $!mode.Str ne "";
 		@realargs.append(@objects);
 		@realargs.append("-o", $output);
-        try {
-            my $proc = run $!compiler, @realargs, :$out, :$err;
-
-            return &fetchMessage($proc, $output, :$out, :$err);
-            CATCH {
-                default {
-                    .resume;
-                }
-            }
-        }
+		try {
+			await self.compile(@realargs, :$out, :$err);
+			return Target.new(target => $output);
+			CATCH {
+				default {
+					return Target.new;	
+				}	
+			}	
+		}		
 	}
+	
 
     method setOptimizeLevel(int $level) {
         self.addArg("-O{$level}");
@@ -325,26 +344,5 @@ multi sub do_compile($compile, @args, @incode) of IO::Path {
 				...
 			}
 		}
-	}
-}
-
-sub fetchMessage($proc, $output, :$out, :$err) {
-	if $*PERL.version ~~ v6.c {
-		my $stdout = $out ?? $proc.out.slurp-rest() !! "";
-		my $stderr = $err ?? $proc.err.slurp-rest() !! "";
-
-		$proc.out.close() if $out;
-		$proc.err.close() if $err;
-		return Result.new(
-			target => Target.new(target => $output),
-			stdout => $stdout,
-			stderr => $stderr,
-		);
-	} else {
-		return Result.new(
-			target => Target.new(target => $output),
-			stdout => $out ?? $proc.out.slurp(:close) !! "",
-			stderr => $err ?? $proc.err.slurp(:close) !! "",
-		);
 	}
 }

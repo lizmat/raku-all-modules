@@ -20,18 +20,18 @@ my $ret = getopt(|(@interfaces>>.optionset), :autohv, :!strict);
 my %ret = $ret.return-value;
 
 for %ret.values -> $target {
-    if $target.target -> $executable {
-        given $executable.action() {
+    if $target.hasTarget {
+        given $target.action() {
             when TargetAction::RUN {
-                $executable.run();
+                $target.run();
             }
             when TargetAction::SAY {
-                $executable.say();
+                $target.say();
             }
             default {
                 fail "Don't know how to do with {$target}";
             }
         }
-        $executable.clean();
+        $target.clean();
     }
 }
