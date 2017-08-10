@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cosimo/perl6-cache-memcached.git
 	branch = master
-	commit = 3a39df51db9b27ab5d4d610acb6e168a6a0f3b54
-	parent = aa75cd1ef7f64b1d95116338e6194857e7f0bbdf
+	commit = a997dc790492f6ff4e349cc8e81791e81215014a
+	parent = 173acd4271e53e3ba7fe3fd278237fd14e069f26
 	cmdver = 0.4.0

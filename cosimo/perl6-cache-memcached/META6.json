@@ -1,7 +1,7 @@
 {
     "perl": "6.c",
     "name": "Cache::Memcached",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "Interface to memcached service",
     "provides": {
         "Cache::Memcached": "lib/Cache/Memcached.pm"
@@ -19,5 +19,6 @@
 		"bugtracker": "https://github.com/cosimo/perl6-cache-memcached/issues"
 	},
 	"tags" : [ "cache", "memcached" ],
-    "source-url": "git://github.com/cosimo/perl6-cache-memcached.git"
+    "source-url": "git://github.com/cosimo/perl6-cache-memcached.git",
+    "meta-version" : 0
 }

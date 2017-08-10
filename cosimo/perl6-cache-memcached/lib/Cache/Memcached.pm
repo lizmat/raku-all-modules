@@ -3,7 +3,7 @@ use v6.c;
 
 use String::CRC32;
 
-unit class Cache::Memcached:auth<cosimo>:ver<0.0.7>;
+unit class Cache::Memcached:auth<cosimo>:ver<0.0.8>;
 
 has Bool  $.debug is rw = False;
 has Bool  $.no-rehash is rw;
@@ -99,7 +99,7 @@ sub connect-sock ($sock, $sin, $timeout = 0.25) returns IO::Socket {
     # except if someone wants 0 timeout, meaning
     # a blocking connect, but even then turn it
     # non-blocking at the end of this function
-    
+
     # TODO FIXME
     my $host = $sock;
     my $port = $sin;
@@ -131,7 +131,7 @@ method sock-to-host (Str $host) {
         $.log-debug("cache_sock hit");
         return %cache_sock{$host};
     }
-    
+
     my $now = time;
     my $ip;
     my $port;
@@ -226,7 +226,7 @@ method disconnect-all () {
 method write-and-read (IO::Socket $sock, Str $command, Mu $check_complete?) {
 
     my $res;
-    my $ret = Mu; 
+    my $ret = Mu;
     my $offset = 0;
     my $line = $command;
 
@@ -237,7 +237,7 @@ method write-and-read (IO::Socket $sock, Str $command, Mu $check_complete?) {
     # state: 0 - writing, 1 - reading, 2 - done
     my $state = 0;
     my $copy_state = -1;
-  
+
     loop {
 
         if $copy_state != $state {
@@ -313,7 +313,7 @@ method delete ($key, $time = "") {
 
     if &!stat-callback {
         my $etime = now;
-        &!stat-callback.($stime, $etime, $sock, 'delete');        
+        &!stat-callback.($stime, $etime, $sock, 'delete');
     }
 
     return $res.defined && $res eq "DELETED\r\n";
@@ -370,40 +370,44 @@ method !_set ($cmdname, $key, $val, Int $exptime = 0) {
         my $etime = Time::HiRes::time();
         &!stat-callback.($stime, $etime, $sock, $cmdname);
     }
-    
+
     return $res.defined && $res eq "STORED\r\n";
 
 }
 
-method incr ($key, $offset) {
+method incr ($key, $offset = 1 --> Bool) {
     self!incrdecr("incr", $key, $offset);
 }
 
-method decr ($key, $offset) {
+method decr ($key, $offset = 1 --> Bool) {
     self!incrdecr("decr", $key, $offset);
 }
 
-method !incrdecr ($cmdname, $key, $value) {
-    return if ! $!active || $!readonly;
+method !incrdecr ($cmdname, $key, $value = 1 --> Bool) {
 
-    my $stime;
+    my Bool $rc = False;
 
-    $stime = now if &!stat-callback;
-    my $sock = $.get-sock($key);
-    return unless $sock;
 
-    %!stats{$cmdname}++;
-    $value = 1 unless defined $value;
+    if $!active && !$!readonly {
+        my $stime;
 
-    my $line = "$cmdname " ~ $!namespace ~ "$key $value\r\n";
-    my $res = self.write-and-read($sock, $line);
+        $stime = now if &!stat-callback;
+        my $sock = $.get-sock($key);
 
-    if &!stat-callback {
-        my $etime = now;
-        &!stat-callback.($stime, $etime, $sock, $cmdname);
+        if $sock {
+            %!stats{$cmdname}++;
+            my $line = "$cmdname " ~ $!namespace ~ "$key $value\r\n";
+            my $res = self.write-and-read($sock, $line);
+
+            if &!stat-callback {
+                my $etime = now;
+                &!stat-callback.($stime, $etime, $sock, $cmdname);
+            }
+            $rc = $res.defined && $res eq "STORED\r\n";
+        }
     }
 
-    return defined $res && $res eq "STORED\r\n";
+    $rc;
 }
 
 
@@ -420,7 +424,7 @@ method get ($key) {
         my $namespace = $!namespace // "";
         my $full_key = $namespace ~ $key;
         $.log-debug("get(): full key '$full_key'");
-   
+
         my $get_cmd = "get $full_key\r\n";
         $.log-debug("get(): command '$get_cmd'");
 
@@ -446,16 +450,15 @@ sub hashfunc(Str $key) {
 
 
 method flush-all () {
-    my $success = 1;
+    my Bool $success = True;
     my @hosts = @!buckets;
 
     for @hosts -> $host {
         my $sock = $.sock-to-host($host);
-        my @res = $.run-command($sock, "flush-all\r\n");
-        $success = 0 unless @res == 1 && @res[0] eq "OK\r\n";
+        my @res = $.run-command($sock, "flush_all\r\n");
+        $success =  False unless @res == 1 && @res[0] eq "OK\r\n";
     }
-
-    return $success;
+    $success;
 }
 
 
@@ -507,11 +510,11 @@ method stats(*@types) {
         # Now handle the other types, passing each type to each host server.
         my @hosts = @!buckets;
 
-        HOST: 
+        HOST:
         for @hosts -> $host {
             my $sock = $.sock-to-host($host);
             next HOST unless $sock;
-            TYPE: 
+            TYPE:
             for @types.grep({ $_ !~~ /^self$/ }) -> $typename {
                 my $type = $typename eq 'misc' ?? "" !! " $typename";
                 my $lines = self.write-and-read($sock, "stats$type\r\n", -> $bref {
@@ -546,7 +549,7 @@ method stats(*@types) {
                             if $typename eq 'malloc' && $key;
                         }
                     }
-                } 
+                }
                 else {
                     # This stat is not key-value so just pull it
                     # all out in one blob.
@@ -595,7 +598,7 @@ Cache::Memcached - client library for memcached (memory cache daemon)
 
 =head1 SYNOPSIS
 
-=begin code 
+=begin code
 
   use Cache::Memcached;
 
