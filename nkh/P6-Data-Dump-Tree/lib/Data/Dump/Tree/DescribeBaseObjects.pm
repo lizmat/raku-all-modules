@@ -64,16 +64,23 @@ multi method get_elements (Seq $s)
 	@elements
 	} 
 
-multi method get_header (IntStr $i) { $i.Int ~ ' / "' ~ $i.Str ~ '"',  '.' ~ $i.^name, |is_final($i, 'IntStr')}
+multi method get_header (IntStr $i) 
+{
+~$i.Int eq $i.Str 
+	?? ( $i.Int ,  '.' ~ $i.^name, |is_final($i, 'IntStr') )
+	!! ( $i.Int ~ ' / "' ~ $i.Str ~ '"',  '.' ~ $i.^name, |is_final($i, 'IntStr') )
+}
 multi method get_elements (IntStr $e) { self!get_attributes($e) }
-
-multi method get_header (Int $i) { $i,  '.' ~ $i.^name, |is_final($i, 'Int') }
+ 
+multi method get_header (Int:U $i) { '',  'Int', DDT_FINAL }
+multi method get_header (Int:D $i) { $i,  $i.^name eq 'Int' ?? '   ' !! '.' ~ $i.^name, |is_final($i, 'Int') }
 multi method get_elements (Int $e) { self!get_attributes($e) }
 
 multi method get_header (Str:U $s) { '', '.' ~ $s.^name, DDT_FINAL }
 multi method get_header (Str:D $s) { $s, '.' ~ $s.^name, |is_final($s, 'Str') } 
 multi method get_elements (Str $e) { self!get_attributes($e) }
 
+multi method get_header (Num:D $n) { $n, '.' ~ $n.^name, |is_final($n, 'Num') } 
 multi method get_header (Rat $r) { $r  ~ ' (' ~ $r.numerator ~ '/' ~ $r.denominator ~ ')', '.' ~ $r.^name, |is_final($r, 'Rat') }
 multi method get_elements (Rat $e) { self!get_attributes($e, <numerator denominator>) }
 
@@ -113,7 +120,12 @@ multi method get_header (Match $m)
 # Block must be declare or it groaks when passed a Sub
 multi method get_header (Block $b) { $b.perl, '.' ~ $b.^name, DDT_FINAL }
 multi method get_header (Routine $r) { '' , '.' ~ $r.^name, DDT_FINAL }
-multi method get_header (Sub $s) { ( $s.name || '<anon>'), '.' ~ $s.^name, DDT_FINAL }
+multi method get_header (Sub $s) 
+{
+	($s.name || '<anon>') ~ ' ' ~ $s.signature.gist,
+	$s.^name  ~~ /NativeCall/ ?? '.Sub <NativeCall>' !! '.Sub',
+	DDT_FINAL
+}
 
 multi method get_header (Any $a) 
 {
@@ -138,6 +150,10 @@ multi method get_elements (Array $a) {
 	|self!get_attributes($a, <descriptor reified todo>),
 	|$a.list.map: {$++, ' = ', $_} }
 
+# native array
+multi method get_header (array $a) { '', '[' ~ $a.elems ~ ']' ~ $a.^name.substr(5)}
+multi method get_elements (array $a) { |$a.list.map: {$++, ' = ', $_} }
+
 multi method get_header (Hash:U $h) { '', '{}', DDT_FINAL }
 multi method get_header (Hash:D $h) { '', '{' ~ $h.elems ~ '}' ~ $h.^name.substr(4) }
 multi method get_elements (Hash:D $h) {
@@ -161,19 +177,29 @@ multi method get_header (Enumeration $e) { '', '.' ~ $e.^name, DDT_FINAL }
 
 } #role
 
+class Data::Dump::Tree::Type::Nil
+{
+method ddt_get_header { 'Nil', '', DDT_FINAL }
+}
+
+class Data::Dump::Tree::Type::ValueOnly
+{
+has $.v = '' ;
+
+method new ($v) { self.bless: :v($v) }
+multi method ddt_get_header { "$.v", '', DDT_FINAL }
+
+sub DVO($v) is export { Data::Dump::Tree::Type::ValueOnly.new($v) }
+}
+
 role DDTR::StringLimiter
 {
 
 method limit_string(Str $s, $limit)
 {
-if $limit.defined && $s.chars > $limit
-	{
-	$s.substr(0, $limit) ~ '(+' ~ $s.chars - $limit ~ ')'
-	}
-else
-	{
-	$s 
-	}	
+$limit.defined && $s.chars > $limit
+	?? $s.substr(0, $limit) ~ '(+' ~ $s.chars - $limit ~ ')'
+	!! $s 
 }
 
 
@@ -190,19 +216,6 @@ role DDTR::PerlString
 {
 multi method get_header (IntStr $i) { $i.Int ~ ' / "' ~ $i.Str ~ '"',  '.' ~ $i.^name, DDT_FINAL }
 multi method get_header (Str:D $s) { $_ = $s.perl ; S:g/^\"(.*)\"$/$0/, '.' ~ $s.^name, |is_final($s, 'Str') } 
-}
-
-role DDTR::PerlSub
-{
-multi method get_header (Routine $r) { $r.perl, '.' ~ $r.^name, DDT_FINAL }
-multi method get_header (Sub $s) { $s.perl, '.' ~ $s.^name, DDT_FINAL }
-}
-
-class Data::Dump::Tree::Type::NQP
-{
-has $.class ;
-
-multi method ddt_get_header { $.class, ' ** NQP **', DDT_FINAL }
 }
 
 class Data::Dump::Tree::Type::MaxDepth

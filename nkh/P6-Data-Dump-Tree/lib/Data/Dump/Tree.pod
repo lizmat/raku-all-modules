@@ -1,6 +1,10 @@
 
 =begin pod
 
+*Warning*: This module is developed and tested with the latest rakudo. It may
+not work or install properly with your version of rakudo, there is a test suite
+run to check its fitness. 
+
 =NAME Date::Dump::Tree - Renders data structures in a tree fashion
 
 =SYNOPSIS
@@ -20,6 +24,8 @@ Data::Dump::Tree renders your data structures in a tree fashion for legibility.
 
 It also
 
+=item Colors the output if you install Term::ANSIColor (highly recommended)
+
 =item can display two data structures side by side (DDTR::MultiColumns)
 
 =item can display the difference between two data structures (DDTR::Diff)
@@ -30,9 +36,9 @@ It also
 
 =item can display parts of the data structure Horizontally ( :flat() )
 
-=item can be used to "visit" a data structure and call callbacks you define
+=item supports NativeCall data types and representations (see int32 example)
 
-=item install Term::ANSIColor and get colored output (highly recommended)
+=item can be used to "visit" a data structure and call callbacks you define
 
 =INTERFACE
 
@@ -144,6 +150,8 @@ The value of the element being displayed; Data::Dump::Tree displays the value of
 The type of the variable with a '.' appended. IE: '.Str', '.MyClass'
 
 Data::DumpTree will display
+
+=item  Ints have their type set to a white space string to reduce noise
 
 =item  Hashes as '{n}' where n is the number of element of the hash
 
@@ -289,6 +297,14 @@ You can also define your own cycle with B<@kb_colors>:
 
 Note that the width of the glyps is subtracted from the width you pass as we
 use that space when displaying multiline values in the dump.
+
+=head3 $indent = Str
+
+The string is prepended in the rendering
+
+=head3 $nl = Bool
+
+Add an empty line to the rendering
 
 =head3 $max_depth 
 
@@ -665,10 +681,6 @@ display the tree glyphs.
 
 Renders string containing control codes (eg: \n, ANSI, ...) with backslashed
 codes and hex values.
-
-=head3 DDTR::PerlSub
-
-Sub objects will be rendered with .perl
 
 =head3 DDTR::FixedGlyphs 
 

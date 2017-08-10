@@ -4,8 +4,19 @@
 
 Date::Dump::Tree - Renders data structures in a tree fashion with colors
 
-![Imgur](http://i.imgur.com/P7eRSwl.png?1)
+Some blog entries you may like to look at:
 
+http://blogs.perl.org/users/nadim_khemir/2017/08/perl-6-datadumptree-version-15.html
+
+http://blogs.perl.org/users/nadim_khemir/2017/08/take-a-walk-on-the-c-side.html
+
+*Warning* This module is developed and tested with the latest rakudo
+
+*Warning* It may not work or install properly on your version of rakudo
+
+*Warning* There is a test suite run to check its fitness
+
+![Imgur](http://i.imgur.com/P7eRSwl.png?1)
 
 NAME
 ====
@@ -15,7 +26,7 @@ Date::Dump::Tree - Renders data structures in a tree fashion
 SYNOPSIS
 ========
 
-    use Data::Dump::Tree ;
+    use Data::Dump::Tree ; # or use DDT ;
 
     dump @your_data ;
 
@@ -42,6 +53,8 @@ It also
 
   * can display parts of the data structure Horizontally ( :flat() )
 
+  * supports NativeCall data types and representations (see int32 example)
+
   * can be used to "visit" a data structure and call callbacks you define
 
   * install Term::ANSIColor and get colored output (highly recommended)
@@ -49,38 +62,38 @@ It also
 INTERFACE
 =========
 
-sub ddt($data_to_dump, $data_to_dump, ..., :named_argument, ...)
-----------------------------------------------------------------
+sub ddt($data_to_dump, $data_to_dump, :named_argument, ...)
+-----------------------------------------------------------
 
 'say's the rendering of the data structure; an alias to *dump()*
 
-sub dump($data_to_dump, $data_to_dump, ..., :named_argument, ...)
------------------------------------------------------------------
+sub dump($data_to_dump, $data_to_dump, :named_argument, ...)
+------------------------------------------------------------
 
 'say's the rendering of the data structure
 
-sub get_dump($data_to_dump, $data_to_dump, ..., :named_argument, ...)
----------------------------------------------------------------------
+sub get_dump($data_to_dump, $data_to_dump, :named_argument, ...)
+----------------------------------------------------------------
 
 Returns a string containing the rendering of the data structure
 
-sub get_dump_lines($data_to_dump, $data_to_dump, ..., :named_argument, ...)
----------------------------------------------------------------------------
+sub get_dump_lines($data_to_dump, $data_to_dump, :named_argument, ...)
+----------------------------------------------------------------------
 
 Returns an array containing the lines of the data structure rendering
 
-method dump: $data_to_dump, $data_to_dump, ..., :named_argument, ...
---------------------------------------------------------------------
+method dump: $data_to_dump, $data_to_dump, :named_argument, ...
+---------------------------------------------------------------
 
 'say's the rendering of the data structure
 
-method get_dump: $data_to_dump, $data_to_dump, ..., :named_argument, ...
-------------------------------------------------------------------------
+method get_dump: $data_to_dump, $data_to_dump, :named_argument, ...
+-------------------------------------------------------------------
 
 Returns a string containing the rendering of the data structure
 
-method get_dump_lines: $data_to_dump, $data_to_dump, ..., : named_argument, ...
--------------------------------------------------------------------------------
+method get_dump_lines: $data_to_dump, $data_to_dump, :named_argument, ...
+-------------------------------------------------------------------------
 
 Returns an array containing the rendering of the data structure
 
@@ -160,6 +173,8 @@ The value of the element being displayed; Data::Dump::Tree displays the value of
 The type of the variable with a '.' appended. IE: '.Str', '.MyClass'
 
 Data::DumpTree will display
+
+  * Ints have their type set to a white space string to reduce noise
 
   * Hashes as '{n}' where n is the number of element of the hash
 
@@ -293,6 +308,14 @@ You can also define your own cycle with **@kb_colors**:
 ### $width = terminal width
 
 Note that the width of the glyps is subtracted from the width you pass as we use that space when displaying multiline values in the dump.
+
+### $indent = Str
+
+The string is prepended in the rendering
+
+### $nl = Bool
+
+Add an empty line to the rendering
 
 ### $max_depth 
 
@@ -626,10 +649,6 @@ This is the tightest rendering as only one character per level is used to displa
 ### DDTR::PerlString
 
 Renders string containing control codes (eg: \n, ANSI, ...) with backslashed codes and hex values.
-
-### DDTR::PerlSub
-
-Sub objects will be rendered with .perl
 
 ### DDTR::FixedGlyphs 
 

@@ -18,14 +18,13 @@ my %default_colors =
 
 	gl_0 242  gl_1 yellow  gl_2 green gl_3 red  gl_4 blue
 
-	kb_0 178   kb_1 172 
-	kb_2 33    kb_3 27
-	kb_4 175   kb_5 169      
-	kb_6 34    kb_7 28
-	kb_8 160   kb_9 124 
+	kb_0 178   kb_1 172   kb_2 33   kb_3 27   kb_4 175   kb_5 169      
+	kb_6 34    kb_7 28    kb_8 160  kb_9 124 
 	> ;
 
 has @.title is rw ;
+has $.indent = '' ;
+has Bool $.nl ; # add empty line to the rendering
 has Bool $.caller is rw = False ;
 
 has Bool $.color is rw = True ;
@@ -53,7 +52,6 @@ has $.address_from ;
 has $.address is rw ;
 has %.rendered ;
 has %.element_names ;
-
 
 has DDT_Address_Display $.display_address is rw = DDT_Address_Display::DDT_DISPLAY_CONTAINER ;
 
@@ -104,16 +102,8 @@ Data::Dump::Tree.new(|args.hash).get_dump_lines(|args.list).map( { $_.map({ $_.j
 }
 
 method dump(|args) { print self.get_dump(|args) }
-
-method get_dump(|args)
-{
-self.get_dump_lines(|args).map( { $_.map({ $_.join} ).join ~ "\n" } ).join ;
-}
-
-method get_dump_lines_integrated(|args)
-{
-self.get_dump_lines(|args).map( { $_.map({ $_.join} ).join } ) ;
-}
+method get_dump(|args ) { self.get_dump_lines(|args).map( { $_.map({ $_.join} ).join ~ "\n" } ).join }
+method get_dump_lines_integrated(|args) { self.get_dump_lines(|args).map( { $_.map({ $_.join} ).join } ) }
 
 method get_dump_lines(|args)
 {
@@ -214,6 +204,8 @@ self.render_element_structure(
 	() , 
 	($final ?? 0 !! $width, $empty_glyph, $empty_glyph, %glyphs<multi_line>, $empty_glyph, $empty_glyph),
 	) ;
+			
+@!renderings.push: ('', $!indent, '') if $!nl ; 
 }
 
 method render_element_structure($element, $current_depth, @head_glyphs, @glyphs)
@@ -245,8 +237,10 @@ for @sub_elements Z 0..* -> ($sub_element, $index)
 	}
 }
 
-method render_element($element, $current_depth, @head_glyphs, @glyphs)
+method render_element($element, $current_depth, @head_glyphs_no_indent, @glyphs)
 {
+my @head_glyphs = ('', $.indent, ''), |@head_glyphs_no_indent ;
+
 my ($k, $b, $s, $path) = $element ;
 my ($glyph_width, $glyph, $continuation_glyph, $multi_line_glyph, $empty_glyph, $filter_glyph) = @glyphs ;
 
@@ -257,12 +251,43 @@ my ($v, $f, $final, $want_address) =
 		?? ('', '.Mu', DDT_FINAL ) 
 		!! self.get_element_header($s) ;
 
-$f ~= ':U' unless $s.defined ;
-$f = '' unless $.display_type ; 
+if $.display_type 
+	{ 
+	$f ~= ':U' unless $s.defined ;
+
+	my Str $repr = '' ~ $s.REPR ;
+
+	given $repr
+		{
+		when 'CArray' 
+			{
+			$f ~~ s/^'.CArray'// ;
+			$f = ( $s.defined  ?? '[' ~ $s.elems ~ ']' !! '' ) ~ $f ~ ' <' ~ $repr ~ '>' ;
+			}
+
+		when 'CPointer' | 'CStruct' | 'CUnion' 
+			{
+			$f ~= ' <' ~ $repr ~ '>'
+			}
+
+		when 'VMArray' 
+			{
+			$f ~= ' <array>'
+			}
+		}
+	}
+else
+	{
+	$f = '' ;
+	}
+ 
  
 my $s_replacement ;
 @!header_filters and $s.WHAT !=:= Mu and  
-	$.filter_header(self, $s_replacement, $s, ($current_depth, $path, (|@head_glyphs, $filter_glyph), @!renderings), ($k, $b, $v, $f, $final, $want_address)) ;
+	$.filter_header(
+		self, $s_replacement, $s,
+		($current_depth, $path, (|@head_glyphs, $filter_glyph), @!renderings),
+		($k, $b, $v, $f, $final, $want_address)) ;
 
 $s_replacement ~~ Data::Dump::Tree::Type::Nothing and return(True, True, $s, $continuation_glyph) ;
 
@@ -304,7 +329,10 @@ my ($ddt_address, $perl_address, $link) =
 		?? $address.list.map: { $.superscribe_address($_) } 
 		!! ('', '', '') ;
 
-my (@kvf, @ks, @vs, @fs) := self!split_entry($current_depth, $width, $k, $b, $glyph_width, $v, $f, ($ddt_address, $link, $perl_address) ) ;
+my (@kvf, @ks, @vs, @fs) := self!split_entry(
+				$current_depth, $width, $k, $b,
+				$glyph_width, $v, $f,
+				($ddt_address, $link, $perl_address) ) ;
 
 if @kvf # single line rendering
 	{
@@ -361,10 +389,9 @@ else
 		@sub_elements =	((
 				'',
 				'',
-				Data::Dump::Tree::Type::MaxDepth.new(
-					glyph => %glyphs<max_depth>[1],
-					depth => $.max_depth,
-					),
+				Data::Dump::Tree::Type::MaxDepth.new:
+					:glyph(%glyphs<max_depth>[1]),
+						:depth($.max_depth),
 				),) ;
 		}
 	}
@@ -450,7 +477,10 @@ method !get_element_subs(Mu $s)
 
 my regex ansi_color { \e \[ \d+ [\;\d+]* <?before [\;\d+]* > m } 
 
-method !split_entry(Int $current_depth, Int $width, Cool $k, Cool $b, Int $glyph_width, Cool $v, $f is copy, ($ddt_address is copy, $link, $perl_address))
+method !split_entry(
+	Int $current_depth, Int $width, Cool $k, Cool $b,
+	Int $glyph_width, Cool $v, $f is copy,
+	($ddt_address is copy, $link, $perl_address))
 {
 my (@kvf, @ks, @vs, @fs) ;
 
@@ -469,8 +499,8 @@ if none($k2, $v2, $f2) ~~ /\n/	&& ($k2 ~ $b ~ $f2 ~ $ddt_address ~ $perl_address
 		($ddt_address, 	' ' ~ $ddt_address,		'ddt_address'),
 		($link, 	$link,				'link'), 
 		($perl_address, ' ' ~ $perl_address,		'perl_address')
-
-		-> ($entry, $text, $color)
+		->
+		($entry,	$text, 				$color)
 		{
 		@kvf[0].push: $!colorizer.color($text, $color) if $entry ne '' ;
 		}
@@ -482,14 +512,10 @@ else
 
 	# add binder to last key line
 	if @ks { @ks[*-1] = (|@ks[*-1], $!colorizer.color($b, $.color_kbs ?? @.kb_colors_cycle[$current_depth] !! 'binder')) }
-	if $v2_width == $v2.chars
-		{
-		@vs = self.split_text($v2, $width).map: { ($!colorizer.color($_, 'value'), ) }
-		}
-	else
-		{
-		@vs = self.split_colored_text($v2, $width).map: { ($!colorizer.color($_, 'value'), ) }
-		}
+
+	@vs = $v2_width == $v2.chars # no color codes in $v2
+		?? self.split_text($v2, $width).map: { ($!colorizer.color($_, 'value'), ) }
+		!! self.split_colored_text($v2, $width).map: { ($!colorizer.color($_, 'value'), ) }
 
 	# put the footer and addresses on a single line if there is room
 	my $f2_ddt_link_perl_length = $f2.chars +  $ddt_address.chars +  $link.chars + $perl_address.chars ;
@@ -565,7 +591,10 @@ multi method split_text(Cool:D $text, $width)
 
 return $text if $width < 1 ;
 
-$text.lines.map({ |.comb($width)}) ;
+# combing an empty line returns nothing but we still want a line
+my @lines = $text.lines.map: { (|.comb($width)) || '' } ;
+
+@lines ;
 }
 
 multi method split_colored_text(Cool:D $text, $width)
@@ -582,7 +611,7 @@ for $text.lines -> $line
 	@lines.push: '' ;
 	$length = 0 ;
 
-	for $line.split: / <ansi_color>/, :v
+	for $line.split: / <ansi_color> /, :v
 		{
 		given $_
 			{
@@ -600,11 +629,10 @@ for $text.lines -> $line
 					}
 
 				$length += .chars ;	
-				@lines[*-1] ~= $_ ;
+				@lines[*-1] ~= '' ~ $_ ;
 				}
 			}		
 		}
-	
 	}
 
 @lines ;
@@ -705,13 +733,16 @@ $is_last
 method !get_class_and_parents ($a) { get_class_and_parents($a) }
 sub get_class_and_parents (Any $a) is export 
 {
-(($a.^name, |get_Any_parents_list($a).grep({ ! $a.^name.match($_) })).map: {'.' ~ $_}).join(' ') 
+(($a.^name, |get_Any_parents_list($a).grep({ ! $a.^name.match($_) })).map:
+	{'.' ~ S:g/'NativeCall::Types::'// with $_}).join(' ') 
 }
  
 method !get_Any_parents_list(Any $a) { get_Any_parents_list($a) }
 sub get_Any_parents_list(Any $a) is export 
 {
-my @a = try { @a = $a.^parents.map({ $_.^name }) }  ;
+
+my @a = try { $a.^parents.map: { $_.^name } } 
+
 $! ?? (('DDT exception', ': ', "$!"),)  !! @a ;
 }
 
@@ -723,7 +754,32 @@ $! ?? (('DDT exception', ': ', $!.message),)  !! @a ;
 
 multi sub get_attributes (Any $a, @ignore?) is export 
 {
+my %types ;
+
+if $a.defined && $a.REPR eq 'CArray'
+	{
+	return |$a.list.map: {$++, ' = ', $_} 
+	}
+
+if $a.defined && $a.REPR eq 'CStruct' | 'CUnion'
+	{
+	_get_attributes($a.WHAT).map:
+		{
+		my $type = S/':U'$// with $_[2].?type ;
+		$type //= '.' ~ $_[2].^name ; 
+		$type = S:g/'NativeCall::Types::'// with $type ; 
+		
+		%types{$_[0]} = $type  ; 
+		}  
+	}
+
+_get_attributes($a, @ignore, %types) ; 
+}
+
+sub _get_attributes (Any $a, @ignore?, %types?) 
+{
 my @attributes ;
+
 for $a.^attributes.grep({$_.^isa(Attribute)})
    #weeding out perl internal, thanks to moritz 
 	{
@@ -733,16 +789,44 @@ for $a.^attributes.grep({$_.^isa(Attribute)})
 
 	$name ~~ s~^(.).~$0.~ if $_.has_accessor ;
 
-	my $value = $a.defined 	?? $_.get_value($a) // 'Nil' !! $_.type ; 
+	my $t = %types{$name} // '' ;
+
+	my $value = $a.defined 	?? $_.get_value($a) // Data::Dump::Tree::Type::Nil.new !! $_.type ; 
 
 	# display where attribute is coming from or nothing if base class
 	my $p = $_.package.^name ~~ / ( '+' <- [^\+]> * ) $/ ?? " $0" !! '' ;
 	my $rw = $_.readonly ?? '' !! ' is rw' ;
 
-   	#weeding out perl internal, thanks to jnth 
-	@attributes.push: $value.HOW.^name eq 'NQPClassHOW'
-				?? ($name, ' = ', Data::Dump::Tree::Type::NQP.new(:class($value.^name))) 
-				!! ("$name$rw$p", ' = ', $value) 
+ 	given  $value.HOW.^name
+		{
+   		#weeding out perl internal, thanks to jnth 
+		when 'NQPClassHOW' 
+			{
+ 			@attributes.push:
+				(
+				$name, ' = ',
+				Data::Dump::Tree::Type::Final.new:
+					:value($value.^name),
+					:type<NQP>
+				) 
+			}
+
+		when 'Perl6::Metamodel::NativeHOW' 
+			{
+ 			@attributes.push: 
+				(
+				$name, ' = ',
+				Data::Dump::Tree::Type::Final.new:
+					:value($value),
+					:type('.' ~ (S:g/'NativeCall::Types::'// with $value.^name) ~ ':U')
+				) 
+			}
+
+		default
+ 			{
+			@attributes.push: ( "$name$t$rw$p", ' = ', $value ) 
+			}
+		}
 	}
 
 @attributes ;
