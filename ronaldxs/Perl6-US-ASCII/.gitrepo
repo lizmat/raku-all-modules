@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ronaldxs/Perl6-US-ASCII.git
 	branch = master
-	commit = 070aa18d5d71e508b6d7a6636d23177f349a4e3c
-	parent = c1bbd51b0a34d08b9b8038cbef73ab3e1dfdcc35
+	commit = 1a5abffda8681280930ba1a1835eaab899d4e581
+	parent = b0c00db25e96f0cba14400a3b97f43a20f7d512b
 	cmdver = 0.4.0
