@@ -3,7 +3,7 @@
     "name"          : "Punnable",
     "version"       : "0.1.0",
     "description"   : "Make roles with stub-methods punnable",
-    "authors"       : [ "Fernando Corrêa de Oliveira" ],
+    "authors"       : [ "Fernando Correa de Oliveira" ],
     "tags"          : ["pun", "role", "stub"],
     "provides" : {
 		"Punnable": "lib/Punnable.pm6"
