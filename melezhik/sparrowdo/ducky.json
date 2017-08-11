@@ -1,0 +1,38 @@
+[
+  {
+    "task" : "install perl6",
+    "plugin" : "rakudo-install",
+    "data" : {
+      "url" : "https://github.com/nxadm/rakudo-pkg/releases/download/2017.07/perl6-rakudo-moarvm-CentOS7.3.1611-20170700-01.x86_64.rpm"
+    }
+  },
+  {
+    "task" : "install Sparrowdo from source",
+    "plugin" : "zef",
+    "data" : {
+      "list" : [
+        "."
+      ],
+      "options" : "--force-install"
+    }
+  },
+  {
+    "task" : "install Sparrowdo modules",
+    "plugin" : "zef",
+    "data" : {
+      "list" : [
+        "Sparrowdo::Sparrow::Update",
+        "Sparrowdo::Cpanm::GitHub"
+      ]
+    }
+  },
+  {
+    "task" : "install JSON::Unmarshal",
+    "plugin" : "zef",
+    "data" : {
+      "list" : [
+        "JSON::Unmarshal"
+      ]
+    }
+  }
+]
