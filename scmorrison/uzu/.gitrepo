@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/scmorrison/uzu.git
 	branch = master
-	commit = d02678069e3618b277cf61f46727405720a6a3ba
-	parent = 5ff0f2e37828653cde5be06747dc36bab7dd8d83
+	commit = cd45d3cb0ffcddaee912960e97e2d574c7f7394b
+	parent = 97051ac13d99c4cc0214938f6ad49a51b432c1dd
 	cmdver = 0.4.0
