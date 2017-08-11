@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "App::snippet",
-    "version"     : "0.1.2",
+    "version"     : "0.1.3",
     "license"     : "MIT",
     "description" : "run c/cpp or other language code snippet",
     "depends"     : [
@@ -31,7 +31,7 @@
     "authors" : "Loren",
     "source-url"  : "https://github.com/araraloren/perl6-app-snippet.git",
     "support" : {
-        "bugtracker" : "https://github.com.araraloren/perl6-terminal-table/issues",
-        "source" : "https://github.com/araraloren/perl6-terminal-table.git"
+        "bugtracker" : "https://github.com.araraloren/perl6-app-snippet/issues",
+        "source" : "https://github.com/araraloren/perl6-app-snippet.git"
     }
 }
