@@ -1,11 +1,10 @@
 use v6;
-use Panda::Builder;
 
-# for panda only
+# for zef
 # tests require cloning atweiden/txn-examples into t/data
-class Build is Panda::Builder
+class Build
 {
-    method build($workdir)
+    method build($)
     {
         run qw<git clone https://github.com/atweiden/txn-examples t/data>;
         chdir 't/data';
