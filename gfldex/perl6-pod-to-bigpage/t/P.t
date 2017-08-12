@@ -7,7 +7,7 @@ plan 1;
 
 =begin pod
 P<./t/hello-camelia.txt>
-P<http://perl6.org/robots.txt>
+P<http://http.perl6.org/robots.txt>
 =end pod
 
 my $ok-result = q:to/EOH/;
