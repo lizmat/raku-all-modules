@@ -64,6 +64,18 @@ sub i18n-context-vars(
                          ( $context{$i18n_key}.defined ?? |$context{$i18n_key}<i18n> !! %() )));
 }
 
+sub extract-file-parts(
+    IO::Path $path,
+    Str      $pages_dir
+    --> List
+) {
+    my $relative_path         = S/ $pages_dir // given $path.IO.path;
+    my $file_name             = S/'.tt'|'.mustache'$// given (S/^\/// given $relative_path);
+    my ($page_name, $out_ext) = split('.', $file_name);
+    my $target_dir            = $relative_path.IO.parent.path;
+    return $page_name, ($out_ext||'html'), $target_dir;
+}
+
 
 sub write-generated-files(
     Hash     $content,
@@ -71,13 +83,16 @@ sub write-generated-files(
     --> Bool()
 ) {
     # IO write to disk
-    for $content.kv -> $template_name, %meta {
-        my $file       = %meta<path>.Str.split('pages')[1];
-        my $html       = %meta<html>;
-        my $target_dir = $build_dir.IO.child($file.IO.dirname);
-        mkdir $target_dir;
-        spurt $target_dir.IO.child("$template_name.html"), $html;
-    };
+    my Promise @write_queue;
+    map -> $template_name, %meta {
+        push @write_queue, start {
+            my $html       = %meta<html>;
+            my $target_dir = $build_dir.IO.child(%meta<target_dir>.IO);
+            mkdir $target_dir;
+            spurt $build_dir.IO.child("{$template_name}.{%meta<out_ext>}"), $html;
+        }
+    }, kv $content;
+    await @write_queue;
 }
 
 sub html-file-name(
@@ -109,7 +124,9 @@ sub prepare-html-output(
     Str      :$language,
     Str      :$layout_contents,
     Bool     :$no_livereload,
-    IO::Path :$path
+    IO::Path :$path,
+    Str      :$target_dir,
+    Str      :$out_ext
     --> Pair
 ) {
     # Default file_name without prefix
@@ -120,14 +137,16 @@ sub prepare-html-output(
             language         => $language;
 
     # Return processed HTML
-    my Str $processed_html =
+    my Str $html =
         process-livereload
             content          => $layout_contents,
             no_livereload    => $no_livereload;
 
     return $file_name => %{ 
-        path => $path,
-        html => $processed_html
+        :$path,
+        :$html,
+        :$target_dir,
+        :$out_ext
     }
 }
 
@@ -137,95 +156,153 @@ sub parse-template(
     --> List
 ) {
     # Extract header yaml if available
-    my ($page_yaml, $page_html) = ~<< ( slurp($path, :r) ~~ / ( ^^ '---' .* '---' | ^^ ) (.*) / );
-    return $page_html, $page_yaml ?? load-yaml $page_yaml !! %{};
+    try {
+        my ($template_yaml, $template_html) = ~<< ( slurp($path, :r) ~~ / ( ^^ '---' .* '---' | ^^ ) (.*) / );
+        my %yaml = $template_yaml ?? load-yaml $template_yaml !! %();
+
+        CATCH {
+            default {
+                note "Invalid template yaml [$path]";
+            }
+        }
+
+        return $template_html, %yaml;
+    }
 }
 
 multi sub render(
     'mustache',
-    Hash  $context,
-    List :$template_dirs,
-    Str  :$default_language,
-    Str  :$language, 
-    Hash :$pages,
-    Hash :$categories,
-    Bool :$no_livereload
+    Hash      $context,
+    IO::Path :$theme_dir,
+    Str      :$default_language,
+    Str      :$language, 
+    Hash     :$pages,
+    Hash     :$partials,
+    Hash     :$categories,
+    Bool     :$no_livereload
     --> Hash()
 ) {
 
     use Template::Mustache;
+    my Str $layout_template = slurp grep( / 'layout.mustache' $ /, templates(exts => ['mustache'], dir => $theme_dir) )[0], :r;
+    my Any %layout_vars     = language => $language, |$context{$language};
 
-    my Any %layout_vars = language => $language, |$context{$language};
-    return gather {
-        map -> $page_name, %meta {
-            
+    my Promise @page_queue;
+    map -> $page_name, %meta {
+        push @page_queue, start {
+
             # Append page-specific i18n vars if available
             my Any %page_context = i18n-context-vars path => %meta<path>, :$context, :$language;
 
+            # Render the partials content
+            my Promise @partials_queue;
+            map -> $partial_name, %p {
+                push @partials_queue, start {
+                    $partial_name => Template::Mustache.render: %p<html>, %( |%layout_vars, |%page_context, |%meta<vars>, |%p<vars> );
+                }
+            }, kv $partials;
+            await Promise.allof: @partials_queue;
+            my Any %partials = @partials_queue».result;
+
             # Render the page content
             my Str $page_contents = Template::Mustache.render:
-                %meta<html>, %( |%page_context, |%meta<vars>, category => $categories ), from => $template_dirs;
+                %meta<html>, %( |%layout_vars, |%page_context, |%meta<vars>, category => $categories ), from => [%partials];
 
             # Append page content to $context
-            my Str $layout_contents =
-                decode-entities Template::Mustache.render:
-                    'layout',
-                    %( |%layout_vars, |%meta<vars>, categories => $categories, content => $page_contents ),
-                    from => $template_dirs;
+            my Str $layout_contents = do given %meta<out_ext> {
+                when 'html' {
+                    decode-entities Template::Mustache.render:
+                        $layout_template,
+                        %( |%layout_vars, |%meta<vars>, categories => $categories, content => $page_contents ),
+                        from => [%partials]
+                }
 
-            take prepare-html-output
+                # Do not wrap non-html files with layout
+                default { $page_contents  }
+            }
+
+            prepare-html-output
                 :$page_name,
                 :$default_language,
                 :$language,
                 :$layout_contents,
                 :$no_livereload,
-                path => %meta<path>
-        }, kv $pages;
-    }
+                path => %meta<path>,
+                target_dir => %meta<target_dir>,
+                out_ext    => %meta<out_ext>;
+        }
+    }, kv $pages;
+
+    return @page_queue».result;
 }
 
 multi sub render(
     'tt',
-    Hash  $context,
-    List :$template_dirs,
-    Str  :$default_language,
-    Str  :$language, 
-    Hash :$pages,
-    Hash :$categories,
-    Bool :$no_livereload
+    Hash      $context,
+    IO::Path :$theme_dir,
+    Str      :$default_language,
+    Str      :$language, 
+    Hash     :$pages,
+    Hash     :$partials,
+    Hash     :$categories,
+    Bool     :$no_livereload
     --> Hash()
 ) {
 
     use Template6;
-    my Template6 $t6 .= new;
-    map { $t6.add-path: $_ }, @$template_dirs;
 
-    my Any %layout_vars = language => $language, |$context{$language};
-    return gather {
-        $pages.kv.map: -> $page_name, %meta {
+    my Str $layout_template = slurp grep( / 'layout.tt' $ /, templates(exts => ['tt'], dir => $theme_dir) )[0], :r;
+    my Any %layout_vars     = language => $language, |$context{$language};
+
+    my Promise @page_queue;
+    $pages.kv.map: -> $page_name, %meta {
+        push @page_queue, start {
+
+            my Template6 $t6 .= new;
+            $t6.add-template: 'layout', $layout_template;
             
             # Append page-specific i18n vars if available
             my Any %page_context = i18n-context-vars path => %meta<path>, :$context, :$language;
 
+            # Render the partials content
+            my Promise @partials_queue;
+            map -> $partial_name, %p {
+                push @partials_queue, start {
+                    $t6.add-template: "{$partial_name}_", %p<html>;
+                    $t6.add-template: $partial_name, $t6.process( "{$partial_name}_", |%layout_vars, |%page_context, |%meta<vars>, |%p<vars> );
+                }
+            }, kv $partials;
+            await Promise.allof: @partials_queue;
+
             # Cache template
-            $t6.add-template: "_{$page_name}_str", %meta<html>;
+            $t6.add-template: "_{$page_name}_", %meta<html>;
 
             # Render the page content
-            my Str $page_contents   = $t6.process: "_{$page_name}_str", |%page_context, |%meta<vars>, categories => $categories;
+            my Str $page_contents   = $t6.process: "_{$page_name}_", |%layout_vars, |%page_context, |%meta<vars>, categories => $categories;
 
             # Append page content to $context
-            my Str $layout_contents = $t6.process: 
-                'layout', |%layout_vars, |%meta<vars>, categories => $categories, content => $page_contents;
+            my Str $layout_contents = do given %meta<out_ext> {
+                when 'html' {
+                    $t6.process: 'layout', |%layout_vars, |%meta<vars>, categories => $categories, content => $page_contents;
+                }
 
-            take prepare-html-output
+                # Do not wrap non-html files with layout
+                default { $page_contents  }
+            }
+
+            prepare-html-output
                 :$page_name,
                 :$default_language,
                 :$language,
                 :$layout_contents,
                 :$no_livereload,
-                path => %meta<path>
+                path       => %meta<path>,
+                target_dir => %meta<target_dir>,
+                out_ext    => %meta<out_ext>;
         }
     }
+
+    return @page_queue».result;
 }
 
 our sub build(
@@ -233,48 +310,66 @@ our sub build(
     ::D :&logger = Uzu::Logger::start()
     --> Bool
 ) {
-    my ($assets_dir, $public_dir, $build_dir) = $config<assets_dir public_dir build_dir>;
-
-    # All available pages
     my List $exts = $config<template_extensions>{$config<template_engine>};
-    my IO::Path @page_templates = templates(exts => $exts, dir => $config<pages_dir>);
-
     my %categories;
 
-    my %pages = map -> $path { 
-        my Str $page_name = ( split '.', IO::Path.new($path).basename )[0]; 
-        next unless $path.IO.f;
-        my $page_raw = slurp($path, :r);
+    # All available pages
+    my Promise @page_load_queue;
+    map -> $path { 
+        push @page_load_queue, start {
+            my Str ($page_name, $out_ext, $target_dir) = extract-file-parts($path, $config<pages_dir>.IO.path);
+            next unless $path.IO.f;
+            my $page_raw = slurp $path, :r;
 
-        # Extract header yaml if available
-        my ($page_html, %page_vars) = parse-template path => $path;
+            # Extract header yaml if available
+            my ($page_html, %page_vars) = parse-template path => $path;
 
-        # Append page to categories hash if available
-        #with %page_vars<categories> {
-        #    await map -> $category {
-        #        my $uri            = S/'.tt'|'.mustache'/.html/ given split('pages', $path.path).tail;
-        #        my $title          = %page_vars<title>||$uri;
-        #        my $category_label = S/'/categories/'// given $category;
-        #        push %categories<labels>, { name => $category_label };
-        #        push %categories{$category}, { :$title, :$uri };
-        #    }, build-category-uri(%page_vars<categories>);
-        #}
+            # Append page to categories hash if available
+            #with %page_vars<categories> {
+            #    await map -> $category {
+            #        my $uri            = S/'.tt'|'.mustache'/.html/ given split('pages', $path.path).tail;
+            #        my $title          = %page_vars<title>||$uri;
+            #        my $category_label = S/'/categories/'// given $category;
+            #        push %categories<labels>, { name => $category_label };
+            #        push %categories{$category}, { :$title, :$uri };
+            #    }, build-category-uri(%page_vars<categories>);
+            #}
 
-        %( $page_name => %{ path => $path, html => $page_html, vars => %page_vars } );
-    }, @page_templates;
+            %( $page_name => %{ path => $path, html => $page_html, vars => %page_vars, out_ext => $out_ext, target_dir => $target_dir } );
+        }
+    }, templates(exts => $exts, dir => $config<pages_dir>);
+
+    # All available partials
+    my Promise @partial_load_queue;
+    map -> $path { 
+        push @partial_load_queue, start {
+            my Str $partial_name = ( split '.', IO::Path.new($path).basename )[0]; 
+            next unless $path.IO.f;
+            my $partial_raw = slurp($path, :r);
+
+            # Extract header yaml if available
+            my ($partial_html, %partial_vars) = parse-template path => $path;
+
+            %( $partial_name => %{ path => $path, html => $partial_html, vars => %partial_vars } );
+        }
+    }, templates(exts => $exts, dir => $config<partials_dir>);
+
+    await Promise.allof: @page_load_queue, @partial_load_queue;
+    my Any %pages    = @page_load_queue».result;
+    my Any %partials = @partial_load_queue».result;
 
     # Clear out build
     logger "Clear old files";
-    rm-dir $build_dir;
+    rm-dir $config<build_dir>;
 
     # Create build dir
-    if !$build_dir.IO.d { 
+    if !$config<build_dir>.IO.d { 
         logger "Create build directory";
-        mkdir $build_dir;
+        mkdir $config<build_dir>;
     }
 
     logger "Copy public, assets";
-    map { copy-dir $_, $build_dir }, [$public_dir, $assets_dir];
+    map { copy-dir $_, $config<build_dir> }, [$config<public_dir>, $config<assets_dir>];
 
     # Append nested pages directories
     my @template_dirs = |$config<template_dirs>, |find(dir => $config<pages_dir>, type => 'dir');
@@ -283,26 +378,27 @@ our sub build(
     my @i18n_dirs = $config<i18n_dir>, |find(dir => $config<i18n_dir>, type => 'dir');
 
     # One per language
-    await gather {
-        map -> $language { 
-            take start {
+    my Promise @language_queue;
+    map -> $language { 
+            push @language_queue, start {
                 logger "Compile templates [$language]";
                 i18n-from-yaml(
                     language         => $language,
                     i18n_dir         => $config<i18n_dir>)
                 ==> render(
                     $config<template_engine>,
-                    template_dirs    => @template_dirs,
+                    theme_dir        => $config<theme_dir>,
                     default_language => $config<language>[0],
                     language         => $language,
                     pages            => %pages,
+                    partials         => %partials,
                     categories       => %categories,
                     no_livereload    => $config<no_livereload>)
                 ==> write-generated-files(
-                    build_dir        => $build_dir);
+                    build_dir        => $config<build_dir>);
             }
-        }, $config<language>;
-    }
+    }, $config<language>;
+    await @language_queue;
 
     logger "Compile complete";
 }
