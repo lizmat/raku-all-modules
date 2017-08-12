@@ -2,7 +2,7 @@
     "perl"        : "6.*",
     "name"        : "Config::Netrc",
     "license"     : "Artistic-2.0",
-    "version"     : "*",
+    "version"     : "1.0",
     "tags"        : ["Grammar", "Config"],
     "description" : ".netrc file parser module for Perl 6",
     "provides": {
