@@ -49,14 +49,12 @@ sub scrape(Str $url, &parser, &operator, &next?, Int $gens=1, Int $delay=0);
 
 ## Installation
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
-
 ```
-$ panda update
-$ panda install deredere
+$ zef update
+$ zef install deredere
 ```
 
-Also, you should install `IO::Sockes::SSL` to work with "https" links. You also need `XML` to build effective data parsers.
+Also, you can install `IO::Sockes::SSL` to work with "https" links. You also need `XML` to build effective data parsers.
 
 ## Testing
 
