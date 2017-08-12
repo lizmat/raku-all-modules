@@ -1,7 +1,7 @@
 augment List[File] {
     method remove? { $self.${xargs rm -rf !>X} }
 
-    method cat@ { ${cat @$self} }
+    method cat@ { $self.${xargs cat} }
 }
 
 my File $?file-cleanup = ${mktemp};
@@ -91,12 +91,13 @@ augment File {
     #| Appends a string to a file,. If the file doesn't end in a
     #| newline, one will be prepended to the string. A newline is
     #| appended to the string regardless of whether it already ends in
-    #| a string. Returns the argument string.
-    method push(#|[string to push] $str)~ {
+    #| a string. Returns the invocant File.
+    method push(#|[string to push] $str)^ {
         $self.try-slurp.${
             awk :l($str) -v "f=$self"
-             '{print>f}END{l=ENVIRON["l"];print l>f; printf "%s", l}'
-        }
+             '{print>f}END{l=ENVIRON["l"];print l>f}'
+        };
+        $self;
     }
 
     method unshift($str)~ {
@@ -227,6 +228,8 @@ augment File {
 
     method cleanup^ {
         $?file-cleanup.push($self);
+        $self;
+
         FILE-CLEAN ${rm -rf @($?file-cleanup.slurp) $?file-cleanup }
     }
 
