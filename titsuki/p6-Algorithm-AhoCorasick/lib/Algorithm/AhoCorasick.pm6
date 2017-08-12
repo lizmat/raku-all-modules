@@ -54,22 +54,19 @@ method match($text) {
 
 method locate($text) {
     my $matched;
-    my $state = $!root;
+    my $trans = $!root;
     for ^$text.chars -> $i {
-        my $trans = Mu;
         my $edge-character = $text.substr($i,1);
-        while $state.defined {
-            $trans = $state.transitions{$edge-character};
-            if $state === $!root || $trans.defined {
-                last;
-            }
-            $state = $state.failure;
+        until ($trans.defined and $trans.transitions{$edge-character}:exists) or ($trans === $!root) {
+            $trans = $trans.failure;
         }
 
-        if $trans.defined {
-            $state = $trans;
+        $trans = do if $trans.transitions{$edge-character}:exists {
+            $trans.transitions{$edge-character};
+        } else {
+            $!root;
         }
-        for $state.matched-string.keys -> $string {
+        for $trans.matched-string.keys -> $string {
             $matched{$string}.push($i - $string.chars + 1);
         }
     }

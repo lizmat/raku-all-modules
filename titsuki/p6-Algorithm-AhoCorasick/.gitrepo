@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-AhoCorasick.git
 	branch = master
-	commit = 967b1407cecab6bdb1bbe65207e1c67dd1c0dcd6
-	parent = 0dea59e3febb5d2ce24d6a0af2cb42848c609cbc
+	commit = 315e1348ffece66aa75eb2c5ff69f78a7fd9e47b
+	parent = 5f12b42a5f3826b8e388111339dda9c8b4edb19f
 	cmdver = 0.4.0
