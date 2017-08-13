@@ -13,5 +13,5 @@ sub ciwp_payment_period ( Rat() $final_value, Rat() $interest_rate, Rat() $payme
 }
 
 sub ciwp_payment_size ( Rat() $final_value, Rat() $interest_rate, Rat() $total_periods ) is export {
-	( $final_value * $interest_rate ) / ((1 + $interest_rate ) ** $total_periods - 1) # Returns mounthly payment size to reach the estimated final payment.
+	( $final_value * $interest_rate ) / ((1 + $interest_rate ) ** $total_periods - 1) # Returns monthly payment size to reach the estimated final payment.
 }
