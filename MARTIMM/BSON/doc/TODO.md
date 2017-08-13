@@ -15,5 +15,3 @@
 
 
 ### Bugs
-
-* An array in a document which is modified later with push, pop or otherwise will not be properly encoded.

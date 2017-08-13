@@ -157,7 +157,7 @@ subtest "Document nesting 2", {
 # on ubuntu docker (Gabor) this test seems to fail. On Travis(Ubuntu) or Fedora
 # it works fine. So test only when on TRAVIS
 
-if %*ENV<TRAVIS>:exists {
+#if %*ENV<TRAVIS>:exists or '/home/marcel/Languages/Perl6'.IO ~~ :d {
   subtest "Big, wide and deep nesting", {
 
     # Keys must be sufficiently long and value complex enough to keep a
@@ -166,22 +166,22 @@ if %*ENV<TRAVIS>:exists {
     my Num $count = 0.1e0;
     my BSON::Document $d .= new;
     for ('zxnbcvzbnxvc-aa', *.succ ... 'zxnbcvzbnxvc-bz') -> $char {
-      $d{$char} = ($count += 2.44);
+      $d{$char} = ($count += 2.44e0);
     }
 
     my BSON::Document $dsub .= new;
     for ('uqwteuyqwte-aa', *.succ ... 'uqwteuyqwte-bz') -> $char {
-      $dsub{$char} = ($count += 2.1);
+      $dsub{$char} = ($count += 2.1e0);
     }
 
     for ('uqwteuyqwte-da', *.succ ... 'uqwteuyqwte-dz') -> $char {
-      $d<x1>{$char} = ($count += 2.1);
+      $d<x1>{$char} = ($count += 2.1e0);
       $d<x2><x1>{$char} = $dsub.clone;
       $d<x2><x2><x3>{$char} = $dsub.clone;
     }
 
     for ('jhgsajhgasjdg-ca', *.succ ... 'jhgsajhgasjdg-cz') -> $char {
-      $d{$char} = ($count -= 0.02);
+      $d{$char} = ($count -= 0.02e0);
     }
 
     for ('uqwteuyqwte-ea', *.succ ... 'uqwteuyqwte-ez') -> $char {
@@ -191,9 +191,9 @@ if %*ENV<TRAVIS>:exists {
     }
 
     $dsub .= new($d.encode);
-    is-deeply $d, $dsub, 'document the same after encoding/decoding';
+    is-deeply $dsub, $d, 'document the same after encoding/decoding';
   }
-}
+#}
 
 #-------------------------------------------------------------------------------
 subtest "Exception tests", {

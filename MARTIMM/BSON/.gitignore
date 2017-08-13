@@ -1,6 +1,5 @@
 .directory
 *.html
-benchmarks/*
 Old/*
 *.mbc
 */*.mbc
