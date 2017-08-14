@@ -1,0 +1,17 @@
+{
+    "perl"        : "6.*",
+    "name"        : "IoC",
+    "version"     : "*",
+    "description" : "Wire your application components together using inversion of control",
+    "depends"     : [ ],
+    "provides"    : {
+       "Ioc"  : "lib/IoC.pm6",
+       "IoC::BlockInjection" : "lib/IoC/BlockInjection.pm6",
+       "IoC::ConstructorInjection" : "lib/IoC/ConstructorInjection.pm6",
+       "IoC::Container" : "lib/IoC/Container.pm6",
+       "IoC::Literal" : "lib/IoC/Literal.pm6",
+       "IoC::Service" : "lib/IoC/Service.pm6"
+    },
+    "source-type"   : "git",
+    "source-url"    : "git://github.com/jasonmay/perl6-ioc.git"
+}

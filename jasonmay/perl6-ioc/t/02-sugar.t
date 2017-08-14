@@ -1,4 +1,4 @@
-BEGIN { @*INC.push('lib') };
+use lib 'lib';
 
 use IoC;
 use Test;

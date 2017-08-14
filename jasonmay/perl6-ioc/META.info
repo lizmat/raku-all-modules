@@ -1,8 +1,0 @@
-{
-    "name"        : "IoC",
-    "version"     : "*",
-    "description" : "Wire your application components together using inversion of control",
-    "depends"     : [ ],
-    "source-type"   : "git",
-    "source-url"    : "git://github.com/jasonmay/perl6-ioc.git"
-}

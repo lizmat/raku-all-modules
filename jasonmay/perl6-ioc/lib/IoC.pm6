@@ -1,4 +1,4 @@
-module IoC;
+unit module IoC;
 
 use IoC::Container;
 use IoC::ConstructorInjection;
