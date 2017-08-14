@@ -231,8 +231,6 @@ multi sub MAIN(Str :$add-dep, Str :$base-dir = '.', Str :$meta6-file-name = 'MET
    # (note BOLD "Dependency to $add-dep already in META6.json."; return) if $add-dep.&simple-version ∈ $meta6<depends>».&simple-version;
 
    $meta6<depends>.push($add-dep);
-   dd $meta6<depends>;
-   exit 0;
    $meta6-file.spurt($meta6.to-json);
 }
 
