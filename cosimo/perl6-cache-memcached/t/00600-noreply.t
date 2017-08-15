@@ -7,7 +7,7 @@ use Test;
 use Cache::Memcached;
 use CheckSocket;
 
-plan 15;
+plan 16;
 
 my $testaddr = "127.0.0.1:11211";
 my $port = 11211;
@@ -65,5 +65,19 @@ $memd.delete("key");
 is($memd.get("key"), Nil, "key is deleted");
 
 nok $memd.incr("key"), "incr returns false if the key doesn't exist";
+
+subtest {
+    my $key = ("a" .. "z").pick(8).join("");
+
+    nok $memd.incr($key), "incr returns false if the key doesn't exist";
+    ok $memd.incr($key, init => 10), "supply an initialiser";
+    is $memd.get($key), 11, "got back the initialiser + 1";
+    ok $memd.set($key, "VastAndBulbous"), "set to a non numeric value";
+    nok $memd.incr($key), "incr returns false if the key is non numeric";
+    nok $memd.incr($key, init => 0), "incr returns false if the key is non numeric even with an initialiser";
+    $memd.flush-all;
+
+}, "new incr feature";
+
 
 done-testing();
