@@ -17,24 +17,21 @@ Currently there is no dedicated test to determine whether your platform is
 supported, the unit tests will simply fail horribly.
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
 
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Sys::Lastlog
-
-I have no reason to believe *zef* wouldn't work equally well, I just
-haven't tested it.
+    zef install Sys::Lastlog
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-https://github.com/jonathanstowe/Sys-Lastlog
+https://github.com/jonathanstowe/Sys-Lastlog/issues
 
 ## Copyright and Licence
 
