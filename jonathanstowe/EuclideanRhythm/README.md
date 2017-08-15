@@ -36,18 +36,15 @@ over a fixed number of slots may find this useful.
 ## Installation
 
 Assuming you have a working installation of Rakudo perl 6 then you
-should be able to install this with:
+should be able to install this with *zef*:
 
-	panda install EuclideanRhythm
+	zef install EuclideanRhythm
 
 or if you have a local copy of this repository:
 
-	panda install .
+	sef install .
 
 in the directory you found this file.
-
-I haven't tested it but I see no reason that this shouldn't work
-equally as well with "zef" or some similarly capable package manager.
 
 ## Support
 
@@ -64,5 +61,5 @@ would be implemented in another module.
 
 This is free software. Please see the LICENCE file in the distribution.
 
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 

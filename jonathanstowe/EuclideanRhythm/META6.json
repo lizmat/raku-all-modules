@@ -2,7 +2,9 @@
   "name": "EuclideanRhythm",
   "source-url": "git@github.com:jonathanstowe/EuclideanRhythm.git",
   "support": {
-    "source": "git@github.com:jonathanstowe/EuclideanRhythm.git"
+    "source": "git@github.com:jonathanstowe/EuclideanRhythm.git",
+    "email" : "jns+gh@gellyfish.co.uk",
+    "bugtracker" : "https://github.com/jonathanstowe/EuclideanRhythm/issues"
   },
   "perl": "6.c",
   "resources": [
@@ -32,5 +34,5 @@
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
   ],
   "description": "create rhythmic patterns based on the Euclidean algorithm",
-  "meta6": "0"
+  "meta-version": "0"
 }
