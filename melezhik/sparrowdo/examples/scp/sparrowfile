@@ -1,17 +1,24 @@
-my $user = $*USER;
-my $ssh-key = "/home/$user/.ssh/id_rsa";
+package-install "openssh-server";
+
+service-start "sshd";
+
+my $key = "/root/.ssh/id_rsa";
+
+file-delete "/root/.ssh/id_rsa.pub";
+file-delete '/root/.ssh/id_rsa';
+file-delete '/root/.ssh/authorized_keys';
+
+bash 'cat /dev/zero | ssh-keygen -q -N ""';
+bash 'cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys';
+
 
 ssh 'rm -rf  /tmp/test-ssh-scp && mkdir -p /tmp/test-ssh-scp', %( 
   host => '127.0.0.1',
-  user    => $user,
-  ssh-key => $ssh-key
 );
 
 scp %( 
   data    => $*CWD ~ "/data/hello.txt",
   host    => "127.0.0.1:/tmp/test-ssh-scp", 
-  user    => $user,
-  ssh-key => $ssh-key
 );
 
 bash 'cat /tmp/test-ssh-scp/hello.txt', %(
@@ -21,8 +28,6 @@ bash 'cat /tmp/test-ssh-scp/hello.txt', %(
 scp %( 
   data    => $*CWD ~ "/data/hello2.txt",
   host    => "127.0.0.1:/tmp/test-ssh-scp", 
-  user    => $user,
-  ssh-key => $ssh-key
 );
 
 bash 'cat /tmp/test-ssh-scp/hello2.txt', %(
@@ -36,8 +41,6 @@ scp %(
   data    => '/tmp/test-ssh-scp-pull',
   host    => "127.0.0.1:/tmp/test-ssh-scp/hello.txt",
   pull    => True, 
-  user    => $user,
-  ssh-key => $ssh-key
 );
 
 bash 'cat /tmp/test-ssh-scp-pull/hello.txt', %(
@@ -50,8 +53,6 @@ scp %(
   data    => '/tmp/test-ssh-scp-pull',
   host    => "127.0.0.1:/tmp/test-ssh-scp/hello.txt 127.0.0.1:/tmp/test-ssh-scp/hello2.txt",
   pull    => True, 
-  user    => $user,
-  ssh-key => $ssh-key
 );
 
 bash 'cat /tmp/test-ssh-scp-pull/hello.txt', %(
@@ -68,8 +69,6 @@ scp %(
   data    => '/tmp/test-ssh-scp-pull',
   host    => "127.0.0.1:/tmp/test-ssh-scp/hello.txt 127.0.0.1:/tmp/test-ssh-scp/hello2.txt",
   pull    => True,
-  user    => $user,
-  ssh-key => $ssh-key
 );
 
 bash 'cat /tmp/test-ssh-scp-pull/hello.txt', %(

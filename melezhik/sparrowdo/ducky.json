@@ -1,5 +1,12 @@
 [
   {
+    "task" : "install tools",
+    "plugin" : "package-generic",
+    "data" : {
+        "list" : "which"
+    }
+  },
+  {
     "task" : "install perl6",
     "plugin" : "rakudo-install",
     "data" : {
@@ -17,22 +24,54 @@
     }
   },
   {
-    "task" : "install Sparrowdo modules",
+    "task" : "install misc modules",
     "plugin" : "zef",
     "data" : {
       "list" : [
-        "Sparrowdo::Sparrow::Update",
-        "Sparrowdo::Cpanm::GitHub"
+        "JSON::Unmarshal", "Sparrowdo::Cpanm::GitHub"
       ]
     }
   },
   {
-    "task" : "install JSON::Unmarshal",
-    "plugin" : "zef",
+    "task" : "df-check plugin",
+    "plugin" : "bash",
     "data" : {
-      "list" : [
-        "JSON::Unmarshal"
-      ]
+      "command" : "sparrowdo --task_run=df-check --local_mode --no_sudo",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  },
+  {
+    "task" : "sparrowdo tests",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "strun --root examples",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  },
+  {
+    "task" : "sparrowdo task run test",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "sparrowdo --local_mode --no_sudo --task_run=user@name=foo --task_run=bash@command='id && cd ~/ && pwd && uptime && ls -l && ps uax|grep system|grep -v grep',user=foo --task_run=df-check@therhold=54",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  },
+  {
+    "task" : "sparrowdo task run test2",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "sparrowdo --local_mode --no_sudo --no_index_update --module_run=Cpanm::GitHub@user=dagolden,project=Class-Tiny,branch=master",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
     }
   }
 ]
+
+

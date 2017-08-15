@@ -1,29 +1,14 @@
-language: perl
-
+services:
+  - docker
 env:
-  - PATH=/opt/rakudo/bin:/home/travis/.perl6/bin:$PATH
+  - PATH=.ducky/:$PATH
 
 before_install:
-  - cat /dev/zero | ssh-keygen -q -N ""
-  - cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-  - chmod og-wx ~/.ssh/authorized_keys
-  - wget https://github.com/nxadm/rakudo-pkg/releases/download/2017.06/perl6-rakudo-moarvm-ubuntu17.04_20170600-01_amd64.deb
-  - sudo dpkg -i *.deb 
-  - git clone https://github.com/ugexe/zef.git
-  - cd zef
-  - perl6 -Ilib bin/zef install . && cd ../
-  - cpanm -q --notest https://github.com/melezhik/outthentic.git https://github.com/melezhik/sparrow.git
 
-install:
-    - zef install .
-    - zef install Sparrowdo::Sparrow::Update
-    - zef --force install JSON::Unmarshal
-    - zef install Sparrowdo::Cpanm::GitHub
+  - git clone https://github.com/melezhik/ducky.git .ducky
+  - docker pull melezhik/centos7
+  - docker run --privileged --name centos7 --entrypoint  init -v $PWD:/var/ducky -v /sys/fs/cgroup:/sys/fs/cgroup:ro  -d  melezhik/centos7:latest
+  - ducky.bash centos7 
 
 script:
-  - sparrowdo --module_run=Sparrow::Update --bootstrap --host=127.0.0.1
-  - sparrowdo --task_run=df-check --host=127.0.0.1
-  - strun --root examples/
-  - sparrowdo --host=127.0.0.1 --no_index_update --task_run=user@name=foo --task_run=bash@command='id && cd ~/ && pwd && uptime && ls -l && ps uax|grep ssh|grep -v grep',user=foo --task_run=df-check@therhold=54
-  - sparrowdo --host=127.0.0.1 --no_index_update --module_run=Cpanm::GitHub@user=dagolden,project=Class-Tiny,branch=master
-
+  - echo 

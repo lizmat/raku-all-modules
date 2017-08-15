@@ -1,11 +1,18 @@
-# ensure existence by PID taken from /var/run/sshd.pid
-proc-exists 'sshd';
+# ensure existence by PID taken from /var/run/nginx.pid
+
+package-install ('epel-release', 'nginx');
+
+service-start('nginx');
+ 
+proc-exists 'nginx';
 
 # ensure existence by footprint
-proc-exists-by-footprint 'sshd', 'sshd\s+-D';
+proc-exists-by-footprint 'nginx', 'nginx.*master';
 
 # ensure existence by footprint
-proc-exists-by-pid 'sshd', '/var/run/sshd.pid';
+proc-exists-by-pid 'nginx', '/var/run/nginx.pid';
+
+service-stop('nginx');
 
 http-ok 'http://sparrowhub.org';
 

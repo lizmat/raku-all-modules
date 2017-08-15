@@ -44,7 +44,7 @@ sub MAIN (
 
   # read config if exists
 
-  my $sparrowdo-cache = '/home/' ~ %*ENV<USER> ~ '/.sparrowdo/' ~ $sparrow_root;
+  my $sparrowdo-cache = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/.sparrowdo/' ~ $sparrow_root !! '/.sparrowdo';
   mkdir "$sparrowdo-cache/plugins";
 
   my $conf-ini-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini' !! ( $sparrow_root ~ '/sparrowdo.ini' );

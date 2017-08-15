@@ -1,0 +1,14 @@
+[
+  {
+    "task" : "sparrowdo tests",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "strun --root examples --param case=scp",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  }
+]
+
+

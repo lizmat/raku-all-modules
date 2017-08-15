@@ -1,10 +1,22 @@
-my $user = $*USER;
-my $key = "/home/$user/.ssh/id_rsa";
+package-install "openssh-server";
 
-ssh q:to/HERE/, %( host => "127.0.0.1" , user => $user, ssh-key =>  $key );
+service-start "sshd";
+
+my $key = "/root/.ssh/id_rsa";
+
+file-delete "/root/.ssh/id_rsa.pub";
+file-delete '/root/.ssh/id_rsa';
+file-delete '/root/.ssh/authorized_keys';
+
+bash 'cat /dev/zero | ssh-keygen -q -N ""';
+bash 'cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys';
+
+
+
+ssh q:to/HERE/, %( host => "127.0.0.1" , user => 'root' );
   echo one
   echo two
   echo three
 HERE
 
-ssh 'uptime', %( host => "127.0.0.1" , user => $user, ssh-key =>  $key );
+ssh 'uptime', %( host => "127.0.0.1" );

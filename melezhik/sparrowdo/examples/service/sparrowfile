@@ -1,4 +1,4 @@
-package-install 'nginx';
+package-install ('epel-release', 'nginx');
 
 service-enable 'nginx';
 
