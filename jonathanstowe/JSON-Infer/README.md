@@ -41,18 +41,8 @@ consistency of the data.
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
-
-    # From the source directory
-   
-    panda install .
-
-    # Remote installation
-
-    panda install JSON::Infer
-
-Or with *zef* :
+Assuming you have a working Perl 6 installation you should be able to
+install this with *zef* :
 
     # From the source directory
    
@@ -62,7 +52,6 @@ Or with *zef* :
 
     zef install JSON::Infer
 
-
 Other install mechanisms may be become available in the future.
 
 ## Support
@@ -70,7 +59,7 @@ Other install mechanisms may be become available in the future.
 
 Suggestions/patches are welcomed via github at
 
-   https://github.com/jonathanstowe/JSON-Infer
+https://github.com/jonathanstowe/JSON-Infer/issues
 
 ## Licence
 
@@ -78,4 +67,4 @@ This is free software.
 
 Please see the LICENCE file in the distribution for details.
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017
