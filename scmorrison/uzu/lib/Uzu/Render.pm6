@@ -25,19 +25,23 @@ sub i18n-files(
 
 sub i18n-from-yaml(
     Str      :$language,
-    IO::Path :$i18n_dir
+    IO::Path :$i18n_dir,
+    ::D :&logger,
     --> Hash 
 ) {
-    state %i18n;
+    
+    state %i18n = %();
+
     map -> $i18n_file {
 
-        return %( error => "i18n yaml file [$i18n_file] could not be loaded" ) unless $i18n_file.IO.f;
+        logger "i18n yaml file [$i18n_file] could not be loaded" unless $i18n_file.IO.f;
 
         try {
 
             my %yaml = load-yaml slurp($i18n_file, :r);
             my $key  = $i18n_file.dirname.split('i18n')[1] || $language;
-            %i18n{$key}<i18n> = %yaml;
+            %i18n{$key}<i18n>     = %yaml;
+            %i18n{$key}<modified> = $i18n_file.modified;
 
             CATCH {
                 default {
@@ -102,20 +106,6 @@ sub write-generated-file(
     spurt $build_dir.IO.child("{$page_name}.{%meta<out_ext>}"), $html;
 }
 
-sub write-generated-files(
-    Hash     $content,
-    IO::Path :$build_dir
-    --> Bool()
-) {
-    # IO write to disk
-    for kv $content -> $template_name, %meta {
-        my $html       = %meta<html>;
-        my $target_dir = $build_dir.IO.child(%meta<target_dir>.IO);
-        mkdir $target_dir when !$target_dir.IO.d;
-        spurt $build_dir.IO.child("{$template_name}.{%meta<out_ext>}"), $html;
-    };
-}
-
 sub html-file-name(
     Str :$page_name,
     Str :$default_language,
@@ -171,7 +161,6 @@ sub prepare-html-output(
     }
 }
 
-
 sub parse-template(
     IO::Path :$path
     --> List
@@ -197,6 +186,7 @@ multi sub render(
     Channel  :$iorunner,
     IO::Path :$build_dir,
     Str      :$layout_template,
+    Instant  :$layout_modified,
     IO::Path :$theme_dir,
     Str      :$default_language,
     Str      :$language, 
@@ -205,13 +195,24 @@ multi sub render(
     Hash     :$categories,
     Bool     :$no_livereload
 ) {
+
     use Template::Mustache;
-    my Any %layout_vars = :$language, |$context{$language};
+    my Any %layout_vars   = :$language, |$context{$language};
 
     for $pages.sort({ $^a.values[0]<modified> < $^b.values[0]<modified> }) -> $page {
 
         my Str $page_name = $page.key;
         my Any %meta      = $page.values[0];
+
+        # When was this page last rendered?
+        my $last_render_time = "{$build_dir}/{$page_name}.{%meta<out_ext>}".IO.modified||0;
+
+        # Capture i18n, template, layout, and partial modified timestamps
+        my @modified_timestamps = [$layout_modified, %meta<modified>];
+        my @partial_render_queue;
+
+        # i18n file timestamps
+        push @modified_timestamps, |($context.map: { $_.values[0]<modified> });
 
         # Append page-specific i18n vars if available
         my Any %page_context = i18n-context-vars path => %meta<path>, :$context, :$language;
@@ -219,9 +220,18 @@ multi sub render(
         # Render the partials content
         my Any %partials;
         for kv $partials -> $partial_name, %p {
-            %partials{$partial_name} = Template::Mustache.render:
-                %p<html>, %( |%layout_vars, |%page_context, |%meta<vars>, |%p<vars> );
+            push @partial_render_queue, &{
+                %partials{$partial_name} = Template::Mustache.render:
+                    %p<html>, %( |%layout_vars, |%page_context, |%meta<vars>, |%p<vars> );
+            }
         };
+
+        # Skip rendering if layout, page, or partial templates
+        # have not been modified
+        next when max(@modified_timestamps) < $last_render_time;
+
+        # Continue... render partials
+        @partial_render_queue>>.();
 
         # Render the page content
         my Str $page_contents = Template::Mustache.render:
@@ -262,6 +272,7 @@ multi sub render(
     Channel  :$iorunner,
     IO::Path :$build_dir,
     Str      :$layout_template,
+    Instant  :$layout_modified,
     IO::Path :$theme_dir,
     Str      :$default_language,
     Str      :$language, 
@@ -271,24 +282,44 @@ multi sub render(
     Bool     :$no_livereload
 ) {
     use Template6;
-    my Any %layout_vars     = language => $language, |$context{$language};
+    my Any %layout_vars   = language => $language, |$context{$language};
 
     for $pages.sort({ $^a.values[0]<modified> < $^b.values[0]<modified> }) -> $page {
 
         my Str $page_name = $page.key;
         my Any %meta      = $page.values[0];
 
+        # When was this page last rendered?
+        my $last_render_time = "{$build_dir}/{$page_name}.{%meta<out_ext>}".IO.modified||0;
+
         my Template6 $t6 .= new;
         $t6.add-template: 'layout', $layout_template;
         
+        # Capture i18n, template, layout, and partial modified timestamps
+        my @modified_timestamps = [$layout_modified, %meta<modified>];
+        my @partial_render_queue;
+
+        # i18n file timestamps
+        push @modified_timestamps, |($context.map: { $_.values[0]<modified> });
+
         # Append page-specific i18n vars if available
         my Any %page_context = i18n-context-vars path => %meta<path>, :$context, :$language;
 
         # Render the partials content
         for kv $partials -> $partial_name, %p {
-            $t6.add-template: "{$partial_name}_", %p<html>;
-            $t6.add-template: $partial_name, $t6.process( "{$partial_name}_", |%layout_vars, |%page_context, |%meta<vars>, |%p<vars> );
+            push @modified_timestamps, %p<modified>;
+            push @partial_render_queue, &{
+                $t6.add-template: "{$partial_name}_", %p<html>;
+                $t6.add-template: $partial_name, $t6.process( "{$partial_name}_", |%layout_vars, |%page_context, |%meta<vars>, |%p<vars> );
+            }
         };
+
+        # Skip rendering if layout, page, or partial templates
+        # have not been modified
+        next when max(@modified_timestamps) < $last_render_time;
+
+        # Continue... render partials
+        @partial_render_queue>>.();
 
         # Cache template
         $t6.add-template: "_{$page_name}_", %meta<html>;
@@ -377,10 +408,6 @@ our sub build(
 
     }, templates(exts => $exts, dir => $config<partials_dir>);
 
-    # Clear out build
-    logger "Clear old files";
-    rm-dir $config<build_dir>;
-
     # Create build dir
     if !$config<build_dir>.IO.d { 
         logger "Create build directory";
@@ -396,10 +423,11 @@ our sub build(
     # Append nested i18n directories
     my @i18n_dirs = $config<i18n_dir>, |find(dir => $config<i18n_dir>, type => 'dir');
 
-    my Str $layout_template =
-        slurp grep( / 'layout.' @$exts $ /, templates(:$exts, dir => $config<theme_dir>)).head, :r;
+    my IO::Path $layout_path = grep( / 'layout.' @$exts $ /, templates(:$exts, dir => $config<theme_dir>)).head;
+    my Str $layout_template  = slurp $layout_path;
 
-    my Channel $iorunner = Channel.new;
+    my Channel $iorunner .= new;
+    my Promise $iorunner_manager = io-runner($iorunner);
 
     # One per language
     map -> $language { 
@@ -408,12 +436,14 @@ our sub build(
 
         i18n-from-yaml(
             language         => $language,
-            i18n_dir         => $config<i18n_dir>)
+            i18n_dir         => $config<i18n_dir>,
+            logger           => &logger)
         ==> render(
             $config<template_engine>,
             iorunner         => $iorunner,
             build_dir        => $config<build_dir>,
             layout_template  => $layout_template,
+            layout_modified  => $layout_path.modified,
             theme_dir        => $config<theme_dir>,
             default_language => $config<language>[0],
             language         => $language,
@@ -428,6 +458,15 @@ our sub build(
          
     }, $config<language>;
 
-    await io-runner($iorunner);
+    await $iorunner_manager;
     logger "Compile complete";
+}
+
+our sub clear(
+    Map $config,
+    ::D :&logger = Uzu::Logger::start()
+) {
+    # Clear out build
+    logger "Deleting build directory";
+    rm-dir $config<build_dir>;
 }
