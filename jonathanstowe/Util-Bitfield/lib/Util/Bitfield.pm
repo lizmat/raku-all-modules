@@ -1,8 +1,8 @@
-use v6;
+use v6.c;
 
 =begin pod
 
-=head1 NAME 
+=head1 NAME
 
 Util::Bitfield - Utility subroutines for working with bitfields
 
@@ -91,8 +91,8 @@ represent the documented number of bits in the source.
 
 This is used internally but may be useful depending on your requirements, it
 returns the "bit mask" that isolates the value of C<$bits> length starting
-at C<$start> (as above zero indexed from most significant bit,) in the 
-value of C<$word-size> bits.  Typically this mask would be 'anded' with 
+at C<$start> (as above zero indexed from most significant bit,) in the
+value of C<$word-size> bits.  Typically this mask would be 'anded' with
 the incoming value and the result shifted right by the appropriate number of
 bits to get the actual value.  The C<:invert> adverb is provided to make
 the inverse mask (i.e. zero the selected range) that would be used when
@@ -109,7 +109,7 @@ of bits without overflowing.
 =end pod
 
 
-module Util::Bitfield:ver<0.0.2>:auth<github:jonathanstowe> {
+module Util::Bitfield:ver<0.0.3>:auth<github:jonathanstowe> {
 
     class X::BitOverflow is Exception {
         has Int $.value is required;
@@ -120,7 +120,7 @@ module Util::Bitfield:ver<0.0.2>:auth<github:jonathanstowe> {
     }
 
     sub make-mask(Int $bits, Int $start = 0, Int $word-size = 32, Bool :$invert) is export(:DEFAULT) {
-	    my $ret = (((1 +< $bits) - 1) +< ($word-size - ($bits + $start)));
+        my $ret = (((1 +< $bits) - 1) +< ($word-size - ($bits + $start)));
 
         if $invert {
             $ret = ((2 ** $word-size) - 1) +^ $ret;
@@ -130,7 +130,7 @@ module Util::Bitfield:ver<0.0.2>:auth<github:jonathanstowe> {
     }
 
     sub extract-bits(Int $value, Int $bits, Int $start = 0, Int $word-size = 32) is export(:DEFAULT){
-	    ($value +& make-mask($bits, $start, $word-size)) +> ( $word-size - ( $bits + $start));
+        ($value +& make-mask($bits, $start, $word-size)) +> ( $word-size - ( $bits + $start));
     }
 
     sub insert-bits(Int $ins, Int $value, Int $bits, Int $start = 0, Int $word-size = 32) is export(:DEFAULT) {
@@ -142,12 +142,12 @@ module Util::Bitfield:ver<0.0.2>:auth<github:jonathanstowe> {
     }
 
     sub split-bits(Int $bits, Int $value where { $_ < 2**$bits }) is export(:DEFAULT) {
-	    my @bits;
-	    for ^$bits -> $j {
-		    my $k = ( $bits - 1) - $j;
-		    @bits[$k] = ($value +& ( 1 +< $j)) ?? 1 !! 0;
-	    }
-	    @bits;
+        my @bits;
+        for ^$bits -> $j {
+            my $k = ( $bits - 1) - $j;
+            @bits[$k] = ($value +& ( 1 +< $j)) ?? 1 !! 0;
+        }
+        @bits;
     }
 
 

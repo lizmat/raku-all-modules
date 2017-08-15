@@ -47,18 +47,15 @@ within a larger integer as smaller integers.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Util::Bitfield
-
-I haven't tried this with *zef* but I have no reason to think it
-shouldn't work if you would rather use that.
+    zef install Util::Bitfield
 
 Other install mechanisms may be become available in the future.
 
@@ -66,7 +63,7 @@ Other install mechanisms may be become available in the future.
 
 Suggestions/patches are welcomed via github at
 
-https://github.com/jonathanstowe/Util-Bitfield
+https://github.com/jonathanstowe/Util-Bitfield/issues
 
 ## Licence
 
