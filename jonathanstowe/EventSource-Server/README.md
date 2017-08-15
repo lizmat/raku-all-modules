@@ -2,6 +2,8 @@
 
 A simple handler to provide Server Sent Events from HTTP::Server::Tiny / Crust applications
 
+[![Build Status](https://travis-ci.org/jonathanstowe/EventSource-Server.svg?branch=master)](https://travis-ci.org/jonathanstowe/EventSource-Server)
+
 ## Synopsis
 
 This sends out an event with the DateTime string every second
@@ -48,14 +50,10 @@ notifications,)
 
 ## Installation
 
-Assuming you have a working installation of Rakudo Perl 6 with eithe ```zef```
-or ```panda``` installed then you should be able to install this with:
+Assuming you have a working installation of Rakudo Perl 6 with ```zef```
+installed then you should be able to install this with:
 
     zef install EventSource::Server
-
-or
-
-    panda install EventSource::Server
 
 If you want to install this from a local copy substitute the distribution
 name for the path to the local copy.
@@ -63,16 +61,19 @@ name for the path to the local copy.
 ## Support
 
 This is quite a simple module but is fairly difficult to test well without
-bringing in a vast array of large and otherwise un-needed modules, so I won't
-be surprised there are bugs, similarly whilst I have tested for interoperability
-with the Javascript hosts that I have available to me I haven't tested against
-every known host that provides the EventSource interface.
+bringing in a vast array of large and otherwise un-needed modules, so
+I won't be surprised there are bugs, similarly whilst I have tested for
+interoperability with the Javascript hosts that I have available to me
+I haven't tested against every known host that provides the EventSource
+interface.
 
-So please feel free to report any problems (or make suggestions,) to https://github.com/jonathanstowe/EventSource-Server/issues
+So please feel free to report any problems (or make suggestions,) to
+https://github.com/jonathanstowe/EventSource-Server/issues
 
 ## Copyright and Licence
 
-This is free software, please see the [LICENCE](LICENCE) file in the distributiuon.
+This is free software, please see the [LICENCE](LICENCE) file in the
+distribution.
 
 © Jonathan Stowe 2017
 
