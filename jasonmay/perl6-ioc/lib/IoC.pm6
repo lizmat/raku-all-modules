@@ -1,4 +1,4 @@
-unit module IoC;
+unit module IoC:ver<0.0.1>:auth<github:jasonmay>;
 
 use IoC::Container;
 use IoC::ConstructorInjection;
@@ -14,7 +14,7 @@ sub container($pair) is export {
     );
 
     $container-name = $pair.key;
-    
+
     unless $pair.value ~~ Callable {
         die "Second param must be invocable";
     }
@@ -32,7 +32,7 @@ sub service($pair) is export {
         %params<value> = $pair.value;
     }
     else {
-        %params = (%params, $pair.value.pairs);
+        %params.push: $pair.value.pairs;
     }
 
     my $service;
