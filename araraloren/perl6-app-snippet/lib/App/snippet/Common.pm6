@@ -1,5 +1,6 @@
 
 use Getopt::Advance;
+use App::snippet;
 
 unit module App::snippet::Common;
 
@@ -76,4 +77,27 @@ sub commonOptionSet(Str $std, @compiler, $default-compiler) is export {
         'pass arguments to executable binary.',
     );
     $optset;
+}
+
+sub formatCode($optset, @code) is export {
+	my $formater = "";
+	
+	given $optset {
+		when *.get('clang-format').has-value {
+			$formater = 'clang-format';
+		}
+		when *.get('astyle').has-value {
+			$formater = 'astyle';
+		}
+		when *.get('uncrustify').has-value {
+			$formater = 'uncrustify';
+		}
+		default {
+			return ();
+		}
+	}
+	
+	my $code = &simpleFormater($formater, $optset{$formater})(@code);
+
+	return [ $code, ];
 }

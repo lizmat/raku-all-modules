@@ -6,6 +6,20 @@ run c/cpp or other language snippet code
 image:https://travis-ci.org/araraloren/perl6-app-snippet.svg?branch=master["Build Status", link="https://travis-ci.org/araraloren/perl6-app-snippet"]
 image:https://ci.appveyor.com/api/projects/status/jxi78155dvv8jrqx/branch/master?svg=true["https://ci.appveyor.com/api/projects/status/jxi78155dvv8jrqx?svg=true"]
 
+== Feature
+
+* Run code from command line arguments
+* Run code input from user
+* compile files and link them to executable binary
+* Preprocess code only
+* Compile code only
+* Code format
+
+== Language Support
+
+* c
+* c++
+
 == Usage
 
 - c

@@ -53,7 +53,7 @@ EOF
                 :out(!$optset<quite>),
                 :err(!$optset<quite>),
             );
-				&displayCode(@incode) if $optset<p>;
+				&displayCode(&formatCode($optset, @incode) // @incode) if $optset<p>;
         } else {
             @args.shift;
             $to-execute = True;

@@ -320,29 +320,17 @@ sub displayCode(@code, $ch = '-', $length = 50) is export {
 	say $ch x $length;
 }
 
-multi sub do_compile($compile, @args) of IO::Path {
-	try {
-		run $compile, @args;
-		CATCH {
-			default {
-				note "Compile failed: $compile {@args}";
-				...
-			}
-		}
-	}
-}
-
-multi sub do_compile($compile, @args, @incode) of IO::Path {
-	try {
-		my $proc = run $compile, @args, :in;
-
-		$proc.in.say($_) for @incode;
-		$proc.in.close();
-		CATCH {
-			default {
-				note "Compile failed: $compile {@args}";
-				...
-			}
-		}
-	}
+sub simpleFormater(Str $command, Str $style) is export {
+	my $bin = which($command);
+	my $proc = Proc::Async.new(:w, $bin, $style.trim eq "" ?? [] !! $style.split(/\s+/, :skip-empty));
+	return sub (@code) {
+		my $code = "";
+		$proc.stdout.tap({ $code ~= $^a; });
+		$proc.stderr.tap(&print);
+		my $promise = $proc.start;
+		$proc.say($_) for @code;
+		$proc.close-stdin;
+		await $promise;
+		return $code.chomp;
+	};
 }
