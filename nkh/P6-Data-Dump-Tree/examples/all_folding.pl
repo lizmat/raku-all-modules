@@ -3,6 +3,7 @@
 use Data::Dump::Tree ;
 use Data::Dump::Tree::DescribeBaseObjects ;
 use Data::Dump::Tree::Enums ;
+use Data::Dump::Tree::CursesFoldable ;
 
 # -------------------------------------------------------
 # example with different types of elements and some roles
@@ -92,7 +93,8 @@ try
 	my $element = [1, [2, [3, 4]]] ;
 	my $data = [ $element, ([6, [3]],), $element ] ;
 
-	my $columns = get_columns (1..7), |($data.map({ get_dump_lines_integrated($_) })) ;
+	#my $columns = get_columns (1..7), |($data.map({ get_dump_lines_integrated($_) })) ;
+	my $columns = '' ;
 
 	@e = ($!title, '', $table ~ "\n" ~ $columns), |get_attributes(self),  ;
 	}
@@ -105,14 +107,20 @@ $! ?? (('DDT exception', ': ', "$!"),)  !! @e ;
 
 # ------------- test --------------
 
-ddt
+sub MAIN(Bool :$debug)
+{
+ddt 	
 	get_test_structure(),
-	title =>'test data',
-	caller => True,
-	display_perl_address => True,
-	width => 75,
-	does => (DescribeDog, DescribeShyFinal),
-	max_depth => 3 ;
+	:curses,
+	:$debug,
+	:title<test data>,
+	:caller,
+	:display_perl_address,
+	:width(75),
+	:does[DescribeDog, DescribeShyFinal],
+	:max_depth(3),
+	 ;
+}
 
 # ------------- helpers  -------------
 

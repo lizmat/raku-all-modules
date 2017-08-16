@@ -7,6 +7,10 @@ use Data::Dump::Tree::DescribeBaseObjects ;
 # use json parser
 use JSON::Tiny ;
 
+use Data::Dump::Tree::CursesFoldable ;
+
+sub MAIN(Bool :$debug)
+{
 # The Json that needs parsing
 my $JSON =
 Q<<{
@@ -35,29 +39,20 @@ Q<<{
 # parse data
 my $parsed = JSON::Tiny::Grammar.parse: $JSON ;
 
-# display using .perl
-#$parsed.perl.say ;
-
-# display using .gist
-$parsed.gist.say ;
-
-# show the dump via Data::Dump, this takes ages so it is commented out
-#use Data::Dump ;
-#Dump($parsed).say ;
-
 # dump with DDT
 my $d = Data::Dump::Tree.new:
 		:title<Parsed JSON>, 
-		#:!color, :width(100), :!display_info, 
 		:display_address(DDT_DISPLAY_NONE),
-		:does(DDTR::MatchDetails, DDTR::PerlString, DDTR::Superscribe) ;
+		:does(DDTR::MatchDetails, DDTR::PerlString), 
+		:header_filters[&header_filter],
+		:elements_filters[&elements_filter] ;
 
-# limit the output of the matched string to 40  characters in length	
 $d.match_string_limit = 40 ;
-$d.ddt: $parsed ;
+$d.dump: $parsed ;
 
+display_foldable(:$debug, $parsed, :ddt_is($d), :title<Fold JSON>) ;
+}
 
-$d.ddt: $parsed, :header_filters(&header_filter,), :elements_filters(&elements_filter,) ;
 
 sub header_filter($dumper, \r, $s, ($depth, $path, $glyph, @renderings), (\k, \b, \v, \f, \final, \want_address))
 {
