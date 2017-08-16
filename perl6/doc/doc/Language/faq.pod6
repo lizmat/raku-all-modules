@@ -155,15 +155,27 @@ compilation unit.
 =head2 How can I dump Perl 6 data structures (like Perl 5 Data::Dumper and similar)?
 X<|Data::Dumper (FAQ)>
 
+Typical options are to use L<say> routine that uses L<gist> method that
+gives the "gist" of the object being dumped. More detailed output can be
+obtained by calling L<perl> method that typically returns representation
+in L<EVAL>-able code.
+
+If you're using the L<rakudo implementation|http://rakudo.org>, you can use
+the L«non-standard C<dd> routine|/programs/01-debugging#Dumper_function_dd»
+for dumping, whose output is similar to L<perl>, but with more information.
+
 Examples:
 
-    my $foo="bar";
-    dd $foo;          # OUTPUT: «Str $foo = "bar"␤»
-    say :$foo.perl;   # OUTPUT: «:foo("bar")␤»
-    say :$foo.gist;   # OUTPUT: «foo => bar␤»
+    my $foo = { foo => 'bar' };
+    say $foo.perl;   # OUTPUT: «${:foo("bar")}␤»
+    say $foo;        # OUTPUT: «{foo => bar}␤»
 
-There are also modules in the ecosystem to do this, like
-L<Data::Dump|https://github.com/tony-o/perl6-data-dump/>, which colors the output.
+    # non-standard routine available in rakudo implementation:
+    dd $foo;         # OUTPUT: «Hash $foo = ${:foo("bar")}␤»
+
+There are also L<several ecosystem modules|https://modules.perl6.org/s/dump>
+that provide more control over how data structures are dumped, including support
+for colored output in.
 
 =head2 How can I get command line history in the Perl 6 prompt (REPL)?
 
@@ -301,6 +313,24 @@ In Perl 6, values of many basic types are immutable, but the variables holding 
 not. The C<s///> operator works on a variable, into which it puts a newly
 created string object. Likewise, C<$i++> works on the C<$i> variable, not
 just on the value in it.
+
+Knowing this, you would not try to change a literal string (e.g. like
+C<'hello' ~~ s/h/H/; #doesn't work>), but you might accidentally do
+something equivalent using `map`:
+
+    my @foo = <hello world>.map: { s/h/H/ }; # dies with
+                                             # Cannot modify an immutable Str (hello)
+
+    my @bar = <hello world>».subst-mutate: 'h', 'H'; # dies with
+                                                     # Cannot resolve caller subst-mutate(Str: Str, Str);
+                                                     # the following candidates match the type but require
+                                                     # mutable arguments: ...
+
+Instead, use a routine or operator that returns a new value instead of modifying
+the original in place:
+
+    my @foo = <hello world>.map: { S/h/H/ };  # ['Hello','world']
+    my @bar = <hello world>».subst: 'h', 'H'; # ['Hello','world']
 
 See the documentation on L<containers|/language/containers> for more
 information.
