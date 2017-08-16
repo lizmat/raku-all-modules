@@ -24,7 +24,7 @@ my %charset-str =
     alnum   =>  (@digit-r, @upper-r, @lower-r).flat.join,
     blank   =>  "\t ",
     space   =>  "\t\n\x[0B]\x[0C]\r ",
-    cntrl   =>  ( chr(0) .. chr(0x0F), chr(0x7F) ).flat.join
+    cntrl   =>  ( chr(0) .. chr(0x1F), chr(0x7F) ).flat.join
 ;
 %charset-str.append:
     (   graph   =>  (

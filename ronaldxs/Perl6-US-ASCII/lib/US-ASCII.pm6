@@ -1,6 +1,6 @@
 use US-ASCII::ABNF::Common;
 
-grammar US-ASCII:ver<0.1.5>:auth<R Schmidt (ronaldxs@software-path.com)>
+grammar US-ASCII:ver<0.1.6>:auth<R Schmidt (ronaldxs@software-path.com)>
     does US-ASCII::ABNF::Common
 {
     token alpha     { <[A..Za..z]> }
@@ -19,7 +19,7 @@ grammar US-ASCII:ver<0.1.5>:auth<R Schmidt (ronaldxs@software-path.com)>
     token _space    { $?NL || <[\t\c[LINE TABULATION]\c[FF]\r\ ]> }
     token space     { <+_space> }
     token print     { <+_punct +_space +[0..9A..Za..z]> }
-    token cntrl     { <[\x[0]..\x[f]]+[\x[7f]]> }
+    token cntrl     { <[\x[0]..\x[1f]]+[\x[7f]]> }
     token vchar     { <[\x[21]..\x[7E]]> }
 
     token wb        { <?after <US-ASCII::alnum>><!US-ASCII::alnum>  |
@@ -29,7 +29,7 @@ grammar US-ASCII:ver<0.1.5>:auth<R Schmidt (ronaldxs@software-path.com)>
 
 #   crlf not working yet
 #    token crlf      { <CR><LF> }
-    # todo ww, wb others?
+    # todo CRLF CTL (duplicate) LWSP OCTET WSP 
     # token NL ??
 
     constant charset = set chr(0) .. chr(127);
@@ -66,7 +66,7 @@ grammar US-ASCII:ver<0.1.5>:auth<R Schmidt (ronaldxs@software-path.com)>
 # easier to read than US-ASCII::ALPHA.  With the role below you can
 # compose upper case names of the same regexes/tokens without overwriting
 # builtin character classes.
-role US-ASCII-UC:ver<0.1.4>:auth<R Schmidt (ronaldxs@software-path.com)> 
+role US-ASCII-UC:ver<0.1.5>:auth<R Schmidt (ronaldxs@software-path.com)> 
     does US-ASCII::ABNF::Common
 {
     token ALPHA     { <.US-ASCII::alpha> }

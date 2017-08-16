@@ -3,7 +3,7 @@
     "perl" : "6.c",
     "name" : "US-ASCII",
     "license" : "Artistic-2.0",
-    "version" : "0.1.5",
+    "version" : "0.1.6",
     "description" : "US-ASCII restricted character classes and related.",
     "authors" : [ "Ron Schmidt" ],
     "provides" : {
