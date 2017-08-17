@@ -1,8 +1,9 @@
 use Test;
-plan 6;
+plan 9;
 
 use lib "lib";
 
+use Test;
 use-ok "Test::Fuzz";
 
 {
@@ -33,4 +34,16 @@ use-ok "Test::Fuzz";
 	Test::Fuzz::add-func($h);
 
 	run-tests <f2 g2>;
+}
+
+{
+	use Test::Fuzz;
+
+	my $runs = (^100).pick; #Number of fuzzy tests to run.
+	my $real-runs = 0;      #Number of fuzzy tests actually run.
+	sub func(Int $a) is fuzzed { ++$real-runs; }
+
+	run-tests @('func'), :$runs;
+
+	ok $runs == $real-runs, "Runs: $runs, Real-Runs: $real-runs";
 }

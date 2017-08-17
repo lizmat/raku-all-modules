@@ -1,7 +1,7 @@
 {
     "perl"          : "6.*",
     "name"          : "Test::Fuzz",
-    "version"       : "0.2.0",
+    "version"       : "0.2.1",
     "description"   : "Generative Testing",
     "authors"       : ["Fernando Correa de Oliveira"],
     "tags"          : ["test", "fuzz", "generative"],

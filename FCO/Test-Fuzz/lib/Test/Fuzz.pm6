@@ -24,9 +24,12 @@ multi trait_mod:<is> (Routine $func, :$fuzzed!) is export {
 
 #| function that run fuzzed tests
 sub run-tests(
-	@funcs = %funcs.keys.sort #= if no specified the functions, it runs all fuzzed tests
+	@funcs = %funcs.keys.sort, #= if no specified the functions, it runs all fuzzed tests
+	Int :$runs #The number of tests to run.
 ) is export {
 	for %funcs{@funcs}:v -> +@f {
-		@f>>.run-tests
+		defined $runs
+			?? @f>>.run-tests($runs)
+			!! @f>>.run-tests
 	}
 }
