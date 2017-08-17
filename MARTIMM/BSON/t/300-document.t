@@ -43,8 +43,7 @@ subtest "Initialize document", {
 
   # Init via hash inhibited
   throws-like { $d .= new: ppp => 100, qqq => ( d => 110, e => 120); },
-    X::BSON::Parse-document,
-    'Cannot use hashes on init',
+    X::BSON, 'Cannot use hashes on init',
     :message(/:s Cannot use hash values on init/);
 }
 
@@ -55,8 +54,7 @@ subtest "Ban the hash", {
   throws-like {
       $d<q> = {a => 20};
       is $d<q><a>, 20, "Hash value $d<q><a>";
-    }, X::BSON::Parse-document,
-    'Cannot use hashes when assigning',
+    }, X::BSON, 'Cannot use hashes when assigning',
     :message(/:s Cannot use hash values/);
 
   $d.accept-hash(True);
@@ -98,7 +96,7 @@ subtest "Test document, associative", {
   throws-like {
       my $x = 10;
       $d<e> := $x;
-    }, X::BSON::Parse-document,
+    }, X::BSON, 'Cannot use binding',
     :message(/:s Cannot use binding/);
 }
 
@@ -205,32 +203,28 @@ subtest "Exception tests", {
       my BSON::Document $d .= new;
       $d<js> = BSON::Javascript.new(:javascript(''));
       $d.encode;
-    }, X::BSON::Parse-document,
-    'empty javascript',
+    }, X::BSON, 'empty javascript',
     :message(/:s cannot process empty javascript code/);
 
   throws-like {
       my BSON::Document $d .= new;
       $d<int1> = 1762534762537612763576215376534;
       $d.encode;
-    }, X::BSON::Parse-document,
-    'too large',
+    }, X::BSON, 'too large',
     :message(/:s Number too large/);
 
   throws-like {
       my BSON::Document $d .= new;
       $d<int2> = -1762534762537612763576215376534;
       $d.encode;
-    }, X::BSON::Parse-document,
-    'too small',
+    }, X::BSON, 'too small',
     :message(/:s Number too small/);
 
   throws-like {
       my BSON::Document $d .= new;
       $d{"Double\0test"} = 1.2.Num;
       $d.encode;
-    }, X::BSON::Parse-document,
-    '0x00 in string',
+    }, X::BSON, '0x00 in string',
     :message(/:s Forbidden 0x00 sequence in/);
 
   throws-like {
@@ -241,8 +235,7 @@ subtest "Exception tests", {
       # Now use encoded buffer and take a slice from it rendering it currupt.
       my BSON::Document $d2 .= new;
       $d2.decode(Buf.new($b[0 ..^ ($b.elems - 4)]));
-    }, X::BSON::Parse-document,
-    'not enough',
+    }, X::BSON, 'not enough',
     :message(/:s Not enaugh characters left/);
 
   throws-like {
@@ -255,8 +248,7 @@ subtest "Exception tests", {
       );
 
       my BSON::Document $d .= new($b);
-    }, X::BSON::Parse-document,
-    'size does not match',
+    }, X::BSON, 'size does not match',
     :message(/:s Size of document\(.*\) does not match/);
 
   throws-like {
@@ -266,8 +258,8 @@ subtest "Exception tests", {
       my BSON::Document $d .= new;
       $d{"A"} = $a;
       $d.encode;
-    }, X::BSON::Parse-document,
-    :message(/:s BSON type/);
+    }, X::BSON, 'Not a BSON type',
+    :message(/'encode() on A<' \d* '>, error: Not yet implemented'/);
 
   throws-like {
       my $b = Buf.new(
@@ -280,8 +272,8 @@ subtest "Exception tests", {
 
       my BSON::Document $d .= new($b);
     },
-    X::BSON::NYS,
-    :message(/:s BSON type \'160\' is not supported/);
+    X::BSON, 'type is not implemented',
+    :message(/ 'decode() on 160, error: BSON code \'0xa0\' not implemented'/);
 
   throws-like {
       my $b = Buf.new(
@@ -294,8 +286,7 @@ subtest "Exception tests", {
       );
 
       my BSON::Document $d .= new($b);
-    }, X::BSON::Parse-document,
-    'Missing trailing 0x00',
+    }, X::BSON, 'Missing trailing 0x00',
     :message(/:s Missing trailing 0x00/);
 
 }

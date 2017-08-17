@@ -63,12 +63,12 @@ package BSON {
             $first-one--;
             $exponent -= $first-one;
 
-            $r *= 2 ** $first-one;              # 1.***              
-            $r2 = $r * 4503599627370496;        # 2 ** 52, Get max precision  
-            $bit-string = $r2.base(2);          # Get bits           
+            $r *= 2 ** $first-one;              # 1.***
+            $r2 = $r * 4503599627370496;        # 2 ** 52, Get max precision
+            $bit-string = $r2.base(2);          # Get bits
 #say "bs 3a: $exp-shift. $exponent, $first-one, bs: $bit-string";
-            $bit-string ~~ s/\.//;              # Remove dot      
-            $bit-string ~~ s/^1//;              # Remove first 1  
+            $bit-string ~~ s/\.//;              # Remove dot
+            $bit-string ~~ s/^1//;              # Remove first 1
 #say "bs 3b: $exp-shift. $exponent, $first-one, bs: $bit-string";
           }
 
@@ -189,7 +189,7 @@ package BSON {
       }
 #sleep 1;
 #say "Value calculated";
-      return $value; #X::NYI.new(feature => "Type Double");
+      return $value; #X::BSON.new(feature => "Type Double");
     }
   }
 }

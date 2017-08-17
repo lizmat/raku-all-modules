@@ -28,8 +28,8 @@ class ObjectId {
   #
   multi submethod BUILD ( Str:D :$string! ) {
 
-    die X::BSON::Parse-objectid.new(
-      :operation<ObjectId.new>,
+    die X::BSON.new(
+      :type<ObjectId>, :operation('new()'),
       :error<String too short or nonhexadecimal>
     ) unless $string ~~ m/ ^ <xdigit>**24 $ /;
 
@@ -68,8 +68,8 @@ class ObjectId {
   #
   multi submethod BUILD ( Buf:D :$bytes ) {
 
-    die X::BSON::Parse-objectid.new(
-      :operation('ObjectId.new'),
+    die X::BSON.new(
+      :operation('new()'), :type('ObjectId'),
       :error('Byte buffer too short or long')
     ) unless $bytes.elems == 12;
 

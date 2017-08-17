@@ -5,6 +5,8 @@ change at any time. The public API should not be considered stable*.
 * 0.9.36
   * Remove native implementation of encode/decode int23/int64 because benchmarks show that it is slower that pure perl.
   * Fixed. In test 300-document.t it seems that a bug is found when handling a very large document. It is about encoding a double.
+  * try/catch replaced with throws-like in tests.
+  * all BSON exceptions replaced by one X::BSON.
 * 0.9.35
   * Quick fix to read a timestamp as an unsigned 64 bit integer. will become an object later. timestamp really is an object of 2 integers; an increment and a timestamp
 * 0.9.34

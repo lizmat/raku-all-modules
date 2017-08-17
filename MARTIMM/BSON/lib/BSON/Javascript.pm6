@@ -74,8 +74,8 @@ class Javascript {
     }
 
     else {
-      die X::BSON::Parse-document.new(
-        :operation('encode Javscript'),
+      die X::BSON.new(
+        :operation<encode>, :type<Javscript>,
         :error('cannot process empty javascript code')
       );
     }

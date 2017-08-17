@@ -348,19 +348,11 @@ place when providing a byte buffer to C<new()>.
 =begin comment
 =head1 Exceptions
 
-=head2 X::Parse-document
+=head2 X::BSON
 
-This is thrown when the document doesn't parse correctly while encoding or
-decoding.
-
-=head2 X::NYI
-
-Thrown when encoding stumbles upon a variable with a known type which
-is not implemented(yet)
-
-=head2 X::NYS
-
-Thrown when encoding stumbles upon a variable which is not supported
+Thrown on any problem occuring in decoding or encoding or any other operation
+The information cab be returned by calling any of C<.operation>, C<.type> or
+C<.message>.
 
 =end comment
 

@@ -6,42 +6,23 @@ use BSON::ObjectId;
 #-------------------------------------------------------------------------------
 subtest {
 
-  try {
-    my BSON::ObjectId $o .= new(:string<67ab4550>);
+  throws-like
+    { my BSON::ObjectId $o .= new(:string<67ab4550>); },
+    X::BSON, 'Too short oid string',
+    :message(/:s String too short or nonhexadecimal/);
 
-    CATCH {
-#.say;
-      when X::BSON::Parse-objectid {
-        ok .message ~~ ms/'String' 'too' 'short' 'or' 'nonhexadecimal'/,
-           'Too short oid string';
-      }
-    }
-  }
-
-  try {
-    my BSON::ObjectId $o .= new(:string<Vbghu7988798Vbghu7988798>);
-
-    CATCH {
-      when X::BSON::Parse-objectid {
-        ok .message ~~ ms/'String' 'too' 'short' 'or' 'nonhexadecimal'/,
-           'Nonhexadecimal';
-      }
-    }
-  }
+  throws-like
+    { my BSON::ObjectId $o .= new(:string<Vbghu7988798Vbghu7988798>); },
+    X::BSON, 'Nonhexadecimal',
+    :message(/:s String too short or nonhexadecimal/);
 
   my BSON::ObjectId $o .= new(:string<0babc7988798abcde7988798>);
   is $o.oid.elems, 12, 'Properly defined string';
 
-  try {
-    my BSON::ObjectId $o .= new(:bytes(Buf.new(5,7,9...15)));
-
-    CATCH {
-      when X::BSON::Parse-objectid {
-        ok .message ~~ ms/'Byte' 'buffer' 'too' 'short' 'or' 'long'/,
-           'Too short/long byte buffer';
-      }
-    }
-  }
+  throws-like
+    { my BSON::ObjectId $o .= new(:bytes(Buf.new(5,7,9...15))); },
+    X::BSON, 'Too short/long byte buffer',
+    :message(/:s Byte buffer too short or long/);
 
   $o .= new(
     :bytes(

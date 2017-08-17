@@ -73,8 +73,8 @@ class Document does Associative {
   multi method new ( |capture ) {
 
     if capture.keys {
-      die X::BSON::Parse-document.new(
-        :operation("new: " ~ capture.gist)
+      die X::BSON.new(
+        :operation("new: " ~ capture.gist), :type<capture>,
         :error(
           "Cannot use hash values on init.\n",
           "Set accept-hash and use assignments later"
@@ -93,18 +93,18 @@ class Document does Associative {
     # self{x} = y will end up at ASSIGN-KEY
     for @$pairs -> $pair {
 #say "P: ", $pair.perl, ', ', $pair.value.defined;
-      die X::BSON::Parse-document.new(
-        :operation("new: List $pairs.gist()"),
+      die X::BSON.new(
+        :operation("new: List $pairs.gist()"), :type<List>,
         :error("Pair not defined")
       ) unless ?$pair;
 
-      die X::BSON::Parse-document.new(
-        :operation("new: List $pairs.gist()"),
+      die X::BSON.new(
+        :operation("new: List $pairs.gist()"), :type<List>,
         :error("Key of pair not defined or empty")
       ) unless ?$pair.key;
 
-      die X::BSON::Parse-document.new(
-        :operation("new: List $pairs.gist()"),
+      die X::BSON.new(
+        :operation("new: List $pairs.gist()"), :type<List>,
         :error("Value of pair not defined")
       ) unless $pair.value.defined;
 
@@ -335,8 +335,8 @@ class Document does Associative {
       }
 
       else {
-        die X::BSON::Parse-document.new(
-          :operation("\$d<$key> = ({$pair.perl}, ...)")
+        die X::BSON.new(
+          :operation("\$d<$key> = ({$pair.perl}, ...)"), :type<List>,
           :error("Can only use lists of Pair")
         );
       }
@@ -390,8 +390,8 @@ class Document does Associative {
 #say "$*THREAD.id(), Hash, Asign-key($?LINE): $key => ", $new;
 
     if ! $accept-hash {
-      die X::BSON::Parse-document.new(
-        :operation("\$d<$key> = {$new.perl}")
+      die X::BSON.new(
+        :operation("\$d<$key> = {$new.perl}"), :type<Hash>,
         :error("Cannot use hash values.\nSet accept-hash if you really want to")
       );
     }
@@ -481,11 +481,7 @@ class Document does Associative {
       my Buf $b = self!encode-element: ($k => $v);
       CATCH {
 #say .WHAT;
-        when X::BSON::Parse-objectid    { .rethrow; }
-        when X::BSON::Parse-document    { .rethrow; }
-        when X::BSON::NYI               { .rethrow; }
-        when X::BSON::NYS               { .rethrow; }
-        when X::BSON::Deprecated        { .rethrow; }
+        when X::BSON                    { .rethrow; }
 
         default {
           note "Error at $?FILE $?LINE: $_";
@@ -503,8 +499,8 @@ class Document does Associative {
   #
   method BIND-KEY ( Str $key, \new ) {
 
-    die X::BSON::Parse-document.new(
-      :operation("\$d<$key> := {new}")
+    die X::BSON.new(
+      :operation("\$d<$key> := {new}"), :type<any>,
       :error("Cannot use binding")
     );
   }
@@ -613,8 +609,8 @@ class Document does Associative {
 #say "$*THREAD.id(), Broken: $key";
 #say %!promises{$key}.cause.WHAT;
 #say %!promises{$key}.cause.message;
-            die X::BSON::Parse-document.new(
-              :operation<encode>,
+            die X::BSON.new(
+              :operation<encode>, :type<any>,
               :error(%!promises{$key}.cause)
             );
           }
@@ -790,9 +786,9 @@ class Document does Associative {
         # DBPointer - deprecated
         # "\x0C" e_name string (byte*12)
         #
-        die X::BSON::Deprecated(
-          operation => 'encoding DBPointer',
-          type => '0x0C'
+        die X::BSON.new(
+          :operation('encoding DBPointer'), :type('0x0C'),
+          :error('DBPointer is deprecated')
         );
       }
 }}
@@ -824,13 +820,13 @@ class Document does Associative {
         # "\x10" e_name int32
         # '\x12' e_name int64
         #
-        if -0xffffffff < $p.value < 0xffffffff {
+        if -0x7fffffff <= $p.value <= 0x7fffffff {
           $b = [~] Buf.new(BSON::C-INT32),
                    encode-e-name($p.key),
                    encode-int32($p.value);
         }
 
-        elsif -0x7fffffff_ffffffff < $p.value < 0x7fffffff_ffffffff {
+        elsif -0x7fffffff_ffffffff <= $p.value <= 0x7fffffff_ffffffff {
           $b = [~] Buf.new(BSON::C-INT64),
                    encode-e-name($p.key),
                    encode-int64($p.value);
@@ -839,8 +835,8 @@ class Document does Associative {
         else {
           my $reason = 'small' if $p.value < -0x7fffffff_ffffffff;
           $reason = 'large' if $p.value > 0x7fffffff_ffffffff;
-          die X::BSON::Parse-document.new(
-            :operation('encode Int'),
+          die X::BSON.new(
+            :operation<encode>, :type<Int>,
             :error("Number too $reason")
           );
         }
@@ -862,7 +858,7 @@ class Document does Associative {
 
         }}
 
-        die X::BSON::NYI.new( :operation('encode-element()'), :type($_));
+        die X::BSON.new( :operation<encode>, :type($_), :error('Not yet implemented'));
       }
 
       default {
@@ -872,7 +868,7 @@ class Document does Associative {
 #        }
 #
 #        else {
-          die X::BSON::NYS.new( :operation('encode-element()'), :type($_));
+          die X::BSON.new( :operation<encode>, :type($_), :error('Not yet implemented'));
 #        }
       }
     }
@@ -913,8 +909,8 @@ class Document does Associative {
     $!index++;
 
     # check size of document with final byte location
-    die X::BSON::Parse-document.new(
-      :operation<decode-document()>,
+    die X::BSON.new(
+      :operation<decode>, :type<Document>,
       :error(
         [~] 'Size of document(', $doc-size,
             ') does not match with index(', $!index, ')'
@@ -1242,19 +1238,19 @@ class Document does Associative {
           }
         );
       }}
-        die X::BSON::NYI.new(
-          :operation<decode-element()>,
-          :error("BSON code '{.fmt('0x%02x')}'"),
-          :type(BSON::C-DECIMAL128)
+
+        die X::BSON.new(
+          :operation<decode>, :type($_),
+          :error("BSON code '{.fmt('0x%02x')}' not yet implemented"),
         );
       }
 
       default {
         # We must stop because we do not know what the length should be of
         # this particular structure.
-        die X::BSON::NYS.new(
-          :operation<decode-element()>,
-          :error("BSON code '{.fmt('0x%02x')}'"),
+        die X::BSON.new(
+          :operation<decode>,
+          :error("BSON code '{.fmt('0x%02x')}' not implemented"),
           :type($_)
         );
       } # default

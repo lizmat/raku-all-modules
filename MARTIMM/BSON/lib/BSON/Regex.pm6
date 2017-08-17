@@ -65,8 +65,8 @@ reference of match to this class instead of the proper one.
   #---------------------------------------------------------------------------
 #TODO Remove duplicate sub into other module
   sub encode-cstring ( Str:D $s --> Buf ) {
-    die X::Parse-document.new(
-      :operation('encode-cstring()'),
+    die X::BSON.new(
+      :operation<encode>, :type<cstring>,
       :error('Forbidden 0x00 sequence in $s')
     ) if $s ~~ /\x00/;
 
@@ -100,8 +100,8 @@ reference of match to this class instead of the proper one.
     # This takes only place if there are no 0x0 characters found until the
     # end of the buffer which is almost never.
     #
-    die X::Parse-document.new(
-      :operation<decode-cstring>,
+    die X::BSON.new(
+      :operation<decode>, :type<cstring>,
       :error('Missing trailing 0x00')
     ) unless $index < $l and $b[$index++] ~~ 0x00;
 
