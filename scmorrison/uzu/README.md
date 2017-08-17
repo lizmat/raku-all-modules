@@ -6,7 +6,7 @@ Uzu is a static site generator with built-in web server, file modification watch
 - [Features](#features)
 - [Usage](#usage)
 - [Config](#config)
-  * [Config variables](#config-variabbles)
+  * [Config variables](#config-variables)
 - [Project folder structure (Template6)](#project-folder-structure-template6)
 - [Project folder structure (Mustache)](#project-folder-structure-mustache)
 - [i18n YAML and Templating](#i18n-yaml-and-templating)
@@ -16,9 +16,11 @@ Uzu is a static site generator with built-in web server, file modification watch
     + [Examples](#examples-template6)
   * [Mustache](#mustache)
     + [Examples](#examples-mustache)
+  * [Partials](#partials)
   * [Global variables](#global-variables)
   * [Template variables](#template-variables)
   * [Related / linked pages](#related--linked-pages)
+- [Page render conditions](#page-render-conditions)
 - [Installation](#installation)
 - [Todo](#todo)
 - [Requirements](#requirements)
@@ -133,13 +135,13 @@ Config variables are defined in `config.yml`:
 * `port`: Host TCP port for dev server. Defaults to `3000`.
 * `project_root`: Project root folder. Defaults to `.`.
 
-### Accessing core variables in templates
+### Accessing config variables in templates
 
-Core variables can be accessed from inside templates directly (e.g. `port`, `theme`, etc.)
+Config variables can be accessed from inside templates directly (e.g. `port`, `theme`, etc.)
 
 ### Accessing non-core variables in templates
 
-Non-core varibles are any additional variables found in config.yml and can be accessed in templates using `site.variablename` (e.g. `site.url`, `site.author`).
+Non-core variables are any additional variables found in config.yml and can be accessed in templates using `site.variablename` (e.g. `site.url`, `site.author`).
 
 Project folder structure (Template6)
 ========================
@@ -174,6 +176,8 @@ Project folder structure (Template6)
         │   ├── fonts
         │   ├── img
         │   ├── js
+        ├── partials              # Theme specific partials. These will override any top-level
+        │   ├── footer.tt         # partials with the same file name.
         └── layout.tt             # Theme layout file
 ```
 
@@ -210,6 +214,8 @@ Project folder structure (Mustache)
         │   ├── fonts
         │   ├── img
         │   ├── js
+        ├── partials              # Theme specific partials. These will override any top-level
+        │   ├── footer.tt         # partials with the same file name.
         └── layout.mustache       # Theme layout file
 ```
 See [uzu-starter](https://github.com/scmorrison/uzu-starter) for a full example.
@@ -349,22 +355,6 @@ Uzu supports the [Template Toolkit](http://template-toolkit.org/) templating for
 [% end %]
 ```
 
-### Including partials 
-
-Partials are stored in the `partials` directory. You can include these in layouts and pages.
-
-```html
-<!doctype html>
-<html lang="[% language %]">
-[% INCLUDE "head" %]
-    <body>
-      [% INCLUDE "navigation" %]
-      [% content %]
-      [% INCLUDE "footer" %]
-    </body>
-</html>
-```
-
 ## Mustache
 
 Uzu also supports the [Mustache](http://mustache.github.io/) templating format for template files. 
@@ -412,9 +402,25 @@ Mustache is a 'logic-less' templating system, but you can test for the existence
 {{/site.graphics}}
 ```
 
-### Including partials
+## Partials 
 
-Partials are stored in the `partials` directory. You can include these in layouts and pages.
+Partials are stored in the `partials` and `themes/THEME_NAME/partials` directories. Any theme partial will override any partial found in the top-level `partials` directory with the same file name. Partials can be include in layouts, pages, and other partials.
+
+For `Template6`:
+
+```html
+<!doctype html>
+<html lang="[% language %]">
+[% INCLUDE "head" %]
+    <body>
+      [% INCLUDE "navigation" %]
+      [% content %]
+      [% INCLUDE "footer" %]
+    </body>
+</html>
+```
+
+For `Mustache`:
 
 ```html
 <!doctype html>
@@ -428,7 +434,7 @@ Partials are stored in the `partials` directory. You can include these in layout
 </html>
 ```
 
-### Global variables
+## Global variables
 
 Some variables are generated dynamically and exposed to templates for use:
 
@@ -448,6 +454,10 @@ Some variables are generated dynamically and exposed to templates for use:
     {{#theme_default}}
     {{> default_header }}
     {{/theme_default}}
+
+    {{#theme_enoshima}}
+    {{> enoshima_header }}
+    {{/theme_enoshima}}
     ```
 
 ### Template variables
@@ -525,6 +535,18 @@ The above produces the following HTML. Note that the `author` and `title` values
 </ul>
 ```
 
+# Page render conditions
+
+In order to reduce build times Uzu will try to avoid rerendering a page if it hasn't been modified.
+
+Pages will only be rendered under the following conditions:
+
+* Rendered page does not exist in `build` directory
+* A partial file included in the page's layout, the page itself, or a partial included in the page have been modified
+* The page includes a related / linked pages `_pages` yaml dict and one of the linked pages templates has been modified
+* Running `uzu --clear build` will rebuild all pages
+* Pressing `c enter` while running `uzu watch` will rebuild all pages
+
 Installation
 ============
 
@@ -536,15 +558,12 @@ Installation issue? See [Troubleshooting](#troubleshooting).
 Todo
 ====
 
-* Add tests
-* Add build steps to build.pl6
+* More tests
 * Uglify JS / CSS
-* Build deploy process push to S3
+* Build deploy process push to remote services
 * Features
-  * Posts for blogs
-  * Additional templating support (mustache, markdown)
-  * Nested directory support for pages / i18n variables
-  * Dynamic variables (tags, pagination) 
+  * Additional templating support (markdown)
+  * Dynamic variables (categories, tags, pagination) 
 
 Requirements
 ============
@@ -563,6 +582,8 @@ Troubleshooting
   # directory.
   rm -rf ~/.zef/store/uzu.git ~/.zef/tmp/uzu.git 
   ```
+
+  In some instances it might help to delete your local `~/.perl6/precomp` directory. 
 
 Authors
 =======
