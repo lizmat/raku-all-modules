@@ -78,7 +78,7 @@ multi sub bootup-file (Str $app) {
 }
 
 sub get-path-from-repo is export {
-    my @includes = "-I" <<~<< $*REPO.repo-chain.map(*.path-spec);
+    my @includes = $*REPO.repo-chain.map(*.path-spec);
     return @includes;
 }
 
