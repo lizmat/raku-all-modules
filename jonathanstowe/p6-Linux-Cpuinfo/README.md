@@ -28,18 +28,15 @@ in Perl programs.
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Linux::Cpuinfo
-
-Although I haven't tested it I see no reason that this won't work
-with "zef" or some equally capable package manager.
+    zef install Linux::Cpuinfo
 
 ## Support
 
@@ -56,6 +53,6 @@ would be appreciated.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+Please see the [LICENCE](LICENCE) file in the distribution.
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017

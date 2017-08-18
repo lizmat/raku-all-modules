@@ -35,5 +35,5 @@
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],
   "description": "Get the kernel CPU information on Linux",
-  "meta6": "0"
+  "meta-version": "0"
 }
