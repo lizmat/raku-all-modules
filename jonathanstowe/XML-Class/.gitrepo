@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/XML-Class.git
 	branch = master
-	commit = bfa12a54ce45deacb5bf9bfb91c56c5793b30088
-	parent = 28bbcfefb0f11ddf7fe20a8ee66ef0855cb4007c
+	commit = f908d093b0bd91624a3e4257360f87f8ef5c5666
+	parent = e4e50b85134bf4dba403c4f9470cabe4e8196315
 	cmdver = 0.4.0

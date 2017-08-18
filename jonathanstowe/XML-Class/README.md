@@ -66,18 +66,15 @@ The full documentation is available as POD or as
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install XML::Class
-
-I haven't tried this with *zef* but I have no reason to think it
-shouldn't work if you would rather use that.
+    zef install XML::Class
 
 Other install mechanisms may be become available in the future.
 
