@@ -69,7 +69,7 @@ module.
 
 =head2 method new
 
-    multi method new(Str :$file!) 
+    multi method new(Str :$file!)
     multi method new(IO::Path :$file!)
     multi method new(IO::Handle :$file!)
     multi method new(Str:D :$json!)
@@ -134,7 +134,7 @@ role AutoAssoc {
     }
 }
 
-class META6:ver<0.0.16>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
+class META6:ver<0.0.17>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
 
     enum Optionality <Mandatory Optional>;
 
@@ -222,7 +222,7 @@ class META6:ver<0.0.16>:auth<github:jonathanstowe> does JSON::Class does AutoAss
     }
 
 
-    has Version     $.meta6         is rw is marshalled-by('Str') is unmarshalled-by(&unmarsh-version) is specification(Optional) = Version.new(0);
+    has Version     $.meta-version  is rw is marshalled-by('Str') is unmarshalled-by(&unmarsh-version) is specification(Optional) = Version.new(0);
     has Version     $.perl-version  is rw is marshalled-by('Str') is unmarshalled-by(&unmarsh-version) is specification(Mandatory) is json-name('perl');
     has Str         $.name          is rw is specification(Mandatory);
     has Version     $.version       is rw is marshalled-by('Str') is unmarshalled-by(&unmarsh-version) is specification(Mandatory);

@@ -18,7 +18,7 @@ lives-ok { $obj = META6.new(file => $meta-path) }, "default test";
 is $obj.version, "0.0.1", "object get good version";
 is $obj.name, "JSON::Marshal", "got right name";
 is $obj.description, "Simple serialisation of objects to JSON", "and description";
-is $obj.meta6, Version.new(0), "got the right default version";
+is $obj.meta-version, Version.new(0), "got the right default version";
 
 my $json;
 
