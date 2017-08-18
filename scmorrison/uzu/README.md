@@ -9,6 +9,7 @@ Uzu is a static site generator with built-in web server, file modification watch
   * [Config variables](#config-variables)
 - [Project folder structure (Template6)](#project-folder-structure-template6)
 - [Project folder structure (Mustache)](#project-folder-structure-mustache)
+- [Public and Assets directories](#public-and-assets-directories)
 - [i18n YAML and Templating](#i18n-yaml-and-templating)
   * [Nested i18n variable files](#nested-i18n-variable-files)
 - [Template Features](#template-features)
@@ -220,8 +221,24 @@ Project folder structure (Mustache)
 ```
 See [uzu-starter](https://github.com/scmorrison/uzu-starter) for a full example.
 
-i18n YAML and Templating
-=========
+# Public and Assets directories
+
+* `public/` - The root public directory is where project-wide static assets are stored.
+* `themes/**/assets/` - The theme's assets directory is where theme-specific static assets are stored.
+
+Files found in either of these directories are copied wholesale to the root of the `build/` directory on successful build. For example:
+
+* `public/js/site.js` will be copied to `build/js/site.js`
+* `themes/default/assets/img/logo.png` will be copied to `build/img/logo.png`
+
+**Note:** Any tmp / swp files created by editors will also be copied into `build/`. Most editors provide options to configure this behavior. For example, you can have all `vim` `.swp` files saved into a central directory by adding something like this to `~/.vimrc`:
+
+```
+set backupdir=~/.vim/backup//
+set directory=~/.vim/swp//
+```
+
+# i18n YAML and Templating
 
 You can separate out the content text to YAML files located in a project-root folder called `i18n`. Simply create a separate file for each language, like this:
 
@@ -535,6 +552,16 @@ The above produces the following HTML. Note that the `author` and `title` values
 </ul>
 ```
 
+### Disable layout rendering for page template
+
+To disable layout rendering for specific pages add the `nolayout` variable to the page's yaml variables:
+
+```yaml
+---
+nolayout: true
+---
+```
+
 # Page render conditions
 
 In order to reduce build times Uzu will try to avoid rerendering a page if it hasn't been modified.
@@ -542,7 +569,8 @@ In order to reduce build times Uzu will try to avoid rerendering a page if it ha
 Pages will only be rendered under the following conditions:
 
 * Rendered page does not exist in `build` directory
-* A partial file included in the page's layout, the page itself, or a partial included in the page have been modified
+* The page template has been modified
+* A partial file included in the layout, page, or any partial included in the page has been modified
 * The page includes a related / linked pages `_pages` yaml dict and one of the linked pages templates has been modified
 * Running `uzu --clear build` will rebuild all pages
 * Pressing `c enter` while running `uzu watch` will rebuild all pages
