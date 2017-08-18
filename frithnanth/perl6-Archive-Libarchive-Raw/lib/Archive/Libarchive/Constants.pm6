@@ -1,12 +1,12 @@
 use v6;
-unit module Archive::Libarchive::Constants:ver<0.0.1>;
+unit module Archive::Libarchive::Constants:ver<0.0.2>;
 
 constant ARCHIVE_OK                                       is export = 0;
 constant ARCHIVE_EOF                                      is export = 1;
-constant ARCHIVE_RETRY                                    is export = 0xFFFFFFF6;
-constant ARCHIVE_WARN                                     is export = 0xFFFFFFEC;
-constant ARCHIVE_FAILED                                   is export = 0xFFFFFFE7;
-constant ARCHIVE_FATAL                                    is export = 0xFFFFFFE2;
+constant ARCHIVE_RETRY                                    is export = -10;
+constant ARCHIVE_WARN                                     is export = -20;
+constant ARCHIVE_FAILED                                   is export = -25;
+constant ARCHIVE_FATAL                                    is export = -30;
 constant ARCHIVE_FILTER_NONE                              is export = 0;
 constant ARCHIVE_FILTER_GZIP                              is export = 1;
 constant ARCHIVE_FILTER_BZIP2                             is export = 2;

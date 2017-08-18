@@ -2,9 +2,8 @@
   "perl" : "6.c",
   "name" : "Archive::Libarchive::Raw",
   "tags" : [ "archive", "libarchive", "compression", "nativecall" ],
-  "version" : "0.0.3",
+  "version" : "0.0.4",
   "description" : "Raw interface to libarchive",
-  "build-depends" : [ "LWP::Simple", "Shell::Command" ],
   "depends" : [ "NativeCall" ],
   "test-depends" : [ "Test" ],
   "provides" : {

@@ -1,10 +1,8 @@
-use Panda::Builder;
-
-use Shell::Command;
+use v6;
 use LWP::Simple;
 use NativeCall;
 
-class Build is Panda::Builder {
+class Build {
     method build($workdir) {
         # We only have a .dll file bundled on Windows; non-windows is assumed
         # to have a libarchive already.
