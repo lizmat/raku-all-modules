@@ -94,18 +94,18 @@ class CSS::Declarations::Box {
     }
 
     method padding returns Array {
-        $!padding //= $.enclose($.Array, self.widths($!css.padding));
+        $!padding //= self!enclose($.Array, self.widths($!css.padding));
     }
     method border returns Array {
-        $!border //= $.enclose($.padding, self.widths($!css.border-width));
+        $!border //= self!enclose($.padding, self.widths($!css.border-width));
     }
     method margin returns Array {
-        $!margin //= $.enclose($.border, self.widths($!css.margin));
+        $!margin //= self!enclose($.border, self.widths($!css.margin));
     }
 
     method content returns Array is rw { self.Array }
 
-    method enclose(List $inner, List $outer) {
+    method !enclose(List $inner, List $outer) {
         [
          $inner[Top]    + $outer[Top],
          $inner[Right]  + $outer[Right],
@@ -161,7 +161,7 @@ class CSS::Declarations::Box {
     }
 
     method translate( \x = 0, \y = 0) {
-        self.Array = [ $!top    + y, $!right + x ];
+        self.Array = [ $!top + y, $!right + x ];
     }
 
     method save {

@@ -299,13 +299,15 @@ say $box.font-length('larger'); # 12
 
 The box `new` constructor accepts:
 
-  -- any two of `:top`, `:bottom` or `:height`,
+  - any two of `:top`, `:bottom` or `:height`,
 
-  -- and any two of `:left`, `:right` or `:width`.
+  - and any two of `:left`, `:right` or `:width`.
 
 #### font
 
-- The '.font' accessor returns an object of type `CSS::Declarations::Font`, with accessor methods: `em`, `ex`, `weight`, `family`, `style` and `leading`.
+    say "font-size is {$box.font.em}";
+
+The '.font' accessor returns an object of type `CSS::Declarations::Font`, with accessor methods: `em`, `ex`, `weight`, `family`, `style` and `leading`.
 
 #### top, right, bottom, left
 

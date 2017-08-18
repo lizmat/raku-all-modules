@@ -3,9 +3,9 @@ use v6;
 #| management class for a set of CSS::Declarations
 class CSS::Declarations {
 
-    use CSS::Module:ver(v0.4.6..*);
+    use CSS::Module:ver(v0.4.6+);
     use CSS::Module::CSS3;
-    use CSS::Writer:ver(v0.2.4..*);
+    use CSS::Writer:ver(v0.2.4+);
     use Color;
 
     use CSS::Declarations::Property;
