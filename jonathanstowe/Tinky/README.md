@@ -145,26 +145,22 @@ The full documentation is available [here](Documentation.md).
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Tinky
-
-Although I haven't tested I can't see any reason why it should not
-work with "zef" or any equally capable package manager that may
-come along.
+    zef install Tinky
 
 ## Support
 
 This is an experimental software but suggestions and patches that
 may make it more useful in your software are welcomed via github at
 
-https://github.com/jonathanstowe/Tinky
+https://github.com/jonathanstowe/Tinky/issues
 
 
 ## Licence
@@ -173,4 +169,4 @@ This is free software.
 
 Please see the [LICENCE](LICENCE) file in the distribution.
 
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
