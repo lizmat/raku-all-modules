@@ -87,24 +87,22 @@ hopefully it will be useful in other applications.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Oyatul
-
-This will undoubtedly work equally well with *zef* I just haven't tested it.
+    zef install Oyatul
 
 ## Support
 
 Suggestions and patches that may make it more useful in your software
 are welcomed via github at:
 
-https://github.com/jonathanstowe/Oyatul
+https://github.com/jonathanstowe/Oyatul/issues
 
 ## Licence
 

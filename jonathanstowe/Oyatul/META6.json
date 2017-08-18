@@ -34,5 +34,5 @@
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],
   "description": "Abstract representation of a filesystem layout",
-  "meta6": "0"
+  "meta-version": "0"
 }
