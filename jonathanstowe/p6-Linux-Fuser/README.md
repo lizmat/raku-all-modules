@@ -20,16 +20,13 @@ would be delighted to hear about any where it does work.
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to install this
-with *panda* :
+with *zef* :
 
-   panda install Linux::Fuser
+    zef install Linux::Fuser
 
 Or if you have a local clone of the repository
 
-	panda install .
-
-While I have only tested with panda I can't see any particular reason why this
-shouldn't work with *zef* or some equally capable package manager.
+    zef install .
 
 ## Support
 
