@@ -18,7 +18,7 @@ sub git-config(IO::Path $file? --> Hash) is export {
     my $cfg-handle = ([//] try (@fs».IO».open)) // warn("Can not find gitconfig at any of {('⟨' «~« @fs »~» '⟩').join(', ')}");
     my $cfg-text is default("") = try $cfg-handle.slurp;
 
-    my $parsed = Config.parse($cfg-text); # or fail 'Failed to parse „~/.gitconfig“.';
+    my $parsed = Config.parse($cfg-text) // []; # or fail 'Failed to parse „~/.gitconfig“.';
 
     for $parsed.Hash<section>.list -> $section {
         next unless $section<section-name>;
@@ -29,7 +29,7 @@ sub git-config(IO::Path $file? --> Hash) is export {
     }
 
     my $cfg-file-path = $cfg-handle.path;
-    
+
     %ret but role :: {
         method search-path { @fs }
         method path { $cfg-file-path }
