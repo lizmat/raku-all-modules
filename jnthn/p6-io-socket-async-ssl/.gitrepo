@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jnthn/p6-io-socket-async-ssl.git
 	branch = master
-	commit = c9dc74f6b79c8aa52c831ef51078bda1eda5b1e8
-	parent = a8fbc2494c70328e490394c63cdce82a0d94360b
+	commit = 62212cdbb1940ea5d3dd4b8824aa10c83aa4e1d9
+	parent = d52a6a8b01347869ed19516d04c3e3c15dfec863
 	cmdver = 0.4.0
