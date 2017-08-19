@@ -17,9 +17,11 @@ Uzu is a static site generator with built-in web server, file modification watch
     + [Examples](#examples-template6)
   * [Mustache](#mustache)
     + [Examples](#examples-mustache)
+  * [Theme layouts](#theme-layouts)
   * [Partials](#partials)
   * [Global variables](#global-variables)
   * [Template variables](#template-variables)
+  * [Layout variables](#layout-variables)
   * [Related / linked pages](#related--linked-pages)
 - [Page render conditions](#page-render-conditions)
 - [Installation](#installation)
@@ -419,9 +421,9 @@ Mustache is a 'logic-less' templating system, but you can test for the existence
 {{/site.graphics}}
 ```
 
-## Partials 
+## Theme layouts
 
-Partials are stored in the `partials` and `themes/THEME_NAME/partials` directories. Any theme partial will override any partial found in the top-level `partials` directory with the same file name. Partials can be include in layouts, pages, and other partials.
+Theme layout templates are located at the `themes/THEME_NAME/layout.tt` or `themes/THEME_NAME/layout.mustache`. Use the `content` partial to include rendered page content in a layout.
 
 For `Template6`:
 
@@ -431,7 +433,8 @@ For `Template6`:
 [% INCLUDE "head" %]
     <body>
       [% INCLUDE "navigation" %]
-      [% content %]
+      <!-- Rendered page content -->
+      [% INCLUDE "content" %]
       [% INCLUDE "footer" %]
     </body>
 </html>
@@ -445,10 +448,33 @@ For `Mustache`:
 {{> head }}
     <body>
       {{> navigation }}
-      {{ content }}
+      <!-- Rendered page content -->
+      {{> content }}
       {{> footer }}
     </body>
 </html>
+```
+
+## Partials 
+
+Partials are stored in the `partials` and `themes/THEME_NAME/partials` directories. Any theme partial will override any partial found in the top-level `partials` directory with the same file name. Partials can be include in layouts, pages, and other partials.
+
+For `Template6`:
+
+```html
+[% INCLUDE "navigation" %]
+<div>
+    [% INCLUDE "login_form" %]
+</div>
+```
+
+For `Mustache`:
+
+```html
+{{> navigation }}
+<div>
+    {{> login_form }}
+</div>
 ```
 
 ## Global variables
@@ -512,6 +538,38 @@ For `Template6`:
     <meta charset="utf-8">
     <title>{{ title }} - {{ date }}</title>
 </head>
+```
+
+### Layout variables
+
+You can define variables in the layout template and access them using the `layout.` prefix in templates;
+
+For example:
+
+Define yaml definitions in `themes/**/layout.tt` or `themes/**/layout.mustache`:
+
+```
+---
+root_url: https://www.perl6.org
+name: Dark Theme
+---
+<!doctype html>
+<html>
+...
+```
+
+Will be accessible in templates like this:
+
+For `Template6`:
+
+```
+<a href="[% layout.root_url %]/about-this-theme.html">[% layout.name %]</a>
+```
+
+...and for `Mustache`:
+
+```
+<a href="{{ layout.root_url }}/about-this-theme.html">{{ layout.name }}</a>
 ```
 
 ### Related / linked pages

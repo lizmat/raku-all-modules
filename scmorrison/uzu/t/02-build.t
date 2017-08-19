@@ -15,7 +15,7 @@ plan 3;
 my $test_root   = $*CWD.IO.child('t');
 
 subtest {
-    plan 12;
+    plan 13;
 
     my $source_root = $test_root.IO.child('example_project_tt');
 
@@ -96,10 +96,15 @@ subtest {
     my $t12_expected_html  = slurp $test_root.IO.child('expected_tt').child('embedded.html');
     my $t12_generated_html = slurp $tmp_build_path.IO.child('embedded.html');
     is $t12_generated_html, $t12_expected_html, '[Template6] embedded partials can access page vars';
+
+    # Deeply embedded partials can access page vars
+    my $t13_expected_html  = slurp $test_root.IO.child('expected_tt').child('deepembed.html');
+    my $t13_generated_html = slurp $tmp_build_path.IO.child('deepembed.html');
+    is $t13_generated_html, $t13_expected_html, '[Template6] deeply embedded partials can access page vars';
 }, 'Rendering [Defaults]';
 
 subtest {
-    plan 9;
+    plan 10;
 
     my $source_root = $test_root.IO.child('example_project_mustache');
 
@@ -172,10 +177,15 @@ subtest {
     my $t9_expected_html  = slurp $test_root.IO.child('expected_mustache').child('embedded.html');
     my $t9_generated_html = slurp $tmp_build_path.IO.child('embedded.html');
     is $t9_generated_html, $t9_expected_html, '[Mustache] embedded partials can access page vars';
+
+    # Deeply embedded partials can access page vars
+    my $t10_expected_html  = slurp $test_root.IO.child('expected_mustache').child('deepembed.html');
+    my $t10_generated_html = slurp $tmp_build_path.IO.child('deepembed.html');
+    is $t10_generated_html, $t10_expected_html, '[Mustache] deeply embedded partials can access page vars';
 }, 'Rendering [Mustache]';
 
 subtest {
-    plan 2;
+    plan 3;
 
     my $source_root = $test_root.IO.child('example_project_mustache');
 
@@ -194,7 +204,7 @@ subtest {
     my $config = Uzu::Config::from-file config_file => $config_path, no_livereload => True;
 
     # Expect a warning when i18n yaml is invalid
-    my $t5_yaml = q:to/END/;
+    my $yaml = q:to/END/;
     ---
     company: Sam Morrison
     site_name: Uzu Test Project
@@ -204,12 +214,17 @@ subtest {
     END
 
     # Save to tmp_build_path i18n yaml file
-    spurt $tmp_root.IO.child('i18n').child('en.yml'), $t5_yaml;
+    spurt $tmp_root.IO.child('i18n').child('en.yml'), $yaml;
+
+    # Do not die when theme layout template is missing
+    unlink $tmp_root.IO.child('themes').child('default').child('layout.mustache');
+
     my $build_out = output-from { Uzu::Render::build $config };
 
     # Test warnings
     like $build_out, / "No content found for page" /, 'empty page template warning to stdout';
     like $build_out, / "Invalid i18n yaml file" /, 'invalid i18n yaml warning to stdout';
+    like $build_out, / "Theme [default] does not contain a layout template" /, 'theme layout template is missing warning to stdout';
 
 }, 'Warnings';
 
