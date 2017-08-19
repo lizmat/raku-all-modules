@@ -2,7 +2,7 @@
     "perl" : "6.*",
     "name" : "overload::constant",
     "author" : "github:FROGGS",
-    "version" : "0.0.1",
+    "version" : "0.0.2",
     "description" : "allows to intercept parsing of num/str literals",
     "depends" : [ ],
     "provides" : {

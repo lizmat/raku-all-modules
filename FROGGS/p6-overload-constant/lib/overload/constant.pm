@@ -17,28 +17,29 @@ sub EXPORT(*@handlers) {
                 }
             }
             if atkeyish($/, 'integer') -> $v {
-                $/.'!make'( %handlers<integer>
+                $/.make( %handlers<integer>
                                 ?? call-handler(%handlers<integer>(nqp::p6box_s($v.Str)))
                                 !! $*W.add_numeric_constant($/, 'Int', $v.made) )
             }
             elsif atkeyish($/, 'dec_number') -> $v {
-                $/.'!make'( %handlers<decimal>
+                $/.make( %handlers<decimal>
                                 ?? call-handler(%handlers<decimal>(nqp::p6box_s($v.Str)))
                                 !! $v.made )
             }
             elsif atkeyish($/, 'rad_number') -> $v {
-                $/.'!make'( %handlers<radix>
+                $/.make( %handlers<radix>
                                 ?? call-handler(%handlers<radix>(nqp::p6box_s($v.Str)))
                                 !! $v.made )
             }
             else {
-                $/.'!make'( %handlers<numish>
+                $/.make( %handlers<numish>
                                 ?? call-handler(%handlers<numish>(nqp::p6box_s($/.Str)))
                                 !! $*W.add_numeric_constant($/, 'Num', +nqp::p6box_s($/.Str)) )
             }
         }
     }
-    nqp::bindkey(%*LANG, 'MAIN-actions', %*LANG<MAIN-actions>.HOW.mixin(%*LANG<MAIN-actions>, Numish[%handlers]));
+
+    $*LANG.refine_slang('MAIN', role {}, Numish[%handlers]);
 
     {}
 }
