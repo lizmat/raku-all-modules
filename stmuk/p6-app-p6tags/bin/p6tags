@@ -72,7 +72,7 @@ for @files -> $io {
     for $io.lines -> $line {
         next unless $line;
 
-        @tags.append: gather Purl6.parse( $line, :actions( Purl6::Actions.new( :$file ) ) );
+        @tags.append: gather try Purl6.parse( $line, :actions( Purl6::Actions.new( :$file ) ) );
 
     }  
 }
