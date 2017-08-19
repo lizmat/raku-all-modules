@@ -38,7 +38,7 @@ method parse (Str $str, :$match-prefix) {
         $!grammar.subparse($c_str);
     }
     else {
-        $!grammar.parse($c_str);
+        try $!grammar.parse($c_str);
     }
 
     # hacky but for the time being an improvement
