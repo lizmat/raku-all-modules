@@ -9,8 +9,8 @@ submethod BUILD {
   $!channel := Channel.new;
   $!promise := start {
     loop {
-      exit if $!channel.closed;
       my $msg = $!channel.receive;
+      CATCH { last when X::Channel::ReceiveOnClosed }
       $_<callable>.($msg<data>) for @!events.grep(-> $e {
         given ($e<event>.WHAT) {
           when Regex { $msg<event> ~~ $e<event> }
