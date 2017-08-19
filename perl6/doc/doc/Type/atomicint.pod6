@@ -45,10 +45,10 @@ must be used in conjunction with the atomic operations.
 
 =head2 atomic-assign
 
-Defined as: 
+Defined as:
 
-    multi sub atomic-assign(atomcint $ is rw, int $value)
-    multi sub atomic-assign(atomcint $ is rw, Int() $value)
+    multi sub atomic-assign(atomicint $ is rw, int $value)
+    multi sub atomic-assign(atomicint $ is rw, Int() $value)
 
 Performs an atomic assignment to a native integer, which may be in a lexical,
 attribute, or native array element. If C<$value> cannot unbox to a 64-bit
@@ -60,9 +60,9 @@ other threads.
 
 =head2 atomic-fetch
 
-Defined as: 
+Defined as:
 
-    multi sub atomic-fetch(atomcint $ is rw)
+    multi sub atomic-fetch(atomicint $ is rw)
 
 Performs an atomic read of a native integer, which may live in a lexical,
 attribute, or native array element. Using this routine instead of simply
@@ -72,7 +72,7 @@ preventing the compiler from lifting reads. For example:
 
     my atomicint $i = 0;
     start { atomic-assign($i, 1) }
-    while atomc-fetch($i) == 0 { }
+    while atomic-fetch($i) == 0 { }
 
 Is certain to terminate, while in:
 
@@ -118,7 +118,7 @@ hardware-provided atomic operations. Since the operation is atomic, it is safe
 to use without acquiring a lock. Returns the value as seen before the addition
 was performed. Overflow will wrap around silently. If C<$value> is too big to
 unbox to a 64-bit integer, an exception will be thrown. If C<$value> otherwise
-overflows C<atomicsize> then it will be silently truncated before the addition
+overflows C<atomicint> then it will be silently truncated before the addition
 is performed.
 
 =head2 cas
@@ -132,6 +132,7 @@ Defined as:
 Performs an atomic compare and swap of the native integer value in location
 C<$target>. The first two forms have semantics like:
 
+=for code :preamble<no strict;>
     my int $seen = $target;
     if $seen == $expected {
         $target = $value;
@@ -144,7 +145,7 @@ it is safe to attempt the operation from multiple threads without any other
 synchronization. For example:
 
     my int $master = 0;
-    await start { 
+    await start {
         if cas($master, 0, 1) == 0 {
             say "Master!"
         }
@@ -166,6 +167,7 @@ this fails, it will read the latest value, and retry, until a CAS operation
 succeeds. Therefore, an atomic multiply of an C<atomicint> C<$i> by 2 could
 be implemented as:
 
+=for code :preamble<no strict;>
     cas $i, -> int $current { $current * 2 }
 
 If another thread changed the value while C<$current * 2> was being calculated
@@ -176,8 +178,8 @@ attempt, and this would be repeated until success.
 
 =head2 infix ⚛=
 
-    multi sub infix:<⚛=>(atomcint $ is rw, int $value)
-    multi sub infix:<⚛=>(atomcint $ is rw, Int() $value)
+    multi sub infix:<⚛=>(atomicint $ is rw, int $value)
+    multi sub infix:<⚛=>(atomicint $ is rw, Int() $value)
 
 Performs an atomic assignment to a native integer, which may be in a lexical,
 attribute, or native array element. If C<$value> cannot unbox to a 64-bit
@@ -188,7 +190,7 @@ performed such that the changed value will be "published" to other threads.
 
 =head2 prefix ⚛
 
-    multi sub prefix:<⚛>(atomcint $ is rw)
+    multi sub prefix:<⚛>(atomicint $ is rw)
 
 Performs an atomic read of a native integer, which may live in a lexical,
 attribute, or native array element. Using this operator instead of simply
@@ -212,7 +214,7 @@ terminate.
 
 =head2 prefix ++⚛
 
-    multi sub prefix:<++⚛>(atomcint $ is rw)
+    multi sub prefix:<++⚛>(atomicint $ is rw)
 
 Performs an atomic increment on a native integer. This will be performed using
 hardware-provided atomic operations. Since the operation is atomic, it is safe
@@ -221,7 +223,7 @@ increment. Overflow will wrap around silently.
 
 =head2 postfix ⚛++
 
-    multi sub postfix:<⚛++>(atomcint $ is rw)
+    multi sub postfix:<⚛++>(atomicint $ is rw)
 
 Performs an atomic increment on a native integer. This will be performed using
 hardware-provided atomic operations. Since the operation is atomic, it is safe
@@ -230,7 +232,7 @@ it. Overflow will wrap around silently.
 
 =head2 prefix --⚛
 
-    multi sub prefix:<--⚛>(atomcint $ is rw)
+    multi sub prefix:<--⚛>(atomicint $ is rw)
 
 Performs an atomic decrement on a native integer. This will be performed using
 hardware-provided atomic operations. Since the operation is atomic, it is safe
@@ -239,7 +241,7 @@ decrement. Overflow will wrap around silently.
 
 =head2 postfix ⚛--
 
-    multi sub postfix:<⚛-->(atomcint $ is rw)
+    multi sub postfix:<⚛-->(atomicint $ is rw)
 
 Performs an atomic decrement on a native integer. This will be performed using
 hardware-provided atomic operations. Since the operation is atomic, it is safe
@@ -258,7 +260,7 @@ hardware-provided atomic operations. Since the operation is atomic, it is safe
 to use without acquiring a lock. Evaluates to the result of the addition.
 Overflow will wrap around silently. If C<$value> is too big to unbox to a
 64-bit integer, an exception will be thrown. If C<$value> otherwise overflows
-C<atomicsize> then it will be silently truncated before the addition is
+C<atomicint> then it will be silently truncated before the addition is
 performed.
 
 =end pod

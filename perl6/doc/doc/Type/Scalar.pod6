@@ -100,6 +100,7 @@ explicitly initialized with a value before any atomic operations are
 performed upon it. This is to avoid races with lazy allocation and
 auto-vivification. For example:
 
+=for code :preamble<no strict;>
     cas(@a[5], $expected, $value)
 
 Will work in principle since an C<Array> consists of C<Scalar> containers.
@@ -154,6 +155,7 @@ Defined as:
 Performs an atomic compare and swap of the value in the C<Scalar> C<$target>.
 The first form has semantics like:
 
+=for code :preamble<no strict;>
     my $seen = $target;
     if $seen<> =:= $expected<> {
         $target = $value;
@@ -171,7 +173,7 @@ For example:
     constant NOT_STARTED = Any.new;
     constant STARTED = Any.new;
     my $master = NOT_STARTED;
-    await start { 
+    await start {
         if cas($master, NOT_STARTED, STARTED) === Any {
             say "Master!"
         }
