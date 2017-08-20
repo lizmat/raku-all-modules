@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/perl6-community-modules/System-Passwd.git
+	branch = master
+	commit = 529a626fa989376b035cb82f25e41d885d28d11b
+	parent = ccc4a1f0964ff0dc7fdd01d10238e47254f9c0bb
+	cmdver = 0.4.0
