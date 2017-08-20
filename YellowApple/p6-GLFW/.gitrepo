@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/YellowApple/p6-GLFW.git
+	branch = master
+	commit = 36927d7821985058cdcf7977f330a17ef35777c3
+	parent = efd753452ac39ae1bdbd16acea64c60e55ceeb46
+	cmdver = 0.4.0
