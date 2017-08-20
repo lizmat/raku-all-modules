@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/noqisofon/p6-miroku.git
+	branch = master
+	commit = cea545074d1691c7251022f860810ea979ff8808
+	parent = 6c328bdae2913ebada922aabe182157046063609
+	cmdver = 0.4.0

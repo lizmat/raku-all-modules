@@ -1,0 +1,38 @@
+#!/usr/bin/env perl6
+# -*- mode: perl6; -*-
+use v6;
+use App::Miroku;
+
+my $app = App::Miroku.new;
+
+
+multi MAIN('new', $module, Str $prefix = 'p6-', Str :$to = '.', Str :$type = 'lib') {
+    $app.perform( 'new', $module, :$prefix, :$to, :$type );
+}
+
+multi MAIN('build') {
+    $app.perform( 'build' );
+}
+
+multi MAIN('test', *@file, Bool :v(:$verbose), Int :j(:$jobs)) {
+    $app.perform( 'test', @file, :$verbose, :$jobs );
+}
+
+multi MAIN('help') { USAGE }
+multi MAIN(:h(:$help)!) { USAGE }
+
+sub USAGE() {
+    require Pod::To::Text;
+    ::('Pod::To::Text').render($=pod).say;
+}
+
+=begin pod
+
+=head1 USAGE
+
+  > miroku new Foo::Bar # create p6-Foo-Bar distribution
+  > miroku build        #
+
+  > miroku test         # 
+
+=end pod

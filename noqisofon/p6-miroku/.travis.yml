@@ -1,0 +1,14 @@
+os:
+  - linux
+  - osx
+language: perl6
+perl6:
+  - latest
+  - '2017.07'
+  - '2017.06'
+install:
+  - rakudobrew build-zef
+  - zef --debug --depsonly install .
+script:
+  - PERL6LIB=$PWD/lib prove -e perl6 -vr t/ xt/
+sudo: false

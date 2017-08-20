@@ -1,0 +1,11 @@
+# -*- mode: gitignore; -*-
+
+# Emacs temporary files
+*~
+\#*#
+
+# Compile results
+*.o
+*.obj
+
+.precomp/
