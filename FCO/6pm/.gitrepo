@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/FCO/6pm.git
+	branch = master
+	commit = 31789fed7770c60d1d570347ad080fb3ee5401f2
+	parent = 0ab61b7482ae9e8e32c907700eb966748df249a1
+	cmdver = 0.4.0
