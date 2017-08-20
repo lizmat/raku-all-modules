@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-http-server-router-yaml.git
+	branch = master
+	commit = 7a3be16c2d33ebee04e671bac04d8b6d00c30866
+	parent = b002e9a16eaaddbb5cbd3738abc9064e07e802fd
+	cmdver = 0.4.0
