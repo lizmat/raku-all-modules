@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/whity/perl6-hematite.git
+	branch = master
+	commit = d53a7032fc1842678601ad411db2fef05ba6b191
+	parent = f9d5b4f13a0e1495cf015e15effc9b02ae5fe048
+	cmdver = 0.4.0
