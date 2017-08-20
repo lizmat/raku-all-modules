@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/japhb/RPG-Base.git
+	branch = master
+	commit = 6fa9b16c9081409829d08a44db6e28664e6b9dc7
+	parent = 6a10866439fa855f715c3c165e7661ab703d8880
+	cmdver = 0.4.0
