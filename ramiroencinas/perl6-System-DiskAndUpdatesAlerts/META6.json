@@ -1,0 +1,17 @@
+{
+  "perl" : "6.c",
+  "name" : "System::DiskAndUpdatesAlerts",
+  "license" : "Artistic-2.0",
+  "version" : "1.0.0",
+  "description" : "Send email alerts about disk capacity and pending updates.",
+  "authors" : [ "Ramiro Encinas Alarza" ],
+  "provides" : {
+    "System::DiskAndUpdatesAlerts" : "lib/System/DiskAndUpdatesAlerts.pm6"
+  },
+  "tags" : [ "filesystem", "utils" , "capacity"],
+  "depends" : [
+    "FileSystem::Capacity",
+    "Package::Updates"
+  ],
+  "source-url" : "git@github.com:ramiroencinas/perl6-System-DiskAndUpdatesAlerts.git"
+}

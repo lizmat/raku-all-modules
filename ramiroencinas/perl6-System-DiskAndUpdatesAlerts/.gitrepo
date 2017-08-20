@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ramiroencinas/perl6-System-DiskAndUpdatesAlerts.git
+	branch = master
+	commit = 86c778572d35c9ae3938ed688fd094454fef99cd
+	parent = f4a040f35ce9fea133a9f59a0a3afd641a54470e
+	cmdver = 0.4.0
