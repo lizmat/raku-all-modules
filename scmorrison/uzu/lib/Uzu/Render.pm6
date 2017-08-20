@@ -97,6 +97,26 @@ sub page-uri(
     }
 }
 
+multi sub find-linked-pages(
+    List $p
+) {
+    map {
+       find-linked-pages $_ when $_ ~~ Hash;
+    }, @$p;
+}
+
+multi sub find-linked-pages(
+    Hash $p,
+    --> Hash
+) {
+    state %page_sets;
+    map { 
+        find-linked-pages(.value) when .value ~~ Hash|List;
+        %page_sets{.key} = .values[0] when .key ~~  / '_pages' $/;
+    }, %$p;
+    %page_sets;
+}
+
 sub linked-pages(
     Str  :$base_page,
     Hash :$page_vars,
@@ -108,7 +128,8 @@ sub linked-pages(
     --> Hash
 ) {
     my %linked_pages;
-    for $page_vars{grep { / '_pages' $/ }, keys $page_vars}:kv -> $block_key, @pages {
+    for kv find-linked-pages($page_vars) -> $block_key, @pages {
+
         for @pages -> %vars {
             my $key  = %vars<page>;
             my $url = ($key ~~ / '://' / || !$site_index{$key})
@@ -229,7 +250,8 @@ sub prepare-html-output(
 }
 
 sub parse-template(
-    IO::Path :$path
+    IO::Path :$path,
+    ::D      :&logger
     --> List
 ) {
     # Extract header yaml if available
@@ -239,7 +261,7 @@ sub parse-template(
 
         CATCH {
             default {
-                note "Invalid template yaml [$path]";
+                logger "Invalid template yaml [$path]";
             }
         }
 
@@ -249,14 +271,15 @@ sub parse-template(
 
 sub build-partials-hash(
     IO::Path :$source,
-    List     :$exts
+    List     :$exts,
+    ::D      :&logger
 ) {
     map -> $path { 
         next unless $path.IO.f;
         my Str ($partial_name, $out_ext, $target_dir) = extract-file-parts($path, $source.IO.path);
 
         # Extract header yaml if available
-        my ($partial_html, %partial_vars) = parse-template :$path;
+        my ($partial_html, %partial_vars) = parse-template :$path, :&logger;
 
         %( $partial_name => %{
             path       => $path,
@@ -300,7 +323,7 @@ sub embedded-partials(
     # Prerender any embedded partials
     for $partials_all{|@$partial_keys}:kv -> $partial_name, %partial {
         my @partial_keys = partial-names($template_engine, %partial<html>);
-        for @partial_keys -> $embedded_partial_name {
+        (@partial_keys.hyper.map: -> $embedded_partial_name {
 
             my %context = |$context, |%partial<vars>, |$partials_all{$embedded_partial_name}<vars>;
 
@@ -336,7 +359,7 @@ sub embedded-partials(
                     }
                 }
             }
-        }
+        });
     }
 
     return [$modified_timestamps, $partial_render_queue, $embedded_partials];
@@ -396,12 +419,14 @@ multi sub render(
         |$context{$language};
 
     my @layout_partials  = partial-names $template_engine, $layout_template;
-    for $pages.sort({ $^a.values[0]<modified> < $^b.values[0]<modified> }) -> $page {
+    ($pages.sort({ $^a.values[0]<modified> < $^b.values[0]<modified> }).hyper.map: -> $page {
 
         my Str $page_name = $page.key;
         my Any %page      = $page.values[0];
         my @page_partials = partial-names $template_engine, %page<html>;
         my Bool $nolayout = %page<vars><nolayout>.defined || $layout_template ~~ '';
+
+        next unless %page<render>;
 
         # When was this page last rendered?
         my $last_render_time = "{$build_dir}/{$page_name}.{%page<out_ext>}".IO.modified||0;
@@ -456,7 +481,7 @@ multi sub render(
         # Render top-level partials content
         for $partials_all{|@page_partials, |@layout_partials}:kv -> $partial_name, %partial {
 
-            my %context = |%base_context, |%partial<vars>;
+            my %context      = |%base_context, |%partial<vars>;
 
             push @modified_timestamps, %partial<modified>;
             push @partial_render_queue, &{
@@ -574,7 +599,7 @@ multi sub render(
                 build_dir     => $build_dir);
 
         }
-    }
+    });
 }
 
 our sub build(
@@ -595,7 +620,7 @@ our sub build(
         my Str ($page_name, $out_ext, $target_dir) = extract-file-parts($path, $config<pages_dir>.IO.path);
 
         # Extract header yaml if available
-        my ($page_html, %page_vars)  = parse-template :$path;
+        my ($page_html, %page_vars)  = parse-template :$path, :&logger;
 
         # Add to site index
         %site_index{$page_name}           = %page_vars;
@@ -613,21 +638,24 @@ our sub build(
         #    }, build-category-uri(%page_vars<categories>);
         #}
 
+        my $pages_watch_dir = $config<pages_watch_dir>.IO.path;
+
         %( $page_name => %{
             path       => $path,
             html       => $page_html,
             vars       => %page_vars,
             out_ext    => $out_ext,
             target_dir => $target_dir,
-            modified   => $path.modified });
+            modified   => $path.modified,
+            render     => so $path.IO.path ~~ /^ $pages_watch_dir /});
 
     }, templates(:$exts, dir => $config<pages_dir>);
 
     # All available partials
-    my Any %partials       = build-partials-hash source => $config<partials_dir>, :$exts;
+    my Any %partials       = build-partials-hash source => $config<partials_dir>, :$exts, :&logger;
     my Any %theme_partials =
         $config<theme_dir>.IO.child('partials').IO.d
-        ?? build-partials-hash source => $config<theme_dir>.IO.child('partials'), :$exts !! %();
+        ?? build-partials-hash source => $config<theme_dir>.IO.child('partials'), :$exts, :&logger !! %();
 
     # Create build dir
     if !$config<build_dir>.IO.d { 
@@ -649,8 +677,8 @@ our sub build(
     # Extract layout header yaml if available
     my ($layout_template, $layout_vars) =
         $layout_path.defined
-        ?? parse-template(path => $layout_path)
-        !! ["", %()];
+        ?? parse-template(path => $layout_path, :&logger)
+        !! ["", %{}];
 
     logger "Theme [{$config<theme>}] does not contain a layout template" unless $layout_path.defined;
 

@@ -12,6 +12,26 @@ other_pages:
       title:  Perl 6 Modules Directory
       author: Perl 6
     - page: about
+going_down:
+    - something: important
+    - deep_pages:
+        - page: blog/fiji
+        - page: about
+        - page: https://github.com/scmorrison/uzu/
+          author: Sam Morrison
+          title: Uzu is a static site generator
+    - deeper_still:
+        - deeper_pages:
+            - page: index
+            - page: about
+            - page: blog/fiji
+categories:
+  - title: General tasks
+    category_pages:
+      - page: http://www.perl6.org
+      - page: index
+      - page: blog/fiji
+      - page: about
 ---
 <ul>
 [% for page in related_pages %]
@@ -23,6 +43,20 @@ other_pages:
 
 <ul>
 [% for page in other_pages %]
+    <li>
+        <a href="[% page.url %]">[% page.title %]</a> [[% page.author %]]
+    </li>
+[% end %]
+</ul>
+<ul>
+[% for page in deep_pages %]
+    <li>
+        <a href="[% page.url %]">[% page.title %]</a> [[% page.author %]]
+    </li>
+[% end %]
+</ul>
+<ul>
+[% for page in deeper_pages %]
     <li>
         <a href="[% page.url %]">[% page.title %]</a> [[% page.author %]]
     </li>

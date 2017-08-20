@@ -187,7 +187,7 @@ subtest {
 subtest {
     plan 3;
 
-    my $source_root = $test_root.IO.child('example_project_mustache');
+    my $source_root = $test_root.IO.child('example_project_tt');
 
     # Setup tmp project root
     my $tmp_root    = tempdir;
@@ -217,7 +217,7 @@ subtest {
     spurt $tmp_root.IO.child('i18n').child('en.yml'), $yaml;
 
     # Do not die when theme layout template is missing
-    unlink $tmp_root.IO.child('themes').child('default').child('layout.mustache');
+    unlink $tmp_root.IO.child('themes').child('default').child('layout.tt');
 
     my $build_out = output-from { Uzu::Render::build $config };
 
