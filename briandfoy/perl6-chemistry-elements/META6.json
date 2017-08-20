@@ -1,0 +1,22 @@
+{
+"authors": [
+	"brian d foy"
+	],
+"depends": [],
+"description": "Perl 6 extension for working with the Periodic Table of Elements",
+"name": "Chemistry::Elements",
+"perl": "6.c",
+"license": "Artistic-2.0",
+"provides": {
+	"Chemistry::Elements": "lib/Chemistry/Elements.pm6"
+	},
+"support": {
+	"source": "git@github.com:briandfoy/perl6-chemistry-elements.git"
+	},
+"test-depends": [
+	"Test"
+	],
+"version": "0.001003",
+"tags": [ "chemistry", "Z", "atomic number" ],
+"source-url" : "git@github.com:briandfoy/perl6-chemistry-elements.git"
+}

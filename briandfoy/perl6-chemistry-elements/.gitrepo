@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/briandfoy/perl6-chemistry-elements.git
+	branch = master
+	commit = ca34d42c157de06566adcf01605eb9ef005f860c
+	parent = 70e29b02497527f6f52e59a4baf916a8595e8745
+	cmdver = 0.4.0
