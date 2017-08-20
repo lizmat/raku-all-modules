@@ -1,0 +1,1987 @@
+%PDF-1.3
+%¥±ë
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+
+2 0 obj <<
+  /Type /Pages
+  /Count 3
+  /Kids [ 3 0 R 37 0 R 39 0 R ]
+>>
+endobj
+
+3 0 obj <<
+  /Type /Page
+  /Contents 4 0 R
+  /MediaBox [ 0 0 612 792 ]
+  /Parent 2 0 R
+  /Resources <<
+    /XObject <<
+      /Fm1 5 0 R
+      /Fm2 9 0 R
+      /Im1 30 0 R
+    >>
+  >>
+>>
+endobj
+
+4 0 obj <<
+  /Length 160
+>> stream
+q
+  q
+    600 0 0 600 6 6 cm
+    /Im1 Do
+  Q
+  q
+    0.326797 0 0 0.326797 100 200 cm
+    /Fm1 Do
+  Q
+  q
+    0.326797 0 0 0.326797 300 300 cm
+    /Fm2 Do
+  Q
+Q
+endstream
+endobj
+
+5 0 obj <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [ 0 0 612 792 ]
+  /Resources <<
+    /Font 6 0 R
+  >>
+  /Length 3980
+>> stream
+BT
+  50 100 Td
+  /F1 18 Tf
+  19.8 TL
+  (Hello,) Tj
+  T*
+  [ (W) 60 (orld!) ] TJ
+  T*
+ET
+BT
+  /F2 10 Tf
+  1 0 0 1 110 700 Tm
+  11 TL
+  0 -9.31 Td
+  (*** top left*** Lorem) Tj
+  T*
+  (ipsum dolor sit amet,) Tj
+  T*
+  (consectetur adipiscing) Tj
+  T*
+  (elit, sed do eiusmod) Tj
+  T*
+  (tempor incididunt ut) Tj
+  T*
+  (labore et dolore) Tj
+  T*
+  (magna aliqua.) Tj
+  T*
+  1 0 0 1 110 530 Tm
+  11 TL
+  0 -9.31 Td
+  [ 3530 (*** top center***) ] TJ
+  T*
+  [ 4779 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 3974 (amet, consectetur) ] TJ
+  T*
+  [ 4780 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 3585 (eiusmod tempor) ] TJ
+  T*
+  [ 4753 (incididunt ut labore et) ] TJ
+  T*
+  [ 4669 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 110 360 Tm
+  11 TL
+  0 -9.31 Td
+  [ 9337 (*** top right*** Lorem) ] TJ
+  T*
+  [ 9225 (ipsum dolor sit amet,) ] TJ
+  T*
+  [ 9893 (consectetur adipiscing) ] TJ
+  T*
+  [ 8893 (elit, sed do eiusmod) ] TJ
+  T*
+  [ 8726 (tempor incididunt ut) ] TJ
+  T*
+  [ 6948 (labore et dolore) ] TJ
+  T*
+  [ 6281 (magna aliqua.) ] TJ
+  T*
+  1 0 0 1 110 190 Tm
+  11 TL
+  0 -9.31 Td
+  0.173333 Tw
+  (*** top justify*** Lorem) Tj
+  T*
+  2.583333 Tw
+  (ipsum dolor sit amet,) Tj
+  T*
+  1.07 Tw
+  (consectetur adipiscing) Tj
+  T*
+  3.69 Tw
+  (elit, sed do eiusmod) Tj
+  T*
+  6.37 Tw
+  (tempor incididunt ut) Tj
+  T*
+  15.26 Tw
+  (labore et dolore) Tj
+  T*
+  37.19 Tw
+  (magna aliqua.) Tj
+  T*
+  0 Tw
+  1 0 0 1 235 700 Tm
+  11 TL
+  0 30.69 Td
+  (*** center left***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  1 0 0 1 235 530 Tm
+  11 TL
+  0 30.69 Td
+  [ 4224 (*** center center***) ] TJ
+  T*
+  [ 4779 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 3974 (amet, consectetur) ] TJ
+  T*
+  [ 4780 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 3585 (eiusmod tempor) ] TJ
+  T*
+  [ 4753 (incididunt ut labore et) ] TJ
+  T*
+  [ 4669 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 235 360 Tm
+  11 TL
+  0 30.69 Td
+  [ 7614 (*** center right***) ] TJ
+  T*
+  [ 9558 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 7948 (amet, consectetur) ] TJ
+  T*
+  [ 9560 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 7169 (eiusmod tempor) ] TJ
+  T*
+  [ 9505 (incididunt ut labore et) ] TJ
+  T*
+  [ 9338 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 235 190 Tm
+  11 TL
+  0 30.69 Td
+  8.875 Tw
+  (*** center justify***) Tj
+  T*
+  1.473333 Tw
+  (Lorem ipsum dolor sit) Tj
+  T*
+  20.52 Tw
+  (amet, consectetur) Tj
+  T*
+  1.466667 Tw
+  (adipiscing elit, sed do) Tj
+  T*
+  28.31 Tw
+  (eiusmod tempor) Tj
+  T*
+  1.65 Tw
+  (incididunt ut labore et) Tj
+  T*
+  3.31 Tw
+  (dolore magna aliqua.) Tj
+  T*
+  0 Tw
+  1 0 0 1 360 700 Tm
+  11 TL
+  0 70.69 Td
+  (*** bottom left***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  1 0 0 1 360 530 Tm
+  11 TL
+  0 70.69 Td
+  [ 4363 (*** bottom center***) ] TJ
+  T*
+  [ 4779 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 3974 (amet, consectetur) ] TJ
+  T*
+  [ 4780 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 3585 (eiusmod tempor) ] TJ
+  T*
+  [ 4753 (incididunt ut labore et) ] TJ
+  T*
+  [ 4669 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 360 360 Tm
+  11 TL
+  0 70.69 Td
+  [ 7892 (*** bottom right***) ] TJ
+  T*
+  [ 9558 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 7948 (amet, consectetur) ] TJ
+  T*
+  [ 9560 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 7169 (eiusmod tempor) ] TJ
+  T*
+  [ 9505 (incididunt ut labore et) ] TJ
+  T*
+  [ 9338 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 360 190 Tm
+  11 TL
+  0 70.69 Td
+  7.485 Tw
+  (*** bottom justify***) Tj
+  T*
+  1.473333 Tw
+  (Lorem ipsum dolor sit) Tj
+  T*
+  20.52 Tw
+  (amet, consectetur) Tj
+  T*
+  1.466667 Tw
+  (adipiscing elit, sed do) Tj
+  T*
+  28.31 Tw
+  (eiusmod tempor) Tj
+  T*
+  1.65 Tw
+  (incididunt ut labore et) Tj
+  T*
+  3.31 Tw
+  (dolore magna aliqua.) Tj
+  T*
+  0 Tw
+ET
+endstream
+endobj
+
+6 0 obj <<
+  /F1 7 0 R
+  /F2 8 0 R
+>>
+endobj
+
+7 0 obj <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica-Bold
+  /Encoding /WinAnsiEncoding
+>>
+endobj
+
+8 0 obj <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+  /Encoding /WinAnsiEncoding
+>>
+endobj
+
+9 0 obj <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [ 0 0 612 792 ]
+  /Resources <<
+    /Font <<
+      /F1 10 0 R
+      /F2 11 0 R
+    >>
+    /XObject <<
+      /Fm1 12 0 R
+      /Im1 15 0 R
+      /Im10 16 0 R
+      /Im11 17 0 R
+      /Im12 18 0 R
+      /Im13 20 0 R
+      /Im14 22 0 R
+      /Im15 24 0 R
+      /Im16 26 0 R
+      /Im2 28 0 R
+      /Im3 29 0 R
+      /Im4 30 0 R
+      /Im5 32 0 R
+      /Im6 33 0 R
+      /Im7 34 0 R
+      /Im8 35 0 R
+      /Im9 36 0 R
+    >>
+  >>
+  /Length 1858
+>> stream
+q
+  /F1 16 Tf
+  BT
+    1 0 0 1 30 750 Tm
+    (PDF::Content [t/images.t] - assorted images) Tj
+  ET
+  /F2 12 Tf
+  q
+    24 0 0 24 45 650 cm
+    /Im1 Do
+  Q
+  BT
+    1 0 0 1 90 665 Tm
+    (JPEG - Content) Tj
+  ET
+  q
+    19 0 0 19 245 650 cm
+    /Im2 Do
+  Q
+  BT
+    1 0 0 1 290 665 Tm
+    (GIF - Content) Tj
+  ET
+  q
+    1 0 0 1 445 650 cm
+    /Fm1 Do
+  Q
+  BT
+    1 0 0 1 490 665 Tm
+    (PDF - Form) Tj
+  ET
+  q
+    16 0 0 14 45 575 cm
+    /Im3 Do
+  Q
+  BT
+    1 0 0 1 90 590 Tm
+    (Data URI \(GIF\)) Tj
+  ET
+  q
+    16 0 0 16 245 575 cm
+    /Im4 Do
+  Q
+  BT
+    1 0 0 1 290 590 Tm
+    (Data URI \(PNG\)) Tj
+  ET
+  q
+    32 0 0 32 445 575 cm
+    /Im5 Do
+  Q
+  BT
+    1 0 0 1 490 590 Tm
+    (png-1bit-gray) Tj
+  ET
+  q
+    32 0 0 32 45 500 cm
+    /Im6 Do
+  Q
+  BT
+    1 0 0 1 90 515 Tm
+    (png-4bit-gray) Tj
+  ET
+  q
+    32 0 0 32 245 500 cm
+    /Im7 Do
+  Q
+  BT
+    1 0 0 1 290 515 Tm
+    (png-8bit-gray) Tj
+  ET
+  q
+    32 0 0 32 445 500 cm
+    /Im8 Do
+  Q
+  BT
+    1 0 0 1 490 515 Tm
+    (png-16bit-gray) Tj
+  ET
+  q
+    32 0 0 32 45 425 cm
+    /Im9 Do
+  Q
+  BT
+    1 0 0 1 90 440 Tm
+    (png-8bit-rgb) Tj
+  ET
+  q
+    32 0 0 32 245 425 cm
+    /Im10 Do
+  Q
+  BT
+    1 0 0 1 290 440 Tm
+    (png-16bit-rgb) Tj
+  ET
+  q
+    32 0 0 32 445 425 cm
+    /Im11 Do
+  Q
+  BT
+    1 0 0 1 490 440 Tm
+    (png-8bit-rgb+alpha) Tj
+  ET
+  q
+    32 0 0 32 45 350 cm
+    /Im12 Do
+  Q
+  BT
+    1 0 0 1 90 365 Tm
+    (png-2bit-palette) Tj
+  ET
+  q
+    32 0 0 32 245 350 cm
+    /Im13 Do
+  Q
+  BT
+    1 0 0 1 290 365 Tm
+    (png-8bit-gray+alpha) Tj
+  ET
+  q
+    32 0 0 32 445 350 cm
+    /Im14 Do
+  Q
+  BT
+    1 0 0 1 490 365 Tm
+    (png-16bit-gray+alpha) Tj
+  ET
+  q
+    32 0 0 32 45 275 cm
+    /Im15 Do
+  Q
+  BT
+    1 0 0 1 90 290 Tm
+    (png-8bit-rgb+alpha) Tj
+  ET
+  q
+    32 0 0 32 245 275 cm
+    /Im16 Do
+  Q
+  BT
+    1 0 0 1 290 290 Tm
+    (png-16bit-rgb+alpha) Tj
+  ET
+Q
+endstream
+endobj
+
+10 0 obj <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Times-Bold
+  /Encoding /WinAnsiEncoding
+>>
+endobj
+
+11 0 obj <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Times-Roman
+  /Encoding /WinAnsiEncoding
+>>
+endobj
+
+12 0 obj <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [ 0 0 48 60 ]
+  /Resources <<
+    /ExtGState <<
+      /GS1 13 0 R
+    >>
+    /XObject <<
+      /Im1 14 0 R
+    >>
+  >>
+  /Length 193
+>> stream
+q
+  0.1 0 0 0.1 0 0 cm
+  q
+    150 0 0 190.5 150 380 cm
+    /Im1 Do
+  Q
+  1 0 0 1 285 250 cm
+  -1.25861 0.81603 -0.81603 -1.25861 0 0 cm
+  /GS1 gs
+  q
+    150 0 0 190.5 0 0 cm
+    /Im1 Do
+  Q
+Q
+endstream
+endobj
+
+13 0 obj <<
+  /Type /ExtGState
+  /CA 0.5
+  /ca 0.5
+>>
+endobj
+
+14 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /DCTDecode
+  /Height 254
+  /Width 200
+  /Length 8247
+>> stream
+ÿØÿà JFIF  H H  ÿÛ C 
+
+
+		
+%# , #&')*)-0-(0%()(ÿÛ C
+
+
+
+(((((((((((((((((((((((((((((((((((((((((((((((((((ÿÀ  ş È" ÿÄ              ÿÄ @     !1AQa"q#2B‘¡$3R±ÁCbrÑğñ4D‚’áÿÄ             ÿÄ .       !1"AQa#q±$32‘ÁÑÿÚ   ? –íöFßdÜ#ÚYğİEm>ˆÚ}pŒ%EmöFßdÜ#	cQ[O¢6ŸDÜ#	cQ[Q„Ü`¥EmFÔÌ#	dê/j6¦aK#Q{Qµ3ÂXÔ^ÔmLÂ0–5µS0Œ%“¨½¨Ú™„a,j/j6¦aK#Q{P›„%“©–„ì#
+»/ÔVÔmLÂ0–5…æ°Œ)±¨­¨ÛíŸDÌ/ZÆ9îpkZ2Ií÷Qc[ì-ÍÇç gö^7å®‡ r¸4SYê5&±¸Íl²6C4Ñe#Ì5Ï7Í8éí×x•ô52xSĞÕ|®«Gúüo&‡£LrW×m]]~	ô¸L#8pì¿1ÂŞLóš‹Â0›µScQXFpŒ%EaMÂ0–5„a7ÂXÔV„Ü#	cQ8F°Œ(±¨¬!3ÈScS=¨Ú›„aWfÆ¢¶£jn„±¨­¨Ú›„a,j+jUU?ÅRÍNHV}ÂÚÂj»­E$PPÚZ&¼Ö<GC’Üş²=ÆsP‹”‹xüyçÉx×vRİa­¹^/Tf–§’‰¡±ÁÎxêµô_HµµeK+`¶:˜ÂíÀT`nÇ—uõŸMúuoÒtÑTÖ·âïóZ¹~gíiò
+Áäç¦x^brN[DúÆ8ÉâPÉİÕ3æªOW§¤¦¥Ö–éhÿ ”Tµ¿„Hã¿î¥4U0WÓ2¦ŠVÍƒ,‘½ˆVıÎ×Cv§ø{¥,5PÌ•»•®:wqÑ5sêfª£.ßSlÎC[É%ƒÈ éqú‹ì²[ŸôÌ$œøİŸÙü 2ĞGÜ¯Ky>‹NÇt§¾Z ¯¦#ÂrÑİ§Ì~ëhÀÀ?uÖRµhñ“Äá-eÙ¡{Qµ3ÈÇ²›#Q{Qµ3ÂY‹Ú©˜FÆ¢ö£jf„±¨½¨Ú™„a,j/j0„±¨Ü#	˜F_¨¼#	˜FÆ¢ğŒ&aK‹ÀZ·ExÕz‹RT»Æ’–sIO‘¬ç²é1ƒçÂÃ ³ÁM&¨¶7kj^ç²2p^Şy\ş¢ß¦¨ôÿ Lb‹Í9?)Ùoƒ¸—Ë •éO9îT¦ú¾éªî—¶ÖQ|%-C©ÛÏ$…>Ü2ß//UÅg¶ÃH8'ÕVšsXŞ*º…rÒ÷»~)š×xSÃ›ïöV-eTt”³TT=±ÇKœ^p{ªó¥ï}şåvÔïx’š®M”Î-ÁkZppvM•åµÚg©—ÛC~Z
+ÇšŠXÇfr¥¤sÊÑÕà®F÷·æm;šß§+¢¿Â“x•Ÿ<úƒW6Z¯„a„ag„amÙÅÔÃÂÏÂXÔÃÂÏÂXÔÃÂÏÂXÔÃÂÏÂXÔÃYá	cQ˜F0Œ,,¿QxF0Œ%EáLÂ0–5…5ÔÎ¡PŞÛEr" ÌyìãéõRÌ-[­W+mMùğçaa#Ë>jœØÖX8³w§ò_:È¼|˜ë[¥Ó:º«@–ÖÑÊ?µZÃ%íó‚<û­z.»[NÈ®6+¬7<–Ïiœæ³Óæó]šjŠ‹kcÒÚğjÙøt34nGåÏ›•©à´ö#Û+ƒ8¸J¤}xfŠœ{¦QÂ‹Wuj Ë^÷Ø´pÙIÎıCË «–Él£³[ ·[¡l4ğ ĞĞ;û­øãØß•­ió±^ó‘1&oº)kœ†n¦]Ìœº6íoÓ!tvù®mT/wS/³»h?\ÿ øºØåwxŸâGëŠù“ÿ oà^„Ì#`äê/Âf…$j/Âf˜ö(50Â0™Œ£
+	Ô^„Ì#
+HÔ^™„ Ôf„Ì#
+»65„a3ÂXÔ^„Ì#	cQxF0Œ%N>£´›­Èdğk¢>%,şq?ÕI:U­©©ªmw8Ìëp¨c‡çoa ú­2ĞG9Që¹“NßcÕ4æ@k[ù¥‹  Ÿ/¨¶^QİèÜïB~Œßµÿ %Ş¤òƒÃĞ-KudUÔÕAÌs08LŒál´’ qùår`SuNñ:‘{<7å?\…Órg§|]N½¼çdÏß+µ´åvø¯ô‘áúÒşòOöş0Œ,ñû#¼-‹9Z˜a«
+ºˆ©Z‡/w÷lšCèß53­¶ùêëæ¥´ÆYM_Ÿ_ W<Ñ‡–mqø¹ã’}¸õFÒ;©‹WT«o—&SP¾š]µò<|±Œ÷<vS
+Qt‹SEi–(nôòŸ–º‹û¶~äÆN‘³›£ò0ÇyWü“rÒy<£	h!§Œ+ìæj/ÂfÔa,j/j0„²5dcÙ3ÂÂÍEãÙöLÂó	cS{#028@,L6£jaaÏ#Õ©cQ{Wc\Ç5à9S0} gŸ$±­x5z[_Uk¸Öi›‘(‹I1ÿ xä>ŠÎfs—©ÍaÁ””×+75ô°z´Ÿ›ù+RÑ_ÂÛMY¢Xä`ù›ëšãòqé>ŞiÓ¹K>ß•Ùÿ éZ^„‘õ.©„É .úrº[pì÷ö\ılÉ)º«iqniêi$>!8ÚFxZ¯YXt¬Y»WFÉËai{¾Ã·İoñ¦–%g«a”ùoEv‘ßhîî ÷P­_¯i,ÀÓÛ!ş%\s–Æñ¶/Bãè¨Î¡õŠé¨Ÿğ¶pú*<àl'sûwÁZš?Eêıg{|Zjœš™77qúù¬gÉ·®5eÜ~“kÔå:_bÁŸ[Ö[(jªuò†YænæÒDß£#î©Î³R_ß4­­¯wáÅ#‹Ü9àe\Ğÿ G§:xdª½nfGˆÒ	qú+WHh?¥bkmÔmtàs, 9ÄñÎ~ÊByÌßŸTâñ±é_áwKºqp¬–:íQIğÑa¦hÚé?çW•--=,~,Ó·¾Ö44-¹üã·aè¼Ç¯u½F
+‘çy\œœ™m7Ûìa·ŒòèÀ=»&mÿ VY©¨½¨Ú™„a,j/j0„±¨Ì#	˜Fú‹Â>É˜F0ƒQXuèió
+ÔN¡ZtU+ÅSÄ×¹e3O>xÏ§eCjNºj­4Œ£;s]×Bâ]ûªg0òÍî?MÍÈ[ER>’¾j]Š/á9g³ïßÓî£•½WÑôqµÓ\	ókrsûªW§Vyv¥51ºáR»2—ÃkÇ±+…Õ˜­öÚÈè­æ³ct¬¦“Ä<y­yrßÁ×ÇĞñ¨ş£wø>´kkÚ„VRWÅááÎÃí•ÆºugGÛkK=ÉÎpÌlÜ?uó•‚ôê¦Ñ[(ä«’¨ À	ÚÒ~•¯§?£åMT&}Mr4ÕEÙğ`ãU”säŸúQNnŸÃÀ®re¡hê~’»Úk×F×·“ö¤ÖúŠ»JÓI,”±“%$’3nFy=×'KôLéù$p:¦¥£óÊqü‚ÚÕô¿ÕëÍ—SĞ5‘Çox§|17ÍyÁíİ2Æs‡»É.9õÆİKïàÜş’Ôs·LĞŞhctµ4•QÄØC¶ø¡Ç¶GeOQt^ï©.UE/ğ¨§“{i['Šæ·ëÊúCª2Úªô-Á—¸#.‡Ç€Ş n[õP™jÚ;¦¶ÓTÏ,w!ø–ì2;'òçº§.Ò:Jy±AOıÙÌÒıÓVJ<°šùZr60>ØV4QÇb8˜ÖDŞXĞ ı“ˆç8çÍrn”µWÊ—Y-5î ª,ñdƒ%­òu½íÅ<ân\Ô[mşN™åçåKVJ^"•’–=­ –ıT
+—VÖÍz¥Ñu´²Ñj9^bt„~£iÆö»Ô…Úêu–]GO©ì5€†VSÊãŠ¬ÿ ¯
+·Éª6áÑòÊ-º_bL ÿ €ù£ËVÉ^.Özjï	ğ¶v‡xo,>‹½ÕéÙËpi´Åáy„Ì#
+lEáLÂ0–5„&a	cQ˜F0Œ*ìØÔ^FIò3ÂXÔø÷Té-W­õ…}Â+MLqM3šÇÈİ­À<Ô è£–‰ÒÎêx¦ÜÆw?ºú¼gò^cÔ­B-¶Î¢ê™b’Š]´÷I5mò–:azššÙÃ ÍváöR«oA4½$»äšª]§#'
+ß ä´òï%Ï¼İ¨,Ô­–åPÈƒÖ°şg»Ğ,ã‹~
+§ÎäåtÑYt¥½ÒSÓAKC˜ßçĞå2Ó¡¹ÄÏÅÛCg\ãì ºçTÚæÔš6¹³Ñ0\Ü'nĞ[Ç?ExŞ,¶ë¥¾Rø#Ã˜\ÙZ9`…TùJ‘³‡¦z¸öÈŞÄ|Œ~nsØ¨wTo´éãNM’°øBY=ßŸQåîºšã=×N2z¬9ìšHC‡˜iÀ];å¶Šålª‚ëOônÛ„İ´ò¶6Ú6v(¬Y–êÒe3n¦¶ÙMm}ÃVÕ4ü’L¢ç°'Ñu4=’ª£Y½ÚÙ¬§½S·}%'äÙÏÎ1åÙY¦¤£Ò’²ßKtÌ”µ’F?½î»:çBQêé`ªm]M¶çÊÊÊc‰Ï6ç+²k#ØròK“‡Ó‡µ3Ÿ[r£¢v+«)©ä=›$¼}Ô.M[-¯¨ÔÒXm•78+XØ*ç‰»£ˆ|Í>ªÉ´è%µìş)9àÍWó8•†«ÕZg¦¶ˆİ[áQÅ#±^säysïR9|N›ı<Ôö¶H*-vêÛÂ¦Š)+)Ûº)Ş0èóè¨^°ØõZò’ï©+$¨ÑP|İ‘‘‘şª÷¥»EsÓ¿ÄíOlÌ’,[»gnpUlëv¨§ºÙªôM]D[á™ŒnX	;ZO
+ˆ]£¥’7	&é5%DtpÔÒÈÙ`‘ ±Ììáê·»(ïNìõ6]-OO[–Ìâç˜¼¡ÉÎÑÿ ~jKºêÅö<fH%&“³#</p¦Ìt„a3ÂXĞ^™„%aLÂ0°²ıEáLÂ0–5…îĞ³Â0–50.<y*úÛ¨ur¬jiã–S‰Mßİµ¾£İX¸Q­oe³×P›…Úœ¾JF—1Ì;^ì~œû•^Hì¨ÚáäXr[WgkSØ´ŸP(¥µÖºš¢V7,–!óÄ3ÙImö±n°El£‘Îl0ø1¾S“ØŒ•é¦“´è‹eñòÈV>"Y&~D,?£í•: »Ãw²¾¶Òñ<na1<vqÂçx==º²¬³è-un¤’†İª:C3ä°à8ú©t¬–ı{¬•Ù 6ÖsÜçTKOVõRÓË[5ş‚–ˆÍ$_
+Úl? ãó}í'Mm¬t’ÖÖİ*'“%ÅÕ$4èÊŒä¼œÜ™¸¸¥o»üÍº‚šİE4X¶>1õ[GÄ8Ùµ®æÈî¤òM5ÚÙ%Cæ‚İQáBdvç†ûŸ>Ê|îFsÜğµš¦oÅ©$Ñ[ëÛÎ¨‹QÅgÒòQQµĞø¦¢­»šãÇİGë´/VªÏë4ñÜ.³°4Löæ8ˆó`ò*eÕË$—M)5UœÛµ·ûM#›ş1ä}F<—'Bß£Ôšb½¤ËDuı2ÍÂÚÀ£%Üæõ	fƒR‹ìjÙ.×/§`±Çe–¾­­ğã©¦Ãaúa;FX¤³Ûå}Qa¹Õ¼ËS+?+œI ¦T÷ÈÈo²r9WCbíìÜ¬™¢£!¨Ÿ1ÁÏš6¦cœ£j¶ÍMEáLÚ´bºPËv–ÖÊ†ÿ Š1+â ä4ùçî–N¦Ö…2—ª÷	dj/LÂÆ£0Œ&cÙXY~¢ğŒ,ğ½ÀK‹Â0™eæ=’Æ¦Z7ÛT7›EU¾¤¹±NÂÒæ[îº[ò‚ß.ê,”švŠÅÚT×Ùf±]µGck|8âd[_#Gf¹ßùZznİÔ]!DË-´ÓW[âØ¥sƒL,>\òp­¬n#ÈÙhß.t–KMUÆç+`£§fù|‚«Ó‘ægO³44••Ö(å˜Ï1{¥’L~§rp»hÁÈú•ÉÒššÕªí¯±Ô	à'kƒ†×0û…
+ëŸPÎ‹µCCBÇ¾ç^Óá¹£–·OÕY²Š5Ö)äÉ«ò7¡wŸ‰ê&½£‰!u`’,Àe^™À#æ¿è­¦î‘Ü.zŠ®9b¤¨$1Ó×Ísƒõ_JGó´8ŒdvZòz4µI~Hh„‰0æ‡dg*Š»[ªz_«¤¸R5ÒéK£ÿ !ÿ ·yÆ_ä¾ƒF1u×	]&‹šÙaóÜØciîNAãİ Ú}Œ2ÁNHëÄöKÍi‡²Ëjá\/T:WHC[s•±GMJÀX÷¸Ğ1ƒî¹VmwU•·ZÚc£—.ô¿â4sÎ;-íÒòp#Æœ“qV‰–…ÎÓ·ÊCom]±î1ö{dn×°úäº¸çœ¬”¬©Á§L^:ãf¤®š‰cğêà;£œ9¿õúÕäåpôÍmmI®¦ºEáÔÓÌâ×€øÉ;Hıì–J‹ò¤yw/?lz¦aa&[PÓúÁOÛíÂY‹Â0…6F¦xFp¼Æ<²«²ıEíFÔÀÑëÁIŠS,Î`iØÎÎõ>‰dêe„co4Üw8Z•Rƒ4t­8‘à»ì1Ÿó
+lj23¸ü¿“È¬öÉ17~lyDÇxtt$C¸4ÃÑ1—PÖÖ—Ç[TúˆóÜ4ğòQd¨v³oSW>×`¯®crè#.õìªc¢k.ºƒFšëÕ}}®ç+_WC)ùÂõV–µ§uF‘ºBÀC	íõ
+©«¥´k®œU¶G>Š¸2‘ÃÉ® r¨Í'ttº~8´ÛGrë¦­úğo¶ˆ¾Û;[e;?(†>Ë‡¨¨(ª:Á¦*îÑÇSC=;Ä“ä©ç?ur×RÁ[M-=Tm–	‡5ÁV¿§wŠÛL›Md/£ø–T*?<!§8g+>ÔËå‹õVEçä´£†8£‘1±†1¬ z-†öçºÖ§†[!.‘­qgÖµöíKe·K[ZğÈ£Àîãè=ÕT_ûEJu²÷=³YéJh™DµU¥C†ÆşqSı3®´ş£|l·Ü ø§ı+‰}Â‡Á§"×—šûí[¶ÉLóMJÓşéì<¸{©V˜ÕIw9³hZk×Pa¦»Õ¾êÚ(üj¶NHk·ön=xF–ñzwÕi˜`?ÕëŞd c{S÷B¦zÕjÍÒ7øÑÊÆS™ês8+Ô"÷õWCÁä™\?H	'}Ù”R^ÕØâéyã£êö®¶™jä‡°#¶>ÙSmGd–ñoÅX!qŒŸ›(tÎ?Ò®¢1–
+r×{gÎßÀ“é…µ‰ûN?2)e9ºsâ§­­vú—@Ã#½]…²blu†£|ûãüÊub("npÆóì²•¸|>»•–j8÷5®MQË$™ƒ,iìO’Ùo-o®6şl÷K§İáüİò¦Æ Bá	dj3j1„Ü/6ªìØÔå]j£†JjG8±Õ1‡‚Ş#ß·îºÆ#Œ0Ê+$¨ëmA{ §·@3†½äàıN	ı”óiQfR…PŸÈ`	Q­T/L«¾ƒ˜jYNå¬i#ùœ®–¯’h4­ÖZfÈÚi6€qúNT{¢%éu°äm“÷ñ”²T=¶wuŒ†!{“õ2Šb?úÍé^çtæÂù9y¦ırVßQ©MV„¿D	RHğGsµ¹ÇòZ}"Õ]2ÓÒ¼¸ÓåÉKîN¾Ë$Õtíª¦–ı¥aiÇ¡TµÆ:Ûÿ Gä«·0Ëu°\dtCÌ’¼‹{‡ÕWPÃ6êUL°iËÈlXg‚N2ç}yXdî”%D£¥ºÎƒ[išZÊIA«¦Ô×€3‘õS2I ªªuı<¿RëÍ"×AJ?ˆÓGıÜŒ'¾Ñì¥šã[Apé|w­=TÏí3CˆÂüÇ¶Ut~W†X7ùk¡´U>ÒÁ%s|&;³Š§4}eëWÜ$›¨­ŠŞú	|(h ÇŒyù¿ÉMt•æão¿7©¥l•.g‰ATÁòÍ9çÕtiêmúÇøÕ‚ÖOoœÓ:\Áş ¬¢õey"å‘SõòßEbO],T0Rj)«„p>›wváşªÄ¿TÏ§ºxØh[|®oáµŸªwcyÿ 5Ša¬:‹G§«`tói©OÄƒòÉ/ª¶µœİ.–:¶–† ÌG¢MÛ#\b”ƒDYYaÓ4t›ğßbÆá—5ÓÑ6é®¯wÊ“âQÑ€ÊGú >u-Õ×xì–:šÙFö0m,İ»…ÔrUiı	Mh²-Úàâb£’Çrâ~€¬K?#4M¨ÔZ‹P¾`)^À8?Ï
+a#~L-];mm¢ÉGBÓ–ÄÌêO'ùånìsß“ùZ¶cÙ|¯y¶xÖ`èw¼ğ¦Ë–°–÷(‰›Y“Ü¬¬¯Ss”cåÀL{„±¨¢Üc(LÂÆ£0Œ&aXY~§
+ñføÛºá¼9édùÜ/·şı×e¹$Ÿ"™„a,jkÕS¶¢’jg’V9‡èAê İ%§}š†á¦%&Ó1kF›!.õóıÕ‚F!!Ôš¶Õ0nÍÀ`‘è}T—j<:Šy ¡ÑHÒÇ7Õ§º‰ôö×W§ÍÎÓVãğ¢¡ÒP4àâO÷ëî¦€/6ò¤$Ò£ Üqü–…îÓIz¶ÍC_‰£°8-#±Èåt°‚ÂTì„Xo_¦5˜d’²‰øsÇØ72šƒë^ƒÙ«›,Ú^òûlÎØàÄçŒ–á½‡8W5ÆİKs¦u=t-–#ä{¡\ tÙ8şãƒœøïïûªÜÈriw)»®¿¿C§ßj¿iÙgÔv¾:èİŸ«#éÙqz=­µÔWZÉE’ZÃ~‹ã–Ö¼çñ>ƒÑ^µú<X«ª	¸¬ˆD%ø†únqÈR›u%º‚
+:44"‰”ù
+ª%K¢í?ìÏS×VjŠßŠuÓç7 Ã!?“·¸Vn¯°RQ
+™®P˜œ;1áÎ?aÊÜ¬¤‚¶™ôõp²h0æ¼
+¯ÛÓMŸRM¨,”®š¤ÄÊdü îÛ†î;#‰Œ3'Úfw{É¹SË¨.°:+%¿æ¤…Ãš§Ùjf‡¶].w9µ6§ŒÅY'Tû¸†/§¸]ËuŠzªY¨dmD |”¡¿…ú¤X>aLcF9ómíˆŒîvõ{Ìe§É3j0³³SQ%¡ÄØ,ˆçÙ3ÂXÔYáLÂ0–5„&a	cQ˜^a7j6¬õdcÔ&ap¢Æ¢ñÈî™ru¸kÍ+n¸¶‚¶ùC[İµ±™9.ôú¥“£~	&9F\•Tñ5î–xØÖÎqp uÃÓzºÑ©¾:KUS%¥£Ÿá¤”ğÓ' K#‹xÕV;-D×•<53±B]—;ìë¶BøÃ˜ÇŒŒÃºXÔ÷·b‚<»•£UzµÑLØkn4pÎîÌ’V´Ÿ %r«5µ’Í¬Kw«ˆeñP³şb;%oà‘íù@„c@ÂçZ®W;k*>j*‚àÔ·iş‹#-|4’>¯à£ŸôeäGìI)cS|·Ğ¯vù÷K¤”Iß$O”q'†rĞï0µ*ï4”µL§—Åñ\p a)cK7ñëÊóE›~`2>¡"ZÊX¶jˆ#qçx,FaY·deÃÕ&¢²–˜f¦x¢ñ¸7üÒÆ¦xFÕtµYøZˆ¦Ç}ÇìŸöK‹Â0›„a,j/LÂÆ¦x^ág„aaeú˜abî<¸MÂ0–5!ZúÏ|¼S:€¤·˜ÿ ‘dJşù û%YØú=`’gÍCj®7»Äñï.iv{}WĞÁ^àìd».u2¬Ş'¨ÓğÙ u-,me,`6VãÈù›¦ö[¦‹Óô«V™ª’zÀ×V:±¹‰’ŒüÊşÂ0›YLj~¿U^ ½Ş.,íLAáØDg³Ï°Tş«Ójª¯œ¾[”ğÇ!lmŠO”·<`/±°½Â‹!:(.”tşûG¥%ŞŠ–KÜ…Ø}Í¥ŞG–¢Ë£õmšË=5¶¢ÅI[Pòéª …ÍsøÀòòV¦…;&|ı«ºQÔŒL¨¢ÖR>±§ò¾Bn‹¦=ÕZlUK¨ïT×™ŞseÜæ·÷W˜Qd[(ö+z¬®®šáª&§Š¦s ‹-ƒä9R½)Ò;v¸C\ÛÕî¶¦3œÔÔnaÿ ã…fáKÎ%ÊØ'™¯55ìÀÆØdÚÒµf•³o£¥¡s$Õ4½äıT›FÌu4şÎ{‹O£;,$µÑÍÍE<S»Ì[øFÆ¦¥55("šsßÃ`ne±€³Â0–50Ç²0³Â0–50ÂxBXÔÿÙ
+endstream
+endobj
+
+15 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /DCTDecode
+  /Height 24
+  /Width 24
+  /Length 18690
+>> stream
+ÿØÿà JFIF ,,  ÿáCæhttp://ns.adobe.com/xap/1.0/ <?xpacket begin="ï»¿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.0-c060 61.134777, 2010/02/12-17:32:00        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/">
+         <xmp:CreatorTool>Adobe Fireworks CS5.1 11.1.0.205 Windows</xmp:CreatorTool>
+         <xmp:CreateDate>2013-05-22T14:24:01-06:00</xmp:CreateDate>
+         <xmp:MetadataDate>2013-05-22T14:26:15-06:00</xmp:MetadataDate>
+         <xmp:ModifyDate>2013-05-22T23:18:08Z</xmp:ModifyDate>
+      </rdf:Description>
+      <rdf:Description rdf:about=""
+            xmlns:dc="http://purl.org/dc/elements/1.1/">
+         <dc:format>image/jpeg</dc:format>
+      </rdf:Description>
+      <rdf:Description rdf:about=""
+            xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+            xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#"
+            xmlns:stRef="http://ns.adobe.com/xap/1.0/sType/ResourceRef#">
+         <xmpMM:InstanceID>xmp.iid:41690EA32D2068119109CAE49F9F50DC</xmpMM:InstanceID>
+         <xmpMM:DocumentID>xmp.did:41690EA32D2068119109CAE49F9F50DC</xmpMM:DocumentID>
+         <xmpMM:OriginalDocumentID>xmp.did:3D690EA32D2068119109CAE49F9F50DC</xmpMM:OriginalDocumentID>
+         <xmpMM:History>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>created</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:3D690EA32D2068119109CAE49F9F50DC</stEvt:instanceID>
+                  <stEvt:when>2013-05-22T14:24:01-06:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Photoshop CS4 Macintosh</stEvt:softwareAgent>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:3E690EA32D2068119109CAE49F9F50DC</stEvt:instanceID>
+                  <stEvt:when>2013-05-22T14:24:16-06:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Photoshop CS4 Macintosh</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:3F690EA32D2068119109CAE49F9F50DC</stEvt:instanceID>
+                  <stEvt:when>2013-05-22T14:25:17-06:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Photoshop CS4 Macintosh</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>derived</stEvt:action>
+                  <stEvt:parameters>converted from application/vnd.adobe.photoshop to image/jpeg</stEvt:parameters>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:41690EA32D2068119109CAE49F9F50DC</stEvt:instanceID>
+                  <stEvt:when>2013-05-22T14:26:15-06:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Photoshop CS4 Macintosh</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpMM:History>
+         <xmpMM:DerivedFrom rdf:parseType="Resource">
+            <stRef:instanceID>xmp.iid:3F690EA32D2068119109CAE49F9F50DC</stRef:instanceID>
+            <stRef:documentID>xmp.did:3D690EA32D2068119109CAE49F9F50DC</stRef:documentID>
+            <stRef:originalDocumentID>xmp.did:3D690EA32D2068119109CAE49F9F50DC</stRef:originalDocumentID>
+         </xmpMM:DerivedFrom>
+      </rdf:Description>
+      <rdf:Description rdf:about=""
+            xmlns:tiff="http://ns.adobe.com/tiff/1.0/">
+         <tiff:Orientation>1</tiff:Orientation>
+         <tiff:XResolution>3000000/10000</tiff:XResolution>
+         <tiff:YResolution>3000000/10000</tiff:YResolution>
+         <tiff:ResolutionUnit>2</tiff:ResolutionUnit>
+         <tiff:NativeDigest>256,257,258,259,262,274,277,284,530,531,282,283,296,301,318,319,529,532,306,270,271,272,305,315,33432;8147AC03AC2C15F0B45CD28A382A3722</tiff:NativeDigest>
+      </rdf:Description>
+      <rdf:Description rdf:about=""
+            xmlns:exif="http://ns.adobe.com/exif/1.0/">
+         <exif:PixelXDimension>600</exif:PixelXDimension>
+         <exif:PixelYDimension>600</exif:PixelYDimension>
+         <exif:ColorSpace>1</exif:ColorSpace>
+         <exif:NativeDigest>36864,40960,40961,37121,37122,40962,40963,37510,40964,36867,36868,33434,33437,34850,34852,34855,34856,37377,37378,37379,37380,37381,37382,37383,37384,37385,37386,37396,41483,41484,41486,41487,41488,41492,41493,41495,41728,41729,41730,41985,41986,41987,41988,41989,41990,41991,41992,41993,41994,41995,41996,42016,0,2,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,20,22,23,24,25,26,27,28,30;67A1C9BE989BFE80EE3B19C568FCEF2E</exif:NativeDigest>
+      </rdf:Description>
+      <rdf:Description rdf:about=""
+            xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/">
+         <photoshop:ColorMode>3</photoshop:ColorMode>
+         <photoshop:ICCProfile>sRGB IEC61966-2.1</photoshop:ICCProfile>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                            
+<?xpacket end="w"?>ÿÛ C ÿÛ CÿÀ    ÿÄ               	ÿÄ &          !1AWÔÿÄ              	ÿÄ 2         !1Q"#2AÒ45RS‘“”¡ÿÚ   ? S·\€®ZÉ‰–õw2iä;™
+šviã4Ëep™JRn€>€×ğÎÔxs—hÏO_2ë0‡×á5~©ßªÏw–Â³”9ú¿)	û‹ä¿Æ	!e¾‹S.WT…¡`°	Óò/‘~B‚½—°öı‡°õÇ—ª9i"ë´‡Û¢òA×O.|ºa;ë5öáSs+¢õø¥Õ?î2À—Kñv¯ZÈ­Şêv3/({ğ¶zßóvh.ğTöCõä^û)½úæxñ“/RÇÉ·
+8ÑšæWË_tCEjò©Ùºµ~©Ùpóğ®êÚFh¬Gœê×MÑÄ&NsQ{®Š}ü°Ùé-ŸbræAÏ8bşLŒÆ‡ÇÓ–VÌ2Rvµ»ô+‰e&ªò+/ò¼Â^\ÓM ñ¬ZÅ¼m"åFM3Îr³¶¾§ª­‹_`GÄ	gn¾1„L·oÍa†ŠÖœRL ò¨R<ÃP±éª£»,ÖÖSÚXÏ‘6[$¢ˆ !ZÓˆƒ½¬×8OÑÎÀ"‘LÍFÆèG5tÕ¸s½ôÜ¹‹6†·Z¼µ¦Ùë–¨•ÁpÜZş!É™zIü“a•¶ºÊï!PNf<ó1‘ñuVíÊcYŒ¢‚˜)Ê¶x/,Úe£Ê ¥E<cË•YfÂÖ²ªFÒ„£E3š	kÒ%X<¬bLç#hª˜œìåşèc˜±Î#†8%¾ú}…ˆwq7ÄŒÑ–mÈ€Mc±¹lÜtEÀ§/e\]}¼éò´­\bÜ=;Sa*ıÆƒ<Ê‰ŒÁĞÕÛDƒjCHâØé®cìqkDÍC;“2R*–aHÀp£gî+Â–•ÃÌ“Z`œÔùÒvEá¾\×[È<d,‚e`„q’!Ä.` Õ…áâg“a5ôª	Ã(GeG±‚2Ä{#EmhBuXÍÜ5l¡=²BG£eç¨ø¸^è{’µ+t—r“¶š§±N¹È×W-!ˆo*·rÙk+•[¸Ab2ñ9QÀ""Ë$åØ•ñÚ¶­‘Qd4Tb"ôâî˜©½È·RgÉ
+C‘HõE@½{¹Wôã—ú«»?_ªõı?|ÿ =¬eÍ!ÿ ¨_v½›Şñ~Oô?íÁsUu[qã¶ÏY¦'5w`¢a#3Î*——’Ä×vq±±­.¬—{! õve"H¤™Dê(s¤(	Œ= 3·ˆ™~Ã.O,"½Ä‰!cdÊªá¹İ×è˜4ÊyâÜGº†5’ç9Áz"#^Šª¾î?ÿÙ
+endstream
+endobj
+
+16 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 16
+  /ColorSpace /DeviceRGB
+  /DecodeParms <<
+    /BitsPerComponent 16
+    /Colors 3
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 229
+>> stream
+xœÕ–Á
+ƒ0D§àAË~·ı­ö–’†&f“Ìz†Eä=Ö B >/àšïdrs~='3_ÎâóZw·ëÎt(p¢3—óíòp]Ñ`ó²_èìòyt¦°À?t¦ä(Cç\l5èì2õèL»èÌ©g óI°@g.`‡Î(`øÇî ¶gçôDgï&Ğ½›À(ô(`÷‹Îû60½Y`z³Àlô(P4Ğ9¯Ü€:{±€z±€*zÈŸmtÎ3ğ€ÎøAO¼¡3¿æBş^
+endstream
+endobj
+
+17 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /DecodeParms <<
+    /BitsPerComponent 8
+    /Colors 3
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 297
+>> stream
+xœå–MŠÂ@F«1şDw.¼Äxë!ú.2‚dFgFãÂˆÉ$äÃ¸²V•J¥_¿.íb+gğÆ»âúGq98`>/®/ ß€‹€ÑˆV‚ aôû"€ş ¿×ªA·+Ô„¡P: Î İªPZ-@µTƒfS¼ŸAˆ 2ø…~4¸@]5ÉàêªÈ€ú_>ğŒÁtêÌl¹Ì®1333$ƒRÀdâV«8$«ûlB' 4I²^Çù¢ùÊø7ƒñØm6©MV78à±Y³áĞm·tC»|—wc˜Ùn'[Î|•¢(û©Ï%· ƒ jûöĞŸA¥ ƒÏº d@·åº®ZY#
+endstream
+endobj
+
+18 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 2
+  /ColorSpace [ /Indexed /DeviceRGB 3 19 0 R ]
+  /DecodeParms <<
+    /BitsPerComponent 2
+    /Colors 1
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 34
+>> stream
+xœcøºŠ„ğ0ğÉÁ« ,|¨ÒÿøƒÌ= ½I
+endstream
+endobj
+
+19 0 obj <<
+  /Length 12
+>> stream
+ ÿ ÿ  ÿÿ   ÿ
+endstream
+endobj
+
+20 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceGray
+  /DecodeParms <<
+    /BitsPerComponent 8
+    /Colors 1
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /SMask 21 0 R
+  /Width 32
+  /Length 40
+>> stream
+xœcùÏ€°|'¤àíŒºHƒÁ‘ƒÁCÂ‘ƒÁ„  õ?
+endstream
+endobj
+
+21 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceGray
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 51
+>> stream
+xœcàPĞ4´tô
+ŠJÊ*®nî2gÉš-{½zïÙ»oÿFåGåGå‡­< ˆÒü0
+endstream
+endobj
+
+22 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 16
+  /ColorSpace /DeviceGray
+  /DecodeParms <<
+    /BitsPerComponent 16
+    /Colors 1
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /SMask 23 0 R
+  /Width 32
+  /Length 1750
+>> stream
+xœ¥•OhçÅ?æï'Íx$d?[TŠí(È…`0m!i›El·!'Í#4]¸£@¨K¡µßÂ£E/íEH³¨£fQ¤„B¡¡¸àØ”R¨‹))J 5µ]GÓ(ªp%ydg4£Q¯Ó·íêÌöãwÏ=ç\!1ÈüóP=]KÿóOŠ™zÚ“#òŞ™§é¬Å}bİ·óÙŠ»o ÷r­¸CÚÛÖ}+y0e\Ø¿»‡õ’¬gëI1C2\-é1ƒ|z…ÖØ!n ?hFì‰Ö’‹Û	x ·–ì‰&g=8øÈàöµÆïµ\r¢DŞcT11í•©yZf§9Ù'[²-;Ó®Ü–áÅQìK1CÙW3ºRWjJu&h’Â!·DÄôÎ±JP›ìg\Ù7b:ÍïœùÖÅösµ.:óÍïLÇxiÿ½ÆòîåZgulg%40:rBÈ<ùšW&V++ÄòfOàK¼d~l§Z¡ö‹ğ@Á¾gªÿÙËêûõŸ«ÍÊJ×pP«Â—şCzz…š'Gˆ#å,qú†ià"?y [7F{!'nİ< ö&õbíß;ã¡œí–B±€,\ãó¾Ğh–©Mòq½$&Š£|TŒšQ{È"dÍâ~Qÿ¡VÜ)şQ,ia½ë§ İq”âËá/€€µØ!všıŒ	Sß‘¢F’,ë÷‹¢a4›®‹P³iº^­V*¥RQ‹Fş¥‡Rb‰Û'á<7Ü'Ü 'seöÓ`¢$¹õu‹©ÎËæ°ûB¦ÚX©fËª¦n-÷÷…Ã¡F@V}2ŞäòÌ¡Ö}üÀ'ûFğ%\ÄQ–¥N¯«ÌóõÎcØ™CÈ®N=­o¿®ÆS‘Ç]]]Hù}XfL;ßŒX²éğ?ÉGı~<Î<_˜ÂZH;’¶Z¹ùõÇBdp¶÷d÷í`Phø%î¿ìëÌC:O€M'l6ıñ.FEQLuÔ±¶	Äúbf¡òÒ/«'´c/ôˆAI|:'±#ô«Ôy*O:@ĞŠ·–œigŞNY7Í¨at^îì	iØâFäôËã=ZXüúll@ÏŸò½³2ïRcä‡äš7ç]÷»rëb+ä4ì¡fÓ6†¤ûb‘Ó·FGZ¸uõÊq­[gñ
+»MÓÔ6)yÁzgˆ<ñ ÷Û‰¶Ü~®ıb{Ñº®û3g?2c/¾u	¡»wúû;n³¿SsdŠø” İ“òtxâo=ytDÿçGÖÓnFP`„‚·‹0‚j×Óå¥G·îŞAè­KÏF8%NÂ[0‚@ª0Âç0B‚H“µô3ñˆX4°ÍT)òËÆâ×W¯ô÷#tõÊÂ-1
+ªÏDä™,ˆ¨€ˆç¼C@ğl3°Fõ€ÏëÕìÓú¯?®nœ×:n#t\;©E½ù¿5öp*;A[°Æ$¬±–¶·¡mÓÀNê?T«euûûBä„6 Ê³¿#Ô}j R‹¬FŒÙİ¿÷ÏqË,	FJP½@ ]÷ Úæ%È{±V¬T4u]œ=öBxNœ¥ÀÊâdxêØ›ÆlaÊJ÷ö¼õßÁk`åX¹–†ªüÊê=}ò^,•¶–ã©Ş“€û¯)„ğJPíwOZ©uÕî3MC0TÓS’I4-]·\ÿygübQëï‹<T‰ïe·‰Ob·øŞ Ô}Ûxl÷mıæ8oeÍ¯@œÜá ¨µÆÌîåj³"” ïápWL*`LÓMc,ÁàŞi:NQs[µhó¨ùÄL`öïBQ+µÎr6¬C]4 °ŸÎşIm:B”Àò¾!àÁâ¡$¸’ƒ_k&› €3ëJu¬²Ò-uıJA]¤ °ó.)y@Re²œêŸ²†jemÕ•ÊYwØ¹gWíDóè%8Ê4m(¤Å’°ê÷AŞG¨1ï §!ï 5ÆNpËş;ÂªY²h'æWVÀ»8	'z²–«Î„¦ƒr@†ª|ÊJf_§_%?ôÊ8<ğ9©ĞKâ5ß^1ÂÙ»ç*;3nÚM¶·PÏÖ0\zş4­„7aÃ©óäqÆó-BÄr:Ï<dxÓ'™Oš×ìjë7]Åíœ+A=È’pe¾„ÏAÓæ™”UŞ'‹ˆ„÷•¤Á6\'ÌD3i'œ„›lÃMmg€@Ìˆ’ÂşŒ¯€¿àf™3
+]çx×‰¯Ğux ‘q¨^f”IsiÌ4ÍsN¸•v¥6\ö¿ ,H”
+endstream
+endobj
+
+23 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 16
+  /ColorSpace /DeviceGray
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 147
+>> stream
+xœc` ´’!ú9Éƒı†½¤CTıN‚¤ALıAS‰‡Øõ'Kqë/Kâ×ß¢ˆÖ?e)nHœş¥šØ!ñú·®Å„¤é?fˆ
+I×m+’§ÿ¹%’¯ÿûŞï{R?eî§,ü(‹?ÊÒeé—²üCYş¥¬ü ¬ü¢¬ü¤¬ü¦¬ş ¬ş¢¬ş¤  ìÀã
+endstream
+endobj
+
+24 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /DecodeParms <<
+    /BitsPerComponent 8
+    /Colors 3
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /SMask 25 0 R
+  /Width 32
+  /Length 100
+>> stream
+xœíÕ±À0DÑ+(²E²ÿTDò‘.l@õ[x€{‚“LX—ÈºÑüıÓ š wğ¢ñ$À+J4ş î`écÁ!ÿ5Á 0´€áƒÊÀ4°ıŠ~g 
+endstream
+endobj
+
+25 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceGray
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 51
+>> stream
+xœcàPĞ4´tô
+ŠJÊ*®nî2gÉš-{½zïÙ»oÿFåGåGå‡­< ˆÒü0
+endstream
+endobj
+
+26 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 16
+  /ColorSpace /DeviceRGB
+  /DecodeParms <<
+    /BitsPerComponent 16
+    /Colors 3
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /SMask 27 0 R
+  /Width 32
+  /Length 3277
+>> stream
+xœÍXmoUU¾çísÛ^û‚ƒÊ4&E>Œ’":NZ±F±€hf¢118"8‰—âc©‰"$Ğ‰‰
+¬qÆˆcuÚˆZÛ¤5áĞÌL}ÁXÚÒ—{OÏÛ¬çY§÷V~ÁôÃÊî¾gï½ÖÚk=ëYÛNä/“)}˜‘¿ROE{®œùÿœ·Uyï.ï.ùïIL%Ë!ã}”G[)C†k)9oQšPÆ”Û Îgî¥|oÁë)WPîàœï‡¡üåFÈ9şêï¢ü7•n§ÜÃEs¯Í·Ê{ÃŞ°ö<ìä1*ÏÃöó0Î¤õ[üŞºª¿FÉùÌJİm%å#Üçï”œ_°çİ”;©î¿(9_ê ÔñÃ©êË½!˜ãu—PAùÜœX˜´Rõ>Ê[x$=rÆéåa\c?AßsŞä¼qåîÈ™D÷YBùPeŸP÷i ¤wı¾Š,å(ï,ö©êÅçs4@\í÷¸¸.õ;”¯j­™4ò·_Ñ z4ü+åü†˜¼ëiÀíTı:u+%ï-á÷1eôîÀ~9÷K*ı3J†qé•å÷³#ªúloUnÂƒhês·”o@£=Zå«—V/•Ñ$g…Ñåñ_óÈšñ7š1H38cP&œ‰9(C•¿¦êûsTúG*QÙK3©ê3ª›p¹²şRWLœëÉVr@U£]CFıåkVÖH'LÇø8ï¢ô“ÒáŒEişƒç¾Nù[®â|ôWq<GéÓ5¥7©4gf¾ƒœTÕ§jšaN•Y©×“˜ğ¿toA¸·ÉNGœ­ˆ1š¨í2êw(Ÿßß-ÿÿğààJü™÷À±¹™7ğ9W2âc\Å˜v-XõªÎñÌ_ §.«êS{ó™»¶ú{ÜJÎB^¸rş>WÖ+œ! –s¶œ)<2„Òc´kÈ¨ß¡|­üÉˆ†ô¥@‘÷àğ,`Ğ€„»00‚€ªûE~?3CeyÆdªúädíUòKWµ0»¹JN.å½©y‚v§ğáH§µåPdWxTŒÑDÕh×Q¿Cùzù“Ñ£\£ØL9KiSDı„U"T„á÷E§)')ÇÛUõññú:˜“Ï# ª
+.o“¬ktE‹¹Ş¬„PĞéH„ÛkDöØ•Ğ¢¤È®ğ¨£‰ªÑ®!£~‡ò‹ŞYôüšÊ½@èK‡Ššœ‰0Á«Tıwô7ÖKU{`‘øuò@íÜJuµhÕåhn-î8›•=|Ç•Ó†íå¨öQ¹×«b€ÖS-JŠì
+Š1š¨·2êw(ÍÚk$ü‚a@ô˜ø'÷ZU¥U'Ş_úòâªúÅÓ×H›h¯¦Çkê\9É¯+7w{öËşDäy[êKxØ¸‰j-	¸øó±r(ĞzªEI‘]áQ1FU£]CFıåw6J-1ìÆYwí:š8Á€!ªüx
+rô%U}tãS0§a	n%/;rÍÈ×V9rÁsÎ³f»	õÅ™o šCÓ¸Ç\pÊbH´jQRdWxTŒÑDÕh×Q¿Cùe‡–’PèÇÿÿ]G©ôWAÛ®ªŸÛ¶ì Ì¹z=n%/«‹ŸæV£ˆ¹ê8!ì² ^KP,ºÑ:+ê1W£R™’É
+CP(>dn+ LYLJXOµ()²+<*Æh¢j´kÈ¨ß¡ü*ùËd.œçì8dÿWªzÿª›Åœí‹Å€é–qTé¯9‚Âq»ˆ…â—MÉ‡x‘9†Šd~:b€œ‡vÉr¬­ÇX@æ”;û•Å(ĞzªEI‘]áQ1FU£]CFıå7>¸ñÁLæÁMªú‰·6n ÎˆŠşÛîzVD¾å‰Ší¦ä@rÊXàÅ	I—!7 eğuCB(Ó—MQ»“Ôô½Ì½åPÚ›rG†PÊb´&²jQRdWxTŒIyêD%dÔïóÊcÅÆ'Şüâw»c…u8È0Ÿ…@ë’Sp¾7ö&’Ä™ÁŒd…Ñ•À˜ŞL+œ›££OŠüSæÅ+Ù¨Ò^åBJÀxJ´jQRdWxTŒÑDÕhGÈ@áà÷o8yâ$îcÕÍıb‹?ú¡MJó´ìíõ–î@(b'{<¬Gˆâ³+. €cÑÈ‰åŒ¾¤AHA"ybô$•ÒfC{J{•;*#‹I©€ÖS-JŠì„GÅ$*”\u3|­o|‘ßßßÿUÿWÈeÏ	d\½+ò—°:7U”âå uœ`w…b€u+N¶F¢&@K,˜o€¯ASóhüxÅ öIÚl(cOi/P–²¥¼-JŠì€G(¶ìàbÄâƒşÛ¢ÒzWÆşÁÅÉİ´{Îm;·ıÜv`UiÄµ–`uşì”k.Êi®‹œ}ÁÓ"Ÿc.„Â‰­0²ç°VDC€şØ¬ôÚâiŸ¤\HùÒŞÜQYŒR­§(J£’OÁ§W¯ŸOÕô"Âí:$j8N9= ØüñàÖk}iô%TànGöğÛ]IâšÁiù.—Ã	n—/7œ“²GÂ&Vhdoƒ7D‚BæxG…jwª-öIÚlTTWî¨LY¨ÀETã»áÇ†%‡ü%Dµ×‰-=á0øS(\—¾Eéœ¾øÁÅPÇÃn[@!øÈ¹s8x{K’Än-NÎ~=w“|ı4²;CIwû(4µz¢Jhcv§Œé´OR®©Œf(w“CuOÈ¨®!¡ø©xp5Òy4–y³Û”;÷ åƒWs²²˜GÍzÆ—_İîPün?0Ö>ÖV×™ãàZ¶]®Ä›9Ùõ¥¹Ê~œn{Mø±ÈwÃûË¤oÚX+M`‹§}RÚl±ƒö2Aë&¥nÖî˜–qM=¢7×Œ$t„2c××ÙOÙP¬uÖt¡8P#˜5İHn8wÆfæøøÄø9nlšó•8<no9eçvë¼Îw”Ygg°¿œés†¾	hcÍîT[<í“ĞlLÊ-Ô^…[ÈçLÕÕˆØ\‰çºÀÇZÑÜ`QJP[£!Àt|„­X1ÌfÁom4İ4'/O^fÇÑeŠñ÷æµ²R™iKn¹»|éŞÃıöÎ+è´¾Ä¤Ïú&@
+­<?µW”.ÌÈ]Tp#U…’H¯àË¼»8åĞ7Ø…øeQeG"c£`È¯ÉnSÆqÁQ xÚ•±_ğä×ÒO×Š4S]S]èÿ’f0¸Á-¢>«0cI¸+ü!´ÁÖ‘²é#’¾¾ïõM 5
+NMóŒø¢úûY¹ÒªãÈ	oÌ­Ò—=¸s%jß/%ÆX½_Ï ¼5ƒQÅ+IÌ¾ ¿ËÊüÜJ°}2Ší¼6ÇÒBš×&¨¿ÓƒÓƒìÆ›qfÜkJÅï›÷à	Â¾¢Ğ÷¯ô‰/1xÎ˜‘…ÕM¸…ªSÎ*I4zSH*w4 ZûôovSt£pÏæg¨äF“!M
+¦Œã&KdÔdËáR[ÆaSVÚ¥¹›Ğoù¡„¥$Ø¬(1/%¨¿fFfFø6Òg´” '÷™»Ê9>İñğˆ4+ÀWÕ‚Q®¥$c¯å¶¨œ“™lk€‚ã†BÜìPö¬ëci?ÌÕ "Âˆ-@r«!ã¤4=n±$â#íR;ß ®³Ÿó Şv+jİ‰´Zb™1[¹[Ëlßl_ª:y6ú“~ }u|o_¢tLñRé)Jß‚äqwº™w:BÙÄ^ÂboE}”*)ófGr”¤ËØî(Ræ“´"ÚÄ¡¯’îJæÃ=lÓµYoÇ›ƒ¿ÕÚ¿/»İ£OnFG±³ØÉwÃ!Ğÿ¤Ûh¯°v¢îå0‚ÉëôåêÜHm÷¶@È†3„~Ù&
+¯A1±FÇÖeë¾D¾1†@ÅCà‹H{O‚N‰ƒv)yÄ’o¢!ôàÑ0:[éo× Mwé‚ëB©èöNW¾ñ‡ğØf§NáÉ:—ÒŠÒ
+<-fÚ2¦ğ…º·àuûò¿Ûæ‹ÿÜ-s2Î¶GDé­ Zçl u×YÊ¼İ‰´ÚâWä€Çb›mñ!ôv‰Œ6ô{…òf2/2“´™¢nü8šWú /–ÌK5}…Ô±ØŸî,÷cI÷—›7wéş‰Ü’Ñ.Šg2–zJ=Ş]ÿ²Â
+endstream
+endobj
+
+27 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 16
+  /ColorSpace /DeviceGray
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 147
+>> stream
+xœc` ´’!ú9Éƒı†½¤CTıN‚¤ALıAS‰‡Øõ'Kqë/Kâ×ß¢ˆÖ?e)nHœş¥šØ!ñú·®Å„¤é?fˆ
+I×m+’§ÿ¹%’¯ÿûŞï{R?eî§,ü(‹?ÊÒeé—²üCYş¥¬ü ¬ü¢¬ü¤¬ü¦¬ş ¬ş¢¬ş¤  ìÀã
+endstream
+endobj
+
+28 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace [ /Indexed /DeviceRGB 31 <fffffffffbf0ffdfffd4dfffccccffc0dcc0a6caf0ff98ffffffaaffdfaad4dfaad4bfaad49faaaabfaaa0a0a4aa9faa8080807f9faaffff55ffdf55d4bf55d49f55aa9f55808000aa7f55aa5f55aa7f007f5f55555f552a5f55553f55000000> ]
+  /Height 19
+  /Mask [ 7 7 ]
+  /Width 19
+  /Length 361
+>> stream
+					
+		
+	  	 
+
+endstream
+endobj
+
+29 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace [ /Indexed /DeviceRGB 15 <e6b34e8787874b4b4bfecb66fff48ef6f6f6dfdfdfffd46fffe07bc5922dffeb85fff791d6d6d66c6c6cffff99ffffff> ]
+  /Height 14
+  /Width 16
+  /Length 224
+>> stream
+																
+
+														
+						 			
+
+
+
+
+
+
+
+ 			 																		
+endstream
+endobj
+
+30 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 1
+  /ColorSpace [ /Indexed /DeviceRGB 1 31 0 R ]
+  /DecodeParms <<
+    /BitsPerComponent 1
+    /Colors 1
+    /Columns 16
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 16
+  /Width 16
+  /Length 51
+>> stream
+xœcøÿŸáÿ_†ÿŸ°3Ü?Ìp2ÃÍÍ7îƒĞ½Ï÷RÌÀèÿ Q†(
+endstream
+endobj
+
+31 0 obj <<
+  /Length 6
+>> stream
+   ÿÿÿ
+endstream
+endobj
+
+32 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 1
+  /ColorSpace /DeviceGray
+  /DecodeParms <<
+    /BitsPerComponent 1
+    /Colors 1
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 91
+>> stream
+xœ-Ì±	0ÑëÒ²J z4o<‚Á
+aEQñàŠ/ªêÒ¤„lÎ©%SçS4Wâ²!¿K&=Bs%%^‹Ú²ojÊ0i.)anéo0eğ¿‡I/
+endstream
+endobj
+
+33 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 4
+  /ColorSpace /DeviceGray
+  /DecodeParms <<
+    /BitsPerComponent 4
+    /Colors 1
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 72
+>> stream
+xœc``TR26vq	MK+/g C •ÛÑA *wæLrP¹«V‘#€Êİ½›Tî™3ä rïŞ%G •ûî î
+endstream
+endobj
+
+34 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceGray
+  /DecodeParms <<
+    /BitsPerComponent 8
+    /Colors 1
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 65
+>> stream
+xœcd`$ È³Œ)ø÷?`y00Êgd¢y\ŒğÊşÿÏø‡æq10Êà•ed Påşq
+endstream
+endobj
+
+35 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 16
+  /ColorSpace /DeviceGray
+  /DecodeParms <<
+    /BitsPerComponent 16
+    /Colors 1
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 94
+>> stream
+xœÕÒ1
+À0CQ9[ïÆÜ “À({2Õ*£Ù?8€§¸Wc :‚`™ İ‚ö@ÊèÜB&@· =2º·	Ğ-h¤L`?oìOô8Ï ØKØ_
+endstream
+endobj
+
+36 0 obj <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /DecodeParms <<
+    /BitsPerComponent 8
+    /Colors 3
+    /Columns 32
+    /Predictor 15
+  >>
+  /Filter /FlateDecode
+  /Height 32
+  /Width 32
+  /Length 72
+>> stream
+xœíÕÁ	 0@…ì‘ı·r;D+ô¡øÎá+´;€
+ø íä}Lx@J‡Â„(ğ t8#©@»pw£À‚±ù^
+endstream
+endobj
+
+37 0 obj <<
+  /Type /Page
+  /Contents 38 0 R
+  /MediaBox [ 0 0 612 792 ]
+  /Parent 2 0 R
+  /Resources <<
+    /Font 6 0 R
+  >>
+>>
+endobj
+
+38 0 obj <<
+  /Length 3980
+>> stream
+BT
+  50 100 Td
+  /F1 18 Tf
+  19.8 TL
+  (Hello,) Tj
+  T*
+  [ (W) 60 (orld!) ] TJ
+  T*
+ET
+BT
+  /F2 10 Tf
+  1 0 0 1 110 700 Tm
+  11 TL
+  0 -9.31 Td
+  (*** top left*** Lorem) Tj
+  T*
+  (ipsum dolor sit amet,) Tj
+  T*
+  (consectetur adipiscing) Tj
+  T*
+  (elit, sed do eiusmod) Tj
+  T*
+  (tempor incididunt ut) Tj
+  T*
+  (labore et dolore) Tj
+  T*
+  (magna aliqua.) Tj
+  T*
+  1 0 0 1 110 530 Tm
+  11 TL
+  0 -9.31 Td
+  [ 3530 (*** top center***) ] TJ
+  T*
+  [ 4779 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 3974 (amet, consectetur) ] TJ
+  T*
+  [ 4780 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 3585 (eiusmod tempor) ] TJ
+  T*
+  [ 4753 (incididunt ut labore et) ] TJ
+  T*
+  [ 4669 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 110 360 Tm
+  11 TL
+  0 -9.31 Td
+  [ 9337 (*** top right*** Lorem) ] TJ
+  T*
+  [ 9225 (ipsum dolor sit amet,) ] TJ
+  T*
+  [ 9893 (consectetur adipiscing) ] TJ
+  T*
+  [ 8893 (elit, sed do eiusmod) ] TJ
+  T*
+  [ 8726 (tempor incididunt ut) ] TJ
+  T*
+  [ 6948 (labore et dolore) ] TJ
+  T*
+  [ 6281 (magna aliqua.) ] TJ
+  T*
+  1 0 0 1 110 190 Tm
+  11 TL
+  0 -9.31 Td
+  0.173333 Tw
+  (*** top justify*** Lorem) Tj
+  T*
+  2.583333 Tw
+  (ipsum dolor sit amet,) Tj
+  T*
+  1.07 Tw
+  (consectetur adipiscing) Tj
+  T*
+  3.69 Tw
+  (elit, sed do eiusmod) Tj
+  T*
+  6.37 Tw
+  (tempor incididunt ut) Tj
+  T*
+  15.26 Tw
+  (labore et dolore) Tj
+  T*
+  37.19 Tw
+  (magna aliqua.) Tj
+  T*
+  0 Tw
+  1 0 0 1 235 700 Tm
+  11 TL
+  0 30.69 Td
+  (*** center left***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  1 0 0 1 235 530 Tm
+  11 TL
+  0 30.69 Td
+  [ 4224 (*** center center***) ] TJ
+  T*
+  [ 4779 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 3974 (amet, consectetur) ] TJ
+  T*
+  [ 4780 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 3585 (eiusmod tempor) ] TJ
+  T*
+  [ 4753 (incididunt ut labore et) ] TJ
+  T*
+  [ 4669 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 235 360 Tm
+  11 TL
+  0 30.69 Td
+  [ 7614 (*** center right***) ] TJ
+  T*
+  [ 9558 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 7948 (amet, consectetur) ] TJ
+  T*
+  [ 9560 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 7169 (eiusmod tempor) ] TJ
+  T*
+  [ 9505 (incididunt ut labore et) ] TJ
+  T*
+  [ 9338 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 235 190 Tm
+  11 TL
+  0 30.69 Td
+  8.875 Tw
+  (*** center justify***) Tj
+  T*
+  1.473333 Tw
+  (Lorem ipsum dolor sit) Tj
+  T*
+  20.52 Tw
+  (amet, consectetur) Tj
+  T*
+  1.466667 Tw
+  (adipiscing elit, sed do) Tj
+  T*
+  28.31 Tw
+  (eiusmod tempor) Tj
+  T*
+  1.65 Tw
+  (incididunt ut labore et) Tj
+  T*
+  3.31 Tw
+  (dolore magna aliqua.) Tj
+  T*
+  0 Tw
+  1 0 0 1 360 700 Tm
+  11 TL
+  0 70.69 Td
+  (*** bottom left***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  1 0 0 1 360 530 Tm
+  11 TL
+  0 70.69 Td
+  [ 4363 (*** bottom center***) ] TJ
+  T*
+  [ 4779 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 3974 (amet, consectetur) ] TJ
+  T*
+  [ 4780 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 3585 (eiusmod tempor) ] TJ
+  T*
+  [ 4753 (incididunt ut labore et) ] TJ
+  T*
+  [ 4669 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 360 360 Tm
+  11 TL
+  0 70.69 Td
+  [ 7892 (*** bottom right***) ] TJ
+  T*
+  [ 9558 (Lorem ipsum dolor sit) ] TJ
+  T*
+  [ 7948 (amet, consectetur) ] TJ
+  T*
+  [ 9560 (adipiscing elit, sed do) ] TJ
+  T*
+  [ 7169 (eiusmod tempor) ] TJ
+  T*
+  [ 9505 (incididunt ut labore et) ] TJ
+  T*
+  [ 9338 (dolore magna aliqua.) ] TJ
+  T*
+  1 0 0 1 360 190 Tm
+  11 TL
+  0 70.69 Td
+  7.485 Tw
+  (*** bottom justify***) Tj
+  T*
+  1.473333 Tw
+  (Lorem ipsum dolor sit) Tj
+  T*
+  20.52 Tw
+  (amet, consectetur) Tj
+  T*
+  1.466667 Tw
+  (adipiscing elit, sed do) Tj
+  T*
+  28.31 Tw
+  (eiusmod tempor) Tj
+  T*
+  1.65 Tw
+  (incididunt ut labore et) Tj
+  T*
+  3.31 Tw
+  (dolore magna aliqua.) Tj
+  T*
+  0 Tw
+ET
+endstream
+endobj
+
+39 0 obj <<
+  /Type /Page
+  /Contents 40 0 R
+  /MediaBox [ 0 0 612 792 ]
+  /Parent 2 0 R
+  /Resources <<
+    /Font <<
+      /F1 8 0 R
+    >>
+  >>
+>>
+endobj
+
+40 0 obj <<
+  /Length 6801
+>> stream
+BT
+  /F1 10 Tf
+  1 0 0 1 20 700 Tm
+  11 TL
+  (*** *** Lorem ipsum) Tj
+  T*
+  (dolor sit amet,) Tj
+  T*
+  (consectetur adipiscing) Tj
+  T*
+  (elit, sed do eiusmod) Tj
+  T*
+  (tempor incididunt ut) Tj
+  T*
+  (labore et dolore) Tj
+  T*
+  (magna aliqua. Ut) Tj
+  T*
+  (enim ad minim) Tj
+  T*
+  (veniam, quis nostrud) Tj
+  T*
+  (exercitation ullamco) Tj
+  T*
+  (laboris nisi ut aliquip) Tj
+  T*
+  (ex ea commodo) Tj
+  T*
+  (consequat. Duis aute) Tj
+  T*
+  3 Ts
+  1 0 0 1 130 700 Tm
+  11 TL
+  (*** TextRise 3 ***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  (Ut enim ad minim) Tj
+  T*
+  (veniam, quis nostrud) Tj
+  T*
+  (exercitation ullamco) Tj
+  T*
+  (laboris nisi ut aliquip) Tj
+  T*
+  (ex ea commodo) Tj
+  T*
+  (consequat. Duis aute) Tj
+  T*
+  -3 Ts
+  1 0 0 1 240 700 Tm
+  11 TL
+  (*** TextRise -3 ***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  (Ut enim ad minim) Tj
+  T*
+  (veniam, quis nostrud) Tj
+  T*
+  (exercitation ullamco) Tj
+  T*
+  (laboris nisi ut aliquip) Tj
+  T*
+  (ex ea commodo) Tj
+  T*
+  (consequat. Duis aute) Tj
+  T*
+  0 Ts
+  50 Tz
+  1 0 0 1 350 700 Tm
+  11 TL
+  (*** HorizScaling 50 *** Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua. Ut enim ad minim) Tj
+  T*
+  (veniam, quis nostrud exercitation ullamco) Tj
+  T*
+  (laboris nisi ut aliquip ex ea commodo) Tj
+  T*
+  (consequat. Duis aute irure dolor in) Tj
+  T*
+  (reprehenderit in voluptate velit esse cillum) Tj
+  T*
+  (dolore eu fugiat nulla pariatur. ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  100 Tz
+  1 0 0 1 460 700 Tm
+  11 TL
+  (*** *** Lorem ipsum) Tj
+  T*
+  (dolor sit amet,) Tj
+  T*
+  (consectetur adipiscing) Tj
+  T*
+  (elit, sed do eiusmod) Tj
+  T*
+  (tempor incididunt ut) Tj
+  T*
+  (labore et dolore) Tj
+  T*
+  (magna aliqua. Ut) Tj
+  T*
+  (enim ad minim) Tj
+  T*
+  (veniam, quis nostrud) Tj
+  T*
+  (exercitation ullamco) Tj
+  T*
+  (laboris nisi ut aliquip) Tj
+  T*
+  (ex ea commodo) Tj
+  T*
+  (consequat. Duis aute) Tj
+  T*
+  150 Tz
+  1 0 0 1 20 530 Tm
+  11 TL
+  (***) Tj
+  T*
+  (HorizScaling) Tj
+  T*
+  (150 *** Lorem) Tj
+  T*
+  (ipsum dolor sit) Tj
+  T*
+  (amet,) Tj
+  T*
+  (consectetur) Tj
+  T*
+  (adipiscing elit,) Tj
+  T*
+  (sed do) Tj
+  T*
+  (eiusmod) Tj
+  T*
+  (tempor) Tj
+  T*
+  (incididunt ut) Tj
+  T*
+  (labore et) Tj
+  T*
+  (dolore magna) Tj
+  T*
+  100 Tz
+  -1 Tc
+  1 0 0 1 130 530 Tm
+  11 TL
+  (*** CharSpacing -1 ***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor incididunt) Tj
+  T*
+  (ut labore et dolore magna) Tj
+  T*
+  (aliqua. Ut enim ad minim) Tj
+  T*
+  (veniam, quis nostrud) Tj
+  T*
+  (exercitation ullamco laboris) Tj
+  T*
+  (nisi ut aliquip ex ea) Tj
+  T*
+  (commodo consequat. Duis) Tj
+  T*
+  (aute irure dolor in) Tj
+  T*
+  (reprehenderit in voluptate) Tj
+  T*
+  -0.5 Tc
+  1 0 0 1 240 530 Tm
+  11 TL
+  (*** CharSpacing -0.5 ***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua. Ut) Tj
+  T*
+  (enim ad minim veniam,) Tj
+  T*
+  (quis nostrud exercitation) Tj
+  T*
+  (ullamco laboris nisi ut) Tj
+  T*
+  (aliquip ex ea commodo) Tj
+  T*
+  (consequat. Duis aute) Tj
+  T*
+  (irure dolor in) Tj
+  T*
+  0.5 Tc
+  1 0 0 1 350 530 Tm
+  11 TL
+  (*** CharSpacing 0.5) Tj
+  T*
+  (*** Lorem ipsum) Tj
+  T*
+  (dolor sit amet,) Tj
+  T*
+  (consectetur) Tj
+  T*
+  (adipiscing elit, sed) Tj
+  T*
+  (do eiusmod tempor) Tj
+  T*
+  (incididunt ut labore) Tj
+  T*
+  (et dolore magna) Tj
+  T*
+  (aliqua. Ut enim ad) Tj
+  T*
+  (minim veniam, quis) Tj
+  T*
+  (nostrud exercitation) Tj
+  T*
+  (ullamco laboris nisi) Tj
+  T*
+  (ut aliquip ex ea) Tj
+  T*
+  1.5 Tc
+  1 0 0 1 460 530 Tm
+  11 TL
+  (*** CharSpacing) Tj
+  T*
+  (1.5 *** Lorem) Tj
+  T*
+  (ipsum dolor sit) Tj
+  T*
+  (amet,) Tj
+  T*
+  (consectetur) Tj
+  T*
+  (adipiscing elit,) Tj
+  T*
+  (sed do eiusmod) Tj
+  T*
+  (tempor incididunt) Tj
+  T*
+  (ut labore et) Tj
+  T*
+  (dolore magna) Tj
+  T*
+  (aliqua. Ut enim) Tj
+  T*
+  (ad minim veniam,) Tj
+  T*
+  (quis nostrud) Tj
+  T*
+  0 Tc
+  -2 Tw
+  1 0 0 1 20 360 Tm
+  11 TL
+  (*** WordSpacing -2 ***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  (Ut enim ad minim) Tj
+  T*
+  (veniam, quis nostrud) Tj
+  T*
+  (exercitation ullamco) Tj
+  T*
+  (laboris nisi ut aliquip ex) Tj
+  T*
+  (ea commodo) Tj
+  T*
+  (consequat. Duis aute) Tj
+  T*
+  5 Tw
+  1 0 0 1 130 360 Tm
+  11 TL
+  (*** WordSpacing 5) Tj
+  T*
+  (*** Lorem ipsum) Tj
+  T*
+  (dolor sit amet,) Tj
+  T*
+  (consectetur) Tj
+  T*
+  (adipiscing elit, sed) Tj
+  T*
+  (do eiusmod tempor) Tj
+  T*
+  (incididunt ut labore) Tj
+  T*
+  (et dolore magna) Tj
+  T*
+  (aliqua. Ut enim ad) Tj
+  T*
+  (minim veniam, quis) Tj
+  T*
+  (nostrud exercitation) Tj
+  T*
+  (ullamco laboris nisi) Tj
+  T*
+  (ut aliquip ex ea) Tj
+  T*
+  0 Tw
+  1 0 0 1 240 360 Tm
+  8 TL
+  (*** leading 8 ***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  (Ut enim ad minim) Tj
+  T*
+  (veniam, quis nostrud) Tj
+  T*
+  (exercitation ullamco) Tj
+  T*
+  (laboris nisi ut aliquip) Tj
+  T*
+  (ex ea commodo) Tj
+  T*
+  (consequat. Duis aute) Tj
+  T*
+  (irure dolor in) Tj
+  T*
+  (reprehenderit in) Tj
+  T*
+  (voluptate velit esse) Tj
+  T*
+  (cillum dolore eu fugiat) Tj
+  T*
+  (nulla pariatur. ut) Tj
+  T*
+  1 0 0 1 350 360 Tm
+  15 TL
+  (*** leading 15 ***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  (Ut enim ad minim) Tj
+  T*
+  (veniam, quis nostrud) Tj
+  T*
+  (exercitation ullamco) Tj
+  T*
+  1 0 0 1 460 360 Tm
+  11 TL
+  0 -9.31 Td
+  (*** baseline top ***) Tj
+  T*
+  (Lorem ipsum dolor sit) Tj
+  T*
+  (amet, consectetur) Tj
+  T*
+  (adipiscing elit, sed do) Tj
+  T*
+  (eiusmod tempor) Tj
+  T*
+  (incididunt ut labore et) Tj
+  T*
+  (dolore magna aliqua.) Tj
+  T*
+  (Ut enim ad minim) Tj
+  T*
+  (veniam, quis nostrud) Tj
+  T*
+  (exercitation ullamco) Tj
+  T*
+  (laboris nisi ut aliquip) Tj
+  T*
+  (ex ea commodo) Tj
+  T*
+  (consequat. Duis aute) Tj
+  T*
+ET
+endstream
+endobj
+
+xref
+0 41
+0000000000 65535 f 
+0000000014 00000 n 
+0000000068 00000 n 
+0000000148 00000 n 
+0000000342 00000 n 
+0000000556 00000 n 
+0000004686 00000 n 
+0000004732 00000 n 
+0000004843 00000 n 
+0000004949 00000 n 
+0000007331 00000 n 
+0000007439 00000 n 
+0000007548 00000 n 
+0000007957 00000 n 
+0000008019 00000 n 
+0000016452 00000 n 
+0000035327 00000 n 
+0000035838 00000 n 
+0000036415 00000 n 
+0000036750 00000 n 
+0000036816 00000 n 
+0000037152 00000 n 
+0000037388 00000 n 
+0000039438 00000 n 
+0000039772 00000 n 
+0000040168 00000 n 
+0000040404 00000 n 
+0000043980 00000 n 
+0000044314 00000 n 
+0000045064 00000 n 
+0000045565 00000 n 
+0000045917 00000 n 
+0000045976 00000 n 
+0000046347 00000 n 
+0000046699 00000 n 
+0000047044 00000 n 
+0000047420 00000 n 
+0000047771 00000 n 
+0000047908 00000 n 
+0000051944 00000 n 
+0000052101 00000 n 
+trailer
+<<
+  /ID [ <5a274248a837042e8ad2325ff15a8843> <5a274248a837042e8ad2325ff15a8843> ]
+  /Root 1 0 R
+  /Size 41
+>>
+startxref
+58958
+%%EOF

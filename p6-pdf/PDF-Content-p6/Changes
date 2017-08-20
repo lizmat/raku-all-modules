@@ -1,0 +1,5 @@
+Release 0.0.7
+- Replaced $gfx.TextMove() with $gfx.text-position
+Release 0.0.6
+- Initial release
+    
