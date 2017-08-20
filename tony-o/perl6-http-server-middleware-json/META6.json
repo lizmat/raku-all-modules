@@ -1,0 +1,13 @@
+{
+  "perl"        : "6.*",
+  "name"        : "HTTP::Server::Middleware::JSON",
+  "version"     : "0.0.1",
+  "description" : "Middleware to parse JSON for HTTP::Server-s",
+  "auth"        : "github:tony-o",
+  "depends"     : [ "HTTP::Server", "JSON::Fast" ],
+  "test-depends": [ "HTTP::Server::Async" ],
+  "provides" : {
+    "HTTP::Server::Middleware::JSON"  : "lib/HTTP/Server/Middleware/JSON.pm6"
+  },
+  "source-url"  : "git://github.com/tony-o/perl6-http-server-middleware-json.git"
+} 
