@@ -182,7 +182,7 @@ method one-pass-candidates(Acme::Sudoku:D: --> Int ) {
         next unless @!cells[$r;$c].is-empty;
 
         my $intersect = %missing-per-row{$r} (&) %missing-per-column{$c} (&) %missing-per-square{($r div 3)*3+($c div 3)};
-        @!cells[$r;$c].candidates = $intersect.keys.list.sort;
+        @!cells[$r;$c].candidates = $intersect.keys.list.sort.cache;
 
         if @!cells[$r;$c].candidates.elems == 1 {
             @!cells[$r;$c].solved = @!cells[$r;$c].candidates.first;
