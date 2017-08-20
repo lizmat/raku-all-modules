@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparky.git
+	branch = master
+	commit = dc477bb615ded90c6a8d1a9744aec7a8f651be6e
+	parent = a1950757d48127943708faf5e64c85bd3d28d2fc
+	cmdver = 0.4.0

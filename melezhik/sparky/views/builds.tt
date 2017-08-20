@@ -1,0 +1,55 @@
+% my ( $css, @rows) = @_;
+
+%= $css
+
+<html>
+
+    <head>
+      <title>~SPARKY CI WEB~</title>
+    </head>
+
+    <ul class="nav nav-tabs">
+      <li role="presentation" class="active"><a href="/">Recent Builds</a></li>
+      <li role="presentation"><a href="/about">About</a></li>
+    </ul>
+
+    <!-- <div class="jumbotron">  -->
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Recent builds</h3>
+      </div>
+      <table class="table">
+        <tr>
+          <td>Project</td>
+          <td>ID</td>
+          <td>State</td>
+          <td>Time</td>
+        </tr>
+        % for @rows -> %r {
+        <tr>
+          <td>
+          %= "<a href='/project/" ~ %r<project> ~ "'>"  ~ %r<project> ~ "</a>"
+          </td>
+          <td>
+          %= "<a href='/report/" ~ %r<project> ~ '/' ~ %r<id> ~ "'>"  ~ %r<id> ~ "</a>"
+          </td>
+          <td>
+          % if %r<state> == -1 {
+          <span class="label label-danger">failed</span>
+          % }
+          % if %r<state> ==  0 {
+          <span class="label label-info">running</span>
+          % }
+          % if %r<state> == 1 {
+          <span class="label label-success">succeed</span>
+          % }
+          </td>
+          <td>
+          %= %r<dt>
+          </td>
+        </tr>   
+        % }
+      </table>
+  </div>
+  <!-- </div> -->
+<html>

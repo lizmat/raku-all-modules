@@ -1,0 +1,25 @@
+{
+  "perl"        : "6.*",
+  "name"        : "Sparky",
+  "version"     : "0.0.18",
+  "description" : "Sparky is a continues integration server based on Sparrow/Sparrowdo ecosystem",
+  "authors" : [ "Alexey Melezhik"],
+  "depends"     : [
+                    "YAMLish",
+                    "DBIish",
+                    "Sparrowdo",
+                    "Time::Crontab",
+                    "Bailador",
+                    "Text::Markdown",
+                    "Data::Dump"
+                  ],
+  "source-type" : "git",
+  "support" : {
+        "bugtracker" : "https://github.com/melezhik/sparky/issues",
+        "source" : "https://github.com/melezhik/sparky.git"
+    },
+  "provides" : {
+  },
+  "source-url"  : "https://github.com/melezhik/sparky.git",
+  "license": "Artistic-2.0"
+}
