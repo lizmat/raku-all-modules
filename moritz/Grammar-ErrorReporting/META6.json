@@ -1,0 +1,22 @@
+{
+  "name" : "Grammar-ErrorReporting",
+  "source-url" : "git://github.com/moritz/Grammar-ErrorReporting.git",
+  "support" : {
+    "bugtracker": "https://github.com/moritz/Grammar-ErrorReporting/issues"
+  },
+  "perl" : "6.c",
+  "license" : "GPL-3.0",
+  "test-depends" : [
+    "Test::META"
+  ],
+  "provides" : {
+    "Grammar::ErrorReporting" : "lib/Grammar/ErrorReporting.pm6",
+    "X::Grammar::ParseError" : "lib/Grammar/ErrorReporting.pm6"
+  },
+  "version" : "*",
+  "meta-version" : "0",
+  "authors" : [
+    "Moritz Lenz"
+  ],
+  "description" : "Error reporting infrastructure for Perl 6 grammars"
+}

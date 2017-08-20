@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/moritz/Grammar-ErrorReporting.git
+	branch = master
+	commit = 61ef5f6b97e1cea9c0ef1b2dc4715040e9dacbf7
+	parent = 15290108726949bf1e1eecf7a8ec726e6f79460e
+	cmdver = 0.4.0
