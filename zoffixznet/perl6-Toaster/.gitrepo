@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-Toaster.git
+	branch = master
+	commit = 7e00a0f414309d00c2b4b075a2aadaa883fd57a2
+	parent = dd4dcce9bfc92aeac972b3132a096723254f8f72
+	cmdver = 0.4.0

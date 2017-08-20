@@ -1,0 +1,5 @@
+/output/
+.precomp
+*.sqlite.db
+/build
+/screenlog.*

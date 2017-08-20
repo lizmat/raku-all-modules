@@ -1,0 +1,68 @@
+#!/usr/bin/env perl
+
+use Mojolicious::Lite;
+use Mojo::SQLite;
+use List::Util qw/uniq/;
+
+my $sql = Mojo::SQLite->new('toast.sqlite.db');
+app->config({ hypnotoad => { listen => ['http://*:3333'], proxy => 1 } });
+
+get '/' => sub {
+    my $c = shift;
+
+    my $data = $sql->db->select('toast')->hashes->to_array;
+    my $stash;
+    $stash->{commits} = [sort +uniq map $_->{rakudo_long}, @$data];
+    $stash->{results}{ $_->{module} }{ $_->{rakudo_long} } = $_->{status}
+      for @$data;
+
+    my $burnt    = 0;
+    my $unsucced = 0;
+    my $unusable = 0;
+    for (values %{$stash->{results}}) {
+        my ($before, $after) = (@$_{ @{$stash->{commits}} })[0, -1];
+        $before ||= '';
+        $after  ||= '';
+        if ($before eq 'Succ' and $after eq 'Fail') {
+            $burnt++;
+            $_->{burnt} = 1;
+        }
+        if ($before eq 'Succ' and $after ne 'Succ') {
+            $unsucced++;
+            $_->{unsucced} = 1;
+        }
+        $unusable++ if $after ne 'Succ';
+    }
+    $stash->{total_num} = scalar keys %{$stash->{results}};
+    $stash->{burnt} = sprintf '%0.2f', 100 * $burnt / $stash->{total_num};
+    $stash->{burnt_num} = $burnt;
+
+    $stash->{unsucced} = sprintf '%0.2f', 100 * $unsucced / $stash->{total_num};
+    $stash->{unsucced_num} = $unsucced;
+
+    $stash->{unusable_num} = $unusable;
+    $stash->{unusable} = sprintf '%0.2f', 100 * $unusable / $stash->{total_num};
+
+    $c->stash(%$stash);
+    $c->respond_to(
+        html => {template => 'index'},
+        json => { json => (
+            $c->param('stats_only') ? {
+                map +($_ => $stash->{$_}), qw/
+                    burnt_num  burnt  unsucced_num  unsucced
+                    unusable_num  total_num  commits/
+            } : $stash)
+        },
+    );
+};
+
+get '/module' => sub {
+    my $c = shift;
+    $c->stash(
+        mod => $sql->db->select('toast', undef, {
+            module => $c->param('module'), rakudo_long => $c->param('commit'),
+        })->hashes->first,
+    );
+};
+
+app->start;

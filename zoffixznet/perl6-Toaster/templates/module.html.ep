@@ -1,0 +1,26 @@
+% layout 'default';
+
+<h1 class="h3">Perl 6 Ecosystem Toaster
+  <a href="https://github.com/zoffixznet/perl6-Toaster"
+    class="btn btn-sm btn-primary"
+      ><i class="glyphicon glyphicon-thumbs-up"></i>
+    GitHub repo</a>
+  <a href="https://temp.perl6.party/toast.sqlite.db"
+    class="btn btn-sm btn-success"
+      ><i class="glyphicon glyphicon-save"></i>
+      data as SQLite db</a>
+</h1>
+<div class="mod-details">
+% for (grep defined, stash 'mod') {
+  <h2><a href="https://modules.perl6.org/repo/<%= $_->{module} %>"
+      ><%= $_->{module} %></a> <small>toasted on
+      <b><%= $_->{rakudo_long} %></b></small></h2>
+  <p class="lead">Status: <b><%= $_->{status} %></b>;
+      Exit code: <b><%= $_->{exitcode} %></b></p>
+
+  <h3>STDERR</h3>
+  <textarea cols="80" rows="20" style="width: 100%"><%= $_->{stderr} %></textarea>
+  <h3>STDOUT</h3>
+  <textarea cols="80" rows="20" style="width: 100%"><%= $_->{stdout} %></textarea>
+% }
+</div>

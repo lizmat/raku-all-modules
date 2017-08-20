@@ -1,0 +1,28 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Toaster",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001001",
+    "description"  : "Toaster of Perl 6 Ecosystem Modules",
+    "tags"         : [ "ecosystem", "testing" ],
+    "depends"      : [
+        "File::Find",
+        "JSON::Fast",
+        "Terminal::ANSIColor",
+        "DBIish",
+        "Temp::Path",
+        "Proc::Q",
+        "WhereList",
+        "WWW"
+    ],
+    "test-depends" : [
+        "Testo",
+        "Test::META"
+    ],
+    "provides"     : {
+        "Toaster"     : "lib/Toaster.pm6",
+        "Toaster::DB" : "lib/Toaster/DB.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source" : "https://github.com/zoffixznet/perl6-Toaster.git"}
+}

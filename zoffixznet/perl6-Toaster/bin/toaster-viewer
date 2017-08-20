@@ -1,0 +1,48 @@
+#!/usr/bin/env perl6
+use lib <lib>;
+# use lib </home/zoffix/CPANPRC/tardigrade/lib>;
+use TG;
+use Toaster::DB;
+
+my $DB = Toaster::DB.new;
+
+TG.new
+.get({
+      my $data = $DB.all;
+      $^stash<commits> = $data»<rakudo_long>.unique.sort.List;
+      $stash<results>{.<module>}{ .<rakudo_long> } = .<status> for |$data;
+
+      my $burnt    = 0;
+      my $unsucced = 0;
+      my $unusable = 0;
+      for $stash<results>.values {
+          my ($before, $after) = .{ $stash<commits><> }[0, *-1];
+          $before ||= '';
+          $after  ||= '';
+          if $before eq 'Succ' and $after eq 'Fail' {
+              $burnt++;
+              .<burnt> = True;
+          }
+          if $before eq 'Succ' and $after ne 'Succ' {
+              $unsucced++;
+              .<unsucced> = True;
+          }
+          $unusable++ if $after ne 'Succ';
+      }
+      $stash<burnt> = sprintf '%0.2f', 100 * $burnt / $stash<results>;
+      $stash<burnt_num> = $burnt;
+
+      $stash<unsucced> = sprintf '%0.2f', 100 * $unsucced / $stash<results>;
+      $stash<unsucced_num> = $unsucced;
+
+      $stash<unusable_num> = $unusable;
+      $stash<total_num>    = $stash<results>.keys.elems;
+      $stash<unusable> = sprintf '%0.2f', 100 * $unusable / $stash<total_num>;
+}, '/' => '/index')
+
+.get(-> $stash, $env {
+    dd [$env.q];
+    $stash<mod> = %($DB.module-toast: |$env.q<module commit>);
+}, '/module')
+
+.start

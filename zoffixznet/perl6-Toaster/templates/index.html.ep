@@ -1,0 +1,60 @@
+% layout 'default';
+
+      <h1 class="h3">Perl 6 Ecosystem Toaster
+        <a href="https://github.com/zoffixznet/perl6-Toaster"
+          class="btn btn-sm btn-primary"
+            ><i class="glyphicon glyphicon-thumbs-up"></i>
+          GitHub repo</a>
+        <a href="https://temp.perl6.party/toast.sqlite.db"
+          class="btn btn-sm btn-success"
+            ><i class="glyphicon glyphicon-save"></i>
+            data as SQLite db</a>
+      </h1>
+      <p><b>Status:</b>
+          <strong><%= stash('burnt_num') %></strong> (<%= stash('burnt') %>%)
+          of modules got burnt <small>(switch from 'Succ' to 'Fail')</small>
+          and
+          <strong><%= stash('unsucced_num') %></strong> (<%= stash('unsucced') %>%)
+          of modules got unsucced <small>(switch from 'Succ' to 'Kill', 'Fail', or
+          unknown status)</small>.
+          <br>
+
+          On latest toasted commit, <strong><%= stash('unusable_num') %></strong>
+            out of <strong><%= stash('total_num') %></strong>
+            (<%= stash('unusable') %>%) appear to be unusable modules
+          <small>(at least on the system that toasting was done on)</small>.
+      </p>
+
+      <div class="table-responsive">
+        <table class="sortable table table-condensed">
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th data-defaultsort="asc">Burnt</th>
+              <th data-defaultsort="asc">Unsucced</th>
+              % for (@{stash 'commits'}) {
+                  <th><%= $_ %></th>
+              % }
+            </tr>
+          </thead>
+          <tbody>
+            % my %mods = %{stash('results')};
+            % for my $m (sort keys %mods) {
+              <tr>
+                <td><a href="https://modules.perl6.org/dist/<%= $m %>"
+                  ><%= $m %></a></td>
+                <td><%= $mods{$m}{burnt} ? 'Burnt' : ''  %></td>
+                <td><%= $mods{$m}{unsucced} ? 'Unsucced' : '' %></td>
+                % for my $commit (@{stash 'commits'}) {
+                  % my $status = $mods{$m}{$commit} // 'No data';
+                  % my $class =  $status eq 'Succ' ? 'success'
+                  %    : $status eq 'Fail' ? 'danger'  : 'warning';
+                  <td><a class="btn btn-block btn-<%= $class %>"
+                    href="/module?module=<%= $m
+                    %>&amp;commit=<%= $commit %>"><%= $status %></a></td>
+                % }
+              </tr>
+            % }
+          </tbody>
+        </table>
+      </div>

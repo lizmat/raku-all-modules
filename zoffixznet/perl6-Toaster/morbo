@@ -1,0 +1,3 @@
+#!/bin/sh
+morbo -w assets -w templates -w lib toaster-p5-viewer
+
