@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/Adventure-Engine.git
 	branch = master
-	commit = 5bb5425a2db05ba608a54905ce7747cf559ac4e8
-	parent = 79c4be044f6c04c4d978f105962013940fa03d34
-	cmdver = 0.1.0
+	commit = 5b2d53bfa495fd5a7b8fc7fac6ec85a08e9bad05
+	parent = f0c6b6dc0c67df9206d1893e60fb93d28efc31aa
+	cmdver = 0.4.0

@@ -630,4 +630,4 @@ sub throws_exception(&code, $ex_type, $message, &followup = {;}) {
         'examining a thing (+) in inventory';
 }
 
-done;
+done-testing;
