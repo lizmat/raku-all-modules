@@ -220,6 +220,10 @@ Open an encrypted document:
     PDF::API6.open( "enc.pdf", :password<shh1> );
 
 
+Open a PDF, ignoring the cross reference index and stream lengths:
+
+    PDF::API6.open( "damaged.pdf", :repair );
+
 ### update
 
 Performs a fast incremental save of a previously opened document.
@@ -235,6 +239,12 @@ Save the document to a file
     PDF::API6 $pdf .= new;
     #...
     $pdf.save-as: 'our/new.pdf';
+
+The `:preserve` option keeps the original PDF structure. This is generally faster and also ensures that digital signatures are not invalidated.
+
+    PDF::API6 $pdf .= open("our/original.pdf");
+    #...
+    $pdf.save-as: 'our/updated.pdf', :preserve;
 
 A PDF file can also be saved as, and opened from an intermediate JSON representation
 
@@ -268,7 +278,7 @@ Return a binary representation of a PDF as a latin-01 string, or binary Blob
 
 Return an AST tree representation of a PDF.
 
-     my %ast = $pdf.ast
+    my %ast = $pdf.ast
 
 
 # SECTION II: Content Methods (inherited from PDF::Lite)

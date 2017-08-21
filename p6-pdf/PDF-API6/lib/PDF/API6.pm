@@ -29,21 +29,21 @@ class PDF::API6:ver<0.0.1>
 
     method catalog { self<Root> }
 
-    method save-as($spec, Bool :$update is copy, |c) {
+    method save-as($spec, Bool :$preserve is copy, |c) {
 
-	if !$update and self.reader {
+	if !$preserve and self.reader {
             with $.catalog<AcroForm> {
                 # guard against signature invalidation
-                constant AppendOnly = 2;
-                my $sig-flags = .<SigFlags>;
-                if $sig-flags && $sig-flags.flag-is-set: AppendOnly {
-                    with $update {
-                        # callee has specified :!update
-                        die "This PDF contains digital signatures that will be invalidated with .save-as :!update"
-                    }
-                    else {
-                        # save in :update mode to preserve digital signatures
-                        $_ = True;
+                with .<SigFlags> {
+                    constant AppendOnly = 2;
+                    if .flag-is-set(AppendOnly) {
+                        with $preserve {
+                            die "This PDF contains digital signatures that will be invalidated with .save-as :!preserve"
+                        }
+                        else {
+                            # save in :preserve mode to preserve digital signatures
+                            $_ = True
+                        }
                     }
                 }
             }
@@ -63,7 +63,7 @@ class PDF::API6:ver<0.0.1>
                 $info<CreationDate> //= $now
             }
         }
-	nextwith($spec, :$update, |c);
+	nextwith($spec, :$preserve, |c);
     }
 
     method update(|c) {
