@@ -5,10 +5,10 @@ use File::Find;
 use Shell::Command;
 use CPAN::Uploader::Tiny;
 
-unit class App::Mi6:ver<0.0.3>;
+unit class App::Mi6:ver<0.0.4>;
 
-has $!author = qx{git config --global user.name}.chomp;
-has $!email  = qx{git config --global user.email}.chomp;
+has $!author = run(<git config --global user.name>,  :out).out.slurp(:close).chomp;
+has $!email  = run(<git config --global user.email>, :out).out.slurp(:close).chomp;
 has $!year   = Date.today.year;
 
 my $normalize-path = -> $path {
@@ -46,9 +46,7 @@ multi method cmd('new', $module is copy) {
         spurt($f, %content{$c});
     }
     self.cmd("build");
-    my $devnull = open $*SPEC.devnull, :w;
-    run "git", "init", ".", :out($devnull);
-    $devnull.close;
+    run "git", "init", ".", :!out;
     run "git", "add", ".";
     note "Successfully created $main-dir";
 }
@@ -95,8 +93,7 @@ multi method cmd('dist') {
 
 multi method cmd('upload') {
     my $tarball = self.cmd('dist');
-    my $proc = run "git", "status", "-s", :out;
-    my @line = $proc.out.lines;
+    my @line = run("git", "status", "-s", :out).out.lines(:close);
     if @line.elems != 0 {
         note "You need to commit the following files before uploading $tarball";
         note "";
@@ -154,8 +151,9 @@ sub test(@file, Bool :$verbose, Int :$jobs) {
 sub regenerate-readme($module-file) {
     my @cmd = $*EXECUTABLE, "--doc=Markdown", $module-file;
     my $p = withp6lib { run |@cmd, :out };
+    LEAVE $p.out.close;
     die "Failed @cmd[]" if $p.exitcode != 0;
-    my $markdown = $p.out.slurp-rest;
+    my $markdown = $p.out.slurp;
     my ($user, $repo) = guess-user-and-repo();
     my $header = do if $user and ".travis.yml".IO.e {
         "[![Build Status](https://travis-ci.org/$user/$repo.svg?branch=master)]"
@@ -185,8 +183,8 @@ method regenerate-meta-info($module, $module-file) {
     $perl ~~ s/^v//;
 
     my @cmd = $*EXECUTABLE, "-M$module", "-e", "$module.^ver.Str.say";
-    my $p = withp6lib { run |@cmd, :out, :err };
-    my $version = $p.out.slurp-rest.chomp || $already<version>;
+    my $p = withp6lib { run |@cmd, :out, :!err };
+    my $version = $p.out.slurp(:close).chomp || $already<version>;
     $version = "0.0.1" if $version eq "*";
 
     my %new-meta =
@@ -241,9 +239,9 @@ sub make-dist-tarball($main-module) {
     die "To make dist tarball, you must specify version (not '*') in META6.json first"
         if $version eq '*';
     $name ~= "-$version";
-    my $proc = run "git", "ls-files", :out;
-    my @file = $proc.out.lines;
     rm_rf $name if $name.IO.d;
+    unlink "$name.tar.gz" if "$name.tar.gz".IO.e;
+    my @file = run("git", "ls-files", :out).out.lines(:close);
     my @ignore = (
         * eq ".travis.yml",
         * eq ".gitignore",
@@ -262,17 +260,18 @@ sub make-dist-tarball($main-module) {
     }
     my %env = %*ENV;
     %env<$_> = 1 for <COPY_EXTENDED_ATTRIBUTES_DISABLE COPYFILE_DISABLE>;
-    $proc = run "tar", "czf", "$name.tar.gz", $name, :out, :err, :%env;
+    my $proc = run "tar", "czf", "$name.tar.gz", $name, :!out, :err, :%env;
+    LEAVE $proc.err.close;
     if $proc.exitcode != 0 {
         my $exitcode = $proc.exitcode;
-        my $err = $proc.err.slurp-rest;
+        my $err = $proc.err.slurp;
         die $err ?? $err !! "can't create tarball, exitcode = $exitcode";
     }
     return "$name.tar.gz";
 }
 
 sub find-source-url() {
-    try my @line = qx{git remote -v 2>/dev/null};
+    my @line = run("git", "remote", "-v", :out, :!err).out.lines(:close);
     return "" unless @line;
     my $url = gather for @line -> $line {
         my ($, $url) = $line.split(/\s+/);
