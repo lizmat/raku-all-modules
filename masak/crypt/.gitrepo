@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/crypt.git
 	branch = master
-	commit = e8ed2f6e67d33188527ae383af25141ed17b43aa
-	parent = 58c9b7afefd98daa82aca59c632dee3e8aa16c2f
-	cmdver = 0.2.0
+	commit = 915bed73039d7610797704956dd1e44428704cb1
+	parent = c3cb091bb3c8fbdc8591604c5342935207abf2fd
+	cmdver = 0.4.0
