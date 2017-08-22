@@ -52,11 +52,7 @@ a true value, the tests will attempt to control the services, you probably don't
 want to do this on a production system.
 
 Assuming you have a working Rakudo Perl 6 installation then you should be able
-to install with either ```panda``` or ```zef``` depending on your preference:
-
-   panda install Monitor::Monit
-
-or
+to install with ```zef``` :
 
    zef install Monitor::Monit
 
@@ -74,4 +70,4 @@ This is free software.
 
 Please see the [LICENCE](LICENCE) file in this directory.
 
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017

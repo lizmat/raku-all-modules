@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Monitor-Monit.git
 	branch = master
-	commit = cd9d0ef92ea3d33cafb3e6b46a8b090fa91840af
-	parent = 0d2d36206ad03dcab58bebf07ea553f79f18a886
+	commit = 196b7390cc18217f6e16320c8da7f53cf5f18cad
+	parent = ad8fb7f8d82951feaeee092530475fd591e4d2dd
 	cmdver = 0.4.0
