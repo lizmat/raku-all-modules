@@ -49,23 +49,21 @@ most of that will work for other versions.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install RPi::Device::PiGlow
-
-This should work equally well with *zef* but I may not have tested it.
+    zef install RPi::Device::PiGlow
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-https://github.com/jonathanstowe/RPi-Device-PiGlow
+https://github.com/jonathanstowe/RPi-Device-PiGlow/issues
 
 Because there are limited ways to test this automatically without
 physically observing the device, there may be untested bugs.
