@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ufobat/p6-time-crontab.svg?branch=master)](https://travis-ci.org/ufobat/p6-time-crontab)
+
 NAME
 ====
 
