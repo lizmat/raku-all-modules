@@ -58,23 +58,21 @@ be delighted to receive patches for any issues found.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install RPi::Device::SMBus
-
-This should work equally well with *zef* but I haven't tested it.
+    zef install RPi::Device::SMBus
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-https://github.com/jonathanstowe/RPi-Device-SMBus
+https://github.com/jonathanstowe/RPi-Device-SMBus/issues
 
 I won't be surprised if there are problems with some devices as I am
 only able to test against a limited number which do not use all the
