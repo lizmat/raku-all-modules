@@ -30,17 +30,15 @@ until it finds one that is not already bound.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Test::Util::ServerPort
-
-This should work equally well with *zef* but I may not have tested it.
+    zef install Test::Util::ServerPort
 
 ## Support
 
