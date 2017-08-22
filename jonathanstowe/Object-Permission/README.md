@@ -1,4 +1,4 @@
-# Object-Permission
+# Object::Permission
 
 Experimental method (and public attribute accessor,) level authorisation
 for Perl 6 objects.
@@ -39,23 +39,22 @@ populates the permissions as per the application logic.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Object::Permission
+    zef install Object::Permission
 
-This should work equally well with *zef* but I may not have tested it.
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-https://github.com/jonathanstowe/Object-Permission
+https://github.com/jonathanstowe/Object-Permission/issues
 
 ## Licence
 
