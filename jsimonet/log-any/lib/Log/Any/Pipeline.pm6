@@ -106,7 +106,7 @@ class Log::Any::Pipeline {
 	}
 
 	# Dump the adapters
-	method gist {
+	multi method gist( Log::Any::Pipeline:D: ) {
 		return 'Log::Any::Pipeline.new(adapters => ' ~ @!adapters.gist ~ ')';
 	}
 

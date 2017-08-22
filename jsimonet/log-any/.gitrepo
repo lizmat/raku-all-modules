@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jsimonet/log-any.git
 	branch = master
-	commit = ad64da64e56765b30882989a3f0fecad76d4097f
-	parent = 0c205535ea884ea4eee2f69988c2af760d83dba9
+	commit = cf3fb87d4186cb361b6c2742b0605aa2573ca8c0
+	parent = 9937962916ff96b227ca34c1a2b58685bc8b2ff8
 	cmdver = 0.4.0
