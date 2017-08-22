@@ -28,23 +28,21 @@ part aren't correct for your system and that this will not install or
 work properly, if this is the case please see the "Support" section below.
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Sys::Utmp
-
-This should work with *zef* I just haven't tested it.
+    zef install Sys::Utmp
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-https://github.com/jonathanstowe/Sys-Utmp
+https://github.com/jonathanstowe/Sys-Utmp/issues
 
 I'm not able to test on a wide variety of platforms so any help there would be 
 appreciated. Also the assumptions in the C library are based on those used
