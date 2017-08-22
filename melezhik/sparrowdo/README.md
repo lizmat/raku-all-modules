@@ -497,6 +497,12 @@ Later on in the scenario you may access config data via `config` function:
     my $user         = config<user>;
     my $install-base = config<install-base>;
 
+# Environment variables 
+
+* `SPARROWDO-DEBUG`
+
+Enable some sparrowdo debug messages printed in a console.
+
     
 # AUTHOR
 

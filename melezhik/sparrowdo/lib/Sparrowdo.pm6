@@ -3,6 +3,7 @@ use v6;
 unit module Sparrowdo;
 
 use Terminal::ANSIColor;
+use Data::Dump;
 
 my %input_params = Hash.new;
 my $target_os;
@@ -32,7 +33,8 @@ sub push_spl ($item){
 }
 
 sub get_tasks () is export {
-    @tasks
+    say Dump(@tasks) if %*ENV<SPARROWDO-DEBUG>;
+    @tasks;
 }
 
 sub get_spl () is export {
