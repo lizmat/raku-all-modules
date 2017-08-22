@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/NativeHelpers-Array.git
 	branch = master
-	commit = 1ece3f0f9b39f216201ade9b53296ecbcf0d09d3
-	parent = e1973c93bb4227339c476333dab731259dbfad8e
+	commit = 85ee7e5c1eec1ebb7d3366effb76e3b6010f54f4
+	parent = 771dbb9738ffd6bfe1e235373d728d251ac7513b
 	cmdver = 0.4.0

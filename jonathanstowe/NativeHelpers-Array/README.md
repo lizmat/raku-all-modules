@@ -14,13 +14,13 @@ into modules where they may be useful.
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
-    panda install .
+    zef install .
 
 Remote installation
 
-    panda install NativeHelpers::Array
+    zef install NativeHelpers::Array
 
 Other install mechanisms may be become available in the future.
 
@@ -30,10 +30,10 @@ This should be considered experimental software until such time that
 Perl 6 reaches an official release.  However suggestions/patches are
 welcomed via github at
 
-https://github.com/jonathanstowe/NativeHelpers-Array
+https://github.com/jonathanstowe/NativeHelpers-Array/issues
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+Please see the [LICENCE](LICENCE) file in the distribution
 
-(C) Jonathan Stowe 2015
+© Jonathan Stowe 2015, 2016, 2017
