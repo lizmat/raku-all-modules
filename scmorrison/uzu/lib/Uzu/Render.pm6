@@ -40,22 +40,31 @@ sub i18n-from-yaml(
 
         try {
 
+            CATCH {
+                default {
+                    logger "Invalid i18n yaml file [$i18n_file]";
+                    logger .Str;
+                }
+            }
+
             my %yaml = load-yaml slurp($i18n_file, :r);
             my $key  = $i18n_file.dirname.split('i18n')[1] || $language;
             %i18n{$key}<i18n>     = %yaml;
             %i18n{$key}<modified> = $i18n_file.modified;
-
-            CATCH {
-                default {
-                    note "Invalid i18n yaml file [$i18n_file]";
-                }
-            }
         }
 
    }, i18n-files(:$language, dir => $i18n_dir);
 
    return %i18n;
 }
+
+sub i18n-valid-hash(
+    %h
+    --> Bool
+) {
+    so %h.values.all ~~ Pair;
+}
+
 
 sub i18n-context-vars(
     Str      :$language, 
@@ -64,9 +73,9 @@ sub i18n-context-vars(
 ) {
     my Str $i18n_key = ($path.IO.path ~~ / .* 'pages' (.*) '.' .*  / ).head.Str;
     return %( |$context,
-              i18n => %( |$context{$language}<i18n>, 
+              i18n => %( ( $context{$language}<i18n>.defined ?? |$context{$language}<i18n> !! %()), 
                          # Page-specific i18n vars?
-                         ( $context{$i18n_key}.defined ?? |$context{$i18n_key}<i18n> !! %() )));
+                         ( $context{$i18n_key}.defined ?? |$context{$i18n_key}<i18n> !! %())));
 }
 
 sub html-file-name(
@@ -97,68 +106,78 @@ sub page-uri(
     }
 }
 
-multi sub find-linked-pages(
-    List $p
+multi sub inject-linked-pages($p, :$template_engine, :&expand-linked-pages) {$p}
+multi sub inject-linked-pages(
+    Iterable $p,
+    :$template_engine,
+    :&expand-linked-pages
 ) {
-    map {
-       find-linked-pages $_ when $_ ~~ Hash;
-    }, @$p;
+    my $n = $p.map({
+        .&inject-linked-pages(:$template_engine, :&expand-linked-pages);
+    }).map({
+        .&inject-linked-pages(:$template_engine, :&expand-linked-pages);
+    });
+    if $n.cache.values.all ~~ Pair { 
+        $n.cache.Hash;
+    } elsif $n.cache.values.any ~~ Hash|Pair {
+        $template_engine ~~ 'mustache'
+        ?? $n.cache.List
+        !! $n.cache.Hash;
+    } else {
+        $n.cache;
+    }
 }
-
-multi sub find-linked-pages(
+multi sub inject-linked-pages(
     Hash $p,
-    --> Hash
+    :$template_engine,
+    :&expand-linked-pages
+    --> Hash()
 ) {
-    state %page_sets;
-    map { 
-        find-linked-pages(.value) when .value ~~ Hash|List;
-        %page_sets{.key} = .values[0] when .key ~~  / '_pages' $/;
-    }, %$p;
-    %page_sets;
+    map -> $k, $v {
+        if $k ~~ /'_pages'$/ {
+           expand-linked-pages(block_key => $k, pages => $v).Hash;
+        } else {
+            $k => inject-linked-pages($v, :$template_engine, :&expand-linked-pages);
+        }
+    }, kv $p;
 }
 
 sub linked-pages(
     Str  :$base_page,
+    Str  :$block_key,
+         :@pages,
     Hash :$page_vars,
     Hash :$site_index,
     Str  :$default_language,
     Str  :$language,
     Str  :$i18n_format = 'default',
+         :@timestamps,
     ::D  :&logger
-    --> Hash
 ) {
     my %linked_pages;
-    for kv find-linked-pages($page_vars) -> $block_key, @pages {
 
-        for @pages -> %vars {
-            my $key  = %vars<page>;
-            my $url = ($key ~~ / '://' / || !$site_index{$key})
-                ?? $key
-                !! page-uri page_name => $key, :$default_language, :$language, out_ext => $site_index{$key}<out_ext>;
+    for @pages -> %vars {
+        my $key  = %vars<page>;
+        my $url = ($key ~~ / '://' / || !$site_index{$key})
+            ?? $key
+            !! page-uri page_name => $key, :$default_language, :$language, out_ext => $site_index{$key}<out_ext>;
 
-            logger "Broken link in template [$base_page]: page [$key] referenced in [$block_key] not found" when $key !~~ /'://'/ && !$site_index{$key};
+        logger "Broken link in template [$base_page]: page [$key] referenced in [$block_key] not found" when $key !~~ /'://'/ && !$site_index{$key};
 
-            push %linked_pages{$block_key}, grep({ .value }, [
-                |$site_index{$key}.Hash,
-                # use the variables defined in the _pages block if set
-                page     => $key,
-                url      => $url,
-                title    => $site_index{$key}<title>    ||%vars<title>,
-                author   => $site_index{$key}<author>   ||%vars<author>||'',
-                date     => $site_index{$key}<date>     ||'',
-                modified => $site_index{$key}<modified>
-            ]).Hash;
-        }
+        push @timestamps, $site_index{$key}<modified>;
+        push %linked_pages{$block_key}, grep({ .value }, [
+            |$site_index{$key}.Hash,
+            # use the variables defined in the _pages block if set
+            page     => $key,
+            url      => $url,
+            title    => $site_index{$key}<title>    ||%vars<title>,
+            author   => $site_index{$key}<author>   ||%vars<author>||'',
+            date     => $site_index{$key}<date>     ||'',
+            modified => $site_index{$key}<modified>
+        ]).Hash;
     }
 
-    return %linked_pages;
-}
-
-sub linked-page-timestamps(
-    Hash $pages
-    --> List
-) {
-    |grep { .defined }, flat map({ .values>><modified> }, values $pages);
+    return %linked_pages
 }
 
 sub extract-file-parts(
@@ -171,19 +190,6 @@ sub extract-file-parts(
     my ($page_name, $out_ext) = split '.', $file_name;
     my $target_dir            = $relative_path.IO.parent.path;
     return $page_name, ($out_ext||'html'), $target_dir;
-}
-
-sub io-runner(
-    Channel $queue
-    --> Promise
-) {
-  start {
-    $queue.list.map: -> $action {
-      last if $action ~~ Str && $action ~~ 'exit';
-      # else, run action
-      &$action();
-    }
-  }
 }
 
 sub write-generated-file(
@@ -205,13 +211,14 @@ our sub process-livereload(
     Bool :$no_livereload
     --> Str
 ) {
+    return '' when !$content.defined;
     unless $no_livereload {
         # Add livejs if live-reload enabled (default)
         my Str $livejs = '<script src="/uzu/js/live.js"></script>';
         if $content ~~ /'</body>'/ {
             return S/'</body>'/$livejs\n<\/body>/ given $content;
         } else {
-            return $content  ~ "\n$livejs";
+            return $content ~ "\n$livejs";
         }
     }
     return $content;
@@ -256,15 +263,16 @@ sub parse-template(
 ) {
     # Extract header yaml if available
     try {
-        my ($template_yaml, $template_html) = ~<< ( slurp($path, :r) ~~ / ( ^^ '---' .* '---' | ^^ ) [\v]? (.*) / );
-        my %yaml = $template_yaml ?? load-yaml $template_yaml !! %();
 
         CATCH {
             default {
                 logger "Invalid template yaml [$path]";
+                logger .Str;
             }
         }
 
+        my ($template_yaml, $template_html) = ~<< ( slurp($path, :r) ~~ / ( ^^ '---' .* '---' | ^^ ) [\v]? (.*) / );
+        my %yaml = $template_yaml ?? load-yaml $template_yaml !! %();
         return $template_html, %yaml;
     }
 }
@@ -370,9 +378,10 @@ multi sub render-template(
     'mustache',
     Hash  :$context,
     Str   :$content,
-    Array :$from = []
+    Array :$from = [],
+    ::D   :&logger
 ) {
-      Template::Mustache.render: $content, $context, from => $from;
+   Template::Mustache.render: $content, $context, from => $from;
 }
 
 multi sub render-template(
@@ -380,15 +389,31 @@ multi sub render-template(
     Hash      :$context,
     Str       :$template_name,
     Str       :$content,
-    Template6 :$t6
+    Template6 :$t6,
+    ::D       :&logger
 ) {
-    if $content && $context {
-        $t6.add-template: "{$template_name}_", $content;
-        $t6.add-template: $template_name, $t6.process("{$template_name}_", |$context);
-    } elsif !$context {
-        $t6.add-template: $template_name, $content;
-    } else {
-        $t6.add-template: $template_name, $t6.process($template_name, |$context);
+
+    try {
+
+       CATCH {
+           default {
+               logger "Error rendering template [{S/'_'$// given $template_name}]";
+               logger "Template6: {.Str}";
+           }
+       }
+
+       if $content && $context {
+           # Store and Render
+           $t6.add-template: "{$template_name}_", $content;
+           $t6.add-template: $template_name, $t6.process("{$template_name}_", |$context);
+       } elsif !$context {
+           # Store template
+           $t6.add-template: $template_name, $content;
+       } else {
+           # Render a stored template
+           $t6.add-template: $template_name, $t6.process($template_name, |$context);
+       }
+
     }
 }
 
@@ -416,7 +441,7 @@ multi sub render(
         "lang_{$language}" => True,
         "theme_{$theme}"   => True,
         layout             => $layout_vars,
-        |$context{$language};
+        |%( $context{$language}.values.all ~~ Pair ?? $context{$language} !! %() );
 
     my @layout_partials  = partial-names $template_engine, $layout_template;
     for $pages.sort({ $^a.values[0]<modified> < $^b.values[0]<modified> }) -> $page {
@@ -436,8 +461,6 @@ multi sub render(
                 ?? "{$build_dir}/{$page_name}.{%page<out_ext>}".IO.modified||0
                 !! ($build_dir ~ page-uri :$page_name, :$default_language, :$language, out_ext => %page<out_ext>).IO.modified||0;
 
-            my Template6 $t6 .= new when $template_engine ~~ 'tt';
-            
             # Capture i18n, template, layout, and partial modified timestamps
             my @modified_timestamps = [$layout_modified, %page<modified>];
             my @partial_render_queue;
@@ -449,25 +472,31 @@ multi sub render(
             my Any %i18n_vars = i18n-context-vars path => %page<path>, :$context, :$language;
 
             # Prepare page links from *_pages yaml blocks
-            my %linked_pages = linked-pages
-                base_page => $page_name,
-                page_vars => %page<vars>,
-                :$site_index,
-                :$default_language,
-                :$language,
-                :&logger;
+            my $page_vars = inject-linked-pages(
+                %page<vars>, :$template_engine, expand-linked-pages => ->
+                    :$base_page           = $page_name,
+                    :$block_key,
+                    :$pages,
+                    :$r_site_index        = $site_index,
+                    :$r_default_language  = $default_language,
+                    :$r_language          = $language {
+                        linked-pages(
+                            :$base_page,
+                            :$block_key,
+                            :$pages,
+                            site_index       => $r_site_index,
+                            default_language => $r_default_language,
+                            language         => $r_language,
+                            timestamps       => @modified_timestamps)
+                    }
+            );
 
-            # Linked pages file timestamps
-            push @modified_timestamps, linked-page-timestamps %linked_pages;
-
-            my Any %partials = %() when $template_engine ~~ 'mustache';
+            # Render engine storage
+            my Template6 $t6 .= new when $template_engine ~~ 'tt';
+            my Any %partials  = %() when $template_engine ~~ 'mustache';
 
             # Prepare base context variables
-            my %base_context =
-                |%global_vars,
-                |%i18n_vars,
-                |%page<vars>,
-                |%linked_pages;
+            my %base_context = |%global_vars, |%i18n_vars, |$page_vars;
 
             my ($modified_timestamps, $partial_render_queue) =
                  embedded-partials
@@ -497,7 +526,8 @@ multi sub render(
                                    'mustache',
                                     context  => %context,
                                     content  => %partial<html>,
-                                    from     => [%partials];
+                                    from     => [%partials],
+                                    logger   => &logger;
                         }
                         when 'tt' {
                             render-template
@@ -505,7 +535,8 @@ multi sub render(
                                  context       => %context,
                                  template_name => $partial_name,
                                  content       => %partial<html>,
-                                 t6            => $t6;
+                                 t6            => $t6,
+                                 logger        => &logger;
                         }
                     }
                 }
@@ -527,7 +558,8 @@ multi sub render(
                        'mustache',
                         context  => %context,
                         content  => %page<html>,
-                        from     => [%partials];
+                        from     => [%partials],
+                        logger   => &logger;
                 }
                 when 'tt' {
                     # Cache template
@@ -540,7 +572,8 @@ multi sub render(
                         'tt',
                          template_name => "{$page_name}_",
                          context       => %context,
-                         t6            => $t6;
+                         t6            => $t6,
+                         logger        => &logger;
                 }
             }
 
@@ -560,7 +593,8 @@ multi sub render(
                                'mustache',
                                 context  => %context,
                                 content  => $layout_template,
-                                from     => [%( |%partials, content => $page_contents )];
+                                from     => [%( |%partials, content => $page_contents )],
+                                logger   => &logger;
                         }
                         when 'tt' {
                             # Cache layout template
@@ -580,7 +614,8 @@ multi sub render(
                                 'tt',
                                  context       => %context,
                                  template_name => 'layout',
-                                 t6            => $t6;
+                                 t6            => $t6,
+                                 logger        => &logger;
                         }
                     }
                 }

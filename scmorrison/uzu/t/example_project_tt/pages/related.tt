@@ -1,4 +1,5 @@
 ---
+author: Page Author
 related_pages:
     - page: about
       title: Let's use this title
@@ -21,18 +22,32 @@ going_down:
           author: Sam Morrison
           title: Uzu is a static site generator
     - deeper_still:
+        - title: Deeper title
         - deeper_pages:
             - page: index
             - page: about
             - page: blog/fiji
 categories:
-  - title: General tasks
-    category_pages:
-      - page: http://www.perl6.org
-      - page: index
-      - page: blog/fiji
-      - page: about
+  - general_tasks:
+      - title: General tasks
+        category_pages:
+          - page: http://www.perl6.org
+            title: Perl 6
+          - page: index
+          - page: blog/fiji
+          - page: about
+  - other_tasks:         
+      - title: Other tasks
+        category_pages:
+          - page: about
+          - page: index
+  - more_tasks:
+      - title: Even more tasks
+        category_pages:
+          - page: blog/fiji
+          - page: about
 ---
+related pages
 <ul>
 [% for page in related_pages %]
     <li>
@@ -41,6 +56,7 @@ categories:
 [% end %]
 </ul>
 
+other pages
 <ul>
 [% for page in other_pages %]
     <li>
@@ -48,17 +64,58 @@ categories:
     </li>
 [% end %]
 </ul>
+
+deep pages
 <ul>
-[% for page in deep_pages %]
+[% for page in going_down.deep_pages %]
     <li>
         <a href="[% page.url %]">[% page.title %]</a> [[% page.author %]]
     </li>
 [% end %]
 </ul>
+
+deeper still
+<p>
+[% going_down.deeper_still.title %]
 <ul>
-[% for page in deeper_pages %]
+[% for page in going_down.deeper_still.deeper_pages %]
     <li>
         <a href="[% page.url %]">[% page.title %]</a> [[% page.author %]]
     </li>
 [% end %]
 </ul>
+</p>
+
+categories
+<p>
+[% categories.general_tasks.title %]
+<ul>
+[% for page in categories.general_tasks.category_pages %]
+    <li>
+        <a href="[% page.url %]">[% page.title %]</a> [[% page.author %]]
+    </li>
+[% end %]
+</ul>
+</p>
+
+<p>
+[% categories.other_tasks.title %]
+<ul>
+[% for page in categories.other_tasks.category_pages %]
+    <li>
+        <a href="[% page.url %]">[% page.title %]</a> [[% page.author %]]
+    </li>
+[% end %]
+</ul>
+</p>
+
+<p>
+[% categories.more_tasks.title %]
+<ul>
+[% for page in categories.more_tasks.category_pages %]
+    <li>
+        <a href="[% page.url %]">[% page.title %]</a> [[% page.author %]]
+    </li>
+[% end %]
+</ul>
+</p>
