@@ -80,25 +80,21 @@ own application as the callback URI is set to 'localhost'.
 ## Installation
 
 If you have a working Rakudo Perl 6 installation can install directly with
-"panda":
+"zef":
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install WebService::Soundcloud
-
-Although I haven't tested it, I can't so any reason why this
-should not work with "zef" or some other similarly capable
-package manager
+    zef install WebService::Soundcloud
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-https://github.com/jonathanstowe/WebService-Soundcloud
+https://github.com/jonathanstowe/WebService-Soundcloud/issues
 
 ## Licence
 
