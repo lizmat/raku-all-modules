@@ -29,23 +29,21 @@ of an arbitrary user (as in the second example above.)
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Object::Permission::Group
-
-There is no reason to believe this shouldn't work with *zef* as well.
+    zef install Object::Permission::Group
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-https://github.com/jonathanstowe/Object-Permission-Group
+https://github.com/jonathanstowe/Object-Permission-Group/issues
 
 ## Licence
 
