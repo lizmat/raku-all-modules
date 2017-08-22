@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ufobat/p6-XML-Rabbit.git
 	branch = master
-	commit = efd83e541f90936bc35effb72bf53fc924861c4b
-	parent = 13fce6571242b3eb3b4c8eb0bba58d819d7530d3
+	commit = a048e3b30efbe9cfa0299a02b0ae1a2a4930fcd5
+	parent = 261e10ef68adbcf66d16b9a561d182555486320d
 	cmdver = 0.4.0
