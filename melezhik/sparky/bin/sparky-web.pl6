@@ -6,9 +6,10 @@ use YAMLish;
 my $root = %*ENV<SPARKY_ROOT> || '/home/' ~ %*ENV<USER> ~ '/.sparky/projects';
 my $reports-dir = "$root/.reports";
 
+
 get '/' => sub {
 
-  my $dbh = DBIish.connect("SQLite", database => "$root/db.sqlite3".IO.absolute );
+  my $dbh = get-dbh();
 
   my $sth = $dbh.prepare(q:to/STATEMENT/);
       SELECT * FROM builds order by dt desc
@@ -76,6 +77,34 @@ sub css {
   <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
   CSS
+}
+
+sub get-dbh {
+
+  my $conf-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparky.yaml' !! ( '/sparky.yaml' );
+  
+  my %conf = $conf-file.IO ~~ :e ?? load-yaml(slurp $conf-file) !! Hash.new;
+  
+  my $dbh;
+  
+  if %conf<database> && %conf<database><engine> && %conf<database><engine> !~~ / :i sqlite / {
+
+    $dbh  = DBIish.connect(
+        %conf<database><engine>,
+        host      => %conf<database><host>,
+        port      => %conf<database><port>,
+        database  => %conf<database><name>,
+        user      => %conf<database><user>,
+        password  => %conf<database><pass>,
+    );
+  
+  } else {
+  
+    my $db-name = "$root/db.sqlite3";
+    $dbh  = DBIish.connect("SQLite", database => $db-name );
+  
+  }
+  
 }
 
 baile;

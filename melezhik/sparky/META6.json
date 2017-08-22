@@ -1,7 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "Sparky",
-  "version"     : "0.0.18",
+  "version"     : "0.0.21",
   "description" : "Sparky is a continues integration server based on Sparrow/Sparrowdo ecosystem",
   "authors" : [ "Alexey Melezhik"],
   "depends"     : [

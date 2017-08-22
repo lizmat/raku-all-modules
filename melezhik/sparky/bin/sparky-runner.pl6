@@ -39,12 +39,11 @@ sub MAIN (
 
   my $dbh;
 
-
   if $make-report {
 
     mkdir $reports-dir;
   
-    $dbh = DBIish.connect("SQLite", database => "$dir/../db.sqlite3".IO.absolute );
+    $dbh = get-dbh( $dir );
   
     my $sth = $dbh.prepare(q:to/STATEMENT/);
       INSERT INTO builds (project, state)
@@ -128,7 +127,7 @@ sub MAIN (
   }
 
   if $make-report {
-    $dbh.do("UPDATE builds SET state = 1 WHERE ID = $build_id");
+    $dbh.do("UPDATE builds SET state = 1 WHERE id = $build_id");
     say "BUILD SUCCEED $project" ~ '@' ~ $build_id;
     $BUILD_STATE="OK";
   } else {
@@ -145,7 +144,7 @@ sub MAIN (
         warn .say;
         if $make-report {
           say "BUILD FAILED $project" ~ '@' ~ $build_id;
-          $dbh.do("UPDATE builds SET state = -1 WHERE ID = $build_id");
+          $dbh.do("UPDATE builds SET state = -1 WHERE id = $build_id");
           $BUILD_STATE="FAILED";
 
         } else {
@@ -164,7 +163,7 @@ sub MAIN (
     say "keep builds: " ~ %config<keep_builds>;
 
     my $sth = $dbh.prepare(q:to/STATEMENT/);
-        SELECT ID from builds where project = ? order by id asc
+        SELECT id from builds where project = ? order by id asc
     STATEMENT
     
     $sth.execute($project);
@@ -183,7 +182,7 @@ sub MAIN (
         $i++;
         my $bid = @r[0];
         if $i <= $remove-builds {
-          if $dbh.do("delete from builds WHERE ID = $bid") {
+          if $dbh.do("delete from builds WHERE id = $bid") {
             say "remove build $project" ~ '@' ~ $bid;
           } else {
             say "!!! can't remove build <$project>" ~ '@' ~ $bid;
@@ -201,6 +200,33 @@ sub MAIN (
 
   } 
 
+
+}
+
+sub get-dbh ( $dir ) {
+
+  my $conf-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparky.yaml' !! ( '/sparky.yaml' );
+
+  my %conf = $conf-file.IO ~~ :e ?? load-yaml(slurp $conf-file) !! Hash.new;
+
+  my $dbh;
+
+  if %conf<database> && %conf<database><engine> && %conf<database><engine> !~~ / :i sqlite / {
+
+    $dbh  = DBIish.connect(
+        %conf<database><engine>,
+        host      => %conf<database><host>,
+        port      => %conf<database><port>,
+        database  => %conf<database><name>,
+        user      => %conf<database><user>,
+        password  => %conf<database><pass>,
+    );
+
+  } else {
+
+    $dbh  = DBIish.connect("SQLite", database => "$dir/../db.sqlite3".IO.absolute  );
+
+  }
 
 }
 

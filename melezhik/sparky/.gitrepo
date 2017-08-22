@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/melezhik/sparky.git
 	branch = master
-	commit = dc477bb615ded90c6a8d1a9744aec7a8f651be6e
-	parent = a1950757d48127943708faf5e64c85bd3d28d2fc
+	commit = 28cbadd068339a0a6554788fa00eba20f1aa50da
+	parent = 3e9b2a21aa39a3e4b9a32cf8ba3aef5b9b4138a6
 	cmdver = 0.4.0
