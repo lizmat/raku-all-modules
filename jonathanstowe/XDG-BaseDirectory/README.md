@@ -20,17 +20,14 @@ and no external dependencies.
 
 ## Installation
 
-Assuming you have a working Rakudo Perl 6 installation with panda
+Assuming you have a working Rakudo Perl 6 installation with *zef*
 installed you can install from a copy of the source directory:
 
-     panda install .
+     zef install .
 
 or remotely:
 
-     panda install XDG::BaseDirectory 
-
-Although I haven't tested, there is no reason that "zef" or some
-similarly capable package manager shouldn't work.
+     zef install XDG::BaseDirectory 
 
 ## Support
 
@@ -45,4 +42,4 @@ would be appreciated.
 
 Please see the [LICENCE](LICENCE) file in the distribution
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017
