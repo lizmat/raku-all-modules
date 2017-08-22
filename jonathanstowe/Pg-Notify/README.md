@@ -60,14 +60,6 @@ Assuming you have a working Rakudo Perl 6 installation you should just be able t
 
 	zef install .
 
-Or indeed *panda* :
-
-	panda install Pg::Notify
-
-	# or from a local copy
-
-	panda install .
-
 But I can't think there should be any problem with any installer that may come along in the future.
 
 ## Support
