@@ -156,11 +156,7 @@ This aims to simplify the construction of state machines from a fixed configurat
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation then you
-should be able to install this module with *zef* or *panda*:
-
-	panda install Tinky::JSON
-
-or
+should be able to install this module with *zef* :
 
 	zef install Tinky::JSON
 
@@ -177,4 +173,4 @@ Please send any reports, suggestions or patches to https://github.com/jonathanst
 The is free software.  The terms are described in the [LICENCE](LICENCE)
 file in the distribution.
 
-© Jonathan Stowe, 2016
+© Jonathan Stowe, 2016, 2017
