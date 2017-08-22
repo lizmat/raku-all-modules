@@ -11,6 +11,7 @@ submethod TWEAK() {
         my $compiler = $CLASS.new(lang => self.lang());
         my $target;
         my $to-execute = !$optset<E> && !$optset<S>;
+		my $tmppath = tmppath();
 
         # generate compile arguments
         $compiler.autoDetecte(); # ??user defined compiler!!
@@ -22,6 +23,7 @@ submethod TWEAK() {
         $compiler.linkLibrary(&argsFromOV($optset, '-l', 'l'));
         $compiler.setStandard($optset<std>);
         $compiler.addArg(< -Wall -Wextra -Werror >) if $optset<w>;
+		$tmppath.IO.dirname.IO.mkdir;
         # generate code or file
         if +@args == 1 {
             my @incode = [];
@@ -49,7 +51,7 @@ EOF
             }
             $target = $compiler.compileCode(
                 @incode,
-                $optset<o> // &sourceNameToExecutable(tmppath()),
+                $optset<o> // &sourceNameToExecutable($tmppath),
                 :out(!$optset<quite>),
                 :err(!$optset<quite>),
             );
@@ -78,7 +80,7 @@ EOF
 				$compiler.setMode(CompileMode::LINK);
             $target = $compiler.linkObject(
                 @objects,
-                $optset<o> // &sourceNameToExecutable(tmppath()),
+                $optset<o> // &sourceNameToExecutable($tmppath),
                 :out(!$optset<quite>),
                 :err(!$optset<quite>)
             );
