@@ -37,15 +37,15 @@ http://www.mega-nerd.com/libsamplerate/download.html
 I am however unlikely to be able to offer help with installing it this way.
 
 Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Audio::Convert::Samplerate
+    zef install Audio::Convert::Samplerate
 
 Other install mechanisms may be become available in the future.
 
@@ -57,6 +57,6 @@ https://github.com/jonathanstowe/Audio-Convert-Samplerate/issues
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+Please see the [LICENCE](LICENCE) file in the distribution
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017
