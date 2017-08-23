@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/Perl6-Grammar--HTTP.git
 	branch = master
-	commit = df065bd00aadec7c49f1d8083a050ff449fbbba0
-	parent = dc094f56b7edbec3d1d0f4583f94146e84cb37a3
+	commit = 210371b64dafcca7b4eecf450489d9a992388f27
+	parent = fc9935b5b5be84d08ae0ea1fff1c1cfe8576dc0b
 	cmdver = 0.4.0
