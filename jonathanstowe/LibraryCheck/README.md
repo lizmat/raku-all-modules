@@ -47,21 +47,13 @@ be taken as an example of nice Perl 6 code.
 ## Installation
 
 Assuming you have a working Rakudo perl6 installation you should be able to
-install this with either *zef* or *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
-
-    # or
-
     zef install .
 
     # Remote installation
-
-    panda install LibraryCheck
-
-    # or
 
     zef install LibraryCheck
 
@@ -77,6 +69,6 @@ platforms that rakudo will work on.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+Please see the [LICENCEi](LICENCE) file in the distribution
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017
