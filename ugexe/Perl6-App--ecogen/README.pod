@@ -10,7 +10,7 @@ See: https://github.com/ugexe/Perl6-ecosystems
 
 =head1 Installation
 
-    $ zef install https://github.com/ugexe/Perl6-App--ecogen.git
+    $ zef install App::ecogen
 
 =head1 Usage
 
