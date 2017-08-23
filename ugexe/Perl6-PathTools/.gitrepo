@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/Perl6-PathTools.git
 	branch = master
-	commit = 4ff656d2b5f4380693270da9e977f789ab311084
-	parent = 49ce3d6a6461450ff5561caba642ed55bb23de68
+	commit = 6a1f3633b6ce0d4d6e98c55486a7e209c8fddfdb
+	parent = 00af558e12d01a2f504bcf18a86d332e1f721592
 	cmdver = 0.4.0
