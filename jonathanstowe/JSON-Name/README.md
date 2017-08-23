@@ -33,17 +33,16 @@ Of course it could be used in other modules for a similar purpose.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install JSON::Name
+    zef install JSON::Name
 
-This should work equally well with *zef* but I haven't tested it.
 
 ## Support
 
