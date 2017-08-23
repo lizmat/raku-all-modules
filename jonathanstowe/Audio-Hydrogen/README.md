@@ -30,18 +30,15 @@ examples for things that you can do with it.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Audio::Hydrogen
-
-I haven't tried this with *zef* but I have no reason to think it
-shouldn't work if you would rather use that.
+    zef install Audio::Hydrogen
 
 Other install mechanisms may be become available in the future.
 
@@ -55,7 +52,7 @@ do with it.
 
 Suggestions/patches are welcomed via github at
 
-https://github.com/jonathanstowe/Audio-Hydrogen
+https://github.com/jonathanstowe/Audio-Hydrogen/issues
 
 ## Licence
 
