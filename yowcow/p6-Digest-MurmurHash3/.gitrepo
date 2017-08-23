@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/yowcow/p6-Digest-MurmurHash3.git
 	branch = master
-	commit = e8fe2af14d60d097438439ca1e766172d9239892
-	parent = 359f3520316cc6bda9c2ed9ce4c1b221d84a0911
+	commit = ad2d0a67c1c7c9313c3ad64ecd34abdea21e1253
+	parent = c9283ae350d497c000a6ca96c3303c9c1cae2be5
 	cmdver = 0.4.0
