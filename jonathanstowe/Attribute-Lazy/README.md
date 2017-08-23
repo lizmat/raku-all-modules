@@ -29,17 +29,7 @@ to calculate (or various other reasons that haven't been thought of.)
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
-
-    # From the source directory
-   
-    panda install .
-
-    # Remote installation
-
-    panda install Attribute::Lazy
-
-Or *zef*:
+install this with *zef* :
 
     # From the source directory
    
@@ -57,8 +47,8 @@ Suggestions/patches are welcomed via github at https://github.com/jonathanstowe/
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+Please see the [LICENCE](LICENCE) file in the distribution
 
 © Rakudo Contributors 2015
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 
