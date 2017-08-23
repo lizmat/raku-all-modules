@@ -20,26 +20,24 @@ dependency on an external network service.  For example:
 
 ## Installation
 
-You can install directly with "panda":
+You can install directly with "zef":
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install CheckSocket
-
-I haven't tested with "zef" but I see no reason why it shouldn't work.
+    zef install CheckSocket
 
 ## Support
 
 Suggestions/patches are welcomed via github at
 
-   https://github.com/jonathanstowe/CheckSocket
+https://github.com/jonathanstowe/CheckSocket/issues
 
 ## Licence
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015, 2016
+(C) Jonathan Stowe 2015, 2016, 2017
