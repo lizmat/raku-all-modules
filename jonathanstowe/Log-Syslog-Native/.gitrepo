@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Log-Syslog-Native.git
 	branch = master
-	commit = b706f5305e7077122b6dfbd210ec03d8042d19d3
-	parent = 5adbeadfd217b78e32cf6f18b5f7f73dcd289862
+	commit = 9ed180d9d07178d7a94a781ce2fc2052d7bf9331
+	parent = 75ecf48d9c6debef7f0933a4da7fb705e881a6c8
 	cmdver = 0.4.0

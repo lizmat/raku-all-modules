@@ -23,16 +23,16 @@ in their standard runtime library.
 Currently there is no dedicated test to determine whether your platform is
 supported, the unit tests will simply fail horribly.
 
-Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
+Assuming you have a working Rakudo Perl6 installation you should be able to
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remove installation
 
-    panda install Log::Syslog::Native
+    zef install Log::Syslog::Native
 
 Other install mechanisms may be become available in the future.
 
