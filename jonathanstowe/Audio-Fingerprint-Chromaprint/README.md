@@ -58,11 +58,7 @@ found at https://acoustid.org/chromaprint.
 
 Assuming you have a working rakudo Perl 6 installation (and the
 chromaprint library,) then you should be able to install the module
-with ```panda``` :
-
-	panda install Audio::Fingerprint::Chromaprint
-
-or with ```zef```
+with ```zef``` :
 
 	zef install Audio::Fingerprint::Chromaprint
 
@@ -80,5 +76,5 @@ This is free software.
 
 See the [LICENCE](LICENCE) file in the distribution.
 
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 
