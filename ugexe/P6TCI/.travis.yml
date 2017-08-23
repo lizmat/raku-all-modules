@@ -28,15 +28,15 @@ before_install:
 
     # No need to actually install the module installer
     - git clone https://github.com/ugexe/zef $HOME/zef
-    - export MODULE_INSTALLER="-I $HOME/zef/lib $HOME/zef/bin/zef"
+    - export MODULE_INSTALLER="-I $HOME/zef $HOME/zef/bin/zef"
 
 install:
     # Install prereqs
-    - perl6 $MODULE_INSTALLER --depsonly install .
+    - perl6 $MODULE_INSTALLER --deps-only install .
 
 script:
     # The actual testing
-    - prove -v -e 'perl6 -Ilib' t/
+    - prove -v -e 'perl6 -I.' t/
 
 after_success:
     # List all installed modules for debugging for brevity
