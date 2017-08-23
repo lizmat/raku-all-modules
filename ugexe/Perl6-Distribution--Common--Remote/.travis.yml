@@ -30,7 +30,7 @@ before_install:
 
 install:
     - git clone https://github.com/ugexe/zef $HOME/zef
-    - perl6 -I $HOME/zef/lib $HOME/zef/bin/zef --depsonly install .
+    - perl6 -I $HOME/zef $HOME/zef/bin/zef --deps-only install .
 
 script:
-    - prove -v -e 'perl6 -Ilib' t/
+    - prove -v -e 'perl6 -I.' t/
