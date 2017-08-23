@@ -68,17 +68,14 @@ you can provide your own as required.
 ## Installation
 
 Assuming you have a working Rakudo perl 6 installation you should be
-able to install this directly with panda:
+able to install this directly with zef:
 
-    panda install Lumberjack
+    zef install Lumberjack
 
 Or if you have the source code locally:
 
-    panda install .
+    zef install .
 
-I haven't tested it myself, but I see no reason that you shouldn't be
-able to install this with "zef" or indeed any other similarly capable
-package management tool that may come along.
 
 ## Support
 
@@ -97,7 +94,7 @@ https://github.com/jonathanstowe/Lumberjack/issues
 
 # Licence and Copyright
 
-This is free software, please see the LICENCE file for full description.
+This is free software, please see the [LICENCE](LICENCE) file for full description.
 
-    © Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 
