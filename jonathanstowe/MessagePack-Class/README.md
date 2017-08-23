@@ -83,15 +83,7 @@ in that language.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation the you should be able
-to install this with ```panda``` :
-
-    panda install MessagePack::CLass
-
-    # or from a local check-out:
-
-    panda install .
-
-Or with ```zef```:
+to install this with ```zef``` :
 
     zef install MessagePack::Class
 
