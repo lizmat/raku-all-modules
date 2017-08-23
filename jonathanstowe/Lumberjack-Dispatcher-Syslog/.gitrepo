@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Lumberjack-Dispatcher-Syslog.git
 	branch = master
-	commit = 7815ea99e0afd2b5ea36fb1044f1182d3cc8d55a
-	parent = 74bfef0a1c5d66753a5e19d2ddb1cf4fe821c3b8
+	commit = 24be673ca5369ddbbba38b8c5982c66c9366cd0f
+	parent = 2c64205be88de3574a770425f11acc4fc38feb73
 	cmdver = 0.4.0

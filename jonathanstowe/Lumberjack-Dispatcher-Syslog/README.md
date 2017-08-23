@@ -53,16 +53,14 @@ default configuration (or put them in separate files.)
 ## Installation
 
 Assuming you have got a working installation of Rakudo perl 6 you
-should be able to install this with panda:
+should be able to install this with zef:
 
-    panda install Lumberjack::Dispatcher::Syslog
+    zef install Lumberjack::Dispatcher::Syslog
 
 Or if you have a local clone of the code:
 
-    panda install .
+    zef install .
 
-Though I haven't tested with it, I see no reason that "zef" or any other
-installer that may come along shouldn't work equally well.
 
 ## Support
 
@@ -78,7 +76,7 @@ please feel free to post at https://github.com/jonathanstowe/Lumberjack-Dispatch
 
 ## Licence and copyright
 
-This is free software. Please see the LICENCE file in the repository.
+This is free software. Please see the [LICENCE](LICENCE) file in the repository.
 
-	© Jonathan Stowe, 2016
+© Jonathan Stowe, 2016, 2017
 
