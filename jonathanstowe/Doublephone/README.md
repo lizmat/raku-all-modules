@@ -40,16 +40,8 @@ optimised for comparison and not as a guide to how something might be pronounced
 
 ## Installation
 
-If you have a working installation of Rakudo Perl 6 with one of ```panda``` or ```zef``` installed
+If you have a working installation of Rakudo Perl 6 with ```zef``` installed
 then you should be able to install this with either:
-
-	panda install Doublephone
-
-	# or from a local clone
-
-	panda install .
-
-or:
 
 	zef install Doublephone
 
@@ -74,7 +66,7 @@ data source for these.
 
 This is free software, please see the [LICENCE](LICENCE) file in the distribution.
 
-© Jonathan Stowe, 2016
+© Jonathan Stowe, 2016, 2017
 
 The C portions from Text::DoubleMetaphone have the following copyright text:
 
