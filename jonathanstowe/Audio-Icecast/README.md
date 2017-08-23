@@ -43,16 +43,13 @@ serious use of this module.
 
 ## Installation
 
-You can install this module using ```panda``` :
+You can install this module using ```zef``` :
 
-    panda install Audio::Icecast
+    zef install Audio::Icecast
 
 Or if you have the source code locally:
 
-    panda install .
-
-I haven't tested with "zef" but I see no reason why it shouldn't
-work.
+    zef install .
 
 ## Support
 
@@ -67,7 +64,7 @@ send a pull request.
 
 ## Licence and copyright
 
-This is free software, please see the LICENCE file in the distribution.
+This is free software, please see the [LICENCE](LICENCE) file in the distribution.
 
-	© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 
