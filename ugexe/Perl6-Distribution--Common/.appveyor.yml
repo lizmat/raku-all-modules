@@ -17,6 +17,6 @@ install:
 build: off
 
 test_script:
-    - prove -v -e "perl6 -Ilib" t/
+    - prove -v -e "perl6 -I." t/
 
 shallow_clone: true
