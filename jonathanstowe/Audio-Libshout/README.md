@@ -61,17 +61,15 @@ parameters that can be over-written by some environment variables:
    * SHOUT_TEST_MOUNT - the mount point on the server to use.  The default is '/shout_test'
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Audio::Libshout
-
-This should work equally well with *zef* but I haven't tested it.
+    zef install Audio::Libshout
 
 ## Support
 
