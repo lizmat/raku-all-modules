@@ -14,7 +14,7 @@ Create a "snapshot" of the installed Perl 6 modules so they can be reinstalled l
 Then at some point later in the directory it created:
 
 ```
-	panda install .
+	zef install .
 
 ```
 
@@ -32,20 +32,18 @@ to run some application (or duplicate a development environment.)
 This is similar in intent to the ```autobundle``` command of Perl 5's ```cpan``` command.
 
 It should work with any module installer that uses the standard Perl 6 installation
-mechanisms (such as ```panda``` or ```zef```) and should in theory work with any new
+mechanisms ( ```zef```) and should in theory work with any new
 ones that may come along as it simply writes a minimal META file into an otherwise
 bare directory.  The META file contains the installed modules as it's dependencies
 just a like a normal module might.
 
 ## Installation
 
-Assuming you have a working rakudo Perl 6 installation you can install with ```panda```:
+Assuming you have a working rakudo Perl 6 installation you can install with ```zef```:
 
-	panda install App::ModuleSnap
+	zef install App::ModuleSnap
 
 which will install the script and the small supporting module.
-
-Whilst I haven't tested this it should work equally as well with ```zef```.
 
 ## Support
 
@@ -56,5 +54,5 @@ via github at https://github.com/jonathanstowe/App-ModuleSnap/issues .
 
 This is free software. Please see the [LICENCE](LICENCE) file in the distribution.
 
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 
