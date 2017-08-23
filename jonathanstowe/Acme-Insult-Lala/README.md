@@ -35,11 +35,7 @@ but there's nothing more to it than you see in the Synopsis.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should
-be able to do either:
-
-    panda install Acme::Insult::Lala
-
-or
+be able to do :
 
     zef install Acme::Insult::Lala
 
@@ -59,5 +55,5 @@ came from some such source in the first place.  All the
 rest of the code is free software and licensed under the terms
 described in the [LICENCE](LICENCE) file.
 
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 
