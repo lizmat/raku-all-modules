@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Crypt-Libcrypt.git
 	branch = master
-	commit = 67859121b404b2870b73f2b59c27495f378081a3
-	parent = bf830caa84c847a7303e2f1cb5131ec6d29c367f
+	commit = 4f07827ac1c19b9f61f39fbf86af84f7e879543e
+	parent = 308b4c2a340fbefbc2ffae446955b5f59dfadbce
 	cmdver = 0.4.0

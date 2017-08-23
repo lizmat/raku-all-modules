@@ -28,23 +28,21 @@ Currently there is no dedicated test to determine whether your platform is
 supported, the unit tests may simply fail horribly.
 
 Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Crypt::Libcrypt
-
-This should work equally well with *zef* but I haven't tested it.
+    zef install Crypt::Libcrypt
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-https://github.com/jonathanstowe/Crypt-Libcrypt
+https://github.com/jonathanstowe/Crypt-Libcrypt/issues
 
 I'm not able to test on a wide variety of platforms so any help there would be 
 appreciated. Also help with the documentation of which platforms support
