@@ -45,27 +45,26 @@ of implementing the functionality going forward.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install IO::Path::Mode
+    zef install IO::Path::Mode
 
-This should work equally well with *zef* but I just haven't tested it.
 
 ## Support
 
 I welcome suggestions, patches and bug reports at:
 
-   https://github.com/jonathanstowe/IO-Path-Mode
+https://github.com/jonathanstowe/IO-Path-Mode/issues
 
 I'd be particularly interested in suggestions relating to making
 the mode mutable and adding a multi candidate for 'chmod' that
-can take an ```IO::Path::Mode``` object/
+can take an ```IO::Path::Mode``` object.
 
 ## Licence
 
