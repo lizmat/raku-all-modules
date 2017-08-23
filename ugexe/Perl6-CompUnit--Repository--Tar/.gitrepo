@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/Perl6-CompUnit--Repository--Tar.git
 	branch = master
-	commit = 03f1c6954402c1990fcea78f137ab6904d217f9d
-	parent = 4a390878d20dfe061177f9286f2bc8cbe1e58de3
+	commit = 087cc7f289ea8686cf44a9608116a700c31d1cbd
+	parent = 559801707c6b8a6b37bd18a9ca3bc0639648cf44
 	cmdver = 0.4.0

@@ -21,6 +21,6 @@ test_script:
     - perl6 -I %APPVEYOR_BUILD_FOLDER%\..\zef\lib %APPVEYOR_BUILD_FOLDER%\..\zef\bin\zef --depsonly install .
 
     # Test CompUnit::Repository::Tar
-    - prove -v -e "perl6 -Ilib" t/
+    - prove -v -e "perl6 -I." t/
 
 shallow_clone: true

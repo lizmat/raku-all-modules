@@ -30,4 +30,4 @@ install:
     - perl6 -I $HOME/zef/lib $HOME/zef/bin/zef --depsonly install .
 
 script:
-    - prove -v -e 'perl6 -Ilib' t/
+    - prove -v -e 'perl6 -I.' t/
