@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bduggan/p6-jupyter-kernel.git
+	branch = master
+	commit = bab6ad29754467e380641728f9c648edbd1ba2d1
+	parent = f7c4df52c46896390dcddbd1f8840aeaf8e3e35e
+	cmdver = 0.4.0
