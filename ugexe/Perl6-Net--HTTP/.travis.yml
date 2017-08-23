@@ -22,4 +22,4 @@ install:
     # need at least 1 statement in 'install'
     - perl6 -v
 script:
-    - prove -v -e "perl6 -Ilib" t/ xt/
+    - prove -v -e "perl6 -I." t/ xt/
