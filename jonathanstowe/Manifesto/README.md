@@ -45,13 +45,13 @@ or otherwise tapped.
 ## Installation
 
 Assuming you have a working installation of Rakudo perl 6 installed
-with either *zef* or *panda* you should be able to do either:
+with *zef* you should be able to do either:
 
     zef install Manifesto
 
-or
+	# or from a local checkout
 
-    panda install Manifesto
+    zef install .
 
 Other equally capable installers may become available in the future.
 
@@ -63,7 +63,7 @@ them via [GitHub](https://github.com/jonathanstowe/Manifesto/issues)
 
 ## Copyright and Licence
 
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 
 This is free software, the terms are described in the [LICENCE](LICENCE) file
 in this repository.
