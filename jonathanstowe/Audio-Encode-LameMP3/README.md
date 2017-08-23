@@ -49,17 +49,15 @@ way, also bear in mind that if you install a newer version than I have
 to test with then this may not work.
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Audio::Encode-LameMP3
-
-This should work equally well with *zef* but I may not have tested it.
+    zef install Audio::Encode-LameMP3
 
 The tests take a little longer than I would like largely because there's
 quite a lot of file I/O involved.
