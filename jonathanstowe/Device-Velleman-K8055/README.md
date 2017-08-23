@@ -85,11 +85,7 @@ the module, it will attempt to skip most of the tests and
 may even succeed in installing but may not work well.
 
 If you have a working rakudo Perl 6 installation you should 
-be able to install with ```panda``` :
-
-    panda install Device::Velleman::K8055
-
-Or with ```zef``` (though I may not have tested this,):
+be able to install with ```zef``` :
 
     zef install Device::Velleman::K8055
 
@@ -108,7 +104,7 @@ or even better send a pull request.
 This is free software, see the [LICENCE](LICENCE) file in the
 distrubution.
 
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 
 The terms of the k8055 library used are described in its
 [README](https://github.com/jodersky/k8055/blob/master/README.md).
