@@ -1,9 +1,10 @@
 Jupyter::Kernel for Perl 6
 ----------------
-
 [![Build Status](https://travis-ci.org/bduggan/p6-jupyter-kernel.svg)](https://travis-ci.org/bduggan/p6-jupyter-kernel)
 
-This is a kernel for using Jupyter notebooks with Perl 6.
+[![asciicast](https://asciinema.org/a/rdezRa5QQMbxi4L5D5zEtj6Y0.png)](https://asciinema.org/a/rdezRa5QQMbxi4L5D5zEtj6Y0?autoplay=1)
+
+This is a pure-Perl 6 implementation of a Perl 6 kernel for Jupyter notebooks.
 
 Jupyter notebooks provide a web-based (or console-based) REPL for running
 code and serializing input and output.
@@ -35,16 +36,6 @@ Which is more convenient as a shell alias:
 alias iperl6='jupyter-console --kernel=perl6'
 ```
 
-Note that to configure the above, you might want to run
-```
-jupyter-console --generate-config
-```
-
-Then, for instance, you can customize the highlighting with:
-```
-c.ZMQTerminalInteractiveShell.highlighting_style = 'vim'
-```
-
 SEE ALSO
 --------
 
@@ -59,3 +50,16 @@ CREDITS
 Some portions of this code were taken from timo's excellent
 iperl6kernel module.
 
+RANDOM NOTES
+-------------
+In iTerm2 on OS/X, the default syntax highlighting colors in the
+console can be hard to read and hard to change.  One way to change
+them is:
+```
+jupyter-console --generate-config
+```
+Then set:
+```
+c.ZMQTerminalInteractiveShell.highlighting_style = 'vim'
+```
+or use something other than iTerm2.
