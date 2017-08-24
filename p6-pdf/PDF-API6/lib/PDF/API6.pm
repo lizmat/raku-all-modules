@@ -140,7 +140,7 @@ class PDF::API6:ver<0.0.1>
             my $page-ref = $page ~~ Numeric
                 ?? self.page($page)
                 !! $page;
-            my $open-action = $catalog<OpenAction> = [$page-ref];
+            my $open-action = [$page-ref];
             with $open-action {
                 when $fit   { .push: to-name('Fit') }
                 when $fith  { .push($fith) }
@@ -169,7 +169,11 @@ class PDF::API6:ver<0.0.1>
                         .push: $v;
                     }
                 }
+                default {
+                    .push: to-name('Fit');
+                }
             }
+            $catalog<OpenAction> = $open-action;
         }
     }
 
