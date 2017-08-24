@@ -28,8 +28,18 @@
     "plugin" : "zef",
     "data" : {
       "list" : [
-        "JSON::Unmarshal", "Sparrowdo::Cpanm::GitHub"
+        "JSON::Unmarshal", "Sparrowdo::Cpanm::GitHub", "Sparrowdo::Sparrow::Update"
       ]
+    }
+  },
+  {
+    "task" : "Sparrow update",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "sparrowdo --local_mode --no_sudo --module_run=Sparrow::Update",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
     }
   },
   {

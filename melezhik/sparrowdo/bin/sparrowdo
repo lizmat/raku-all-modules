@@ -195,6 +195,7 @@ sub ssh_shell ( $cmd ) {
   @bash_commands.push:  "export SPARROW_CONF_PATH=$sparrow_root/sparrow-cache/sparrow.yaml";
   @bash_commands.push:  'export OUTTHENTIC_CWD=' ~ input_params('Cwd') if input_params('Cwd');
   @bash_commands.push:  'export sparrow_hub_api_url=' ~ input_params('SparrowhubApi') if input_params('SparrowhubApi');
+  @bash_commands.push:  'export OUTTHENTIC_FORMAT=sparrowdo';
 
   @bash_commands.push:  $cmd;
 
