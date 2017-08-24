@@ -81,7 +81,7 @@ module PDF::Content::Util::Font {
         :zapfdingbats-bolditalic<zapfdingbats>,
     };
 
-    our sub core-font-name(Str $family!, Str :$weight?, Str :$style?, ) {
+    our sub core-font-name(Str $family!, Str :$weight?, Str :$style?, ) is export(:core-font-name) {
         my Str $face = $family.lc;
         my Str $bold = $weight && $weight ~~ m:i/bold|[6..9]00/
             ?? 'bold' !! '';
