@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-Toaster.git
 	branch = master
-	commit = 7e00a0f414309d00c2b4b075a2aadaa883fd57a2
-	parent = dd4dcce9bfc92aeac972b3132a096723254f8f72
+	commit = f101934648654e89213d8e1f30410830e3991221
+	parent = b9bd1e50a54500be01cee7a1fbca20a0bd8b63f6
 	cmdver = 0.4.0
