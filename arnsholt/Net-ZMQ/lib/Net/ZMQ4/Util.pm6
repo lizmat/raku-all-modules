@@ -1,4 +1,4 @@
-unit module Net::ZMQ::Util;
+unit module Net::ZMQ4::Util;
 
 use NativeCall;
 
@@ -22,5 +22,7 @@ my sub zmq_die() is export {
     my $no = zmq_errno();
     X::ZMQ.new(:errno($no), :strerror(zmq_strerror($no))).throw;
 }
+
+our $context-count is export = 0;
 
 # vim: ft=perl6

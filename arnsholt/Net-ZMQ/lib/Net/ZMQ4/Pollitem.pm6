@@ -1,15 +1,15 @@
 use NativeCall;
-unit class Net::ZMQ::Pollitem is repr('CStruct');
+unit class Net::ZMQ4::Pollitem is repr('CStruct');
 
-use Net::ZMQ::Constants;
-use Net::ZMQ::Socket;
+use Net::ZMQ4::Constants;
+use Net::ZMQ4::Socket;
 
-has Net::ZMQ::Socket $!socket;
-has int32            $!fd;
-has int16            $!events;
-has int16            $.revents;
+has Net::ZMQ4::Socket $!socket;
+has int32             $!fd;
+has int16             $!events;
+has int16             $.revents;
 
-submethod BUILD(Net::ZMQ::Socket :$socket, Bool :$in , Bool :$out , Bool :$err) {
+submethod BUILD(Net::ZMQ4::Socket :$socket, Bool :$in , Bool :$out , Bool :$err) {
     $!socket := $socket;
     $!events = 0;
     $!events +|= ZMQ_POLLIN  if $in;
