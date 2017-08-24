@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6-community-modules/System-Passwd.git
 	branch = master
-	commit = 529a626fa989376b035cb82f25e41d885d28d11b
-	parent = ccc4a1f0964ff0dc7fdd01d10238e47254f9c0bb
+	commit = 85e5f4d2dc2e3f362c072c33aa77cc281e790480
+	parent = facf08c1bf2867c0ed52f1b9877997f286127dc0
 	cmdver = 0.4.0
