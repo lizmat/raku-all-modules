@@ -34,3 +34,11 @@ Example with a chroot:
 	# that we defined above by calling UNIX::Privileges::userinfo
 	# just remember you have to do this *before* creating the chroot
 	UNIX::Privileges::drop($user);
+
+## Installation
+
+Assuming ypu have a working Rakudo Perl 6 installation you can install
+this with *zef* :
+
+    zef install UNIX::Privileges
+

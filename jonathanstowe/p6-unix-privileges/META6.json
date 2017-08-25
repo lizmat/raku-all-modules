@@ -1,16 +1,38 @@
 {
-    "perl" : "6.c",
-    "name" : "UNIX::Privileges",
-    "version" : "0.1.1",
-    "author" : "github:carbin",
-    "auth" : "github:carbin",
-    "description" : "A module for handling UNIX Privileges",
-    "depends" : [ ],
-    "build-depends" : [ "LibraryMake" ],
-    "resources" : [ "libraries/unix_privileges" ],
-    "provides" : {
-        "UNIX::Privileges" : "lib/UNIX/Privileges.pm6"
-    },
-    "source-url" : "git://github.com/jonathanstowe/p6-unix-privileges.git"
+  "name": "UNIX::Privileges",
+  "source-url": "git://github.com/jonathanstowe/p6-unix-privileges.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/p6-unix-privileges.git"
+  },
+  "perl": "6.c",
+  "resources": [
+    "libraries/unix_privileges"
+  ],
+  "build-depends": [
+    "LibraryMake",
+	"Shell::Command"
+  ],
+  "author": "github:carbin",
+  "auth": "github:carbin",
+  "depends": [
+    
+  ],
+  "tags": [
+    "unix",
+    "privileges",
+    "daemon"
+  ],
+  "license": "ISC",
+  "test-depends": [
+    
+  ],
+  "provides": {
+    "UNIX::Privileges": "lib/UNIX/Privileges.pm6"
+  },
+  "version": "0.1.1",
+  "authors": [
+	"carbin"
+  ],
+  "description": "A module for handling UNIX Privileges",
+  "meta-version": "0"
 }
-

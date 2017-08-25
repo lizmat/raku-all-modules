@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/p6-unix-privileges.git
 	branch = master
-	commit = ef762c463ac51e79c826341692f9057ce6ec98f6
-	parent = 330305b89c8bb6c738693fc76542334bd5d24003
+	commit = d40af1a799d6c3e1e1cdf51fa6e62f382183babc
+	parent = 4a2172f5382a7fea2bd8ad85601cce1b7e522588
 	cmdver = 0.4.0
