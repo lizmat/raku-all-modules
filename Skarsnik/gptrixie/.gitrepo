@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Skarsnik/gptrixie.git
 	branch = master
-	commit = 8b5cce96f9229b3fe95d06bc45dbb20bb4436e0d
-	parent = 4afe6521092b9ba32f63d24459eae28500ebcf40
+	commit = 1bd53952a0c22f29f3759ba491b4dced45a0e718
+	parent = 6f544152206b85860006bd15e8225cfb3fa6a283
 	cmdver = 0.4.0
