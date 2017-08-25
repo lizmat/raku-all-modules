@@ -1,9 +1,10 @@
-/* Get prototype. */
 #include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+/* Get prototype. */
 #include "base64.h"
+
 static const char b64_enc_std[64] =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const char b64_enc_uri[64] =
@@ -85,8 +86,7 @@ base64_encode_tail (const char *b64_enc_table,
 static void
 encode (const char *b64_enc_table,
 	uint8_t* in, size_t inlen,
-	uint8_t* out, size_t outlen)
-{
+	uint8_t* out, size_t outlen) {
   size_t whole_blocks = inlen / 3;
   if (whole_blocks * 4 > outlen) {
     whole_blocks = outlen / 4;
@@ -98,22 +98,20 @@ encode (const char *b64_enc_table,
 
 DLLEXPORT void
 base64_encode (uint8_t* in, size_t inlen,
-	       uint8_t* out, size_t outlen)
-{
+	       uint8_t* out, size_t outlen) {
   encode (b64_enc_std, in, inlen, out, outlen);
 }
 
 DLLEXPORT void
 base64_encode_uri (uint8_t* in, size_t inlen,
-		   uint8_t* out, size_t outlen)
-{
+		   uint8_t* out, size_t outlen) {
   encode (b64_enc_uri, in, inlen, out, outlen);
 }
 
 // --- Base-64 decoding ---
 // Works with both URI and STD encoded data.
 
-static uint8_t next_digit(uint8_t* in,
+static uint8_t next_digit (uint8_t* in,
 			  size_t inlen,
 			  size_t *i,
 			  uint8_t *n,
@@ -145,8 +143,9 @@ base64_decode (uint8_t* in, size_t inlen,
     int32_t j;
     ssize_t error_pos = 0;
 
-    while (inlen > 0 && in[inlen - 1] == PADDING
-	   || b64_dec[ in[inlen - 1] ] == W) {
+    while (inlen > 0
+           && (in[inlen - 1] == PADDING
+               || b64_dec[ in[inlen - 1] ] == W)) {
       inlen--;
     }
 
