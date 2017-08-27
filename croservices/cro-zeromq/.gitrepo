@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/croservices/cro-zeromq.git
+	branch = master
+	commit = 0db37a04a856833b6c3206d095789e3db2f31ab6
+	parent = 14e9220cbbce2d636aa7a49f638a84c0043829c1
+	cmdver = 0.4.0
