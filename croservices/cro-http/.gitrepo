@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/croservices/cro-http.git
+	branch = master
+	commit = 623172af650e767888dc3f8ccf1c991f6144ad35
+	parent = c11c2a27b8dce98794c4b271e09bd1074d3f2ee8
+	cmdver = 0.4.0
