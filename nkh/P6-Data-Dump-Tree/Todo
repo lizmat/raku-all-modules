@@ -1,3 +1,6 @@
+ddt callframe fails
+
+get_header and get_elements could know about remaining width, options, ....
 
 folding
 	#pass an object and apply folding role on top
@@ -5,20 +8,40 @@ folding
 	large renderings are slow to scroll
 		probably NCurses related as get_lines is 0.004s and 0.0006s when cached
 
+	replace NCurses by Terminal::Print
+		utf8
+		mo specific color handling
+
 object size
 
-NCurses
-	#support multi line entries
+hexdump object
+	how do we handle lack of space, eg: wraping so the display still makes sense
 
-	#utility sub
-	render unicode
-	
 dhtml
 	user css override
 	visual cue for folds
 
 render role inheritance
 	eg: role X does Y
+
+Serialization and attributes links
+	https://github.com/FROGGS/p6-Ser/blob/master/lib/Ser.pm
+	https://github.com/Skarsnik/nativecall-typediag/blob/master/lib/NativeCall/TypeDiag.pm6#L96	
+
+#ddt_send
+	handle multiple packaets sending
+
+
+#utf8 address is always 0!
+	utf8 does not have a WHICH
+	it does have a WHERE but it is not stable beffore it gets accessed multiple times
+	
+#search unfold command
+	searching for data also means showing them
+	the fold information could be manipulated by the search
+		search($data, :unfold, :fold_other,:center)
+		
+	it can also return a list of commands to display the next/previous result
 
 #ddt adverbs
 	:curses

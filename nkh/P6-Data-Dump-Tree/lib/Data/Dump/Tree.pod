@@ -60,7 +60,13 @@ This interface accepts the following adverbs:
 
 =item B<:curses> opens a NCurses interface, NCurses module must be installed
 
-=item B<:remote> sends data the to listener (examples/ddt.pl and ddt_receive.pl)
+=item B<:remote> sends a rendering the to listener
+
+See examples/ddt.pl and ddt_receive.pl
+
+=item B<:remote_fold> sends a foldable rendering  the to listener 
+
+See examples/ddt_fold_send.pl and ddt_fold_receive.pl.
 
 
 =head2  method ddt: $data_to_dump, $data_to_dump, :adverb, :named_argument, ...
@@ -146,7 +152,7 @@ The type of the variable with a '.' appended. IE: '.Str', '.MyClass'
 
 Data::Dump::Tree will display
 
-=item  Ints have their type set to a white space string to reduce noise
+=item  Ints, and Bools, type is set to white space to reduce noise
 
 =item  Hashes as '{n}' where n is the number of element of the hash
 

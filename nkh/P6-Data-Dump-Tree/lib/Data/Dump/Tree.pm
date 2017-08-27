@@ -2,7 +2,6 @@
 use Data::Dump::Tree::Colorizer ;
 use Data::Dump::Tree::Enums ;
 use Data::Dump::Tree::DescribeBaseObjects ;
-use Data::Dump::Tree::ExtraRoles ;
 use Data::Dump::Tree::Ddt ;
 
 class Data::Dump::Tree does DDTR::DescribeBaseObjects
@@ -99,12 +98,13 @@ sub ddt(|args) is export
 {
 if	args.hash<print> 		{ print get_dump(|args) }
 elsif	args.hash<note> 		{ note get_dump(|args) }
-elsif 	args.hash<get>			{ get_dump(|args) }
-elsif	args.hash<get_lines>		{ get_dump_lines(|args) }
-elsif	args.hash<get_lines_integrated>	{ get_dump_lines_integrated(|args) } 
-elsif	args.hash<curses>		{ ddt_curses(|args) }
-elsif	args.hash<remote>		{ ddt_remote( get_dump(|args), :remote_port(args.hash<remote_port>)) }
-elsif	args.hash<remote_fold>		{ 'ddt :remote_fold not implemented.'.say } 
+elsif 	args.hash<get>			{ get_dump |args }
+elsif	args.hash<get_lines>		{ get_dump_lines |args }
+elsif	args.hash<get_lines_integrated>	{ get_dump_lines_integrated |args } 
+elsif	args.hash<curses>		{ ddt_curses |args }
+elsif	args.hash<remote>		{ ddt_remote get_dump(|args), :remote_port(args.hash<remote_port>) }
+elsif	args.hash<remote_fold>		{ ddt_remote_fold |args, :remote_port(args.hash<remote_port>) }
+elsif	args.hash<remote_fold_object>	{ ddt_remote_fold_object |args, :remote_port(args.hash<remote_port>) }
 else					{ print get_dump(|args) }
 }
 
@@ -120,12 +120,13 @@ method ddt(|args)
 {
 if	args.hash<print> 		{ print self.get_dump(|args) }
 elsif	args.hash<note> 		{ note self.get_dump(|args) }
-elsif 	args.hash<get>			{ self.get_dump(|args) }
-elsif	args.hash<get_lines>		{ self.get_dump_lines(|args) }
-elsif	args.hash<get_lines_integrated>	{ self.get_dump_lines_integrated(|args) } 
-elsif	args.hash<curses>		{ ddt_curses(|args, :ddt_is(self)) }
-elsif	args.hash<remote>		{ ddt_remote( self.get_dump(|args), :remote_port(args.hash<remote_port>)) }
-elsif	args.hash<remote_fold>		{ 'ddt :remote_fold not implemented.'.say } 
+elsif 	args.hash<get>			{ self.get_dump: |args }
+elsif	args.hash<get_lines>		{ self.get_dump_lines: |args }
+elsif	args.hash<get_lines_integrated>	{ self.get_dump_lines_integrated: |args } 
+elsif	args.hash<curses>		{ ddt_curses |args, :ddt_is(self) }
+elsif	args.hash<remote>		{ ddt_remote self.get_dump(|args), :remote_port(args.hash<remote_port>) }
+elsif	args.hash<remote_fold>		{ ddt_remote_fold |args, :remote_port(args.hash<remote_port>) }
+elsif	args.hash<remote_fold_object>	{ ddt_remote_fold_object |args, :remote_port(args.hash<remote_port>) }
 else					{ print self.get_dump(|args) }
 }
 
@@ -513,7 +514,7 @@ my ($k2, $v2, $f2)  = ($k // '', $v // '', $f // '').map: { .subst(/\t/, ' ' x 8
 
 my $v2_width = (S:g/ <ansi_color> // given $v2).chars ;
 
-if none($k2, $v2, $f2) ~~ /\n/	&& ($k2 ~ $b ~ $f2 ~ $ddt_address ~ $perl_address ~ $link).chars + $v2_width <= $width 
+if none($k2, $v2, $f2) ~~ /\n/	&& ([~] $k2, $b, $f2, $ddt_address, $perl_address, $link).chars + $v2_width <= $width 
 	{
 	for
 		($k2, 		$k2,				$.color_kbs ?? @.kb_colors_cycle[$current_depth] !! 'key'), 
@@ -684,7 +685,9 @@ method !get_address(Mu $e) { ($.address_from // self)!get_global_address($e) }
 method !get_global_address(Mu $e)
 {
 my $ddt_address = $!address++ ;
-my $perl_address = $e.WHICH ;
+my $perl_address = $e ~~ utf8 ?? $e.WHERE !! $e.WHICH ;
+
+#dd ('WHERE', $e.WHERE) if $e ~~ utf8 ;
 
 if ! $e.defined 
 	{
@@ -692,7 +695,7 @@ if ! $e.defined
 	}
 else
 	{
-	$perl_address ~= ':DDT:' ~ $e.WHICH unless $perl_address ~~ /\d ** 4/ ;
+	$perl_address ~= ':DDT:' ~ ($e ~~ utf8 ?? 0 !! $e.WHICH) unless $perl_address ~~ /\d ** 4/ ;
 	}
 
 my ($link, $rendered) = ('', False) ;
@@ -775,6 +778,7 @@ method !get_attributes (Any $a, @ignore?)
 {
 my @a = try { @a = get_attributes($a, @ignore) }  ;
 $! ?? (('DDT exception', ': ', $!.message),)  !! @a ;
+#$! ?? (('DDT exception', ': ', $!.message ~ $!.backtrace),)  !! @a ;
 }
 
 multi sub get_attributes (Any $a, @ignore?) is export 
@@ -788,14 +792,18 @@ if $a.defined && $a.REPR eq 'CArray'
 
 if $a.defined && $a.REPR eq 'CStruct' | 'CUnion'
 	{
+	# get the attributes type from the type object
 	_get_attributes($a.WHAT).map:
 		{
-		my $type = S/':U'$// with $_[2].?type ;
-		$type //= '.' ~ $_[2].^name ; 
-		$type = S:g/'NativeCall::Types::'// with $type ; 
+		my $type = S:g/'NativeCall::Types::'// with
+				($_[2].^name eq 'Data::Dump::Tree::Type::Final')
+					?? ( ' ' ~ S/':U'$// with $_[2].type)
+					!! ( ' .' ~ $_[2].^name ) ;
+
 		
-		%types{$_[0]} = $type  ; 
-		}  
+		%types{S:g/^'HAS '// with $_[0]} = $type  ; 
+		} 
+ 
 	}
 
 _get_attributes($a, @ignore, %types) ; 
@@ -816,11 +824,13 @@ for $a.^attributes.grep({$_.^isa(Attribute)})
 
 	my $t = %types{$name} // '' ;
 
-	my $value = $a.defined 	?? $_.get_value($a) // Data::Dump::Tree::Type::Nil.new !! $_.type ; 
+	my $value = try { $a.defined ?? $_.get_value($a) // Data::Dump::Tree::Type::Nil.new !! $_.type } 
+	$value = DVO 'DDT exception: not handled!' if $! ;
 
 	# display where attribute is coming from or nothing if base class
 	my $p = $_.package.^name ~~ / ( '+' <- [^\+]> * ) $/ ?? " $0" !! '' ;
 	my $rw = $_.readonly ?? '' !! ' is rw' ;
+	my $has =  $_.inlined ?? 'HAS ' !! '';
 
  	given  $value.HOW.^name
 		{
@@ -829,7 +839,7 @@ for $a.^attributes.grep({$_.^isa(Attribute)})
 			{
  			@attributes.push:
 				(
-				$name, ' = ',
+				"$has$name$t$rw$p", ' = ',
 				Data::Dump::Tree::Type::Final.new:
 					:value($value.^name),
 					:type<NQP>
@@ -840,7 +850,7 @@ for $a.^attributes.grep({$_.^isa(Attribute)})
 			{
  			@attributes.push: 
 				(
-				$name, ' = ',
+				"$has$name$t$rw$p", ' = ',
 				Data::Dump::Tree::Type::Final.new:
 					:value($value),
 					:type('.' ~ (S:g/'NativeCall::Types::'// with $value.^name) ~ ':U')
@@ -849,7 +859,7 @@ for $a.^attributes.grep({$_.^isa(Attribute)})
 
 		default
  			{
-			@attributes.push: ( "$name$t$rw$p", ' = ', $value ) 
+			@attributes.push: ( "$has$name$t$rw$p", ' = ', $value ) 
 			}
 		}
 	}
