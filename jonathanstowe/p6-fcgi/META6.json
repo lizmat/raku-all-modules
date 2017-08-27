@@ -1,14 +1,38 @@
 {
-    "perl" : "6.c",
-    "name" : "FastCGI::NativeCall",
-    "version" : "0.0.1",
-    "author" : "github:carbin",
-    "description" : "An implementation of FastCGI using NativeCall",
-    "depends" : [ ],
-    "build-depends" : [ "LibraryMake" ],
-    "resources" : [ "libraries/fcgi" ],
-    "provides" : {
-        "FastCGI::NativeCall" : "lib/FastCGI/NativeCall.pm6"
-    },
-    "source-url" : "git://github.com/jonathanstowe/p6-fcgi.git"
+  "name": "FastCGI::NativeCall",
+  "source-url": "git://github.com/jonathanstowe/p6-fcgi.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/p6-fcgi.git"
+  },
+  "perl": "6.c",
+  "resources": [
+    "libraries/fcgi"
+  ],
+  "build-depends": [
+    "LibraryMake",
+	"Shell::Command"
+  ],
+  "author": "github:carbin",
+  "auth": "github:carbin",
+  "depends": [
+    
+  ],
+  "tags": [
+    "fcgi",
+    "fastcgi",
+    "http"
+  ],
+  "license": "ISC",
+  "test-depends": [
+    
+  ],
+  "provides": {
+    "FastCGI::NativeCall": "lib/FastCGI/NativeCall.pm6"
+  },
+  "version": "0.0.2",
+  "meta-version": "0",
+  "authors": [
+	"carbin"
+  ],
+  "description": "An implementation of FastCGI using NativeCall"
 }

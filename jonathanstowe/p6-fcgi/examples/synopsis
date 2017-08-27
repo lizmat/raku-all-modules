@@ -1,0 +1,14 @@
+#!/usr/bin/env perl6
+
+use FastCGI::NativeCall;
+
+my $fcgi = FastCGI::NativeCall.new(path => "/tmp/fastcgi.sock", backlog => 32 );
+
+my $count = 0;
+
+while $fcgi.accept() {
+	say $fcgi.env;
+    $fcgi.Print("Content-Type: text/html\r\n\r\n{++$count}");
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
