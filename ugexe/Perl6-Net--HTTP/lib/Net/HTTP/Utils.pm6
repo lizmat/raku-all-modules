@@ -4,7 +4,7 @@ my $CRLF       = buf8.new(13, 10);
 my $CRLF-BYTES = $CRLF.bytes;
 
 # header-case
-sub hc(Str:D $str) is export { $ = $str.split("-").map(*.wordcase).join("-") }
+sub hc(Str:D $str) is export { $str.split("-").map(*.wordcase).join("-") }
 
 role IO::Socket::HTTP {
     has $.closing is rw = False;
@@ -18,7 +18,7 @@ role IO::Socket::HTTP {
             $buf ~= $byte;
             last if $buf.subbuf(*-$CRLF-BYTES) eq $CRLF;
         }
-        $ = ?$chomp ?? $buf.subbuf(0, $buf.bytes - $CRLF-BYTES) !! $buf;
+        return ?$chomp ?? $buf.subbuf(0, $buf.bytes - $CRLF-BYTES) !! $buf;
     }
 
     method lines(Bool :$bin where *.so) {
@@ -33,7 +33,8 @@ role IO::Socket::HTTP {
         # ignore $buffer if ?$chunked
         my $bytes-read = 0;
         my $want-size  = (?$chunked ?? :16(self.get(:bin).decode('latin-1')) !! $buffer) || 0;
-        $ = Supply.on-demand(-> $supply {
+
+        return Supply.on-demand(-> $supply {
             loop {
                 my $buffered-size = 0;
                 if $want-size {
@@ -52,7 +53,7 @@ role IO::Socket::HTTP {
                 if ?$chunked and $.recv($CRLF-BYTES, :bin) -> $chunked-crlf {
                     unless $chunked-crlf eq $CRLF {
                         die "Chunked encoding error: expected separator ords "
-                        ~   "'{$CRLF.contents}' not found (got: {$chunked-crlf.contents})";
+                            ~ $CRLF.contents ~ " not found. Got: " ~ $chunked-crlf.contents;
                     }
                     $bytes-read += $chunked-crlf.bytes;
                     $want-size = :16(self.get(:bin).decode('latin-1'));

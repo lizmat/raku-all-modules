@@ -1,3 +1,4 @@
+use v6;
 use Test;
 plan 3;
 
@@ -42,3 +43,5 @@ if Net::HTTP::Dialer.?can-ssl {
 else {
     ok 1, "Skip: Can't do SSL. Is IO::Socket::SSL available?";
 }
+
+done-testing;

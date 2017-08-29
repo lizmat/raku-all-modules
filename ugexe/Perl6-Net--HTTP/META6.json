@@ -1,7 +1,7 @@
 {
     "perl"        : "6",
     "name"        : "Net::HTTP",
-    "version"     : "0.0.1",
+    "version"     : "0.0.3",
     "auth"        : "github:ugexe",
     "authors"     : ["ugexe"],
     "description" : "Roll your own http client",
@@ -19,6 +19,7 @@
         "Net::HTTP::Utils"      : "lib/Net/HTTP/Utils.pm6"
     },
     "depends"     : [ ],
+    "tags"        : [ "HTTP", "Client" ],
     "support"     : { "bugtracker" : "https://github.com/ugexe/Perl6-Net--HTTP/issues" },
     "source-url"  : "git://github.com/ugexe/Perl6-Net--HTTP.git"
 }

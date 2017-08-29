@@ -1,3 +1,4 @@
+use v6;
 use Test;
 plan 1;
 
@@ -15,7 +16,7 @@ subtest {
     my %header  = :Host<google.com>, :User-Agent("perl6-net-http");
 
     my $request = Net::HTTP::Request.new(:$url, :$method, :%header);
-    ok $request.Str.chars eq $want-str.chars;
+    is $request.Str.chars, $want-str.chars;
 
     subtest {
         temp %header;
@@ -29,3 +30,5 @@ subtest {
         }
     }, 'Auto setting the host header';
 }, 'Basic: request header tests';
+
+done-testing;

@@ -1,3 +1,4 @@
+use v6;
 use Test;
 plan 1;
 
@@ -26,3 +27,5 @@ subtest {
     my $results = from-json($response.content(:force));
     is $results<data>, $payload;
 }, "Basic POST";
+
+done-testing;

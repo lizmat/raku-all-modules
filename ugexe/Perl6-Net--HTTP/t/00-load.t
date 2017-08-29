@@ -13,3 +13,5 @@ use-ok('Net::HTTP::Transport');
 use-ok('Net::HTTP::GET');
 use-ok('Net::HTTP::POST');
 use-ok('Net::HTTP::Client');
+
+done-testing;

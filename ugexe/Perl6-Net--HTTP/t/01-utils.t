@@ -1,3 +1,4 @@
+use v6;
 use Test;
 plan 1;
 
@@ -9,3 +10,5 @@ subtest {
     is hc("Transfer-encoding"), 'Transfer-Encoding';
 
 }, 'Header case works [&hc]';
+
+done-testing;

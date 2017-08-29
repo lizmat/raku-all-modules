@@ -1,3 +1,4 @@
+use v6;
 use Test;
 plan 3;
 
@@ -144,3 +145,5 @@ subtest {
         }
     }
 }, '[ipv6] valid absolute urls';
+
+done-testing;

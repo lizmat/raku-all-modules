@@ -1,5 +1,6 @@
+use v6;
 use Test;
-plan 3;
+plan 4;
 
 use Net::HTTP::Transport;
 use Net::HTTP::URL;
@@ -23,10 +24,13 @@ subtest {
     my $req = Net::HTTP::Request.new: :$url, :method<GET>,
         header => :Connection<keep-alive>, :User-Agent<perl6-net-http>;
 
+    my $instances = 5;
     my $transport = Net::HTTP::Transport.new;
-    my $res       = await start { $transport.round-trip($req) };
+    my @responses = await (start { $transport.round-trip($req) } xx $instances);
 
-    is $res.body.decode.lines.grep(/^0/).elems, 1000;
+    for @responses -> $res {
+        is $res.body.decode.lines.grep(/^0/).elems, 1000;
+    }
 }, 'Threads: start { $transport.round-trip($req) }';
 
 
@@ -47,3 +51,24 @@ if Net::HTTP::Dialer.?can-ssl {
 else {
     ok 1, "Skip: Can't do SSL. Is IO::Socket::SSL available?";
 }
+
+if Net::HTTP::Dialer.?can-ssl {
+    subtest {
+        my $url = Net::HTTP::URL.new('https://jigsaw.w3.org/HTTP/ChunkedScript');
+        my $req = Net::HTTP::Request.new: :$url, :method<GET>,
+            header => :Connection<close>, :User-Agent<perl6-net-http>;
+
+        my $instances = 5;
+        my $transport = Net::HTTP::Transport.new;
+        my @responses = await (start { $transport.round-trip($req) } xx $instances);
+
+        for @responses -> $res {
+            is $res.body.decode.lines.grep(/^0/).elems, 1000;
+        }
+    }, 'Threads: start { $transport.round-trip($req) } [IO::Socket::SSL]';
+}
+else {
+    ok 1, "Skip: Can't do SSL. Is IO::Socket::SSL available?";
+}
+
+done-testing;

@@ -1,3 +1,4 @@
+use v6;
 use Test;
 plan 1;
 
@@ -43,3 +44,5 @@ subtest {
 
     is $response-from-args.body.contents, $response-from-buf.body.contents;
 }, 'Basic: response tests';
+
+done-testing;
