@@ -1,4 +1,4 @@
-unit module Template::Anti:ver<0.4.1>:auth<Sterling Hanenkamp (hanenkamp@cpan.org)>;
+unit module Template::Anti:ver<0.4.2>:auth<Sterling Hanenkamp (hanenkamp@cpan.org)>;
 
 use v6;
 
@@ -364,7 +364,7 @@ class TADOM is DOM::Tiny {
         my $orig = self.render;
         self.append([~] gather for @items -> $item {
             my $copy = TADOM.parse($orig, :xml(self.xml));
-            dup($copy, $item);
+            dup($copy.[0], $item);
             take $copy;
         });
         self.remove;

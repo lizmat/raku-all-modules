@@ -1,3 +1,8 @@
+v0.4.2
+
+    * Bugfix: .duplicate() operates on the tag node rather than the root node of
+      the disconnected, duplicated document. This was always the intention.
+
 v0.4.1
 
     * Internal fixes to API to prevent test failures.
