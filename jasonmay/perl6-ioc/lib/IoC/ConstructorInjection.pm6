@@ -17,12 +17,14 @@ class IoC::ConstructorInjection does IoC::Service {
 
     method build-instance {
         my %params;
-
         for %!dependencies.pairs -> $pair {
             %params{$pair.key} = $!container.fetch($pair.value).get();
         };
 
-        return $!type.new(|%params);
+        ## Ticket - https://rt.perl.org/Public/Bug/Display.html?id=131971
+        my $type = $!type;
+        require ::($type);
+        return  ::($type).new(|%params);
     }
 };
 

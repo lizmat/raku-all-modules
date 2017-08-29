@@ -13,8 +13,13 @@ class IoC::Container {
         return %!services{$service-name};
     }
 
-    method resolve(:$service) {
-        return self.fetch($service).get;
+    multi method resolve($service) {
+        my $ioc-service = self.fetch($service);
+        return $ioc-service.get if $ioc-service.defined;
+        die "Service $service is not known";
+    }
+    multi method resolve(:$service) {
+        return self.resolve($service);
     }
 };
 
