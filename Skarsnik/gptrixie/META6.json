@@ -4,8 +4,8 @@
     "license"       : "Artistic-2.0",
     "version"       : "*",
     "description"   : "Generate NativeCall code from C headers file",
-    "author"        : "Sylvain 'Skarsnik' Colinet <scolinet@gmail.com>",
-    "depends"       : [ "XML" ],
+    "authors"        : ["Sylvain 'Skarsnik' Colinet <scolinet@gmail.com>"],
+    "depends"       : [ "XML", "Test::Meta"],
     "provides"      : {
         "GPT::Class"		 : "lib/GPT/Class.pm6",
         "GPT::DumbGenerator"     : "lib/GPT/DumbGenerator.pm6",
