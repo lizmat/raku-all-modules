@@ -8,5 +8,5 @@ use Net::HTTP::Dialer;
 class Net::HTTP::Client does RoundTripper {
     also does Net::HTTP::Dialer;
 
-    method round-trip(Request $req --> Response) { }
+    method round-trip(Request:D $req --> Response) { }
 }

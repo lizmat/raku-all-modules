@@ -8,7 +8,7 @@ our $transport = Net::HTTP::Transport.new;
 
 class Net::HTTP::GET {
     proto method CALL-ME(|) {*}
-    multi method CALL-ME(Str $abs-url, :$body, :%header is copy, |c --> Response) {
+    multi method CALL-ME(Str:D $abs-url, :$body, :%header is copy, |c --> Response) {
         my $url = Net::HTTP::URL.new($abs-url);
         with Net::HTTP::Request.new(:$url, :method<GET>) -> $req {
             temp %header<Connection> //= <keep-alive>;
@@ -18,7 +18,7 @@ class Net::HTTP::GET {
             samewith($req, |c);
         }
     }
-    multi method CALL-ME(Request $req, Response ::RESPONSE = Net::HTTP::Response --> Response) {
+    multi method CALL-ME(Request:D $req, Response ::RESPONSE = Net::HTTP::Response --> Response) {
         self.round-trip($req, RESPONSE);
     }
 

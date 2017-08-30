@@ -18,7 +18,7 @@ class Net::HTTP::Transport does RoundTripper {
     # mix in a proxy role and the host and request target url are set appropriately automatically
     # method proxy { ::('Net::HTTP::URL').new("http://proxy-lord.org") }
 
-    method round-trip(Request $req, Response ::RESPONSE = Net::HTTP::Response --> Response) {
+    method round-trip(Request:D $req, Response ::RESPONSE = Net::HTTP::Response --> Response) {
         self.hijack($req);
 
         # MAKE REQUEST
@@ -43,7 +43,7 @@ class Net::HTTP::Transport does RoundTripper {
     }
 
     # no private multi methods :(
-    multi method hijack(Request $req) {
+    multi method hijack(Request:D $req) {
         my $header := $req.header;
         my $proxy   = self.?proxy;
 
@@ -59,7 +59,7 @@ class Net::HTTP::Transport does RoundTripper {
         $header<Connection> //= 'keep-alive';
     }
 
-    method get-socket(Request $req) {
+    method get-socket(Request:D $req) {
         $!lock.protect({
             my $connection;
 

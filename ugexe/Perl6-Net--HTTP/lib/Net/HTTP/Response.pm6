@@ -13,7 +13,7 @@ class Net::HTTP::Response does Response {
     multi method new(:$status-line, :%header, :$body, :%trailer, *%_) {
         self.bless(:$status-line, :%header, :$body, :%trailer, |%_);
     }
-    multi method new(Blob $raw, *%_) {
+    multi method new(Blob:D $raw, *%_) {
         # Decodes headers to a string, and leaves the body as binary
         # i.e. `::("$?CLASS").new($socket.recv(:bin))`
         my $sep = buf8.new($CRLF.contents.Slip xx 2);
@@ -36,7 +36,7 @@ class Net::HTTP::Response does Response {
 
 
     method status-code { $!status-line ~~ self!status-line-matcher andthen return ~$_[0] }
-    method !status-line-matcher { $ = rx/^ 'HTTP/' \d [\.\d]? \s (\d\d\d) \s/ }
+    method !status-line-matcher { rx/^ 'HTTP/' \d [\.\d]? \s (\d\d\d) \s/ }
 }
 
 # I'd like to put this in Net::HTTP::Utils, but there is problem with it being loaded late
@@ -53,7 +53,7 @@ role ResponseBodyDecoder {
         $!sniffed;
     }
 
-    method content(Bool :$force) {
+    method content(Bool:D :$force) {
         with self.header<Content-Type> {
             $!enc-via-header := .map({ sniff-content-type($_) }).first(*)
         }
@@ -74,25 +74,25 @@ role ResponseBodyDecoder {
         die "Don't know how to decode this content; call with the `:force` argument to try harder";
     }
 
-    sub sniff-content-type(Str $header) {
+    sub sniff-content-type(Str:D $header) {
         if $header ~~ /[:i 'charset=' <q=[\'\"]>? $<charset>=<[a..z A..Z 0..9 \- \_ \.]>+ $<q>?]/ {
             my $charset = ~$<charset>;
             return $charset.lc;
         }
     }
 
-    multi sub sniff-meta(Buf $body) {
+    multi sub sniff-meta(Buf:D $body) {
         samewith($body.subbuf(0,512).decode('latin-1'));
     }
-    multi sub sniff-meta(Str $body) {
+    multi sub sniff-meta(Str:D $body) {
         if $body ~~ /[:i '<' \s* meta \s* [<-[\>]> .]*? 'charset=' <q=[\'\"]>? $<charset>=<[a..z A..Z 0..9 \- \_ \.]>+ $<q>? .*? '>' ]/ {
             my $charset = ~$<charset>;
             return $charset.lc;
         }
     }
 
-    multi sub sniff-bom(Str $data) { }
-    multi sub sniff-bom(Blob $data) {
+    multi sub sniff-bom(Str:D $data) { }
+    multi sub sniff-bom(Blob:D $data) {
         given $data.subbuf(0,4).decode('latin-1') {
             when /^ 'ÿþ␀␀'  / { return 'utf-32-le'     } # no test
             when /^ '␀␀þÿ'  / { return 'utf-32-be'     } # no test
