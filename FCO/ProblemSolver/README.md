@@ -3,8 +3,8 @@
 # ProblemSolver
 
 ```perl6
-use Problem;
-my Problem $problem .= new;
+use ProblemSolver;
+my ProblemSolver $problem .= new;
 
 $problem.add-variable: "a", ^100;
 $problem.add-variable: "b", ^100;
@@ -18,8 +18,8 @@ say $problem.solve						# ((a => 14 b => 28))
 ```perl6
 # SEND + MORE = MONEY
 
-use Problem;
-my Problem $problem .= new: :stop-on-first-solution;
+use ProblemSolver;
+my ProblemSolver $problem .= new: :stop-on-first-solution;
 
 $problem.add-variable: "S", 1 ..^ 10;
 $problem.add-variable: "E", ^10;
@@ -48,7 +48,7 @@ say $problem.solve
 ```perl6
 # 4 queens
 
-use Problem;
+use ProblemSolver;
 
 class Point {
 	has Int $.x;
@@ -61,7 +61,7 @@ class Point {
 }
 
 sub MAIN(Int $n = 4) {
-	my Problem $problem .= new: :stop-on-first-solution;
+	my ProblemSolver $problem .= new: :stop-on-first-solution;
 
 	sub print-board(%values) {
 		my @board;
@@ -114,8 +114,8 @@ sub MAIN(Int $n = 4) {
 ```perl6
 # colorize map
 
-use Problem;
-my Problem $problem .= new: :stop-on-first-solution;
+use ProblemSolver;
+my ProblemSolver $problem .= new: :stop-on-first-solution;
 
 my @colors = <green yellow blue white>;
 

@@ -6,9 +6,9 @@
     "authors"       : ["Fernando Correa de Oliveira"],
     "tags"          : ["solver", "constraint", "problem"],
     "provides"      : {
-        "ProblemSolver" : "lib/ProblemSolver.pm6",
-        "Domain"        : "lib/ProblemSolver/Domain.pm6",
-        "State"         : "lib/ProblemSolver/State.pm6"
+        "ProblemSolver"         : "lib/ProblemSolver.pm6",
+        "ProblemSolver::Domain" : "lib/ProblemSolver/Domain.pm6",
+        "ProblemSolver::State"  : "lib/ProblemSolver/State.pm6"
     },
     "depends"       : [ ],
     "test-depends"  : [
