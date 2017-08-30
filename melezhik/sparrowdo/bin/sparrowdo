@@ -38,6 +38,7 @@ sub MAIN (
   Str  :$repo,
   Bool :$local_mode = False,
   Str  :$cwd, 
+  Str  :$format, 
 )
 
 {
@@ -53,6 +54,8 @@ sub MAIN (
   my $verbose_val = $verbose;
 
   $verbose_val = True if $conf-ini<sparrowdo><verbose> && ! $verbose_val;
+
+  my $format_val = $conf-ini<sparrowdo><format> ?? $conf-ini<sparrowdo><format> !! 'default';
     
   my $no_index_update_val = $no_index_update;
 
@@ -74,6 +77,7 @@ sub MAIN (
     SshUser => $ssh_user, 
     SshPrivateKey => $ssh_private_key, 
     Verbose => $verbose_val,
+    Format => $format || $format_val,
     NoSudo => $no_sudo,
     NoColor => $no_color,
     NoIndexUpdate => $no_index_update_val,
@@ -195,7 +199,7 @@ sub ssh_shell ( $cmd ) {
   @bash_commands.push:  "export SPARROW_CONF_PATH=$sparrow_root/sparrow-cache/sparrow.yaml";
   @bash_commands.push:  'export OUTTHENTIC_CWD=' ~ input_params('Cwd') if input_params('Cwd');
   @bash_commands.push:  'export sparrow_hub_api_url=' ~ input_params('SparrowhubApi') if input_params('SparrowhubApi');
-  @bash_commands.push:  'export OUTTHENTIC_FORMAT=sparrowdo';
+  @bash_commands.push:  'export OUTTHENTIC_FORMAT=' ~ input_params('Format');
 
   @bash_commands.push:  $cmd;
 
