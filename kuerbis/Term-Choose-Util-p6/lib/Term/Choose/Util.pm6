@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose::Util:ver<1.0.1>;
+unit class Term::Choose::Util:ver<1.0.2>;
 
 use NCurses;
 use Term::Choose              :choose, :choose-multi, :pause;

@@ -1,6 +1,9 @@
 Revision history for Term::Choose::Util
 
 
+1.0.2   2017-08-29
+        - Added tags to the META6.json file
+
 1.0.1   2017-08-06
         - Removed unused function
 
