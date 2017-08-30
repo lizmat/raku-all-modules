@@ -1,8 +1,10 @@
 Revision history for Term::TablePrint
 
 
+1.0.3   2017-08-29
+        - Added tags to the META6.json file
+
 1.0.2   2017-08-06
-        - Code refactoring
         - Remove `gist` preceded by `subst`
 
 1.0.1   2017-07-30

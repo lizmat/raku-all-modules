@@ -1,5 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<1.0.2>;
+unit class Term::TablePrint:ver<1.0.3>;
 
 
 use NCurses;
@@ -257,7 +257,7 @@ method !_inner_print_tbl {
     }
     my Str @header;
     if %!o<prompt> {
-        @header.push: %!o<prompt>; # ###
+        @header.push: %!o<prompt>;
     }
     if %!o<keep-header> {
         my $col_names = @list.shift;
@@ -391,17 +391,18 @@ method !_calc_col_width {
     my @portions = ( ^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
     @portions[0][0] = 1;
     @portions[@portions.end][1] = $!table.elems;
-    my $lock = Lock.new();
     my @promise;
+#    my atomicint $count = 0;                                # 2017.34
+    my $lock = Lock.new();
     my Int $count = 0;
     for @portions -> $range {
         @promise.push: start {
             do for $range[0] ..^ $range[1] -> $row {
                 if $step {
+#                    atomic-fetch-inc( $count );             # 2017.34
                     $lock.protect( { ++$count } );
                     self!_progressbar_update( $count ) if $count %% $step;
                 }
-
                 do for @col_idx -> $col {
                     if ! $!table[$row][$col].defined {
                         $row, $col, $undef, $undef_w, $undef_n;
@@ -512,7 +513,6 @@ sub _minus_x_percent ( Int $value, Int $percent ) {
 
 method !_cols_to_avail_width( @list ) {
     my Int $step;
-    my Int $count = 0;
     if $!show_progress {
         $!bar_w = getmaxx( $!win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
         $step = $!total div $!bar_w || 1;    #
@@ -533,8 +533,10 @@ method !_cols_to_avail_width( @list ) {
     my $size = $!table.elems div $threads;
     my @portions = ( ^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
     @portions[@portions.end][1] = $!table.elems;
-    my $lock = Lock.new();
     my @promise;
+#    my atomicint $count = 0;                                # 2017.34
+    my $lock = Lock.new();
+    my Int $count = 0;
     for @portions -> $range {
         @promise.push: start {
             do for $range[0] ..^ $range[1] -> $row {
@@ -544,6 +546,7 @@ method !_cols_to_avail_width( @list ) {
                     $str ~= $tab if $col != @!new_cols_w.end;
                 }
                 if $step {
+#                    atomic-fetch-inc( $count );             # 2017.34
                     $lock.protect( { ++$count } );
                     self!_progressbar_update( $count ) if $count %% $step;
                 }
