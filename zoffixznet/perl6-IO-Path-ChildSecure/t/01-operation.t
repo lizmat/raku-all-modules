@@ -114,6 +114,6 @@ fails-like { $parent.&child-secure("../\x[308]") }, X::IO::NotAChild,
         ok .out.slurp(:close).contains('alive').not,
           'we die on too-early compiler versions';
         ok .err.slurp(:close).contains('needs Rakudo 2017.04'),
-          'when we die, error message tells us which Rakudo version needed';
+          'when we die, error message tells us which Rakudo version we need';
     }
 }
