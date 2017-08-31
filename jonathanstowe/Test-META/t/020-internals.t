@@ -61,6 +61,21 @@ lives-ok { Test::META::get-meta() }, "get-meta";
     ), "check-license with bad license name - but a URL was supplied";
 }
 
+subtest {
+    nok Test::META::check-version(META6.new()), "check-version with no version";
+    nok Test::META::check-version(META6.new(version => Version.new("*"))), "check-version with plain '*'";
+    nok Test::META::check-version(META6.new(version => Version.new("1.1.*"))), "check-version with embedded '*'";
+    ok Test::META::check-version(META6.new(version => Version.new('0.0.1'))), "check-version with a good version";
+
+}, "check-version";
+
+subtest {
+    nok Test::META::check-sources(META6.new(source-url => 'git@github.com:jonathanstowe/Test-META.git')), "not a valid URI";
+    nok Test::META::check-sources(META6.new(source-url => 'git://github.com/jonathanstowe/Test-META')), "git URI must end in git";
+    ok Test::META::check-sources(META6.new(source-url => 'http://xeamplw.com/jonathanstowe/Test-META')), "non-git URI needn't must end in git";
+
+}, "check-sources";
+
 
 done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6
