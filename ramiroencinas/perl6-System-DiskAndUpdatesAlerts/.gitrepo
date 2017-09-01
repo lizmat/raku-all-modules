@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ramiroencinas/perl6-System-DiskAndUpdatesAlerts.git
 	branch = master
-	commit = 86c778572d35c9ae3938ed688fd094454fef99cd
-	parent = f4a040f35ce9fea133a9f59a0a3afd641a54470e
+	commit = 06b38a3e7d63a2f62b1d1374cce7b5cfcc7b315d
+	parent = 964f0e437f9350e3585d8ba809a0f34388b7b6d7
 	cmdver = 0.4.0

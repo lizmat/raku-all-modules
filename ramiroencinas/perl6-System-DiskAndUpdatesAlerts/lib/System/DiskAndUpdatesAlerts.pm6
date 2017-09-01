@@ -40,7 +40,7 @@ sub send-alerts(:$smtp-server, :$smtp-port, :$from, :$to, :$disk-limit-percent) 
     $report ~= $disk-header ~ $disk-body ~ '</tbody></table>';
 
   } else {
-    $report ~= "<p>All mounted points are less than $disk-limit-percent%.</p>";
+    $report ~= "<p>All mounted points have less of $disk-limit-percent% of capacity.</p>";
   }
 
   # updates
