@@ -475,6 +475,25 @@ the lexical ordering in the regexes.
 
     say ('abc' ~~ / a | .b /).Str;    # OUTPUT: «ab␤»
 
+=head1 X<Conjunction: C<&&>|regex,&&>
+
+Matches successfully if all `&&`-delimited segments match the same substring
+of the target string. The segments are evaluated left to right.
+
+This can be useful for augmenting an existing regex. For example if you have
+a regex `quoted` that matches a quoted string, `/ <quoted> && <-[x]>* /`
+matches a quoted string that does not contain the character `x`. Note that you
+cannot easily obtain the same behavior with a look-ahead, because a look-ahead
+doesn't stop looking when the quoted string stops matching.
+
+=head1 X<Conjunction: C<&>|regex,&>
+
+Much like C<&&> in a regex, it matches successfully if all segments
+separated by `&` match the same part of the target string.
+
+C<&> (unlike C<&&>) is considered declarative, and notionally all the
+segments can be evaluated in parallel, or in any order the compiler chooses.
+
 =head1 Anchors
 
 The regex engine tries to find a match inside a string by searching from
