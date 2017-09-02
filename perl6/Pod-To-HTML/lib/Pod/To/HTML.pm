@@ -177,7 +177,7 @@ sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$foote
             aside, u \{ opacity: 0.7 }
             a[id^="fn-"]:target \{ background: #ff0 }
           </style>
-          <link rel="stylesheet" href="$css-url">
+          { qq|<link rel="stylesheet" href="$css-url">| if $css-url }
           { do-metadata() // () }
           $head
         </head>

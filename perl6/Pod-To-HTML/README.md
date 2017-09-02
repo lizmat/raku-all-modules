@@ -18,12 +18,14 @@ From within Perl 6:
 say Pod::To::HTML.render($=pod[0]);
 
 #Pod file
-say Pod::To::HTML.render('your/file.pod'.IO, 
-                         header => "your-custom-header-inside-body", 
-                         footer => "your-custom-footer-inside-body", 
-                         head-fields => "tags-inside-head", 
+say Pod::To::HTML.render('your/file.pod'.IO,
+                         header => "your-custom-header-inside-body",
+                         footer => "your-custom-footer-inside-body",
+                         head-fields => "tags-inside-head",
                          lang        => "document language (defaults to 'en')",
-                         default-title = 'No =title was found so we use this');
+                         default-title = 'No =title was found so we use this',
+                         css-url => 'https://example.com/css.css');
+                         # specify css-url as empty string to disable CSS inclusion
 
 #Pod string
 my $pod = q:to/END/;
@@ -31,10 +33,10 @@ my $pod = q:to/END/;
 My I<super B<awesome>> embedded C<pod>
      document!
 END
-say Pod::To::HTML.render($pod, 
-                         header => "your-custom-header-inside-body", 
-                         footer => "your-custom-footer-inside-body", 
-                         head-fields => "tags-inside-head", 
+say Pod::To::HTML.render($pod,
+                         header => "your-custom-header-inside-body",
+                         footer => "your-custom-footer-inside-body",
+                         head-fields => "tags-inside-head",
 			 lang        => "document language (defaults to 'en')",
                          default-title = 'No =title was found so we use this');
 ```
