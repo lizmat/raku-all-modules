@@ -254,6 +254,16 @@ Optional parameter.
 
 If set to true - disable color output of sparrowdo client. 
 
+## --format
+
+Sets format for reports. One of possible values:
+
+* default
+* concise
+* production
+
+Default value is `default`
+
 Optional parameter.
 
 ## --module\_run
@@ -329,6 +339,7 @@ Here is the list of available options:
 * verbose
 * repo
 * sparrowhub_api
+* format
 
 For example:
 
@@ -336,6 +347,7 @@ For example:
     no_index_update = 1
     verbose         = 1
     repo            = 192.168.0.2:4441
+    format          = production
 
 # Bootstrapping 
 
@@ -503,6 +515,9 @@ Later on in the scenario you may access config data via `config` function:
 
 Enable some sparrowdo debug messages printed in a console.
 
+* `OUTTHENTIC_FORMAT`
+
+Sets format for reports, see also `--format` option of sparrowdo client.
     
 # AUTHOR
 

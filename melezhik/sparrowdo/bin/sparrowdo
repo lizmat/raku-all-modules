@@ -55,7 +55,7 @@ sub MAIN (
 
   $verbose_val = True if $conf-ini<sparrowdo><verbose> && ! $verbose_val;
 
-  my $format_val = $conf-ini<sparrowdo><format> ?? $conf-ini<sparrowdo><format> !! 'default';
+  my $format_val = $conf-ini<sparrowdo><format> ?? $conf-ini<sparrowdo><format> !! %*ENV<OUTTHENTIC_FORMAT> || 'default';
     
   my $no_index_update_val = $no_index_update;
 

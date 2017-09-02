@@ -1,3 +1,7 @@
+# 0.0.28 2017-09-01
+
+- Sets format for reports by using `--format`, `OUTTENTIC_FORMAT`, or sparrowdo.ini file
+
 # 0.0.26 2017-08-03
 
 - Core dsl - minor fixes for subroutines signatures to make it sure it works on recent Rakudo
