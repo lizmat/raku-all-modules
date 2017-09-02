@@ -7,7 +7,7 @@ From command line:
     $ perl6 --doc=Markdown lib/to/class.pm
 
 From Perl6:
-=begin code
+=begin code :lang<perl6>
 use Pod::To::Markdown;
 
 =NAME
@@ -18,6 +18,11 @@ foobar.pl
 
 say pod2markdown($=pod);
 =end code
+To render without fenced codeblocks C<```>, as some markdown engines don't support
+this, use the :no-fenced-codeblocks option.
+If you want to have code show up as C<```perl6> to enable syntax highlighting on
+certain markdown renderers, use:
+C<=begin code :lang<perl6>>
 =end SYNOPSIS
 
 =begin EXPORTS
@@ -108,7 +113,9 @@ multi sub pod2markdown(Pod::Block::Declarator $pod, Bool :$no-fenced-codeblocks)
                @params.pop if @params[*-1].name eq '%_';
 	    my $name = $_.name;
 	    $ret ~= head2markdown($lvl+1, "method $name") ~ "\n\n";
-	    $ret ~= "```\nmethod $name" ~ signature2markdown(@params) ~ "$returns\n```";
+	    $ret ~= $no-fenced-codeblocks
+            ?? ("method $name" ~ signature2markdown(@params) ~ "$returns").indent(4)
+            !! "```\nmethod $name" ~ signature2markdown(@params) ~ "$returns\n```";
         }
         when Sub {
 	    my $returns = ($_.signature.returns.WHICH.perl eq 'Mu')
@@ -117,7 +124,9 @@ multi sub pod2markdown(Pod::Block::Declarator $pod, Bool :$no-fenced-codeblocks)
 	    my @params = $_.signature.params;
 	    my $name = $_.name;
 	    $ret ~= head2markdown($lvl+1, "sub $name") ~ "\n\n";
-	    $ret ~= "```\nsub $name" ~ signature2markdown(@params) ~ "$returns\n```";
+	    $ret ~= $no-fenced-codeblocks
+            ?? ("sub $name" ~ signature2markdown(@params) ~ "$returns").indent(4)
+            !! "```\nsub $name" ~ signature2markdown(@params) ~ "$returns\n```";
         }
         when .HOW ~~ Metamodel::ClassHOW {
 	    if ($_.WHAT.perl eq 'Attribute') {
@@ -184,9 +193,26 @@ multi sub pod2markdown(Pod::FormattingCode $pod, Bool :$no-fenced-codeblocks) is
             $text = '[' ~ $text ~ '](' ~ $text ~ ')';
         }
     }
-
-    $text = %Mformats{$pod.type} ~ $text ~ %Mformats{$pod.type}
-        if %Mformats.EXISTS-KEY: $pod.type;
+    # If the code contains a backtick, we need to do more work
+    if $pod.type eq 'C' and $text.contains('`') {
+        # We need to open and close with some number larger than the largest
+        # contiguous number of backticks
+        my $length = $text.match(/'`'*/, :g).sort.tail.chars + 1;
+        my $symbol = %Mformats{$pod.type} x $length;
+        # If text starts with a backtick we need to pad it with a space
+        my $begin = $text.starts-with('`')
+            ?? $symbol ~ ' '
+            !! $symbol;
+        # likewise if it ends with a backtick that must be padded as well
+        my $end = $text.ends-with('`')
+            ?? ' ' ~ $symbol
+            !! $symbol;
+        $text = $begin ~ $text ~ $end
+    }
+    else {
+        $text = %Mformats{$pod.type} ~ $text ~ %Mformats{$pod.type}
+            if %Mformats.EXISTS-KEY: $pod.type;
+    }
 
     $text = sprintf '<%s>%s</%s>',
         %HTMLformats{$pod.type},
