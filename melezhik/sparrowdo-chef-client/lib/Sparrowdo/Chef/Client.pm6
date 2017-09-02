@@ -30,9 +30,17 @@ our sub tasks (%args) {
   
   my $log-level = %args<log-level> || 'info';
 
-  my $chef-run-command = "chef-client --color --json /tmp/chef.json -l $log-level";
+  my $chef-run-command = '';
+
+  if %args<chef-repo-path> {
+    $chef-run-command ~= "cd " ~ %args<chef-repo-path> ~ ' && '
+  }
+
+  $chef-run-command ~= "chef-client --color --json /tmp/chef.json -l $log-level";
 
   $chef-run-command ~= " --force-formatter"  if %args<force-formatter>;
+
+  $chef-run-command ~= " --local-mode"  if %args<local-mode>;
 
   task_run %(
     task => "run chef-client",

@@ -1,14 +1,14 @@
-language: perl6
+services:
+  - docker
+env:
+  - PATH=.ducky/:$PATH
 
-perl6:
-    - latest
+before_install:
 
-install:
-    - rakudobrew build-panda
-    - panda installdeps .
+  - git clone https://github.com/melezhik/ducky.git .ducky
+  - docker pull melezhik/centos7
+  - docker run --privileged --name centos7 --entrypoint  init -v $PWD:/var/ducky -v /sys/fs/cgroup:/sys/fs/cgroup:ro  -d  melezhik/centos7:latest
+  - ducky.bash centos7 
 
 script:
-  - prove -vr -e 'perl6 -Ilib' t/
-
-sudo: false
-
+  - echo 

@@ -1,0 +1,53 @@
+[
+  {
+    "task" : "install tools",
+    "plugin" : "package-generic",
+    "data" : {
+        "list" : "which git"
+    }
+  },
+  {
+    "task" : "install chef",
+    "plugin" : "bash",
+    "data" : {
+        "command" : "which chef-client 2>/dev/null || curl -L https://omnitruck.chef.io/install.sh | bash"
+    }
+  },
+  {
+    "task" : "setup test cookbook",
+    "plugin" : "bash",
+    "data" : {
+        "command" : "rm -rf /var/chef/cookbooks && mkdir -p /var/chef/cookbooks && cd /var/chef/cookbooks &&  knife cookbook site download test-cookbook && tar -xzf test-cookbook-0.1.0.tar.gz"
+    }
+  },
+  {
+    "task" : "install perl6",
+    "plugin" : "rakudo-install",
+    "data" : {
+      "url" : "https://github.com/nxadm/rakudo-pkg/releases/download/2017.07/perl6-rakudo-moarvm-CentOS7.3.1611-20170700-01.x86_64.rpm"
+    }
+  },
+  {
+    "task" : "install Sparrowdo::Chef::Client from source",
+    "plugin" : "zef",
+    "data" : {
+      "list" : [
+        "https://github.com/melezhik/sparrowdo.git",
+        "."
+      ],
+      "options" : "--force-install"
+    }
+  },
+  {
+    "task" : "Module Test",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "sparrowdo --local_mode --no_sudo --format=production",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  }
+]
+
+

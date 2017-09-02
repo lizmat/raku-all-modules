@@ -1,0 +1,14 @@
+module_run 'Chef::Client', %(
+  run-list => [
+    "recipe[test-cookbook]",
+  ],
+  log-level => 'info',
+  attributes => %(
+    foo => %(
+      bar => [ 1, 2 , 3]
+    )
+  ),
+  local-mode => True ,
+  chef-repo-path => '/var/chef/cookbooks'  
+);
+

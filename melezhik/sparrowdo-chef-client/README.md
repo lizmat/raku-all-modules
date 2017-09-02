@@ -9,7 +9,7 @@ Run chef client on remote host using Sparrowdo.
 
 # INSTALL
 
-    $ panda install Sparrowdo::Chef::Client
+    $ zef install Sparrowdo::Chef::Client
 
 
 # USAGE
@@ -53,8 +53,22 @@ For example:
       }
     }
 
+## local-mode
 
-Optional. Default value is empty Hash.
+If set runs with `--local-mode`, see https://docs.chef.io/ctl_chef_client.html#run-in-local-mode
+
+For example:
+
+    local-mode => true
+
+Optional.
+
+## chef-repo-path
+
+Sets chef repository directory path, see also `local-mode`
+
+Optional.
+
 
 ## force-formatter
 
