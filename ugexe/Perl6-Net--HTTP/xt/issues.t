@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 1;
+plan 2;
 
 use Net::HTTP::Request;
 use Net::HTTP::URL;
@@ -18,5 +18,16 @@ subtest {
       }
    }
 }, 'https://github.com/ugexe/Perl6-Net--HTTP/issues/8 - thread interpolation while stringifying requests via "{...}"';
+
+subtest {
+   my $request = Net::HTTP::Request.new(
+      :url(Net::HTTP::URL.new("http://www.google.com/")),
+      :method<GET>,
+      :body("x" x (2 ** 16)),
+      :header({}),
+   );
+
+   lives-ok { $request.raw().sink }
+}, 'https://github.com/ugexe/Perl6-Net--HTTP/issues/11 - Net::HTTP::Request::raw explodes on large (> 64kb) requests';
 
 done-testing;

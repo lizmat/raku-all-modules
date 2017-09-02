@@ -30,10 +30,12 @@ class Net::HTTP::Request does Request {
     # An over-the-wire representation of the Request
     method raw {
         return buf8.new( grep * ~~ Int,
-            |self.start-line.encode, |$CRLF,
-            |self!header-bin, |$CRLF, |$CRLF,
-            |self!body-bin,
-            |self!trailer-bin,
+            self.start-line.encode.Slip,
+            $CRLF.Slip,
+            self!header-bin.Slip,
+            $CRLF.Slip, $CRLF.Slip,
+            self!body-bin.Slip,
+            self!trailer-bin.Slip,
             )
     }
 
