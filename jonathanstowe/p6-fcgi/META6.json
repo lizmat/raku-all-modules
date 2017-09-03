@@ -29,7 +29,7 @@
   "provides": {
     "FastCGI::NativeCall": "lib/FastCGI/NativeCall.pm6"
   },
-  "version": "0.0.2",
+  "version": "0.0.3",
   "meta-version": "0",
   "authors": [
 	"carbin"
