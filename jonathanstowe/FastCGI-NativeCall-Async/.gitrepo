@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/FastCGI-NativeCall-Async.git
+	branch = master
+	commit = 7ea1c840f5af298f0db2de277faea479877c76ec
+	parent = 0553b92520bd604dc9797cbadaf196f81dd3e67d
+	cmdver = 0.4.0
