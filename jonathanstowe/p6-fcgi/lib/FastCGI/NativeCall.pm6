@@ -20,7 +20,8 @@ my $count = 0;
 
 while $fcgi.accept() {
 	say $fcgi.env;
-    $fcgi.Print("Content-Type: text/html\r\n\r\n{++$count}");
+    $fcgi.header(Content-Type => "text/html");
+    $fcgi.Print("{ ++$count }");
 }
 
 =end code
@@ -89,6 +90,16 @@ or otherwise.
 
 This returns a Hash containing the "environment" as determined by the FastCGI
 protocol, this may be dependent on the configuration of your host HTTP server.
+
+=head2 method header
+
+    multi method header(*%header)
+    multi method header(%header)
+
+This is a helper to output the header of the response with the correct line endings
+and the header/body separator from either the named header fields or from a Hash
+containing the header fields.  If you want to return an HTTP status other than the
+default '200' then the C<Status> header should be added.
 
 =head2 method Print
 
@@ -219,6 +230,17 @@ class FastCGI::NativeCall {
 
     method accept(--> Bool) {
         self.Accept() >= 0;;
+    }
+
+    proto method header(|c) { * }
+
+    multi method header(*%header) {
+        self.header(%header);
+    }
+
+    multi method header(%header) {
+        my $header = %header.pairs.map( -> ( :$key, :$value ) { "$key: $value" }).join("\r\n") ~ "\r\n\r\n";
+        self.Print($header);
     }
 
     method Print(Str $content) {

@@ -15,10 +15,10 @@ my $count = 0;
 
 while $fcgi.accept() {
 	say $fcgi.env;
-    $fcgi.Print("Content-Type: text/html\r\n\r\n{++$count}");
+    $fcgi.header(Content-Type => "text/html");
+    $fcgi.Print("{ ++$count }");
 }
 ```
-
 There is an example [nginx](http://nginx.org/) configuration in the [examples](examples) directory.
 
 ## Description
