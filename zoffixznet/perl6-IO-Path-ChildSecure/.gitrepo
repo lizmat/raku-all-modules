@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-IO-Path-ChildSecure.git
 	branch = master
-	commit = cc1d75d18c01f9ce886484abb2595e7101a1b74e
-	parent = 04c471a0d00f1b06bce40de5ed9ae0df43387c7b
+	commit = bdf654fd728d177865cbd0e3e38fabb574cb8e0a
+	parent = 4dce46cce39022ba141ab658801d6cb99e209a90
 	cmdver = 0.4.0
