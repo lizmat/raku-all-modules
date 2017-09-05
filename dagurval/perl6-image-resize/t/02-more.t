@@ -37,5 +37,5 @@ my $height = 366;
 
 
 
-done;
+done-testing;
 # vim: ft=perl6

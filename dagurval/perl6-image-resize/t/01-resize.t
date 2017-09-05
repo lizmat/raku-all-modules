@@ -41,6 +41,6 @@ my $height = 366;
     is $y, "64", "Resized y to 64";
 }
 
-done;
+done-testing;
 
 # vim: ft=perl6

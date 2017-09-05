@@ -13,7 +13,7 @@ class Image::Resize {
         die "File '$path' does not exist"
             unless $path.Str.IO.e;
 
-        self.bless(*, img-path => $path);
+        self.bless(img-path => $path);
     }
 
     submethod BUILD(:$!img-path) {
