@@ -58,16 +58,9 @@ instructions below based on your platform:
 sudo apt-get install libarchive13
 ```
 
-The module looks for a library called libarchive.so, or whatever it finds in
-the environment variable `PERL6_LIBARCHIVE_LIB` (provided that the library one
-chooses uses the same API).
-
 ## Installation
 
-To install it using zef (a module management tool):
-
 ```
-$ zef update
 $ zef install Archive::Libarchive::Raw
 ```
 

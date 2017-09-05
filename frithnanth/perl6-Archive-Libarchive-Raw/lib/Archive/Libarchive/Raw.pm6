@@ -1,13 +1,11 @@
 use v6;
-unit module Archive::Libarchive::Raw:ver<0.0.4>;
+unit module Archive::Libarchive::Raw:ver<0.0.5>;
 
 use NativeCall;
 
-constant LIB = %*ENV<PERL6_LIBARCHIVE_LIB> || (
-    $*DISTRO.is-win
-        ?? %?RESOURCES<libarchive.dll>.absolute
-        !! 'libarchive.so.13'
-);
+constant LIB = $*DISTRO.is-win
+                ?? %?RESOURCES<libarchive.dll>.absolute
+                !! ('archive', v13);
 
 class archive       is repr('CPointer') is export { * } # libarchive private struct
 class archive_entry is repr('CPointer') is export { * } # libarchive private struct
@@ -267,16 +265,9 @@ instructions below based on your platform:
 sudo apt-get install libarchive13
 =end code
 
-The module looks for a library called libarchive.so, or whatever it finds in
-the environment variable B<PERL6_LIBARCHIVE_LIB> (provided that the library one
-chooses uses the same API).
-
 =head1 Installation
 
-To install it using zef (a module management tool):
-
 =begin code
-$ zef update
 $ zef install Archive::Libarchive::Raw
 =end code
 
