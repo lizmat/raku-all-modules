@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/croservices/cro-ssl.git
 	branch = master
-	commit = 0470d0480889677f4d42cfc4785c98bd15934fa7
-	parent = ea68cbb7ddc3559a53516017e0fdf4b2d0dd35a2
+	commit = 1c0306572e2b70a654944097c75a20accacc04d7
+	parent = ae205cf36d03f5147c5cb798c23f8bc8e2064fa4
 	cmdver = 0.4.0

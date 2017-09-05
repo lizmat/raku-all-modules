@@ -192,7 +192,7 @@ my class UppercaseTransform does Cro::Transform {
 }
 
 # ALPN
-{
+if supports-alpn() {
     my $lis = Cro::SSL::Listener.new(port => TEST_PORT, |%key-cert, alpn => <h2 http/1.1>);
     my $server-conns = Channel.new;
     my $incoming = $lis.incoming;
@@ -217,9 +217,11 @@ my class UppercaseTransform does Cro::Transform {
     }
 
     $tap.close;
+} else {
+    skip "no alpn support in this ssl version", 4;
 }
 
-{
+if supports-alpn() {
     my $listener = Cro::SSL::Listener.new(port => TEST_PORT, |%key-cert, alpn => <h2 http/1.1>);
     my $loud-service = Cro.compose($listener, UppercaseTransform);
     $loud-service.start;
@@ -266,6 +268,8 @@ my class UppercaseTransform does Cro::Transform {
     }
 
     $loud-service.stop;
+} else {
+    skip "no alpn support in this ssl version", 2;
 }
 
 done-testing;
