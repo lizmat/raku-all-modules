@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 3;
+plan 4;
 
 use Net::HTTP::GET;
 
@@ -13,6 +13,14 @@ subtest {
     my $response400 = Net::HTTP::GET($url ~ '/status/400');
     is $response400.status-code, "400";
 }, "Basic";
+
+subtest {
+    my $url = "http://httpbin.org";
+
+    my $response = Net::HTTP::GET($url ~ '/encoding/utf8');
+    is $response.status-code, 200;
+    ok $response.content.contains('∀∂∈ℝ∧∪≡∞ ↑↗↨↻⇣ ┐┼╔╘░►☺♀ ﬁ�⑀₂ἠḂӥẄɐː⍎אԱა');
+}, "Basic content";
 
 subtest {
     my $url = "http://httpbin.org/redirect/3";

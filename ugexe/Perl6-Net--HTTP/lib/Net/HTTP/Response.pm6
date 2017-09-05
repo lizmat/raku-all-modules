@@ -53,7 +53,7 @@ role ResponseBodyDecoder {
         $!sniffed;
     }
 
-    method content(Bool:D :$force) {
+    method content(Bool:D :$force = False) {
         with self.header<Content-Type> {
             $!enc-via-header := .map({ sniff-content-type($_) }).first(*)
         }
