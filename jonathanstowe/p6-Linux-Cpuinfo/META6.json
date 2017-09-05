@@ -2,7 +2,9 @@
   "name": "Linux::Cpuinfo",
   "source-url": "https://github.com/jonathanstowe/p6-Linux-Cpuinfo.git",
   "support": {
-    "source": "git://github.com/jonathanstowe/p6-Linux-Cpuinfo.git"
+    "source": "git://github.com/jonathanstowe/p6-Linux-Cpuinfo.git",
+    "bugtracker" : "https://github.com/jonathanstowe/p6-Linux-Cpuinfo/issues/",
+    "email": "jns+git@gellyfish.co.uk"
   },
   "perl": "6.c",
   "resources": [
@@ -30,7 +32,7 @@
     "Linux::Cpuinfo": "lib/Linux/Cpuinfo.pm",
     "Linux::Cpuinfo::Cpu": "lib/Linux/Cpuinfo/Cpu.pm"
   },
-  "version": "0.0.7",
+  "version": "0.0.8",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],

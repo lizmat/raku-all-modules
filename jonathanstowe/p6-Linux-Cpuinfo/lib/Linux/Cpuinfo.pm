@@ -43,11 +43,12 @@ in Perl programs.
 
 =end pod
 
-class Linux::Cpuinfo:ver<0.0.7>:auth<github:jonathanstowe> {
-    has Str $.filename = '/proc/cpuinfo';
+class Linux::Cpuinfo:ver<0.0.8>:auth<github:jonathanstowe> {
+    has Str                 $.filename = '/proc/cpuinfo';
+    has Str                 $.cpu-info;
     has Linux::Cpuinfo::Cpu @.cpus;
-    has Int $.num-cpus;
-    has Str $.arch = $*KERNEL.hardware;
+    has Int                 $.num-cpus;
+    has Str                 $.arch = $*KERNEL.hardware;
     has $.cpu-class;
 
     #| Returns an L<doc:Array> of objects of a sub-class of L<doc:Linux::Cpuinfo::Cpu>
@@ -56,20 +57,7 @@ class Linux::Cpuinfo:ver<0.0.7>:auth<github:jonathanstowe> {
     #| such as "hyper-threading".
     method cpus() {
         if not @!cpus.elems > 0 {
-            my Buf $buf = Buf.new;
-
-            my $proc = open $!filename, :bin;
-            my Bool $last = False;
-
-            while not $last {
-                my $tmp_buf = $proc.read(1024);
-                $last = $tmp_buf.elems < 1024;
-                $buf ~= $tmp_buf;
-            }
-
-            my $proc_str = $buf.decode;
-
-            for $proc_str.split( /\n\n/ ) -> $cpu {
+            for $.cpu-info.split( /\n\n/ ) -> $cpu {
                 if $cpu.chars > 0 {
                     my $co = self.cpu-class.new($cpu);
 
@@ -89,6 +77,10 @@ class Linux::Cpuinfo:ver<0.0.7>:auth<github:jonathanstowe> {
         @!cpus;
     }
 
+    method cpu-info(--> Str) {
+        $!cpu-info //= $!filename.IO.slurp;
+    }
+
     #| Build a sub class of Linux::Cpuinfo::Cpu
     method cpu-class() {
         if not $!cpu-class.isa(Linux::Cpuinfo::Cpu) {
@@ -100,11 +92,6 @@ class Linux::Cpuinfo:ver<0.0.7>:auth<github:jonathanstowe> {
         $!cpu-class;
     }
 
-    method cpu_class() {
-        DEPRECATED('cpu-class', v0.0.7);
-        self.cpu-class;
-    }
-
     #| Returns the number of CPU cores reported by the kernel.
     #| This may be the number of "virtual cores" if the CPU
     #| has a mechanism such as "hyper-threading"
@@ -113,11 +100,6 @@ class Linux::Cpuinfo:ver<0.0.7>:auth<github:jonathanstowe> {
             $!num-cpus = self.cpus.elems;
         }
         $!num-cpus;
-    }
-
-    method num_cpus() returns Int {
-        DEPRECATED('num-cpus', v0.0.7);
-        self.num-cpus;
     }
 }
 # vim: expandtab shiftwidth=4 ft=perl6

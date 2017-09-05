@@ -131,7 +131,7 @@ measure of the CPU's performance.
 
 =end pod
 
-class Linux::Cpuinfo::Cpu:ver<0.0.7>:auth<github:jonathanstowe> {
+class Linux::Cpuinfo::Cpu:ver<0.0.8>:auth<github:jonathanstowe> {
 
     #|  a hash keyed on the names of the fields found in the record
     has %.fields;
