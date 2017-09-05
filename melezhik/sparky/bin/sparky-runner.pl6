@@ -72,7 +72,7 @@ sub MAIN (
 
   }
 
-  my $sparrowdo-run = "sparrowdo --sparrow_root=/opt/sparky-sparrowdo/$project";
+  my $sparrowdo-run = "sparrowdo --sparrow_root=/opt/sparky-sparrowdo/$project --format=production";
 
   $sparrowdo-run ~= ' --no_color' unless ! $make-report;
 
