@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/tbrowder/Net-IP-Lite-Perl6.git
+	branch = master
+	commit = 514da4ef9fc4ec5fadff2baadd7320a8266a620a
+	parent = bbc37989655ffe675f37308a9deb441f8405a044
+	cmdver = 0.4.0

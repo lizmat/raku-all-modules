@@ -1,0 +1,42 @@
+======================================
+REQUIREMENTS FOR NEXT BETA RELEASE
+======================================
+
+remove extra lib (../Misc::Utils/lib) from main Makefile
+
+consider changing to check ip version inside other functions and not
+  requiring ip-version in params; should change some subs to
+  export(:util) as a result (NOT YET)
+
+consider removing ip- prefix to subs
+
+------------------------------------------
+DONE:
+------------------------------------------
+
+all tests must have plan N, remove "done-testing" (DONE)
+
+move util functions to the new util module (BUMP MINOR VERSION NUMBER);
+  will entail adding the dependency and using the new module (DONE)
+
+use Misc::Utils (DONE)
+
+====================================
+REQUIREMENTS FOR STABLE RELEASE
+====================================
+
+enhance folding capability of create md (make more robust)
+
+improve fold reporting
+
+tidy failure messages, use fail consistently
+
+add Makefile target to generate text from pod in the module
+
+handle bug and issue reports
+
+========================================
+REQUIREMENTS FOR A FUTURE STABLE RELEASE
+========================================
+
+add capability to handle CIDR notation

@@ -1,0 +1,83 @@
+======================================
+REQUIREMENTS FOR INITIAL, BETA RELEASE
+======================================
+
+report results of sig folding (if verbose) (DONE)
+
+modify create md so user opts for fiddling with sig lines or not (DONE)
+
+modify create md so sig lines are collected and then folded (user has
+  opted for such on the CLI) (DONE)
+
+be sure and report if sig lines are too long if user has opted out
+  (DONE)
+
+mention md create utility (DONE)(
+
+use Getopt::Long (DONE)
+
+create a script and make target to produce the DEFAULT-SUBS.md and
+  UTIL-SUBS.md in the ./docs dir; need line-wrap for long sigs (e.g.,
+  ip-bintoip) (DONE)
+
+add suitable tags to META6.json (DONE)
+
+ask for comments from #perl6 (pending receipt of comments...) (DONE)
+
+add ip-reverse-net sub? or part of sub ip-reverse-address? add test
+  for it (DONE)
+
+correct links to sub docs in README.md (DONE)
+
+add README.md remark about possible doc and API changes prior to
+  version 1.0.0 (DONE)
+
+change to verision 0.1.0 (DONE)
+
+decided: use a README.md for now (DONE)
+
+ensure all subs are described (DONE)
+
+clean up code (DONE)
+
+add return types where appropriate (DONE)
+
+tighten arg type requirements (DONE)
+
+define and use regex tokens for the oft-used ones such as
+  for: binary, hexadecimal, and ip-version numbers; single
+  hexadecimal characters; and positive decimal integers (DONE)
+
+separate tests into appropriate files (DONE)
+
+put util functions after all default export functions (DONE)
+
+ensure the :auth and :ver adverbs are in place (DONE)
+
+make starting version 1.0.0 (but consider a beta release with ver < 1)
+  (DONE)
+
+add param constraints where appropriate
+  (particularly in utility functions) (DONE)
+
+put base conversion and other utility functions in separate export
+  category: util (DONE)
+
+export all subs (and test them) (DONE)
+
+complete two new base conversion functions (DONE)
+
+for base conversions (except single-character ones) make sure
+  generated size is okay (pad left with zeroes if necessary) (DONE)
+
+add length capability where warranted (add tests) (DONE)
+
+finish reverse function; add tests (DONE)
+
+get compress working for ipv6 (DONE)
+
+add user-accessible DEBUG var (DONE)
+
+use loop construct in places with explicit list for statements (DONE)
+
+remove type constraints from ip type check funcs (DONE)
