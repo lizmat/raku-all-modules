@@ -1,0 +1,24 @@
+{
+    "perl"        : "6.c",
+    "name"        : "Text::More",
+    "version"     : "0.1.6",
+    "description" : "Provides some additional text functions and a utility program to create a markdown file of subroutine descriptions",
+    "authors"     : [ "github:tbrowder" ],
+    "license"     : "Artistic-2.0",
+    "source-url"  : "https://github.com/tbrowder/Text-More-Perl6.git",
+    "support"     : {
+        "bugtracker" : "https://github.com/tbrowder/Text-More-Perl6/issues"
+    },
+    "provides"    : {
+        "Text::More" : "lib/Text/More.pm6"
+    },
+    "test-depends"     : [
+    ],
+    "depends" : [
+    ],
+    "resources" : [
+    ],
+    "tags" : [
+	"string functions"
+    ]
+}

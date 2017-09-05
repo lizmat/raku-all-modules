@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/tbrowder/Text-More-Perl6.git
+	branch = master
+	commit = c751353a773f0dfbb8add563ea53b9e759c8c694
+	parent = aa02c7219aa711df5e286518be2631cf620225c6
+	cmdver = 0.4.0
