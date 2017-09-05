@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/gabrielash/perl6-zmq.git
+	branch = master
+	commit = 180765018109bbeda7fc3d8758dce0b744b4579b
+	parent = ce174f49044bea67a992bee17fc1f1e08cd8f905
+	cmdver = 0.4.0
