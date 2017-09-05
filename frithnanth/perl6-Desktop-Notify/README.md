@@ -137,16 +137,9 @@ instructions below based on your platform:
 sudo apt-get install libnotify4
 ```
 
-The module looks for a library called libnotify.so.4, or whatever it finds in
-the environment variable `PERL6_NOTIFY_LIB` (provided that the library one
-chooses uses the same API).
-
 ## Installation
 
-To install it using zef:
-
 ```
-$ zef update
 $ zef install Desktop::Notify
 ```
 

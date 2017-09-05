@@ -1,10 +1,10 @@
 #!/usr/bin/env perl6
 
-unit class Desktop::Notify:ver<0.2.0>;
+unit class Desktop::Notify:ver<0.2.1>;
 
 use NativeCall;
 
-constant LIB = %*ENV<PERL6_NOTIFY_LIB> || 'libnotify.so.4';
+constant LIB = ('notify', v4);
 
 class NotifyNotification is repr('CPointer') { * } # libnotify private struct
 class GError is repr('CStruct') {
@@ -275,16 +275,9 @@ instructions below based on your platform:
 sudo apt-get install libnotify4
 =end code
 
-The module looks for a library called libnotify.so.4, or whatever it finds in
-the environment variable B<PERL6_NOTIFY_LIB> (provided that the library one
-chooses uses the same API).
-
 =head1 Installation
 
-To install it using zef:
-
 =begin code
-$ zef update
 $ zef install Desktop::Notify
 =end code
 
