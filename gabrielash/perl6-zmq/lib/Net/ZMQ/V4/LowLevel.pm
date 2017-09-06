@@ -40,7 +40,6 @@ my constant LIB = 'zmq';
 
 class zmq_msg_t is repr('CStruct') is export {
 #  has CArray[uint64]                 $._; # unsigned char[64] _
-
 # solution thanks to https://github.com/arnsholt/Net-ZMQ
 	has int64 $._;
 	has int64 $._1;
@@ -51,10 +50,24 @@ class zmq_msg_t is repr('CStruct') is export {
 	has int64 $._6;
 	has int64 $._7;
 
+=begin c
+    my $instances = 0;
+    my $created = 0;
+    method instances() { say "msg_t : $created instances created, $instances remaining"; $instances; }
+    method created()   { $created }
+    method DESTROY { 
+		     --$instances
+		    }# say .WHICH, " Destroyed" }
+    method TWEAK   { 
+		    { ++$created; ++$instances; }
+		}# say .WHICH, " created"  }
+=end c
+=cut
 #submethod TWEAK {
 ## Why Does this not work?
 #    $!_ := CArray[uint64].new( [0,0,0,0,0,0,0,0] );
 #  }
+
 }
 
 ## int64: because Pointers are immutable in Perl6, assignments to

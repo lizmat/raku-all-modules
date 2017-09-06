@@ -139,7 +139,8 @@ class Message is export  {
     return self.bless( :_($built) );
   }
 
-  method send(Socket:D $socket, :$part, :$async, :$callback where sub-or-true( $callback ) ) {
+  method send(Socket:D $socket, :$part, :$async, :$callback where sub( $callback )
+                          , :$verbose ) {
     my $doc := q:to/END/;
     sends the assembled message in segments with zero-copy
     part - sets the last part as incopmlete
@@ -156,25 +157,29 @@ class Message is export  {
     END
     #:
 
+        # INVESTIGATE: not sure how zmq_msg_init_data behaves without a callback
+        # does it takes ownership and free the memory? Then callbacks are mandatory
+        # If callback are used, and we add a reference to msg-t, does this protect
+        # against gc as long as the message is in scope? Or does it leak memory?
+        # see test 11. with 100000 runs, a local scope callback prevents gc. a
+        # callback argument and no callback perform equally well, reclaiming 99.9% at END {}
+
     my $no-more = 0;
     $no-more = ZMQ_SNDMORE if $part;
     my $more = $no-more +| ZMQ_SNDMORE;
 
     my $sent = 0;
     my $segments = self.segments;
-    say "segments = $segments";
     my MsgIterator  $it = $!_.iterator;
     my $i = 0;
+
     while $it.has-next {
       my $end = $it.next;
       my zmq_msg_t $msg-t .= new;
-      my &callback = ($callback && $callback.WHAT === Sub )
-                    ?? $callback
-                    !! -> $data, $hint { say "sending now to $end ";}
       my $ptr = ($end > $i) ?? $!_.offset-pointer($i)
                             !! Pointer;
-      my $r = $callback
-                    ?? zmq_msg_init_data_callback($msg-t,$ptr , $end - $i, &callback)
+      my $r = $callback.defined && $callback.WHAT === Sub
+                    ?? zmq_msg_init_data_callback($msg-t,$ptr , $end - $i, $callback)
                     !! zmq_msg_init_data($msg-t, $ptr , $end - $i);
       throw-error if $r  == -1;
       my &sender = $socket.sender;
@@ -183,7 +188,6 @@ class Message is export  {
       $i = $end;
       $sent += $r;
     }
-    say "segments remaining = $segments";
     return $sent;
   }
 

@@ -354,7 +354,7 @@ class Socket does SocketOptions is export {
 
 ## RECV
    # string
-    multi method receive(:$truncate! where c-unsigned($truncate)
+    multi method receive(:$truncate! where uint-bool($truncate)
                             , :$async, :$bin) {
       my $doc := q:to/END/;
       this method uses the vanilla recv of zmq, which truncates messages

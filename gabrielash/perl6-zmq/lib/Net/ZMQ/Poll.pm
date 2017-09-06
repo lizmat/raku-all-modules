@@ -107,16 +107,29 @@ class Poll-impl {
     }
   }
 
-  method poll( --> PollHandler ) {
+  multi method poll(:$serial!) { 
     die "cannot poll un unfinalized Poll" unless @!c-items.defined;
     throw-error()  if -1 == zmq_poll( @!c-items.as-pointer, self.elems, $!delay);
     for ^self.elems -> $n {
-        return @!items[$n]
+        return @!items[$n].do( @!items[$n].socket )
           if ( @!c-items[$n].revents +& %poll-events<incoming> );
     }
-    return PollHandler;
+    return Any;
   }
-}
+
+  multi method poll( --> Seq ) {
+    die "cannot poll un unfinalized Poll" unless @!c-items.defined;
+    given zmq_poll( @!c-items.as-pointer, self.elems, $!delay)  {
+      when -1 { throw-error };
+      when  0 { return () };
+      default { return
+            @!items[  | @!c-items.grep( {  $_.revents +& %poll-events<incoming> },  :k)
+                     ]\
+                     .map( { $_.do( $_.socket ) } );
+              }
+    }
+  }
+}#class
 
 class Poll is export {
   my $doc = q:to/END/;
@@ -129,18 +142,13 @@ class Poll is export {
   #:
 
   trusts PollBuilder;
-  has Poll-impl $!pimpl handles < elems >;
+  has Poll-impl $!pimpl handles < elems poll >;
 
   submethod BUILD(:$pimpl ) { $!pimpl = $pimpl; }
 
   method new  {die "Poll: private constructor";}
   method !create( Poll-impl:D $pimpl)   {return self.bless(:pimpl($pimpl)); }
 
-  method poll() {
-    my PollHandler $pr = $!pimpl.poll;
-    return $pr.do( $pr.socket ) if $pr.defined;
-    return Any;
-  }
   method doc {$doc};
 }
 

@@ -56,9 +56,10 @@ my $p2 = start {
 
       my $cnt = 0;
       loop {
-        my $r = $poll.poll;      
-        say "{ ++$cnt } : $r " if $r.defined;        
-        last if $r === False;
+        my @r = $poll.poll;
+	say "got", @r;
+        say "got { @r.elems } -> { $cnt += @r.elems }" if @r; 
+        last if @r.grep(  { $_ === False } );
       }
      ok $cnt == 8, "received all $cnt";
      ok True, "loop ended. pulls Done!";

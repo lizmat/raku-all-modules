@@ -209,11 +209,11 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
   	Immutable message     
 
     Methods
-        send(Socket, :part, :async, :callback  --> Int)    
-              # use of callback is experimental
+        send(Socket, :part, :async, Callable:($,$ --> Int:D) :callback  --> Int)                  
         bytes( --> Int)          
         segments( --> Int)  
         copy( --> Str)
+        
 
 #####   PollBuilder
     PollBuilder builds a polled set of receiving sockets
@@ -226,7 +226,7 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
       .delay( 500 )\
       .finalize;
 
-    1 while $poll.poll;
+    1 while $poll.poll(:serial);
     say "Done!";
 
 
@@ -251,13 +251,15 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
 
 
 #####  Poll
-    Poll holds a ready immutable poll set of receiving sockets
+    Poll holds and polls an  immutable collection of receiving sockets
 
     Methods
     poll()   
-      poll returns whatever the callback function associated with the succesfully
-      polled socket returns or Any on failure.
-      # TODO: add option to throw
+      poll returns a sequence of the results of the callback functions associated with the succesfully
+      polled sockets or an empty sequence. It throws on error.
+    poll(:serial)
+      primarily fo testing: returns a single result, from the callback of the first succesfully polled
+      socket, or Any. The order is defined by the building invocation.
 
 
 ## LICENSE
