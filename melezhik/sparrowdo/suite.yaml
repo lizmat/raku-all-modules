@@ -14,5 +14,5 @@ case:
   - copy-local-file
   - asserts
   - git
-
+  - hostname
 

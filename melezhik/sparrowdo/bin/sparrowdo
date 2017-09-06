@@ -91,7 +91,12 @@ sub MAIN (
 
   bootstrap($sparrow_root,$sparrowdo-cache) if $bootstrap;
 
-  ssh_shell "rm -rf $sparrow_root/sparrow-cache && mkdir -m 777 -p $sparrow_root/sparrow-cache && mkdir -m 777 -p $sparrow_root/sparrow-cache/plugins && mkdir -m 777 -p $sparrow_root/sparrow-cache/files && echo print os | perl -MOutthentic  > $sparrow_root/sparrow-cache/os.txt";
+  ssh_shell "rm -rf $sparrow_root/sparrow-cache && \\
+  mkdir -m 777 -p $sparrow_root/sparrow-cache && \\
+  mkdir -m 777 -p $sparrow_root/sparrow-cache/plugins && \\
+  mkdir -m 777 -p $sparrow_root/sparrow-cache/files && \\
+  echo print os | perl -MOutthentic  > $sparrow_root/sparrow-cache/os.txt && \\
+  cat /etc/hostname > $sparrow_root/sparrow-cache/hostname.txt";
 
 
   say $no_color ?? 
@@ -99,9 +104,10 @@ sub MAIN (
   colored( 'running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
 
 
-  _scp "$sparrow_root/sparrow-cache/os.txt", "$sparrowdo-cache/target_os", 1; # copy back to master host 
+  _scp "$sparrow_root/sparrow-cache/*.txt", "$sparrowdo-cache/", 1, 1; # copy back a target host data back to master host 
 
-  set_target_os slurp "$sparrowdo-cache/target_os";
+  set_target_os slurp "$sparrowdo-cache/os.txt";
+  set_target_hostname slurp "$sparrowdo-cache/hostname.txt";
 
   say $no_color ??
   ('target OS is - '~ target_os ) !!
@@ -253,7 +259,7 @@ our sub _copy-local-file ( $file, $dest ) {
 }
 
 
-our sub _scp ( $file, $dest, $reverse = 0 ) {
+our sub _scp ( $file, $dest, $reverse = 0, $recursive = 0 ) {
 
   my $ssh_host_term = input_params('Host');
 
@@ -268,6 +274,8 @@ our sub _scp ( $file, $dest, $reverse = 0 ) {
     $scp_params ~= ' -i ' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
   
     $scp_params ~= ' -q'  unless input_params('Verbose');
+
+    $scp_params ~= ' -r ' if $recursive;
   
     $scp_command = 'scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
   

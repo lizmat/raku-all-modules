@@ -451,6 +451,10 @@ The list of OS names is provided by `target_os()` function:
     fedora
     amazon
 
+* `target_hostname()`
+
+This function returns the remote server hostname.
+
 * `input_params($param)`
 
 The input\_params function returns command line parameter one provides when run sparrowdo client. 

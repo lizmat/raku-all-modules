@@ -6,7 +6,7 @@ use Terminal::ANSIColor;
 use Data::Dump;
 
 my %input_params = Hash.new;
-my $target_os;
+my $target_os; my $target_hostname;
 my @tasks = Array.new;
 my @plugins = Array.new;
 my @spl = Array.new;
@@ -47,6 +47,14 @@ sub set_target_os ($os) is export  {
 
 sub target_os () is export  {
   return $target_os;
+}
+
+sub set_target_hostname ($hostname) is export  {
+  $target_hostname = $hostname
+}
+
+sub target_hostname () is export  {
+  return $target_hostname;
 }
 
 sub set_input_params (%args) is export  {
