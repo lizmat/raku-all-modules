@@ -13,7 +13,7 @@ has $.engine-id = ~UUID.new: :version(4);
 has $.kernel-info = {
     protocol_version => '5.0',
     implementation => 'p6-jupyter-kernel',
-    implementation_version => '0.0.1',
+    implementation_version => '0.0.3',
     language_info => {
         name => 'perl6',
         version => ~$*PERL.version,
@@ -60,7 +60,7 @@ method run($spec-file!) {
     # Shell
     my $execution_count = 1;
     my $sandbox = Jupyter::Kernel::Sandbox.new;
-    start loop {
+    my $promise = start loop {
     try {
         my $msg = $shell.read-message;
         $iopub.parent = $msg;
@@ -142,6 +142,5 @@ method run($spec-file!) {
         }
     }
     }
-
-    loop { }
+    await $promise;
 }
