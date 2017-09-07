@@ -1,6 +1,11 @@
-use Cro::HTTP::Server;
 use Cro::HTTP::Client;
+use Cro::HTTP::Server;
+use Cro::SSL;
 use Test;
+
+plan 2;
+
+skip-rest "ALPN is not supported" unless supports-alpn;
 
 class MyServer does Cro::Transform {
     method consumes() { Cro::HTTP::Request }
@@ -56,5 +61,3 @@ for ^3 {
 await Promise.anyof($p, Promise.in(2));
 
 is $counter, 3, 'Concurrent responses are handled';
-
-done-testing;
