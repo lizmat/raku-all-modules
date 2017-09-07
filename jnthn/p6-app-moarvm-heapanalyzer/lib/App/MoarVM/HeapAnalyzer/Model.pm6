@@ -1,5 +1,7 @@
 unit class App::MoarVM::HeapAnalyzer::Model;
 
+use nqp;
+
 # We resolve the top-level data structures asynchronously.
 has $!strings-promise;
 has $!types-promise;
@@ -10,6 +12,8 @@ has @!unparsed-snapshots;
 
 # Promises that resolve to parsed snapshots.
 has @!snapshot-promises;
+
+has int $!version;
 
 # Holds and provides access to the types data set.
 my class Types {
@@ -341,60 +345,220 @@ my class Snapshot {
     }
 }
 
+class MyLittleBuffer {
+    has $!buffer = Buf.new();
+    has $.fh;
+
+    method gimme(int $size) {
+        if nqp::elems(nqp::decont($!buffer)) > $size {
+            $!buffer;
+        } else {
+            $!buffer.splice(nqp::elems(nqp::decont($!buffer)), 0, $!fh.read(4096));
+            $!buffer;
+        }
+    }
+
+    method seek(|c) {
+        $!fh.seek(|c);
+        $!buffer = Buf.new();
+    }
+
+    method exactly(int $size) {
+        self.gimme($size);
+        Buf.new($!buffer.splice(0, $size));
+    }
+    method tell {
+        $!fh.tell - nqp::elems(nqp::decont($!buffer))
+    }
+}
+
+sub readSizedInt64(@buf) {
+    #my $bytesize = 8;
+    #my @buf := $fh.gimme(8);
+    #die "expected $bytesize bytes, but got { @buf.elems() }" unless @buf.elems >= $bytesize;
+
+    my int64 $result =
+            nqp::add_i nqp::shift_i(@buf),
+            nqp::add_i nqp::bitshiftl_i(nqp::shift_i(@buf),  8),
+            nqp::add_i nqp::bitshiftl_i(nqp::shift_i(@buf), 16),
+            nqp::add_i nqp::bitshiftl_i(nqp::shift_i(@buf), 24),
+            nqp::add_i nqp::bitshiftl_i(nqp::shift_i(@buf), 32),
+            nqp::add_i nqp::bitshiftl_i(nqp::shift_i(@buf), 40),
+            nqp::add_i nqp::bitshiftl_i(nqp::shift_i(@buf), 48),
+                       nqp::bitshiftl_i(nqp::shift_i(@buf), 56)
+}
+sub readSizedInt32(@buf) {
+    #my $bytesize = 4;
+    #my @buf := $fh.gimme(4);
+    #die "expected $bytesize bytes, but got { @buf.elems() }" unless @buf.elems >= $bytesize;
+
+    my int64 $result =
+            nqp::add_i nqp::shift_i(@buf),
+            nqp::add_i nqp::bitshiftl_i(nqp::shift_i(@buf),  8),
+            nqp::add_i nqp::bitshiftl_i(nqp::shift_i(@buf), 16),
+                       nqp::bitshiftl_i(nqp::shift_i(@buf), 24)
+}
+sub readSizedInt16(@buf) {
+    #my $bytesize = 2;
+    #my @buf := $fh.gimme(2);
+    #die "expected $bytesize bytes, but got { @buf.elems() }" unless @buf.elems >= $bytesize;
+
+    my int64 $result =
+            nqp::add_i(nqp::shift_i(@buf),
+                       nqp::bitshiftl_i(nqp::shift_i(@buf), 8));
+}
+
 submethod BUILD(IO::Path :$file = die "Must construct model with a file") {
     # Pull data from the file.
     my %top-level;
     my @snapshots;
     my $cur-snapshot-hash;
-    for $file.lines.kv -> $lineno, $_ {
-        # Empty or comment
-        when /^ \s* ['#' .*]? $/ {
-            next;
-        }
 
-        # Data item
-        when /^ (\w+) ':' \s*/ {
-            my $key = ~$0;
-            my $value = .substr($/.chars);
-            with $cur-snapshot-hash {
-                .{$key} = $value;
+    $!version = 1;
+
+    try {
+        my $fh = $file.open(:r, :enc<latin1>);
+        if $fh.readchars(16) eq "MoarHeapDumpv002" {
+            $!version = 2;
+        }
+        LEAVE $fh.close;
+        CATCH { .say }
+    }
+
+    if $!version == 1 {
+        for $file.lines.kv -> $lineno, $_ {
+            # Empty or comment
+            when /^ \s* ['#' .*]? $/ {
+                next;
             }
-            else {
-                %top-level{$key} = $value;
+
+            # Data item
+            when /^ (\w+) ':' \s*/ {
+                my $key = ~$0;
+                my $value = .substr($/.chars);
+                with $cur-snapshot-hash {
+                    .{$key} = $value;
+                }
+                else {
+                    %top-level{$key} = $value;
+                }
+            }
+
+            # Snapshot heading
+            when /^ snapshot \s+ \d+ \s* $/ {
+                push @snapshots, $cur-snapshot-hash := {};
+            }
+
+            # Confused
+            default {
+                die "Confused by heap snapshot line {$lineno + 1}";
             }
         }
-        
-        # Snapshot heading
-        when /^ snapshot \s+ \d+ \s* $/ {
-            push @snapshots, $cur-snapshot-hash := {};
-        }
-        
-        # Confused
-        default {
-            die "Confused by heap snapshot line {$lineno + 1}";
-        }
-    }
 
-    # Sanity check.
-    sub want-key(%hash, $key, $where = "in the snapshot file header") {
-        unless %hash{$key}:exists {
-            die "Seems there's a missing $key entry $where"
+        # Sanity check.
+        sub want-key(%hash, $key, $where = "in the snapshot file header") {
+            unless %hash{$key}:exists {
+                die "Seems there's a missing $key entry $where"
+            }
         }
-    }
-    want-key(%top-level, 'strings');
-    want-key(%top-level, 'types');
-    want-key(%top-level, 'static_frames');
-    for @snapshots.kv -> $idx, %snapshot {
-        want-key(%snapshot, 'collectables', "in snapshot $idx");
-        want-key(%snapshot, 'references', "in snapshot $idx");
-    }
+        want-key(%top-level, 'strings');
+        want-key(%top-level, 'types');
+        want-key(%top-level, 'static_frames');
+        for @snapshots.kv -> $idx, %snapshot {
+            want-key(%snapshot, 'collectables', "in snapshot $idx");
+            want-key(%snapshot, 'references', "in snapshot $idx");
+        }
 
-    # Set off background parsing of the headers, and stash unparsed snapshots.
-    $!strings-promise = start Rakudo::Internals::JSON.from-json(%top-level<strings>).list;
-    $!types-promise = start self!parse-types(%top-level<types>);
-    $!static-frames-promise = start self!parse-static-frames(%top-level<static_frames>);
-    @!unparsed-snapshots = @snapshots;
+        # Set off background parsing of the headers, and stash unparsed snapshots.
+        $!strings-promise = start from-json(%top-level<strings>).list;
+        $!types-promise = start self!parse-types(%top-level<types>);
+        $!static-frames-promise = start self!parse-static-frames(%top-level<static_frames>);
+        @!unparsed-snapshots = @snapshots;
+    }
+    elsif $!version == 2 {
+        my $fh = MyLittleBuffer.new(fh => $file.open(:r, :bin));
+        constant index-entries = 4;
+        constant per-snapshot-entries = 4;
+        $fh.seek(-8 * index-entries, SeekFromEnd);
+        my @sizes = readSizedInt64($fh.gimme(8)) xx index-entries;
+        my ($stringheap_size, $types_size, $staticframe_size, $snapshot_entry_count) = @sizes;
+        @sizes.pop; # remove the number of snapshot entries
+
+        sub fh-at($pos) {
+            my $fh = MyLittleBuffer.new(fh => $file.open(:r, :bin, :buffer(4096)));
+            $fh.seek($pos, SeekFromBeginning);
+            $fh
+        }
+
+        $fh.seek(-8 * index-entries - (8 * per-snapshot-entries) * $snapshot_entry_count, SeekFromEnd);
+        my $snapshot-position = 16;
+        @!unparsed-snapshots = do for ^$snapshot_entry_count {
+            my @buf := $fh.gimme(per-snapshot-entries * 8);
+            my @sizes = readSizedInt64(@buf), readSizedInt64(@buf), readSizedInt64(@buf), readSizedInt64(@buf);
+            my $collpos = $snapshot-position;
+            my $refspos = $collpos + @sizes[0];
+            my $halfrefpos = $refspos + @sizes[2];
+            my $incrementalpos = $refspos + @sizes[1];
+            $snapshot-position += @sizes[0] + @sizes[1] + @sizes[3];
+            [$collpos, $halfrefpos, $refspos, $incrementalpos, $file];
+        }
+
+        my @positions = [\+] $snapshot-position, $stringheap_size, $types_size, $staticframe_size;
+        my @fds = @positions.map(&fh-at);
+        my ($stringheap_fd, $types_fd, $staticframe_fd, $snapshots_fd) = @fds;
+
+        $!strings-promise       = start self!parse-strings-ver2($stringheap_fd);
+        $!types-promise         = start self!parse-types-ver2($types_fd);
+        $!static-frames-promise = start self!parse-static-frames-ver2($staticframe_fd);
+    }
 }
+
+sub expect-header($fh, $name, $text = $name.substr(0, 4)) {
+    my $result = $fh.exactly($text.chars).decode("latin1");
+    die "expected the $name header at 0x{ ($fh.tell - $text.chars).base(16) }, but got $result.perl() instead." unless $result eq $text;
+}
+
+method !parse-strings-ver2($fh) {
+    expect-header($fh, "strings", "strs");
+    my $stringcount = readSizedInt64($fh.gimme(8));
+    do for ^$stringcount {
+        my $length = readSizedInt64($fh.gimme(8));
+        $length ?? $fh.exactly($length).decode("utf8")
+                !! ""
+    }
+}
+method !parse-types-ver2($fh) {
+    expect-header($fh, "types");
+    my ($typecount, $size-per-type) = readSizedInt64($fh.gimme(8)) xx 2;
+    my int @repr-name-indexes;
+    my int @type-name-indexes;
+    for ^$typecount {
+        my @buf := $fh.gimme(16);
+        @repr-name-indexes.push(readSizedInt64(@buf));
+        @type-name-indexes.push(readSizedInt64(@buf));
+    }
+    Types.new(:@repr-name-indexes, :@type-name-indexes, strings => await $!strings-promise);
+}
+method !parse-static-frames-ver2($fh) {
+    expect-header($fh, "frames");
+    my ($staticframecount, $size-per-frame) = readSizedInt64($fh.gimme(4)) xx 2;
+    my int @name-indexes;
+    my int @cuid-indexes;
+    my int32 @lines;
+    my int @file-indexes;
+    for ^$staticframecount {
+        my @buf := $fh.gimme(24);
+        @name-indexes.push(readSizedInt64(@buf));
+        @cuid-indexes.push(readSizedInt64(@buf));
+        @lines       .push(readSizedInt64(@buf));
+        @file-indexes.push(readSizedInt64(@buf));
+    }
+    StaticFrames.new(
+        :@name-indexes, :@cuid-indexes, :@lines, :@file-indexes,
+        strings => await $!strings-promise
+    )
+}
+
 
 method !parse-types($types-str) {
     my int @repr-name-indexes;
@@ -438,7 +602,7 @@ method prepare-snapshot($index) {
     with @!snapshot-promises[$index] -> $prom {
         given $prom.status {
             when Kept { Ready }
-            when Broken { die $prom.cause }
+            when Broken { await $prom }
             default { Preparing }
         }
     }
@@ -459,7 +623,7 @@ method get-snapshot($index) {
     )
 }
 
-method !parse-snapshot(%snapshot) {
+method !parse-snapshot($snapshot-task) {
     my $col-data = start {
         my int8 @col-kinds;
         my int @col-desc-indexes;
@@ -472,26 +636,76 @@ method !parse-snapshot(%snapshot) {
         my int $num-stables;
         my int $num-frames;
         my int $total-size;
-        for %snapshot<collectables>.split(';') {
-            my @pieces := .split(',').List;
-            
-            my int $kind = @pieces[0].Int;
-            @col-kinds.push($kind);
+
+        my @collectable-pieces = do {
+            if $!version == 1 {
+                $snapshot-task<collectables>.split(";").map({
+                    my uint64 @pieces = .split(",").map(*.Int);
+                })
+            }
+            elsif $!version == 2 {
+                my $fh := MyLittleBuffer.new(fh => $snapshot-task.tail.open(:r, :bin, :buffer(4096)));
+                $fh.seek($snapshot-task[0], SeekFromBeginning);
+                expect-header($fh, "collectables");
+                my ($count, $size-per-collectable) = readSizedInt64($fh.gimme(8)) xx 2;
+
+                my $startpos = $snapshot-task[0] + 4 + 16;
+                my $first-half-count = $count div 2;
+
+                my $second-fh := MyLittleBuffer.new(fh => $snapshot-task.tail.open(:r, :bin, :buffer(4096)));
+                $second-fh.seek($startpos + $first-half-count * $size-per-collectable, SeekFromBeginning);
+                await start {
+                        do for ^$first-half-count {
+                            my @buf := $fh.gimme(2 + 4 + 2 + 8 + 8 + 4);
+                            my uint64 @result;
+                            nqp::push_i(@result, readSizedInt16(@buf));
+                            nqp::push_i(@result, readSizedInt32(@buf));
+                            nqp::push_i(@result, readSizedInt16(@buf));
+                            nqp::push_i(@result, readSizedInt64(@buf));
+                            nqp::push_i(@result, readSizedInt64(@buf));
+                            nqp::push_i(@result, readSizedInt32(@buf));
+                            @result;
+                        }.Slip
+                    },
+                    start {
+                        do for ^($count - $first-half-count) {
+                            my @buf := $second-fh.gimme(2 + 4 + 2 + 8 + 8 + 4);
+                            my uint64 @result;
+                            nqp::push_i(@result, readSizedInt16(@buf)),
+                            nqp::push_i(@result, readSizedInt32(@buf)),
+                            nqp::push_i(@result, readSizedInt16(@buf)),
+                            nqp::push_i(@result, readSizedInt64(@buf)),
+                            nqp::push_i(@result, readSizedInt64(@buf)),
+                            nqp::push_i(@result, readSizedInt32(@buf));
+                            @result;
+                        }.Slip
+                    }
+            }
+        }
+
+        for @collectable-pieces -> @pieces {
+            my int $kind = nqp::shift_i(@pieces);
+
+            nqp::push_i(@col-kinds, $kind);
+
             if    $kind == 1 { $num-objects++ }
             elsif $kind == 2 { $num-type-objects++ }
             elsif $kind == 3 { $num-stables++ }
             elsif $kind == 4 { $num-frames++ }
 
-            @col-desc-indexes.push(@pieces[1].Int);
+            nqp::push_i(@col-desc-indexes, nqp::shift_i(@pieces));
 
-            my int $size = @pieces[2].Int;
-            @col-size.push($size);
-            my int $unmanaged-size = @pieces[3].Int;
-            @col-unmanaged-size.push($unmanaged-size);
+            my int $size = nqp::shift_i(@pieces);
+            nqp::push_i(@col-size, $size);
+            my int $unmanaged-size = nqp::shift_i(@pieces);
+            nqp::push_i(@col-unmanaged-size, $unmanaged-size);
             $total-size += $size + $unmanaged-size;
 
-            @col-refs-start.push(@pieces[4].Int);
-            @col-num-refs.push(@pieces[5].Int);
+            nqp::push_i(@col-refs-start, nqp::shift_i(@pieces));
+            nqp::push_i(@col-num-refs, nqp::shift_i(@pieces));
+        }
+        CATCH {
+            .say
         }
         hash(
             :@col-kinds, :@col-desc-indexes, :@col-size, :@col-unmanaged-size,
@@ -504,11 +718,83 @@ method !parse-snapshot(%snapshot) {
         my int8 @ref-kinds;
         my int @ref-indexes;
         my int @ref-tos;
-        for %snapshot<references>.split(';') {
-            my @pieces := .split(',').List;
-            @ref-kinds.push(@pieces[0].Int);
-            @ref-indexes.push(@pieces[1].Int);
-            @ref-tos.push(@pieces[2].Int);
+
+        if $!version == 1 {
+            for $snapshot-task<references>.split(";") {
+                my int @pieces = .split(",").map(*.Int);
+                @ref-kinds.push(@pieces.shift);
+                @ref-indexes.push(@pieces.shift);
+                @ref-tos.push(@pieces.shift);
+            }
+        }
+        elsif $!version == 2 {
+            sub grab_n_refs_starting_at($n, $pos, \ref-kinds, \ref-indexes, \ref-tos) {
+                my $fh := MyLittleBuffer.new(fh => $snapshot-task.tail.open(:r, :bin, :buffer(4096)));
+                $fh.seek($pos, SeekFromBeginning);
+
+                my int $size = $fh.exactly(1)[0];
+
+                for ^$n {
+                    my @buf;
+                    if $size == 54 { # "6"
+                        @buf := $fh.gimme(18);
+                        nqp::push_i(ref-kinds, nqp::shift_i(@buf));
+                        nqp::push_i(ref-indexes, readSizedInt64(@buf));
+                        nqp::push_i(ref-tos, readSizedInt64(@buf));
+                        $size = nqp::shift_i(@buf);
+                    }
+                    elsif $size == 51 { # "3"
+                        @buf := $fh.gimme(10);
+                        nqp::push_i(ref-kinds, nqp::shift_i(@buf));
+                        nqp::push_i(ref-indexes, readSizedInt32(@buf));
+                        nqp::push_i(ref-tos, readSizedInt32(@buf));
+                        $size = nqp::shift_i(@buf);
+                    }
+                    elsif $size == 49 { # "1"
+                        @buf := $fh.gimme(6);
+                        nqp::push_i(ref-kinds, nqp::shift_i(@buf));
+                        nqp::push_i(ref-indexes, readSizedInt16(@buf));
+                        nqp::push_i(ref-tos, readSizedInt16(@buf));
+                        $size = nqp::shift_i(@buf);
+                    }
+                    elsif $size == 48 { # "0"
+                        @buf := $fh.gimme(4);
+                        nqp::push_i(ref-kinds, nqp::shift_i(@buf));
+                        nqp::push_i(ref-indexes, nqp::shift_i(@buf));
+                        nqp::push_i(ref-tos, nqp::shift_i(@buf));
+                        $size = nqp::shift_i(@buf);
+                    }
+                    else {
+                        die "unexpected size indicator in references blob: $size ($size.chr())";
+                    }
+                }
+            }
+            my $fh := MyLittleBuffer.new(fh => $snapshot-task.tail.open(:r, :bin, :buffer(4096)));
+            $fh.seek($snapshot-task[2], SeekFromBeginning);
+            expect-header($fh, "references", "refs");
+            my ($count, $size-per-reference) = readSizedInt64($fh.gimme(8)) xx 2;
+            $fh.fh.close;
+            my int8 @ref-kinds-second;
+            my int @ref-indexes-second;
+            my int @ref-tos-second;
+            await start {
+                    grab_n_refs_starting_at(
+                        $count div 2,
+                        $snapshot-task[2] + 4 + 16,
+                        @ref-kinds, @ref-indexes, @ref-tos);
+                },
+                start {
+                    grab_n_refs_starting_at(
+                        $count - $count div 2,
+                        $snapshot-task[1],
+                        @ref-kinds-second, @ref-indexes-second, @ref-tos-second);
+                };
+            await start { @ref-kinds.splice(+@ref-kinds, 0, @ref-kinds-second); },
+                  start { @ref-indexes.splice(+@ref-indexes, 0, @ref-indexes-second); },
+                  start { @ref-tos.splice(+@ref-tos, 0, @ref-tos-second); };
+        }
+        CATCH {
+            .say
         }
         hash(:@ref-kinds, :@ref-indexes, :@ref-tos)
     }
