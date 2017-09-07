@@ -10,7 +10,7 @@ use NativeCall;
 
 BEGIN %*ENV<PERL6_TEST_DIE_ON_FAIL> = 1;
 
-say  "Test NativeCall mechanisms examples" ;
+say  "Test MsgBuilder doc example" ;
 
 use-ok  'Net::ZMQ::Common' , 'Common functions loaded';
 

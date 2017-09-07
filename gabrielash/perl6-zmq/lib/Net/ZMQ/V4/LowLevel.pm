@@ -7,32 +7,32 @@ use NativeCall;
 constant ZMQ_LOW_LEVEL is export = 1;
 
 constant ZMQ_LOW_LEVEL_FUNCTIONS_TESTED is export = <
-				    zmq_version
-				    zmq_errno
-				    zmq_strerror
-				    zmq_ctx_new
-				    zmq_ctx_term
-				    zmq_ctx_shutdown
-				    zmq_ctx_get
-				    zmq_ctx_set
-				    zmq_socket
-				    zmq_close
-				    zmq_bind
-				    zmq_unbind
-				    zmq_connect
-				    zmq_disconnect
-				    zmq_send
-				    zmq_recv
-				    zmq_getsokopt
-				    zmq_setsockopt
+            zmq_version
+            zmq_errno
+            zmq_strerror
+            zmq_ctx_new
+            zmq_ctx_term
+            zmq_ctx_shutdown
+            zmq_ctx_get
+            zmq_ctx_set
+            zmq_socket
+            zmq_close
+            zmq_bind
+            zmq_unbind
+            zmq_connect
+            zmq_disconnect
+            zmq_send
+            zmq_recv
+            zmq_getsokopt
+            zmq_setsockopt
             zmq_msg_init
             zmq_msg_init_data
             zmq_msg_close
             zmq_msg_data
             zmq_msg_recv
             zmq_msg_send
-						zmq_poll
-				>;
+            zmq_poll
+            >;
 
 
 my constant LIB = 'zmq';

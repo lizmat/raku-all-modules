@@ -11,8 +11,121 @@ use Net::ZMQ::Error;
 use Net::ZMQ::Common;
 use Net::ZMQ::Socket;
 
-class MsgIterator {...}
 class MsgBuilder {...}
+class MsgRecv-impl {...}
+
+class MsgRecv is export does Positional does Iterable {
+  my $doc := q:to/END/;
+
+   methods
+   push-transform(UInt, &func)
+   slurp(Socket, -async)
+   send(Socket, $from = 0, $n =  self.elems, :async )
+
+   END
+   #:
+
+  has MsgRecv-impl $!mimpl handles < elems keys > .= new;
+  has %!transformers;
+  has %!cached;
+
+  method TWEAK {
+  }
+
+  method push-transform(UInt $i where ^self.elems, &func) {
+    die "MsgSaver: value has been calculated" if %!cached{$i}:exists;
+    if ! (%!transformers{$i}:exists) {
+       %!transformers{$i} := Array[Callable].new;
+    }
+    %!transformers{$i}.push(&func );
+    return self;
+  }
+
+  method AT-POS(UInt:D $i where ^self.elems) {
+      return %!cached{$i} if %!cached{$i}:exists;
+      my Str $value = $!mimpl[$i];
+      return $value unless %!transformers{$i}:exists;
+      for %!transformers{$i}.values -> &f {
+          my $value_ = &f($value);
+          if !$value_.defined {
+            %!cached{$i} = Any;
+            return Any;
+          }
+          $value = $value_;
+          CATCH { default
+                  { die "MsgSaver[$i]: your function probably isn't :(Str:D --> Str) ",&f.perl; }
+                }
+      }
+      %!cached{$i} = $value;
+      return $value;
+  }
+
+  method iterator( --> Iterator:D) {
+    return
+      class :: does Iterator {
+          has $.index is rw = 0;
+          has $.sz;
+          has $.array is required;
+          method TWEAK { $!sz = $!array.elems }
+          method pull-one {
+              $.sz > $.index ?? $.array.AT-POS($.index++) !! IterationEnd;
+          }
+        }.new(array => self)
+  }
+
+  method slurp(Socket $socket, :$async) {
+    $!mimpl.slurp($socket, :$async);
+    return self;
+  }
+
+  method send(Socket $socket, Int $from where ^self.elems = 0
+                            , Int $n where positive($n) =  self.elems
+                            , :$async ) {
+
+    $from = 0 unless $from.defined;
+    my $last = $from + $n - 1;
+    die "MsgPartsImpl: index out of range" unless $last < self.elems;
+    my @values = self[$from..$last].grep( {$_.defined});
+    say "$from .. $last: ", @values;
+    my $parts = @values.elems;
+    for @values -> $v {
+      my $part = --$parts > 0;
+      $socket.send($v, :$async, :$part);
+    }
+  }
+}
+
+class MsgRecv-impl does Positional[CArray[uint]] {
+  my $doc := q:to/END/;
+
+  END
+  #:
+
+  has zmq_msg_t @!msg-parts handles < elems keys >;
+
+  method TWEAK {
+    @!msg-parts .= new;
+  }
+
+  method DESTROY {
+    for ^self.elems -> $i {
+      zmq_msg_close @!msg-parts[$i];
+    }
+  }
+
+  method AT-POS(UInt:D $i where ^self.elems) {
+    my $sz = zmq_msg_size( @!msg-parts[$i] );
+    my $data = zmq_msg_data( @!msg-parts[$i] );
+    return
+        Buf.new(| (^$sz).map( { $data[$_] })).decode('ISO-8859-1');
+  }
+
+  method slurp(Socket $socket, :$async) {
+    $socket.receive( @!msg-parts , :$async);
+  }
+
+}
+
 
 class Buffer {
   my $doc := q:to/END/;
@@ -30,16 +143,13 @@ class Buffer {
       iterator( --> MsgIterator)  - return a segment Iterator
       offset-pointer(Int i --> Pointer) - returns a Pointer to the buffer's byte i location in memory
 
-  END
-  #:
+    END
+    #:
 
-  has buf8 $.buffer     is rw = buf8.new;
-  has uint @.offsets    is rw;
+  has buf8 $.buffer  is rw = buf8.new;
+  has uint @.offsets handles  < AT-POS  >;
   has Int  $.next-i     is rw = 0;
 
-  method iterator( --> MsgIterator) {
-    return MsgIterator.new(self);
-  }
 
   method bytes( --> Int ) { return $!next-i; }
 
@@ -55,53 +165,6 @@ class Buffer {
 
   method copy( --> Str ) {
      return $!buffer.decode('ISO-8859-1');
-  }
-}
-
-class MsgIterator {
-  my $doc := q:to/END/;
-
-    Forward Iterator over the Message class, returns a series of segments sizes in
-    bytes. example
-
-      my $it = $buffer.iterator;
-      my $from = 0;
-      while $it->has-next {
-        $next = $it.next;
-        say "segment is from offset $from to { $next - 1 }";
-        $from = $next;
-      }
-
-  END
-  #:
-
-  has Buffer $!buffer handles < segments bytes >;
-  has Int $!i;
-  has Int $!offset;
-
-
-  method TWEAK {
-    die "MsgIterator needs an instance" unless $!buffer.defined;
-    $!i = 0;
-    $!offset = Int;
-  }
-
-  submethod BUILD( :$buffer ) { $!buffer := $buffer; }
-
-  method new(Buffer $buffer) {
-    return self.bless( :$buffer );
-  }
-
-  method next( --> Int  ) {
-      die "illegal offset" if $!offset > self.bytes;
-      return $!offset;
-  }
-
-  method has-next( --> Bool)  {
-    return False if $!i == self.segments;#$!segments;
-    $!offset = $!buffer.offset( $!i++ );
-    die "asserting offset not in overflow" unless ($!offset <= self.bytes);
-    return True;
   }
 }
 
@@ -123,8 +186,8 @@ class Message is export  {
         bytes()
         segments()
 
-  END
-  #:
+    END
+    #:
 
   has Str $.encoding;   # not implemented yet
 
@@ -142,20 +205,20 @@ class Message is export  {
   method send(Socket:D $socket, :$part, :$async, :$callback where sub( $callback )
                           , :$verbose ) {
     my $doc := q:to/END/;
-    sends the assembled message in segments with zero-copy
-    part - sets the last part as incopmlete
-    callback - specifies a callback function for ZMQ
-    async - duh!
+      sends the assembled message in segments with zero-copy
+      part - sets the last part as incopmlete
+      callback - specifies a callback function for ZMQ
+      async - duh!
 
-    Uses Nativcast Pointer arithmatic to avoid copying of data in order to benefit from
-    the optimizations of ZMQ zero-copy. Offsets into the buffer are sent as
-    arguments to ZMQ with the assumption that the buffer is an immutable byte
-    array in continguous memory. Caveat Emptor!
+      Uses Nativcast Pointer arithmatic to avoid copying of data in order to benefit from
+      the optimizations of ZMQ zero-copy. Offsets into the buffer are sent as
+      arguments to ZMQ with the assumption that the buffer is an immutable byte
+      array in continguous memory. Caveat Emptor!
 
-    The default callback has to be threadsafe, and it is not, yet!   #ISSUE
+      The default callback has to be threadsafe, and it is not, yet!   #ISSUE
 
-    END
-    #:
+      END
+      #:
 
         # INVESTIGATE: not sure how zmq_msg_init_data behaves without a callback
         # does it takes ownership and free the memory? Then callbacks are mandatory
@@ -170,13 +233,12 @@ class Message is export  {
 
     my $sent = 0;
     my $segments = self.segments;
-    my MsgIterator  $it = $!_.iterator;
     my $i = 0;
 
-    while $it.has-next {
-      my $end = $it.next;
+    for $!_.offsets  -> $end {
       my zmq_msg_t $msg-t .= new;
-      my $ptr = ($end > $i) ?? $!_.offset-pointer($i)
+
+      my Pointer $ptr = ($end > $i) ?? $!_.offset-pointer($i)
                             !! Pointer;
       my $r = $callback.defined && $callback.WHAT === Sub
                     ?? zmq_msg_init_data_callback($msg-t,$ptr , $end - $i, $callback)
@@ -195,8 +257,8 @@ class Message is export  {
 
 class MsgBuilder is export {
   my $doc= q:to/END/;
-  Class MsgBuilder builds a Message Object that can be used to send complex message
-  using zero-copy.
+    Class MsgBuilder builds a Message Object that can be used to send complex message
+    using zero-copy.
 
       USAGE example
         my MsgBuilder $builder  .= new;
@@ -210,17 +272,17 @@ class MsgBuilder is export {
 
 
 
-  Methods
+      Methods
       new()
       add( Str, -max-part-size -divide-into, -newline --> self)
       add( -empty --> self)
       add( -newline --> self)
       finalize( --> Message)
 
-  ATTN - replace - (dash) with colon-dollar in signatures above
+    ATTN - replace - (dash) with colon-dollar in signatures above
             (subtitution is to please Atom syntax-highlighter)
-  END
-  #:
+    END
+    #:
 
   has Str $.encoding;   # not implemented yet
 
