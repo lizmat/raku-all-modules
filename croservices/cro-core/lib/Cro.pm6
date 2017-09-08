@@ -373,16 +373,27 @@ class Cro::PipelineTraceTransform does Cro::Transform {
     method transformer(Supply:D $in --> Supply) {
         supply {
             whenever $in -> \msg {
-                note "[TRACE($!label)] $!component.^name() EMIT {encode msg.perl}";
+                my $output = (try msg.trace-output) // msg.perl;
+                note "[TRACE($!label)] $!component.^name() EMIT {encode $output}";
+                $*ERR.flush;
                 emit msg;
-                LAST { note "[TRACE($!label)] $!component.^name() DONE"; }
-                QUIT { note "[TRACE($!label)] $!component.^name() QUIT {encode .gist}"; }
+                LAST {
+                    note "[TRACE($!label)] $!component.^name() DONE";
+                    $*ERR.flush;
+                }
+                QUIT {
+                    note "[TRACE($!label)] $!component.^name() QUIT {encode .gist}";
+                    $*ERR.flush;
+                }
             }
         }
     }
 
+    my $encode = ?%*ENV<CRO_TRACE_MACHINE_READABLE>;
     sub encode(Str $_) {
-        .subst('\\', '\\\\', :g).subst("\n", '\\n', :g)
+        $encode
+            ?? .subst('\\', '\\\\', :g).subst("\n", '\\n', :g)
+            !! $_
     }
 }
 
@@ -401,7 +412,7 @@ class Cro::ConnectionManager does Cro::Sink {
                     :$label
                   )
                 !! Empty;
-            given Cro.compose(|@debug, @components, :$debug, :$label, :for-connection) {
+            given Cro.compose(@debug, @components, :$debug, :$label, :for-connection) {
                 when Cro::Sink {
                     if $!connection-type ~~ Cro::Replyable {
                         die X::Cro::ConnectionManager::Misuse.new: message =>
