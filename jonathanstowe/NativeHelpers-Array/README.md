@@ -2,6 +2,8 @@
 
 Helper subroutines for working with Perl6 Native Arrays (CArray)
 
+[![Build Status](https://travis-ci.org/jonathanstowe/NativeHelpers-Array.svg?branch=master)](https://travis-ci.org/jonathanstowe/NativeHelpers-Array)
+
 ## Description
 
 This provides a number of exported subroutines that may prove
