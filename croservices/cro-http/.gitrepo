@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/croservices/cro-http.git
 	branch = master
-	commit = 5041d16ee78b51ce6243a1dba1441a5dc2258e22
-	parent = a9c4f37d82134256d809ce23998dc30f0c3bde92
+	commit = 2918dde1cf8cd27c1399564bc452f971dfe3dd39
+	parent = 33acfb282d57905dc7860ed06274ca42c1edc26a
 	cmdver = 0.4.0
