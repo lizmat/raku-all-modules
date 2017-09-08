@@ -219,7 +219,7 @@ sub run-services(:$filter = *, :$trace = False, :@trace-filters) {
                         .line;
                 }
                 else {
-                    note color($color), "\c[NOTEBOOK] {.service-id} ", RESET(),
+                    say color($color), "\c[NOTEBOOK] {.service-id} ", RESET(),
                         .line;
                 }
             }
@@ -235,7 +235,7 @@ sub run-services(:$filter = *, :$trace = False, :@trace-filters) {
                 note colored($prefix, $color) ~ colored($event, "bold") ~
                     " [{.id}] {.component}";
                 with .data -> $data {
-                    note $data.trim.indent($prefix.chars);
+                    note $data.trim.indent($prefix.chars + 2);
                 }
             }
         }
