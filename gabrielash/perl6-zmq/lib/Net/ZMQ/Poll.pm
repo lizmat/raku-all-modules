@@ -82,6 +82,19 @@ class MessagePollHandler is PollHandler is export {
   }
 }
 
+class MsgRecvPollHandler is PollHandler is export {
+  my $doc = q:to/END/;
+    A PollHandler that calls action(MsgRecv Message) in do(Socket)
+  END
+  #:
+
+  method do(Socket:D $socket ) {
+    my MsgRecv $recv .= new;
+    $recv.slurp( $socket); 
+    return @.action[0]( $recv );
+  }
+}
+
 class Poll-impl {
   my $doc = q:to/END/;
     Implementation of Poll

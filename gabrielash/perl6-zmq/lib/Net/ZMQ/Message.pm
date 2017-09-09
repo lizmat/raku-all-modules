@@ -33,7 +33,7 @@ class MsgRecv is export does Positional does Iterable {
   }
 
   method push-transform(UInt $i where ^self.elems, &func) {
-    die "MsgSaver: value has been calculated" if %!cached{$i}:exists;
+    %!cached{$i}:delete if %!cached{$i}:exists;
     if ! (%!transformers{$i}:exists) {
        %!transformers{$i} := Array[Callable].new;
     }
@@ -43,7 +43,8 @@ class MsgRecv is export does Positional does Iterable {
 
   method AT-POS(UInt:D $i where ^self.elems) {
       return %!cached{$i} if %!cached{$i}:exists;
-      my Str $value = $!mimpl[$i];
+      my $value = $!mimpl[$i];
+      %!cached{$i} = $value;
       return $value unless %!transformers{$i}:exists;
       for %!transformers{$i}.values -> &f {
           my $value_ = &f($value);
@@ -128,7 +129,7 @@ class MsgRecv-impl does Positional[CArray[uint]] {
 
 
 class Buffer {
-  my $doc := q:to/END/;
+  my $doc = q:to/END/;
 
     class Buffer wraps a byte buffer (buf8)
     ready for use for sending complex multi-part messages fast.
@@ -144,7 +145,7 @@ class Buffer {
       offset-pointer(Int i --> Pointer) - returns a Pointer to the buffer's byte i location in memory
 
     END
-    #:
+    #: #'
 
   has buf8 $.buffer  is rw = buf8.new;
   has uint @.offsets handles  < AT-POS  >;
@@ -202,7 +203,7 @@ class Message is export  {
     return self.bless( :_($built) );
   }
 
-  method send(Socket:D $socket, :$part, :$async, :$callback where sub( $callback )
+ method send(Socket:D $socket, :$part, :$async, :$callback where sub( $callback )
                           , :$verbose ) {
     my $doc := q:to/END/;
       sends the assembled message in segments with zero-copy
@@ -250,9 +251,14 @@ class Message is export  {
       $i = $end;
       $sent += $r;
     }
+
     return $sent;
   }
 
+  method send-all(*@sockets, :$part, :$async, :$callback where sub( $callback )
+                            , :$verbose ) {
+      return [ self.send($_ , :$part, :$async, :$callback, :$verbose ) for @sockets ];
+  }
 }
 
 class MsgBuilder is export {

@@ -122,7 +122,7 @@ class Socket does SocketOptions is export {
   method doc {return $doc};
 
   multi method new($context
-              , :$throw-everything, :$async-fail-throw
+              , :$throw-everything = True, :$async-fail-throw
               , :$max-send-bytes, :$max-recv-number, :$max-recv-bytes, *%s ) {
           die "Socket.new: type cannot be determined from {%s}\n"
               ~ "chose one of\n{%socket-types.keys.gist} " if %s.elems != 1;
@@ -137,7 +137,7 @@ class Socket does SocketOptions is export {
   method TWEAK {
       $!handle = zmq_socket( $!context.ctx, $!type);
       throw-error()
-            if ! $!handle;
+            if ! $!handle.defined;
       $!max-send-bytes //= MAX_SEND_BYTES;
       $!max-recv-number //= MAX_RECV_NUMBER;
       $!max-recv-bytes  //= MAX_RECV_BYTES;
@@ -404,9 +404,9 @@ class Socket does SocketOptions is export {
       my buf8 $msgbuf .= new;
       my $i = 0;
       repeat {
-        my buf8 $part  = self.receive(:bin, :$async);
+        my $part  = self.receive(:bin, :$async);
         return Any if ! $part.defined;
-
+        
         $msgbuf[ $i++ ] =  $part[ $_]   for 0..^$part.bytes;
       } while self.incomplete;
 

@@ -73,7 +73,7 @@ my $p2 = start {
 
 my $cnt = 0; 
 for 0..^4 {my $sent =  $c.send("Hello"); say "Hello sent ",++$cnt;};
-for 0..^4 {my $sent =  $c.send("STOP"); say "STOP sent ", ++$cnt;};
+for 0..^4 {sleep 1;my $sent =  $c.send("STOP"); say "STOP sent ", ++$cnt;};
 
 ok $cnt == 8, "Total count is  $cnt";
 

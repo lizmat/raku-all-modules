@@ -16,7 +16,7 @@ class Context does ContextOptions is export {
     has ZMQError $.last-error;
 
     submethod TWEAK(){
-        $!ctx := zmq_ctx_new();
+        $!ctx = zmq_ctx_new();
         throw-error()  if ! $!ctx;
     }
 

@@ -210,6 +210,7 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
 
     Methods
         send(Socket, :part, :async, Callable:($,$ --> Int:D) :callback  --> Int)                  
+        send-all(@sockets, :part, :async, Callable:($,$ --> Int:D) :callback  --> Int)
         bytes( --> Int)          
         segments( --> Int)  
         copy( --> Str)
@@ -253,11 +254,12 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
 
 #####  PollHandler
     PollHandler is an an abstract class that represents an action to do on a socket when
-    it polls positive. It has three readymade subclasses that feed the action a different
+    it polls positive. It has four readymade subclasses that feed the action a different
     argument:
         * StrPollHandler
         * MessagePollHandler
         * SocketPollHandler
+        * MsgRecvPollHandler
 
     Methods
       new( Socket, Callable:(T) )

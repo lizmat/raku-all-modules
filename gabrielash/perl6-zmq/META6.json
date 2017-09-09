@@ -34,11 +34,12 @@
         "Net::ZMQ::Socket"       : "lib/Net/ZMQ/Socket.pm",
         "Net::ZMQ::Poll"         : "lib/Net/ZMQ/Poll.pm",
         "Net::ZMQ::Proxy"        : "lib/Net/ZMQ/Proxy.pm",
+        "Net::ZMQ::EchoServer"   : "lib/Net/ZMQ/EchoServer.pm",
         "Net::ZMQ::ContextOptions"       : "lib/Net/ZMQ/ContextOptions.pm",
         "Net::ZMQ::SocketOptions"        : "lib/Net/ZMQ/SocketOptions.pm"
   },
   "production": false,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "meta-version": "0",
   "authors": ["Gabriel Ash", "github:gabrielash" ],
   "description": "Perl6 interface for ZeroMQ"
