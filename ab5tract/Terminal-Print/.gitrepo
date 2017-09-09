@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ab5tract/Terminal-Print.git
 	branch = master
-	commit = 07c0194875de35b009cbbc75d55df78ac6ac4103
-	parent = 43646a75aadcefb10ac7c9b45d384494e5b42d24
+	commit = a3f77f1b0f622b395576881dfc30865d06f11e86
+	parent = 63625f84b6c83cf5e967f10f2868f90711a7e2f7
 	cmdver = 0.4.0
