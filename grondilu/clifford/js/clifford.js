@@ -1,31 +1,33 @@
+"use strict";
+
 function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
 function lcm(a, b) { return (a*b) / gcd(a, b); }
 
-let SymbolTable = {};
-const _floatingPointValue = Symbol("floating point value");
+let SymbolTable = {}
 
 class MultiVector {
     constructor(name) {
-        if (name === undefined) {
-            this.symbol = Symbol();
-        } else if (typeof(name) === 'string') {
-            this.symbol = Symbol.for(name);
-        } else if (typeof(name) === 'symbol') {
-            this.symbol = name;
-        } else { throw new TypeError(); }
-        SymbolTable[this.symbol] = this;
+        if (typeof(name) === 'string') {
+            SymbolTable[this.name = name] = this;
+        }
     }
     get grade() { return new Grade(this); }
     simplify() { return this; }
-    toString() { return Symbol.keyFor(this.symbol) || super.toString(); }
+    compute()  {
+        // keep simplifying until stability is reached
+        let [current, next] = [this, this.simplify()];
+        while (!(current === next)) {
+            [current, next] = [next, next.simplify()];
+        }
+        return current;
+    }
+    toString() { return this.name || super.toString(); }
 }
 class Vector extends MultiVector {
     get grade() { return new Grade(this, 1); }
 }
-class NilpotentVector extends Vector {}
-class UnitVector extends Vector {}
-class BaseVector extends UnitVector {
-    get letter() {}
+class BaseVector extends Vector {}
+class NormalBaseVector extends BaseVector {
     constructor(index, name) {
         super(name);
         let parsedInt = parseInt(index);
@@ -33,15 +35,11 @@ class BaseVector extends UnitVector {
         this.index = parsedInt;
     }
 }
-class EuclideanBaseVector     extends BaseVector {
-    get letter() { return 'e'; }
-}
-class AntiEuclideanBaseVector extends BaseVector {
-    get letter() { return 'ē'; }
-}
-
-let no = new NilpotentVector('no'),
-    ni = new NilpotentVector('ni');
+class EuclideanBaseVector     extends NormalBaseVector {}
+class AntiEuclideanBaseVector extends NormalBaseVector {}
+class NullBaseVector          extends BaseVector {}
+let no = new NullBaseVector('ο'),
+    ni = new NullBaseVector('∞');
 
 class Vector3D extends Vector {
     constructor(x, y, z, name) {
@@ -58,46 +56,51 @@ class ConformalPoint extends Vector {
             throw new TypeError();
         }
     }
-    get norm() { return new Real(0); }
 }
 class Real extends MultiVector {
-    constructor(x, name) {
-        super(name);
-        if (!(x === undefined)) this[_floatingPointValue] = x;
-    }
     get grade() { return new Grade(this, 0); }
-    valueOf() { return this[_floatingPointValue]; }
-    toString() {
-        return this.valueOf() === undefined ?
-            super.toString() :
-            this.valueOf().toString();
-    }
-
+    valueOf() { return NaN; }
+    simplify() { return SymbolTable[this.name] || this; }
 }
+
+class SquareRoot extends Real {
+    constructor(square, name) {
+        super(undefined, name);
+        if (square instanceof Real) {
+            this.square = square;
+        } else { throw new TypeError(); }
+    }
+    valueOf() { return Math.sqrt(this.square); }
+    toString() {
+        return `√${this.square.toString()}`;
+    }
+}
+
 class Fraction extends Real {
     constructor(numerator, denominator = 1, name) {
         if (denominator === 0) {
             throw new EvalError('division by zero');
         }
-        super(name);
+        super(undefined, name);
         this.numerator = numerator;
         this.denominator = denominator;
     }
-    get [_floatingPointValue]() { return this.numerator / this.denominator }
+    get valueOf() { return this.numerator / this.denominator }
     get nude() { return [this.numerator, this.denominator]; }
     simplify() {
         let $gcd = gcd(...this.nude);
         if (this.denominator == $gcd) {
             return new Int(this.numerator / $gcd);
-        } else {
+        } else if ($gcd > 1) {
             return new Fraction(...this.nude.map(x => x/$gcd));
-        }
+        } else { return super.simplify(); }
     }
     toString() { return `${this.numerator}/${this.denominator}`; }
 }
 class Int extends Fraction {
     constructor(n, name) { super(n, 1, name); }
     toString() { return this.numerator.toString(); }
+    simplify() { return this; }
 }
 class Grade extends Int {
     constructor(multivector, grade, name) {
@@ -111,7 +114,7 @@ class BinaryInternalOperator extends MultiVector {
     // by toString().
     // 'classesWithLowerOperatorPrecedence'
     // is used to decide whether or not to use parenthesis.
-    get operatorCharacter() {}
+    get operatorCharacter() { throw new Error('virtual call'); }
     get classesWithLowerOperatorPrecedence() { return [] }
 
     constructor(a, b, name) {
@@ -123,10 +126,13 @@ class BinaryInternalOperator extends MultiVector {
         }
     }
     simplify() {
-        return new this.constructor(
-            this.left.simplify(),
-            this.right.simplify()
-        );
+        let left  = this.left.simplify(),
+            right = this.right.simplify();
+        if (left === this.left && right === this.right) {
+            return super.simplify()
+        } else {
+            return new this.constructor(left, right);
+        }
     }
     toString() {
         let [left, right] =
@@ -141,9 +147,29 @@ class BinaryInternalOperator extends MultiVector {
 }
 class Addition         extends BinaryInternalOperator {
     get operatorCharacter() { return '+'; }
+    simplify() {
+        if (this.left instanceof Fraction &&
+            this.right instanceof Fraction) {
+            let [a, b, c, d] = [
+                ...this.left.nude,
+                ...this.right.nude
+            ];
+            return new Fraction(a*d + c*b, b*d).simplify();
+        } else { return super.simplify(); }
+    }
 }
 class Subtraction      extends BinaryInternalOperator {
     get operatorCharacter() { return '-'; }
+    simplify() {
+        if (this.left instanceof Fraction &&
+            this.right instanceof Fraction) {
+            let [a, b, c, d] = [
+                ...this.left.nude,
+                ...this.right.nude
+            ];
+            return new Fraction(a*d - c*b, b*d).simplify();
+        } else { return super.simplify(); }
+    }
 }
 class InnerProduct extends BinaryInternalOperator {
     get operatorCharacter() { return '·'; }
@@ -154,13 +180,28 @@ class InnerProduct extends BinaryInternalOperator {
     }
     simplify() {
         if (
-            this.left instanceof BaseVector &&
-            this.right instanceof BaseVector
+            (
+                this.left  instanceof NormalBaseVector &&
+                this.right instanceof NullBaseVector
+            ) || (
+                this.left  instanceof NullBaseVector &&
+                this.right instanceof NormalBaseVector
+            )
+        ) {
+            return new Int(0);
+        } else if (
+            (this.left === no && this.right === ni) ||
+            (this.left === ni && this.right === no)
+        ) {
+            return new Int(-1);
+        } else if (
+            this.left instanceof NormalBaseVector &&
+            this.right instanceof NormalBaseVector
         ) {
             let left = this.left,
                 right = this.right,
                 leftAndRight = [left, right],
-                sameIndex = +(left.index == right.index);
+                sameIndex = left.index == right.index;
 
             return new Int(
                 leftAndRight.some(x => x instanceof EuclideanBaseVector) &&
@@ -168,7 +209,7 @@ class InnerProduct extends BinaryInternalOperator {
                 ? 0 :
                 left instanceof EuclideanBaseVector &&
                 right instanceof EuclideanBaseVector
-                ? sameIndex :
+                ? +sameIndex :
                 left instanceof AntiEuclideanBaseVector &&
                 right instanceof AntiEuclideanBaseVector
                 ? -sameIndex :
@@ -180,7 +221,7 @@ class InnerProduct extends BinaryInternalOperator {
     }
 
 }
-class OuterProduct     extends BinaryInternalOperator {
+class OuterProduct extends BinaryInternalOperator {
     get operatorCharacter() { return '∧'; }
     get classesWithLowerOperatorPrecedence() {
         return [ Addition, Subtraction,
@@ -189,7 +230,7 @@ class OuterProduct     extends BinaryInternalOperator {
         ];
     }
 }
-class Product          extends BinaryInternalOperator {
+class Product extends BinaryInternalOperator {
     get operatorCharacter() { return '*'; }
     get classesWithLowerOperatorPrecedence() {
         return [ Addition, Subtraction ];
@@ -199,35 +240,43 @@ class Product          extends BinaryInternalOperator {
             this.left instanceof BaseVector &&
             this.right instanceof BaseVector
         ) {
-            let left = this.left,
+            let left  = this.left,
                 right = this.right;
             return left.index == right.index ?
                 new InnerProduct(left, right).simplify() :
                 new OuterProduct(left, right).simplify();
+        } else if (
+            this.left instanceof Fraction,
+            this.right instanceof Fraction
+        ) {
+            let [a, b, c, d] = [
+                ...this.left.nude,
+                ...this.right.nude
+            ];
+            return new Fraction(a*c, b*d).simplify();
         } else {
             return super.simplify();
         }
     }
-
 }
-class Division         extends BinaryInternalOperator {
+
+class Division extends BinaryInternalOperator {
     get operatorCharacter() { return '/'; }
     get classesWithLowerOperatorPrecedence() {
         return [ Addition, Subtraction ];
     }
     simplify() {
-        let superSimplified = super.simplify(),
-            left  = superSimplified.left,
-            right = superSimplified.right;
+        let left  = this.left,
+            right = this.right;
         if (left instanceof Int && right instanceof Int) {
-            return new Fraction(left, right).simplify();
+            return new Fraction(left, right);
         } else if (
             left  instanceof Fraction &&
             right instanceof Fraction
         ) {
             // (a/b) / (c/d) = a*d/(b*c)
             let [a, b, c, d] = [...left.nude, ...right.nude];
-            return new Fraction(a*d, b*c).simplify();
+            return new Fraction(a*d, b*c);
         } else {
             return super.simplify();
         }
@@ -239,6 +288,21 @@ class Exponential extends BinaryInternalOperator {
         return [ Addition, Subtraction,
             Product, InnerProduct, OuterProduct
         ];
+    }
+    simplify() {
+        if (this.left instanceof Fraction &&
+            this.right instanceof Int) {
+            return new Fraction(
+                ...this.left.nude.map(x => Math.pow(x, this.right))
+            );
+        } else if (
+            this.left instanceof NullBaseVector &&
+            this.right > 0
+        ) {
+            return new Int(0);
+        } else {
+            return super.simplify();
+        }
     }
 }
 
@@ -287,13 +351,13 @@ expression
 
 statement
     = left:Identifier __ '=' __  right:additive {
-        return $clifford.SymbolTable[left.symbol] = right;
+        return $clifford.SymbolTable[left] = right;
     }
 
 additive
     = left:multiplicative __ "+" __ right:additive {
         return new $clifford.Addition(left, right);
-    } / left:multiplicative "-" right:additive {
+    } / left:multiplicative __ "-" __ right:additive {
         return new $clifford.Subtraction(left, right);
     } / multiplicative
 
@@ -343,7 +407,11 @@ primary
     / Identifier
     / "(" additive:additive ")" { return additive; }
 
-BaseVector = EuclideanBaseVector / AntiEuclideanBaseVector
+BaseVector = EuclideanBaseVector
+           / AntiEuclideanBaseVector
+           / NilpotentBaseVector { return $clifford[text()]; }
+
+NilpotentBaseVector = "no" / "ni"
 
 EuclideanBaseVector
     = "e" index:BaseVectorIndex {
@@ -406,14 +474,10 @@ zero = "0"
 
 Identifier
   = head:IdentifierStart tail:IdentifierPart* {
-        let name = head + tail.join(""),
-            value  = $clifford.SymbolTable[Symbol.for(name)];
+        let name  = head + tail.join("");
 
-        if (value === undefined) {
-            return new $clifford.Real(undefined, name);
-        } else {
-            return value;
-        }
+        return $clifford.SymbolTable[name] ||
+        new $clifford.Real(name);
     }
 
 DecimalDigit = [0-9]
@@ -510,8 +574,8 @@ Zs = [\\u0020\\u00A0\\u1680\\u2000-\\u200A\\u202F\\u205F\\u3000]
 
 module.exports = {
     parser: require('pegjs').generate(grammar),
-    no, ni,
     SymbolTable,
+    ni, no,
     MultiVector, Vector, Vector3D,
     BaseVector, EuclideanBaseVector, AntiEuclideanBaseVector,
     ConformalPoint, Real, Fraction, Int, Grade,
