@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Gnouc/p6-linux-process-signalinfo.git
 	branch = master
-	commit = cacb21c091a170ea2a6daadbb22405b35ae29205
-	parent = 318ce0f4dff00d11c226f396891a60aeae67c312
+	commit = 5cf6709cd0299e2905d866db75843f1297819a74
+	parent = e0fe625a74621da955b302a4aa5f0c81169f30db
 	cmdver = 0.4.0

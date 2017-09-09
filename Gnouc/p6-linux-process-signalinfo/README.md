@@ -1,16 +1,16 @@
-#Linux::Process::SignalInfo
+# Linux::Process::SignalInfo
 
-#Description
+# Description
 
 Show process signal information in Linux
 
-#Installation
+# Installation
 
 ```
-panda install Linux::Process::SignalInfo
+zef install Linux::Process::SignalInfo
 ```
 
-#Usage
+# Usage
 
 ```perl
 use v6;
@@ -36,10 +36,10 @@ Ignored: [SIGPIPE]
 Catched: [SIGQUIT SIGILL SIGABRT SIGBUS SIGFPE SIGSEGV]
 ```
 
-#Author
+# Author
 
 Cuong Manh Le <cuong.manhle.vn@gmail.com>
 
-#License
+# License
 
 See [LICENSE](https://github.com/Gnouc/p6-linux-process-signalinfo/blob/master/LICENSE)
