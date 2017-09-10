@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-MeCab.git
 	branch = master
-	commit = 440e4e0e765550c19c860e432b9176601ffa660f
-	parent = fd745ba6fd848c4a22b3ebcf393f55319f92c180
+	commit = 6d71eb1e3b262e3564504fc1b7d3de9578fc1b62
+	parent = c941f55f7b41bf41eec28fc7daba3911098e5b4f
 	cmdver = 0.4.0
