@@ -1,7 +1,7 @@
 
 use v6;
 
-unit module Cardinal:ver<2.0.0>:auth<github:thundergnat>;
+unit module Cardinal:ver<2.1.0>:auth<github:thundergnat>;
 
 # Arrays probably should be constants but constant arrays and pre-comp
 # don't get along very well right now.
@@ -141,10 +141,15 @@ multi sub cardinal (Int $int) is export {
 multi sub cardinal (Num $num) is export {
     if $num < 0 { return "negative {cardinal(-$num)}" }
     die if $num ~~ Inf or $num ~~ NaN;
-    my ($mantissa, $exponent) = $num.fmt('%e').split('e')».Numeric;
-    my ($whole, $fraction) = $mantissa.split('.')».Numeric;
-    my $f = ($fraction.defined) ?? join( ' ', ' point', @I[$fraction.comb]) !! '';
-    "{@I[$whole.comb]}$f times ten to the { $exponent.&ordinal }";
+    my ($mantissa, $exponent) = $num.fmt('%.16e').split('e')».Numeric;
+    my ($whole, $fraction) = $mantissa.split('.');
+    $whole.=Numeric;
+    $fraction //= '';
+    $fraction.=subst( / 0*$ /, '' );
+    my $f = +$fraction ?? join( ' ', ' point', @I[$fraction.comb]) !! '';
+    $exponent ??
+      "{@I[$whole.comb]}$f times ten to the { $exponent.&ordinal }" !!
+      "{@I[$whole.comb]}$f";
 }
 
 sub cardinal-year ($year where 0 < $year < 10000, :$oh = 'oh-' ) is export {

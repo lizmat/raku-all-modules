@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/thundergnat/Lingua-EN-Numbers-Cardinal.git
 	branch = master
-	commit = 3a948ae10e056dccd2252ed31072b350b44c5f93
-	parent = 9b54f820384541b174a1ff3375a0fb1aa55a9c8c
+	commit = d03b099beb16a942354b907e4eb6cf03d40a14ce
+	parent = 5c231fff3b687478634217ac064822fe31a77252
 	cmdver = 0.4.0

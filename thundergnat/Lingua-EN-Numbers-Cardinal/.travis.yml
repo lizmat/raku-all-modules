@@ -1,8 +1,10 @@
 branches:
 sudo: false
 language: perl6
+
 perl6:
-  - latest
+    - latest
+
 install:
-  - rakudobrew build-panda
-  - panda installdeps .
+    - rakudobrew build zef
+    - zef install .
