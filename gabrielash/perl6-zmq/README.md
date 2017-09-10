@@ -285,6 +285,17 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
             :capture($socket.as-ptr) , :control($socket.as-ptr))
     run()
 
+#####  EchoServer
+    runs an echo server  (connect with :client )
+  
+    methods
+      new( :uri )
+      run                           blocks on the invoking thread
+      detach( --> Promise)          runs in a promise
+      shutdown                      stops the server  (no restart possible)
+
+
+
 ## LICENSE
 
 All files (unless noted otherwise) can be used, modified and redistributed

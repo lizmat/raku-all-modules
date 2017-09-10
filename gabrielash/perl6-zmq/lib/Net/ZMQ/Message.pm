@@ -292,7 +292,7 @@ class MsgBuilder is export {
 
   has Str $.encoding;   # not implemented yet
 
-  has Buffer $!_;
+  has Buffer $!_ handles < copy >;
   has Bool $!finalized;
 
   method TWEAK {

@@ -12,17 +12,17 @@ use Net::ZMQ::Proxy;
 
 class EchoServer is export {
   has Str $.uri is required;
-  has Socket $.socket;
-  has Context $.ctx;
-  has Callable $.start;
+  has Context $!ctx;
+  has Socket $!socket;
   has Socket $!control;
   has Socket $!terminator;
+  has Callable $!start;
 
 my $ctrl-uri := 'inproc://';
 
   method TWEAK {
     $!start = sub () {
-                      die "cannot reuse EchoServer" if $!ctx.defined;
+                      die "EchoServer: cannot reuse EchoServer" if $!ctx.defined;
                       $!ctx .= new;
                       $!socket .= new($!ctx, :server);
                       $!socket.bind($!uri);

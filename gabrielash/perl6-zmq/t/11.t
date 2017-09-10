@@ -50,7 +50,7 @@ dies-ok {$msg.bytes }, "unfinalized size fails pass";
 my $builder = $msg;
 $msg = $msg.finalize;
 dies-ok {$msg.add("another message") }, "finalized add fails pass";
-
+say $msg.copy;
 
 my Int $sl = $msg.send($s1);
 ok $l123 == $sl, "message sent with correct length : $l123 -> $sl";

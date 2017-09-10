@@ -406,7 +406,7 @@ class Socket does SocketOptions is export {
       repeat {
         my $part  = self.receive(:bin, :$async);
         return Any if ! $part.defined;
-        
+
         $msgbuf[ $i++ ] =  $part[ $_]   for 0..^$part.bytes;
       } while self.incomplete;
 
@@ -517,7 +517,7 @@ class Socket does SocketOptions is export {
     }
 
     multi method set-option(int $opt, Str $value, Str, int $size where positive($size) ) {
-      my buf8 $buf = $value.encode('ISO-8859-1');
+      my buf8 $buf .= new( |$value.encode('ISO-8859-1'));
       my size_t $len = ($buf.bytes, $size).min;
 
       return Any if  -1 == zmq_setsockopt($!handle, $opt, $buf, $len ) && self!fail;
