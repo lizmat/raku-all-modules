@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/scovit/NativeHelpers-CBuffer.git
+	branch = master
+	commit = b3c1dbf4988e472d12a00b56270d7e2ade270b65
+	parent = d9f9e0882319bde2712d744739622aa4075caacf
+	cmdver = 0.4.0
