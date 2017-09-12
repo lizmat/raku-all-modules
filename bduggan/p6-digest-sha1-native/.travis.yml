@@ -2,7 +2,7 @@ language: perl6
 perl6:
   - latest
 install:
-  - rakudobrew build-panda
-  - panda installdeps .
+  - rakudobrew build zef
+  - zef install --depsonly .
   - perl6 Configure.pl6
 sudo: false

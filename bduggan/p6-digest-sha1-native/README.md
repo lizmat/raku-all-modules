@@ -2,7 +2,7 @@ Digest::SHA1::Native
 =======
 Fast SHA1 computation using NativeCall to C.
 
-[![Build Status](https://travis-ci.org/bduggan/p6-digest-sha1-native.svg)](https://travis-ci.org/bduggan/p6-digest-sha1-native)
+[![Build Status](https://travis-ci.org/bduggan/p6-digest-sha1-native.svg?branch=master)](https://travis-ci.org/bduggan/p6-digest-sha1-native)
 
 Synopsis
 ========
