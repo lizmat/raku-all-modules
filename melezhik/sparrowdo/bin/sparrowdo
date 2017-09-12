@@ -400,15 +400,14 @@ elif [[ "$os" =~ "archlinux" ]]; then
 
   if ! which cpanm 2>/dev/null; then
     echo "installing cpanm ..."
-    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
-    chmod a+x /bin/cpanm
+    pacman -S --noconfirm -q cpanminus
   fi
 
   if ! which sparrow 2>/dev/null; then
 
     pacman -Sy
 
-    pacman -S --noconfirm -q guile
+    pacman -S --noconfirm -q guile 
 
     if ! which perl 2>/dev/null; then
       pacman -S --noconfirm -q perl
@@ -421,6 +420,8 @@ elif [[ "$os" =~ "archlinux" ]]; then
     if ! which make 2>/dev/null; then
       pacman -S --noconfirm -q make 
     fi
+
+    pacman -S --noconfirm -q perl-clone perl-config-tiny perl-yaml perl-test-yaml perl-test-base perl-spiffy perl-algorithm-diff perl-text-diff perl-json perl-try-tiny perl-capture-tiny perl-file-sharedir perl-file-sharedir-install perl-module-build-tiny perl-extutils-installpaths perl-extutils-config perl-extutils-helpers perl-class-inspector
 
     cpanm -q Outthentic Sparrow || echo "Some error occurs. Try to take the system upgrade of your server: run 'pacman -Syu' on the target machine and then run bootstrap again"
 
