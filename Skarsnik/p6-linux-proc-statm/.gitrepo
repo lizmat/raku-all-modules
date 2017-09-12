@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Skarsnik/p6-linux-proc-statm.git
 	branch = master
-	commit = bbe27b29f6f3aa1ea85baa082fdc5fc8502b3145
-	parent = f9eb0a99a9596fc2ccb224f433178c115f1a8a3f
+	commit = 3c693653154614ff5e4d22b8120e87b3b5d788b6
+	parent = 974d19a7962015e04c6035e4c04ba302d574571d
 	cmdver = 0.4.0

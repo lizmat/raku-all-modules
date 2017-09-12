@@ -24,6 +24,7 @@ module Linux::Proc::Statm {
     %data<lib> = f(@value[4], $unit);
     %data<data> = f(@value[5], $unit);
     %data<dirty> = f(@value[6], $unit);
+    $fh.close;
     return %data;
   }
 
