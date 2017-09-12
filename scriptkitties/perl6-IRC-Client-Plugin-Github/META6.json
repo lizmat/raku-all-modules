@@ -1,0 +1,26 @@
+{
+    "perl": "6",
+    "name": "IRC::Client::Plugin::Github",
+    "version": "0.0.1",
+    "auth": "github:scriptkitties",
+    "description": "A plugin to provide Github functionality to IRC::Client projects",
+    "license": "GPL-3.0",
+    "depends": [
+        "Bailador",
+        "Config",
+        "IRC::Client"
+    ],
+    "provides": {
+        "IRC::Client::Plugin::Github": "lib/IRC/Client/Plugin/Github.pm6",
+        "IRC::Client::Plugin::Github::WebhookEvents::Push": "lib/IRC/Client/Plugin/Github/WebhookEvents.pm6"
+    },
+    "authors": [
+        "Patrick Spek <p.spek@tyil.work>"
+    ],
+    "tags": [
+    ],
+    "test-depends": [
+        "Test::META"
+    ],
+    "source-url": "https://github.com/scriptkitties/perl6-IRC-Client-Plugin-Github.git"
+}

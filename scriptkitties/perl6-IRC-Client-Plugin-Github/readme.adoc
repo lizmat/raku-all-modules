@@ -1,0 +1,91 @@
+= IRC::Client::Plugin::Github
+:toc: preamble
+
+A plugin for Github functionality in IRC::Client projects.
+
+== Features
+This module is currently only handling Github notifications through the webhook
+system.
+
+=== Notifications through Github webhooks
+Using https://github.com/Bailador/Bailador[Bailador] as webserver, the plugin
+can act upon Github webhook calls. This means immediate notifications whenever
+something happens on a configured repository.
+
+== Usage
+
+Install the module through https://github.com/ugexe/zef[zef]:
+
+----
+zef install IRC::Client::Plugin::Github
+----
+
+Sample setup for an `IRC::Client` project using `IRC::Client::Plugin::Github`:
+
+[source,perl6]
+----
+use Config;
+use IRC::Client;
+
+sub MAIN
+{
+	my Config $config = Config.new;
+
+	.run with IRC::Client.new(
+		:nick<shithub>,
+		:plugins(
+			IRC::Client::Plugin::Github.new(config => $config)
+		)
+	);
+}
+----
+
+=== Configuration
+Configuration is done using https://github.com/scriptkitties/p6-Config[Config].
+
+My preferred way of configuration is with `toml` files, so that's what I'll use
+here to layout the configuration options. If you want to use another style,
+adapt as necesary and make sure there's a parser available and installed to use
+with `Config`.
+
+[source,toml]
+----
+# Set this to true to get more output on reasons why things might not be
+# working for you.
+debug = false
+
+# General configuration of the plugin
+[github.webhook]
+
+# Which IP to bind Bailador to.
+host = "0.0.0.0"
+
+# Which port to bind Bailador to.
+port = 8000
+
+# Set the message-style to "notice" to send notices instead of PRIVMSGs
+message-style = "privmsg"
+
+# The default channels to send to. If no channels are configured on the
+# repository's configuration key, this array will be used instead.
+channels = ["#scriptkitties"]
+
+# If set to true, it will notify for every repository that POSTs a payload to
+# the Bailador instance. Note this could be abused to spam through the bot.
+# When false, every repository should be properly defined if you want to see
+# any notifications from it.
+allow-unknown = false
+
+# Every repository must be configured with a heading similar like this,
+# "github.webhook.repos.<repo-name>", where the repo name is the `full-name`
+# attribute on the `repository` key from the webhook payload. Every "/" in the
+# `full-name` must be converted to a "-", in order to play nice with toml.
+[github.webhook.repos.scripkitties-perl6-IRC-Client-Plugin-Github]
+
+# An array of channels to post notifications in. Overrides the
+# `default-channels` from `github.webhook` if set.
+channels = ["#scriptkitties"]
+----
+
+== License
+This sourcecode is distributed under the GPLv3 license.
