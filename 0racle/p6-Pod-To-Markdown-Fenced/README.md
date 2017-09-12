@@ -2,6 +2,10 @@ NAME
 ====
 Pod::To::Markdown::Fenced - Render POD code blocks as fenced (```) code blocks
 
+IMPORTANT NOTE
+==============
+At this time of writing (September 2017) there is an [issue](https://github.com/github/linguist/issues/3763) with GitHub where it doesn't identify Perl 6 correctly, and therefore doesn't highlight it. It appears to have started around the time of this [pull request](https://github.com/github/linguist/pull/3672). Until the issue is resolved, language recognition and syntax highlighting of Perl 6 is broken.
+
 SYNOPSIS
 ========
 Do you like syntax highlighting?
