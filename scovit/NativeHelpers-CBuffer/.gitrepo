@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/scovit/NativeHelpers-CBuffer.git
 	branch = master
-	commit = b3c1dbf4988e472d12a00b56270d7e2ade270b65
-	parent = d9f9e0882319bde2712d744739622aa4075caacf
+	commit = f70bdcd4b97c0742753ba316579cf3ec9f2bd8f7
+	parent = b2b0ab9891d5315405cc438f27d5b3f20930cc81
 	cmdver = 0.4.0
