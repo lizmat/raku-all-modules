@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/tbrowder/Text-More-Perl6.git
 	branch = master
-	commit = c751353a773f0dfbb8add563ea53b9e759c8c694
-	parent = aa02c7219aa711df5e286518be2631cf620225c6
+	commit = 806dd7456bfec85bde26d96f19f2db1199946d86
+	parent = c4481e08dfad70f3fc92e1bd3cb76983a9070028
 	cmdver = 0.4.0

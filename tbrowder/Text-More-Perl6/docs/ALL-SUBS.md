@@ -8,7 +8,7 @@
 | [split-line](#split-line) | [split-line-rw](#split-line-rw) | [strip-comment](#strip-comment) |
 | [write-paragraph](#write-paragraph) | [write-paragraph2](#write-paragraph2) |  |
 ### sub commify
-- Purpose: Add commas to a mumber to separate multiples of a thousand
+- Purpose: Add commas to a number to separate multiples of a thousand
 - Params : An integer or number with a decimal fraction
 - Returns: The input number with commas added, e.g., 1234.56 => 1,234.56
 ```perl6
