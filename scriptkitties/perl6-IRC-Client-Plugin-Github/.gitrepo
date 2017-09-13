@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/scriptkitties/perl6-IRC-Client-Plugin-Github.git
 	branch = master
-	commit = 58d75d86f989b11494f99e5432cfd28c5a8cd0fc
-	parent = f2dc159ffdfe9d74e58ba66e0188c40343923539
+	commit = 9df6b7ba8dfc5261a36367d63536462f67471533
+	parent = e4bcf4700a110b7b2af5ae6ed5de85e98df21930
 	cmdver = 0.4.0

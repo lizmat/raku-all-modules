@@ -26,6 +26,7 @@ Sample setup for an `IRC::Client` project using `IRC::Client::Plugin::Github`:
 ----
 use Config;
 use IRC::Client;
+use IRC::Client::Plugin::Github;
 
 sub MAIN
 {
