@@ -1,0 +1,19 @@
+{
+  "authors" : [
+    "brian d foy"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "represent a Perl 6 data structure in a human readable way",
+  "license" : "Artistic-2.0",
+  "name" : "PrettyDump",
+  "perl" : "6.c",
+  "provides" : {
+    "PrettyDump" : "lib/PrettyDump.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/briandfoy/perl6-PrettyDump",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "1.1.5"
+}

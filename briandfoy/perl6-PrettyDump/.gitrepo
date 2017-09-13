@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/briandfoy/perl6-PrettyDump
+	branch = master
+	commit = a4c7c6cb79c0f451053a05975b3ebbe8cc5bf0ae
+	parent = ffb0f201a101ea644691163a543bf9723af846a0
+	cmdver = 0.4.0
