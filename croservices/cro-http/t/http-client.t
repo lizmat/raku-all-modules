@@ -1,4 +1,5 @@
 use Base64;
+use Cro::HTTP::Client;
 use Cro::HTTP::Client::CookieJar;
 use Cro::HTTP::Response;
 use Test;
@@ -135,7 +136,6 @@ constant %key-cert := {
 }
 
 {
-    use Cro::HTTP::Client;
     my $base = "http://localhost:{HTTP_TEST_PORT}";
 
     throws-like { await Cro::HTTP::Client.get("$base/random-page"); }, X::Cro::HTTP::Error::Client,
@@ -143,6 +143,11 @@ constant %key-cert := {
 
     throws-like { await Cro::HTTP::Client.get("$base/error"); }, X::Cro::HTTP::Error::Server,
         'It throws exception for 500';
+
+    my $c = Cro::HTTP::Client.new(base-uri => "http://localhost:{HTTP_TEST_PORT}");
+    given await $c.get('/') -> $resp {
+        ok $resp ~~ Cro::HTTP::Response, 'base-uri argument works';
+    }
 
     given await Cro::HTTP::Client.get("$base/") -> $resp {
         ok $resp ~~ Cro::HTTP::Response, 'Got a response back from GET /';
@@ -439,6 +444,14 @@ constant %key-cert := {
     }
     await Promise.anyof($p, Promise.in(2));
     is $counter, 5, 'Concurrent client works';
+}
+
+{
+    my $base = "https://localhost:{HTTPS_TEST_PORT}";
+
+    given await Cro::HTTP::Client.get("$base/", :%ca) -> $resp {
+        ok $resp ~~ Cro::HTTP::Response, 'Got a response back from GET / with HTTPS';
+    }
 }
 
 done-testing;

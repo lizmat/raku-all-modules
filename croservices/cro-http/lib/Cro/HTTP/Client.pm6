@@ -219,12 +219,13 @@ class Cro::HTTP::Client {
     has $!connection-cache = ConnectionCache.new;
     has $.http;
     has $.ca;
+    has $.base-uri;
 
     method persistent() {
         self ?? $!persistent !! False
     }
 
-    submethod BUILD(:$cookie-jar, :@!headers, :$!content-type,
+    submethod BUILD(:$cookie-jar, :@!headers, :$!content-type, :$!base-uri = '',
                     :$!body-serializers, :$!add-body-serializers,
                     :$!body-parsers, :$!add-body-parsers,
                     :$!follow, :%!auth, :$!http, :$!persistent = True, :$!ca) {
@@ -284,7 +285,9 @@ class Cro::HTTP::Client {
         self.request($method, $url, %options)
     }
     multi method request(Str $method, $url, %options --> Promise) {
-        my $parsed-url = $url ~~ Cro::Uri ?? $url !! Cro::Uri.parse(~$url);
+        my $parsed-url = $url ~~ Cro::Uri
+                       ?? $url
+                       !! Cro::Uri.parse(self ?? $!base-uri ~ $url !! $url);
         my $http = self ?? $!http // %options<http> !! %options<http>;
         with $http {
             unless $_ eq '1.1' || $_ eq '2' || $_ eqv <1.1 2> {
@@ -418,7 +421,7 @@ class Cro::HTTP::Client {
         }
         else {
             push @parts, Cro::ConnectionConditional.new(
-                { (.apln-result // '') eq 'h2' } => [
+                { (.alpn-result // '') eq 'h2' } => [
                     VersionDecisionNotifier.new(:promise($version-decision), :result('2')),
                     Cro::HTTP2::RequestSerializer.new,
                     Cro::HTTP2::FrameSerializer.new(:client)
@@ -439,7 +442,7 @@ class Cro::HTTP::Client {
         }
         else {
             push @parts, Cro::ConnectionConditional.new(
-                { (.apln-result // '') eq 'h2' } => [
+                { (.alpn-result // '') eq 'h2' } => [
                     Cro::HTTP2::FrameParser.new(:client),
                     Cro::HTTP2::ResponseParser.new
                 ],
@@ -460,12 +463,12 @@ class Cro::HTTP::Client {
         my %ca = self ?? (self.ca // $ca // {}) !! $ca // {};
         my $out = $version-decision
             ?? $connector.establish($in.Supply, :$host, :$port, |{%ssl-config, %ca})
-            !! supply {
-                whenever $connector.establish($in.Supply, :$host, :$port) {
+            !! Promise(supply {
+                whenever $connector.establish($in.Supply, :$host, :$port, |{%ssl-config, %ca}) {
                     .emit;
                     QUIT { try $version-decision.break($_) }
                 }
-            };
+            });
         $version-decision.then: -> $version {
             $version.result eq '2'
                 ?? Pipeline2.new(:$secure, :$host, :$port, :$in, :$out)
