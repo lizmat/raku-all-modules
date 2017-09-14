@@ -1,3 +1,8 @@
+# 0.0.29 2017-09-13
+
+- Archlinux bootstrap impoved, thanks to @Spigell (https://github.com/melezhik/sparrowdo/pull/10 , https://github.com/melezhik/sparrowdo/pull/11 )
+
+
 # 0.0.28 2017-09-01
 
 - Sets format for reports by using `--format`, `OUTTENTIC_FORMAT`, or sparrowdo.ini file

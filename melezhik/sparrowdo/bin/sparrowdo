@@ -199,7 +199,7 @@ sub ssh_shell ( $cmd ) {
   @bash_commands.push:  'export https_proxy=' ~ input_params('HttpsProxy') if input_params('HttpsProxy');
   @bash_commands.push:  'export GIT_PROTOCOL=https';
   @bash_commands.push:  'export PERL_USE_UNSAFE_INC=1';
-  @bash_commands.push:  'export PATH=/usr/bin/site_perl:/usr/local/bin:/usr/sbin/:/sbin/:/bin/$PATH';
+  @bash_commands.push:  'export PATH=/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/local/bin:/usr/sbin/:/sbin/:/bin/$PATH';
   @bash_commands.push:  'export SPARROW_ROOT=' ~ input_params('SparrowRoot');
   @bash_commands.push:  'export SPARROW_NO_COLOR=1' if input_params('NoColor');
   @bash_commands.push:  "export SPARROW_CONF_PATH=$sparrow_root/sparrow-cache/sparrow.yaml";
@@ -392,6 +392,8 @@ elif [[ "$os" =~ "centos" ]]; then
 
 elif [[ "$os" =~ "archlinux" ]]; then
 
+  pacman -Sy
+
   echo bootstrap for archlinux
 
   if ! which curl 2>/dev/null; then
@@ -404,8 +406,6 @@ elif [[ "$os" =~ "archlinux" ]]; then
   fi
 
   if ! which sparrow 2>/dev/null; then
-
-    pacman -Sy
 
     pacman -S --noconfirm -q guile 
 
