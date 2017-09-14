@@ -1,5 +1,6 @@
 use v6;
 use HTML::Parser::XML;
+use XML::Document;
 
 =begin pod
 
