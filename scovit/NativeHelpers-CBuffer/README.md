@@ -134,13 +134,13 @@ declarations, any abuse will result in Segmentation faults and/or
 memory corruption!
 
 In order to declare `C`-stile `#define` constants in modules,
-use `perl` macros:
+use `perl` sub (or macro) instead:
 
 ```perl6
    # the following, is equivalent to
      #define STRING_CONST     "The string"
 
-   macro STRING_CONST  is export { quasi { CBuffer.new("The string"); } };
+   sub STRING_CONST is export { CBuffer.new("The string") };
 ```
 
 AUTHOR
