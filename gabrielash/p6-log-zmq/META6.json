@@ -1,0 +1,39 @@
+{
+  "name": "Log::ZMQ",
+  "source-url": "https://github.com/gabrielash/p6-log-zmq.git",
+  "support": {
+    "source": null
+  },
+  "perl": "6.c",
+  "resources": [
+    "bin/log-catcher.pl"
+  ],
+  "build-depends": [
+
+  ],
+
+  "auth": "github:gabrielash",
+
+  "depends": [
+    "Net::ZMQ:auth('github:gabrielash')",
+    "JSON::Tiny"
+  ],
+  "tags": [
+
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "Test::META"
+  ],
+  "provides": {
+    "Log::ZMQ::Logger":         "lib/Log/ZMQ/Logger.pm",
+    "Log::ZMQ::LogCatcher":     "lib/Log/ZMQ/LogCatcher.pm",
+    "Log::ZMQ::Common":         "lib/Log/ZMQ/Common.pm"
+    
+  },
+  "production": false,
+  "version": "0.0.2",
+  "meta-version": "0",
+  "authors": ["Gabriel Ash", "github:gabrielash" ],
+  "description": "Perl6 zmq-based logging"
+}
