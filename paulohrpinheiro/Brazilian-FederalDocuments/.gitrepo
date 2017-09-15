@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/paulohrpinheiro/Brazilian-FederalDocuments.git
+	branch = master
+	commit = 498cf9d94fb542687c45d3bcaba523fbaad70c91
+	parent = da143b46bd28c883b69aa49e298e50cedf66653f
+	cmdver = 0.4.0
