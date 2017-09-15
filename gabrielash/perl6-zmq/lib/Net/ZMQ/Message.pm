@@ -243,7 +243,7 @@ class Message is export  {
                             !! Pointer;
       my $r = $callback.defined && $callback.WHAT === Sub
                     ?? zmq_msg_init_data_callback($msg-t,$ptr , $end - $i, $callback)
-                    !! zmq_msg_init_data($msg-t, $ptr , $end - $i);
+                    !! zmq_msg_init_data($msg-t, $ptr , $end - $i );
       throw-error if $r  == -1;
       my &sender = $socket.sender;
       $r = sender($msg-t,  (--$segments == 0 ) ?? $no-more !! $more , :$async);

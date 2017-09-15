@@ -29,6 +29,7 @@ use Net::ZMQ::Poll;
 
   my $endpoint = 'tcp://127.0.0.1:6000';
   $c.bind($endpoint);
+  sleep 2;
 
 my $p2 = start {
   my Context $ctx .= new :throw-everything;
@@ -71,6 +72,7 @@ my $p2 = start {
     say "everything closed";
 }
 
+sleep 2;
 my $cnt = 0; 
 for 0..^4 {my $sent =  $c.send("Hello"); say "Hello sent ",++$cnt;};
 for 0..^4 {sleep 1;my $sent =  $c.send("STOP"); say "STOP sent ", ++$cnt;};
