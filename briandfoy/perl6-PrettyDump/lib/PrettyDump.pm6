@@ -205,7 +205,7 @@ use v6;
 
 ###############################################################################
 
-class PrettyDump:auth<BDFOY>:ver<1.1.5> {
+class PrettyDump:auth<BDFOY>:ver<1.1.6> {
 	has Str $.pre-item-spacing       = "\n";
 	has Str $.post-item-spacing      = "\n";
 
