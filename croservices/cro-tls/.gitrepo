@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/croservices/cro-tls.git
+	branch = master
+	commit = 8ffb0aaca930ed53db4bf248317bff0450cf3ae3
+	parent = 45edb34a596b4197f3cce8a080cb413ded8c0344
+	cmdver = 0.4.0
