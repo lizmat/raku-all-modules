@@ -45,7 +45,7 @@ sub MAIN (Str $module, Bool :$get = False) {
 
         $md =  LWP::Simple.get($url);
 
-        last if $md !~~ "Not Found"
+        last if $md !~~ "Not Found" && $md !~~ Any
 
     };
 

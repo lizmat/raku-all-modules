@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/stmuk/p6-eco-readme.git
 	branch = master
-	commit = 04bc062ca686d205042bf56ad52ec2e749256ff5
-	parent = ab7bafdde3924265404b798f8960c2f16b579058
+	commit = 29a08bff45cc57624479a0d497f2db3685d5ea7e
+	parent = def9b9bda239ee0627872c283bc979b899974838
 	cmdver = 0.4.0
