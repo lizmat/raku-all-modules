@@ -21,10 +21,10 @@ Paulo Henrique Rodrigues Pinheiro (paulohrpinheiro):
 ### A cara do Perl6
 
     ➜  ~ perl6
-    > my @primes = ^∞ .grep: *.is-prime;
+    > my @primes = grep { .is-prime }, ^∞
     [...]
-    > say "1001ˢᵗ prime is @primes[1000]";
-    1001ˢᵗ prime is 7927
+    > @primes[^10]
+    (2 3 5 7 11 13 17 19 23 29)
     > my @p = 1,2,4,8...Inf
     [...]
     > @p[4..10]

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/paulohrpinheiro/Brazilian-FederalDocuments.git
 	branch = master
-	commit = 498cf9d94fb542687c45d3bcaba523fbaad70c91
-	parent = da143b46bd28c883b69aa49e298e50cedf66653f
+	commit = 1df71f3e8369b989d6e07f095201fc4bb6428466
+	parent = 5d253ea0a8a6fae57774563ff44dcfbf551e0735
 	cmdver = 0.4.0
