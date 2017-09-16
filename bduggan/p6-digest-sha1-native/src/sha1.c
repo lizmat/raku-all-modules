@@ -226,14 +226,14 @@ static void SHA1_Final(SHA1_CTX* context, unsigned char digest[SHA1_DIGEST_SIZE]
 
 
 /* Produces a hex output of the digest. */
-static void SHA1_DigestToHex(const unsigned char digest[SHA1_DIGEST_SIZE], char *output)
+static void SHA1_DigestToHex(const unsigned char digest[SHA1_DIGEST_SIZE], unsigned char *output)
 {
     int i,j;
-    char *c = output;
+    unsigned char *c = output;
 
     for (i = 0; i < SHA1_DIGEST_SIZE/4; i++) {
         for (j = 0; j < 4; j++) {
-            sprintf(c,"%02X", digest[i*4+j]);
+            sprintf((char *)c,"%02X", digest[i*4+j]);
             c += 2;
         }
     }

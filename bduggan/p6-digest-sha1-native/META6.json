@@ -15,7 +15,7 @@
     "description" : "p6 bindings to C implementation of SHA1",
     "test-depends" : [ ],
     "version" : "0.02",
-    "license" : "Perl",
+    "license" : "Artistic-2.0",
     "authors" : [
         "Brian Duggan"
     ]

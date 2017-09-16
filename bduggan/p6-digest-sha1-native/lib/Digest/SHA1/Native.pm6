@@ -1,4 +1,4 @@
-unit module Digest::SHA1::Fast;
+unit module Digest::SHA1::Native;
 
 use NativeCall;
 
