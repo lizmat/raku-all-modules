@@ -10,7 +10,6 @@ our sub IRC::Client::Plugin::Github::WebhookEvents::Push (
 	:%payload,
 	Config :$config
 ) is export {
-	say %payload.WHAT;
 	my Str $user = %payload<pusher><name>;
 	my Int $commits = %payload<commits>.elems;
 	my Str $repository = %payload<repository><name>;
