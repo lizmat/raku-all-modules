@@ -13,6 +13,7 @@
                 "cro": "bin/cro",
                 "Cro::Tools::CLI": "lib/Cro/Tools/CLI.pm6",
                 "Cro::Tools::CroFile": "lib/Cro/Tools/CroFile.pm6",
+                "Cro::Tools::Link::Editor": "lib/Cro/Tools/Link/Editor.pm6",
                 "Cro::Tools::LinkTemplate": "lib/Cro/Tools/LinkTemplate.pm6",
                 "Cro::Tools::LinkTemplate::HTTP": "lib/Cro/Tools/LinkTemplate/HTTP.pm6",
                 "Cro::Tools::LinkTemplate::HTTPS": "lib/Cro/Tools/LinkTemplate/HTTPS.pm6",
@@ -32,9 +33,9 @@
         "web/index.html",
         "web/css/bootstrap.min.css",
         "web/css/cro.css",
-        "fake-ssl/ca-crt.pem",
-        "fake-ssl/server-crt.pem",
-        "fake-ssl/server-key.pem"
+        "fake-tls/ca-crt.pem",
+        "fake-tls/server-crt.pem",
+        "fake-tls/server-key.pem"
     ],
     "source-url"    : "https://github.com/croservices/cro.git"
 }
