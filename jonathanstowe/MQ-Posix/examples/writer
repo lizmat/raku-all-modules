@@ -1,0 +1,9 @@
+#!/usr/bin/env perl6
+
+use MQ::Posix;
+
+my $queue = MQ::Posix.new(name => 'test-queue', :create, :w );
+
+await $queue.send("some test message", priority => 10);
+
+$queue.close;

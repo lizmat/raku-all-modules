@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/MQ-Posix.git
+	branch = master
+	commit = f0687302315d80c7adcc2ad4ee12564f2e587a09
+	parent = d0bac9a8192b54a3ddf475f834392eab91de41bb
+	cmdver = 0.4.0
