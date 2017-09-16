@@ -37,7 +37,7 @@ $logsys.unset-suppress-level;
 my $log2 = Logging::instance;
 
 
-sleep 1;
+sleep 2;
 
 my $logger = $logsys.logger;
 my $logger2 = $log2.logger;
@@ -49,7 +49,7 @@ my $promise = start {
       my $ctx = Context.new:throw-everything;
       my $s1 = Socket.new($ctx, :subscriber, :throw-everything);
       ok $s1.connect($uri).defined, "log subscriber connected to $uri";
-      ok $s1.subscribe($prefix).defined, "log filtered on dom1" ;
+      ok $s1.subscribe($prefix).defined, "log filtered on $prefix" ;
       say "log subscriber ready"; 
       loop {
           my $m = $s1.receive(:slurp) ; 
@@ -60,15 +60,11 @@ my $promise = start {
     }
 
 
-if 0 {
-$logger.log('nice day', :dom1 );
-$logger2.log('you will never see this', :debug, :dom2 );
-$logger.log('another nice day', :critical, :dom1);
-} else {
+
+
 $logger.log('nice day');
-$logger2.log('you will never see this', :debug);
+$logger2.log('another day', :debug);
 $logger.log('another nice day', :critical);
-}
 
 
 await $promise;
