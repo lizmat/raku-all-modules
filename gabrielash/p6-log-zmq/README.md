@@ -138,7 +138,7 @@ This is the body of the MAIN sub
 current implemention print the received messaged to stdout. other backends can be added
 with the following methods:
 
-  * add-zmq-handler( &f:(:$content, :$timestamp, :$level, :$domain, :$target) )
+  * add-zmq-handler( &f:(:$content, :$timestamp, :$level, :$domain, :$prefix) )
   * add-handler( Str $format,  &f:(Str:D $content) )
 
 
