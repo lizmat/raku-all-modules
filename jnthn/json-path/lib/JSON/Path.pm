@@ -49,7 +49,7 @@ class JSON::Path {
         self.bless(:$path);
     }
 
-    submethod BUILD(:$!path as Str) { }
+    submethod BUILD(Str() :$!path) { }
 
     multi method Str(JSON::Path:D:) {
         $!path
@@ -167,7 +167,9 @@ class JSON::Path {
                     die "Non-safe evaluation"
                         if $Safe;
 
+                    use MONKEY-SEE-NO-EVAL;
                     my &condition = EVAL '-> $_ { my $/; ' ~ ~$<code> ~ ' }';
+                    no MONKEY-SEE-NO-EVAL;
                     make sub ($next, $current, @path) {
                         for @($current).grep(&condition) {
                             $next($_, @path);
