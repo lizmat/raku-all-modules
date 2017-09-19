@@ -8,7 +8,7 @@ use Test;
 
 BEGIN %*ENV<PERL6_TEST_DIE_ON_FAIL> = 1;
 
-# plan 1;
+plan 3;
 
 say "testing Logger";
 
