@@ -128,9 +128,10 @@ class Platform::Docker::Container is Platform::Container {
                     $mode    = $content<mode>  if $content<mode>;
                     $content = $content<content>;
                     temp $path = $path.IO.dirname;
-                    $content = "$path/$content".IO.slurp if "$path/$content".IO.e;
+                    $content = "$path/$content".IO.slurp if $content && "$path/$content".IO.e;
                 }
             }
+            $content = '' unless $content;
             my $file_tpl = "$path/{self.name}/" ~ $target;
             mkdir $file_tpl.IO.dirname;
             spurt $file_tpl, $content;
