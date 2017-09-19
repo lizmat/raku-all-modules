@@ -83,7 +83,7 @@ class HTML::Restrict {
 
     method walk-nodes(@nodes) {
 
-        # this is recusive and needs a limit XXX
+        # this is recursive and needs a limit XXX
         $recurse-count++;
         #die "recurse count reached" if $recurse-count == $.recurse-depth;
 
@@ -121,3 +121,4 @@ class HTML::Restrict {
 
     }
 }
+# vim: filetype=perl6

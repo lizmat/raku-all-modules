@@ -1,4 +1,5 @@
 use v6;
+use lib 'lib';
 use Test; 
 use HTML::Restrict;
 
@@ -29,7 +30,7 @@ my $html = q[
 
     my $expected = "<?xml version=\"1.0\"?><html><!--asdf -->  <a>HREF=JAVA \&lt;!\&gt;</a>  <hr/>  <i FAKE=\"attribute\"> IN ITALICS WITH FAKE=\"attribute\" </i> <br/>  <b> IN BOLD </b> <br/>  <a>HREF=JAVA \&lt;!\&gt;</a>  <a NAME=\"evil\"> <a>HREF=JAVA \&lt;!\&gt;</a>  <br/>  <a HREF=\"image/bigone.jpg\"> <img SRC=\"image/smallone.jpg\"/>  </a>  </a>  <br/></html>";
 
-    ok $got eq $expected or die $got.gist;
+    ok $got eq $expected, "Sanitised as expected 1"  or die $got.gist;
 }
 
 {
@@ -41,7 +42,7 @@ my $html = q[
 
     my $expected = "<?xml version=\"1.0\"?><html><!--asdf -->  <a>HREF=JAVA \&lt;!\&gt;</a>  <hr/>  <i FAKE=\"attribute\"> IN ITALICS WITH FAKE=\"attribute\" </i> <br/>  <b> IN BOLD </b> <br/>  <a>HREF=JAVA \&lt;!\&gt;</a>  <a NAME=\"evil\"> <a>HREF=JAVA \&lt;!\&gt;</a>  <br/>  <a HREF=\"image/bigone.jpg\"> <img SRC=\"image/smallone.jpg\"/>  </a>  </a>  <br/></html>";
 
-    ok $got eq $expected or die $got.gist;
+    ok $got eq $expected, "Sanitised as expected 2"  or die $got.gist;
 }
 
 {
@@ -54,5 +55,5 @@ my $html = q[
 
     my $expected ='<?xml version="1.0"?><html> <head><meta charset="utf-8"/>  </head>  <body><a href="http://stevemynott.blogspot.com/feeds/posts/default">Steve Mynott</a>  Now is the time for all good men </body>  </html>';
 
-    ok $got eq $expected or die $got.gist;
+    ok $got eq $expected, "Sanitised as expected 3"  or die $got.gist;
 }
