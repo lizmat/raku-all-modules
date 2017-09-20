@@ -2,6 +2,7 @@ use Cro::Tools::Link::Editor;
 use Cro::Tools::Runner;
 use Cro::Tools::Template;
 use Cro::Tools::TemplateLocator;
+use File::Find;
 use Terminal::ANSIColor;
 
 proto MAIN(|) is export {*}
@@ -152,27 +153,42 @@ multi MAIN('stub', Str $service-type, Str $id, Str $path, $options = '') {
     }
 }
 
+multi MAIN('services') {
+    my @services = find(dir => $*CWD, name => / \.cro\.yml$/);
+    for @services -> $path {
+        my $cro-file = Cro::Tools::CroFile.parse($path.IO.slurp);
+        with $cro-file {
+            say colored("{.id} ({.name})", "bold"), RESET();
+            say $path.relative($*CWD);
+            for .endpoints {
+                say "🔌 Endpoint {.id} ({.name})";
+                say "  Host environment variable: {.host-env}";
+                say "  Port environment variable: {.port-env}";
+            }
+        }
+        say '';
+    }
+}
+
+multi MAIN('link', 'add', $from-service-id, $to-service-id, $to-endpoint-id?) {
+    add-link($from-service-id, $to-service-id, $to-endpoint-id);
+}
+multi MAIN('link', 'show', $service-id?) {
+    show-link($service-id);
+}
+multi MAIN('link', 'code', $from-service-id, $to-service-id, $to-endpoint-id?) {
+    code-link($from-service-id, $to-service-id, $to-endpoint-id);
+}
+multi MAIN('link', 'rm', $from-service-id, $to-service-id, $to-endpoint-id?) {
+    rm-link($from-service-id, $to-service-id, $to-endpoint-id);
+}
+
 multi MAIN('run') {
     run-services();
 }
 
 multi MAIN('run', *@service-name) {
     run-services(filter => any(@service-name));
-}
-
-multi MAIN('link', $command, $from-service-id, $to-service-id, $to-endpoint-id?) {
-    die 'Unknown command' unless $command eq 'add'|'code'|'rm';
-    given $command {
-        when 'add' {
-            add-link($from-service-id, $to-service-id, $to-endpoint-id);
-        }
-        when 'code' {
-            code-link($from-service-id, $to-service-id, $to-endpoint-id);
-        }
-        when 'rm' {
-            rm-link($from-service-id, $to-service-id, $to-endpoint-id);
-        }
-    }
 }
 
 multi MAIN('trace', *@service-name-or-filter) {
