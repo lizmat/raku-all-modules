@@ -312,9 +312,10 @@ sub bootstrap ( $sparrow_root, $sparrowdo-cache ) {
 
   my $bootstrap = q:to/HERE/;
 
+os=$(lsb_release -d 2>/dev/null; uname -a; cat /etc/issue; cat /etc/*-release 2>&1)
+
 set -e
 
-os=$(lsb_release -d 2>/dev/null; uname -a; cat /etc/issue; cat /etc/*-release 2>&1)
 
 shopt -s nocasematch;
 
@@ -426,6 +427,7 @@ elif [[ "$os" =~ "archlinux" ]]; then
     cpanm -q Outthentic Sparrow || echo "Some error occurs. Try to take the system upgrade of your server: run 'pacman -Syu' on the target machine and then run bootstrap again"
 
   fi
+
 elif [[ "$os" =~ "fedora" ]]; then
 
   echo bootstrap for fedora
@@ -499,7 +501,36 @@ elif [[ "$os" =~ "ubuntu" ]]; then
     cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
   fi
 
-  echo
+
+elif [[ "$os" =~ "minoca" ]]; then
+
+  echo bootstrap for minoca
+
+  opkg -f /etc/opkg/opkg.conf update
+
+  if ! which curl 2>/dev/null; then
+     opkg install curl
+  fi
+
+  if ! which perl 2>/dev/null; then
+     opkg install perl
+  fi
+
+  if ! which cpanm 2>/dev/null; then
+    echo "installing cpanm ..."
+    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+    chmod +x /bin/cpanm
+    ln -fs /bin/env /usr/bin/env
+  fi
+
+  if ! which sparrow 2>/dev/null; then
+
+    opkg -f /etc/opkg/opkg.conf  install make gcc tar gzip
+    cpanm --notest -q Sparrow
+    sparrow index update
+
+  fi
+
 
 else
   echo "unknown os: $os"
