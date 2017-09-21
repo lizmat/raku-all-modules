@@ -20,9 +20,9 @@ is-deeply $g.locate( $ipv4 ), {
     'country' => 'United States',
     'country_code' => 'US',
     'dma_code' => 807,
-    'latitude' => 37.769699,
-    'longitude' => -122.393303,
-    'postal_code' => '94107',
+    'latitude' => 37.774899,
+    'longitude' => -122.419403,
+    'postal_code' => '94119',
     'region' => 'California',
     'region_code' => 'CA',
     'time_zone' => 'America/Los_Angeles'
