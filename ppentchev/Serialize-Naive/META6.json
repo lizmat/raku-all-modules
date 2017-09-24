@@ -1,7 +1,8 @@
 {
   "perl": "6.c",
   "name": "Serialize::Naive",
-  "version": "0.2.4",
+  "license" : "Artistic-2.0",
+  "version": "0.2.5",
   "description": "A somewhat naive (de-)serialization implementation",
   "authors": [ "Peter Pentchev" ],
   "provides": {

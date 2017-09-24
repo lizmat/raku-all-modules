@@ -65,17 +65,17 @@ METHODS
 
     Return a hash containing key/value pairs for all the public attributes of the object's class. Attributes are classified in several categories:
 
-      * Basic types
+        * Basic types
 
-        The value of the attribute is stored directly as the hash pair value.
+          The value of the attribute is stored directly as the hash pair value.
 
-      * Typed arrays or hashes
+        * Typed arrays or hashes
 
-        The value of the attribute is stored as respectively an array or a hash containing the recursively serialized values of the elements.
+          The value of the attribute is stored as respectively an array or a hash containing the recursively serialized values of the elements.
 
-      * Other classes
+        * Other classes
 
-        The value of the attribute is recursively serialized to a hash using the same algorithm.
+          The value of the attribute is recursively serialized to a hash using the same algorithm.
 
     Current API available since version 0.1.0.
 
@@ -123,7 +123,7 @@ Peter Pentchev <[roam@ringlet.net](mailto:roam@ringlet.net)>
 COPYRIGHT
 =========
 
-Copyright (C) 2016 Peter Pentchev
+Copyright (C) 2016, 2017 Peter Pentchev
 
 LICENSE
 =======

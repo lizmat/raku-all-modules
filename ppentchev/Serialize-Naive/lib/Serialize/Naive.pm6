@@ -1,4 +1,4 @@
-unit role Serialize::Naive:ver<0.2.4>:auth<github:ppentchev>;
+unit role Serialize::Naive:ver<0.2.5>:auth<github:ppentchev>;
 
 use v6.c;
 
@@ -262,7 +262,7 @@ Peter Pentchev <L<roam@ringlet.net|mailto:roam@ringlet.net>>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2016  Peter Pentchev
+Copyright (C) 2016, 2017  Peter Pentchev
 
 =head1 LICENSE
 
