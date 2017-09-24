@@ -30,6 +30,12 @@ SYNOPSIS
         $c .= capture-check(:accept(0, 3), :&fail, 'sh', '-c', 'date; exit 1');
         say 'not reached, fail() dies';
 
+        $c .= capture-check('git', 'ls-files', '-z', :nl("\0"));
+        say 'Got some unquoted filenames from Git:';
+        $c.lines>>.say;
+
+        $c .= capture-check('env', 'LANG=fr_FR.ISO-8859-1', 'date', :enc('ISO-8859-1'));
+
 DESCRIPTION
 ===========
 
@@ -55,17 +61,21 @@ METHODS
 
   * method capture()
 
-        method capture(*@cmd)
+        method capture(*@cmd, Str :$enc, Str :$nl)
 
     Execute the specified command in the same way as `run()` would, then create a new `Shell::Capture` object with its `exitcode` and `lines` members set respectively to the exit code of the command and its output split into lines, as described above.
 
+    The `$enc` and `$nl` parameters, if supplied, are passed directly to `run()`, allowing the caller to specify the encoding of the data output by the external program and the character (or string) used to delimit lines in the output. See the `Proc.new()` documentation for more information.
+
   * method capture-check()
 
-        method capture-check(:$accept, :$fail, *@cmd)
+        method capture-check(:$accept, :$fail, Str :$enc, Str :$nl, *@cmd)
 
     Execute the specified command and create a `Shell::Capture` object in the same way as `capture()`, then check the exit code against the `$accept` list (default: only 0). If the exit code is on the list, return the `Shell::Capture` object to the caller.
 
     If the exit code is not on the list and there is no `$fail` handler specified, output an error message to the standard error stream and terminate the program. If a fail handler is specified, invoke it with two arguments: the `Shell::Capture` object for further examination and the command executed; if the fail handler returns, `capture-check()` will return the `Shell::Capture` object to its caller (useful for writing tests).
+
+    The `$enc` and `$nl` parameters, if specified, are passed directly to `run()` just as in `capture()`.
 
 AUTHOR
 ======
@@ -75,7 +85,7 @@ Peter Pentchev <[roam@ringlet.net](mailto:roam@ringlet.net)>
 COPYRIGHT
 =========
 
-Copyright (C) 2016 Peter Pentchev
+Copyright (C) 2016, 2017 Peter Pentchev
 
 LICENSE
 =======

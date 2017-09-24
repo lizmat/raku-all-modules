@@ -1,4 +1,4 @@
-unit class Shell::Capture:ver<0.2.0>:auth<github:ppentchev>;
+unit class Shell::Capture:ver<0.2.1>:auth<github:ppentchev>;
 
 use v6.c;
 
@@ -139,7 +139,7 @@ Peter Pentchev <L<roam@ringlet.net|mailto:roam@ringlet.net>>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2016  Peter Pentchev
+Copyright (C) 2016, 2017  Peter Pentchev
 
 =head1 LICENSE
 

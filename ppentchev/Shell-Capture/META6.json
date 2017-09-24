@@ -1,7 +1,8 @@
 {
   "perl": "6.c",
   "name": "Shell::Capture",
-  "version": "0.2.0",
+  "license" : "Artistic-2.0",
+  "version": "0.2.1",
   "description": "Capture a command's output and exit code",
   "authors": [ "Peter Pentchev" ],
   "provides": {
