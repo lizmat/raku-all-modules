@@ -114,27 +114,29 @@ use JSON::Name;
 use JSON::Class:ver(v0.0.5+);
 
 role AutoAssoc {
-    method AT-KEY($key){
+    method AT-KEY($key) {
         self!json-name-to-attibute($key).?get_value(self);
     }
 
-    method EXISTS-KEY($key){
-        so self!json-name-to-attibute($key)
+    method EXISTS-KEY($key --> Bool) {
+        self.AT-KEY($key).defined
     }
 
-    method ASSIGN-KEY($key, \value){
-        self!json-name-to-attibute($key).set_value(self, value)
+    method ASSIGN-KEY($key, \value) {
+        if self!json-name-to-attibute($key) -> $attr {
+            $attr.set_value(self, value)
+        }
     }
 
-    method !json-name-to-attibute($json-name){
-        state %lookup = do for self.^attributes(:local) {
+    method !json-name-to-attibute($json-name) {
+        state %lookup = do for self.^attributes(:local).grep({ $_.has_accessor }) {
             (.?json-name ?? .json-name !! .name).subst(/^ '$!' | '%!' | '@!' /, '') => $_
         }
         %lookup{$json-name}
     }
 }
 
-class META6:ver<0.0.17>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
+class META6:ver<0.0.18>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
 
     enum Optionality <Mandatory Optional>;
 

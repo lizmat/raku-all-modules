@@ -22,6 +22,8 @@ is $obj<version perl>, '0.0.1 6', 'Hash get list of keys';
 is $obj<version>:exists, True, 'Hash key exists';
 is $obj<isnthere>:exists, False, 'Hash key does not exist';
 
+lives-ok { $obj<isnthere> = 'foo' }, "set non-existent attribute";
+
 $obj<version> = v0.0.2;
 is $obj<version>, '0.0.2', 'Hash set good version';
 

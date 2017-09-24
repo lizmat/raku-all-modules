@@ -31,7 +31,7 @@
     "META6": "lib/META6.pm"
   },
   "production": true,
-  "version": "0.0.17",
+  "version": "0.0.18",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],
