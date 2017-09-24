@@ -13,7 +13,7 @@ has $.engine-id = ~UUID.new: :version(4);
 has $.kernel-info = {
     protocol_version => '5.0',
     implementation => 'p6-jupyter-kernel',
-    implementation_version => '0.0.3',
+    implementation_version => '0.0.4',
     language_info => {
         name => 'perl6',
         version => ~$*PERL.version,
@@ -116,14 +116,17 @@ method run($spec-file!) {
             }
             when 'complete_request' {
                 my $code = ~$msg<content><code>;
-                my $cursor_end = $msg<content><cursor_pos>;
-                my (Int $cursor_start, $completions) = $sandbox.completions($code);
-                $shell.send: 'complete_reply',
-                  { matches => $completions,
-                    :$cursor_end,
-                    :$cursor_start,
-                    metadata => {},
-                    status => 'ok'
+                my $cursor_pos = $msg<content><cursor_pos>;
+                my (Int $cursor_start, Int $cursor_end, $completions)
+                    = $sandbox.completions($code,$cursor_pos);
+                if $completions and $completions.chars {
+                    $shell.send: 'complete_reply',
+                      { matches => $completions,
+                        :$cursor_end,
+                        :$cursor_start,
+                        metadata => {},
+                        status => 'ok'
+                      }
                   }
             }
             when 'shutdown_request' {

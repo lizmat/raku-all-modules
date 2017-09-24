@@ -69,6 +69,19 @@ Or make a handy shell alias:
 alias iperl6='jupyter-console --kernel=perl6'
 ```
 
+### Features
+
+* Autocompletion.  Typing `[tab]` in the client will send an autocomplete request.  Possible autocompletions are:
+
+  * methods: after a `.` the invocant will be evaluated to find methods
+
+  * set operators: after a `(`, set operators (unicode and texas) will be shown
+
+  * equality/inequality operators: after `=`, `<`, or `>`, related operators will be shown
+
+  * autocompleting `*` or `/` will give `×` or `÷` respectively
+
+
 Docker
 -------
 
@@ -84,6 +97,8 @@ example notebooks:
 
 *  [Generating an SVG](eg/svg.ipynb).
 
+*  [Some unicodey math examples](http://nbviewer.jupyter.org/github/bduggan/p6-jupyter-kernel/blob/master/eg/math.ipynb)
+
 SEE ALSO
 --------
 https://hub.docker.com/r/sumdoc/perl-6-notebook/
@@ -96,8 +111,6 @@ KNOWN ISSUES
 
 * Newly declared methods might not be available in autocompletion unless SPESH is disabled (see tests in [this PR](https://github.com/bduggan/p6-jupyter-kernel/pull/11)).
 
-* More work needs to be done on autocompletion.
-
 THANKS
 --------
 Suman Khanal
@@ -105,4 +118,3 @@ Suman Khanal
 Matt Oates
 
 Timo Paulssen
-
