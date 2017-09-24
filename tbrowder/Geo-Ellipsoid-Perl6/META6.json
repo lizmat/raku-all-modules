@@ -1,0 +1,24 @@
+{
+    "perl" : "6.c",
+    "name" : "Geo::Ellipsoid",
+    "version" : "0.1.0",
+    "description" : "Accurate latitude/longitude calculations",
+    "authors" : [ "Tom Browder <tom.browder@gmail.com> (translator Perl 5 to Perl 6, current maintainer)",
+                  "Jim Gibson (CPAN Perl 5 author, v1.12)"
+		],
+    "license"     : "Artistic-2.0",
+    "source-type" : "git",
+    "source-url" : "git://github.com/tbrowder/Geo-Ellipsoid-Perl6.git",
+    "support"     : {
+        "bugtracker" : "https://github.com/tbrowder/Geo-Ellipsoid-Perl6/issues"
+    },
+    "provides" : {
+	"Geo::Ellipsoid"        : "lib/Geo/Ellipsoid.pm6",
+	"Geo::Ellipsoid::Utils" : "lib/Geo/Ellipsoid/Utils.pm6"
+    },
+    "test-depends"     : [
+	"Test::META"
+    ],
+    "resources" : [
+    ]
+}

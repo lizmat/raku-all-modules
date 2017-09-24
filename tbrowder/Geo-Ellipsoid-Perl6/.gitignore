@@ -1,0 +1,7 @@
+*~
+lib/.precomp
+release-tool.p6
+.precomp
+test/diff.log
+test/res.txt .log
+test/res.txt

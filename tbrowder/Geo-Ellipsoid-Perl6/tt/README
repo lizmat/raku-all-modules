@@ -1,0 +1,3 @@
+These are the tests from the original Geo::Ellipsoid module from CPAN.
+
+They are used for comparison to the Perl 6 version's test results.

@@ -1,0 +1,43 @@
+=begin pod
+
+There are some differences between test functions in Perl 5's
+"Test::Number::Delta: and Perl 6's "Test" modules.
+
+As used in the Perl 5 version for testing Geo::Ellipsoid:
+
+1.  # Equality test with default tolerance [absolute]
+    delta_ok( 1e-5, 2e-5, 'values within 1e-6');
+
+2.  # Provide specific tolerance [absolute]
+    delta_within( 1e-3, 2e-3, 1e-4, 'values within 1e-4');
+
+3.  # Set a different default tolerance [absolute]
+    use Test::Number::Delta within => 1e-5;
+    delta_ok( 1.1e-5, 2e-5, 'values within 1e-5'); # ok
+
+4.  # Set a relative tolerance [relative]
+    use Test::Number::Delta relative => 1e-3;
+    delta_ok( 1.01, 1.0099, 'values within 1.01e-3');
+
+Those translate to the Perl 6 versions:
+
+1.  # Equality test with default tolerance [absolute]
+    # delta_ok
+    my $abs-tol = 1e-6;
+    is-approx($got, $expected, :$abs-tol) # default tolerance: 1e-6
+
+2.  # Provide specific tolerance [absolute]
+    # delta_within
+    is-approx($got, $expected, :abs-tol<1e-6>)
+
+3.  # Set a different default tolerance [absolute]
+    # delta_ok
+    my $abs-tol = 1e-6;
+    is-approx($got, $expected, :$abs-tol)
+
+4.  # Set a relative tolerance [relative]
+    # delta_ok
+    my $rel-tol = 1e-6;
+    is-approx($got, $expected, :$rel-tol)
+
+=end pod
