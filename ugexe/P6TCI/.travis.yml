@@ -15,6 +15,11 @@ matrix:
 
 sudo: false
 
+addons:
+    apt:
+        packages:
+            - oracle-java8-installer
+
 before_install:
     # Install Rakudo
     - 'if [[ $BACKEND == "moar" ]]; then export VM_OPTS="--gen-moar"; fi'
