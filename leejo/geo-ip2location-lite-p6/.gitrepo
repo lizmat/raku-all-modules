@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/leejo/geo-ip2location-lite-p6.git
 	branch = master
-	commit = aba66c7c069b507d276cf0dd69bb6d122173645c
-	parent = adf53c66d3bf9b0e9036308c611562ba419b670c
+	commit = 377589ba1202c7c33fa8ed422450256544730284
+	parent = 3c34cd949fff5e25d2aa22296895e6855672f497
 	cmdver = 0.4.0
