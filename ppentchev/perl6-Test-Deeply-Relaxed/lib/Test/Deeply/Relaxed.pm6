@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-unit module Test::Deeply::Relaxed:ver<0.1.1.dev1>:auth<github:ppentchev>;
+unit module Test::Deeply::Relaxed:ver<0.1.1>:auth<github:ppentchev>;
 
 use v6.c;
 
@@ -18,7 +18,7 @@ sub check-deeply-relaxed($got, $expected, Bool:D :$cache) returns Bool:D
 	given $expected {
 		when Baggy {
 			return False unless $got ~~ Baggy;
-			return $got ≼ $expected && $got ≽ $expected;
+			return $got ⊆ $expected && $got ⊇ $expected;
 		}
 
 		when Setty {
@@ -180,7 +180,7 @@ Peter Pentchev <L<roam@ringlet.net|mailto:roam@ringlet.net>>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2016  Peter Pentchev
+Copyright (C) 2016, 2017  Peter Pentchev
 
 =head1 LICENSE
 

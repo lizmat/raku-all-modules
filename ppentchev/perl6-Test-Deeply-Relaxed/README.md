@@ -46,11 +46,15 @@ FUNCTIONS
 
     If the `:cache` flag is specified, the cache of values will be used for any iterable objects that support it. This allows the caller to later examine the sequences further.
 
+    Current API available since version 0.1.0.
+
   * sub isnt-deeply-relaxed
 
         sub isnt-deeply-relaxed($got, $expected, $name = Str, Bool:D :$cache = False)
 
     The opposite of `is-deeply-relaxed()` - fail if the two structures are loosely the same.
+
+    Current API available since version 0.1.0.
 
 AUTHOR
 ======
@@ -60,7 +64,7 @@ Peter Pentchev <[roam@ringlet.net](mailto:roam@ringlet.net)>
 COPYRIGHT
 =========
 
-Copyright (C) 2016 Peter Pentchev
+Copyright (C) 2016, 2017 Peter Pentchev
 
 LICENSE
 =======

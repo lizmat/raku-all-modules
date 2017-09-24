@@ -1,7 +1,8 @@
 {
   "perl": "6.c",
   "name": "Test::Deeply::Relaxed",
-  "version": "0.1.1.dev1",
+  "license" : "Artistic-2.0",
+  "version": "0.1.1",
   "description": "Compare two complex data structures loosely",
   "authors": [ "Peter Pentchev" ],
   "provides": {
