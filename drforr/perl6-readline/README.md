@@ -16,19 +16,16 @@ To install libreadline5 on Debian for example, please use the following command:
 	sudo apt-get install libreadline5
 ```
 
-* Using panda (a module management tool bundled with Rakudo Star):
+* Using zef (a module management tool bundled with Rakudo Star):
 
 ```
-    panda update && panda install Readline
+    zef update && zef install Readline
 ```
 
-* Using ufo (a project Makefile creation script bundled with Rakudo Star) and make:
+Or alternatively installing it from a checkout of this repo with zef:
 
 ```
-    ufo                    
-    make
-    make test
-    make install
+    zef install .
 ```
 
 ## Testing

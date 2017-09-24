@@ -6,6 +6,5 @@ before_install:
 perl6:
   - latest
 install:
-  - rakudobrew build-panda
-  - panda installdeps .
-  - panda installdeps .
+  - rakudobrew build zef
+  - zef install .
