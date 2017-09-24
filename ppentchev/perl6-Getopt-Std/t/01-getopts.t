@@ -30,44 +30,48 @@ class TestCase
 
 sub test-getopts(TestCase:D $t)
 {
-	sub run-test(Bool:D $res, %res-opts, @res-args, Bool:D :$all,
+	sub run-test(Bool:D $res, %res-opts, @res-args,
 	    Bool:D :$permute, Bool:D :$unknown)
 	{
-		my Str:D $test = "$t.name() [all: $all permute: $permute unknown: $unknown]";
-		my Str:D @test-args = $t.args;
-		my %test-opts = $t.opts;
-		try getopts($t.optstring, %test-opts, @test-args,
-		    :$all, :$permute, :$unknown);
-		my Bool:D $result = !$!;
-		my Bool:D $exp-res = $res || $unknown;
-		is $result, $exp-res, "$test: " ~ ($exp-res?? 'succeeds'!! 'fails');
-		if !$result {
-			skip "$test failed, not testing options or arguments", 2;
-			return;
+		sub do-run-test(Str:D $test, $func, %exp-opts)
+		{
+			my Str:D @test-args = $t.args;
+			my $test-opts = try $func($t.optstring, @test-args,
+			    :$permute, :$unknown);
+			my Bool:D $result = !$!;
+			my Bool:D $exp-res = $res || $unknown;
+			is $result, $exp-res, "$test: " ~ ($exp-res?? 'succeeds'!! 'fails');
+			if !$result {
+				skip "$test failed, not testing options or arguments", 2;
+				return;
+			}
+			is-deeply-relaxed $test-opts, %exp-opts, "$test: stores the expected options";
+			is-deeply-relaxed @test-args, @res-args, "$test: leaves the expected arguments";
 		}
 
-		my %exp-opts = $all?? %res-opts!!
-			$t.optstring.comb(/ . ':'? /).flatmap(-> $opt {
-				my Bool:D $arg = $opt.chars > 1;
-				my Str:D $char = $arg?? $opt.substr(0, 1)!! $opt;
-				my $exp = %res-opts{$char};
-				$exp.defined??
-					($char => $arg?? $exp[* - 1]!! $exp.join(''),)!!
-					()
-			});
-		is-deeply-relaxed %test-opts, %exp-opts, "$test: stores the expected options";
-		is-deeply-relaxed @test-args, @res-args, "$test: leaves the expected arguments";
+		do-run-test "$t.name() [all: True permute: $permute unknown: $unknown]",
+		    &getopts-all, %res-opts;
+		return if $unknown;
+
+		my %exp-opts = $t.optstring.comb(/ . ':'? /).flatmap(-> $opt {
+			my Bool:D $arg = $opt.chars > 1;
+			my Str:D $char = $arg?? $opt.substr(0, 1)!! $opt;
+			my $exp = %res-opts{$char};
+			$exp.defined??
+				($char => $arg?? $exp[* - 1]!! $exp.join(''),)!!
+				()
+		});
+		do-run-test "$t.name() [all: False permute: $permute unknown: $unknown]",
+		    &getopts, %exp-opts;
 	}
 
-	for (False, True) -> $all {
-		run-test $t.res, $t.res-opts, $t.res-args,
-		    :$all, :!permute, :!unknown;
-		run-test $t.permute-res, $t.permute-opts, $t.permute-args,
-		    :$all, :permute, :!unknown;
+	run-test $t.res, $t.res-opts, $t.res-args,
+	    :!permute, :!unknown;
+	run-test $t.permute-res, $t.permute-opts, $t.permute-args,
+	    :permute, :!unknown;
 
-		run-test $t.res, $t.unknown-opts, $t.unknown-args,
-		    :$all, :!permute, :unknown if $t.unknown-opts && $all;
-	}
+	run-test $t.res, $t.unknown-opts, $t.unknown-args,
+	    :!permute, :unknown if $t.unknown-opts;
 }
 
 my @tests = (

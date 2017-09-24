@@ -1,7 +1,8 @@
 {
   "perl": "6.c",
   "name": "Getopt::Std",
-  "version": "1.0.0.dev1",
+  "license" : "Artistic-2.0",
+  "version": "1.0.0",
   "description": "Process single-character options with option clustering",
   "authors": [ "Peter Pentchev" ],
   "provides": {

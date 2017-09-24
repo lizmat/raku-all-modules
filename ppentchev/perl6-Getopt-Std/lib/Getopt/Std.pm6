@@ -2,7 +2,7 @@
 
 use v6.c;
 
-unit module Getopt::Std:ver<1.0.0.dev1>:auth<github:ppentchev>;
+unit module Getopt::Std:ver<1.0.0>:auth<github:ppentchev>;
 
 class X::Getopt::Std is Exception
 {
@@ -58,25 +58,26 @@ sub getopts-parse-optstring(Str:D $optstr) returns Hash[Bool:D]
 	return $m.made;
 }
 
-sub getopts-collapse-array(Bool:D %defs, %opts)
+sub getopts-collapse-array(Bool:D %defs, Hash[Array[Str:D]] $opts) returns Hash[Str:D]
 {
-	for %opts.kv -> $opt, $value {
-		%opts{$opt} = %defs{$opt} || $opt eq chr(1)
+	Hash[Str:D].new($opts.map(-> $pair {
+		my ($opt, $value) = $pair.kv;
+		$opt => %defs{$opt} || $opt eq chr(1)
 		    ?? $value[* - 1]
-		    !! $value.join('');
-	}
+		    !! $value.join('')
+	}))
 }
 
-sub getopts(Str:D $optstr, %opts, @args, Bool :$all, Bool :$nonopts,
-    Bool :$permute, Bool :$unknown) is export
+sub getopts-all(Str:D $optstr, @args, Bool :$nonopts,
+    Bool :$permute, Bool :$unknown) returns Hash[Array[Str:D]] is export
 {
 	xdie 'No options defined' if $optstr eq '' && !$nonopts && !$unknown;
 	my Bool:D %defs = getopts-parse-optstring($optstr);
 
 	my Str:D @restore;
 	my Bool:D $result = True;
-	%opts = ();
-	%opts{$_.key}.push($_.value) for gather {
+	my Hash[Array[Str:D]] $opts .= new;
+	$opts{$_.key}.push($_.value) for gather {
 		while @args {
 			my $x = @args.shift;
 			if $x eq '--' {
@@ -116,11 +117,18 @@ sub getopts(Str:D $optstr, %opts, @args, Bool :$all, Bool :$nonopts,
 
 	if $nonopts {
 		xdie "getopts() internal error: arguments left with nonopts: @args.perl()" if @args;
-		%opts{chr(1)} = @restore.clone;
+		$opts{chr(1)} = @restore.clone;
 	} else {
 		@args.unshift(|@restore);
 	}
-	getopts-collapse-array %defs, %opts unless $all;
+	Hash[Array[Str:D]].new($opts.keys.map(-> $key { $key => Array[Str:D].new(|$opts{$key}) }))
+}
+
+sub getopts(Str:D $optstr, @args, Bool :$nonopts,
+    Bool :$permute, Bool :$unknown) returns Hash[Str:D] is export
+{
+	my Bool:D %defs = getopts-parse-optstring($optstr);
+	getopts-collapse-array %defs, getopts-all $optstr, @args, :$nonopts, :$permute, :$unknown
 }
 
 =begin pod
@@ -154,7 +162,7 @@ Getopt::Std - Process single-character options with option clustering
     # - for options that don't, return the option name as many times
     #   as it was specified
 
-    my Array[Str:D] %opts = getopts('o:v', @*ARGS, :all);
+    my %opts = getopts-all('o:v', @*ARGS);
 
     $verbose_level = %opts<v>.elems;
 
@@ -162,7 +170,7 @@ Getopt::Std - Process single-character options with option clustering
         process_outfile $fname;
     }
 
-    # Permute usage (with both :all and :!all):
+    # Permute usage (with both getopts() and getopts-all()):
     # - don't stop at the first non-option argument, look for more
     #   arguments starting with a dash
     # - stop at an -- argument
@@ -173,8 +181,9 @@ Getopt::Std - Process single-character options with option clustering
 
 =head1 DESCRIPTION
 
-This module exports the C<getopts()> function for parsing command-line
-arguments similarly to the POSIX getopt(3) standard C library routine.
+This module exports the C<getopts()> and C<getopts-all()>> functions for
+parsing command-line arguments similarly to the POSIX getopt(3) standard
+C library routine.
 
 The options are single letters (no long options) preceded by a single
 dash character.  Options that do not accept arguments may be clustered
@@ -186,32 +195,27 @@ There is no equals character between an option and its argument; if one is
 supplied, it will be considered the first character of the argument.
 
 If an unrecognized option character is supplied in the arguments array,
-C<getopts()> will display an error message and return false.  Otherwise
-it will return true and fill in the C<%opts> hash with the options found
-in the arguments array.  The key in the C<%opts> array is the option name
-(e.g. C<h> or C<o>); the value is the option argument for options that
-accept one or the option name (as many times as it has been specified) for
-options that do not.
+C<getopts()> will throw an exception.  Otherwise it will return a hash with
+the options found in the arguments array.  The key in the returned hash is
+the option name (e.g. C<h> or C<o>); the value is the option argument for
+options that accept one or the option name (as many times as it has been
+specified) for options that do not.
 
 =head1 FUNCTIONS
 
 =begin item1
 sub getopts
 
-    sub getopts(Str:D $optstr, %opts, @args, Bool :$all, Bool :$nonopts,
-      Bool :$permute, Bool :$unknown)
+    sub getopts(Str:D $optstr, @args, Bool :$nonopts,
+        Bool :$permute, Bool :$unknown) returns Hash[Str:D]
 
 Look for the command-line options specified in C<$optstr> in the C<@args>
-array.  Record the options found into the C<%opts> hash, leave only
-the non-option arguments in the C<@args> array.
+array.  Return the options found in a hash, leave only the non-option
+arguments in the C<@args> array.
 
-The C<:all> flag controls the behavior in the case of the same option
-specified more than once.  Without it, options that take arguments have
-only the last argument recorded in the C<%opts> hash; with the C<:all>
-flag, all C<%opts> values are arrays containing all the specified
-arguments.  For example, the command line R<-vI foo -I bar -v>, matched
-against an option string of R<I:v>, would produce C<{ :I<bar> :v<vv> }>
-without C<:all> and C<{ :I(['foo', 'bar']) :v(['v', 'v']) }> with C<:all>.
+Note that if an option is specified more than once on the command line,
+C<getopts()> will only record the last argument in the returned hash;
+see also the C<getopts-all()> function below.
 
 The C<:permute> flag specifies whether option parsing should stop at
 the first non-option argument, or go on and process any other arguments
@@ -222,7 +226,7 @@ The C<:unknown> flag controls the handling of unknown options - ones not
 specified in the C<$optstr>, but present in the C<@args>.  If it is
 false (the default), C<getopts()> will throw an exception;
 otherwise, the unknown option character will be present in
-the result C<%opts> as an argument to a C<:> option and C<getopts()> will
+the returned hash as an argument to a C<:> option and C<getopts()> will
 still succeed.  This is similar to the behavior of some C<getopt(3)>
 implementations if C<$optstr> starts with a C<:> character.
 
@@ -239,13 +243,31 @@ specified or an unknown option has been found in the arguments array.
 Current API available since version 1.0.0.
 =end item1
 
+=begin item1
+sub getopts-all
+
+    sub getopts-all(Str:D $optstr, @args, Bool :$nonopts,
+        Bool :$permute, Bool :$unknown) returns Hash[Array[Str:D]]
+
+Same as the C<getopts()> function, but all the returned values are
+arrays containing all the specified arguments if any options have been
+specified more than once.
+
+For example, the command line R<-vI foo -I bar -v>, matched
+against an option string of R<I:v>, would produce C<{ :I<bar> :v<vv> }>
+with C<getopts()> and C<{ :I(['foo', 'bar']) :v(['v', 'v']) }> with
+C<getopts-all()>.
+
+Current API available since version 1.0.0.
+=end item1
+
 =head1 AUTHOR
 
 Peter Pentchev <L<roam@ringlet.net|mailto:roam@ringlet.net>>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2016  Peter Pentchev
+Copyright (C) 2016, 2017  Peter Pentchev
 
 =head1 LICENSE
 
