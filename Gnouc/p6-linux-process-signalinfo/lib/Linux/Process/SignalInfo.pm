@@ -13,13 +13,12 @@ class Linux::Process::SignalInfo:ver<v0.0.2>:auth<github:Gnouc> {
     has %!signal_data;
     has Str $.error is rw = '';
 
-    method !is_bit_set($mask, $n) returns Bool {
-        return ($mask +& (1 +< ($n - 1))).Bool;
+    method !is_bit_set($mask, $n --> Bool) {
+        ($mask +& (1 +< ($n - 1))).Bool;
     }
 
     method read() {
         for $.pid.fmt('/proc/%d/status').IO.lines -> $line {
-            last if $line eq '';
             my ($type, $value) = $line.split(':');
             if %SIGNAL_ACTION{$type}:exists {
                 %!signal_info{$type} = Int('0x' ~ $value.trim);
@@ -31,7 +30,7 @@ class Linux::Process::SignalInfo:ver<v0.0.2>:auth<github:Gnouc> {
             }
         }
 
-        return %!signal_info;
+        %!signal_info;
     }
 
     method parse() {
@@ -43,13 +42,12 @@ class Linux::Process::SignalInfo:ver<v0.0.2>:auth<github:Gnouc> {
                 %!signal_data{$action}.push($signal);
             }
         }
-        return %!signal_data;
+        %!signal_data;
     }
 
     method pprint() {
         for %!signal_data.kv -> $k, $v {
             "%SIGNAL_ACTION{$k}: $v.gist()".say;
         }
-        return;
     }
 }
