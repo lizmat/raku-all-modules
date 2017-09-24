@@ -1,13 +1,22 @@
 # ensure existence by PID taken from /var/run/nginx.pid
 
-package-install ('epel-release', 'nginx');
+if target_os() ~~ m/centos/ {
+  package-install ('epel-release', 'nginx');
+} else {
+  package-install ('nginx');
+}
+
 
 service-start('nginx');
  
 proc-exists 'nginx';
 
 # ensure existence by footprint
-proc-exists-by-footprint 'nginx', 'nginx.*master';
+if target_os() ~~ m/minoca/ {
+  proc-exists-by-footprint 'nginx', 'nginx';
+} else {
+  proc-exists-by-footprint 'nginx', 'nginx.*master';
+}
 
 # ensure existence by footprint
 proc-exists-by-pid 'nginx', '/var/run/nginx.pid';

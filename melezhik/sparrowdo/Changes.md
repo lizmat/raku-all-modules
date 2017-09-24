@@ -1,3 +1,7 @@
+# 0.0.30 2017-09-21
+
+- Minoca OS bootstrap support 
+
 # 0.0.29 2017-09-13
 
 - Archlinux bootstrap impoved, thanks to @Spigell (https://github.com/melezhik/sparrowdo/pull/10 , https://github.com/melezhik/sparrowdo/pull/11 )

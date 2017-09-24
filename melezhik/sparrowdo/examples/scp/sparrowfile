@@ -1,6 +1,10 @@
 package-install "openssh-server";
 
-service-start "sshd";
+if target_os() ~~ m/ubuntu/ {
+  service-start "ssh";
+} else {
+  service-start "sshd";
+}
 
 my $key = "/root/.ssh/id_rsa";
 

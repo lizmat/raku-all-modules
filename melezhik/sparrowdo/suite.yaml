@@ -1,18 +1,37 @@
-case: 
-  - cpan
-  - directory
-  - group
-  - packages
-  - service
-  - user
-  - files
-  - templates
-  - bash
-  - task_run_short
-  - ssh
-  - scp
-  - copy-local-file
-  - asserts
-  - git
-  - hostname
+case:
+  default: 
+    - cpan
+    - directory
+    - group
+    - packages
+    - service
+    - user
+    - files
+    - templates
+    - bash
+    - task_run_short
+    - ssh
+    - scp
+    - copy-local-file
+    - asserts
+    - git
+    - hostname
+  minoca:
+    - hostname
+    - cpan
+    - directory
+    - group
+    - packages
+    - service
+    - user
+    - files
+    - templates
+    - bash
+    - copy-local-file
+    - asserts
+    - git
 
+sparrowdo:
+  options: 
+    default: "--no_sudo --local_mode --format=production"
+    minoca: "--no_sudo --host=127.0.0.1 --ssh_user=root --ssh_port=2222 --format=production"

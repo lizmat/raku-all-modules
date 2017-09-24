@@ -1,13 +1,18 @@
 use List::Util 'shuffle';
 
+my $flavor = $ENV{flavor} || 'default';
+
 my $case = config()->{case};
 
-if ( ref $case eq 'ARRAY'){
-  for my $c (shuffle(@$case)){
-    run_story('case' , { case => $c });
+my $sparrowdo_options = config()->{sparrowdo}->{options}->{$flavor};
+
+if ( ref $case eq 'HASH'){
+  my @case = @{$case->{$flavor}};
+  for my $c (shuffle(@case)){
+    run_story('case' , { case => $c , sparrowdo_options => $sparrowdo_options });
   }
 }else{
-  run_story('case' , { case => $case });
+  run_story('case' , { case => $case , sparrowdo_options => $sparrowdo_options });
 }
 
 my @s;

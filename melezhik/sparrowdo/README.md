@@ -195,6 +195,11 @@ Prints brief usage info.
 
 Sets the remote host's IP address or hostname. This is mandatory parameter. Default value is `127.0.0.1`.
 
+## --docker
+
+Sets the name of running docker container, use this if you want to run sparrow tasks against docker.
+
+
 ## --sparrowfile
 
 Alternative location of sparrowfile. 

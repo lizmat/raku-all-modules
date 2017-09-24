@@ -1,4 +1,9 @@
-package-install ('epel-release', 'nginx');
+
+if target_os() ~~ m/centos/ {
+  package-install ('epel-release', 'nginx');
+} else {
+  package-install ('nginx');
+}
 
 service-enable 'nginx';
 

@@ -26,4 +26,4 @@ bash 'echo $FOO; echo $BAR', %(
 
 bash "pwd", %( description => "use this description for bash command" );
 
-bash "uptime", %( description => "uptime - a very very very very very very very very very very very very very veryvery very very very very very very very very very very very very very very very very very very very very very very very very very very very LONG description" );
+bash "ls -l", %( description => " this is a very very very very very very very very very very very very very veryvery very very very very very very very very very very very very very very very very very very very very very very very very very very very LONG description" );

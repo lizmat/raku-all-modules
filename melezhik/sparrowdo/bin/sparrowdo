@@ -37,6 +37,7 @@ sub MAIN (
   Str  :$sparrow_root = '/opt/sparrow', 
   Str  :$repo,
   Bool :$local_mode = False,
+  Str  :$docker,
   Str  :$cwd, 
   Str  :$format, 
 )
@@ -69,6 +70,7 @@ sub MAIN (
   set_input_params %(  
     Host => $host, 
     Sparrowfile => $sparrowfile,
+    Docker    => $docker,
     LocalMode => $local_mode,
     Cwd => $cwd, 
     HttpProxy => $http_proxy, 
@@ -103,8 +105,12 @@ sub MAIN (
   'running sparrow tasks on ' ~ $host ~ ' ... ' !!
   colored( 'running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
 
-
-  _scp "$sparrow_root/sparrow-cache/*.txt", "$sparrowdo-cache/", 1, 1; # copy back a target host data back to master host 
+  if $docker {
+    _scp "$sparrow_root/sparrow-cache/", "$sparrowdo-cache/", 1, 1; # copy back a target host data back to master host 
+    
+  } else {
+    _scp "$sparrow_root/sparrow-cache/*.txt", "$sparrowdo-cache/", 1, 1; # copy back a target host data back to master host 
+  }
 
   set_target_os slurp "$sparrowdo-cache/os.txt";
   set_target_hostname slurp "$sparrowdo-cache/hostname.txt";
@@ -211,8 +217,23 @@ sub ssh_shell ( $cmd ) {
 
   my $ssh_cmd;
 
-  if ! input_params('LocalMode') {
+  if input_params('LocalMode') {
 
+      $ssh_cmd = ( input_params('NoSudo') ) ?? "bash -c '" !! "sudo bash -c '"; 
+      $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'";
+
+  } elsif input_params('Docker') {
+
+      $ssh_cmd = "docker exec -it " ~ input_params('Docker') ~ ' ';
+
+      if input_params('NoSudo') {
+        $ssh_cmd ~= "bash -c '" ~ ( join ' ; ', @bash_commands ) ~ "'";
+      } else {
+        $ssh_cmd ~= "sudo bash -c '" ~ ( join ' ; ', @bash_commands ) ~ "'";
+      }
+ 
+  } else {
+  
     my $ssh_host_term = input_params('Host');
   
     $ssh_host_term = input_params('SshUser') ~ '@' ~ $ssh_host_term if input_params('SshUser');
@@ -232,12 +253,6 @@ sub ssh_shell ( $cmd ) {
     $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'\"";
   
     $ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
-  
-  } else {
-
-    $ssh_cmd = ( input_params('NoSudo') ) ?? "bash -c '" !! "sudo bash -c '"; 
-
-    $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'";
   
   }
 
@@ -267,7 +282,27 @@ our sub _scp ( $file, $dest, $reverse = 0, $recursive = 0 ) {
 
   my $scp_command;
 
-  if ! input_params('LocalMode') {
+  if ( input_params('LocalMode') ) {
+
+    $scp_command = 'cp';
+  
+    if $reverse {
+      $scp_command ~= ' ' ~ $file ~ ' ' ~ $dest ;
+    } else {
+      $scp_command ~= ' ' ~ $file ~ ' ' ~ $dest;
+    }
+
+  } elsif ( input_params('Docker') ) {
+
+    $scp_command = "docker cp ";
+
+    if $reverse {
+      $scp_command ~= input_params('Docker') ~ ':' ~ $file ~ ' ' ~ $dest;
+    } else {
+      $scp_command ~= $file ~  ' ' ~ input_params('Docker') ~ ':' ~ $dest;
+    }
+
+  } else {
 
     my $scp_params = ' -P ' ~ input_params('SshPort');
   
@@ -284,16 +319,7 @@ our sub _scp ( $file, $dest, $reverse = 0, $recursive = 0 ) {
     } else {
       $scp_command ~= ' ' ~ $file ~ ' ' ~ $ssh_host_term ~ ':' ~ $dest;
     }
-  } else {
-
-    $scp_command = 'cp';
-  
-    if $reverse {
-      $scp_command ~= ' '~ $file ~ ' ' ~ $dest ;
-    } else {
-      $scp_command ~= ' ' ~ $file ~ ' ' ~ $dest;
-    }
-  }
+  } 
 
   say ( input_params('NoColor') ??
   $scp_command !!
@@ -324,6 +350,8 @@ if [[ $os =~ "debian" ]]; then
   echo bootstrap for debian
 
   DEBIAN_FRONTEND=noninteractive
+
+  apt-get update
 
   if ! which curl 2>/dev/null; then
      apt-get install -y -qq curl
@@ -481,6 +509,8 @@ elif [[ "$os" =~ "ubuntu" ]]; then
   echo bootstrap for ubuntu
 
   DEBIAN_FRONTEND=noninteractive
+
+  apt-get update
 
   if ! which curl 2>/dev/null; then
      apt-get install -y -qq curl
