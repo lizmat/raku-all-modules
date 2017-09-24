@@ -1,0 +1,8 @@
++ add a way to insert a text file for one of the headings:
+
+  probable use: add a usage statement into the SYNOPSIS section in place of the usage statement
+
++ encourage more detailed 'description' entries.
+
++ address #ugexe concerns about checking for unsafe chars, disambiguating different versions and authors, etc.
+
