@@ -168,6 +168,11 @@ An assumption is made that ssh user you run `sparrowdo` with ( see --ssh_user co
 * ssh passwordless access on the remote host
 * sudo (passwordless?) rights on remote host
 
+***NOTE!***
+
+You can use password authentication with --password command line parameter or ( more preferred ) via shell environment `SSHPASS`. See info for `--password` parameter below.
+   
+
 # Advanced usage
 
 ## Running private plugins
@@ -219,6 +224,14 @@ Sets https\_proxy environment variable on the remote host.
 ## --ssh\_user
 
 Sets user for the ssh connection to the remote host.
+
+## --password
+
+Your password for authentication to the remote host. Also you can use shell environment variable `SSHPASS`, e.g:
+
+    $ export SSHPASS=12345; sparrowdo ...
+
+You must install `sshpass` to use this feature.
 
 ## --ssh\_private\_key
 
@@ -488,6 +501,7 @@ This is the list of arguments valid for the input\_params function:
     Cwd
     LocalMode
     SparrowhubApi
+    Password
 
 See also the [sparrowdo client command line parameters](#sparrowdo-client-command-line-parameters) section.
 

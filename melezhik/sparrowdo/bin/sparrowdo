@@ -37,6 +37,7 @@ sub MAIN (
   Str  :$sparrow_root = '/opt/sparrow', 
   Str  :$repo,
   Bool :$local_mode = False,
+  Str  :$password,
   Str  :$docker,
   Str  :$cwd, 
   Str  :$format, 
@@ -47,6 +48,9 @@ sub MAIN (
   # read config if exists
 
   my $sparrowdo-cache = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/.sparrowdo/' ~ $sparrow_root !! '/.sparrowdo';
+
+  shell "rm -rf $sparrowdo-cache/";
+
   mkdir "$sparrowdo-cache/plugins";
 
   my $conf-ini-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini' !! ( $sparrow_root ~ '/sparrowdo.ini' );
@@ -85,9 +89,9 @@ sub MAIN (
     NoIndexUpdate => $no_index_update_val,
     SparrowRoot => $sparrow_root,
     Repo => $repo_val,
-    SparrowhubApi => $conf-ini<sparrowdo><sparrowhub_api>
+    SparrowhubApi => $conf-ini<sparrowdo><sparrowhub_api>,
+    Password => $password
   );
-
 
   ssh_shell "rm -rf $sparrow_root/sparrowdo-cache && mkdir -m 777 -p $sparrow_root/sparrowdo-cache";
 
@@ -106,7 +110,9 @@ sub MAIN (
   colored( 'running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
 
   if $docker {
-    _scp "$sparrow_root/sparrow-cache/", "$sparrowdo-cache/", 1, 1; # copy back a target host data back to master host 
+
+    _scp "$sparrow_root/sparrow-cache/os.txt", "$sparrowdo-cache/", 1; # copy back a target host data back to master host 
+    _scp "$sparrow_root/sparrow-cache/hostname.txt", "$sparrowdo-cache/", 1; # copy back a target host data back to master host 
     
   } else {
     _scp "$sparrow_root/sparrow-cache/*.txt", "$sparrowdo-cache/", 1, 1; # copy back a target host data back to master host 
@@ -234,22 +240,31 @@ sub ssh_shell ( $cmd ) {
  
   } else {
   
-    my $ssh_host_term = input_params('Host');
-  
-    $ssh_host_term = input_params('SshUser') ~ '@' ~ $ssh_host_term if input_params('SshUser');
-  
-    $ssh_cmd  =  'ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
-  
+    if input_params('Password') {
+      $ssh_cmd = 'sshpass -p ' ~ input_params('Password');
+      $ssh_cmd ~= ' ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
+    } elsif %*ENV<SSHPASS> {
+      $ssh_cmd = 'sshpass -e ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
+    } else {
+      $ssh_cmd =  'ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
+    }
+
+    $ssh_cmd ~= ' -p ' ~ input_params('SshPort') if input_params('SshPort');
+
     $ssh_cmd ~= ' -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -tt';
   
     $ssh_cmd ~= ' -q' unless input_params('Verbose');
   
-    $ssh_cmd ~= ' -p ' ~ input_params('SshPort') ~ ' ' ~ $ssh_host_term;
-  
     $ssh_cmd ~= ' -i ' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
   
+    if input_params('SshUser') {
+      $ssh_cmd ~= ' ' ~ input_params('SshUser') ~ '@' ~ input_params('Host') ~ ' ';
+    } else {
+      $ssh_cmd ~= ' ' ~ input_params('Host') ~ ' ';
+    }
+
     $ssh_cmd ~= ( input_params('NoSudo') ) ?? " \"bash -c '" !! " \"sudo bash -c '"; 
-  
+
     $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'\"";
   
     $ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
@@ -276,9 +291,13 @@ our sub _copy-local-file ( $file, $dest ) {
 
 our sub _scp ( $file, $dest, $reverse = 0, $recursive = 0 ) {
 
-  my $ssh_host_term = input_params('Host');
+  my $ssh_host_term;
 
-  $ssh_host_term = input_params('SshUser') ~ '@' ~ $ssh_host_term if input_params('SshUser');
+  if input_params('SshUser') {
+    $ssh_host_term = input_params('SshUser') ~ '@' ~ input_params('Host');
+  } else {
+    $ssh_host_term = input_params('Host');
+  }
 
   my $scp_command;
 
@@ -312,8 +331,17 @@ our sub _scp ( $file, $dest, $reverse = 0, $recursive = 0 ) {
 
     $scp_params ~= ' -r ' if $recursive;
   
-    $scp_command = 'scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
-  
+
+    if input_params('Password') {
+      $scp_command = 'sshpass -p ' ~ input_params('Password') ~ ' ';
+      $scp_command ~= 'scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
+    }  elsif %*ENV<SSHPASS> {
+      $scp_command = 'sshpass -e';
+      $scp_command ~= ' scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
+    } else {
+      $scp_command = 'scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
+    }
+
     if $reverse {
       $scp_command ~= ' ' ~ $ssh_host_term ~ ':' ~ $file ~ ' ' ~ $dest ;
     } else {
