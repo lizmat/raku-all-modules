@@ -79,6 +79,8 @@ module Cro::HTTP::Router {
                         whenever start ($req.path eq '/' ??
                                         implementation() !!
                                         implementation(|$arg-capture)) {
+                            # No Content is default
+                            $response.status //= 204;
                             emit $response;
 
                             QUIT {
