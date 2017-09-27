@@ -9,8 +9,8 @@ use Cro::HTTP::Server;
 
 The server hosts an application, which is something that transforms a
 `Cro::HTTP::Request` instance representing the request into a
-`Cro::HTTP::Resposne` instance representing the response. While it's possible
-to write that "by hand", it is far more convenient to use the HTTP router.
+`Cro::HTTP::Response` instance representing the response. While it's possible
+to write that "by hand," it is far more convenient to use the HTTP router.
 
 ```
 use Cro::HTTP::Router;
