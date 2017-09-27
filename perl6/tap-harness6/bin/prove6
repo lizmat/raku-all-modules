@@ -21,7 +21,7 @@ multi sub MAIN(
 	Bool :l($lib), Bool :b($blib), Bool :$timer = False, Int :j($jobs) = 1,
 	Bool :$ignore-exit = False, Bool :$trap = False, Bool :v($verbose) = False,
 	Bool :$shuffle = False, Str :$err = 'stderr', Bool :$reverse = False,
-	Str :e($exec), Str :$harness, Str :$reporter, :I($incdir),
+	Str :e($exec), Str :$harness, Str :$reporter, :I($incdir), Bool :$loose = False,
 	*@files) {
 	@files = 't' if not @files;
 	die "Invalid value '$err' for --err\n" if $err ne any('stderr','merge','ignore');
@@ -45,7 +45,8 @@ multi sub MAIN(
 	my @sources = @files.map(*.IO).flatmap(&listall);
 	@sources = $shuffle ?? @sources.pick(*) !! @sources.sort;
 	@sources = @sources.reverse if $reverse;
-	my $run = $harness-class.new(:$jobs, :$timer, :$ignore-exit, :$err, |%more).run(@sources);
+	my %args = :$jobs, :$timer, :$ignore-exit, :$err, :$loose, |%more;
+	my $run = $harness-class.new(|%args).run(@sources);
 	exit min($run.result.has-errors, 254);
 }
 
