@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/frithnanth/perl6-Desktop-Notify
 	branch = master
-	commit = 64f05221268685119a0b7dbbc20b1d8eb1d97608
-	parent = a61667f9afbb65ed700798297bed78812590177d
+	commit = f1508b0b580ac8078e27bf8019ba020f98846368
+	parent = 5e69315951e390ef1df2efa1b2a1380d7b539ad9
 	cmdver = 0.4.0
