@@ -14,5 +14,5 @@
   "resources" : [ "libarchive.dll" ],
   "authors" : [ "Fernando Santagata" ],
   "license": "Artistic-2.0",
-  "source-url" : "git://github.com/frithnanth/perl6-Archive-Libarchive-Raw"
+  "source-url" : "git://github.com/frithnanth/perl6-Archive-Libarchive-Raw.git"
 }
