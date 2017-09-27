@@ -132,6 +132,7 @@ method write(Blob $b) {
 
 method get() {
     my $buf = buf8.new;
+    my $nl-bytes = $.input-line-separator.encode.bytes;
     loop {
         my $more = self.recv(1, :bin);
         if !$more {
@@ -139,9 +140,10 @@ method get() {
             return $buf.decode;
         }
         $buf ~= $more;
-        my $str = $buf.decode;
-        if $str && $str.index($.input-line-separator) {
-            return $str.substr(0, $str.chars - $.input-line-separator.chars);
+        next unless $buf.bytes >= $nl-bytes;
+
+        if $buf.subbuf($buf.bytes - $nl-bytes, $nl-bytes).decode('latin-1') eq $.input-line-separator {
+            return $buf.subbuf(0, $buf.bytes - $nl-bytes).decode;
         }
     }
 }
