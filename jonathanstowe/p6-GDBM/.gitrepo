@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/p6-GDBM.git
+	branch = master
+	commit = 0b6fd7c2c66e6c02d0063421bca9ad604f443d72
+	parent = 119990fbc313fa93db340c50fc925416909edf1b
+	cmdver = 0.4.0
