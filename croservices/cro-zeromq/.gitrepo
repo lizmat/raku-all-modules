@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/croservices/cro-zeromq.git
 	branch = master
-	commit = 0db37a04a856833b6c3206d095789e3db2f31ab6
-	parent = 14e9220cbbce2d636aa7a49f638a84c0043829c1
+	commit = f03987e53330a132c3f958150437bd7f4bbb77df
+	parent = d150b05dbfa4f8da7fc30a95eed9f335d7cb750d
 	cmdver = 0.4.0
