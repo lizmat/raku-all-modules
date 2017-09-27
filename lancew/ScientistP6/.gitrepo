@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/lancew/ScientistP6.git
+	branch = master
+	commit = a29cb982b9fa6bed087b2501202a19d476dcc019
+	parent = a678161aeb4e3fee952484c91afb79765afb3ba6
+	cmdver = 0.4.0
