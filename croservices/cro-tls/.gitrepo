@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/croservices/cro-tls.git
 	branch = master
-	commit = a3a07fcc65b4468c7a50d096de13cddc9136f94c
-	parent = e5ea2245aef95b8e3759710c31b96667024a16e2
+	commit = e090f2487e9a0ed1e6d752c55da8f9cda5ea2d7a
+	parent = 6850ff4fdefe7b044c2dda30ef77e5a60834c1ce
 	cmdver = 0.4.0
