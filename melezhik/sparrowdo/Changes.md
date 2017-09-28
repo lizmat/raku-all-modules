@@ -1,3 +1,10 @@
+# 0.0.31 2017-09-21
+
+- Ssh passwords support, acknowledges to @Spigell - https://github.com/melezhik/sparrowdo/pull/12
+- Minor fixes at sparrowdo cache method
+- Improvment of tests
+- bin/sparrowdo small refactoring
+
 # 0.0.30 2017-09-21
 
 - Minoca OS bootstrap support 
