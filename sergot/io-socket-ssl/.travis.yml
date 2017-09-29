@@ -5,5 +5,5 @@ install:
   - rakudobrew build-zef
   - zef --deps-only install .
 script:
-  - prove -v -e 'perl6 -I.' t/
+  - NETWORK_TESTING=1 prove -v -e 'perl6 -I.' t/
 sudo: false
