@@ -1,7 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "Text::More",
-    "version"     : "0.1.7",
+    "version"     : "0.1.8",
     "description" : "Provides some additional text functions and a utility program to create a markdown file of subroutine descriptions",
     "authors"     : [ "github:tbrowder" ],
     "license"     : "Artistic-2.0",

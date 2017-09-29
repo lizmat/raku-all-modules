@@ -1,3 +1,7 @@
+branches:
+    only:
+    - /.*/
+
 language: perl6
 
 perl6:
