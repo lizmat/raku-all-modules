@@ -38,7 +38,7 @@ grammar ABC::Grammar
     token grace_notes { '{' <acciaccatura>? <grace_note_stem>+ '}' }
     
     token long_gracing_text { [<alpha> | '.' | ')' | '(']+ }
-    token long_gracing { '+' <long_gracing_text> '+' }
+    token long_gracing { ['+' <long_gracing_text> '+'] | ['!' <long_gracing_text> '!'] }
     token gracing { '.' | '~' | <[ H .. Y ]> | <[ h .. w ]> | <long_gracing> }
     
     token spacing { \h+ }
