@@ -48,7 +48,7 @@ package Avro {
   #   constructors of reader and writer
   #======================================
 
-  enum Encoding is export <JSON Binary>; 
+  enum Encoding <JSON Binary>;
 
 
   #== Enum ==============================
@@ -56,7 +56,7 @@ package Avro {
   #   -- the codec, used by the writer
   #======================================
 
-  enum Codec is export <null deflate>;
+  enum Codec <null deflate>;
 
 
   #== Class =============================

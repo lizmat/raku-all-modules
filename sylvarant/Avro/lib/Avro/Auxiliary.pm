@@ -1,5 +1,6 @@
 use v6;
 use JSON::Tiny;
+use experimental :pack;
 
 package Avro {
 
@@ -99,11 +100,7 @@ package Avro {
     has Int $!size;
     has Buf $!stream;
 
-    multi method new(){
-      self.bless( blob => pack("") );
-    }
-
-    multi method new(Blob :$blob) {
+    multi method new(Blob :$blob = pack '') {
       self.bless( blob => $blob );
     }
 
@@ -111,7 +108,6 @@ package Avro {
       $!index = 0;
       $!stream = $blob;
       $!size = $!stream.elems();
-      CATCH { default { $!size = 0 } } #empty buffers become undefined?
     }
 
     method !resize() {
@@ -137,7 +133,6 @@ package Avro {
         }
       }
       $!size = $!stream.elems();
-      CATCH { default { $!size = 0 } } # same issue
     }
 
     method blob (--> Blob) {
