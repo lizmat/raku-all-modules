@@ -2,6 +2,8 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.37
+  * Removed Digest::MD5 in favor of OpenSSL::Digest after seeing strange errors.
 * 0.9.36
   * Remove native implementation of encode/decode int23/int64 because benchmarks show that it is slower that pure perl.
   * Fixed. In test 300-document.t it seems that a bug is found when handling a very large document. It is about encoding a double.

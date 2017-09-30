@@ -4,9 +4,9 @@ use v6.c;
 unit package BSON:auth<github:MARTIMM>;
 
 use BSON;
-use Digest::MD5;
+use OpenSSL::Digest;
 
-#-----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Information about object id construction can be found at
 # http://docs.mongodb.org/manual/reference/object-id/
 # Here it will be used when the argument to encode() is undefined.
@@ -23,14 +23,14 @@ class ObjectId {
   has Int $.pid;
   has Int $.count;
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   # A string of 24 hexadecimal characters.
   #
   multi submethod BUILD ( Str:D :$string! ) {
 
     die X::BSON.new(
       :type<ObjectId>, :operation('new()'),
-      :error<String too short or nonhexadecimal>
+      :error('String too short or nonhexadecimal')
     ) unless $string ~~ m/ ^ <xdigit>**24 $ /;
 
 
@@ -63,16 +63,15 @@ class ObjectId {
     );
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   # A buffer of 12 bytes
   #
   multi submethod BUILD ( Buf:D :$bytes ) {
 
     die X::BSON.new(
       :operation('new()'), :type('ObjectId'),
-      :error('Byte buffer too short or long')
+      :error('Byte buffer too short/long')
     ) unless $bytes.elems == 12;
-
 
     $!oid = $bytes;
 
@@ -83,6 +82,7 @@ class ObjectId {
         $!oid[4..6].list ==> map { $_.fmt('%02x') }
         ).join('').decode;
       CATCH {
+
         default {
           $!machine-id = 'No utf-8 encoded machine name';
         }
@@ -94,13 +94,13 @@ class ObjectId {
     $!count = :16( ($!oid[9..11].list ==> map { $_.fmt('%02x') }).join('') );
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   # Only given a machine name and a count
   # See also: http://docs.mongodb.org/manual/reference/object-id
   #
   multi submethod BUILD ( Str:D :$machine-name!, Int:D :$count! ) {
 
-    $!machine-id = Digest::MD5.md5_hex($machine-name).substr( 0, 6);
+    $!machine-id = md5($machine-name.encode)>>.fmt('%02x').join('').substr( 0, 6);
     $!time = time;
     $!pid = $*PID;
     $!count = $count;
@@ -108,13 +108,13 @@ class ObjectId {
     self!generate-oid;
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   # No arguments. Generated id.
   # See also: http://docs.mongodb.org/manual/reference/object-id
   #
   multi submethod BUILD ( ) {
 
-    $!machine-id = Digest::MD5.md5_hex(~$*KERNEL).substr( 0, 6);
+    $!machine-id = md5((~$*KERNEL).encode)>>.fmt('%02x').join('').substr( 0, 6);
     $!time = time;
     $!pid = $*PID;
     $!count = 0xFFFFFF.rand.Int;
@@ -122,14 +122,14 @@ class ObjectId {
     self!generate-oid;
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   method perl ( --> Str ) {
     my Str $string = $!oid.list.fmt('%02x');
     $string ~~ s:g/\s+//;
     [~] 'BSON::ObjectId.new(', ":string('0x$string')", ')';
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   method !generate-oid ( ) {
 
     my @numbers = ();
@@ -163,12 +163,12 @@ class ObjectId {
     $!oid .= new(@numbers);
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   method encode ( ) {
     $!oid;
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   method decode (
     Buf:D $b,
     Int:D $index is copy,

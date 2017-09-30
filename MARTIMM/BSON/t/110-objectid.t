@@ -22,7 +22,7 @@ subtest {
   throws-like
     { my BSON::ObjectId $o .= new(:bytes(Buf.new(5,7,9...15))); },
     X::BSON, 'Too short/long byte buffer',
-    :message(/:s Byte buffer too short or long/);
+    :message(/:s Byte buffer too short\/long/);
 
   $o .= new(
     :bytes(
