@@ -1,0 +1,108 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+use CucumisSextus::Gherkin;
+use CucumisSextus::Core;
+use CucumisSextus::Tags;
+
+# XXX we should have a cmdline arg to stop after the first problem
+
+sub MAIN(:$tags, *@feature-spec) {
+
+    # collect all feature-spec to execute
+    my @features;
+    my $have-errors = False;
+
+    if @feature-spec.elems == 0 {
+        push @feature-spec, 'features';
+    }
+
+    for @feature-spec -> $f {
+        my $path = IO::Path.new($f);
+        if $path.d {
+            for $path.dir -> $c {
+                if $c.f && $c ~~ /\.feature$/ {
+                    push @features, parse-feature-file($c);
+                }
+            }
+        }
+        elsif $path.f {
+            push @features, parse-feature-file($f);
+        }
+        else {
+            note "could not find file or directory '$f'";
+            $have-errors = True;
+        }
+        CATCH {
+            when X::CucumisSextus::FeatureParseFailure {
+                note .message;
+                $have-errors = True;
+            }
+        }
+    }
+
+    # parse tag filters
+    my @tag-filters;
+    if $tags {
+        for $tags.flat -> $t {
+            push @tag-filters, parse-filter($t);
+            # XXX exception handler, setting $have-errors
+        }
+    }
+
+    if $have-errors {
+        # XXX say that there were errors above
+        exit 1;
+    }
+
+    # XXX sort by filename
+
+    # now execute the features
+    $have-errors = False;
+    for @features -> $f {
+        if !all-filters-match(@tag-filters, $f.tags) {
+            say "Skipping feature '" ~ $f.name ~ "' due to tag filters";
+            next;
+        }
+
+        # XXX we could avoid that if we group the features by $steps-base
+        clear-stepdefs();
+        # XXX only if that directory exists
+        my $steps-base = IO::Path.new($f.filename).parent.child("step_definitions");
+        if ($steps-base.d) {
+            for $steps-base.dir -> $mod {
+                if $mod.f && $mod ~~ /.pm6?$/ {
+                    # XXX something funky going on, why can't I use this without storing 
+                    # in variable? and the error message is weird as well
+                    my $abs-path = $mod.absolute;
+                    require $abs-path;
+                }
+            }
+        }
+
+        execute-feature($f, @tag-filters);
+
+        CATCH {
+            # XXX need to load step definitions
+
+            when X::CucumisSextus::FeatureExecFailure {
+                note .message;
+                $have-errors = True;
+            }
+            # XXX different exceptions for test errors
+        }
+    }
+
+    if $have-errors {
+        # XXX summary of all excecution errors
+        exit 1;
+    }
+}
+
+sub USAGE() {
+    # XXX improve!
+    print Q:c:to/EOH/;
+    Usage: {$*PROGRAM-NAME}
+    EOH
+}

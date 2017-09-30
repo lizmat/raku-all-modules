@@ -1,0 +1,25 @@
+{
+    "perl" : "6.*",
+    "name" : "CucumisSextus",
+    "version" : "0.1",
+    "description" : "Cucumber-like BDD Framework",
+    "authors" : [
+        "Robert Lemmen"
+    ],
+    "depends" : [
+    ],
+    "test-depends" : [
+        "Test::Meta"
+    ],
+    "provides" : {
+        "CucumisSextus" : "lib/Gherkin.pm6",
+        "CucumisSextus" : "lib/Glue.pm6",
+        "CucumisSextus" : "lib/Core.pm6",
+        "CucumisSextus" : "lib/Tags.pm6",
+        "CucumisSextus" : "lib/X/CucumisSextus/FeatureExecFailure.pm6",
+        "CucumisSextus" : "lib/X/CucumisSextus/FeatureParseFailure.pm6"
+
+    },
+    "license" : "Artistic-2.0",
+    "source-url" : "https://github.com/robertlemmen/perl6-cucumis-sextus.git"
+}

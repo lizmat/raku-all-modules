@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/robertlemmen/perl6-cucumis-sextus.git
+	branch = master
+	commit = e431f0e851aedcb18432d877236778ff44f608b8
+	parent = 45ffe5c2bbcbe9d9f42c7084713c8793aa8f8631
+	cmdver = 0.4.0
