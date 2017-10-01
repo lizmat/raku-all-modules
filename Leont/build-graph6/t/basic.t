@@ -10,6 +10,9 @@ use File::Temp;
 my $graph = Build::Graph.new;
 $graph.load-plugin('Basic');
 
+# pre-v2017.09.84.gb.02.da.4.d.1.a Rakudos have it as $*INITTIME
+my $INIT-TIME = $*INIT-INSTANT // $*INITTIME;
+
 my $dirname = tempdir(:unlink);
 my $dir = $dirname.IO;
 END { rm_rf($dirname) with $dirname }
@@ -52,11 +55,11 @@ my %expected = (
 		[ $source2, 'build'],
 		[ 'build' ],
 
-		sub { utime(0, $*INITTIME - 1, $source3_bar) },
+		sub { utime(0, $INIT-TIME - 1, $source3_bar) },
 		[ $source3_bar, 'build' ],
 		[ 'build' ],
 
-		sub { unlink $source3_foo; utime(0, $*INITTIME - 1, $source3_bar) },
+		sub { unlink $source3_foo; utime(0, $INIT-TIME - 1, $source3_bar) },
 		[ $source3_foo, $source3_bar, 'build' ],
 		[ 'build' ],
 
@@ -64,7 +67,7 @@ my %expected = (
 		[ $source3_bar, 'build' ],
 		[ 'build' ],
 
-		sub { unlink $source1; utime(0, $*INITTIME - 1, $source2) },
+		sub { unlink $source1; utime(0, $INIT-TIME - 1, $source2) },
 		[ $source1, $source2, 'build'],
 		[ 'build' ],
 	],
