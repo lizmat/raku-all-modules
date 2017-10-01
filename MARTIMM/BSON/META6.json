@@ -8,7 +8,7 @@
     "Marcel Timmerman took over in Januari 2015 and is working on it until the present day"
   ],
   "depends": [
-    "Digest::MD5",
+    "OpenSSL",
     "UUID"
   ],
   "build-depends": [ ],
@@ -27,5 +27,5 @@
   },
   "source-url": "git://github.com/MARTIMM/BSON.git",
   "perl": "6",
-  "version": "0.9.37.1"
+  "version": "0.9.37.2"
 }
