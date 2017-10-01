@@ -10,7 +10,7 @@ isa-ok($obj, Sys::Utmp);
 
 lives-ok {
    for $obj.list -> $ut {
-      ok $ut.defined, "got a defined onject";
+      ok $ut.defined, "got a defined object";
       isa-ok $ut, Sys::Utmp::Utent;
       isa-ok $ut.timestamp, DateTime, "timestamp is a datetime object";
    }

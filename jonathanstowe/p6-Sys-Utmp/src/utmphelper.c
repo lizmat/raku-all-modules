@@ -1,3 +1,9 @@
+#ifdef __NetBSD__
+#include <utmpx.h>
+#define USEXFUNCS 1
+#define _HAVE_UTMPXNAME 1
+#define _HAVE_UT_TV 1
+#else
 #if __FreeBSD__ >= 10
 #include <utmpx.h>
 #define USEXFUNCS 1
@@ -9,6 +15,7 @@
 #ifdef __FreeBSD_cc_version
 #define BSD 1
 #define NOUTFUNCS 1
+#endif
 #endif
 #endif
 
@@ -235,7 +242,11 @@ extern void _p_endutent(void)
 extern void _p_utmpname(const char * filename)
 {
 #ifdef USEXFUNCS
+#ifdef _HAVE_UTMPXNAME
+     utmpxname(filename);
+#else
      setutxdb(UTXDB_ACTIVE,filename);
+#endif
 #else
      utmpname(filename);
 #endif

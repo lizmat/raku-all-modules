@@ -31,10 +31,10 @@
   "provides": {
     "Sys::Utmp": "lib/Sys/Utmp.pm"
   },
-  "version": "0.0.9",
+  "version": "0.0.10",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],
   "description": "Perl 6 access to Utmp entries on Unix-like systems",
-  "meta6": "0"
+  "meta-version": "0"
 }
