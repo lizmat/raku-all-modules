@@ -1194,9 +1194,11 @@ class Document does Associative {
         $!index += BSON::C-UINT64-SIZE;
 
         %!promises{$key} = Promise.start( {
-            @!values[$idx] = BSON::Timestamp.new(
-              decode-uint64( $!encoded-document, $i)
-            );
+#            @!values[$idx] = BSON::Timestamp.new( :timestamp(
+#                decode-uint64( $!encoded-document, $i)
+#              )
+#            );
+            @!values[$idx] = decode-uint64( $!encoded-document, $i);
 #note "Timestamp: ", @!values[$idx];
 
             $!encoded-document.subbuf(
