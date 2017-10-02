@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/noqisofon/p6-miroku.git
 	branch = master
-	commit = cea545074d1691c7251022f860810ea979ff8808
-	parent = 6c328bdae2913ebada922aabe182157046063609
+	commit = ab7eb1fa43a410bfc72fc2035630b7ea36464d21
+	parent = 0d514046612b160e6c3a3a56c9c0ebdf3d51e9a9
 	cmdver = 0.4.0

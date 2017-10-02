@@ -1,0 +1,20 @@
+version: 0.0.1_{build}
+
+clone_folder: c:/projects/p6-miroku
+
+init:
+  - cmd: >-
+      if not exist "C:/Strawberry" cinst strawberryperl
+      set PATH=C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;%PATH%
+      ps: refreshenv
+      perl -v
+      
+      if not exist "C:\Rakudo" cinst rakudostar
+      set PATH=C:\rakudo\bin;C:\rakudo\share\perl6\site\bin;%PATH%
+      ps: refreshenv
+      perl6 -v
+
+build: off
+
+test_script:
+  - cmd: prove -e perl6 -vr t/ xt/
