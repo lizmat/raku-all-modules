@@ -1,6 +1,3 @@
-$*PERL.compiler.version after v2017.03.292.g.0.b.5.a.41.ba.8
-    or die 'IO::Path::ChildSecure module needs Rakudo 2017.04 or newer';
-
 sub child-secure (IO::Path:D \SELF, \child) is export {
     use MONKEY-GUTS;
     # The goal of this method is to guarantee the resultant child path is

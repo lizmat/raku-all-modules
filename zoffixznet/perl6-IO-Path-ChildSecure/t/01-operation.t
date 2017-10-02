@@ -2,7 +2,7 @@ use lib 'lib';
 use Test;
 use IO::Path::ChildSecure;
 
-plan 12;
+plan 10;
 
 ##### Testo
 
@@ -92,28 +92,3 @@ fails-like { $parent.&child-secure('foo/../../bar') }, X::IO::NotAChild,
 
 fails-like { $parent.&child-secure("../\x[308]") }, X::IO::NotAChild,
 'resolved parent fails (given path is not a child, via combiners)';
-
-{
-    my $code = ｢
-          my $*PERL := class FakePerl {
-              method compiler {
-                  class FakeCompiler {
-                      has $.id   = '2357471601F275BAC6F2A55E972FEECEA97BC47'
-                        ~ '8.1492376576.44754';
-                      has $.name = 'rakudo';
-                      has $.version = v2017.03.290.gf.6387.a.845;
-                  }.new
-              }
-          }.new;
-          use lib 'lib';
-          require IO::Path::ChildSecure;
-          say "alive";
-    ｣;
-
-    with run :out, :err, $*EXECUTABLE, '-e', $code {
-        ok .out.slurp(:close).contains('alive').not,
-          'we die on too-early compiler versions';
-        ok .err.slurp(:close).contains('needs Rakudo 2017.04'),
-          'when we die, error message tells us which Rakudo version we need';
-    }
-}
