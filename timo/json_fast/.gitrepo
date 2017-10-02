@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/timo/json_fast.git
 	branch = master
-	commit = c162ed4a290391c3c439efd80d0a198a9337157e
-	parent = 7fb30a6e7ed1c90cbe07435d8bb323f9b6210a85
+	commit = 1b1e7af6dc3093b4ff8c11451d5ad76fbc16f8be
+	parent = 959db358fe82a70ca0047a4259e393330412b314
 	cmdver = 0.4.0
