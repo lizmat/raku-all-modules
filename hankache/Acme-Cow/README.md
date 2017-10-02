@@ -4,11 +4,11 @@ A Perl 6 implementation of cowsay.
 
 Installation
 ------------
-To install with Panda:
+To install with zef:
 
 ```
-panda update
-panda install Acme::Cow
+zef update
+zef install Acme::Cow
 ```
 
 Examples
