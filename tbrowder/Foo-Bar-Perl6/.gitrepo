@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tbrowder/Foo-Bar-Perl6.git
+	branch = master
+	commit = d1bb005ad6023469f6c0bea4c5a3f9820b9257e1
+	parent = 6fbc99886ce84955aaeeb0d367ace2c1f8ac92b9
+	cmdver = 0.4.0
