@@ -611,9 +611,7 @@
     "DateTime::TimeZone::Zone::America::Noronha": "lib/DateTime/TimeZone/Zone/America/Noronha.pm6"
   },
   "version": "0.10.0",
-  "authors": [
-
-  ],
+  "authors": ["Timothy Totten"],
   "description": "A library for working with Time Zones in Perl 6",
   "meta6": "0"
 }
