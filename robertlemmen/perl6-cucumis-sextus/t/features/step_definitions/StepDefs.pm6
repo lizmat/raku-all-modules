@@ -9,6 +9,11 @@ Given /'a new Calculator object'/, sub () {
     $trace ~= 'A';
 };
 
+Given /'ich habe einen Taschenrechner'/, sub () {
+    say "# new-calculator-de";
+    $trace ~= 'Ade';
+};
+
 Given /'a freshly unboxed Calculator'/, sub () {
     say "# unboxed-calculator";
     $trace ~= 'B';
@@ -20,6 +25,11 @@ Step /'having pressed' \s+ (\S+) [\s+ 'and' \s+ (\S+)]*/, sub (+@btns) {
     }
 }
 
+Step /'Ich habe die Taste' \s+ (\S+) \s+ 'gedrueckt'/, sub ($num) {
+    say "# having-pressed-de '$num'";
+    $trace ~= "D" ~ $num ~ "de";
+};
+
 Step /'having pressed' \s* (123)/, sub ($num) {
     say "# broken-having-pressed '$num'";
     $trace ~= "D$num";
@@ -30,7 +40,12 @@ Step /'having pressed' \s* (\d+) \s* 'again'/, sub () {
     $trace ~= 'E';
 };
 
-Then /'the display should show' \s* (\d+)/, sub ($num) {
+Then /'sollte der Bildschirm' \s+ ('-'? <[\d . ]>+) \s+ 'anzeigen'/, sub ($num) {
+    say "# then-display-shows-de '$num'";
+    $trace ~= "F" ~ $num ~ "de";
+};
+
+Then /'the display should show' \s+ ('-'? <[\d . ]>+)/, sub ($num) {
     say "# then-display-shows '$num'";
     $trace ~= "F$num";
 };
@@ -45,6 +60,11 @@ Step /'having successfully performed the following calculations'/, sub (@table) 
     for @table -> $r {
         $trace ~= "T" ~ $r{'first'} ~ $r{'operator'} ~ $r{'second'};
     }
+}
+
+Step /'having keyed' \s* (\S+)/, sub ($key) {
+    say "# having-keyed";
+    $trace ~= "t$key";
 }
 
 Before sub ($feature, $scenario) {

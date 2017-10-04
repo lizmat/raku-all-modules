@@ -33,6 +33,11 @@ throws-like({ execute-feature($feature, []) } , X::CucumisSextus::FeatureExecFai
     "Executing a feature against glue code with mismatched signature should fail");
 
 clear-trace;
+lives-ok({ $feature = parse-feature-file('t/features/basic-german.feature') }, "Parsing a feature file in german should work");
+lives-ok({ execute-feature($feature, []) } , "Executing the german feature should work");
+is(get-trace, 'AdeD1deF1de', 'All steps have executed in right order');
+
+clear-trace;
 lives-ok({ $feature = parse-feature-file('t/features/slurpy.feature') }, "Parsing a feature with slupy args should work");
 lives-ok({ execute-feature($feature, []) } , "Executing the slurpy feature/glue code should work");
 is(get-trace, 'AC1C2C3C+C4C5C6C+F579', 'All steps have executed in right order');
@@ -46,5 +51,10 @@ clear-trace;
 lives-ok({ $feature = parse-feature-file('t/features/basic-hooked.feature') }, "Parsing a feature with hooks should work");
 lives-ok({ execute-feature($feature, []) } , "Executing the feature with hooks should work");
 is(get-trace, '[AC1F1]', 'All steps and hooks have executed in right order');
+
+clear-trace;
+lives-ok({ $feature = parse-feature-file('t/features/basic-examples.feature') }, "Parsing a feature with examples should work");
+lives-ok({ execute-feature($feature, []) } , "Executing the feature with examples should work");
+is(get-trace, 'At5.0t+t5.0C=F10At6t/t3C=F2At10t*t7.550C=F75.5At3t-t10C=F-7', 'All steps and hooks have executed in right order');
 
 done-testing;

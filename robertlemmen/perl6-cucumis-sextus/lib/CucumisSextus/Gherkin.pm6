@@ -2,6 +2,7 @@ unit module CucumisSextus::Gherkin;
 
 use X::CucumisSextus::FeatureParseFailure;
 use CucumisSextus::Tags;
+use CucumisSextus::I18n;
 
 class Feature {
     has $.filename is rw;
@@ -17,6 +18,7 @@ class Scenario {
     has $.line is rw;
     has @.steps is rw;
     has @.tags is rw;
+    has @.examples is rw;
 }
 
 class Step {
@@ -26,21 +28,6 @@ class Step {
     has @.table is rw;
 }
 
-# XXX this will get long, we could put it into it's own module
-my $keywords = {
-    'en' => {   'feature'          => /'Feature'|'Business Need'|'Ability'/,
-                'scenario'         => 'Scenario',
-                'background'       => 'Background',
-                'scenario-outline' => /'Scenario Outline'|'Scenario Template'/,
-                'examples'         => /'Examples'|'Scenarios'/,
-                'given'            => /'*'|'Given'/,
-                'when'             => /'*'|'When'/,
-                'then'             => /'*'|'Then'/,
-                'and'              => /'*'|'And'/,
-                'but'              => /'*'|'But'/,
-            },
-};
-
 sub parse-feature-file($filename) is export {
     my $lang = 'en';
     my $feature;
@@ -49,15 +36,31 @@ sub parse-feature-file($filename) is export {
     my $last-verb;
     my @tags;
     my @column-header;
+    my $in-examples;
+    my $is-outline;
 
     # XXX tags are madness: https://github.com/cucumber/cucumber/wiki/Tags
     # XXX description lines for features and scenarios
 
     my $line-number = 1;
     for $filename.IO.lines {
-        if m/^ \s* $/ {
-            # blank line, end step/scenario
-            @column-header = ();
+        if m/^ \s* '#' \s* 'language:' \s+ (\S+)/ {
+            if $line-number == 1 {
+                if defined $gherkin-keywords{$0} {
+                    $lang = $0;
+                }
+                else {
+                    die X::CucumisSextus::FeatureParseFailure.new("Failed to parse feature file " 
+                        ~ "at $filename:$line-number: language '$0' not supported");
+                }
+            }
+            else {
+                die X::CucumisSextus::FeatureParseFailure.new("Failed to parse feature file " 
+                    ~ "at $filename:$line-number: language directive, but not on first line");
+            }
+        }
+        elsif m/^ \s* $/ {
+            # blank line
         }
         elsif m/^ \s* '#'/ {
             # comment, ignore
@@ -68,7 +71,7 @@ sub parse-feature-file($filename) is export {
             @tags.append(@ctags);
         }
         # XXX all over the place: space after colon single, multiple, optional?
-        elsif m/^ <{ $keywords{$lang}{'feature'} }> ':' \s* (.+) $/ {
+        elsif m/^ <{ $gherkin-keywords{$lang}{'feature'} }> ':' \s* (.+) $/ {
             if ! defined $feature {
                 $feature = Feature.new;
                 $feature.filename = $filename;
@@ -82,7 +85,8 @@ sub parse-feature-file($filename) is export {
                     ~ "at $filename:$line-number: multiple features per file");
             }
         }
-        elsif m/^ \s* <{ $keywords{$lang}{'scenario'} }> ':' \s* (.+) $/ {
+        elsif m/^ \s* <{ $gherkin-keywords{$lang}{'scenario-outline'} }> ':' \s* (.+) $/ {
+            # XXX very-similar to the below, refactor
             if defined $feature {
                 # XXX end previous step
                 $scenario = Scenario.new;
@@ -92,13 +96,35 @@ sub parse-feature-file($filename) is export {
                 $feature.scenarios.push($scenario);
 
                 $last-verb = Nil;
+                $in-examples = False;
+                $is-outline = True;
+                @column-header = ();
             }
             else {
                 die X::CucumisSextus::FeatureParseFailure.new("Failed to parse feature file " 
                     ~ "at $filename:$line-number: scenario definition without feature");
             }
         }
-        elsif m/^ \s* <{ $keywords{$lang}{'background'} }> ':' \s* (.+) $/ {
+        elsif m/^ \s* <{ $gherkin-keywords{$lang}{'scenario'} }> ':' \s* (.+) $/ {
+            if defined $feature {
+                # XXX end previous step
+                $scenario = Scenario.new;
+                $scenario.name = ~$0;
+                $scenario.tags = @tags;
+                $scenario.line = $line-number;
+                $feature.scenarios.push($scenario);
+
+                $last-verb = Nil;
+                $in-examples = False;
+                $is-outline = False;
+                @column-header = ();
+            }
+            else {
+                die X::CucumisSextus::FeatureParseFailure.new("Failed to parse feature file " 
+                    ~ "at $filename:$line-number: scenario definition without feature");
+            }
+        }
+        elsif m/^ \s* <{ $gherkin-keywords{$lang}{'background'} }> ':' \s* (.+) $/ {
             if defined $feature {
                 if $feature.background {
                     die X::CucumisSextus::FeatureParseFailure.new("Failed to parse feature file " 
@@ -122,9 +148,7 @@ sub parse-feature-file($filename) is export {
                     ~ "at $filename:$line-number: background definition without feature");
             }
         }
-        elsif m/^ \s* <{ $keywords{$lang}{'scenario'} }> ':' \s* (.+) $/ {
-        }
-        elsif m/^ \s* <{ $keywords{$lang}{'given'} }> \s* (.+) $/ {
+        elsif m/^ \s* <{ $gherkin-keywords{$lang}{'given'} }> \s* (.+) $/ {
             my $verb = 'given';
             $step = Step.new;
             $step.verb = $verb;
@@ -133,7 +157,7 @@ sub parse-feature-file($filename) is export {
             $scenario.steps.push($step);
             $last-verb = $verb;
         }
-        elsif m/^ \s* <{ $keywords{$lang}{'when'} }> \s* (.+) $/ {
+        elsif m/^ \s* <{ $gherkin-keywords{$lang}{'when'} }> \s* (.+) $/ {
             my $verb = 'when';
             $step = Step.new;
             $step.verb = $verb;
@@ -142,7 +166,7 @@ sub parse-feature-file($filename) is export {
             $scenario.steps.push($step);
             $last-verb = $verb;
         }
-        elsif m/^ \s* <{ $keywords{$lang}{'then'} }> \s* (.+) $/ {
+        elsif m/^ \s* <{ $gherkin-keywords{$lang}{'then'} }> \s* (.+) $/ {
             my $verb = 'then';
             $step = Step.new;
             $step.verb = $verb;
@@ -151,8 +175,8 @@ sub parse-feature-file($filename) is export {
             $scenario.steps.push($step);
             $last-verb = $verb;
         }
-        elsif m/^ \s* (   <{ $keywords{$lang}{'and'} }>
-                        | <{ $keywords{$lang}{'but'} }> )
+        elsif m/^ \s* (   <{ $gherkin-keywords{$lang}{'and'} }>
+                        | <{ $gherkin-keywords{$lang}{'but'} }> )
                             \s* (.+) $/ {
 
             if ! defined $last-verb {
@@ -167,9 +191,15 @@ sub parse-feature-file($filename) is export {
             $step.line = $line-number;
             $scenario.steps.push($step);
         }
-        # XXX scenario outlines
-        elsif m/^ \s* <{ $keywords{$lang}{'examples'} }> \s* (.+) $/ {
-            # XXX
+        elsif m/^ \s* <{ $gherkin-keywords{$lang}{'examples'} }> \s* (.+) $/ {
+# XXX makes sense, but the other cucumbers do not behave this way...
+#            if $is-outline {
+                $in-examples = True;
+#            }
+#            else {
+#                die X::CucumisSextus::FeatureParseFailure.new("Failed to parse feature file " 
+#                    ~ "at $filename:$line-number: examples given but not in scenario outline");
+#            }
         }
         elsif m/^ \s* \| (.*) \| \s* $/ {
             # XXX when can this occur?
@@ -180,12 +210,16 @@ sub parse-feature-file($filename) is export {
                         ~ "at $filename:$line-number: inconsistent number of columns across table");
                 }
                 my %hash = @column-header Z=> @fields;
-                $step.table.push(%hash);
+                if $in-examples {
+                    $scenario.examples.push(%hash);
+                }
+                else {
+                    $step.table.push(%hash);
+                }
             }
             else {
                 @column-header = @fields;
             }
-            # XXX first line is column headers, turn others into hashes
         }
         $line-number++;
     }
