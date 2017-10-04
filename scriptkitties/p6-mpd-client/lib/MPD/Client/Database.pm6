@@ -4,7 +4,7 @@ use v6.c;
 
 use MPD::Client::Util;
 
-unit module MPD::Client::Current;
+unit module MPD::Client::Database;
 
 multi sub mpd-count (
 	Str $tag,
@@ -86,17 +86,17 @@ multi sub mpd-list (
 
 multi sub mpd-list (
 	Str $type,
-	Str $group-type
+	Str $group-type,
 	IO::Socket::INET $socket
 ) is export {
-	mpd-responses(mpd-send-raw("list $type group $grouptype", $socket));
+	mpd-responses(mpd-send-raw("list $type group $group-type", $socket));
 }
 
 multi sub mpd-listall (
 	IO::Socket::INET $socket
 	--> Array
 ) is export {
-	mpd-responses(mpd-send-raw("listall", $socket));
+	parse-listall-lines(mpd-send-raw("listall", $socket));
 }
 
 multi sub mpd-listall (
@@ -104,7 +104,7 @@ multi sub mpd-listall (
 	IO::Socket::INET $socket
 	--> Array
 ) is export {
-	mpd-responses(mpd-send-raw("listall $uri", $socket));
+	parse-listall-lines(mpd-send-raw("listall $uri", $socket));
 }
 
 multi sub mpd-listallinfo (
@@ -256,4 +256,24 @@ multi sub mpd-rescan (
 	--> Bool
 ) is export {
 	mpd-response-ok(mpd-send("rescan", $uri, $socket));
+}
+
+sub parse-listall-lines (
+	IO::Socket::INET $socket
+	--> Array
+) {
+	my Hash @entries;
+
+	for $socket.lines -> $line {
+		last if $line eq "OK";
+
+		if ($line ~~ /(.+) ": " (.+)/) {
+			@entries.push(%(
+				type => $0.Str,
+				path => $1.Str
+			));
+		}
+	}
+
+	@entries;
 }

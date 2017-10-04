@@ -13,6 +13,8 @@ sub mpd-next (
 	--> IO::Socket::INET
 ) is export {
 	mpd-send("next", $socket);
+
+	$socket;
 }
 
 #| Toggles pause/resumes playing.
@@ -30,15 +32,29 @@ multi sub mpd-pause (
 	--> IO::Socket::INET
 ) is export {
 	mpd-send("pause", $pause, $socket);
+
+	$socket;
+}
+
+#| Begins playing at the start of the playlist.
+multi sub mpd-play (
+	IO::Socket::INET $socket
+	--> IO::Socket::INET
+) is export {
+	mpd-send("play", $socket);
+
+	$socket;
 }
 
 #| Begins playing the playlist at song number $songpos.
-sub mpd-play (
+multi sub mpd-play (
 	Int $songpos,
 	IO::Socket::INET $socket
 	--> IO::Socket::INET
 ) is export {
 	mpd-send("play", $songpos, $socket);
+
+	$socket;
 }
 
 #| Begins playing the playlist at song $songid.
@@ -48,6 +64,8 @@ sub mpd-playid (
 	--> IO::Socket::INET
 ) is export {
 	mpd-send("playid", $songid, $socket);
+
+	$socket;
 }
 
 #| Plays previous song in the playlist.
@@ -56,6 +74,8 @@ sub mpd-previous (
 	--> IO::Socket::INET
 ) is export {
 	mpd-send("previous", $socket);
+
+	$socket;
 }
 
 #| Seeks to the position $time (in seconds; fractions allowed) of entry
@@ -67,6 +87,8 @@ sub mpd-seek (
 	--> IO::Socket::INET
 ) is export {
 	mpd-send("seek", [$songpos, $time], $socket);
+
+	$socket;
 }
 
 #| Seeks to the position $time (in seconds; fractions allowed) of song $songid.
@@ -77,6 +99,8 @@ sub mpd-seekid (
 	--> IO::Socket::INET
 ) is export {
 	mpd-send("seekid", [$songid, $time], $socket);
+
+	$socket;
 }
 
 #| Seeks to the position $time (in seconds; fractions allowed) within the
@@ -91,6 +115,8 @@ multi sub mpd-seekcur (
 	}
 
 	mpd-send("seekcur", $time, $socket);
+
+	$socket;
 }
 
 #| Seeks to the relative position $time (in seconds; fractions allowed) within
@@ -116,6 +142,8 @@ multi sub mpd-seekcur (
 	}
 
 	mpd-send("seekcur", $prefix ~ $time, $socket);
+
+	$socket;
 }
 
 #| Stops playing.
@@ -124,4 +152,6 @@ sub mpd-stop (
 	--> IO::Socket::INET
 ) is export {
 	mpd-send("stop", $socket);
+
+	$socket;
 }

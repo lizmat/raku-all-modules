@@ -43,10 +43,10 @@ sub mpd-listplaylistinfo (
 
 		if (my $match = MPD::Client::Grammars::ResponseLine.parse($line)) {
 			if ($match<key> eq "file") {
-				$hits[++$index] = {};
+				@hits[++$index] = {};
 			}
 
-			$hits[$index]{$match<key>} = $match<value>;
+			@hits[$index]{$match<key>} = $match<value>;
 		}
 	}
 
@@ -67,10 +67,10 @@ sub mpd-listplaylists (
 
 		if (my $match = MPD::Client::Grammars::ResponseLine.parse($line)) {
 			if ($match<key> eq "playlist") {
-				$hits[++$index] = {};
+				@hits[++$index] = {};
 			}
 
-			$hits[$index]{$match<key>} = $match<value>;
+			@hits[$index]{$match<key>} = $match<value>;
 		}
 	}
 

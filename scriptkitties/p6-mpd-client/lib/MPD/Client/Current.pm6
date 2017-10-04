@@ -109,7 +109,7 @@ sub mpd-playlist (
 sub mpd-playlistfind (
 	Str $tag,
 	Str $needle,
-	IO::Socket::INET $Socket
+	IO::Socket::INET $socket
 	--> Array
 ) is export {
 	$socket
@@ -118,7 +118,7 @@ sub mpd-playlistfind (
 		;
 }
 
-sub mpd-playlistid (
+multi sub mpd-playlistid (
 	IO::Socket::INET $socket
 	--> Array
 ) is export {
@@ -128,7 +128,7 @@ sub mpd-playlistid (
 		;
 }
 
-sub mpd-playlistid (
+multi sub mpd-playlistid (
 	Int $songid,
 	IO::Socket::INET $socket
 	--> Array
@@ -139,7 +139,7 @@ sub mpd-playlistid (
 		;
 }
 
-sub mpd-playlistinfo (
+multi sub mpd-playlistinfo (
 	IO::Socket::INET $socket
 	--> Array
 ) is export {
@@ -149,7 +149,7 @@ sub mpd-playlistinfo (
 		;
 }
 
-sub mpd-playlistinfo (
+multi sub mpd-playlistinfo (
 	Int $songpos,
 	IO::Socket::INET $socket
 	--> Array
@@ -160,7 +160,7 @@ sub mpd-playlistinfo (
 		;
 }
 
-sub mpd-playlistinfo (
+multi sub mpd-playlistinfo (
 	Int $start,
 	Int $end,
 	IO::Socket::INET $socket
@@ -246,12 +246,12 @@ sub mpd-prioid (
 	Int $priority,
 	Int $id,
 	IO::Socket::INET $socket
-	--> bool
+	--> Bool
 ) is export {
 	mpd-response-ok(mpd-send("prioid", $id, $socket));
 }
 
-sub mpd-rangeid (
+multi sub mpd-rangeid (
 	Int $id,
 	IO::Socket::INET $socket
 	--> Bool
@@ -259,7 +259,7 @@ sub mpd-rangeid (
 	mpd-response-ok(mpd-send("rangeid", [$id, ":"], $socket));
 }
 
-sub mpd-rangeid (
+multi sub mpd-rangeid (
 	Int $id,
 	Real $start,
 	Real $end,
@@ -339,17 +339,17 @@ sub search-response-list (
 	my @hits;
 	my $index = -1;
 
-	for $socket.get() -> $line {
+	for $socket.lines -> $line {
 		if ($line eq "OK") {
 			last;
 		}
 
 		if (my $match = MPD::Client::Grammars::ResponseLine.parse($line)) {
 			if ($match<key> eq "file") {
-				$hits[++$index] = {};
+				@hits[++$index] = {};
 			}
 
-			$hits[$index]{$match<key>} = $match<value>;
+			@hits[$index]{$match<key>} = $match<value>;
 		}
 	}
 

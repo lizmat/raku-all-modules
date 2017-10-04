@@ -11,7 +11,7 @@ unit module MPD::Client::Reflection;
 #| domain socket).
 # TODO: Either allow UNIX sockets, or drop this command
 sub mpd-config (
-	IO::Socket::INET $Socket
+	IO::Socket::INET $socket
 	--> Hash
 ) is export {
 	mpd-send("config", $socket);
@@ -19,7 +19,7 @@ sub mpd-config (
 
 #| Get an array of which commands the current user has access to.
 sub mpd-commands (
-	IO::Socket::INET $Socket
+	IO::Socket::INET $socket
 	--> Array
 ) is export {
 	mpd-responses(mpd-send-raw("commands", $socket));

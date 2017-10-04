@@ -44,7 +44,7 @@ sub mpd-responses (
 	my $first-key = "";
 	my $index = -1;
 
-	for $socket.get() -> $line {
+	for $socket.lines -> $line {
 		if ($line eq "OK") {
 			last;
 		}
@@ -113,7 +113,7 @@ multi sub mpd-send (
 	IO::Socket::INET $socket
 	--> Hash
 ) is export {
-	mpd-send($option ~ " " ~ $value.Str, $socket);
+	mpd-send("$option \"{$value.Str}\"", $socket);
 }
 
 multi sub mpd-send (
