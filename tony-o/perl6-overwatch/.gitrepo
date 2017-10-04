@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-overwatch.git
 	branch = master
-	commit = 47d283dfd8854ea228ec8343dbddb56e43b66edb
-	parent = 9452f89b07e30a2c3c40913068766d6f4fa58be3
+	commit = 693f2d4666448f00b23e52486ad3b7d5388054f3
+	parent = 53c51124a7e0548429d513ce79f6da3fb0a8c7aa
 	cmdver = 0.4.0

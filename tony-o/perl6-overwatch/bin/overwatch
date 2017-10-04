@@ -3,7 +3,6 @@
 use overwatch;
 
 sub MAIN (
-  *@args, 
   Str :e(:$execute) = 'perl6', 
   Bool :k(:$keep-alive) = True, 
   Bool :x(:$exit-on-error) = False, 
@@ -11,6 +10,7 @@ sub MAIN (
   Bool :q(:$quiet) = False,
   Str :f(:$filter) = '',
   :w(:@watch) = [],
+  *@args, 
 ) {
 
   my overwatch $overwatch;
