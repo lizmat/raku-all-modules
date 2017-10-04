@@ -118,6 +118,29 @@ multi method post(Str $uri is copy, %form, Bool :$bin, *%header ) {
     self.post(URI.new(_clear-url($uri)), %form, |%header);
 }
 
+proto method put(|c) { * }
+
+multi method put(URI $uri is copy, %form , Bool :$bin,  *%header) {
+    my $request = HTTP::Request.new(PUT => $uri, |%header);
+    $request.add-form-data(%form);
+    self.request($request, :$bin);
+}
+
+multi method put(Str $uri is copy, %form, Bool :$bin, *%header ) {
+    self.put(URI.new(_clear-url($uri)), %form, |%header);
+}
+
+proto method delete(|c) { * }
+
+multi method delete(URI $uri is copy, Bool :$bin,  *%header ) {
+    my $request  = HTTP::Request.new(DELETE => $uri, |%header);
+    self.request($request, :$bin);
+}
+
+multi method delete(Str $uri is copy, Bool :$bin,  *%header ) {
+    self.delete(URI.new(_clear-url($uri)), :$bin, |%header);
+}
+
 method request(HTTP::Request $request, Bool :$bin) returns HTTP::Response {
     my HTTP::Response $response;
 
