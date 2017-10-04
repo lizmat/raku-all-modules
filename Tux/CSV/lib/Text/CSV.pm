@@ -265,7 +265,7 @@ class CellSet {
 class CSV::Field {
 
     has Bool $.is_quoted  is rw = False;
-    has Str  $.text       is rw = Str;
+    has Str  $.text       is rw;
 
     has Bool $!is_binary  = False;
     has Bool $!is_utf8    = False;
@@ -924,7 +924,7 @@ class Text::CSV {
                 @f.push: "";
                 next;
                 }
-            my Str $t = $f.Str ~ "";
+            my Str $t = $f.Str;
             if ($t eq "") {
                 @f.push: $!always_quote || $!quote_empty ?? "$!quo$!quo" !! "";
                 next;
