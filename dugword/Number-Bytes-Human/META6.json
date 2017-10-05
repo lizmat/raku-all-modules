@@ -1,6 +1,7 @@
 {
     "perl": "6.c",
     "name": "Number::Bytes::Human",
+    "license" : "MIT",
     "version": "0.0.3",
     "description": "Converts byte count into an easy to read format.",
     "authors": ["Douglas L. Jenkins"],

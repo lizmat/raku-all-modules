@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dugword/Number-Bytes-Human.git
 	branch = master
-	commit = f2b789cc55d90f32bf8b8bd789a808fb93ad4730
-	parent = 33c9f393c95e16048cc9e0a23b6a83342a14b953
+	commit = b610a5cbda9db2b348bcaf01b622108e817f3d3b
+	parent = bfa723572c4d3bac8bc68294d4ce56092f28f9d6
 	cmdver = 0.4.0
