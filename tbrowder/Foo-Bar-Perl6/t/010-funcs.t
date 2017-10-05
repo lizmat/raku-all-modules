@@ -3,7 +3,10 @@ use Test;
 
 use Foo::Bar :ALL;
 
-plan 2;
+plan 3;
 
 is foo, 'bar';
 is foo('foo'), 'foo';
+
+is baz, 'baz';
+
