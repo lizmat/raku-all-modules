@@ -67,6 +67,11 @@ Step /'having keyed' \s* (\S+)/, sub ($key) {
     $trace ~= "t$key";
 }
 
+Step /'having entered the following sequence'/, sub ($text) {
+    say "# having-entered";
+    $trace ~= "U$text";
+}
+
 Before sub ($feature, $scenario) {
     if $feature.tags.first(* ~~ 'hooked') {
         $trace ~= '[';

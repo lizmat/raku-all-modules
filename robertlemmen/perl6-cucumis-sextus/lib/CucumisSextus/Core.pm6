@@ -69,6 +69,9 @@ sub execute-step($feature, $step, $kvsubst) {
         if $step.table {
            push @args, $step.table;
         }
+        if $step.multiline {
+            push @args, $step.multiline;
+        }
         if $s[2].cando( \(|@args) ) {
             $s[2](|@args);
         }

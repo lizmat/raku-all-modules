@@ -1,6 +1,6 @@
 unit module CucumisSextus::I18n;
 
-# this data is taken from 
+# this data is taken from revision 928d623 of
 # https://github.com/cucumber/cucumber/blob/master/gherkin/gherkin-languages.json
 
 our $gherkin-keywords is export = {

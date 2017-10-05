@@ -26,6 +26,7 @@ class Step {
     has $.text is rw;
     has $.line is rw;
     has @.table is rw;
+    has $.multiline is rw;
 }
 
 sub parse-feature-file($filename) is export {
@@ -38,6 +39,8 @@ sub parse-feature-file($filename) is export {
     my @column-header;
     my $in-examples;
     my $is-outline;
+    my $in-multiline;
+    my $multiline-prefix;
 
     # XXX tags are madness: https://github.com/cucumber/cucumber/wiki/Tags
     # XXX description lines for features and scenarios
@@ -59,8 +62,32 @@ sub parse-feature-file($filename) is export {
                     ~ "at $filename:$line-number: language directive, but not on first line");
             }
         }
+        elsif m/^ (\s*) '"""' \s* $/ {
+            if ($in-multiline) {
+                $in-multiline = False;
+            }
+            else {
+                # XXX can't happen everywhere, also conflicts with table
+                $multiline-prefix = $0;
+                $in-multiline = True;
+            }
+        }
+        elsif $in-multiline {
+            # XXX explicitely writing $_ is weird?
+            if $_.starts-with($multiline-prefix) {
+                if $step.multiline {
+                    $step.multiline ~= "\n";
+                }
+                $step.multiline ~= $_.substr($multiline-prefix.chars);
+            }
+            else {
+                die X::CucumisSextus::FeatureParseFailure.new("Failed to parse feature file " 
+                    ~ "at $filename:$line-number: inconsistent indentation in multiline string");
+            }
+        }
         elsif m/^ \s* $/ {
             # blank line
+            # XXX clear some state
         }
         elsif m/^ \s* '#'/ {
             # comment, ignore
@@ -220,6 +247,9 @@ sub parse-feature-file($filename) is export {
             else {
                 @column-header = @fields;
             }
+        }
+        else {
+            # XXX line not understood, complain
         }
         $line-number++;
     }

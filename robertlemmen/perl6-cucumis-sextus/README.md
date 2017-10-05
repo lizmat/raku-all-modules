@@ -10,7 +10,6 @@ cases, see below.
 
 ### Missing Features
 
-* Multiline strings
 * Failure exceptions from glue code
 * Harness improvements to allow parallel execution
 * Reporting
@@ -172,6 +171,35 @@ would yield:
      {:first("0.01"), :operator("/"), :result("1"), :second("0.01")}, 
      {:first("10"), :operator("*"), :result("10"), :second("1")}]
 
+### Multiline Data
+
+In a way similar to tables, you can add multiline verbatim data to your step
+definitions by starting and ending such a section with three quotes:
+
+    Feature: Basic Calculator Functions
+    In order to check I've written the Calculator class correctly
+    As a developer I want to check some basic operations
+    So that I can have confidence in my Calculator class.
+
+    Scenario: Ticker Tape
+        Given a new Calculator object
+        And having entered the following sequence
+        """
+        1 + 2 + 3 + 4 + 5 + 6 -
+        100
+        * 13 \=\=\= + 2 =
+        """
+        Then the display should show -1025
+
+Note that while the indentation of the three quotes themselves, like any other line
+in a feature file, is not relevant, that indentation is removed from each line in the
+multiline data. This also means that your indentation needs to be somewhat conistent 
+or cucumis will fail to do so.
+
+The multiline data is passed to your step definition as a single argument after any
+captures, just like with tables. Note that you can only use multiline data or tables 
+in a step, not both.
+
 ### Hooks
 
 You can create "before" and "after" hooks in your glue code, these will be 
@@ -213,7 +241,7 @@ sets of input and output values using outlines and examples:
 Note that the glue code regular expression has to match the substituted value, 
 not the original one from the step text.
 
-## Other Languages
+### Other Languages
 
 If you want to write your feature files in your native language rather than in
 english, you can certianly do that by putting a language directive into the first

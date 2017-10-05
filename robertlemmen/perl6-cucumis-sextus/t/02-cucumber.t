@@ -57,4 +57,9 @@ lives-ok({ $feature = parse-feature-file('t/features/basic-examples.feature') },
 lives-ok({ execute-feature($feature, []) } , "Executing the feature with examples should work");
 is(get-trace, 'At5.0t+t5.0C=F10At6t/t3C=F2At10t*t7.550C=F75.5At3t-t10C=F-7', 'All steps and hooks have executed in right order');
 
+clear-trace;
+lives-ok({ $feature = parse-feature-file('t/features/basic-multiline.feature') }, "Parsing a feature with multiline strings should work");
+lives-ok({ execute-feature($feature, []) } , "Executing the feature with multiline strings should work");
+is(get-trace, "AU1 + 2 + 3 + 4 + 5 + 6 -\n100\n* 13 \\=\\=\\= + 2 =F-1025", 'All steps and hooks have executed in right order');
+
 done-testing;
