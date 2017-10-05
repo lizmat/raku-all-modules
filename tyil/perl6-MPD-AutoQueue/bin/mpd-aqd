@@ -1,0 +1,15 @@
+#! /usr/bin/env sh
+
+readonly DIR=$(CDPATH="" cd -- "$(dirname -- "$0")" && pwd)
+
+main()
+{
+	cd -- "${DIR}/.." || exit
+
+	perl=${1-perl6}
+	shift
+
+	"${perl}" -Ilib "bin/mpd-aq" > /dev/null 2>&1 &
+}
+
+main "$@"
