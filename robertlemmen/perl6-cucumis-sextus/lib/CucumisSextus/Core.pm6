@@ -8,6 +8,17 @@ my @defined-steps;
 my @before-hooks;
 my @after-hooks;
 
+class CucumisResult is export {
+    has $.executed is rw = 0;
+    has $.skipped is rw = 0;
+    has $.succeeded is rw = 0;
+    has $.failed is rw = 0;
+
+    method Str() {
+        "$!executed scenario" ~ ($!executed > 1 ?? 's' !! '') ~ " executed, $!skipped skipped, $!succeeded succeeded, $!failed failed";
+    }
+}
+
 sub add-stepdef($type, $match, $callable, $file, $line) is export {
     @defined-steps.push([$type, $match, $callable, $file, $line]);
 }
@@ -82,7 +93,27 @@ sub execute-step($feature, $step, $kvsubst) {
     }
 }
 
-sub execute-feature($feature, @tag-filters) is export {
+sub execute-scenario($feature, $scenario, $kvsubst, $result) {
+    $result.executed++;
+    for $scenario.steps -> $step {
+        execute-step($feature, $step, $kvsubst);
+    }
+    $result.succeeded++;
+    CATCH {
+        when X::CucumisSextus::FeatureExecFailure {
+            .throw;
+        }
+        default {
+            $result.failed++;
+            say "Exception (" ~ .^name ~ ") during step execution: " ~ .Str;
+            for .backtrace {
+                say "    ", .file, " ", .line;
+            }
+        }
+    }
+}
+
+sub execute-feature($feature, @tag-filters, $result) is export {
     say "Feature " ~ $feature.name;
 
     for $feature.scenarios -> $scenario {
@@ -92,6 +123,7 @@ sub execute-feature($feature, @tag-filters) is export {
 
         if !all-filters-match(@tag-filters, @effective-tags) {
             say "  Skipping scenario '" ~ $scenario.name ~ "' due to tag filters";
+            $result.skipped++;
             next;
         }
 
@@ -103,10 +135,7 @@ sub execute-feature($feature, @tag-filters) is export {
         for @subst -> $kvsubst {
             if $feature.background {
                 say "  Background " ~ $feature.background.name;
-                for $feature.background.steps -> $step {
-                    # XXX background can have examples?
-                    execute-step($feature, $step, $kvsubst);
-                }
+                execute-scenario($feature, $feature.background, $kvsubst, $result);
             }
 
             say "  Scenario " ~ $scenario.name;
@@ -114,9 +143,7 @@ sub execute-feature($feature, @tag-filters) is export {
             for @before-hooks -> $hook {
                 $hook($feature, $scenario);
             }
-            for $scenario.steps -> $step {
-                execute-step($feature, $step, $kvsubst);
-            }
+            execute-scenario($feature, $scenario, $kvsubst, $result);
             # XXX we want to run these even if there are failures in the steps
             for @after-hooks.reverse -> $hook {
                 $hook($feature, $scenario);

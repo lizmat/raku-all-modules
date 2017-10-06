@@ -4,23 +4,22 @@
 
 ## State
 
-This is in very early development, and is lacking lots of features and 
-probably has quite a lot of bugs as well. But it can already do some basic
-cases, see below. 
+This is still in development, but already works for most basic cases. There are 
+bound to be many bugs, please let me know how you get along.
 
 ### Missing Features
 
-* Failure exceptions from glue code
 * Harness improvements to allow parallel execution
-* Reporting
 * TAP integration
+* Different types of reporting
+* Neater printing of featrues/scenarios/steps as they are being executed
 
 ## Usage
 
 This is trying to be faithful and compatible to the "consensus" Cucumber 
-implementation, which also means that most of this documentation applies:
-https://github.com/cucumber/cucumber/wiki/A-Table-Of-Content and will also
-explain background and theory better than I possibly could.
+implementation, which also means that most of this documentation applies
+and will also explain background and theory better than I possibly could: 
+https://github.com/cucumber/cucumber/wiki/A-Table-Of-Content
 
 Please let me know if there are any surprising discrepancies.
 
@@ -76,12 +75,28 @@ even use non-capturing groups in the regex and slurpy arguments (quite cool!):
         }
     }
 
+Within your glue code, you can use any exception (except X::CucumisSextus::FeatureExecFailure, 
+which is to signal problems when trying to run the step, not *within* the step) to signal
+a failure. The next steps of the scenario will be skipped, but the remaining scenarios of the 
+feature will be executed, as will be other features.
+
+    Then /'the display should be off'/, sub () {
+        die "display should be off, but isn't";
+    }
+
 ### Execution
 
 In order to execute the tests described in a feature file, the "cucumis6" tool can 
 be used:
 
     cucumis6 features
+
+Cucumis will execute your features, producing some more output, and then report the results:
+
+    14 scenarios executed, 4 skipped, 12 succeeded, 2 failed
+
+The return code form the command will only be 0 if there are no problems executing cucumis, 
+and if there are no failed scenarios.
 
 ### Tags
 

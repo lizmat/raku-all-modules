@@ -72,6 +72,13 @@ Step /'having entered the following sequence'/, sub ($text) {
     $trace ~= "U$text";
 }
 
+Then /'the display should be off'/, sub () {
+    say "# display-should-be-off";
+    $trace ~= "V1";
+    die "display should be off, but isn't";
+    $trace ~= "V2";
+}
+
 Before sub ($feature, $scenario) {
     if $feature.tags.first(* ~~ 'hooked') {
         $trace ~= '[';

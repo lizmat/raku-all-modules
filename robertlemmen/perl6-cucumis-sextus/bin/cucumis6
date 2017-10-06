@@ -60,6 +60,7 @@ sub MAIN(:$tags, *@feature-spec) {
 
     # now execute the features
     $have-errors = False;
+    my $result = CucumisResult.new;
     for @features -> $f {
         if !all-filters-match(@tag-filters, $f.tags) {
             say "Skipping feature '" ~ $f.name ~ "' due to tag filters";
@@ -81,7 +82,7 @@ sub MAIN(:$tags, *@feature-spec) {
             }
         }
 
-        execute-feature($f, @tag-filters);
+        execute-feature($f, @tag-filters, $result);
 
         CATCH {
             # XXX need to load step definitions
@@ -96,6 +97,13 @@ sub MAIN(:$tags, *@feature-spec) {
 
     if $have-errors {
         # XXX summary of all excecution errors
+        exit 1;
+    }
+
+    say "";
+    say $result.Str;
+    if $result.failed {
+        # XXX we should have different return codes for different cases
         exit 1;
     }
 }
