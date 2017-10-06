@@ -4,6 +4,6 @@ perl6:
     - latest
 
 install:
-    - rakudobrew build-panda
-    - panda installdeps .
-    # - env
+    - rakudobrew build-zef
+    - zef --force install HTTP::UserAgent
+    - zef --deps-only install .

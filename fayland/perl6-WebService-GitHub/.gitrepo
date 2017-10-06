@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/fayland/perl6-WebService-GitHub.git
 	branch = master
-	commit = 6dd84bb1ad7b16d54248e7955d676b4b2e08e4dc
-	parent = 21b5720fc0f5a2ad62981d38049e5b5d3b73210e
+	commit = f1f7f2852dcb422d794599172beb7bdd4abdcbeb
+	parent = bf2a5d3dc71370cd0800513abc2d8a563daa51a0
 	cmdver = 0.4.0
