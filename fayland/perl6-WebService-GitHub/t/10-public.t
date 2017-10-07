@@ -3,7 +3,7 @@ use WebService::GitHub;
 
 ok(1);
 
-if (%*ENV<TRAVIS>) {
+if (%*ENV<TRAVIS> && rate-limit-remaining()) {
     diag "running on travis";
     my $gh = WebService::GitHub.new;
     my $user = $gh.request('/users/fayland').data;

@@ -1,3 +1,5 @@
+#!/usr/bin/env perl6
+
 use v6;
 
 die 'export GITHUB_USER AND GITHUB_PASS' unless %*ENV<GITHUB_USER> and %*ENV<GITHUB_PASS>;
