@@ -9,7 +9,7 @@ use Getopt::Std :DEFAULT;
 
 my Str:D %base-opts = :foo('bar'), :baz('quux'), :h(''), :something('15'), :O('-3.5');
 my Str:D @base-args = <-v -I tina -vOverbose something -o something -- else -h>;
-my $base-optstr = 'I:O:o:v';
+my $base-optstr = 'I:O:o:v-:';
 my Str:D %empty_hash;
 
 class TestCase
@@ -105,6 +105,12 @@ my @tests = (
 		:args(<-v out>),
 		:res-args([<out>]),
 		:res-opts({:v(['v'])}),
+	),
+	TestCase.new(
+		:name('dash as an option character'),
+		:args(<--help me>),
+		:res-args([<me>]),
+		:res-opts({'-' => ['help']}),
 	),
 	TestCase.new(
 		:name('repeated flag'),

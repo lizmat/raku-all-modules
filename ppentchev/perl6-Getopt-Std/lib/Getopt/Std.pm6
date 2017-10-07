@@ -2,7 +2,7 @@
 
 use v6.c;
 
-unit module Getopt::Std:ver<1.0.0>:auth<github:ppentchev>;
+unit module Getopt::Std:ver<1.0.1>:auth<github:ppentchev>;
 
 class X::Getopt::Std is Exception
 {
@@ -92,7 +92,7 @@ sub getopts-all(Str:D $optstr, @args, Bool :$nonopts,
 			}
 			$x = ~$<opts>;
 
-			while $x ~~ /^ $<opt> = [ <[a..zA..Z0..9?]> ] $<rest> = [ .* ] $/ {
+			while $x ~~ /^ $<opt> = [ . ] $<rest> = [ .* ] $/ {
 				$x = ~$<rest>;
 				my Str:D $opt = ~$<opt>;
 				if not %defs{$opt}:k {
