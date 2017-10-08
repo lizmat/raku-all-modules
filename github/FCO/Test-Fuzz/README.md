@@ -30,7 +30,7 @@ multi MAIN(Bool :$fuzz!) {
 ```
 
 ## Description
-`Test::Fuzz` is a tool to `generative/fuzz testing`.
+`Test::Fuzz` is a tool for `generative/fuzz testing`.
 Add the `is fuzzed` trait and `Test::Fuzz` will try to figure out the best generators to use to test your function.
 
 To run the tests, just call the `run-tests` function.
@@ -38,9 +38,9 @@ To run the tests, just call the `run-tests` function.
 ## INSTALLATION
 
 ```
-    # with panda
-    > panda install Test::Fuzz
-
-    # or, with zef
+    # with zef
     > zef install Test::Fuzz
+    
+    # or, with 6pm (https://github.com/FCO/6pm)
+    > $ 6pm install Test::Fuzz    
 ```
