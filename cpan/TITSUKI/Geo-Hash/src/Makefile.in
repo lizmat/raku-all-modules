@@ -1,0 +1,13 @@
+# Simple Makefile for static library construction and testing
+name = %geohash%
+
+all: %DESTDIR%/resources/libraries/%geohash% test
+
+%DESTDIR%/resources/libraries/%geohash%: geohash.c
+	%CC% -shared %CCSHARED% geohash.c -o %DESTDIR%/resources/libraries/%geohash%
+test:
+	gcc geohash_test.c geohash.c 	
+	./a.out
+	rm a.out
+clean: 
+	rm %DESTDIR%/resources/libraries/%geohash%
