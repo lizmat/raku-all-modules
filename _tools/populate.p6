@@ -18,6 +18,8 @@ for @projects {
     my @chunks = $url.split('/');
     my $local = join '/', @chunks[*-2, *-1];
     $local ~~ s/ '.git' $ //;
+    my $prefix = $url.contains('gitlab.com') ?? 'gitlab' !! 'github';
+    $local = "$prefix/$local";
     %local-seen{$local} = True;
     if $ignore-errors {
        my $proc = run 'git', 'subrepo', 'clone', '-f', $url, $local;
