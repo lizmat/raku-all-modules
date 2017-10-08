@@ -1,0 +1,19 @@
+{
+  "authors" : [
+    "Timo Paulssen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Sugar-free NativeCall binding for libSDL2",
+  "license" : "Artistic-2.0",
+  "name" : "SDL2::Raw",
+  "perl" : "6.*",
+  "provides" : {
+    "SDL2::Raw" : "lib/SDL2/Raw.pm"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/timo/SDL2_Raw-p6.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.1"
+}

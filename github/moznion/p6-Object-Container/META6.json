@@ -1,0 +1,20 @@
+{
+  "authors" : [
+    "moznion"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "A simple container for object for perl6",
+  "license" : "Artistic-2.0",
+  "name" : "Object::Container",
+  "perl" : "6.c",
+  "provides" : {
+    "Object::Container" : "lib/Object/Container.pm6",
+    "Object::Container::Item" : "lib/Object/Container/Item.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/moznion/p6-Object-Container.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}

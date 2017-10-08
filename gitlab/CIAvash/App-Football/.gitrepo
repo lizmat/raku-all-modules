@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://gitlab.com/CIAvash/App-Football.git
+	branch = master
+	commit = 9cd99bad6d63a830c0d31e48777936f8af123e79
+	parent = 3ac38407321820289fbaaaad582a1c5588710c72
+	cmdver = 0.4.0

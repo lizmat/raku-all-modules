@@ -1,0 +1,19 @@
+{
+  "authors" : [
+    "Tom Browder <tom.browder@gmail.com>"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Miscellaneous stuff for practicing module development",
+  "name" : "Foo::Bar",
+  "perl" : "6.*",
+  "provides" : {
+    "Foo::Bar" : "lib/Foo/Bar.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/tbrowder/Foo-Bar-Perl6.git",
+  "test-depends" : [
+    "Test::Meta"
+  ],
+  "version" : "72.0.1"
+}

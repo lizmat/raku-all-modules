@@ -1,0 +1,51 @@
+=pod
+
+=encoding utf8
+
+=head2 Geo::Ellipsoid
+
+=for HTML <a href="https://travis-ci.org/tbrowder/Geo-Ellipsoid-Perl6">
+          <img src="https://travis-ci.org/tbrowder/Geo-Ellipsoid-Perl6.svg?branch=master"></a>
+
+Longitude and latitude calculations using an ellipsoid model.
+
+=head2 INSTALLATION
+
+To install this module, run one of the following commands:
+
+    zef install Geo::Ellipsoid
+    panda install Geo::Ellipsoid
+
+=head2 TESTING
+
+1. To run the test suite:
+
+   $ make test
+
+2. To run an individual test:
+
+   $ perl6 t/test-filename.t
+
+3. To compare the results of this module to the CPAN Perl 5 version:
+
+   $ make test-orig > res.txt
+   $ diff res.txt test/results.txt
+
+=head2 RELEASE NOTES
+
+This is version 1.0, the initial port of the CPAN Perl 5 version to
+Perl 6.
+
+=head2 RELEASE NOTES (from the original CPAN version)
+
+This module is a port of existing Fortran subroutines to Perl.
+
+=head2 COPYRIGHT AND LICENCE
+
+Copyright (C) 2015-2016 Tom Browder <tom.browder@gmail.com>
+Copyright (C) 2005-2008 Jim Gibson
+
+This program is free software; you can redistribute it or modify it
+under the same terms as Perl itself.
+
+=cut

@@ -1,0 +1,11 @@
+{
+    "perl"          : "6.*",
+    "name"          : "Math::RungeKutta",
+    "version"       : "0.1",
+    "description"   : "Numeric integrator for ordinary coupled, linear differential equations",
+    "provides"      : {
+        "Math::RungeKutta": "lib/Math/RungeKutta.pm"
+    },
+    "license"       : "Artistic-2.0",
+    "source-url"    : "git://github.com/moritz/Math-RungeKutta.git"
+}

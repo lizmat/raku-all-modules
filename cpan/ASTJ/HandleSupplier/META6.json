@@ -1,0 +1,21 @@
+{
+  "authors" : [
+    "Asato Wakisaka"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "generate Supplier for an IO::Handle object",
+  "license" : "Artistic-2.0",
+  "name" : "HandleSupplier",
+  "perl" : "6.c",
+  "provides" : {
+    "HandleSupplier" : "lib/HandleSupplier.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/astj/p6-HandleSupplier.git",
+  "tags" : [ ],
+  "test-depends" : [
+    "IO::Blob"
+  ],
+  "version" : "0.0.1"
+}

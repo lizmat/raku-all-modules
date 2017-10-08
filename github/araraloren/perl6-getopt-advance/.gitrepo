@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/araraloren/perl6-getopt-advance.git
+	branch = master
+	commit = 71e072724b8615dc8f873debdb3560b3451556d1
+	parent = 52259a68faf70bd0923c199b1f0ffd9c57146c9d
+	cmdver = 0.4.0

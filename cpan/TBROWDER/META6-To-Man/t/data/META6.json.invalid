@@ -1,0 +1,24 @@
+{
+    "name"        : "My::Module",
+    "version"     : "0.1.0",
+    "authors"     : [ "github:tbrowder" ],
+    "license"     : "Artistic-2.0",
+    "source-url"  : "https://github.com/tbrowder/META6-To-Man-Perl6.git",
+    "support"     : {
+        "bugtracker" : "https://github.com/tbrowder/META6-To-Man-Perl6/issues"
+    },
+    "provides"    : {
+        "META6::To::Man" : "lib/META6/To/Man.pm6"
+    },
+    "test-depends"     : [
+	"Test::META"
+    ],
+    "depends" : [
+	"Text::More"
+    ],
+    "resources" : [
+    ],
+    "tags" : [
+	"META6", "POSIX", "man page", "roff", "troff", "groff"
+    ]
+}
