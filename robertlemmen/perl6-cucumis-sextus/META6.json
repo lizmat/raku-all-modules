@@ -9,7 +9,7 @@
     "depends" : [
     ],
     "test-depends" : [
-        "Test::Meta"
+        "Test::META"
     ],
     "provides" : {
         "X::CucumisSextus::FeatureExecFailure" : "lib/X/CucumisSextus/FeatureExecFailure.pm6",
