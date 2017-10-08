@@ -1,6 +1,6 @@
 {
     "name"        : "Math::Model",
-    "version"     : "*",
+    "version"     : "0.1",
     "description" : "Automagic integrator for models (first order ODEs)",
     "provides"    : {
         "Math::Model" : "lib/Math/Model.pm"
