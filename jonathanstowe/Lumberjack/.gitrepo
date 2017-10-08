@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Lumberjack.git
 	branch = master
-	commit = 3b6d921a886ed5dde57ebd0993e7c4f4846b34f9
-	parent = 82524e445a2b100b6a601c96382ccf086d773229
+	commit = d32d0b5a2607dbc231d23bddca62e1167e387d48
+	parent = 1b8d49b9d50b47ec21f5440c5a02e4092ee8bfb6
 	cmdver = 0.4.0

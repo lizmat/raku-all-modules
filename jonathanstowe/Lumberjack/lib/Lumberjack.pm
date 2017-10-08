@@ -857,6 +857,7 @@ class Lumberjack {
                 }
             }
             $!handle.say: format-message($!format, $message, callframes => $!callframes);
+            $!handle.flush;
         }
     }
 }
