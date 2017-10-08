@@ -1,0 +1,140 @@
+{
+    "ConfigVersion" : "1",
+    "RootDir"  : "$*HOME/.zef",
+    "StoreDir" : "$*HOME/.zef/store",
+    "TempDir"  : "$*HOME/.zef/tmp",
+    "DefaultCUR" : ["auto"],
+    "License" : {
+        "whitelist" : "*",
+        "blacklist" : []
+    },
+    "Report" : [
+        { 
+            "short-name" : "p6ctesters",
+            "enabled" : 0,
+            "module" : "Zef::Service::P6CReporter"
+        },
+        {
+            "short-name" : "cpantesters",
+            "enabled" : 1,
+            "module" : "Zef::CPANReporter",
+            "comment" : "Third party plugin - zef install Zef::Reporter::CPAN"
+        }
+    ],
+    "Repository" : [
+        {
+            "short-name" : "cached",
+            "enabled" : 1,
+            "module" : "Zef::Repository::LocalCache",
+            "options" : { }
+        },
+        {
+            "short-name" : "cpan",
+            "enabled" : 1,
+            "module" : "Zef::Repository::Ecosystems",
+            "options" : {
+                "name" : "cpan",
+                "auto-update" : 1,
+                "mirrors" : [
+                    "git://github.com/ugexe/Perl6-ecosystems.git",
+                    "https://raw.githubusercontent.com/ugexe/Perl6-ecosystems/master/cpan.json"
+                ]
+            }
+        },
+        {
+            "short-name" : "p6c",
+            "enabled" : 1,
+            "module" : "Zef::Repository::Ecosystems",
+            "options" : {
+                "name" : "p6c",
+                "auto-update" : 1,
+                "mirrors" : [
+                    "http://ecosystem-api.p6c.org/projects.json",
+                    "git://github.com/ugexe/Perl6-ecosystems.git"
+                ]
+            }
+        },
+        {
+            "short-name" : "metacpan",
+            "enabled" : 0,
+            "module" : "Zef::Repository::MetaCPAN",
+            "options" : {
+                "mirrors" : ["http://hack.p6c.org:5000/v0/release/"]
+            }
+        }
+    ],
+    "Fetch" : [
+        {
+            "short-name" : "git",
+            "module" : "Zef::Service::Shell::git",
+            "options" : {
+                "scheme" : "https"
+            }
+        },
+        {
+            "short-name" : "path",
+            "module" : "Zef::Service::FetchPath"
+        },
+        {
+            "short-name" : "wget",
+            "module" : "Zef::Service::Shell::wget"
+        },
+        {
+            "short-name" : "curl",
+            "module" : "Zef::Service::Shell::curl"
+        },
+        {
+            "short-name" : "pswebrequest",
+            "module" : "Zef::Service::Shell::PowerShell::download"
+        }
+    ],
+    "Extract" : [
+        {
+            "short-name" : "git",
+            "module" : "Zef::Service::Shell::git",
+            "comment" : "used to checkout (extract) specific tags/sha1/commit/branch from a git repo"
+        },
+        {
+            "short-name" : "path",
+            "module" : "Zef::Service::FetchPath",
+            "comment" : "if this goes before git then git wont be able to extract/checkout local paths because this reaches it first :("
+        },
+        {
+            "short-name" : "tar",
+            "module" : "Zef::Service::Shell::tar"
+        },
+        {
+            "short-name" : "p5tar",
+            "module" : "Zef::Service::Shell::p5tar"
+        },
+        {
+            "short-name" : "unzip",
+            "module" : "Zef::Service::Shell::unzip"
+        },
+        {
+            "short-name" : "psunzip",
+            "module" : "Zef::Service::Shell::PowerShell::unzip"
+        }
+    ],
+    "Build" : [
+        {
+            "short-name" : "default-builder",
+            "module" : "Zef::Service::Shell::Build"
+        }
+    ],
+    "Test" : [
+        {
+            "short-name" : "tap-harness",
+            "module" : "Zef::Service::TAP",
+            "comment" : "Perl6 TAP::Harness adapter"
+        },
+        {
+            "short-name" : "prove",
+            "module" : "Zef::Service::Shell::prove"
+        },
+        {
+            "short-name" : "perl6-test",
+            "module" : "Zef::Service::Shell::Test"
+        }
+    ]
+}
