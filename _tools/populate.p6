@@ -8,11 +8,25 @@ run <wget -O cpan.json http://modules.perl6.org/s/from:cpan/.json>
 run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json'
     if $fetch;
 
-my @cpan-projects = (slurp 'cpan.json').list;
+my @cpan-projects = (from-json slurp 'cpan.json')<dists>.list;
+my %local-seen;
+
+for @cpan-projects -> $project {
+    my $local = "cpan/$project<author_id>/" ~ $project<name>.subst(:g, '::', '-');
+    %local-seen{$local} = True;
+    shell qq:to/EOF/;
+        git rm -rf $local
+        mkdir -p $local
+        wget -O - $project<url> | tar --strip-components=1 -xz --directory $local/
+        git add -f $local
+        git commit -m 'add or update $local'
+        EOF
+}
+
+exit;
 
 my $github-source = slurp 'projects.json';
 my @projects = from-json($github-source).list;
-my %local-seen;
 for @projects {
     my $url = try { .<source-url> // .<repo-url> // .<support><source> };
 
