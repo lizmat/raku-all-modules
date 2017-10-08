@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/p6-GDBM.git
 	branch = master
-	commit = 0b6fd7c2c66e6c02d0063421bca9ad604f443d72
-	parent = 119990fbc313fa93db340c50fc925416909edf1b
+	commit = 6a1ecf9aac44a2cc98e00b4435e9ebb555c7a98b
+	parent = 8aa9036ad490242d684abf06c1428eb7e511fcfa
 	cmdver = 0.4.0
