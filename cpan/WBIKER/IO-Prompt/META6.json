@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "pnu",
+    "wbiker"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "This is a generic module for interactive prompting from the console.",
+  "license" : "Artistic-2.0",
+  "name" : "IO::Prompt",
+  "perl" : "6.*",
+  "provides" : {
+    "IO::Prompt" : "lib/IO/Prompt.pm"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/wbiker/io-prompt.git",
+  "tags" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "version" : "0.0.2"
+}
