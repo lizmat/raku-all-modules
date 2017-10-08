@@ -23,8 +23,6 @@ for @cpan-projects -> $project {
         EOF
 }
 
-exit;
-
 my $github-source = slurp 'projects.json';
 my @projects = from-json($github-source).list;
 for @projects {
