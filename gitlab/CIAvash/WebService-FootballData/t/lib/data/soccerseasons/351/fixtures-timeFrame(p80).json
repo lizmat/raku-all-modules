@@ -1,0 +1,33 @@
+{
+    "_links": [{
+        "self": "soccerseasons/351/fixtures"
+    }, {
+        "soccerseason": "soccerseasons/351"
+    }],
+    "count": 18,
+    "fixtures": [{
+        "_links": {
+            "self": {
+                "href": "fixtures/135823"
+            },
+            "soccerseason": {
+                "href": "soccerseasons/351"
+            },
+            "homeTeam": {
+                "href": "teams/11"
+            },
+            "awayTeam": {
+                "href": "teams/4"
+            }
+        },
+        "date": "2015-05-16T13:30:00Z",
+        "status": "FINISHED",
+        "matchday": 33,
+        "homeTeamName": "VfL Wolfsburg",
+        "awayTeamName": "Borussia Dortmund",
+        "result": {
+            "goalsHomeTeam": 2,
+            "goalsAwayTeam": 1
+        }
+    }]
+}

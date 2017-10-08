@@ -1,0 +1,18 @@
+{
+    "_links": {
+        "self": {
+            "href": "teams/5"
+        },
+        "fixtures": {
+            "href": "teams/5/fixtures"
+        },
+        "players": {
+            "href": "teams/5/players"
+        }
+    },
+    "name": "FC Bayern München",
+    "code": "FCB",
+    "shortName": "Bayern",
+    "squadMarketValue": "551,250,000 €",
+    "crestUrl": "http://upload.wikimedia.org/wikipedia/commons/c/c5/Logo_FC_Bayern_München.svg"
+}
