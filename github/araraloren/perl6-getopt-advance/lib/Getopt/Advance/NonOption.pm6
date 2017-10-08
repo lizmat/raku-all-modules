@@ -24,6 +24,9 @@ role NonOption {
             when :(@) {
                 $ret = &!callback(c.[* - 1]);
             }
+			when :() {
+				$ret = &!callback();
+			}
         }
         $!success = True;
         return $ret;
@@ -39,7 +42,7 @@ class NonOption::All does NonOption {
     }
 
     method set-callback(
-        &callback where .signature ~~ :($, @) | :(@)
+        &callback where .signature ~~ :($, @) | :(@) | :()
     ) {
         &!callback = &callback;
     }
@@ -76,7 +79,7 @@ class NonOption::Cmd does NonOption {
     }
 
     method set-callback(
-        &callback where .signature ~~ :($, $) | :($)
+        &callback where .signature ~~ :($, $) | :($) | :()
     ) {
         &!callback = &callback;
     }
@@ -97,6 +100,9 @@ class NonOption::Cmd does NonOption {
             when :(@) {
                 &!callback(c.[* - 1]);
             }
+			when :() {
+				&!callback();
+			}
         }
         $!success = True;
     }
@@ -157,6 +163,9 @@ class NonOption::Pos does NonOption {
             when :($) {
                 &!callback(c.[* - 1]);
             }
+			when :() {
+				&!callback();
+			}
         }
         $!success = True;
     }

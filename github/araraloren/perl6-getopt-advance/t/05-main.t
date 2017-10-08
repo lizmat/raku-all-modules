@@ -2,7 +2,7 @@
 use Test;
 use Getopt::Advance;
 
-plan 3;
+plan 4;
 
 my OptionSet $optset .= new;
 
@@ -15,6 +15,7 @@ getopt(
 );
 
 $optset.remove($sumid);
+$optset.insert-main(&sum3);
 
 getopt(
     <multi 1 2 3 4 5 6 7 8 9 10>,
@@ -34,4 +35,8 @@ sub sum1($optset, @args) {
 
 sub sum2(@args) {
     is @args>>.value, <plus 1 2 3 4 5 6 7 8 9 10>, "get non-option argument";
+}
+
+sub sum3() {
+	is 1, 1, "call argument less main";
 }

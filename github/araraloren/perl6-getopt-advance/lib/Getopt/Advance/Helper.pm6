@@ -146,37 +146,43 @@ sub ga-helper-impl2($optset, $outfh, :$table-format) is export {
 
 	my $usage = "";
 
-    if not $table-format {
-        for @command -> $cmd {
-            $usage ~= "{$*PROGRAM-NAME} {$cmd} {join(" ", @pos)} ";
-            $usage ~= "{join(" ", @opts)} {join(" ", @wepos)} ";
-            $usage ~= $optset.get-main().elems > 0 ?? "*\@args\n" !! "\n";
-        }
-    } else {
-        my @usage = [];
+	if +@command == 0 {
+		$usage ~= "{$*PROGRAM-NAME} {join(" ", @pos)} ";
+		$usage ~= "{join(" ", @opts)} {join(" ", @wepos)} ";
+		$usage ~= $optset.get-main().elems > 0 ?? "*\@args\n" !! "\n";
+	} else {
+		if not $table-format {
+			for @command -> $cmd {
+				$usage ~= "{$*PROGRAM-NAME} {$cmd} {join(" ", @pos)} ";
+				$usage ~= "{join(" ", @opts)} {join(" ", @wepos)} ";
+				$usage ~= $optset.get-main().elems > 0 ?? "*\@args\n" !! "\n";
+			}
+	    } else {
+	        my @usage = [];
 
-        for @command -> $cmd {
-            my @inner-usage = [];
+	        for @command -> $cmd {
+	            my @inner-usage = [];
 
-            @inner-usage.push($*PROGRAM-NAME);
-            @inner-usage.push($cmd);
-            @inner-usage.append(@pos);
-            @inner-usage.append(@opts);
-            @inner-usage.append(@wepos);
-            @inner-usage.append($optset.get-main().elems > 0 ?? "*\@args" !! "");
-            @usage.push(@inner-usage);
-        }
+	            @inner-usage.push($*PROGRAM-NAME);
+	            @inner-usage.push($cmd);
+	            @inner-usage.append(@pos);
+	            @inner-usage.append(@opts);
+	            @inner-usage.append(@wepos);
+	            @inner-usage.append($optset.get-main().elems > 0 ?? "*\@args" !! "");
+	            @usage.push(@inner-usage);
+	        }
 
-        require Terminal::Table <&array-to-table>;
+	        require Terminal::Table <&array-to-table>;
 
-        $usage ~= .join(" ") ~ "\n" for &array-to-table(@usage, style => 'none');
-    }
+	        $usage ~= .join(" ") ~ "\n" for &array-to-table(@usage, style => 'none');
+	    }
+	}
 	my @annotations = [];
 
 	@annotations.push("{.join(" ")}\n") for @($optset.annotation());
 	($usage, @annotations);
 }
 
-sub ga-versioner(Str $version, $outfh) is export {
+sub ga-versioner($version, $outfh) is export {
     $outfh.say($version) if $version;
 }

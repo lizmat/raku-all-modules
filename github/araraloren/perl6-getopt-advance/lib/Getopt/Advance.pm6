@@ -83,7 +83,11 @@ multi sub getopt (
                 when X::GA::ParseFailed {
                     $index++;
                     if $index == $count {
-                        &auto-helper(@optsets);
+                        if +@optsets > 1 {
+                            &auto-helper(@optsets);
+                        } else {
+                            &auto-helper(@optsets[0]);
+                        }
                         $stderr.say(.message);
                         .throw;
                     }
@@ -109,17 +113,17 @@ multi sub getopt (
     }
 
 	if $index == $count {
-		&auto-helper(@optsets);
+        if +@optsets > 1 {
+            &auto-helper(@optsets);
+        } else {
+            &auto-helper(@optsets[0]);
+        }
         exit (0);
 	}
 
     if $autohv {
-        if $optset.has('version') && $optset<version> {
-            &ga-versioner($version, $stdout);
-        }
-        if $optset.has('help') && $optset<help> {
-            &auto-helper($optset);
-        }
+        &ga-versioner($version, $stdout);
+        &auto-helper($optset);
     }
 
     return $ret;
