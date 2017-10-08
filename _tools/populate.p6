@@ -43,7 +43,9 @@ for @projects {
 
 my $removed = 0;
 
-for dir().grep(*.d).grep(*.basename eq none('_tools', '.git')).map({ dir($_).grep(*.d)}).flat {
+for dir().grep(*.d).grep(*.basename eq none('_tools', '.git'))\ # source
+        .map({ dir($_).grep(*.d)}).flat \                       # author
+        .map({ dir($_).grep(*.d)}).flat {                       # project
     my $local = $_.relative;
     unless %local-seen{$local} {
         if $delete && $local.IO.e {
