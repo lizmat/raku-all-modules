@@ -1,0 +1,7 @@
+sudo: false
+language: perl6
+perl6:
+    - latest
+install:
+    - rakudobrew build-zef
+    - zef --deps-only install .
