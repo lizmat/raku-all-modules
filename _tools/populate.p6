@@ -2,10 +2,16 @@ use v6;
 use JSON::Tiny;
 unit sub MAIN(Bool :$delete=True, Bool :$fetch=True, Bool :$ignore-errors);
 
+run <wget -O cpan.json http://modules.perl6.org/s/from:cpan/.json>
+    if $fetch;
+
 run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json'
     if $fetch;
-my $json = slurp 'projects.json';
-my @projects = from-json($json).list;
+
+my @cpan-projects = (slurp 'cpan.json').list;
+
+my $github-source = slurp 'projects.json';
+my @projects = from-json($github-source).list;
 my %local-seen;
 for @projects {
     my $url = try { .<source-url> // .<repo-url> // .<support><source> };
