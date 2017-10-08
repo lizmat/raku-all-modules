@@ -1,0 +1,9 @@
+% my ($h) = @_;
+<html>
+    <head>
+        <title>A greeting for <%= $h<name> %></title>
+    </head>
+    <body>
+        <h1>Hello <%= $h<name> %></h1>
+    </body>
+</html>
