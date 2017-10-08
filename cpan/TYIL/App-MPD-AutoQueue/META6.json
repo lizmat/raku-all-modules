@@ -1,0 +1,25 @@
+{
+  "auth" : "github:scriptkitties",
+  "authors" : [
+    "Patrick Spek <p.spek@tyil.work>"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Config",
+    "MPD::Client"
+  ],
+  "description" : "Automatic playlist queueing",
+  "license" : "GPL-3.0",
+  "name" : "App::MPD::AutoQueue",
+  "perl" : "6",
+  "provides" : {
+    "App::MPD::AutoQueue" : "lib/App/MPD/AutoQueue.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/tyil/perl6-App-MPD-AutoQueue.git",
+  "tags" : [ ],
+  "test-depends" : [
+    "Test::META"
+  ],
+  "version" : "0.1.1"
+}

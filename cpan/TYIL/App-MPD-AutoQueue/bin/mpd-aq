@@ -1,0 +1,49 @@
+#! /usr/bin/env perl6
+
+use v6.c;
+
+use App::MPD::AutoQueue;
+use Config;
+use MPD::Client::Status;
+use MPD::Client;
+
+sub MAIN
+{
+	my Config $config .= new;
+
+	$config.read: {
+		mpd => {
+			host => "localhost",
+			port => 6600
+		},
+		mpd-autoqueue => {
+			say => True
+		}
+	};
+
+	# Connect to MPD
+	my $client = mpd-connect(
+		:host($config.get("mpd.host")),
+		:port($config.get("mpd.port"))
+	);
+
+	# Get initial database
+	my @database = update-database(:$client, :say($config.get("mpd-autoqueue.say")));
+
+	# Queue initial track if possible
+	queue-random(:$client, :@database, :say($config.get("mpd-autoqueue.say")));
+
+	# Start event loop
+	loop {
+		my $event = mpd-idle($client);
+
+		given $event<changed> {
+			when "database" {
+				@database = update-database(:$client, :say($config.get("mpd-autoqueue.say")));
+			}
+			when "playlist" | "player" {
+				queue-random(:$client, :@database, :say($config.get("mpd-autoqueue.say")));
+			}
+		}
+	}
+}
