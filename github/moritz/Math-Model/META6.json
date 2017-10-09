@@ -1,11 +1,18 @@
 {
+    "authors" : [
+        "Moritz Lenz"
+    ],
+    "build-depends" : [ ],
     "name"        : "Math::Model",
-    "version"     : "0.1",
+    "version"     : "0.3",
     "description" : "Automagic integrator for models (first order ODEs)",
     "provides"    : {
         "Math::Model" : "lib/Math/Model.pm"
     },
     "depends"     : [ "Math::RungeKutta", "SVG", "SVG::Plot" ],
     "license"     : "Artistic-2.0",
+    "resources" : [ ],
+    "tags": [ "math" ],
+    "test-depends": [],
     "source-url"  : "git://github.com/moritz/Math-Model.git"
 }
