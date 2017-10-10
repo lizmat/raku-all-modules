@@ -92,6 +92,10 @@ sub MAIN (
     $sparrowdo-run ~= " --no_index_update";
   }
 
+  if %sparrowdo-config<format> {
+    $sparrowdo-run ~= " --format=" ~ %sparrowdo-config<format>;
+  }
+
 
   if %sparrowdo-config<ssh_user> {
     $sparrowdo-run ~= " --ssh_user=" ~ %sparrowdo-config<ssh_user>;
