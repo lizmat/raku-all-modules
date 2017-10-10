@@ -1,3 +1,7 @@
+# 0.0.32 2017-10-09
+
+Core-dsl doc: `on_change` parameter for `template` function
+
 # 0.0.31 2017-09-21
 
 - Ssh passwords support, acknowledges to @Spigell - https://github.com/melezhik/sparrowdo/pull/12

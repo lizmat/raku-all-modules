@@ -261,6 +261,8 @@ Templates are files gets populated from templates sources in [Template-Toolkit](
 
 Examples:
 
+    # build /var/data/animals.txt from template
+
     $ cat examples/templates/animals.tmpl
 
     Hello, my name is [% name %]!
@@ -277,6 +279,17 @@ Examples:
       ),
     );
     
+
+    # trigger action when /var/data/animals.txt changed
+
+    template-create '/var/data/animals.txt', %(
+      source => ( slurp 'examples/templates/animals.tmpl' ),
+      variables => %(
+        name => 'green fox',
+        language => 'Spanish'
+      ),
+      on_change => "echo /var/data/animals.txt changed"
+    );
     
 ## Bash commands
 
