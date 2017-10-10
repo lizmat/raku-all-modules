@@ -19,7 +19,7 @@ class Cro::TLS::Replier does Cro::Sink {
     method sinker(Supply:D $pipeline) returns Supply:D {
         supply {
             whenever $pipeline {
-                await $!socket.write(.data);
+                whenever $!socket.write(.data) {}
                 LAST $!socket.close;
             }
         }
