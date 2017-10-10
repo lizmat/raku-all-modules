@@ -2,10 +2,7 @@ use v6;
 
 unit module RPi::Wiring::I2C;
 
-use strict;
-use warnings;
 use NativeCall;
-use Carp qw(carp croak verbose);
 
 constant LIB = 'libwiringPi.so';
 
