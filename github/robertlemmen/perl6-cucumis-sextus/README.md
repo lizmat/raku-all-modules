@@ -262,16 +262,21 @@ If you want to write your feature files in your native language rather than in
 english, you can certianly do that by putting a language directive into the first
 line of your feature file:
 
-    # language: de
-    Funktionalität: Einfache Taschenrechner Operationen
+    #language: hi
+    रूप लेख: मूलभूत गणक कार्य
+        जाँच करने के लिए मैंने गणक वर्ग को सही ढंग से लिखा है
+        एक विकासक के रूप में मैं कुछ बुनियादी कार्यों की जांच करना चाहता हूं
+        ताकि मेरे गणक वर्ग में मुझे भरोसा हो।
+    परिदृश्य: प्रदर्शन पर प्रथम कुंजी दबाएं
+        पूर्वानुमान एक नई गणक वस्तु
+        और 1 दबाया हुआ
+        अतः प्रदर्शन 1 दिखाना चाहिए
 
-    Szenario: Eine Taste wird gedrueckt
-        Angenommen ich habe einen Taschenrechner
-        Und Ich habe die Taste 1 gedrueckt
-        Dann sollte der Bildschirm 1 anzeigen
+And then write the appropriate step definition code:
 
-If you are able to speak a language with cool characters like chinese or thai, 
-please get in touch, I need prettier examples!
+    Then /'प्रदर्शन' \s+ (\d+) \s+ 'दिखाना चाहिए'/, sub ($num) {
+        # XXX implement
+    }
 
 ## Feedback and Contact
 

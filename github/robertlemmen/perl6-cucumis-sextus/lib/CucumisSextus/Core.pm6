@@ -114,6 +114,9 @@ sub execute-scenario($feature, $scenario, $kvsubst, $result) {
 }
 
 sub execute-feature($feature, @tag-filters, $result) is export {
+    # XXX if  there is nothing recognizabl;e in the feature, the error handling
+    # is terrible, this can be reproduced by e.g. removing the "#language" line
+    # from a non-english feature
     say "Feature " ~ $feature.name;
 
     for $feature.scenarios -> $scenario {

@@ -79,6 +79,18 @@ Then /'the display should be off'/, sub () {
     $trace ~= "V2";
 }
 
+Given /'एक नई गणक वस्तु'/, sub () {
+    $trace ~= "HG";
+}
+
+Step /(\d+) \s+ 'दबाया हुआ'/, sub ($num) {
+    $trace ~= "H$num";
+}
+
+Then /'प्रदर्शन' \s+ (\d+) \s+ 'दिखाना चाहिए'/, sub ($num) {
+    $trace ~= "T$num";
+}
+
 Before sub ($feature, $scenario) {
     if $feature.tags.first(* ~~ 'hooked') {
         $trace ~= '[';
