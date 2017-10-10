@@ -86,7 +86,7 @@ This is insert a main to `$optset`, it print all non-option argument.
 `my @x := $optset<x>;`
 
 NOTE: Use bind operator when you want bind `Option::Array`'s value to
-an Positional/Association variable. 
+an Positional/Association variable.
 
 == Option
 
@@ -225,6 +225,8 @@ When `$strict` is True, argument of option should not be begin with `-` or `--`.
 * :$autohv = False
 +
 When `$autohv` is True, `&getopt` will automate print `$version` information and help message.
+The `:autohv` will not work if you don't have a option named `help` and `version`.
+Without `:autohv`, you need deal the `help` or `version` manually.
 
 * :$version
 +
@@ -240,7 +242,7 @@ When `$x-style` is True, x-style have priority over unix-style.
 
 == Pod Document
 
-link:doc/Getopt/Advance.pod[Getopt-Advance]
+link:doc/Getopt/Advance.pod6[Getopt-Advance]
 
 == Example
 
@@ -285,77 +287,7 @@ $ ./find-file.p6 ../t '1\d.*t$'
 ====  source code
 
 .find-file
-[source,perl6]
-------------------------
-#!/usr/bin/env perl6
-
-use Getopt::Advance;
-use Getopt::Advance::Helper;
-use Getopt::Advance::Exception;
-
-my @files = [];
-my OptionSet $optset .= new;
-
-$optset.insert-pos(
-    "directory",
-    0,
-    sub ($, $dirarg) {
-        die "$dirarg: Not a valid directory" if $dirarg.value.IO !~~ :d;
-        @files = gather &find($dirarg.value.IO);
-    }
-);
-$optset.append(
-    "h|help=b"      => "print this help.",
-    "v|version=b"   => "print program version.",
-    "?=b"           => "same as -h.",
-    :multi
-);
-$optset.append(
-    'd=b' => 'specify file type to directory',
-    'l=b' => 'specify file type to symlink',
-    'f=b' => 'specify file type to normal file',
-    :radio
-);
-for <d l f> -> $t {
-    $optset.set-callback(
-        $t,
-        -> $, $ { @files = @files.grep({ ."{$t}"(); }); }
-    );
-}
-$optset.push(
-    'size=i',
-    'the minimum size limit of file.',
-    callback => sub ($, $size) {
-        @files = @files.grep({ .s() >= $size.Int; });
-    }
-);
-$optset.insert-main(
-    sub main($optset, @args) {
-        if $optset.get-pos('directory', 0).?success {
-            @args.shift;
-        } else {
-            &ga-want-helper();
-        }
-        my $regex = +@args > 0 ?? @args.shift.value !! "";
-
-        if $regex eq "" {
-            .path.say for @files;
-        } else {
-            .path.say if .path ~~ /<$regex>/ for @files;
-        }
-    }
-);
-&getopt($optset, :autohv, helper => &ga-helper2);
-
-sub find($dir) {
-    for $dir.dir() -> $f {
-        take $f;
-        if $f ~~ :d {
-            &find($f);
-        }
-    }
-}
-------------------------
+link:sample/find-file.p6[find-file]
 
 = Installation
 

@@ -42,6 +42,7 @@ $optset.push(
 );
 $optset.insert-main(
     sub main($optset, @args) {
+        return 0 if $optset<help> || $optset<version>;
         if $optset.get-pos('directory', 0).?success {
             @args.shift;
         } else {

@@ -51,6 +51,7 @@ $optset.push(
 );
 $optset.insert-main(
     sub main($optset, @args) {
+        return 0 if $optset<help> || $optset<version>;
         if $optset.get-pos('directory', 0).?success {
             @args.shift;
         } else {
@@ -109,6 +110,18 @@ non-option argument, it provide `main`、`pos` and `cmd` feature.
 Sub `&getopt` accept one or multi `OptionSet`, pass it and command line argument
 to the `&parser`. Once an `OptionSet` matching success, it will return matched
 `OptionSet` and all `NOA(Non-Option Argument)`.
+
+=head2 The help message
+
+Sub `&getopt` will display the help message in the following cases:
+
+=item all of OptionSet match failed
+
+=item &ga-want-helper called
+
+=item &ga-want-all-helper called
+
+=item The OptionSet has option named `help`, and `:autohv` passed to `&getopt`.
 
 If an `OptionSet` match failed, consider follow serveral situation:
 
