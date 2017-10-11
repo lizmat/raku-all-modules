@@ -189,18 +189,25 @@ class FastCGI::NativeCall {
         %env{$key} = $value;
     }
 
+    proto method new(|c) { * }
+
     multi method new(Int $sock) {
-        return self.bless(:$sock);
+        DEPRECATED('named argument');
+        self.bless(:$sock);
     }
 
-    multi method new(Str :$path, Int :$backlog = 16 ) {
+    multi method new(Int :$sock!) {
+        self.bless(:$sock);
+    }
+
+    multi method new(Str :$path!, Int :$backlog = 16 ) {
         my $sock = OpenSocket($path, $backlog);
-        self.new($sock);
+        self.bless(:$sock);
     }
 
     has $!sock;
 
-    submethod BUILD(:$!sock) {
+    submethod BUILD(:$!sock!) {
         $!fcgx_req = XS_Init($!sock);
     }
 

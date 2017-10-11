@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/p6-fcgi.git
 	branch = master
-	commit = 225e26a73a278fbe9af3b68495258cea3785550d
-	parent = 2e1118cd333bb875da9906640d1436ed6f856d42
+	commit = c7ed4329bd5a6f7aa78214bf059f964fcbf4a113
+	parent = b91b9f9598f6312b7fd20be0b4b7afca9b7c33d1
 	cmdver = 0.4.0

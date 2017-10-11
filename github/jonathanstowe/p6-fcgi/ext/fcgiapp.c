@@ -411,7 +411,7 @@ static void CopyAndAdvance(char **destPtr, char **srcPtr, int n);
 int FCGX_VFPrintF(FCGX_Stream *stream, const char *format, va_list arg)
 {
     char *f, *fStop, *percentPtr, *p, *fmtBuffPtr, *buffPtr;
-    int op, performedOp, sizeModifier, buffCount = 0, buffLen, specifierLength;
+    int op, performedOp, sizeModifier, buffCount = 0, __attribute__((__unused__)) buffLen, specifierLength;
     int fastPath, n, auxBuffLen = 0, buffReqd, minWidth, precision, exp;
     char *auxBuffPtr = NULL;
     int streamCount = 0;

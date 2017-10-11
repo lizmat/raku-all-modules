@@ -4,24 +4,35 @@ use FastCGI::NativeCall;
 
 plan 2;
 
-subtest {
-    my $sock = FastCGI::NativeCall::OpenSocket('01-test.sock', 5);
-    ok '01-test.sock'.IO ~~ :e, 'opened socket';
+sub sock-path(--> Str) {
+    $*PID ~ '-' ~ now.Int ~ '.sock';
+}
 
-    my $fcgi = FastCGI::NativeCall.new($sock);
-    ok $fcgi, 'created objected';
+subtest {
+    my $path = sock-path();
+    my $sock = FastCGI::NativeCall::OpenSocket($path, 5);
+    ok $path.IO ~~ :e, 'opened socket';
+
+    my $fcgi = FastCGI::NativeCall.new(:$sock);
+    ok $fcgi, 'created object';
     lives-ok { $fcgi.close }, "close";
 
-    unlink('01-test.sock');
+    LEAVE {
+        unlink($path);
+    }
 }, "original interface";
 subtest {
 
-    my $fcgi = FastCGI::NativeCall.new(path => "02-test.sock", backlog => 10);
-    ok '02-test.sock'.IO ~~ :e, 'opened socket';
-    ok $fcgi, 'created objected';
+    my $path = sock-path();
+
+    my $fcgi = FastCGI::NativeCall.new(:$path, backlog => 10);
+    ok $path.IO ~~ :e, 'opened socket';
+    ok $fcgi, 'created object';
     lives-ok { $fcgi.close }, "close";
 
-    unlink('01-test.sock');
+    LEAVE {
+        unlink($path);
+    }
 }, "new interface";
 
 # vim: ft=perl6
