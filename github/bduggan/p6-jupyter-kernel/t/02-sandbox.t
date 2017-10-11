@@ -3,7 +3,7 @@ use lib 'lib';
 use Test;
 use Jupyter::Kernel::Sandbox;
 
-plan 27;
+plan 35;
 
 my $r = Jupyter::Kernel::Sandbox.new;
 
@@ -57,5 +57,15 @@ is $res.output, 'Died', 'Die trapped';
 
 $res = $r.eval('sub foo { ... }; foo;');
 is $res.output, 'Stub code executed', 'trapped sub call that died';
+
+is $r.eval('123', :store(1)).output, "123", 'store eval in Out[1]';
+is $r.eval('Out[1]', :store(2)).output, "123", 'get Out[1]';
+is $r.eval('_2', :store(3)).output, "123", 'get _2';
+is $r.eval('_', :store(4)).output, "123", 'get _';
+
+is $r.eval('my $y = 3; my $x = 99; $x + 1').output, "100", 'two statements';
+is $r.eval('my $yy = 3; my $xx = 99; $xx + 1', :store(5)).output, "100", 'two statements';
+is $r.eval('_').output, "100", 'saved the right thing';
+is $r.eval('_ + 1').output, "101", 'used _ in an expression';
 
 ok 1, 'still here';

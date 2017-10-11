@@ -39,18 +39,35 @@ class Jupyter::Kernel::Sandbox is export {
     method TWEAK {
         $!compiler := nqp::getcomp('perl6');
         $!repl = REPL.new($!compiler, {});
+        self.eval(q:to/INIT/);
+            my $Out = [];
+            sub Out { $Out };
+            my \_ = do {
+                state $last;
+                Proxy.new( FETCH => method () { $last },
+                           STORE => method ($x) { $last = $x } );
+            }
+        INIT
     }
 
-    method eval(Str $code, Bool :$no-persist) {
+    method eval(Str $code, Bool :$no-persist, Int :$store) {
         my $stdout;
         my $*CTXSAVE = $!repl;
         my $*MAIN_CTX;
         my $*OUT = class { method print(*@args) { $stdout ~= @args.join }
                            method flush { } }
         my $exception;
+        my $eval-code = $code;
+        if $store {
+            $eval-code = qq:to/DONE/
+                my \\_$store = \$( $code );
+                \$Out[$store] := _$store;
+                _ = _$store;
+                DONE
+        }
         my $output =
             try $!repl.repl-eval(
-                $code,
+                $eval-code,
                 $exception,
                 :outer_ctx($!save_ctx),
                 :interactive(1)

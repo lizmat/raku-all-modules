@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bduggan/p6-jupyter-kernel.git
 	branch = master
-	commit = e311dd63e5a8a1defd5807e7b598ca542f1fa3be
-	parent = 2bddcc5b48bb9926975965bb990bffdf6f976562
+	commit = 36db67b300f2a4fdcf69bd4aec31d35fa7106111
+	parent = 5eb34c72b490889a68b3ba56ec1a3c7870d38071
 	cmdver = 0.4.0
