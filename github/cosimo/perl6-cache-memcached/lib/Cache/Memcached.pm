@@ -3,7 +3,7 @@ use v6.c;
 
 use String::CRC32;
 
-class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
+class Cache::Memcached:auth<cosimo>:ver<0.0.10> does Associative {
 
     has Bool  $.debug is rw = False;
     has Bool  $.no-rehash is rw;
@@ -11,13 +11,11 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
     has Bool  $.readonly is rw;
     has       &.stat-callback is rw;
     has Str   $.namespace = "";
-    has Int   $!namespace_len = 0;
     has       @!servers = ();
     has       $!active;
     has Str   @.buckets = (); # is rw;
     has Int   $!bucketcount = 0;
-    has       $!_single_sock = False;
-    has       $!_stime;
+    has       $!single-sock = False;
     has Rat   $.connect-timeout is rw;
     has       @!buck2sock;
     has Version $!server-version;
@@ -35,11 +33,6 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
         self.set-servers(@!servers);
     }
 
-    our $VERSION       = v0.0.5;
-
-
-    our $SOCK_TIMEOUT = 2.6; # default timeout in seconds
-
     my %host_dead;   # host -> unixtime marked dead until
     my %cache_sock;  # host -> socket
     my $PROTO_TCP;
@@ -54,10 +47,10 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
         $!bucketcount = 0;
         $.init-buckets();
         @!buck2sock = ();
-        $!_single_sock = Mu;
+        $!single-sock = Mu;
 
         if +@servers == 1 {
-            $!_single_sock = @servers[0];
+            $!single-sock = @servers[0];
         }
     }
 
@@ -123,8 +116,7 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
     }
 
 
-# Why is this public? I wouldn't have to worry about undef $self if it weren't.
-    method sock-to-host (Str $host) {
+    method sock-to-host(Str $host) {
         my $sock;
 
         $.log-debug("sock-to-host");
@@ -165,8 +157,8 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
     method get-sock ($key) {
         my $sock;
 
-        if $!_single_sock {
-            $sock = $.sock-to-host($!_single_sock);
+        if $!single-sock {
+            $sock = self.sock-to-host($!single-sock);
         }
         elsif $!active {
             my $hv = hashfunc($key);
@@ -174,7 +166,7 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
 
             while $tries++ < 20 {
                 my $host = @!buckets[ $hv % $!bucketcount ];
-                $sock = $.sock-to-host($host);
+                $sock = self.sock-to-host($host);
                 last if $sock || $!no-rehash;
                 $hv += hashfunc($tries ~ $key); # stupid, but works
             }
@@ -294,7 +286,7 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
         $!active && !$!readonly;
     }
 
-    method delete ($key, $time = "" --> Bool) {
+    method delete($key, $time = "" --> Bool) {
         my Bool $rc = False;
         if $.writeable {
 
@@ -361,9 +353,9 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
                 my $line = "$cmdname " ~ $!namespace ~ "$key $flags $exptime $len\r\n$val\r\n";
                 my $res  = self.write-and-read($sock, $line);
 
-                if $!debug && $line {
+                if $line {
                     $line.chop.chop;
-                    warn "Cache::Memcache: {$cmdname} {$!namespace}{$key} = {$val} ({$line})\n";
+                    $.log-debug("Cache::Memcache: {$cmdname} {$!namespace}{$key} = {$val} ({$line})");
                 }
 
                 if &!stat-callback {
@@ -417,7 +409,7 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
     }
 
 
-    method get ($key) {
+    method get(Str:D $key) {
 
         my @res;
 
@@ -444,6 +436,33 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
         return @res[1].defined ?? @res[1] !! Nil;
     }
 
+    multi method AT-KEY(Cache::Memcached:D $self: $key) {
+        Proxy.new(
+            FETCH => method () {
+                $self.get($key);
+            },
+            STORE => method ($val) {
+                $self.set($key, $val);
+            }
+        );
+    }
+
+    method DELETE-KEY(Cache::Memcached:D: $key) {
+        my $val = self.get($key);
+        if $val.defined {
+            self.delete($key);
+        }
+        $val;
+    }
+
+    method ASSIGN-KEY(Cache::Memcached:D: $key, $val) {
+        self.set($key, $val);
+    }
+
+    method EXISTS-KEY(Cache::Memcached:D: $key --> Bool) {
+        self.get($key).defined;
+    }
+
     sub hashfunc(Str $key) {
         my $crc = String::CRC32::crc32($key);
         $crc +>= 16;
@@ -457,7 +476,7 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
         my @hosts = @!buckets;
 
         for @hosts -> $host {
-            my $sock = $.sock-to-host($host);
+            my $sock = self.sock-to-host($host);
             my @res = $.run-command($sock, "flush_all\r\n");
             $success =  False unless @res == 1 && @res[0] eq "OK\r\n";
         }
@@ -515,7 +534,7 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
 
             HOST:
             for @hosts -> $host {
-                my $sock = $.sock-to-host($host);
+                my $sock = self.sock-to-host($host);
                 next HOST unless $sock;
                 TYPE:
                 for @types.grep({ $_ !~~ /^self$/ }) -> $typename {
@@ -553,19 +572,63 @@ class Cache::Memcached:auth<cosimo>:ver<0.0.9> {
                             }
                         }
                     }
+                    elsif $typename eq 'slabs' {
+                        my %slabs;
+                        for @lines -> $line {
+                            if $line ~~ / 'STAT ' $<slab> = [ \d+ ]\: $<key> = [ \S+ ] \s+ $<value> = [ \d+ ] / {
+                                %slabs{~$/<slab>}{~$/<key>} = ~$/<value>
+                            }
+                        }
+                         %stats_hr<hosts>{$host}{$typename} = %slabs;
+                    }
                     else {
                         # This stat is not key-value so just pull it
                         # all out in one blob.
-                        $lines ~~ s:m/^END\r?\n//;
+                        $lines ~~ s:m/^^END\r?\n//;
                         %stats_hr<hosts>{$host}{$typename} ||= "";
                         %stats_hr<hosts>{$host}{$typename} ~= "$lines";
                     }
                 }
             }
         }
-
         return %stats_hr;
     }
+
+    method slab-numbers() {
+        self.stats("slabs")<hosts>.values.map({ $_<slabs>})>>.keys.flat.unique;
+
+    }
+
+    method keys() {
+        my @keys;
+        my $ns = $!namespace;
+        for @!buckets.map({ self.sock-to-host($_) }).grep({ .defined }) -> $sock {
+            for self.slab-numbers -> $slab {
+                my $lines = self.write-and-read($sock, "stats cachedump $slab 0\r\n", -> $bref {
+                    return $bref ~~ /:m^[END|ERROR]\r?\n/;
+                });
+
+                if $lines ~~ m:global/^^'ITEM ' $ns$<key> = [ \S+ ]/ {
+                    for $/.list -> $item {
+                        @keys.push: ~$item<key>;
+                    }
+                }
+            }
+        }
+        @keys.sort.unique;
+    }
+
+    method pairs() {
+        gather {
+            for self.keys -> $key {
+                if self.get($key) -> $value {
+                    take $key => $value;
+                }
+            }
+        }
+    }
+
+
 
     method stats-reset ($types) returns Bool {
 

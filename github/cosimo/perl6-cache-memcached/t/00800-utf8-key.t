@@ -5,7 +5,7 @@ use Test;
 use Cache::Memcached;
 use CheckSocket;
 
-plan 2;
+plan 4;
 
 my $testaddr = "127.0.0.1";
 my $port = 11211;
@@ -24,5 +24,7 @@ my $key = "Ïâ";
 
 ok($memd.set($key, "val1"), "set key1 as val1");
 is($memd.get($key), "val1", "get key1 is val1");
+ok $memd.delete($key), "delete key";
+nok $memd.get($key), "don't get back deleted key";
 
 done-testing();

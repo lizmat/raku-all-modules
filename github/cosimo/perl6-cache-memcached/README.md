@@ -5,7 +5,7 @@ caching daemon.
 
 ## Synopsis
 
-```
+```perl6
   use Cache::Memcached;
 
   my $memd = Cache::Memcached.new;
@@ -16,6 +16,18 @@ caching daemon.
   $memd.decr("key");
   $memd.incr("key", 2);
 
+```
+Or you can use it as an Associative type:
+
+```perl6
+
+use Cache::Memcached;
+
+my $memd = Cache::Memcached.new;
+
+$memd<my_key> = "Some value";
+say $memd<my_key>;
+$memd<my_key>:delete;
 ```
 
 ## Description
@@ -30,7 +42,7 @@ external modules.)
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
+Assuming you have a working Rakudo Perl 6 installation you should be able to
 install this with *zef* :
 
     # From the source directory
@@ -40,16 +52,6 @@ install this with *zef* :
     # Remote installation
 
     zef install Cache::Memcached
-
-Or *panda* if you prefer :
-
-    # From the source directory
-   
-    panda install .
-
-    # Remote installation
-
-    panda install Cache::Memcached
 
 There should be no reason that it won't work with any new installer
 that may come along in the future.

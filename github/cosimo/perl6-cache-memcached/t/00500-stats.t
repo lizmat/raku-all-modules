@@ -1,6 +1,5 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/env perl6
 
-use strict;
 use Test;
 use Cache::Memcached;
 use CheckSocket;
@@ -41,5 +40,6 @@ for @misc_stats_keys -> $stat_key  {
     ok($misc_stats{'hosts'}{$testaddr}{'misc'}{$stat_key}:exists,
        "misc stats hosts $testaddr misc contains $stat_key");
 }
+
 
 done-testing();
