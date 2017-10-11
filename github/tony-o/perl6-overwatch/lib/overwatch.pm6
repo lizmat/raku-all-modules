@@ -13,6 +13,9 @@ class overwatch {
   has $.git = -1;
   has @.filters;
   has @.watch;
+  has @.watched;
+  has $.proc is rw;
+  has $.killer is rw;
 
   method BUILD(:$!execute, :$!keep-alive, :$!exit-on-error, :$!filter, :$!git-interval = Int, :$!git, :@!filters, :@!watch) {
     $.supplier .=new;
@@ -20,7 +23,7 @@ class overwatch {
   }
 
   method go (*@args) {
-    my ($prom, $proc, $killer, @filters);
+    my ($prom);
 
     die 'Please provide some arguments' if @args.elems == 0;
 
@@ -41,37 +44,8 @@ class overwatch {
       args         => @args,
     });
 
-    for @.watch -> $dir {
-      die "Unable to find directory: $dir" if $dir.IO !~~ :e;
-      $dir.IO.watch.tap: -> $f {
-        my $restart = False;
-        for @.filters -> $e { 
-          $restart = True, last if $f.path.chars > $e.chars &&  $e eq $f.path.substr(*- $e.chars); 
-        }
-        if @filters.elems == 0 || (@filters.elems > 0 && $restart) {
-          try {
-            $proc.kill(SIGQUIT);
-            CATCH { 
-              default { 
-                $.supplier.emit({
-                  action => 'error',
-                  type   => 100,
-                  msg    => "Could not kill process: {.message}"
-                });
-              } 
-            }
-          }
-          try {
-            $killer.keep(True);
-          }
-          $.supplier.emit({
-            action    => 'file-changed',
-            file-path => "$dir/{$f.path}".IO.relative;
-          });
-        }
-      }
-    }
-    
+    self!do-watch;
+
     my $s;
     if $.git-interval >= 0 {
       start { 
@@ -98,19 +72,19 @@ class overwatch {
         action => 'kill-proc',
         signal => $_,
       });
-      await $proc.kill($_);
+      await $.proc.kill($_);
       exit 0;
     });
 
-    while Any ~~ $proc || $.keep-alive {
-      $proc = Proc::Async.new($.execute, @args);
-      $proc.stdout.act(&print);
-      $proc.stderr.act(-> $r { $*ERR.print($r); });
-      $prom = $proc.start;
-      $killer = Promise.new;
-      await Promise.anyof($prom, $killer);
-      $killer.break if $killer.status !~~ Kept;
-      if ($killer.status !~~ Kept && $prom.result:exists && $prom.result.exitcode != 0 && $.exit-on-error) || $.dying {
+    while Any ~~ $.proc || $.keep-alive {
+      $.proc = Proc::Async.new($.execute, @args);
+      $.proc.stdout.act(&print);
+      $.proc.stderr.act(-> $r { $*ERR.print($r); });
+      $prom = $.proc.start;
+      $.killer = Promise.new;
+      await Promise.anyof($prom, $.killer);
+      $.killer.break if $.killer.status !~~ Kept;
+      if ($.killer.status !~~ Kept && $prom.result:exists && $prom.result.exitcode != 0 && $.exit-on-error) || $.dying {
         $.supplier.emit({
           action => 'proc-died',
           code   => $prom.result.exitcode,
@@ -123,5 +97,47 @@ class overwatch {
       });
     }
     try $s.quit;
+  }
+
+  method !do-watch {
+    for @.watch -> $dir {
+      next if @.watched.grep($dir);
+      die "Unable to find directory: $dir" if $dir.IO !~~ :e;
+      @.watch.push(|$dir.IO.dir.grep(*~~:d));
+      @.watched.push($dir);
+      $dir.IO.watch.act: -> $f {
+        my $restart = False;
+        for @.filters -> $e { 
+          $restart = True, last if $f.path.chars > $e.chars && $e eq $f.path.substr(* - $e.chars); 
+        }
+        try {
+          if $f.path.IO ~~ :d {
+            @.watch.push($f.path);
+            self!do-watch;
+          }
+        }
+        if @.filters.elems == 0 || (@.filters.elems > 0 && $restart) {
+          try {
+            $.proc.kill(SIGQUIT);
+            CATCH { 
+              default { 
+                $.supplier.emit({
+                  action => 'error',
+                  type   => 100,
+                  msg    => "Could not kill process: {.message}"
+                });
+              } 
+            }
+          }
+          try {
+            $.killer.keep(True);
+          }
+          $.supplier.emit({
+            action    => 'file-changed',
+            file-path => "$dir/{$f.path}".IO.relative;
+          });
+        }
+      }
+    }
   }
 }

@@ -9,7 +9,8 @@ sub MAIN (
   Int  :g(:$git) = -1,
   Bool :q(:$quiet) = False,
   Str :f(:$filter) = '',
-  :w(:@watch) = [],
+  :w(:$watch) = [],
+  :p(:$pargs) = [],
   *@args, 
 ) {
 
@@ -25,7 +26,7 @@ sub MAIN (
     :$git,
     :$quiet,
     :$filter,
-    :@watch
+    :$watch
   );
 
 
@@ -63,7 +64,7 @@ sub MAIN (
     });
   }
 
-  $overwatch.go(@args);
+  $overwatch.go([$pargs, |@args]);
 }
 
 sub USAGE {
@@ -112,6 +113,12 @@ Options:
 {$space x 2}Default: ''
 {$space x 2}Comma separated list of file extensions to watch
 {$space x 2}for changes.  List applies to all --watch dirs.
+
+{$space}-p \| --pargs
+{$space x 2}Default: []
+{$space x 2}List of arguments to start "-e" with.
+{$space x 2}IE: overwatch -p="-e" "sleep 5"
+{$space x 2}Would monitor the process: perl6 -e "sleep 5"
 
 Notes:
 {$space}Multiple -w switches may be specified

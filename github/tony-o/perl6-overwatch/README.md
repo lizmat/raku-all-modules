@@ -1,15 +1,15 @@
-#Overwatch
+# Overwatch
 
 Perl6 Overwatch can be used to restart programs when they crash or 
 when files are modified.  
 
-##Usage 
+## Usage 
 
 ```
 overwatch [options] <program> [<program arguments>]
 ```
     
-##Required
+## Required
 
 ```
 <program>
@@ -17,9 +17,9 @@ overwatch [options] <program> [<program arguments>]
     
 A program/script name is required.
 
-##Options
+## Options
 
-###Executable
+### Executable
 
 ```
 -e=<executable> | --execute=<executable>
@@ -29,7 +29,7 @@ Default: ```perl6```
 
 The executable that runs the specified <program>.
 
-###Keep Alive
+### Keep Alive
 
 ```
 -k | --keep-alive
@@ -40,7 +40,7 @@ Default: ```True```
 Automatically rerun the program.
  
 
-###Exit on error
+### Exit on error
 
 ```
 -x | --exit-on-error
@@ -50,7 +50,7 @@ Default: ```False```
 
 Stop overwatch if the <program> exited with a non-zero code.
 
-###Git
+### Git
 
 ```
 -g | --git
@@ -62,7 +62,7 @@ Checks default upstream git repository and pulls if local is behind.
 
 A value of zero or less disables this option.
 
-###Quiet
+### Quiet
 
 ```
 -q | --quiet
@@ -72,7 +72,7 @@ Default: ```False```
 
 Prevents overwatch from printing informative messages to stdout. 
 
-###Watch
+### Watch
 
 ```
 -w | --watch
@@ -82,7 +82,7 @@ Default: ```[]```
 
 Directories/files to watch for changes, when a file is changed the <program> is restarted.
 
-###Filter
+### Filter
 
 ```
 -f | --filter
@@ -92,11 +92,21 @@ Default: ```''```
 
 Comma separated list of file extensions to watch for changes.  List applies to all ```watch``` dirs.
 
-##Notes
+#### Notes
 * Multiple -w switches may be specified
-* To negate a [True|False} value you can use -/q (same as -q=False)
+* To negate a [True|False] value you can use -/q (same as -q=False)
 
-##Examples
+### Process Args
+
+```
+-p | --pargs
+```
+
+Default: ```[]```
+
+List of arguments to start the executable with.  Example `overwatch -p='-e' 'sleep 5'` would monitor the process: `perl6 -e 'sleep 5'`
+
+## Examples
 
 ```
 overwatch app.pl6
@@ -110,7 +120,7 @@ overwatch -w=models mvc.pl6
 overwatch -w=/tmp/ -e=/bin/sh shellscript.sh --shellarg=go
 ```
 
-##License
+## License
 
 [Artistic License 2.0](http://www.perlfoundation.org/artistic_license_2_0)
 
