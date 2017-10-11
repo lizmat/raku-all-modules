@@ -1,26 +1,74 @@
-use v6;
+use v6.c;
 use Test;
 use FastCGI::NativeCall;
 use FastCGI::NativeCall::PSGI;
-use MONKEY-TYPING;
 
-plan 2;
+plan 3;
 
-augment class FastCGI::NativeCall::PSGI {
-	method get-app {
-		return $!app;
-	}
+
+sub sock-path(--> Str) {
+    $*PID ~ '-' ~ now.Int ~ '.sock';
 }
 
-my $sock = FastCGI::NativeCall::OpenSocket('01-test.sock', 5);
-my $psgi = FastCGI::NativeCall::PSGI.new(FastCGI::NativeCall.new($sock));
+subtest {
 
-ok $psgi, 'created object';
+    my $path = sock-path();
+    my $psgi = FastCGI::NativeCall::PSGI.new(fcgi => FastCGI::NativeCall.new(:$path, backlog => 5));
 
-sub dispatch-psgi($env) { return 'works' }
+    ok $psgi, 'created object';
 
-$psgi.app(&dispatch-psgi);
+    ok $path.IO.e, "the socket was created okay";
 
-is $psgi.get-app()({}), 'works', 'app successfully set';
+    sub dispatch-psgi($env) { return 'works' }
 
-unlink('01-test.sock');
+    $psgi.app(&dispatch-psgi);
+
+    is $psgi.app.({}), 'works', 'app successfully set';
+
+    LEAVE {
+        unlink($path);
+    }
+}, "old API";
+
+subtest {
+
+    my $path = sock-path();
+    my $psgi = FastCGI::NativeCall::PSGI.new(:$path, backlog => 5);
+
+    ok $psgi, 'created object';
+
+    ok $path.IO.e, "the socket was created okay";
+
+    sub dispatch-psgi($env) { return 'works' }
+
+    $psgi.app(&dispatch-psgi);
+
+    is $psgi.app.({}), 'works', 'app successfully set';
+
+    LEAVE {
+        unlink($path);
+    }
+}, "new API";
+subtest {
+
+    my $path = sock-path();
+
+    my $sock = FastCGI::NativeCall::OpenSocket($path, 5);
+    my $psgi = FastCGI::NativeCall::PSGI.new(:$sock);
+
+    ok $psgi, 'created object';
+
+    ok $path.IO.e, "the socket was created okay";
+
+    sub dispatch-psgi($env) { return 'works' }
+
+    $psgi.app(&dispatch-psgi);
+
+    is $psgi.app.({}), 'works', 'app successfully set';
+
+    LEAVE {
+        unlink($path);
+    }
+}, "with socket";
+
+# vim: expandtab shiftwidth=4 ft=perl6

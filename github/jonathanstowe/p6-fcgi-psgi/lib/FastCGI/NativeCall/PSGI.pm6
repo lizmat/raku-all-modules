@@ -7,15 +7,27 @@ class FastCGI::NativeCall::PSGI {
     has FastCGI::NativeCall $.fcgi;
     has $!body;
     has %!env;
-    has $!app;
+    has Callable $.app;
+
+    proto method new(|c) { * }
 
     multi method new(FastCGI::NativeCall $fcgi) {
-        return self.bless(:$fcgi);
+        DEPRECATED('named parameter "fcgi"');
+        self.bless(:$fcgi);
     }
 
-    multi method new(Str :$path, Int :$backlog = 16) {
+    multi method new(FastCGI::NativeCall :$fcgi!) {
+        self.bless(:$fcgi);
+    }
+
+    multi method new(Str :$path!, Int :$backlog = 16) {
         my $fcgi = FastCGI::NativeCall.new(:$path, :$backlog);
-        self.new($fcgi);
+        self.bless(:$fcgi);
+    }
+
+    multi method new(Int :$sock!) {
+        my $fcgi = FastCGI::NativeCall.new(:$sock);
+        self.bless(:$fcgi);
     }
 
     multi method run(&app) {
@@ -34,8 +46,14 @@ class FastCGI::NativeCall::PSGI {
         }
     }
 
-    method app($app) {
+    proto method app(|c) { * }
+
+    multi method app(Callable $app --> Callable) {
         $!app = $app;
+    }
+
+    multi method app(--> Callable) is rw {
+        $!app;
     }
 
     method handler {

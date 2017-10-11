@@ -54,6 +54,18 @@ $psgi.run(&app);
 
 A suitable nginx configuration for these can be found in the [examples](examples) directory.
 
+If you are using Apache httpd with [mod_fcgid](https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html)
+then your script will be executed by the server with its STDIN (file descriptor 0) reopened to
+a listening socket that has already been created for you, in this case your constructor will
+become:
+
+```perl6
+my $psgi = FastCGI::NativeCall::PSGI.new(sock => 0);
+```
+
+There is a snippet of Apache configuration in the [examples](examples/apache.conf) directory. You
+will almost certainly want to tweak that to your own requirements.
+
 ## Description
 
 [FastCGI](https://fastcgi-archives.github.io/) is a protocol that allows
