@@ -14,10 +14,13 @@ role IO::Socket::HTTP {
     # Currently assumes these are called in a specific order per request
     method get(Bool :$bin where *.so, Bool :$chomp = True) {
         my $buf = $.recv(1, :bin);
-        while (my $byte = $.recv(1, :bin)).DEFINITE {
+
+        repeat {
+            my $byte = $.recv(1, :bin);
+            last unless $byte.DEFINITE;
             $buf ~= $byte;
-            last if $buf.subbuf(*-$CRLF-BYTES) eq $CRLF;
-        }
+        } until $buf.subbuf($buf.bytes - $CRLF-BYTES, $CRLF-BYTES) eq $CRLF;
+
         return ?$chomp ?? $buf.subbuf(0, $buf.bytes - $CRLF-BYTES) !! $buf;
     }
 

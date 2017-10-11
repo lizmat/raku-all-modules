@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/Perl6-Net--HTTP.git
 	branch = master
-	commit = 140b02d56adbb9026fda611e8b03466f49b27205
-	parent = d0815ab7aa048ade8822ff2adeb04b89ea738f92
+	commit = df628c2e636149c81a648b95f33aff4a523f8e3d
+	parent = f25ef8ec686a06e4ff730adcfe5182da9ec2db23
 	cmdver = 0.4.0
