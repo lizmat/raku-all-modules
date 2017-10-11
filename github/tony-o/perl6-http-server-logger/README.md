@@ -4,7 +4,7 @@ Uses apache log format for logging, you can specify custom formats also.
 
 By default this module uses the common log format specified by Apache.
 
-##usage
+## usage
 
 ```perl6
 use HTTP::Server::Logger;
@@ -23,7 +23,7 @@ $log.pretty-log; #use a pretty format '[%s] %{%Y/%m/%d %H:%m}t %U'
 $server.listen;
 ```
 
-##custom logger
+## custom logger
 
 you can use this logger for custom logging as long as you're okay with the apache log format
 
@@ -37,7 +37,7 @@ $log.log({
   Z => 'something Z',
 });
 
-#output: 'something t something Z'
+# output: 'something t something Z'
 ```
 
 need some custom formatting for Z?
@@ -52,5 +52,5 @@ $log.log({
   Z => 'lowercase',
 });
 
-#output: 'something t LOWERCASE'
+# output: 'something t LOWERCASE'
 ```
