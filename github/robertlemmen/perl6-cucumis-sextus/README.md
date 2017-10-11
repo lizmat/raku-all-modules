@@ -278,6 +278,10 @@ And then write the appropriate step definition code:
         # XXX implement
     }
 
+Note that you could even use Hindi number literals like १ instead 
+of the arabic oes in the example above, the \d does detect them 
+correctly and $num.Int will convert to a number as well!
+
 ## Feedback and Contact
 
 Please let me know what you think: Robert Lemmen <robertle@semistable.com>
