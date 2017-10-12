@@ -1,3 +1,9 @@
+# 0.0.32 2017-10-11
+
+- Funtoo Linux  Bootstrap
+- Minor bug fixes (#13)
+- Minor fixes in bootstrap function
+
 # 0.0.32 2017-10-09
 
 Core-dsl doc: `on_change` parameter for `template` function

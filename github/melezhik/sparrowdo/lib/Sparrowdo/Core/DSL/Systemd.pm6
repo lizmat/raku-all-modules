@@ -30,7 +30,7 @@ WantedBy=multi-user.target
   template-create "/etc/systemd/system/$name.service", %(
     source => $templ,
     variables => %opts,
-    on_change => "echo reload systemctl daemon; systemctl daemon-reload"
+    on_change => 'systemctl daemon-reload'
   );
   
 }

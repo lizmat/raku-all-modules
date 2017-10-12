@@ -9,6 +9,7 @@ Sparrowdo core-dsl functions spec.
   * [CPAN packages](#cpan-packages)
   * [Zef modules](#zef-modules)
 * [Services](#services)
+  * [Systemd](#systemd)
 * [Directories](#directories)
 * [Files](#files)
 * [Copy local files](#copy-local-files)
@@ -151,6 +152,31 @@ Examples:
     
     service-disable 'nginx';
     
+### Systemd
+
+Sparrowdo provides limited and poorly tested API for Systemd scripts. Here is example how you can  use it:
+
+    user "foo";
+
+    # install systemd script for some service and reload systemd daemon
+    systemd-service "long-dream", %(
+      user => "foo",
+      workdir => "/home/foo",
+      command => "/bin/bash -c 'sleep 10000'"
+    );
+
+    # start service
+    service-start "long-dream";
+
+Basically it's `systemd-service` function with parameters:
+
+* `name` - service name
+* `user` - sets the user to own service process
+* `command` - sets the service command
+* `workdir` - sets working directory
+
+All the parameters are required.
+
 
 ## Directories
 

@@ -212,7 +212,7 @@ sub ssh_shell ( $cmd ) {
   @bash_commands.push:  'export https_proxy=' ~ input_params('HttpsProxy') if input_params('HttpsProxy');
   @bash_commands.push:  'export GIT_PROTOCOL=https';
   @bash_commands.push:  'export PERL_USE_UNSAFE_INC=1';
-  @bash_commands.push:  'export PATH=/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/local/bin:/usr/sbin/:/sbin/:/bin/$PATH';
+  @bash_commands.push:  'export PATH=/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/local/bin:/usr/sbin/:/sbin/:/bin/:$PATH';
   @bash_commands.push:  'export SPARROW_ROOT=' ~ input_params('SparrowRoot');
   @bash_commands.push:  'export SPARROW_NO_COLOR=1' if input_params('NoColor');
   @bash_commands.push:  "export SPARROW_CONF_PATH=$sparrow_root/sparrow-cache/sparrow.yaml";
@@ -367,7 +367,7 @@ sub bootstrap ( $sparrow_root, $sparrowdo-cache ) {
 
   my $bootstrap = q:to/HERE/;
 
-os=$(lsb_release -d 2>/dev/null; uname -a; cat /etc/issue; cat /etc/*-release 2>&1)
+os=$(lsb_release -d 2>/dev/null; uname -o; cat /etc/issue 2>/dev/null; cat /etc/*-release 2>/dev/null)
 
 set -e
 
@@ -445,6 +445,20 @@ elif [[ "$os" =~ "centos" ]]; then
 
   if ! which sparrow 2>/dev/null; then
     yum -y install gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
+  fi
+
+elif [[ "$os" =~ "funtoo" ]]; then
+
+  echo bootstrap for funtoo
+
+  if ! which cpanm 2>/dev/null; then
+    echo "installing cpanm ..."
+    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+    chmod a+x /bin/cpanm
+  fi
+
+  if ! which sparrow 2>/dev/null; then
     cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
   fi
 
