@@ -55,7 +55,12 @@ sub MAIN (
   mkdir "$sparrowdo-cache/plugins";
 
   my $conf-ini-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini' !! ( $sparrow_root ~ '/sparrowdo.ini' );
-  my $conf-ini = $conf-ini-file.IO ~~ :e ?? Config::Simple.read($conf-ini-file,:f<ini>) !! Hash.new;
+
+  my $conf-ini = Hash.new;
+
+  if $conf-ini-file.IO ~~ :e {
+    Config::Simple.read($conf-ini-file,:f("ini"))
+  }
   
   my $verbose_val = $verbose;
 
@@ -103,7 +108,7 @@ sub MAIN (
   mkdir -m 777 -p $sparrow_root/sparrow-cache/plugins && \\
   mkdir -m 777 -p $sparrow_root/sparrow-cache/files && \\
   echo print os | perl -MOutthentic  > $sparrow_root/sparrow-cache/os.txt && \\
-  cat /etc/hostname > $sparrow_root/sparrow-cache/hostname.txt";
+  uname -n > $sparrow_root/sparrow-cache/hostname.txt";
 
 
   say $no_color ?? 
@@ -444,7 +449,7 @@ elif [[ "$os" =~ "centos" ]]; then
   fi
 
   if ! which sparrow 2>/dev/null; then
-    yum -y install gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+    yum -y install make gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
     cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
   fi
 
