@@ -1,0 +1,56 @@
+# An experimental AppVeyor config to install Strawberry Perl and
+# Rakudo Star. Once installed, AppVeyor caches those for use next time.
+#
+# I specifically don't build Rakudo from GitHub because I want to use
+# the "normal people" release.
+
+
+# AppVeyor environment variables: https://www.appveyor.com/docs/environment-variables/
+
+os: Visual Studio 2015
+
+platform: x64
+
+# clearing the cache: https://github.com/appveyor/ci/issues/985
+# change .appveyor_clear_cache.txt to invalidate cache
+#
+# If the build is successful, AppVeyor caches these files and
+# directories for future builds
+cache:
+    - C:\Strawberry -> .appveyor_clear_cache.txt
+    - C:\Rakudo -> .appveyor_clear_cache.txt
+
+environment:
+    MY_VAR: true
+    MSIEXEC_WAIT_SECONDS: 10
+    AUTOMATED_TESTING: 1
+    TEST_VERBOSE: 0
+    HARNESS_OPTIONS:
+    HARNESS_VERBOSE: 0
+    HARNESS_TIMER: 1
+    HARNESS_PERL_SWITCHES: -MDevel::Cover
+
+install:
+  # Install Strawberry Perl with chocolately.
+  # Strawberry Perl comes with `prove`, which we use to run the tests.
+  # http://strawberryperl.com
+  # https://chocolatey.org/packages/StrawberryPerl
+  - if not exist "C:\Strawberry" cinst strawberryperl
+  - SET PATH=C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
+  - ps: refreshenv
+  - perl -v
+  # Install Rakudo Star with chocolately.
+  # https://chocolatey.org/packages/rakudostar
+  - if not exist "C:\Rakudo" cinst rakudostar
+  - SET PATH=C:\rakudo\bin;C:\rakudo\share\perl6\site\bin;%PATH%
+  - ps: refreshenv
+  - perl6 -v
+  - zef --depsonly install .
+
+build: off
+
+test_script:
+  - prove -v -e "perl6 -Ilib" t/
+
+shallow_clone: true
+

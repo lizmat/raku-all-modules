@@ -5,6 +5,7 @@ use Platform::Util::OS;
 role Platform::Docker::DNS is Platform::Container {
     
     has Str $.name = 'DNS';
+    has Str $.projectdir = 'service/dns';
 
     method start {
         my Platform::Docker::DNS $service;

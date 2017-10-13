@@ -4,6 +4,7 @@ use YAMLish;
 
 class Platform::Environment {
 
+    has Str $.network = 'acme';
     has Str $.domain = 'localhost';
     has Str $.data-path is rw;
     has Str $.environment;

@@ -2,6 +2,7 @@ use v6;
 use Platform::Container;
 use Platform::Docker::DNS;
 use Platform::Docker::Proxy;
+use YAMLish;
 
 class Platform is Platform::Container {
 
@@ -29,6 +30,19 @@ class Platform is Platform::Container {
         my $ssh-dir = $.data-path ~ '/' ~ self.domain ~ '/ssh';
         mkdir $ssh-dir if not $ssh-dir.IO.e;
         run <ssh-keygen -t rsa -q -N>, '', '-f', "$ssh-dir/id_rsa";
+    }
+
+    method is-environment(Str $path) {
+        my $is-environment = False;
+        if $path.IO.f {
+            my $dir = $path.IO.dirname;
+            my $config = load-yaml $path.IO.slurp;
+            my $first-entry = $config.keys[0];
+            if "$dir/$first-entry".IO.d { # if it's directory then yml file is probably environment definition file
+                $is-environment = True;
+            }
+        }
+        $is-environment;
     }
 
 }

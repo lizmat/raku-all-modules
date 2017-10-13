@@ -1,5 +1,6 @@
 use v6;
 use Platform::Container;
+use Platform::Docker::Command;
 
 class Platform::Docker::Container is Platform::Container {
 
@@ -17,7 +18,7 @@ class Platform::Docker::Container is Platform::Container {
             "$!dockerfile-loc/Dockerfile".IO.slurp ~~ / ^ FROM \s .* alpine / 
             ) ?? 'alpine' !! 'debian';
         $!shell = $!variant eq 'alpine' ?? 'ash' !! 'bash';
-        @!volumes = map { '--volume ' ~ self.projectdir.IO.absolute ~ '/' ~ $_ }, self.config-data<volumes>.Array if self.config-data<volumes>;
+        @!volumes = self.config-data<volumes>.Array.map({ <--volume>, self.projectdir.IO.absolute ~ '/' ~ $_ }).flat if self.config-data<volumes>;
         self.hostname = self.name ~ '.' ~ self.domain;
     }
 
@@ -33,7 +34,7 @@ class Platform::Docker::Container is Platform::Container {
                 @args.push($value) if $value.chars > 0;
             }
         }
-        run <docker build -t>, self.name, @args, <.>, :cwd«$.dockerfile-loc»;
+        Platform::Docker::Command.new(<docker>, <build -t>, self.name, @args, <.>).run(:cwd«$.dockerfile-loc»);
     }
 
     method users {
@@ -76,22 +77,21 @@ class Platform::Docker::Container is Platform::Container {
     method dirs {
         return if not self.config-data<dirs>;
         my @args = flat self.env-cmd-opts;
-        my $proc = shell "docker run {@args.join(' ')} -d -it --name {self.name} {self.name} {self.shell}", :out;
-        my $out = $proc.out.slurp-rest;
+        Platform::Docker::Command.new(<docker>, <run>, @args.flat, <-d --name>, self.name, self.name, $!shell).run;
         my $config = self.config-data;
         for $config<dirs>.Hash.kv -> $target, $content {
-            put "+ $target";
             my ($owner, $group, $mode);
             $owner   = $content<owner> if $content<owner>;
             $group   = $content<group> if $content<group>;
             $mode    = $content<mode>  if $content<mode>;
-            run <docker exec>, self.name, 'mkdir', '-p', $target;
-            run <docker exec>, self.name, 'chown', "$owner:$group", $target if $owner and $group;
-            run <docker exec>, self.name, 'chmod', $mode, $target if $mode;
+            my @cmd = [ "mkdir -p $target" ];
+            @cmd.push: "chown $owner:$group $target" if $owner and $group;
+            @cmd.push: "chmod $mode $target" if $mode;
+            Platform::Docker::Command.new(<docker>, <exec>, self.name, $!shell, <-c>, @cmd.join(' ; ')).run;
         }
-        $proc = run <docker stop -t 0>, self.name, :out; $out = $proc.out.slurp-rest; 
-        $proc = run <docker commit>, self.name, self.name, :out; $out = $proc.out.slurp-rest;
-        $proc = run <docker rm>, self.name, :out; $out = $proc.out.slurp-rest;
+        Platform::Docker::Command.new(<docker>, <stop -t 0>, self.name).run;
+        Platform::Docker::Command.new(<docker>, <commit>, self.name, self.name).run;
+        Platform::Docker::Command.new(<docker>, <rm>, self.name).run
     }
 
     method files {
@@ -102,13 +102,11 @@ class Platform::Docker::Container is Platform::Container {
             exit;
         }
         my @args = flat self.env-cmd-opts;
-        my $proc = shell "docker run {@args.join(' ')} -d -it --name {self.name} {self.name} {self.shell}", :out;
-        my $out = $proc.out.slurp-rest;
+        Platform::Docker::Command.new(<docker>, <run>, @args.flat, <-d --name>, self.name, self.name, $!shell).run;
         my $domain_path = self.data-path ~ '/' ~ self.domain;
         my $path = $domain_path ~ '/files';
         for $config<files>.Hash.kv -> $target, $content is rw {
             my ($owner, $group, $mode);
-            put "+ $target";
             if $content ~~ Hash {
                 if $content<volume> { # create file to host and mount it inside container
                     my Str $flags = '';
@@ -120,7 +118,7 @@ class Platform::Docker::Container is Platform::Container {
                     $local_target ~~ s'^\/'';
                     mkdir "$path/{self.name}/" ~ $local_target.IO.dirname;
                     spurt "$path/{self.name}/{$local_target}", $content;
-                    @.volumes.push: "--volume $path/{self.name}/{$local_target}:{$target}{$flags}";
+                    @.volumes.push: <--volume>, "$path/{self.name}/{$local_target}:{$target}{$flags}";
                     next;
                 } else {
                     $owner   = $content<owner> if $content<owner>;
@@ -135,31 +133,30 @@ class Platform::Docker::Container is Platform::Container {
             my $file_tpl = "$path/{self.name}/" ~ $target;
             mkdir $file_tpl.IO.dirname;
             spurt $file_tpl, $content;
-            run <docker exec>, self.name, 'mkdir', '-p', $target.IO.dirname;
-            run <docker cp>, $file_tpl, self.name ~ ":$target";
-            run <docker exec>, self.name, 'chown', "$owner:$group", $target if $owner and $group;
-            run <docker exec>, self.name, 'chmod', $mode, $target if $mode;
+            Platform::Docker::Command.new(<docker>, <exec>, self.name, 'mkdir', '-p', $target.IO.dirname).run;
+            Platform::Docker::Command.new(<docker>, <cp>, $file_tpl, self.name ~ ":$target").run;
+            my @perm;
+            @perm.push: "chown $owner:$group $target" if $owner and $group;
+            @perm.push: "chmod $mode $target" if $mode;
+            Platform::Docker::Command.new(<docker>, <exec>, self.name, $!shell, <-c>, @perm.join(' ; ')).run if @perm.elems > 0;
         }
-        $proc = run <docker stop -t 0>, self.name, :out; $out = $proc.out.slurp-rest;
-        $proc = run <docker commit>, self.name, self.name, :out; $out = $proc.out.slurp-rest;
-        $proc = run <docker rm>, self.name, :out; $out = $proc.out.slurp-rest;
+        Platform::Docker::Command.new(<docker>, <stop -t 0>, self.name).run;
+        Platform::Docker::Command.new(<docker>, <commit>, self.name, self.name).run;
+        Platform::Docker::Command.new(<docker>, <rm>, self.name).run;
     }
 
     method exec {
         return if not self.config-data<exec>;
-        for self.config-data<exec>.Array {
-            put "+ {$_}";
-            shell "docker exec {self.name} $_";
-        }
+        Platform::Docker::Command.new(<docker>, <exec>, self.name, $!shell, <-c>, $_).run for self.config-data<exec>.Array;
     }
 
     method run {
         my $config = self.config-data;
-        $config<command> ||= '';
+        $config<command> = ($!shell, <-c>, $config<command>.flat) if $config<command> && $config<command>.chars > 0; 
 
         # Type of docker image e.g systemd
         if $config<type> and $config<type> eq 'systemd' {
-            @.volumes.push('--volume /sys/fs/cgroup:/sys/fs/cgroup');
+            @.volumes.push: <--volume>, "/sys/fs/cgroup:/sys/fs/cgroup";
             @.extra-args.push('--privileged');
         }
 
@@ -167,12 +164,15 @@ class Platform::Docker::Container is Platform::Container {
         @.extra-args.push("--network {$.network.Str}") if $.network-exists;
 
         # DNS
-        @.extra-args.push("--dns {$.dns.Str}") if $.dns.Str.chars > 0;
+        @.extra-args.push: <--dns>, $.dns.Str if $.dns.Str.chars > 0;
 
-        # PHASE: run
+        # Compute arbitrary amount of args
         my @args = flat self.env-cmd-opts, @.volumes, @.extra-args;
-        my $cmd = "docker run {@args.join(' ')} -dit -h {self.hostname} --name {self.name} {self.name} {$config<command>}";
-        shell $cmd, :out, :err;
+      
+        # PHASE: run
+        my @params = flat <docker>, <run>, <--detach>, @args, <-h>, self.hostname, <--name>, self.name, self.name;
+        @params.append: $config<command>.flat if $config<command>;
+        Platform::Docker::Command.new(|@params).run;
     }
     
     method start {
@@ -204,11 +204,11 @@ class Platform::Docker::Container is Platform::Container {
 
     method env-cmd-opts {
         my $config = self.config-data;
-        my @env = [ "--env VIRTUAL_HOST={self.hostname}" ];
+        my @env = <--env>, "VIRTUAL_HOST={self.hostname}";
         if $config<environment> {
             my $proc = run <git -C>, self.projectdir, <rev-parse --abbrev-ref HEAD>, :out, :err;
             my $branch = $proc.out.slurp-rest.trim;
-            @env = (@env, map { $_ = '--env ' ~ $_.subst(/ \$\(GIT_BRANCH\) /, $branch) }, $config<environment>.Array).flat;
+            @env = flat @env, $config<environment>.Array.map({<--env>, $_.subst(/ \$\(GIT_BRANCH\) /, $branch)}).flat;
         }
         @env;
     }

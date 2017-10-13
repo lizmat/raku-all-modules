@@ -2,117 +2,32 @@
 
 use v6;
 use lib 'lib';
-use Terminal::ANSIColor;
+use Platform::Output;
+use Platform::CLI;
+use CommandLine::Usage;
 
-multi sub load-module(:$name, :$network = 'acme', :$domain = 'localhost', :$data-path) {
-    require ::($name);
-    ::($name).new(:$domain, :$data-path);
-}
+my %*SUB-MAIN-OPTS = :named-anywhere;
 
-multi sub load-module(:$name, :$project, :$network = 'acme', :$domain = 'localhost', :$data-path) {
-    CATCH {
-        when X::IO {
-            say color('red') ~ "ERROR: " ~ $_.Str ~ color('reset');
-            exit;
+%*ENV<PERL6_PROGRAM_NAME> = %*ENV<PERL6_PROGRAM_NAME> ?? %*ENV<PERL6_PROGRAM_NAME>.IO.basename !! $*PROGRAM-NAME.IO.basename;
+
+#| A tool for running projects through container environment programmatible way
+sub MAIN(*@args, *%args) {
+    %args = set-defaults(|%args);
+    try {
+        CATCH {
+            default {
+                USAGE;
+            }
         }
+        cli(|@args, |%args);
     }
-    require ::($name);
-    ::($name).new(:$project, :$network, :$domain, :$data-path);
 }
 
-multi sub load-module(:$name, :$environment, :$network = 'acme', :$domain = 'localhost', :$data-path) {
-    CATCH {
-        when X::IO {
-            say color('red') ~ "ERROR: " ~ $_.Str ~ color('reset');
-            exit;
-        }
-    }
-    require ::($name);
-    ::($name).new(:$domain, :$data-path, :$environment);
+sub USAGE {
+    CommandLine::Usage.new(
+        :name( %*ENV<PERL6_PROGRAM_NAME> ),
+        :func( &cli ),
+        :desc( &MAIN.candidates[0].WHY.Str ),
+        :conf( &set-defaults ),
+        ).parse.say;
 }
-
-#| Start shared platform services
-multi sub MAIN('create', Str :$network = 'acme', Str :$domain = 'localhost', Str :$data-path = '~/.platform') {
-    put color('yellow') ~ '» Service' ~ color('reset');
-    put $_.as-string for load-module(:name<Platform>, :$network, :$domain, :$data-path).create.Array;
-}
-
-#| Shutdown shared platform services
-multi sub MAIN('destroy', Str :$network = 'acme', Str :$domain = 'localhost', Str :$data-path = '~/.platform') {
-    load-module(:name<Platform>, :$network, :$domain, :$data-path).destroy;
-}
-
-#| Initialize and run single project
-multi sub MAIN('run', Str :$project, Str :$network = 'acme', Str :$domain = 'localhost', Str :$data-path = '~/.platform') {
-    put banner() ~ load-module(:name<Platform::Project>, :$project, :$network, :$domain, :$data-path).run.as-string;
-}
-
-#| Start suspended project
-multi sub MAIN('start', Str :$project, Str :$data-path = '~/.platform') {
-    put banner() ~ load-module(:name<Platform::Project>, :$project, :$data-path).start.as-string;
-}
-
-#| Attach to running project
-multi sub MAIN('attach', Str :$project, Str :$data-path = '~/.platform') {
-    load-module(:name<Platform::Project>, :$project, :$data-path).attach;
-}
-
-#| Stop running project 
-multi sub MAIN('stop', Str :$project, Str :$data-path = '~/.platform') {
-    load-module(:name<Platform::Project>, :$project, :$data-path).stop;
-}
-
-#| Remove stopped project
-multi sub MAIN('rm', Str :$project, Str :$data-path = '~/.platform') {
-    my $obj = load-module(:name<Platform::Project>, :$project, :$data-path).rm;
-    put banner() ~ $obj.as-string if $obj.last-result<err>.chars > 0;
-}
-
-#| Stop and remove project
-multi sub MAIN('remove', Str :$project, Str :$data-path = '~/.platform') {
-    my $obj = load-module(:name<Platform::Project>, :$project, :$data-path);
-    $obj.stop;
-    my $res = $obj.rm;
-    put banner() ~ $res.as-string if $res.last-result<err>.chars > 0;
-}
-
-#| Initialize and run environment
-multi sub MAIN('run', Str :$environment, Str :$network = 'acme', Str :$domain = 'localhost', Str :$data-path = '~/.platform') {
-    put banner() ~ load-module(:name<Platform::Environment>, :$environment, :$network, :$domain, :$data-path).run.as-string;
-}
-
-#| Start suspended environment
-multi sub MAIN('start', Str :$environment, Str :$data-path = '~/.platform') {
-    put banner() ~ load-module(:name<Platform::Environment>, :$environment, :$data-path).start.as-string;
-}
-
-#| Stop running environment
-multi sub MAIN('stop', Str :$environment, Str :$data-path = '~/.platform') {
-    put banner() ~ load-module(:name<Platform::Environment>, :$environment, :$data-path).stop.as-string;
-}
-
-#| Remove stopped environment
-multi sub MAIN('rm', Str :$environment, Str :$data-path = '~/.platform') {
-    put banner() ~ load-module(:name<Platform::Environment>, :$environment, :$data-path).rm.as-string;
-}
-
-#| Stop and remove stopped environment
-multi sub MAIN('remove', Str :$environment, Str :$data-path = '~/.platform') {
-    my $obj = load-module(:name<Platform::Environment>, :$environment, :$data-path).stop;
-    put banner() ~ load-module(:name<Platform::Environment>, :$environment, :$data-path).rm.as-string;
-}
-
-#| Generation of RSA Private Key
-multi sub MAIN('ssl', 'genrsa', Str :$domain = 'localhost', Str :$data-path = '~/.platform') {
-    load-module(:name<Platform>, :$domain, :$data-path).ssl('genrsa');
-}
-
-#| Generation of authentication keys
-multi sub MAIN('ssh', 'keygen', Str :$domain = 'localhost', Str :$data-path = '~/.platform') {
-    load-module(:name<Platform>, :$domain, :$data-path).ssh('keygen'); 
-}
-
-sub banner returns Str {
-    color('yellow') ~ '» Project' ~ color('reset') ~ "\n";
-}
-

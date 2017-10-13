@@ -4,6 +4,7 @@ use Platform::Container;
 class Platform::Docker::Proxy is Platform::Container {
 
     has Str $.name = 'Proxy';
+    has Str $.projectdir = 'service/proxy';
 
     method start {
         $.hostname = $.name.lc ~ ".{$.domain}";
