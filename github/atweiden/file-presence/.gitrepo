@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/atweiden/file-presence.git
 	branch = master
-	commit = 7de89dd7c10f68b288c921e26f137d2231558e54
-	parent = 53583cf8701c61fc3e936246ce66bf6babda60f7
+	commit = e6e6574e364deeeaa7ce581660d49bb47219cad4
+	parent = 0c18b6114c44bedb95f2d32e63dbe2f5a83614f6
 	cmdver = 0.4.0
