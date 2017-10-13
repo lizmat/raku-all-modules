@@ -9,7 +9,7 @@ class PathOutOfRange is Exception
     has X::OutOfRange:D $.out-of-range is required;
 
     # parse stringified Range in X::OutOfRange
-    grammar RangeStr
+    my grammar RangeStr
     {
         token integer
         {
@@ -24,7 +24,7 @@ class PathOutOfRange is Exception
             ^ <range-str> $
         }
     }
-    class RangeStrActions
+    my class RangeStrActions
     {
         method integer($/)
         {
