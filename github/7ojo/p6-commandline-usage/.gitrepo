@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/7ojo/p6-commandline-usage.git
+	branch = master
+	commit = 9091e36608cef6580dd58b419307c135a27af4ea
+	parent = d5ac292581c21312f46fa97a7884a7b1b8787dda
+	cmdver = 0.4.0

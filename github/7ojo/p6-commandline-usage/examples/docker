@@ -1,0 +1,29 @@
+#!/usr/bin/env perl6
+
+use lib 'lib';
+use Example::Docker;
+use CommandLine::Usage;
+
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
+#| A self-sufficient runtime for containers
+sub MAIN(*@args, *%args) {
+    set-defaults(|%args);
+    try {
+        CATCH {
+            default {
+                USAGE;
+            }
+        }
+        command(|@args, |%args);
+    }
+}
+
+sub USAGE {
+    CommandLine::Usage.new(
+        :name( $*PROGRAM-NAME.IO.basename ),
+        :func( &command ),
+        :desc( &MAIN.candidates[0].WHY.Str ),
+        :conf( &set-defaults ),
+        ).parse.say;
+}
