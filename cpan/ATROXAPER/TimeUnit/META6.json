@@ -1,0 +1,13 @@
+{
+  "perl" : "6.*",
+  "name" : "TimeUnit",
+  "version" : "0.1.2",
+  "description" : "Library for conversion a time unit to another.",
+  "author" : [ "Mikhail Khorkov" ],
+  "license" : "Artistic-2.0",
+  "provides" : {
+    "TimeUnit" : "lib/TimeUnit.pm6"
+  },
+  "tags": [ "time" ],
+  "source-url" : "git://github.com/atroxaper/p6-TimeUnit.git"
+}
