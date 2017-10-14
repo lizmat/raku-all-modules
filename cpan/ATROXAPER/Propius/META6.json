@@ -1,0 +1,14 @@
+{
+  "perl" : "6.*",
+  "name" : "Propius",
+  "version" : "0.1.0",
+  "description" : "Memory cache with loader and eviction by time.",
+  "author" : [ "Mikhail Khorkov" ],
+  "license" : "Artistic-2.0",
+  "provides" : {
+    "Propius" : "lib/Propius.pm6"
+  },
+  "depends" : [ "TimeUnit", "OO::Monitors" ],
+  "tags": [ "cache" ],
+  "source-url" : "git://github.com/atroxaper/p6-Propius.git"
+}
