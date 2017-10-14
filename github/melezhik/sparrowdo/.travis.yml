@@ -2,25 +2,26 @@ language: "perl"
 
 services:
   - docker
+
 env:
   - PATH=.ducky/:/opt/rakudo/bin/:~/.perl6/bin:$PATH
 
 before_install:
-
   - docker run --privileged -d --name centos7 --entrypoint  init -v $PWD:/var/ducky -v /sys/fs/cgroup:/sys/fs/cgroup:ro centos
-  - docker run -t -d --name ubuntu ubuntu bash
-  - docker run -t -d --name archlinux  base/archlinux  bash
-  - docker run -t -d --name fedora fedora bash
-  - docker run -t -d --name amazon amazonlinux bash
-  - docker run -t -d --name debian bitnami/minideb-extras bash
-  - docker run -t -d --name funtoo mastersrp/funtoo bash
   - docker run -t -d --name alpine alpine sh
+  - docker run -t -d --name amazon amazonlinux bash
+  - docker run -t -d --name archlinux  base/archlinux  bash
+  - docker run -t -d --name debian bitnami/minideb-extras bash
+  - docker run -t -d --name fedora fedora bash
+  - docker run -t -d --name funtoo mastersrp/funtoo bash
+  - docker run -t -d --name ubuntu ubuntu bash
   - docker exec -t alpine apk update
   - docker exec -t alpine apk add bash
   - docker images
   - docker ps
 
 install:
+  - cpanm https://github.com/melezhik/outthentic.git
   - cpanm https://github.com/melezhik/sparrow.git
   - sparrow index update
   - sparrow plg install rakudo-install
@@ -29,13 +30,12 @@ install:
   - git clone https://github.com/melezhik/ducky.git .ducky
 
 script:
-  - sparrowdo --docker=centos7 --no_sudo  --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=ubuntu --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=archlinux --no_sudo  --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=fedora --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=amazon --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=debian --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=funtoo --no_sudo --bootstrap  --task_run=bash@command='ls -l'
   - sparrowdo --docker=alpine --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - ducky.bash centos7 
-  
+  - sparrowdo --docker=amazon --no_sudo --bootstrap  --task_run=bash@command='ls -l'
+  - sparrowdo --docker=archlinux --no_sudo  --bootstrap  --task_run=bash@command='ls -l'
+  - sparrowdo --docker=centos7 --no_sudo  --bootstrap  --task_run=bash@command='ls -l'
+  - sparrowdo --docker=debian --no_sudo --bootstrap  --task_run=bash@command='ls -l'
+  - sparrowdo --docker=fedora --no_sudo --bootstrap  --task_run=bash@command='ls -l'
+  - sparrowdo --docker=funtoo --no_sudo --bootstrap  --task_run=bash@command='ls -l'
+  - sparrowdo --docker=ubuntu --no_sudo --bootstrap  --task_run=bash@command='ls -l'
+  - ducky.bash centos7

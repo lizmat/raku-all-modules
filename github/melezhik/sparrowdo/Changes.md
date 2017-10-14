@@ -1,4 +1,4 @@
-# 0.0.32 2017-10-11
+# 0.0.33 2017-10-11
 
 - Funtoo Linux  Bootstrap
 - Minor bug fixes (#13)

@@ -371,254 +371,104 @@ sub bootstrap ( $sparrow_root, $sparrowdo-cache ) {
   colored( 'running sparrow bootstrap for host: ' ~ $host ~ ' ... ', 'bold black on_yellow');
 
   my $bootstrap = q:to/HERE/;
-
-os=$(lsb_release -d 2>/dev/null; uname -o; cat /etc/issue 2>/dev/null; cat /etc/*-release 2>/dev/null)
-
-set -e
-
-
-shopt -s nocasematch;
-
-if [[ $os =~ "debian" ]]; then
-
-  echo bootstrap for debian
-
-  DEBIAN_FRONTEND=noninteractive
-
-  apt-get update
-
-  if ! which curl 2>/dev/null; then
-     apt-get install -y -qq curl
-  fi
-
-  if ! which cpanm 2>/dev/null; then
-    echo "installing cpanm ..."
-    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
-    chmod a+x /bin/cpanm
-  fi
-  
-  if ! which perl 2>/dev/null; then
-     apt-get install -y -qq perl
-  fi
-
-  if ! which sparrow 2>/dev/null; then
-    apt-get install -y -qq build-essential
-    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
-  fi
-
-
-elif [[ "$os" =~ "amazon" ]]; then
-
-  echo bootstrap for amazon
-
-  if ! which curl 2>/dev/null; then
-     yum -y install curl
-  fi
-
-  if ! which cpanm 2>/dev/null; then
-    echo "installing cpanm ..."
-    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
-    chmod a+x /bin/cpanm
-  fi
-
-  if ! which perl 2>/dev/null; then
-    yum -y install perl
-  fi
-
-  if ! which sparrow 2>/dev/null; then
-    yum -y install gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
-    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
-  fi
-
-elif [[ "$os" =~ "centos" ]]; then
-
-  echo bootstrap for centos
-
-  if ! which curl 2>/dev/null; then
-     yum -y install curl
-  fi
-
-  if ! which cpanm 2>/dev/null; then
-    echo "installing cpanm ..."
-    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
-    chmod a+x /bin/cpanm
-  fi
-
-  if ! which perl 2>/dev/null; then
-    yum -y install perl
-  fi
-
-  if ! which sparrow 2>/dev/null; then
-    yum -y install make gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
-    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
-  fi
-
-elif [[ "$os" =~ "funtoo" ]]; then
-
-  echo bootstrap for funtoo
-
-  if ! which cpanm 2>/dev/null; then
-    echo "installing cpanm ..."
-    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
-    chmod a+x /bin/cpanm
-  fi
-
-  if ! which sparrow 2>/dev/null; then
-    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
-  fi
-
-elif [[ "$os" =~ "archlinux" ]]; then
-
-  pacman -Sy
-
-  echo bootstrap for archlinux
-
-  if ! which curl 2>/dev/null; then
-    pacman -S --noconfirm -q curl
-  fi
-
-  if ! which cpanm 2>/dev/null; then
-    echo "installing cpanm ..."
-    pacman -S --noconfirm -q cpanminus
-  fi
-
-  if ! which sparrow 2>/dev/null; then
-
-    pacman -S --noconfirm -q guile 
-
-    if ! which perl 2>/dev/null; then
-      pacman -S --noconfirm -q perl
-    fi
-
-    if ! which gcc 2>/dev/null; then
-      pacman -S --noconfirm -q gcc 
-    fi
-
-    if ! which make 2>/dev/null; then
-      pacman -S --noconfirm -q make 
-    fi
-
-    pacman -S --noconfirm -q perl-clone perl-config-tiny perl-yaml perl-test-yaml perl-test-base perl-spiffy perl-algorithm-diff perl-text-diff perl-json perl-try-tiny perl-capture-tiny perl-file-sharedir perl-file-sharedir-install perl-module-build-tiny perl-extutils-installpaths perl-extutils-config perl-extutils-helpers perl-class-inspector
-
-    cpanm -q Outthentic Sparrow || echo "Some error occurs. Try to take the system upgrade of your server: run 'pacman -Syu' on the target machine and then run bootstrap again"
-
-  fi
-
-elif [[ "$os" =~ "fedora" ]]; then
-
-  echo bootstrap for fedora
-
-  if ! which curl 2>/dev/null; then
-     dnf -y install curl
-  fi
-
-  if ! which cpanm 2>/dev/null; then
-    echo "installing cpanm ..."
-    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
-    chmod a+x /bin/cpanm
-  fi
-
-  if ! which perl 2>/dev/null; then
-    dnf -y install perl
-  fi
-
-  if ! which sparrow 2>/dev/null; then
-    dnf -y install gcc perl-open perl-Test perl-Test-Simple perl-Storable perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
-    cpanm -q Test::More Outthentic Sparrow || cpanm -q Outthentic Sparrow
-  fi
-
-elif [[ "$os" =~ "alpine" ]]; then
-
-  echo bootstrap for alpine
-
-  apk update --wait 120
-
-  if ! which curl 2>/dev/null; then
-     apk add --wait 120 wget curl
-  fi
-
-  if ! which cpanm 2>/dev/null; then
-    echo "installing cpanm ..."
-    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
-    chmod a+x /bin/cpanm
-  fi
-
-  if ! which perl 2>/dev/null; then
-    apk add --wait 120 perl
-  fi
-
-  if ! which sparrow 2>/dev/null; then
-    apk add --wait 120 wget git curl bash build-base gcc perl-dev
-    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
-  fi
-
-elif [[ "$os" =~ "ubuntu" ]]; then
-
-  echo bootstrap for ubuntu
-
-  DEBIAN_FRONTEND=noninteractive
-
-  apt-get update
-
-  if ! which curl 2>/dev/null; then
-     apt-get install -y -qq curl
-  fi
-
-  if ! which cpanm 2>/dev/null; then
-    echo "installing cpanm ..."
-    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
-    chmod a+x /bin/cpanm
-  fi
-
-  if ! which perl 2>/dev/null; then
-    apt-get install -y -qq perl
-  fi
-
-  if ! which sparrow 2>/dev/null; then
-    apt-get install -y -qq build-essential
-    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
-  fi
-
-
-elif [[ "$os" =~ "minoca" ]]; then
-
-  echo bootstrap for minoca
-
-  opkg -f /etc/opkg/opkg.conf update
-
-  if ! which curl 2>/dev/null; then
-     opkg install curl
-  fi
-
-  if ! which perl 2>/dev/null; then
-     opkg install perl
-  fi
-
-  if ! which cpanm 2>/dev/null; then
-    echo "installing cpanm ..."
-    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
-    chmod +x /bin/cpanm
-    ln -fs /bin/env /usr/bin/env
-  fi
-
-  if ! which sparrow 2>/dev/null; then
-
-    opkg -f /etc/opkg/opkg.conf  install make gcc tar gzip
-    cpanm --notest -q Sparrow
-    sparrow index update
-
-  fi
-
-
+#! /usr/bin/env sh
+
+# Find out the target OS
+if [ -s /etc/os-release ]; then
+  # freedesktop.org and systemd
+  . /etc/os-release
+  OS=$NAME
+  VER=$VERSION_ID
+elif lsb_release -h >/dev/null 2>&1; then
+  # linuxbase.org
+  OS=$(lsb_release -si)
+  VER=$(lsb_release -sr)
+elif [ -s /etc/lsb-release ]; then
+  # For some versions of Debian/Ubuntu without lsb_release command
+  . /etc/lsb-release
+  OS=$DISTRIB_ID
+  VER=$DISTRIB_RELEASE
+elif [ -s /etc/debian_version ]; then
+  # Older Debian/Ubuntu/etc.
+  OS=Debian
+  VER=$(cat /etc/debian_version)
+elif [ -s /etc/SuSe-release ]; then
+  # Older SuSE/etc.
+  printf "TODO\n"
+elif [ -s /etc/redhat-release ]; then
+  # Older Red Hat, CentOS, etc.
+  OS=$(cat /etc/redhat-release| head -n 1)
 else
-  echo "unknown os: $os"
-  exit 1
+  RELEASE_INFO=$(cat /etc/*-release 2>/dev/null | head -n 1)
+
+  if [ ! -z "$RELEASE_INFO" ]; then
+    OS=$(printf -- "$RELEASE_INFO" | awk '{ print $1 }')
+    VER=$(printf -- "$RELEASE_INFO" | awk '{ print $NF }')
+  else
+    # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
+    OS=$(uname -s)
+    VER=$(uname -r)
+  fi
 fi
 
+# Convert OS name to lowercase to remove inconsistencies
+OS=$(printf -- "$OS" | awk '{ print tolower($1) }')
 
+printf -- "Bootstrap for %s\n" "$OS"
 
-# forcefully upgrade Outthentic and Sparrow
+# Install native dependencies
+case "$OS" in
+  alpine)
+    apk update --wait 120
+    apk add --wait 120 curl perl git bash build-base gcc perl-dev wget
+  ;;
+  amazon|centos|red)
+    yum -y install make curl perl gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+  ;;
+  arch|archlinux)
+    pacman -Syy
+    pacman -S --needed --noconfirm -q curl cpanminus guile perl gcc make perl-clone perl-config-tiny perl-yaml perl-test-yaml perl-test-base perl-spiffy perl-algorithm-diff perl-text-diff perl-json perl-try-tiny perl-capture-tiny perl-file-sharedir perl-file-sharedir-install perl-module-build-tiny perl-extutils-installpaths perl-extutils-config perl-extutils-helpers perl-class-inspector
+  ;;
+  debian|ubuntu)
+    DEBIAN_FRONTEND=noninteractive
+
+    apt-get update
+    apt-get install -y -qq build-essential curl perl
+  ;;
+  fedora)
+    dnf -y install curl perl gcc perl-open perl-Test perl-Test-Simple perl-Storable perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+  ;;
+  funtoo)
+    echo
+  ;;
+  minoca)
+    opkg -f /etc/opkg/opkg.conf update
+    opkg install curl perl make gcc tar gzip
+  ;;
+  ubuntu)
+  ;;
+  *)
+    printf -- "Your OS (%s) is not supported\n" "$OS"
+    exit 1
+esac
+
+# Install cpanm
+if ! which cpanm 2>/dev/null; then
+  printf -- "installing cpanm ...\n"
+  curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+  chmod a+x /bin/cpanm
+fi
+
+# Install sparrow
+if ! which sparrow 2>/dev/null; then
+  cpanm -q Outthentic Sparrow Test::More || cpanm -q Outthentic Sparrow Test::More
+fi
+
+# Forcefully upgrade Outthentic and Sparrow
 cpanm -q --notest Outthentic Sparrow || cpanm --notest -q Outthentic Sparrow
+
+# Update sparrow
+sparrow index update
 
 HERE
 
@@ -630,3 +480,5 @@ HERE
   ssh_shell "bash $sparrow_root/sparrowdo-cache/bootstrap.sh";
 
 }
+
+# vim: ft=perl6 et sw=2 ts=2
