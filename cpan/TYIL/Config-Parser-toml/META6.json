@@ -1,0 +1,27 @@
+{
+  "name": "Config::Parser::toml",
+  "perl": "6",
+  "source-url": "https://github.com/scriptkitties/p6-Config-Parser-toml.git",
+  "auth": "github:scriptkitties",
+  "depends": [
+    "Config",
+    "Config::TOML"
+  ],
+  "license": "GPL-3.0",
+  "provides": {
+    "Config::Parser::toml": "lib/Config/Parser/toml.pm6"
+  },
+  "tags": [
+    "config",
+    "configuration"
+  ],
+  "test-depends": [
+    "File::Temp",
+    "Test::META"
+  ],
+  "version": "1.0.1",
+  "description": "TOML parser for Config",
+  "authors": [
+    "Patrick Spek <p.spek@tyil.work>"
+  ]
+}

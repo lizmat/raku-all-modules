@@ -1,0 +1,5 @@
+[header]
+c = "c"
+
+[merge-header]
+a = "a"
