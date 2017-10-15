@@ -1,0 +1,27 @@
+{
+  "name": "Config::Parser::yaml",
+  "perl": "6",
+  "source-url": "https://github.com/scriptkitties/p6-Config-Parser-yaml.git",
+  "auth": "github:scriptkitties",
+  "depends": [
+    "Config",
+    "YAMLish"
+  ],
+  "license": "GPL-3.0",
+  "provides": {
+    "Config::Parser::yaml": "lib/Config/Parser/yaml.pm6"
+  },
+  "tags": [
+    "config",
+    "configuration",
+    "yaml"
+  ],
+  "test-depends": [
+    "Test::META"
+  ],
+  "version": "1.0.1",
+  "description": "YAML parser for Config.",
+  "authors": [
+    "Patrick Spek <p.spek@tyil.work>"
+  ]
+}
