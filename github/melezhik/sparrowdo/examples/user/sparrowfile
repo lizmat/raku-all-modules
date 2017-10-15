@@ -1,5 +1,5 @@
-user-delete 'foo';
-user-create 'foo';
-user-delete 'foo';
-user 'foo';
-user 'foo' , %( action => 'delete' );
+user-delete 'nuthatch';
+user-create 'nuthatch';
+user-delete 'nuthatch';
+user 'nuthatch';
+user 'nuthatch' , %( action => 'delete' );

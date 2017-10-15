@@ -231,7 +231,7 @@ sub ssh_shell ( $cmd ) {
 
   if input_params('LocalMode') {
 
-      $ssh_cmd = ( input_params('NoSudo') ) ?? "bash -c '" !! "sudo bash -c '"; 
+      $ssh_cmd = ( input_params('NoSudo') ) ?? "sh -c '" !! "sudo sh -c '"; 
       $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'";
 
   } elsif input_params('Docker') {
@@ -239,9 +239,9 @@ sub ssh_shell ( $cmd ) {
       $ssh_cmd = "docker exec -it " ~ input_params('Docker') ~ ' ';
 
       if input_params('NoSudo') {
-        $ssh_cmd ~= "bash -c '" ~ ( join ' ; ', @bash_commands ) ~ "'";
+        $ssh_cmd ~= "sh -c '" ~ ( join ' ; ', @bash_commands ) ~ "'";
       } else {
-        $ssh_cmd ~= "sudo bash -c '" ~ ( join ' ; ', @bash_commands ) ~ "'";
+        $ssh_cmd ~= "sudo sh -c '" ~ ( join ' ; ', @bash_commands ) ~ "'";
       }
  
   } else {
@@ -269,7 +269,7 @@ sub ssh_shell ( $cmd ) {
       $ssh_cmd ~= ' ' ~ input_params('Host') ~ ' ';
     }
 
-    $ssh_cmd ~= ( input_params('NoSudo') ) ?? " \"bash -c '" !! " \"sudo bash -c '"; 
+    $ssh_cmd ~= ( input_params('NoSudo') ) ?? " \"sh -c '" !! " \"sudo sh -c '"; 
 
     $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'\"";
   
@@ -423,7 +423,7 @@ case "$OS" in
     apk add --wait 120 curl perl git bash build-base gcc perl-dev wget
   ;;
   amazon|centos|red)
-    yum -y install make curl perl gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+    yum -q -y install make curl perl gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
   ;;
   arch|archlinux)
     pacman -Syy
@@ -477,7 +477,7 @@ HERE
 
   _scp "$sparrowdo-cache/bootstrap.sh",  "$sparrow_root/sparrowdo-cache";
 
-  ssh_shell "bash $sparrow_root/sparrowdo-cache/bootstrap.sh";
+  ssh_shell "sh $sparrow_root/sparrowdo-cache/bootstrap.sh";
 
 }
 

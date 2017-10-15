@@ -1,5 +1,11 @@
 package-install "openssh-server";
 
+if target_os() ~~ m/centos/ {
+
+  package-install "openssh-clients";
+
+}
+
 if target_os() ~~ m/ubuntu/ {
   service-start "ssh";
 } else {
@@ -20,8 +26,10 @@ ssh 'rm -rf  /tmp/test-ssh-scp && mkdir -p /tmp/test-ssh-scp', %(
   host => '127.0.0.1',
 );
 
+bash 'mkdir -p ~/data/ && cd ~/data && echo "<hello txt file>" > hello.txt && echo "<hello2 txt file>" > hello2.txt';
+
 scp %( 
-  data    => $*CWD ~ "/data/hello.txt",
+  data    => "~/data/hello.txt",
   host    => "127.0.0.1:/tmp/test-ssh-scp", 
 );
 
@@ -30,7 +38,7 @@ bash 'cat /tmp/test-ssh-scp/hello.txt', %(
 );
 
 scp %( 
-  data    => $*CWD ~ "/data/hello2.txt",
+  data    => "~/data/hello2.txt",
   host    => "127.0.0.1:/tmp/test-ssh-scp", 
 );
 
@@ -51,7 +59,7 @@ bash 'cat /tmp/test-ssh-scp-pull/hello.txt', %(
   expect_stdout => '<hello txt file>'
 );
 
-bash 'rm -rf tmp/test-ssh-scp-pull/*.txt';
+bash 'rm -rf /tmp/test-ssh-scp-pull/*.txt';
 
 scp %( 
   data    => '/tmp/test-ssh-scp-pull',
@@ -67,7 +75,7 @@ bash 'cat /tmp/test-ssh-scp-pull/hello2.txt', %(
   expect_stdout => '<hello2 txt file>'
 );
 
-bash 'rm -rf tmp/test-ssh-scp-pull/*.txt';
+bash 'rm -rf /tmp/test-ssh-scp-pull/*.txt';
 
 scp %( 
   data    => '/tmp/test-ssh-scp-pull',

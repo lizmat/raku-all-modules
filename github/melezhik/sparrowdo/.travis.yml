@@ -4,38 +4,25 @@ services:
   - docker
 
 env:
-  - PATH=.ducky/:/opt/rakudo/bin/:~/.perl6/bin:$PATH
-
-before_install:
-  - docker run --privileged -d --name centos7 --entrypoint  init -v $PWD:/var/ducky -v /sys/fs/cgroup:/sys/fs/cgroup:ro centos
-  - docker run -t -d --name alpine alpine sh
-  - docker run -t -d --name amazon amazonlinux bash
-  - docker run -t -d --name archlinux  base/archlinux  bash
-  - docker run -t -d --name debian bitnami/minideb-extras bash
-  - docker run -t -d --name fedora fedora bash
-  - docker run -t -d --name funtoo mastersrp/funtoo bash
-  - docker run -t -d --name ubuntu ubuntu bash
-  - docker exec -t alpine apk update
-  - docker exec -t alpine apk add bash
-  - docker images
-  - docker ps
-
+  - TEST=prove
+  - TEST=api
+  - TEST=bootstrap:alpine
+  - TEST=bootstrap:amazon
+  - TEST=bootstrap:archlinux
+  - TEST=bootstrap:centos
+  - TEST=bootstrap:debian
+  - TEST=bootstrap:fedora
+  - TEST=bootstrap:funtoo
+  - TEST=bootstrap:ubuntu
+    
 install:
   - cpanm https://github.com/melezhik/outthentic.git
   - cpanm https://github.com/melezhik/sparrow.git
   - sparrow index update
   - sparrow plg install rakudo-install
   - sparrow plg run rakudo-install --param user_install=on --param sudo=on --param url=https://github.com/nxadm/rakudo-pkg/releases/download/2017.09.1%2B2/perl6-rakudo-moarvm-debian8.7_20170900-01_amd64.deb
+  - export PATH=$PATH:$HOME/.perl6/bin:/opt/rakudo/bin
   - zef install .
-  - git clone https://github.com/melezhik/ducky.git .ducky
 
 script:
-  - sparrowdo --docker=alpine --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=amazon --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=archlinux --no_sudo  --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=centos7 --no_sudo  --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=debian --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=fedora --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=funtoo --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - sparrowdo --docker=ubuntu --no_sudo --bootstrap  --task_run=bash@command='ls -l'
-  - ducky.bash centos7
+  - sh ./.travis.d/run.sh "$TEST"
