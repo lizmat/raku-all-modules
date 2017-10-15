@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-browser-open.git
 	branch = master
-	commit = de1d22be1ab8ce32207f4e99e6f951564e51861a
-	parent = 0da8e48a4f665b20b37705b0971eac39ca0e87c8
+	commit = 720760f3f29b1697011218136dd16711ee00a14b
+	parent = 45ee07fd131d0db24120b016718cf0134c7971a3
 	cmdver = 0.4.0

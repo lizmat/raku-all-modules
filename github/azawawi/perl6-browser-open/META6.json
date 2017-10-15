@@ -1,12 +1,13 @@
 {
-	"name"        : "Browser::Open",
-	"license"     : "MIT",
-	"version"     : "*",
-	"perl"        : "6.c",
-	"description" : "Open a given URL in a browser",
-	"depends"     : [ "File::Which" ],
-	"provides"    : {
-		"Browser::Open"         : "lib/Browser/Open.pm6"
-	},
-	"source-url"  : "git://github.com/azawawi/perl6-browser-open.git"
+    "name"         : "Browser::Open",
+    "license"      : "MIT",
+    "version"      : "*",
+    "perl"         : "6.c",
+    "description"  : "Open a given URL in a browser",
+    "depends"      : [ "File::Which" ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "Browser::Open" : "lib/Browser/Open.pm6"
+    },
+    "source-url"   : "git://github.com/azawawi/perl6-browser-open.git"
 }
