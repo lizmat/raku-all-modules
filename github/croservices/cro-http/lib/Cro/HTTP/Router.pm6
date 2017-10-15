@@ -37,35 +37,101 @@ module Cro::HTTP::Router {
     }
 
     class RouteSet does Cro::Transform {
-        my class Handler {
-            has Str $.method;
-            has &.implementation;
+        my role Handler {
+            has @.prefix;
             has @.body-parsers;
             has @.body-serializers;
 
-            method copy-adding(:@body-parsers!, :@body-serializers!) {
+            method copy-adding() { ... }
+            method signature() { ... }
+            method invoke(Cro::HTTP::Request $request, Capture $args) { ... }
+
+            method !add-body-parsers(Cro::HTTP::Request $request --> Nil) {
+                if @!body-parsers {
+                    $request.body-parser-selector = Cro::HTTP::BodyParserSelector::Prepend.new(
+                        parsers => @!body-parsers,
+                        next => $request.body-parser-selector
+                    );
+                }
+            }
+
+            method !add-body-serializers(Cro::HTTP::Response $response --> Nil) {
+                if @!body-serializers {
+                    $response.body-serializer-selector = Cro::HTTP::BodySerializerSelector::Prepend.new(
+                        serializers => @!body-serializers,
+                        next => $response.body-serializer-selector
+                    );
+                }
+            }
+        }
+
+        my class RouteHandler does Handler {
+            has Str $.method;
+            has &.implementation;
+
+            method copy-adding(:@prefix, :@body-parsers!, :@body-serializers!) {
                 self.bless:
                     :$!method, :&!implementation,
+                    :prefix[flat @prefix, @!prefix],
                     :body-parsers[flat @!body-parsers, @body-parsers],
                     :body-serializers[flat @!body-serializers, @body-serializers]
             }
 
-            method invoke(Cro::HTTP::Request $req, Cro::HTTP::Response $res, Capture $args) {
-                if @!body-parsers {
-                    $req.body-parser-selector = Cro::HTTP::BodyParserSelector::Prepend.new(
-                        parsers => @!body-parsers,
-                        next => $req.body-parser-selector
-                    );
+            method signature() {
+                &!implementation.signature
+            }
+
+            method invoke(Cro::HTTP::Request $request, Capture $args --> Promise) {
+                my $response = my $*CRO-ROUTER-RESPONSE := Cro::HTTP::Response.new(:$request);
+                self!add-body-parsers($request);
+                self!add-body-serializers($response);
+                start {
+                    {
+                        $request.path eq '/'
+                            ?? &!implementation()
+                            !! &!implementation(|$args);
+                        CATCH {
+                            when X::Cro::HTTP::Router::NoRequestBodyMatch {
+                                $response.status = 400;
+                            }
+                            when X::Cro::HTTP::BodyParserSelector::NoneApplicable {
+                                $response.status = 400;
+                            }
+                            default {
+                                .note;
+                                $response.status = 500;
+                            }
+                        }
+                    }
+                    $response.status //= 204;
+                    $response
                 }
-                if @!body-serializers {
-                    $res.body-serializer-selector = Cro::HTTP::BodySerializerSelector::Prepend.new(
-                        serializers => @!body-serializers,
-                        next => $res.body-serializer-selector
-                    );
+            }
+        }
+
+        my class DelegateHandler does Handler {
+            has Cro::Transform $.transform;
+
+            method copy-adding(:@prefix, :@body-parsers!, :@body-serializers!) {
+                self.bless:
+                    :$!transform,
+                    :prefix[flat @prefix, @!prefix],
+                    :body-parsers[flat @!body-parsers, @body-parsers],
+                    :body-serializers[flat @!body-serializers, @body-serializers]
+            }
+
+            method signature() {
+                (-> {}).signature
+            }
+
+            method invoke(Cro::HTTP::Request $request, Capture $args) {
+                self!add-body-parsers($request);
+                supply {
+                    whenever $!transform.transformer(supply emit $request) -> $response {
+                        self!add-body-serializers($response);
+                        emit $response;
+                    }
                 }
-                $req.path eq '/'
-                    ?? &!implementation()
-                    !! &!implementation(|$args)
             }
         }
 
@@ -73,41 +139,27 @@ module Cro::HTTP::Router {
         has $!path-matcher;
         has Cro::HTTP::BodyParser @!body-parsers;
         has Cro::HTTP::BodySerializer @!body-serializers;
-        has RouteSet @!includes;
+        has @!includes;
 
         method consumes() { Cro::HTTP::Request }
         method produces() { Cro::HTTP::Response }
 
         method transformer(Supply:D $requests) {
             supply {
-                whenever $requests -> $req {
-                    my $*CRO-ROUTER-REQUEST = $req;
+                whenever $requests -> $request {
+                    my $*CRO-ROUTER-REQUEST = $request;
                     my $*WRONG-METHOD = False;
                     my $*MISSING-UNPACK = False;
                     my @*BIND-FAILS;
-                    with $req.path ~~ $!path-matcher {
-                        my $*CRO-ROUTER-RESPONSE := Cro::HTTP::Response.new(request => $req);
+                    with $request.path ~~ $!path-matcher {
                         my ($handler-idx, $args) = .ast;
                         my $handler := @!handlers[$handler-idx];
-                        my $res = $*CRO-ROUTER-RESPONSE;
-                        whenever start $handler.invoke($req, $res, $args) {
-                            # No Content is default
-                            $res.status //= 204;
-                            emit $res;
-
+                        whenever $handler.invoke($request, $args) -> $response {
+                            emit $response;
                             QUIT {
-                                when X::Cro::HTTP::Router::NoRequestBodyMatch {
-                                    $res.status = 400;
-                                    emit $res;
-                                }
-                                when X::Cro::HTTP::BodyParserSelector::NoneApplicable {
-                                    $res.status = 400;
-                                    emit $res;
-                                }
                                 default {
                                     .note;
-                                    $res.status = 500;
-                                    emit $res;
+                                    emit Cro::HTTP::Response.new(:500status, :$request);
                                 }
                             }
                         }
@@ -134,14 +186,14 @@ module Cro::HTTP::Router {
                                 }
                             }
                         }
-                        emit Cro::HTTP::Response.new(:$status, request => $*CRO-ROUTER-REQUEST);
+                        emit Cro::HTTP::Response.new(:$status, :$request);
                     }
                 }
             }
         }
 
         method add-handler(Str $method, &implementation --> Nil) {
-            @!handlers.push(Handler.new(:$method, :&implementation));
+            @!handlers.push(RouteHandler.new(:$method, :&implementation));
         }
 
         method add-body-parser(Cro::HTTP::BodyParser $parser --> Nil) {
@@ -152,20 +204,24 @@ module Cro::HTTP::Router {
             @!body-serializers.push($serializer);
         }
 
-        method include(RouteSet $includee) {
-            @!includes.push($includee);
+        method include(@prefix, RouteSet $includee) {
+            @!includes.push({ :@prefix, :$includee });
         }
 
         method !handlers() { @!handlers }
+
+        method delegate(@prefix, Cro::Transform $transform) {
+            @!handlers.push(DelegateHandler.new(:@prefix, :$transform));
+        }
 
         method definition-complete(--> Nil) {
             for @!handlers {
                 .body-parsers = @!body-parsers;
                 .body-serializers = @!body-serializers;
             }
-            for @!includes -> $inc {
-                for $inc!handlers() {
-                    @!handlers.push(.copy-adding(:@!body-parsers, :@!body-serializers));
+            for @!includes -> (:@prefix, :$includee) {
+                for $includee!handlers() {
+                    @!handlers.push(.copy-adding(:@prefix, :@!body-parsers, :@!body-serializers));
                 }
             }
             self!generate-route-matcher();
@@ -173,7 +229,6 @@ module Cro::HTTP::Router {
 
         method !generate-route-matcher(--> Nil) {
             my @route-matchers;
-
             my @handlers = @!handlers; # This is closed over in the EVAL'd regex
             for @handlers.kv -> $index, $handler {
                 # Things we need to do to prepare segments for binding and unpack
@@ -185,9 +240,15 @@ module Cro::HTTP::Router {
                 # If we need a signature bind test (due to subset/where).
                 my $need-sig-bind = False;
 
+                # The prefix is a set of segments that are part of the route
+                # that we match, but excluded from the invocation capture that
+                # we produce. These are used in include/delegate.
+                my @prefix = $handler.prefix.map({ "'$_'" });
+                my $prefix-elems = @prefix.elems;
+
                 # Positionals are URL segments, nameds are unpacks of other
                 # request data.
-                my $signature = $handler.implementation.signature;
+                my $signature = $handler.signature;
                 my (:@positional, :@named) := $signature.params.classify:
                     { .named ?? 'named' !! 'positional' };
 
@@ -236,11 +297,11 @@ module Cro::HTTP::Router {
                     } else {
                         my Str $range = $signed ?? -$bound ~ ' <= $_ <= ' ~ $bound - 1 !! '0 <= $_ <= ' ~ 2 ** $bits - 1;
                         my Str $check = '<?{('
-                                      ~ Q:c/with @segs[{$seg-index}]/
+                                      ~ Q:c/with @segs[{$prefix-elems + $seg-index}]/
                                       ~ ' {( '~ $range
                                       ~ ' )} else { True }) }>';
                         @matcher-target.push: Q['-'?\d+:] ~ $check;
-                        @make-tasks.push: Q:c/.=Int with @segs[{$seg-index}]/;
+                        @make-tasks.push: Q:c/.=Int with @segs[{$prefix-elems + $seg-index}]/;
                         $need-sig-bind = True if @constraints;
                     }
                 }
@@ -269,7 +330,8 @@ module Cro::HTTP::Router {
                         elsif $type =:= Int || $type =:= UInt {
                             @matcher-target.push(Q['-'?\d+:]);
                             my Str $coerce-prefix = $type =:= Int ?? '.=Int' !! '.=UInt';
-                            @make-tasks.push: $coerce-prefix ~ Q:c/ with @segs[{$seg-index}]/;
+                            @make-tasks.push: $coerce-prefix ~
+                                Q:c/ with @segs[{$prefix-elems + $seg-index}]/;
                             $need-sig-bind = True if @constraints;
                         }
                         else {
@@ -280,7 +342,7 @@ module Cro::HTTP::Router {
                     }
                 }
                 my $segment-matcher = " '/' " ~
-                    @segments-required.join(" '/' ") ~
+                    (flat @prefix, @segments-required).join(" '/' ") ~
                     @segments-optional.map({ "[ '/' $_ " }).join ~ (' ]? ' x @segments-optional) ~
                     $segments-terminal;
 
@@ -353,17 +415,21 @@ module Cro::HTTP::Router {
                     $need-sig-bind = True if extract-constraints($param);
                 }
 
-                my $method-check = '<?{ $req.method eq "' ~ $handler.method ~
-                    '" || !($*WRONG-METHOD = True) }>';
+                my $method-check = $handler.can('method')
+                    ?? '<?{ $req.method eq "' ~ $handler.method ~
+                        '" || !($*WRONG-METHOD = True) }>'
+                    !! '';
                 my $checks = @checks
                     ?? '<?{ ' ~ @checks.join(' and ') ~ ' }>'
                     !! '';
                 my $form-cap = '{ my %unpacks; ' ~ @make-tasks.join(';') ~
-                    '; $cap = Capture.new(:list(@segs), :hash(%unpacks)); }';
+                    '; $cap = Capture.new(:list(@segs' ~
+                    ($prefix-elems ?? "[$prefix-elems..*]" !! "") ~
+                    '), :hash(%unpacks)); }';
                 my $bind-check = $need-sig-bind
-                    ?? '<?{ my $imp = @handlers[' ~ $index ~ '].implementation; ' ~
-                            '$imp.signature.ACCEPTS($cap) || ' ~
-                            '!(@*BIND-FAILS.push($imp, $cap)) }>'
+                    ?? '<?{ my $han = @handlers[' ~ $index ~ ']; ' ~
+                            '$han.signature.ACCEPTS($cap) || ' ~
+                            '!(@*BIND-FAILS.push($han.implementation, $cap)) }>'
                     !! '';
                 my $make = '{ make (' ~ $index ~ ', $cap) }';
                 push @route-matchers, join " ",
@@ -420,8 +486,75 @@ module Cro::HTTP::Router {
         $*CRO-ROUTE-SET.add-body-serializer($serializer);
     }
 
-    sub include(RouteSet $includee) is export {
-        $*CRO-ROUTE-SET.include($includee);
+    sub include(*@includees, *%includees --> Nil) is export {
+        for @includees {
+            when RouteSet  {
+                $*CRO-ROUTE-SET.include([], $_);
+            }
+            when Pair {
+                my ($prefix, $routes) = .kv;
+                if $routes ~~ RouteSet {
+                    given $prefix {
+                        when Str {
+                            $*CRO-ROUTE-SET.include([$prefix], $routes);
+                        }
+                        when Iterable {
+                            $*CRO-ROUTE-SET.include($prefix, $routes);
+                        }
+                        default {
+                            die "An 'include' prefix may be a Str or Iterable, but not " ~ .^name;
+                        }
+                    }
+                }
+                else {
+                    die "Can only use 'include' with 'route' block, not a $routes.^name()";
+                }
+            }
+            default {
+                die "Can only use 'include' with `route` block, not a " ~ .^name;
+            }
+        }
+        for %includees.kv -> $prefix, $routes {
+            if $routes ~~ RouteSet {
+                $*CRO-ROUTE-SET.include([$prefix], $routes);
+            }
+            else {
+                die "Can only use 'include' with `route` block, not a $routes.^name()";
+            }
+        }
+    }
+
+    sub delegate(*@delegates, *%delegates --> Nil) is export {
+        for flat @delegates, %delegates.pairs {
+            when Pair {
+                my ($prefix, $transform) = .kv;
+                unless $transform ~~ Cro::Transform {
+                    die "Pairs passed to 'delegate' must have a Cro::Transform value";
+                }
+                unless $transform.consumes ~~ Cro::HTTP::Request {
+                    die "Transform used with delegate must consume Cro::HTTP::Request, but " ~
+                        $transform.^name ~ " consumes " ~ $transform.consumes.^name;
+                }
+                unless $transform.produces ~~ Cro::HTTP::Response {
+                    die "Transform used with delegate must produce Cro::HTTP::Response, but " ~
+                        $transform.^name ~ " produces " ~ $transform.produces.^name;
+                }
+                given $prefix {
+                    when Iterable {
+                        $*CRO-ROUTE-SET.delegate($prefix, $transform);
+                    }
+                    when Str {
+                        $*CRO-ROUTE-SET.delegate([$prefix], $transform);
+                    }
+                    default {
+                        die "Paris passed to 'delegate' must have a Str or Iterable key, not " ~ .^name;
+                    }
+                }
+            }
+            default {
+                die "Must pass one or more Pairs to 'delegate', not a " ~ .^name;
+            }
+        }
     }
 
     sub term:<request>() is export {

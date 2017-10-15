@@ -1633,4 +1633,93 @@ throws-like { response }, X::Cro::HTTP::Router::OnlyInHandler, what => 'response
     }
 }
 
+{
+    my $nested1 = route {
+        get -> {
+            content 'text/plain', 'route 1A';
+        }
+        get -> 'some', 'parts' {
+            content 'text/plain', 'route 1B';
+        }
+    }
+    my $nested2 = route {
+        get -> {
+            content 'text/plain', 'route 2A';
+        }
+        get -> 'more' {
+            content 'text/plain', 'route 2B';
+        }
+    }
+    my $app = route {
+        include unquoted => $nested1;
+        include 'quoted' => $nested2;
+        include first => $nested1,
+                second => $nested2;
+        include 'first-quoted' => $nested1,
+                second-unquoted => $nested2;
+        include <many parts> => $nested1,
+                <yet more parts> => $nested2;
+    }
+    my $source = Supplier.new;
+    my $responses = $app.transformer($source.Supply).Channel;
+    my %expected =
+        '/unquoted' => 'route 1A',
+        '/unquoted/some/parts' => 'route 1B',
+        '/quoted' => 'route 2A',
+        '/quoted/more' => 'route 2B',
+        '/first' => 'route 1A',
+        '/first/some/parts' => 'route 1B',
+        '/second' => 'route 2A',
+        '/second/more' => 'route 2B',
+        '/first-quoted' => 'route 1A',
+        '/first-quoted/some/parts' => 'route 1B',
+        '/second-unquoted' => 'route 2A',
+        '/second-unquoted/more' => 'route 2B',
+        '/many/parts' => 'route 1A',
+        '/many/parts/some/parts' => 'route 1B',
+        '/yet/more/parts' => 'route 2A',
+        '/yet/more/parts/more' => 'route 2B';
+    for %expected.kv -> $target, $expected {
+        $source.emit(Cro::HTTP::Request.new(method => 'GET', :$target));
+        given $responses.receive -> $r {
+            is body-text($r), $expected, "Basic include: $expected";
+        }
+    }
+}
+
+{
+    my class TestTransform does Cro::Transform {
+        has $.label is required;
+        method consumes() { Cro::HTTP::Request }
+        method produces() { Cro::HTTP::Response }
+        method transformer(Supply $in --> Supply) {
+            supply whenever $in -> $request {
+                my $resp = Cro::HTTP::Response.new(:$request, :200status);
+                $resp.append-header('Content-type', 'text/plain');
+                $resp.set-body("delegated transform $!label");
+                emit $resp;
+            }
+        }
+    }
+    my $app = route {
+        delegate simple => TestTransform.new(:label<simple>);
+        delegate <multi part> => TestTransform.new(:label<multi part>);
+        delegate first => TestTransform.new(:label<first>),
+                 <and second> => TestTransform.new(:label<and second>);
+    }
+    my $source = Supplier.new;
+    my $responses = $app.transformer($source.Supply).Channel;
+    my %expected =
+        '/simple' => 'delegated transform simple',
+        '/multi/part' => 'delegated transform multi part',
+        '/first' => 'delegated transform first',
+        '/and/second' => 'delegated transform and second';
+    for %expected.kv -> $target, $expected {
+        $source.emit(Cro::HTTP::Request.new(method => 'GET', :$target));
+        given $responses.receive -> $r {
+            is body-text($r), $expected, "Basic delegation: $expected";
+        }
+    }
+}
+
 done-testing;
