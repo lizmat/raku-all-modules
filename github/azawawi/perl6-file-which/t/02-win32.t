@@ -1,7 +1,6 @@
 use v6;
 
 use Test;
-use lib 'lib';
 use File::Which;
 
 my @execs = ('calc', 'cmd', 'explorer', 'iexplore', 'wordpad', 'notepad');
