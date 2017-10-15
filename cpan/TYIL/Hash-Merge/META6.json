@@ -1,0 +1,26 @@
+{
+  "name": "Hash::Merge",
+  "perl": "6",
+  "source-url": "https://github.com/scriptkitties/p6-Hash-Merge.git",
+  "auth": "github:scriptkitties",
+  "depends": [
+    
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "Hash::Merge": "lib/Hash/Merge.pm6"
+  },
+  "tags": [
+    "hash",
+    "utils"
+  ],
+  "test-depends": [
+    "Test::META"
+  ],
+  "version": "0.1.1",
+  "description": "Module to add deep merge functionality to Hashes",
+  "authors": [
+    "Samantha McVey <samantham@posteo.net>",
+    "Patrick Spek <p.spek@tyil.work>"
+  ]
+}
