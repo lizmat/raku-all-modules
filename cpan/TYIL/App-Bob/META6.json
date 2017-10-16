@@ -19,8 +19,8 @@
   "test-depends": [
     "Test::META"
   ],
-  "version": "0.2.2",
-  "description": "Bob helps you build and package your modules",
+  "version": "0.5.1",
+  "description": "Bob the CPAN distribution builder",
   "authors": [
     "Patrick Spek <p.spek@tyil.work>"
   ]
