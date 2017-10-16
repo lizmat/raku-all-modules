@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cjfields/bioperl6.git
 	branch = master
-	commit = 0ec5b691620221f7c7779390c0de2b44a20fda4b
-	parent = ca6541da3272929cf62bb9670ef284e59db982e9
+	commit = 70897bc305580c6875a2c663f49840fe1992e9c3
+	parent = 02abdcbced9084e4f048e1dde3be0431706e37b6
 	cmdver = 0.4.0
