@@ -34,7 +34,7 @@ say xxHash64("dupa");
 ## Dependencies
 
 - Rakudo Perl6
-- libxxhash ([mac][mac], [pac][pac])
+- [libxxhash][libxxhash] ([mac][mac], [pac][pac])
 
 
 ## Licensing
@@ -42,5 +42,6 @@ say xxHash64("dupa");
 This is free and unencumbered public domain software. For more
 information, see http://unlicense.org/ or the accompanying UNLICENSE file.
 
+[libxxhash]: https://github.com/Cyan4973/xxHash
 [mac]: https://github.com/atweiden/homebrew-formulae/blob/master/libxxhash/libxxhash.rb
 [pac]: https://aur.archlinux.org/packages/libxxhash/
