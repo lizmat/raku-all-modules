@@ -90,7 +90,7 @@ class LilypondContext {
     }
 
     method get-Lilypond-measure-length() {
-        given $.context.meter {
+        given $.context.meter.trim {
             when "C" | "C|" | "4/4" { "1" }
             when "3/4" | 6/8 { "2." }
             when "2/4" { "2" }

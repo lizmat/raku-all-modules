@@ -137,6 +137,13 @@ use ABC::Grammar;
 }
 
 {
+    my $match = ABC::Grammar.parse("!trill!", :rule<element>);
+    isa-ok $match, Match, 'Got a match';
+    ok $match, '"!trill!" is an element';
+    is $match<gracing>, "!trill!", '"!trill!" gracing is !trill!';
+}
+
+{
     my $match = ABC::Grammar.parse("~", :rule<element>);
     isa-ok $match, Match, 'Got a match';
     ok $match, '"~" is an element';
