@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/holli-holzer/Operator-grandpa.git
+	branch = master
+	commit = 3cac1be8656cee8b53c18337b6877abf5e4dfd54
+	parent = 59416225e1499d11648b376cbfa3dee0303faaa2
+	cmdver = 0.4.0

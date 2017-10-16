@@ -1,0 +1,21 @@
+{
+  "name" : "Operator::grandpa",
+  "source-url" : "https://github.com/holli-holzer/Operator-grandpa.git",
+  "support" : {
+    "source" : "https://github.com/holli-holzer/Operator-grandpa.git"
+  },
+  "perl" : "6.c",
+  "license" : "Artistic-2.0",
+  "test-depends" : [
+    "Test::META"
+  ],
+  "provides" : {
+    "Operator::grandpa" : "lib/Operator/grandpa.pm6"
+  },
+  "version" : "1.001001",
+  "meta-version" : "0",
+  "authors" : [
+    "Markus \u00abHolli\u00bb Holzer"
+  ],
+  "description" : "The grandpa operator"
+}
