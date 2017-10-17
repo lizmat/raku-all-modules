@@ -1,5 +1,5 @@
 {
-  "name" : "Grammar-ErrorReporting",
+  "name" : "Grammar::ErrorReporting",
   "source-url" : "git://github.com/moritz/Grammar-ErrorReporting.git",
   "support" : {
     "bugtracker": "https://github.com/moritz/Grammar-ErrorReporting/issues"
@@ -13,7 +13,7 @@
     "Grammar::ErrorReporting" : "lib/Grammar/ErrorReporting.pm6",
     "X::Grammar::ParseError" : "lib/Grammar/ErrorReporting.pm6"
   },
-  "version" : "*",
+  "version" : "0.2",
   "meta-version" : "0",
   "authors" : [
     "Moritz Lenz"

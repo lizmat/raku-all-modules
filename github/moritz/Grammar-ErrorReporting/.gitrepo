@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moritz/Grammar-ErrorReporting.git
 	branch = master
-	commit = 61ef5f6b97e1cea9c0ef1b2dc4715040e9dacbf7
-	parent = 15290108726949bf1e1eecf7a8ec726e6f79460e
+	commit = 72d143a542ca6b34eec1827ee7ba495a8cedc287
+	parent = 8646b6c85156d9000a0c345a2682b347de849711
 	cmdver = 0.4.0
