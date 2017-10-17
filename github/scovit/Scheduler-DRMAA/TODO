@@ -1,0 +1,12 @@
+If you are willing to help, the following are nice investments to make:
+
+- HTCondor plugin, with DAGMan dependencies (and possibly more)
+- Other plugins
+- Syntax check heredocs script if executable is Perl 6
+- MPI Perl 6 module to communicate between jobs, and also to share
+  state
+- A less deterministic Perl 6 Scheduler role in core
+
+Might be that, at that point, the present module will become an arcaic
+useless joke, but, finally, Perl concurrency functionalities can make it
+the programming language for future parallel architectures.

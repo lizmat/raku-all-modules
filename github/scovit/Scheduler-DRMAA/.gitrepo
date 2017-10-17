@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/scovit/Scheduler-DRMAA.git
+	branch = master
+	commit = 6adce96192bdebfd1e963d5740f3dcb1bb033d72
+	parent = 43fe4ecc685575ec7575a07407c87d1954b4f33a
+	cmdver = 0.4.0
