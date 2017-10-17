@@ -1,3 +1,8 @@
+# 0.0.34 2017-10-16
+
+- Sparrowdo bootstrap is compelte rewitten, huge thanks to @Tyil
+- Parallel tests for varios OS, huge thanks for @Tyil
+
 # 0.0.33 2017-10-11
 
 - Funtoo Linux  Bootstrap
