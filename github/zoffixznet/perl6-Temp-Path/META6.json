@@ -2,13 +2,12 @@
     "perl"         : "6.c",
     "name"         : "Temp::Path",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001001",
+    "version"      : "1.001003",
     "description"  : "Make a temporary path, file, or directory",
     "tags"         : [ "filesystem" ],
     "depends"      : [
         "Digest::SHA",
-        "File::Directory::Tree",
-        "RakudoPrereq"
+        "File::Directory::Tree"
     ],
     "test-depends" : [
         "Testo",

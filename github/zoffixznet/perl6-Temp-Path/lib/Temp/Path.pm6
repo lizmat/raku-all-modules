@@ -1,7 +1,5 @@
 unit module Temp::Path;
 
-use RakudoPrereq v2017.03.294.g.8.bacad.8.f.8,
-    'IO::Path module requires Rakudo v2017.04 or newer';
 use Digest::SHA;
 use File::Directory::Tree;
 
