@@ -2,14 +2,17 @@
     "perl"         : "6.c",
     "name"         : "Color",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001001",
+    "version"      : "1.002004",
     "description"
         : "Format conversion, manipulation, and math operations on colours",
     "depends"      : [ ],
     "test-depends" : [ "Test" ],
     "provides"     : {
         "Color" : "lib/Color.pm6",
-        "Color::Operators" : "lib/Color/Operators.pm6"
+        "Color::Operators" : "lib/Color/Operators.pm6",
+        "Color::Conversion" : "lib/Color/Conversion.pm6",
+        "Color::Manipulation" : "lib/Color/Manipulation.pm6",
+        "Color::Utilities" : "lib/Color/Utilities.pm6"
     },
     "authors"      : ["Zoffix Znet"],
     "support"      : { "source" : "git://github.com/zoffixznet/perl6-Color.git" }
