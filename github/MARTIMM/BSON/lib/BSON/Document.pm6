@@ -587,8 +587,8 @@ class Document does Associative {
 
       loop ( my $idx = 0; $idx < @!keys.elems; $idx++) {
         my $key = @!keys[$idx];
-#say "$*THREAD.id(), $key, ", @!values[$idx];    #, ', ',
-#    %!promises{$key}.defined ?? %!promises{$key}.status !! 'no promise';
+#note "$*THREAD.id(), $key, ", @!values[$idx], ', ',
+#     %!promises{$key}.defined ?? %!promises{$key}.status !! 'promise processed';
 
         # Test if a promise is created to calculate stuff in parallel
         if %!promises{$key}.defined {
@@ -596,19 +596,19 @@ class Document does Associative {
           if $pstat ~~ Kept {
             @!encoded-entries[$idx] = %!promises{$key}.result;
             %!promises{$key} = Nil;
-#say "$*THREAD.id(), Kept: $key, ", @!values[$idx];
+#note "$*THREAD.id(), Kept: $key, ", @!values[$idx];
           }
 
           elsif $pstat ~~ Planned {
-#say "$*THREAD.id(), Planned: $key, ", @!values[$idx];
+#note "$*THREAD.id(), Planned: $key, ", @!values[$idx];
             $still-planned = True;
             next;
           }
 
           elsif $pstat ~~ Broken {
-#say "$*THREAD.id(), Broken: $key";
-#say %!promises{$key}.cause.WHAT;
-#say %!promises{$key}.cause.message;
+#note "$*THREAD.id(), Broken: $key";
+#note %!promises{$key}.cause.WHAT;
+#note %!promises{$key}.cause.message;
             die X::BSON.new(
               :operation<encode>, :type<any>,
               :error(%!promises{$key}.cause)
@@ -667,7 +667,7 @@ class Document does Associative {
   # element ::= type-code e_name some-encoding
   #
   method !encode-element ( Pair:D $p --> Buf ) {
-#say "Encode element ", $p.perl, ', ', $p.key.WHAT, ', ', $p.value.WHAT;
+#note "Encode element ", $p.perl, ', ', $p.key.WHAT, ', ', $p.value.WHAT;
 
     my Buf $b;
 
@@ -711,9 +711,9 @@ class Document does Associative {
         # The keys must be in ascending numerical order.
         #
         my $pairs = (for .kv -> $k, $v { "$k" => $v });
-#say "Array, pairs: ", $pairs.perl;
+#note "Array, pairs: ", $pairs.perl;
         my BSON::Document $d .= new($pairs);
-#say "Array: ", $d.perl;
+#note "Array: ", $d.perl;
         $b = [~] Buf.new(BSON::C-ARRAY), encode-e-name($p.key), $d.encode;
 #note "Encoded array ($?LINE): ", $b;
       }
@@ -862,6 +862,7 @@ class Document does Associative {
       }
 
       default {
+#note "Default {$p.key} => {$p.value//'(Any)'}: ", $p.value.WHAT;
 #        if .can('encode') and .can('bson-code') {
 #          my $code = .bson-code;
 #          $b = [~] Buf.new($code), encode-e-name($p.key), .encode;
