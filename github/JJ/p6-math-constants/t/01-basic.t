@@ -15,7 +15,7 @@ is α.WHAT, (Rat), "e is OK";
 is-approx ℎ/(2*π), ℏ, "Planck's constants";
 is-approx φ, (1 + sqrt(5))/2, "Golden ratio";
 is-approx α, 0.00729735256, "Fine structure";
-is-approx e²/(4*π*ε0*ℏ*c), α, "Fine structure constant";
+is-approx q²/(4*π*ε0*ℏ*c), α, "Fine structure constant";
 
 is-approx 0.1c, c/10, "Speed of light as unit";
 

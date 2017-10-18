@@ -17,7 +17,7 @@ my constant φ is export := phi;
 my constant ℎ is export := plancks-h;
 my constant ℏ is export := plancks-reduced-h;
 my constant α is export := fine-structure-constant;
-my constant e is export := elementary-charge;
+my constant q is export := elementary-charge;
 my constant ε0 is export := vacuum-permittivity;
 
 #Use them as units
@@ -43,7 +43,7 @@ say "We have ", phi, " ", plancks-h, " ",  plancks-reduced-h, " ", c
 , " ", G, " and ", fine-structure-constant, " plus ",
 elementary-charge, " and ", vacuum-permittivity ;
 say "And also  φ ", φ, " α ", α,  " ℎ ",  ℎ, " and ℏ ", ℏ,
-" with e ", e, " and ε0 ", ε0;
+" with q ", q, " and ε0 ", ε0;
 
    say "We are flying at speed ", .1c;
 
@@ -56,7 +56,7 @@ and ℏ are different versions of Planck's constant,
 c is the speed of light, G the universal gravitation constant,
 and α the fine structure constant.
 
-    There are a set of 3 electrical constants: the elementary charge e,
+    There are a set of 3 electrical constants: the elementary charge q,
 the vacuum permittivity ε₀ and the fine structure constant α
 
     C<c> can also be used as an unit of speed,

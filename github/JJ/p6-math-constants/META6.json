@@ -4,7 +4,7 @@
     ],
     "build-depends" : [ ],
     "depends" : [ ],
-    "description" : "A few math and Physics constants",
+    "description" : "A few Math and Physics constants",
     "name" : "Math::Constants",
     "license" : "GPL-3.0",
     "perl" : "6.*",
