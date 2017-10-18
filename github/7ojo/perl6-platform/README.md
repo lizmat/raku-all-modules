@@ -19,7 +19,10 @@ See environment file: ```examples/02-environment/nginx-ldap.yml```
     * [Example project setup](#example-project-setup)
     * [Advanced setup](#advanced-setup)
   * [Using on Linux OS](#using-on-linux-os)
-    * TODO: Should be no brainer, but add some notes
+    * [Prerequisites](#linux-prerequisites)
+       * [Perl6 2017.01 or newer](#linux-perl6)
+       * [Docker 17 or newer](#linux-docker-ce)
+    * [Install Platform tool](#linux-install-platform-tool)
   * [Using on Mac OS](#using-on-mac-os)
      * [Prerequisites](#prerequisites)
         * [Perl6 2017.01 or newer](#perl6-201701-or-newer)
@@ -174,6 +177,41 @@ When you have tightly coupled projects you may want configure those "single" pro
     * [http://project-snail.local](http://project-snail.local)
 
 ## Using on Linux OS
+
+### Prerequisites
+
+* Latest stable version of Rakudo Perl 6 + ZEF package manager
+* Latest stable version of Docker CE
+
+### Install Platform Tool
+
+    $ zef install Platform
+    $ platform
+    
+    Usage:	platform COMMAND
+    
+    A tool for running projects through container environment programmatible way
+    
+    Options:
+      -D, --debug              Enable debug mode
+      -a, --data-path string   Location of resource files (default "/home/tojo/.platform")
+      -d, --domain string      Domain address (default "localhost")
+      -n, --network string     Network name (default "acme")
+    
+    Commands:
+      attach      Attach to a running container through shell
+      create      Start shared platform services
+      destroy     Shutdown shared platform services
+      remove      Initialize single project or environment with collection of projects
+      rm          Remove stopped project or environment
+      run         Initialize single project or environment with collection of projects
+      ssh         Wrapper to ssh* commandds
+      ssl         Wrapper to openssl command
+      start       Start suspended project or environment
+      stop        Stop suspended project or environment
+    
+    Run 'platform COMMAND --help' for more information on a command.
+    
 
 ## Using on Mac OS
 

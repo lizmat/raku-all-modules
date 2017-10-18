@@ -77,7 +77,7 @@ class Platform::Docker::Container is Platform::Container {
     method dirs {
         return if not self.config-data<dirs>;
         my @args = flat self.env-cmd-opts;
-        Platform::Docker::Command.new(<docker>, <run>, @args.flat, <-d --name>, self.name, self.name, $!shell).run;
+        Platform::Docker::Command.new(<docker>, <run>, @args.flat, <-it -d --name>, self.name, self.name, $!shell).run;
         my $config = self.config-data;
         for $config<dirs>.Hash.kv -> $target, $content {
             my ($owner, $group, $mode);
@@ -102,7 +102,7 @@ class Platform::Docker::Container is Platform::Container {
             exit;
         }
         my @args = flat self.env-cmd-opts;
-        Platform::Docker::Command.new(<docker>, <run>, @args.flat, <-d --name>, self.name, self.name, $!shell).run;
+        Platform::Docker::Command.new(<docker>, <run>, @args.flat, <-it -d --name>, self.name, self.name, $!shell).run;
         my $domain_path = self.data-path ~ '/' ~ self.domain;
         my $path = $domain_path ~ '/files';
         for $config<files>.Hash.kv -> $target, $content is rw {
@@ -170,7 +170,7 @@ class Platform::Docker::Container is Platform::Container {
         my @args = flat self.env-cmd-opts, @.volumes, @.extra-args;
       
         # PHASE: run
-        my @params = flat <docker>, <run>, <--detach>, @args, <-h>, self.hostname, <--name>, self.name, self.name;
+        my @params = flat <docker>, <run>, <-it --detach>, @args, <-h>, self.hostname, <--name>, self.name, self.name;
         @params.append: $config<command>.flat if $config<command>;
         Platform::Docker::Command.new(|@params).run;
     }
