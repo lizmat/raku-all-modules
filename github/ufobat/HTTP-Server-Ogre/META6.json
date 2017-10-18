@@ -12,7 +12,8 @@
   "name" : "HTTP::Server::Ogre",
   "perl" : "6.c",
   "provides" : {
-    "HTTP::Server::Ogre" : "lib/HTTP/Server/Ogre.pm6"
+    "HTTP::Server::Ogre" : "lib/HTTP/Server/Ogre.pm6",
+    "HTTP::Server::Ogre::Http1Protocol" : "lib/HTTP/Server/Ogre/Http1Protocol.pm"
   },
   "resources" : [ ],
   "source-url" : "git://github.com/ufobat/HTTP-Server-Ogre.git",

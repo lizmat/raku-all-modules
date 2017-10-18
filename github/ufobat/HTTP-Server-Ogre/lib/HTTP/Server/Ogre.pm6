@@ -26,54 +26,76 @@ This library is free software; you can redistribute it and/or modify it under th
 
 =end pod
 
-use HTTP::Request::Supply;
-use HTTP::Status;
-# TODO use IO::Socket::Async::SSL;
+use HTTP::Server::Ogre::Http1Protocol;
 
-class HTTP::Server::Ogre:ver<0.0.1> {
-    has $.host is required;
-    has Int $.port is required;
-    has $.app is required;
+class HTTP::Server::Ogre:ver<0.0.2> {
+    has Str  $.host is required;
+    has Int  $.port is required;
+    has      $.app  is required;
+    has Bool $.tls-mode  = False;
+    has      $.http-mode;
+    has      %.tls-config = ();
 
-    constant CRLF = "\x0D\x0A";
+    my %protocols = (
+        '1.1' => HTTP::Server::Ogre::Http1Protocol.new;
+        # '2'   => HTTP::Server::Ogre::Http2Protocol.new;
+    );
 
     method run() {
-        react {
-            whenever IO::Socket::Async.listen($.host, $.port) -> $conn {
-                my $envs = HTTP::Request::Supply.parse-http($conn.Supply(:bin));
-                whenever $envs -> %env {
-                    my $result = await $.app.(%env);
-                    self!handle-response($result, $conn);
-                }
-            }
-        }
-    }
+        my $http-mode;
+        my $listener;
 
-    method !handle-response($result, $conn) {
-        my $http-status = $result[0];
-        my @http-header = $result[1].flat;
-        my $body-supply = $result[2];
-
-        my $protocol = 'HTTP/1.0';
-        my $http-msg = get_http_status_msg($http-status);
-
-        $conn.print("$protocol $http-status $http-msg" ~ CRLF);
-        for @http-header -> $header {
-            $conn.print($header.key ~ ': ' ~ $header.value ~ CRLF);
-        }
-        $conn.print(CRLF);
-        $body-supply.tap(
-            -> $chunk {
-                if $chunk ~~ Str {
-                    $conn.print($chunk);
-                } elsif $chunk ~~ Blob {
-                    $conn.write($chunk);
+        if $.tls-mode {
+            require IO::Socket::Async::SSL;
+            sub supports-alpn { IO::Socket::Async::SSL.supports-alpn };
+            if $!http-mode == <2> {
+                # serve http 2 only
+                die 'HTTP/2 is requested but ALPN is not supported' unless supports-alpn;
+                %.tls-config<alpn> = <h2>;
+                $http-mode = <2>;
+            } elsif $!http-mode eqv <1.1 2>|<2 1.1> {
+                # client can choose http version
+                die 'HTTP/2 is requested but ALPN is not supported' unless supports-alpn;
+                %.tls-config<alpn> = <h2 http/1.1>;
+                $http-mode = <client>;
+            } elsif $!http-mode == <1.1> {
+                # server http 1.1 only
+                $http-mode = <1.1>;
+            } elsif !defined $!http-mode {
+                if supports-alpn() {
+                    # client can choose http version
+                    %.tls-config<alpn> = <h2 http/1.1>;
+                    $http-mode = <client>;
                 } else {
-                    X::NYI.new(feature => 'handle chunk types differend to Blob and Str').thorw;
+                    # serve http 1.1 only
+                    $http-mode = <1.1>;
+                }
+            } else {
+                die 'Incorrect http mode requested. pass <1.1>, <2> or <2 1.1>';
+            }
+            $listener = IO::Socket::Async::SSL.listen($.host, $.port, |%!tls-config);
+        } else {
+            # serve http 1.1 only
+            $listener = IO::Socket::Async.listen($.host, $.port);
+            $http-mode = <1.1>;
+        }
+
+        react {
+            whenever $listener -> $conn {
+                if $http-mode eq <client> {
+                    $http-mode = $conn.alpn-result ?? <2> !! <1.1>;
+                }
+
+                my $proto = %protocols{$http-mode};
+                my $envs  = $proto.read-from($conn);
+
+                whenever $envs -> %env {
+                    my $promise = $.app.(%env);
+                    whenever $promise -> $result {
+                        $proto.write-to($conn, $result);
+                    }
                 }
             }
-        );
-        $body-supply.wait;
-        $conn.close();
+        }
     }
 }
