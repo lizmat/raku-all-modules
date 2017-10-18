@@ -1,0 +1,28 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo",
+    "Sparrowdo::Archive",
+    "Sparrowdo::RemoteFile"
+  ],
+  "description" : "",
+  "license" : "Artistic-2.0",
+  "name" : "Sparrowdo::Prometheus",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::Prometheus" : "lib/Sparrowdo/Prometheus.pm6"
+  },
+  "resources" : [ ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-prometheus.git",
+  "support" : {
+    "bugtracker" : "https://github.com/melezhik/sparrowdo-prometheus/issues",
+    "source" : "https://github.com/melezhik/sparrowdo-prometheus.git"
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
