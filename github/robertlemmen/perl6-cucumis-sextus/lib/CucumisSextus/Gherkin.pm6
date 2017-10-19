@@ -4,29 +4,37 @@ use X::CucumisSextus::FeatureParseFailure;
 use CucumisSextus::Tags;
 use CucumisSextus::I18n;
 
-class Feature {
+class File {
     has $.filename is rw;
+    has @.lines is rw;
+}
+
+class Feature {
     has $.name is rw;
-    has $.line is rw;
     has @.scenarios is rw;
     has $.background is rw;
     has @.tags is rw;
+    has $.file is rw;
+    has $.line-from is rw;
+    has $.line-to is rw;
 }
 
 class Scenario {
     has $.name is rw;
-    has $.line is rw;
     has @.steps is rw;
     has @.tags is rw;
     has @.examples is rw;
+    has $.line-from is rw;
+    has $.line-to is rw;
 }
 
 class Step {
     has $.verb is rw;
     has $.text is rw;
-    has $.line is rw;
     has @.table is rw;
     has $.multiline is rw;
+    has $.line-from is rw;
+    has $.line-to is rw;
 }
 
 sub parse-feature-file($filename) is export {
@@ -34,6 +42,7 @@ sub parse-feature-file($filename) is export {
     my $feature;
     my $scenario;
     my $step;
+    my $current;
     my $last-verb;
     my @tags;
     my @column-header;
@@ -45,8 +54,14 @@ sub parse-feature-file($filename) is export {
     # XXX tags are madness: https://github.com/cucumber/cucumber/wiki/Tags
     # XXX description lines for features and scenarios
 
+    my $file = File.new;
+    $file.lines.push(""); # because we index from 1 as file lines are typically seen that way
+    $file.filename = $filename;
+
     my $line-number = 1;
     for $filename.IO.lines {
+        $file.lines.push($_);
+
         if m/^ \s* '#' \s* 'language:' \s+ (\S+)/ {
             if $line-number == 1 {
                 if defined $gherkin-keywords{$0} {
@@ -94,6 +109,7 @@ sub parse-feature-file($filename) is export {
         }
         elsif my @ctags = parse-tags($_) {
             # tags, add to list
+            # XXX tags mess up from-line/to-line
             # XXX surely tags can't happen just anywhere...
             @tags.append(@ctags);
         }
@@ -101,10 +117,11 @@ sub parse-feature-file($filename) is export {
         elsif m/^ <{ $gherkin-keywords{$lang}{'feature'} }> ':' \s* (.+) $/ {
             if ! defined $feature {
                 $feature = Feature.new;
-                $feature.filename = $filename;
+                $feature.file = $file;
                 $feature.name = ~$0;
                 $feature.tags = @tags;
-                $feature.line = $line-number;
+                $feature.line-from = $line-number;
+                $current = $feature;
                 @tags = ();
             }
             else {
@@ -119,7 +136,11 @@ sub parse-feature-file($filename) is export {
                 $scenario = Scenario.new;
                 $scenario.name = ~$0;
                 $scenario.tags = @tags;
-                $scenario.line = $line-number;
+                $scenario.line-from = $line-number;
+                if $current {
+                    $current.line-to = $line-number - 1;
+                }
+                $current = $scenario;
                 $feature.scenarios.push($scenario);
 
                 $last-verb = Nil;
@@ -138,7 +159,11 @@ sub parse-feature-file($filename) is export {
                 $scenario = Scenario.new;
                 $scenario.name = ~$0;
                 $scenario.tags = @tags;
-                $scenario.line = $line-number;
+                $scenario.line-from = $line-number;
+                if $current {
+                    $current.line-to = $line-number - 1;
+                }
+                $current = $scenario;
                 $feature.scenarios.push($scenario);
 
                 $last-verb = Nil;
@@ -165,7 +190,11 @@ sub parse-feature-file($filename) is export {
                 $scenario = Scenario.new;
                 $scenario.name = ~$0;
                 $scenario.tags = @tags;
-                $scenario.line = $line-number;
+                $scenario.line-from = $line-number;
+                if $current {
+                    $current.line-to = $line-number - 1;
+                }
+                $current = $scenario;
                 $feature.background = $scenario;
 
                 $last-verb = Nil;
@@ -180,7 +209,11 @@ sub parse-feature-file($filename) is export {
             $step = Step.new;
             $step.verb = $verb;
             $step.text = $0;
-            $step.line = $line-number;
+            $step.line-from = $line-number;
+            if $current {
+                $current.line-to = $line-number - 1;
+            }
+            $current = $step;
             $scenario.steps.push($step);
             $last-verb = $verb;
         }
@@ -189,7 +222,11 @@ sub parse-feature-file($filename) is export {
             $step = Step.new;
             $step.verb = $verb;
             $step.text = $0;
-            $step.line = $line-number;
+            $step.line-from = $line-number;
+            if $current {
+                $current.line-to = $line-number - 1;
+            }
+            $current = $step;
             $scenario.steps.push($step);
             $last-verb = $verb;
         }
@@ -198,7 +235,11 @@ sub parse-feature-file($filename) is export {
             $step = Step.new;
             $step.verb = $verb;
             $step.text = $0;
-            $step.line = $line-number;
+            $step.line-from = $line-number;
+            if $current {
+                $current.line-to = $line-number - 1;
+            }
+            $current = $step;
             $scenario.steps.push($step);
             $last-verb = $verb;
         }
@@ -215,18 +256,19 @@ sub parse-feature-file($filename) is export {
             $step = Step.new;
             $step.verb = $verb;
             $step.text = $1;
-            $step.line = $line-number;
+            $step.line-from = $line-number;
+            if $current {
+                $current.line-to = $line-number - 1;
+            }
+            $current = $step;
             $scenario.steps.push($step);
         }
         elsif m/^ \s* <{ $gherkin-keywords{$lang}{'examples'} }> \s* (.+) $/ {
-# XXX makes sense, but the other cucumbers do not behave this way...
-#            if $is-outline {
-                $in-examples = True;
-#            }
-#            else {
-#                die X::CucumisSextus::FeatureParseFailure.new("Failed to parse feature file " 
-#                    ~ "at $filename:$line-number: examples given but not in scenario outline");
-#            }
+            $in-examples = True;
+            if $current {
+                $current.line-to = $line-number - 1;
+            }
+            $current = Nil;
         }
         elsif m/^ \s* \| (.*) \| \s* $/ {
             # XXX when can this occur?
@@ -253,5 +295,9 @@ sub parse-feature-file($filename) is export {
         }
         $line-number++;
     }
+    if $current {
+        $current.line-to = $line-number;
+    }
+    $file.lines.push(""); # final line to make output easier
     return $feature;
 }

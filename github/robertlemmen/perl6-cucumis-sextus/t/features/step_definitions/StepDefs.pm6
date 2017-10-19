@@ -50,6 +50,12 @@ Then /'the display should show' \s+ ('-'? <[\d . ]>+)/, sub ($num) {
     $trace ~= "F$num";
 };
 
+# XXX temporary until we can replace them
+Then /'the display should show' \s+ ('_' .+)/, sub ($num) {
+    say "# then-display-shows '$num'";
+    $trace ~= "F$num";
+};
+
 Step /'having it switched on'/, sub () {
     say "# having-switched-on";
     $trace ~= "G";
@@ -60,6 +66,10 @@ Step /'having successfully performed the following calculations'/, sub (@table) 
     for @table -> $r {
         $trace ~= "T" ~ $r{'first'} ~ $r{'operator'} ~ $r{'second'};
     }
+}
+
+Step /'having added these numbers'/, sub (@table) {
+    say "# having-added-numbers";
 }
 
 Step /'having keyed' \s* (\S+)/, sub ($key) {

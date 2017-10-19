@@ -5,6 +5,7 @@ use v6;
 use CucumisSextus::Gherkin;
 use CucumisSextus::Core;
 use CucumisSextus::Tags;
+use CucumisSextus::Reporter::Simple;
 
 # XXX we should have a cmdline arg to stop after the first problem
 
@@ -61,16 +62,18 @@ sub MAIN(:$tags, *@feature-spec) {
     # now execute the features
     $have-errors = False;
     my $result = CucumisResult.new;
+    my $reporter = CucumisSextus::Reporter::Simple.new;
+    $reporter.before-run();
     for @features -> $f {
         if !all-filters-match(@tag-filters, $f.tags) {
-            say "Skipping feature '" ~ $f.name ~ "' due to tag filters";
+            $reporter.skipped-feature($f);
             next;
         }
 
         # XXX we could avoid that if we group the features by $steps-base
         clear-stepdefs();
         # XXX only if that directory exists
-        my $steps-base = IO::Path.new($f.filename).parent.child("step_definitions");
+        my $steps-base = IO::Path.new($f.file.filename).parent.child("step_definitions");
         if ($steps-base.d) {
             for $steps-base.dir -> $mod {
                 if $mod.f && $mod ~~ /.pm6?$/ {
@@ -82,11 +85,10 @@ sub MAIN(:$tags, *@feature-spec) {
             }
         }
 
-        execute-feature($f, @tag-filters, $result);
+        execute-feature($f, @tag-filters, $result, $reporter);
 
         CATCH {
-            # XXX need to load step definitions
-
+            # XXX is this still useful? do we not catch the exceptions inside now?
             when X::CucumisSextus::FeatureExecFailure {
                 note .message;
                 $have-errors = True;
@@ -101,7 +103,8 @@ sub MAIN(:$tags, *@feature-spec) {
     }
 
     say "";
-    say $result.Str;
+    $reporter.after-run();
+    #say $result.Str;
     if $result.failed {
         # XXX we should have different return codes for different cases
         exit 1;

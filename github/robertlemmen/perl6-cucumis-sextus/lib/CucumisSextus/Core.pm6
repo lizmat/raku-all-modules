@@ -46,15 +46,14 @@ sub kv-replace($ptext, $kv, $feature, $step) {
             $text ~~ s/\< $match \>/$replacement/;
         }
         else {
-            die X::CucumisSextus::FeatureExecFailure.new("No replacement for '<$match>' in step '" ~ $ptext ~ "' at " ~ $feature.filename ~ ":" ~ $step.line);
+            die X::CucumisSextus::FeatureExecFailure.new("No replacement for '<$match>' in step '" ~ $ptext ~ "' at " ~ $feature.file.filename ~ ":" ~ $step.line-from);
         }
     }
     return $text;
 }
 
-sub execute-step($feature, $step, $kvsubst) {
+sub execute-step($feature, $step, $kvsubst, $reporter) {
     my $text = kv-replace($step.text, $kvsubst, $feature, $step);
-    say "    Step " ~ $step.verb ~ " " ~ $text;
     my @matchers-found;
     for @defined-steps -> $s {
         my $cm = $s[1];
@@ -66,11 +65,11 @@ sub execute-step($feature, $step, $kvsubst) {
     }
     if @matchers-found.elems == 0 {
         # XXX better detail
-        die X::CucumisSextus::FeatureExecFailure.new("No matching glue code found for step '" ~ $text ~ "' at " ~ $feature.filename ~ ":" ~ $step.line);
+        die X::CucumisSextus::FeatureExecFailure.new("No matching glue code found for step '" ~ $text ~ "' at " ~ $feature.file.filename ~ ":" ~ $step.line-from);
     }
     elsif @matchers-found.elems > 1 {
         # XXX better detail
-        die X::CucumisSextus::FeatureExecFailure.new("Ambiguous glue code for step '" ~ $text ~ "' at " ~ $feature.filename ~ ":" ~ $step.line ~ ", candidates are: ");
+        die X::CucumisSextus::FeatureExecFailure.new("Ambiguous glue code for step '" ~ $text ~ "' at " ~ $feature.file.filename ~ ":" ~ $step.line-from ~ ", candidates are: ");
     }
     else {
         my $s = @matchers-found[0];
@@ -93,18 +92,29 @@ sub execute-step($feature, $step, $kvsubst) {
     }
 }
 
-sub execute-scenario($feature, $scenario, $kvsubst, $result) {
+sub execute-scenario($feature, $scenario, $kvsubst, $result, $reporter) {
     $result.executed++;
+    $reporter.before-scenario($feature, $scenario);
     for $scenario.steps -> $step {
-        execute-step($feature, $step, $kvsubst);
+        execute-step($feature, $step, $kvsubst, $reporter);
+        # XXX need other args
+        $reporter.step($feature, Nil, $step, True);
     }
     $result.succeeded++;
+    $reporter.after-scenario($feature, $scenario, True);
     CATCH {
         when X::CucumisSextus::FeatureExecFailure {
+            $reporter.after-scenario($feature, $scenario, False);
+            # XXX perhaps we should go on and just tally them differently, but what 
+            # are they called?
             .throw;
         }
         default {
+            $reporter.step($feature, Nil, Nil, False);
+            $reporter.after-scenario($feature, $scenario, False);
+            # XXX need other args
             $result.failed++;
+            # XXX how do we do this through the reporter?
             say "Exception (" ~ .^name ~ ") during step execution: " ~ .Str;
             for .backtrace {
                 say "    ", .file, " ", .line;
@@ -113,11 +123,11 @@ sub execute-scenario($feature, $scenario, $kvsubst, $result) {
     }
 }
 
-sub execute-feature($feature, @tag-filters, $result) is export {
+sub execute-feature($feature, @tag-filters, $result, $reporter) is export {
     # XXX if  there is nothing recognizabl;e in the feature, the error handling
     # is terrible, this can be reproduced by e.g. removing the "#language" line
     # from a non-english feature
-    say "Feature " ~ $feature.name;
+    $reporter.before-feature($feature); 
 
     for $feature.scenarios -> $scenario {
         my @effective-tags;
@@ -125,7 +135,7 @@ sub execute-feature($feature, @tag-filters, $result) is export {
         @effective-tags.append($scenario.tags);
 
         if !all-filters-match(@tag-filters, @effective-tags) {
-            say "  Skipping scenario '" ~ $scenario.name ~ "' due to tag filters";
+            $reporter.skipped-scenario($feature, $scenario);
             $result.skipped++;
             next;
         }
@@ -137,21 +147,19 @@ sub execute-feature($feature, @tag-filters, $result) is export {
 
         for @subst -> $kvsubst {
             if $feature.background {
-                say "  Background " ~ $feature.background.name;
-                execute-scenario($feature, $feature.background, $kvsubst, $result);
+                execute-scenario($feature, $feature.background, $kvsubst, $result, $reporter);
             }
-
-            say "  Scenario " ~ $scenario.name;
 
             for @before-hooks -> $hook {
                 $hook($feature, $scenario);
             }
-            execute-scenario($feature, $scenario, $kvsubst, $result);
+            execute-scenario($feature, $scenario, $kvsubst, $result, $reporter);
             # XXX we want to run these even if there are failures in the steps
             for @after-hooks.reverse -> $hook {
                 $hook($feature, $scenario);
             }
         }
     }
+    $reporter.after-feature($feature, True); # XXX actual result
 }
 
