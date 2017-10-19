@@ -1,0 +1,5 @@
+module_run 'RemoteFile', %(
+    url       => 'https://github.com/melezhik/remote-file/archive/master.zip',
+    location  => '/tmp/foo/bar/master.zip'
+);
+
