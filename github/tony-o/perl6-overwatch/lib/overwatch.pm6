@@ -57,7 +57,7 @@ class overwatch {
           my $remote = qx<git rev-parse @{u}>.chomp; 
           my $base   = qx<git merge-base @{0} @{u}>.chomp;
           if $local ne $remote && $local eq $base {
-            $.supplier.emit({ action => 'git-pull' });
+            $.supplier.emit({ action => 'git-pull', });
             qx<git pull>;
           }
         }, quit => { $p.keep; });
@@ -72,7 +72,7 @@ class overwatch {
         action => 'kill-proc',
         signal => $_,
       });
-      await $.proc.kill($_);
+      try await $.proc.kill($_);
       exit 0;
     });
 
@@ -124,7 +124,7 @@ class overwatch {
                 $.supplier.emit({
                   action => 'error',
                   type   => 100,
-                  msg    => "Could not kill process: {.message}"
+                  msg    => "Could not kill process: {.message}",
                 });
               } 
             }
@@ -134,7 +134,7 @@ class overwatch {
           }
           $.supplier.emit({
             action    => 'file-changed',
-            file-path => "$dir/{$f.path}".IO.relative;
+            file-path => "$dir/{$f.path}".IO.relative,
           });
         }
       }

@@ -32,7 +32,7 @@ sub MAIN (
 
   if !$quiet {
     $overwatch.events.tap(-> $event {
-      given $event<action> {
+      try given $event<action> {
         when 'start' {
           '[INFO] Starting overseer with options:'.say;
           "[INFO]   --execute: {$event<execute>}".say;
