@@ -402,8 +402,8 @@ else
   RELEASE_INFO=$(cat /etc/*-release 2>/dev/null | head -n 1)
 
   if [ ! -z "$RELEASE_INFO" ]; then
-    OS=$(printf -- "$RELEASE_INFO" | awk '{ print $1 }')
-    VER=$(printf -- "$RELEASE_INFO" | awk '{ print $NF }')
+    OS=$(printf "$RELEASE_INFO" | awk '{ print $1 }')
+    VER=$(printf "$RELEASE_INFO" | awk '{ print $NF }')
   else
     # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
     OS=$(uname -s)
@@ -412,9 +412,9 @@ else
 fi
 
 # Convert OS name to lowercase to remove inconsistencies
-OS=$(printf -- "$OS" | awk '{ print tolower($1) }')
+OS=$(printf "$OS" | awk '{ print tolower($1) }')
 
-printf -- "Bootstrap for %s\n" "$OS"
+printf "Bootstrap for %s\n" "$OS"
 
 # Install native dependencies
 case "$OS" in
@@ -443,18 +443,18 @@ case "$OS" in
   ;;
   minoca)
     opkg -f /etc/opkg/opkg.conf update
-    opkg install curl perl make gcc tar gzip
+    opkg install awk curl perl make gcc tar gzip
   ;;
   ubuntu)
   ;;
   *)
-    printf -- "Your OS (%s) is not supported\n" "$OS"
+    printf "Your OS (%s) is not supported\n" "$OS"
     exit 1
 esac
 
 # Install cpanm
 if ! which cpanm 2>/dev/null; then
-  printf -- "installing cpanm ...\n"
+  printf "installing cpanm ...\n"
   curl -s -kL http://cpanmin.us/ -o /bin/cpanm
   chmod a+x /bin/cpanm
 fi
