@@ -47,9 +47,9 @@ class DRMAA::Job-template {
 		$cached = $template.attribute-fetch($name) unless defined $cached;
 		$cached;
 	    },
-            STORE => method (Str $value) {
+            STORE => method ($value) {
 		$cached = Any;
-		$template.attribute-store($name, $value);
+		$template.attribute-store($name, $value.Str);
 	    }
         )
     }
@@ -96,49 +96,49 @@ class DRMAA::Job-template {
     };
 
     multi method block-email()          is rw { given (DRMAA_BLOCK_EMAIL) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method block-email($value)          { given (DRMAA_BLOCK_EMAIL) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method block-email($value)          { given (DRMAA_BLOCK_EMAIL) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method deadline-time()        is rw { given (DRMAA_DEADLINE_TIME) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method deadline-time($value)        { given (DRMAA_DEADLINE_TIME) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method deadline-time($value)        { given (DRMAA_DEADLINE_TIME) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method duration-hlimit()      is rw { given (DRMAA_DURATION_HLIMIT) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method duration-hlimit($value)      { given (DRMAA_DURATION_HLIMIT) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method duration-hlimit($value)      { given (DRMAA_DURATION_HLIMIT) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method duration-slimit()      is rw { given (DRMAA_DURATION_SLIMIT) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method duration-slimit($value)      { given (DRMAA_DURATION_SLIMIT) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method duration-slimit($value)      { given (DRMAA_DURATION_SLIMIT) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method error-path()           is rw { given (DRMAA_ERROR_PATH) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method error-path($value)           { given (DRMAA_ERROR_PATH) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method error-path($value)           { given (DRMAA_ERROR_PATH) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method input-path()           is rw { given (DRMAA_INPUT_PATH) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method input-path($value)           { given (DRMAA_INPUT_PATH) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method input-path($value)           { given (DRMAA_INPUT_PATH) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method job-category()         is rw { given (DRMAA_JOB_CATEGORY) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method job-category($value)         { given (DRMAA_JOB_CATEGORY) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method job-category($value)         { given (DRMAA_JOB_CATEGORY) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method job-name()             is rw { given (DRMAA_JOB_NAME) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method job-name($value)             { given (DRMAA_JOB_NAME) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method job-name($value)             { given (DRMAA_JOB_NAME) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
 
     multi method join-files()           is rw { given (DRMAA_JOIN_FILES) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method join-files($value)           { given (DRMAA_JOIN_FILES) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method join-files($value)           { given (DRMAA_JOIN_FILES) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method js-state()             is rw { given (DRMAA_JS_STATE) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method js-state($value)             { given (DRMAA_JS_STATE) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method js-state($value)             { given (DRMAA_JS_STATE) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method native-specification() is rw { given (DRMAA_NATIVE_SPECIFICATION) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method native-specification($value) { given (DRMAA_NATIVE_SPECIFICATION) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method native-specification($value) { given (DRMAA_NATIVE_SPECIFICATION) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method output-path()          is rw { given (DRMAA_OUTPUT_PATH) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method output-path($value)          { given (DRMAA_OUTPUT_PATH) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
-    
+    multi method output-path($value)          { given (DRMAA_OUTPUT_PATH) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
+
     multi method remote-command()       is rw { given (DRMAA_REMOTE_COMMAND) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method remote-command($value)       { given (DRMAA_REMOTE_COMMAND) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method remote-command($value)       { given (DRMAA_REMOTE_COMMAND) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method start-time()           is rw { given (DRMAA_START_TIME) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method start-time($value)           { given (DRMAA_START_TIME) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method start-time($value)           { given (DRMAA_START_TIME) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method transfer-files()       is rw { given (DRMAA_TRANSFER_FILES) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method transfer-files($value)       { given (DRMAA_TRANSFER_FILES) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method transfer-files($value)       { given (DRMAA_TRANSFER_FILES) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method argv()                 is rw { given (DRMAA_V_ARGV) { LEAVE { .free }; self.vector-attribute($_.Str) } }
     multi method argv($value)                 { given (DRMAA_V_ARGV) { LEAVE { .free }; self.vector-attribute-store($_.Str, $value) } }
@@ -150,13 +150,13 @@ class DRMAA::Job-template {
     multi method env($value)                  { given (DRMAA_V_ENV) { LEAVE { .free }; self.vector-attribute-store($_.Str, $value) } }
     
     multi method wct-hlimit()           is rw { given (DRMAA_WCT_HLIMIT) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method wct-hlimit($value)           { given (DRMAA_WCT_HLIMIT) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method wct-hlimit($value)           { given (DRMAA_WCT_HLIMIT) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method wct-slimit()           is rw { given (DRMAA_WCT_SLIMIT) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method wct-slimit($value)           { given (DRMAA_WCT_SLIMIT) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method wct-slimit($value)           { given (DRMAA_WCT_SLIMIT) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
     
     multi method wd()                   is rw { given (DRMAA_WD) { LEAVE { .free }; self.attribute($_.Str) } }
-    multi method wd($value)                   { given (DRMAA_WD) { LEAVE { .free }; self.attribute-store($_.Str, $value) } }
+    multi method wd($value)                   { given (DRMAA_WD) { LEAVE { .free }; self.attribute-store($_.Str, $value.Str) } }
 
     method after($after) {
 	die X::NYI.new(:feature('Dependencies in ' ~ DRMAA::Session.native-specification.^name))
@@ -191,20 +191,27 @@ class DRMAA::Job-template {
 	DRMAA::Session.native-specification.job-template-afterok(self, $after);
     }
     
-    method script(Str:D $script, :$tempdir = './.drmaa_scripts') {
+    method script(Str:D $script, :$tempdir = './.drmaa_scripts' --> Str) {
+	use nqp;
+
 	mkdir $tempdir unless $tempdir.IO.d;
 
-	my $filename; { use nqp; $filename = "$tempdir/" ~ nqp::sha1($script); }
+	my $filename = nqp::sha1($script);
+	my $fullname = "$tempdir/$filename";
 
-	spurt $filename, $script;
-	$filename.IO.chmod: 0o700;
+	unless $fullname.IO.f && (nqp::sha1(slurp($fullname)) eq $filename) {
+	    spurt $fullname, $script;
+	    $fullname.IO.chmod: 0o700;
 
-	$*ERR.say("File {$filename.IO.basename} created and stored", 
-		  " in $tempdir directory");
+	    $*ERR.say("File $filename created and stored", 
+		      " in $tempdir directory");
+	}
 
 	self.remote-command($*EXECUTABLE);
-	self.argv(($filename, |@*ARGS));
+	self.argv(($fullname, |@*ARGS));
 	self.env(%*ENV.kv.rotor(2).map: { .join("=") });
+
+	$fullname
     };
     
     submethod BUILD(*%all) {

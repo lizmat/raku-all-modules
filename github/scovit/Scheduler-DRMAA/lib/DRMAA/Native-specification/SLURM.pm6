@@ -25,7 +25,7 @@ class DRMAA::Native-specification::SLURM does DRMAA::Native-specification {
 	$what.native-specification ~= ' --dependency=afternotok:' ~ join(':', $after.map: { $_.job-id });
     };
     method submission-then(DRMAA::Submission:D $after, DRMAA::Job-template:D $what --> DRMAA::Submission) {
-	.job-template-afterany($what, $after);
+	self.job-template-afterany($what, $after);
 
 	$what.run;
     }
