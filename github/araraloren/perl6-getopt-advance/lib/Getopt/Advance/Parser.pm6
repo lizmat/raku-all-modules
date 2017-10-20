@@ -271,17 +271,15 @@ multi sub ga-parser(
             }
         }
     }
-
+    # set value before non-option and main
+    .set-value for @oav;
+    # check option group and value optional
+    $optset.check();
     # call callback of non-option
     &process-pos($optset, @noa);
-    # set value before main
-    .set-value for @oav;
     # call main
     my %ret;
     %ret = &process-main($optset, @noa) if !$autohv || !&will-not-process-main($optset);
-    # check option group and value optional
-    $optset.check();
-
     return Getopt::Advance::ReturnValue.new(
         optionset => $optset,
         noa => @noa,
@@ -355,17 +353,15 @@ multi sub ga-parser(
             }
         }
     }
-
+    # set value before non-option and main
+    .set-value for @oav;
+    # check option group and value optional
+    $optset.check();
     # call callback of non-option
     &process-pos($optset, @noa);
-    # set value before main
-    .set-value for @oav;
     # call main
     my %ret;
     %ret = &process-main($optset, @noa) if !$autohv || !&will-not-process-main($optset);
-    # check option group and value optional
-    $optset.check();
-
     return Getopt::Advance::ReturnValue.new(
         optionset => $optset,
         noa => @noa,
