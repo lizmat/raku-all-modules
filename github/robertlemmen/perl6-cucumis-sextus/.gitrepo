@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/robertlemmen/perl6-cucumis-sextus.git
 	branch = master
-	commit = 42c164a7ee5ba08c503567e8fd2f2ff4bf19fb47
-	parent = fef0c4ccbc8f7ab516f2b2244c9a80a45c615d01
+	commit = a357c69f9be1dcdd75e3fce831290b03f9342902
+	parent = 0251b4ab69afcb883f309afd7d77639353942780
 	cmdver = 0.4.0

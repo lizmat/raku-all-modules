@@ -279,8 +279,22 @@ And then write the appropriate step definition code:
     }
 
 Note that you could even use Hindi number literals like १ instead 
-of the arabic oes in the example above, the \d does detect them 
+of the arabic ones in the example above, the \d does detect them 
 correctly and $num.Int will convert to a number as well!
+
+This should even work for right-to-left languages, but of course
+you get the usual problems with shells, editors and the like:
+
+    #language: fa
+    ویژگی: عملیات ساده ماشین حساب
+        جهت ارزیابی اینکه کلاس ماشین حساب را به درستی نوشته ام
+        به عنوان یک برنامه نویس چند عملیات ساده ریاضی را ارزیابی می کنم
+        تا از کلاس ماشین حسابم اطمینان حاصل کنم
+
+    سناریو: اولین دکمه فشرده شده در صفحه نمایش
+        با فرض یک شی جدید ماشین حساب 
+        و فشرده شدن ۱۲۳
+        آنگاه صفحه نمایش باید ۱۲۳ را نشان بدهد
 
 ## Feedback and Contact
 

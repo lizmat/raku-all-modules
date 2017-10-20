@@ -113,6 +113,15 @@ After sub ($feature, $scenario) {
     }
 }
 
+Step /'یک شی' .*/, sub () {
+}
+
+Step /'فشرد' .*/, sub () {
+}
+
+Step /'صفحه' .*/, sub () {
+}
+
 sub clear-trace() is export {
     $trace = '';
 }
