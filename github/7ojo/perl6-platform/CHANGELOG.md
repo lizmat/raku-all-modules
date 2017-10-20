@@ -5,15 +5,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [0.0.5]
 ### Added
-- ```platform --project=xxx attach``` to connect container via shell
+- New commandline interface using CommandLine::Usage
+- New colourful output format
+- ```platform attach <project>``` to connect container via shell
 - examples/openldap to use openldap on your environments
-- ```platform [--environment=|--project=] remove``` command to stop & remove
+- ```platform remove <project>``` command to stop & remove
 - Throw exception if project file doesn't exists and catch it for reporting
+
+### Changed
+- Added -it params to exec/run command
 
 ### Fixed
 - Rakudo 2017.04 and up compliance abspath -> absolute
 - Usage of ~ on project folder
+- File creation fixes when file wanted to be empty
 - Misc output cleanups 
 
 ## [0.0.4]
@@ -54,7 +62,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Proxy + DNS services
 - Project and Environment support
 
-[Unreleased]: https://github.com/7ojo/perl6-platform/compare/0.0.4...HEAD
+[Unreleased]: https://github.com/7ojo/perl6-platform/compare/0.0.5...HEAD
+[0.0.5]: https://github.com/7ojo/perl6-platform/compare/0.0.4...0.0.5
 [0.0.4]: https://github.com/7ojo/perl6-platform/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/7ojo/perl6-platform/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/7ojo/perl6-platform/compare/0.0.1...0.0.2
