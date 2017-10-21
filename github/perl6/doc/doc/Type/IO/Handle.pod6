@@ -18,7 +18,7 @@ method open(IO::Handle:D:
     Str :$mode,
     :$r, :$w, :$a, :$x, :$update, :$rw, :$rx, :$ra,
     :$create, :$append, :$truncate, :$exclusive,
-    :$out-buffer, :$in-buffer
+    :$out-buffer,
     --> IO::Handle:D
 )
 
@@ -84,9 +84,8 @@ modes in this case will result in exception being thrown.
 
 In B<6.d> language, path C<'-'> has no special meaning.
 
-The C<:out-buffer> and C<:in-buffer> control input and output buffering
-and by default behave as if values were C<Nil>.
-See methods L<out-buffer> and L<in-buffer> for details.
+The C<:out-buffer> controls output buffering and by default behaves as if
+it were C<Nil>. See method L<out-buffer> for details.
 
 B<Note:> unlike some other languages, Perl 6 does not use reference counting,
 and so B<the file handles are NOT flushed or closed when they go out of scope>.
@@ -494,21 +493,17 @@ Lastly, can take a C<Nil> to enable TTY-based buffering control: if
 the handle L<is a TTY|/routine/t>, the buffering is disabled, otherwise,
 default, implementation-defined buffer size is used.
 
-=head2 method in-buffer
+See L<flush> to write out data currently in the buffer. Changing buffer
+size flushes the filehandle.
 
-Defined as:
+=for code
+given 'foo'.IO.open: :w, :1000out-buffer {
+    .say: 'Hello world!'; # buffered
+    .out-buffer = 42;       # buffer resized; previous print flushed
+    .say: 'And goodbye';
+    .close; # closing the handle flushes the buffer
+}
 
-    method in-buffer(--> Int:D) is rw
-
-Controls input buffering and can be set via an argument to L<open>.
-Implementations may do partial or no input buffering on
-L<binary|/routine/encoding> handles.
-
-Takes an C<int> as the size of the buffer to use (zero is acceptable). Can
-also take a L<Bool>: C<True> means to use default, implementation-defined buffer
-size; C<False> means to disable buffering (equivalent to using C<0> as buffer
-size). C<Nil> is also accepted and means to use default, implementation-defined
-buffer size
 
 =head2 method put
 
