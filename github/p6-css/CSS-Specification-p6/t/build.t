@@ -18,7 +18,7 @@ sub capture($code, $output-path?) {
         }
 
     $code();
-
+    $*OUT.close;
     return $output-path // $output;
 }
 
