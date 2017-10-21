@@ -1,0 +1,28 @@
+{
+  "name" : "Color::Names",
+  "source-url" : "https://github.com/holli-holzer/perl6-Color-Names.git",
+  "support" : {
+    "source" : "https://github.com/holli-holzer/perl6-Color-Names.git"
+  },
+  "perl" : "6.c",
+  "depends" : [
+    "JSON::Fast"
+  ],
+  "license" : "GPL-3.0",
+  "test-depends" : [
+    "Test::META"
+  ],
+  "provides" : {
+    "Color::Names::XKCD" : "lib/Color/Names/XKCD.pm6",
+    "Color::Names::X11" : "lib/Color/Names/X11.pm6",
+    "Color::Names" : "lib/Color/Names.pm6",
+    "Color::Names::CSS3" : "lib/Color/Names/CSS3.pm6"
+  },
+  "version" : "1.001003",
+  "meta-version" : "0",
+  "authors" : [
+    "Markus 'holli' Holzer",
+    ""
+  ],
+  "description" : "A comprehensive? list of named colors"
+}
