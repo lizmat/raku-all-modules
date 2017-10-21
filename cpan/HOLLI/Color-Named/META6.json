@@ -1,0 +1,22 @@
+{
+  "name" : "Color::Named",
+  "source-url" : "https://github.com/holli-holzer/perl6-Color-Named.git",
+  "support" : {
+    "source" : "https://github.com/holli-holzer/perl6-Color-Named.git"
+  },
+  "perl" : "6.c",
+  "license" : "GPL-3.0",
+  "test-depends" : [
+    "Test::META"
+  ],
+  "provides" : {
+    "Color::Named" : "lib/Color/Named.pm6"
+  },
+  "version" : "1.001002",
+  "meta-version" : "0",
+  "authors" : [
+    "Markus 'holli' Holzer",
+    ""
+  ],
+  "description" : "Work with named colors"
+}
