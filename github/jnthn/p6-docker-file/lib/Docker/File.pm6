@@ -339,7 +339,7 @@ class Docker::File {
             \n
         }
 
-        token instruction:sym<LABEL> {
+        regex instruction:sym<LABEL> {
             <sym> \h+ <label>+ % [\h+ | \h* \\ \n \h*] \n
         }
 
@@ -347,7 +347,7 @@ class Docker::File {
             <sym> \h+ <file-list('VOLUME')> \h* \n
         }
 
-        token instruction:sym<ENV> {
+        regex instruction:sym<ENV> {
             <sym> \h+
             [
             | $<key>=[<-[\s"=]>+] \h+ <![=]> $<value>=[\N+] \n
