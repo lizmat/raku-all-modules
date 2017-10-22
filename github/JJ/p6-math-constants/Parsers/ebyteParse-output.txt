@@ -1,0 +1,452 @@
+#  Universal
+Speed-of-light-c	2.997924580e+8
+Permeability-of-vacuum-μ	12.566370614359e-7
+Permittivity-of-vacuum-ε	8.854187817620e-12
+Gravitation-constant-G	6.6738480e-11
+Planck-constant-h	6.6260695729e-34
+Angular-Planck-constant	1.05457172647e-34
+Charge/Quantum-ratio	2.41798934853e+14
+Elementary-charge-e	1.60217656535e-19
+Quantum/Charge-ratio	4.1356675210e-15
+Fine-structure-constant-α	7.297352569824e-3
+Inverse-of-fine-structure-constant	137.03599907445
+Boltzmann-constant-k	1.380648813e-23
+Planck-mass-m	2.1765113e-8
+Planck-time-t	5.3910632e-44
+Planck-length-l	1.61619997e-35
+Planck-temperature	1.41683385e+32
+
+
+#  Electromagnetic
+Impedance-of-vacuum-Z	376.730313461
+Magnetic-flux-quantum-Φ	2.06783375846e-15
+Josephson-constant-K	4.8359787011e14
+von-Klitzing-constant-R	2.5812807443484e+4
+Conductance-quantum-G	7.748091734625e-5
+Inverse-of-conductance-quantum	1.2906403721742e+4
+
+
+#  Radiation constants
+Stefan-Boltzmann-const.-σ	5.67037321e-8
+1st-radiation-constant-c	3.7417715317e-16
+2nd-radiation-constant-c	1.438777013e-2
+Wien-λ-displacement-constant-λ	2.897772126e-3
+Wien-f-displacement-constant-f/T	5.878925453e+10
+Max.-luminous-efficacy:-absolute	683
+Max.-luminous-efficacy:-black-body	95
+Solar-luminous-efficacy	93
+Solar-illuminance	1.28010e5
+
+
+#  Electron and atomic physics
+Rydberg-constant-R∞	1.097373156853955e+7
+Hartree-energy-E	4.3597443419e-18
+Bohr-radius	5.291772109217e-11
+Bohr-magneton-μ	9.2740096820e-24
+Bohr-magneton	1.39962455531e+10
+Quantum-of-circulation	3.636947552024e-4
+Richardson-constant	1.20173e+6
+
+Electron-rest-mass-m	9.1093829140e-31
+Electron-rest-energy-(m	8.1871050636e-14
+Electron-charge/mass-ratio	-1.75882008839e11
+Compton-wavelength-of-electron-λ	2.426310238916e-12
+Classical-electron-radius-r	2.817940326727e-15
+Thomson-cross-section-σ	0.665245873413e-28
+Electron-magnetic-moment-μ	-9.2847643021e-24
+Electron-g-factor-g	-2.0023193043615353
+Electron-magnetic-moment-anomaly	1.1596521807627e-3
+Electron-gyromagnetic-ratio-γ	28.0249526662e+9
+Electron/Proton-mass-ratio	5.446170217822e-4
+Electron/Proton-magnetic-moments-ratio	-658.210684854
+Electron/Proton-magnetic-moments-ratio	-658.227597172
+
+
+#  Physico-chemical
+Atomic-mass-constant-u	1.66053892173e-27
+Molar-mass-of- 	12e-3
+Molar-mass-constant	1.0e-3
+Boltzmann-constant-k	1.380648813e-23
+Boltzmann-constant-in-eV/K	8.617332478e-5
+Avogadro's-number-N	6.0221412927e+23
+Molar-Planck-constant	3.990312717628e-10
+Molar-Planck-constant-by-c	0.11962656577984
+Electron-molar-mass	5.485799094622e-7
+Electron-molar-charge	-9.6485336521e+4
+Faraday-constant-F	+9.6485336521e+4
+Molar-gas-constant-R	8.314462175
+Molar-volume-of-ideal-gas-V	22.41396820e-3
+Loschmidt-constant-n	2.686780524e+25
+Sackur-Tetrode-constant-S	-1.164870823
+
+
+#  Nuclear physics
+Fermi-coupling-	3.67033631e+48
+Fermi-coupling	1.1663645e+4
+Weak-mixing-angle	0.222321
+Nuclear-magneton	5.0507835311e-27
+Nuclear-magneton	7.6225935717e+6
+
+Proton-rest-mass-m	1.67262177774e-27
+Proton-rest-energy	1.50327748466e-10
+Proton-/-electron-mass-ratio	1836.1526724575
+Compton-wavelength-of-proton	1.3214098562394e-15
+Proton-rms-charge-radius	0.877551e-15
+Proton-magnetic-moment	1.41060674333e-26
+Proton-g-factor	5.58569471346
+Proton-gyromagnetic-ratio	42.577480610e+6
+Proton-gyromagnetic-ratio	42.576388112e+6
+Proton-magnetic-shielding	25.69414e-6
+Electric-dipole-moment	<8.7e-45
+Electric-polarizibility	1.206e-48
+Magnetic-polarizibility	1.95e-49
+
+Neutron-rest-mass-m	1.67492735174e-27
+Neutron-rest-energy	1.50534963166e-10
+Compton-wavelength-of-neutron	1.319590906811e-15
+Neutron-half-life-time	881.515
+Neutron-magnetic-moment	-0.9662364723e-26
+Neutron-g-factor	-3.8260854590
+Neutron-gyromagnetic-ratio	29.164694369e+6
+Electric-dipole-moment	<4.6e-47
+Electric-polarizibility	1.1615e-48
+Magnetic-polarizibility	3.720e-49
+
+Deuteron-rest-mass	3.3435834815e-27
+Deuteron-rest-energy	3.0050629713e-10
+Deuteron-rms-charge-radius	2.142421e-15
+Deuteron-magnetic-moment	0.43307348910e-26
+Deuteron-g-factor	0.857438230872
+Deuteron-gyromagnetic-ratio	6.53590338141e+6
+Deuteron-quadrupole-moment	4.581e-50
+
+Triton-rest-mass	5.0073563022e-27
+Triton-rest-energy	4.5003874120e-10
+Triton-half-life-time	3.88870e+8
+Triton-magnetic-moment	1.50460944738e-26
+Triton-g-factor	5.95792489676
+Triton-gyromagnetic-ratio	45.413674613e+6
+
+Helion-rest-mass	5.0064123422e-27
+Helion-rest-energy	4.4995390220e-10
+Helion-magnetic-moment	-1.07461748627e-26
+Helion-g-factor	-4.25525061350
+Helion-gyromagnetic-ratio	32.4341019890e+6
+
+α-particle-rest-mass	6.6446567529e-27
+α-particle-rest-energy	5.9719196726e-10
+
+
+#  Particle physics
+
+Electron-neutrino-ν	max3.5e-13
+Muon-neutrino-ν	max0.27e-13
+Tau-neutrino-ν	max24.8e-13
+
+Muon-rest-energy	1.69283366786e-11
+Muon-rest-mass	1.88353147596e-28
+Muon-magnetic-moment	-4.4904480715e-26
+Muon-g-factor-g	-2.002331841813
+Muon-magnetic-moment-anomaly	1.1659209163e-3
+Muon-gyromagnetic-ratio	135.53881712e+6
+Muon-half-life-time	1.52e-6
+
+Tau-rest-energy	2.8467826e-10
+Tau-rest-mass	3.1674729e-27
+Tau-half-life-time	2.9e-13
+
+u-(up)-quark-rest-energy	3.8e-13
+c-(charm)-quark-rest-energy	2.03e-10
+t-(top)-quark-rest-energy	2.743e-8
+
+d-(down)-quark-rest-energy	7.7e-13
+s-(strange)-quark-rest-energy	1.67e-11
+b-(bottom)-quark-rest-energy	6.7e-10
+
+Pions-π	2.236160756e-11
+
+
+
+Pion-π	2.162563496e-11
+
+
+
+Kaons-K	7.9095826e-11
+
+
+
+Kaon-K	7.9726538e-11
+Kaon-K	8.8707742e-28
+
+
+
+η-rest-energy	8.7775738e-11
+
+
+η'-rest-energy	1.5343438e-10
+
+
+
+Λ	1.787521196e-10
+
+
+Bottom-Λ	9.004626e-10
+
+
+Charmed-Λ	3.6633122e-10
+
+
+
+Σ	1.9055811e-10
+
+
+Σ	1.91082338e-10
+
+
+Σ	1.91852548e-10
+
+
+Charmed-Σ	3.9317729e-10
+
+
+Charmed-Σ	3.9299864e-10
+
+
+Charmed-Σ	3.9313629e-10
+
+
+Bottom-Σ	9.305162e-10
+
+
+Bottom-Σ	9.317043e-10
+
+
+
+Σ	2.2154964e-10
+
+
+Σ	2.2169316e-10
+
+
+Σ	2.2225480e-10
+
+
+Charmed-Σ	4.0349296e-10
+
+
+Charmed-Σ	4.033537e-10
+
+
+Charmed-Σ	4.0342880e-10
+
+
+
+Ξ	2.10663832e-10
+
+
+Ξ	2.1169721e-10
+
+
+Charmed-Ξ	3.9540164e-10
+
+
+Charmed-Ξ	3.9589864e-10
+
+
+Double-charmed-Ξ	5.637914e-10
+
+
+Bottom-Ξ	9.279848e-10
+
+
+Bottom-Ξ	9.281548e-10
+
+
+
+
+Ω	2.6795646e-10
+
+
+Charmed-Ω	4.321941e-10
+
+
+Bottom-Ω	9.70011e-10
+
+
+
+W-boson-rest-energy	1.2879124e-8
+
+
+Z-boson-rest-energy	1.46098633e-8
+
+
+H	2.004234e-8
+
+
+
+
+#  CMB
+Mean-apparent-CMB-	2.7254857
+rms-variations-of-CMB-temperature	1.8e-7
+Peak-frequency-density-ν	1.6023e+11
+Peak-wavelength-density-λ	1.063e-3
+
+
+#  Universe
+Diameter	8.8010e+26
+Volume	3.6010e+80
+Mass	3.5610e+54
+Mean-density	9.9020e-27
+Age	4.36654e+17
+Mean-expansion-rate	2.2913e-18
+Number-of-stars	3.010e+23
+Number-of-galaxies	1.2520e+11
+Number-of-fundamental-particles	1.0025e+80
+Mean-concentration-of-particles	0.2810
+
+
+#  Milky way
+Diameter	1.0410e+21
+Thickness	1.0010e+19
+Mass	2.5050e+42
+Number-of-stars	3.010e+11
+Oldest-known-star	4.15650e+17
+Speed	5.52060e+5
+Angle	1.0510
+
+Arms-pattern-rotation-(apparent)	1.5815e+15
+
+Bar-pattern-rotation-period-(apparent)	5.2047e+14
+
+
+#  Solar system
+Distance-to-Milky-Way-galaxy-center	2.5710e+20
+Rotation-around-galaxy-center:-period	7.4939e+15
+Rotation-around-galaxy-center:-orbital-speed	2.20e+5
+Absolute-speed-with-respect-to-CMB	3.7e+5
+Extension-(max.aphelion-of-a-minor-planet)	1.598e+14
+Distance-to-nearest-neighbour-system	3.97050e+16
+
+Mass	1.9891020e+30
+Mean-radius	6.955050e+8
+Flattening	9e-6
+Volume	1.4122650e+27
+Mean-density	1.408e+3
+Surface-gravity-on-equator	2.74e+2
+Escape-velocity	6.176e+2
+Photosphere-temperature	5778
+Absolute-visual-magnitude	+4.83
+Radiance-I	2.009e+7
+Luminose-efficacy	98
+Luminosity-L	3.84114e+26
+Loss-of-mass-due-to-elmag-radiation	4.27316e+9
+Total-neutrino-emissions	1.83050e+38
+Age	1.442014e+17
+
+Earth-aphelion,-largest-distance-from-Sun	1.52098232e+11
+Earth-perihelion,-smallest-distance-from-Sun	1.47098290e+11
+Longitude-of-ascending-node	6.08665006
+Argument	1.9933026
+Semi-major-orbital-axis	1.49598261e+11
+Earth-orbit-inclination-to-Sun-equator	0.1249
+Earth-orbit-inclination-to-	0.0275533
+Earth-orbital-	0.01671123
+Mean-anomaly	3.5751716e+2
+Earth-mean-orbital-velocity	2.9780e+4
+Sun-visual-brightess-from-the-Earth	-26.74
+Sun-angular-diameter-seen-from-the-Earth	0.00919-0.00951
+Solar-constant-(mean-value-for-Earth)	1.3659448e3
+Solar-neutrinos-flux-on-Earth-surface	6.5010e+14
+Satellites-count	1natural
+
+Number-of-planets	8
+
+Registered,-with-known-orbits	583'767
+Numbered-minor-planets	326'266
+Named-minor-planets	17'055
+
+Age	1.432714e+17
+Global-composition-in-weight-%	Fe32.1,O30.1,Si15.1,Mg13.9,S2.9,Ni1.8,Ca1.5,Al1.4,therest:1.2
+Atmospheric-composition-in-weight-%	N
+Mass	5.9736e+24
+Volume	1.08321e+21
+Mean-density	5.515e+3
+Mean-radius	6.3710e+6
+Equatorial-radius	6.3781e+6
+Polar-radius	6.3568e+6
+Flattening	0.00335
+Surface-area	5.100720e+14
+Dry-land-surface-area	1.48940e+14
+Surface-temperature,-mean	287.2
+Surface-pressure,-mean	1.01325e+5
+Equatorial-surface-gravity	9.780327
+Escape-velocity	1.1186e+4
+Albedo,-geometric	0.367
+Albedo,-Bond	0.306
+Sidereal-rotation-period	8.616410e+4
+Equatorial-rotation-speed	465.1
+Axial-tilt	0.40763819
+Radius-of-the-core	3.485e+6
+Average-lunar-month	2.55144305e+6
+
+
+#  Conventional constants
+Molar-mass-constant	0.001
+Molar-mass-of- 	0.012
+Standard-gravity-acceleration	9.80665
+Standard-atmosphere	101325
+
+Stellar-apparent-magnitude	2.511886431509580
+Stellar-absolute-magnitude	2.511886431509580
+
+
+#  Engineering
+
+0-dBm-power	0.001
+0-dBm-potential	0.774596669241483
+0-dBm-current	0.001290994448736
+
+0-dBW-power	1.0
+0-dBW-potential	7.071067811865475
+0-dBW-current	0.141421356237310
+Conversion-of-dBW-into-dBm	+30
+
+Relative-luminance-of-Red/RGB	0.2126
+Relative-luminance-of-Green/RGB	0.7152
+Relative-luminance-of-Blue/RGB	0.0722
+
+Frequency-of-the-A4-reference-note	440.0
+Full-octave-frequency-ratio	2.0
+Half-tone-frequency-ratio-2	1.059463094359295
+
+
+#  Conversion factors
+
+Electron-volt	1.60217656535e-19
+Electron-volt-to-mass	1.78266184539e-36
+Electron-volt-to-atomic-units-u	1.07354415024e-9
+Electron-volt-to-frequency	2.41798934853e+14
+Electron-volt-to-half-life-time	6.5821192822e-16
+Joul-to-eV	6.2415093414e+18
+Mass-to-eV	5.6095888512e+35
+Atomic-unit-u-to-eV	931.49406121e+6
+Frequency-(1-Hz)-to-eV	4.13566751691e-15
+Atomic-mass-constant-u,-m	1.66053892173e-27
+Atomic-mass-energy-(uc	1.49241795466e-10
+
+Astronomical-unit-ua,-au	1.4959787030e+11
+Light-year	9.4607304725808e+15
+Parsec	3.0856775760e+16
+
+Hour	3.600e+3
+Day	8.6400e+4
+Julian-year	3.1557600e+7
+Gregorian-year	3.1556952e+7
+Tropical-year	3.155692518747072e+7
+
+1-radian	5.729577951308232e+1
+1°-degree	1.745329251994330e-2
+1'-minute	2.908882086657215e-4
+1''-second	4.848136811095359e-6
+1-steradian	3.282806350011744e+3
+1-degree	3.046174197867086e-4
