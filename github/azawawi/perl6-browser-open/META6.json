@@ -1,7 +1,7 @@
 {
     "name"         : "Browser::Open",
     "license"      : "MIT",
-    "version"      : "*",
+    "version"      : "1.0.0",
     "perl"         : "6.c",
     "description"  : "Open a given URL in a browser",
     "depends"      : [ "File::Which" ],
