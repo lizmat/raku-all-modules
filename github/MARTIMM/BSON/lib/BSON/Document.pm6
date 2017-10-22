@@ -35,6 +35,7 @@ class Document does Associative {
   #
   my Bool $autovivify = False;
   my Bool $accept-hash = False;
+  my Bool $accept-rat = False;
 
   #-----------------------------------------------------------------------------
   # Make new document and initialize with a list of pairs
@@ -235,6 +236,11 @@ class Document does Associative {
   #-----------------------------------------------------------------------------
   submethod accept-hash ( Bool $acch = True ) {
     $accept-hash = $acch;
+  }
+
+  #-----------------------------------------------------------------------------
+  submethod accept-rat ( Bool $accr = True ) {
+    $accept-rat = $accr;
   }
 
   #-----------------------------------------------------------------------------
@@ -672,6 +678,17 @@ class Document does Associative {
     my Buf $b;
 
     given $p.value {
+
+  	  when Rat {
+  		  # Only handle Rat if it can be converted without precision loss
+  		  if $accept-rat || .Num.Rat(0) == $_ {
+  			  $_ .= Num;
+  		  }
+
+        # Now that Rat is converted to Num, proceed to encode the Num. But
+        # when the Rat stays a Rat, it will end up in an exception (?)
+        proceed;
+  	  }
 
       when Num {
         # Double precision

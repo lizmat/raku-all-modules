@@ -194,6 +194,26 @@ subtest "Document nesting 2", {
 #}
 
 #-------------------------------------------------------------------------------
+subtest "Simplified encode Rat test", {
+
+  my BSON::Document $d .= new;
+  $d<a> = 3.5;
+  my Buf $b = $d.encode;
+  $d .= new($b);
+  is $d<a>, 3.5, "Number is 3.5";
+  ok $d<a> ~~ Num, "Number is of type Num";
+
+#`{{
+  $d .= new;
+  $d<a> = 1/331234567890987;
+  $b = $d.encode;
+  $d .= new($b);
+  is $d<a>, 1/331234567890987, "Number is 1/331234567890987";
+  ok $d<a> ~~ Num, "Number is of type Num";
+}}
+}
+
+#-------------------------------------------------------------------------------
 subtest "Exception tests", {
 
   # Hash tests done above
@@ -288,7 +308,6 @@ subtest "Exception tests", {
       my BSON::Document $d .= new($b);
     }, X::BSON, 'Missing trailing 0x00',
     :message(/:s Missing trailing 0x00/);
-
 }
 
 #-------------------------------------------------------------------------------

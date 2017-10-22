@@ -69,6 +69,11 @@ BSON/Document.pod
 Original creator of the modules is Pawel Pabian (2011-2015, v0.3)(bbkr on github).
 Current maintainer Marcel Timmerman (2015-present)(MARTIMM on github).
 
+## Contributors
+
+Dan Zwell
+
+
 
 
 [spec]: http://bsonspec.org/

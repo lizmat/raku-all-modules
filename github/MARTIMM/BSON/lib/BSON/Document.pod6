@@ -222,6 +222,12 @@ say $d<q>.keys;
 
 =end code
 
+=head2 accept-rat
+
+  submethod accept-rat ( Bool $accr = True )
+
+When true, rational numbers will be converted to double, regardless of precision loss. This is useful for dealing with messy input, since rational numbers cannot be encoded at this time. By default it is set to C<False>. Rational numbers that will not lose precision will be converted regardless of this setting.
+
 =head2 find-key
 
   multi method find-key ( Int:D $idx --> Str )
