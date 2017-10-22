@@ -1,5 +1,6 @@
 {
     "name": "File::Zip",
+    "license" : "MIT",
     "version": "*",
     "perl": "6.c",
     "description": "Perl 6 API to the ZIP file format",

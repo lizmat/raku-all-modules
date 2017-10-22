@@ -30,11 +30,10 @@ For more examples, please see the [examples](examples) folder.
 
 ## Installation
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using zef (a module management tool bundled with Rakudo Star):
 
 ```
-$ panda update
-$ panda install File::Zip
+$ zef install File::Zip
 ```
 
 ## Testing
