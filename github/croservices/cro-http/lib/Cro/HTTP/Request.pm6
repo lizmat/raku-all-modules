@@ -36,6 +36,7 @@ class Cro::HTTP::Request does Cro::HTTP::Message {
     # rules out space, we can't malform messages.
     subset Target of Str where /^<[\x21..\xFF]>+$/;
     has Target $.target is rw;
+    has Str $.original-target;
 
     multi method Str(Cro::HTTP::Request:D:) {
         die X::Cro::HTTP::Request::Incomplete.new(:missing<method>) unless $!method;
@@ -57,6 +58,25 @@ class Cro::HTTP::Request does Cro::HTTP::Message {
     method path-segments() {
         self!ensure-cached-uri();
         $!cached-uri.path-segments
+    }
+
+    method original-target() {
+        $!original-target // $!target
+    }
+
+    method original-path() {
+        Cro::Uri::HTTP.parse-request-target(self.original-target())
+    }
+
+    method original-path-segments() {
+        Cro::Uri::HTTP.parse-request-target(self.original-target()).path-segments
+    }
+
+    method without-first-path-segments($n) {
+        self.clone(
+            original-target => $!original-target // $!target,
+            target => '/' ~ $!target.split('/')[$n+1..*].join('/') # We assume leading slash is always provided
+        )
     }
 
     method !ensure-cached-uri(--> Nil) {
