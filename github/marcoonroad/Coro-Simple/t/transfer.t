@@ -20,7 +20,7 @@ sub transfer (&generator) {
 # }
 
 # pure 'begin' function
-multi begin (( )) { } # work around ? ...
+multi begin (Bool $) { }
 multi begin (&generator) { begin generator( ) }
 
 my $first;
@@ -52,7 +52,7 @@ $first  = ping "Ping!";
 $second = wtf;
 $third  = pong "Pong!";
 
-ok $first and $second and $third;
+ok $first && $second && $third;
 
 begin $first; # begin the cycle with this generator
 
