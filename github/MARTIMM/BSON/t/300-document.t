@@ -203,14 +203,23 @@ subtest "Simplified encode Rat test", {
   is $d<a>, 3.5, "Number is 3.5";
   ok $d<a> ~~ Num, "Number is of type Num";
 
-#`{{
+  my Rat $n = 1/331234567890987123;
+  ok $n.Num.Rat != $n, "Rat number not of same accuracy as Num";
+
   $d .= new;
-  $d<a> = 1/331234567890987;
+  throws-like {
+    $d<a> = $n;
+    $b = $d.encode;
+  }, X::BSON, 'Rat is not yet implemented',
+  :message(/:s Not yet implemented/);
+
+  $d .= new;
+  $d.accept-rat;
+  $d<a> = $n;
   $b = $d.encode;
   $d .= new($b);
-  is $d<a>, 1/331234567890987, "Number is 1/331234567890987";
+  ok $d<a>.Rat != $n, "Number is not equal to $n";
   ok $d<a> ~~ Num, "Number is of type Num";
-}}
 }
 
 #-------------------------------------------------------------------------------

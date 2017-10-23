@@ -225,8 +225,8 @@ subtest {
     # 15
     BSON::C-DATETIME,                           # 0x09
       0x64, 0x74, 0x69, 0x6d, 0x65, 0x00,       # 'dtime'
-#      local-encode-int64($datetime.posix).List, # time
-      encode-int64($datetime.posix).List,       # time
+#      local-encode-int64((($datetime.posix+$datetime.second-$datetime.whole-second)*1000).Int).List,       # time
+      encode-int64((($datetime.posix+$datetime.second-$datetime.whole-second)*1000).Int).List,       # time
 
     # 6
     BSON::C-NULL,                               # 0x0A
@@ -281,7 +281,7 @@ subtest {
   is $d<oid>.oid.elems, 12, 'Length of object id ok';
   is $d<oid>.pid, $*PID, "Pid = $*PID";
 
-  is $d<dtime>.Str, $datetime.Str, 'Date and time ok';
+  is $d<dtime>.utc, $datetime.utc, 'Date and time ok';
 
   nok $d<null>.defined, 'Null not defined';
 

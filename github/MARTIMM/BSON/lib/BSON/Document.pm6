@@ -681,12 +681,12 @@ class Document does Associative {
 
   	  when Rat {
   		  # Only handle Rat if it can be converted without precision loss
-  		  if $accept-rat || .Num.Rat(0) == $_ {
+  		  if $accept-rat || .Num.Rat(1e-16) == $_ {
   			  $_ .= Num;
   		  }
 
         # Now that Rat is converted to Num, proceed to encode the Num. But
-        # when the Rat stays a Rat, it will end up in an exception (?)
+        # when the Rat stays a Rat, it will end up in an exception.
         proceed;
   	  }
 
@@ -778,7 +778,7 @@ class Document does Associative {
         #
         $b = [~] Buf.new(BSON::C-DATETIME),
                  encode-e-name($p.key),
-                 encode-int64(.posix);
+                 encode-int64((( .posix + .second - .whole-second) * 1000).Int);
       }
 
       when not .defined {
@@ -1097,8 +1097,8 @@ class Document does Associative {
 
         %!promises{$key} = Promise.start( {
             @!values[$idx] = DateTime.new(
-              decode-int64( $!encoded-document, $i),
-              :timezone($*TZ)
+              decode-int64( $!encoded-document, $i) / 1000,
+              :timezone(0)
             );
 
             $!encoded-document.subbuf(

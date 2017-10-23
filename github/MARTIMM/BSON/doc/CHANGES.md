@@ -2,8 +2,13 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.10.2
+  * Changed precision in test for Rat
+* 0.10.1
+  * Bug fixed; Datetime was not in converted to miliseconds when encoding and
+  when decoding not converted to seconds. Thanks to Dan Zwell.
 * 0.10.0
-  * Rat to Num conversion when there is no loss of accuracy.
+  * Rat to Num conversion when there is no loss of accuracy. Thanks to Dan Zwell.
 * 0.9.38
   * Bugfix handling timestamps. This will become a class object later.
 * 0.9.37
