@@ -1,4 +1,9 @@
+sudo: required
+services: docker
 language: perl6
 install:
   - rakudobrew build zef
-  - zef --depsonly install .
+  - zef --debug --depsonly install .
+  - docker info
+script:
+  - PERL6LIB=lib prove -v -r --exec=perl6 t/
