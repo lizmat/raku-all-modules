@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Twitter.git
 	branch = master
-	commit = fa2bd47a93f039f7589776f353e1a5955804afd2
-	parent = 1a66d3516dc447e67ff8991e2934c886bc603cfd
+	commit = a1148e84085db40189aa22c8b67292b74b5fe418
+	parent = 887f6beaf3eeff88dd171ea666a3d4f2765831e4
 	cmdver = 0.4.0
