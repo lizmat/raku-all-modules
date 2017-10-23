@@ -257,7 +257,6 @@ method !render-to-string($data, %options) returns Str {
     }
 
     %options{'type'} = $type = lc($type);
-
     return self.app.render-handler($type)($data, |%options);
 }
 
@@ -364,7 +363,7 @@ method serve-file(Str $filepath) returns ::?CLASS {
     my Str $ext = IO::Path.new($filepath).extension;
 
     # guess content type
-    my Str $content_type = $MimeTypes.type($ext);
+    my Str $content_type = $MimeTypes.type($ext) || 'application/octect-stream';
     self.response.content-type($content_type);
 
     # serve file
