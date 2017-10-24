@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/7ojo/perl6-platform.git
 	branch = master
-	commit = b27a6ce883552cd4cc0ed043d0030d03e0c58926
-	parent = 670e8578a74c1913e0eff4a4d7e7270f5ff5558b
+	commit = a92405e6455fb15ddae16bb224fb24c1c400900e
+	parent = b2139521eded55920c33d6b31df0604ad73b3535
 	cmdver = 0.4.0

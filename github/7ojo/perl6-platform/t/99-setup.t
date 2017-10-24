@@ -4,7 +4,7 @@ use Test;
 use Template;
 use nqp;
 
-plan 3;
+plan 4;
 
 constant DOCKER = ( ( run <docker --version>, :out, :err ).out.slurp ~~ / ^ Docker / ).Bool;
 
@@ -81,8 +81,6 @@ subtest 'platform create', {
     is "$data-dir/.platform/resolv.conf".IO.slurp.trim, "nameserver %addr<dns>", "<data-dir>/resolv.conf contents";
 }
 
-#`(
-
 subtest 'platform ssl genrsa', {
     plan 4;
     my $proc = run <bin/platform>, "--data-path=$data-dir/.platform", <ssl genrsa>, :out, :err;
@@ -95,6 +93,9 @@ subtest 'platform ssl genrsa', {
         ok "$data-dir/.platform/localhost/ssl/$file".IO.e, "<data>/localhost/ssl/$file exists";
     }
 }
+
+#`(
+
 
 subtest 'platform ssh keygen', {
     plan 3;
