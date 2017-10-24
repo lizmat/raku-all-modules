@@ -12,5 +12,6 @@
     "WorkdayCalendar": "lib/Date/WorkdayCalendar.pm"
   },
   "version": "0.1.0",
+  "tags" : [ "date", "workday" , "calendar"],
   "description": "Calendar and Date objects to handle business days, holidays and weekends"
 }
