@@ -2,6 +2,10 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.11.0
+  * Added a method Capture to return a Capture of the contents of a BSON::Document. Thanks to Dan Zwell.
+* 0.10.3
+  * Changed precision in test for Rat. accept-rat will be used different later
 * 0.10.2
   * Changed precision in test for Rat
 * 0.10.1
