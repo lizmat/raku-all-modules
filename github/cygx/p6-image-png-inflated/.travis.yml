@@ -8,9 +8,9 @@ language: perl6
 perl6:
   - latest
 install:
-  - rakudobrew build-panda
+  - rakudobrew build-zef
   - gcc -o pngcheck pngcheck.c
 script:
-  - panda install .
+  - zef install .
   - perl6 camelia.p6
   - ./pngcheck camelia.png
