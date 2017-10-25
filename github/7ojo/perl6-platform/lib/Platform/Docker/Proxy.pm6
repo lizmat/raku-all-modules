@@ -15,7 +15,7 @@ class Platform::Docker::Proxy is Platform::Container {
             <--dns>, $.dns,
             <--env>, "VIRTUAL_HOST={$.hostname}",
             <--publish 80:80 --volume /var/run/docker.sock:/tmp/docker.sock:ro>,
-            <jwilder/nginx-proxy>,
+            <jwilder/nginx-proxy:alpine>,
             :out, :err;
         self.last-result = self.result-as-hash($proc);
         self;

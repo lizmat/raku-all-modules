@@ -1,9 +1,12 @@
 sudo: required
 services: docker
 language: perl6
+before_install:
+  - docker info
 install:
   - rakudobrew build zef
   - zef --debug --depsonly install .
-  - docker info
+  - docker pull jwilder/nginx-proxy:alpine
+  - docker pull zetaron/docker-dns-gen:latest
 script:
   - PERL6LIB=lib prove -v -r --exec=perl6 t/

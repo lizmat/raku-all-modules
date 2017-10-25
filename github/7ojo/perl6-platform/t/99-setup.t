@@ -4,7 +4,7 @@ use Test;
 use Template;
 use nqp;
 
-plan 4;
+plan 6;
 
 constant DOCKER = ( ( run <docker --version>, :out, :err ).out.slurp ~~ / ^ Docker / ).Bool;
 
@@ -94,9 +94,6 @@ subtest 'platform ssl genrsa', {
     }
 }
 
-#`(
-
-
 subtest 'platform ssh keygen', {
     plan 3;
     run <bin/platform>, "--data-path=$data-dir/.platform", <ssh keygen>;
@@ -106,29 +103,34 @@ subtest 'platform ssh keygen', {
 
 subtest 'platform run|stop|start|rm project-butterfly', {
     plan 4;
-    my $proc = run <bin/platform>, "--project=$data-dir/project-butterfly", "--data-path=$data-dir/.platform", <run>, :out;
-    ok $proc.out.slurp-rest.Str ~~ / butterfly \s+ \[ \✓ \] /, 'project butterfly is up';
-
+    my ($proc, $out, $found);
+    $proc = run <bin/platform run>, "--data-path=$data-dir/.platform", "$data-dir/project-butterfly", :out;
+    $out = $proc.out.slurp-rest;
+    $out = ( shell Q:w{docker ps --format "table {{.Names}}" --filter "name=butterfly"}, :out ).out.slurp.lines.skip(1).sort.join("\n");
+    is $out, 'project-butterfly', 'project-butterfly is up';
+    
     sleep 0.5; # wait project to start
 
-    $proc = run <host project-butterfly.localhost localhost>, :out;
-    my $out = $proc.out.slurp-rest;
-    my $found = $out.lines[*-1] ~~ / address \s $<ip-address> = [ \d+\.\d+\.\d+\.\d+ ] $$ /;
+    # Is dns setup ok?
+    $proc = run <docker exec -it platform-proxy getent hosts>, <project-butterfly.localhost>, :out;
+    $out = $proc.out.slurp-rest;
+    $found = $out ~~ / $<ip-address> = [ \d+\.\d+\.\d+\.\d+ ] /;
     ok $found, 'got ip-address ' ~ ($found ?? $/.hash<ip-address> !! '');
 
-    run <bin/platform>, "--project=$data-dir/project-butterfly", "--data-path=$data-dir/.platform", <stop>;
+    run <bin/platform stop>, "--data-path=$data-dir/.platform", "$data-dir/project-butterfly";
+    $out = ( shell Q:w{docker ps --format "table {{.Names}}" --filter "name=butterfly"}, :out ).out.slurp.lines.skip(1).sort.join("\n");
+    is $out, '', 'project-butterfly is down';
 
-    $proc = run <bin/platform>, "--project=$data-dir/project-butterfly", "--data-path=$data-dir/.platform", <start>, :out;
+    $proc = run <bin/platform start>, "--data-path=$data-dir/.platform", "$data-dir/project-butterfly", :out;
     $out = $proc.out.slurp-rest;
-    ok $out ~~ / butterfly \s+ \[ \✓ \] /, 'project butterfly is up';
+    $out = ( shell Q:w{docker ps --format "table {{.Names}}" --filter "name=butterfly"}, :out ).out.slurp.lines.skip(1).sort.join("\n");
+    is $out, 'project-butterfly', 'project-butterfly is up';
 
-    run <bin/platform>, "--project=$data-dir/project-butterfly", "--data-path=$data-dir/.platform", <stop>;
-
-    run <bin/platform>, "--project=$data-dir/project-butterfly", "--data-path=$data-dir/.platform", <rm>;
-
-    $proc = run <bin/platform>, "--project=$data-dir/project-butterfly", "--data-path=$data-dir/.platform", <rm>, :out;
-    ok $proc.out.slurp-rest.Str ~~ / No \s such \s container /, 'got error message'
+    run <bin/platform>, <stop>, "--data-path=$data-dir/.platform", "$data-dir/project-butterfly";
+    run <bin/platform>, <rm>, "--data-path=$data-dir/.platform", "$data-dir/project-butterfly";
 }
+
+#`(
 
 create-project('snail');
 
