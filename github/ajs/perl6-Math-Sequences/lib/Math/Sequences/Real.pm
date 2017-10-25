@@ -8,7 +8,7 @@ class Reals is Range is export {
             :$max = Inf,
             :$excludes-min = False,
             :$excludes-max = False) {
-        nextwith :$min, :$max, :$excludes-min, :$excludes-max
+        nextwith $min, $max, :$excludes-min, :$excludes-max
     }
 
     method gist {
