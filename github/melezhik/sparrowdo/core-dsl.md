@@ -392,6 +392,12 @@ Examples:
     directory '/tmp/foo';
     git-scm 'https://github.com/melezhik/sparrow.git', %( to => '/tmp/foo' );
 
+    # checkout under user
+    git-scm 'https://github.com/melezhik/sparrow.git', %( to => '/tmp/foo', user => 'alexey' );
+
+    # enable debug
+    git-scm 'https://github.com/melezhik/sparrow.git', %( to => '/tmp/foo', debug => True );
+
 ## Ssh
 
 This function executes ssh commands.
