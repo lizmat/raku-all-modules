@@ -1,0 +1,41 @@
+BUGS
+----
+Parse::STDF was developed and tested using Perl 6.c, Rakudo version 2017.09-500-gb19e352 built 
+on MoarVM version 2017.09.1-614-g1952356.  There is a bug (see <https://rt.perl.org/Public/Bug/Display.html?id=127210>)
+which impacts some of the class attributes typed as `uint8`.  Until this bug is fixed, workarounds are needed.
+See **examples/summary.p6** on how to do this.
+
+When this bug is fixed the following files must be updated:
+ - examples/summary.p6
+ - t/12-pcr.t
+ - t/06-mir.t
+
+PERFORMANCE
+-----------
+Perl6 is painfully slow.  Waiting for a faster version before making a formal release.
+
+TESTING
+-------
+$ PERL6LIB=lib prove -v -r --exec=perl6 t/
+
+RUNNING EXAMPLES
+----------------
+$ export PERL6LIB=lib
+$ examples/ver.p6
+
+INSTALL LOCALLY
+---------------
+$ zef install ./perl6-Parse-STDF/
+
+  -or-
+
+# Forces installation, bypassing test results.
+$ zef install --force-test ./perl6-Parse-STDF/ 
+
+UINSTALL 
+--------
+$ zef uinstall Parse::STDF
+
+DOCS
+----
+$ p6doc Parse::STDF

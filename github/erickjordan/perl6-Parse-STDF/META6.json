@@ -1,0 +1,15 @@
+{
+   "perl" : "6.c",
+   "name" : "Parse::STDF",
+   "version" : "0.1.1",
+   "author" : "ejordan",
+   "authors" : [ "Erick Jordan <ejordan@cpan.org>" ],
+   "description" : "Module for parsing files in Standard Test Data Format",
+   "provides" : {
+      "Parse::STDF" : "lib/Parse/STDF.pm6", "Parse::STDF::Native" : "lib/Parse/STDF/Native.pm6"
+   },
+   "depends" : [ ],
+   "resources" : [ ],
+   "source-url" : "git://github.com/erickjordan/perl6-Parse-STDF.git",
+   "tags" : ["Parser", "Parsing", "Parse"]
+}
