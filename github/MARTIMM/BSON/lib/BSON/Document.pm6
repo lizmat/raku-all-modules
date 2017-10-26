@@ -274,17 +274,20 @@ class Document does Associative {
     my $value;
     my Int $idx = self.find-key($key);
     if $idx.defined {
-      $value = @!values[$idx];
+      return-rw @!values[$idx];
     }
 
     # No key found so its undefined, check if we must make a new entry
     elsif $autovivify {
       $value = BSON::Document.new;
       self{$key} = $value;
+      return-rw self{$key};
 #say "At-key($?LINE): $key => ", $value.WHAT;
     }
 
-    $value;
+    else {
+      return Any;
+    }
   }
 
   #-----------------------------------------------------------------------------
