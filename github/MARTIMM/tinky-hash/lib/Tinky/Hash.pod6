@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 =begin pod
 
@@ -239,4 +239,3 @@ Procede to the next state. It wil execute the C<$o.state = $new-state> from
 C<Tinky::Object>.
 
 =end pod
-

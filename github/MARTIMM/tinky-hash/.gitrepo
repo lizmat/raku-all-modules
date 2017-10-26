@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/tinky-hash.git
 	branch = master
-	commit = b6ab47f2732c12782e469a0d85313bde974ca9c5
-	parent = 8d8c6662f5a2b37e13d189fe22cedc95298e05b9
+	commit = e46204615418ae637e16dfd742df3fefe16c17c6
+	parent = 0c2ac42391484f2be016273ee7ed7ccefbbadf9a
 	cmdver = 0.4.0
