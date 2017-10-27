@@ -1,0 +1,11 @@
+user "foo";
+
+systemd-service "long-dream", %(
+  user => "foo",
+  workdir => "/home/foo",
+  command => "/bin/bash -c 'sleep 8'"
+);
+
+service-restart "long-dream";
+
+bash "ps uax |grep sleep | grep -v grep";

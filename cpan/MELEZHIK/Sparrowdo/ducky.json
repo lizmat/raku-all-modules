@@ -1,0 +1,87 @@
+[
+  {
+    "task" : "install tools",
+    "plugin" : "package-generic",
+    "data" : {
+        "list" : "which"
+    }
+  },
+  {
+    "task" : "install perl6",
+    "plugin" : "rakudo-install",
+    "data" : {
+      "url" : "https://github.com/nxadm/rakudo-pkg/releases/download/2017.07/perl6-rakudo-moarvm-CentOS7.3.1611-20170700-01.x86_64.rpm"
+    }
+  },
+  {
+    "task" : "install Sparrowdo from source",
+    "plugin" : "zef",
+    "data" : {
+      "list" : [
+        "."
+      ],
+      "options" : "--force-install"
+    }
+  },
+  {
+    "task" : "install misc modules",
+    "plugin" : "zef",
+    "data" : {
+      "list" : [
+        "JSON::Unmarshal", "Sparrowdo::Cpanm::GitHub", "Sparrowdo::Sparrow::Update"
+      ]
+    }
+  },
+  {
+    "task" : "Sparrow update",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "sparrowdo --local_mode --no_sudo --module_run=Sparrow::Update --format=production",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  },
+  {
+    "task" : "df-check plugin",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "sparrowdo --task_run=df-check --local_mode --no_sudo --format=production",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  },
+  {
+    "task" : "sparrowdo tests",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "strun --root examples --format production",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  },
+  {
+    "task" : "sparrowdo task run test",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "sparrowdo --local_mode --no_sudo --task_run=user@name=foo --task_run=bash@command='id && cd ~/ && pwd && uptime && ls -l && ps uax|grep system|grep -v grep',user=foo --task_run=df-check@therhold=54 --format=production",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  },
+  {
+    "task" : "sparrowdo task run test2",
+    "plugin" : "bash",
+    "data" : {
+      "command" : "sparrowdo --local_mode --no_sudo --no_index_update --module_run=Cpanm::GitHub@user=dagolden,project=Class-Tiny,branch=master --format=production",
+      "envvars" : {
+        "PATH" : "/opt/rakudo/share/perl6/site/bin:/opt/rakudo/bin/:$PATH"
+      }
+    }
+  }
+]
+
+

@@ -1,0 +1,8 @@
+service-start 'nginx';
+
+http-ok;
+
+http-ok %( no-proxy => True , path => '/' , port => 80 );
+
+http-ok 'http://sparrowhub.org', %( stdout => 'SparrowHub' );
+

@@ -1,0 +1,11 @@
+use v6;
+
+use Sparrowdo;
+
+task-run 'check disk available space', 'df-check', %( threshold => 80 );
+
+bash 'pwd';
+
+task-run 'hello sparrowdo qrify', 'qrify', %(
+  args => [ 'hello Sparrowdo!' ]
+)

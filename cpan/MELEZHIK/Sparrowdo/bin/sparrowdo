@@ -1,0 +1,484 @@
+use Terminal::ANSIColor;
+use JSON::Tiny;
+use Sparrowdo;
+use Sparrowdo::Core::DSL::User;
+use Sparrowdo::Core::DSL::Group;
+use Sparrowdo::Core::DSL::File;
+use Sparrowdo::Core::DSL::Directory;
+use Sparrowdo::Core::DSL::Template;
+use Sparrowdo::Core::DSL::Systemd;
+use Sparrowdo::Core::DSL::Package;
+use Sparrowdo::Core::DSL::CPAN::Package;
+use Sparrowdo::Core::DSL::Zef;
+use Sparrowdo::Core::DSL::Git;
+use Sparrowdo::Core::DSL::Service;
+use Sparrowdo::Core::DSL::Bash;
+use Sparrowdo::Core::DSL::Ssh;
+use Sparrowdo::Core::DSL::Assert;
+use Config::Simple;
+
+
+sub MAIN (
+
+  Str  :$host = '127.0.0.1', 
+  Str  :$sparrowfile, 
+  Str  :$http_proxy, 
+  Str  :$https_proxy, 
+  Str  :$ssh_user, 
+  Str  :$ssh_private_key, 
+  Int  :$ssh_port = 22, 
+  Bool :$verbose = False, 
+  Bool :$bootstrap = False, 
+  Bool :$check_syntax = False, 
+  Str  :$module_run,
+       :$task_run, 
+  Bool :$no_sudo = False,
+  Bool :$no_color = False,
+  Bool :$no_index_update = False,
+  Str  :$sparrow_root = '/opt/sparrow', 
+  Str  :$repo,
+  Bool :$local_mode = False,
+  Str  :$password,
+  Str  :$docker,
+  Str  :$cwd, 
+  Str  :$format, 
+)
+
+{
+
+  # read config if exists
+
+  my $sparrowdo-cache = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/.sparrowdo/' ~ $sparrow_root !! '/.sparrowdo';
+
+  shell "rm -rf $sparrowdo-cache/";
+
+  mkdir "$sparrowdo-cache/plugins";
+
+  my $conf-ini-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini' !! ( $sparrow_root ~ '/sparrowdo.ini' );
+
+  my $conf-ini = Hash.new;
+
+  if $conf-ini-file.IO ~~ :e {
+    Config::Simple.read($conf-ini-file,:f("ini"))
+  }
+  
+  my $verbose_val = $verbose;
+
+  $verbose_val = True if $conf-ini<sparrowdo><verbose> && ! $verbose_val;
+
+  my $format_val = $conf-ini<sparrowdo><format> ?? $conf-ini<sparrowdo><format> !! %*ENV<OUTTHENTIC_FORMAT> || 'default';
+    
+  my $no_index_update_val = $no_index_update;
+
+  $no_index_update_val = True if $conf-ini<sparrowdo><no_index_update> && ! $no_index_update_val;
+
+  my $repo_val = $repo;
+
+  $repo_val = $conf-ini<sparrowdo><repo> if $conf-ini<sparrowdo><repo> && ! $repo_val;
+  
+  
+  set_input_params %(  
+    Host => $host, 
+    Sparrowfile => $sparrowfile,
+    Docker    => $docker,
+    LocalMode => $local_mode,
+    Cwd => $cwd, 
+    HttpProxy => $http_proxy, 
+    HttpsProxy => $https_proxy, 
+    SshPort => $ssh_port, 
+    SshUser => $ssh_user, 
+    SshPrivateKey => $ssh_private_key, 
+    Verbose => $verbose_val,
+    Format => $format || $format_val,
+    NoSudo => $no_sudo,
+    NoColor => $no_color,
+    NoIndexUpdate => $no_index_update_val,
+    SparrowRoot => $sparrow_root,
+    Repo => $repo_val,
+    SparrowhubApi => $conf-ini<sparrowdo><sparrowhub_api>,
+    Password => $password
+  );
+
+  ssh_shell "rm -rf $sparrow_root/sparrowdo-cache && mkdir -m 777 -p $sparrow_root/sparrowdo-cache";
+
+  bootstrap($sparrow_root,$sparrowdo-cache) if $bootstrap;
+
+  ssh_shell "rm -rf $sparrow_root/sparrow-cache && \\
+  mkdir -m 777 -p $sparrow_root/sparrow-cache && \\
+  mkdir -m 777 -p $sparrow_root/sparrow-cache/plugins && \\
+  mkdir -m 777 -p $sparrow_root/sparrow-cache/files && \\
+  echo print os | perl -MOutthentic  > $sparrow_root/sparrow-cache/os.txt && \\
+  uname -n > $sparrow_root/sparrow-cache/hostname.txt";
+
+
+  say $no_color ?? 
+  'running sparrow tasks on ' ~ $host ~ ' ... ' !!
+  colored( 'running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
+
+  if $docker {
+
+    _scp "$sparrow_root/sparrow-cache/os.txt", "$sparrowdo-cache/", 1; # copy back a target host data back to master host 
+    _scp "$sparrow_root/sparrow-cache/hostname.txt", "$sparrowdo-cache/", 1; # copy back a target host data back to master host 
+    
+  } else {
+    _scp "$sparrow_root/sparrow-cache/*.txt", "$sparrowdo-cache/", 1, 1; # copy back a target host data back to master host 
+  }
+
+  set_target_os slurp "$sparrowdo-cache/os.txt";
+  set_target_hostname slurp "$sparrowdo-cache/hostname.txt";
+
+  say $no_color ??
+  ('target OS is - '~ target_os ) !!
+  colored('target OS is - '~ target_os, 'black on_white');
+
+  if 'config.pl6'.IO.e {
+    say $no_color ??
+    'load configuration from config.pl6 ...' !!
+    colored('load configuration from config.pl6 ...', 'blue on_green');
+    config_set(EVALFILE 'config.pl6'); 
+  }
+
+
+  if $module_run {
+    module_run $module_run;
+  } elsif $task_run {
+    plg-run($task_run);
+  } else {
+    EVALFILE $sparrowfile||'sparrowfile';
+  }
+
+  exit if $check_syntax;
+
+  if get_spl() {
+
+    if input_params('Verbose') {
+      say input_params('NoColor') ?? 
+      'populating SPL file' !!
+      colored( 'populating SPL file', 'bold yellow on_cyan' );
+    }
+
+    spurt "$sparrowdo-cache/sparrow.list", get_spl().join: "\n";
+    _scp "$sparrowdo-cache/sparrow.list", "$sparrow_root/sparrow-cache/";
+    ssh_shell "mkdir -p $sparrow_root && mv $sparrow_root/sparrow-cache/sparrow.list $sparrow_root";
+    say input_params('NoColor') ??
+    "copied SPL file as $sparrow_root/sparrow.list - OK" !!
+    colored("copied SPL file as $sparrow_root/sparrow.list - OK", 'bold green on_black');
+
+  } else {
+
+    ssh_shell "mkdir -p $sparrow_root && touch $sparrow_root/sparrow.list";
+    say input_params('NoColor') ??
+    "SPL file $sparrow_root/sparrow.list is empty" !!
+    colored("SPL file $sparrow_root/sparrow.list is empty", 'bold green on_black');
+
+  }
+
+  if $repo_val {
+    ssh_shell "echo repo: $repo_val > $sparrow_root/sparrow-cache/sparrow.yaml";
+    say input_params('NoColor') ??
+    "set custom repo to $repo_val - OK" !!
+    colored("set custom repo to $repo_val - OK", 'bold green on_black');
+  }
+
+  ssh_shell 'sparrow index update' unless input_params('NoIndexUpdate');
+
+  # plugins mode
+  if ($task_run) {
+    for plg-list() -> @p {
+      ssh_shell "sparrow plg install " ~ @p[0];
+      if @p[1] {
+        spurt "$sparrowdo-cache/plugins/@p[0].args", @p[1].join: "\n";
+        _scp  "$sparrowdo-cache/plugins/@p[0].args", "$sparrow_root/sparrow-cache/plugins";
+        ssh_shell "sparrow plg run " ~ @p[0] ~ ' --args-file ' ~ "$sparrow_root/sparrow-cache/plugins/" ~ "@p[0].args";
+      } else {
+        ssh_shell "sparrow plg run " ~ @p[0];
+      }
+    } 
+    # task box mode  
+  } else {
+    spurt "$sparrowdo-cache/task-box.json", (to-json get_tasks());
+    _scp "$sparrowdo-cache/task-box.json", "$sparrow_root/sparrow-cache";
+    say input_params('NoColor') ??
+    "set up task box file - $sparrowdo-cache/task-box.json - OK" !!
+    colored("set up task box file - $sparrowdo-cache/task-box.json - OK", 'bold green on_black');
+    ssh_shell "sparrow box run $sparrow_root/sparrow-cache/task-box.json --mode quiet --purge-cache";
+  }
+
+}
+
+sub ssh_shell ( $cmd ) {
+
+
+  #my @bash_commands = ( 'export LC_ALL=en_US.UTF-8' );
+  my @bash_commands = ( 'export LC_ALL=C' );
+  my $sparrow_root = input_params('SparrowRoot');
+
+  @bash_commands.push:  'export http_proxy=' ~ input_params('HttpProxy') if input_params('HttpProxy');
+  @bash_commands.push:  'export https_proxy=' ~ input_params('HttpsProxy') if input_params('HttpsProxy');
+  @bash_commands.push:  'export GIT_PROTOCOL=https';
+  @bash_commands.push:  'export PERL_USE_UNSAFE_INC=1';
+  @bash_commands.push:  'export PATH=/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/local/bin:/usr/sbin/:/sbin/:/bin/:$PATH';
+  @bash_commands.push:  'export SPARROW_ROOT=' ~ input_params('SparrowRoot');
+  @bash_commands.push:  'export SPARROW_NO_COLOR=1' if input_params('NoColor');
+  @bash_commands.push:  "export SPARROW_CONF_PATH=$sparrow_root/sparrow-cache/sparrow.yaml";
+  @bash_commands.push:  'export OUTTHENTIC_CWD=' ~ input_params('Cwd') if input_params('Cwd');
+  @bash_commands.push:  'export sparrow_hub_api_url=' ~ input_params('SparrowhubApi') if input_params('SparrowhubApi');
+  @bash_commands.push:  'export OUTTHENTIC_FORMAT=' ~ input_params('Format');
+
+  @bash_commands.push:  $cmd;
+
+  my $ssh_cmd;
+
+  if input_params('LocalMode') {
+
+      $ssh_cmd = ( input_params('NoSudo') ) ?? "sh -c '" !! "sudo sh -c '"; 
+      $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'";
+
+  } elsif input_params('Docker') {
+
+      $ssh_cmd = "docker exec -it " ~ input_params('Docker') ~ ' ';
+
+      if input_params('NoSudo') {
+        $ssh_cmd ~= "sh -c '" ~ ( join ' ; ', @bash_commands ) ~ "'";
+      } else {
+        $ssh_cmd ~= "sudo sh -c '" ~ ( join ' ; ', @bash_commands ) ~ "'";
+      }
+ 
+  } else {
+  
+    if input_params('Password') {
+      $ssh_cmd = 'sshpass -p ' ~ input_params('Password');
+      $ssh_cmd ~= ' ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
+    } elsif %*ENV<SSHPASS> {
+      $ssh_cmd = 'sshpass -e ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
+    } else {
+      $ssh_cmd =  'ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
+    }
+
+    $ssh_cmd ~= ' -p ' ~ input_params('SshPort') if input_params('SshPort');
+
+    $ssh_cmd ~= ' -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -tt';
+  
+    $ssh_cmd ~= ' -q' unless input_params('Verbose');
+  
+    $ssh_cmd ~= ' -i ' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
+  
+    if input_params('SshUser') {
+      $ssh_cmd ~= ' ' ~ input_params('SshUser') ~ '@' ~ input_params('Host') ~ ' ';
+    } else {
+      $ssh_cmd ~= ' ' ~ input_params('Host') ~ ' ';
+    }
+
+    $ssh_cmd ~= ( input_params('NoSudo') ) ?? " \"sh -c '" !! " \"sudo sh -c '"; 
+
+    $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'\"";
+  
+    $ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
+  
+  }
+
+  say input_params('NoColor') ??
+  $ssh_cmd !!
+  colored($ssh_cmd, 'bold green') if input_params('Verbose');
+
+  shell $ssh_cmd;
+
+}
+
+our sub _copy-local-file ( $file, $dest ) {
+
+  say input_params('NoColor') ??
+  "copy local file $file to remote $dest" !!
+  colored("copy local file $file to remote $dest", 'bold yellow');
+  _scp($file,$dest);
+
+}
+
+
+our sub _scp ( $file, $dest, $reverse = 0, $recursive = 0 ) {
+
+  my $ssh_host_term;
+
+  if input_params('SshUser') {
+    $ssh_host_term = input_params('SshUser') ~ '@' ~ input_params('Host');
+  } else {
+    $ssh_host_term = input_params('Host');
+  }
+
+  my $scp_command;
+
+  if ( input_params('LocalMode') ) {
+
+    $scp_command = 'cp';
+  
+    if $reverse {
+      $scp_command ~= ' ' ~ $file ~ ' ' ~ $dest ;
+    } else {
+      $scp_command ~= ' ' ~ $file ~ ' ' ~ $dest;
+    }
+
+  } elsif ( input_params('Docker') ) {
+
+    $scp_command = "docker cp ";
+
+    if $reverse {
+      $scp_command ~= input_params('Docker') ~ ':' ~ $file ~ ' ' ~ $dest;
+    } else {
+      $scp_command ~= $file ~  ' ' ~ input_params('Docker') ~ ':' ~ $dest;
+    }
+
+  } else {
+
+    my $scp_params = ' -P ' ~ input_params('SshPort');
+  
+    $scp_params ~= ' -i ' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
+  
+    $scp_params ~= ' -q'  unless input_params('Verbose');
+
+    $scp_params ~= ' -r ' if $recursive;
+  
+
+    if input_params('Password') {
+      $scp_command = 'sshpass -p ' ~ input_params('Password') ~ ' ';
+      $scp_command ~= 'scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
+    }  elsif %*ENV<SSHPASS> {
+      $scp_command = 'sshpass -e';
+      $scp_command ~= ' scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
+    } else {
+      $scp_command = 'scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
+    }
+
+    if $reverse {
+      $scp_command ~= ' ' ~ $ssh_host_term ~ ':' ~ $file ~ ' ' ~ $dest ;
+    } else {
+      $scp_command ~= ' ' ~ $file ~ ' ' ~ $ssh_host_term ~ ':' ~ $dest;
+    }
+  } 
+
+  say ( input_params('NoColor') ??
+  $scp_command !!
+  colored($scp_command, 'bold green') ) if input_params('Verbose');
+
+  shell $scp_command;
+
+}
+
+sub bootstrap ( $sparrow_root, $sparrowdo-cache ) {
+
+  my $host = input_params('Host');
+  say input_params('NoColor') ?? 
+  'running sparrow bootstrap for host: ' ~ $host ~ ' ... ' !!
+  colored( 'running sparrow bootstrap for host: ' ~ $host ~ ' ... ', 'bold black on_yellow');
+
+  my $bootstrap = q:to/HERE/;
+#! /usr/bin/env sh
+
+# Find out the target OS
+if [ -s /etc/os-release ]; then
+  # freedesktop.org and systemd
+  . /etc/os-release
+  OS=$NAME
+  VER=$VERSION_ID
+elif lsb_release -h >/dev/null 2>&1; then
+  # linuxbase.org
+  OS=$(lsb_release -si)
+  VER=$(lsb_release -sr)
+elif [ -s /etc/lsb-release ]; then
+  # For some versions of Debian/Ubuntu without lsb_release command
+  . /etc/lsb-release
+  OS=$DISTRIB_ID
+  VER=$DISTRIB_RELEASE
+elif [ -s /etc/debian_version ]; then
+  # Older Debian/Ubuntu/etc.
+  OS=Debian
+  VER=$(cat /etc/debian_version)
+elif [ -s /etc/SuSe-release ]; then
+  # Older SuSE/etc.
+  printf "TODO\n"
+elif [ -s /etc/redhat-release ]; then
+  # Older Red Hat, CentOS, etc.
+  OS=$(cat /etc/redhat-release| head -n 1)
+else
+  RELEASE_INFO=$(cat /etc/*-release 2>/dev/null | head -n 1)
+
+  if [ ! -z "$RELEASE_INFO" ]; then
+    OS=$(printf "$RELEASE_INFO" | awk '{ print $1 }')
+    VER=$(printf "$RELEASE_INFO" | awk '{ print $NF }')
+  else
+    # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
+    OS=$(uname -s)
+    VER=$(uname -r)
+  fi
+fi
+
+# Convert OS name to lowercase to remove inconsistencies
+OS=$(printf "$OS" | awk '{ print tolower($1) }')
+
+printf "Bootstrap for %s\n" "$OS"
+
+# Install native dependencies
+case "$OS" in
+  alpine)
+    apk update --wait 120
+    apk add --wait 120 curl perl git bash build-base gcc perl-dev wget
+  ;;
+  amazon|centos|red)
+    yum -q -y install make curl perl gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+  ;;
+  arch|archlinux)
+    pacman -Syy
+    pacman -S --needed --noconfirm -q curl cpanminus guile perl gcc make perl-clone perl-config-tiny perl-yaml perl-test-yaml perl-test-base perl-spiffy perl-algorithm-diff perl-text-diff perl-json perl-try-tiny perl-capture-tiny perl-file-sharedir perl-file-sharedir-install perl-module-build-tiny perl-extutils-installpaths perl-extutils-config perl-extutils-helpers perl-class-inspector
+  ;;
+  debian|ubuntu)
+    DEBIAN_FRONTEND=noninteractive
+
+    apt-get update
+    apt-get install -y -qq build-essential curl perl
+  ;;
+  fedora)
+    dnf -y install curl perl gcc perl-open perl-Test perl-Test-Simple perl-Storable perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+  ;;
+  funtoo)
+    echo
+  ;;
+  minoca)
+    opkg -f /etc/opkg/opkg.conf update
+    opkg install awk curl perl make gcc tar gzip
+  ;;
+  ubuntu)
+  ;;
+  *)
+    printf "Your OS (%s) is not supported\n" "$OS"
+    exit 1
+esac
+
+# Install cpanm
+if ! which cpanm 2>/dev/null; then
+  printf "installing cpanm ...\n"
+  curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+  chmod a+x /bin/cpanm
+fi
+
+# Install sparrow
+if ! which sparrow 2>/dev/null; then
+  cpanm -q Outthentic Sparrow Test::More || cpanm -q Outthentic Sparrow Test::More
+fi
+
+# Forcefully upgrade Outthentic and Sparrow
+cpanm -q --notest Outthentic Sparrow || cpanm --notest -q Outthentic Sparrow
+
+# Update sparrow
+sparrow index update
+
+HERE
+
+
+  spurt "$sparrowdo-cache/bootstrap.sh", $bootstrap;  
+
+  _scp "$sparrowdo-cache/bootstrap.sh",  "$sparrow_root/sparrowdo-cache";
+
+  ssh_shell "sh $sparrow_root/sparrowdo-cache/bootstrap.sh";
+
+}
+
+# vim: ft=perl6 et sw=2 ts=2

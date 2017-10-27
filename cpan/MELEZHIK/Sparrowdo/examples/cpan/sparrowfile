@@ -1,0 +1,31 @@
+#user-delete 'travis';
+
+user-create 'travis';
+
+directory '/home/travis/cpan-test', %( owner => 'travis' );
+
+cpan-package-install ('Class::Tiny', 'Config::Tiny', 'HTTP::Tiny'), %( 
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
+  );
+
+cpan-package-install 'Class::Tiny Config::Tiny HTTP::Tiny', %( 
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
+);
+
+cpan-package-install 'Class::Tiny', %( 
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
+);
+
+cpan-package 'Class::Tiny', %( 
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
+);
+
+cpan-package ('Class::Tiny','Config::Tiny'), %( 
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
+);
+
