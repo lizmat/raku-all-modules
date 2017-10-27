@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/erickjordan/perl6-Parse-STDF.git
 	branch = master
-	commit = 321cce79f01aee32732a7746babb46fa46c4849c
-	parent = be32d35460bd7d4707424feb47a55bdb426fd9fd
+	commit = e1eb795639556a0a7863e2791cdea683ebdbd483
+	parent = 151ae03f44ae38ad13f102bd1241078ec56458d5
 	cmdver = 0.4.0

@@ -59,12 +59,10 @@ structs are in turn referenced as Perl6 class objects.
     }
 
 ## INSTALLATION
-<ul>
-<li>Since Parse::STDF uses libstdf.so, libstdf.so must be in your library path (i.e. /usr/local/lib).
-To install libstdf.so on Ubuntu for example, use the following commands:
-</li>
-</ul>
-<pre><code>
+
+Since Parse::STDF uses **libstdf**, 'libstdf.so' must be in your library path (e.g. /usr/local/lib).
+To install **libstdf** on Ubuntu for example, use the following commands:
+
     $ wget https://sourceforge.net/projects/freestdf/files/libstdf/libstdf-0.4.tar.bz2
     $ bunzip2 libstdf-0.4.tar.bz2
     $ tar -xvf libstdf-0.4.tar
@@ -73,15 +71,10 @@ To install libstdf.so on Ubuntu for example, use the following commands:
     $ make
     $ sudo make install
     $ sudo ldconfig
-</code></pre>
-<ul>
-<li>Using zef (Rakudo module management tool) install:
-</li>
-</ul>
-<pre><code>
-    $ zef install Parse::STDF
-</code></pre>
 
+Using zef (Rakudo module management tool) install:
+
+    $ zef install Parse::STDF
 
 ## TESTED PLATFORMS
 The following platforms have been tested:
@@ -132,3 +125,6 @@ objects just as if it were written in C.
 ## SEE ALSO
 For an intro to the Standard Test Data Format (along with references to detailed documentation) 
 see <http://en.wikipedia.org/wiki/Standard_Test_Data_Format>.
+
+## AUTHOR
+Erick F. Jordan <ejordan@cpan.org>
