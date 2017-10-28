@@ -4,6 +4,6 @@ use Toaster;
 use WhereList;
 
 sub MAIN (*@commits where all-items(Str, *.so)) {
-    @commits ||= 'nom';
+    @commits ||= 'master';
     Toaster.new.toast-all: $_ for @commits;
 }

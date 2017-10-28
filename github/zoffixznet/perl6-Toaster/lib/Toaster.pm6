@@ -40,13 +40,13 @@ my $batch = floor 1.3 * do with run 'lscpu', :out, :!err {
 } || 8;
 
 
-method toast-all ($commit = 'nom') {
+method toast-all ($commit = 'master') {
     my @modules = jget(ECO_API)<dists>.map(*.<name>).sort
         .grep: *.match: BANNED_MODULES.none;
     say "About to toast {+@modules} modules";
     self.toast: @modules, $commit;
 }
-method toast (@modules, $commit = 'nom') {
+method toast (@modules, $commit = 'master') {
     temp %*ENV;
     %*ENV<PATH> = self.build-rakudo: $commit;
     %*ENV<ALL_TESTING  NETWORK_TESTING  ONLINE_TESTING> = 1, 1, 1;
@@ -83,7 +83,7 @@ method toast (@modules, $commit = 'nom') {
     toast-it toast-it @modules;
 }
 
-method build-rakudo (Str:D $commit = 'nom') {
+method build-rakudo (Str:D $commit = 'master') {
     say "Starting to build rakudo $commit";
     indir RAKUDO_BUILD_DIR, {
         my $com-dir = $commit.subst: :g, /\W/, '_';
