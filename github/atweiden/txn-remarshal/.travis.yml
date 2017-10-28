@@ -11,7 +11,7 @@ perl6:
 sudo: required
 
 env:
-    - PATH=~/.rakudobrew/bin:~/.rakudobrew/moar-nom/install/share/perl6/site/bin:~/.rakudobrew/moar-nom/zef/bin:$PATH
+    - PATH=~/.rakudobrew/bin:$PATH
 
 before_install:
     # install libxxhash into /usr/lib/libxxhash.so
