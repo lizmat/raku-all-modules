@@ -9,9 +9,9 @@ Sparky is a continues integration server based on Sparrow/Sparrowdo ecosystem.
 # Sparky workflow in 4 lines:
 
     $ sparkyd # run Sparky daemon to build your projects
-    $ perl6 bin/sparky-web.pl6 # run Sparky web ui to see build statuses and reports 
+    $ perl6 bin/sparky-web.pl6 # run Sparky web ui to see build statuses and reports
     $ nano ~/.sparky/projects/my-project/sparrowfile  # write a build scenario
-    $ firefox 127.0.0.1:3000 # see what's happening 
+    $ firefox 127.0.0.1:3000 # see what's happening
 
 # Installation
 
@@ -27,7 +27,7 @@ First you should run database initialization script to populate database schema:
 
 # Running daemon
 
-Then you need to run the sparky daemon  
+Then you need to run the sparky daemon
 
     $ sparkyd
 
@@ -37,9 +37,9 @@ Then you need to run the sparky daemon
 
 * Sparky root directory default location is `~/.sparky/projects`.
 
-* Once all the sub directories gets passed, sparky daemon sleeps for $timeout seconds. 
+* Once all the sub directories gets passed, sparky daemon sleeps for $timeout seconds.
 
-* A timeout option allow to adjust a load to your system. 
+* A timeout option allow to adjust a load to your system.
 
 * You can change a timeout by applying `--timeout` parameter when running sparky daemon:
 
@@ -83,8 +83,8 @@ Sparky project is just a directory located at the sparky root directory:
 
 # Writting build scenario
 
-Sparky is heavily based on Sparrowdo, so I encourage you to read [Sparrowdo docs](https://github.com/melezhik/sparrowdo) 
-_to know how to write Sparky scenarios_. 
+Sparky is heavily based on Sparrowdo, so I encourage you to read [Sparrowdo docs](https://github.com/melezhik/sparrowdo)
+_to know how to write Sparky scenarios_.
 
 Here is a short example.
 
@@ -103,10 +103,10 @@ Say, we want to check out the Baildor source code from Git, install dependencies
     bash 'prove6 -l', %(
       debug => True,
       envvars => %(
-        PATH => '/root/.rakudobrew/moar-nom/install/share/perl6/site/bin:$PATH'
+        PATH => '/root/.rakudobrew/moar-master/install/share/perl6/site/bin:$PATH'
       )
     );
-    
+
 # Configure Sparky workers
 
 By default the build scenario gets executed _on the same machine you run Sparky at_, but you can change this
@@ -153,7 +153,7 @@ You can disable project builds by setting `disable` option to true:
     disabled: true
 
 It's handy when you start a new project and don't want to add it into build pipeline.
-    
+
 
 # Downstream projects
 
@@ -219,7 +219,7 @@ You can disable cron check to run project forcefully, by setting `SPARKY_SKIP_CR
 
 ## SPARKY_ROOT
 
-Sets the sparky root directory 
+Sets the sparky root directory
 
 ## SPARKY_TIMEOUT
 
@@ -227,7 +227,7 @@ Sets timeout for sparky workers, see [Running daemon](#running-daemon) section.
 
 # Running under other databases engines (MySQL, PostgreSQL)
 
-By default Sparky uses sqlite as database engine, which makes it easy to use when developing. 
+By default Sparky uses sqlite as database engine, which makes it easy to use when developing.
 However sqlite has limitation on transactions locking whole database when doing inserts/updates (Database Is Locked errors).
 
 if you prefer other databases here is guideline.
@@ -235,11 +235,11 @@ if you prefer other databases here is guideline.
 ## Create sparky configuration file
 
 You should defined database engine and connection parameters, say we want to use MySQL:
-  
+
     $ nano ~/sparky.yaml
 
     database:
-      engine: MySQL 
+      engine: MySQL
       host: $dbhost
       port: $dbport
       name: $dbname
@@ -279,5 +279,3 @@ That is it, now sparky runs under MySQL!
 # Author
 
 Alexey Melezhik
-
- 
