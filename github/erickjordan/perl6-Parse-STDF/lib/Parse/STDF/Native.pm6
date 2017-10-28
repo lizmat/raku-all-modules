@@ -1,4 +1,5 @@
 use v6;
+use RakudoPrereq v2017.10, '', 'rakudo-only no-where';
 use NativeCall;
 
 unit module Parse::STDF::Native;
