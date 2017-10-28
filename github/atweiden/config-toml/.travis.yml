@@ -10,7 +10,7 @@ perl6:
 sudo: false
 
 env:
-    - PATH=~/.rakudobrew/bin:~/.rakudobrew/moar-nom/install/share/perl6/site/bin:~/.rakudobrew/moar-nom/zef/bin:$PATH
+    - PATH=~/.rakudobrew/bin:$PATH
 
 install:
     - rakudobrew build zef
