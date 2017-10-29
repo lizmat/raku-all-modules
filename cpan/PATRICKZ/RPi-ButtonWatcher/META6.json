@@ -1,0 +1,23 @@
+{
+  "perl"         : "6.c",
+  "name"         : "RPi::ButtonWatcher",
+  "license"      : "Artistic-2.0",
+  "version"      : "0.0.1",
+  "description"  : "A button push event supplier.",
+  "tags" : [
+    "RaspberryPi"
+  ],
+  "depends" : [
+    "RPi::Wiring::Pi"
+  ],
+  "provides" : {
+    "RPi::ButtonWatcher" : "lib/RPi/ButtonWatcher.pm6"
+  },
+  "authors" : [
+    "Patrick Sebastian Zimmermann"
+  ],
+  "support" : {
+    "source" : "git://github.com/patzim/perl6-RPi-ButtonWatcher.git"
+  }
+}
+
