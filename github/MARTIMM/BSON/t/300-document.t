@@ -72,6 +72,8 @@ subtest "Ban the hash", {
 
   $d<e><f><g> = {b => 30};
   is $d<e><f><g><b>, 30, "Autovivified hash value $d<e><f><g><b>";
+
+  $d.autovivify(False);
 }
 
 #-------------------------------------------------------------------------------
@@ -151,9 +153,9 @@ subtest "Document nesting 2", {
 }
 
 #-------------------------------------------------------------------------------
-# Test to see if no hangup takes place when making a special doc
-# on ubuntu docker (Gabor) this test seems to fail. On Travis(Ubuntu) or Fedora
-# it works fine. So test only when on TRAVIS
+# Test to see if no hangup takes place when making a special doc.
+# On ubuntu docker (Gabor) this test seems to fail. On Travis(Ubuntu)
+# or Fedora it works fine. So test only when on TRAVIS.
 
 #if %*ENV<TRAVIS>:exists or '/home/marcel/Languages/Perl6'.IO ~~ :d {
   subtest "Big, wide and deep nesting", {
@@ -163,6 +165,8 @@ subtest "Document nesting 2", {
     # which are by default 16.
     my Num $count = 0.1e0;
     my BSON::Document $d .= new;
+    $d.autovivify(True);
+
     for ('zxnbcvzbnxvc-aa', *.succ ... 'zxnbcvzbnxvc-bz') -> $char {
       $d{$char} = ($count += 2.44e0);
     }
@@ -190,6 +194,8 @@ subtest "Document nesting 2", {
 
     $dsub .= new($d.encode);
     is-deeply $dsub, $d, 'document the same after encoding/decoding';
+
+    $d.autovivify(False);
   }
 #}
 
@@ -242,6 +248,57 @@ subtest "Document desctructure tests", {
   # documents contents
   $sub(%doc);
 }
+
+#-------------------------------------------------------------------------------
+#`{{
+subtest "reassignment test", {
+
+  my BSON::Document $d .= new;
+  $d<a> = 1;
+  $d<b> = 2;
+  ok $d<test-assign> ~~ BSON::TemporaryContainer, 'Temporary container';
+  ok $d<test-assign2> ~~ BSON::TemporaryContainer, 'Temporary container';
+  ok $d<test-assign3> ~~ BSON::TemporaryContainer, 'Temporary container';
+  $d<test-assign> = 12345;
+  $d<test-assign> = 54321;
+  $d<test-assign2> = 890;
+  diag $d.perl;
+
+  my Buf $b = $d.encode;
+  $d .= new($b);
+  diag $d.perl;
+  is $d<test-assign>, 54321, "Value is $d<test-assign>";
+}
+}}
+
+#-------------------------------------------------------------------------------
+#`{{
+subtest "Slice assignment", {
+
+  my BSON::Document $d .= new;
+  $d<test-assign> = 12345;
+
+#$d.autovivify;
+  $d<firstname lastname> = <John Doe>;
+  is $d<firstname>, 'John', "firstname set to $d<firstname>";
+  is $d<lastname>, 'Doe', "lastname set to $d<lastname>";
+
+  my %x = %(a => 10, b => 11, c => 12);
+  my @keys = <a c>;
+  $d{@keys} = %x{@keys};
+
+  is $d<a>, 10, 'Key a set';
+  is $d<b>, Any, 'Key b not set';
+  is $d<c>, 12, 'Key c set';
+
+  $d<p q r> = ('a', 'b', (a => 11));
+  diag "$?LINE, $d.perl()";
+
+  my Buf $b = $d.encode;
+  note "$?LINE, ", $b;
+  diag "$?LINE, $d.new($b).perl()";
+}
+}}
 
 #-------------------------------------------------------------------------------
 subtest "Exception tests", {

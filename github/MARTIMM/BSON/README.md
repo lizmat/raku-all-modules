@@ -71,7 +71,7 @@ Current maintainer Marcel Timmerman (2015-present)(MARTIMM on github).
 
 ## Contributors
 
-Dan Zwell
+Dan Zwell (lefth on github)
 
 
 
