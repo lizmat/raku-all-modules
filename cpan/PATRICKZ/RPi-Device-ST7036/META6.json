@@ -1,0 +1,26 @@
+{
+  "perl"         : "6.c",
+  "name"         : "RPi::Device::ST7036",
+  "license"      : "Artistic-2.0",
+  "version"      : "0.0.3",
+  "description"  : "Support for the ST7036 dot matrix display.",
+  "tags"         : [
+    "RaspberryPi"
+  ],
+  "depends"      : [
+    "RPi::Wiring::Pi"
+  ],
+  "test-depends" : [
+    "Test::META"
+  ],
+  "provides"     : {
+    "RPi::Device::ST7036"        : "lib/RPi/Device/ST7036.pm6",
+    "RPi::Device::ST7036::Setup" : "lib/RPi/Device/ST7036/Setup.pm6"
+  },
+  "authors"      : [
+    "Patrick Sebastian Zimmermann"
+  ],
+  "support"      : {
+    "source" : "git://github.com/patzim/perl6-RPi-Device-ST7036.git"
+  }
+}
