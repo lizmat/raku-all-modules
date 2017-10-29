@@ -37,9 +37,9 @@ is(~EVAL($vcrazy.perl), ~$vcrazy, ".perl works");
 
 is $v11.conj, Math::Vector.new(0-i,1-i), ".conj works";
 
-is($v1.Dim, 3, "Dim works for 3D Math::Vector");
-is($v5.Dim, 5, "Dim works for 5D Math::Vector");
-is($v7.Dim, 7, "Dim works for 7D Math::Vector");
+is($v1.dim, 3, "dim works for 3D Math::Vector");
+is($v5.dim, 5, "dim works for 5D Math::Vector");
+is($v7.dim, 7, "dim works for 7D Math::Vector");
 
 is-approx($v7 ⋅ $v8, 0, "Perpendicular Math::Vectors have 0 dot product");
 
@@ -69,30 +69,30 @@ is(~(-$v2), "(-3, -4, 0)", "Negating works");
 # }
 
 #lengths
-is($origin3d.Length, 0, "Origin has 0 length");
-is($v6.Length, 1, "Simple length calculation");
-is($v8.Length, 1, "Simple length calculation");
+is($origin3d.length, 0, "Origin has 0 length");
+is($v6.length, 1, "Simple length calculation");
+is($v8.length, 1, "Simple length calculation");
 
 for @vectors -> $v
 {
-    # is-approx($v.Length ** 2, ⎡$v ⎤ * ⎡$v ⎤, "v.Length squared equals ⎡v ⎤ squared");
-    is-approx($v.Length ** 2, $v dot $v.conj, "v.Length squared equals v ⋅ v.conj");
+    # is-approx($v.length ** 2, ⎡$v ⎤ * ⎡$v ⎤, "v.length squared equals ⎡v ⎤ squared");
+    is-approx($v.length ** 2, $v dot $v.conj, "v.length squared equals v ⋅ v.conj");
     is-approx($v.abs ** 2, $v ⋅ $v.conj, "v.abs squared equals v ⋅ v.conj");
 }
 
 for @vectors -> $v
 {
     my Math::Vector $vn = $v * 4.5;
-    is-approx($vn.Length, $v.Length * 4.5, "Scalar by Math::Vector multiply gets proper length");
-    is-approx-vector($vn.Unitize, $v.Unitize, "Scalar by Math::Vector multiply gets proper direction");
+    is-approx($vn.length, $v.length * 4.5, "Scalar by Math::Vector multiply gets proper length");
+    is-approx-vector($vn.unitize, $v.unitize, "Scalar by Math::Vector multiply gets proper direction");
     is-approx-vector($vn, 4.5 * $v, "Scalar by Math::Vector multiply is commutative");
 }
 
 for @vectors -> $v
 {
     my Math::Vector $vn = $v / 4.5;
-    is-approx($vn.Length, $v.Length / 4.5, "Math::Vector by Scalar divide gets proper length");
-    is-approx-vector($vn.Unitize, $v.Unitize, "Math::Vector by Scalar divide gets proper direction");
+    is-approx($vn.length, $v.length / 4.5, "Math::Vector by Scalar divide gets proper length");
+    is-approx-vector($vn.unitize, $v.unitize, "Math::Vector by Scalar divide gets proper direction");
     is-approx-vector($vn, $v * (1.0 / 4.5), "Math::Vector by Scalar divide is equal to multiplication by reciprocal");
 }
 
@@ -134,7 +134,7 @@ for flat ($v1, $v2, $v3) X ($v1, $v2, $v3) -> $x, $y
     is-approx($cross ⋅ $x, 0, "(x × y) ⋅ x = 0");
     is-approx($cross ⋅ $y, 0, "(x × y) ⋅ y = 0");
     is-approx-vector($cross, -($y × $x), "x × y = -y × x");
-    is-approx($cross.Length ** 2, $x.Length ** 2 * $y.Length ** 2 - ($x ⋅ $y) ** 2, 
+    is-approx($cross.length ** 2, $x.length ** 2 * $y.length ** 2 - ($x ⋅ $y) ** 2, 
               "|x × y|^2 = |x|^2 * |y|^2 - (x ⋅ y)^2");
 }
 
@@ -144,7 +144,7 @@ for flat ($v7, $v8, $v9, $v10) X ($v7, $v8, $v9, $v10) -> $x, $y
     is-approx($cross ⋅ $x, 0, "(x × y) ⋅ x = 0");
     is-approx($cross ⋅ $y, 0, "(x × y) ⋅ y = 0");
     is-approx-vector($cross, -($y × $x), "x × y = -y × x");
-    is-approx($cross.Length ** 2, $x.Length ** 2 * $y.Length ** 2 - ($x ⋅ $y) ** 2, 
+    is-approx($cross.length ** 2, $x.length ** 2 * $y.length ** 2 - ($x ⋅ $y) ** 2, 
               "|x × y|^2 = |x|^2 * |y|^2 - (x ⋅ y)^2");
 }
 

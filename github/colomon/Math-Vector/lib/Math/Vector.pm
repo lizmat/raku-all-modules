@@ -1,4 +1,5 @@
 use v6;
+no precompilation; # avoid https://github.com/rakudo/rakudo/issues/1219
 
 use Test;  # so we can define is-approx-vector
 
@@ -31,12 +32,15 @@ class Math::Vector
         die "Cannot call Num on Vector!";
     }
     
-    method Dim()
-    {
+    method Dim() is DEPRECATED('dim') {
+        self.dim;
+    }
+
+    method dim() {
         @.coordinates.elems;
     }
 
-    multi sub infix:<⋅>(Math::Vector $a, Math::Vector $b where { $a.Dim == $b.Dim }) is export # is tighter(&infix:<+>) (NYI)
+    multi sub infix:<⋅>(Math::Vector $a, Math::Vector $b where { $a.dim == $b.dim }) is export # is tighter(&infix:<+>) (NYI)
     {
         [+]($a.coordinates »*« $b.coordinates);
     }
@@ -46,14 +50,17 @@ class Math::Vector
         $a ⋅ $b;
     }
 
-    method Length()
-    {
+    method Length() is DEPRECATED('length') {
+        self.length;
+    }
+
+    method length() {
         sqrt(self ⋅ self.conj);
     }
     
     multi method abs()
     {
-        self.Length;
+        self.length;
     }
 
     multi method conj()
@@ -61,9 +68,12 @@ class Math::Vector
         Math::Vector.new(@.coordinates>>.conj);
     }
         
-    method Unitize()
-    {
-        my $length = self.Length;
+    method Unitize() is DEPRECATED('unitize') {
+        self.unitize;
+    }
+
+    method unitize() {
+        my $length = self.length;
         if $length > 1e-10
         {
             return Math::Vector.new(@.coordinates >>/>> $length);
@@ -74,12 +84,12 @@ class Math::Vector
         }
     }
     
-    multi sub infix:<+> (Math::Vector $a, Math::Vector $b where { $a.Dim == $b.Dim }) is export
+    multi sub infix:<+> (Math::Vector $a, Math::Vector $b where { $a.dim == $b.dim }) is export
     {
         Math::Vector.new($a.coordinates »+« $b.coordinates);
     }
     
-    multi sub infix:<->(Math::Vector $a, Math::Vector $b where { $a.Dim == $b.Dim }) is export
+    multi sub infix:<->(Math::Vector $a, Math::Vector $b where { $a.dim == $b.dim }) is export
     {
         Math::Vector.new($a.coordinates »-« $b.coordinates);
     }
@@ -104,14 +114,14 @@ class Math::Vector
         Math::Vector.new($a.coordinates >>/>> $b);
     }
 
-    multi sub infix:<×>(Math::Vector $a where { $a.Dim == 3 }, Math::Vector $b where { $b.Dim == 3 }) is export
+    multi sub infix:<×>(Math::Vector $a where { $a.dim == 3 }, Math::Vector $b where { $b.dim == 3 }) is export
     {
         Math::Vector.new($a.coordinates[1] * $b.coordinates[2] - $a.coordinates[2] * $b.coordinates[1], 
                    $a.coordinates[2] * $b.coordinates[0] - $a.coordinates[0] * $b.coordinates[2], 
                    $a.coordinates[0] * $b.coordinates[1] - $a.coordinates[1] * $b.coordinates[0]);
     }
 
-    multi sub infix:<×>(Math::Vector $a where { $a.Dim == 7 }, Math::Vector $b where { $b.Dim == 7 }) is export
+    multi sub infix:<×>(Math::Vector $a where { $a.dim == 7 }, Math::Vector $b where { $b.dim == 7 }) is export
     {
         Math::Vector.new($a.coordinates[1] * $b.coordinates[3] - $a.coordinates[3] * $b.coordinates[1] 
                    + $a.coordinates[2] * $b.coordinates[6] - $a.coordinates[6] * $b.coordinates[2] 
@@ -143,13 +153,13 @@ class Math::Vector
 
     multi sub circumfix:<⎡ ⎤>(Math::Vector $a) is export
     {
-        $a.Length;
+        $a.length;
     }
 
     sub is-approx-vector(Math::Vector $a, Math::Vector $b, $desc) is export
     {
-        ok(($a - $b).Length < 0.00001, $desc);
+        ok(($a - $b).length < 0.00001, $desc);
     }
 }
 
-subset Math::UnitVector of Math::Vector where { (1 - 1e-10) < $^v.Length < (1 + 1e-10) };
+subset Math::UnitVector of Math::Vector where { (1 - 1e-10) < $^v.length < (1 + 1e-10) };
