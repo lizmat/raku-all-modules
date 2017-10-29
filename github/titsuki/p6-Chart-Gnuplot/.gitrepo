@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Chart-Gnuplot.git
 	branch = master
-	commit = c531dcb9280bce31b1d28e4f7e2b4b05a3c08380
-	parent = 410c5a9db7e1a940f0f79e6c66f298b07860180e
+	commit = 9d540baa53cbd8d448d456811bb2ef9345d47205
+	parent = d25958631599c366e5d11fb7afaaaa13cb6c37f7
 	cmdver = 0.4.0
