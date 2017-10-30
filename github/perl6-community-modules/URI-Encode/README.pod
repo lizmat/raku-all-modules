@@ -15,7 +15,7 @@ A Perl 6 module for encoding / decoding URIs
     # remove percent encoding
     my $decoded_uri = uri_decode(http://www.example.com/?name=john%20doe&age=54');
 
-    # provided for symmetry, is the same as decode_uri()
+    # provided for symmetry, is the same as uri_decode()
     my $decoded_component = uri_decode_component('some%20text%2Fto%20%2B%20safely');
 
 =head1 Author
