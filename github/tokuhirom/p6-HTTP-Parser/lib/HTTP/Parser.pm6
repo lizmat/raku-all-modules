@@ -63,8 +63,8 @@ my class HTTPRequestHeadAction {
         %!env<REQUEST_URI> = ~$/;
         %!env<QUERY_STRING> //= '';
     }
-    method path($/) {
-        my $path = (~$/).subst(/'%' (<[0..9 A..F a..f]> ** 2)/, -> $/ {chr(:16(~$/[0]))}, :global);
+    method path($_) {
+        my $path = .Str.subst(/'%' (<[0..9 A..F a..f]> ** 2)/, -> $/ {chr(:16(~$/[0]))}, :global);
         %!env<PATH_INFO> = $path;
     }
     method query($/) {
@@ -84,12 +84,12 @@ my class HTTPRequestHeadAction {
 
     method field-content($/) { $/.make: ~$/ }
 
-    method field-name($/) {
-        my $name = $/.Str.subst(/\-/, '_', :g).uc;
+    method field-name($_) {
+        my $name = .Str.subst(/\-/, '_', :g).uc;
         if $name ne 'CONTENT_LENGTH' && $name ne 'CONTENT_TYPE' {
             $name = 'HTTP_' ~ $name;
         }
-        $/.make: $name;
+        .make: $name;
     }
 }
 
