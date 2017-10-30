@@ -3,9 +3,9 @@ no precompilation; # avoid https://github.com/rakudo/rakudo/issues/1219
 
 use Test;  # so we can define is-approx-vector
 
-class Math::Vector
+class Math::Vector does Positional
 {
-    has @.coordinates;
+    has @.coordinates handles <AT-POS>;
     
     multi method new (*@x) 
     {
@@ -116,34 +116,34 @@ class Math::Vector
 
     multi sub infix:<×>(Math::Vector $a where { $a.dim == 3 }, Math::Vector $b where { $b.dim == 3 }) is export
     {
-        Math::Vector.new($a.coordinates[1] * $b.coordinates[2] - $a.coordinates[2] * $b.coordinates[1], 
-                   $a.coordinates[2] * $b.coordinates[0] - $a.coordinates[0] * $b.coordinates[2], 
-                   $a.coordinates[0] * $b.coordinates[1] - $a.coordinates[1] * $b.coordinates[0]);
+        Math::Vector.new($a[1] * $b[2] - $a[2] * $b[1], 
+                         $a[2] * $b[0] - $a[0] * $b[2], 
+                         $a[0] * $b[1] - $a[1] * $b[0]);
     }
 
     multi sub infix:<×>(Math::Vector $a where { $a.dim == 7 }, Math::Vector $b where { $b.dim == 7 }) is export
     {
-        Math::Vector.new($a.coordinates[1] * $b.coordinates[3] - $a.coordinates[3] * $b.coordinates[1] 
-                   + $a.coordinates[2] * $b.coordinates[6] - $a.coordinates[6] * $b.coordinates[2] 
-                   + $a.coordinates[4] * $b.coordinates[5] - $a.coordinates[5] * $b.coordinates[4],
-                   $a.coordinates[2] * $b.coordinates[4] - $a.coordinates[4] * $b.coordinates[2] 
-                   + $a.coordinates[3] * $b.coordinates[0] - $a.coordinates[0] * $b.coordinates[3] 
-                   + $a.coordinates[5] * $b.coordinates[6] - $a.coordinates[6] * $b.coordinates[5],
-                   $a.coordinates[3] * $b.coordinates[5] - $a.coordinates[5] * $b.coordinates[3] 
-                   + $a.coordinates[4] * $b.coordinates[1] - $a.coordinates[1] * $b.coordinates[4] 
-                   + $a.coordinates[6] * $b.coordinates[0] - $a.coordinates[0] * $b.coordinates[6],
-                   $a.coordinates[4] * $b.coordinates[6] - $a.coordinates[6] * $b.coordinates[4] 
-                   + $a.coordinates[5] * $b.coordinates[2] - $a.coordinates[2] * $b.coordinates[5] 
-                   + $a.coordinates[0] * $b.coordinates[1] - $a.coordinates[1] * $b.coordinates[0],
-                   $a.coordinates[5] * $b.coordinates[0] - $a.coordinates[0] * $b.coordinates[5] 
-                   + $a.coordinates[6] * $b.coordinates[3] - $a.coordinates[3] * $b.coordinates[6] 
-                   + $a.coordinates[1] * $b.coordinates[2] - $a.coordinates[2] * $b.coordinates[1],
-                   $a.coordinates[6] * $b.coordinates[1] - $a.coordinates[1] * $b.coordinates[6] 
-                   + $a.coordinates[0] * $b.coordinates[4] - $a.coordinates[4] * $b.coordinates[0] 
-                   + $a.coordinates[2] * $b.coordinates[3] - $a.coordinates[3] * $b.coordinates[2],
-                   $a.coordinates[0] * $b.coordinates[2] - $a.coordinates[2] * $b.coordinates[0] 
-                   + $a.coordinates[1] * $b.coordinates[5] - $a.coordinates[5] * $b.coordinates[1] 
-                   + $a.coordinates[3] * $b.coordinates[4] - $a.coordinates[4] * $b.coordinates[3]);
+        Math::Vector.new($a[1] * $b[3] - $a[3] * $b[1] 
+                         + $a[2] * $b[6] - $a[6] * $b[2] 
+                         + $a[4] * $b[5] - $a[5] * $b[4],
+                         $a[2] * $b[4] - $a[4] * $b[2] 
+                         + $a[3] * $b[0] - $a[0] * $b[3] 
+                         + $a[5] * $b[6] - $a[6] * $b[5],
+                         $a[3] * $b[5] - $a[5] * $b[3] 
+                         + $a[4] * $b[1] - $a[1] * $b[4] 
+                         + $a[6] * $b[0] - $a[0] * $b[6],
+                         $a[4] * $b[6] - $a[6] * $b[4] 
+                         + $a[5] * $b[2] - $a[2] * $b[5] 
+                         + $a[0] * $b[1] - $a[1] * $b[0],
+                         $a[5] * $b[0] - $a[0] * $b[5] 
+                         + $a[6] * $b[3] - $a[3] * $b[6] 
+                         + $a[1] * $b[2] - $a[2] * $b[1],
+                         $a[6] * $b[1] - $a[1] * $b[6] 
+                         + $a[0] * $b[4] - $a[4] * $b[0] 
+                         + $a[2] * $b[3] - $a[3] * $b[2],
+                         $a[0] * $b[2] - $a[2] * $b[0] 
+                         + $a[1] * $b[5] - $a[5] * $b[1] 
+                         + $a[3] * $b[4] - $a[4] * $b[3]);
     }
 
     multi sub infix:<cross>(Math::Vector $a, Math::Vector $b) is export

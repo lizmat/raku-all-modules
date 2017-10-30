@@ -24,12 +24,16 @@ isa-ok($v3, Math::Vector, "Variable is of type Math::Vector");
 isa-ok($v5, Math::Vector, "Variable is of type Math::Vector");
 isa-ok($v7, Math::Vector, "Variable is of type Math::Vector");
 isa-ok($vcrazy, Math::Vector, "Variable is of type Math::Vector");
+does-ok($v1, Positional, "Vector is Positional");
 
 is(~$v1, "(1, 2, 3)", "Stringify works");
 is(~$v3, "(-1, 0, 2)", "Stringify works");
 is(~$origin3d, "(0, 0, 0)", "Stringify works");
 is(~$v5, "(1, 2, 3, 4, 5)", "Stringify works");
 is(~$vcrazy, "((1, 2, 3), (-1, 0, -1))", "Stringify works");
+
+is($v1[0], 1, "[] works on Vector");
+is($v1[1..2], (2, 3), "[] works on Vector");
 
 is(~EVAL($v1.perl), ~$v1, ".perl works");
 is(~EVAL($v9.perl), ~$v9, ".perl works");
