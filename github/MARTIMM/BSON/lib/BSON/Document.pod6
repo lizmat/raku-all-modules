@@ -68,54 +68,84 @@ binary. There are 127 user definable types in that BSON binary specification, so
 place enough to put it there, also because when javascript is run on the server
 it would not able to cope with these types.
 
-The types currently supported are marked with a [x]. [-] will not be
-implemented and [ ] is a future thingy.
 
-=begin code
+=begin table
 
-    Encoding/Decoding a bytestream from/to perl6
+       |  Type/     |                                 |
+  Impl |  subtype   | BSON spec                       | Perl6            | Note
+ ======|============|=================================|==================|======
+   x   |  1         | 64-bit Double                   | Num              | Rat is converted to num
+ ------+------------+---------------------------------+------------------+------
+   x   |  2         | UTF-8 string                    | Str              |
+ ------+------------+---------------------------------+------------------+------
+   x   |  3         | Embedded document.              | BSON::Document   |
+ ------+------------+---------------------------------+------------------+------
+   x   |  4         | Array document                  | Array            |
+ ------+------------+---------------------------------+------------------+------
+   x   |  5         | All kinds of binary data        | BSON::Binary     |
+ ------+------------+---------------------------------+------------------+------
+   x   |  5/0       | Generic type                    |                  |
+ ------+------------+---------------------------------+------------------+------
+       |  5/1       | Function                        |                  |
+ ------+------------+---------------------------------+------------------+------
+   -   |  5/2       | Binary old, deprecated          |                  |
+ ------+------------+---------------------------------+------------------+------
+   -   |  5/3       | UUID old, deprecated            |                  |
+ ------+------------+---------------------------------+------------------+------
+   x   |  5/4       | UUID                            |                  |
+ ------+------------+---------------------------------+------------------+------
+   x   |  5/5       | MD5                             |                  |
+ ------+------------+---------------------------------+------------------+------
+       |  5/128     | Int larger/smaller than 64 bit  | Int              |
+ ------+------------+---------------------------------+------------------+------
+       |  5/129     |                                 | FatRat           |
+ ------+------------+---------------------------------+------------------+------
+       |  5/130     |                                 | Rat              | When precision is an issue
+ ------+------------+---------------------------------+------------------+------
+   -   |  6         | Undefined value - Deprecated    |                  |
+ ------+------------+---------------------------------+------------------+------
+   x   |  7         | ObjectId                        | BSON::ObjectId   |
+ ------+------------+---------------------------------+------------------+------
+   x   |  8         | Boolean "true" / "false"        | Bool             |
+ ------+------------+---------------------------------+------------------+------
+   x   |  9         | int64 UTC datetime              | DateTime         |
+ ------+------------+---------------------------------+------------------+------
+   x   | 10         | Null value                      | Undefined type   |
+ ------+------------+---------------------------------+------------------+------
+   x   | 11         | Regular expression(perl 5 like) | BSON::Regex      |
+ ------+------------+---------------------------------+------------------+------
+   -   | 12         | DBPointer - Deprecated          |                  |
+ ------+------------+---------------------------------+------------------+------
+   x   | 13         | Javascript code                 | BSON::Javascript |
+ ------+------------+---------------------------------+------------------+------
+   -   | 14         | Symbol - Deprecated             |                  |
+ ------+------------+---------------------------------+------------------+------
+   x   | 15         | Javascript code with scope      | BSON::Javascript |
+ ------+------------+---------------------------------+------------------+------
+   x   | 16         | 32 bit integers.                | Int              |
+ ------+------------+---------------------------------+------------------+------
+   x   | 17         | Timestamp, converted to uint64. | BSON::Timestamp  |
+ ------+------------+---------------------------------+------------------+------
+   x   | 18         | 64 bit integers.                | Int              |
+ ------+------------+---------------------------------+------------------+------
+       | 19         | 128 bit decimal floating point  | Decimal::D128    |
+ ------+------------+---------------------------------+------------------+------
 
-      Type/sub-
-Impl  type  BSON spec                           Perl6
+=end table
+B<Encoding/Decoding a bytestream from/to perl6>
 
- [x]  1     64-bit Double                       Num
- [x]  2     UTF-8 string                        Str
- [x]  3     Embedded document.                  BSON::Document
- [x]  4     Array document                      Array
- [x]  5     All kinds of binary data            BSON::Binary
- [x]  5/0   Generic type
- [ ]  5/1   Function
- [-]  5/2   Binary old, deprecated
- [-]  5/3   UUID old, deprecated
- [x]  5/4   UUID
- [x]  5/5   MD5
- [ ]  5/128 Int larger/smaller than 64 bit      Int
- [ ]  5/129                                     FatRat
- [ ]  5/130                                     Bag
- [-]  6     Undefined value - Deprecated
- [x]  7     ObjectId                            BSON::ObjectId
- [x]  8     Boolean "true" / "false"            Bool
- [x]  9     int64 UTC datetime                  DateTime
- [x] 10     Null value                          Undefined type
- [x] 11     Regular expression(perl 5 like)     BSON::Regex
- [-] 12     DBPointer - Deprecated
- [x] 13     Javascript code                     BSON::Javascript
- [-] 14     Symbol - Deprecated
- [x] 15     Javascript code with scope          BSON::Javascript
- [x] 16     32 bit integers.                    Int
- [x] 17     Timestamp, converted to uint64.     BSON::Timestamp
- [x] 18     64 bit integers.                    Int
- [ ] 19     128 bit decimal floating point      Decimal::D128
+B<The types currently supported are marked with a 'x'. '-' will not be
+implemented and <empty> is a future thingy.>
 
-=end code
+
 
 =head1 Operators
 
-=head2 x{}
+=head2 postcircumfix { }
 
   $d{'full address'} = 'my-street 45, new york';
 
-=head2 x<>
+=head2 postcircumfix < >
 
   $d<name> = 'Mr Foo and Mrs Bar';
 
@@ -173,7 +203,7 @@ Return type and location of the object.
 
 =head2 autovivify
 
-  submethod autovivify ( Bool $avvf = True )
+  method autovivify ( Bool :$on = True, Bool :$instance-only = False )
 
 By default it is set to C<False> and will throw an exception with an message
 like 'Cannot modify an immutable Any' when an attempt is made like in the
@@ -191,16 +221,17 @@ To have this feature one must turn this option on like so;
 =begin code
 
 my BSON::Document $d .= new;
-$d.autovivify(True);
+$d.autovivify(:on);
 $d<a><b> = 10;
 
 =end code
 
-NOTE: Testing for items will also create the entries if they weren't there.
+B<NOTE: Testing for items will also create the entries if they weren't there.>
+B<NOTE: :instance-only does not have much use at the moment.>
 
 =head2 accept-hash
 
-  submethod accept-hash ( Bool $acch = True )
+  method accept-hash ( Bool :$accept = True, Bool :$instance-only = False )
 
 By default it is set to C<False> and will throw an exception with a message
 like 'Cannot use hash values'. This is explicitly done to keep input order.
@@ -209,7 +240,7 @@ When it is turned off try something like below to see what is meant;
 =begin code
 
 my BSON::Document $d .= new;
-$d.accept-hash(True);
+$d.accept-hash(:accept);
 $d<q> = {
   a => 120, b => 121, c => 122, d => 123, e => 124, f => 125, g => 126,
   h => 127, i => 128, j => 129, k => 130, l => 131, m => 132, n => 133,
@@ -222,11 +253,27 @@ say $d<q>.keys;
 
 =end code
 
-=head2 accept-rat
+B<NOTE: :instance-only does not have much use at the moment.>
 
-  submethod accept-rat ( Bool $accr = True )
+=head2 convert-rat
 
-When true, rational numbers will be converted to double, regardless of precision loss. This is useful for dealing with messy input, since rational numbers cannot be encoded at this time. By default it is set to C<False>. Rational numbers that will not lose precision will be converted regardless of this setting.
+  method convert-rat (
+    Bool $accept = True,
+    Bool :$accept-precision-loss = False,
+    Bool :$instance-only = False
+  )
+
+When rational numbers are accepted, they will be converted to double(Num), if
+precision is not compromised. If the precision is compromised then an exception
+is thrown. However when C<:accept-precision-loss> is also set then the conversion
+always takes place regardless of precision loss. This is useful for dealing
+with messy input, since rational numbers cannot be encoded at this time.
+
+Plans are to convert to binary when precision is an issue instead of throwing
+an exception. One cannot use server side calculations then when converted to
+binary.
+
+B<NOTE: :instance-only does not have much use at the moment.>
 
 =head2 find-key
 

@@ -6,7 +6,7 @@ use BSON::Document;
 subtest "Autovivication", {
 
   my BSON::Document $d .= new;
-  $d.autovivify(True);
+  $d.autovivify(:on);
 
   #                ||||
   # Differs here   vvvv
@@ -159,22 +159,3 @@ subtest "Autovivication", {
 # Cleanup
 done-testing;
 exit(0);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
