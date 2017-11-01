@@ -9,6 +9,9 @@ my constant c is export = 299792458;
 my constant G is export = 6.67408e-11;
 my constant eulernumber-e is export = 2.7182818284;
 my constant pi is export = 3.142857;
+my constant gas-constant = 8.3144598;
+my constant F is export = 96484.5561;
+
 
 # REF: http://www.ebyte.it/library/educards/constants/ConstantsOfPhysicsAndMath.html
 my constant quantum-ratio is export = 2.417989348e14;
