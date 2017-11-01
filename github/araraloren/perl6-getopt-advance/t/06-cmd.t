@@ -19,7 +19,6 @@ $optset.reset-cmd("plus");
 $optset.reset-cmd("multi");
 
 $optset.insert-cmd("join", sub __main($, @noa) {
-    @noa.shift;
     my $sep = @noa.shift.value;
     is (join $sep, @noa>>.value>>.Str), "english|chinese|japanese", "join ok";
 });
