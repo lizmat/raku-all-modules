@@ -2,8 +2,10 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.11.4
+  * Bug fixed; hangups while encoding. Threads are only started when encode() is called.
 * 0.11.3
-  * Changed decoding on threads in such a way that results are returned as a result instead of changing the results array directly.
+  * Bug fixed; Crashes solved. Changed decoding on threads in such a way that results are returned as a result instead of changing the results array directly.
 * 0.11.2
   * Renamed accept-rat variables and method in convert-rat. If not set, it will be converted to binary. If set, it checks for precision loss before converting to Num. if that is accepted too, all Rat's are converted.
 * 0.11.1
@@ -15,7 +17,7 @@ change at any time. The public API should not be considered stable*.
 * 0.10.2
   * Changed precision in test for Rat
 * 0.10.1
-  * Bug fixed; Datetime was not in converted to miliseconds when encoding and
+  * Bug fixed; Datetime was not converted to miliseconds when encoding and
   when decoding not converted to seconds. Thanks to Dan Zwell.
 * 0.10.0
   * Rat to Num conversion when there is no loss of accuracy. Thanks to Dan Zwell.

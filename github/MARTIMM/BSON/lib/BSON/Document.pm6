@@ -336,7 +336,6 @@ class Document does Associative {
   #----------------------------------------------------------------------------
   method EXISTS-KEY ( Str $key --> Bool ) {
 
-#note "Key $key ", self.find-key($key).defined ?? 'exists' !! 'does not exist';
     self.find-key($key).defined;
   }
 
@@ -364,17 +363,7 @@ class Document does Associative {
     my BSON::Document $v = $new;
 
     my Int $idx = self.find-key($k);
-    if $idx.defined {
-      if %!promises{$k}.defined {
-        %!promises{$k}.result;
-        %!promises{$k}:delete;
-      }
-    }
-
-    else {
-      $idx = @!keys.elems;
-    }
-
+    $idx = @!keys.elems unless $idx.defined;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
   }
@@ -399,17 +388,7 @@ class Document does Associative {
 
     my Str $k = $key;
     my Int $idx = self.find-key($k);
-    if $idx.defined {
-      if %!promises{$k}.defined {
-        %!promises{$k}.result;
-        %!promises{$k}:delete;
-      }
-    }
-
-    else {
-      $idx = @!keys.elems;
-    }
-
+    $idx = @!keys.elems unless $idx.defined;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
   }
@@ -425,17 +404,7 @@ class Document does Associative {
     $v{$new.key} = $new.value;
 
     my Int $idx = self.find-key($k);
-    if $idx.defined {
-      if %!promises{$k}.defined {
-        %!promises{$k}.result;
-        %!promises{$k}:delete;
-      }
-    }
-
-    else {
-      $idx = @!keys.elems;
-    }
-
+    $idx = @!keys.elems unless $idx.defined;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
   }
@@ -477,37 +446,9 @@ class Document does Associative {
     my Array $v = $new;
 
     my Int $idx = self.find-key($k);
-    if $idx.defined {
-      if %!promises{$k}.defined {
-        %!promises{$k}.result;
-        %!promises{$k}:delete;
-      }
-    }
-
-    else {
-      $idx = @!keys.elems;
-    }
-
+    $idx = @!keys.elems unless $idx.defined;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
-
-#    %!promises{$k} = Promise.start({self!encode-element: ($k => $v);});
-    %!promises{$k} = Promise.start( {
-#note "$*THREAD.id(), Array, E key = $k, val = ", $v, ', ', $v.WHAT();
-      my Buf $b = self!encode-element: ($k => $v);
-
-      CATCH {
-#note .WHAT;
-#note "Error at line $?LINE: ";
-#.note;
-        default {
-          note "Error at $?FILE $?LINE: ",  $_;
-          .rethrow;
-        }
-      }
-
-      $b;
-    });
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -521,37 +462,9 @@ class Document does Associative {
     my $v = $new;
 
     my Int $idx = self.find-key($k);
-    if $idx.defined {
-      if %!promises{$k}.defined {
-        %!promises{$k}.result;
-        %!promises{$k}:delete;
-      }
-    }
-
-    else {
-      $idx = @!keys.elems;
-    }
-
+    $idx = @!keys.elems unless $idx.defined;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
-
-#    %!promises{$k} = Promise.start({ self!encode-element: ($k => $v); });
-    %!promises{$k} = Promise.start( {
-#note "E key = $k, val = ", $v, ', ', $v.WHAT();
-      my Buf $b = self!encode-element: ($k => $v);
-      CATCH {
-#note .WHAT;
-#.note;
-        when X::BSON { .rethrow; }
-
-        default {
-          note "Error at $?FILE $?LINE: $_";
-          .rethrow;
-        }
-      }
-
-      $b
-    });
   }
 
   #----------------------------------------------------------------------------
@@ -638,89 +551,69 @@ class Document does Associative {
   #----------------------------------------------------------------------------
   # Encoding document
   #----------------------------------------------------------------------------
-  # Called from user to get encoded document or by a request from an
-  # encoding Document to encode a subdocument.
-  method encode ( --> Buf ) {
+  # Called from user to get a complete encoded document or by a request
+  # from an encoding Document to encode a subdocument or array.
+  method encode ( $document: --> Buf ) {
 
-    my Bool $still-planned = True;
-    while $still-planned {
-      $still-planned = False;
+    # encode all in parallel except for Arrays and Documents. This level must
+    # be done first.
+    loop ( my $idx = 0; $idx < @!keys.elems; $idx++) {
+      my $v = @!values[$idx];
+      next if $v ~~ any(Array|BSON::Document);
 
-      loop ( my $idx = 0; $idx < @!keys.elems; $idx++) {
-        my $key = @!keys[$idx];
-#note "$*THREAD.id(), $key, ", @!values[$idx], ', ',
-#     %!promises{$key}.defined ?? %!promises{$key}.status !! 'promise processed';
-
-        # Test if a promise is created to calculate stuff in parallel
-        if %!promises{$key}.defined {
-          my PromiseStatus $pstat = %!promises{$key}.status;
-          if $pstat ~~ Kept {
-            @!encoded-entries[$idx] = %!promises{$key}.result;
-            %!promises{$key} = Nil;
-#note "$*THREAD.id(), Kept: $key, ", @!values[$idx];
-          }
-
-          elsif $pstat ~~ Planned {
-#note "$*THREAD.id(), Planned: $key, ", @!values[$idx];
-            $still-planned = True;
-            next;
-          }
-
-          elsif $pstat ~~ Broken {
-#note "$*THREAD.id(), Broken: $key";
-#note %!promises{$key}.cause.WHAT;
-#note %!promises{$key}.cause.message;
-            die X::BSON.new(
-              :operation<encode>, :type<any>,
-              :error(%!promises{$key}.cause)
-            );
-          }
+      my $k = @!keys[$idx];
+      %!promises{$k} = Promise.start( {
+          self!encode-element: ($k => $v);
         }
+      );
+    }
 
-        # Test if a value is a document. These are never done in parallel
-        # Subdocuments entries are also calculated in parallel but also
-        # except for subdocuments. When encodng a Document here it calls
-        # its own encode() which will gather the data. This happens depth
-        # first so ends up here returning the complete encoded subdocument.
-        #
-        elsif @!values[$idx] ~~ BSON::Document {
-#note "$*THREAD.id(), D: $key, ", @!values[$idx];
-          @!encoded-entries[$idx] =
-            self!encode-element: (@!keys[$idx] => @!values[$idx]);
-        }
+    await %!promises.values;
 
-        else {
-#note "$*THREAD.id(), EK: $key, ", @!values[$idx];
-        }
-      }
+    loop ( $idx = 0; $idx < @!keys.elems; $idx++) {
+      my $key = @!keys[$idx];
+      next unless %!promises{$key}.defined;
+      @!encoded-entries[$idx] = %!promises{$key}.result;
     }
 
     %!promises = ();
 
+    # filling the gaps of arays and nested documents
+    loop ( $idx = 0; $idx < @!keys.elems; $idx++) {
+      my $key = @!keys[$idx];
+      if @!values[$idx] ~~ Array {
 
-    # if there are entries
-    my Buf $b;
-    if @!encoded-entries.elems {
+        # The document for an array is a normal BSON document with integer values
+        # for the keys counting with 0 and continuing sequentially.
+        # For example, the array ['red', 'blue'] would be encoded as the document
+        # ('0': 'red', '1': 'blue'). The keys must be in ascending numerical order.
 
-      $!encoded-document = Buf.new;
-#note @!encoded-entries.perl;
-      for @!encoded-entries -> $e {
-#        next unless ?$e;
-        $!encoded-document ~= $e;
+        my $pairs = (for @!values[$idx].kv -> $k, $v { "$k" => $v });
+        my BSON::Document $d .= new($pairs);
+        @!encoded-entries[$idx] = [~] Buf.new(BSON::C-ARRAY),
+                                      encode-e-name($key),
+                                      $d.encode;
       }
 
-      # encode size: number of elems + null byte at the end
-      $b = [~] encode-int32($!encoded-document.elems + 5),
-               $!encoded-document,
-               Buf.new(0x00);
+      elsif @!values[$idx] ~~ BSON::Document {
+        @!encoded-entries[$idx] = [~] Buf.new(BSON::C-DOCUMENT),
+                                      encode-e-name($key),
+                                      @!values[$idx].encode;
+      }
     }
 
-    # otherwise generate an empty document
-    else {
-      $b = [~] encode-int32(5), Buf.new(0x00);
+    # if there are entries
+    $!encoded-document = Buf.new;
+    for @!encoded-entries -> $e {
+      next unless $e.defined;
+      $!encoded-document ~= $e;
     }
 
-    return $b;
+    # encode size: number of elems + null byte at the end
+    my Buf $b = [~] encode-int32($!encoded-document.elems + 5),
+        $!encoded-document,
+        Buf.new(0x00);
+    $b
   }
 
   #----------------------------------------------------------------------------
@@ -796,28 +689,13 @@ class Document does Associative {
       when BSON::Document {
         # Embedded document
         # "\x03" e_name document
-        #
-        $b = [~] Buf.new(BSON::C-DOCUMENT), encode-e-name($p.key), .encode;
-#note "Encoded doc ($?LINE): ", $b;
+        # this handled separately after encoding is done for non-docs/arrays
       }
 
       when Array {
         # Array
         # "\x04" e_name document
-
-        # The document for an array is a normal BSON document
-        # with integer values for the keys,
-        # starting with 0 and continuing sequentially.
-        # For example, the array ['red', 'blue']
-        # would be encoded as the document {'0': 'red', '1': 'blue'}.
-        # The keys must be in ascending numerical order.
-        #
-        my $pairs = (for .kv -> $k, $v { "$k" => $v });
-#note "Array, pairs: ", $pairs.perl;
-        my BSON::Document $d .= new($pairs);
-#note "Array: ", $d.perl;
-        $b = [~] Buf.new(BSON::C-ARRAY), encode-e-name($p.key), $d.encode;
-#note "Encoded array ($?LINE): ", $b;
+        # this handled separately after encoding is done for non-docs/arrays
       }
 
       when BSON::Binary {
@@ -968,28 +846,20 @@ class Document does Associative {
       }
 
       default {
-#note "Default {$p.key} => {$p.value//'(Any)'}: ", $p.value.WHAT;
-#        if .can('encode') and .can('bson-code') {
-#          my $code = .bson-code;
-#          $b = [~] Buf.new($code), encode-e-name($p.key), .encode;
-#        }
-#
-#        else {
-          die X::BSON.new( :operation<encode>, :type($_), :error('Not yet implemented'));
-#        }
+        die X::BSON.new( :operation<encode>, :type($_), :error('Not yet implemented'));
       }
     }
 
 #note "\nEE: ", ", {$p.key} => {$p.value//'(Any)'}: ", $p.value.WHAT, ', ', $b;
 
-    $b;
+    $b
   }
 
   #----------------------------------------------------------------------------
   # Decoding document
   #----------------------------------------------------------------------------
   method decode ( Buf:D $data --> Nil ) {
-#note "Decode data: ", $data.perl;
+
     $!encoded-document = $data;
 
     @!keys = ();
@@ -1053,6 +923,7 @@ class Document does Associative {
       # 64-bit floating point
       when BSON::C-DOUBLE {
 
+#`{{
         my $c = -> $i is copy {
           my $v = decode-double( $!encoded-document, $i);
 #note "DBL: $key, $idx = @!values[$idx]";
@@ -1064,11 +935,23 @@ class Document does Associative {
                 )
           )
         }
+}}
 
         my Int $i = $!index;
         $!index += BSON::C-DOUBLE-SIZE;
 #note "DBL Subbuf: ", $!encoded-document.subbuf( $i, BSON::C-DOUBLE-SIZE);
-        %!promises{$key} = Promise.start( { $c($i) } );
+        %!promises{$key} = Promise.start( {
+            my $v = decode-double( $!encoded-document, $i);
+  #note "DBL: $key, $idx = @!values[$idx]";
+
+            # Return total section of binary data
+            ( $v, $!encoded-document.subbuf(
+                    $decode-start ..^            # At bson code
+                    ($i + BSON::C-DOUBLE-SIZE)   # $i is at code + key further
+                  )
+            )
+          }
+        );
       }
 
       # String type
