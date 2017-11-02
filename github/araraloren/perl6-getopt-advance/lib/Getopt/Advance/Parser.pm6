@@ -404,50 +404,77 @@ sub process-main($optset, @noa) {
 sub process-pos($optset, @noa is copy) {
     my %cmd = $optset.get-cmd();
     my %pos = $optset.get-pos();
-    my $cmd-matched = False;
-    
+    my Array %need-sort-pos;
+    my ($cmd-matched, $front-matched) = (False, False);
+
+    # check cmd
     if %cmd.elems > 0 {
         if +@noa == 0 {
             ga-try-next("Need command: < {%cmd.values>>.usage.join("|")} >.");
         } else {
-	    my $matched = False;
             my @cmdargs = @noa[1..*-1];
             for %cmd.values() -> $cmd {
                 # check command
                 if $cmd.match-name(@noa[0].value) {
-                    # exclude the cmd name
-                    $matched ||= $cmd.($optset, @cmdargs);
-                }
-            }
-            # if cmd matched, exclude the cmd name
-            @noa.shift if $matched;
-	    $cmd-matched = $matched;
-	    # this check front/0 pos[Int], not call callback
-            unless $matched {
-                # when no command matched, check if there
-                # any front pos[Int] can match
-                for %pos.values() -> $pos {
-                    if $pos.index ~~ Int {
-                        for @noa -> $noa {
-                            if $pos.match-index(+@noa, 0) {
-                                $matched = True;
-                            }
-                        }
+                    if $cmd.($optset, @cmdargs) {
+                        # exclude the cmd name
+                        @noa.shift;
+                        $cmd-matched = True;
+                        last;
                     }
                 }
             }
-            unless $matched {
-                # no cmd or pos matched
-                ga-try-next("Not recongnize command: {@noa[0].value}.");
+        }
+    }
+    # if cmd match, pos check start from the next non-option argument
+    for %pos.values -> $pos {
+        %need-sort-pos{
+            -> $index {
+                $index ~~ WhateverCode ?? $index.(+@noa) !! $index;
+            }($pos.index);
+        }.push: $pos;
+    }
+
+    my @fix-noa = $cmd-matched ?? @noa.map({ $^a.clone(index => $^a.index - 1); }) !! @noa;
+
+    # check front pos
+    if +@noa > 0 {
+        for @(%need-sort-pos{0}) -> $front {
+            try {
+                if $front.($optset, @fix-noa[0]) {
+                    $front-matched = True;
+                    last;
+                }
+                CATCH {
+                    when X::GA::PosCallFailed {}
+                    default {
+                        ...
+                    }
+                }
             }
         }
     }
-    if +@noa > 0 {
-        for %pos.values() -> $pos {
-            for @noa -> $noa {
-	        # fix this index when cmd name matched
-                if $pos.match-index(+@noa, $cmd-matched ?? $noa.index - 1 !! $noa.index) {
-                    $pos.($optset, $noa);
+
+    if (%cmd.elems > 0 && not $cmd-matched)
+        && (%need-sort-pos{0}.elems > 0 && not $front-matched) {
+        # no cmd or pos matched, and pos is optional
+        ga-try-next("Not recongnize command: {@noa[0].value}.");
+    }
+
+    # check other pos
+    for %need-sort-pos.keys.sort.[1..*-1] -> $index {
+        if +@noa > $index {
+            for @(%need-sort-pos{$index}) -> $pos {
+                try {
+                    if $pos.($optset, @fix-noa[$index]) {
+                        last;
+                    }
+                    CATCH {
+                        when X::GA::PosCallFailed {}
+                        default {
+                            ...
+                        }
+                    }
                 }
             }
         }

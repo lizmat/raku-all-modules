@@ -19,8 +19,13 @@ sub ga-invalid-value(Str $msg) is export {
     .throw;
 }
 
-class X::GA::OptionTypeInvalid is X::GA::Exception { }
+class X::GA::PosCallFailed is X::GA::Exception { }
 
+sub ga-try-next-pos(Str $msg) is export {
+    X::GA::PosCallFailed
+    .new(message => $msg)
+    .throw;
+}
 
 class X::GA::Error is X::GA::Exception { }
 
