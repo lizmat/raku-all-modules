@@ -1,5 +1,5 @@
 use v6;
-unit class Email::Valid:ver<1.0.0>:auth<github:demayl>;
+unit class Email::Valid:ver<1.0.1>:auth<github:demayl>;
 
 use Net::DNS; # Required only when :mx_check( True )
 #use Net::SMTP;
@@ -48,7 +48,7 @@ my grammar IPv6 {
     token ipv6-short { <ipv6-block> ** 1..6 % <.ipv6-sep> <.ipv6-sep>**2 <ipv6-block> ** 1..6 % <.ipv6-sep> <?{$/<ipv6-block>.elems < 8}> <!after ':'0+>  }
     token ipv6-tiny  { <.ipv6-sep> ** 2 <ipv6-block> <!after ':'0+> }
     token ipv6-sep   { ':' }
-    token ipv6-block { :i <[ a..f 0..9 ]> ** 1..4 }
+    token ipv6-block { :i <[ a..f 0..9 ]> ** 1..4 } # there is a <xdigit>
 }
 
 
@@ -60,8 +60,9 @@ my grammar Email::Valid::Tokens is IPv4 is IPv6 {
     token mailbox { <quoted> | <:alpha +digit> [\w|'.'|'%'|'+'|'-'|"'"]+<!after < . % + - >> } # we can extend allowed characters or allow quoted mailboxes. RFC5322 !#$%&'*+-/=?^_`{|}~
     regex quoted  { ('"'|"'")  [. <!after '='>]**{1..64} $0 }  #Any printable character ( execept = ) is valid in quoted email .... Add more quotation marks ?
     token tld     { [ 'xn--' <:alpha +digit> ** 2..* | <:alpha> ** 2..15 ] }
+    token d_part  { [ <!before ['-'|<!before 'xn'>[<:alpha>|<[0..9]>|'-']**1..2'--']> [ 'xn--' <:alpha +digit> ** 2..* | [<:alpha>|<[0..9]>|'-']+ ] <!after '-'> '.' ] } # RFC-5891:4.2.3.1 disallow double hypen in 3+4 pos in domain part
     token domain  { 
-        ([ <!before '-'> [ 'xn--' <:alpha +digit> ** 2..* | [\w | '-']+ ] <!after '-'> '.' ]) ** {1..$max_subd_parts} <?{ all($0.flat) ~~ /^. ** 2..64$/ }>
+        (<d_part>) ** {1..$max_subd_parts} <?{ all($0.flat) ~~ /^. ** 2..64$/ }>
          <tld> || \[<ipv4-host>\] || \[ < I i > < P p > < V v >6':'<ipv6-host>\]
     }
 }

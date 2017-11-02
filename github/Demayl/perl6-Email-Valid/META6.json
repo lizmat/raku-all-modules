@@ -2,7 +2,7 @@
     "perl"        : "6.*",
     "name"        : "Email::Valid",
     "license"     : "Artistic-2.0",
-    "version"     : "1.0.0",
+    "version"     : "1.0.1",
     "description" : "Email validator for Perl6",
     "tags"        : ["Email", "Valid", "Validator"],
     "provides": {

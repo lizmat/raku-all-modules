@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 43;
+plan 54;
 use Email::Valid;
 my Email::Valid $validator .= new();
 
@@ -35,7 +35,12 @@ ok $validator.validate('wtf@dom.trfgttrfgttrfgt'), 'Test long tld part 1' ;
 ok $validator.validate('wtf@dom.trfgttrfgttrfg'), 'Test long tld part 2' ;
 ok $validator.validate('box@xn--c1arf.xn--e1aybc.xn--90ae' ), 'IDN domain with idn TLD';
 ok $validator.validate('кутия@xn--c1arf.xn--e1aybc.xn--90ae' ), 'IDN domain with idn TLD & cyrillic mailbox';
+ok $validator.validate('omg@xn----7sbabaju1atr8asehc6bb.com' ), 'IDN domain with idn TLD & cyrillic mailbox2';
+nok $validator.validate('omg@xn-_--7sbabaju1atr8asehc6bb.com' ), 'IDN domain with idn TLD & cyrillic mailbox & underscore';
+nok $validator.validate('omg@-wf--7sbabaju1atr8asehc6bb.com' ), 'IDN domain with idn TLD & cyrillic mailbox & start hypen';
 ok $validator.validate('кутия@тест.ру' ), 'Cyrillic mailbox & domain';
+ok $validator.validate('кутия@те-ст.ру' ), 'Cyrillic mailbox & domain2';
+nok $validator.validate('кутия@те_ст.ру' ), 'Cyrillic mailbox & domain underscore';
 
 nok $validator.validate('"wtf is this"@test.ws' ), 'Quoted email';
 nok $validator.validate('" "@test.ws' ), 'Quoted with empty space';
@@ -53,3 +58,9 @@ ok $validator.validate('"a"@test.ws' ), 'Quoted with 1 alpha';
 nok $validator.validate('""@test.ws' ), 'Quoted empty';
 nok $validator.validate('"a=a"@test.ws' ), 'Quoted =';
 nok $validator.validate('"="@test.ws' ), 'Quoted = empty';
+nok $validator.validate('test@ma_ail.com' ), 'Underscore';
+nok $validator.validate('test@ma_.com' ), 'Underscore2';
+nok $validator.validate('test@ma_-.com' ), 'Underscore3';
+nok $validator.validate('test@123_321.com' ), 'Underscore4';
+nok $validator.validate('test@xx-----321.com' ), 'RFC-5891 4.2.3.1 3,4 pos';
+ok $validator.validate('test@xn-----321.com' ), 'RFC-5891 4.2.3.1 puny exclude';
