@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/DateTime-DST.git
 	branch = master
-	commit = c793f49b3e7bd254526678d6c0655e93384f0905
-	parent = a19725cf6d5709c761d61f1d7f04d6abc7f9086d
+	commit = c6bf179af5798565c292f4a45fefb44948830e80
+	parent = 3058021c0a1f62ae9d99c9d789b8468405b2dc27
 	cmdver = 0.4.0
