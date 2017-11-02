@@ -2,6 +2,8 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.11.5
+  * Modified Javascript class to encode the scope immediately on instantiation instead of later when the document is encoded as a whole.
 * 0.11.4
   * Bug fixed; hangups while encoding. Threads are only started when encode() is called.
 * 0.11.3

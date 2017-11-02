@@ -80,6 +80,7 @@ Timing 50 iterations ...
 | 20170225 | 017.02-56-g9f10434, MoarVM 2017.02-7-g3d85900 | 20.9844
 | 20170225 | Dropped positional role from BSON::Document | 21.7285
 | 20170718 | 2017.07-19-g1818ad2, bugfix hangup decoding | 14.7199
+| 20171101 | 2017.10-25-gbaed02bf7 MoarVM 2017.10, lot of fixes | 15.9207
 
 ###  Original BSON methods with hashes.
 * I think this was about 2015 06 or so. In the mean time Hashing should be faster too!

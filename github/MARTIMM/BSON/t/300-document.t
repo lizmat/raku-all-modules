@@ -328,5 +328,4 @@ subtest "Exception tests", {
 
 #-------------------------------------------------------------------------------
 # Cleanup
-done-testing();
-exit(0);
+done-testing;

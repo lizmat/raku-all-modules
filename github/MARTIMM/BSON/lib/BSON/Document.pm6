@@ -268,24 +268,13 @@ class Document does Associative {
   }
 
   #----------------------------------------------------------------------------
-  multi method find-key ( Int:D $idx --> Str ) {
+  method find-key ( Str:D $key --> Int ) {
 
-    my $key = $idx >= @!keys.elems ?? 'key' ~ $idx !! @!keys[$idx];
-    return self{$key}:exists ?? $key !! Str;
-  }
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  multi method find-key ( Str:D $key --> Int ) {
-
-    my Int $idx;
-    loop ( my $i = 0; $i < @!keys.elems; $i++) {
-      if @!keys[$i] eq $key {
-        $idx = $i;
-        last;
-      }
+    for ^@!keys.elems -> $i {
+      return $i if @!keys[$i] eq $key
     }
 
-    $idx;
+    Int
   }
 
 
@@ -297,7 +286,6 @@ class Document does Associative {
 
     my $value;
     my Int $idx = self.find-key($key);
-#note "Key: $key, {$idx//'-'}";
 
     if $idx.defined {
 #note "return @!values[$idx]";
@@ -363,7 +351,7 @@ class Document does Associative {
     my BSON::Document $v = $new;
 
     my Int $idx = self.find-key($k);
-    $idx = @!keys.elems unless $idx.defined;
+    $idx //= @!keys.elems;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
   }
@@ -388,7 +376,7 @@ class Document does Associative {
 
     my Str $k = $key;
     my Int $idx = self.find-key($k);
-    $idx = @!keys.elems unless $idx.defined;
+    $idx //= @!keys.elems;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
   }
@@ -404,7 +392,7 @@ class Document does Associative {
     $v{$new.key} = $new.value;
 
     my Int $idx = self.find-key($k);
-    $idx = @!keys.elems unless $idx.defined;
+    $idx //= @!keys.elems;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
   }
@@ -446,7 +434,7 @@ class Document does Associative {
     my Array $v = $new;
 
     my Int $idx = self.find-key($k);
-    $idx = @!keys.elems unless $idx.defined;
+    $idx //= @!keys.elems;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
   }
@@ -460,9 +448,8 @@ class Document does Associative {
 
     my Str $k = $key;
     my $v = $new;
-
     my Int $idx = self.find-key($k);
-    $idx = @!keys.elems unless $idx.defined;
+    $idx //= @!keys.elems;
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
   }
@@ -538,9 +525,7 @@ class Document does Associative {
   method modify-array ( Str $key, Str $operation, $data --> List ) {
 
     my Int $idx = self.find-key($key);
-    if self{$key}:exists
-       and self{$key} ~~ Array
-       and self{$key}.can($operation) {
+    if self{$key}:exists and self{$key} ~~ Array and self{$key}.can($operation) {
 
       my $array = self{$key};
       $array."$operation"($data);
@@ -557,7 +542,8 @@ class Document does Associative {
 
     # encode all in parallel except for Arrays and Documents. This level must
     # be done first.
-    loop ( my $idx = 0; $idx < @!keys.elems; $idx++) {
+    #loop ( my $idx = 0; $idx < @!keys.elems; $idx++) {
+    for ^@!keys.elems -> $idx {
       my $v = @!values[$idx];
       next if $v ~~ any(Array|BSON::Document);
 
@@ -570,7 +556,8 @@ class Document does Associative {
 
     await %!promises.values;
 
-    loop ( $idx = 0; $idx < @!keys.elems; $idx++) {
+    #loop ( $idx = 0; $idx < @!keys.elems; $idx++) {
+    for ^@!keys.elems -> $idx {
       my $key = @!keys[$idx];
       next unless %!promises{$key}.defined;
       @!encoded-entries[$idx] = %!promises{$key}.result;
@@ -579,7 +566,8 @@ class Document does Associative {
     %!promises = ();
 
     # filling the gaps of arays and nested documents
-    loop ( $idx = 0; $idx < @!keys.elems; $idx++) {
+    #loop ( $idx = 0; $idx < @!keys.elems; $idx++) {
+    for ^@!keys.elems -> $idx {
       my $key = @!keys[$idx];
       if @!values[$idx] ~~ Array {
 
@@ -942,7 +930,7 @@ class Document does Associative {
 #note "DBL Subbuf: ", $!encoded-document.subbuf( $i, BSON::C-DOUBLE-SIZE);
         %!promises{$key} = Promise.start( {
             my $v = decode-double( $!encoded-document, $i);
-  #note "DBL: $key, $idx = @!values[$idx]";
+#note "DBL: $key, $idx = @!values[$idx]";
 
             # Return total section of binary data
             ( $v, $!encoded-document.subbuf(

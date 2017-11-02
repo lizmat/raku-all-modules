@@ -138,5 +138,4 @@ subtest "Big, wide and deep nesting", {
 
 #------------------------------------------------------------------------------
 # Cleanup
-done-testing();
-exit(0);
+done-testing;

@@ -10,20 +10,20 @@ class Javascript {
 
   has Str $.javascript;
   has $.scope;
+  has Buf $!encoded-scope;
 
   has Bool $.has-javascript = False;
   has Bool $.has-scope = False;
 
   #---------------------------------------------------------------------------
-  submethod BUILD ( Str :$javascript, :$scope ) {
-
-    # Store the attribute values. ? sets True if defined and filled.
-    #
-    $!javascript = $javascript;
-    $!scope = $scope;
+  submethod BUILD (
+    Str :$!javascript,
+    :$!scope where (.^name eq 'BSON::Document' or $_ ~~ Any)
+  ) {
 
     $!has-javascript = ?$!javascript;
-    $!has-scope = ?$!scope if $scope.^name ~~ 'BSON::Document';
+    $!has-scope = ?$!scope;
+    $!encoded-scope = $!scope.encode if $!has-scope;
   }
 
   #---------------------------------------------------------------------------
@@ -58,19 +58,10 @@ class Javascript {
   #---------------------------------------------------------------------------
   method encode ( --> Buf ) {
 
-    my Buf $b;
-
+    my Buf $js;
     if $!has-javascript {
-      my Buf $js = encode-string($!javascript);
-
-      if $!has-scope {
-        my Buf $scope = $!scope.encode;
-        $b = [~] $js, $scope;
-      }
-
-      else {
-        $b = $js;
-      }
+      $js = encode-string($!javascript);
+      $js ~= $!encoded-scope if $!has-scope;
     }
 
     else {
@@ -80,7 +71,7 @@ class Javascript {
       );
     }
 
-    $b;
+    $js
   }
 
   #---------------------------------------------------------------------------
