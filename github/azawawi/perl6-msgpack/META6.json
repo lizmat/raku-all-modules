@@ -1,0 +1,32 @@
+{
+    "auth"          : "github:azawawi",
+    "authors"       : [
+        "Ahmad M. Zawawi"
+    ],
+    "description"   : "Perl 6 Interface to libmsgpack",
+    "license"       : "MIT",
+    "name"          : "MsgPack",
+    "perl"          : "6.c",
+    "provides"      : {
+        "MsgPack"         : "lib/MsgPack.pm6",
+        "MsgPack::Native" : "lib/MsgPack/Native.pm6",
+        "MsgPack::Packer" : "lib/MsgPack/Packer.pm6"
+    },
+    "resources"     : [
+        "libmsgpack-perl6.dll",
+        "libmsgpack-perl6.dylib",
+        "libmsgpack-perl6.so"
+    ],
+    "source-url"    : "git://github.com/azawawi/perl6-msgpack.git",
+    "tags"          : [
+        "Data",
+        "MessagePack",
+        "msgpack",
+        "NativeCall"
+    ],
+    "test-depends"  : [
+        "LibraryCheck",
+        "Test"
+    ],
+    "version"       : "0.0.3"
+}

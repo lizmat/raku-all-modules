@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-msgpack.git
+	branch = master
+	commit = fa164804c1611e9f77450de791af08236a4d75fa
+	parent = 315736d5f49627def89ea66d9168b47d915b5ee0
+	cmdver = 0.4.0
