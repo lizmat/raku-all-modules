@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/croservices/cro-websocket.git
 	branch = master
-	commit = bfa730d1e41fe74da69938ee8a563e9c0de8649d
-	parent = 60be0efc99c629b578a3b3602a85c0302c496542
+	commit = 5b2ab6919dccd3c7ae0ca8b74df919a91317241c
+	parent = 99081931db79c522fe32d6c81ce4e7a2429ba0ce
 	cmdver = 0.4.0
