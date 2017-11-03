@@ -15,10 +15,9 @@ my %Units =
                 'gram'
     ),
     weight-imperial => (
-        ton => 160,
-            stone => 14,
-                pound => 16,
-                    'ounce'
+        ton => 2_000,
+            pound => 16,
+                'ounce'
     ),
     length => (
         'light year' => 9_460_730_472.5808,
@@ -45,8 +44,9 @@ my %Units =
     volume-imperial => (
         gallon => 4,
             quart => 2,
-                pint => 20,
-                    'fluid ounce'
+                pint => 2,
+                    cup => 8,
+                        'fluid ounce'
     ),
     info => (
         yottabyte => 1000, zettabyte => 1000, exabyte => 1000, petabyte => 1000,

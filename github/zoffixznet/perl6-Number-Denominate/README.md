@@ -250,8 +250,9 @@ Units of volume.
 ```perl6
     gallon => 4,
         quart => 2,
-            pint => 20,
-                'fluid ounce'
+            pint => 2,
+                cup => 8,
+                    'fluid ounce'
 ```
 Units of volume (Imperial).
 
@@ -267,10 +268,9 @@ Units of weight.
 #### `weight-imperial`
 
 ```perl6
-    ton => 160,
-        stone => 14,
-            pound => 16,
-                'ounce'
+    ton => 2_000,
+        pound => 16,
+            'ounce'
 ```
 Units of weight (Imperial).
 
