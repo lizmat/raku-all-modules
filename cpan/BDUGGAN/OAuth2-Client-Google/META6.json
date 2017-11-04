@@ -1,0 +1,23 @@
+{
+  "authors" : [
+    "Brian Duggan"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "HTTP::UserAgent",
+    "IO::Socket::SSL",
+    "JSON::Fast"
+  ],
+  "description" : "Authenticate against Google's OAuth2 API.",
+  "license" : "Artistic-2.0",
+  "name" : "OAuth2::Client::Google",
+  "perl" : "6.c",
+  "provides" : {
+    "OAuth2::Client::Google" : "lib/OAuth2/Client/Google.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/bduggan/p6-oauth2-client-google.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.1.0"
+}
