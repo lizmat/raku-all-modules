@@ -8,9 +8,10 @@
     "name"          : "MsgPack",
     "perl"          : "6.c",
     "provides"      : {
-        "MsgPack"         : "lib/MsgPack.pm6",
-        "MsgPack::Native" : "lib/MsgPack/Native.pm6",
-        "MsgPack::Packer" : "lib/MsgPack/Packer.pm6"
+        "MsgPack"           : "lib/MsgPack.pm6",
+        "MsgPack::Native"   : "lib/MsgPack/Native.pm6",
+        "MsgPack::Packer"   : "lib/MsgPack/Packer.pm6",
+        "MsgPack::Unpacker" : "lib/MsgPack/Unpacker.pm6"
     },
     "resources"     : [
         "libmsgpack-perl6.dll",
@@ -20,6 +21,7 @@
     "source-url"    : "git://github.com/azawawi/perl6-msgpack.git",
     "tags"          : [
         "Data",
+        "JSON",
         "MessagePack",
         "msgpack",
         "NativeCall"
@@ -28,5 +30,5 @@
         "LibraryCheck",
         "Test"
     ],
-    "version"       : "0.0.3"
+    "version"       : "0.0.5"
 }

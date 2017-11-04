@@ -16,6 +16,9 @@ sub library {
 sub libmsgpack {
     constant LIB = 'msgpackc';
 
+    # macOS
+    return "libmsgpackc.dylib" if $*KERNEL.name eq 'darwin';
+
 	# Linux/Unix
 	if library-exists(LIB, v2) {
 		return sprintf('lib%s.so.2', LIB);
@@ -81,6 +84,41 @@ sub msgpack_pack_array(msgpack_packer $pk is rw, size_t $n)
     is export
     { * }
 
+sub msgpack_pack_map(msgpack_packer $pk is rw, size_t $n)
+    returns int32
+    is native(&library)
+    is symbol('wrapped_msgpack_pack_map')
+    is export
+    { * }
+
+sub msgpack_pack_bin(msgpack_packer $pk is rw, size_t $n)
+    returns int32
+    is native(&library)
+    is symbol('wrapped_msgpack_pack_bin')
+    is export
+    { * }
+
+sub msgpack_pack_bin_body(msgpack_packer $pk is rw, CArray[uint8] $b, size_t $l)
+    returns int32
+    is native(&library)
+    is symbol('wrapped_msgpack_pack_bin_body')
+    is export
+    { * }
+
+sub msgpack_pack_raw(msgpack_packer $pk is rw, size_t $n)
+    returns int32
+    is native(&library)
+    is symbol('wrapped_msgpack_pack_raw')
+    is export
+    { * }
+
+sub msgpack_pack_raw_body(msgpack_packer $pk is rw, CArray[uint8] $b, size_t $l)
+    returns int32
+    is native(&library)
+    is symbol('wrapped_msgpack_pack_raw_body')
+    is export
+    { * }
+
 sub msgpack_pack_int(msgpack_packer $pk is rw, int32 $d)
     returns int32
     is native(&library)
@@ -120,4 +158,8 @@ sub msgpack_pack_str_body(msgpack_packer $pk is rw, Str $b, size_t $l)
 sub msgpack_version          is native(&libmsgpack) is export returns Str   { * }
 sub msgpack_version_major    is native(&libmsgpack) is export returns int32 { * }
 sub msgpack_version_minor    is native(&libmsgpack) is export returns int32 { * }
-sub msgpack_version_revision is native(&libmsgpack) is export returns int32 { * }
+#
+# TODO handle backward compatibility under 1.0.0
+# See https://github.com/msgpack/msgpack-c/blob/master/CHANGELOG.md
+#
+#sub msgpack_version_revision is native(&libmsgpack) is export returns int32 { * }

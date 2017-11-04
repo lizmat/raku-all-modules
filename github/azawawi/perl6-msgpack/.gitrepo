@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-msgpack.git
 	branch = master
-	commit = fa164804c1611e9f77450de791af08236a4d75fa
-	parent = 315736d5f49627def89ea66d9168b47d915b5ee0
+	commit = 603fcffd09ee717edf2b5914e431a3d227d8919d
+	parent = beb2dc9f1faea6b61d5d3455636fe3e444590dd1
 	cmdver = 0.4.0

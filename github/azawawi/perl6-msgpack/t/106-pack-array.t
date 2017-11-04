@@ -17,6 +17,4 @@ ok MsgPack::pack( [1.1,-2.2,3.3,-4.4] ) ~~ Blob.new(148,203,63,241,153,153,153,1
 ok MsgPack::pack( [ 1 xx 16 ] ) ~~ Blob.new( 0xdc, 0x00, 0x10, 0x01 xx 16 ), "Array packed correctly";
 ok MsgPack::pack( [ 'a' xx 16 ] ) ~~ Blob.new( 0xdc, 0x00, 0x10, (0xa1, 0x61) xx 16 ), "Array packed correctly";
 
-#TODO Enable this test once Hash is implemented
-skip 'Hash is not implemented yet';
-#ok MsgPack::pack( [{},{ a=> 2},3] ) ~~ Blob.new(147,128,129,161,97,2,3), "Array packed correctly";
+ok MsgPack::pack( [{},{ a=> 2},3] ) ~~ Blob.new(147,128,129,161,97,2,3), "Array packed correctly";

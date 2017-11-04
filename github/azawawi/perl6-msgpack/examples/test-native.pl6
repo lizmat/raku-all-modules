@@ -35,12 +35,6 @@ msgpack_zone_new
 msgpack_zone_push_finalizer_expand
 =end TODO
 
-# msgpack/version.h
-sub msgpack_version          is native(&library) returns Str   { * }
-sub msgpack_version_major    is native(&library) returns int32 { * }
-sub msgpack_version_minor    is native(&library) returns int32 { * }
-sub msgpack_version_revision is native(&library) returns int32 { * }
-
 class msgpack_zone is repr('CStruct') {
 	has int32 $something; #TODO implement msgpack_zone
 }
@@ -55,13 +49,6 @@ class msgpack_unpacker is repr('CStruct') {
  	has size_t 				  $initial_buffer_size;
  	has Pointer 		      $ctx;
 }
-
-#TODO implement it via proper CUnion once it can be set in the constructor
-# sizeof(msgpack_object_union) = 16
-#class msgpack_object_union is repr('CStruct') {
-	#has int8 $.c1 is rw;
-	#has int8 $.c2 is rw;
-#};
 
 class msgpack_object is repr('CStruct') {
 	has int32 $.type is rw; # msgpack_object_type
@@ -201,10 +188,5 @@ my $pk = msgpack_packer.new;
 #msgpack_object_print($stdout, $o);
 
 #say msgpack_object_equal($o, $o);
-
-say "Version:  " ~ msgpack_version;
-say "Minor:    " ~ msgpack_version_major;
-say "Minor:    " ~ msgpack_version_minor;
-say "Revision: " ~ msgpack_version_revision;
 
 # vim: set tabstop=4:
