@@ -46,7 +46,7 @@ my @footnotes;
 my %crossrefs;
 
  sub Debug(Callable $)  { }         # Disable debug code
-#sub Debug(Callable $c) { $c() }    # Enable debug code
+# sub Debug(Callable $c) { $c() }    # Enable debug code
 
 sub escape_html(Str $str) returns Str {
     return $str unless $str ~~ /<[&<>"']>/;
@@ -348,7 +348,7 @@ multi sub node2html(Pod::Block::Named $node) {
             return qq[<img src="$url" />];
         }
         when 'Xhtml' | 'Html' {
-            unescape_html node2html $node.contents
+            unescape_html node2rawhtml $node.contents
         }
         default {
             if $node.name eq 'TITLE' {
@@ -373,6 +373,10 @@ multi sub node2html(Pod::Block::Named $node) {
                 ~ "</section>\n";
         }
     }
+}
+
+sub node2rawhtml(Positional $node) {
+    return $node.map({ $_.contents }).join
 }
 
 multi sub node2html(Pod::Block::Para $node) {
