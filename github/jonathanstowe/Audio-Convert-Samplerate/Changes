@@ -1,0 +1,14 @@
+v0.0.7		Tue Apr 26 16:03:53 2016 +0100 
+	* Spring clean
+v0.0.6		Sat Mar 12 11:04:42 2016 +0000 
+	* Remove version literal
+v0.0.5		Thu Dec 24 23:10:19 2015 +0000 
+	* Changes for 6.c
+		 
+	* Up version
+		 
+	* Need to coerce 0 for num typed native array element
+		 
+	* done -> done-testing
+		 
+	* Add more fully featured example
