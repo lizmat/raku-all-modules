@@ -1,0 +1,20 @@
+{
+  "authors" : [
+    "Shoichi Kaji"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "a test module",
+  "license" : "Artistic-2.0",
+  "name" : "Acme::Test::Module",
+  "perl" : "6.c",
+  "provides" : {
+    "Acme::Test::Module" : "lib/Acme/Test/Module.pm6",
+    "Acme::Test::Module::Foo" : "lib/Acme/Test/Module/Foo.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/skaji/perl6-Acme-Test-Module.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "1.0.3"
+}
