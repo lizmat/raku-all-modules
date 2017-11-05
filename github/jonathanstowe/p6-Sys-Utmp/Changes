@@ -1,0 +1,14 @@
+v0.0.10		Sat Sep 30 15:47:04 2017 +0100 
+	* Fix to work on NetBSD
+v0.0.9		Tue Jan 24 21:00:42 2017 +0000 
+	* Make zef compatible
+v0.0.8		Sat Mar 12 11:17:50 2016 +0000 
+	* Remove version literal
+v0.0.7		Fri Dec 25 17:48:05 2015 +0000 
+	* Update for 6.c
+		 
+	* Update build and library discovery for post @*INC world
+		 
+	* done -> done-testing
+		 
+	* Add ver/auth to class Add vim modeline
