@@ -548,50 +548,73 @@ say %h.perl
 =head2 C«<{$x}>» vs C«$($x)»: Implicit EVAL
 
 Sometimes you may need to match a generated string in a regex. The
-right way to do it is to use C<$(…)> syntax.
+right way to do it is to use C<$(…)> or C«<{…}>» syntax.
 
-=for code
-my $x = ‘ailemac’;
-say ‘I ♥ camelia’ ~~ / $($x.flip) / # OUTPUT: «｢camelia｣␤»
+    =for code
+    my $x = ‘ailemac’;
+    say ‘I ♥ camelia’ ~~ / $($x.flip) / # OUTPUT: «｢camelia｣␤»
+    my $x = ‘ailemac’;
+    say ‘I ♥ camelia’ ~~ / <{$x.flip}> / # OUTPUT: «｢camelia｣␤»
 
 However, there is a wrong way to write it, and the problem is that
 it works I<sometimes>.
 
-=for code
-my $x = ‘ailemac’;
-#                    ⚠ ↓↓ WRONG ↓↓ ⚠
-say ‘I ♥ camelia’ ~~ / <{$x.flip}> / # OUTPUT: «｢camelia｣␤»
-
-Internally it EVAL-s the given string inside an anonymous regex, and
-that works alright with simple strings. However, it immediately breaks
+Internally C«<{…}>» EVAL-s the given string inside an anonymous regex, while
+C<$(…)> lexically interpolates the given string. So C«<{…}>» immediately breaks
 with more complicated inputs. For example:
 
-=begin comment
-Backtraces from EVALs are less than awesome (RT #132015).
-The output was modified a little bit so that there's no distraction.
-=end comment
-=for code :skip-test
-my $x = ‘ailemac#’;
-#                    ⚠ ↓↓ WRONG ↓↓ ⚠
-say ‘I ♥ camelia’ ~~ / <{$x.flip}> / # OUTPUT: «｢camelia｣␤»
-# OUTPUT:
-# ===SORRY!===
-# Regex not terminated.
-# at EVAL_0:1
-# ------> anon regex { #camelia}⏏<EOL>
-# Malformed regex
-# at EVAL_0:1
-# ------> anon regex { #camelia}⏏<EOL>
-#     expecting any of:
-#         infix stopper
+    =for code :skip-test
+    my $x = ‘ailemac#’;
+    say ‘I ♥ #camelia’ ~~ / $($x.flip) /; # OUTPUT: «｢#camelia｣␤»
+    #                    ⚠ ↓↓ WRONG ↓↓ ⚠
+    say ‘I ♥ camelia’ ~~ / <{$x.flip}> /; # OUTPUT: «｢camelia｣␤»
+    # OUTPUT:
+    # ===SORRY!===
+    # Regex not terminated.
+    # at EVAL_0:1
+    # ------> anon regex { #camelia}⏏<EOL>
+    # Malformed regex
+    # at EVAL_0:1
+    # ------> anon regex { #camelia}⏏<EOL>
+    #     expecting any of:
+    #         infix stopper
 
 Therefore, try not to use C«<{}>» unless you really need EVAL.
 
 Note that even though EVAL is normally considered unsafe, in this case
 it is restricted to a set of safe operations (which is why it works
-without L<MONKEY-SEE-NO-EVAL> pragma). In theory, careless use of
-C«<{}>» will only result in an exception being thrown, and should not
-introduce security issues.
+without L<MONKEY-SEE-NO-EVAL|
+/language/pragmas#index-entry-MONKEY-SEE-NO-EVAL-MONKEY-SEE-NO-EVAL> pragma).
+In theory, careless use of C«<{}>» will only result in an exception being
+thrown, and should not introduce security issues.
+
+=head2 C<|> vs C<||>: which branch will win
+
+To match one of several possible alternatives, C<||> or C<|> will be used. But
+they are so different.
+
+While there are more alternations than one matched, for those separated by
+C<||>, the first matching alternation wins; for those separated by C<|>,
+which to win is decided by LTM strategy. See also:
+L<documentation on C<||>|/language/regexes#Alternation:_||> and
+L<documentation on C<|>|/language/regexes#Longest_Alternation:_|>.
+
+For advice of which to use: for simple regexes just using C<||> instead of C<|>
+will get you familiar semantics, but if writing grammars then it's useful to
+learn about LTM and declarative prefixes and prefer C<|>. And keep yourself
+away from using them in one regex. When you have to do that, add parentheses
+and ensure that you know how LTM strategy works to make the code
+do what you want.
+
+The trap typically arises when you try to mix both C<|> and C<||> in
+the same regex:
+
+=for code
+say 42 ~~ / [  0 || 42 ] | 4/; # OUTPUT: «｢4｣␤»
+say 42 ~~ / [ 42 ||  0 ] | 4/; # OUTPUT: «｢42｣␤»
+
+The code above may seem like it is producing a wrong result, but the
+implementation is actually right.
 
 =head1 Common Precedence Mistakes
 
@@ -1037,6 +1060,7 @@ my $b = A.new;
 $b.sayit;      # nothing
 
 =head2 C<LEAVE> phaser and C<exit>
+
 Using L«C<LEAVE>|/syntax/LEAVE» phaser to perform graceful resource
 termination is a common pattern, but it does not cover the case when
 the program is stopped with L«C<exit>|/routine/exit».

@@ -623,14 +623,6 @@ sub find-definitions(:$pod, :$origin, :$min-level = -1, :$url) {
                 $created.subkinds   = @subkinds;
                 $created.categories = @subkinds;
             }
-            if %attr<kind> eq 'routine' {
-                %routines-by-type{$origin.name}.append: $chunk;
-                write-qualified-method-call(
-                    :$name,
-                    :pod($chunk),
-                    :type($origin.name),
-                );
-            }
         }
         $i = $new-i + 1;
     }
@@ -880,7 +872,7 @@ sub write-sub-index(:$kind, :$category, :&summary = {Nil}) {
             .grep({$category ⊆ .categories})\ # XXX
             .categorize(*.name).sort(*.key)>>.value
             .map({[
-                .map({.subkinds // Nil}).unique.join(', '),
+                .map({slip .subkinds // Nil}).unique.join(', '),
                 pod-link(.[0].name, .[0].url),
                 .&summary
             ]})
@@ -893,12 +885,10 @@ sub write-kind($kind) {
     $*DR.lookup($kind, :by<kind>)
         .categorize({.name})
         .kv.map: -> $name, @docs {
-            my @subkinds = @docs.map({.subkinds}).unique;
-            my $subkind = @subkinds.squish(with => &infix:<~~>) == 1
-                          ?? @subkinds.list[0]
-                          !! $kind;
+            my @subkinds = @docs.map({slip .subkinds}).unique;
+            my $subkind = @subkinds == 1 ?? @subkinds[0] !! $kind;
             my $pod = pod-with-title(
-                "Documentation for $subkind $name",
+                "$subkind $name",
                 pod-block("Documentation for $subkind $name, assembled from the following types:"),
                 @docs.map({
                     pod-heading("{.origin.human-kind} {.origin.name}"),
@@ -924,15 +914,6 @@ sub write-kind($kind) {
     say '';
 }
 
-sub write-qualified-method-call(:$name!, :$pod!, :$type!) {
-    my $p = pod-with-title(
-        "Documentation for method $type.$name",
-        pod-block('From ', pod-link($type, "/type/{$type}#$name")),
-        @$pod,
-    );
-    return if $name ~~ / '/' /;
-    spurt "html/routine/{replace-badchars-with-goodnames $type}.{replace-badchars-with-goodnames $name}.html", p2h($p, 'routine');
-}
 sub get-temp-filename {
     state %seen-temps;
     my $temp = join '-', %*ENV<USER> // 'u', (^1_000_000).pick, 'pod_to_pyg.pod';
