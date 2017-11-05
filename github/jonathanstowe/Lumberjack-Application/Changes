@@ -1,0 +1,12 @@
+v0.0.6		Tue Jun 13 21:30:00 2017 +0100 
+	* Update to work with P6W
+v0.0.5		Sat Apr 29 12:42:57 2017 +0100 
+	* Fix for incompatible change in %?RESOURCES
+v0.0.4		Fri Nov 4 21:06:54 2016 +0000 
+	* Handle a Failure better Send charset with content type
+v0.0.3		Mon Jul 4 11:55:30 2016 +0100 
+	* Version bump
+v0.0.2		Sun May 29 08:46:00 2016 +0100 
+	* Remove version from use Lumberjack
+v0.0.1		Tue Apr 12 00:36:39 2016 +0100 
+	* INitial release
