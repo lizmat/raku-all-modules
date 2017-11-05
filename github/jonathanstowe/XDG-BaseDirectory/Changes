@@ -1,0 +1,10 @@
+v0.0.5		Tue May 31 14:48:58 2016 +0100 
+	* Implement runtime-dir Fix cache-home to return an IO::Path
+v0.0.4		Mon Apr 25 19:15:41 2016 +0100 
+	* Switch to throwing exceptions
+v0.0.3		Sat Mar 12 13:47:06 2016 +0000 
+	* Remove version literal
+		 
+	* Post GLR changes
+		 
+	* Wrong name in META.info
