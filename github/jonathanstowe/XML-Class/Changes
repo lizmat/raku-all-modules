@@ -1,0 +1,8 @@
+v0.0.4		Wed Mar 8 21:45:47 2017 +0000 
+	* Fix a test
+v0.0.3		Mon Sep 26 17:58:02 2016 +0100 
+	* Replace samewith for performance reasons
+v0.0.2		Wed Mar 23 15:21:00 2016 +0000 
+	* Allow for custom deserialise/serialise on builtins
+v0.0.1		Sun Feb 28 19:06:51 2016 +0000 
+	* Initial release
