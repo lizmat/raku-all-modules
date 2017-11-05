@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/EuclideanRhythm.git
 	branch = master
-	commit = 4493cf049561391f08de81bba1549ef816496367
-	parent = c638d7419416db6286c797f3e5b503a6b703d07e
+	commit = 62b4d60e61c0cccaad0ffe50b7c141702648cba8
+	parent = d8e8efc57c3e4b58ced17f52a155a9073c21347b
 	cmdver = 0.4.0
