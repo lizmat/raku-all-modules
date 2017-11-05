@@ -1,0 +1,6 @@
+v0.0.2		Sat Mar 12 11:12:24 2016 +0000 
+	* Remove version literal
+v0.0.1		Thu Dec 24 19:44:58 2015 +0000 
+	* Fix version tag
+		 
+	* Add travis
