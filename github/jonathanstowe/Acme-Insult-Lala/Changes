@@ -1,0 +1,6 @@
+v0.0.3		Wed Mar 8 20:44:45 2017 +0000 
+	* Fix for non-flattened args to map
+v0.0.2		Sun Sep 25 17:20:30 2016 +0100 
+	* Update the vocabulary
+v0.0.1		Mon May 9 19:42:43 2016 +0100 
+	* Initial release
