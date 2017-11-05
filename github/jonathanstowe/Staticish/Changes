@@ -1,0 +1,12 @@
+v0.0.6		Sat Mar 26 11:01:13 2016 +0000 
+	* Fix not working when precompiled
+v0.0.5		Sun Mar 6 19:23:07 2016 +0000 
+	* Need an additional hack for rw attribute accessors
+		 
+	* Change version in other place
+		 
+	* Bump version
+		 
+	* Make rw methods work somewhat properly
+		 
+	* rw accessors don't quite work yet
