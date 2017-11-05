@@ -1,0 +1,8 @@
+v0.0.4		Mon Sep 26 17:51:35 2016 +0100 
+	* Replace samewith for performance reasons
+v0.0.3		Tue Apr 26 16:15:53 2016 +0100 
+	* Switch to JSON::Fast
+v0.0.2		Tue Feb 16 18:39:58 2016 +0000 
+	* Slight change in require of role
+v0.0.1		Tue Feb 9 17:40:10 2016 +0000 
+	* First release
