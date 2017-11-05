@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/URI-FetchFile.git
 	branch = master
-	commit = 6ba36007e5161b0d51c0a2f4c471b7aab9ac3bb1
-	parent = 9e11b59d8e6e267649b8f49dfb91c66d48c836c2
+	commit = e0ad0886630830c0126c4a55aaa226439d48882f
+	parent = 89108e17291459f780404fd0d361a896af1fa673
 	cmdver = 0.4.0
