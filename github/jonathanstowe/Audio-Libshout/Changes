@@ -1,0 +1,20 @@
+v0.0.10		Tue Jan 24 21:25:29 2017 +0000 
+	* Make zef compatible
+v0.0.9		Sat May 28 22:14:13 2016 +0100 
+	* Adjust send-channel handling to deal with reliability issues
+v0.0.8		Mon Feb 29 12:07:23 2016 +0000 
+	* Fixes after testing properly with 6.c
+v0.0.7		Thu Dec 24 22:59:32 2015 +0000 
+	* Changes for 6.c
+		 
+	* Up version
+		 
+	* Update version, add Test::META
+		 
+	* done -> done-testing
+		 
+	* Bounce version add "panda" to build-depends
+		 
+	* Basically working live encoding example
+		 
+	* Add test configuration details
