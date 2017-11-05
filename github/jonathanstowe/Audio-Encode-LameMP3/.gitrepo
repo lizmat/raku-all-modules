@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Audio-Encode-LameMP3.git
 	branch = master
-	commit = 5c0db54ef1c815ae7030b881478cff8c81833418
-	parent = 7ae6d8fd3f51dd3f2ffbe693970689516ff50d2c
+	commit = 093db0fd5678d5ad2d306d6648947791d454db6c
+	parent = dd90f353b00f33cbaf306d25829b7fe3a5b5c7ac
 	cmdver = 0.4.0
