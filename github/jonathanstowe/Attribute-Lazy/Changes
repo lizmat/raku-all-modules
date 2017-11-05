@@ -1,0 +1,6 @@
+v0.0.3		Wed Dec 21 20:54:19 2016 +0000 
+	* Modernise the README and META
+v0.0.2		Sat Jan 23 18:22:08 2016 +0000 
+	* Enable the block to have acccess to the instance object
+v0.0.1		Sat Jan 23 17:07:35 2016 +0000 
+	* Initial release

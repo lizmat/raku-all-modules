@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Attribute-Lazy.git
 	branch = master
-	commit = 788e2f573b32b35875bcff7b82743577b3477df8
-	parent = d593b213da4383b30826ff5c96d1229f0602b3ba
+	commit = e27794aaaa799e926b61803c3a550df1440c1cb7
+	parent = b03dfde5b543eac47f079d4e95b95177f62efb6f
 	cmdver = 0.4.0
