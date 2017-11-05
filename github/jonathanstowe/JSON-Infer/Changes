@@ -1,0 +1,28 @@
+v0.0.15		Sat Feb 4 16:36:32 2017 +0000 
+	* Add a kebab switch to amend attribute names
+v0.0.14		Mon Sep 26 18:17:03 2016 +0100 
+	* Replace samewith for performance reasons
+v0.0.12		Fri Aug 26 16:51:05 2016 +0100 
+	* Fix the p6-json-infer script
+v0.0.11		Fri May 27 11:40:13 2016 +0100 
+	* Explicitly add JSON::Fast to test as builtin is deprecated
+v0.0.10		Tue Apr 19 20:39:10 2016 +0100 
+	* Use JSON::Fast
+v0.0.9		Thu Feb 18 13:45:17 2016 +0000 
+	* Hadn't tested the way exception was used in the script
+v0.0.8		Tue Feb 16 14:45:02 2016 +0000 
+	* Move all the classes to one file
+v0.0.7		Mon Feb 15 19:59:49 2016 +0000 
+	* Ditch late loading of HTTP::UserAgent
+v0.0.6		Mon Feb 15 11:50:51 2016 +0000 
+	* Add the ability to infer from a file
+v0.0.5		Fri Jan 29 09:36:00 2016 +0000 
+	* Changes required after testing with 6.c
+		 
+	* Remove "use lib" from tests
+		 
+	* Up the version
+		 
+	* Don't use fully qualified names in the inner classes Don't duplicate inner classes
+		 
+	* use JSON::Tiny as all the other dependencies use it
