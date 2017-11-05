@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/MQ-Posix.git
 	branch = master
-	commit = f0687302315d80c7adcc2ad4ee12564f2e587a09
-	parent = d0bac9a8192b54a3ddf475f834392eab91de41bb
+	commit = 5e1bec78c8efc8be3f0507774f8db452aba63003
+	parent = 3f5cd47e9fd540a5f0c94b8909736b0704c58967
 	cmdver = 0.4.0
