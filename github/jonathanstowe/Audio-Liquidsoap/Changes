@@ -1,0 +1,12 @@
+v0.0.6		Sat Apr 29 14:36:25 2017 +0100 
+	* Fix untested bug in exceptions
+v0.0.5		Mon Sep 26 18:28:09 2016 +0100 
+	* Replace the samewith for performance reasons
+v0.0.4		Mon May 2 14:00:31 2016 +0100 
+	* Up version to remedy naming braino
+v0.0.3		Sat Mar 12 14:35:03 2016 +0000 
+	* Missing dependency
+v0.0.2		Tue Feb 16 16:38:55 2016 +0000 
+	* Had omitted a test dependency
+v0.0.1		Sun Feb 14 23:23:00 2016 +0000 
+	* Initial release

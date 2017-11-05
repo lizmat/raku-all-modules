@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Audio-Liquidsoap.git
 	branch = master
-	commit = 8d7c4f8bc13a0364813acf51ac561de9442a03e8
-	parent = a34aca8d890a5764bbdc0ff08a044e4ef37ca41b
+	commit = 4c2f108deb1be9ce08f0b040d5d2b007b7f2a77b
+	parent = 0047bc86c0f69941bf18e04ed0ac7693420c45cb
 	cmdver = 0.4.0
