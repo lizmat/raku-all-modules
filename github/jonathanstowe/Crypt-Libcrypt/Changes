@@ -1,0 +1,10 @@
+v0.0.7		Tue Jan 24 21:21:59 2017 +0000 
+	* Make zef compatible
+v0.0.6		Sat Mar 12 14:00:07 2016 +0000 
+	* Remove version literal
+v0.0.5		Thu Dec 24 19:35:38 2015 +0000 
+	* Fix for 6.c
+		 
+	* done -> done-testing
+		 
+	* Add vim modeline
