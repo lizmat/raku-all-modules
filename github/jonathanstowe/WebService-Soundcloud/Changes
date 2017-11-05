@@ -1,0 +1,10 @@
+v0.0.5		Sat Apr 15 15:44:30 2017 +0100 
+	* Fix the get tests
+v0.0.4		Tue Dec 20 19:37:34 2016 +0000 
+	* Fix test
+v0.0.3		Tue Apr 26 11:29:37 2016 +0100 
+	* Switch to JSON::Fast
+v0.0.2		Sat Mar 12 11:09:40 2016 +0000 
+	* Remove version literal
+		 
+	* download is NYI
