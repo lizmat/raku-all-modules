@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/Manifesto.git
 	branch = master
-	commit = 934edea94299c04c467d03c2a10b17b620e3cce7
-	parent = 6807e7e830a2005570c7a67abe9eab98832bc036
+	commit = 48dce3216126bf54aa34f0512792d3b292b5364c
+	parent = d177001f77f3bab6343650172bc40ca75e632812
 	cmdver = 0.4.0
