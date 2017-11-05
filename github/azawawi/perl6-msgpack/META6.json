@@ -27,7 +27,6 @@
         "NativeCall"
     ],
     "test-depends"  : [
-        "LibraryCheck",
         "Test"
     ],
     "version"       : "0.0.5"

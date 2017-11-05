@@ -7,26 +7,27 @@ use NativeCall;
 use MsgPack::Native;
 
 has msgpack_packer  $.pk   is rw;
-has msgpack_sbuffer $.sbuf is rw;
 
 method pack( $data ) returns Blob
 {
-    $.sbuf = msgpack_sbuffer.new;
-    $.pk   = msgpack_packer.new;
+    # Create simple buffer and packer C structures
+    my $sbuf = msgpack_sbuffer.new;
+    $.pk     = msgpack_packer.new;
 
-    msgpack_sbuffer_init($.sbuf);
-    msgpack_packer_init($.pk, $.sbuf);
+    # Initialize simple buffer and packer C structures
+    msgpack_sbuffer_init($sbuf);
+    msgpack_packer_init($.pk, $sbuf);
 
+    # Start packing our data filling the simple buffer
     self._pack($data);
 
-    my $packed;
-    my $size   = $.sbuf.size;
-    my $buffer = $.sbuf.data;
-    $packed.append($buffer[$_]) for ^$size;
+    # Create a binary blob out from a slice of the simple buffer
+    my $result = Blob.new( $sbuf.data[ ^$sbuf.size ] );
 
-    msgpack_sbuffer_destroy($.sbuf);
+    # Cleanup
+    msgpack_sbuffer_destroy($sbuf);
 
-    return Blob.new($packed);
+    return $result;
 }
 
 multi method _pack(List:D $list) {

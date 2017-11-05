@@ -128,3 +128,11 @@ EXTERN_C int wrapped_msgpack_pack_raw_body(msgpack_packer* pk, const void* b, si
     return msgpack_pack_v4raw_body(pk, b, l);
 #endif
 }
+
+EXTERN_C void wrapped_msgpack_unpacked_init(msgpack_unpacked* result) {
+    msgpack_unpacked_init(result);
+}
+
+EXTERN_C void wrapped_msgpack_unpacked_destroy(msgpack_unpacked* result) {
+    msgpack_unpacked_destroy(result);
+}
