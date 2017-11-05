@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/EventSource-Server.git
 	branch = master
-	commit = 80c6f6a8d9fffb38b3c7452501f379e8f8ae4136
-	parent = 3ae5a20e293a099d036f0bb1a8ff71d4d1b96ab9
+	commit = 676d6cb3f1c4d87dcfb94f1c3d61b0e2cbff7f18
+	parent = 74b37c96abb471c8abdbdca528b2c6b7a8904c08
 	cmdver = 0.4.0
