@@ -1,0 +1,14 @@
+v0.0.10		Wed May 3 22:12:00 2017 +0100 
+	* Fix race condition
+v0.0.9		Sat Apr 15 10:58:12 2017 +0100 
+	* Fix for recent IO changes and some tidying up
+v0.0.8		Wed Apr 27 16:37:47 2016 +0100 
+	* Some spring cleaning
+v0.0.7		Sat Mar 12 10:57:42 2016 +0000 
+	* Remove version literal
+v0.0.6		Thu Dec 24 20:39:26 2015 +0000 
+	* Updates for 6.c
+		 
+	* need flat after GLR
+		 
+	* Properly add the support/source element
