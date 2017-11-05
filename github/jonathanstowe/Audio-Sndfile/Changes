@@ -1,0 +1,22 @@
+v0.0.11		Sun Jun 11 10:54:24 2017 +0100 
+	* Fix from Zoffix regarding cleanup in absence of the library Modernize the travis build
+v0.0.10		Tue Apr 26 15:36:03 2016 +0100 
+	* Spring clean
+v0.0.9		Fri Mar 11 23:47:33 2016 +0000 
+	* Fix the version literal
+v0.0.8		Thu Dec 24 14:49:16 2015 +0000 
+	* NativeCall changes for 6.c drop "lib" provide version
+		 
+	* Up version
+		 
+	* Add the meta test
+		 
+	* coerce 0 to appropriate type to stop unboxing errors
+		 
+	* done -> done-testing
+		 
+	* Add version/auth to Audio::Sndfile::Info
+		 
+	* Update documentation to include multis
+		 
+	* Add proper synopsis
