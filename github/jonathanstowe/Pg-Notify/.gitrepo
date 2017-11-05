@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/Pg-Notify.git
 	branch = master
-	commit = 4dda7cca8bd4a3939fb9e59d272a333ab3a1f6b3
-	parent = 381f1ae5f0ceaae0d7a4cb8a74515e08427d5b1c
+	commit = cf983445c190d9f2a3b6f6b05d86215407c625d9
+	parent = 5b4e15a9a1215f8f0753c4beaf425e497632952a
 	cmdver = 0.4.0
