@@ -9,10 +9,10 @@ class XML::XPath::Predicates {
         for @.predicates -> $predicate {
             my $interim = [];
             for $start.kv -> $index, $node {
-                say "\npredicate $index";
+                #say "\npredicate $index";
                 my $predicate-result = $predicate.evaluate($node, $index, $start.elems);
                 #say $node.perl;
-                say $predicate-result.perl;
+                #say $predicate-result.perl;
 
                 $predicate-result = unwrap($predicate-result);
 
