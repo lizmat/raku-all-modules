@@ -111,7 +111,7 @@ into the newly created Array.
 
 Defined as:
 
-    multi        reverse(*@list  --> Seq:D)
+    multi sub    reverse(*@list  --> Seq:D)
     multi method reverse(List:D: --> Seq:D)
 
 Returns a L«C<Seq>|/type/Seq» with the same elements in reverse order.
@@ -830,4 +830,4 @@ TODO
 
 =end pod
 
-# vim: expandtab shiftwidth=4 ft=perl6
+# vim: expandtab softtabstop=4 shiftwidth=4 ft=perl6
