@@ -4,7 +4,7 @@ plan 6;
 use lib '.';
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content::Text::Block;
-use PDF::Content::Util::Font;
+use PDF::Content::Font::CoreFont;
 use t::PDFTiny;
 
 # ensure consistant document ID generation
@@ -14,7 +14,7 @@ my \nbsp = "\c[NO-BREAK SPACE]";
 my @chunks =  PDF::Content::Text::Block.comb: "z80 a-b. -3   {nbsp}A{nbsp}bc{nbsp} 42";
 is-deeply @chunks, ["z80", " ", "a-", "b.", " ", "-", "3", "   ", "{nbsp}A{nbsp}bc{nbsp}", " ", "42"], 'text-block comb';
 
-my $font = PDF::Content::Util::Font::core-font( :family<helvetica>, :weight<bold> );
+my $font = PDF::Content::Font::CoreFont.load-font( :family<helvetica>, :weight<bold> );
 my $font-size = 16;
 my $text = "Hello.  Ting, ting-ting. Attention! … ATTENTION! ";
 my $pdf = t::PDFTiny.new;

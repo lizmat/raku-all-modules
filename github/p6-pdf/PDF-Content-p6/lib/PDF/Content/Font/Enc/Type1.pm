@@ -1,6 +1,5 @@
 class PDF::Content::Font::Enc::Type1 {
 
-    use PDF::DAO::Dict;
     use PDF::Content::Font::Encodings;
     has $.glyphs = $PDF::Content::Font::Encodings::win-glyphs;
     has $!encoding = $PDF::Content::Font::Encodings::mac-encoding;
@@ -48,20 +47,6 @@ class PDF::Content::Font::Enc::Type1 {
     #| reduce string to the displayable characters
     method filter(Str $text-in) {
 	$text-in.order.grep({ @!from-unicode[$_] }).join;
-    }
-
-    #| map ourselves to a PDF::Content object
-    method to-dict($font-name) {
-	my %enc-name = :win<WinAnsiEncoding>, :mac<MacRomanEncoding>;
-	my $dict = { :Type( :name<Font> ), :Subtype( :name<Type1> ),
-		     :BaseFont( :name( $font-name ) ),
-	};
-
-	with %enc-name{self.enc} -> $name {
-	    $dict<Encoding> = :$name;
-	}
-
-	PDF::DAO::Dict.coerce: $dict;
     }
 
     multi method encode(Str $s, :$str! --> Str) {

@@ -4,7 +4,7 @@ plan 3;
 use lib '.';
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content::Text::Block;
-use PDF::Content::Util::Font;
+use PDF::Content::Font::CoreFont;
 use PDF::Content::Text::Reserved;
 use PDF::Content::Image;
 use t::PDFTiny;
@@ -17,7 +17,7 @@ my $page = $pdf.add-page;
 
 my @chunks = PDF::Content::Text::Block.comb: 'I must go down to the seas';
 @chunks.append: ' ', 'aga','in';
-my $font = PDF::Content::Util::Font::core-font( :family<helvetica>, :weight<bold> );
+my $font = PDF::Content::Font::CoreFont.load-font( :family<helvetica>, :weight<bold> );
 my $font-size = 16;
 
 my $text-block;
