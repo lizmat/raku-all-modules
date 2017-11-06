@@ -7,15 +7,19 @@ my @filechars = flat('a'..'z', 'A'..'Z', 0..9, '_');
 constant MAX-RETRIES = 10;
 
 my %roster = ();
+my %keptfd = ();
 my Lock $roster-lock;
+my Lock $keptfd-lock;
 BEGIN { # Because --doc runs END
     $roster-lock = Lock.new;
+    $keptfd-lock = Lock.new;
 }
 
 my role File::Temp::AutoUnlink {
     submethod DESTROY {
         given self.path {
             if $_.path.IO ~~ :f { # Workaround, should just be $_ ~~ :f
+                self.close;
                 my $did;
                 $roster-lock.protect: {
                     $did = %roster{$_.path}:delete;
@@ -48,9 +52,13 @@ sub make-temp($type, $template, $tempdir, $prefix, $suffix, $unlink) {
         }
         if $unlink {
             $roster-lock.protect: {
-                %roster{$name} = True;
+                %roster{$name} = $fh;
             };
             $fh &&= $fh does File::Temp::AutoUnlink;
+        } elsif ($type eq 'file') {
+            $keptfd-lock.protect: {
+                %keptfd{$name} = $fh;
+            }
         }
         return $type eq 'file' ?? ($name,$fh) !! $name;
     }
@@ -86,6 +94,7 @@ END {
         for @rk -> $fn {
             if $fn.IO ~~ :f
             {
+                %roster{$fn}.close;
                 unlink($fn);
             }
             elsif $fn.IO ~~ :d
@@ -94,6 +103,13 @@ END {
             }
         }
         %roster = ();
+    }
+    $keptfd-lock.protect: {
+        my @kk = %keptfd.keys;
+        for @kk -> $fn {
+            %keptfd{$fn}.close;
+        }
+        %keptfd = ();
     }
 }
 

@@ -1,10 +1,11 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/github/perlpilot/p6-File-Temps?svg=true)](https://ci.appveyor.com/project/perlpilot/p6-File-Temps/branch/master)
+
+NAME
+====
+
 File::Temp
-==========
 
-Create temporary files. This module is loosely based on the Perl 5
-module of the same name.
-
-Synopsis
+SYNOPSIS
 ========
 
     # Generate a temp file in a temp dir
@@ -26,17 +27,17 @@ Synopsis
     # specify a prefix and suffix for the filename
     my ($filename,$filehandle) = tempfile(:prefix('foo'), :suffix(".txt"));
 
-
-Description
+DESCRIPTION
 ===========
 
-This module exports 2 routines:
+This module exports two routines:
 
-* tempfile
-* tempdir
+  * `tempfile` creates a temporary file and returns a filehandle to that file 
+    opened for writing and the filename of that temporary file
 
-`tempfile`  creates a temporary file and returns the filename and a filehandle open for reading and writing on that file.
+  * `tempdir` creates a temporary directory and returns the directory name.
 
-`tempdir` creates a temporary directory and returns the directory name.
+AUTHOR
+======
 
-
+Jonathan Scott Duff <duff@pobox.com>
