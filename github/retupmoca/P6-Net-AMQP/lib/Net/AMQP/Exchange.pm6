@@ -58,7 +58,7 @@ method delete($if-unused = 0) {
 
         $v.keep(1);
     });
-    
+
     my $delete = Net::AMQP::Payload::Method.new('exchange.delete',
                                                 0,
                                                 $.name,
@@ -70,10 +70,11 @@ method delete($if-unused = 0) {
     return $p;
 }
 
-method publish(:$routing-key = "", :$mandatory, :$immediate, :$content-type = "", :$content-encoding = "",
-               :$persistent, :$priority = 0, :$correlation-id = "", :$reply-to = "",
-               :$expiration = "0", :$message-id = "", :$timestamp = 0, :$type = "",
-               :$app-id = "", :$body is copy, *%headers) {
+method publish(:$routing-key = "", :$mandatory, :$immediate, :$content-type, :$content-encoding ,
+               :$persistent, :$priority, :$correlation-id, :$reply-to ,
+               :$expiration, :$message-id, :$timestamp, :$type,
+               :$app-id, :$body is copy, *%headers) {
+
 
     $!channel-lock.protect: {
         #method
