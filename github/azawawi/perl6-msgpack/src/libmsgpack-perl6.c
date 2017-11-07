@@ -136,3 +136,9 @@ EXTERN_C void wrapped_msgpack_unpacked_init(msgpack_unpacked* result) {
 EXTERN_C void wrapped_msgpack_unpacked_destroy(msgpack_unpacked* result) {
     msgpack_unpacked_destroy(result);
 }
+
+// We need to wrap it since Perl 6's NativeCall does not pass
+// CStruct by value
+EXTERN_C void wrapped_msgpack_object_print(msgpack_object *obj) {
+    msgpack_object_print(stdout, *obj);
+}

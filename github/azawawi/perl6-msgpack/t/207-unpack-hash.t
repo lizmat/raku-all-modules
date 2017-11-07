@@ -5,11 +5,6 @@ use MsgPack;
 
 plan 3;
 
-unless ?%*ENV<EXPERIMENTAL> {
-    skip-rest "Skipping experimental tests";
-    exit;
-}
-
 my %h;
 
 %h = MsgPack::unpack( Blob.new(129,163,107,101,121,165,118,97,108,117,101) );

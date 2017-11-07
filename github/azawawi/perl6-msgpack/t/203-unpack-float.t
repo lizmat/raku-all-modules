@@ -5,11 +5,6 @@ use MsgPack;
 
 plan 8;
 
-unless ?%*ENV<EXPERIMENTAL> {
-    skip-rest "Skipping experimental tests";
-    exit;
-}
-
 #float
 my $value;
 

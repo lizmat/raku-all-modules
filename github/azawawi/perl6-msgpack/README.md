@@ -4,26 +4,28 @@
  
 Perl 6 Interface to libmsgpack
 
-This module is totally **experimental** at the moment. You have been warned.
-
 ## Example
 
 ```Perl6
 use v6;
 use MsgPack;
 
-my $data   = [1, True, "Example"];
-my $packed = MsgPack::pack($data);
+my $data     = [1, True, "Example", { "that" => "rocks" }];
+my $packed   = MsgPack::pack($data);
+my $unpacked = MsgPack::unpack($packed);
 
-say $data.perl;
-say $packed.perl;
+say "data     : " ~ $data.perl;
+say "packed   : " ~ $packed.perl;
+say "unpacked : " ~ $unpacked.perl;
 ```
 
 For more examples, please see the [examples](examples) folder.
 
 ## Installation
 
-To install it using zef (a module management tool bundled with Rakudo Star):
+- Please follow the section below to install `libmsgpack` on your system.
+
+- Install it using zef (a module management tool bundled with Rakudo Star):
 
 ```
 $ zef install MsgPack
@@ -52,7 +54,7 @@ $ brew install msgpack
 
 Not supported at the moment but planned as a pre-built DLL in the near future.
 
-TODO support
+TODO support windows with a pre-built DLL
 
 ## Testing
 
@@ -71,6 +73,10 @@ $ AUTHOR_TESTING=1 prove -e "perl6 -Ilib"
 ## See Also
 
 - [Data::MessagePack](https://github.com/pierre-vigier/Perl6-Data-MessagePack/)
+
+    Most of the excellent tests here are based of the work of
+    [Pierre Vigier](https://github.com/pierre-vigier/).
+    Thanks for creating an excellent pure Perl 6 reference implementation.
 
 ## Author
 

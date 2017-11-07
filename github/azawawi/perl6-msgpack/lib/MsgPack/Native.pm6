@@ -148,28 +148,14 @@ class msgpack_zone is repr('CStruct') is export {
     has uint64 $.filler7;
 }
 
-class fake_msgpack_object is repr('CStruct') is export {
-	has uint32 $.type;
-	has uint32 $.i1;
-	has uint32 $.i2;
-	has uint32 $.i3;
-	has uint32 $.i4;
-	has uint32 $.i5;
-}
-
 class msgpack_object_array is repr('CStruct') is export {
     has uint32 $.size;
-    has CArray[fake_msgpack_object] $.ptr;  # TODO Array[msgpack_object]
-};
-
-class msgpack_object_kv is repr('CStruct') is export {
-    HAS fake_msgpack_object $.key;
-    HAS fake_msgpack_object $.val;
+    has Pointer $.ptr;  #TODO CArray[msgpack_object]
 };
 
 class msgpack_object_map is repr('CStruct') is export {
-    has uint32                    $.size;
-    has CArray[msgpack_object_kv] $.ptr;
+    has uint32  $.size;
+    has Pointer $.ptr; #TODO CArray[msgpack_object_kv]
 } ;
 
 class msgpack_object_str is repr('CStruct') is export {
@@ -201,9 +187,13 @@ class msgpack_object_union is repr('CUnion') is export {
 }
 
 class msgpack_object is repr('CStruct') is export {
-    # TODO msgpack_object_type when it works in Rakudo
     has uint32               $.type; 
     HAS msgpack_object_union $.via;
+}
+
+class msgpack_object_kv is repr('CStruct') is export {
+    HAS msgpack_object $.key;
+    HAS msgpack_object $.val;
 }
 
 class msgpack_unpacked is repr('CStruct') is export {
@@ -259,6 +249,11 @@ enum msgpack_object_type is export (
     MSGPACK_OBJECT_BIN                  => 0x08,
     MSGPACK_OBJECT_EXT                  => 0x09,
 );
+
+sub wrapped_msgpack_object_print(msgpack_object $obj)
+    is native(&library)
+    is export
+    { * }
 
 # msgpack/version.h
 sub msgpack_version          is native(&library) is export returns Str   { * }

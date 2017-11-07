@@ -5,11 +5,6 @@ use MsgPack;
 
 plan 8;
 
-unless ?%*ENV<EXPERIMENTAL> {
-    skip-rest "Skipping experimental tests";
-    exit;
-}
-
 my $value;
 
 $value = MsgPack::unpack( Blob.new( 0xa3, 0x61, 0x62, 0x63 ) );

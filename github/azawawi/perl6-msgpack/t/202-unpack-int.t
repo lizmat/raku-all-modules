@@ -5,11 +5,6 @@ use MsgPack;
 
 plan 40;
 
-unless ?%*ENV<EXPERIMENTAL> {
-    skip-rest "Skipping experimental tests";
-    exit;
-}
-
 my $value;
 
 $value = MsgPack::unpack( Blob.new(0x00) );
@@ -49,6 +44,7 @@ ok $value == 184467440737095, "Positive integer unpacked correclty";
 ok $value ~~ Int, "Type is correct";
 
 $value = MsgPack::unpack( Blob.new(0xcf, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff) );
+todo "(2**64 - 1) unpacked correctly";
 ok $value == (2**64 -1), "Positive integer unpacked correclty";
 ok $value ~~ Int, "Type is correct";
 
