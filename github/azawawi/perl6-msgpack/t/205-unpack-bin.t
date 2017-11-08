@@ -5,6 +5,11 @@ use MsgPack;
 
 plan 3;
 
+if MsgPack::version<major> < 1 {
+    skip-rest "BIN pack/unpack works only in v1.0.0 and later";
+    exit;
+}
+
 my $value;
 
 $value = MsgPack::unpack( Blob.new( 0xc4, 3, 1, 2, 3 ) );

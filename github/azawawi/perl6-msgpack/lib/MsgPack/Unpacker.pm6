@@ -17,12 +17,17 @@ method unpack(Blob $packed) {
     my $result          = msgpack_unpacked.new;
     msgpack_unpacked_init($result);
 
+    # Compatibility with older pre-1.0 versions
+    my $success = (msgpack_version_major() < 1)
+        ?? 1
+        !! MSGPACK_UNPACK_SUCCESS.value;
+
     # Start unpacking
     my size_t $off     = 0;
     my ($buffer, $len) = ($sbuf.data, $sbuf.size);
     my $ret            = msgpack_unpack_next($result, $buffer, $len, $off);
     my $unpacked;
-    while $ret == MSGPACK_UNPACK_SUCCESS.value {
+    while $ret == $success {
         $unpacked = self.unpack-object($result.data);
         $ret      = msgpack_unpack_next($result, $buffer, $len, $off);
     }
@@ -39,12 +44,13 @@ method unpack(Blob $packed) {
 }
 
 method unpack-object(msgpack_object $obj) {
+    return Any unless $obj;
     given $obj.type {
         when MSGPACK_OBJECT_NIL {
             return Any;
         }
         when MSGPACK_OBJECT_BOOLEAN {
-            return $obj.via ?? True !! False;
+            return $obj.via && $obj.via.boolean == 1 ?? True !! False;
         }
         when MSGPACK_OBJECT_POSITIVE_INTEGER {
             return $obj.via ?? $obj.via.u64.Int !! 0;
