@@ -229,8 +229,8 @@ my grammar Grammar {
             }
             make TAP::Plan.new(|%args);
         }
-        method description($/) {
-            make ~$/.subst(/\\('#'|'\\')/, { $_[0] }, :g)
+        method description($m) {
+            $m.make: ~$m.subst(/\\('#'|'\\')/, { $_[0] }, :g)
         }
         method !make_test($/) {
             my %args = (:ok($<nok> eq ''));
