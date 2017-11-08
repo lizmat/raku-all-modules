@@ -1,3 +1,6 @@
+Release 0.0.8
+- Replace PDF::Content::Util::Font module with class
+  PDF::Content::Font::CoreFont
 Release 0.0.7
 - Replaced $gfx.TextMove() with $gfx.text-position
 Release 0.0.6

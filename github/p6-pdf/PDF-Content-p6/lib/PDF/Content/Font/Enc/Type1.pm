@@ -36,31 +36,18 @@ class PDF::Content::Font::Enc::Type1 {
         }
     }
 
-    #| compute the overall font-height
-    method height($pointsize?, List :$bbox!, Bool :$from-baseline, Bool :$hanging) {
-	my Numeric $height = $bbox[3];
-        $height *= .75 if $hanging;  # not applicable to core fonts - approximate
-	$height -= $bbox[1] unless $from-baseline;
-	$pointsize ?? $height * $pointsize / 1000 !! $height;
+    multi method encode(Str $text, :$str! --> Str) {
+        self.encode($text).decode: 'latin-1';
+    }
+    multi method encode(Str $text --> buf8) is default {
+        buf8.new: $text.ords.map({@!from-unicode[$_]}).grep: {$_};
     }
 
-    #| reduce string to the displayable characters
-    method filter(Str $text-in) {
-	$text-in.order.grep({ @!from-unicode[$_] }).join;
+    multi method decode(Str $encoded, :$str! --> Str) {
+        $encoded.ords.map({@!to-unicode[$_]}).grep({$_}).map({.chr}).join;
     }
-
-    multi method encode(Str $s, :$str! --> Str) {
-        self.encode($s).decode: 'latin-1';
-    }
-    multi method encode(Str $s --> buf8) is default {
-        buf8.new: $s.ords.map({@!from-unicode[$_]}).grep: {$_};
-    }
-
-    multi method decode(Str $s, :$str! --> Str) {
-        $s.ords.map({@!to-unicode[$_]}).grep({$_}).map({.chr}).join;
-    }
-    multi method decode(Str $s --> buf16) {
-        buf16.new: $s.ords.map({@!to-unicode[$_]}).grep: {$_};
+    multi method decode(Str $encoded --> buf16) {
+        buf16.new: $encoded.ords.map({@!to-unicode[$_]}).grep: {$_};
     }
 
 }

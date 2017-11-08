@@ -115,23 +115,10 @@ role PDF::Content::ResourceDict {
             // self!register-resource( $font );
     }
 
-    method !vivify-font($font-obj) {
-        my $dict = $font-obj.to-dict;
-        my $font-dict = PDF::DAO.coerce( :$dict );
-        PDF::DAO.coerce($font-dict, PDF::Content::Font);
-        if $font-dict.can('set-font-obj') {
-            $font-dict.set-font-obj: $font-obj;
-        }
-        else {
-            $font-dict.font-obj = $font-obj;
-        }
-        $font-dict;
-    }
-
     multi method use-font($font-obj) is default {
         self.find-resource(sub ($_){ .?font-obj === $font-obj },
 			   :type<Font>)
-            // self!register-resource: self!vivify-font($font-obj);
+            // self!register-resource: $font-obj.to-dict;
     }
 
 }

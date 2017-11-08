@@ -2,10 +2,11 @@ use v6;
 
 class PDF::Content::Font::CoreFont {
     use Font::AFM:ver(v1.23.5+);
+    use PDF::Content::Font;
     use PDF::Content::Font::Enc::Type1;
     use PDF::DAO::Dict;
     has Font::AFM $.metrics handles <kern>;
-    has PDF::Content::Font::Enc::Type1 $.encoder handles <encode decode filter enc>;
+    has PDF::Content::Font::Enc::Type1 $.encoder handles <encode decode enc>;
 
     constant coreFonts = set <
         courier courier-oblique courier-bold courier-boldoblique
@@ -114,15 +115,20 @@ class PDF::Content::Font::CoreFont {
         $.load-font( $family, |c );
     }
 
-    method height(|c) {
+    #| compute the overall font-height
+    method height($pointsize?, Bool :$from-baseline, Bool :$hanging) {
         my List $bbox = $!metrics.FontBBox;
-        $!encoder.height(:$bbox, |c);
+	my Numeric $height = $bbox[3];
+        $height *= .75 if $hanging;  # not applicable to core fonts - approximate
+	$height -= $bbox[1] unless $from-baseline;
+	$pointsize ?? $height * $pointsize / 1000 !! $height;
     }
+
     method stringwidth(Str $str, $pointsize = 0, Bool :$kern=False) {
         my $glyphs = $!encoder.glyphs;
         $!metrics.stringwidth( $str, $pointsize, :$kern, :$glyphs);
     }
-    #| map ourselves to a PDF::Content object
+
     method to-dict {
         my %enc-name = :win<WinAnsiEncoding>, :mac<MacRomanEncoding>;
         my $dict = { :Type( :name<Font> ), :Subtype( :name<Type1> ),
@@ -133,7 +139,10 @@ class PDF::Content::Font::CoreFont {
             $dict<Encoding> = :$name;
         }
 
-        PDF::DAO::Dict.coerce: $dict;
+        PDF::Content::Font.make-font(
+            PDF::DAO::Dict.coerce($dict),
+            self
+            );
     }
 
     method font-name { $!metrics.FontName }
