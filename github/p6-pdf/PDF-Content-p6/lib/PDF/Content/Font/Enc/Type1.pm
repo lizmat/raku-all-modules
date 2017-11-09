@@ -4,7 +4,7 @@ class PDF::Content::Font::Enc::Type1 {
     has $.glyphs = $PDF::Content::Font::Encodings::win-glyphs;
     has $!encoding = $PDF::Content::Font::Encodings::mac-encoding;
     has uint8 @!from-unicode;
-    has uint16 @!to-unicode[256];
+    has uint16 @.to-unicode[256];
     my subset EncodingScheme of Str where 'mac'|'win'|'sym'|'zapf';
     has EncodingScheme $.enc = 'win';
 

@@ -36,5 +36,8 @@ class PDF::Content::Text::Style is rw {
 	default            { 0 }
     }
 
-    method space-width { $!font.stringwidth(' ', $!font-size ); }
+    method space-width {
+        $!font.encode(' '); # just to include it in subsets
+        $!font.stringwidth(' ', $!font-size );
+    }
 }
