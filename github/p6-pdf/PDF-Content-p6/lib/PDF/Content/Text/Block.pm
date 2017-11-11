@@ -215,6 +215,7 @@ class PDF::Content::Text::Block {
 
         my $word-spacing = $gfx.WordSpacing;
         my $leading = $gfx.TextLeading;
+        my Str $space = $.font.encode(' ', :str);
 
         for @!lines.pairs {
 	    my \line = .value;
@@ -229,7 +230,7 @@ class PDF::Content::Text::Block {
                 @content.push( OpCode::SetWordSpacing => [ $word-spacing = $_ ])
                     unless $_ =~= $word-spacing || +line.words <= 1;
             }
-            @content.push: line.content(:$.font-size, :$x-shift);
+            @content.push: line.content(:$.font-size, :$x-shift, :$space);
         }
 
 	if $nl {

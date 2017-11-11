@@ -37,7 +37,7 @@ class PDF::Content::Text::Line {
         $!indent = - $.content-width  /  2;
     }
 
-    method content(Numeric :$font-size!, Numeric :$x-shift = 0) {
+    method content(Numeric :$font-size!, Numeric :$x-shift = 0, Str :$space!) {
         my Numeric \scale = -1000 / $font-size;
         my subset Str-or-Pos where Str|Numeric;
         my Str-or-Pos @line;
@@ -49,7 +49,7 @@ class PDF::Content::Text::Line {
         my int $wc = 0;
 
         for @!words -> \w {
-	    @line.push: ' ' if @!word-boundary[$wc++];
+	    @line.push: $space if @!word-boundary[$wc++];
             @line.append: w.list;
         }
 
