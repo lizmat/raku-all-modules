@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/mj41/SP6.git
 	branch = master
-	commit = 2ffe2e7c1360c436a315f5d5fa69981a23df2ebd
-	parent = aee9b9759074bab13c60f5d333d13657e8f204b0
+	commit = ccb32779834123aa0894a06a1bf95cb9528645f0
+	parent = 486ae3cb862f093922bd17bfa5cfc21f83a1b624
 	cmdver = 0.4.0
