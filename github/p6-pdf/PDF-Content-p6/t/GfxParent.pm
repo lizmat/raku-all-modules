@@ -30,4 +30,7 @@ role t::GfxParent {
     method resource-entry($a,$b) {
         self{$a}{$b};
     }
+    method resources($a) {
+        self{$a}
+    }
 }

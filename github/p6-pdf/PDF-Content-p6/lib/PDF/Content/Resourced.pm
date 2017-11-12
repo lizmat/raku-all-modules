@@ -2,19 +2,19 @@ use v6;
 
 role PDF::Content::Resourced {
 
-    method core-font(|c) {
-	(self.Resources //= {}).core-font(|c);
-    }
+    method !resources { self.Resources //= {} }
 
-    #| ensure that object is registered as a resource
+    method core-font(|c) {
+	self!resources.core-font(|c);
+    }
     method use-font($obj, |c) {
-	(self.Resources //= {}).use-font($obj, |c);
+	self!resources.use-font($obj, |c);
     }
     method use-resource($obj, |c) {
-	(self.Resources //= {}).resource($obj, |c);
+	self!resources.resource($obj, |c);
     }
     method resource-key($obj, |c) {
-	(self.Resources //= {}).resource-key($obj, |c);
+	self!resources.resource-key($obj, |c);
     }
 
     #| my %fonts = $doc.page(1).resources('Font');
@@ -26,11 +26,12 @@ role PDF::Content::Resourced {
 	@entries;	
     }
     multi method resources(Str $type) is default {
-	my %entries;
-	my $resources = self.Resources;
-	my Hash $resource-entries = $resources{$type}
-	    if $resources && ($resources{$type}:exists);
-	%entries = .keys.map( { $_ => $resource-entries{$_} } )
+        my Hash $resource-entries;
+	with self.Resources -> $resources {
+            $resource-entries = $resources{$type}
+              if $resources{$type}:exists;
+        }
+	my %entries = .keys.map( { $_ => $resource-entries{$_} } )
 	    with $resource-entries;
 	%entries;
     }

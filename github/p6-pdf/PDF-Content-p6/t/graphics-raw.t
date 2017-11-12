@@ -7,6 +7,7 @@ use PDF::Content::Ops :OpCode;
 
 class Graphics does PDF::Content::Graphics {
     has Str $.decoded;
+    method resources($) { %() }
 };
 
 my $gfx = Graphics.new(:decoded("BT ET .5 0 0 rg"));

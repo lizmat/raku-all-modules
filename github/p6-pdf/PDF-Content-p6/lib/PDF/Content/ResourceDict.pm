@@ -103,7 +103,7 @@ role PDF::Content::ResourceDict {
     method resource-entry(Str:D $type!, Str:D $key!) {
         .{$key} with self{$type};
     }
-    
+
     method core-font(|c) {
         self.use-font: (require ::('PDF::Content::Font::CoreFont')).load-font( |c );
     }

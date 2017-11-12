@@ -9,7 +9,9 @@ use PDF::Content::Ops :OpCode;
 use PDF::Content::Matrix :scale;
 use t::GfxParent;
 
-my $parent = { :Font{ :F1{} }, } does t::GfxParent;
+my $dummy-font = %() does role { method cb-finish {} }
+
+my $parent = { :Font{ :F1($dummy-font) }, } does t::GfxParent;
 my $g = PDF::Content.new: :$parent;
 
 $g.op(Save);

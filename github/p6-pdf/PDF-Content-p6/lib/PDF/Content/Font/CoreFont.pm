@@ -168,4 +168,5 @@ class PDF::Content::Font::CoreFont {
         self!load-core-font( $.core-font-name($font-name, |c), :$enc );
     }
 
+    method cb-finish {}
 }

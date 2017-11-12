@@ -72,20 +72,23 @@ role PDF::Content::Page
         $xobject;
     }
 
-    method finish {
-	self.MediaBox //= [0, 0, 612, 792];
-	my $decoded = $.pre-gfx.Str;
-        $decoded ~= "\n" if $decoded;
-	$decoded ~= $.gfx.Str;
-
-	if self<Contents> ~~ PDF::DAO::Stream {
-	    self<Contents>.decoded = $decoded;
-	}
-	else {
-	    self<Contents> = PDF::DAO::Stream.new: :$decoded;
-        }
+    method decoded {
+        Proxy.new(
+            FETCH => sub ($) { self.contents },
+            STORE => sub ($,$decoded) {
+                if self<Contents> ~~ PDF::DAO::Stream {
+                    self<Contents>.decoded = $decoded;
+                }
+                else {
+                    self<Contents> = PDF::DAO::Stream.new: :$decoded;
+                }
+            },
+        );
     }
 
-    method cb-finish { $.finish }
+    method cb-finish {
+        self.MediaBox //= [0, 0, 612, 792];
+        $.finish
+    }
 
 }

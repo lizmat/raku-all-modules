@@ -781,7 +781,10 @@ class PDF::Content::Ops {
 	die "q (Save) unmatched by closing Q (Restore) at end of content stream\n"
 	    if @!gsave;
         warn "unexpected end of content stream in $!context context"
-	    unless $!context == Page;
+            unless $!context == Page;
+        with $!parent {
+            .cb-finish for .resources('Font').values;
+        }
     }
 
     #| serialize content into a string. indent blocks for readability
