@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/007.git
 	branch = master
-	commit = 38edc1c97bf754e09cb637e576637ea253faf584
-	parent = c44513acc438d24fd92ef059b8936d2f8a92397d
+	commit = 73fc8a8f17d9c65c0335fae2a7e4bb385e74d470
+	parent = d95c109c32113794f12b5f286159c52f8250d1f2
 	cmdver = 0.4.0
