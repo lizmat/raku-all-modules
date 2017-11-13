@@ -6,6 +6,8 @@ use lib 'lib';
 
 use DNS::Zone::ResourceRecordData::MX;
 
+plan 5;
+
 # Test that attribues are required
 # (Throws an exception if an attribute is required, but not provided)
 throws-like(
@@ -33,5 +35,3 @@ my $rdata = DNS::Zone::ResourceRecordData::MX.new(
 isa-ok $rdata, DNS::Zone::ResourceRecordData::MX;
 
 is $rdata.gen, '10 mxname', 'Test generate ResourceRecordDataA string';
-
-done-testing;

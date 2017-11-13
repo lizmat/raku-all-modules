@@ -79,5 +79,3 @@ for @toTestAreNOk -> %t
 {
 	nok DNS::Zone::Grammars::Modern.parse(%t<str>, rule => %t<rule> ), "%t<str> with rule %t<rule>";
 }
-
-done-testing;

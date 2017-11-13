@@ -1,7 +1,7 @@
 language: perl6
 perl6:
     - latest
-    - "2016.10"
+    - "2017.10"
 install:
     - rakudobrew build-zef
     - zef --debug install .

@@ -26,5 +26,3 @@ for @toTestAreNOk -> $t
 {
 	nok DNS::Zone::Grammars::Modern.parse($t, rule => 'commentWithoutNewline' ), $t;
 }
-
-done-testing;

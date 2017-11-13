@@ -20,7 +20,7 @@ my @toTestAreNOk = (
 	" in soa dom action 2016100601 12 34 56 78", # No domain name
 );
 
-# plan @toTestAreOk.elems + @toTestAreNOk.elems;
+plan @toTestAreOk.elems + @toTestAreNOk.elems;
 
 for @toTestAreOk -> $t
 {
@@ -31,5 +31,3 @@ for @toTestAreNOk -> $t
 {
 	nok DNS::Zone::Grammars::Modern.parse($t), $t;
 }
-
-done-testing;

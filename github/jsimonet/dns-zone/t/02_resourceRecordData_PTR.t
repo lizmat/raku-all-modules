@@ -6,6 +6,8 @@ use lib 'lib';
 
 use DNS::Zone::ResourceRecordData::PTR;
 
+plan 3;
+
 # Test that attribues are required
 # (Throws an exception if an attribute is required, but not provided)
 throws-like(
@@ -21,5 +23,3 @@ my $rdata = DNS::Zone::ResourceRecordData::PTR.new(
 isa-ok $rdata, DNS::Zone::ResourceRecordData::PTR;
 
 is $rdata.gen, 'data', 'Test generate ResourceRecordDataPTR string';
-
-done-testing;

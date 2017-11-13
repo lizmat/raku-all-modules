@@ -6,6 +6,8 @@ use DNS::Zone;
 use DNS::Zone::ResourceRecord;
 use DNS::Zone::ResourceRecordData::A;
 
+plan 3;
+
 # test zone type
 # test some constructors arguments
 my $zone = DNS::Zone.new;
@@ -29,5 +31,3 @@ is $zone.gen, 'domainName in 3600 A 10.0.0.1';
 $zone.del( :1position );
 
 is $zone.gen, '';
-
-done-testing;

@@ -29,5 +29,3 @@ for @toTestAreNOk -> $t
 {
 	nok DNS::Zone::Grammars::Modern.parse($t, rule => 'ttlOrClass' ), $t;
 }
-
-done-testing;

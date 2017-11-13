@@ -6,6 +6,8 @@ use lib 'lib';
 
 use DNS::Zone::ResourceRecordData::SRV;
 
+plan 7;
+
 # Test that attribues are required
 # (Throws an exception if an attribute is required, but not provided)
 throws-like(
@@ -64,5 +66,3 @@ my $rdata = DNS::Zone::ResourceRecordData::SRV.new(
 isa-ok $rdata, DNS::Zone::ResourceRecordData::SRV;
 
 is $rdata.gen, '10 20 1234 target', 'Test generate ResourceRecordDataSRV string';
-
-done-testing;

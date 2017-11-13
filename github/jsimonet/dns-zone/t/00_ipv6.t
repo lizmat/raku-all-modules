@@ -39,5 +39,3 @@ for @toTestAreNOk -> $t
 {
 	nok DNS::Zone::Grammars::Modern.parse($t, rule => 'ipv6' ), $t;
 }
-
-done-testing;

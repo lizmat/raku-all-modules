@@ -249,7 +249,7 @@ grammar DNS::Zone::Grammars::Modern {
 	# 1000::10.0.0.1 The "10" is interpreted as <h16> and <ipv6> token fails.
 	token ipv6 {
 		<doubleColon> <ipv4> |
-		[
+		[:!r
 			<h16>                                        <doubleColon>   <ipv4> |
 			<h16> ** 2 %         <doubleColon>   [ ':' | <doubleColon> ] <ipv4> |
 			<h16> ** 3 % [ ':' | <doubleColon> ] [ ':' | <doubleColon> ] <ipv4> |

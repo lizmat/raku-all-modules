@@ -6,6 +6,8 @@ use lib 'lib';
 
 use DNS::Zone::ResourceRecordData::SOA;
 
+plan 10;
+
 # Test that attribues are required
 # (Throws an exception if an attribute is required, but not provided)
 throws-like(
@@ -113,5 +115,3 @@ my $rdata = DNS::Zone::ResourceRecordData::SOA.new(
 isa-ok $rdata, DNS::Zone::ResourceRecordData::SOA;
 
 is $rdata.gen, 'domainName domainAction 2016103101 3600 456 123 321', 'Test generate ResourceRecordDataSOA string';
-
-done-testing;

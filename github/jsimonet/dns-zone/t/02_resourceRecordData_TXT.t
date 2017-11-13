@@ -6,6 +6,8 @@ use lib 'lib';
 
 use DNS::Zone::ResourceRecordData::TXT;
 
+plan 3;
+
 # Test that attribues are required
 # (Throws an exception if an attribute is required, but not provided)
 throws-like(
@@ -21,5 +23,3 @@ my $rdata = DNS::Zone::ResourceRecordData::TXT.new(
 isa-ok $rdata, DNS::Zone::ResourceRecordData::TXT;
 
 is $rdata.gen, 'txt', 'Test generate ResourceRecordDataTXT string';
-
-done-testing;
