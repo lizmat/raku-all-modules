@@ -7,6 +7,7 @@ class PDF::Content::Font::CoreFont {
     use PDF::DAO::Dict;
     has Font::AFM $.metrics handles <kern>;
     has PDF::Content::Font::Enc::Type1 $.encoder handles <encode decode enc>;
+    has PDF::Content::Font $!dict;
 
     constant coreFonts = set <
         courier courier-oblique courier-bold courier-boldoblique
@@ -129,7 +130,7 @@ class PDF::Content::Font::CoreFont {
         $!metrics.stringwidth( $str, $pointsize, :$kern, :$glyphs);
     }
 
-    method to-dict {
+    method !make-dict {
         my %enc-name = :win<WinAnsiEncoding>, :mac<MacRomanEncoding>;
         my $dict = { :Type( :name<Font> ), :Subtype( :name<Type1> ),
                      :BaseFont( :name( $!metrics.FontName ) ),
@@ -138,11 +139,13 @@ class PDF::Content::Font::CoreFont {
         with %enc-name{self.enc} -> $name {
             $dict<Encoding> = :$name;
         }
+        $dict;
+    }
 
-        PDF::Content::Font.make-font(
-            PDF::DAO::Dict.coerce($dict),
-            self
-            );
+   method to-dict {
+        $!dict //= PDF::Content::Font.make-font(
+            PDF::DAO::Dict.coerce(self!make-dict),
+            self);
     }
 
     method font-name { $!metrics.FontName }
@@ -152,7 +155,7 @@ class PDF::Content::Font::CoreFont {
         %core-font-cache{$font-name.lc~'-*-'~$enc} //= do {
             my $encoder = PDF::Content::Font::Enc::Type1.new: :$enc;
             my $metrics = Font::AFM.core-font( $font-name );
-            self.new: :$encoder, :$metrics;
+            self.new( :$encoder, :$metrics );
         }
     }
 

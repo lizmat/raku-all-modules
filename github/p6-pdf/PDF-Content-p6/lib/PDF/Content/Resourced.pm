@@ -23,7 +23,7 @@ role PDF::Content::Resourced {
 	my $resource-entries = .ProcSet with self.Resources;
 	@entries = .keys.map( { $resource-entries[$_] } )
 	    with $resource-entries;
-	@entries;	
+	@entries;
     }
     multi method resources(Str $type) is default {
         my Hash $resource-entries;

@@ -293,6 +293,7 @@ class PDF::Content
             },
             STORE => sub ($, $v) {
                 my @v = $v.isa(List) ?? @$v !! [ $v, ];
+                @v[0] = .use-font(@v[0]) with $.parent;
                 self.set-font(|@v);
             },
             );

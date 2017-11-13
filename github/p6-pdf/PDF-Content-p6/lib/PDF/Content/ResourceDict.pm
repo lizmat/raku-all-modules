@@ -14,7 +14,7 @@ role PDF::Content::ResourceDict {
            unless %!resource-key{$object.WHICH};
        %!resource-key{$object.WHICH};
     }
-    
+
     method !resource-type( PDF::DAO $_ ) is default {
         when Hash {
             when .<Type>:exists {
