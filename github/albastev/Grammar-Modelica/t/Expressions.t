@@ -185,7 +185,7 @@ grammar TestPrimary is Grammar::Modelica {
   rule component_reference {'component_reference'}
   rule output_expression_list {'output_expression_list'}
   rule expression_list {'expression_list'}
-  rule function_arguments {'function_arguments'}
+  rule array_arguments {'array_arguments'}
 }
 ok TestPrimary.parse('12345');
 ok TestPrimary.parse('"valid string"');
@@ -200,7 +200,7 @@ ok TestPrimary.parse('[expression_list]');
 ok TestPrimary.parse('[expression_list;expression_list]');
 ok TestPrimary.parse('[expression_list;expression_list;expression_list;expression_list]');
 ok TestPrimary.parse('[expression_list ;expression_list; expression_list ; expression_list]');
-ok TestPrimary.parse('{function_arguments}');
+ok TestPrimary.parse('{array_arguments}');
 ok TestPrimary.parse('end');
 
 grammar TestName is Grammar::Modelica {

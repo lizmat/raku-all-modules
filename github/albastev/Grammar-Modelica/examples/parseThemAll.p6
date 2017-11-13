@@ -26,10 +26,12 @@ sub MAIN($modelica-dir) {
     
     # https://docs.perl6.org/routine/dir
     my @stack = $modelica-dir.IO;
+    my @files;
     while @stack { 
       for @stack.pop.dir -> $path { 
-        light($path) if $path.f && $path.extension.lc eq 'mo'; 
+        @files.push($path) if $path.f && $path.extension.lc eq 'mo'; 
         @stack.push: $path if $path.d;
       }
     }
+    @files.race.map({light($_)});
 }
