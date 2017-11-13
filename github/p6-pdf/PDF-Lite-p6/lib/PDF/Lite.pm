@@ -17,7 +17,7 @@ class PDF::Lite
     use PDF::Content::Page;
     use PDF::Content::PageNode;
     use PDF::Content::PageTree;
-    use PDF::Content::Resourced;    
+    use PDF::Content::Resourced;
     use PDF::Content::ResourceDict;
     use PDF::Content::XObject;
     use PDF::Content::Font;

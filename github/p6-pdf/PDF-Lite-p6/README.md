@@ -265,7 +265,7 @@ for 1 ... $pdf.page-count -> $page-no {
         my $xobject = %object{$key};
         my $subtype = $xobject<Subtype>;
         my $size = $xobject.encoded.codes;
-        say "\t$key: $subtype $size bytes"
+        say "\t$key: $subtype {$xobject.width}x{$xobject.height} $size bytes"
     }
 }
 
