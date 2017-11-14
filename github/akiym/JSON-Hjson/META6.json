@@ -5,8 +5,8 @@
   "build-depends" : [ ],
   "depends" : [ ],
   "description" : "Human JSON (Hjson) deserializer",
-  "name" : "JSON::Hjson",
   "license" : "Artistic-2.0",
+  "name" : "JSON::Hjson",
   "perl" : "6.c",
   "provides" : {
     "JSON::Hjson" : "lib/JSON/Hjson.pm6",
@@ -15,9 +15,10 @@
   },
   "resources" : [ ],
   "source-url" : "git://github.com/akiym/JSON-Hjson.git",
+  "tags" : [ ],
   "test-depends" : [
     "JSON::Tiny",
     "Test::META"
   ],
-  "version" : "*"
+  "version" : "0.0.1"
 }

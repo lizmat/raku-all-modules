@@ -47,12 +47,12 @@ token string:sym<quoteless-string> {
 token ql-char { <-[\n\r]> }
 token ql-end  { <[\x20\t\r]>* \n | $ }
 
-token json-string { \" ~ \" [ <str> | \\ <str=.str_escape> ]* }
+token json-string { \" ~ \" [ <str> | \\ <str=.str-escape> ]* }
 
 token str        { <-["\\\t\n]>+ }
-token str_escape { <["\\/bfnrt]> | 'u' <utf16_codepoint>+ % '\u' }
+token str-escape { <["\\/bfnrt]> | 'u' <utf16-codepoint>+ % '\u' }
 
-token utf16_codepoint { <.xdigit>**4 }
+token utf16-codepoint { <.xdigit>**4 }
 
 token comment {
     [ [ '#' | '//' ] <-[\n]>* ] | [ '/*' ~ '*/' .*? ]
