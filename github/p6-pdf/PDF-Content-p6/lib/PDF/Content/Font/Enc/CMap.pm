@@ -13,7 +13,7 @@ class PDF::Content::Font::Enc::CMap {
                     my uint ($from, $to, $code-point) = @<r>.map: { :16(.Str) };
 
                     for $from .. $to {
-                        @!to-unicode[$_] = $code-point;
+                        @!to-unicode[$_] = $code-point++;
                     }
                 }
             }
