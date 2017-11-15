@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/akiym/JSON-Hjson.git
 	branch = master
-	commit = e4a19a8fe9046e9ab761bd7aeaa74d427dc4e655
-	parent = b053e72a8e9c4018c84928ea596704360f47981d
+	commit = 0076e2b7b27ea58a7f589a2319d9dee1528acc46
+	parent = 06182da8d8685ba238866de9f5b7254cc37aee4d
 	cmdver = 0.4.0
