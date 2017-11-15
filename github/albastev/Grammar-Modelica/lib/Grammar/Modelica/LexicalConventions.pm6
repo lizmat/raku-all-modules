@@ -26,7 +26,7 @@ regex UNSIGNED_INTEGER {<DIGIT>+}
 
 #UNSIGNED_NUMBER = UNSIGNED_INTEGER [ "." [ UNSIGNED_INTEGER ] ]
 #  [ ( "e" | "E" ) [ "+" | "-" ] UNSIGNED_INTEGER ]
-regex UNSIGNED_NUMBER {<UNSIGNED_INTEGER>+%'.'?[<[eE]><[+-]>?<UNSIGNED_INTEGER>]?}
+regex UNSIGNED_NUMBER {<UNSIGNED_INTEGER>+['.'<UNSIGNED_INTEGER>?]?[<[eE]><[+-]>?<UNSIGNED_INTEGER>]?}
 
 regex c-comment {['//'.*?$$]||['/*'.*?'*/']}
 

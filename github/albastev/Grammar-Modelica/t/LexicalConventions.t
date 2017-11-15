@@ -5,7 +5,7 @@ use Test;
 use lib '../lib';
 use Grammar::Modelica;
 
-plan 87;
+plan 90; 
 
 grammar TestString is Grammar::Modelica {
   rule TOP {^<STRING>$}
@@ -141,6 +141,7 @@ grammar TestUnsignedNumber is Grammar::Modelica {
 }
 
 ok TestUnsignedNumber.parse('12');
+ok TestUnsignedNumber.parse('12.');
 nok TestUnsignedNumber.parse('1 2');
 ok TestUnsignedNumber.parse('12.34');
 nok TestUnsignedNumber.parse('12 .34');
@@ -148,6 +149,8 @@ nok TestUnsignedNumber.parse('12. 34');
 ok TestUnsignedNumber.parse('12.34e-56');
 ok TestUnsignedNumber.parse('12.34E-56');
 ok TestUnsignedNumber.parse('12.34e+56');
+ok TestUnsignedNumber.parse('1.e4');
+ok TestUnsignedNumber.parse('1.0e4');
 nok TestUnsignedNumber.parse('12.34 e+56');
 nok TestUnsignedNumber.parse('12.34e +56');
 nok TestUnsignedNumber.parse('12.34e+ 56');
