@@ -24,10 +24,10 @@ my class Result does Jupyter::Kernel::Response {
         }
     }
     method stdout-mime-type {
-        return self!mime-type($.stdout);
+        return self!mime-type($.stdout // '');
     }
     method output-mime-type {
-        return self!mime-type($.output);
+        return self!mime-type($.output // '');
     }
 }
 
@@ -61,7 +61,9 @@ class Jupyter::Kernel::Sandbox is export {
         my $eval-code = $code;
         if $store {
             $eval-code = qq:to/DONE/
-                my \\_$store = \$( $code );
+                my \\_$store = \$(
+                    $code
+                );
                 \$Out[$store] := _$store;
                 _ = _$store;
                 DONE
