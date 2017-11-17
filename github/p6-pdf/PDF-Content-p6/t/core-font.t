@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 40;
+plan 41;
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content::Font;
 use PDF::Content::Font::CoreFont;
@@ -22,8 +22,10 @@ isa-ok $hb-afm.metrics, 'Font::AFM';
 is $hb-afm.font-name, 'Helvetica-Bold', 'font-name';
 is $hb-afm.enc, 'win', '.enc';
 is $hb-afm.height, 1190, 'font height';
+is $hb-afm.height(:hanging), 925, 'font height hanging';
 is-approx $hb-afm.height(12), 14.28, 'font height @ 12pt';
 is-approx $hb-afm.height(12, :from-baseline), 11.544, 'font base-height @ 12pt';
+is-approx $hb-afm.height(12, :hanging), 11.1, 'font hanging height @ 12pt';
 is $hb-afm.encode("A♥♣✔B", :str), "AB", '.encode(...) sanity';
 
 my $ab-afm = PDF::Content::Font::CoreFont.load-font( 'Arial-Bold' );
@@ -44,7 +46,6 @@ my $tr-afm = PDF::Content::Font::CoreFont.load-font( 'Times-Roman' );
 is $tr-afm.stringwidth("RVX", :!kern), 2111, 'stringwidth :!kern';
 is $tr-afm.stringwidth("RVX", :kern), 2111 - 80, 'stringwidth :kern';
 is-deeply $tr-afm.kern("RVX" ), (['R', -80, 'VX'], 2031), '.kern(...)';
-is-deeply $tr-afm.kern("RVX", 12), (['R', -0.96, 'VX'], 2031 * 12 / 1000), '.kern(..., $w))';
 
 for (win => "Á®ÆØ",
      mac => "ç¨®¯") {

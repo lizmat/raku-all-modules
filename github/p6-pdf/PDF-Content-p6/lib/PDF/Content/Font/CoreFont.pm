@@ -119,9 +119,9 @@ class PDF::Content::Font::CoreFont {
     #| compute the overall font-height
     method height($pointsize?, Bool :$from-baseline, Bool :$hanging) {
         my List $bbox = $!metrics.FontBBox;
-	my Numeric $height = $bbox[3];
-        $height *= .75 if $hanging;  # not applicable to core fonts - approximate
-	$height -= $bbox[1] unless $from-baseline;
+	my Numeric $height = $hanging ?? $!metrics.Ascender !! $bbox[3];
+	$height -= $hanging ?? $!metrics.Descender !! $bbox[1]
+            unless $from-baseline;
 	$pointsize ?? $height * $pointsize / 1000 !! $height;
     }
 
