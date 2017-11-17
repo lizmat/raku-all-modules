@@ -71,7 +71,7 @@ my enum Native::Packing::Endian is export(:Endian) <Network Vax Host>;
 
 role Native::Packing {
 
-    my constant HostEndian = do {
+    sub detect-host-endian {
         my $i = CArray[uint16].new(0x1234);
         my $j = nativecast(CArray[uint8], $i);
         if $j[0] == 0x12 {
@@ -84,6 +84,8 @@ role Native::Packing {
             Vax;
         }
     }
+
+    my constant HostEndian = detect-host-endian();
 
     method host-endian {
         HostEndian
