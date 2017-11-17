@@ -1,0 +1,49 @@
+{
+    "_links": [
+        {
+            "self": "soccerseasons/351/teams"
+        },
+        {
+            "soccerseason": "soccerseasons/351"
+        }
+    ],
+    "count": 18,
+    "teams": [
+        {
+            "_links": {
+                "self": {
+                    "href": "teams/5"
+                },
+                "fixtures": {
+                    "href": "teams/5/fixtures"
+                },
+                "players": {
+                    "href": "teams/5/players"
+                }
+            },
+            "name": "FC Bayern München",
+            "code": "FCB",
+            "shortName": "Bayern",
+            "squadMarketValue": "551,250,000 €",
+            "crestUrl": "http://upload.wikimedia.org/wikipedia/commons/c/c5/Logo_FC_Bayern_München.svg"
+        },
+        {
+            "_links": {
+                "self": {
+                    "href": "teams/11"
+                },
+                "fixtures": {
+                    "href": "teams/11/fixtures"
+                },
+                "players": {
+                    "href": "teams/11/players"
+                }
+            },
+            "name": "VfL Wolfsburg",
+            "code": "WOB",
+            "shortName": "Wolfsburg",
+            "squadMarketValue": "206,350,000 €",
+            "crestUrl": "http://upload.wikimedia.org/wikipedia/de/b/bc/VfL_Wolfsburg_Logo_weiß.svg"
+        }
+    ]
+}

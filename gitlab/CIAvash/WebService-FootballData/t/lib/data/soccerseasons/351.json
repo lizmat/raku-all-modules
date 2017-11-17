@@ -1,0 +1,25 @@
+{
+    "_links": {
+        "self": {
+            "href": "soccerseasons/351"
+        },
+        "teams": {
+            "href": "soccerseasons/351/teams"
+        },
+        "fixtures": {
+            "href": "soccerseasons/351/fixtures"
+        },
+        "leagueTable": {
+            "href": "soccerseasons/351/leagueTable"
+        }
+    },
+    "id": 351,
+    "caption": "1. Bundesliga 2014/15",
+    "league": "BL1",
+    "year": "2014",
+    "currentMatchday": null,
+    "numberOfMatchdays": 34,
+    "numberOfTeams": 18,
+    "numberOfGames": 306,
+    "lastUpdated": "2015-05-24T03:48:48Z"
+}

@@ -1,0 +1,33 @@
+{
+    "_links": [{
+        "self": "soccerseasons/351/fixtures"
+    }, {
+        "soccerseason": "soccerseasons/351"
+    }],
+    "count": 9,
+    "fixtures": [{
+        "_links": {
+            "self": {
+                "href": "fixtures/136022"
+            },
+            "soccerseason": {
+                "href": "soccerseasons/351"
+            },
+            "homeTeam": {
+                "href": "teams/5"
+            },
+            "awayTeam": {
+                "href": "teams/4"
+            }
+        },
+        "date": "2014-11-01T17:30:00Z",
+        "status": "FINISHED",
+        "matchday": 10,
+        "homeTeamName": "FC Bayern München",
+        "awayTeamName": "Borussia Dortmund",
+        "result": {
+            "goalsHomeTeam": 2,
+            "goalsAwayTeam": 1
+        }
+    }]
+}

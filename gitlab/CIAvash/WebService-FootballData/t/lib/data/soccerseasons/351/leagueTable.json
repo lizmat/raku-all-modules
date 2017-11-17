@@ -1,0 +1,71 @@
+{
+    "_links": {
+        "self": "soccerseasons/351/leagueTable/?matchday=34",
+        "soccerseason": "soccerseasons/351"
+    },
+    "leagueCaption": "1. Bundesliga 2014/15",
+    "matchday": 34,
+    "standing": [{
+        "_links": {
+            "team": {
+                "href": "teams/5"
+            }
+        },
+        "position": 1,
+        "teamName": "FC Bayern München",
+        "crestURI": "http://upload.wikimedia.org/wikipedia/commons/c/c5/Logo_FC_Bayern_München.svg",
+        "playedGames": 34,
+        "points": 79,
+        "goals": 80,
+        "goalsAgainst": 18,
+        "goalDifference": 62,
+        "wins": 25,
+        "draws": 4,
+        "losses": 5,
+        "home": {
+            "goals": 46,
+            "goalsAgainst": 7,
+            "wins": 14,
+            "draws": 1,
+            "losses": 2
+        },
+        "away": {
+            "goals": 34,
+            "goalsAgainst": 11,
+            "wins": 11,
+            "draws": 3,
+            "losses": 3
+        }
+    }, {
+        "_links": {
+            "team": {
+                "href": "teams/11"
+            }
+        },
+        "position": 2,
+        "teamName": "VfL Wolfsburg",
+        "crestURI": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Logo-VfL-Wolfsburg.svg",
+        "playedGames": 34,
+        "points": 69,
+        "goals": 72,
+        "goalsAgainst": 38,
+        "goalDifference": 34,
+        "wins": 20,
+        "draws": 9,
+        "losses": 5,
+        "home": {
+            "goals": 38,
+            "goalsAgainst": 13,
+            "wins": 13,
+            "draws": 4,
+            "losses": 0
+        },
+        "away": {
+            "goals": 34,
+            "goalsAgainst": 25,
+            "wins": 7,
+            "draws": 5,
+            "losses": 5
+        }
+    }]
+}
