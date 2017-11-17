@@ -1,0 +1,10 @@
+language: generic
+install:
+  - curl -O -J -L https://github.com/nxadm/rakudo-pkg/releases/download/2017.02/perl6-rakudo-moarvm-ubuntu16.10_20170200-01_amd64.deb
+  - sudo dpkg -i perl6-rakudo-moarvm-ubuntu16.10_20170200-01_amd64.deb
+  - export PATH=/opt/rakudo/bin:~/.perl6/bin:$PATH
+  - /opt/rakudo/bin/install_zef_as_user.sh
+  - ~/.perl6/bin/zef --force --/test install .
+script:
+  - prove -v -e 'perl6 -Ilib' t/
+sudo: sudo 
