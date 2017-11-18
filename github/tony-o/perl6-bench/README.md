@@ -1,11 +1,12 @@
-#Bench[mark]
+# Bench[mark]
 
 [![Build Status](https://travis-ci.org/tony-o/perl6-bench.svg)](https://travis-ci.org/tony-o/perl6-bench)
 
 Benchmark tool for benchmarking how long a block of code runs for X iterations *or* how many times it can run in a given period.
 
+Bench now uses Telemetry if you have it to show you the USR/SYS/CPU times, so your output below may look slightly different.
 
-#Usage
+# Usage
 
 ```perl6
 use Bench;
@@ -43,37 +44,37 @@ O========O========O=======O========O
 ------------------------------------
 ```
 
-#Methods
+# Methods
 
-##.timestr(Array) returns Str
+## .timestr(Array) returns Str
 
 Takes an array returned from any of the following methods and returns a formatted string with the data filled in.  The string is similar to below: ```6.4145 wallclock secs @ 155.8971/s (n=1000)``` 
 
-##.timeit(Int $iterations, Sub) returns Array
+## .timeit(Int $iterations, Sub) returns Array
 
 Times a single sub over X iterations.  Doesn't output anything by default, just returns an array of time spent and iterations.  Use in conjunction with ```.timestr```
 
-##.countit(Rat $time, Sub) returns Array
+## .countit(Rat $time, Sub) returns Array
 
 Returns how many iterations of the Sub it can run in the specified time.  Use in conjunction with ```.timestr```
 
-##.timethis(Int $iterations, Sub, Str :$title) returns Array
+## .timethis(Int $iterations, Sub, Str :$title) returns Array
 
 Runs the specified sub for $iterations and automatically prints out the ```.timestr```.  If $iterations is negative or 0 then it runs ```.countit``` instead of ```.timeit```
 
-##.timethese(Int $iterations, Hash $Subs) returns Array
+## .timethese(Int $iterations, Hash $Subs) returns Array
 
 Similar to ```.timethis``` but the key in the hash becomes the title for the test.  An example of the output can be 
 
-##.cmpthese(Int $iterations, Hash $Subs) returns Array
+## .cmpthese(Int $iterations, Hash $Subs) returns Array
 
 Similar to ```.timethese``` but it produces a cute little table comparing the results.
 
-#License
+# License
 
 Do whatever you want with it.
 
-#Authors
+# Authors
 
 [@tony-o](https://www.gittip.com/tony-o/)
 

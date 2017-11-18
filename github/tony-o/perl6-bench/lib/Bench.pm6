@@ -1,16 +1,30 @@
 use Text::Table::Simple;
 
+my $use-telemetry = True;
+(try require ::('Telemetry') <&infix:<->>) === Nil and $use-telemetry = False;
+
+sub get-now(Bool $no-telemetry = False) {
+  return now
+    if !$use-telemetry || $no-telemetry;
+  ::('Telemetry').new;
+}
+
 class Bench {
-  has Bool $.debug     = False;
-  has Int  $.min_count = 4;
-  has Rat  $.min_cpu   = 0.04;
-  has Str  $.format    = '%5.4f';
-  has Str  $.style     = 'auto';
+  has Bool $.debug        = False;
+  has Int  $.min_count    = 4;
+  has Rat  $.min_cpu      = 0.04;
+  has Str  $.format       = '%1.3f';
+  has Str  $.style        = 'auto';
+  has Bool $.no-telemetry = False;
 
   method timediff($a, $b){
     my $r = Array.new;
     for 0..max($a.end,$b.end) -> $i {
-      $r.append(($a[$i] // 0) - ($b[$i] // 0));
+      $r.append(
+        ($use-telemetry && !$.no-telemetry)
+          ?? infix:<->($a[$i], $b[$i])
+          !! ($a[$i] - $b[$i])
+      );
     }
     return $r;
   }
@@ -27,8 +41,25 @@ class Bench {
     my ($r, $n) = @$t; 
     my $f = $format;
     my $s = '';
-    $s ~= sprintf("$f wallclock secs", $r);
-    my $elapsed = $r;
+    my ($wc,$usr,$sys,$cpu);
+    if $use-telemetry && !$.no-telemetry {
+      ($wc, $usr, $sys, $cpu) = map { $_ < 0 ?? 0 !! $_ }, (
+        $r.wallclock / 1000000,
+        $r.cpu-user / 1000000,
+        $r.cpu-sys / 1000000,
+        $r.cpu / 1000000,
+      );
+      $s ~= sprintf("$f wallclock secs ($f usr $f sys $f cpu)",
+              $wc,
+              $usr,
+              $sys,
+              $cpu,
+            );
+
+    } else {
+      $s ~= sprintf("$f wallclock secs", $r);
+    }
+    my $elapsed = (!$.no-telemetry && $use-telemetry) ?? $wc !! $r;
     $s ~= sprintf(" \@ $f/s (n=$n)", $n/$elapsed) if $n && $elapsed;
     return $s;
   }
@@ -41,11 +72,11 @@ class Bench {
     die "Negative loop count ($n)" if $n < 0;
     my ($t0, $t1, $td);
     my $subcode = "sub \{ for (1..$n) \{ \$c(); \}; \}";
-    my $tbase   = now;
+    my $tbase   = get-now($.no-telemetry);
     my $ev = &($subcode.EVAL);
-    while (($t0 = now) == $tbase) { };
+    while (($t0 = get-now($.no-telemetry)) eqv $tbase) { };
     $ev.();
-    $t1 = now;
+    $t1 = get-now($.no-telemetry);
     $td = $.timediff([$t1], [$t0]);
     return $td;
   }
@@ -69,9 +100,9 @@ class Bench {
     my (Int $n, $tc);
     my $zeros = 0;
     loop ($n = 1; ; $n *= 2) {
-      my $t0 = now;
+      my $t0 = get-now($.no-telemetry);
       my $td = $.timeit($n, $c);
-      my $t1 = now;
+      my $t1 = get-now($.no-telemetry);
       $tc = $td[0];
       if ($tc <= 0 and $n > 1024) {
         my $d = $.timediff($t1,$t0);
