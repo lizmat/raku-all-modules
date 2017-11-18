@@ -20,7 +20,7 @@ class Build {
         die "unable to load encodings: $encoding-path"
             unless $encoding-path ~~ :e;
 
-        my %latin1-chars = %Font::AFM::ISOLatin1Encoding.invert;
+        my %charset = %Font::AFM::Glyphs.invert;
 
         for $encoding-path.lines {
             next if /^ '#'/ || /^ $/;
@@ -45,7 +45,7 @@ class Build {
                 my $dec = $glyphs{$scheme} //= {}
                 self!save-glyph(:glyphs($dec), :encoding($enc), $glyph-name, $chr, $byte);
 
-                if my $alternate-chr = %latin1-chars{$glyph-name} {
+                with %charset{$glyph-name} -> $alternate-chr {
                     if $alternate-chr ne $chr {
                         self!save-glyph(:glyphs($dec), $glyph-name, $alternate-chr, $byte);
                     }
@@ -98,7 +98,8 @@ class Build {
 
         for $glyphs.keys.sort -> $type {
             say "    #-- {$type.uc} encoding --#"; 
-            say "    constant \${$type}-glyphs = {$glyphs{$type}.perl};";
+            say "    constant \${$type}-glyphs = {$glyphs{$type}.perl};"
+                if $type eq 'zapf';
             say "    constant \${$type}-encoding = {$encodings{$type}.perl};";
             say "";
         }

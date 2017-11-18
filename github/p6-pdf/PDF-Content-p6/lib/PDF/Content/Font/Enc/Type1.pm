@@ -1,8 +1,8 @@
 class PDF::Content::Font::Enc::Type1 {
-
+    use Font::AFM;
     use PDF::Content::Font::Encodings;
-    has $.glyphs = $PDF::Content::Font::Encodings::win-glyphs;
-    has $!encoding = $PDF::Content::Font::Encodings::mac-encoding;
+    has $.glyphs = %Font::AFM::Glyphs;
+    has $!encoding;
     has uint8 @!from-unicode;
     has uint16 @.to-unicode[256];
     my subset EncodingScheme of Str where 'mac'|'win'|'sym'|'zapf';
@@ -11,15 +11,12 @@ class PDF::Content::Font::Enc::Type1 {
     submethod TWEAK {
 	given $!enc {
 	    when 'mac' {
-		$!glyphs = $PDF::Content::Font::Encodings::mac-glyphs;
 		$!encoding = $PDF::Content::Font::Encodings::mac-encoding;
 	    }
 	    when 'win' {
-		$!glyphs = $PDF::Content::Font::Encodings::win-glyphs;
 		$!encoding = $PDF::Content::Font::Encodings::win-encoding;
 	    }
 	    when 'sym' {
-		$!glyphs = $PDF::Content::Font::Encodings::sym-glyphs;
 		$!encoding = $PDF::Content::Font::Encodings::sym-encoding;
 	    }
 	    when 'zapf' {
@@ -30,9 +27,11 @@ class PDF::Content::Font::Enc::Type1 {
 
         for $!glyphs.pairs {
             my uint16 $code-point = .key.ord;
-            my uint8 $encoding = $!encoding{.value}.ord;
-            @!from-unicode[$code-point] = $encoding;
-            @!to-unicode[$encoding] = $code-point;
+            with $!encoding{.value} {
+                my uint8 $encoding = .ord;
+                @!from-unicode[$code-point] = $encoding;
+                @!to-unicode[$encoding] = $code-point;
+            }
         }
     }
 
