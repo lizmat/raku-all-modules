@@ -29,47 +29,47 @@ Here's the current proposed order of macro examples to tackle:
   spot of being simple and also clearly needing to be a macro. It ends up
   being code with some private state, since hitting the same `ff` expression
   several times will have results depending on what has happened to that
-  expression before. (#207)
+  expression before. ([#207](https://github.com/masak/007/issues/#207))
 
 * A `swap` macro. Takes two lvalues and swaps their contents. The term
   "lvalue" here is significant, as these need to be assignable. (That's also
   why a simple sub wouldn't be enough in this case, since we have
   call-by-value.) This macro needs the assignment protocol to be in place in
-  order to work fully. (#218)
+  order to work fully. ([#218](https://github.com/masak/007/issues/#218))
 
 * Reduction metaoperator, such as `[+](1, 2, 3)`. In 007, the `[+]` would
   parse into a code-generated anonymous subroutine. This one is interesting
   for two reasons. First, it *really* uses closures and hygiene all-out.
   Second, it requires `is parsed` to be implemented enough to pass the `+`
   part of `[+]` as a parameter to the macro so that it can be part of the
-  generated code. (#176)
+  generated code. ([#176](https://github.com/masak/007/issues/#176))
 
 * `postfix:<++>` and family; a total of four operators. Also requires the
-  assignment protocol. (#122)
+  assignment protocol. ([#122](https://github.com/masak/007/issues/#122))
 
 * `+=` assignment operators and family. Requires both the assignment
-  protocol and `is parsed`. (#152)
+  protocol and `is parsed`. ([#152](https://github.com/masak/007/issues/#152))
 
 * `.=` mutating method call. Also requires both the assignment protocol and
-  `is parsed`. (#203)
+  `is parsed`. ([#203](https://github.com/masak/007/issues/#203))
 
 * Unbound methods. Something like `unbound .abs()` to denote the longer
-  `sub (obj) { return obj.abs(); }`. (#202)
+  `sub (obj) { return obj.abs(); }`. ([#202](https://github.com/masak/007/issues/#202))
 
 * Arrow functions. Something like `x => x * x` to denote the longer
-  `sub (x) { return x * x; }`. (#215)
+  `sub (x) { return x * x; }`. ([#215](https://github.com/masak/007/issues/#215))
 
-* Ternary operator `?? !!`. Also needs `is parsed`. (#163)
+* Ternary operator `?? !!`. Also needs `is parsed`. ([#163](https://github.com/masak/007/issues/#163))
 
 * `each()` macro. This one is interesting because it's build using a
-  statement macro inside of it. (#158)
+  statement macro inside of it. ([#158](https://github.com/masak/007/issues/#158))
 
 These are features/bug fixes that will need to be in place for the above to
 work:
 
-* Allowing declarations in macro expansions. (#212)
-* The assignment protocol. (See below.) (#214)
-* `is parsed`, or at least enough of it. (#177)
+* Allowing declarations in macro expansions. ([#212](https://github.com/masak/007/issues/#212))
+* The assignment protocol. (See below.) ([#214](https://github.com/masak/007/issues/#214))
+* `is parsed`, or at least enough of it. ([#177](https://github.com/masak/007/issues/#177))
 * Various Qnode introspection and manipulation. (No issue for this yet.)
 
 ## Pre-v1.0.0
@@ -87,21 +87,19 @@ The first track is still the *raison d'être* for 007. The second track rounds
 * The big focus is [quasi unquotes](https://github.com/masak/007/issues/30), a
   big part of making simple macros work as expected. The champion on this one
   is **masak**.
-* Also want to close [a philosophical
-  issue](https://github.com/masak/007/issues/7) about the statement/expression
-  discrepancy that's exhibited in quasi blocks. We're quite near to being able
-  to resolve this one now.
+* Fix the fact that [variables declared in quasis currently don't work in the
+  corresponding injected code](https://github.com/masak/007/issues/212).
 * Make unhygienic declarations that are injected into code [actually declare
   stuff](https://github.com/masak/007/issues/88). We can cheat majorly at this
   one at first, as long as it works.
+* [`is parsed`](https://github.com/masak/007/issues/#177).
 
 ### Language track
 
 * We're planning to [give the web page a big
   facelift](https://github.com/masak/007/issues/67), including more examples
   and interactive Qtrees. The champion on this one is **masak**.
-    * masak would also like to take this opportunity to tie together some kind
-      of doc-comments, automated tests, and documentation on the web page.
+* Implement some more [code inspection](https://github.com/masak/007/issues/222).
 
 ### General cleanup that should happen before v1.0.0
 
