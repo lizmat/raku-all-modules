@@ -6,24 +6,23 @@ use App::Cpan6::Commands::Dist;
 use App::Cpan6::Input;
 use App::Cpan6::Meta;
 
-unit module App::Cpan6::Commands::Release;
+unit module App::Cpan6::Commands::Bump;
 
-multi sub MAIN("release", $path = ".", Bool :$ask = False) is export
+multi sub MAIN("bump", Str $path, Bool :$ask = False) is export
 {
-	# Define release types
-	my Str @release-types = (
+	# Define bump types
+	my Str @bump-types = (
 		"Major",
 		"Minor",
 		"Bugfix",
 	);
-	my Int $default-release = 3;
-	my Str $absolute-path = $path.IO.absolute;
+	my Int $default-bump = 3;
 
-	# Change to the directory to release
-	chdir $absolute-path;
+	# Change to the directory to bump
+	chdir $path;
 
 	# Make sure the directory is clean
-	if ($absolute-path.IO.add(".git").e) {
+	if ($path.IO.add(".git").e) {
 		my $git-cmd = run « git status --short », :out;
 
 		if (0 < $git-cmd.out.lines.elems) {
@@ -34,32 +33,30 @@ multi sub MAIN("release", $path = ".", Bool :$ask = False) is export
 	# Get the META6 info
 	my %meta = get-meta;
 
-	say "Making release for {%meta<name>} v{%meta<version>}";
+	# Output the possible bump types
+	say "Bump parts";
 
-	# Output the possible release types
-	say "Release type";
-
-	for @release-types.kv -> $i,  $type {
+	for @bump-types.kv -> $i,  $type {
 		say "  {$i + 1} - $type";
 	};
 
-	# Request user input to select the release type
-	my Int $release;
+	# Request user input to select the bump type
+	my Int $bump;
 
 	loop {
-		my $input = ask("Release type", default => $default-release.Str);
+		my $input = ask("Bump part", default => $default-bump.Str);
 
 		if ($input ~~ /^$ | ^\d+$/) {
-			$release = $input.Int;
+			$bump = $input.Int;
 		}
 
-		if ($release == 0) {
-			$release = $default-release;
+		if ($bump == 0) {
+			$bump = $default-bump;
 		}
 
-		$release--;
+		$bump--;
 
-		if ($release < @release-types.elems) {
+		if ($bump < @bump-types.elems) {
 			last;
 		}
 	}
@@ -68,7 +65,7 @@ multi sub MAIN("release", $path = ".", Bool :$ask = False) is export
 	my @version = %meta<version>.split(".");
 	my @new-version = @version;
 
-	given @release-types[$release].lc {
+	given @bump-types[$bump].lc {
 		when "major"  { 
 			@new-version[0]++;
 			@new-version[1] = 0;
@@ -85,14 +82,14 @@ multi sub MAIN("release", $path = ".", Bool :$ask = False) is export
 
 	%meta<version> = @new-version.join(".");
 
-	say "New release version will be {%meta<version>}";
+	say "Bumping {%meta<name>} to {%meta<version>}";
 
 	exit if $ask && !confirm;
 
 	put-meta(:%meta);
 
 	# Commit the updated META6
-	if ($absolute-path.IO.add(".git").e) {
+	if ($path.IO.add(".git").e) {
 		run « git add META6.json »;
 		run « git commit -m "Bump version to {%meta<version>}" »;
 		run « git tag "v{%meta<version>}" »;
@@ -101,5 +98,17 @@ multi sub MAIN("release", $path = ".", Bool :$ask = False) is export
 	return if $ask && !confirm("Create new dist?");
 
 	# Build the dist
-	MAIN("dist", $absolute-path, :force);
+	MAIN("dist", $path, :force);
+}
+
+multi sub MAIN("bump", Bool :$ask = False) is export
+{
+	MAIN("bump", ".", :$ask);
+}
+
+multi sub MAIN("bump", *@paths, Bool :$ask = False) is export
+{
+	for @paths -> $path {
+		MAIN("bump", $path.IO.absolute, :$ask);
+	}
 }

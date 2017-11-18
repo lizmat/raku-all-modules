@@ -25,5 +25,5 @@ sub put-meta(:%meta, :$path = ".", :$clobber = True) is export
 		die "Not clobbering {$meta6}";
 	}
 
-	spurt($meta6, to-json(%meta))
+	spurt($meta6, to-json(%meta, :sorted-keys))
 }

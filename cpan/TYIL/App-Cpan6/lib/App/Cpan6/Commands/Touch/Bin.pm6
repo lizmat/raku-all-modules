@@ -6,7 +6,7 @@ use App::Cpan6::Meta;
 
 unit module App::Cpan6::Commands::Touch::Bin;
 
-multi sub MAIN("touch", "bin", Str $provide)
+multi sub MAIN("touch", "bin", Str $provide) is export
 {
 	my %meta = get-meta;
 	my $path = "./bin".IO;

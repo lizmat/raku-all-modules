@@ -6,6 +6,13 @@ use App::Cpan6::Meta;
 
 unit module App::Cpan6::Commands::Depend;
 
+multi sub MAIN("depend", Str @modules, Bool :$skip-install = False) is export
+{
+	for @modules -> $module {
+		MAIN("depend", $module, :$skip-install);
+	}
+}
+
 multi sub MAIN("depend", Str $module, Bool :$skip-install = False) is export
 {
 	# Get the meta info

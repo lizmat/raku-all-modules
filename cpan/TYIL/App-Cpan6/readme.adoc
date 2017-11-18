@@ -4,7 +4,7 @@
 `App::Cpan6` is a tool to assist in creating and sharing
 https://www.cpan.org/[CPAN] modules.
 
-== Features
+== Commands
 To do it's job, `cpan6` has a couple of tools ready for you. Use any of the
 following subcommands to use them.
 
@@ -37,6 +37,9 @@ each type of package, there's a different subcommand.
 To create `ebuild` files, used by Gentoo and derivatives, you can make use of
 the `ebuild` subcommand to `package`.
 
+==== push
+`push` is a short-hand to running `release`, `dist` and `upload`.
+
 === release
 Create a new release for a module. This will bump the version number in
 `META6.json`, commit it into git and create a tag with the version number.
@@ -63,6 +66,53 @@ a `--type` argument to `cpan6`. Valid types are
 Upload module tarballs to PAUSE. This will ask you to enter your PAUSE ID and
 password. It will ask to save your PAUSE ID, so you wont have to enter it next
 time.
+
+== Configuration
+To avoid having to repeat yourself too often, a number of configuration options
+can be set in the configuration file. The format of the configuration file is
+https://github.com/toml-lang/toml[TOML]. `cpan6` assumes some defaults, defined
+in `App::Cpan6::Config`, which can all be overwritten in the configuration
+file.
+
+Currently, the configuration file is only searched in
+`${HOME}/.config/cpan6.toml`. Additional search locations may be added later.
+
+=== Example
+This example configuration block describes a configuration file's contents with
+all options defined, and set to their defaults.
+
+[source,toml]
+----
+[cpan6]
+# The directory to store newly created dists in. Set to "." to put them into
+# the current working directory. If unset, "/home/user" will be substituted
+# with the path to your $HOME.
+distdir = "/home/user/.local/var/cpan6/dists"
+
+[pause]
+# Set this id to your own PAUSE ID. If it's unset, it will be asked when
+# needed.
+id = ""
+
+# The new module options are always asked for, but the values set in the
+# configuration file here will be used as defaults. This enables you to just
+# hit enter a couple times.
+[new-module]
+# The real name of the author of the module.
+author = ""
+
+# The email address of the author of the module.
+email = ""
+
+# Which version of Perl 6 the module is going to be written against.
+perl = "c"
+
+# The license under which this module will be made available.
+license = "GPL-3.0"
+
+# The prefix given to the directory containing the module.
+dir-prefix = "perl6-"
+----
 
 == Roadmap
 - Add `push` command to release a new version of a module, and upload it to PAUSE

@@ -53,3 +53,13 @@ EOF
 	# Inform the user of success
 	say "Added $provide to {%meta<name>}";
 }
+
+multi sub MAIN("touch", "class", Str $provide) is export
+{
+	MAIN("touch", "lib", $provide, type => "class");
+}
+
+multi sub MAIN("touch", "unit", Str $provide) is export
+{
+	MAIN("touch", "lib", $provide, type => "unit");
+}
