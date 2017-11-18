@@ -15,6 +15,10 @@ sub MAIN(Str :$glyphlist = 'glyphlist.txt', Bool :$subset = False) {
             %glyphs{$char} = $glyph-name;
         }
     }
+
+    # additional ad-hoc mappings
+    %glyphs<μ> = 'mu';
+
     say %glyphs.perl;
 }
 

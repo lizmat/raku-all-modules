@@ -19,8 +19,7 @@ Font::AFM - Interface to Adobe Font Metrics files
 =head1 DESCRIPTION
 
 This module implements the Font::AFM class. Objects of this class are
-initialised from an AFM (Adobe Font Metrics) file and allow you to obtain information
-about the font and the metrics of the various glyphs in the font.
+initialised from an AFM (Adobe Font Metrics) file and allow you to obtain information about the font and the metrics of the various glyphs in the font.
 
 All measurements in AFM files are given in terms of units equal to
 1/1000 of the scale factor of the font being used. To compute actual
@@ -66,14 +65,14 @@ The list of available fonts is:
 Object constructor. Takes the name of the font as argument.
 Croaks if the font can not be found.
 
-=item $afm.stringwidth($string, $fontsize, :kern, :%glyphs)
+=item $afm.stringwidth($string, $fontsize?, :kern, :%glyphs)
 
 Returns the width of the string passed as argument. The
-string is assumed to be encoded in the iso-8859-1 character
-set. A second argument can be used to scale the width
-according to the font size.
+string is assumed to contains only characters from `%glyphs`
+A second argument can be used to scale the width according to
+the font size.
 
-=item ($kerned, $width) = $afm.kern($string, $fontsize, :%glyphs?)
+=item ($kerned, $width) = $afm.kern($string, $fontsize?, :%glyphs?)
 
 Kern the string. Returns an array of string segments, separated
 by numeric kerning distances, and the overall width of the string.
@@ -469,7 +468,7 @@ it under the same terms as Perl itself.
     "parenrightex", "" => "parenrightbt", "" => "bracketrighttp",
     "" => "bracketrightex", "" => "bracketrightbt", "" =>
     "bracerighttp", "" => "bracerightmid", "" => "bracerightbt", ""
-    => "apple", :ﬁ("fi"), :ﬂ("fl")};
+    => "apple", :ﬁ("fi"), :ﬂ("fl"), :mu("μ") };
 
     #| compute the expected string-width at the given point size for this glyph set
     method stringwidth( Str $string,

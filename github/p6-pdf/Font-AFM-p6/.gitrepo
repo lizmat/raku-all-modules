@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-pdf/Font-AFM-p6.git
 	branch = master
-	commit = 04991ecb5354ffd753477373b94a66ff05bb0957
-	parent = f16236a0094af227402cbc796c2d41e85dad510a
+	commit = ec7ea8c39634f8dac3d42b10c2807f633039ddd3
+	parent = f37eed16c19ff9e6679d912dcb78ee32b49d4686
 	cmdver = 0.4.0
