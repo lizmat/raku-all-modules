@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 41;
+plan 43;
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content::Font;
 use PDF::Content::Font::CoreFont;
@@ -26,21 +26,37 @@ is $hb-afm.height(:hanging), 925, 'font height hanging';
 is-approx $hb-afm.height(12), 14.28, 'font height @ 12pt';
 is-approx $hb-afm.height(12, :from-baseline), 11.544, 'font base-height @ 12pt';
 is-approx $hb-afm.height(12, :hanging), 11.1, 'font hanging height @ 12pt';
-is $hb-afm.encode("A♥♣✔B", :str), "AB", '.encode(...) sanity';
+is $hb-afm.encode("A♥♣✔B", :str), "A\x[1]\x[2]B", '.encode(...) sanity';
 
 my $ab-afm = PDF::Content::Font::CoreFont.load-font( 'Arial-Bold' );
 isa-ok $hb-afm.metrics, 'Font::AFM'; 
 is $hb-afm.font-name, 'Helvetica-Bold', 'font-name';
-is $hb-afm.encode("A♥♣✔B", :str), "AB", '.encode(...) sanity';
+is $hb-afm.encode("A♥♣✔B", :str), "A\x[1]\x[2]B", '.encode(...) sanity';
 
 my $hbi-afm = PDF::Content::Font::CoreFont.load-font( :family<Helvetica>, :weight<Bold>, :style<Italic> );
 is $hbi-afm.font-name, 'Helvetica-BoldOblique', ':font-family => font-name';
 
+
 my $hb-afm-again = PDF::Content::Font::CoreFont.load-font( 'Helvetica-Bold' );
 ok $hb-afm-again === $hb-afm, 'font caching';
 
+my $ext-chars = "ΨΩαΩ";
+my $enc = $hbi-afm.encode($ext-chars, :str);
+is $enc, "\x[1]\x[2]\x[3]\x[2]", "extended  chars encoding";
+is $hbi-afm.decode($enc, :str), $ext-chars,  "extended  chars decoding";
+
+$hbi-afm.cb-finish;
 my $hbi-afm-dict = $hbi-afm.to-dict;
-is-json-equiv $hbi-afm-dict, { :BaseFont<Helvetica-BoldOblique>, :Encoding<WinAnsiEncoding>, :Subtype<Type1>, :Type<Font>}, "to-dict";
+is-json-equiv $hbi-afm-dict, {
+    :Type<Font>,
+    :Subtype<Type1>,
+    :BaseFont<Helvetica-BoldOblique>,
+    :Encoding{
+        :Type<Encoding>,
+        :BaseEncoding<WinAnsiEncoding>,
+        :Differences[1, "Psi", "Omega", "alpha"],
+    },
+}, "to-dict (extended chars)";
 
 my $tr-afm = PDF::Content::Font::CoreFont.load-font( 'Times-Roman' );
 is $tr-afm.stringwidth("RVX", :!kern), 2111, 'stringwidth :!kern';
