@@ -18,6 +18,14 @@ HTTP::Server::Ogre is not tiny nor easy to handle. He is rather a stupid ogre th
 
 Martin Barth <martin@senfdax.de>
 
+=head1 SEE ALSO
+
+Cro especially Cro::HTTP - L<https://github.com/croservices/cro-http>
+
+=head1 ACKNOWLEDGEMENTS
+
+Thanks to the guys from Cro, especially Jonathan and Altai-man for writing the first  HTTP/2 Implementation.
+
 =head1 COPYRIGHT AND LICENSE
 
 Copyright 2017 Martin Barth
@@ -27,8 +35,9 @@ This library is free software; you can redistribute it and/or modify it under th
 =end pod
 
 use HTTP::Server::Ogre::Http1Protocol;
+use HTTP::Server::Ogre::Http2Protocol;
 
-class HTTP::Server::Ogre:ver<0.0.2> {
+class HTTP::Server::Ogre:ver<0.0.3> {
     has Str  $.host is required;
     has Int  $.port is required;
     has      $.app  is required;
@@ -37,8 +46,8 @@ class HTTP::Server::Ogre:ver<0.0.2> {
     has      %.tls-config = ();
 
     my %protocols = (
-        '1.1' => HTTP::Server::Ogre::Http1Protocol.new;
-        # '2'   => HTTP::Server::Ogre::Http2Protocol.new;
+        '1.1' => HTTP::Server::Ogre::Http1Protocol;
+        '2'   => HTTP::Server::Ogre::Http2Protocol;
     );
 
     method run() {
@@ -86,13 +95,15 @@ class HTTP::Server::Ogre:ver<0.0.2> {
                     $http-mode = $conn.alpn-result ?? <2> !! <1.1>;
                 }
 
-                my $proto = %protocols{$http-mode};
+                my $proto = %protocols{$http-mode}.new;
                 my $envs  = $proto.read-from($conn);
 
                 whenever $envs -> %env {
                     my $promise = $.app.(%env);
                     whenever $promise -> $result {
-                        $proto.write-to($conn, $result);
+                        my %parameters = ();
+                        %parameters<stream-id> = $_ with %env<ogre.stream-id>;
+                        $proto.write-to($conn, $result, |%parameters);
                     }
                 }
             }

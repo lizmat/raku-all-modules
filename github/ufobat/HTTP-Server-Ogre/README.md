@@ -20,6 +20,16 @@ AUTHOR
 
 Martin Barth <martin@senfdax.de>
 
+SEE ALSO
+========
+
+Cro especially Cro::HTTP - [https://github.com/croservices/cro-http](https://github.com/croservices/cro-http)
+
+ACKNOWLEDGEMENTS
+================
+
+Thanks to the guys from Cro, especially Jonathan and Altai-man for writing the first HTTP/2 Implementation.
+
 COPYRIGHT AND LICENSE
 =====================
 
