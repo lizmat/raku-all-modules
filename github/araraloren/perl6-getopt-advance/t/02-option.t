@@ -13,7 +13,8 @@ $optset.push("f|flag=a", "compile flag", value => [ "std=c++11", ]);
 $optset.push("c|compile=s", "compile", value => 'g++', callback => &checkCompile);
 $optset.push("os=h", "operator system executable extension", value => %(win32 => 'exe'));
 $optset.push("quite=b/");
-$optset.append("p|print=b;|debug=b");
+$optset.push("d2|debug2=b", "open debug mode 2");
+$optset.append("p|print=b;d|debug=b");
 $optset.append("i|include=a" => "include c/cpp header", "I=a" => "include search path");
 $optset.append("S=b" => "pass -S", "E=b" => "pass -E", :radio);
 $optset.append("f|flag=a;l|link=a;D|DEFINE=a;", :multi);
@@ -35,7 +36,8 @@ getopt(
         "-O1",
         "-f", "Wextra",
         "-l", "m",
-        "-e", 'printf("hello world");'
+        "-e", 'printf("hello world");',
+        "-d2"
     ],
     $optset,
     :!strict
@@ -52,6 +54,7 @@ ok $optset.get('h').value, "set help option ok";
 ok [&&] $optset{<help v>}, "help and version all set";
 is $optset.get("h").annotation, "print this help message";
 ok "Wall" (elem) $optset<f>, "set value ok";
+ok $optset{"d2"}, "set debug mode2 ok";
 
 sub checkMain($self, $a) {
     ok $self === $optset.get("main"), "same option";

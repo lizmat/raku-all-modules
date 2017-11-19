@@ -1,7 +1,7 @@
 #!/usr/bin/env perl6
 
+use nqp;
 use Getopt::Advance;
-use Getopt::Advance::Exception;
 
 my OptionSet $os .= new;
 
@@ -47,30 +47,84 @@ $os.push(
     'no|=a',
     'exclude file category.',
 );
+$os.push(
+    'only|=s',
+    'only search given category.',
+);
+$os.push(
+    'd|debug=b',
+    'print debug message.'
+);
 my $id = $os.insert-pos(
     "directory",
     sub find-and-print-source($os, $dira) {
-        my @stack = $dira.value.IO;
-        my @ext = [];
-        for < c h cpp cfg m a > -> $opt {
-            if $opt !(elem) @($os<no>) {
-                @ext.append($os{$opt} // []);
+        my @stack = $dira.value;
+        my %ext := set (
+            with $os<only> {
+                fail "Not recognized category: {$_}." unless $_ (elem) < c h cpp cfg m a w >;
+                $os<only> eq "w" ?? [] !! ($os{$_} // []);
+            } else {
+                my @ext = [];
+                for < c h cpp cfg m a > {
+                    if $_ !(elem) @($os<no>) {
+                        @ext.append($os{$_} // []);
+                    }
+                }
+                @ext;
+            }
+        );
+        my %whole := set($os.get('only').has-value && $os<only> ne "w" ?? [] !! ($os<w> // []));
+
+        note "GET ALL EXT => ", %ext if $os<d>;
+
+        my $supplier = Supplier.new;
+
+        react {
+            start whenever $supplier.Supply {
+                put Q :qq '"$_"';
+                LAST done
             }
         }
+
         while @stack {
-            with @stack.pop {
-                when :d {
-                    @stack.append(.dir);
-                }
-                when $_.basename (elem) @($os<w>) {
-                    .put;
-                }
-                when $_.basename ~~ / \. @ext $/ {
-                    .put;
-                }
-            }
+            note "CURR FILES => ", @stack if $os<d>;
+            my @stack-t = (@stack.race.map(
+                                  sub ($_) {
+                                      note "\t|GOT FILE => ", $_ if $os<d>;
+                                      if nqp::lstat(nqp::unbox_s($_), nqp::const::STAT_ISDIR) == 1 {
+                                          return .&getSubFiles;
+                                      } else {
+                                          my $fp = &basename($_);
+                                          if $fp.substr(($fp.rindex(".") // -1) + 1) (elem) %ext {
+                                              $supplier.emit($_);
+                                          }  elsif $os<w>.defined && $fp (elem) %whole {
+                                              $supplier.emit($_);
+                                          }
+                                      }
+                                      return ();
+                                  }
+                              ).flat);
+            @stack = @stack-t;
         };
     },
     :last
 );
+
 &getopt($os);
+
+sub basename($filepath) {
+    return $filepath.substr(($filepath.rindex('/') // -1) + 1);
+}
+
+sub getSubFiles($path) {
+    my @ret := [];
+    my $dh := nqp::opendir($path);
+
+    while (my $f = nqp::nextfiledir($dh)) {
+        @ret.push("$path/$f") if $f ne ".." && $f ne ".";
+    }
+
+    nqp::closedir($dh);
+
+    return @ret;
+}

@@ -152,7 +152,7 @@ class Option::Actions {
 			my ($optname, $value) = ($!name.substr(0, 1), $!name.substr(1));
 
 			if $optset.get($optname) -> $opt {
-				if $optname eq $opt.short {
+				if $optname eq $opt.short && $opt.need-argument {
                     $!type = Parser::Type::WITH-ARG;
 					return ($opt, $value);
 				}
