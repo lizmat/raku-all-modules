@@ -2,7 +2,7 @@ class PDF::Content::Font::Enc::Type1 {
     use Font::AFM;
     use PDF::Content::Font::Encodings;
     has $.glyphs = %Font::AFM::Glyphs;
-    has $!encoding;
+    has array $!encoding;
     has UInt %!from-unicode;
     has uint16 @.to-unicode[256];
     has uint8 @!spare-encodings;
@@ -27,22 +27,27 @@ class PDF::Content::Font::Enc::Type1 {
 	    }
 	}
 
-        for $!glyphs.pairs {
-            my uint16 $code-point = .key.ord;
-            with $!encoding{.value} {
-                my uint8 $encoding = .ord;
+        @!to-unicode = $!encoding.list;
+        for 1 .. 255 -> $encoding {
+            my uint16 $code-point = @!to-unicode[$encoding];
+            if $code-point {
                 %!from-unicode{$code-point} = $encoding;
-                @!to-unicode[$encoding] = $code-point;
+            }
+            else {
+                @!spare-encodings.push($encoding)
             }
         }
-        for 1 .. 255 -> uint8 $i  {
-            @!spare-encodings.push($i)
-                unless @!to-unicode{$i};
-        }
+        # map non-breaking space to a regular space
+        %!from-unicode{"\c[NO-BREAK SPACE]".ord} //= %!from-unicode{' '.ord};
+    }
+
+    method lookup-glyph(UInt $chr-code) {
+          $!glyphs{$chr-code.chr}
     }
 
     method !add-encoding($chr-code) {
-        if $!glyphs{$chr-code.chr} && @!spare-encodings {
+        my $glyph-name = self.lookup-glyph($chr-code);
+        if  @!spare-encodings && $glyph-name && $glyph-name ne '.notdef' {
             my $idx = @!spare-encodings.shift;
             %!from-unicode{$chr-code} = $idx;
             @!to-unicode[$idx] = $chr-code;
@@ -73,9 +78,9 @@ class PDF::Content::Font::Enc::Type1 {
         for @!differences {
             @diffs.push: $_
                 unless $_ == $cur-idx;
-            @diffs.push: $!glyphs{ @!to-unicode[$_].chr };
+            @diffs.push: 'name' => self.lookup-glyph( @!to-unicode[$_] );
             $cur-idx = $_ + 1;
         }
-          @diffs;
+        @diffs;
     }
 }

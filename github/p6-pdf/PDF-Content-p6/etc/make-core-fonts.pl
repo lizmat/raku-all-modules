@@ -14,13 +14,13 @@ class Build {
                 with $glyphs;
     }
 
-    method !build-enc(IO::Path $encoding-path, Hash :$glyphs! is rw, Hash :$encodings! is rw) {
+    method !build-enc(IO::Path $encoding-path) {
         my $encoding-io = $encoding-path;
 
         die "unable to load encodings: $encoding-path"
             unless $encoding-path ~~ :e;
 
-        my %charset = %Font::AFM::Glyphs.invert;
+        my %encodings = :mac(array[uint16].new(0 xx 256)), :win(array[uint16].new(0 xx 256));
 
         for $encoding-path.lines {
             next if /^ '#'/ || /^ $/;
@@ -41,21 +41,21 @@ class Build {
                 :win(@enc[2]) {
                 my ($scheme, $byte) = .kv;
                 next unless $byte.defined;
-                my $enc = $encodings{$scheme} //= {}
-                my $dec = $glyphs{$scheme} //= {}
-                self!save-glyph(:glyphs($dec), :encoding($enc), $glyph-name, $chr, $byte);
-
-                with %charset{$glyph-name} -> $alternate-chr {
-                    if $alternate-chr ne $chr {
-                        self!save-glyph(:glyphs($dec), $glyph-name, $alternate-chr, $byte);
-                    }
-                }
+                my $enc := %encodings{$scheme};
+                $enc[$byte] = $chr.ord;
             }
+        }
+        for <mac win> -> $type {
+            say "    #-- {$type.uc} encoding --#";
+            say "    constant \${$type}-encoding = {%encodings{$type}.perl};";
+            say "";
         }
     }
 
-    method !build-sym-enc(IO::Path $encoding-path, Str :$sym = 'sym', Hash :$glyphs! is rw, Hash :$encodings! is rw) {
+    method !build-sym-enc(IO::Path $encoding-path, :$type!, :$glyphs) {
         my $encoding-io = $encoding-path;
+        my uint16 @encodings = 0 xx 256;
+        my %glyphs;
 
         die "unable to load encodings: $encoding-path"
             unless $encoding-path ~~ :e;
@@ -69,20 +69,21 @@ class Build {
                };
 
             my $glyph-name = ~ $<glyph-name>;
-            my $char = :16( $<code-point>.Str ).chr;
-            my $byte = :16( $<encoding>.Str ).chr;
-            $glyphs{$sym}{$char} = $glyph-name;
-            $encodings{$sym}{$glyph-name} = $byte;
+            my uint16 $code-point = :16( ~$<code-point> );
+            my uint8  $encoding = :16( $<encoding>.Str );
+            %glyphs{$code-point.chr} = $glyph-name;
+            @encodings[$encoding] ||= $code-point;
         }
+        say "    #-- {$type.uc} encoding --#";
+        say "    constant \${$type}-glyphs = {%glyphs.perl};"
+            if $glyphs;
+              
+        say "    constant \${$type}-encoding = {@encodings.perl};";
+            
+        say ""
     }
 
-    method !write-enc(Hash :$glyphs! is rw, Hash :$encodings! is rw) {
-        my $lib-dir = $*SPEC.catdir('lib', 'PDF', 'Content', 'Font');
-        mkdir( $lib-dir, 0o755);
-
-        my $module-name = "PDF::Content::Font::Encodings";
-        my $gen-path = $*SPEC.catfile($lib-dir, "Encodings.pm");
-        my $*OUT = open( $gen-path, :w);
+    method !write-enc-header {
 
         print q:to"--CODE-GEN--";
         use v6;
@@ -93,28 +94,21 @@ class Build {
         # This file was auto-generated
 
         module PDF::Content::Font::Encodings {
-
         --CODE-GEN--
-
-        for $glyphs.keys.sort -> $type {
-            say "    #-- {$type.uc} encoding --#"; 
-            say "    constant \${$type}-glyphs = {$glyphs{$type}.perl};"
-                if $type eq 'zapf';
-            say "    constant \${$type}-encoding = {$encodings{$type}.perl};";
-            say "";
-        }
-
-        say '}';
     }
 
-   method build {
+    method build {
+        my $lib-dir = $*SPEC.catdir('lib', 'PDF', 'Content', 'Font');
+        mkdir( $lib-dir, 0o755);
 
-       my $glyphs = {};
-       my $encodings = {};
-       self!build-enc("etc/encodings.txt".IO, :$glyphs, :$encodings);
-       self!build-sym-enc("etc/symbol.txt".IO, :$glyphs, :$encodings);
-       self!build-sym-enc("etc/zdingbat.txt".IO, :sym<zapf>, :$glyphs, :$encodings);
-       self!write-enc(:$glyphs, :$encodings);
+        my $module-name = "PDF::Content::Font::Encodings";
+        my $gen-path = $*SPEC.catfile($lib-dir, "Encodings.pm");
+        my $*OUT = open( $gen-path, :w);
+        self!write-enc-header;
+        self!build-enc("etc/encodings.txt".IO);
+        self!build-sym-enc("etc/symbol.txt".IO, :type<sym>);
+        self!build-sym-enc("etc/zdingbat.txt".IO, :type<zapf>, :glyphs);
+        say '}';
     }
 }
 

@@ -1,3 +1,5 @@
+Release 0.0.9
+- Streamlined core font encoding and allow inclusion of extra glyphs.
 Release 0.0.8
 - Replace PDF::Content::Util::Font module with class
   PDF::Content::Font::CoreFont
