@@ -25,6 +25,8 @@ class HTTP::Server::Ogre::Http1Protocol {
         }
         $conn.print(CRLF);
         $body-supply.tap(
+            done => { $conn.close },
+            quit => { $conn.close },
             -> $chunk {
                 if $chunk ~~ Str {
                     $conn.print($chunk);
@@ -35,7 +37,5 @@ class HTTP::Server::Ogre::Http1Protocol {
                 }
             }
         );
-        $body-supply.wait;
-        $conn.close();
     }
 };
