@@ -2,12 +2,12 @@
 
 use v6.c;
 
+use App::Cpan6::Commands::Bump;
 use App::Cpan6::Commands::Depend;
 use App::Cpan6::Commands::Dist;
 use App::Cpan6::Commands::New;
 use App::Cpan6::Commands::Pkg::Ebuild;
 use App::Cpan6::Commands::Push;
-use App::Cpan6::Commands::Release;
 use App::Cpan6::Commands::Test;
 use App::Cpan6::Commands::Touch::Bin;
 use App::Cpan6::Commands::Touch::Lib;

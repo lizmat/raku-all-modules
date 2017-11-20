@@ -4,7 +4,7 @@ use v6;
 
 use App::Cpan6;
 use App::Cpan6::Commands::Dist;
-use App::Cpan6::Commands::Release;
+use App::Cpan6::Commands::Bump;
 use App::Cpan6::Commands::Upload;
 use App::Cpan6::Meta;
 use App::Cpan6::Path;
