@@ -1,0 +1,33 @@
+{
+   "meta6" : "0",
+   "tags" : [
+		"format",
+		"formatter",
+		"formatiing",
+		"Lisp"
+   ],
+   "provides" : {
+      "Format::Lisp" : "lib/Format/Lisp.pm6",
+      "Format::Lisp::Grammar" : "lib/Format/Lisp/Grammar.pm6",
+      "Format::Lisp::Actions" : "lib/Format/Lisp/Actions.pm6"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "https://github.com/drforr/perl6-Format-Lisp"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:drforr",
+   "source-url" : "https://github.com/drforr/perl6-Format-Lisp.git",
+   "depends" : [
+   ],
+   "name" : "Format::Lisp",
+   "authors" : [
+      "Jeffrey Goff <drforr@pobox.com>"
+   ],
+   "version" : "0.0.1",
+   "license" : "Artistic-2.0",
+   "description" : "Implement Common Lisp formatter for Perl 6"
+}
