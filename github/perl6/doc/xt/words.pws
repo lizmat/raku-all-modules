@@ -72,6 +72,7 @@ auth
 autodie
 autoflush
 autoincrement
+autoload
 autopun
 autoquoted
 autoquotes
@@ -535,6 +536,7 @@ kernelnames
 keyof
 keypress
 khaleesi
+kib
 knowhow
 kv
 kvpair
