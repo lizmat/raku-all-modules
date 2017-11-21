@@ -4,9 +4,7 @@ use CSS::Grammar::AST :CSSValue;
 
 class CSS::Specification::Terms::Actions {
 
-    has @._proforma;
-
-    method decl($/, :@proforma = @._proforma ) {
+    method decl($/, :@proforma = [] ) {
 
         my %ast;
 
