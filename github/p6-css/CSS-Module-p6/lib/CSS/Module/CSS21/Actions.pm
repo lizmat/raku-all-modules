@@ -48,5 +48,8 @@ class CSS::Module::CSS21::Actions
     is CSS::Grammar::Actions
     does CSS::Module::CSS21::Spec::Interface {
 
-    has @._proforma = 'inherit';
+    method decl($/, :@proforma = ['inherit']) {
+        nextwith($/, :@proforma);
+    }
+
 }

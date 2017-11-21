@@ -46,13 +46,18 @@ for 't/00basic.json'.IO.lines.map({ from-json($_).pairs[0] }) {
         my $actions = $module.actions.new(:$lax);
         my %level-tests = %( %expected{$suite} // () );
         my %level-expected = %expected, %level-tests;
+        if $lax {
+            %level-expected<todo><parse> = 'lax parsing' if $lax;
+            %level-expected<todo><warnings> = 'lax warnings';
+            %level-expected<todo><ast> = 'lax ast';
+        }
 
-	    CSS::Grammar::Test::parse-tests($grammar, $input,
-					    :$rule,
-					    :$suite,
-					    :$actions,
-                                            :$writer,
-					    :expected(%level-expected) );
+        CSS::Grammar::Test::parse-tests($grammar, $input,
+                                        :$rule,
+                                        :$suite,
+                                        :$actions,
+                                        :$writer,
+                                        :expected(%level-expected) );
     }
 
 }
