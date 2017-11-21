@@ -87,8 +87,13 @@ role Native::Packing {
 
     my constant HostEndian = detect-host-endian();
 
-    method host-endian {
-        HostEndian
+    method host-endian { HostEndian }
+
+    multi sub unpack-foreign-attribute(Native::Packing $sub-rec, Buf $buf, uint $off is rw) {
+        my $bytes := $sub-rec.bytes;
+        my $v := $sub-rec.unpack($buf.subbuf($off, $bytes));
+        $off += $bytes;
+        $v;
     }
 
     multi sub unpack-foreign-attribute($type, Buf $buf, uint $off is rw) is default {
@@ -111,6 +116,10 @@ role Native::Packing {
         self.new(|%args);
     }
 
+    multi sub read-foreign-attribute(Native::Packing $sub-rec, \fh) {
+        $sub-rec.read(fh);
+    }
+
     multi sub read-foreign-attribute($type, \fh) is default {
         my uint $byte-count = $type.^nativesize div 8;
         my $native = CArray[uint8].new: fh.read($byte-count).reverse;
@@ -124,10 +133,16 @@ role Native::Packing {
         my %args = self.^attributes.map: {
             my str $name = .name.substr(2);
             my $type = .type;
-           
             $name => read-foreign-attribute($type, fh);
         }
         self.new(|%args);
+    }
+
+    multi sub unpack-host-attribute(Native::Packing $sub-rec, Buf $buf, uint $off is rw) {
+        my $bytes := $sub-rec.bytes;
+        my $v := $sub-rec.unpack($buf.subbuf($off, $bytes));
+        $off += $bytes;
+        $v;
     }
 
     multi sub unpack-host-attribute($type, Buf $buf, uint $off is rw) is default {
@@ -150,6 +165,10 @@ role Native::Packing {
         self.new(|%args);
     }
 
+    multi sub read-host-attribute(Native::Packing $sub-rec, \fh) {
+        $sub-rec.read(fh);
+    }
+
     multi sub read-host-attribute($type, \fh) is default {
         my uint $byte-count = $type.^nativesize div 8;
         my buf8 $raw = fh.read( $byte-count);
@@ -168,6 +187,10 @@ role Native::Packing {
         self.new(|%args);
     }
 
+    multi sub pack-foreign-attribute(Native::Packing $, Buf $buf, Native::Packing $sub-rec) {
+        $sub-rec.pack($buf);
+    }
+
     multi sub pack-foreign-attribute($type, Buf $buf, $val) is default {
         my uint $byte-count = $type.^nativesize div 8;
         my $cval = CArray[$type].new;
@@ -183,8 +206,8 @@ role Native::Packing {
         # ensure we're working at the byte level
         my uint $off = 0;
         for self.^attributes {
-            my $val = .get_value(self);
-            pack-foreign-attribute(.type, $buf,  $val);
+            my $val = self.defined ?? .get_value(self) !! 0;
+            pack-foreign-attribute(.type, $buf, $val);
         }
         $buf;
     }
@@ -192,6 +215,10 @@ role Native::Packing {
     # convert between differing architectures
     method write-foreign($fh) {
         $fh.write: self.pack-foreign;
+    }
+
+    multi sub pack-host-attribute(Native::Packing $, Buf $buf, Native::Packing $sub-rec) {
+        $sub-rec.pack($buf);
     }
 
     multi sub pack-host-attribute($type, Buf $buf, $val) is default {
@@ -207,8 +234,8 @@ role Native::Packing {
     method pack-host(buf8 $buf = buf8.new) {
         my uint $off = 0;
         for self.^attributes {
-            my $val = .get_value(self);
-            pack-host-attribute(.type, $buf,  $val);
+            my $val = self.defined ?? .get_value(self) !! 0;
+            pack-host-attribute(.type, $buf, $val);
         }
         $buf;
     }
@@ -219,7 +246,12 @@ role Native::Packing {
     }
 
     method bytes {
-        [+] self.^attributes.map: *.type.^nativesize div 8;
+        [+] self.^attributes.map: {
+            given .type {
+                when Native::Packing { .bytes }
+                default { .^nativesize div 8 }
+            }
+        }
     }
 }
 

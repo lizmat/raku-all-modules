@@ -32,8 +32,8 @@ my LogicalDescriptor $screen .= read: $fh;
 say "GIF has size {$screen.width} X {$screen.height}";
 ```
 
-It currently handles records containing native integers (int8, uint8, int16, etc) and
-numerics (num32, num64).
+It currently handles records containing native integers (`int8`, `uint8`, `int16`, etc),
+numerics (`num32`, `num64`) and sub-records of type `Native::Packing`.
 
 - Data may read be and written to binary files, via the `read` and `write` methods
 
@@ -50,8 +50,8 @@ The two fixed modes are:
 The endianess of the binary format needs to be known to correctly
 read and write to it.
 
-There is also a `Host` mode. This will read and write binary data in the
-same endianess as the host computer.
+There is also a platform-dependant `Host` mode. This will read and write
+binary data in the same endianess as the host computer.
 
 Endian Examples:
 

@@ -1,3 +1,6 @@
+Release 0.0.3
+    - handle sub-records of type Native::Packing
+
 Release 0.0.2
     - fixed endian test
 

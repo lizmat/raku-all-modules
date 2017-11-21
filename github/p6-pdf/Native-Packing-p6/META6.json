@@ -3,7 +3,7 @@
     "name"        : "Native::Packing",
     "license"     : "Artistic-2.0",
     "tags"        : ["binary", "endian", "native", "struct", "pack", "unpack" ], 
-    "version"     : "0.0.2",
+    "version"     : "0.0.3",
     "auth"        : "github:p6-pdf",
     "description" : "Endian safe Binary Struct packing and unpacking",
     "depends"     : [ ],
