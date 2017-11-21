@@ -158,7 +158,7 @@ class Bench {
     say sprintf("%10s: %s", $title, $.timestr($t));
     say "\t\t(warning: too few iterations for a reliable count)"
         if $n < $.min_count ||
-           ($t[0] < 1 && $n < 1000);
+           (($use-telemetry && !$.no-telemetry ?? $t[0].wallclock !! $t[0]) < 1 && $n < 1000);
     return $t;
   }
 
