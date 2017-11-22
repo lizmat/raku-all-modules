@@ -1,0 +1,13 @@
+language: perl6
+
+perl6:
+  - latest
+
+os:
+  - linux
+
+install:
+  - rakudbrew build zef
+  - zef install .
+
+script: AUTHOR_TESTING=1 prove -v -e "perl6 -Ilib" t/

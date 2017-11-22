@@ -25,5 +25,16 @@ sub put-meta(:%meta, :$path = ".", :$clobber = True) is export
 		die "Not clobbering {$meta6}";
 	}
 
+	# Manually sort arrays used in META6
+	my @sortable-arrays = (
+		"depends",
+		"resources",
+		"tags",
+	);
+
+	for @sortable-arrays -> $array {
+		%meta{$array} = %meta{$array}.sort;
+	}
+
 	spurt($meta6, to-json(%meta, :sorted-keys))
 }

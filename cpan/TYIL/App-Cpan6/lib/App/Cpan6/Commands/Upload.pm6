@@ -13,23 +13,8 @@ unit module App::Cpan6::Commands::Upload;
 
 multi sub MAIN("upload", Str @dists) is export
 {
-	my Config $config = get-config;
-
-	# Get PAUSE ID
-	if (!$config.has("pause.id")) {
-		$config.set("pause.id", ask("PAUSE ID", default => $*USER.Str));
-
-		if (confirm("Save PAUSE ID to config?")) {
-			 $config.write("{$*HOME}/.config/cpan6.toml");
-		}
-	}
-
-	# Get PAUSE password
-	$config.set("pause.password", password("PAUSE password"));
-
-	# Run upload for every given path
 	for @dists -> $dist {
-		MAIN("upload", $dist.IO.absolute, pause-id => $config.get("pause.id"), pause-password => $config.get("pause.password"));
+		MAIN("upload", $dist.IO.absolute);
 	}
 }
 
@@ -38,7 +23,7 @@ multi sub MAIN("upload", Str $dist) is export
 	my Config $config = get-config;
 
 	# Get PAUSE ID
-	if (!$config.has("pause.id")) {
+	if (!$config.has("pause.id") || $config<pause><id> eq "") {
 		$config.set("pause.id", ask("PAUSE ID", default => $*USER.Str));
 
 		if (confirm("Save PAUSE ID to config?")) {

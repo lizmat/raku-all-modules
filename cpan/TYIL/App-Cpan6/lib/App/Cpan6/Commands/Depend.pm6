@@ -6,20 +6,20 @@ use App::Cpan6::Meta;
 
 unit module App::Cpan6::Commands::Depend;
 
-multi sub MAIN("depend", Str @modules, Bool :$skip-install = False) is export
+multi sub MAIN("depend", Str @modules, Bool :$no-install = False) is export
 {
 	for @modules -> $module {
-		MAIN("depend", $module, :$skip-install);
+		MAIN("depend", $module, :$no-install);
 	}
 }
 
-multi sub MAIN("depend", Str $module, Bool :$skip-install = False) is export
+multi sub MAIN("depend", Str $module, Bool :$no-install = False) is export
 {
 	# Get the meta info
 	my %meta = get-meta;
 
 	# Install the new dependency with zef
-	if (!$skip-install) {
+	if (!$no-install) {
 		my $zef = run « zef --cpan install $module »;
 
 		die "Zef failed, bailing" if 0 < $zef.exitcode;

@@ -25,6 +25,14 @@ sub get-config(--> Config) is export
 			license => "GPL-3.0",
 			dir-prefix => "perl6-",
 		),
+		external => %(
+			git => True,
+			travis => True,
+		),
+		style => %(
+			indent => "tab",
+			spaces => 4,
+		),
 		pause => %(
 			id => ""
 		),
@@ -39,4 +47,14 @@ sub get-config(--> Config) is export
 	}
 
 	$config;
+}
+
+multi sub put-config(Config:D :$config, Str:D :$path) is export
+{
+	$config.write($path);
+}
+
+multi sub put-config(Config:D :$config) is export
+{
+	put-config(:$config, :path("$*HOME/.config/cpan6.toml"))
 }

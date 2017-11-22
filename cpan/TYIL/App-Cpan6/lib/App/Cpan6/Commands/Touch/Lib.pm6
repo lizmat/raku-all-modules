@@ -2,12 +2,15 @@
 
 use v6;
 
+use App::Cpan6::Config;
 use App::Cpan6::Meta;
+use App::Cpan6::Template;
 
 unit module App::Cpan6::Commands::Touch::Lib;
 
 multi sub MAIN("touch", "lib", Str $provide, Str :$type = "") is export
 {
+	my $config = get-config;
 	my %meta = get-meta;
 	my $path = "./lib".IO;
 
@@ -22,28 +25,20 @@ multi sub MAIN("touch", "lib", Str $provide, Str :$type = "") is export
 		die "File already exists at {$path.absolute}";
 	}
 
-	# Create directories if needed
-	mkdir $path.parent.absolute;
-
-	# Create template
-	my $template = qq:to/EOF/
-#! /usr/bin/env false
-
-use v{%meta<perl>};
-
-EOF
-;
+	my $template = "module/";
+	my %context = %(
+		perl => %meta<perl>,
+		vim => template("vim-line/$config<style><indent>", context => $config<style>).trim-trailing,
+		:$provide,
+	);
 
 	given $type {
-		when "class" {
-			$template ~= "class $provide " ~ '{ … }' ~ "\n";
-		}
-		when "unit" {
-			$template ~= "unit module $provide;\n";
-		}
+		when "class" { $template ~= "class" }
+		when "unit"  { $template ~= "unit" }
+		default      { $template ~= "lib" }
 	}
 
-	spurt($path.absolute, $template);
+	template($template, $path, :%context);
 
 	# Update META6.json
 	%meta<provides>{$provide} = $path.relative;

@@ -1,0 +1,149 @@
+= CPAN6(1)
+:toc:
+:doctype: manpage
+
+== NAME
+cpan6 - a tool to assist in creating and sharing CPAN modules
+
+== SYNOPSIS
+*cpan6* [OPTIONS] COMMAND [ARGS]
+
+== DESCRIPTION
+The `cpan6` program is a Perl 6 module which is aimed to help developers in
+creating new modules. It should be able to assist from the very start through
+the end of actually publishing a module on PAUSE.
+
+It can create the skeleton of a new module project, add more files later on
+(and update your `META6.json` accordingly), package it up to a distributable
+archive and upload the archive to PAUSE.
+
+== COMMANDS
+=== bootstrap config [ option ]
+Update a given configuration option. If no option is supplied, all
+configuration options are presented in alphabetical order.
+
+=== [ --dir=/usr/share/man ] bootstrap man [ page ]
+Attempt to bootstrap the man pages into the given `--dir`. Optionally takes a
+`page`, which will limit to attempt installation for the given page only.
+
+=== bump [ patch | minor | major ]
+Bumps the module's patch, minor or major version. If no bump type is supplied,
+it will be prompted. If a `.git` repository is found, a commit and a tag will
+be created as well.
+
+=== [ --no-install ] depend < modules ... >
+Add a dependency to one or more modules. Will attempt to install the module
+locally as well, unless `--no-install` is supplied.
+
+=== dist < paths ... >
+Create a distribution from a module in a given path. Multiple paths can be
+supplied to create multiple dists in one go. If no path is supplied, the
+current directory will be used.
+
+=== help
+Shows a small overview of all possible commands and their arguments.
+
+=== [ --no-git ] [ --no-travis ] new [ name ]
+Create a new Perl 6 module skeleton. A name can be supplied as argument, but
+will be prompted for if not supplied. Options for git and travis are available,
+and enabled by default. To disable these, use `--no-git` or `--no-travis`,
+respectively.
+
+=== [ --no-bump ] push < paths ... >
+Pushes one or more paths to PAUSE. This is a shorthand for `bump`, `dist` and
+`upload`. The `bump` part can be skipped using `--/bump`.
+
+=== test
+Run the default test script, `prove -e "perl6 -Ilib" t`.
+
+=== touch bin <name>
+Create a new runnable Perl 6 script in the `bin/` directory. A small skeleton
+template is inserted into the new file. Additionally, the `META6.json` is
+updated accordingly to contain the new file in its `provides` section.
+
+=== touch class
+Create a new module file in the `lib/` directory. A skeleton for a class
+structure is inserted in the new file, and directories are created needed to
+place the file in the correct location. Additionally, the `META6.json` is
+updated accordingly to contain the new module file in its `provides` section.
+
+=== touch resource
+Create a new resource file in the `resources/` directory. Directories are
+created as needed. Additionally, the `META6.json` is updated accordingly to
+contain the new resource in its `resources` section.
+
+=== touch test
+Create a new test spec file in the `t/` directory. Directories are created as
+needed.
+
+=== touch unit
+Create a new unit module file in the `lib/` directory. A skeleton for a unit
+module structure is inserted in the new file, and directories are created
+needed to place the file in the correct location. Additionally, the
+`META6.json` is updated accordingly to contain the new module file in its
+`provides` section.
+
+=== [ --pause-id="" ] [ --pause-password="" ] upload < dists ... >
+Uploads the given dists to PAUSE. A PAUSE ID and password for authentication
+can be supplied using `--pause-id=<id>` and `--pause-password=<password>`
+respectively. If not supplied, these will be read from your configuration. If
+these are not set in the configuration, they will be prompted for.
+
+== OPTIONS
+=== --force
+Remove all sanity checks on a given command. This can have unwanted results,
+hence you should only use this if you know what you're doing.  Using this
+option can result in loss of data.
+
+=== --verbose
+Make the given command more verbose. Mostly useful for finding out why
+something is failing for you, or to help people assist you.
+
+== EXAMPLES
+=== cpan6 bootstrap man
+Install the man pages bundled with `cpan6`.
+
+=== cpan6 bootstrap config
+Build a configuration file for `cpan6`. You will be prompted for all options
+available. If you already have a configuration file, the options already
+configured can be skipped by hitting enter.
+
+=== cpan6 new My::Little::Module
+Create a new module named `My::Little::Module`. The skeleton required for a
+module will be created for you. The default prefix is `perl6-` for the
+directory name, which will result in `perl6-my-little-module` as the resulting
+directory.
+
+=== cpan6 depend Config
+Add the `Config` module as a dependency. This will add it to the `META6.json`
+file and call `zef install Config`.
+
+=== cpan6 touch class My::New::Class
+Creates a new Perl 6 class, with a default skeleton. Directories will be
+created as needed. The class will also be added to the `provides` section of
+your `META6.json`.
+
+=== cpan6 touch unit My::New::Unit
+Creates a new Perl 6 unit module file, with a default skeleton. Directories
+will be created as needed. The unit module will also be added to the `provides`
+section of your `META6.json`.
+
+=== cpan6 dist
+Wraps the current directory into a `.tar.gz` distribution, and saves it to your
+cpan6 dist folder. This is `~/.local/var/cpan6/dists` by default.
+
+=== cpan6 upload `~/.local/var/cpan6/dists/My-Little-Module-0.1.0.tar.gz`
+Uploads the given `.tar.gz` archive to PAUSE.
+
+== BUGS
+Bugs can be reported on the Github page of this project:
+https://github.com/scriptkitties/perl6-App-Cpan6.
+
+== AUTHOR
+Originally written by Patrick Spek <p.spek@tyil.nl>.
+
+== COPYRIGHT
+This project is distributed under the terms of the GNU GPL version 3 or later.
+Check the LICENSE file for more information.
+
+// vim: ft=adoc et sw=4

@@ -6,12 +6,12 @@ use Terminal::Readsecret;
 
 unit module App::Cpan6::Input;
 
-sub ask(Str $message, Str :$default = "" --> Str) is export
+multi sub ask(Str $message, Any :$default = "" --> Str) is export
 {
 	my Str $prompt = $message;
 
-	if ($default ne "") {
-		$prompt ~= " [$default]";
+	if (~$default ne "") {
+		$prompt ~= " [{~$default}]";
 	}
 
 	$prompt ~= ": ";
@@ -20,12 +20,20 @@ sub ask(Str $message, Str :$default = "" --> Str) is export
 		my $input = prompt $prompt;
 
 		return $input if $input ne "";
-		return $default if $default ne "";
+		return ~$default if ~$default ne "";
 	}
 }
 
-sub confirm(Str $prompt = "Continue?", Bool $default = True --> Bool) is export
+multi sub ask(Str:D $message, Any:D $default = "" --> Str) is export
 {
+	ask($message, :$default);
+}
+
+multi sub confirm(
+	Str $prompt = "Continue?",
+	Bool :$default = True
+	--> Bool
+) is export {
 	my Str $options;
 
 	if ($default) {
@@ -49,6 +57,14 @@ sub confirm(Str $prompt = "Continue?", Bool $default = True --> Bool) is export
 			return False;
 		}
 	}
+}
+
+multi sub confirm(
+	Str:D $prompt = "Continue?",
+	Bool:D $default = True
+	--> Bool
+) is export {
+	confirm($prompt, :$default);
 }
 
 sub password(Str $prompt = "Password" --> Str) is export
