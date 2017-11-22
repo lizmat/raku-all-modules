@@ -53,7 +53,7 @@ Deserialises the provided JSON string, returning a new object, with the
 public attributes initialised with the corresponding values in the JSON
 structure.
 
-If the JSON is not valid or the data cannot be coerced into the correct 
+If the JSON is not valid or the data cannot be coerced into the correct
 type for the target class then an exception may be thrown.
 
 =head2 method to-json
@@ -76,11 +76,11 @@ though.)
 use JSON::Unmarshal;
 use JSON::Marshal:ver(v0.0.7+);
 
-sub EXPORT {
-    { '&trait_mod:<is>'    =>  &trait_mod:<is> }
+my package EXPORT::DEFAULT {
+    OUR::{'&trait_mod:<is>'} := &trait_mod:<is>;
 }
 
-role JSON::Class:ver<0.0.9>:auth<github:jonathanstowe> {
+role JSON::Class:ver<0.0.10>:auth<github:jonathanstowe> {
 
 
     method from-json(Str $json) returns JSON::Class {

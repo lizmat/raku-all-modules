@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/JSON-Class.git
 	branch = master
-	commit = 531fa9093d15a35ed485797d01bbe6886a51b1be
-	parent = 4044afc7a5b979551e48cba30c6c30c8ded9dcce
+	commit = b4b782aab7e840e0af8997682947df4268d551f5
+	parent = 27f6e05a71ad2e632f67cdae6028497b6eecbe05
 	cmdver = 0.4.0
