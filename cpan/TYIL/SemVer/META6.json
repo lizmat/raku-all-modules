@@ -1,0 +1,29 @@
+{
+  "authors": "Patrick Spek <p.spek@tyil.email>",
+  "depends": {
+    "runtime": {
+      "recommends": [
+        
+      ],
+      "requires": [
+        
+      ],
+      "test": {
+        "requires": [
+          "Test::META"
+        ]
+      }
+    }
+  },
+  "description": "Class representing a semantic version",
+  "meta-version": 1,
+  "name": "SemVer",
+  "perl": "6.c",
+  "provides": {
+    "SemVer": "lib/SemVer.pm6"
+  },
+  "tags": [
+    
+  ],
+  "version": "0.1.0"
+}

@@ -1,0 +1,45 @@
+= SemVer
+:toc: preamble
+
+http://semver.org/[Semantic versioning] is a standard to give version numbers
+meaning. To work with these versions, the `SemVer` class comes into play. It
+will deal with incrementing the version for you, and making it easy to work
+with it programmatically.
+
+== Installation
+Use `zef`, the Perl 6 module installer:
+
+[source]
+----
+# zef install SemVer
+----
+
+== Usage
+[source,perl6]
+----
+use SemVer;
+
+# Create a new SemVer from a string
+my SemVer $v .= new("1.12.3");
+              # new(1, 12, 3); # Alternative method
+
+say $v.Str; # "1.12.3";
+
+# Increment the patch level
+$v.bump-patch;
+
+say $v.Str; # "1.12.4"
+
+# Increment minor level
+$v.bump-minor;
+
+say $v.Str; # "1.13.0"
+
+# Increment major level
+$v.bump-major;
+
+say $v.Str; # "2.0.0"
+----
+
+== License
+This module is released under the terms of the GNU GPL version 3 or later.
