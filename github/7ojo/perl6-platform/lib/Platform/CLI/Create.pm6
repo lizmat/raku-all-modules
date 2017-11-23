@@ -3,13 +3,16 @@ unit module Platform::CLI::Create;
 our $data-path;
 our $network;
 our $domain;
+our $dns-port;
 
 use Platform::Output;
 use Terminal::ANSIColor;
 use CommandLine::Usage;
 
 #| Start shared platform services
-multi cli('create') is export {
+multi cli('create',
+    Int :$dns-port = 53   #= DNS server port
+    ) is export {
     try {
         CATCH {
             default {
@@ -18,8 +21,8 @@ multi cli('create') is export {
             }
         }
         use Platform;
-        put Platform::Output.x-prefix ~ color('yellow') ~ 'Services' ~ color('reset'); 
-        put $_.as-string for Platform.new(:$network, :$domain, :$data-path).create.Array;
+        put Platform::Output.x-prefix ~ color('yellow') ~ 'Services' ~ color('reset');
+        put $_.as-string for Platform.new(:$network, :$domain, :$data-path, :$dns-port).create.Array;
     }
 }
 

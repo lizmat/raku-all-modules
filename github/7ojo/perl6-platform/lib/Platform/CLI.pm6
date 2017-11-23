@@ -33,6 +33,12 @@ multi set-defaults(
 }
 
 multi set-defaults(*@args, *%args) {
+    
+    # TODO: Refactor some how. Duplicates default values.
+    %args<data-path> ||= '$HOME/.platform';
+    %args<domain>    ||= 'localhost';
+    %args<network>   ||= 'acme';
+
     for <data-path domain network> -> $class-var {
         for <
             Attach

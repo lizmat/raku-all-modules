@@ -1,5 +1,4 @@
 use v6;
-use Text::Wrap;
 use Platform::Output;
 use Platform::Command;
 use Platform::Util::OS;
@@ -13,6 +12,7 @@ class Platform::Container is Platform::Output {
     has Bool $.network-exists = False;
     has Str $.domain = 'localhost';
     has Str $.dns;
+    has Int $.dns-port = 53;
     has Str $.data-path is rw;
     has Str $.projectdir;
     has Hash $.config-data;
@@ -56,13 +56,13 @@ class Platform::Container is Platform::Output {
             @lines.push: " {self.after-prefix}" ~ color('red') ~ "{$.projectdir.IO.relative}"; 
         }
         if %.last-result<err>.chars > 0 {
-            my $wrapped-err = wrap-text(%.last-result<err>);
+            my $wrapped-err = Platform::Output.text(%.last-result<err>);
             my $sep = ($.help-hint && $.help-hint.chars > 0 
                 )
                 ?? self.box:<├> 
                 !! self.box:<└>;
             @lines.push: "  {$sep}{self.box:<─>} " ~ join("\n  " ~ ($.help-hint ?? self.box:<│> !! '') ~ "  ", $wrapped-err.lines) if %.last-result<err>;
-            @lines.push: "  {self.box:<└─>} " ~ color('yellow') ~ "hint: " ~ join("\n     ", wrap-text($.help-hint).lines) if $.help-hint;
+            @lines.push: "  {self.box:<└─>} " ~ color('yellow') ~ "hint: " ~ join("\n     ", Platform::Output.text($.help-hint).lines) if $.help-hint;
         }
         @lines[@lines.elems-1] ~= color('reset');
         @lines.join("\n");

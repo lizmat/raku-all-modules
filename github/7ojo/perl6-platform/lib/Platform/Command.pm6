@@ -1,7 +1,6 @@
 use v6;
 use Platform::Output;
 use Terminal::ANSIColor;
-use Text::Wrap;
 
 class Platform::Command is Proc::Async is Platform::Output {
 
@@ -28,7 +27,7 @@ class Platform::Command is Proc::Async is Platform::Output {
     }
 
     method run(:$cwd = $*CWD) {
-        my Str $wrapped-cmd = wrap-text(self.path ~ ' ' ~ self.args);
+        my Str $wrapped-cmd = Platform::Output.text(self.path ~ ' ' ~ self.args);
         put self.x-prefix ~ color('cyan') ~ $wrapped-cmd.lines.join(color('reset') ~ "\n {self.after-prefix}" ~ color('cyan')) ~ color('reset');
         try sink await self.start(:$cwd);
         self;

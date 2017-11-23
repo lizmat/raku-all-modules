@@ -1,4 +1,5 @@
 use v6;
+use Text::Wrap;
 
 class Platform::Output {
 
@@ -9,9 +10,18 @@ class Platform::Output {
     my Str $.box:<└> = '└';
     my Str $.box:<└─> = '└─';
     my Str $.box:<─> = '─';
+    my Int $.width;
 
     method x-prefix {
         self.prefix ~ self.after-prefix;
     }
 
+    method text(*@args, *%args) {
+        unless $.width {
+            my $proc = run <tput cols>, :out;
+            $.width = $proc.out.slurp-rest.trim.Int;
+            $.width ||= 80;
+        }
+        wrap-text(|@args, |%args, :$.width);
+    }
 }

@@ -20,7 +20,7 @@ role Platform::Docker::DNS is Platform::Container {
             }
             default {
                 require Platform::Docker::DNS::Linux;
-                $service = Platform::Docker::DNS::Linux.new(:$.network, :$.domain, :$.data-path);
+                $service = Platform::Docker::DNS::Linux.new(:$.network, :$.domain, :$.data-path, :$.dns-port);
             }
         }
         $service.start();

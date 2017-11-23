@@ -8,6 +8,8 @@ Welcome to Platform's documentation!
 
 Here you'll find Platform's documentation. Tool for quickly define and launch experimental architectures in a new layout where your software will sit and serve others.
 
+TODO: make correct architecture diagram here
+
 .. uml::
 
    @startuml
@@ -19,11 +21,12 @@ Here you'll find Platform's documentation. Tool for quickly define and launch ex
    @enduml
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: User Documentation
 
    overview
    getting_started
+   environments
 
 
 Indices and tables

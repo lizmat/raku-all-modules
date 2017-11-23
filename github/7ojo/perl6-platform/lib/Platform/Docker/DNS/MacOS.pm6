@@ -56,7 +56,9 @@ class Platform::Docker::DNS::MacOS does Platform::Docker::DNS {
             <--dns>, '8.8.4.4',
             <--env>, "VIRTUAL_HOST={$hostname}",
             <--env>, "DOMAIN_TLD={self.domain}",
-            <--publish 53:53/udp --volume /var/run/docker.sock:/var/run/docker.sock:ro --label dns.tld=localhost>,
+            <--publish>, "{$.dns-port}:53/udp",
+            <--volume /var/run/docker.sock:/var/run/docker.sock:ro>,
+            <--label dns.tld=localhost>,
             <zetaron/docker-dns-gen>,
             :out, :err;
         self.last-result = self.result-as-hash($proc);

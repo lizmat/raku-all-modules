@@ -1,6 +1,7 @@
 use v6;
-use Platform::Project;
 use YAMLish;
+use Platform::Project;
+use Platform::Git;
 
 class Platform::Environment {
 
@@ -8,12 +9,22 @@ class Platform::Environment {
     has Str $.domain = 'localhost';
     has Str $.data-path is rw;
     has Str $.environment;
+    has Str @.reserved-keys = [ 'type', 'name', 'desc' ];
+
     has Platform::Project @.projects;
     has Platform::Container @.containers;
 
     submethod TWEAK {
         my $config = load-yaml $!environment.IO.slurp;
         for $config.Hash.sort(*.key)>>.kv.flat -> $project, $data {
+            next if @!reserved-keys.contains($project);
+
+            # Git support. Try to fetch repository if it does not exists
+            Platform::Git.new(
+                data    => $data<git>, 
+                target  => $!environment.IO.parent ~ '/' ~ $project
+                ).clone if $data<git>;
+
             my $project-path = $project ~~ / ^ \/ / ?? $project !! "{self.environment.IO.dirname}/{$project}".IO.absolute;
             if $data ~~ Bool and $data {
                 @!projects.push: Platform::Project.new(:domain($!domain), :data-path($!data-path), :project($project-path));
