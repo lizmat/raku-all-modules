@@ -1,3 +1,6 @@
+0.3.3
+    CSS::Declarations
+    - Adjust for latest Color module; include Color::Conversion
 0.3.2
     CSS::Declarations::Box
     - Add bounds checks top >= bottom, right >= left

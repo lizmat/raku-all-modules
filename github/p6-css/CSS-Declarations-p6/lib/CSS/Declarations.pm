@@ -7,7 +7,7 @@ class CSS::Declarations {
     use CSS::Module::CSS3;
     use CSS::Writer:ver(v0.2.4+);
     use Color;
-
+    use Color::Conversion;
     use CSS::Declarations::Property;
     use CSS::Declarations::Edges;
     use CSS::Declarations::Units;
