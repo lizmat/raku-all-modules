@@ -1,3 +1,13 @@
+use Format::Lisp;
+
+sub deftest( &block, $result ) is export {
+	&block() eqv $result
+}
+
+sub def-format-test( $format, $arg-ref, $result ) is export {
+	$*fl.format( $format, |@( $arg-ref ) ) eqv $result;
+}
+
 our $CHAR-CODE-LIMIT is export = 0x10000;
 our @standard-chars is export =
 	'a'..'z',

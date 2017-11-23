@@ -5,44 +5,44 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
 # (def-format-test format.{.1
 #   (concatenate 'string "~{~" (string #\Newline) "~}")
 #   (nil) "")
 # 
-is $fl.format( qq[~\{~\n~\}], Nil ), Q[], Q[format.{.1];
+ok def-format-test( qq[~\{~\n~\}], ( Nil ), Q[] ), Q[format.{.1];
 
 # (def-format-test format.{.1a
 #   "~{~}" ("" nil) "")
 # 
-is $fl.format( Q[~{~}], Q[], Nil ), Q[], Q[format.{.1a];
+ok def-format-test( Q[~{~}], ( Q[], Nil ), Q[] ), Q[format.{.1a];
 
 # (def-format-test format.{.1b
 #   "~0{~}" ("" '(1 2 3)) "")
 # 
-is $fl.format( Q[~0{~}], Q[], [ 1, 2, 3 ] ), Q[], Q[format.{.1b];
+ok def-format-test( Q[~0{~}], [ Q[], [ 1, 2, 3 ] ], Q[] ), Q[format.{.1b];
 
 # (def-format-test format.{.2
 #   "~{ ~}" (nil) "")
 # 
-is $fl.format( Q[~{ ~}], Nil ), Q[], Q[format.{.2];
+is $*fl.format( Q[~{ ~}], Nil ), Q[], Q[format.{.2];
 
 # (def-format-test format.{.3
 #   "~{X Y Z~}" (nil) "")
 # 
-is $fl.format( Q[~{X Y Z~}], Nil ), Q[], Q[format.{.3];
+is $*fl.format( Q[~{X Y Z~}], Nil ), Q[], Q[format.{.3];
 
 # (def-format-test format.{.4
 #   "~{~A~}" ('(1 2 3 4)) "1234")
 # 
-is $fl.format( Q[~{~A~}], [ 1, 2, 3, 4 ] ), Q[1234], Q[format.{.4];
+is $*fl.format( Q[~{~A~}], [ 1, 2, 3, 4 ] ), Q[1234], Q[format.{.4];
 
 #`(
 # (def-format-test format.{.5
 #   "~{~{~A~}~}" ('((1 2 3)(4 5)(6 7 8))) "12345678")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~{~{~A~}~}],
 	[ [ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8 ] ],
 ), Q[12345678], Q[format.{.5];
@@ -52,7 +52,7 @@ is $fl.format(
 # (def-format-test format.{.6
 #   "~{~1{~A~}~}" ('((1 2 3)(4 5)(6 7 8))) "146")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~{~1{~A~}~}],
 	[ [ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8 ] ]
 ), Q[146], Q[format.{.6];
@@ -61,7 +61,7 @@ is $fl.format(
 # (def-format-test format.{.7
 #   (concatenate 'string "~1{~" (string #\Newline) "~}") (nil) "")
 # 
-is $fl.format( qq{~1\{~\n~\}}, Nil ), Q[], Q[format.{.7];
+is $*fl.format( qq{~1\{~\n~\}}, Nil ), Q[], Q[format.{.7];
 
 #`(
 # (deftest format.{.8
@@ -74,7 +74,7 @@ is $fl.format( qq{~1\{~\n~\}}, Nil ), Q[], Q[format.{.7];
 is do {
 	my @collected;
 	for 0 .. 10 -> $i {
-		my $s = $fl.format(
+		my $s = $*fl.format(
 			Q[~v{~A~}],
 			$i, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 ]
 		);
@@ -96,10 +96,10 @@ is do {
 #   nil)
 # 
 is do {
-	my $fn = $fl.formatter( Q[~V{~A~}] );
+	my $fn = $*fl.formatter( Q[~V{~A~}] );
 	my @collected;
 	for 0 .. 10 -> $i {
-		my $s = $fl.formatter-call-to-string(
+		my $s = $*fl.formatter-call-to-string(
 			$fn,
 			$i,
 			[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 ]
@@ -116,7 +116,7 @@ is do {
 # (def-format-test format.{.9
 #   "~#{~A~}" ('(1 2 3 4 5 6 7) nil nil nil) "1234" 3)
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~#{~A~}],
 	[ 1, 2, 3, 4, 5, 6, 7 ], Nil, Nil, Nil
 ), Q[1234], Q[format.{.9];
@@ -128,13 +128,13 @@ is $fl.format(
 # (def-format-test format.{.15
 #   "~0{~}" ("~A" '(1 2 3)) "")
 # 
-is $fl.format( Q[~0{~}], Q[~A], [ 1, 2, 3 ] ), Q[], Q[format.{.15];
+is $*fl.format( Q[~0{~}], Q[~A], [ 1, 2, 3 ] ), Q[], Q[format.{.15];
 
 #`(
 # (def-format-test format.{.16
 #   "~1{~}" ("~A" '(4 5 6)) "4")
 # 
-is $fl.format( Q[~1{~}], Q[~A], [ 4, 5, 6 ] ), Q[4], Q[format.{.16];
+is $*fl.format( Q[~1{~}], Q[~A], [ 4, 5, 6 ] ), Q[4], Q[format.{.16];
 )
 
 #`(
@@ -142,9 +142,9 @@ is $fl.format( Q[~1{~}], Q[~A], [ 4, 5, 6 ] ), Q[4], Q[format.{.16];
 #   (format nil "~{~}" (formatter "") nil)
 #   "")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~{~}],
-	$fl.formatter( Q[] ),
+	$*fl.formatter( Q[] ),
 ), Q[], Q[format.{.17];
 )
 
@@ -152,18 +152,18 @@ is $fl.format(
 #   (format nil "~1{~}" (formatter "") '(1 2 3 4))
 #   "")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~1{~}],
-	$fl.formatter( Q[] ), [ 1, 2, 3, 4 ]
+	$*fl.formatter( Q[] ), [ 1, 2, 3, 4 ]
 ), Q[], Q[format.{.18];
 
 # (deftest format.{.19
 #   (format nil "~{~}" (formatter "~A") '(1 2 3 4))
 #   "1234")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~{~}],
-	$fl.formatter( Q[~A] ), [ 1, 2, 3, 4 ]
+	$*fl.formatter( Q[~A] ), [ 1, 2, 3, 4 ]
 ), Q[1234], Q[format.{.19];
 
 #`(
@@ -171,9 +171,9 @@ is $fl.format(
 #   (format nil "~3{~}" (formatter "~A") '(1 2 3 4))
 #   "123")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~3{~}],
-	$fl.formatter( Q[~A] ), [ 1, 2, 3, 4 ]
+	$*fl.formatter( Q[~A] ), [ 1, 2, 3, 4 ]
 ), Q[123], Q[format.{.20];
 )
 
@@ -181,82 +181,82 @@ is $fl.format(
 # (def-format-test format.{.21
 #   "~V{~}" (2 "~A" '(1 2 3 4 5)) "12")
 # 
-is $fl.format( Q[~V{~}], 2, Q[~A], [ 1, 2, 3, 4, 5 ] ), Q[12], Q[format.{.21];
+is $*fl.format( Q[~V{~}], 2, Q[~A], [ 1, 2, 3, 4, 5 ] ), Q[12], Q[format.{.21];
 )
 
 #`(
 # (def-format-test format.{.22
 #   "~#{~}" ("~A" '(1 2 3 4 5)) "12")
 # 
-is $fl.format( Q[~#{~}], Q[~A], [ 1, 2, 3, 4, 5 ] ), Q[12], Q[format.{.22];
+is $*fl.format( Q[~#{~}], Q[~A], [ 1, 2, 3, 4, 5 ] ), Q[12], Q[format.{.22];
 )
 
 #`(
 # (def-format-test format.{.23
 #   "~{FOO~:}" (nil) "FOO")
 # 
-is $fl.format( Q[~{FOO~:}], Nil ), Q[FOO], Q[format.{.23];
+is $*fl.format( Q[~{FOO~:}], Nil ), Q[FOO], Q[format.{.23];
 )
 
 # (def-format-test format.{.24
 #   "~{~A~:}" ('(1)) "1")
 # 
-is $fl.format( Q[~{~A~:}], [ 1 ] ), Q[1], Q[format.{.24];
+is $*fl.format( Q[~{~A~:}], [ 1 ] ), Q[1], Q[format.{.24];
 
 # (def-format-test format.{.25
 #   "~{~A~:}" ('(1 2)) "12")
 # 
-is $fl.format( Q[~{~A~:}], [ 1, 2 ] ), Q[12], Q[format.{.25];
+is $*fl.format( Q[~{~A~:}], [ 1, 2 ] ), Q[12], Q[format.{.25];
 
 # (def-format-test format.{.26
 #   "~{~A~:}" ('(1 2 3)) "123")
 # 
-is $fl.format( Q[~{~A~:}], [ 1, 2, 3 ] ), Q[123], Q[format.{.26];
+is $*fl.format( Q[~{~A~:}], [ 1, 2, 3 ] ), Q[123], Q[format.{.26];
 
 #`(
 # (def-format-test format.{.27
 #   "~0{FOO~:}" (nil) "")
 # 
-is $fl.format( Q[~0{FOO~:}], Nil ), Q[], Q[format.{.27];
+is $*fl.format( Q[~0{FOO~:}], Nil ), Q[], Q[format.{.27];
 )
 
 #`(
 # (def-format-test format.{.28
 #   "~V{FOO~:}" (0 nil) "")
 # 
-is $fl.format( Q[~V{FOO~:}], 0, Nil ), Q[], Q[format.{.28];
+is $*fl.format( Q[~V{FOO~:}], 0, Nil ), Q[], Q[format.{.28];
 )
 
 #`(
 # (def-format-test format.{.29
 #   "~1{FOO~:}" (nil) "FOO")
 # 
-is $fl.format( Q[~1{FOO~:}], Nil ), Q[FOO], Q[format.{.29];
+is $*fl.format( Q[~1{FOO~:}], Nil ), Q[FOO], Q[format.{.29];
 )
 
 #`(
 # (def-format-test format.{.30
 #   "~2{FOO~:}" (nil) "FOO")
 # 
-is $fl.format( Q[~2{FOO~:}], Nil ), Q[FOO], Q[format.{.30];
+is $*fl.format( Q[~2{FOO~:}], Nil ), Q[FOO], Q[format.{.30];
 )
 
 # (def-format-test format.{.31
 #   (concatenate 'string "~2{~" (string #\Newline) "~:}")
 #   (nil) "")
 # 
-is $fl.format( qq[~2\{~\n~:\}], Nil ), Q[], Q[format.{.30];
+is $*fl.format( qq[~2\{~\n~:\}], Nil ), Q[], Q[format.{.30];
 
 # (def-format-test format.{.32
 #   "~2{FOO~}" (nil) "")
 # 
-is $fl.format( Q[~2{FOO~}], Nil ), Q[], Q[format.{.32];
+is $*fl.format( Q[~2{FOO~}], Nil ), Q[], Q[format.{.32];
 
 #`(
 # (def-format-test format.{.33
 #   "~v{~a~}" (nil '(1 2 3 4 5 6 7)) "1234567")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~v{~a~}],
 	Nil, [ 1, 2, 3, 4, 5, 6, 7 ]
 ), Q[1234567], Q[format.{.32];
@@ -267,7 +267,7 @@ is $fl.format(
 # (def-format-test format.\:{.1
 #   "~:{(~A ~A)~}" ('((1 2 3)(4 5)(6 7 8))) "(1 2)(4 5)(6 7)")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~:{(~A ~A)~}],
 	[ [ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8 ] ]
 ), Q[(1 2)(4 5)(6 7)], Q[format.:{.1];
@@ -276,23 +276,23 @@ is $fl.format(
 #   (concatenate 'string "~:{~" (string #\Newline) "~}")
 #   (nil) "")
 # 
-is $fl.format( qq[~:\{~\n~\}], Nil ), Q[], Q[format.:{.2];
+is $*fl.format( qq[~:\{~\n~\}], Nil ), Q[], Q[format.:{.2];
 
 # (def-format-test format.\:{.3
 #   "~:{~}" ("" nil) "")
 # 
-is $fl.format( Q[~:{~}], Q[], Nil ), Q[], Q[format.:{.3];
+is $*fl.format( Q[~:{~}], Q[], Nil ), Q[], Q[format.:{.3];
 
 # (def-format-test format.\:{.4
 #   "~:{~}" ("~A" nil) "")
 # 
-is $fl.format( Q[~:{~}], Q[~A], Nil ), Q[], Q[format.:{.4];
+is $*fl.format( Q[~:{~}], Q[~A], Nil ), Q[], Q[format.:{.4];
 
 #`(
 # (def-format-test format.\:{.5
 #   "~:{~}" ("X" '(nil (1 2) (3))) "XXX")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~:{~}],
 	Q[X], [ Nil, [ 1, 2 ], [ 3 ] ]
 ), Q[XXX], Q[format.:{.5];
@@ -303,9 +303,9 @@ is $fl.format(
 #   (format nil "~:{~}" (formatter "~A") '((1 2) (3) (4 5 6)))
 #   "134")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~:{~}],
-	$fl.formatter( Q[~A] ),
+	$*fl.formatter( Q[~A] ),
 	[ [ 1, 2 ], [ 3 ], [ 4, 5, 6 ] ]
 ), Q[134], Q[format.:{.6];
 )
@@ -314,24 +314,24 @@ is $fl.format(
 # (def-format-test format.\:{.7
 #   "~0:{XYZ~}" ('((1))) "")
 # 
-is $fl.format( Q[~0:{XYZ~}], [ [ 1 ] ] ), Q[], Q[format.:{.7];
+is $*fl.format( Q[~0:{XYZ~}], [ [ 1 ] ] ), Q[], Q[format.:{.7];
 )
 
 # (def-format-test format.\:{.8
 #   "~2:{XYZ~}" ('((1))) "XYZ")
 # 
-is $fl.format( Q[~2:{XYZ~}], [ [ 1 ] ] ), Q[XYZ], Q[format.:{.7];
+is $*fl.format( Q[~2:{XYZ~}], [ [ 1 ] ] ), Q[XYZ], Q[format.:{.7];
 
 # (def-format-test format.\:{.9
 #   "~2:{~A~}" ('((1) (2))) "12")
 # 
-is $fl.format( Q[~2:{~A~}], [ [ 1 ], [ 2 ] ] ), Q[12], Q[format.:{.9];
+is $*fl.format( Q[~2:{~A~}], [ [ 1 ], [ 2 ] ] ), Q[12], Q[format.:{.9];
 
 #`(
 # (def-format-test format.\:{.10
 #   "~2:{~A~}" ('((1 X) (2 Y) (3 Z))) "12")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~2:{~A~}],
 	[ [ 1, Q[X] ], [ 2, Q[V] ], [ 3, Q[Z] ] ]
 ), Q[12], Q[format.:{.10];
@@ -348,7 +348,7 @@ is do {
 	my @collected;
 	for 0 .. 10 -> $i {
 		@collected.append(
-			$fl.format(
+			$*fl.format(
 				Q[~v:{~A~}],
 				$i, [ [ 1 ], [ 2 ], [ 3, Q[X] ],
 				      [ 4, Q[Y], Q[Z] ], [ 5 ], [ 6 ] ]
@@ -385,7 +385,7 @@ is do {
 # (def-format-test format.\:{.12
 #   "~V:{X~}" (nil '((1) (2) (3) nil (5))) "XXXXX")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~V:{X~}],
 	Nil, [ [ 1 ], [ 2 ], [ 3 ], Nil, [ 5 ] ]
 ), Q[XXXXX], Q[format.:{.12];
@@ -396,7 +396,7 @@ is $fl.format(
 # (def-format-test format.\:{.13
 #   "~#:{~A~}" ('((1) (2) (3) (4) (5)) 'foo 'bar) "123" 2)
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~#:{~A~}],
 	[ [ 1 ], [ 2 ], [ 3 ], [ 4 ], [ 5 ] ], Q[foo], Q[bar]
 ), Q[123], Q[format.:{.13];
@@ -405,7 +405,7 @@ is $fl.format(
 # (def-format-test format.\:{.14
 #   "~:{~A~:}" ('((1 X) (2 Y) (3) (4 A B))) "1234")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~:{~A~}],
 	[ [ 1, Q[X] ], [ 2, Q[Y] ], [ 3 ], [ 4, Q[A], Q[B] ] ]
 ), Q[1234], Q[format.:{.14];
@@ -421,7 +421,7 @@ is-deeply do {
 	my @collected;
 	for 0 .. 10 -> $i {
 		@collected.append(
-			$fl.format(
+			$*fl.format(
 				Q[~v:{~A~:}],
 				[ [ 1, Q[X] ], [ 2, Q[Y] ],
 				  [ 3 ], [ 4, Q[A], Q[B] ] ]
@@ -457,13 +457,13 @@ is-deeply do {
 # (def-format-test format.\:{.16
 #   "~:{ABC~:}" ('(nil)) "ABC")
 # 
-is $fl.format( Q[~:{ABC~:}], [ Nil ] ), Q[ABC], Q[format.:{.16];
+is $*fl.format( Q[~:{ABC~:}], [ Nil ] ), Q[ABC], Q[format.:{.16];
 
 #`(
 # (def-format-test format.\:{.17
 #   "~v:{ABC~:}" (nil '(nil)) "ABC")
 # 
-is $fl.format( Q[~v:{ABC~:}], Nil, [ Nil ] ), Q[ABC], Q[format.:{.17];
+is $*fl.format( Q[~v:{ABC~:}], Nil, [ Nil ] ), Q[ABC], Q[format.:{.17];
 )
 
 # ;;; Tests of ~@{ ... ~}
@@ -472,37 +472,37 @@ is $fl.format( Q[~v:{ABC~:}], Nil, [ Nil ] ), Q[ABC], Q[format.:{.17];
 #   (concatenate 'string "~@{~" (string #\Newline) "~}")
 #   nil "")
 # 
-is $fl.format( qq[~@\{~\n~\}] ), Q[], Q[format.@{.1];
+is $*fl.format( qq[~@\{~\n~\}] ), Q[], Q[format.@{.1];
 
 # (def-format-test format.@{.1A
 #   "~@{~}" ("") "")
 # 
-is $fl.format( Q[~@{~}], Q[] ), Q[], Q[format.@{.1A];
+is $*fl.format( Q[~@{~}], Q[] ), Q[], Q[format.@{.1A];
 
 # (def-format-test format.@{.2
 #   "~@{ ~}" nil "")
 # 
-is $fl.format( Q[~@{ ~}] ), Q[], Q[format.@{.2];
+is $*fl.format( Q[~@{ ~}] ), Q[], Q[format.@{.2];
 
 #`(
 # (def-format-test format.@{.3
 #   "~@{X ~A Y Z~}" (nil) "X NIL Y Z")
 # 
-is $fl.format( Q[~@{X ~A Y Z~}], Nil ), Q[X NIL Y Z], Q[format.@{.3];
+is $*fl.format( Q[~@{X ~A Y Z~}], Nil ), Q[X NIL Y Z], Q[format.@{.3];
 )
 
 #`(
 # (def-format-test format.@{.4
 #   "~@{~A~}" (1 2 3 4) "1234")
 # 
-is $fl.format( Q[~@{~A~}], 1, 2, 3, 4 ), Q[1234], Q[format.@{.4];
+is $*fl.format( Q[~@{~A~}], 1, 2, 3, 4 ), Q[1234], Q[format.@{.4];
 )
 
 #`(
 # (def-format-test format.@{.5
 #   "~@{~{~A~}~}" ('(1 2 3) '(4 5) '(6 7 8)) "12345678")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~@{~{~A~}~}],
 	[ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8 ]
 ), Q[12345678], Q[format.@{.5];
@@ -512,7 +512,7 @@ is $fl.format(
 # (def-format-test format.@{.6
 #   "~@{~1{~A~}~}" ('(1 2 3) '(4 5) '(6 7 8)) "146")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~@{~1{~A~}~}],
 	[ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8 ]
 ), Q[146], Q[format.@{.6];
@@ -521,20 +521,20 @@ is $fl.format(
 # (def-format-test format.@{.7
 #   "~1@{FOO~}" nil "")
 # 
-is $fl.format( Q[~1@{FOO~}] ), Q[], Q[format.@{.7];
+is $*fl.format( Q[~1@{FOO~}] ), Q[], Q[format.@{.7];
 
 #`(
 # (def-format-test format.@{.8
 #   "~v@{~A~}" (nil 1 4 7) "147")
 # 
-is $fl.format( Q[~v@{~A~}], Nil, 1, 4, 7 ), Q[147], Q[format.@{.8];
+is $*fl.format( Q[~v@{~A~}], Nil, 1, 4, 7 ), Q[147], Q[format.@{.8];
 )
 
 #`(
 # (def-format-test format.@{.9
 #   "~#@{~A~}" (1 2 3) "123")
 # 
-is $fl.format( Q[~#@{~A~}], 1, 2, 3 ), Q[123], Q[format.@{.9];
+is $*fl.format( Q[~#@{~A~}], 1, 2, 3 ), Q[123], Q[format.@{.9];
 )
 
 #`(
@@ -566,16 +566,16 @@ is $fl.format( Q[~#@{~A~}], 1, 2, 3 ), Q[123], Q[format.@{.9];
 # (def-format-test format.@{.11
 #   "~@{X~:}" nil "X")
 # 
-is $fl.format( Q[~@{X~:}] ), Q[X], Q[format.@{.11];
+is $*fl.format( Q[~@{X~:}] ), Q[X], Q[format.@{.11];
 )
 
 #`(
 # (def-format-test format.@{.12
 #   "~@{~}" ((formatter "X~AY") 1) "X1Y")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~@{~}],
-	$fl.formatter( Q[X~AY] ), 1
+	$*fl.formatter( Q[X~AY] ), 1
 ), Q[X1Y], Q[format.@{.12];
 )
 
@@ -583,9 +583,9 @@ is $fl.format(
 # (def-format-test format.@{.13
 #   "~v@{~}" (1 (formatter "X") 'foo) "X" 1)
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~@{~}],
-	1, $fl.formatter( Q[X~AY] ), 'foo'
+	1, $*fl.formatter( Q[X~AY] ), 'foo'
 ), Q[X], Q[format.@{.13];
 )
 
@@ -595,13 +595,13 @@ is $fl.format(
 #   (concatenate 'string "~:@{~" (string #\Newline) "~}")
 #   nil "")
 # 
-is $fl.format( qq[~:@\{~\n~\}] ), Q[], Q[format.:@{.1];
+is $*fl.format( qq[~:@\{~\n~\}] ), Q[], Q[format.:@{.1];
 
 #`(
 # (def-format-test format.\:@{.2
 #   "~:@{~A~}" ('(1 2) '(3) '(4 5 6)) "134")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~:@{~A~}],
 	[ 1, 2 ], [ 3 ], [ 4, 5, 6 ]
 ), Q[134], Q[format.:@.3];
@@ -611,7 +611,7 @@ is $fl.format(
 # (def-format-test format.\:@{.3
 #   "~:@{(~A ~A)~}" ('(1 2 4) '(3 7) '(4 5 6)) "(1 2)(3 7)(4 5)")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~:@{(~A ~A)~}],
 	[ 1, 2, 4 ], [ 3, 7 ], [ 4, 5, 6 ]
 ), Q[(1 2)(3 7)(4 5)], Q[format.:@.3];
@@ -621,7 +621,7 @@ is $fl.format(
 # (def-format-test format.\:@{.4
 #   "~:@{~}" ("(~A ~A)" '(1 2 4) '(3 7) '(4 5 6)) "(1 2)(3 7)(4 5)")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~:@{~}],
 	Q[(~A ~A)], [ 1, 2, 4 ], [ 3, 7 ], [ 4, 5, 6 ]
 ), Q[(1 2)(3 7)(4 5)], Q[format.:@.4];
@@ -631,9 +631,9 @@ is $fl.format(
 # (def-format-test format.\:@{.5
 #   "~:@{~}" ((formatter "(~A ~A)") '(1 2 4) '(3 7) '(4 5 6)) "(1 2)(3 7)(4 5)")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~:@{~}],
-	1, $fl.formatter( Q[(~A ~A)] ), 'foo'
+	1, $*fl.formatter( Q[(~A ~A)] ), 'foo'
 ), Q[X], Q[format.@{.13];
 )
 
@@ -641,7 +641,7 @@ is $fl.format(
 # (def-format-test format.\:@.6
 #   "~:@{~A~:}" ('(1 A) '(2 B) '(3) '(4 C D)) "1234")
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~:@{~A~:}],
 	[ 1, Q[A] ], [ 2, Q[B] ], [ 3 ], [ 4, Q[C], Q[D] ]
 ), Q[1234], Q[format.:@.6];
@@ -651,7 +651,7 @@ is $fl.format(
 # (def-format-test format.\:@.7
 #   "~0:@{~A~:}" ('(1 A) '(2 B) '(3) '(4 C D)) "" 4)
 # 
-is $fl.format(
+is $*fl.format(
 	Q[~0:@{~A~:}],
 	[ 1, Q[A] ], [ 2, Q[B] ], [ 3 ], [ 4, Q[C], Q[D] ]
 ), Q[], Q[format.:@.7];
@@ -661,14 +661,14 @@ is $fl.format(
 # (def-format-test format.\:@.8
 #   "~#:@{A~:}" (nil nil nil) "AAA")
 # 
-is $fl.format( Q[~#:@{A~:}], Nil, Nil, Nil ), Q[AAA], Q[format.:@.8];
+is $*fl.format( Q[~#:@{A~:}], Nil, Nil, Nil ), Q[AAA], Q[format.:@.8];
 )
 
 #`(
 # (def-format-test format.\:@.9
 #   "~v:@{~A~}" (nil '(1) '(2) '(3)) "123")
 # 
-is $fl.format( Q[~v:@{~A~}], Nil, [ 1 ], [ 2 ], [ 3 ] ), Q[123], Q[format.:@.9];
+is $*fl.format( Q[~v:@{~A~}], Nil, [ 1 ], [ 2 ], [ 3 ] ), Q[123], Q[format.:@.9];
 )
 
 #`(
@@ -686,7 +686,7 @@ is-deeply do {
 	for 0 .. 10 -> $i {
 		@x.append( $i );
 		@collected.append(
-			$fl.format( Q[~V:@{~A~}], $i, @x.reverse )
+			$*fl.format( Q[~V:@{~A~}], $i, @x.reverse )
 		);
 	}
 	@collected;
@@ -723,7 +723,7 @@ is-deeply do {
 	for 0 .. 10 -> $i {
 		@x.append( $i );
 		@collected.append(
-#			$fl.format( Q[~V:@{~A~}], $i, @x.reverse )
+#			$*fl.format( Q[~V:@{~A~}], $i, @x.reverse )
 		);
 	}
 	@collected;
@@ -750,7 +750,7 @@ is-deeply do {
 # 
 throws-like {
 	my $x = :A; # XXX Not sure...
-	$fl.format( Q[~{~A~}], $x );
+	$*fl.format( Q[~{~A~}], $x );
 }, X::Type-Error, Q[format.{.error.1];
 )
 
@@ -761,7 +761,7 @@ throws-like {
 # 
 throws-like {
 	my $x = 1; # XXX Not sure...
-	$fl.format( Q[~{~A~}], $x );
+	$*fl.format( Q[~{~A~}], $x );
 }, X::Type-Error, Q[format.{.error.2];
 )
 
@@ -772,7 +772,7 @@ throws-like {
 # 
 throws-like {
 	my $x = Q[foo]; # XXX Not sure...
-	$fl.format( Q[~{~A~}], $x );
+	$*fl.format( Q[~{~A~}], $x );
 }, X::Type-Error, Q[format.{.error.3];
 )
 
@@ -783,7 +783,7 @@ throws-like {
 # 
 throws-like {
 	my $x = 0b01101; # XXX Not sure...
-	$fl.format( Q[~{~A~}], $x );
+	$*fl.format( Q[~{~A~}], $x );
 }, X::Type-Error, Q[format.{.error.4];
 )
 
@@ -794,7 +794,7 @@ throws-like {
 # 
 throws-like {
 	my $x = :x; # XXX symbol
-	$fl.format( Q[~{~A~}], $x );
+	$*fl.format( Q[~{~A~}], $x );
 }, X::Error, Q[format.{.error.5];
 )
 
@@ -805,7 +805,7 @@ throws-like {
 # 
 throws-like {
 	my $x = :x; # XXX symbol
-	$fl.format( Q[~:{~A~}], $x );
+	$*fl.format( Q[~:{~A~}], $x );
 }, X::Error, Q[format.:{.error.1];
 )
 
@@ -816,7 +816,7 @@ throws-like {
 # 
 throws-like {
 	my $x = :x; # XXX symbol
-	$fl.format( Q[~:{~A~}], $x );
+	$*fl.format( Q[~:{~A~}], $x );
 }, X::Type-Error, Q[format.:{.error.2];
 )
 
@@ -827,7 +827,7 @@ throws-like {
 # 
 throws-like {
 	my $x = :x; # XXX symbol
-	$fl.format( Q[~:{~A~}], $x );
+	$*fl.format( Q[~:{~A~}], $x );
 }, X::Error, Q[format.:{.error.3];
 )
 
@@ -838,7 +838,7 @@ throws-like {
 # 
 throws-like {
 	my $x = :x; # XXX symbol
-	$fl.format( Q[~:{~A~}], $x );
+	$*fl.format( Q[~:{~A~}], $x );
 }, X::Error, Q[format.:{.error.4];
 )
 
@@ -849,7 +849,7 @@ throws-like {
 # 
 throws-like {
 	my $x = :x; # XXX symbol
-	$fl.format( Q[~:{~A~}], $x );
+	$*fl.format( Q[~:{~A~}], $x );
 }, X::Error, Q[format.:{.error.5];
 )
 
@@ -860,7 +860,7 @@ throws-like {
 # 
 throws-like {
 	my $x = :x; # XXX symbol
-	$fl.format( Q[~:@{~A~}], $x );
+	$*fl.format( Q[~:@{~A~}], $x );
 }, X::Type-Error, Q[format.:@{.error.1];
 )
 
@@ -871,7 +871,7 @@ throws-like {
 # 
 throws-like {
 	my $x = 0;
-	$fl.format( Q[~:@{~A~}], $x );
+	$*fl.format( Q[~:@{~A~}], $x );
 }, X::Type-Error, Q[format.:@{.error.2];
 )
 
@@ -882,7 +882,7 @@ throws-like {
 # 
 throws-like {
 	my $x = 0b01101;
-	$fl.format( Q[~:@{~A~}], $x );
+	$*fl.format( Q[~:@{~A~}], $x );
 }, X::Type-Error, Q[format.:@{.error.3];
 )
 
@@ -893,7 +893,7 @@ throws-like {
 # 
 throws-like {
 	my $x = Q[abc];
-	$fl.format( Q[~:@{~A~}], $x );
+	$*fl.format( Q[~:@{~A~}], $x );
 }, X::Type-Error, Q[format.:@{.error.4];
 )
 
@@ -904,7 +904,7 @@ throws-like {
 # 
 throws-like {
 	my $x = Q[abc];
-	$fl.format( Q[~:@{~A ~A~}], $x );
+	$*fl.format( Q[~:@{~A ~A~}], $x );
 }, X::Type-Error, Q[format.:@{.error.5];
 )
 

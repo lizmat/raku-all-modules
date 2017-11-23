@@ -5,37 +5,33 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
-#`(
 subtest {
-#`(
-	is $fl.format( Q{X~~~D&}, 4 ), Q{X~4&}, Q{non-nil};
-)
+	ok def-format-test( Q{X~~~D&}, ( 4 ), Q{X~4&} ), Q{non-nil};
 }, Q{missing coverage};
-)
 
 # (def-format-test format.&.1
 #   "~0&" nil "")
 # 
-is $fl.format( Q{~0&} ), Q{}, Q{format.&.1};
+ok def-format-test( Q{~0&}, ( ), Q{} ), Q{format.&.1};
 
 # (def-format-test format.&.2
 #   "~&" nil "")
 # 
-is $fl.format( Q{~&} ), Q{}, Q{format.&.2};
+ok def-format-test( Q{~&}, ( ), Q{} ), Q{format.&.2};
 
 #`(
 # (def-format-test format.&.3
 #   "X~&" nil #.(concatenate 'string "X" (string #\Newline)))
 # 
-is $fl.format( Q{X~&} ), qq{X\n}, Q{format.&.3};
+ok def-format-test( Q{X~&}, ( ), qq{X\n} ), Q{format.&.3};
 )
 
 # (def-format-test format.&.4
 #   "X~%~&" nil #.(concatenate 'string "X" (string #\Newline)))
 # 
-is $fl.format( Q{X~%~&} ), qq{X\n}, Q{format.&.4};
+ok def-format-test( Q{X~%~&}, ( ), qq{X\n} ), Q{format.&.4};
 
 #`(
 # (deftest format.&.5
@@ -47,18 +43,20 @@ is $fl.format( Q{X~%~&} ), qq{X\n}, Q{format.&.4};
 #         collect i)
 #   nil)
 # 
-is do {
-	my @collected;
-	for 1 .. 100 -> $i {
-		my $s1 = "\n" xx ( $i - 1 );
-		my $format-string = $fl.format( "~~~D&", $i );
-		my $s2 = $fl.format( $format-string );
-		unless $s1 eq $s2 {
-			@collected.append( $i );
+ok deftest(
+	{
+		my @collected;
+		for 1 .. 100 -> $i {
+			my $s1 = "\n" xx ( $i - 1 );
+			my $format-string = $*fl.format( "~~~D&", $i );
+			my $s2 = $*fl.format( $format-string );
+			unless $s1 eq $s2 {
+				@collected.append( $i );
+			}
 		}
-	}
-	@collected.elems;
-}, 0, Q{format.&.5};
+		@collected;
+	}, [ ]
+), Q{format.&.5};
 )
 
 #`(
@@ -72,19 +70,21 @@ is do {
 #         collect i)
 #   nil)
 # 
-is do {
-	my @collected;
-	for 1 .. 100 -> $i {
-		my $s1 = "\n" xx ( $i - 1 );
-		my $format-string = $fl.format( "~~~D&", $i );
-		my $fn = $fl.formatter( $format-string );
-		my $s2 = $fl.formatter-call-to-string( $fn );
-		unless $s1 eq $s2 {
-			@collected.append( $i );
+ok deftest(
+	{
+		my @collected;
+		for 1 .. 100 -> $i {
+			my $s1 = "\n" xx ( $i - 1 );
+			my $format-string = $**fl.format( "~~~D&", $i );
+			my $fn = $*fl.formatter( $format-string );
+			my $s2 = $*fl.formatter-call-to-string( $fn );
+			unless $s1 eq $s2 {
+				@collected.append( $i );
+			}
 		}
-	}
-	@collected.elems;
-}, 0, Q{formatter.&.5};
+		@collected;
+	}, [ ]
+), Q{formatter.&.5};
 )
 
 #`(
@@ -99,18 +99,20 @@ is do {
 #         collect i)
 #   nil)
 # 
-is do {
-	my @collected;
-	for 1 .. 100 -> $i {
-		my $s1 = 'X' ~ ( "\n" xx ( $i - 1 ) );
-		my $format-string = $fl.format( "X~~~D&", $i );
-		my $s2 = $fl.format( $format-string );
-		unless $s1 eq $s2 {
-			@collected.append( $i );
+ok deftest(
+	{
+		my @collected;
+		for 1 .. 100 -> $i {
+			my $s1 = 'X' ~ ( "\n" xx ( $i - 1 ) );
+			my $format-string = $*fl.format( "X~~~D&", $i );
+			my $s2 = $*fl.format( $format-string );
+			unless $s1 eq $s2 {
+				@collected.append( $i );
+			}
 		}
-	}
-	@collected.elems;
-}, 0, Q{format.&.6};
+		@collected;
+	}, [ ]
+), Q{format.&.6};
 )
 
 #`(
@@ -126,31 +128,33 @@ is do {
 #         collect i)
 #   nil)
 # 
-is do {
-	my @collected;
-	for 1 .. 100 -> $i {
-		my $s1 = 'X' ~ ( "\n" xx ( $i - 1 ) );
-		my $format-string = $fl.format( "X~~~D&", $i );
-		my $fn = $fl.formatter( $format-string );
-		my $s2 = $fl.formatter-call-to-string( $fn );
-		unless $s1 eq $s2 {
-			@collected.append( $i );
+ok deftest(
+	{
+		my @collected;
+		for 1 .. 100 -> $i {
+			my $s1 = 'X' ~ ( "\n" xx ( $i - 1 ) );
+			my $format-string = $*fl.format( "X~~~D&", $i );
+			my $fn = $*fl.formatter( $format-string );
+			my $s2 = $*fl.formatter-call-to-string( $fn );
+			unless $s1 eq $s2 {
+				@collected.append( $i );
+			}
 		}
-	}
-	@collected.elems;
-}, 0, Q{formatter.&.6};
+		@collected;
+	}, [ ]
+), Q{formatter.&.6};
 )
 
 # (def-format-test format.&.7
 #   "~v&" (nil) "")
 # 
-is $fl.format( Q{~v&}, Nil ), Q{}, Q{format.&.7};
+ok def-format-test( Q{~v&}, ( Nil ), Q{} ), Q{format.&.7};
 
 #`(
 # (def-format-test format.&.8
 #   "X~v&" (nil) #.(concatenate 'string "X" (string #\Newline)))
 # 
-is $fl.format( Q{X~v&}, Nil ), qq{X\n}, Q{format.&.8};
+ok def-format-test( Q{X~v&}, ( Nil ), qq{X\n} ), Q{format.&.8};
 )
 
 #`(
@@ -162,17 +166,19 @@ is $fl.format( Q{X~v&}, Nil ), qq{X\n}, Q{format.&.8};
 #         collect i)
 #   nil)
 # 
-is do {
-	my @collected;
-	for 1 .. 100 -> $i {
-		my $s1 = "\n" xx ( $i - 1 );
-		my $s2 = $fl.format( "~V&", $i );
-		unless $s1 eq $s2 {
-			@collected.append( $i );
+ok deftest(
+	{
+		my @collected;
+		for 1 .. 100 -> $i {
+			my $s1 = "\n" xx ( $i - 1 );
+			my $s2 = $*fl.format( "~V&", $i );
+			unless $s1 eq $s2 {
+				@collected.append( $i );
+			}
 		}
-	}
-	@collected.elems;
-}, 0, Q{format.&.9};
+		@collected;
+	}, [ ]
+), Q{format.&.9};
 )
 
 #`(
@@ -185,18 +191,20 @@ is do {
 #           collect i))
 #   nil)
 # 
-is do {
-	my @collected;
-	my $fn = $fl.formatter( "~V&" );
-	for 1 .. 100 -> $i {
-		my $s1 = "\n" xx ( $i - 1 );
-		my $s2 = $fl.formatter-call-to-string( $fn, $i );
-		unless $s1 eq $s2 {
-			@collected.append( $i );
+ok deftest(
+	{
+		my @collected;
+		my $fn = $*fl.formatter( "~V&" );
+		for 1 .. 100 -> $i {
+			my $s1 = "\n" xx ( $i - 1 );
+			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
+			unless $s1 eq $s2 {
+				@collected.append( $i );
+			}
 		}
-	}
-	@collected.elems;
-}, 0, Q{formatter.&.9};
+		@collected;
+	}, [ ]
+), Q{formatter.&.9};
 )
 
 #`(
@@ -209,6 +217,20 @@ is do {
 #         collect i)
 #   nil)
 # 
+ok deftest(
+	{
+		my @collected;
+		my $fn = $*fl.formatter( "~V&" );
+		for 1 .. 100 -> $i {
+#			my $s1 = "\n" xx ( $i - 1 );
+#			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
+#			unless $s1 eq $s2 {
+#				@collected.append( $i );
+#			}
+		}
+		@collected;
+	}, [ ]
+), Q{format.&.10};
 )
 
 #`(
@@ -224,26 +246,38 @@ is do {
 #           collect i))
 #   nil)
 # 
+ok deftest(
+	{
+		my @collected;
+		my $fn = $*fl.formatter( "~V&" );
+		for 1 .. 100 -> $i {
+#			my $s1 = "\n" xx ( $i - 1 );
+#			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
+#			unless $s1 eq $s2 {
+#				@collected.append( $i );
+#			}
+		}
+		@collected;
+	}, [ ]
+), Q{formatter.&.10};
 )
 
 # (def-format-test format.&.11
 #   "X~V%" (0) "X")
 # 
-is $fl.format( Q{X~V&}, 0 ), Q{X}, Q{format.&.11};
+ok def-format-test( Q{X~V&}, ( 0 ), Q{X} ), Q{format.&.11};
 
 # (def-format-test format.&.12
 #   "X~#%" nil "X")
 # 
-is $fl.format( Q{X~#%} ), Q{X}, Q{format.&.12};
+ok def-format-test( Q{X~#%}, ( ), Q{X} ), Q{format.&.12};
 
-#`(
 # (def-format-test format.&.13
 #   "X~#%" ('a 'b 'c) #.(let ((nl (string #\Newline)))
 #                         (concatenate 'string "X" nl nl nl))
 #   3)
 #
-is $fl.format( Q{X~#%}, Q{a}, Q{b}, Q{c} ), qq{X\n\n\n}, Q{format.&.1};
-)
+ok def-format-test( Q{X~#%}, ( Q{a}, Q{b}, Q{c} ), qq{X\n\n\n} ), Q{format.&.1};
 
 done-testing;
 
