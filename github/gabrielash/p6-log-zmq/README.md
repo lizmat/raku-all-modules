@@ -43,7 +43,7 @@ In development. This is my learning process of perl6 and ZMQ. I have a lot to le
     $l2.log( 'another important message');
 
 #### B ( more elaborate )
-    my $logger = Logging::instance('example', 'tcp://78.78.1.7:3301')\
+    my $logger = Logging::instance('example', 'tcp://78.78.1.7:3301'\
                                 , :default-level( :warning )\
                                 , :domain-list( < database engine front-end nativecall > )\
                                 , :format( :json ))\

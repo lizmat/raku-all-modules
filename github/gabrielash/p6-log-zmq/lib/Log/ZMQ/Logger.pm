@@ -42,7 +42,7 @@ my %FORMATTERS = %(
 );
 
 my Logging $instance;
-END { $instance.DESTROY if $instance.defined; say "END" }
+END { $instance.DESTROY if $instance.defined; }
 
 class Logging is export {
 
@@ -60,7 +60,9 @@ class Logging is export {
  our proto sub instance(|)  {*}
 
   multi sub instance(Str $prefix, Str $uri = $log-uri
-                        , :$default-level  is copy, :@domain-list, :$format is copy)  {
+                        , :$default-level  is copy
+                        , :@domain-list
+                        , :$format is copy)  {
     die "Logging is already initialized. call instance wit empty argument list"
       if $instance.defined;
 
@@ -99,7 +101,12 @@ class Logging is export {
       my Context $ctx .= new;
       my Socket $socket .= new( $ctx , :publisher );
       $socket.bind( $!uri );
-      .send($socket) for $!queue.list;
+
+      {
+          say "DEBUG[QUEUR>LIST]: $_"; 
+          .send($socket)
+      } for $!queue.list;
+
       $socket.unbind.close;
       $ctx.shutdown;
     }
@@ -162,11 +169,13 @@ class Logger is export {
   }
 
   method log(Str $content, *%h) { #say %h;say self.domains;
+    say "DEBUG[Logger::log]:$content" if $!debug;  
     my $argc =  %h.elems;
     my $err = "you can specifiy a level ({ %LEVELS.keys }) and a domain ({ self.domains.keys })\n ({ %h.keys }) makes no sense";
     die $err unless $argc <= 2;
     my $domain = $!domain;
     my $level = self.default-level;
+
 
     for %h.keys  -> $k {
       if self.domains{$k}:exists {
@@ -204,7 +213,7 @@ class Logger is export {
     $builder = &m(:$builder, :$prefix, :$timestamp
                                             , :$level, :$domain,  :$content );
 
-    #say "SENT $builder";
+    say "DEBUG[Logger:log]->SENT $builder" if $!debug;
     $!queue.send($builder.finalize);
   }
 

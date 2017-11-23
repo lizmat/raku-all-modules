@@ -31,7 +31,7 @@
     
   },
   "production": false,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "meta-version": "0",
   "authors": ["Gabriel Ash", "github:gabrielash" ],
   "description": "Perl6 zmq-based logging"
