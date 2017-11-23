@@ -1,30 +1,33 @@
 {
-    "perl": "6",
-    "name": "Config",
-    "version": "1.2.2",
-    "auth": "github:scriptkitties",
-    "description": "Extensible library for reading and writing configuration files.",
-    "license": "GPL-3.0",
-    "depends": [
-        "Hash::Merge"
-    ],
-    "provides": {
-        "Config": "lib/Config.pm6",
-        "Config::Parser": "lib/Config/Parser.pm6",
-        "Config::Parser::NULL": "lib/Config/Parser/NULL.pm6",
-        "Config::Exception::FileNotFoundException": "lib/Config/Exception/FileNotFoundException.pm6",
-        "Config::Exception::UnimplementedMethodException": "lib/Config/Exception/UnimplementedMethodException.pm6",
-        "Config::Exception::MissingParserException": "lib/Config/Exception/MissingParserException.pm6"
-    },
-    "authors": [
-        "Patrick Spek <p.spek@tyil.work>"
-    ],
-    "tags": [
-        "config",
-        "configuration"
-    ],
-    "test-depends": [
-        "Test::META"
-    ],
-    "source-url": "https://github.com/scriptkitties/p6-Config.git"
+  "auth": "github:scriptkitties",
+  "authors": [
+    "Patrick Spek <p.spek@tyil.work>"
+  ],
+  "depends": [
+    "Hash::Merge"
+  ],
+  "description": "Extensible library for reading and writing configuration files.",
+  "license": "GPL-3.0",
+  "name": "Config",
+  "perl": "6",
+  "provides": {
+    "Config": "lib/Config.pm6",
+    "Config::Exception::FileNotFoundException": "lib/Config/Exception/FileNotFoundException.pm6",
+    "Config::Exception::MissingParserException": "lib/Config/Exception/MissingParserException.pm6",
+    "Config::Exception::UnimplementedMethodException": "lib/Config/Exception/UnimplementedMethodException.pm6",
+    "Config::Parser": "lib/Config/Parser.pm6",
+    "Config::Parser::NULL": "lib/Config/Parser/NULL.pm6"
+  },
+  "resources": [
+    
+  ],
+  "source-url": "https://github.com/scriptkitties/p6-Config.git",
+  "tags": [
+    "config",
+    "configuration"
+  ],
+  "test-depends": [
+    "Test::META"
+  ],
+  "version": "1.3.2"
 }
