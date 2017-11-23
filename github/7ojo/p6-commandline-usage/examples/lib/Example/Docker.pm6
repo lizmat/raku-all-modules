@@ -8,6 +8,7 @@ multi command is export {
 }
 
 multi set-defaults(
+    Int :$dns-port = 53,                    #= DNS server port
     Str :$config = '$HOME/.docker',         #= Location of client config files
     :D( :debug($debug) ),                   #= Enable debug mode
     :$help,                                 #= Print usage

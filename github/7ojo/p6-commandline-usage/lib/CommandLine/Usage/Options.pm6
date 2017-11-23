@@ -42,30 +42,33 @@ class CommandLine::Usage::Options {
                 ;
         }
     }
-    
+
     method parse-options (:@candidates) {
         my $out = '';
         for @candidates -> $candidate {
             for $candidate.signature.params -> $param {
                 next if $param.constraint_list();
-                
+
                 my $short-param = '';
                 my $long-param = '';
                 my $default-value = '';
                 my $param-type = '';
-                
+
                 my token type { \w+ <?before \s> }
                 my token name { <-[\s\$():]>+ }
                 my token short-name { <?after ':'> <name> <?before '('> };
-                my token long-name { <?after ':$'> <name> }; 
+                my token long-name { <?after ':$'> <name> };
                 my token separator { '(:'  };
-                
+
                 $param-type = $0 if $param.perl ~~ /^ (<type>) /;
                 $short-param = "-$0" if $param.perl ~~ / (<short-name>) /;
                 $long-param = "--$0" if $param.perl ~~ / (<long-name>) /;
-                $default-value = $0  if $param.perl ~~ / '=' \s* '"' (.+) '"' /; 
-                
+                $default-value = $0 if $param.perl ~~ / '=' \s* '"'? (<-["]>+) '"'? /;
+
                 given $param-type {
+                    when 'Int' {
+                        $param-type = 'integer';
+                    }
                     when 'Str' {
                         $param-type = 'string';
                     }

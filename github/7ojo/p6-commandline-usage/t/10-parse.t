@@ -19,7 +19,7 @@ plan 2;
         );
     my $text = $usage.parse;
     my $versus = qq:to/END/;
-    
+
     Usage:\tmy-command one two
 
     My explanation here
@@ -32,7 +32,8 @@ plan 2;
         Str :$project,
         Str :$network = 'acme',
         Str :$domain = 'localhost',
-        Str :$data-path = '~/.platform'
+        Str :$data-path = '~/.platform',
+        Int :$port = 80
         ) { ... }
 
     multi my-main('stop',
@@ -46,10 +47,10 @@ plan 2;
         :func( &my-main ),
         :filter<run>
         );
-    
+
     my $text = $usage.parse;
     my $versus = qq:to/END/;
-    
+
     Usage:\tmy-command run [OPTIONS]
 
     Explanation of subcommand run and it's options
@@ -59,6 +60,7 @@ plan 2;
           --network string     (default "acme")
           --domain string      (default "localhost")
           --data-path string   (default "~/.platform")
+          --port integer       (default "80")
     END
     is $text, $versus, "my-command run --help";
 }

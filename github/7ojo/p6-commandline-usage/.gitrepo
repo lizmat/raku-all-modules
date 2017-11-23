@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/7ojo/p6-commandline-usage.git
 	branch = master
-	commit = 9091e36608cef6580dd58b419307c135a27af4ea
-	parent = d5ac292581c21312f46fa97a7884a7b1b8787dda
+	commit = 5b0a87f4651f6c406b2a29db89ed3fe692b9f4d7
+	parent = 5b7ffabc43d3047832f47796d4f1225c0f42b524
 	cmdver = 0.4.0

@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- 
+- Added support for integer type and default value 
 
 ## [0.1]
 ### Added
