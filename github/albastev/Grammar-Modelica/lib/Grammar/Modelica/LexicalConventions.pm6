@@ -8,31 +8,31 @@ token BASEIDENT {[[<|w><NONDIGIT>[<DIGIT>||<NONDIGIT>]*]<|w>||<Q-IDENT>]<!after 
 
 token Q-IDENT {<[']>[<Q-CHAR>||<S-ESCAPE>]+<[']>}
 
-regex NONDIGIT { <[A..Za..z_]> }
+token NONDIGIT { <[A..Za..z_]> }
 
-regex STRING { '"' [ <S-CHAR> || <S-ESCAPE> ]* '"'}
+token STRING { '"' [ <S-CHAR> || <S-ESCAPE> ]* '"'}
 
 token S-CHAR {<[ \x[0000] .. \x[10FFFF] ] - [ " \\ ]>}
 
 token Q-CHAR {<NONDIGIT>||<DIGIT>||<[!$%&()*+,./:;<>=?@[\]^{}~#|-]>||" "}
 
-regex S-ESCAPE {'\\\'' || '\\"' || '\\?' || '\\\\' ||
+token S-ESCAPE {'\\\'' || '\\"' || '\\?' || '\\\\' ||
            '\\a' || '\\b' || '\\f' || '\\n' || '\\r' || '\\t' || '\\v'  }
 
-regex DIGIT { <[0..9]> }
+token DIGIT { <[0..9]> }
 
 #UNSIGNED_INTEGER = DIGIT { DIGIT }
-regex UNSIGNED_INTEGER {<DIGIT>+}
+token UNSIGNED_INTEGER {<DIGIT>+}
 
 #UNSIGNED_NUMBER = UNSIGNED_INTEGER [ "." [ UNSIGNED_INTEGER ] ]
 #  [ ( "e" | "E" ) [ "+" | "-" ] UNSIGNED_INTEGER ]
-regex UNSIGNED_NUMBER {<UNSIGNED_INTEGER>+['.'<UNSIGNED_INTEGER>?]?[<[eE]><[+-]>?<UNSIGNED_INTEGER>]?}
+token UNSIGNED_NUMBER {<UNSIGNED_INTEGER>+['.'<UNSIGNED_INTEGER>?]?[<[eE]><[+-]>?<UNSIGNED_INTEGER>]?}
 
-regex c-comment {['//'.*?$$]||['/*'.*?'*/']}
+token c-comment {['//'.*?$$]||['/*'.*?'*/']}
 
 token ws { [\s|<c-comment>]* }
 
-rule keywords {
+token keywords {
   <|w>[ 'within'
    | 'final'
    | 'encapsulated'
