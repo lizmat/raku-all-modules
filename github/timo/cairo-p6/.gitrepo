@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/timo/cairo-p6.git
 	branch = master
-	commit = e2ad47f21b78e1364b424782130a8583001fc4db
-	parent = d0fadff1e144fa74d1d0f09cc6e843ed8d250f10
+	commit = 9e98f6eb8fc0e7e8ca9356a9bc0e3e240a076adb
+	parent = 4a0a047aa7bf04a5dac601220b8d32ed171cfbfe
 	cmdver = 0.4.0
