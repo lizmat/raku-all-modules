@@ -1,0 +1,20 @@
+{
+  "authors": "Ryan Goodner (ryn1x)",
+  "description": "Simple spinners and progress bars for Perl 6.",
+  "meta-version": 1,
+  "name": "Terminal::Spinners",
+  "perl": "6.c",
+  "license": "MIT",
+  "source-url": "https://github.com/ryn1x/Terminal-Spinners.git",
+  "support" : {
+      "source" : "https://github.com/ryn1x/Terminal-Spinners"
+  },
+  "tags": [
+      "CLI",
+      "Terminal"
+  ],
+  "provides": {
+      "Terminal::Spinners": "lib/Terminal/Spinners.pm6"
+  },
+  "version": "0.0.3"
+}
