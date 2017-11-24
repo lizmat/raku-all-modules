@@ -90,7 +90,7 @@ class MsgRecvPollHandler is PollHandler is export {
 
   method do(Socket:D $socket ) {
     my MsgRecv $recv .= new;
-    $recv.slurp( $socket); 
+    $recv.slurp( $socket);
     return @.action[0]( $recv );
   }
 }
@@ -130,15 +130,18 @@ class Poll-impl {
     return Any;
   }
 
-  multi method poll() {
+  multi method poll( --> List) {
+
     die "cannot poll un unfinalized Poll" unless @!c-items.defined;
     given zmq_poll( @!c-items.as-pointer, self.elems, $!delay)  {
       when -1 { throw-error };
       when  0 { return () };
-      default { return
-            @!items[  | @!c-items.grep( {  $_.revents +& %poll-events<incoming> },  :k)
+      default {
+          my @retv =  # coerce to list or the map body isn't executed
+               @!items[  | @!c-items.grep( {  $_.revents +& %poll-events<incoming> },  :k)
                      ]\
-                     .map( { $_.do( $_.socket ) } );
+                     .map( { say $_; $_.do( $_.socket ) } );
+          return @retv;
               }
     }
   }

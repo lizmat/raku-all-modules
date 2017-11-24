@@ -167,8 +167,8 @@ sub zmq_msg_init_size(zmq_msg_t  is rw
 sub zmq_msg_init_data(zmq_msg_t
                      ,Pointer
                      ,size_t
-                     ,Pointer = nativecast(Pointer, 0)
-                     ,Pointer = nativecast(Pointer, 0)
+                     ,Pointer
+                     ,Pointer 
                       ) is native(LIB, v5)
                       returns int32 is export { * }
 
@@ -176,10 +176,10 @@ sub zmq_msg_init_data_callback(zmq_msg_t
                      ,Pointer
                      ,size_t
                      ,&callback (OpaquePointer, OpaquePointer --> int32) # void (f )(void*,void*
-                     ,Pointer = Pointer
+                     ,Pointer 
                       )
                     is symbol('zmq_msg_init_data')
- is native(LIB, v5) returns int32 is export { * }
+                    is native(LIB, v5) returns int32 is export { * }
 
 
 

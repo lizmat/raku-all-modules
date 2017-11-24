@@ -167,6 +167,7 @@ class Buffer {
   method copy( --> Str ) {
      return $!buffer.decode('ISO-8859-1');
   }
+
 }
 
 class Message is export  {
@@ -228,22 +229,23 @@ class Message is export  {
         # see test 11. with 100000 runs, a local scope callback prevents gc. a
         # callback argument and no callback perform equally well, reclaiming 99.9% at END {}
 
-    my $no-more = 0;
+    my int $no-more = 0;
     $no-more = ZMQ_SNDMORE if $part;
-    my $more = $no-more +| ZMQ_SNDMORE;
+    my int $more = $no-more +| ZMQ_SNDMORE;
 
-    my $sent = 0;
+    my int $sent = 0;
     my $segments = self.segments;
-    my $i = 0;
+    my int $i = 0;
 
     for $!_.offsets  -> $end {
       my zmq_msg_t $msg-t .= new;
 
       my Pointer $ptr = ($end > $i) ?? $!_.offset-pointer($i)
-                            !! Pointer;
-      my $r = $callback.defined && $callback.WHAT === Sub
-                    ?? zmq_msg_init_data_callback($msg-t,$ptr , $end - $i, $callback)
-                    !! zmq_msg_init_data($msg-t, $ptr , $end - $i );
+                                    !! Pointer.new(0);
+      my size_t $sz = $end - $i;
+      my $r = ($callback.defined && $callback.WHAT === Sub)
+                    ?? zmq_msg_init_data_callback($msg-t, $ptr , $sz, $callback, Pointer)
+                    !! zmq_msg_init_data($msg-t, $ptr , $sz, Pointer, Pointer );
       throw-error if $r  == -1;
       my &sender = $socket.sender;
       $r = sender($msg-t,  (--$segments == 0 ) ?? $no-more !! $more , :$async);
