@@ -21,14 +21,12 @@ class SemVer
 	{
 		my @parts = $version.split(".");
 
-		if (@parts.elems ≠ 3) {
-			die "Incorrect number of arguments";
-		}
+		die "Incorrect number of arguments" if @parts.elems ≠ 3;
 
 		self.bless(
-			major => @parts[0].Int,
-			minor => @parts[1].Int,
-			patch => @parts[2].Int,
+			major => +@parts[0],
+			minor => +@parts[1],
+			patch => +@parts[2],
 		);
 	}
 
@@ -59,8 +57,13 @@ class SemVer
 		$!patch++;
 	}
 
-	method Str
+	method gist(--> Str)
 	{
 		"{$!major}.{$!minor}.{$!patch}"
+	}
+
+	method Str(--> Str)
+	{
+		self.gist
 	}
 }

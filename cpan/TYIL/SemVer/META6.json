@@ -1,8 +1,5 @@
 {
   "authors": "Patrick Spek <p.spek@tyil.email>",
-  "depends": [
-    null
-  ],
   "description": "Class representing a semantic version",
   "meta-version": 1,
   "name": "SemVer",
@@ -10,11 +7,5 @@
   "provides": {
     "SemVer": "lib/SemVer.pm6"
   },
-  "resources": [
-    null
-  ],
-  "tags": [
-    
-  ],
-  "version": "0.1.1"
+  "version": "0.2.0"
 }

@@ -12,24 +12,24 @@ my SemVer $v .= new;
 
 $v.bump-patch;
 
-is $v.Str, "0.0.1";
+is $v, "0.0.1";
 
 $v.bump-minor;
 
-is $v.Str, "0.1.0";
+is $v, "0.1.0";
 
 $v.bump-major;
 
-is $v.Str, "1.0.0";
+is $v, "1.0.0";
 
 for 1 .. 11 {
 	$v.bump-minor;
 }
 
-is $v.Str, "1.11.0";
+is $v, "1.11.0";
 
 for 1 .. 22 {
 	$v.bump-patch;
 }
 
-is $v.Str, "1.11.22";
+is $v, "1.11.22";
