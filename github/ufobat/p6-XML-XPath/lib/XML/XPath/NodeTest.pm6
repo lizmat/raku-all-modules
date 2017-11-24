@@ -175,7 +175,7 @@ class XML::XPath::NodeTest {
                             my $name   = @values[1];
                             if %*NAMESPACES{ $ns }:exists {
                                 my ($uri, $node-name) = namespace-infos($node);
-                                $take = $uri eq %*NAMESPACES{ $ns } && $node-name eq $name;
+                                $take = ($uri // '') eq %*NAMESPACES{ $ns } && $node-name eq $name;
                                 #say "Namespace $ns exists TAKE($take) node {$node.name}, $uri is $uri ";
                             } else {
                                 #say "";
