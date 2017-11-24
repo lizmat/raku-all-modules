@@ -261,7 +261,7 @@ detail sizes.  Each object has the following available methods:
 
 =head3 glyph-images(str)
 
-Returns an array of [glyphs-images](GlyphImage.md) for the unicode string.
+Returns an array of [glyphs-images](GlyphImage.md) for the Unicode string.
 
 =head3 forall-chars(_code-ref_)
 
@@ -318,7 +318,7 @@ True if the font claims to be in a bold style.
 =head3 is-fixed-width()
 
 True if all the characters in the font are the same width.
-Will be true for monospaced fonts like Courier.
+Will be true for mono-spaced fonts like Courier.
 
 =head3 is-italic()
 
@@ -395,7 +395,7 @@ to PostScript points.
 
 =head3 set-pixel-size(_width_, _height_)
 
-Set the size at which bitmapped fonts will be loaded.  Bitmap fonts are
+Set the size at which bit-mapped fonts will be loaded.  Bitmap fonts are
 automatically set to the first available standard size, so this usually
 isn't needed.
 
@@ -442,7 +442,7 @@ Geoff Richards <qef@laxan.com>
 
 Ivan Baidakou <dmol@cpan.org>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 =head1 COPYRIGHT
 

@@ -31,7 +31,7 @@ Embolden the glyph. This needs to be done before calling either the `bitmap()` o
 
 If the glyph is from a bitmap font, the bitmap image is returned. If it is from a vector font, then it is converted into a bitmap glyph. The outline is rendered into a bitmap at the face's current size.
 
-If antialiasing is used then shades of grey between 0 and 255 may occur. Antialiasing is performed by default, but can be turned off by passing the `FT_RENDER_MODE_MONO` option.
+If anti-aliasing is used then shades of grey between 0 and 255 may occur. Anti-aliasing is performed by default, but can be turned off by passing the `FT_RENDER_MODE_MONO` option.
 
 The size of the bitmap can be obtained as follows:
 
@@ -43,7 +43,7 @@ The optional `:render-mode` argument can be any one of the following:
 
   * *FT_RENDER_MODE_NORMAL*
 
-    The default. Uses antialiasing.
+    The default. Uses anti-aliasing.
 
   * *FT_RENDER_MODE_LIGHT*
 
@@ -53,7 +53,7 @@ The optional `:render-mode` argument can be any one of the following:
 
   * *FT_RENDER_MODE_MONO*
 
-    Render with antialiasing disabled. Each pixel will be either 0 or 255.
+    Render with anti-aliasing disabled. Each pixel will be either 0 or 255.
 
   * *FT_RENDER_MODE_LCD*
 
@@ -69,7 +69,7 @@ The optional `:render-mode` argument can be any one of the following:
 
 ### bitmap_magick( :render-mode_) **** NYI ****
 
-A simple wrapper around the `bitmap()` method. Renders the bitmap as normal and returns it as an Image::Magick object, which can then be composited onto a larger bitmapped image, or manipulated using any of the features available in Image::Magick.
+A simple wrapper around the `bitmap()` method. Renders the bitmap as normal and returns it as an Image::Magick object, which can then be composited onto a larger bit-mapped image, or manipulated using any of the features available in Image::Magick.
 
 The image is in the 'gray' format, with a depth of 8 bits.
 
@@ -95,7 +95,7 @@ AUTHORS
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 COPYRIGHT
 =========

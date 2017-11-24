@@ -73,7 +73,7 @@ Returns an array of Font::FreeType::BitMap::Size objects which detail sizes. Eac
 
 ### glyph-images(str)
 
-Returns an array of [glyphs-images](GlyphImage.md) for the unicode string.
+Returns an array of [glyphs-images](GlyphImage.md) for the Unicode string.
 
 ### forall-chars(_code-ref_)
 
@@ -117,7 +117,7 @@ True if the font claims to be in a bold style.
 
 ### is-fixed-width()
 
-True if all the characters in the font are the same width. Will be true for monospaced fonts like Courier.
+True if all the characters in the font are the same width. Will be true for mono-spaced fonts like Courier.
 
 ### is-italic()
 
@@ -174,7 +174,7 @@ When generating PostScript outlines a resolution of 72 will scale to PostScript 
 
 ### set-pixel-size(_width_, _height_)
 
-Set the size at which bitmapped fonts will be loaded. Bitmap fonts are automatically set to the first available standard size, so this usually isn't needed.
+Set the size at which bit-mapped fonts will be loaded. Bitmap fonts are automatically set to the first available standard size, so this usually isn't needed.
 
 ### style-name()
 
@@ -214,7 +214,7 @@ Geoff Richards <qef@laxan.com>
 
 Ivan Baidakou <dmol@cpan.org>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 COPYRIGHT
 =========

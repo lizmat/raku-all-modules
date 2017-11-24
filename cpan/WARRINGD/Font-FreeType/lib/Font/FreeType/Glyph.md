@@ -81,7 +81,7 @@ The width of the glyph. This is the distance from the left side to the right sid
 
 ### Str()
 
-The unicode character represented by the glyph.
+The Unicode character represented by the glyph.
 
 SEE ALSO
 ========

@@ -6,7 +6,7 @@ Font::FreeType::Native - bindings to the freetype library
 SYNOPSIS
 ========
 
-    # E.g. build a map of glyphs number to unicode
+    # E.g. build a map of glyphs number to Unicode
     use Font::FreeType::Face;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;

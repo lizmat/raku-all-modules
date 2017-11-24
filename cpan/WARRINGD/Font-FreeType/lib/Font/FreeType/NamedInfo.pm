@@ -57,7 +57,7 @@ The _name_ string. Note that its format differs depending on the (platform,
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 =head1 COPYRIGHT
 

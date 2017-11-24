@@ -42,7 +42,7 @@ AUTHORS
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 COPYRIGHT
 =========

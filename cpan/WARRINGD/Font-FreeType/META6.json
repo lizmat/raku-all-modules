@@ -1,5 +1,5 @@
 {
-  "auth" : "cpan:p6-pdf",
+  "auth" : "github:p6-pdf",
   "authors" : [
     "David Warring"
   ],
@@ -36,5 +36,5 @@
     "freetype"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.2"
+  "version" : "0.0.3"
 }

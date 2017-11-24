@@ -148,7 +148,7 @@ the `horizontal_advance()` method.
 
 =head3 Str()
 
-The unicode character represented by the glyph.
+The Unicode character represented by the glyph.
 
 =head1 SEE ALSO
 

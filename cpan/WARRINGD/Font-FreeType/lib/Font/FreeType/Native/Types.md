@@ -14,4 +14,4 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This class contains datatye and enumerations for the FreeType library.
+This class contains datatype and enumerations for the FreeType library.

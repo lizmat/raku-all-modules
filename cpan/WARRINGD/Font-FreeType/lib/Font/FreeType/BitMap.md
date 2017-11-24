@@ -89,7 +89,7 @@ Used to calculate the padding at the end of each row.
 
 Returns a numeric shaped array of dimensions $.width and $height. Each item represents one pixel of the image, starting from the top left. A value of 0 indicates background (outside the glyph outline), and 255 represents a point inside the outline.
 
-If antialiasing is used then shades of grey between 0 and 255 may occur. Antialiasing is performed by default, but can be turned off by passing the `FT_RENDER_MODE_MONO` option.
+If anti-aliasing is used then shades of grey between 0 and 255 may occur. Anti-aliasing is performed by default, but can be turned off by passing the `FT_RENDER_MODE_MONO` option.
 
 ### pgm
 
@@ -101,7 +101,7 @@ The _render-glyph.pl_ example program uses this method.
 
 ### Str()
 
-Returns an ascii display representation of the rendered glyph.
+Returns an ASCII display representation of the rendered glyph.
 
 ### convert()
 
@@ -112,7 +112,7 @@ AUTHORS
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 COPYRIGHT
 =========

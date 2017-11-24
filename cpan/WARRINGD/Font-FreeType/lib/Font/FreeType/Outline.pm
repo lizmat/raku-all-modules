@@ -198,7 +198,7 @@ the face object, or the hinting will distort the outline.
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 =head1 COPYRIGHT
 

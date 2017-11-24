@@ -249,8 +249,8 @@ Each item represents one pixel of the image, starting from the
 top left.  A value of 0 indicates background (outside the
 glyph outline), and 255 represents a point inside the outline.
 
-If antialiasing is used then shades of grey between 0 and 255 may occur.
-Antialiasing is performed by default, but can be turned off by passing
+If anti-aliasing is used then shades of grey between 0 and 255 may occur.
+Anti-aliasing is performed by default, but can be turned off by passing
 the `FT_RENDER_MODE_MONO` option.
 
 =head3 pgm
@@ -267,7 +267,7 @@ The _render-glyph.pl_ example program uses this method.
 
 =head3 Str()
 
-Returns an ascii display representation of the rendered glyph.
+Returns an ASCII display representation of the rendered glyph.
 
 =head3 convert()
 
@@ -277,7 +277,7 @@ produces a new bitmap, re-rendered as eight bit FT_PIXEL_MODE_GRAY.
 
 Geoff Richards <qef@laxan.com>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 =head1 COPYRIGHT
 

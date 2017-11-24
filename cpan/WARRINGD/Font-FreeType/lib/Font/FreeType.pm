@@ -233,14 +233,14 @@ a number in the format "major.minor.patch".
 
 =head1 SEE ALSO
 
-=item [Font::FreeType::Face](lib/Font/FreeType/Face.md) - Font Properties
-=item  [Font::FreeType::Glyph](lib/Font/FreeType/Glyph.md) - Glyph properties
-=item2    [Font::FreeType::GlyphImage](lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
-=item2    [Font::FreeType::Outline](lib/Font/FreeType/Outline.md) - Scalable glyph images
-=item2    [Font::FreeType::BitMap](lib/Font/FreeType/BitMap.md) - Rendered glyph bitmaps
-=item [Font::FreeType::CharMap](lib/Font/FreeType/CharMap.md) - Font Encodings
-=item [Font::FreeType::Native](lib/Font/FreeType/Native.md) - Bindings to the FreeType library
-=item2   [Font::FreeType::Native::Types](lib/Font/FreeType/Native/Types.md) - Data types and enumerations
+=item [Font::FreeType::Face](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Face.md) - Font Properties
+=item  [Font::FreeType::Glyph](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Glyph.md) - Glyph properties
+=item2    [Font::FreeType::GlyphImage](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
+=item2    [Font::FreeType::Outline](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Outline.md) - Scalable glyph images
+=item2    [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/BitMap.md) - Rendered glyph bitmaps
+=item [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/CharMap.md) - Font Encodings
+=item [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Native.md) - Bindings to the FreeType library
+=item2   [Font::FreeType::Native::Types](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Native/Types.md) - Data types and enumerations
 
 =head1 AUTHORS
 
@@ -248,7 +248,7 @@ Geoff Richards <qef@laxan.com>
 
 Ivan Baidakou <dmol@cpan.org>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 =head1 COPYRIGHT
 

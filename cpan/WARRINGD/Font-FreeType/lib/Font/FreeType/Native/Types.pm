@@ -15,7 +15,7 @@ Font::FreeType::Native - type and enumeration declarations
 
 =head1 DESCRIPTION
 
-This class contains datatye and enumerations for the FreeType library.
+This class contains datatype and enumerations for the FreeType library.
 
 =end pod
 

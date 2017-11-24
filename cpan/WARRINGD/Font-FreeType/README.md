@@ -122,21 +122,21 @@ Returns the version number of the underlying FreeType library being used. If cal
 SEE ALSO
 ========
 
-  * [Font::FreeType::Face](lib/Font/FreeType/Face.md) - Font Properties
+  * [Font::FreeType::Face](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Face.md) - Font Properties
 
-  * [Font::FreeType::Glyph](lib/Font/FreeType/Glyph.md) - Glyph properties
+  * [Font::FreeType::Glyph](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Glyph.md) - Glyph properties
 
-    * [Font::FreeType::GlyphImage](lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
+    * [Font::FreeType::GlyphImage](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/GlyphImage.md) - Glyph outlines and bitmaps
 
-    * [Font::FreeType::Outline](lib/Font/FreeType/Outline.md) - Scalable glyph images
+    * [Font::FreeType::Outline](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Outline.md) - Scalable glyph images
 
-    * [Font::FreeType::BitMap](lib/Font/FreeType/BitMap.md) - Rendered glyph bitmaps
+    * [Font::FreeType::BitMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/BitMap.md) - Rendered glyph bitmaps
 
-  * [Font::FreeType::CharMap](lib/Font/FreeType/CharMap.md) - Font Encodings
+  * [Font::FreeType::CharMap](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/CharMap.md) - Font Encodings
 
-  * [Font::FreeType::Native](lib/Font/FreeType/Native.md) - Bindings to the FreeType library
+  * [Font::FreeType::Native](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Native.md) - Bindings to the FreeType library
 
-    * [Font::FreeType::Native::Types](lib/Font/FreeType/Native/Types.md) - Data types and enumerations
+    * [Font::FreeType::Native::Types](https://github.com/p6-pdf/Font-FreeType-p6/blob/master/lib/Font/FreeType/Native/Types.md) - Data types and enumerations
 
 AUTHORS
 =======
@@ -145,7 +145,7 @@ Geoff Richards <qef@laxan.com>
 
 Ivan Baidakou <dmol@cpan.org>
 
-David Warring <david.warring@gmail>.com (Perl 6 Port)
+David Warring <david.warring@gmail.com> (Perl 6 Port)
 
 COPYRIGHT
 =========
