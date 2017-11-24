@@ -116,8 +116,13 @@ class PDF::Content::Font::CoreFont {
         $.load-font( $family, |c );
     }
 
+    multi method height(Numeric $pointsize?, Bool :$ex where .so) {
+        my Numeric $height = $!metrics.XHeight;
+	$pointsize ?? $height * $pointsize / 1000 !! $height;
+    }
+
     #| compute the overall font-height
-    method height($pointsize?, Bool :$from-baseline, Bool :$hanging) {
+    multi method height(Numeric $pointsize?, Bool :$from-baseline, Bool :$hanging) {
         my List $bbox = $!metrics.FontBBox;
 	my Numeric $height = $hanging ?? $!metrics.Ascender !! $bbox[3];
 	$height -= $hanging ?? $!metrics.Descender !! $bbox[1]
