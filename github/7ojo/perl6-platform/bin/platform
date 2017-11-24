@@ -2,8 +2,8 @@
 
 use v6;
 use lib 'lib';
-use Platform::Output;
-use Platform::CLI;
+use App::Platform::Output;
+use App::Platform::CLI;
 use CommandLine::Usage;
 
 my %*SUB-MAIN-OPTS = :named-anywhere;

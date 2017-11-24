@@ -2,13 +2,13 @@ use v6.c;
 use lib 'lib';
 use lib '../lib';
 use Test;
-use Platform::Project;
+use App::Platform::Project;
 
 plan 13;
 
 {
     spurt '.test-10-project-my-project.yml', '';
-    my $prj = Platform::Project.new(:project('.test-10-project-my-project.yml'));
+    my $prj = App::Platform::Project.new(:project('.test-10-project-my-project.yml'));
     my $curr-path = ".".IO.absolute;
 
     is $curr-path, $prj.project-dir, "project dir";
@@ -26,7 +26,7 @@ plan 13;
 
     spurt "$tmpdir/docker/project.yml", 'command: ash';
 
-    my $prj = Platform::Project.new(:project($tmpdir));
+    my $prj = App::Platform::Project.new(:project($tmpdir));
 
     is $tmpdir.IO.absolute, $prj.project-dir, "project dir {$prj.project-dir}";
     is $prj.project-file, "$tmpdir/docker/project.yml".IO.absolute, "project file {$prj.project-file}";
@@ -46,7 +46,7 @@ plan 13;
     spurt "$tmpdir/docker/project.yml", 'command: ash';
     spurt "$tmpdir/project.yml", 'command: ash';
 
-    my $prj = Platform::Project.new(:project($tmpdir));
+    my $prj = App::Platform::Project.new(:project($tmpdir));
 
     is $tmpdir.IO.absolute, $prj.project-dir, "project dir";
     is $prj.project-file, "$tmpdir/docker/project.yml".IO.absolute, "project file";
@@ -65,7 +65,7 @@ plan 13;
 
     spurt "$tmpdir/project.yml", 'command: ash';
 
-    my $prj = Platform::Project.new(:project($tmpdir));
+    my $prj = App::Platform::Project.new(:project($tmpdir));
 
     is $tmpdir, $prj.project-dir, "project dir";
     is $prj.project-file, "$tmpdir/project.yml".IO.absolute, "project file";
@@ -76,7 +76,7 @@ plan 13;
 
 {
     spurt $*HOME.IO.absolute ~ '/.test-10-project-my-project.yml', '';
-    my $prj = Platform::Project.new(:project('~/.test-10-project-my-project.yml'));
+    my $prj = App::Platform::Project.new(:project('~/.test-10-project-my-project.yml'));
     my $curr-path = $*HOME.IO.absolute;
 
     is $prj.project-dir, $curr-path, "project dir with ~";

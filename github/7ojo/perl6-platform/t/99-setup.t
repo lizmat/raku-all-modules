@@ -1,4 +1,5 @@
 use v6.c;
+use lib 'lib';
 use lib 't/lib';
 use Test;
 use Template;
@@ -46,8 +47,8 @@ subtest 'platform create', {
     $proc = run <bin/platform>, "--data-path=$data-dir/.platform", <create>, :out;
     $out = $proc.out.slurp-rest;
 
-    require Platform::Util::OS;
-    if 'linux' eq Platform::Util::OS.detect() {
+    require App::Platform::Util::OS;
+    if 'linux' eq App::Platform::Util::OS.detect() {
         $versus = "platform-dns\nplatform-proxy";
         $dns-name = "dns.localhost";
     } else {
@@ -55,7 +56,7 @@ subtest 'platform create', {
         $dns-name = "dns-in.localhost";
     }
 
-    $out = ( shell Q:w{docker ps --format "table {{.Names}}"}, :out ).out.slurp.lines.skip(1).sort.join("\n");
+    $out = ( shell Q:w{docker ps --format "table {{.Names}}" --filter "name=platform"}, :out ).out.slurp.lines.skip(1).sort.join("\n");
     is $out, $versus, 'dns and proxy services are up';
 
     sleep 0.5;
@@ -165,7 +166,7 @@ subtest 'platform stop|rm butterfly|snail', {
 subtest 'platform destroy', {
     plan 1;
     run <bin/platform destroy>;
-    my $out = ( shell Q:w{docker ps --format "table {{.Names}}"}, :out ).out.slurp.lines.skip(1).sort.join("\n");
+    my $out = ( shell Q:w{docker ps --format "table {{.Names}}" --filter "name=platform"}, :out ).out.slurp.lines.skip(1).sort.join("\n");
     is $out, '', 'dns and proxy services are down';
 }
 
