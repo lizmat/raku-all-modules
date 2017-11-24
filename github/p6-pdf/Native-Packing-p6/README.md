@@ -26,9 +26,9 @@ my class LogicalDescriptor
 }
 
 my $fh = "t/lightbulb.gif".IO.open( :r, :bin);
-$fh.read(6);  # skip GIF header
+my $offset = 6;  # skip GIF header
 
-my LogicalDescriptor $screen .= read: $fh;
+my LogicalDescriptor $screen .= read: $fh, :$offset;
 say "GIF has size {$screen.width} X {$screen.height}";
 ```
 

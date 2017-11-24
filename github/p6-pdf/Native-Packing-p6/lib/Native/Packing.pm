@@ -89,14 +89,14 @@ role Native::Packing {
 
     method host-endian { HostEndian }
 
-    multi sub unpack-foreign-attribute(Native::Packing $sub-rec, Buf $buf, uint $off is rw) {
+    multi sub unpack-foreign-attribute(Native::Packing $sub-rec, Buf $buf, UInt $off is rw) {
         my $bytes := $sub-rec.bytes;
         my $v := $sub-rec.unpack($buf.subbuf($off, $bytes));
         $off += $bytes;
         $v;
     }
 
-    multi sub unpack-foreign-attribute($type, Buf $buf, uint $off is rw) is default {
+    multi sub unpack-foreign-attribute($type, Buf $buf, UInt $off is rw) is default {
         my uint $byte-count = $type.^nativesize div 8;
         my buf8 $native .= new: $buf.subbuf($off, $byte-count).reverse;
         $off += $byte-count;
@@ -105,13 +105,12 @@ role Native::Packing {
     }
 
     # convert between differing architectures
-    method unpack-foreign(\buf) {
+    method unpack-foreign(\buf, UInt :$offset is copy = 0) {
         # ensure we're working at the byte level
-        my uint $off = 0;
         my %args = self.^attributes.map: {
             my $type = .type;
             my str $name = .name.substr(2);
-            $name => unpack-foreign-attribute($type, buf, $off);
+            $name => unpack-foreign-attribute($type, buf, $offset);
         }
         self.new(|%args);
     }
@@ -138,14 +137,14 @@ role Native::Packing {
         self.new(|%args);
     }
 
-    multi sub unpack-host-attribute(Native::Packing $sub-rec, Buf $buf, uint $off is rw) {
+    multi sub unpack-host-attribute(Native::Packing $sub-rec, Buf $buf, UInt $off is rw) {
         my $bytes := $sub-rec.bytes;
         my $v := $sub-rec.unpack($buf.subbuf($off, $bytes));
         $off += $bytes;
         $v;
     }
 
-    multi sub unpack-host-attribute($type, Buf $buf, uint $off is rw) is default {
+    multi sub unpack-host-attribute($type, Buf $buf, UInt $off is rw) is default {
         my uint $byte-count = $type.^nativesize div 8;
         my Buf $raw = $buf.subbuf($off, $byte-count);
         my $cval = nativecast(CArray[$type], $raw);
@@ -154,13 +153,12 @@ role Native::Packing {
     }
 
     # matching architecture - straight copy
-    method unpack-host(\buf) {
+    method unpack-host(\buf, UInt :$offset is copy = 0) {
         # ensure we're working at the byte level
-        my uint $off = 0;
         my %args = self.^attributes.map: {
             my str $name = .name.substr(2);
             my $type = .type;
-            $name => unpack-host-attribute($type, buf, $off);
+            $name => unpack-host-attribute($type, buf, $offset);
         }
         self.new(|%args);
     }
@@ -258,13 +256,14 @@ role Native::Packing {
 role Native::Packing[Native::Packing::Endian $endian]
     does Native::Packing {
 
-    method unpack(\buf) {
+    method unpack(\buf, UInt :$offset = 0) {
         $endian == self.host-endian | Host
-            ?? self.unpack-host(buf)
-            !! self.unpack-foreign(buf)
+            ?? self.unpack-host(buf, :$offset)
+            !! self.unpack-foreign(buf, :$offset)
     }
 
-    method read(\fh) {
+    method read(\fh, UInt :$offset) {
+        fh.read($_) with $offset;
         $endian == self.host-endian | Host
             ?? self.read-host(fh)
             !! self.read-foreign(fh)

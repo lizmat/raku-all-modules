@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-pdf/Native-Packing-p6.git
 	branch = master
-	commit = 84e8a77e78c20dc3c5ab18470aa92c283e0e399d
-	parent = 7c9586aff72bf9425b5968fc5d0f81f1592fd0be
+	commit = c9f292a643ee8bea55c18bcb57a52cbc95b7cc7c
+	parent = f101b4fbc7da5d201b37e0265acf1e272563085d
 	cmdver = 0.4.0

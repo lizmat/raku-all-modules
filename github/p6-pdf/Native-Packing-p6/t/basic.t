@@ -37,6 +37,9 @@ my $v-struct = V.unpack: $v-buf;
 
 is-deeply $v-struct, $struct, 'vax round-trip';
 
+$v-buf.unshift(42);
+is-deeply V.unpack( $v-buf, :offset(1) ), $struct, 'vax.unpack: :$offset';
+
 class H does Native::Packing[Host] {
     has uint8  $.a;
     has uint16 $.b;
@@ -49,6 +52,9 @@ $struct = H.new: :a(10), :b(20), :c(30), :float(42e0);
 my $h-buf = $struct.pack;
 my $h-struct = H.unpack: $h-buf;
 is-deeply $h-struct, $struct, 'host round-trip';
+
+$h-buf.unshift(42);
+is-deeply H.unpack( $h-buf, :offset(1) ), $struct, 'net.unpack: :$offset';
 
 for :vax(V), :network(N), :host(H) {
     my $obj = .value.new;
