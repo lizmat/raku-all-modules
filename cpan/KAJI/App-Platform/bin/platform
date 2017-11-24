@@ -1,0 +1,33 @@
+#!/usr/bin/env perl6
+
+use v6;
+use lib 'lib';
+use App::Platform::Output;
+use App::Platform::CLI;
+use CommandLine::Usage;
+
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
+%*ENV<PERL6_PROGRAM_NAME> = %*ENV<PERL6_PROGRAM_NAME> ?? %*ENV<PERL6_PROGRAM_NAME>.IO.basename !! $*PROGRAM-NAME.IO.basename;
+
+#| A tool for running projects through container environment programmatible way
+sub MAIN(*@args, *%args) {
+    %args = set-defaults(|%args);
+    try {
+        CATCH {
+            default {
+                USAGE;
+            }
+        }
+        cli(|@args, |%args);
+    }
+}
+
+sub USAGE {
+    CommandLine::Usage.new(
+        :name( %*ENV<PERL6_PROGRAM_NAME> ),
+        :func( &cli ),
+        :desc( &MAIN.candidates[0].WHY.Str ),
+        :conf( &set-defaults ),
+        ).parse.say;
+}
