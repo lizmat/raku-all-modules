@@ -14,12 +14,26 @@ unit module App::Cpan6::Commands::New;
 
 multi sub MAIN(
 	"new",
-	Str $name,
-	Bool :$force = False,
-	Bool :$no-git = True,
-	Bool :$no-travis = True,
+	Str:D :$name is copy = "",
+	Str:D :$author is copy = "",
+	Str:D :$email is copy = "",
+	Str:D :$perl is copy = "",
+	Str:D :$description is copy = "",
+	Str:D :$license is copy = "",
+	Bool:D :$no-git = False,
+	Bool:D :$no-travis = False,
+	Bool:D :$force = False,
+	Bool:D :$no-user-config = False,
 ) is export {
-	my Config $config = get-config;
+	my Config $config = get-config(:$no-user-config);
+
+	# Ask the user about some information on the module
+	$name ||= ask("Module name");
+	$author ||= ask("Your name", $config.get("new-module.author"));
+	$email ||= ask("Your email address", $config.get("new-module.email"));
+	$perl ||= ask("Perl 6 version", $config.get("new-module.perl"));
+	$description ||= ask("Module description", "Nondescript");
+	$license ||= ask("License key", $config.get("new-module.license"));
 
 	# Create a directory name for the module
 	my $dir-name = $config.get("new-module.dir-prefix") ~ $name.subst("::", "-", :g);
@@ -30,16 +44,9 @@ multi sub MAIN(
 		return;
 	}
 
-	# Ask the user about some information on the module
-	my $author = ask("Your name", :default($config.get("new-module.author")));
-	my $email = ask("Your email address", :default($config.get("new-module.email")));
-	my $perl = ask("Perl 6 version", :default($config.get("new-module.perl")));
-	my $description = ask("Module description", :default("Nondescript"));
-	my $license = ask("License key", :default($config.get("new-module.license")));
-
 	# Create the initial %meta
 	my %meta = %(
-		meta-version => 1,
+		meta-version => 0,
 		perl => "6.$perl",
 		name => $name,
 		description => $description,
@@ -60,13 +67,13 @@ multi sub MAIN(
 	mkdir "resources" unless $force && "r".IO.d;
 	mkdir "t" unless $force && "t".IO.d;
 
-	template("editorconfig", ".editorconfig", context => $config<style>);
-	template("travis.yml", ".travis.yml") unless $config<external><travis> || $no-travis;
+	template("editorconfig", ".editorconfig", context => $config<style>, clobber => $force);
+	template("travis.yml", ".travis.yml", clobber => $force) if $config<external><travis> && !$no-travis;
 
 	# Write some files
 	put-meta(:%meta);
 
-	if ($config<externel><git> && !$no-git) {
+	if ($config<external><git> && !$no-git) {
 		copy(%?RESOURCES<templates/gitignore>.absolute, ".gitignore", :!createonly);
 
 		if (which("git")) {
@@ -74,18 +81,9 @@ multi sub MAIN(
 
 			run « git init »;
 			run « git add . »;
-			run « git commit -m "Initial commit" »;
+			run « git commit -m "Initial commit" » or say "Git commit failed!";
 		}
 	}
 
 	say "Created new project folder at {".".IO.absolute}";
-}
-
-multi sub MAIN(
-	"new",
-	Bool :$force = False,
-	Bool :$no-git = True,
-	Bool :$no-travis = True,
-) is export {
-	MAIN("new", ask("Name of the module"), :$force, :$no-git, :$no-travis);
 }

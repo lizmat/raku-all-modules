@@ -51,7 +51,7 @@ respectively.
 
 === [ --no-bump ] push < paths ... >
 Pushes one or more paths to PAUSE. This is a shorthand for `bump`, `dist` and
-`upload`. The `bump` part can be skipped using `--/bump`.
+`upload`. The `bump` part can be skipped using `--no-bump`.
 
 === test
 Run the default test script, `prove -e "perl6 -Ilib" t`.
@@ -61,29 +61,29 @@ Create a new runnable Perl 6 script in the `bin/` directory. A small skeleton
 template is inserted into the new file. Additionally, the `META6.json` is
 updated accordingly to contain the new file in its `provides` section.
 
-=== touch class
+=== touch class <class>
 Create a new module file in the `lib/` directory. A skeleton for a class
 structure is inserted in the new file, and directories are created needed to
 place the file in the correct location. Additionally, the `META6.json` is
 updated accordingly to contain the new module file in its `provides` section.
 
-=== touch resource
+=== touch resource <resource>
 Create a new resource file in the `resources/` directory. Directories are
 created as needed. Additionally, the `META6.json` is updated accordingly to
 contain the new resource in its `resources` section.
 
-=== touch test
+=== touch test <test>
 Create a new test spec file in the `t/` directory. Directories are created as
 needed.
 
-=== touch unit
+=== touch unit <unit>
 Create a new unit module file in the `lib/` directory. A skeleton for a unit
 module structure is inserted in the new file, and directories are created
 needed to place the file in the correct location. Additionally, the
 `META6.json` is updated accordingly to contain the new module file in its
 `provides` section.
 
-=== [ --pause-id="" ] [ --pause-password="" ] upload < dists ... >
+=== [ --pause-id=<id> ] [ --pause-password=<password> ] upload < dists ... >
 Uploads the given dists to PAUSE. A PAUSE ID and password for authentication
 can be supplied using `--pause-id=<id>` and `--pause-password=<password>`
 respectively. If not supplied, these will be read from your configuration. If
@@ -94,6 +94,9 @@ these are not set in the configuration, they will be prompted for.
 Remove all sanity checks on a given command. This can have unwanted results,
 hence you should only use this if you know what you're doing.  Using this
 option can result in loss of data.
+
+=== --no-user-config
+Disable loading of user-set configuration options. Used mostly for testing.
 
 === --verbose
 Make the given command more verbose. Mostly useful for finding out why
@@ -139,6 +142,12 @@ Uploads the given `.tar.gz` archive to PAUSE.
 Bugs can be reported on the Github page of this project:
 https://github.com/scriptkitties/perl6-App-Cpan6.
 
+=== cpan6 bootstrap config
+The config bootstrap currently inserts an additional `\` in front of the `@`
+used in the email. This is in error, as the email address is already in double
+quotes. This will have the result of the configuration file completely failing
+to load. Removing the `\` solves the issue for now.
+
 == AUTHOR
 Originally written by Patrick Spek <p.spek@tyil.nl>.
 
@@ -146,4 +155,4 @@ Originally written by Patrick Spek <p.spek@tyil.nl>.
 This project is distributed under the terms of the GNU GPL version 3 or later.
 Check the LICENSE file for more information.
 
-// vim: ft=adoc et sw=4
+// vim: ft=asciidoc et sw=4

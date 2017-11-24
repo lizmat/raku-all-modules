@@ -33,6 +33,9 @@ sub put-meta(:%meta, :$path = ".", :$clobber = True) is export
 	);
 
 	for @sortable-arrays -> $array {
+		next if %meta{$array}:!exists;
+		next if %meta{$array}.elems < 1;
+
 		%meta{$array} = %meta{$array}.sort;
 	}
 
