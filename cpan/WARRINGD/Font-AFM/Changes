@@ -1,0 +1,76 @@
+   Release 1.24.2
+   - Replace ISO Latin subset with a full glyph table of all unicode points
+     included in the Core 12 text fonts.
+   - Added glyph table sources etc/glyphlist.txt and etc/make-glyphlist.pl
+   Release 1.24.1
+   - Fix this module to work with multiple fonts as per PR 5
+   Release 1.24.0
+   - Fix issue #4 IsFixedPitch returns 'false' or 'true', not
+     a True Boolean.
+   - In general, all return values are now correctly typed as Int,
+     Numeric, String, Bool, Version or Array based on the data-types
+     defined in the specification
+     (http://www.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5004.AFM_Spec.pdf)
+   Release 1.23.6
+   - restore lost /etc/make_metrics.pl
+   - avoid need to stantiate metrics classes. Can now use
+     Font::Metrics::courier.BBox, without the need for
+     Font::Metrics::courier.new.BBox
+   - withdraw Font::AFM.new($name) constructor in favour of:
+     Font::AFM.new(:$name)
+   Release 1.23.5
+   - $.kern method now returns a two item list:
+     my ($kerned, $stringwidth) = $font.kern("RVX");
+   - Fixed kerning of Courier, and other fonts without kerning data
+     `$font.stringwidth(..., :kern)` and `$font.kern(...)` both now work.
+     If the font lacks kerning data `:kern` is ignored and `$font.kern`
+     returns a single element.
+   - Make class-name method private
+   - Use perl6.c TWEAK submethod
+
+   Release 1.23.4
+   Fixed %ISOLatin1Encoding character encoding table
+
+   Release 1.23.3
+   Fixed `provides` paths in META.info
+
+   Release 1.23.2
+   Fixed for latest rakudo
+   - a multi submethod BUILD can no longer be directly inherited. Changed
+     it to a singular method which calls a multi method
+
+   Release 1.23.1
+   Replaced dynamic Pand Build.pm with semi-static make_metrics.pl.
+   - generated AFM files should seldom change. build-time generation of modules
+     was overkill. generated sources are now checked in, and can be occasionally
+     regenerated, when needed.
+   Release 1.23
+   Making things less ISO-Latin1 centric
+   - inverted @ISOLatin1Encoding => %ISOLatin1Encoding
+   - removed method .wx-table('latin-1')
+   - renamed method .encode => .kern
+   - added :%chars option to .stringwidth, .kern
+   - compute metrics for Symbol, ZapfDingbats
+   - added types to declarations
+
+   Release 1.22
+   BBox - now fully parsed to an array of integers
+   Kerning now supported
+   - $afm.Kern - returns kerning table as a two dimensional hash array
+   - $afm.stringwidth("RVX", :kern) - computes stringwith after kerning
+   - $afm.encode("RVX", :kern) - encode and kern characters.
+
+2015-04-30
+
+   Release 1.21
+
+   Perl 6 port of Perl 5 version 1.20. See https://metacpan.org/pod/Font::AFM for previous
+   change-log and other details.
+
+   Build
+   - included full set of AFM data in etc/Core14_Fonts
+   - font metrics are computed at panda build time
+
+   Font::Metrics
+   - classess are now lowercase, e.g. Font::Mertics::times-bold. Plays better with upstream
+     case insensitive handling, e.g. in PDF::Compose
