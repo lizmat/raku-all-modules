@@ -27,12 +27,8 @@ class CSS::Declarations {
     has @.warnings;
     has Bool $.warn = True;
 
-    multi sub make-property(CSS::Module $m, Str $name where { %module-properties{$m}{$name}:exists })  {
-        %module-properties{$m}{$name}
-    }
-
-    multi sub make-property(CSS::Module $m, Str $name) is default {
-        %module-properties{$m}{$name} = do with %module-metadata{$m}{$name} -> %defs {
+    sub make-property(CSS::Module $m, Str $name) {
+        %module-properties{$m}{$name} //= do with %module-metadata{$m}{$name} -> %defs {
             with %defs<edges> {
                 # e.g. margin, comprised of margin-top, margin-right, margin-bottom, margin-left
                 for .list -> $side {
@@ -105,6 +101,7 @@ class CSS::Declarations {
         }
         $/.ast.list
     }
+
     method !build-declarations(@declarations) {
 
         for @declarations {
@@ -455,7 +452,7 @@ class CSS::Declarations {
     # Avoid these serialization optimizations, which won't parse correctly:
     #     font: bold;
     #     font: bold Helvetica;
-    # Need a font-size to disambiguate, e.g.: 
+    # Need a font-size to disambiguate, e.g.:
     #     font: bold medium Helvetica;
     #     font: medium Helvetica;
     multi method optimizable('font', :@children!
@@ -539,7 +536,7 @@ class CSS::Declarations {
         }
         for self!compound-properties.list -> \prop {
             # top-down aggregation of compound properties. e.g. border-width, border-style => border
-            
+
             my @children = metadata{prop}<children>.list.grep: {
                 %prop-ast{$_}:exists
             }
@@ -601,7 +598,7 @@ class CSS::Declarations {
             %property.push: 'ident' => prop;
             %property;
         };
-        
+
         :@declaration-list;
     }
 
@@ -687,7 +684,7 @@ class CSS::Declarations {
                              !! method () is rw { self!item-value(name) }
                            )
                       );
-	
+
 	        self.^add_method(name,  @meth[0]);
             }
         }

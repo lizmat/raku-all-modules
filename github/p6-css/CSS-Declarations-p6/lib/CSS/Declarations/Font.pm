@@ -1,9 +1,9 @@
 use v6;
 class CSS::Declarations::Font {
-    use CSS::Declarations:ver(v0.0.4..*);
+    use CSS::Declarations;
     use CSS::Declarations::Units :Scale, :pt;
 
-    has Numeric $.em is rw = 10;;
+    has Numeric $.em is rw = 10;
     has Numeric $.ex is rw = $!em * 0.75;
     my subset FontWeight of Numeric where { $_ ~~ 100 .. 900 && $_ %% 100 }
     has FontWeight $.weight is rw = 400;
