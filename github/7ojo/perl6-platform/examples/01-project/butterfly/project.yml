@@ -1,3 +1,0 @@
-command: nginx -g 'daemon off;'
-volumes:
-    - html:/usr/share/nginx/html:ro
