@@ -16,5 +16,5 @@
   "provides": {
       "Terminal::Spinners": "lib/Terminal/Spinners.pm6"
   },
-  "version": "0.0.3"
+  "version": "0.0.4"
 }

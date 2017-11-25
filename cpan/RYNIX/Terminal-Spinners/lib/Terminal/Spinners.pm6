@@ -1,17 +1,35 @@
 use v6.c;
 
-unit module Terminal::Spinners:ver<0.0.3>:auth<github:ryn1x>;
+unit module Terminal::Spinners:ver<0.0.4>:auth<github:ryn1x>;
 
 class Spinner is export {
-    has $.type = 'classic';
-    has $.speed = 0.08;
-    has $!index = 0;
-    has @!spin = <| / - \\>;
-    has @!bounce = ('[=   ]', '[==  ]', '[=== ]', '[ ===]', '[  ==]',
-                    '[   =]', '[    ]', '[   =]', '[  ==]', '[ ===]',
-                    '[====]', '[=== ]', '[==  ]', '[=   ]', '[    ]');
-    has %!types = classic => @!spin,
-                  bounce => @!bounce;
+    has $.type        = 'classic';
+    has $.speed       = 0.08;
+    has $!index       = 0;
+    has @!classic     = <| / - \\>;
+    has @!bounce      = ('[=   ]', '[==  ]', '[=== ]', '[ ===]', '[  ==]',
+                         '[   =]', '[    ]', '[   =]', '[  ==]', '[ ===]',
+                         '[====]', '[=== ]', '[==  ]', '[=   ]', '[    ]');
+    has @!bounce2     = ('( ●    )', '(  ●   )', '(   ●  )', '(    ● )',
+                         '(     ●)', '(    ● )', '(   ●  )', '(  ●   )',
+                         '( ●    )', '(●     )');
+    has @!dots        = <⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏>;
+    has @!dots2       = <⢄ ⢂ ⢁ ⡁ ⡈ ⡐ ⡠>;
+    has @!dots3       = <⠈ ⠐ ⠠ ⢀ ⡀ ⠄ ⠂ ⠁>;
+    has @!three-dots  = <<'.  ' '.. ' '...'>>;
+    has @!three-dots2 = <<'.  ' '.. ' '...' ' ..' '  .' '   '>>;
+    has @!bar         = <<▁  ▃  ▄  ▅  ▆  ▇  ▆  ▅  ▄  ▃  ▁  ' '>>;
+    has @!bar2        = <<▏  ▎  ▍  ▌  ▊  ▉  ▊  ▋  ▌  ▍  ▎  ' '>>;
+    has %!types       = classic     => @!classic,
+                        bounce      => @!bounce,
+                        bounce2     => @!bounce2,
+                        dots        => @!dots,
+                        dots2       => @!dots2,
+                        dots3       => @!dots3,
+                        three-dots  => @!three-dots,
+                        three-dots2 => @!three-dots2,
+                        bar         => @!bar,
+                        bar2        => @!bar2;
 
     method next() {
         # prints the next frame of the spinner animation
