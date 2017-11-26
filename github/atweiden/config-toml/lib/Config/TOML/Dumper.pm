@@ -194,7 +194,7 @@ multi sub is-valid-array(@ --> Bool:D)
 
 multi sub to-toml(Str:D $s --> Str:D)
 {
-    $s.perl;
+    '"' ~ $s.subst('"', '\"', :g) ~ '"';
 }
 
 multi sub to-toml(Str:U $s)

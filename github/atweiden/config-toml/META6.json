@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Config::TOML",
-    "version"     : "*",
+    "version"     : "0.0.1",
     "author"      : "Andy Weidenbaum",
     "description" : "TOML file parser and writer",
     "license"     : "Unlicense",
