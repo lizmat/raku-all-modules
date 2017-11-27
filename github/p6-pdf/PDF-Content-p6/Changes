@@ -1,5 +1,10 @@
 Release 0.0.9
-- Streamlined core font encoding and allow inclusion of extra glyphs.
+- PDF::Content::Font::Enc::Type1 - Optimised encoding to always include
+up to the maximum of 255 glyphs. Glyphs are mapped as they
+  are encountered:
+  -- firstly to the requested encoding
+  -- secondly to unmapped codes in the encoding scheme
+  -- thirdly to mapped, but unused character encodings
 Release 0.0.8
 - Replace PDF::Content::Util::Font module with class
   PDF::Content::Font::CoreFont
