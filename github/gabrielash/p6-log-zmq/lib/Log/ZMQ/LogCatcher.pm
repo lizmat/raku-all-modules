@@ -144,6 +144,8 @@ class LogCatcher is export {
     loop {
           my MsgRecv $m .= new;
           $m.slurp($!subscriber);
+          $m.set-encoding( 'UTF-8' );
+          die "BAD Transform" unless $m[0].WHAT === Str;
           self!dispatch($m);
     }
   }

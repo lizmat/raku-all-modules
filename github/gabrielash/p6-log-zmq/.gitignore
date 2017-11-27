@@ -6,3 +6,4 @@ Makefile
 *.out
 *.so
 *.o
+resources/xt/*
