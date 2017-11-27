@@ -36,8 +36,8 @@ $s2.connect($uri);
 my Str $str1 = "this is a nüll términated string";
 my Str $str2 = "this is another beautiful string";
 my Str $str3 = "tomorrow the föx wìll comê to town, ho ho ho ho!";
-my  $l123 = "$str1\n$str2\n$str3".codes;
-my  $l12 = "$str1$str2".codes;
+my  $l123 = "$str1\n$str2\n$str3".encode('UTF-8').bytes;
+my  $l12 = "$str1$str2".encode('UTF-8').bytes;
 
 my $msg;
 lives-ok { $msg = MsgBuilder.new; }, "created Msg";
@@ -56,11 +56,11 @@ my Int $sl = $msg.send($s1);
 ok $l123 == $sl, "message sent with correct length : $l123 -> $sl";
 
 my $rc = $s2.receive :slurp; 
-ok $rc.codes == $l123, "message receive with correct length $l123" ;
+ok $rc.encode('UTF-8').bytes == $l123, "message receive with correct length $l123" ;
 ok $rc eq $msg.copy, "say message received ok: \n\t$rc";
 
 
-my $lsent = "$str1\n$str2\n$str3\n".codes;
+my $lsent = "$str1\n$str2\n$str3\n".encode('UTF-8').bytes;
 
 if 1 {
 my $sent;
@@ -94,7 +94,7 @@ my $sent =
 
 ok $sent == $lsent, "builder -> msg -> sent correct : $sent == $lsent" ;
 $rc = $s1.receive :slurp; 
-ok $rc.codes == $lsent, "message receive with correct length $lsent = {$rc.codes }" ;
+ok $rc.encode('UTF-8').bytes == $lsent, "message receive with correct length $lsent = {$rc.codes }" ;
 ok $rc eq $unsent.copy, "message received ok:\n$rc\n{$unsent.copy}\n-----------------------------";
 }
 

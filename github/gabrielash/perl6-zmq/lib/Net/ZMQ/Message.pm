@@ -17,13 +17,13 @@ class MsgRecv-impl {...}
 class MsgRecv is export does Positional does Iterable {
   my $doc := q:to/END/;
 
-   methods
-   push-transform(UInt, &func)
-   slurp(Socket, -async)
-   send(Socket, $from = 0, $n =  self.elems, :async )
+  methods
+  push-transform(UInt, &func)
+  slurp(Socket, -async)
+  send(Socket, $from = 0, $n =  self.elems, :async )
 
-   END
-   #:
+  END
+  #:
 
   has MsgRecv-impl $!mimpl handles < elems keys > .= new;
   has %!transformers;
@@ -32,7 +32,19 @@ class MsgRecv is export does Positional does Iterable {
   method TWEAK {
   }
 
-  method push-transform(UInt $i where ^self.elems, &func) {
+  method set-encoding(Str $encoding) {
+    self.push-transform( { $_.decode($encoding) } );
+  }
+
+  multi method push-transform(&func) {
+    if ! (%!transformers{'ALL'}:exists) {
+       %!transformers{'ALL'} := Array[Callable].new;
+    }
+    %!transformers{'ALL'}.push(&func );
+    return self;
+  }
+
+  multi method push-transform(UInt $i where ^self.elems, &func) {
     %!cached{$i}:delete if %!cached{$i}:exists;
     if ! (%!transformers{$i}:exists) {
        %!transformers{$i} := Array[Callable].new;
@@ -41,25 +53,36 @@ class MsgRecv is export does Positional does Iterable {
     return self;
   }
 
-  method AT-POS(UInt:D $i where ^self.elems) {
-      return %!cached{$i} if %!cached{$i}:exists;
-      my $value = $!mimpl[$i];
-      %!cached{$i} = $value;
-      return $value unless %!transformers{$i}:exists;
-      for %!transformers{$i}.values -> &f {
-          my $value_ = &f($value);
-          if !$value_.defined {
-            %!cached{$i} = Any;
-            return Any;
-          }
-          $value = $value_;
-          CATCH { default
-                  { die "MsgSaver[$i]: your function probably isn't :(Str:D --> Str) ",&f.perl; }
-                }
-      }
-      %!cached{$i} = $value;
-      return $value;
+  method raw-at(UInt:D $i where ^self.elems) {
+    return $!mimpl[$i];
   }
+
+  # run special transformers, or global transformers
+  method AT-POS(UInt:D $i where ^self.elems) {
+    return %!cached{$i} if %!cached{$i}:exists;
+    my $value = $!mimpl[$i];
+
+    if %!transformers{$i}:exists {
+      for %!transformers{$i}.values -> &f {
+        my $value_ = &f($value);
+        if !$value_.defined {
+          %!cached{$i} = Any;
+          return Any;
+        }
+        $value = $value_;
+        CATCH { default
+                    { die "MsgSaver[$i]: your function probably isn't :(Str:D --> Str) ",&f.perl; }
+        }
+      }
+    }elsif %!transformers{'ALL'}:exists {
+        for %!transformers{'ALL'}.values -> &f {
+          $value = &f($value);
+        }
+    }
+    %!cached{$i} = $value;
+    return $value;
+  }
+
 
   method iterator( --> Iterator:D) {
     return
@@ -114,11 +137,12 @@ class MsgRecv-impl does Positional[CArray[uint]] {
     }
   }
 
-  method AT-POS(UInt:D $i where ^self.elems) {
+  method AT-POS(UInt:D $i where ^self.elems ) {
     my $sz = zmq_msg_size( @!msg-parts[$i] );
     my $data = zmq_msg_data( @!msg-parts[$i] );
     return
-        Buf.new(| (^$sz).map( { $data[$_] })).decode('ISO-8859-1');
+          Buf.new(| (^$sz).map( { $data[$_] }));
+#         Buf.new(| (^$sz).map( { $data[$_] })).decode('UTF-8');
   }
 
   method slurp(Socket $socket, :$async) {
@@ -164,8 +188,8 @@ class Buffer {
       return Pointer.new(nativecast(Pointer, $!buffer) + $i);
   }
 
-  method copy( --> Str ) {
-     return $!buffer.decode('ISO-8859-1');
+  method copy(:$enc='UTF-8'  --> Str ) {
+     return $!buffer.decode($enc);
   }
 
 }
@@ -327,11 +351,12 @@ class MsgBuilder is export {
 
   multi method add( Str:D $part, Int :$max-part-size  where positive($max-part-size)
                                 , Int :$divide-into   where positive($divide-into)
-                                , :$newline --> MsgBuilder) {
+                                , :$newline
+                                , :$enc='UTF-8' --> MsgBuilder) {
     self!check-finalized;
     my $old-i = $!_.next-i;
     my $max = $max-part-size;
-    my $tmp = $part.encode('ISO-8859-1');
+    my $tmp = $part.encode($enc);
     $!_.buffer[$!_.next-i++] = $tmp[$_] for 0..^$tmp.bytes;
     $!_.buffer[$!_.next-i++] = 10 if $newline;
 

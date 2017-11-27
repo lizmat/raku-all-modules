@@ -192,8 +192,8 @@ class Socket does SocketOptions is export {
 
 ## SND
     # Str
-  multi method send( Str:D $msg, :$async, :$part ) {
-      return self.send( buf8.new( | $msg.encode('ISO-8859-1' )), :$async, :$part);
+  multi method send( Str:D $msg, :$async, :$part, :$enc='UTF-8' ) {
+      return self.send( buf8.new( | $msg.encode($enc)), :$async, :$part);
     }
 
     # int
@@ -224,8 +224,8 @@ class Socket does SocketOptions is export {
 
 
   multi method send(Str:D $msg, Int $split-at where positive($split-at) = $!max-send-bytes
-                        , :$split!, :$async, :$part ) {
-      return self.send(buf8.new( | $msg.encode('ISO-8859-1' )), $split-at, :split, :$async, :$part );
+                        , :$split!, :$async, :$part, :$enc='UTF-8' ) {
+      return self.send(buf8.new( | $msg.encode($enc )), $split-at, :split, :$async, :$part );
     }
 
 
@@ -338,7 +338,7 @@ class Socket does SocketOptions is export {
                   ?? zmq_msg_init_data_callback($msg, buf8-offset($buf, $i), $end - $i, &callback-f)
                   !! zmq_msg_init_data($msg, buf8-offset($buf, $i), $end - $i);
           throw-error if $r  == -1;
-          say "$i -> {$end - $i} : { buf8.new( | $buf[$i..^$end]).decode('ISO-8859-1')}";
+          say "$i -> {$end - $i} : { buf8.new( | $buf[$i..^$end]).decode('UTF-8')}";
 
           my $result = zmq_msg_send($msg
                         , $!handle
@@ -356,7 +356,7 @@ class Socket does SocketOptions is export {
 ## RECV
    # string
   multi method receive(:$truncate! where uint-bool($truncate)
-                            , :$async, :$bin) {
+                            , :$async, :$bin, :$enc='UTF-8' ) {
       my $doc := q:to/END/;
       this method uses the vanilla recv of zmq, which truncates messages
 
@@ -375,7 +375,7 @@ class Socket does SocketOptions is export {
       $result = $max-recv-bytes if $result > $max-recv-bytes;
 
       return $bin ?? buf8.new( $buf[0..^$result] )
-                  !! buf8.new( $buf[0..^$result] ).decode('ISO-8859-1');
+                  !! buf8.new( $buf[0..^$result] ).decode($enc);
     }
 
     # int
@@ -394,7 +394,7 @@ class Socket does SocketOptions is export {
     }
 
     # slurp
-  multi method receive(:$slurp!, :$async, :$bin) {
+  multi method receive(:$slurp!, :$async, :$bin, :$enc='UTF-8') {
       my $doc := q:to/END/;
       reads and assembles a message from all the parts.
 
@@ -411,11 +411,11 @@ class Socket does SocketOptions is export {
       } while self.incomplete;
 
       return $bin ?? $msgbuf
-                  !! $msgbuf.decode('ISO-8859-1');
+                  !! $msgbuf.decode($enc);
     }
 
     #buf
-    multi method receive(:$bin, :$async) {
+    multi method receive(:$bin, :$async, :$enc='UTF-8') {
       my $doc := q:to/END/;
       reads one message part without size limits.
 
@@ -439,7 +439,7 @@ class Socket does SocketOptions is export {
       return Any if ($sz == -1) && self!fail( :$async);
 
       return $bin ?? $buf
-                    !!  $buf.decode('ISO-8859-1');
+                    !!  $buf.decode($enc);
     }
 
     multi method receive(zmq_msg_t @msg-parts, :$async) {
@@ -485,7 +485,7 @@ class Socket does SocketOptions is export {
        my size_t $len = $size + 1;
 
        return Any if ( -1 == zmq_getsockopt($!handle, $opt, $buf, $len )) && self!fail;
-       return buf8.new( $buf[0..^--$len] ).decode('utf-8');
+       return buf8.new( $buf[0..^--$len] ).decode('UTF-8');
     }
 
     multi method get-option(int $opt, buf8, int $size) {
@@ -517,7 +517,7 @@ class Socket does SocketOptions is export {
     }
 
     multi method set-option(int $opt, Str $value, Str, int $size where positive($size) ) {
-      my buf8 $buf .= new( |$value.encode('ISO-8859-1'));
+      my buf8 $buf .= new( |$value.encode('UTF-8'));
       my size_t $len = ($buf.bytes, $size).min;
 
       return Any if  -1 == zmq_setsockopt($!handle, $opt, $buf, $len ) && self!fail;

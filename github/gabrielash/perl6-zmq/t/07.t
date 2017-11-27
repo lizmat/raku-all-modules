@@ -30,7 +30,7 @@ $s2.connect($uri);
 
 
 my ($p1, $p2) = ('Héllo ', 'Wörld');
-my  ($l1, $l2) = ($p1.chars, $p2.chars);
+my  ($l1, $l2) = ($p1.encode('UTF-8').bytes, $p2.encode('UTF-8').bytes);
 
 ok $s1.send($p1, :part) == $l1,  "sent part 1 $l1  bytes: $p1" ;
 ok $s1.send($p2) == $l2,  "sent part2 $l2  bytes: $p2" ;

@@ -137,10 +137,10 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
           -split causes input to be split and sent in message parts
           -async duh!
           all methods return the number of bytes sent or Any
-        send( Str , :async, :part --> Int)
+        send( Str , :async, :part, :enc --> Int)
         send( Int, :async, :part -->Int )
         send( buf8, :async, :part, :max-send-bytes -->Int )
-        send(Str, Int split-at :split! :async, :part -->Int )
+        send(Str, Int split-at :split! :async, :part. :enc  -->Int )
         send(buf8, Int split-at :split! :async, :part -->Int )
         send(buf8, Array splits, :part, :async, :callback, :max-send-bytes -->Int )
         send(:empty!, :async, :part -->Int )        
@@ -151,10 +151,10 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
           -slurp causes all waiting parts of a message to be aseembled and returned as single object
           -truncate truncates at a maximum byte length
           -async duh!
-        receive(:truncate!, :async, :bin)
+        receive(:truncate!, :async, :bin, :enc )
         receive(:int!, :async, :max-recv-number --> Int)
-        receive(:slurp!, :async, :bin)
-        receive(:async, :bin)
+        receive(:slurp!, :async, :bin, :enc)
+        receive(:async, :bin, :enc)
 
     Options Methods
         there are option getters and setter for every socket option
@@ -200,7 +200,7 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
 
     Methods
         new()
-        add( Str, :max-part-size :divide-into, :newline --> self)
+        add( Str, :max-part-size :divide-into, :newline, :enc --> self)
         add( :empty --> self)
         add( :newline --> self)
         finalize( --> Message)
@@ -213,7 +213,7 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
         send-all(@sockets, :part, :async, Callable:($,$ --> Int:D) :callback  --> Int)
         bytes( --> Int)          
         segments( --> Int)  
-        copy( --> Str)
+        copy(:enc --> Str)
 
 #####  MsgRecv
     MsgRecv accumulates message parts received on one or more sockets with minimal copying.
@@ -224,10 +224,20 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
         slurp(Socket, :async)
                   accumulate waiting message parts from a socket
         push-transform(UInt, &func)
-                  queue a transfrm function on a message part. The function should
-                  conform to :(Str:D --> Str:D|Any ). Any effectively delete the part.         
+                  queue a transfrm function ( for example, encoding). The function should
+                  conform to :(Str:D --> Str:D|Any ) or (Blob:D --> Str:D|Any 
+                . Any effectively delete the part. 
+        push-transform(&func)
+                  queue a global transfrm function 
+
+        set-encoding( 'ENCODING' ) 
+                  a wrapper of push-transform
+
         send(Socket, $from = 0, $n = elems, :async ) sends all or ome of the parts
-        [ UInt ] returns message part as Str
+
+        [ UInt ] returns message part, transformed by all the transformers
+        
+        at-raw( UInt )  returns message part as raw bunary data
 
 
 

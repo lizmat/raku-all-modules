@@ -38,15 +38,15 @@ $sl4.connect($uri2);
 my Str $str1 = "this is a nüll términated string";
 my Str $str2 = "this is another beautiful string";
 my Str $str3 = "tomorrow the föx wìll comê to town, ho ho ho ho!";
-my  $l123 = "$str1\n$str2\n$str3".codes;
-my  $l12 = "$str1$str2".codes;
+my  $l123 = "$str1\n$str2\n$str3".encode('UTF-8').bytes;
+my  $l12 = "$str1$str2".encode('UTF-8').bytes;
 
 my $msg = MsgBuilder.new;
 
 $msg.add($str1);
 $msg.add($str2);
 $msg.add(:empty);
-$msg.add($str3, :max-part-size(20));
+$msg.add($str3, :max-part-size(20), :enc('ISO-8859-1'));
 $msg = $msg.finalize;
 my Int $l1 = $msg.send($sp1);
 
@@ -55,7 +55,13 @@ my MsgRecv $rc .= new;
 $rc.slurp( $sl2);
 ok $rc.elems == $msg.segments, "msg received in {$rc.elems} parts";
 
+$rc.push-transform(sub ($b) { return  $b.decode('UTF-8')});
+$rc.push-transform(1, sub ($b) { return  $b.decode('UTF-8')});
 $rc.push-transform(1, sub ($s) { return "--$s--" });
+$rc.push-transform(3, sub ($b) { return  $b.decode('ISO-8859-1')});
+$rc.push-transform(4, sub ($b) { return  $b.decode('ISO-8859-1')});
+$rc.push-transform(5, sub ($b) { return  $b.decode('ISO-8859-1')});
+
 
 ok  $rc[0] eq $str1, $rc[0] ~ ' =  ' ~ $str1;
 ok  $rc[1] eq "--$str2--", $rc[1] ~ ' =  ' ~ "--$str2--";

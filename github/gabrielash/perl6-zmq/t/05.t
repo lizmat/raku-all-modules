@@ -34,7 +34,7 @@ lives-ok  {$s1.bind($uri)}, 's1 binds succesfully' ;
 lives-ok  {$s2.connect($uri)}, 's2 connects succesfully' ;;
 
 my Str $sent = "Héllo";
-my int $len = $sent.chars;
+my int $len = $sent.encode('UTF-8').bytes;
 ok $s1.send($sent) == $len,  "sent $len  bytes: $sent" ;
 my $rcvd  = $s2.receive;
 say "$rcvd received";
