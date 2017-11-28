@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  body {
+      background: #f3f3f3;
+      color: #333;
+  }
+  #main-content {
+      margin: 20px auto;
+      width: 584px;
+      font-size: 18px;
+  }
+  pre {
+      width: 100%;
+      box-sizing: border-box;
+      overflow: auto;
+      font-size: 16px;
+  }
+</style>
+<div id="main-content">
+
+    <!-- STUFF BELOW GOES INTO Wordpress -->
+
+    <p>Wooo! <strong>Super</strong> article:</p><pre id="advent-code-ID-REDACTED" style="border: 1px dotted #ddd; background: none; border-radius: 3px; padding: 10px;"><table class="highlight tab-size js-file-line-container" data-tab-size="8" style="background: none; padding: 0; margin: 0">
+      <tr style="background: none; padding: 0; margin: 0">
+        <td class="blob-num js-line-number" data-line-number="1" id="file-ID-REDACTED-p6-L1" style="border: 0; padding: 0; background: none"></td>
+        <td class="blob-code blob-code-inner js-file-line" id="file-ID-REDACTED-p6-LC1" style="border: 0; padding: 0; background: none">DEBUG <span class="pl-s" style="color: #032f62"><span class="pl-pds" style="color: #032f62">&#39;</span>Rendering Markdown<span class="pl-pds" style="color: #032f62">&#39;</span></span>;</td>
+      </tr>
+      <tr style="background: none; padding: 0; margin: 0">
+        <td class="blob-num js-line-number" data-line-number="2" id="file-ID-REDACTED-p6-L2" style="border: 0; padding: 0; background: none"></td>
+        <td class="blob-code blob-code-inner js-file-line" id="file-ID-REDACTED-p6-LC2" style="border: 0; padding: 0; background: none"><span class="pl-k" style="color: #d73a49">my</span> $html <span class="pl-k" style="color: #d73a49">=</span> Text::Markdown<span class="pl-k" style="color: #d73a49">.</span><span class="pl-c1" style="color: #005cc5">new</span>($content)<span class="pl-k" style="color: #d73a49">.</span>render;</td>
+      </tr>
+      <tr style="background: none; padding: 0; margin: 0">
+        <td class="blob-num js-line-number" data-line-number="3" id="file-ID-REDACTED-p6-L3" style="border: 0; padding: 0; background: none"></td>
+        <td class="blob-code blob-code-inner js-file-line" id="file-ID-REDACTED-p6-LC3" style="border: 0; padding: 0; background: none">DEBUG <span class="pl-s" style="color: #032f62"><span class="pl-pds" style="color: #032f62">&#39;</span>Finding code chunks in document<span class="pl-pds" style="color: #032f62">&#39;</span></span>;</td>
+      </tr>
+      <tr style="background: none; padding: 0; margin: 0">
+        <td class="blob-num js-line-number" data-line-number="4" id="file-ID-REDACTED-p6-L4" style="border: 0; padding: 0; background: none"></td>
+        <td class="blob-code blob-code-inner js-file-line" id="file-ID-REDACTED-p6-LC4" style="border: 0; padding: 0; background: none"><span class="pl-k" style="color: #d73a49">my</span> $dom <span class="pl-k" style="color: #d73a49">=</span> Acme::Advent::Highlighter::HTMLParser<span class="pl-k" style="color: #d73a49">.</span>parse<span class="pl-k" style="color: #d73a49">:</span> $html;</td>
+      </tr>
+</table></pre><p>Another chunk of code:</p><pre id="advent-code-ID-REDACTED" style="border: 1px dotted #ddd; background: none; border-radius: 3px; padding: 10px;"><table class="highlight tab-size js-file-line-container" data-tab-size="8" style="background: none; padding: 0; margin: 0">
+      <tr style="background: none; padding: 0; margin: 0">
+        <td class="blob-num js-line-number" data-line-number="1" id="file-ID-REDACTED-p6-L1" style="border: 0; padding: 0; background: none"></td>
+        <td class="blob-code blob-code-inner js-file-line" id="file-ID-REDACTED-p6-LC1" style="border: 0; padding: 0; background: none">highlight $dom;</td>
+      </tr>
+      <tr style="background: none; padding: 0; margin: 0">
+        <td class="blob-num js-line-number" data-line-number="2" id="file-ID-REDACTED-p6-L2" style="border: 0; padding: 0; background: none"></td>
+        <td class="blob-code blob-code-inner js-file-line" id="file-ID-REDACTED-p6-LC2" style="border: 0; padding: 0; background: none">$<span class="pl-c1" style="color: #005cc5">wrap</span> <span class="pl-k" style="color: #d73a49">??</span> htmlify <span class="pl-k" style="color: #d73a49">~</span>$dom <span class="pl-k" style="color: #d73a49">!!</span> <span class="pl-k" style="color: #d73a49">~</span>$dom;</td>
+      </tr>
+</table></pre><p>We&#39;re done</p>
+
+    <!-- STUFF ABOVE GOES INTO Wordpress -->
+
+</div>
