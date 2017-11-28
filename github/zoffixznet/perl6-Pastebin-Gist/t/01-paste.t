@@ -2,7 +2,7 @@ use lib <lib>;
 use Test;
 use Pastebin::Gist;
 
-plan 5;
+plan 7;
 
 my $p = Pastebin::Gist.new(
     token => '7042d1' # Github revokes tokens if it notices them in source
@@ -30,8 +30,13 @@ for keys $files {
         'Paste content is sane';
 }
 
-throws-like { $p.fetch: 'blahblah' }, Pastebin::Gist::X,
-    message => /'not found'/, 'failures throw Pastebin::Gist::X exception';
+ok $p.delete($paste_url), 'tried to delete a gist';
+throws-like { $p.fetch: $paste_url }, Pastebin::Gist::X,
+    :message{ .contains: 'not found' }, 'gist got deleted';
+
+throws-like { $p.delete: $paste_url }, Pastebin::Gist::X,
+    :message{ .contains: 'not found' },
+    'we get a 404 on deleting non-existent gists';
 
 =finish
 

@@ -1,6 +1,7 @@
-use WWW;
-use JSON::Fast;
 unit class Pastebin::Gist;
+
+use WWW :extras;
+use JSON::Fast;
 
 class X is Exception { has $.message }
 
@@ -10,9 +11,6 @@ constant %UA       = :User-Agent('Rakudo Pastebin::Gist');
 
 subset ValidGistToken of Str where /:i <[a..f 0..9]> ** 40/;
 has ValidGistToken $.token = %*ENV<PASTEBIN_GIST_TOKEN>;
-
-BEGIN WWW.^ver
-    andthen $_ >= v1.004001 or die 'Need WWW.pm6 version 1.004001 or newer';
 
 method paste (
     $paste,
@@ -38,6 +36,20 @@ method fetch ($what) returns List {
         my %files;
         %files{$_} = $res.<files>{$_}<content> for $res<files>:v.keys;
         return %files, $res<description>;
+    }
+    else -> $_ {
+        when *.exception.message.contains: 'Error 404' {
+            die X.new: :message('404 paste not found');
+        }
+        die X.new: :message(.exception.message);
+    }
+}
+
+method delete ($what) returns Bool {
+    with delete API-URL ~ "gists/$what.split('/').tail()", |%UA,
+        :Authorization("token $!token"), :Content-Type<application/json>
+    {
+        return True;
     }
     else -> $_ {
         when *.exception.message.contains: 'Error 404' {

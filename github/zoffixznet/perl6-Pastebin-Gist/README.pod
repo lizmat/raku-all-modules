@@ -17,9 +17,11 @@ Pastebin::Gist - Perl 6 interface to https://gist.github.com/
             'file1.p6' => { content => "Paste content 1" },
             'meow.css' => { content => "Paste content 2" },
         },
-        desc => "Foo Bar",
-        public => 0,
+        :desc("Foo Bar"),
+        :!public,
     );
+
+    $p.delete: $paste_url; # delete a gist
 
 =head1 DESCRIPTION
 
@@ -59,8 +61,8 @@ C<PASTEBIN_GIST_TOKEN> environmental variable to the value of your token.
             'file1.p6' => { content => "Paste content 1" },
             'meow.css' => { content => "Paste content 2" },
         },
-        desc => 'Optional summary',
-        public => True,
+        :desc('Optional summary'),
+        :public,
     );
 
 B<Returns> URL to the created paste (e.g.
@@ -122,6 +124,15 @@ ID number of the gist  you want to retrieve. The C<$files> is a hashref,
 where keys are file names and values are the file's contents.
 On failure, throws
 `Pastebin::Gist::X` exception whose `$.message` method has reason for error.
+
+=head2 C<delete>
+
+    $p.delete: 'https://gist.github.com/5590bc07b8d5bd8fd98d';
+    $p.delete: '5590bc07b8d5bd8fd98d';
+
+B<Returns> `True`. Deletes an existing gist referenced by either the ID or the
+full URL to it. On failure, throws `Pastebin::Gist::X` exception whose
+`$.message` method has reason for error.
 
 =head1 REPOSITORY
 
