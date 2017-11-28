@@ -52,7 +52,8 @@ ok deftest(
 	{
 		my $*PRINT-CASE = Q{downcase};
 		$*fl.format( Q{~A}, Nil );
-	}, Q{nil}
+	},
+	Q{nil}
 ), Q{format.a.2};
 
 # (deftest formatter.a.2
@@ -67,7 +68,8 @@ ok deftest(
 		$*fl.formatter-call-to-string(
 			$*fl.formatter( Q{~A} ), Nil
 		);
-	}, Q{nil}
+	},
+	Q{nil}
 ), Q{formatter.a.2};
 
 # (deftest format.a.3
@@ -80,7 +82,8 @@ ok deftest(
 	{
 		my $*PRINT-CASE = Q{capitalize};
 		$*fl.format( Q{~a}, Nil );
-	}, Q{Nil}
+	},
+	Q{Nil}
 ), Q{format.a.3};
 
 # (deftest formatter.a.3
@@ -95,7 +98,8 @@ ok deftest(
 		$*fl.formatter-call-to-string(
 			$*fl.formatter( Q{~a} ), Nil
 		);
-	}, Q{Nil}
+	},
+	Q{Nil}
 ), Q{formatter.a.3};
 
 # (def-format-test format.a.4
@@ -138,7 +142,8 @@ ok deftest(
 			}
 		}
 		@collected;
-	}, [ ]
+	},
+	[ ]
 ), Q{format.a.7};
 
 # (deftest format.a.8
@@ -175,7 +180,8 @@ ok deftest(
 			}
 		}
 		@collected;
-	}, [ ]
+	},
+	[ ]
 ), Q{format.a.8};
 
 # (deftest format.a.9
@@ -212,7 +218,8 @@ ok deftest(
 			@collected.append( $s );
 		}
 		@collected;
-	}, [	Q{NIL},
+	},
+	[	Q{NIL},
 		Q{NIL},
 		Q{NIL},
 		Q{ NIL},
@@ -259,8 +266,8 @@ ok deftest(
 			@collected.append( $s );
 		}
 		@collected;
-	}, [
-		Q{NIL},
+	},
+	[	Q{NIL},
 		Q{NIL},
 		Q{NIL},
 		Q{NIL },
@@ -307,8 +314,8 @@ ok deftest(
 			@collected.append( $s );
 		}
 		@collected;
-	}, [
-		Q{()},
+	},
+	[	Q{()},
 		Q{()},
 		Q{ ()},
 		Q{  ()},
@@ -355,8 +362,8 @@ ok deftest(
 			@collected.append( $s );
 		}
 		@collected;
-	}, [
-		Q{()},
+	},
+	[	Q{()},
 		Q{()},
 		Q{() },
 		Q{()  },
@@ -401,8 +408,8 @@ ok deftest(
 			@collected.append( $s );
 		}
 		@collected;
-	}, [
-		Q{()},
+	},
+	[	Q{()},
 		Q{()},
 		Q{() },
 		Q{()  },
@@ -447,8 +454,8 @@ ok deftest(
 			@collected.append( $s );
 		}
 		@collected;
-	}, [
-		Q{()},
+	},
+	[	Q{()},
 		Q{()},
 		Q{ ()},
 		Q{  ()},
@@ -571,8 +578,8 @@ subtest {
 				@collected.append( $s );
 			}
 			@collected;
-		}, [
-			Q{ABC  },
+		},
+		[	Q{ABC  },
 			Q{ABC  },
 			Q{ABC  },
 			Q{ABC  },
@@ -703,8 +710,8 @@ subtest {
 				@collected.append( $s );
 			}
 			@collected;
-		}, [
-			Q{ABC},
+		},
+		[	Q{ABC},
 			Q{ABC },
 			Q{ABC  },
 			Q{ABC   },
@@ -743,8 +750,8 @@ subtest {
 				@collected.append( $s );
 			}
 			@collected;
-		}, [
-			Q{ABC},
+		},
+		[	Q{ABC},
 			Q{ ABC},
 			Q{  ABC},
 			Q{   ABC},
@@ -783,90 +790,89 @@ subtest {
 	), Q{format.a.48};
 }, Q{other tests};
 
-# ;;; # parameters
-# 
+subtest {
+	# (def-format-test format.a.49
+	#   "~#A" ("abc" nil nil nil) "abc " 3)
+	# 
+	ok def-format-test(
+		Q{~#A},
+		( Q{abc}, Nil, Nil, Nil ),
+		Q{abc }
+	), Q{format.a.49};
 
-# (def-format-test format.a.49
-#   "~#A" ("abc" nil nil nil) "abc " 3)
-# 
-ok def-format-test(
-	Q{~#A},
-	( Q{abc}, Nil, Nil, Nil ),
-	Q{abc }
-), Q{format.a.49};
+	# (def-format-test format.a.50
+	#   "~#@a" ("abc" nil nil nil nil nil) "   abc" 5)
+	# 
+	ok def-format-test(
+		Q{~#@a},
+		( Q{abc}, Nil, Nil, Nil, Nil, Nil ),
+		Q{   abc}
+	), Q{format.a.50}
+	;
 
-# (def-format-test format.a.50
-#   "~#@a" ("abc" nil nil nil nil nil) "   abc" 5)
-# 
-ok def-format-test(
-	Q{~#@a},
-	( Q{abc}, Nil, Nil, Nil, Nil, Nil ),
-	Q{   abc}
-), Q{format.a.50}
-;
+	# (def-format-test format.a.51
+	#   "~5,#a" ("abc" nil nil nil) "abc    " 3)
+	# 
+	ok def-format-test(
+		Q{~5,#a},
+		[Q{abc}, Nil, Nil, Nil ], Q{abc    }
+	), Q{format.a.51};
 
-# (def-format-test format.a.51
-#   "~5,#a" ("abc" nil nil nil) "abc    " 3)
-# 
-ok def-format-test(
-	Q{~5,#a},
-	[Q{abc}, Nil, Nil, Nil ], Q{abc    }
-), Q{format.a.51};
+	# (def-format-test format.a.52
+	#   "~5,#@A" ("abc" nil nil nil) "    abc" 3)
+	# 
+	ok def-format-test(
+		Q{~5,#@A}, ( Q{abc}, Nil, Nil, Nil ), Q{    abc}
+	), Q{format.a.52};
 
-# (def-format-test format.a.52
-#   "~5,#@A" ("abc" nil nil nil) "    abc" 3)
-# 
-ok def-format-test(
-	Q{~5,#@A}, ( Q{abc}, Nil, Nil, Nil ), Q{    abc}
-), Q{format.a.52};
+	# (def-format-test format.a.53
+	#   "~4,#A" ("abc" nil nil) "abc   " 2)
+	# 
+	ok def-format-test(
+		Q{~4,#A},
+		( Q{abc}, Nil, Nil ),
+		Q{abc   }
+	), Q{format.a.53};
 
-# (def-format-test format.a.53
-#   "~4,#A" ("abc" nil nil) "abc   " 2)
-# 
-ok def-format-test(
-	Q{~4,#A},
-	( Q{abc}, Nil, Nil ),
-	Q{abc   }
-), Q{format.a.53};
+	# (def-format-test format.a.54
+	#   "~4,#@A" ("abc" nil nil) "   abc" 2)
+	# 
+	ok def-format-test(
+		Q{~4,#@A},
+		( Q{abc}, Nil, Nil ),
+		Q{   abc}
+	), Q{format.a.54};
 
-# (def-format-test format.a.54
-#   "~4,#@A" ("abc" nil nil) "   abc" 2)
-# 
-ok def-format-test(
-	Q{~4,#@A},
-	( Q{abc}, Nil, Nil ),
-	Q{   abc}
-), Q{format.a.54};
+	# (def-format-test format.a.55
+	#   "~#,#A" ("abc" nil nil nil) "abc    " 3)
+	# 
+	ok def-format-test(
+		Q{~#,#A},
+		( Q{abc}, Nil, Nil, Nil ),
+		Q{abc    }
+	), Q{format.a.55};
 
-# (def-format-test format.a.55
-#   "~#,#A" ("abc" nil nil nil) "abc    " 3)
-# 
-ok def-format-test(
-	Q{~#,#A},
-	( Q{abc}, Nil, Nil, Nil ),
-	Q{abc    }
-), Q{format.a.55};
+	# (def-format-test format.a.56
+	#   "~#,#@A" ("abc" nil nil nil) "    abc" 3)
+	# 
+	ok def-format-test(
+		Q{~#,#@A},
+		( Q{abc}, Nil, Nil, Nil ),
+		Q{    abc}
+	), Q{format.a.56};
 
-# (def-format-test format.a.56
-#   "~#,#@A" ("abc" nil nil nil) "    abc" 3)
-# 
-ok def-format-test(
-	Q{~#,#@A},
-	( Q{abc}, Nil, Nil, Nil ),
-	Q{    abc}
-), Q{format.a.56};
+	# (def-format-test format.a.57
+	#   "~-100A" ("xyz") "xyz")
+	# 
+	ok def-format-test( Q{~-10@A}, ( Q{xyz} ), Q{xyz} ), Q{format.a.57};
 
-# (def-format-test format.a.57
-#   "~-100A" ("xyz") "xyz")
-# 
-ok def-format-test( Q{~-10@A}, ( Q{xyz} ), Q{xyz} ), Q{format.a.57};
-
-# (def-format-test format.a.58
-#   "~-100000000000000000000a" ("xyz") "xyz")
-#
-ok def-format-test(
-	Q{~-100000000000000000000a}, ( Q{xyz} ), Q{xyz}
-), Q{format.a.58};
+	# (def-format-test format.a.58
+	#   "~-100000000000000000000a" ("xyz") "xyz")
+	#
+	ok def-format-test(
+		Q{~-100000000000000000000a}, ( Q{xyz} ), Q{xyz}
+	), Q{format.a.58};
+}, Q{# parameters};
 
 done-testing;
 

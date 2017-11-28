@@ -5,16 +5,16 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
 subtest {
-	is $fl.format( Q{~C}, Q{a} ), Q{a}, Q{format.c.1};
+	is $*fl.format( Q{~C}, Q{a} ), Q{a}, Q{format.c.1};
 
-	is $fl.format( Q{~c}, Q{Ø} ), Q{Ø}, Q{format.c.1a};
+	is $*fl.format( Q{~c}, Q{Ø} ), Q{Ø}, Q{format.c.1a};
 
-	is $fl.format( Q{~:c}, Q{ } ), Q{Space}, Q{format.c.2};
+	is $*fl.format( Q{~:c}, Q{ } ), Q{Space}, Q{format.c.2};
 
-	is $fl.format( Q{~:C}, qq{\n} ), Q{Linefeed}, Q{format.c.2a};
+	is $*fl.format( Q{~:C}, qq{\n} ), Q{Linefeed}, Q{format.c.2a};
 
 	# format.c.3 is its own coverage
 
@@ -22,17 +22,15 @@ subtest {
 
 	# format.c.4a is redundant
 
-	is $fl.format( Q{~@c}, Q{a} ), Q{a}, Q{format.c.5};
+	is $*fl.format( Q{~@c}, Q{a} ), Q{a}, Q{format.c.5};
 
-	is $fl.format( Q{~@C}, Q{Ø} ), Q{Ø}, Q{format.c.5a};
+	is $*fl.format( Q{~@C}, Q{Ø} ), Q{Ø}, Q{format.c.5a};
 
 	# format.c.6 is redundant
 
 	# format.c.6a is redundant
 }, Q{missing coverage};
 
-# ;;; Test of the ~C directive
-# 
 # (deftest format.c.1
 #   (loop for c across +standard-chars+
 #         for s = (format nil "~C" c)
@@ -40,16 +38,18 @@ subtest {
 #         collect (list c s))
 #   nil)
 # 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s = $fl.format( Q{~C}, $c );
-		unless $s eq $c {
-			@collected.append( [ $c, $s ] );
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s = $*fl.format( Q{~C}, $c );
+			unless $s eq $c {
+				@collected.append( [ $c, $s ] );
+			}
 		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.1};
+		@collected;
+	}, [ ]
+), Q{format.c.1};
 
 #`(
 # (deftest format.c.1a
@@ -64,16 +64,18 @@ is do {
 #         when (> count 100) collect "count limit exceeded" and do (loop-finish))
 #   nil)
 # 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s = $fl.format( Q{~c}, $c );
-#		unless $s eq $c {
-#			@collected.append( [ $c, $s ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.1a};
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s = $*fl.format( Q{~c}, $c );
+	#		unless $s eq $c {
+	#			@collected.append( [ $c, $s ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+), Q{format.c.1a};
 )
 
 #`(
@@ -86,16 +88,18 @@ is do {
 #         collect (list c s))
 #   nil)
 # 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s = $fl.format( Q{~:c}, $c );
-		unless $s eq $c {
-#			@collected.append( [ $c, $s ] );
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s = $*fl.format( Q{~:c}, $c );
+			unless $s eq $c {
+	#			@collected.append( [ $c, $s ] );
+			}
 		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.2};
+		@collected;
+	}, [ ]
+), Q{format.c.2};
 )
 
 #`(
@@ -113,22 +117,24 @@ is do {
 #         when (> count 100) collect "count limit exceeded" and do (loop-finish))
 #   nil)
 # 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s = $fl.format( Q{~:C}, $c );
-		unless $s eq $c {
-#			@collected.append( [ $c, $s ] );
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s = $*fl.format( Q{~:C}, $c );
+			unless $s eq $c {
+	#			@collected.append( [ $c, $s ] );
+			}
 		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.2a};
+		@collected;
+	}, [ ]
+), Q{format.c.2a};
 )
 
 # (def-format-test format.c.3
 #   "~:C" (#\Space) #.(char-name #\Space))
 # 
-is $fl.format( Q{~:C}, Q{ } ), Q{Space}, Q{format.c.3};
+ok def-format-test( Q{~:C}, Q{ }, Q{Space} ), Q{format.c.3};
 
 #`(
 # (deftest format.c.4
@@ -139,16 +145,18 @@ is $fl.format( Q{~:C}, Q{ } ), Q{Space}, Q{format.c.3};
 #         collect (list c (char-name c) s))
 #   nil)
 # 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s = $fl.format( Q{~:C}, $c );
-#		unless $s eq $c {
-#			@collected.append( [ $c, $s ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.4};
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s = $*fl.format( Q{~:C}, $c );
+	#		unless $s eq $c {
+	#			@collected.append( [ $c, $s ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+), Q{format.c.4};
 )
 
 #`(
@@ -168,7 +176,7 @@ is do {
 is do {
 	my @collected;
 	for @standard-chars -> $c {
-		my $s = $fl.format( Q{~:c}, $c );
+		my $s = $*fl.format( Q{~:c}, $c );
 #		unless $s eq $c {
 #			@collected.append( [ $c, $s ] );
 #		}
@@ -189,7 +197,7 @@ is do {
 is do {
 	my @collected;
 	for @standard-chars -> $c {
-		my $s = $fl.format( Q{~@c}, $c );
+		my $s = $*fl.format( Q{~@c}, $c );
 #		unless $s eq $c {
 #			@collected.append( [ $c, $s ] );
 #		}
@@ -213,7 +221,7 @@ is do {
 is do {
 	my @collected;
 	for @standard-chars -> $c {
-		my $s = $fl.format( Q{~@C}, $c );
+		my $s = $*fl.format( Q{~@C}, $c );
 #		unless $s eq $c {
 #			@collected.append( [ $c, $s ] );
 #		}
@@ -234,8 +242,8 @@ is do {
 is do {
 	my @collected;
 	for @standard-chars -> $c {
-		my $s1 = $fl.format( Q{~:C}, $c );
-		my $s2 = $fl.format( Q{~:@C}, $c );
+		my $s1 = $*fl.format( Q{~:C}, $c );
+		my $s2 = $*fl.format( Q{~:@C}, $c );
 #		unless $s eq $c {
 #			@collected.append( [ $c, $s ] );
 #		}
@@ -259,8 +267,8 @@ is do {
 is do {
 	my @collected;
 	for @standard-chars -> $c {
-		my $s1 = $fl.format( Q{~:C}, $c );
-		my $s2 = $fl.format( Q{~@:C}, $c );
+		my $s1 = $*fl.format( Q{~:C}, $c );
+		my $s2 = $*fl.format( Q{~@:C}, $c );
 #		unless $s eq $c {
 #			@collected.append( [ $c, $s ] );
 #		}
