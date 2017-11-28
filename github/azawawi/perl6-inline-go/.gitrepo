@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-inline-go.git
+	branch = master
+	commit = 0ac3f33ae890f01fb3894ddb7ceadcb7de8843fb
+	parent = b3e0c273cc25eaabfee51a2f5be6151008a542cc
+	cmdver = 0.4.0

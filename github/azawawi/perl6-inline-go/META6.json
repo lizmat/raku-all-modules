@@ -1,0 +1,25 @@
+{
+    "auth"          : "github:azawawi",
+    "authors"       : [
+        "Ahmad M. Zawawi"
+    ],
+    "description"   : "Use Go code inside Perl 6",
+    "license"       : "MIT",
+    "name"          : "Inline::Go",
+    "perl"          : "6.c",
+    "provides"      : {
+        "Inline::Go"          : "lib/Inline/Go.pm6",
+        "Inline::Go::Grammar" : "lib/Inline/Go/Grammar.pm6"
+    },
+    "source-url"    : "git://github.com/azawawi/perl6-inline-go.git",
+    "tags"          : [
+        "Go"
+    ],
+    "depends"       : [
+        "File::Temp"
+    ],
+    "test-depends"  : [
+        "Test"
+    ],
+    "version"       : "0.0.1"
+}
