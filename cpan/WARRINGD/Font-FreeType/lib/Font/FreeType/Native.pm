@@ -440,7 +440,7 @@ class FT_Face is export {
         FT_Vector   $kerning)
     returns FT_Error is native($ftlib) {*};
 
-    #| 
+    #| This function can be used to get the font format.
     method FT_Get_Font_Format
         returns Str
         is export

@@ -29,7 +29,9 @@ class Font::FreeType::Error is Exception {
         Invalid_Character_Code => error-def(0x11, "invalid character code"),
         Invalid_Glyph_Format => error-def(0x12, "unsupported glyph image format"),
         Cannot_Render_Glyph => error-def(0x13, "cannot render this glyph format"),
-        Invalid_Outline => error-def(0x14, "invalid-outline"),
+        Invalid_Outline => error-def(0x14, "invalid outline"),
+        Invalid_Composite => error-def(0x15, "invalid composite"),
+        Too_Many_Hints => error-def(0x16, "too many hints"),
         Invalid_Pixel_Size => error-def(0x17, "invalid pixel size"),
   # handle errors
 

@@ -8,7 +8,7 @@ enum Mode «
     :mono(2)
     :lcd(3)
     :lcd-v(4)
-   »; 
+   »;
 
 sub MAIN(Str $font-file,
          Str $text is copy,
@@ -21,6 +21,7 @@ sub MAIN(Str $font-file,
          UInt :$word-spacing is copy,
          UInt :$bold = 0,
          Mode :$mode = normal,
+         Bool :$verbose,
     ) {
 
     if $text eq '' {
@@ -41,43 +42,49 @@ sub MAIN(Str $font-file,
     $word-spacing //= $char-spacing * 4;
     my @bitmaps = $face.glyph-images($text).map: {
         .bold($bold) if $bold;
-        .bitmap(:render-mode($mode));
+        my $bitmap = .bitmap(:render-mode($mode));
+        note "{.char-code.chr} U+{.char-code.fmt('%06X')} [{.index}]: {$bitmap.width} X {$bitmap.rows}"
+            if $verbose;
+        $bitmap;
     }
 
     my @pix-bufs = @bitmaps.map: { .defined && .width ?? .pixels !! Any };
     my $top = $ascend // @bitmaps.map({.defined ?? .top !! 0}).max;
     my $bottom = - ($descend // @bitmaps.map({.defined ?? .rows - .top !! 0}).max);
-
     for $top ...^ $bottom -> $row {
+        my Str @line;
+        my int16 $pos = 0;
         for 0 ..^ +@bitmaps -> $col {
             with @bitmaps[$col] {
-                my $cs = $char-spacing;
-                $cs += do-horiz-kern($face, $_, @bitmaps[$col+1], $mode)
-                    if $col && $kern && $face.has-kerning && $col+1 < +@bitmaps;
-                print scan-line($_, @pix-bufs[$col], $row);
-                print ' ' x $cs;
+                $pos += do-horiz-kern($face, @bitmaps[$col-1], $_, $mode)
+                    if $col && $kern && $face.has-kerning;
+                for scan-line($_, @pix-bufs[$col], $row) -> $pix {
+                    @line[$pos] = '#' if $pix;
+                    $pos++;
+                }
+                $pos += $char-spacing;
             }
             else {
-                warn "hmm...";
-                print ' ' x $word-spacing;
+                $pos += $word-spacing;
             }
         }
-        say '';
+        $_ //= ' ' for @line;
+        say @line.join;
     }
 }
 
 sub scan-line($bitmap, $pix-buf, $row) {
-    my $s = '';
+    my uint8 @pix[$bitmap.width];
     my int $y = $bitmap.top - $row;
     if $bitmap.rows > $y >= 0 {
+        my int $i = 0;
         for ^$bitmap.width -> int $x {
-            $s ~= $pix-buf[$y;$x] ?? '#' !! ' ';
+            @pix[$i] = 1
+                if $pix-buf[$y;$x];
+            $i++;
         }
     }
-    else {
-        $s = ' ' x $bitmap.width;
-    }
-    $s;
+    @pix;
 }
 
 sub do-horiz-kern($face, $bm1, $bm2, $mode ) {

@@ -34,36 +34,43 @@ Other high level classes in this have a `struct()` accessor, which can be used, 
       <td>Class</td>
       <td>struct() binding</td>
       <td>Description</td>
+      <td></td>
     </tr>
   </thead>
   <tr>
     <td>Font::FreeType</td>
-    <td>L&lt;FT_Library|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library&gt;</td>
+    <td>L&lt;FT_Library</td>
+    <td>https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library&gt;</td>
     <td>A handle to a freetype library instance</td>
   </tr>
   <tr>
     <td>Font::FreeType::Face</td>
-    <td>L&lt;FT_Face|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face&gt;</td>
+    <td>L&lt;FT_Face</td>
+    <td>https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face&gt;</td>
     <td>A Handle to a typographic face object</td>
   </tr>
   <tr>
     <td>Font::FreeType::Glyph</td>
-    <td>L&lt;FT_GlyphSlot|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_GlyphSlot&gt;</td>
+    <td>L&lt;FT_GlyphSlot</td>
+    <td>https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_GlyphSlot&gt;</td>
     <td>A handle to a glyph container</td>
   </tr>
   <tr>
     <td>Font::FreeType::GlyphImage</td>
-    <td>L&lt;FT_Glyph|https://www.freetype.org/freetype2/docs/reference/ft2-glyph_management.html&gt;</td>
+    <td>L&lt;FT_Glyph</td>
+    <td>https://www.freetype.org/freetype2/docs/reference/ft2-glyph_management.html&gt;</td>
     <td>A specific glyph bitmap or outline object</td>
   </tr>
   <tr>
     <td>Font::FreeType::BitMap</td>
-    <td>L&lt;FT_Bitmap|https://www.freetype.org/freetype2/docs/reference/ft2-bitmap_handling.html&gt;</td>
+    <td>L&lt;FT_Bitmap</td>
+    <td>https://www.freetype.org/freetype2/docs/reference/ft2-bitmap_handling.html&gt;</td>
     <td>A rendered bitmap for a glyph</td>
   </tr>
   <tr>
     <td>Font::FreeType::Outline</td>
-    <td>L&lt;FT_Outline|https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html&gt;</td>
+    <td>L&lt;FT_Outline</td>
+    <td>https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html&gt;</td>
     <td>A scalable glyph outline</td>
   </tr>
 </table>
@@ -344,6 +351,14 @@ method FT_Get_Kerning(
 ```
 
 Return the kerning vector between two glyphs of the same face.
+
+### method FT_Get_Font_Format
+
+```
+method FT_Get_Font_Format() returns Str
+```
+
+This function can be used to get the font format.
 
 ### method FT_Reference_Face
 

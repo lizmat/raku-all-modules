@@ -40,7 +40,8 @@ class Font::FreeType::Glyph is rw {
     method glyph-image {
         my $top = $!struct.bitmap-top;
         my $left = $!struct.bitmap-left;
-        Font::FreeType::GlyphImage.new: :glyph(self.struct), :$left, :$top, :$!char-code;
+        my $index = $.index;
+        Font::FreeType::GlyphImage.new: :glyph(self.struct), :$left, :$top, :$!char-code, :$index;
     }
 
 }

@@ -10,7 +10,8 @@ class Font::FreeType::GlyphImage {
 
     has FT_Glyph $.struct handles <top left>;
     has FT_Library $!library;
-    has FT_ULong     $.char-code;
+    has FT_ULong  $.char-code;
+    has FT_UInt   $.index;
 
     method format { FT_GLYPH_FORMAT($!struct.format) }
 
