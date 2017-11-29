@@ -30,6 +30,8 @@ files using it.
 
 * patch your "taglist.vim" with "taglist.vim.patch" to be perl6 aware
 
+(or use https://github.com/stmuk/taglist.vim)
+
 * copy the included "dot-ctags" to ~/.ctags to add very basic perl6 support to ctags(1)
 
 note linux distros probably ship different versions of ctags(1)
