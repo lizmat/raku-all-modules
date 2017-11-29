@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-inline-go.git
 	branch = master
-	commit = 0ac3f33ae890f01fb3894ddb7ceadcb7de8843fb
-	parent = b3e0c273cc25eaabfee51a2f5be6151008a542cc
+	commit = 2e1cfc646aaa3d3453705b780e390c143d5bc98e
+	parent = ba3e5571702ba8cdd7b0d24795929dd4f935193c
 	cmdver = 0.4.0
