@@ -1,7 +1,7 @@
 
 use Acme::Advent::Highlighter;
 
-sub MAIN ($content, $token? is copy, Bool :$wrap) {
+sub MAIN ($content, $token? is copy, Bool :$wrap, Bool :$multi) {
     $token = $token
         // "token".IO.slurp
         // %*ENV<ACME_ADVENT_HIGHLIGHTER_TOKEN>
@@ -9,5 +9,5 @@ sub MAIN ($content, $token? is copy, Bool :$wrap) {
             ~ ' ACME_ADVENT_HIGHLIGHTER_TOKEN env var';
 
     my $hl = Acme::Advent::Highlighter.new: :token($token.trim);
-    put $hl.render: $content, :$wrap;
+    put $hl.render: $content, :$wrap, :$multi;
 }

@@ -3,13 +3,14 @@ unit class Acme::Advent::Highlighter;
 use Pastebin::Gist;
 use Text::Markdown;
 use Acme::Advent::Highlighter::HTMLParser;
+use Acme::Advent::Highlighter::MultiMarkdown;
 use UUID;
 use WWW;
 
 has Str:D $.token is required;
 has Pastebin::Gist:D $!gist = Pastebin::Gist.new: :$!token;
 
-method render (Str:D $c, :$wrap) {
+method render (Str:D $c, :$wrap, :$multi) {
     my $content = $c.match( /^ 'http' 's'? '://'/ ) ?? do {
         DEBUG "Detected a URL as content… fetching data from $c";
         get $c
@@ -20,7 +21,10 @@ method render (Str:D $c, :$wrap) {
         } !! $c;
 
     DEBUG 'Rendering Markdown';
-    my $html = Text::Markdown.new($content).render;
+    my $html = $multi
+        ?? Acme::Advent::Highlighter::MultiMarkdown.render: $content
+        !! Text::Markdown.new($content).render;
+
     DEBUG 'Finding code chunks in document';
     my $dom = Acme::Advent::Highlighter::HTMLParser.parse: $html;
     my %codes;
@@ -120,7 +124,7 @@ sub highlight ($dom) {
             ~ ' border-radius: 3px; padding: 10px;',
     ;
 
-    for %styles.kv -> $selector, $style {
+    for %styles.sort -> (:key($selector), :value($style)) {
         DEBUG "Applying styling to selector $selector";
         .attr: 'style', $style for $dom.find: $selector
     }
