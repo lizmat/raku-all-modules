@@ -1,0 +1,6 @@
+Release 0.0.2
+        Avoid loading TrueType Collections (type *.ttc). Not supported
+        by Ghostscript 9.20 (and possibly other readers)
+
+Release 0.0.1
+        Initial release
