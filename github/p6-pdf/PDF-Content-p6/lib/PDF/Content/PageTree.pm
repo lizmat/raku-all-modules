@@ -13,16 +13,16 @@ role PDF::Content::PageTree
         my $sub-pages = self.Kids.tail
             if self.Kids;
 
-	if $page {
-	    unless $page<Resources>:exists {
+	with $page {
+	    unless .<Resources>:exists {
 		# import resources, if inherited and outside our hierarchy
-		my $resources = $page.Resources;
-		$page<Resources> = $resources.clone
-		    if $resources && $resources !=== self.Resources;
+		my $resources = .Resources;
+		.<Resources> = $resources.clone
+		    if $resources && $resources !=== .Resources;
 	    }
 	}
 	else {
-	    $page = PDF::DAO.coerce: :dict{ :Type( :name<Page> ) };
+	    $_ = PDF::DAO.coerce: :dict{ :Type( :name<Page> ) };
 	}
 
         if $sub-pages && $sub-pages.can('add-page') {

@@ -58,7 +58,7 @@ role PDF::Content::Graphics {
 	$.decoded // '';
     }
 
-    method new-gfx(|c) { 
+    method new-gfx(|c) {
         PDF::Content.new( :parent(self), |c );
     }
 
@@ -71,11 +71,13 @@ role PDF::Content::Graphics {
     }
 
     method finish {
-        my $decoded = do with $!pre-gfx { .Str } else { '' };
-        $decoded ~= "\n" if $decoded;
-        $decoded ~= do with $!gfx { .Str } else { '' };
-
-        self.decoded = $decoded;
+        if $!gfx.defined || $!pre-gfx.defined {
+            # rebuild graphics, if they've been accessed
+            my $decoded = do with $!pre-gfx { .Str } else { '' };
+            $decoded ~= "\n" if $decoded;
+            $decoded ~= $.gfx.Str;
+            self.decoded = $decoded;
+        }
     }
 
     method cb-finish { $.finish }

@@ -3,7 +3,6 @@ use PDF::DAO::Stream;
 
 class PDF::Content::Font::Enc::CMap {
     has uint32 @!to-unicode;
-    has UInt %ligatures;
 
     submethod TWEAK(PDF::DAO::Stream :$cmap!) {
 
