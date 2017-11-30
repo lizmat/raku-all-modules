@@ -1,7 +1,7 @@
 # PDF::Lite
 
 `PDF::Lite` is a minimal class for creating or editing PDF documents, including:
-- Basic Text (core fonts only)
+- Basic Text
 - Simple forms and images (GIF, JPEG & PNG)
 - Graphics and Drawing
 - Content reuse (Pages and form objects)
@@ -144,7 +144,30 @@ $pdf.save-as: "examples/text-effects.pdf";
 
 ![text-effects.pdf](examples/.previews/text-effects-001.png)
 
-Note: only the PDF core fonts are supported: Courier, Times, Helvetica, ZapfDingbats and Symbol.
+## Fonts
+
+This module has build-in support for the PDF core fonts: Courier, Times, Helvetica, ZapfDingbats and Symbol.
+
+The companion module PDF::Font can be used to handle a wider range of fonts:
+
+```
+    use PDF::Lite;
+    use PDF::Font;
+    my $pdf = PDF::Lite.new;
+    my $page = $pdf.add-page;
+    $page.MediaBox = [0, 0, 400, 120];
+    my $noto = PDF::Font.load-font: "t/fonts/NotoSans-Regular.ttf";
+
+    $page.text: {
+        .text-position = [10,100];
+        .font = $noto;
+        .say: "Noto Sans Regular";
+    }
+
+    $pdf.save-as: "examples/fonts.pdf";
+```
+
+![example.pdf](examples/.previews/fonts-001.png)
 
 ## Forms and Patterns
 
@@ -158,9 +181,9 @@ use PDF::Lite;
 my $pdf = PDF::Lite.new;
 my $page = $pdf.add-page;
 $page.MediaBox = [0, 0, 400, 120];
-my $font = $page.core-font( :family<Helvetica> );
 
 $page.graphics: {
+    my $font = .core-font( :family<Helvetica> );
     my $form = .xobject-form(:BBox[0, 0, 95, 25]);
     $form.graphics: {
         # Set a background color
@@ -253,6 +276,7 @@ my $pdf = PDF::Lite.open: "t/images.pdf";
 for 1 ... $pdf.page-count -> $page-no {
     say "page: $page-no";
     my $page = $pdf.page: $page-no;
+    # get all X-Objects (images and forms) on the page
     my %object = $page.resources('XObject');
 
     # also report on images embedded in the page content
@@ -389,6 +413,8 @@ $pdf.page(1).gfx(:&callback).ops;
 ```
 
 ## See also
+
+- [PDF::Font](https://github.com/p6-pdf/PDF-Font-p6) for rendering Postscript and TrueType fonts.
 
 - This module (PDF::Lite) is based on [PDF](https://github.com/p6-pdf/PDF-p6) and has all of it methods available. This includes:
 
