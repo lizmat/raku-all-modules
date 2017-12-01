@@ -199,9 +199,11 @@ class PDF::Font::FreeType {
     method !make-index-dict {
         my $FontDescriptor = self!font-descriptor;
         my $BaseFont = $FontDescriptor<FontName>;
-        my $Subtype = :name(self!font-format eq 'TrueType'
-                              ?? 'CIDFontType2'
-                              !! 'CIDFontType0');
+        my $Subtype = :name( given self!font-format {
+            when 'Type1'    {'Type1'}
+            when 'TrueType' {'CIDFontType2'}
+            default { 'CIDFontType0' }
+        });
 
         my $DescendantFonts = [
             :dict{

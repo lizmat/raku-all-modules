@@ -10,7 +10,10 @@ SYNPOSIS
 
     use PDF::Lite;
     use PDF::Font;
-    my $deja = PDF::Font.load-font("t/fonts/DejaVuSans.ttf");
+    my $deja = PDF::Font.load-font: :file<t/fonts/DejaVuSans.ttf>;
+
+    # experimental. requires fontconfig
+    my $deja-vu = PDF::Font.load-font: :name<DejaVuSans>;
 
     my PDF::Lite $pdf .= new;
     $pdf.add-page.text: {
@@ -44,11 +47,9 @@ parameters:
 
         * True-Type (`.ttf`)
 
-        * True-Type Collections (`.ttc`)
-
         * Postscript (`.pfb`, or `.pfa`)
 
 BUGS AND LIMITATIONS
 ====================
 
-  * Font subsetting is not yet implemented. Font are always fully embedded, which may result in large PDF files.
+  * Font subsetting is not yet implemented. I.E. fonts are always fully embedded, which may result in large PDF files.

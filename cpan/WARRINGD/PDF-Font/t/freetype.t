@@ -5,8 +5,8 @@ use Test;
 # ensure consistant document ID generation
 srand(123456);
 my $pdf = PDF::Lite.new;
-my $deja = PDF::Font.load-font("t/fonts/DejaVuSans.ttf");
-my $otf-font = PDF::Font.load-font("t/fonts/Cantarell-Oblique.otf");
+my $deja = PDF::Font.load-font: :file<t/fonts/DejaVuSans.ttf>;
+my $otf-font = PDF::Font.load-font: :file<t/fonts/Cantarell-Oblique.otf>;
 
 $pdf.add-page.text: {
    .font = $deja;
