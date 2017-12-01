@@ -54,7 +54,7 @@ multi sub postfix:<c>  (Rat $value) is export {
 
 =head1 NAME
 
-Math::Constants - blah blah blah
+Math::Constants - A few Math and Physics constants using original notation
 
 =head1 SYNOPSIS
 
@@ -70,7 +70,7 @@ say "And also  φ ", φ, " α ", α,  " ℎ ",  ℎ, " and ℏ ", ℏ,
 
 =head1 DESCRIPTION
 
-Math::Constants is a set of constants used in Physics and Math.
+Math::Constants is a set of constants used in Physics, Chemistry and Math.
 
 φ is a mathematical constant called the Golden Ratio, ℎ,
 and ℏ are different versions of Planck's constant,
@@ -92,7 +92,7 @@ JJ Merelo <jjmerelo@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2016 JJ Merelo
+Copyright 2016, 2017 JJ Merelo
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
