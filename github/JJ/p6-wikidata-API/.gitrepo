@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/JJ/p6-wikidata-API.git
+	branch = master
+	commit = d9f0f79cf2c0346644d12a3bb6ce0907182c2493
+	parent = ec73a5ee0b99a4b88ea36703ac3aaf2219b0fcc3
+	cmdver = 0.4.0
