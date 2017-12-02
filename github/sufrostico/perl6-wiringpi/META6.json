@@ -2,12 +2,13 @@
     "perl"         : "6.c",
     "name"         : "RPi::Wiring::Pi",
     "license"      : "GPL-3.0",
-    "version"      : "2.25.0",
+    "version"      : "2.26.0",
     "authors"      : [ "Aurelio Sanabria (Sufrostico) <sufrostico at gmail dot com>" ],
     "description"  : "Perl 6 wrapper to the WiringPI, a wiring based Raspberry Pi library.",
     "test-depends" : [ "Test" ],
     "provides"     : {
-        "RPi::Wiring::Pi" : "lib/RPi/Wiring/Pi.pm6"
+        "RPi::Wiring::Pi"       : "lib/RPi/Wiring/Pi.pm6",
+        "RPi::Wiring::SPI"      : "lib/RPi/Wiring/SPI.pm6"
     },
     "support"      : {
         "source" : "git://github.com/sufrostico/perl6-wiringpi.git"

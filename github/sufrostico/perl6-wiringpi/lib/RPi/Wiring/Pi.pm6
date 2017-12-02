@@ -374,7 +374,11 @@ sub waitForInterrupt (int32 , int32 ) returns int32 is native(LIB) is export {*}
     program) which runs concurrently with your main program and using the mutex
     mechanisms, safely pass variables between them.  ]
     #sub wiringPiISR (int32 pin, int32 edgeType, &callback ) returns int32 is native(LIB) is export {*};
-sub wiringPiISR (int32 , int32 , &callback ) returns int32 is native(LIB) is export {*};
+# wiringPiISR() does not work on current MoarVM, because this function starts a  new thread
+# and calls the callback from that thread. This causes an 'Unknown Thread ID'
+# panic.
+
+#sub wiringPiISR (int32 , int32 , &callback ()) returns int32 is native(LIB) is export {*};
 
 # Concurrent Processing (multi-threading) --------------------------------------
 

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sufrostico/perl6-wiringpi.git
 	branch = master
-	commit = 616e8453bbf03dddadb7ad24fb0b9f2fdd85b759
-	parent = 6f42d0a9c18ad365f7b79a310b18e28f1925c140
+	commit = c407a9f0dc665de0fd7e971bb857b344b122573e
+	parent = f514f02ef4cadc655722c24c1bf470b5205b8571
 	cmdver = 0.4.0
