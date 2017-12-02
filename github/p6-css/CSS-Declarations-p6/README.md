@@ -307,7 +307,7 @@ The box `new` constructor accepts:
 
     say "font-size is {$box.font.em}";
 
-The '.font' accessor returns an object of type `CSS::Declarations::Font`, with accessor methods: `em`, `ex`, `weight`, `family`, `style` and `leading`.
+The '.font' accessor returns an object of type `CSS::Declarations::Font`, with accessor methods: `em`, `ex`, `weight`, `family`, `style`, `leading` and `fontconfig-pattern`.
 
 #### top, right, bottom, left
 
