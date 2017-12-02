@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bbkr/GeoIPerl6.git
 	branch = master
-	commit = 0510a5305c528dcd8d0ec3eef6aaa5ce6626c7f6
-	parent = f7053d2758c4f3176a8c761d498c70192bc23463
+	commit = 33bfc8818597b1276896661f4ff91a8bacc40d3b
+	parent = b2aeb47f10090617ec6384254a2bdee8563ce269
 	cmdver = 0.4.0
