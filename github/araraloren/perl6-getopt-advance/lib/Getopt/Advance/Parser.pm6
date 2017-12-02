@@ -404,7 +404,7 @@ sub process-main($optset, @noa) {
 sub process-pos($optset, @noa is copy) {
     my %cmd = $optset.get-cmd();
     my %pos = $optset.get-pos();
-    my Array %need-sort-pos;
+    my %need-sort-pos;
     my ($cmd-matched, $front-matched) = (False, False);
 
     # check cmd
@@ -429,16 +429,16 @@ sub process-pos($optset, @noa is copy) {
     # if cmd match, pos check start from the next non-option argument
     for %pos.values -> $pos {
         %need-sort-pos{
-            -> $index {
+            -> $index { # cmd pos index base on 0
                 $index ~~ WhateverCode ?? $index.(+@noa) !! $index;
-            }($pos.index);
+            }($pos.index)
         }.push: $pos;
     }
 
     my @fix-noa = $cmd-matched ?? @noa.map({ $^a.clone(index => $^a.index - 1); }) !! @noa;
 
     # check front pos
-    if +@noa > 0 {
+    if +@noa > 0 && (%need-sort-pos{0}:exists) {
         for @(%need-sort-pos{0}) -> $front {
             try {
                 if $front.($optset, @fix-noa[0]) {

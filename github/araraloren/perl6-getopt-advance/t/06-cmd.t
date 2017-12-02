@@ -1,9 +1,9 @@
 
-
 use Test;
 use Getopt::Advance;
+use Getopt::Advance::Exception;
 
-plan 3;
+plan 6;
 
 my OptionSet $optset .= new;
 
@@ -34,4 +34,26 @@ sub main($ret) {
     } elsif $optset.get-cmd("multi").success {
         is ([*] @noa>>.value>>.Int), 3628800, "multi ok";
     }
+}
+
+my OptionSet $osa .= new;
+
+$osa.insert-main(sub ($os, @_) { $os });
+$osa.insert-pos(
+    "want-digit",
+    0,
+    sub ($_) {
+        &ga-try-next-pos("want a digit");
+    }
+);
+
+my OptionSet $osb = $osa.clone();
+my OptionSet $osc = $osa.clone();
+
+$osa.insert-cmd("a");
+$osb.insert-cmd("b");
+$osc.insert-cmd("c");
+
+for < a b c > -> $cmd {
+    is &getopt(<< $cmd >>, $osa, $osb, $osc).optionset, {a => $osa, b => $osb, c => $osc}{$cmd}, "match cmd ok";
 }
