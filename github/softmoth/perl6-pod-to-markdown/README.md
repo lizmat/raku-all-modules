@@ -5,16 +5,10 @@ wn)
 
 ## Installation
 
-Using zef (preferred)
+Using zef
 ```
 $ zef update
 $ zef install Pod::To::Markdown
-```
-
-Using panda:
-```
-$ panda update
-$ panda install Pod::To::Markdown
 ```
 
 NAME
