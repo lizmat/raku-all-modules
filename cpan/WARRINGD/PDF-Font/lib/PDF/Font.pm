@@ -24,15 +24,9 @@ class PDF::Font {
         PDF::Font::Type1.new( :$face, :$font-stream, |c);
     }
 
-    # experimental; resolve font name via fontconfig
+    # resolve font name via fontconfig
     multi method load-font(Str :$name!, |c) {
-        my $cmd =  run('fc-match',  '-f', '%{file}', $name, :out, :err);
-        given $cmd.err.slurp {
-            note $_ if $_;
-        }
-        my $file = $cmd.out.slurp;
-        die "unable to resolve font-name: $name"
-          unless $file;
+        my $file = self.find-font($name);
         self.load-font: :$file, |c;
     }
 
@@ -40,6 +34,15 @@ class PDF::Font {
         die "unsupported font format: {$face.font-format}";
     }
 
+    method find-font(Str $name) {
+        my $cmd =  run('fc-match',  '-f', '%{file}', $name, :out, :err);
+        given $cmd.err.slurp {
+            note $_ if $_;
+        }
+        my $file = $cmd.out.slurp;
+        $file
+          || die "unable to resolve font-name: $name"
+    }
 }
 
 =begin pod
@@ -54,7 +57,7 @@ PDF::Font
  use PDF::Font;
  my $deja = PDF::Font.load-font: :file<t/fonts/DejaVuSans.ttf>;
 
- # experimental. requires fontconfig
+ # requires fontconfig
  my $deja-vu = PDF::Font.load-font: :name<DejaVuSans>;
 
  my PDF::Lite $pdf .= new;
@@ -72,15 +75,18 @@ L<PDF::Lite>,  L<PDF::API6> and other PDF modules.
 
 =head1 METHODS
 
+
 =head3 load-font
 
- PDF::Font.load-font(Str $font-file);
+A class level method to create a new font object.
 
-A class level method to create a new font object from a font file.
+=head4 C<PDF::Font.load-font(Str :$file);>
+
+Loads a font file.
 
 parameters:
 =begin item
-C<$font-file>
+C<:$file>
 
 Font file to load. Currently supported formats are:
 =item2 Open-Type (C<.otf>)
@@ -88,6 +94,31 @@ Font file to load. Currently supported formats are:
 =item2 Postscript (C<.pfb>, or C<.pfa>)
 
 =end item
+
+=head4 C<PDF::Font.load-font(Str :$name);>
+
+ my $vera = PDF::Font.load-font('vera');
+ my $deja = PDF::Font.load-font('Deja:weight=bold:width=condensed:slant=italic');
+
+Loads a font by a fontconfig name.
+
+Note: Requires fontconfig to be installed on the system.
+
+parameters:
+=begin item
+C<:$name>
+
+Name of an installed system font to load.
+
+=end item
+
+=head3 find-font
+
+Locates a font-file bya fontconfig name/pattern. Doesn't actually load it.
+
+   my $file = PDF::Font.find-font('Deja:weight=bold:width=condensed:slant=italic');
+   say $file;  # /usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-BoldOblique.ttf
+   my $font = PDF::Font.load-font( :$file )';
 
 =head1 BUGS AND LIMITATIONS
 

@@ -1,5 +1,10 @@
+Release 0.1.1
+    - Restrict type-1 font to Win encoding, freetype to
+      Identity-H.
+    - Added PDF::Font.find-font method
+
 Release 0.1.0
-    - Fixed font dictonary for type1 identity-h encoding
+    - Fixed font dictionary for type1 identity-h encoding
     - Changed method load-font:
       -- PDF::Font.load-font: :$file; # load from a font file
       -- PDF::Font.load-font: :$name; # load a font by name (experimental)

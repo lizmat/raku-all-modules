@@ -12,7 +12,7 @@ SYNPOSIS
     use PDF::Font;
     my $deja = PDF::Font.load-font: :file<t/fonts/DejaVuSans.ttf>;
 
-    # experimental. requires fontconfig
+    # requires fontconfig
     my $deja-vu = PDF::Font.load-font: :name<DejaVuSans>;
 
     my PDF::Lite $pdf .= new;
@@ -33,13 +33,15 @@ METHODS
 
 ### load-font
 
-    PDF::Font.load-font(Str $font-file);
+A class level method to create a new font object.
 
-A class level method to create a new font object from a font file.
+#### `PDF::Font.load-font(Str :$file);`
+
+Loads a font file.
 
 parameters:
 
-  * `$font-file`
+  * `:$file`
 
     Font file to load. Currently supported formats are:
 
@@ -48,6 +50,29 @@ parameters:
         * True-Type (`.ttf`)
 
         * Postscript (`.pfb`, or `.pfa`)
+
+#### `PDF::Font.load-font(Str :$name);`
+
+    my $vera = PDF::Font.load-font('vera');
+    my $deja = PDF::Font.load-font('Deja:weight=bold:width=condensed:slant=italic');
+
+Loads a font by a fontconfig name.
+
+Note: Requires fontconfig to be installed on the system.
+
+parameters:
+
+  * `:$name`
+
+    Name of an installed system font to load.
+
+### find-font
+
+Locates a font-file bya fontconfig name/pattern. Doesn't actually load it.
+
+    my $file = PDF::Font.find-font('Deja:weight=bold:width=condensed:slant=italic');
+    say $file;  # /usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-BoldOblique.ttf
+    my $font = PDF::Font.load-font( :$file )';
 
 BUGS AND LIMITATIONS
 ====================

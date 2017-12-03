@@ -25,7 +25,8 @@ class PDF::Font::FreeType {
     my subset EncodingScheme of Str where 'mac'|'win'|'identity-h';
     has EncodingScheme $!enc;
 
-    submethod TWEAK(:$!enc = $!face.num-glyphs <= 255 && $!face.has-reliable-glyph-names ?? 'win' !! 'identity-h') {
+    submethod TWEAK {
+        $!enc = self!font-format eq 'Type1' ?? 'win' !! 'identity-h';
         $!encoder = $!enc eq 'identity-h'
             ?? PDF::Font::Enc::Identity-H.new: :$!face
             !! PDF::Font::Enc::Type1.new: :$!enc, :$!face;
