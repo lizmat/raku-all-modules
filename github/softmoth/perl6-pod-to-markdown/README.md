@@ -1,20 +1,9 @@
-# Pod::To::Markdown (Perl6)
-
-[![Build Status](https://travis-ci.org/softmoth/perl6-pod-to-markdown.svg?branch=master)](https://travis-ci.org/softmoth/perl6-pod-to-markdo
-wn)
-
-## Installation
-
-Using zef
-```
-$ zef update
-$ zef install Pod::To::Markdown
-```
-
 NAME
 ====
 
 Pod::To::Markdown - Render Pod as Markdown
+
+[![Build Status](https://travis-ci.org/softmoth/perl6-pod-to-markdown.svg?branch=master)](https://travis-ci.org/softmoth/perl6-pod-to-markdown)
 
 SYNOPSIS
 ========
@@ -54,9 +43,10 @@ DESCRIPTION
 
 ```
 sub pod2markdown(
-    Pod::Heading $pod,
+    $pod,
+    Str :$positional-separator = "\n\n",
     Bool :$no-fenced-codeblocks
-) returns Mu
+) returns Str
 ```
 
 Render Pod as Markdown

@@ -32,11 +32,10 @@ C<=begin code :lang<perl6>>
 
 =DESCRIPTION
 
-unit class Pod::To::Markdown;
+class Pod::To::Markdown {
 
 my Bool $in-code-block = False;
 
-#| Render Pod as Markdown
 multi sub pod2markdown(Pod::Heading $pod, Bool :$no-fenced-codeblocks) is export {
     my Str $head = pod2markdown(
 	$pod.contents,
@@ -229,7 +228,8 @@ multi sub pod2markdown(Positional $pod, Str :$positional-separator = "\n\n", Boo
 
 multi sub pod2markdown(Pod::Config $pod, Bool :$no-fenced-codeblocks) is export { }
 
-multi sub pod2markdown($pod, Str :$positional-separator? = "\n\n", Bool :$no-fenced-codeblocks) is export {
+#| Render Pod as Markdown
+multi sub pod2markdown($pod, Str :$positional-separator? = "\n\n", Bool :$no-fenced-codeblocks) returns Str is export {
     $pod.Str
 }
 
@@ -272,6 +272,20 @@ sub signature2markdown($params) {
       $params.elems ??
       "(\n    " ~ $params.map({ $_.perl }).join(", \n    ") ~ "\n)"
       !! "()";
+}
+
+}
+
+# Trying to process this file itself results in the following:
+# $ perl6 --doc=Markdown lib/Pod/To/Markdown.pm6
+# ===SORRY!===
+# P6M Merging GLOBAL symbols failed: duplicate definition of symbol Markdown
+#
+# Here's a hack to generate README.md from this POD:
+# perl6 lib/Pod/To/Markdown.pm6 > README.md
+
+sub MAIN() {
+    print Pod::To::Markdown.render($=pod);
 }
 
 # vim: ts=8
