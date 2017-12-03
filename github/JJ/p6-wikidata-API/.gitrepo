@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/JJ/p6-wikidata-API.git
 	branch = master
-	commit = d9f0f79cf2c0346644d12a3bb6ce0907182c2493
-	parent = ec73a5ee0b99a4b88ea36703ac3aaf2219b0fcc3
+	commit = f21751eb0e5e6a9e1268053ef0565a46a9af7b07
+	parent = f15265db3e7d8a865b561917e92678d29aa5e9f6
 	cmdver = 0.4.0

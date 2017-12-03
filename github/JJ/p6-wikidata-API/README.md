@@ -40,3 +40,17 @@ END
   say query-file( $to-file );
 ~~~
   
+There are a few SPARQL queries you can
+try [in this other repo](https://github.com/JJ/wikidata-queries) 
+
+Download one query from that repo to test the command-line utility
+that will be installed too
+
+	wdq.p6 one-query-or-other.sparql
+
+## See also
+
+This module is tested using
+the [`test-perl6`](https://hub.docker.com/r/jjmerelo/test-perl6/)
+Docker container. Check out
+the [Travis configuration file](.travis.yml) for usage.

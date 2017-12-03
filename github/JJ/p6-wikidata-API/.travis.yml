@@ -1,6 +1,14 @@
-language: perl6
-perl6:
-  - latest
+services:
+  - docker
+
 install:
-    - rakudobrew build-zef
-    - zef --debug --depsonly install .
+  - docker pull jjmerelo/test-perl6
+  - docker images
+  - docker run -t --entrypoint="/bin/sh" jjmerelo/test-perl6 -c "apk update && apk upgrade && apk add openssl-dev"
+  - docker run -t --entrypoint="/bin/sh" jjmerelo/test-perl6 -c "perl6 --version; which zef "
+
+script:
+  - docker run -t -v  /home/travis/build/JJ/p6-wikidata-API:/test jjmerelo/test-perl6
+
+
+

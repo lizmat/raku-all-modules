@@ -3,7 +3,6 @@
 	"JJ Merelo"
     ],
     "build-depends" : [ ],
-    "depends" : [ ],
     "description" : "A thin wrapper for querying Wikidata using SPARQL",
     "name" : "Wikidata::API",
     "license" : "GPL-3.0",
@@ -23,5 +22,5 @@
         "Test",
         "Test::META"
     ],
-    "version" : "0.0.3"
+    "version" : "0.0.4"
 }
