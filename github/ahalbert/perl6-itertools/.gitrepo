@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ahalbert/perl6-itertools.git
 	branch = master
-	commit = 9d80326d3c03090cf5a3ea51dde2976a9d302995
-	parent = f1873a16fd77f0b0092bfc0474abea78c0679c88
+	commit = f46f6626a617888f0edd94ed5e292b3d2f54735e
+	parent = 994848ea978acded7093ed56652383619b3dab39
 	cmdver = 0.4.0
