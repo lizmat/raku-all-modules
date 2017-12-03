@@ -1,6 +1,6 @@
 use v6.c;
 
-unit module Terminal::Spinners:ver<0.0.4>:auth<github:ryn1x>;
+unit module Terminal::Spinners:ver<0.0.5>:auth<github:ryn1x>;
 
 class Spinner is export {
     has $.type        = 'classic';
