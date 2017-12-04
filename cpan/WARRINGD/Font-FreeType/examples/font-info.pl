@@ -33,7 +33,7 @@ sub MAIN(Str $filename) {
     say @properties.join: '  ' if @properties;
 
     say "Units per em: ", $face.units-per-EM if $face.units-per-EM;
-    if ($face.is-scalable) {
+    if $face.is-scalable {
         my $bb = $face.bounding-box;
         say sprintf('Global BBox: (%d,%d):(%d,%d)',
                     <x-min y-min x-max y-max>.map({ $bb."$_"() }) );
@@ -45,7 +45,7 @@ sub MAIN(Str $filename) {
     say "Number of faces: ", $face.num-faces
       if $face.num-faces > 1;
 
-    if ($face.fixed-sizes) {
+    if $face.fixed-sizes {
         say "Fixed sizes:";
         for $face.fixed-sizes -> $size {
             say "    ",

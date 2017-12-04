@@ -1,3 +1,7 @@
+0.0.5
+    - Rename examples/font-say.pl bin/font-say
+    - Don't call FT_Reference_Face, which will cause memory leakage.
+
 0.0.4
     - Add missing build dependency on LibraryMake
 

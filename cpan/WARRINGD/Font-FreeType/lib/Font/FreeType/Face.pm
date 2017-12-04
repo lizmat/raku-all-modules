@@ -17,10 +17,6 @@ class Font::FreeType::Face {
         height max-advance-width max-advance-height size>;
     has UInt $.load-flags = FT_LOAD_DEFAULT;
 
-    submethod TWEAK( :$!struct! ) {
-        $!struct.FT_Reference_Face;
-    }
-
     method units-per-EM { self.is-scalable ?? $!struct.units-per-EM !! Mu }
     method underline-position { self.is-scalable ?? $!struct.underline-position !! Mu }
     method underline-thickness { self.is-scalable ?? $!struct.underline-thickness !! Mu }
@@ -158,8 +154,10 @@ class Font::FreeType::Face {
     }
 
     submethod DESTROY {
-        ft-try({ $!struct.FT_Done_Face;});
-        $!struct = Nil;
+        with $!struct {
+            ft-try({ .FT_Done_Face });
+            $_ = Nil;
+        }
     }
 }
 
@@ -429,6 +427,25 @@ An array of the [charmaps](CharMap.md) of the face.
 =head3 bounding-box()
 
 The outline's bounding box for this face.
+
+=head3 struct
+
+    use Font::FreeType::Native;
+    use Cairo;
+    my FT_Face $ft-face-struct = $face.struct;
+    $ft-face-struct.FT_Reference_Face;
+    my Cairo::Font $font .= create(
+         $ft-face-struct, :free-type,
+    );
+    # some time later...
+    $ft-face.FT_Done_Face;
+    $ft-face = Nil;
+
+This method provides access to the underlying native FT_Face struct; for
+example, for integration with the L<Cairo> graphics library.
+
+The C<FT_Reference_Face> and C<FT_Done_Face> methods will need to be called
+if the struct outlives the parent C<$face> object.
 
 =head1 SEE ALSO
 

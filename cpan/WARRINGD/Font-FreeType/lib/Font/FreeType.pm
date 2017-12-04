@@ -8,6 +8,7 @@ class Font::FreeType {
     use Font::FreeType::Native::Types;
 
     has FT_Library $!library;
+    has Bool $!cleanup = False; # temporarily disabled
     our $lock = Lock.new;
 
     submethod BUILD {
@@ -17,9 +18,13 @@ class Font::FreeType {
     }
 
     submethod DESTROY {
-        $lock.protect: {
-            ft-try({ $!library.FT_Done_FreeType });
-            $!library = Nil;
+        if $!cleanup {
+            $lock.protect: {
+                with $!library {
+                    ft-try({ .FT_Done_FreeType });
+                    $_ = Nil;
+                }
+            }
         }
     }
 
@@ -230,6 +235,37 @@ module and so will be available once you do `use Font::FreeType`.
 Returns the version number of the underlying FreeType library being
 used.  If called in scalar context returns a Version consisting of
 a number in the format "major.minor.patch".
+
+=head1 SCRIPTS
+
+=head3 font-say
+
+ font-say [--resolution=<Int>] [--kern] [--hint] [--ascend=<Int>] [--descend=<Int>] [--char-spacing=<Int>] [--word-spacing=<Int>] [--bold=<Int>] [--mode=<Mode> (lcd lcd-v light mono normal)] [--verbose] <font-file> <text>
+
+This script displays text as bitmapped characters, using a given font. For example:
+
+ % bin/font-say t/fonts/Vera.ttf 'FreeType!'
+ ##########                                     ##############                                       ##
+ ##########                                     ##############                                       ##
+ ###             ###      ###          ###            ###                      ####         ###      ##
+ ###        ########    #######      #######          ###    ###      ###  #########      #######    ##
+ ###        ########   #########    #########         ###     ###    ###   ##########    #########   ##
+ #########  ####      ####   ###   ####   ###         ###     ###    ###   ####   ####  ####   ###   ##
+ #########  ####      ###     ###  ###     ###        ###     ####  ###    ####    ###  ###     ###  ##
+ #########  ###       ###########  ###########        ###      ###  ###    ###     ###  ###########  ##
+ ###        ###       ###########  ###########        ###      ###  ###    ###     ###  ###########  ##
+ ###        ###       ###          ###                ###       ######     ###     ###  ###          ##
+ ###        ###       ###          ###                ###       ######     ####    ###  ###
+ ###        ###       ####     #   ####     #         ###       #####      ####   ####  ####     #   ##
+ ###        ###        #########    #########         ###        ####      ##########    #########   ##
+ ###        ###         ########     ########         ###        ####      #########      ########   ##
+                         #####        #####                      ###       ### ####        #####
+                                                                 ###       ###
+                                                              #####        ###
+                                                              #####        ###
+                                                              ###          ###
+
+
 
 =head1 SEE ALSO
 

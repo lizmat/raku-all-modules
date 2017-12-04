@@ -440,14 +440,14 @@ class FT_Face is export {
         FT_Vector   $kerning)
     returns FT_Error is native($ftlib) {*};
 
-    #| This function can be used to get the font format.
+    #| Return a string describing the format of a given face. Possible values are ‘TrueType’, ‘Type 1’, ‘BDF’, ‘PCF’, ‘Type 42’, ‘CID Type 1’, ‘CFF’, ‘PFR’, and ‘Windows FNT’.
     method FT_Get_Font_Format
         returns Str
         is export
         is symbol('FT_Get_X11_Font_Format') # for FreeType < v2.0.0 compat
         is native($ftlib) {*};
 
-    #| Return a string describing the format of a given face. Possible values are ‘TrueType’, ‘Type 1’, ‘BDF’, ‘PCF’, ‘Type 42’, ‘CID Type 1’, ‘CFF’, ‘PFR’, and ‘Windows FNT’.
+    #| A counter gets initialized to 1 at the time an FT_Face structure is created. This function increments the counter. FT_Done_Face then only destroys a face if the counter is 1, otherwise it simply decrements the counter.
     method FT_Reference_Face
         returns FT_Error
         is export

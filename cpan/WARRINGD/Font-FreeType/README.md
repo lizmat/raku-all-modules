@@ -119,6 +119,36 @@ The following load flags are available. They can be combined with the bit-wise O
 
 Returns the version number of the underlying FreeType library being used. If called in scalar context returns a Version consisting of a number in the format "major.minor.patch".
 
+SCRIPTS
+=======
+
+### font-say
+
+    font-say [--resolution=<Int>] [--kern] [--hint] [--ascend=<Int>] [--descend=<Int>] [--char-spacing=<Int>] [--word-spacing=<Int>] [--bold=<Int>] [--mode=<Mode> (lcd lcd-v light mono normal)] [--verbose] <font-file> <text>
+
+This script displays text as bitmapped characters, using a given font. For example:
+
+    % bin/font-say t/fonts/Vera.ttf 'FreeType!'
+    ##########                                     ##############                                       ##
+    ##########                                     ##############                                       ##
+    ###             ###      ###          ###            ###                      ####         ###      ##
+    ###        ########    #######      #######          ###    ###      ###  #########      #######    ##
+    ###        ########   #########    #########         ###     ###    ###   ##########    #########   ##
+    #########  ####      ####   ###   ####   ###         ###     ###    ###   ####   ####  ####   ###   ##
+    #########  ####      ###     ###  ###     ###        ###     ####  ###    ####    ###  ###     ###  ##
+    #########  ###       ###########  ###########        ###      ###  ###    ###     ###  ###########  ##
+    ###        ###       ###########  ###########        ###      ###  ###    ###     ###  ###########  ##
+    ###        ###       ###          ###                ###       ######     ###     ###  ###          ##
+    ###        ###       ###          ###                ###       ######     ####    ###  ###
+    ###        ###       ####     #   ####     #         ###       #####      ####   ####  ####     #   ##
+    ###        ###        #########    #########         ###        ####      ##########    #########   ##
+    ###        ###         ########     ########         ###        ####      #########      ########   ##
+                            #####        #####                      ###       ### ####        #####
+                                                                    ###       ###
+                                                                 #####        ###
+                                                                 #####        ###
+                                                                 ###          ###
+
 SEE ALSO
 ========
 

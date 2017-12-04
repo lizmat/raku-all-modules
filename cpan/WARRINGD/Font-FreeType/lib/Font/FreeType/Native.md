@@ -358,7 +358,7 @@ Return the kerning vector between two glyphs of the same face.
 method FT_Get_Font_Format() returns Str
 ```
 
-This function can be used to get the font format.
+Return a string describing the format of a given face. Possible values are ‘TrueType’, ‘Type 1’, ‘BDF’, ‘PCF’, ‘Type 42’, ‘CID Type 1’, ‘CFF’, ‘PFR’, and ‘Windows FNT’.
 
 ### method FT_Reference_Face
 
@@ -366,7 +366,7 @@ This function can be used to get the font format.
 method FT_Reference_Face() returns uint32
 ```
 
-Return a string describing the format of a given face. Possible values are ‘TrueType’, ‘Type 1’, ‘BDF’, ‘PCF’, ‘Type 42’, ‘CID Type 1’, ‘CFF’, ‘PFR’, and ‘Windows FNT’.
+A counter gets initialized to 1 at the time an FT_Face structure is created. This function increments the counter. FT_Done_Face then only destroys a face if the counter is 1, otherwise it simply decrements the counter.
 
 ### method FT_Done_Face
 
