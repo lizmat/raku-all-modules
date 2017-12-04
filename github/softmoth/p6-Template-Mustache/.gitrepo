@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/softmoth/p6-Template-Mustache.git
 	branch = master
-	commit = 5c0ecdbf2a35f26299d4b471307a946a68494171
-	parent = 3649e6a2bc8314275fbee727ef5af2df3f2e8e9f
+	commit = dbdb6dcd11698dfd0efe6730eb711db483fe5890
+	parent = cf32486fd88abc3f32979d37caeac606f0b83963
 	cmdver = 0.4.0
