@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/drforr/perl6-Format-Lisp.git
 	branch = master
-	commit = 80db916b44b34a4b573bd8097093f675275ebbdf
-	parent = 9957a6b1bdf45c34917e73d2c03e3024ea1745ca
+	commit = a46d8ab4421990ab6deda31ceee9c6850b6a5e0d
+	parent = dccf167ae9172fc1db5211a313e4cbe602278f70
 	cmdver = 0.4.0

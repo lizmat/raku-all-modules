@@ -43,7 +43,7 @@ ok def-format-test( Q{~[a~]}, ( 1 ), Q{} ), Q{format.cond.5};
 #         collect (format nil "~[a~;b~;c~;d~;e~;f~;g~;h~;i~]" i))
 #   ("" "a" "b" "c" "d" "e" "f" "g" "h" "i" "" ""))
 # 
-is-deeply do {
+ok deftest( {
 	my @collected;
 	for -1 .. 10 -> $i {
 		@collected.append(
@@ -51,8 +51,9 @@ is-deeply do {
 		);
 	}
 	@collected;
-}, [ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{}
-], Q{format.cond.7};
+},
+[ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{} ],
+), Q{format.cond.7};
 )
 
 #`(
@@ -62,50 +63,48 @@ is-deeply do {
 #           collect (formatter-call-to-string fn i)))
 #   ("" "a" "b" "c" "d" "e" "f" "g" "h" "i" "" ""))
 # 
-is-deeply do {
+ok deftest( {
 	my $fn = $*fl.formatter( Q{~[a~;b~;c~;d~;e~;f~;g~;h~;i~] );
 	my @collected;
 	for -1 .. 10 -> $i {
-		@collected.append(
-			$*fl.formatter-call-to-string( $fn, $i )
-		);
+		@collected.append( formatter-call-to-string( $fn, $i ) );
 	}
 	@collected;
-}, [ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{}
-], Q{format.cond.7};
+},
+[ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{} ]
+), Q{format.cond.7};
 )
 
 #`(
 # (def-format-test format.cond.8
 #   "~0[a~;b~;c~;d~]" (3) "a" 1)
 # 
-is $*fl.format( Q{~0[a~;b~;c~;d~]}, 3 ), Q{a}, Q{format.cond.8};
+ok def-format-test( Q{~0[a~;b~;c~;d~]}, ( 3 ), Q{a}, 1 ), Q{format.cond.8};
 )
 
 # (def-format-test format.cond.9
 #   "~-1[a~;b~;c~;d~]" (3) "" 1)
 # 
-is $*fl.format( Q{~-1[a~;b~;c~;d~]}, 3 ), Q{}, Q{format.cond.9};
+ok def-format-test( Q{~-1[a~;b~;c~;d~]}, ( 3 ), Q{}, 1 ), Q{format.cond.9};
 
 #`(
 # (def-format-test format.cond.10
 #   "~1[a~;b~;c~;d~]" (3) "b" 1)
 # 
-is $*fl.format( Q{~1[a~;b~;c~;d~]}, 3 ), Q{b}, Q{format.cond.10};
+ok def-format-test( Q{~1[a~;b~;c~;d~]}, ( 3 ), Q{b}, 1 ), Q{format.cond.10};
 )
 
 # (def-format-test format.cond.11
 #   "~4[a~;b~;c~;d~]" (3) "" 1)
 # 
-is $*fl.format( Q{~4[a~;b~;c~;d~]}, 3 ), Q{}, Q{format.cond.11};
+ok def-format-test( Q{~4[a~;b~;c~;d~]}, ( 3 ), Q{}, 1 ), Q{format.cond.11};
 
 # (def-format-test format.cond.12
 #   "~100000000000000000000000000000000[a~;b~;c~;d~]" (3) "" 1)
 # 
-is $*fl.format(
-	Q{~100000000000000000000000000000000[a~;b~;c~;d~]},
-	3
-), Q{}, Q{format.cond.12};
+ok def-format-test(
+	Q{~100000000000000000000000000000000[a~;b~;c~;d~]}, ( 3 ), Q{}
+), Q{format.cond.12};
 
 #`(
 # (deftest format.cond.13
@@ -113,7 +112,7 @@ is $*fl.format(
 #         collect (format nil "~v[a~;b~;c~;d~;e~;f~;g~;h~;i~]" i nil))
 #   ("" "a" "b" "c" "d" "e" "f" "g" "h" "i" "" ""))
 # 
-is-deeply do {
+ok deftest( {
 	my @collected;
 	for -1 .. 10 -> $i {
 		@collected.append(
@@ -121,8 +120,9 @@ is-deeply do {
 		);
 	}
 	@collected;
-}, [ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{}
-], Q{format.cond.13};
+},
+[ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{} ],
+), Q{format.cond.13};
 )
 
 #`(
@@ -132,17 +132,16 @@ is-deeply do {
 #           collect (formatter-call-to-string fn i)))
 #   ("" "a" "b" "c" "d" "e" "f" "g" "h" "i" "" ""))
 # 
-is-deeply do {
+ok deftest( {
 	my $fn = $*fl.formatter( Q{~V[a~;b~;c~;d~;e~;f~;g~;h~;i~]} );
 	my @collected;
 	for -1 .. 10 -> $i {
-		@collected.append(
-			$*fl.formatter-call-to-string( $fn, $i )
-		);
+		@collected.append( formatter-call-to-string( $fn, $i ) );
 	}
 	@collected;
-}, [ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{}
-], Q{formatter.cond.13};
+},
+[ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{} ],
+),  Q{formatter.cond.13};
 )
 
 #`(
@@ -151,7 +150,7 @@ is-deeply do {
 #         collect (format nil "~v[a~;b~;c~;d~;e~;f~;g~;h~;i~]" nil i))
 #   ("" "a" "b" "c" "d" "e" "f" "g" "h" "i" "" ""))
 # 
-is-deeply do {
+ok deftest( {
 	my @collected;
 	for -1 .. 10 -> $i {
 		@collected.append(
@@ -159,8 +158,9 @@ is-deeply do {
 		);
 	}
 	@collected;
-}, [ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{}
-], Q{format.cond.13};
+},
+[ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{} ],
+), Q{format.cond.13};
 )
 
 #`(
@@ -169,32 +169,31 @@ is-deeply do {
 #     (loop for i from -1 to 10
 #           collect (formatter-call-to-string fn nil i)))
 #   ("" "a" "b" "c" "d" "e" "f" "g" "h" "i" "" ""))
-# 
-is-deeply do {
+#  
+ok deftest( {
 	my $fn = $*fl.formatter( "~v[a~;b~;c~;d~;e~;f~;g~;h~;i~]" );
 	my @collected;
 	for -1 .. 10 -> $i {
-		@collected.append(
-			$*fl.formatter-call-to-string( $fn, Nil, $i )
-		);
+		@collected.append( formatter-call-to-string( $fn, Nil, $i ) );
 	}
 	@collected;
-}, [ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{}
-], Q{formatter.cond.14};
+},
+[ Q{}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{f}, Q{g}, Q{h}, Q{i}, Q{}, Q{} ],
+), Q{formatter.cond.14};
 )
 
 #`(
 # (def-format-test format.cond.15
 #   "~#[A~;B~]" nil "A")
 # 
-is $*fl.format( Q{~#[A~;B~]} ), Q{A}, Q{format.cond.15};
+ok def-format-test( Q{~#[A~;B~]}, ( ), Q{A} ), Q{format.cond.15};
 )
 
 #`(
 # (def-format-test format.cond.16
 #   "~#[A~;B~]" (nil) "B" 1)
 # 
-is $*fl.format( Q{~#[A~;B~]}, Nil ), Q{B}, Q{format.cond.16};
+ok def-format-test( Q{~#[A~;B~]}, ( Nil ), Q{B}, 1 ), Q{format.cond.16};
 )
 
 subtest {
@@ -207,7 +206,7 @@ subtest {
 	#         collect (list i s))
 	#   nil)
 	# 
-	is do {
+	ok deftest( {
 		my @collected;
 		for -100 .. 100 -> $i {
 			my $s = $*fl.format( Q{~[~:;a~]}, $i );
@@ -215,8 +214,10 @@ subtest {
 				@collected.append( [ $i, $s ] );
 			}
 		}
-		@collected.elems;
-	}, 0, Q{format.cond:.1};
+		@collected;
+	},
+	[ ]
+	), Q{format.cond:.1};
 	)
 
 	#`(
@@ -228,24 +229,26 @@ subtest {
 	#           collect (list i s)))
 	#   nil)
 	# 
-	is do {
+	ok deftest( {
 		my $fn = $*fl.formatter( Q{~[~:;a~]} );
 		my @collected;
 		for -100 .. 100 -> $i {
-			my $s = $*fl.formatter-call-to-string( $fn, $i );
+			my $s = formatter-call-to-string( $fn, $i );
 			unless $i == 0 or $s eq Q{a} {
 				@collected.append( [ $i, $s ] );
 			}
 		}
-		@collected.elems;
-	}, 0, Q{formatter.cond:.1};
+		@collected;
+	},
+	[ ]
+	), Q{formatter.cond:.1};
 	)
 
 	#`(
 	# (def-format-test format.cond\:.2
 	#   "~[a~:;b~]" (0) "a")
 	# 
-	is $*fl.format( Q{~[a~:;b~]}, 0 ), Q{a}, Q{format.cond:.2};
+	ok def-format-test( Q{~[a~:;b~]}, ( 0 ), Q{a} ), Q{format.cond:.2};
 	)
 
 	# (def-format-test format.cond\:.3
@@ -264,7 +267,7 @@ subtest {
 	#         collect (format nil "~[a~;b~;c~;d~:;e~]" i))
 	#   ("e" "a" "b" "c" "d" "e" "e" "e" "e" "e" "e" "e"))
 	# 
-	is-deeply do {
+	ok deftest( {
 		my @collected;
 		for -1 .. 10 -> $i {
 			@collected.append(
@@ -272,8 +275,10 @@ subtest {
 			);
 		}
 		@collected;
-	}, [ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}
-	], Q{format.cond.5};
+	},
+	[ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e},
+	  Q{e}, Q{e}, Q{e}, Q{e}, Q{e} ]
+	), Q{format.cond.5};
 	)
 
 	#`(
@@ -283,17 +288,19 @@ subtest {
 	#           collect (formatter-call-to-string fn i)))
 	#   ("e" "a" "b" "c" "d" "e" "e" "e" "e" "e" "e" "e"))
 	# 
-	is-deeply do {
+	ok deftest( {
 		my $fn = $*fl.formatter( "~[a~;b~;c~;d~:;e~]" );
 		my @collected;
 		for -1 .. 10 -> $i {
 			@collected.append(
-				$*fl.formatter-call-to-string( $fn, $i )
+				formatter-call-to-string( $fn, $i )
 			);
 		}
 		@collected;
-	}, [ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}
-	], Q{formatter.cond.5};
+	},
+	[ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e},
+	  Q{e}, Q{e}, Q{e}, Q{e}, Q{e} ]
+	), Q{formatter.cond.5};
 	)
 
 	#`(
@@ -302,7 +309,7 @@ subtest {
 	#         collect (format nil "~v[a~;b~;c~;d~:;e~]" i nil))
 	#   ("e" "a" "b" "c" "d" "e" "e" "e" "e" "e" "e" "e"))
 	# 
-	is-deeply do {
+	ok deftest( {
 		my @collected;
 		for -1 .. 10 -> $i {
 			@collected.append(
@@ -310,8 +317,10 @@ subtest {
 			);
 		}
 		@collected;
-	}, [ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}
-	], Q{format.cond:.6};
+	},
+	[ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e},
+	  Q{e}, Q{e}, Q{e}, Q{e}, Q{e} ]
+	), Q{format.cond:.6};
 	)
 
 	#`(
@@ -321,17 +330,19 @@ subtest {
 	#           collect (formatter-call-to-string fn i)))
 	#   ("e" "a" "b" "c" "d" "e" "e" "e" "e" "e" "e" "e"))
 	# 
-	is-deeply do {
+	ok deftest( {
 		my $fn = $*fl.formatter( "~v[a~;b~;c~;d~:;e~]" );
 		my @collected;
 		for -1 .. 10 -> $i {
 			@collected.append(
-				$*fl.format( $fn, $i, Nil )
+				formatter-call-to-string( $fn, $i )
 			);
 		}
 		@collected;
-	}, [ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}
-	], Q{formatter.cond:.6};
+	},
+	[ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e},
+	  Q{e}, Q{e}, Q{e}, Q{e}, Q{e} ]
+	), Q{formatter.cond:.6};
 	)
 
 	#`(
@@ -340,7 +351,7 @@ subtest {
 	#         collect (format nil "~v[a~;b~;c~;d~:;e~]" nil i))
 	#   ("e" "a" "b" "c" "d" "e" "e" "e" "e" "e" "e" "e"))
 	# 
-	is-deeply do {
+	ok deftest( {
 		my @collected;
 		for -1 .. 10 -> $i {
 			@collected.append(
@@ -348,8 +359,10 @@ subtest {
 			);
 		}
 		@collected;
-	}, [ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}
-	], Q{format.cond:.7};
+	},
+	[ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e},
+	  Q{e}, Q{e}, Q{e}, Q{e}, Q{e} ]
+	), Q{format.cond:.7};
 	)
 
 	#`(
@@ -359,31 +372,35 @@ subtest {
 	#           collect (formatter-call-to-string fn nil i)))
 	#   ("e" "a" "b" "c" "d" "e" "e" "e" "e" "e" "e" "e"))
 	# 
-	is-deeply do {
+	ok deftest( {
 		my $fn = $*fl.formatter( "~v[a~;b~;c~;d~:;e~]" );
 		my @collected;
 		for -1 .. 10 -> $i {
 			@collected.append(
-				$*fl.formatter-call-to-string( $fn, Nil, $i )
+				formatter-call-to-string( $fn, Nil, $i )
 			);
 		}
 		@collected;
-	}, [ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e}
-	], Q{formatter.cond:.7};
+	},
+	[ Q{e}, Q{a}, Q{b}, Q{c}, Q{d}, Q{e},
+	  Q{e}, Q{e}, Q{e}, Q{e}, Q{e}, Q{e} ]
+	), Q{formatter.cond:.7};
 	)
 
 	#`(
 	# (def-format-test format.cond\:.8
 	#   "~#[A~:;B~]" nil "A")
 	# 
-	is $*fl.format( Q{~#[A~:;B~]} ), Q{A}, Q{format.cond:.8};
+	ok def-format-test( Q{~#[A~:;B~]}, ( ), Q{A} ), Q{format.cond:.8};
 	)
 
 	#`(
 	# (def-format-test format.cond\:.9
-	#   "~#[A~:;B~]" (nil nil) "B" 2)
+	#   "~#[A~:;B~]" (nil nil) "B" 2) 
 	# 
-	is $*fl.format( Q{~#[A~:;B~]}, Nil, Nil ), Q{B}, Q{format.cond:.9};
+	ok def-format-test(
+		Q{~#[A~:;B~]}, ( Nil, Nil ), Q{B}, 2
+	), Q{format.cond:.9};
 	)
 }, Q{~[ .~:;  ~]};
 
@@ -393,7 +410,7 @@ subtest {
 	# (def-format-test format.\:cond.1
 	#   "~:[a~;b~]" (nil) "a")
 	# 
-	is $*fl.format( Q{~#:a~;b~]}, Nil ), Q{a}, Q{format.:cond.1};
+	ok def-format-test( Q{~#:a~;b~]}, ( Nil ), Q{a} ), Q{format.:cond.1};
 	)
 
 	#`(
@@ -404,7 +421,7 @@ subtest {
 	#         collect (list x s))
 	#   nil)
 	# 
-	is do {
+	ok deftest( {
 		die; # mini-univere isn't finished
 		my @collected;
 		for @mini-universe -> $x {
@@ -413,8 +430,10 @@ subtest {
 				@collected.append( [ $x, $s ] );
 			}
 		}
-		@collected.elems;
-	}, 0, Q{format.:cond.2};
+		@collected;
+	},
+	[ ]
+	), Q{format.:cond.2};
 	)
 
 	#`(
@@ -426,18 +445,20 @@ subtest {
 	#           collect (list x s)))
 	#   nil)
 	# 
-	is do {
+	ok deftest( {
 		my $fn = $*fl.formatter( "~:[a~;b~]" );
 		die; # mini-univere isn't finished
 		my @collected;
 		for @mini-universe -> $x {
-			my $s = $*fl.formatter-call-to-string( $fn, $x );
+			my $s = formatter-call-to-string( $fn, $x );
 			if $x and $s ne Q{b} {
 				@collected.append( [ $x, $s ] );
 			}
 		}
-		@collected.elems;
-	}, 0, Q{format.:cond.2};
+		@collected;
+	},
+	[ ]
+	), Q{format.:cond.2};
 	)
 }, Q{~:[...~]};
 
@@ -447,22 +468,14 @@ subtest {
 	# (def-format-test format.@cond.1
 	#   "~@[X~]Y~A" (1) "XY1")
 	# 
-	ok def-format-test(
-		Q{~@[X~]Y~A},
-		( 1 ),
-		Q{XY1}
-	), Q{format.@cond.1};
+	ok def-format-test( Q{~@[X~]Y~A}, ( 1 ), Q{XY1}), Q{format.@cond.1};
 	)
 
 	#`(
 	# (def-format-test format.@cond.2
 	#   "~@[X~]Y~A" (nil 2) "Y2")
 	# 
-	ok def-format-test(
-		Q{~@[X~]Y~A},
-		( Nil, 2 ),
-		Q{Y2}
-	), Q{format.@cond.2};
+	ok def-format-test( Q{~@[X~]Y~A}, ( Nil, 2 ), Q{Y2}), Q{format.@cond.2};
 	)
 }, Q{~@[ ... ~]};
 

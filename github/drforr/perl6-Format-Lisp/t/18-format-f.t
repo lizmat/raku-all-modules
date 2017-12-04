@@ -5,7 +5,7 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
 # ;;; Equivalent to PRIN1 for 0 or (abs x) in range [10^-3,10^7).
 # 
@@ -26,19 +26,20 @@ my $fl = Format::Lisp.new;
 #      collect (list x type s1 s2 s3)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~F} );
 	my @collected;
 	for 0.0, -0.0 -> $x { # XXX Not a lot of different types.
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 #	}
-	@collected.elems;
-}, 0, Q{format.f.1};
+	@collected
+}, [ ]
+), Q{format.f.1};
 )
 
 #`(
@@ -62,19 +63,20 @@ is do {
 #      collect (list x s1 s2 s3)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~f} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~f} );
 	my @collected;
 	for 1 .. 1000 {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.2};
+	@collected;
+}, [ ]
+), Q{format.f.2};
 )
 
 #`(
@@ -97,19 +99,20 @@ is do {
 #      collect (list x s1 s2 s3)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~F} );
 	my @collected;
 	for 1 .. 1000 {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.3};
+	@collected;
+}, [ ]
+), Q{format.f.3};
 )
 
 #`(
@@ -122,20 +125,21 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~3f} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~3f} );
 	my @collected;
 	for 1, 1.0 -> $x {
 #	for @standard-chars -> $c {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.4};
+	@collected;
+}, [ ]
+), Q{format.f.4};
 )
 
 #`(
@@ -148,19 +152,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~2f} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~2f} );
 	my @collected;
 	for 1, 1.0 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.5};
+	@collected;
+}, [ ]
+), Q{format.f.5};
 )
 
 #`(
@@ -173,19 +178,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~4F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~4F} );
 	my @collected;
 	for 1, 1.0 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.6};
+	@collected;
+}, [ ]
+), Q{format.f.6};
 )
 
 #`(
@@ -198,19 +204,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~4@F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~4@F} );
 	my @collected;
 	for 1, 1.0 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.7};
+	@collected;
+}, [ ]
+), Q{format.f.7};
 )
 
 #`(
@@ -223,19 +230,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~3@F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~3@F} );
 	my @collected;
 	for 1, 1.0 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.8};
+	@collected;
+}, [ ]
+), Q{format.f.8};
 )
 
 #`(
@@ -248,19 +256,20 @@ is do {
 #           collect (list (- x) s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~4f} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~4f} );
 	my @collected;
 	for 1, 1.0 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.9};
+	@collected;
+}, [ ]
+), Q{format.f.9};
 )
 
 #`(
@@ -273,19 +282,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~3F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~3F} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.10};
+	@collected;
+}, [ ]
+), Q{format.f.10};
 )
 
 #`(
@@ -298,19 +308,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~4f} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~4f} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.11};
+	@collected;
+}, [ ]
+), Q{format.f.11};
 )
 
 #`(
@@ -323,19 +334,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~4,2F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~4,2F} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.12};
+	@collected;
+}, [ ]
+), Q{format.f.12};
 )
 
 #`(
@@ -348,19 +360,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~3,2F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~3,2F} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.13};
+	@collected;
+}, [ ]
+), Q{format.f.13};
 )
 
 #`(
@@ -373,19 +386,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~2,1F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~2,1F} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.14};
+	@collected;
+}, [ ]
+), Q{format.f.14};
 )
 
 #`(
@@ -398,19 +412,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~4,2@F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~4,2@F} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.15};
+	@collected;
+}, [ ]
+), Q{format.f.15};
 )
 
 #`(
@@ -423,19 +438,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~2,2F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~2,2F} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.16};
+	@collected;
+}, [ ]
+), Q{format.f.16};
 )
 
 #`(
@@ -448,19 +464,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~,2F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~,2F} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.17};
+	@collected;
+}, [ ]
+), Q{format.f.17};
 )
 
 #`(
@@ -474,19 +491,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~,2F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~,2F} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.18};
+	@collected;
+}, [ ]
+), Q{format.f.18};
 )
 
 #`(
@@ -499,19 +517,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~4,2,-1F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~4,2,-1F} );
 	my @collected;
 	for 5, 5.0 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.19};
+	@collected;
+}, [ ]
+), Q{format.f.19};
 )
 
 #`(
@@ -524,19 +543,20 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~4,2,0F} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~4,2,0F} );
 	my @collected;
 	for 1/2, 0.5 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.20};
+	@collected;
+}, [ ]
+), Q{format.f.20};
 )
 
 #`(
@@ -549,317 +569,332 @@ is do {
 #           collect (list x s s2)))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~4,2,1f} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~4,2,1f} );
 	my @collected;
 	for 1/20, 0.05 -> $x {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.21};
+	@collected;
+}, [ ]
+), Q{format.f.21};
 )
 
-# ;;; overflow
-# 
-#`(
-# (deftest format.f.22
-#   (let ((fn (formatter "~5,1,,'*F")))
-#     (loop for x in (remove-duplicates
-#                     '(1000 1000.0s0 1000.0f0 1000.0d0 1000.0l0))
-#           for s = (format nil "~5,1,,'*f" x)
-#           for s2 = (formatter-call-to-string fn x)
-#           unless (and (string= s "*****") (string= s s2))
-#           collect (list x s s2)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~5,1,,'*F} );
-	my @collected;
-	for 1000, 1000.0 -> $x {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.22};
-)
+subtest {
+	1;
+	#`(
+	# (deftest format.f.22
+	#   (let ((fn (formatter "~5,1,,'*F")))
+	#     (loop for x in (remove-duplicates
+	#                     '(1000 1000.0s0 1000.0f0 1000.0d0 1000.0l0))
+	#           for s = (format nil "~5,1,,'*f" x)
+	#           for s2 = (formatter-call-to-string fn x)
+	#           unless (and (string= s "*****") (string= s s2))
+	#           collect (list x s s2)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~5,1,,'*F} );
+		my @collected;
+		for 1000, 1000.0 -> $x {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.22};
+	)
 
-#`(
-# (deftest format.f.23
-#   (let ((fn (formatter "~5,1,,'*f")))
-#     (loop for x in (remove-duplicates
-#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
-#           for s = (format nil "~5,1,,'*f" x)
-#           for s2 = (formatter-call-to-string fn x)
-#           unless (and (string= s "100.0") (string= s s2))
-#           collect (list x s s2)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~5,1,,'*f} );
-	my @collected;
-	for 100, 100.0 -> $x {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.23};
-)
+	#`(
+	# (deftest format.f.23
+	#   (let ((fn (formatter "~5,1,,'*f")))
+	#     (loop for x in (remove-duplicates
+	#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
+	#           for s = (format nil "~5,1,,'*f" x)
+	#           for s2 = (formatter-call-to-string fn x)
+	#           unless (and (string= s "100.0") (string= s s2))
+	#           collect (list x s s2)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~5,1,,'*f} );
+		my @collected;
+		for 100, 100.0 -> $x {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.23};
+	)
 
-#`(
-# (deftest format.f.24
-#   (let ((fn (formatter "~4,0,,'*F")))
-#     (loop for x in (remove-duplicates
-#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
-#           for s = (format nil "~4,0,,'*f" x)
-#           for s2 = (formatter-call-to-string fn x)
-#           unless (and (string= s "100.") (string= s s2))
-#           collect (list x s s2)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~4,0,,'*F} );
-	my @collected;
-	for 100, 100.0 -> $x {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.24};
-)
+	#`(
+	# (deftest format.f.24
+	#   (let ((fn (formatter "~4,0,,'*F")))
+	#     (loop for x in (remove-duplicates
+	#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
+	#           for s = (format nil "~4,0,,'*f" x)
+	#           for s2 = (formatter-call-to-string fn x)
+	#           unless (and (string= s "100.") (string= s s2))
+	#           collect (list x s s2)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~4,0,,'*F} );
+		my @collected;
+		for 100, 100.0 -> $x {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.24};
+	)
 
-#`(
-# (deftest format.f.25
-#   (let ((fn (formatter "~1,1,,f")))
-#     (loop for x in (remove-duplicates
-#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
-#           for s = (format nil "~1,1,,f" x)
-#           for s2 = (formatter-call-to-string fn x)
-#           unless (and (string= s "100.0") (string= s s2))
-#           collect (list x s s2)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~1,1,,f} );
-	my @collected;
-	for 100, 100.0 -> $x {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.25};
-)
+	#`(
+	# (deftest format.f.25
+	#   (let ((fn (formatter "~1,1,,f")))
+	#     (loop for x in (remove-duplicates
+	#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
+	#           for s = (format nil "~1,1,,f" x)
+	#           for s2 = (formatter-call-to-string fn x)
+	#           unless (and (string= s "100.0") (string= s s2))
+	#           collect (list x s s2)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~1,1,,f} );
+		my @collected;
+		for 100, 100.0 -> $x {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.25};
+	)
+}, Q{overflow};
 
-# ;;; padchar
-# 
-#`(
-# (deftest format.f.26
-#   (let ((fn (formatter "~10,1,,f")))
-#     (loop for x in (remove-duplicates
-#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
-#           for s = (format nil "~10,1,,f" x)
-#           for s2 = (formatter-call-to-string fn x)
-#           unless (and (string= s "     100.0") (string= s s2))
-#           collect (list x s s2)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~10,1,,f} );
-	my @collected;
-	for 100, 100.0 -> $x {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.25};
-)
+subtest {
+	1;
+	#`(
+	# (deftest format.f.26
+	#   (let ((fn (formatter "~10,1,,f")))
+	#     (loop for x in (remove-duplicates
+	#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
+	#           for s = (format nil "~10,1,,f" x)
+	#           for s2 = (formatter-call-to-string fn x)
+	#           unless (and (string= s "     100.0") (string= s s2))
+	#           collect (list x s s2)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~10,1,,f} );
+		my @collected;
+		for 100, 100.0 -> $x {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.25};
+	)
 
-#`(
-# (deftest format.f.27
-#   (let ((fn (formatter "~10,1,,,'*F")))
-#     (loop for x in (remove-duplicates
-#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
-#           for s = (format nil "~10,1,,,'*f" x)
-#           for s2 = (formatter-call-to-string fn x)
-#           unless (and (string= s "*****100.0") (string= s s2))
-#           collect (list x s s2)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~10,1,,,'*F} );
-	my @collected;
-	for 100, 100.0 -> $x {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.27};
-)
+	#`(
+	# (deftest format.f.27
+	#   (let ((fn (formatter "~10,1,,,'*F")))
+	#     (loop for x in (remove-duplicates
+	#                     '(100 100.0s0 100.0f0 100.0d0 100.0l0))
+	#           for s = (format nil "~10,1,,,'*f" x)
+	#           for s2 = (formatter-call-to-string fn x)
+	#           unless (and (string= s "*****100.0") (string= s s2))
+	#           collect (list x s s2)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~10,1,,,'*F} );
+		my @collected;
+		for 100, 100.0 -> $x {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.27};
+	)
+}, Q{padchar};
 
-# ;;; v parameters
-# 
-#`(
-# (deftest format.f.28
-#   (let ((fn (formatter "~VF")))
-#     (loop for x = (random 100.0)
-#           for s1 = (format nil "~f" x)
-#           for s2 = (format nil "~vf" nil x)
-#           for s3 = (formatter-call-to-string fn nil x)
-#           repeat 100
-#           unless (and (string= s1 s2) (string= s2 s3))
-#           collect (list x s1 s2 s3)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~VF} );
-	my @collected;
-	for 1 .. 100 {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.28};
-)
+subtest {
+	1;
+	#`(
+	# (deftest format.f.28
+	#   (let ((fn (formatter "~VF")))
+	#     (loop for x = (random 100.0)
+	#           for s1 = (format nil "~f" x)
+	#           for s2 = (format nil "~vf" nil x)
+	#           for s3 = (formatter-call-to-string fn nil x)
+	#           repeat 100
+	#           unless (and (string= s1 s2) (string= s2 s3))
+	#           collect (list x s1 s2 s3)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~VF} );
+		my @collected;
+		for 1 .. 100 {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.28};
+	)
 
-#`(
-# (deftest format.f.29
-#   (let ((fn (formatter "~,vf")))
-#     (loop for x = (random 100.0)
-#           for s1 = (format nil "~f" x)
-#           for s2 = (format nil "~,vf" nil x)
-#           for s3 = (formatter-call-to-string fn nil x)
-#           repeat 100
-#           unless (and (string= s1 s2) (string= s2 s3))
-#           collect (list x s1 s2 s3)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~,vf} );
-	my @collected;
-	for 1 .. 100 {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.29};
-)
+	#`(
+	# (deftest format.f.29
+	#   (let ((fn (formatter "~,vf")))
+	#     (loop for x = (random 100.0)
+	#           for s1 = (format nil "~f" x)
+	#           for s2 = (format nil "~,vf" nil x)
+	#           for s3 = (formatter-call-to-string fn nil x)
+	#           repeat 100
+	#           unless (and (string= s1 s2) (string= s2 s3))
+	#           collect (list x s1 s2 s3)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~,vf} );
+		my @collected;
+		for 1 .. 100 {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.29};
+	)
 
-#`(
-# (deftest format.f.30
-#   (let ((fn (formatter "~,,Vf")))
-#     (loop for x = (random 100.0)
-#           for s1 = (format nil "~f" x)
-#           for s2 = (format nil "~,,vf" nil x)
-#           for s3 = (formatter-call-to-string fn nil x)
-#           repeat 100
-#           unless (and (string= s1 s2) (string= s2 s3))
-#           collect (list x s1 s2 s3)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~,,Vf} );
-	my @collected;
-	for 1 .. 100 {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.30};
-)
+	#`(
+	# (deftest format.f.30
+	#   (let ((fn (formatter "~,,Vf")))
+	#     (loop for x = (random 100.0)
+	#           for s1 = (format nil "~f" x)
+	#           for s2 = (format nil "~,,vf" nil x)
+	#           for s3 = (formatter-call-to-string fn nil x)
+	#           repeat 100
+	#           unless (and (string= s1 s2) (string= s2 s3))
+	#           collect (list x s1 s2 s3)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~,,Vf} );
+		my @collected;
+		for 1 .. 100 {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.30};
+	)
 
-#`(
-# (deftest format.f.31
-#   (let ((fn (formatter "~,,,vF")))
-#     (loop for x = (random 100.0)
-#           for s1 = (format nil "~f" x)
-#           for s2 = (format nil "~,,,vf" nil x)
-#           for s3 = (formatter-call-to-string fn nil x)
-#           repeat 100
-#           unless (and (string= s1 s2) (string= s2 s3))
-#           collect (list x s1 s2 s3)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~,,,vF} );
-	my @collected;
-	for 1 .. 100 {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.31};
-)
+	#`(
+	# (deftest format.f.31
+	#   (let ((fn (formatter "~,,,vF")))
+	#     (loop for x = (random 100.0)
+	#           for s1 = (format nil "~f" x)
+	#           for s2 = (format nil "~,,,vf" nil x)
+	#           for s3 = (formatter-call-to-string fn nil x)
+	#           repeat 100
+	#           unless (and (string= s1 s2) (string= s2 s3))
+	#           collect (list x s1 s2 s3)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~,,,vF} );
+		my @collected;
+		for 1 .. 100 {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.31};
+	)
 
-#`(
-# (deftest format.f.32
-#   (let ((fn (formatter "~,,,,VF")))
-#     (loop for x = (random 100.0)
-#           for s1 = (format nil "~f" x)
-#           for s2 = (format nil "~,,,,vf" nil x)
-#           for s3 = (formatter-call-to-string fn nil x)
-#           repeat 100
-#           unless (and (string= s1 s2) (string= s2 s3))
-#           collect (list x s1 s2 s3)))
-#   nil)
-# 
-is do {
-	my $fn = $fl.formatter( Q{~,,,,VF} );
-	my @collected;
-	for 1 .. 100 {
-#		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
-#		unless $s1 eq $s1 and $s2 eq $s3 {
-#			@collected.append( [ $c, $s1, $s2, $s3 ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.f.32};
-)
+	#`(
+	# (deftest format.f.32
+	#   (let ((fn (formatter "~,,,,VF")))
+	#     (loop for x = (random 100.0)
+	#           for s1 = (format nil "~f" x)
+	#           for s2 = (format nil "~,,,,vf" nil x)
+	#           for s3 = (formatter-call-to-string fn nil x)
+	#           repeat 100
+	#           unless (and (string= s1 s2) (string= s2 s3))
+	#           collect (list x s1 s2 s3)))
+	#   nil)
+	# 
+	ok deftest( {
+		my $fn = $*fl.formatter( Q{~,,,,VF} );
+		my @collected;
+		for 1 .. 100 {
+	#		my $s1 = $c;
+	#		my $s2 = $*fl.format( Q{~a}, $s1 );
+	#		my $s3 = formatter-call-to-string( $fn, $s1 );
+	#		unless $s1 eq $s1 and $s2 eq $s3 {
+	#			@collected.append( [ $c, $s1, $s2, $s3 ] );
+	#		}
+		}
+		@collected;
+	}, [ ]
+	), Q{format.f.32};
+	)
+}, Q{v parameters};
 
 # ;;; Randomized tests
 # 
@@ -901,18 +936,19 @@ is do {
 #            collect (list i sf s i2))))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for (1 >> 13) - 1 .. (1 >> 13) -> $i {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.34};
+	@collected;
+}, [ ]
+), Q{format.f.34};
 )
 
 #`(
@@ -928,18 +964,19 @@ is do {
 #            collect (list i sf s i2))))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 1 .. 2000 {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.35};
+	@collected;
+}, [ ]
+), Q{format.f.35};
 )
 
 #`(
@@ -955,18 +992,19 @@ is do {
 #            collect (list i sf s i2))))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 1 .. 2000 {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.36};
+	@collected;
+}, [ ]
+), Q{format.f.36};
 )
 
 #`(
@@ -982,18 +1020,19 @@ is do {
 #            collect (list i sf s i2))))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 1 .. 2000 {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.37};
+	@collected;
+}, [ ]
+), Q{format.f.37};
 )
 
 #`(
@@ -1023,18 +1062,19 @@ is do {
 #                 and do (loop-finish)))))))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 #	for @standard-chars -> $c {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 #	}
-	@collected.elems;
-}, 0, Q{format.f.38};
+	@collected;
+}, [ ]
+), Q{format.f.38};
 )
 
 #`(
@@ -1052,18 +1092,19 @@ is do {
 #            collect (list i sf w d s i2))))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 1 .. 2000 {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.39};
+	@collected;
+}, [ ]
+), Q{format.f.39};
 )
 
 #`(
@@ -1081,18 +1122,19 @@ is do {
 #            collect (list i sf w d s i2))))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 1 .. 2000 {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.40};
+	@collected;
+}, [ ]
+), Q{format.f.40};
 )
 
 #`(
@@ -1110,18 +1152,19 @@ is do {
 #            collect (list i sf w d s i2))))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 1 .. 2000 {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.41};
+	@collected;
+}, [ ]
+), Q{format.f.41};
 )
 
 #`(
@@ -1157,18 +1200,19 @@ is do {
 #      collect (list x w d k overflowchar padchar f1 s1 s2)))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 1 .. 2000 {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 	}
-	@collected.elems;
-}, 0, Q{format.f.42};
+	@collected;
+}, [ ]
+), Q{format.f.42};
 )
 
 # ;;; This failed in sbcl 0.8.12.25
@@ -1177,7 +1221,7 @@ is do {
 # (def-format-test format.f.43
 #   "~,,,,',f" (0.0) "0.0")
 # 
-is $fl.format( Q{~,,,,',f}, 0.0 ), Q{0.0}, Q{format.f.43};
+ok def-format-test( Q{~,,,,',f}, ( 0.0 ), Q{0.0} ), Q{format.f.43};
 )
 
 #`(
@@ -1192,38 +1236,39 @@ is $fl.format( Q{~,,,,',f}, 0.0 ), Q{0.0}, Q{format.f.43};
 #         collect (list i c f1 s1 s2))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 #	for @standard-chars -> $c {
 #		my $s1 = $c;
-#		my $s2 = $fl.format( Q{~a}, $s1 );
-#		my $s3 = $fl.formatter-call-to-string( $fn, $s1 );
+#		my $s2 = $*fl.format( Q{~a}, $s1 );
+#		my $s3 = formatter-call-to-string( $fn, $s1 );
 #		unless $s1 eq $s1 and $s2 eq $s3 {
 #			@collected.append( [ $c, $s1, $s2, $s3 ] );
 #		}
 #	}
-	@collected.elems;
-}, 0, Q{format.f.44};
+	@collected;
+}, [ ]
+), Q{format.f.44};
 )
 
 #`(
 # (def-format-test format.f.45
 #     "~2f" (1.1) "1.0")
 # 
-is $fl.format( Q{~2f}, 1.1 ), Q{1.0}, Q{format.f.45};
+ok def-format-test( Q{~2f}, ( 1.1 ), Q{1.0} ), Q{format.f.45};
 )
 
 # (def-format-test format.f.45b
 #     "~3f" (1.1) "1.1")
 # 
-is $fl.format( Q{~3f}, 1.1 ), Q{1.1}, Q{format.f.45b};
+ok def-format-test( Q{~3f}, ( 1.1 ), Q{1.1} ), Q{format.f.45b};
 
 # ;; This fails on ECL 15.3.7
 #`(
 # (def-format-test format.f.46
 #     "~0f" (0.01) ".0")
 # 
-is $fl.format( Q{~0f}, 0.01 ), Q{.0}, Q{format.f.46};
+ok def-format-test( Q{~0f}, ( 0.01 ), Q{.0} ), Q{format.f.46};
 )
 
 # ;; sbcl prints "."
@@ -1231,21 +1276,21 @@ is $fl.format( Q{~0f}, 0.01 ), Q{.0}, Q{format.f.46};
 # (def-format-test format.f.46b
 #     "~0,0f" (0.01) "0.")
 # 
-is $fl.format( Q{~0,0f}, 0.01 ), Q{0.}, Q{format.f.46b};
+ok def-format-test( Q{~0,0f}, ( 0.01 ), Q{0.} ), Q{format.f.46b};
 )
 
 # ;; Most implementations print .00
 # (def-format-test format.f.47
 #     "~3f" (0.000001) "0.0")
 # 
-is $fl.format( Q{~3f}, 0.000001 ), Q{0.0}, Q{format.f.47};
+ok def-format-test( Q{~3f}, ( 0.000001 ), Q{0.0} ), Q{format.f.47};
 
 # ;; CCL 1.10 and ECL 15.3.7 ignore k parameter when w and d aren't set
 #`(
 # (def-format-test format.f.48
 #     "~,,2f" (0.1) "10.0")
 # 
-is $fl.format( Q{~,,2f}, 0.1 ), Q{10.0}, Q{format.f.48};
+ok def-format-test( Q{~,,2f}, ( 0.1 ), Q{10.0} ), Q{format.f.48};
 )
 
 done-testing;

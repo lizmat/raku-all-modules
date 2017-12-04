@@ -8,7 +8,7 @@ use Format::Lisp;
 my $*fl = Format::Lisp.new;
 
 subtest {
-	ok def-format-test( Q{X~~~D&}, ( 4 ), Q{X~4&} ), Q{non-nil};
+	is $*fl.format( Q{X~~~D&}, 4 ), Q{X~4&}, Q{non-nil};
 }, Q{missing coverage};
 
 # (def-format-test format.&.1
@@ -43,19 +43,18 @@ ok def-format-test( Q{X~%~&}, ( ), qq{X\n} ), Q{format.&.4};
 #         collect i)
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		for 1 .. 100 -> $i {
-			my $s1 = "\n" xx ( $i - 1 );
-			my $format-string = $*fl.format( "~~~D&", $i );
-			my $s2 = $*fl.format( $format-string );
-			unless $s1 eq $s2 {
-				@collected.append( $i );
-			}
+ok deftest( {
+	my @collected;
+	for 1 .. 100 -> $i {
+		my $s1 = "\n" xx ( $i - 1 );
+		my $format-string = $*fl.format( "~~~D&", $i );
+		my $s2 = $*fl.format( $format-string );
+		unless $s1 eq $s2 {
+			@collected.append( $i );
 		}
-		@collected;
-	}, [ ]
+	}
+	@collected;
+}, [ ]
 ), Q{format.&.5};
 )
 
@@ -70,20 +69,19 @@ ok deftest(
 #         collect i)
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		for 1 .. 100 -> $i {
-			my $s1 = "\n" xx ( $i - 1 );
-			my $format-string = $**fl.format( "~~~D&", $i );
-			my $fn = $*fl.formatter( $format-string );
-			my $s2 = $*fl.formatter-call-to-string( $fn );
-			unless $s1 eq $s2 {
-				@collected.append( $i );
-			}
+ok deftest( {
+	my @collected;
+	for 1 .. 100 -> $i {
+		my $s1 = "\n" xx ( $i - 1 );
+		my $format-string = $**fl.format( "~~~D&", $i );
+		my $fn = $*fl.formatter( $format-string );
+		my $s2 = formatter-call-to-string( $fn );
+		unless $s1 eq $s2 {
+			@collected.append( $i );
 		}
-		@collected;
-	}, [ ]
+	}
+	@collected;
+}, [ ]
 ), Q{formatter.&.5};
 )
 
@@ -99,19 +97,18 @@ ok deftest(
 #         collect i)
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		for 1 .. 100 -> $i {
-			my $s1 = 'X' ~ ( "\n" xx ( $i - 1 ) );
-			my $format-string = $*fl.format( "X~~~D&", $i );
-			my $s2 = $*fl.format( $format-string );
-			unless $s1 eq $s2 {
-				@collected.append( $i );
-			}
+ok deftest( {
+	my @collected;
+	for 1 .. 100 -> $i {
+		my $s1 = 'X' ~ ( "\n" xx ( $i - 1 ) );
+		my $format-string = $*fl.format( "X~~~D&", $i );
+		my $s2 = $*fl.format( $format-string );
+		unless $s1 eq $s2 {
+			@collected.append( $i );
 		}
-		@collected;
-	}, [ ]
+	}
+	@collected;
+}, [ ]
 ), Q{format.&.6};
 )
 
@@ -128,20 +125,19 @@ ok deftest(
 #         collect i)
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		for 1 .. 100 -> $i {
-			my $s1 = 'X' ~ ( "\n" xx ( $i - 1 ) );
-			my $format-string = $*fl.format( "X~~~D&", $i );
-			my $fn = $*fl.formatter( $format-string );
-			my $s2 = $*fl.formatter-call-to-string( $fn );
-			unless $s1 eq $s2 {
-				@collected.append( $i );
-			}
+ok deftest( {
+	my @collected;
+	for 1 .. 100 -> $i {
+		my $s1 = 'X' ~ ( "\n" xx ( $i - 1 ) );
+		my $format-string = $*fl.format( "X~~~D&", $i );
+		my $fn = $*fl.formatter( $format-string );
+		my $s2 = formatter-call-to-string( $fn );
+		unless $s1 eq $s2 {
+			@collected.append( $i );
 		}
-		@collected;
-	}, [ ]
+	}
+	@collected;
+}, [ ]
 ), Q{formatter.&.6};
 )
 
@@ -166,18 +162,17 @@ ok def-format-test( Q{X~v&}, ( Nil ), qq{X\n} ), Q{format.&.8};
 #         collect i)
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		for 1 .. 100 -> $i {
-			my $s1 = "\n" xx ( $i - 1 );
-			my $s2 = $*fl.format( "~V&", $i );
-			unless $s1 eq $s2 {
-				@collected.append( $i );
-			}
+ok deftest( {
+	my @collected;
+	for 1 .. 100 -> $i {
+		my $s1 = "\n" xx ( $i - 1 );
+		my $s2 = $*fl.format( "~V&", $i );
+		unless $s1 eq $s2 {
+			@collected.append( $i );
 		}
-		@collected;
-	}, [ ]
+	}
+	@collected;
+}, [ ]
 ), Q{format.&.9};
 )
 
@@ -191,19 +186,18 @@ ok deftest(
 #           collect i))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( "~V&" );
-		for 1 .. 100 -> $i {
-			my $s1 = "\n" xx ( $i - 1 );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			unless $s1 eq $s2 {
-				@collected.append( $i );
-			}
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( "~V&" );
+	for 1 .. 100 -> $i {
+		my $s1 = "\n" xx ( $i - 1 );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		unless $s1 eq $s2 {
+			@collected.append( $i );
 		}
-		@collected;
-	}, [ ]
+	}
+	@collected;
+}, [ ]
 ), Q{formatter.&.9};
 )
 
@@ -217,19 +211,18 @@ ok deftest(
 #         collect i)
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( "~V&" );
-		for 1 .. 100 -> $i {
-#			my $s1 = "\n" xx ( $i - 1 );
-#			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-#			unless $s1 eq $s2 {
-#				@collected.append( $i );
-#			}
-		}
-		@collected;
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( "~V&" );
+	for 1 .. 100 -> $i {
+#		my $s1 = "\n" xx ( $i - 1 );
+#		my $s2 = formatter-call-to-string( $fn, $i );
+#		unless $s1 eq $s2 {
+#			@collected.append( $i );
+#		}
+	}
+	@collected;
+}, [ ]
 ), Q{format.&.10};
 )
 
@@ -246,19 +239,18 @@ ok deftest(
 #           collect i))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( "~V&" );
-		for 1 .. 100 -> $i {
-#			my $s1 = "\n" xx ( $i - 1 );
-#			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-#			unless $s1 eq $s2 {
-#				@collected.append( $i );
-#			}
-		}
-		@collected;
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( "~V&" );
+	for 1 .. 100 -> $i {
+#		my $s1 = "\n" xx ( $i - 1 );
+#		my $s2 = formatter-call-to-string( $fn, $i );
+#		unless $s1 eq $s2 {
+#			@collected.append( $i );
+#		}
+	}
+	@collected;
+}, [ ]
 ), Q{formatter.&.10};
 )
 
@@ -277,7 +269,12 @@ ok def-format-test( Q{X~#%}, ( ), Q{X} ), Q{format.&.12};
 #                         (concatenate 'string "X" nl nl nl))
 #   3)
 #
-ok def-format-test( Q{X~#%}, ( Q{a}, Q{b}, Q{c} ), qq{X\n\n\n} ), Q{format.&.1};
+ok def-format-test(
+	Q{X~#%},
+	( Q{a}, Q{b}, Q{c} ),
+	qq{X\n\n\n},
+	3
+), Q{format.&.1};
 
 done-testing;
 

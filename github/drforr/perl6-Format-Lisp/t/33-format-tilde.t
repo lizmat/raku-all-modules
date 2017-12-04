@@ -5,12 +5,12 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
 # (def-format-test format.~.1
 #   "~~" nil "~")
 # 
-is $fl.format( Q{~~}), Q{~}, Q{format.~.1};
+ok def-format-test( Q{~~}, Nil, Q{~} ), Q{format.~.1};
 
 #`(
 # (deftest format.~.2
@@ -22,15 +22,16 @@ is $fl.format( Q{~~}), Q{~}, Q{format.~.1};
 #         collect (list i s s2))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 0 .. 100 -> $i {
 #		my @args = 
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{format.~.2};
+	@collected;
+}, [ ]
+), Q{format.~.2};
 )
 
 #`(
@@ -44,22 +45,23 @@ is do {
 #         collect (list i s s2))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 0 .. 100 -> $i {
 #		my @args = 
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{formatter.~.2};
+	@collected;
+}, [ ]
+), Q{formatter.~.2};
 )
 
 #`(
 # (def-format-test format.~.3
 #   "~v~" (0) "")
 # 
-is $fl.format( Q{~v~}, 0), Q{}, Q{format.~.3};
+ok def-format-test( Q{~v~}, ( 0 ), Q{} ), Q{format.~.3};
 )
 
 #`(
@@ -71,15 +73,16 @@ is $fl.format( Q{~v~}, 0), Q{}, Q{format.~.3};
 #         collect (list i s s2))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 0 .. 100 -> $i {
 #		my @args = 
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{format.~.4};
+	@collected;
+}, [ ]
+), Q{format.~.4};
 )
 
 #`(
@@ -92,15 +95,16 @@ is do {
 #           collect (list i s s2)))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 0 .. 100 -> $i {
 #		my @args = 
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{formatter.~.4};
+	@collected;
+}, [ ]
+), Q{formatter.~.4};
 )
 
 #`(
@@ -113,15 +117,16 @@ is do {
 #         collect (list i s s2))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 0 .. 10 -> $i {
 #		my @args = 
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{format.~.5};
+	@collected;
+}, [ ]
+), Q{format.~.5};
 )
 
 #`(
@@ -137,15 +142,16 @@ is do {
 #           collect (list i s s2)))
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 0 .. 10 -> $i {
 #		my @args = 
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{formatter.~.5};
+	@collected;
+}, [ ]
+), Q{formatter.~.5};
 )
 
 done-testing;

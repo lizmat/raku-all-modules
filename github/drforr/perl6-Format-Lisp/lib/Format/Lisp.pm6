@@ -11,7 +11,6 @@ Format::Lisp - Common Lisp formatter
     my $fl = Format::Lisp.new;
     say $fl.format( "~~,,'~c:~c", ',', 'X' );
     my $func = $fl.formatter( "x~ax" );
-    say $fl.formatter-call-to-string( $func, 'X' ); # => xXx
 
 =end SYNOPSIS
 
@@ -232,9 +231,5 @@ class Format::Lisp {
 		return sub ( *@args ) {
 			return $fl.format( $format, |@args );
 		}
-	}
-
-	method formatter-call-to-string( $formatter, **@arguments ) {
-		return $formatter( @arguments );
 	}
 }

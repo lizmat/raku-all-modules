@@ -5,11 +5,11 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
 subtest {
 	is do {
-		my $fn = $fl.formatter( Q{~C} );
+		my $fn = $*fl.formatter( Q{~C} );
 		$fn( Q{a} );
 	}, Q{a}, Q{formatter.c.1};
 }, Q{missing coverage};

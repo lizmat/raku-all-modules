@@ -5,12 +5,12 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
 # (def-format-test format.page.1
 #   "~0|" nil "")
 # 
-is $fl.format( Q{~0|} ), Q{}, Q{format.page.1};
+ok def-format-test( Q{~0|}, Nil, Q{} ), Q{format.page.1};
 
 #`(
 # (deftest format.page.2
@@ -27,6 +27,9 @@ is $fl.format( Q{~0|} ), Q{}, Q{format.page.1};
 #               collect i)))))
 #   nil)
 # 
+ok deftest( {
+}, [ ]
+), Q{format.page.2};
 )
 
 #`(
@@ -44,17 +47,20 @@ is $fl.format( Q{~0|} ), Q{}, Q{format.page.1};
 #               collect i)))))
 #   nil)
 # 
+ok deftest( {
+}, [ ]
+), Q{format.page.2};
 )
 
 # (def-format-test format.page.4
 #   "~V|" (0) "")
 # 
-is $fl.format( Q{~V|}, 0 ), Q{}, Q{format.page.4};
+ok def-format-test( Q{~V|}, ( 0 ), Q{} ), Q{format.page.4};
 
 # (def-format-test format.page.5
 #   "~v|" (nil) #.(format nil "~|"))
 # 
-is $fl.format( Q{~v|}, Nil ), $fl.format( Q{~|} ), Q{format.page.5};
+ok def-format-test( Q{~v|}, ( Nil ), $*fl.format( Q{~|} ) ), Q{format.page.5};
 
 done-testing;
 

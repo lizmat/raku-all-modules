@@ -1,10 +1,14 @@
 use Format::Lisp;
 
+sub formatter-call-to-string( $formatter, **@arguments ) is export {
+	return $formatter( @arguments );
+}
+
 sub deftest( &block, $result ) is export {
 	&block() eqv $result
 }
 
-sub def-format-test( $format, $arg-ref, $result ) is export {
+sub def-format-test( $format, $arg-ref, $result, $xxx-dunno? ) is export {
 	$*fl.format( $format, |@( $arg-ref ) ) eqv $result;
 }
 

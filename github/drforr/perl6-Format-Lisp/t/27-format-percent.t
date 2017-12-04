@@ -5,12 +5,12 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
 # (def-format-test format.%.1
 #   "~%" nil #.(string #\Newline))
 # 
-is $fl.format( Q{~%} ), qq{\n}, Q{format.%.1};
+ok def-format-test( Q{~%}, Nil, qq{\n} ), Q{format.%.1};
 
 #`(
 # (deftest format.%.2
@@ -24,30 +24,31 @@ is $fl.format( Q{~%} ), qq{\n}, Q{format.%.1};
 #         collect i)
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 0 .. 10 -> $i {
 #		my @args = 
-##		my $s = $fl.format( Q{~v,,2A}, $i, 'ABC' );
-#		my $s2 = $fl.formatter-call-to-string( $fn, $i, 'ABC' );
+##		my $s = $*fl.format( Q{~v,,2A}, $i, 'ABC' );
+#		my $s2 = formatter-call-to-string( $fn, $i, 'ABC' );
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{format.%.2};
+	@collected;
+}, [ ]
+), Q{format.%.2};
 )
 
 #`(
 # (def-format-test format.%.3
 #   "~v%" (nil) #.(string #\Newline))
 # 
-is $fl.format( Q{~v%}, Nil ), qq{\n}, Q{format.%.3};
+ok def-format-test( Q{~v%}, Nil, qq{\n} ), Q{format.%.3};
 )
 
 # (def-format-test format.%.4
 #   "~V%" (1) #.(string #\Newline))
 # 
-is $fl.format( Q{~v%}, 1 ), qq{\n}, Q{format.%.4};
+ok def-format-test( Q{~v%}, ( 1 ), qq{\n} ), Q{format.%.4};
 
 # (deftest format.%.5
 #   (loop for i from 0 to 100
@@ -57,17 +58,18 @@ is $fl.format( Q{~v%}, 1 ), qq{\n}, Q{format.%.4};
 #         collect i)
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 0 .. 100 -> $i {
 		my $s1 = qq{\n} x $i;
-		my $s2 = $fl.format( Q{~v%}, $i );
+		my $s2 = $*fl.format( Q{~v%}, $i );
 		unless $s1 eq $s2 {
 			@collected.append( $i )
 		}
 	}
-	@collected.elems;
-}, 0, Q{format.%.5};
+	@collected;
+}, [ ]
+), Q{format.%.5};
 
 #`(
 # (deftest formatter.%.5
@@ -79,16 +81,17 @@ is do {
 #           collect i))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~v%} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~v%} );
 	my @collected;
 	for 0 .. 100 -> $i {
 #		my @args = 
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{formatter.%.5};
+	@collected;
+}, [ ]
+), Q{formatter.%.5};
 )
 
 #`(
@@ -101,15 +104,16 @@ is do {
 #         collect i)
 #   nil)
 # 
-is do {
+ok deftest( {
 	my @collected;
 	for 0 .. 10 -> $i {
 #		my @args = 
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{format.%.6};
+	@collected;
+}, [ ]
+), Q{format.%.6};
 )
 
 #`(
@@ -125,16 +129,17 @@ is do {
 #           collect i))
 #   nil)
 # 
-is do {
-	my $fn = $fl.formatter( Q{~#%} );
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~#%} );
 	my @collected;
 	for 0 .. 10 -> $i {
 #		my @args = 
 #		is $s, $s2;
 #		@collected.append( $s );
 	}
-	@collected.elems;
-}, 0, Q{formatter.%.6};
+	@collected;
+}, [ ]
+), Q{formatter.%.6};
 )
 
 done-testing;

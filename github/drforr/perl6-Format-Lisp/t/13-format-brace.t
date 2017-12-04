@@ -45,9 +45,7 @@ ok def-format-test( Q[~{~A~}], [ [ 1, 2, 3, 4 ] ], Q[1234] ), Q[format.{.4];
 #   "~{~{~A~}~}" ('((1 2 3)(4 5)(6 7 8))) "12345678")
 # 
 ok def-format-test(
-	Q[~{~{~A~}~}],
-	( [ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8 ] ),
-	Q[12345678]
+	Q[~{~{~A~}~}], ( [ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8 ] ), Q[12345678]
 ), Q[format.{.5];
 )
 
@@ -56,9 +54,7 @@ ok def-format-test(
 #   "~{~1{~A~}~}" ('((1 2 3)(4 5)(6 7 8))) "146")
 # 
 ok def-format-test(
-	Q[~{~1{~A~}~}],
-	[ [ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8 ] ]
-	Q[146]
+	Q[~{~1{~A~}~}], [ [ 1, 2, 3 ], [ 4, 5 ], [ 6, 7, 8 ] ] Q[146]
 ), Q[format.{.6];
 )
 
@@ -75,20 +71,19 @@ ok def-format-test( qq{~1\{~\n~\}}, ( Nil ), Q[] ), Q[format.{.7];
 #         collect (list i s))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		for 0 .. 10 -> $i {
-			my $s = $*fl.format(
-				Q[~v{~A~}],
-				$i, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 ]
-			);
-			unless $s eq Q[1234567890].substr( 0, $i ) {
-				@collected.append( [ $i, $s ] );
-			}
+ok deftest( {
+	my @collected;
+	for 0 .. 10 -> $i {
+		my $s = $*fl.format(
+			Q[~v{~A~}],
+			$i, [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 ]
+		);
+		unless $s eq Q[1234567890].substr( 0, $i ) {
+			@collected.append( [ $i, $s ] );
 		}
-		@collected;
-	}, [ ]
+	}
+	@collected;
+}, [ ]
 ), Q[format.{.8];
 )
 
@@ -101,22 +96,21 @@ ok deftest(
 #           collect (list i s)))
 #   nil)
 # 
-ok deftest(
-	{
-		my $fn = $*fl.formatter( Q[~V{~A~}] );
-		my @collected;
-		for 0 .. 10 -> $i {
-			my $s = $*fl.formatter-call-to-string(
-				$fn,
-				$i,
-				[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 ]
-			);
-			unless $s eq Q[1234567890].substr( 0, $i ) {
-				@collected.append( [ $i, $s ] );
-			}
+ok deftest( {
+	my $fn = $*fl.formatter( Q[~V{~A~}] );
+	my @collected;
+	for 0 .. 10 -> $i {
+		my $s = formatter-call-to-string(
+			$fn,
+			$i,
+			[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 ]
+		);
+		unless $s eq Q[1234567890].substr( 0, $i ) {
+			@collected.append( [ $i, $s ] );
 		}
-		@collected;
-	}, [ ]
+	}
+	@collected;
+}, [ ]
 ), Q[formatter.{.8];
 )
 
@@ -125,9 +119,7 @@ ok deftest(
 #   "~#{~A~}" ('(1 2 3 4 5 6 7) nil nil nil) "1234" 3)
 # 
 ok def-format-test(
-	Q[~#{~A~}],
-	( [ 1, 2, 3, 4, 5, 6, 7 ], Nil, Nil, Nil ),
-	Q[1234]
+	Q[~#{~A~}], ( [ 1, 2, 3, 4, 5, 6, 7 ], Nil, Nil, Nil ), Q[1234], 3
 ), Q[format.{.9];
 )
 
@@ -149,9 +141,7 @@ ok def-format-test( Q[~1{~}], ( Q[~A], [ 4, 5, 6 ] ), Q[4] ), Q[format.{.16];
 #   "")
 # 
 ok def-format-test(
-	Q[~{~}],
-	( $*fl.formatter( Q[] ),
-	Q[]
+	Q[~{~}], ( $*fl.formatter( Q[] ), Q[]
 ), Q[format.{.17];
 )
 
@@ -160,9 +150,7 @@ ok def-format-test(
 #   "")
 # 
 ok def-format-test(
-	Q[~1{~}],
-	( $*fl.formatter( Q[] ), [ 1, 2, 3, 4 ],
-	Q[]
+	Q[~1{~}], ( $*fl.formatter( Q[] ), [ 1, 2, 3, 4 ], Q[]
 ), Q[format.{.18];
 
 # (deftest format.{.19
@@ -170,9 +158,7 @@ ok def-format-test(
 #   "1234")
 # 
 ok def-format-test
-	Q[~{~}],
-	( $*fl.formatter( Q[~A] ), [ 1, 2, 3, 4 ] ),
-	Q[1234]
+	Q[~{~}], ( $*fl.formatter( Q[~A] ), [ 1, 2, 3, 4 ] ), Q[1234]
 ), Q[format.{.19];
 
 #`( 
@@ -181,9 +167,7 @@ ok def-format-test
 #   "123")
 # 
 ok def-format-test(
-	Q[~3{~}],
-	( $*fl.formatter( Q[~A] ), [ 1, 2, 3, 4 ] ),
-	Q[123]
+	Q[~3{~}], ( $*fl.formatter( Q[~A] ), [ 1, 2, 3, 4 ] ), Q[123]
 ), Q[format.{.20];
 )
 
@@ -192,9 +176,7 @@ ok def-format-test(
 #   "~V{~}" (2 "~A" '(1 2 3 4 5)) "12")
 # 
 ok def-format-test(
-	Q[~V{~}],
-	( 2, Q[~A], [ 1, 2, 3, 4, 5 ] ),
-	Q[12]
+	Q[~V{~}], ( 2, Q[~A], [ 1, 2, 3, 4, 5 ] ), Q[12]
 ), Q[format.{.21];
 )
 
@@ -203,9 +185,7 @@ ok def-format-test(
 #   "~#{~}" ("~A" '(1 2 3 4 5)) "12")
 # 
 ok def-format-test(
-	Q[~#{~}],
-	( Q[~A], [ 1, 2, 3, 4, 5 ] ),
-	Q[12]
+	Q[~#{~}], ( Q[~A], [ 1, 2, 3, 4, 5 ] ), Q[12]
 ), Q[format.{.22];
 )
 
@@ -275,9 +255,7 @@ ok def-format-test( Q[~2{FOO~}], ( Nil ), Q[] ), Q[format.{.32];
 #   "~v{~a~}" (nil '(1 2 3 4 5 6 7)) "1234567")
 # 
 ok def-format-test(
-	Q[~v{~a~}],
-	( Nil, [ 1, 2, 3, 4, 5, 6, 7 ] ),
-	Q[1234567]
+	Q[~v{~a~}], ( Nil, [ 1, 2, 3, 4, 5, 6, 7 ] ), Q[1234567]
 ), Q[format.{.32];
 )
 
@@ -297,26 +275,25 @@ subtest {
 	#   (concatenate 'string "~:{~" (string #\Newline) "~}")
 	#   (nil) "")
 	# 
-	is $*fl.format( qq[~:\{~\n~\}], Nil ), Q[], Q[format.:{.2];
+	ok def-format-test( qq[~:\{~\n~\}], ( Nil ), Q[] ), Q[format.:{.2];
 
 	# (def-format-test format.\:{.3
 	#   "~:{~}" ("" nil) "")
 	# 
-	is $*fl.format( Q[~:{~}], Q[], Nil ), Q[], Q[format.:{.3];
+	ok def-format-test( Q[~:{~}], ( Q[], Nil ), Q[] ), Q[format.:{.3];
 
 	# (def-format-test format.\:{.4
 	#   "~:{~}" ("~A" nil) "")
 	# 
-	is $*fl.format( Q[~:{~}], Q[~A], Nil ), Q[], Q[format.:{.4];
+	ok def-format-test( Q[~:{~}], ( Q[~A], Nil ), Q[] ), Q[format.:{.4];
 
 	#`(
 	# (def-format-test format.\:{.5
 	#   "~:{~}" ("X" '(nil (1 2) (3))) "XXX")
 	# 
-	is $*fl.format(
-		Q[~:{~}],
-		Q[X], [ Nil, [ 1, 2 ], [ 3 ] ]
-	), Q[XXX], Q[format.:{.5];
+	ok def-format-test(
+		Q[~:{~}], ( Q[X], [ Nil, [ 1, 2 ], [ 3 ] ] ), Q[XXX],
+	), Q[format.:{.5];
 	)
 
 	#`(
@@ -324,38 +301,50 @@ subtest {
 	#   (format nil "~:{~}" (formatter "~A") '((1 2) (3) (4 5 6)))
 	#   "134")
 	# 
-	is $*fl.format(
-		Q[~:{~}],
-		$*fl.formatter( Q[~A] ),
-		[ [ 1, 2 ], [ 3 ], [ 4, 5, 6 ] ]
-	), Q[134], Q[format.:{.6];
+	ok deftest( {
+		$*fl.format(
+			Q[~:{~}],
+			( $*fl.formatter( Q[~A],
+			  ( [ 1, 2 ], [ 3 ], [ 4, 5, 6 ] ) ) )
+		);
+	}, Q{134}
+	), Q[format.:{.6];
 	)
 
 	#`(
 	# (def-format-test format.\:{.7
 	#   "~0:{XYZ~}" ('((1))) "")
 	# 
-	is $*fl.format( Q[~0:{XYZ~}], [ [ 1 ] ] ), Q[], Q[format.:{.7];
+	ok def-format-test( Q[~0:{XYZ~}], ( [ [ 1 ] ] ), Q[] ), Q[format.:{.7];
 	)
 
+	#`(
 	# (def-format-test format.\:{.8
 	#   "~2:{XYZ~}" ('((1))) "XYZ")
 	# 
-	is $*fl.format( Q[~2:{XYZ~}], [ [ 1 ] ] ), Q[XYZ], Q[format.:{.7];
+	ok def-format-test(
+		Q[~2:{XYZ~}], ( [ [ 1 ] ] ), Q[XYZ]
+	), Q[format.:{.7];
+	)
 
+	#`(
 	# (def-format-test format.\:{.9
 	#   "~2:{~A~}" ('((1) (2))) "12")
 	# 
-	is $*fl.format( Q[~2:{~A~}], [ [ 1 ], [ 2 ] ] ), Q[12], Q[format.:{.9];
+	ok def-format-test(
+		Q[~2:{~A~}], ( [ [ 1 ], [ 2 ] ] ), Q[12]
+	), Q[format.:{.9];
+	)
 
 	#`(
 	# (def-format-test format.\:{.10
 	#   "~2:{~A~}" ('((1 X) (2 Y) (3 Z))) "12")
 	# 
-	is $*fl.format(
+	ok def-format-test(
 		Q[~2:{~A~}],
-		[ [ 1, Q[X] ], [ 2, Q[V] ], [ 3, Q[Z] ] ]
-	), Q[12], Q[format.:{.10];
+		( [ [ 1, Q[X] ], [ 2, Q[V] ], [ 3, Q[Z] ] ] ),
+		Q[12]
+	), Q[format.:{.10];
 	)
 
 	#`(
@@ -365,7 +354,7 @@ subtest {
 	#   ("" "1" "12" "123" "1234" "12345"
 	#    "123456" "123456" "123456" "123456" "123456"))
 	# 
-	is do {
+	ok deftest( {
 		my @collected;
 		for 0 .. 10 -> $i {
 			@collected.append(
@@ -377,8 +366,7 @@ subtest {
 			);
 		}
 		@collected;
-	}, [
-		Q[],
+	}, [	Q[],
 		Q[1],
 		Q[12],
 		Q[123],
@@ -389,7 +377,8 @@ subtest {
 		Q[123456],
 		Q[123456],
 		Q[123456],
-	], Q[format.:{.11];
+	]
+	), Q[format.:{.11];
 	)
 
 	#`(
@@ -400,12 +389,12 @@ subtest {
 	#   ("" "1" "12" "123" "1234" "12345"
 	#    "123456" "123456" "123456" "123456" "123456"))
 	# 
-	is do {
+	ok deftest( {
 		my $fn = $fl.formatter( Q[~v:{~A~}] );
 		my @collected;
 		for 0 .. 10 -> $i {
 			@collected.append(
-				$*fl.formatter-call-to-string(
+				formatter-call-to-string(
 					$fn,
 					$i, [ [ 1 ], [ 2 ], [ 3, Q[X] ],
 					      [ 4, Q[Y], Q[Z] ], [ 5 ], [ 6 ] ]
@@ -413,8 +402,7 @@ subtest {
 			);
 		}
 		@collected;
-	}, [
-		Q[],
+	}, [	Q[],
 		Q[1],
 		Q[12],
 		Q[123],
@@ -425,17 +413,19 @@ subtest {
 		Q[123456],
 		Q[123456],
 		Q[123456],
-	], Q[format.:{.11];
+	]
+	), Q[format.:{.11];
 	)
 
 	#`(
 	# (def-format-test format.\:{.12
 	#   "~V:{X~}" (nil '((1) (2) (3) nil (5))) "XXXXX")
 	# 
-	is $*fl.format(
+	ok def-format-test(
 		Q[~V:{X~}],
-		Nil, [ [ 1 ], [ 2 ], [ 3 ], Nil, [ 5 ] ]
-	), Q[XXXXX], Q[format.:{.12];
+		( Nil, [ [ 1 ], [ 2 ], [ 3 ], Nil, [ 5 ] ] ),
+		Q[XXXXX]
+	), Q[format.:{.12];
 	)
 }, Q[~:{ ... ~}];
 
@@ -444,19 +434,24 @@ subtest {
 	# (def-format-test format.\:{.13
 	#   "~#:{~A~}" ('((1) (2) (3) (4) (5)) 'foo 'bar) "123" 2)
 	# 
-	is $*fl.format(
+	ok def-format-test(
 		Q[~#:{~A~}],
-		[ [ 1 ], [ 2 ], [ 3 ], [ 4 ], [ 5 ] ], Q[foo], Q[bar]
-	), Q[123], Q[format.:{.13];
+		( [ [ 1 ], [ 2 ], [ 3 ], [ 4 ], [ 5 ] ], Q[foo], Q[bar] ),
+		Q[123],
+		2
+	), Q[format.:{.13];
 	)
 
+	#`(
 	# (def-format-test format.\:{.14
 	#   "~:{~A~:}" ('((1 X) (2 Y) (3) (4 A B))) "1234")
 	# 
-	is $*fl.format(
+	ok def-format-test(
 		Q[~:{~A~}],
-		[ [ 1, Q[X] ], [ 2, Q[Y] ], [ 3 ], [ 4, Q[A], Q[B] ] ]
-	), Q[1234], Q[format.:{.14];
+		( [ [ 1, Q[X] ], [ 2, Q[Y] ], [ 3 ], [ 4, Q[A], Q[B] ] ] ),
+		Q[1234]
+	), Q[format.:{.14];
+	)
 
 	#`(
 	# (deftest format.\:{.15
@@ -465,7 +460,7 @@ subtest {
 	#   ("" "1" "12" "123" "1234" "1234"
 	#    "1234" "1234" "1234" "1234" "1234"))
 	# 
-	is-deeply do {
+	ok deftest( {
 		my @collected;
 		for 0 .. 10 -> $i {
 			@collected.append(
@@ -477,8 +472,7 @@ subtest {
 			);
 		}
 		@collected;
-	}, [
-		Q[],
+	}, [	Q[],
 		Q[1],
 		Q[12],
 		Q[123],
@@ -489,7 +483,8 @@ subtest {
 		Q[1234],
 		Q[1234],
 		Q[1234],
-	], Q[format.:{.15];
+	]
+	), Q[format.:{.15];
 	)
 
 	#`(
@@ -500,18 +495,25 @@ subtest {
 	#   ("" "1" "12" "123" "1234" "1234"
 	#    "1234" "1234" "1234" "1234" "1234"))
 	# 
+	ok deftest( {
+	},
+	[ Q[], Q[1], Q[12], Q[123], Q[1234], Q[1234],
+	  Q[1234], Q[1234], Q[1234], Q[1234], Q[1234] ]
+	), Q[formatter.:{.15];
 	)
 
 	# (def-format-test format.\:{.16
 	#   "~:{ABC~:}" ('(nil)) "ABC")
 	# 
-	is $*fl.format( Q[~:{ABC~:}], [ Nil ] ), Q[ABC], Q[format.:{.16];
+	ok def-format-test( Q[~:{ABC~:}], ( [ Nil ] ), Q[ABC]), Q[format.:{.16];
 
 	#`(
 	# (def-format-test format.\:{.17
 	#   "~v:{ABC~:}" (nil '(nil)) "ABC")
 	# 
-	is $*fl.format( Q[~v:{ABC~:}], Nil, [ Nil ] ), Q[ABC], Q[format.:{.17];
+	ok def-format-test(
+		Q[~v:{ABC~:}], ( Nil, [ Nil ] ), Q[ABC]
+	), Q[format.:{.17];
 	)
 }, Q['foo and 'bar];
 
@@ -538,9 +540,7 @@ subtest {
 	#   "~@{X ~A Y Z~}" (nil) "X NIL Y Z")
 	# 
 	ok def-format-test(
-		Q[~@{X ~A Y Z~}],
-		( Nil ),
-		Q[X NIL Y Z]
+		Q[~@{X ~A Y Z~}], ( Nil ), Q[X NIL Y Z]
 	), Q[format.@{.3];
 	)
 
@@ -549,9 +549,7 @@ subtest {
 	#   "~@{~A~}" (1 2 3 4) "1234")
 	# 
 	ok def-format-test(
-		Q[~@{~A~}],
-		( 1, 2, 3, 4 ),
-		Q[1234]
+		Q[~@{~A~}], ( 1, 2, 3, 4 ), Q[1234]
 	), Q[format.@{.4];
 	)
 
@@ -586,9 +584,7 @@ subtest {
 	#   "~v@{~A~}" (nil 1 4 7) "147")
 	# 
 	ok def-format-test(
-		Q[~v@{~A~}],
-		( Nil, 1, 4, 7 ),
-		Q[147]
+		Q[~v@{~A~}], ( Nil, 1, 4, 7 ), Q[147]
 	), Q[format.@{.8];
 	)
 
@@ -607,32 +603,30 @@ subtest {
 	#   ("" "1" "12" "123" "1234" "12345"
 	#    "123456" "1234567" "12345678" "123456789" "12345678910"))
 	# 
-	ok deftest(
-		{
-			my @collected;
-			for 0 .. 10 -> $i {
-				@collected.append(
-	#				$*fl.format(
-	#					Q[~v:{~A~:}],
-	#					[ [ 1, Q[X] ], [ 2, Q[Y] ],
-	#					  [ 3 ], [ 4, Q[A], Q[B] ] ]
-	#				)
-				);
-			}
-			@collected;
-		}, [
-			Q[],
-			Q[1],
-			Q[12],
-			Q[123],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-		]
+	ok deftest( {
+		my @collected;
+		for 0 .. 10 -> $i {
+			@collected.append(
+#				$*fl.format(
+#					Q[~v:{~A~:}],
+#					[ [ 1, Q[X] ], [ 2, Q[Y] ],
+#					  [ 3 ], [ 4, Q[A], Q[B] ] ]
+#				)
+			);
+		}
+		@collected;
+	}, [	Q[],
+		Q[1],
+		Q[12],
+		Q[123],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+	]
 	), Q[format.:{.10];
 	)
 
@@ -649,32 +643,30 @@ subtest {
 	#   ("" "1" "12" "123" "1234" "12345"
 	#    "123456" "1234567" "12345678" "123456789" "12345678910"))
 	# 
-	ok deftest(
-		{
-			my @collected;
-			for 0 .. 10 -> $i {
-				@collected.append(
-					$*fl.format(
-						Q[~v:{~A~:}],
-						[ [ 1, Q[X] ], [ 2, Q[Y] ],
-						  [ 3 ], [ 4, Q[A], Q[B] ] ]
-					)
-				);
-			}
-			@collected;
-		}, [
-			Q[],
-			Q[1],
-			Q[12],
-			Q[123],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-			Q[1234],
-		]
+	ok deftest( {
+		my @collected;
+		for 0 .. 10 -> $i {
+			@collected.append(
+				$*fl.format(
+					Q[~v:{~A~:}],
+					[ [ 1, Q[X] ], [ 2, Q[Y] ],
+					  [ 3 ], [ 4, Q[A], Q[B] ] ]
+				)
+			);
+		}
+		@collected;
+	}, [	Q[],
+		Q[1],
+		Q[12],
+		Q[123],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+		Q[1234],
+	]
 	), Q[formatter.:{.10];
 	)
 
@@ -690,9 +682,7 @@ subtest {
 	#   "~@{~}" ((formatter "X~AY") 1) "X1Y")
 	# 
 	ok def-format-test(
-		Q[~@{~}],
-		( $*fl.formatter( Q[X~AY] ), 1 ),
-		Q[X1Y]
+		Q[~@{~}], ( $*fl.formatter( Q[X~AY] ), 1 ), Q[X1Y]
 	), Q[format.@{.12];
 	)
 
@@ -701,9 +691,7 @@ subtest {
 	#   "~v@{~}" (1 (formatter "X") 'foo) "X" 1)
 	# 
 	ok def-format-test(
-		Q[~@{~}],
-		( 1, $*fl.formatter( Q[X~AY] ), 'foo' ),
-		Q[X]
+		Q[~@{~}], ( 1, $*fl.formatter( Q[X~AY] ), 'foo' ), Q[X], 1
 	), Q[format.@{.13];
 	)
 }, Q[Tests of ~@{ ... ~}];
@@ -720,9 +708,7 @@ subtest {
 	#   "~:@{~A~}" ('(1 2) '(3) '(4 5 6)) "134")
 	# 
 	ok def-format-test(
-		Q[~:@{~A~}],
-		( [ 1, 2 ], [ 3 ], [ 4, 5, 6 ] ),
-		Q[134]
+		Q[~:@{~A~}], ( [ 1, 2 ], [ 3 ], [ 4, 5, 6 ] ), Q[134]
 	), Q[format.:@.3];
 	)
 
@@ -778,7 +764,8 @@ subtest {
 	ok def-format-test(
 		Q[~0:@{~A~:}],
 		( [ 1, Q[A] ], [ 2, Q[B] ], [ 3 ], [ 4, Q[C], Q[D] ] ),
-		Q[]
+		Q[],
+		4
 	), Q[format.:@.7];
 	)
 
@@ -787,9 +774,7 @@ subtest {
 	#   "~#:@{A~:}" (nil nil nil) "AAA")
 	# 
 	ok def-format-test(
-		Q[~#:@{A~:}],
-		( Nil, Nil, Nil ),
-		Q[AAA]
+		Q[~#:@{A~:}], ( Nil, Nil, Nil ), Q[AAA]
 	), Q[format.:@.8];
 	)
 
@@ -798,9 +783,7 @@ subtest {
 	#   "~v:@{~A~}" (nil '(1) '(2) '(3)) "123")
 	# 
 	ok def-format-test(
-		Q[~v:@{~A~}],
-		( Nil, [ 1 ], [ 2 ], [ 3 ] ),
-		Q[123]
+		Q[~v:@{~A~}], ( Nil, [ 1 ], [ 2 ], [ 3 ] ), Q[123]
 	), Q[format.:@.9];
 	)
 
@@ -813,29 +796,28 @@ subtest {
 	#   ("" "1" "12" "123" "1234" "12345" "123456" "1234567" "12345678"
 	#    "123456789" "12345678910"))
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my @x;
-			for 0 .. 10 -> $i {
-				@x.append( $i );
-				@collected.append(
-					$*fl.format( Q[~V:@{~A~}], $i, @x.reverse )
-				);
-			}
-			@collected;
-		}, [	Q[],
-			Q[1],
-			Q[12],
-			Q[123],
-			Q[1234],
-			Q[12345],
-			Q[123456],
-			Q[1234567],
-			Q[12345678],
-			Q[123456789],
-			Q[12345678910]
-		]
+	ok deftest( {
+		my @collected;
+		my @x;
+		for 0 .. 10 -> $i {
+			@x.append( $i );
+			@collected.append(
+				$*fl.format( Q[~V:@{~A~}], $i, @x.reverse )
+			);
+		}
+		@collected;
+	}, [	Q[],
+		Q[1],
+		Q[12],
+		Q[123],
+		Q[1234],
+		Q[12345],
+		Q[123456],
+		Q[1234567],
+		Q[12345678],
+		Q[123456789],
+		Q[12345678910]
+	]
 	), Q[format.:@.10];
 	)
 
@@ -852,30 +834,28 @@ subtest {
 	#   ("" "1" "12" "123" "1234" "12345" "123456" "1234567" "12345678"
 	#    "123456789" "12345678910"))
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my @x;
-			for 0 .. 10 -> $i {
-				@x.append( $i );
-				@collected.append(
-		#			$*fl.format( Q[~V:@{~A~}], $i, @x.reverse )
-				);
-			}
-			@collected;
-		},
-		[	Q[],
-			Q[1],
-			Q[12],
-			Q[123],
-			Q[1234],
-			Q[12345],
-			Q[123456],
-			Q[1234567],
-			Q[12345678],
-			Q[123456789],
-			Q[12345678910]
-		]
+	ok deftest( {
+		my @collected;
+		my @x;
+		for 0 .. 10 -> $i {
+			@x.append( $i );
+			@collected.append(
+	#			$*fl.format( Q[~V:@{~A~}], $i, @x.reverse )
+			);
+		}
+		@collected;
+	}, [	Q[],
+		Q[1],
+		Q[12],
+		Q[123],
+		Q[1234],
+		Q[12345],
+		Q[123456],
+		Q[1234567],
+		Q[12345678],
+		Q[123456789],
+		Q[12345678910]
+	]
 	), Q[formatter.:@.10];
 	)
 }, Q[~:@{];

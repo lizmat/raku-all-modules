@@ -173,16 +173,19 @@ ok deftest(
 #         when (> count 100) collect "count limit exceeded" and do (loop-finish))
 #   nil)
 # 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s = $*fl.format( Q{~:c}, $c );
-#		unless $s eq $c {
-#			@collected.append( [ $c, $s ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.4a};
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s = $*fl.format( Q{~:c}, $c );
+	#		unless $s eq $c {
+	#			@collected.append( [ $c, $s ] );
+	#		}
+		}
+		@collected;
+	},
+	[ ]
+), Q{format.c.4a};
 )
 
 #`(
@@ -194,16 +197,19 @@ is do {
 #         collect (list c s c2))
 #   nil)
 # 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s = $*fl.format( Q{~@c}, $c );
-#		unless $s eq $c {
-#			@collected.append( [ $c, $s ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.5};
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s = $*fl.format( Q{~@c}, $c );
+	#		unless $s eq $c {
+	#			@collected.append( [ $c, $s ] );
+	#		}
+		}
+		@collected;
+	},
+	[ ]
+), Q{format.c.5};
 )
 
 #`(
@@ -217,17 +223,20 @@ is do {
 #         do (incf count) and collect (list c s c2)
 #         when (> count 100) collect "count limit exceeded" and do (loop-finish))
 #   nil)
-# 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s = $*fl.format( Q{~@C}, $c );
-#		unless $s eq $c {
-#			@collected.append( [ $c, $s ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.5};
+#
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s = $*fl.format( Q{~@C}, $c );
+	#		unless $s eq $c {
+	#			@collected.append( [ $c, $s ] );
+	#		}
+		}
+		@collected;
+	},
+	[ ]
+), Q{format.c.5};
 )
 
 #`(
@@ -239,17 +248,20 @@ is do {
 #         collect (list c s1 s2))
 #   nil)
 # 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s1 = $*fl.format( Q{~:C}, $c );
-		my $s2 = $*fl.format( Q{~:@C}, $c );
-#		unless $s eq $c {
-#			@collected.append( [ $c, $s ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.6};
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s1 = $*fl.format( Q{~:C}, $c );
+			my $s2 = $*fl.format( Q{~:@C}, $c );
+	#		unless $s eq $c {
+	#			@collected.append( [ $c, $s ] );
+	#		}
+		}
+		@collected;
+	},
+	[ ]
+), Q{format.c.6};
 )
 
 #`(
@@ -264,17 +276,20 @@ is do {
 #         when (> count 100) collect "count limit exceeded" and do (loop-finish))
 #   nil)
 # 
-is do {
-	my @collected;
-	for @standard-chars -> $c {
-		my $s1 = $*fl.format( Q{~:C}, $c );
-		my $s2 = $*fl.format( Q{~@:C}, $c );
-#		unless $s eq $c {
-#			@collected.append( [ $c, $s ] );
-#		}
-	}
-	@collected.elems;
-}, 0, Q{format.c.6a};
+ok deftest(
+	{
+		my @collected;
+		for @standard-chars -> $c {
+			my $s1 = $*fl.format( Q{~:C}, $c );
+			my $s2 = $*fl.format( Q{~@:C}, $c );
+	#		unless $s eq $c {
+	#			@collected.append( [ $c, $s ] );
+	#		}
+		}
+		@collected;
+	},
+	[ ]
+), Q{format.c.6a};
 )
 
 done-testing;

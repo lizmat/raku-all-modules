@@ -5,13 +5,13 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
 # (def-pprint-test format.justify.1
 #   (format nil "~<~>")
 #   "")
 # 
-is $fl.format( Q{~<~>}, 14 ), Q{}, Q{format.justify.1};
+is $*fl.format( Q{~<~>}, Nil ), Q{}, Q{format.justify.1};
 
 #`(
 # (def-pprint-test format.justify.2
@@ -26,7 +26,7 @@ is do {
 	my @collected;
 	for 1 .. 20 -> $i {
 		my $s1 = Q{x} xx $i - 1;
-		my $s2 = $fl.format( Q{~<~A~>}, $s1 );
+		my $s2 = $*fl.format( Q{~<~A~>}, $s1 );
 		unless $s1 eq $s2 {
 			@collected.append( [ $i, $s1, $s2 ] );
 		}
@@ -48,7 +48,7 @@ is do {
 	my @collected;
 	for 1 .. 20 -> $i {
 		my $s1 = Q{x} xx $i - 1;
-		my $s2 = $fl.format( Q{~<~A~;~A~>}, $s1, $s1 );
+		my $s2 = $*fl.format( Q{~<~A~;~A~>}, $s1, $s1 );
 		unless $s2 eq $s1 ~ $s1 {
 			@collected.append( [ $i, $s1, $s2 ] );
 		}
@@ -72,7 +72,7 @@ is do {
 	for 1 .. 20 -> $i {
 		my $s1 = Q{x} xx $i - 1;
 		my $expected = $s1 ~ ' ' ~ $s1;
-		my $s2 = $fl.format( Q{~,,1<~A~;~A~>}, $s1, $s1 );
+		my $s2 = $*fl.format( Q{~,,1<~A~;~A~>}, $s1, $s1 );
 		unless $s2 eq $expected {
 			@collected.append( [ $i, $expected, $s2 ] );
 		}
@@ -96,7 +96,7 @@ is do {
 	for 1 .. 20 -> $i {
 		my $s1 = Q{x} xx $i - 1;
 		my $expected = $s1 ~ Q{,} ~ $s1;
-		my $s2 = $fl.format( Q{~,,1,',<~A~;~A~>}, $s1, $s1 );
+		my $s2 = $*fl.format( Q{~,,1,',<~A~;~A~>}, $s1, $s1 );
 		unless $s2 eq $expected {
 			@collected.append( [ $i, $expected, $s2 ] );
 		}
@@ -120,7 +120,7 @@ is do {
 	for 1 .. 20 -> $i {
 		my $s1 = Q{x} xx $i - 1;
 		my $expected = $s1 ~ Q{  } ~ $s1;
-		my $s2 = $fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
+		my $s2 = $*fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
 		unless $s2 eq $expected {
 			@collected.append( [ $i, $expected, $s2 ] );
 		}
@@ -150,7 +150,7 @@ is do {
 	for 1 .. 100 {
 #		my $s1 = Q{x} xx $i - 1;
 #		my $expected = $s1 ~ Q{  } ~ $s1;
-#		my $s2 = $fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
+#		my $s2 = $*fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
 #		unless $s2 eq $expected {
 #			@collected.append( [ $i, $expected, $s2 ] );
 #		}
@@ -181,7 +181,7 @@ is do {
 	for 1 .. 100 {
 #		my $s1 = Q{x} xx $i - 1;
 #		my $expected = $s1 ~ Q{  } ~ $s1;
-#		my $s2 = $fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
+#		my $s2 = $*fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
 #		unless $s2 eq $expected {
 #			@collected.append( [ $i, $expected, $s2 ] );
 #		}
@@ -212,7 +212,7 @@ is do {
 	for 1 .. 100 {
 #		my $s1 = Q{x} xx $i - 1;
 #		my $expected = $s1 ~ Q{  } ~ $s1;
-#		my $s2 = $fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
+#		my $s2 = $*fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
 #		unless $s2 eq $expected {
 #			@collected.append( [ $i, $expected, $s2 ] );
 #		}
@@ -243,7 +243,7 @@ is do {
 	for 1 .. 500 {
 #		my $s1 = Q{x} xx $i - 1;
 #		my $expected = $s1 ~ Q{  } ~ $s1;
-#		my $s2 = $fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
+#		my $s2 = $*fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
 #		unless $s2 eq $expected {
 #			@collected.append( [ $i, $expected, $s2 ] );
 #		}
@@ -272,7 +272,7 @@ is do {
 	for 1 .. 10 {
 #		my $s1 = Q{x} xx $i - 1;
 #		my $expected = $s1 ~ Q{  } ~ $s1;
-#		my $s2 = $fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
+#		my $s2 = $*fl.format( Q{~,,2<~A~;~A~>}, $s1, $s1 );
 #		unless $s2 eq $expected {
 #			@collected.append( [ $i, $expected, $s2 ] );
 #		}
@@ -286,7 +286,7 @@ is do {
 #   (format nil "~<XXXXXX~^~>")
 #   "")
 # 
-is $fl.format( Q{~<XXXXXX~^~>} ), Q{}, Q{format.justify.12};
+is $*fl.format( Q{~<XXXXXX~^~>} ), Q{}, Q{format.justify.12};
 )
 
 #`(
@@ -294,7 +294,7 @@ is $fl.format( Q{~<XXXXXX~^~>} ), Q{}, Q{format.justify.12};
 #   (format nil "~<XXXXXX~;YYYYYYY~^~>")
 #   "XXXXXX")
 # 
-is $fl.format( Q{~<XXXXXX~;YYYYYYY~^~>} ), Q{XXXXXX}, Q{format.justify.13};
+is $*fl.format( Q{~<XXXXXX~;YYYYYYY~^~>} ), Q{XXXXXX}, Q{format.justify.13};
 )
 
 #`(
@@ -302,7 +302,7 @@ is $fl.format( Q{~<XXXXXX~;YYYYYYY~^~>} ), Q{XXXXXX}, Q{format.justify.13};
 #   (format nil "~<~<XXXXXX~;YYYYYYY~^~>~>")
 #   "XXXXXX")
 # 
-is $fl.format( Q{~<~<XXXXXX~;YYYYYYY~^~>~>} ), Q{XXXXXX}, Q{format.justify.13a};
+is $*fl.format( Q{~<~<XXXXXX~;YYYYYYY~^~>~>} ), Q{XXXXXX}, Q{format.justify.13a};
 )
 
 #`(
@@ -310,7 +310,7 @@ is $fl.format( Q{~<~<XXXXXX~;YYYYYYY~^~>~>} ), Q{XXXXXX}, Q{format.justify.13a};
 #   (format nil "~<XXXXXX~;YYYYYYY~^~;ZZZZZ~>")
 #   "XXXXXX")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~<~<XXXXXX~;YYYYYYY~^~;ZZZZZ~>~>}
 ), Q{XXXXXX}, Q{format.justify.14};
 )
@@ -320,7 +320,7 @@ is $fl.format(
 #   (format nil "~13,,2<aaa~;bbb~;ccc~>")
 #   "aaa  bbb  ccc")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~13,,2<aaa~;bbb~;ccc~>}
 ), Q{aaa  bbb  ccc}, Q{format.justify.15};
 )
@@ -330,7 +330,7 @@ is $fl.format(
 #   (format nil "~10@<abcdef~>")
 #   "abcdef    ")
 # 
-is $fl.format( Q{~10@<abcdef~>} ), Q{abcdef    }, Q{format.justify.16};
+is $*fl.format( Q{~10@<abcdef~>} ), Q{abcdef    }, Q{format.justify.16};
 )
 
 #`(
@@ -338,7 +338,7 @@ is $fl.format( Q{~10@<abcdef~>} ), Q{abcdef    }, Q{format.justify.16};
 #   (format nil "~10:@<abcdef~>")
 #   "  abcdef  ")
 # 
-is $fl.format( Q{~10:@<abcdef~>} ), Q{  abcdef  }, Q{format.justify.17};
+is $*fl.format( Q{~10:@<abcdef~>} ), Q{  abcdef  }, Q{format.justify.17};
 )
 
 #`(
@@ -346,7 +346,7 @@ is $fl.format( Q{~10:@<abcdef~>} ), Q{  abcdef  }, Q{format.justify.17};
 #   (format nil "~10:<abcdef~>")
 #   "    abcdef")
 # 
-is $fl.format( Q{~10:<abcdef~>} ), Q{    abcdef}, Q{format.justify.18};
+is $*fl.format( Q{~10:<abcdef~>} ), Q{    abcdef}, Q{format.justify.18};
 )
 
 #`(
@@ -354,14 +354,14 @@ is $fl.format( Q{~10:<abcdef~>} ), Q{    abcdef}, Q{format.justify.18};
 #   (format nil "~4@<~>")
 #   "    ")
 # 
-is $fl.format( Q{~4@<~>} ), Q{    }, Q{format.justify.19};
+is $*fl.format( Q{~4@<~>} ), Q{    }, Q{format.justify.19};
 )
 
 #`(
 # (def-pprint-test format.justify.20
 #   (format nil "~5:@<~>")
 #   "     ")
-is $fl.format( Q{~5:@<~>} ), Q{     }, Q{format.justify.20};
+is $*fl.format( Q{~5:@<~>} ), Q{     }, Q{format.justify.20};
 # 
 )
 
@@ -370,7 +370,7 @@ is $fl.format( Q{~5:@<~>} ), Q{     }, Q{format.justify.20};
 #   (format nil "~6:<~>")
 #   "      ")
 # 
-is $fl.format( Q{~6:<~>} ), Q{      }, Q{format.justify.21};
+is $*fl.format( Q{~6:<~>} ), Q{      }, Q{format.justify.21};
 )
 
 #`(
@@ -378,7 +378,7 @@ is $fl.format( Q{~6:<~>} ), Q{      }, Q{format.justify.21};
 #   (format nil "~v<~A~>" nil "XYZ")
 #   "XYZ")
 # 
-is $fl.format( Q{~v:<~A~>}, Nil, Q{XYZ} ), Q{XYZ}, Q{format.justify.22};
+is $*fl.format( Q{~v:<~A~>}, Nil, Q{XYZ} ), Q{XYZ}, Q{format.justify.22};
 )
 
 #`(
@@ -386,7 +386,7 @@ is $fl.format( Q{~v:<~A~>}, Nil, Q{XYZ} ), Q{XYZ}, Q{format.justify.22};
 #   (format nil "~,v<~A~;~A~>" nil "ABC" "DEF")
 #   "ABCDEF")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~,v:<~A~;~A~>},
 	Nil, Q{ABC}, Q{DEF}
 ), Q{ABCDEF}, Q{format.justify.23};
@@ -397,7 +397,7 @@ is $fl.format(
 #   (format nil "~,,v<~A~;~A~>" nil "ABC" "DEF")
 #   "ABCDEF")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~,,v:<~A~;~A~>},
 	Nil, Q{ABC}, Q{DEF}
 ), Q{ABCDEF}, Q{format.justify.24};
@@ -408,7 +408,7 @@ is $fl.format(
 #   (format nil "~,,1,v<~A~;~A~>" nil "ABC" "DEF")
 #   "ABC DEF")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~,,1,v<~A~;~A~>},
 	Nil, Q{ABC}, Q{DEF}
 ), Q{ABC DEF}, Q{format.justify.25};
@@ -419,7 +419,7 @@ is $fl.format(
 #   (format nil "~,,1,v<~A~;~A~>" #\, "ABC" "DEF")
 #   "ABC,DEF")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~,,1,v<~A~;~A~>},
 	Q{.}, Q{ABC}, Q{DEF}
 ), Q{ABC,DEF}, Q{format.justify.26};
@@ -430,7 +430,7 @@ is $fl.format(
 #   (format nil "~6<abc~;def~^~>")
 #   "   abc")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~6<abc~;def~^~>},
 	Q{.}, Q{ABC}, Q{DEF}
 ), Q{   abc}, Q{format.justify.27};
@@ -441,7 +441,7 @@ is $fl.format(
 #   (format nil "~6@<abc~;def~^~>")
 #   "abc   ")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~6@<abc~;def~^~>},
 	Q{.}, Q{ABC}, Q{DEF}
 ), Q{abc   }, Q{format.justify.28};
@@ -455,7 +455,7 @@ is $fl.format(
 #   "
 # X AAA BBB CCC")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~%X ~,,1<~%X ~:;AAA~;BBB~;CCC~>},
 	Q{.}, Q{ABC}, Q{DEF}
 ), qq{\nX AAA BBB CCC}, Q{format.justify.29};
@@ -470,7 +470,7 @@ is $fl.format(
 # X BBB
 # X CCC")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~%X ~<~%X ~0,3:;AAA~>~<~%X ~0,3:;BBB~>~<~%X ~0,3:;CCC~>}
 ), qq{\nX \nX AAA\nX BBB\nX CCC}, Q{format.justify.30};
 )
@@ -481,7 +481,7 @@ is $fl.format(
 #   "
 # X AAABBBCCC")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~%X ~<~%X ~0,30:;AAA~>~<~%X ~0,30:;BBB~>~<~%X ~0,30:;CCC~>}
 ), qq{\nX AAABBBCCC}, Q{format.justify.31};
 )
@@ -495,7 +495,7 @@ is $fl.format(
 # X BBB,
 # X CCC")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~%X ~<~%X ~0,3:;AAA~>,~<~%X ~0,3:;BBB~>,~<~%X ~0,3:;CCC~>}
 ), qq{\nX \nX AAA\nX BBB\nX CCC}, Q{format.justify.32};
 )
@@ -512,7 +512,7 @@ is $fl.format(
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~< ~W ~>}, Nil );
+	$*fl.format( Q{~< ~W ~>}, Nil );
 }, X::Error, Q{format.justify.error.w.1};
 )
 
@@ -522,7 +522,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<X~:;Y~>~W}, Nil );
+	$*fl.format( Q{~<X~:;Y~>~W}, Nil );
 }, X::Error, Q{format.justify.error.w.2};
 )
 
@@ -532,7 +532,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~w~<X~:;Y~>}, Nil );
+	$*fl.format( Q{~w~<X~:;Y~>}, Nil );
 }, X::Error, Q{format.justify.error.w.3};
 )
 
@@ -544,7 +544,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~< ~_ ~>} );
+	$*fl.format( Q{~< ~_ ~>} );
 }, X::Error, Q{format.justify.error._.1};
 )
 
@@ -554,7 +554,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<X~:;Y~>~_} );
+	$*fl.format( Q{~<X~:;Y~>~_} );
 }, X::Error, Q{format.justify.error._.2};
 )
 
@@ -564,7 +564,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~_~<X~:;Y~>} );
+	$*fl.format( Q{~_~<X~:;Y~>} );
 }, X::Error, Q{format.justify.error._.3};
 )
 
@@ -576,7 +576,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~< ~i ~>} );
+	$*fl.format( Q{~< ~i ~>} );
 }, X::Error, Q{format.justify.error.i.1};
 )
 
@@ -586,7 +586,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<X~:;Y~>~I} );
+	$*fl.format( Q{~<X~:;Y~>~I} );
 }, X::Error, Q{format.justify.error.i.2};
 )
 
@@ -596,7 +596,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~i~<X~:;Y~>} );
+	$*fl.format( Q{~i~<X~:;Y~>} );
 }, X::Error, Q{format.justify.error.i.2};
 )
 

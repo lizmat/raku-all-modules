@@ -5,7 +5,7 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
 # ;;; Error cases
 # 
@@ -17,7 +17,7 @@ my $fl = Format::Lisp.new;
 #   t t)
 #I 
 throws-like {
-	$fl.format( Q{~<foo~A~;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<foo~A~;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.1};
 )
 
@@ -27,7 +27,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<foo~A~@;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<foo~A~@;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.2};
 )
 
@@ -37,7 +37,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<foo~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<foo~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.3};
 )
 
@@ -47,7 +47,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<foo~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<foo~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.4};
 )
 
@@ -57,7 +57,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<foo~A~;~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<foo~A~;~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.5};
 )
 
@@ -67,7 +67,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<foo~A~@;~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<foo~A~@;~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.6};
 )
 
@@ -77,7 +77,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.7};
 )
 
@@ -87,7 +87,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.8};
 )
 
@@ -97,7 +97,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~:<foo~A~;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~:<foo~A~;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.9};
 )
 
@@ -107,7 +107,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~:<foo~A~@;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~:<foo~A~@;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.10};
 )
 
@@ -117,7 +117,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~:<foo~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~:<foo~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.11};
 )
 
@@ -127,7 +127,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~:<foo~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~:<foo~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.12};
 )
 
@@ -137,7 +137,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~:<foo~A~;~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~:<foo~A~;~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.13};
 )
 
@@ -147,7 +147,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~:<foo~A~@;~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~:<foo~A~@;~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.14};
 )
 
@@ -157,7 +157,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~:<~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~:<~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.15};
 )
 
@@ -167,7 +167,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~:<~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~:<~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.16};
 )
 
@@ -177,7 +177,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~@<foo~A~;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~@<foo~A~;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.17};
 )
 
@@ -187,7 +187,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~@<foo~A~@;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~@<foo~A~@;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.18};
 )
 
@@ -197,7 +197,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~@<foo~;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~@<foo~;~A~;bar~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.19};
 )
 
@@ -207,7 +207,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~@<foo~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~@<foo~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.20};
 )
 
@@ -217,7 +217,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~@<foo~A~;~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~@<foo~A~;~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.21};
 )
 
@@ -227,7 +227,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~@<foo~A~@;~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~@<foo~A~@;~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.22};
 )
 
@@ -237,7 +237,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~@<~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~@<~;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.23};
 )
 
@@ -247,7 +247,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~@<~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~@<~@;~A~;bar~A~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.24};
 )
 
@@ -257,7 +257,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{1~<X~<Y~:>Z~>2}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{1~<X~<Y~:>Z~>2}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.25};
 )
 
@@ -270,7 +270,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<~:;~>~<~:>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<~:;~>~<~:>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.26};
 )
 
@@ -280,7 +280,7 @@ throws-like {
 #   t t)
 # 
 throws-like {
-	$fl.format( Q{~<~:>~<~:;~>}, [ Q{X} ], [ Q{Y} ] );
+	$*fl.format( Q{~<~:>~<~:;~>}, [ Q{X} ], [ Q{Y} ] );
 }, X::Error, Q{format.logical-block.error.27};
 )
 
@@ -290,20 +290,20 @@ throws-like {
 #   (format nil "~<~A~:>" '(nil))
 #   "NIL")
 # 
-is $fl.format( Q{~<~A~:>}, [ Nil ] ), Q{NIL}, Q{format.logical-block.1};
+is $*fl.format( Q{~<~A~:>}, [ Nil ] ), Q{NIL}, Q{format.logical-block.1};
 
 # (def-pprint-test format.logical-block.2
 #   (format nil "~@<~A~:>" nil)
 #   "NIL")
 # 
-is $fl.format( Q{~@<~A~:>} ), Q{NIL}, Q{format.logical-block.2};
+is $*fl.format( Q{~@<~A~:>} ), Q{NIL}, Q{format.logical-block.2};
 
 #`(
 # (def-pprint-test format.logical-block.3
 #   (format nil "~:<~A~:>" '(nil))
 #   "(NIL)")
 # 
-is $fl.format( Q{~:<~A~:>}, [ Nil ] ), Q{(NIL)}, Q{format.logical-block.3};
+is $*fl.format( Q{~:<~A~:>}, [ Nil ] ), Q{(NIL)}, Q{format.logical-block.3};
 )
 
 #`(
@@ -311,7 +311,7 @@ is $fl.format( Q{~:<~A~:>}, [ Nil ] ), Q{(NIL)}, Q{format.logical-block.3};
 #   (format nil "~:@<~A~:>" nil)
 #   "(NIL)")
 # 
-is $fl.format( Q{~:@<~A~:>}, Nil ), Q{(NIL)}, Q{format.logical-block.4};
+is $*fl.format( Q{~:@<~A~:>}, Nil ), Q{(NIL)}, Q{format.logical-block.4};
 )
 
 #`(
@@ -319,7 +319,7 @@ is $fl.format( Q{~:@<~A~:>}, Nil ), Q{(NIL)}, Q{format.logical-block.4};
 #   (format nil "~@:<~A~:>" nil)
 #   "(NIL)")
 # 
-is $fl.format( Q{~@:<~A~:>}, Nil ), Q{(NIL)}, Q{format.logical-block.5};
+is $*fl.format( Q{~@:<~A~:>}, Nil ), Q{(NIL)}, Q{format.logical-block.5};
 )
 
 #`(
@@ -327,7 +327,7 @@ is $fl.format( Q{~@:<~A~:>}, Nil ), Q{(NIL)}, Q{format.logical-block.5};
 #   (format nil "~<~@{~A~^*~}~:>" '(1 2 3))
 #   "1*2*3")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~<~@{~A~^*~}~:>},
 	1, 2, 3
 ), Q{1*2*3}, Q{format.logical-block.6};
@@ -338,7 +338,7 @@ is $fl.format(
 #   (format nil "~:<~@{~A~^*~}~:>" '(1 2 3))
 #   "(1*2*3)")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:<~@{~A~^*~}~:>},
 	1, 2, 3
 ), Q{(1*2*3)}, Q{format.logical-block.7};
@@ -349,7 +349,7 @@ is $fl.format(
 #   (format nil "~:<~@{~A~^*~}~:>" 1)
 #   "1")
 # 
-is $fl.format( Q{~:<~@{~A~^*~}~:>}, 1 ), Q{1}, Q{format.logical-block.8};
+is $*fl.format( Q{~:<~@{~A~^*~}~:>}, 1 ), Q{1}, Q{format.logical-block.8};
 )
 
 #`(
@@ -357,7 +357,7 @@ is $fl.format( Q{~:<~@{~A~^*~}~:>}, 1 ), Q{1}, Q{format.logical-block.8};
 #   (format nil "~<~;~A~;~:>" '(1 2 3))
 #   "1")
 # 
-is $fl.format( Q{~<~;~A~;~:>}, 1, 2, 3 ), Q{1}, Q{format.logical-block.9};
+is $*fl.format( Q{~<~;~A~;~:>}, 1, 2, 3 ), Q{1}, Q{format.logical-block.9};
 )
 
 #`(
@@ -365,7 +365,7 @@ is $fl.format( Q{~<~;~A~;~:>}, 1, 2, 3 ), Q{1}, Q{format.logical-block.9};
 #   (format nil "~<~;~A~:>" '(1 2 3))
 #   "1")
 # 
-is $fl.format( Q{~<~;~A~:>}, 1, 2, 3 ), Q{1}, Q{format.logical-block.10};
+is $*fl.format( Q{~<~;~A~:>}, 1, 2, 3 ), Q{1}, Q{format.logical-block.10};
 )
 
 #`(
@@ -373,7 +373,7 @@ is $fl.format( Q{~<~;~A~:>}, 1, 2, 3 ), Q{1}, Q{format.logical-block.10};
 #   (format nil "~@<~;~A~;~:>" '(1 2 3))
 #   "(1 2 3)")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~@<~;~A~;~:>},
 	1, 2, 3
 ), Q{(1 2 3)}, Q{format.logical-block.11};
@@ -384,7 +384,7 @@ is $fl.format(
 #   (format nil "~@<~;~A~:>" '(1 2 3))
 #   "(1 2 3)")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~@<~;~A~:>},
 	1, 2, 3
 ), Q{(1 2 3)}, Q{format.logical-block.12};
@@ -395,7 +395,7 @@ is $fl.format(
 #   (format nil "~:<[~;~@{~A~^/~}~:>" '(1 2 3))
 #   "[1/2/3)")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:<[~;~@{~A~^/~}~:>},
 	1, 2, 3
 ), Q{[1/2/3)}, Q{format.logical-block.13};
@@ -406,7 +406,7 @@ is $fl.format(
 #   (format nil "~:<~;~@{~A~^/~}~;]~:>" '(1 2 3))
 #   "1/2/3]")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:<~;~@{~A~^/~}~;]~:>},
 	1, 2, 3
 ), Q{1/2/3]}, Q{format.logical-block.14};
@@ -417,7 +417,7 @@ is $fl.format(
 #   (format nil "~:<[~;~@{~A~^/~}~;]~:>" '(1 2 3))
 #   "[1/2/3]")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:<[~;~@{~A~^/~}~;]~:>},
 	1, 2, 3
 ), Q{[1/2/3]}, Q{format.logical-block.15};
@@ -428,7 +428,7 @@ is $fl.format(
 #   (format nil "~@<~@{~A~^*~}~:>" 1 2 3)
 #   "1*2*3")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~@<~@{~A~^*~}~:>},
 	1, 2, 3
 ), Q{1*2*3}, Q{format.logical-block.16};
@@ -439,7 +439,7 @@ is $fl.format(
 #   (format nil "~@<~@{~A~^ ~_~}~:>" 1 2 3)
 #   "1 2 3")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~@<~@{~A~^ ~_~}~:>},
 	1, 2, 3
 ), Q{1 2 3}, Q{format.logical-block.17};
@@ -453,7 +453,7 @@ is $fl.format(
 # 3"
 #   :margin 2)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~@<~@{~A~^ ~_~}~:>},
 	1, 2, 3
 ), qq{1\n2\n3}, Q{format.logical-block.18};
@@ -467,7 +467,7 @@ is $fl.format(
 #  3)"
 #   :margin 2)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:@<~@{~A~^ ~_~}~:>},
 	1, 2, 3
 ), qq{(1\n2\n3)}, Q{format.logical-block.19};
@@ -479,7 +479,7 @@ is $fl.format(
 #   "(1 2 3)"
 #   :margin 2)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~@:<~@{~A~^ ~}~:>},
 	1, 2, 3
 ), Q{(1 2 3)}, Q{format.logical-block.20};
@@ -493,7 +493,7 @@ is $fl.format(
 #  3)"
 #   :margin 2)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~@:<~@{~A~^ ~:_~}~:>},
 	1, 2, 3
 ), qq{(1\n 2\n 3)}, Q{format.logical-block.21};
@@ -507,7 +507,7 @@ is $fl.format(
 #  3)"
 #   :margin 2)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:@<~@{~A~^ ~}~:@>},
 	1, 2, 3
 ), qq{(1\n 2\n 3)}, Q{format.logical-block.22};
@@ -520,7 +520,7 @@ is $fl.format(
 #   "(1/2/3)"
 #   :margin 2)
 # 
-is $fl.format(
+is $*fl.format(
 	qq{~:@<~@{~A~^/~\n~}~:@>},
 	1, 2, 3
 ), Q{(1/2/3)}, Q{format.logical-block.23};
@@ -534,7 +534,7 @@ is $fl.format(
 #  3)"
 #   :margin 2)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:@<~@{~A~^            ~:_~}~:>},
 	1, 2, 3
 ), qq{(1\n 2\n 3)}, Q{format.logical-block.24};
@@ -548,7 +548,7 @@ is $fl.format(
 #  3)"
 #   :margin 2)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:@<~@{~A~^            ~}~:@>},
 	1, 2, 3
 ), qq{(1\n 2\n 3)}, Q{format.logical-block.25};
@@ -560,7 +560,7 @@ is $fl.format(
 #   "(1 2 3)"
 #   :margin 2)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:@<~@{~A~^~}~:@>},
 	"1 2 3"
 ), Q{(1 2 3)}, Q{format.logical-block.26};
@@ -574,7 +574,7 @@ is $fl.format(
 # **3"
 #   :margin 3)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~@<**~@;~@{~A~^       ~}~:@>},
 	1, 2, 3
 ), qq{**1\n**2\n**3}, Q{format.logical-block.27};
@@ -588,7 +588,7 @@ is $fl.format(
 # **3XX"
 #   :margin 3)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~@<**~@;~@{~A~^       ~}~;XX~:@>},
 	1, 2, 3
 ), qq{**1\n**2\n**3XX}, Q{format.logical-block.28};
@@ -602,7 +602,7 @@ is $fl.format(
 # **3)"
 #   :margin 3)
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~:@<**~@;~@{~A~^       ~}~:@>},
 	1, 2, 3
 ), qq{**1\n**2\n**3}, Q{format.logical-block.29};
@@ -658,7 +658,7 @@ is $fl.format(
 #   (format nil "~<~A~^xxxx~:>" '(1))
 #   "1")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~<~A~^xxxx~:>},
 	[ 1 ]
 ), Q{1}, Q{format.logical-block.escape.1};
@@ -669,7 +669,7 @@ is $fl.format(
 #   (format nil "~<~<~A~^xxx~:>yyy~:>" '((1)))
 #   "1yyy")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{~<~<~A~^xxx~:>yyy~:>},
 	[ [ 1 ] ]
 ), Q{1yyy}, Q{format.logical-block.escape.2};

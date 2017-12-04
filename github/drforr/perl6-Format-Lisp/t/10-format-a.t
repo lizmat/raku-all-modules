@@ -48,12 +48,10 @@ ok def-format-test( Q{~a}, ( Nil ), Q{NIL} ), Q{format.a.1};
 #      (format nil "~A" nil)))
 #   "nil")
 # 
-ok deftest(
-	{
-		my $*PRINT-CASE = Q{downcase};
-		$*fl.format( Q{~A}, Nil );
-	},
-	Q{nil}
+ok deftest( {
+	my $*PRINT-CASE = Q{downcase};
+	$*fl.format( Q{~A}, Nil );
+}, Q{nil}
 ), Q{format.a.2};
 
 # (deftest formatter.a.2
@@ -62,14 +60,10 @@ ok deftest(
 #      (formatter-call-to-string (formatter "~A") nil)))
 #   "nil")
 # 
-ok deftest(
-	{
-		my $*PRINT-CASE = Q{downcase};
-		$*fl.formatter-call-to-string(
-			$*fl.formatter( Q{~A} ), Nil
-		);
-	},
-	Q{nil}
+ok deftest( {
+	my $*PRINT-CASE = Q{downcase};
+	formatter-call-to-string( $*fl.formatter( Q{~A} ), Nil );
+}, Q{nil}
 ), Q{formatter.a.2};
 
 # (deftest format.a.3
@@ -78,12 +72,10 @@ ok deftest(
 #      (format nil "~a" nil)))
 #   "Nil")
 # 
-ok deftest(
-	{
-		my $*PRINT-CASE = Q{capitalize};
-		$*fl.format( Q{~a}, Nil );
-	},
-	Q{Nil}
+ok deftest( {
+	my $*PRINT-CASE = Q{capitalize};
+	$*fl.format( Q{~a}, Nil );
+}, Q{Nil}
 ), Q{format.a.3};
 
 # (deftest formatter.a.3
@@ -92,14 +84,10 @@ ok deftest(
 #      (formatter-call-to-string (formatter "~a") nil)))
 #   "Nil")
 # 
-ok deftest(
-	{
-		my $*PRINT-CASE = Q{capitalize};
-		$*fl.formatter-call-to-string(
-			$*fl.formatter( Q{~a} ), Nil
-		);
-	},
-	Q{Nil}
+ok deftest( {
+	my $*PRINT-CASE = Q{capitalize};
+	formatter-call-to-string( $*fl.formatter( Q{~a} ), Nil );
+}, Q{Nil}
 ), Q{formatter.a.3};
 
 # (def-format-test format.a.4
@@ -129,21 +117,19 @@ ok def-format-test( Q{~:A}, ( [ Nil ] ), Q{(NIL)} ), Q{format.a.5};
 #           collect (list c s1 s2 s3)))
 #   nil)
 # 
-ok deftest(
-	 {
-		my $fn = $*fl.formatter( Q{~a} );
-		my @collected;
-		for @standard-chars -> $c {
-			my $s1 = $c;
-			my $s2 = $*fl.format( Q{~a}, $s1 );
-			my $s3 = $*fl.formatter-call-to-string( $fn, $s1 );
-			unless $s1 eq $s1 and $s2 eq $s3 {
-				@collected.append( [ $c, $s1, $s2, $s3 ] );
-			}
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~a} );
+	my @collected;
+	for @standard-chars -> $c {
+		my $s1 = $c;
+		my $s2 = $*fl.format( Q{~a}, $s1 );
+		my $s3 = formatter-call-to-string( $fn, $s1 );
+		unless $s1 eq $s1 and $s2 eq $s3 {
+			@collected.append( [ $c, $s1, $s2, $s3 ] );
 		}
-		@collected;
-	},
-	[ ]
+	}
+	@collected;
+}, [ ]
 ), Q{format.a.7};
 
 # (deftest format.a.8
@@ -159,29 +145,27 @@ ok deftest(
 #           when (> count 100) collect "count limit exceeded" and do (loop-finish)))
 #   nil)
 # 
-ok deftest(
-	{
-		my $fn = $*fl.formatter( Q{~A} );
-		my @collected;
-		my $i = 0;
-		loop ( my $count = 0 ; ; ) {
-			last if $i < 0x10000 min $CHAR-CODE-LIMIT;
-			my $c = $i.chr;
-			my $s1 = $c;
-			my $s2 = $*fl.format( Q{~A}, $s1 );
-			my $s3 = $*fl.formatter-call-to-string( $fn, $s1 );
-			unless $c ~~ Nil or $s1 eq $s2 or $s2 eq $s3 {
-				$count++;
-				@collected.append( [ $c, $s1, $s2, $s3 ] );
-			}
-			if $count > 100 {
-				@collected.append( Q{count limit exceeded} );
-				last;
-			}
+ok deftest( {
+	my $fn = $*fl.formatter( Q{~A} );
+	my @collected;
+	my $i = 0;
+	loop ( my $count = 0 ; ; ) {
+		last if $i < 0x10000 min $CHAR-CODE-LIMIT;
+		my $c = $i.chr;
+		my $s1 = $c;
+		my $s2 = $*fl.format( Q{~A}, $s1 );
+		my $s3 = formatter-call-to-string( $fn, $s1 );
+		unless $c ~~ Nil or $s1 eq $s2 or $s2 eq $s3 {
+			$count++;
+			@collected.append( [ $c, $s1, $s2, $s3 ] );
 		}
-		@collected;
-	},
-	[ ]
+		if $count > 100 {
+			@collected.append( Q{count limit exceeded} );
+			last;
+		}
+	}
+	@collected;
+}, [ ]
 ), Q{format.a.8};
 
 # (deftest format.a.9
@@ -206,30 +190,28 @@ ok deftest(
 #   "      NIL"
 #   "       NIL")
 # 
-ok deftest(
-	{
-		my @collected;
-		for 1 .. 10 -> $i {
-			my $fmt = $*fl.format( Q{~~~d@a}, $i );
-			my $s = $*fl.format( $fmt, Nil );
-			my $fn = $*fl.formatter( $fmt );
-			my $s2 = $*fl.formatter-call-to-string( $fn, Nil );
-			is $s, $s2;
-			@collected.append( $s );
-		}
-		@collected;
-	},
-	[	Q{NIL},
-		Q{NIL},
-		Q{NIL},
-		Q{ NIL},
-		Q{  NIL},
-		Q{   NIL},
-		Q{    NIL},
-		Q{     NIL},
-		Q{      NIL},
-		Q{       NIL}
-	]
+ok deftest( {
+	my @collected;
+	for 1 .. 10 -> $i {
+		my $fmt = $*fl.format( Q{~~~d@a}, $i );
+		my $s = $*fl.format( $fmt, Nil );
+		my $fn = $*fl.formatter( $fmt );
+		my $s2 = formatter-call-to-string( $fn, Nil );
+		is $s, $s2;
+		@collected.append( $s );
+	}
+	@collected;
+}, [	Q{NIL},
+	Q{NIL},
+	Q{NIL},
+	Q{ NIL},
+	Q{  NIL},
+	Q{   NIL},
+	Q{    NIL},
+	Q{     NIL},
+	Q{      NIL},
+	Q{       NIL}
+]
 ), Q{format.a.9};
 
 # (deftest format.a.10
@@ -254,30 +236,28 @@ ok deftest(
 #   "NIL      "
 #   "NIL       ")
 # 
-ok deftest(
-	{
-		my @collected;
-		for 1 .. 10 -> $i {
-			my $fmt = $*fl.format( Q{~~~da}, $i );
-			my $s = $*fl.format( $fmt, Nil );
-			my $fn = $*fl.formatter( $fmt );
-			my $s2 = $*fl.formatter-call-to-string( $fn, Nil );
-			is $s, $s2;
-			@collected.append( $s );
-		}
-		@collected;
-	},
-	[	Q{NIL},
-		Q{NIL},
-		Q{NIL},
-		Q{NIL },
-		Q{NIL  },
-		Q{NIL   },
-		Q{NIL    },
-		Q{NIL     },
-		Q{NIL      },
-		Q{NIL       }
-	]
+ok deftest( {
+	my @collected;
+	for 1 .. 10 -> $i {
+		my $fmt = $*fl.format( Q{~~~da}, $i );
+		my $s = $*fl.format( $fmt, Nil );
+		my $fn = $*fl.formatter( $fmt );
+		my $s2 = formatter-call-to-string( $fn, Nil );
+		is $s, $s2;
+		@collected.append( $s );
+	}
+	@collected;
+}, [	Q{NIL},
+	Q{NIL},
+	Q{NIL},
+	Q{NIL },
+	Q{NIL  },
+	Q{NIL   },
+	Q{NIL    },
+	Q{NIL     },
+	Q{NIL      },
+	Q{NIL       }
+]
 ), Q{format.a.10};
 
 # (deftest format.a.11
@@ -302,30 +282,28 @@ ok deftest(
 #   "       ()"
 #   "        ()")
 # 
-ok deftest(
-	{
-		my @collected;
-		for 1 .. 10 -> $i {
-			my $fmt = $*fl.format( Q{~~~d@:A}, $i );
-			my $s = $*fl.format( $fmt, Nil );
-			my $fn = $*fl.formatter( $fmt );
-			my $s2 = $*fl.formatter-call-to-string( $fn, Nil );
-			is $s, $s2;
-			@collected.append( $s );
-		}
-		@collected;
-	},
-	[	Q{()},
-		Q{()},
-		Q{ ()},
-		Q{  ()},
-		Q{   ()},
-		Q{    ()},
-		Q{     ()},
-		Q{      ()},
-		Q{       ()},
-		Q{        ()}
-	]
+ok deftest( {
+	my @collected;
+	for 1 .. 10 -> $i {
+		my $fmt = $*fl.format( Q{~~~d@:A}, $i );
+		my $s = $*fl.format( $fmt, Nil );
+		my $fn = $*fl.formatter( $fmt );
+		my $s2 = formatter-call-to-string( $fn, Nil );
+		is $s, $s2;
+		@collected.append( $s );
+	}
+	@collected;
+}, [	Q{()},
+	Q{()},
+	Q{ ()},
+	Q{  ()},
+	Q{   ()},
+	Q{    ()},
+	Q{     ()},
+	Q{      ()},
+	Q{       ()},
+	Q{        ()}
+]
 ), Q{format.a.11};
 
 # (deftest format.a.12
@@ -350,30 +328,28 @@ ok deftest(
 #   "()       "
 #   "()        ")
 # 
-ok deftest(
-	{
-		my @collected;
-		for 1 .. 10 -> $i {
-			my $fmt = $*fl.format( Q{~~~d:a}, $i );
-			my $s = $*fl.format( $fmt, Nil );
-			my $fn = $*fl.formatter( $fmt );
-			my $s2 = $*fl.formatter-call-to-string( $fn, Nil );
-			is $s, $s2;
-			@collected.append( $s );
-		}
-		@collected;
-	},
-	[	Q{()},
-		Q{()},
-		Q{() },
-		Q{()  },
-		Q{()   },
-		Q{()    },
-		Q{()     },
-		Q{()      },
-		Q{()       },
-		Q{()        }
-	]
+ok deftest( {
+	my @collected;
+	for 1 .. 10 -> $i {
+		my $fmt = $*fl.format( Q{~~~d:a}, $i );
+		my $s = $*fl.format( $fmt, Nil );
+		my $fn = $*fl.formatter( $fmt );
+		my $s2 = formatter-call-to-string( $fn, Nil );
+		is $s, $s2;
+		@collected.append( $s );
+	}
+	@collected;
+}, [	Q{()},
+	Q{()},
+	Q{() },
+	Q{()  },
+	Q{()   },
+	Q{()    },
+	Q{()     },
+	Q{()      },
+	Q{()       },
+	Q{()        }
+]
 ), Q{format.a.12};
 
 # (deftest format.a.13
@@ -397,29 +373,27 @@ ok deftest(
 #   "()       "
 #   "()        ")
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~V:a} );
-		for 1 .. 10 -> $i {
-			my $s = $*fl.format( Q{~v:A}, $i, Nil );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i, Nil );
-			is $s, $s2;
-			@collected.append( $s );
-		}
-		@collected;
-	},
-	[	Q{()},
-		Q{()},
-		Q{() },
-		Q{()  },
-		Q{()   },
-		Q{()    },
-		Q{()     },
-		Q{()      },
-		Q{()       },
-		Q{()        }
-	]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~V:a} );
+	for 1 .. 10 -> $i {
+		my $s = $*fl.format( Q{~v:A}, $i, Nil );
+		my $s2 = formatter-call-to-string( $fn, $i, Nil );
+		is $s, $s2;
+		@collected.append( $s );
+	}
+	@collected;
+}, [	Q{()},
+	Q{()},
+	Q{() },
+	Q{()  },
+	Q{()   },
+	Q{()    },
+	Q{()     },
+	Q{()      },
+	Q{()       },
+	Q{()        }
+]
 ), Q{format.a.13};
 
 # (deftest format.a.14
@@ -443,29 +417,27 @@ ok deftest(
 #   "       ()"
 #   "        ()")
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~V@:A} );
-		for 1 .. 10 -> $i {
-			my $s = $*fl.format( Q{~v:@A}, $i, Nil );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i, Nil );
-			is $s, $s2;
-			@collected.append( $s );
-		}
-		@collected;
-	},
-	[	Q{()},
-		Q{()},
-		Q{ ()},
-		Q{  ()},
-		Q{   ()},
-		Q{    ()},
-		Q{     ()},
-		Q{      ()},
-		Q{       ()},
-		Q{        ()},
-	]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~V@:A} );
+	for 1 .. 10 -> $i {
+		my $s = $*fl.format( Q{~v:@A}, $i, Nil );
+		my $s2 = formatter-call-to-string( $fn, $i, Nil );
+		is $s, $s2;
+		@collected.append( $s );
+	}
+	@collected;
+}, [	Q{()},
+	Q{()},
+	Q{ ()},
+	Q{  ()},
+	Q{   ()},
+	Q{    ()},
+	Q{     ()},
+	Q{      ()},
+	Q{       ()},
+	Q{        ()},
+]
 ), Q{format.a.14};
 
 # (def-format-test format.a.15
@@ -564,37 +536,32 @@ subtest {
 	#    "ABC      "
 	#    "ABC       "))
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~v,,2A} );
-			for -4 .. 10 -> $i {
-				my $s = $*fl.format( Q{~v,,2A}, $i, Q{ABC} );
-				my $s2 =
-					$*fl.formatter-call-to-string(
-						$fn, $i, Q{ABC}
-					);
-				is $s, $s2;
-				@collected.append( $s );
-			}
-			@collected;
-		},
-		[	Q{ABC  },
-			Q{ABC  },
-			Q{ABC  },
-			Q{ABC  },
-			Q{ABC  },
-			Q{ABC  },
-			Q{ABC  },
-			Q{ABC  },
-			Q{ABC  },
-			Q{ABC  },
-			Q{ABC   },
-			Q{ABC    },
-			Q{ABC     },
-			Q{ABC      },
-			Q{ABC       }
-		]
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~v,,2A} );
+		for -4 .. 10 -> $i {
+			my $s = $*fl.format( Q{~v,,2A}, $i, Q{ABC} );
+			my $s2 = formatter-call-to-string( $fn, $i, Q{ABC} );
+			is $s, $s2;
+			@collected.append( $s );
+		}
+		@collected;
+	}, [	Q{ABC  },
+		Q{ABC  },
+		Q{ABC  },
+		Q{ABC  },
+		Q{ABC  },
+		Q{ABC  },
+		Q{ABC  },
+		Q{ABC  },
+		Q{ABC  },
+		Q{ABC  },
+		Q{ABC   },
+		Q{ABC    },
+		Q{ABC     },
+		Q{ABC      },
+		Q{ABC       }
+	]
 	), Q{format.a.29};
 
 	# (def-format-test format.a.30
@@ -696,29 +663,24 @@ subtest {
 	#    "ABC     "
 	#    "ABC      "))
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~3,,vA} );
-			for 0 .. 6 -> $i {
-				my $s = $*fl.format( Q{~3,,vA}, $i, Q{ABC} );
-				my $s2 =
-					$*fl.formatter-call-to-string(
-						$fn, $i, Q{ABC}
-					);
-				is $s, $s2;
-				@collected.append( $s );
-			}
-			@collected;
-		},
-		[	Q{ABC},
-			Q{ABC },
-			Q{ABC  },
-			Q{ABC   },
-			Q{ABC    },
-			Q{ABC     },
-			Q{ABC      }
-		]
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~3,,vA} );
+		for 0 .. 6 -> $i {
+			my $s = $*fl.format( Q{~3,,vA}, $i, Q{ABC} );
+			my $s2 = formatter-call-to-string( $fn, $i, Q{ABC} );
+			is $s, $s2;
+			@collected.append( $s );
+		}
+		@collected;
+	}, [	Q{ABC},
+		Q{ABC },
+		Q{ABC  },
+		Q{ABC   },
+		Q{ABC    },
+		Q{ABC     },
+		Q{ABC      }
+	]
 	), Q{format.a.44a};
 
 	# (deftest format.a.44a
@@ -736,29 +698,24 @@ subtest {
 	#    "     ABC"
 	#    "      ABC"))
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~3,,v@A} );
-			for 0 .. 6 -> $i {
-				my $s = $*fl.format( Q{~3,,v@A}, $i, Q{ABC} );
-				my $s2 =
-					$*fl.formatter-call-to-string(
-						$fn, $i, Q{ABC}
-					);
-				is $s, $s2;
-				@collected.append( $s );
-			}
-			@collected;
-		},
-		[	Q{ABC},
-			Q{ ABC},
-			Q{  ABC},
-			Q{   ABC},
-			Q{    ABC},
-			Q{     ABC},
-			Q{      ABC}
-		]
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~3,,v@A} );
+		for 0 .. 6 -> $i {
+			my $s = $*fl.format( Q{~3,,v@A}, $i, Q{ABC} );
+			my $s2 = formatter-call-to-string( $fn, $i, Q{ABC} );
+			is $s, $s2;
+			@collected.append( $s );
+		}
+		@collected;
+	}, [	Q{ABC},
+		Q{ ABC},
+		Q{  ABC},
+		Q{   ABC},
+		Q{    ABC},
+		Q{     ABC},
+		Q{      ABC}
+	]
 	), Q{format.a.44a};
 
 	# (def-format-test format.a.45
@@ -795,70 +752,56 @@ subtest {
 	#   "~#A" ("abc" nil nil nil) "abc " 3)
 	# 
 	ok def-format-test(
-		Q{~#A},
-		( Q{abc}, Nil, Nil, Nil ),
-		Q{abc }
+		Q{~#A}, ( Q{abc}, Nil, Nil, Nil ), Q{abc }, 3
 	), Q{format.a.49};
 
 	# (def-format-test format.a.50
 	#   "~#@a" ("abc" nil nil nil nil nil) "   abc" 5)
 	# 
 	ok def-format-test(
-		Q{~#@a},
-		( Q{abc}, Nil, Nil, Nil, Nil, Nil ),
-		Q{   abc}
-	), Q{format.a.50}
-	;
+		Q{~#@a}, ( Q{abc}, Nil, Nil, Nil, Nil, Nil ), Q{   abc}, 5
+	), Q{format.a.50};
 
 	# (def-format-test format.a.51
 	#   "~5,#a" ("abc" nil nil nil) "abc    " 3)
 	# 
 	ok def-format-test(
-		Q{~5,#a},
-		[Q{abc}, Nil, Nil, Nil ], Q{abc    }
+		Q{~5,#a}, ( Q{abc}, Nil, Nil, Nil ), Q{abc    }, 3
 	), Q{format.a.51};
 
 	# (def-format-test format.a.52
 	#   "~5,#@A" ("abc" nil nil nil) "    abc" 3)
 	# 
 	ok def-format-test(
-		Q{~5,#@A}, ( Q{abc}, Nil, Nil, Nil ), Q{    abc}
+		Q{~5,#@A}, ( Q{abc}, Nil, Nil, Nil ), Q{    abc}, 3
 	), Q{format.a.52};
 
 	# (def-format-test format.a.53
 	#   "~4,#A" ("abc" nil nil) "abc   " 2)
 	# 
 	ok def-format-test(
-		Q{~4,#A},
-		( Q{abc}, Nil, Nil ),
-		Q{abc   }
+		Q{~4,#A}, ( Q{abc}, Nil, Nil ), Q{abc   }, 2
 	), Q{format.a.53};
 
 	# (def-format-test format.a.54
 	#   "~4,#@A" ("abc" nil nil) "   abc" 2)
 	# 
 	ok def-format-test(
-		Q{~4,#@A},
-		( Q{abc}, Nil, Nil ),
-		Q{   abc}
+		Q{~4,#@A}, ( Q{abc}, Nil, Nil ), Q{   abc}, 2
 	), Q{format.a.54};
 
 	# (def-format-test format.a.55
 	#   "~#,#A" ("abc" nil nil nil) "abc    " 3)
 	# 
 	ok def-format-test(
-		Q{~#,#A},
-		( Q{abc}, Nil, Nil, Nil ),
-		Q{abc    }
+		Q{~#,#A}, ( Q{abc}, Nil, Nil, Nil ), Q{abc    }, 3
 	), Q{format.a.55};
 
 	# (def-format-test format.a.56
 	#   "~#,#@A" ("abc" nil nil nil) "    abc" 3)
 	# 
 	ok def-format-test(
-		Q{~#,#@A},
-		( Q{abc}, Nil, Nil, Nil ),
-		Q{    abc}
+		Q{~#,#@A}, ( Q{abc}, Nil, Nil, Nil ), Q{    abc}, 3
 	), Q{format.a.56};
 
 	# (def-format-test format.a.57

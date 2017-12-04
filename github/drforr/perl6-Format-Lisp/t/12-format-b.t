@@ -38,19 +38,18 @@ subtest {
 #            collect (list i s1 j s2))))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~b} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~B}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~b} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~B}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected
+}, [ ]
 ), Q{format.b.1};
 )
 
@@ -70,19 +69,18 @@ ok deftest(
 #            collect (list i s1 j s2))))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~@b} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected;
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~@b} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~@b}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected;
+}, [ ]
 ), Q{format.b.2};
 )
 
@@ -105,19 +103,18 @@ ok deftest(
 #          collect (list i mincol s1 s2 pos)))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~b} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~~~db}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~b} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~~~db}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected
+}, [ ]
 ), Q{format.b.3};
 )
 
@@ -141,19 +138,18 @@ ok deftest(
 #          collect (list i mincol s1 s2 pos)))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~b} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~~~db}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected;
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~b} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~~~db}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected;
+}, [ ]
 ), Q{formatter.b.3};
 )
 
@@ -177,18 +173,17 @@ ok deftest(
 #          collect (list i mincol s1 s2 pos)))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~b} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~~~db}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~b} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~~~db}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+}, [ ]
 ), Q{format.b.4};
 )
 
@@ -213,19 +208,18 @@ ok deftest(
 #          collect (list i mincol s1 s2 pos)))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( "~@B" );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( "~@B" );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~~~d@b}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected
+}, [ ]
 ), Q{formatter.b.4};
 )
 
@@ -250,19 +244,18 @@ ok deftest(
 #          collect (list i mincol s1 s2 pos)))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~@B} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected;
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~@B} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~~~d@b}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected;
+}, [ ]
 ), Q{formatter.b.4};
 )
 
@@ -288,19 +281,18 @@ ok deftest(
 #          collect (list i mincol s1 s2 pos)))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~@B} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected;
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~@B} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~~~d@b}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected;
+}, [ ]
 ), Q{formatter.b.5};
 )
 
@@ -326,19 +318,18 @@ ok deftest(
 #            collect (list i mincol s1 s2 s3 pos))))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~@B} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected;
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~@B} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~~~d@b}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected;
+}, [ ]
 ), Q{format.b.6};
 )
 
@@ -365,296 +356,285 @@ ok deftest(
 #            collect (list i mincol s1 s2 s3 pos))))
 #   nil)
 # 
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~@B} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected;
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~@B} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~~~d@b}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected;
+}, [ ]
 ), Q{format.b.7};
 )
 
-# ;;; Comma tests
-# 
-# (deftest format.b.8
-#   (let ((fn (formatter "~:B")))
-#     (loop for i from -7 to 7
-#           for s1 = (format nil "~b" i)
-#           for s2 = (format nil "~:b" i)
-#           for s3 = (formatter-call-to-string fn i)
-#           unless (and (string= s1 s2) (string= s2 s3))
-#           collect (list i s1 s2 s3)))
-#   nil)
-# 
-ok deftest(
-	{
+subtest {
+	# (deftest format.b.8
+	#   (let ((fn (formatter "~:B")))
+	#     (loop for i from -7 to 7
+	#           for s1 = (format nil "~b" i)
+	#           for s2 = (format nil "~:b" i)
+	#           for s3 = (formatter-call-to-string fn i)
+	#           unless (and (string= s1 s2) (string= s2 s3))
+	#           collect (list i s1 s2 s3)))
+	#   nil)
+	# 
+	ok deftest( {
 		my @collected;
 		my $fn = $*fl.formatter( Q{~:B} );
 		for -7 .. 7 -> $i {
 			my $s1 = $*fl.format( Q{~b}, $i );
 			my $s2 = $*fl.format( Q{~:b}, $i );
-			my $s3 = $*fl.formatter-call-to-string( $fn, $i );
+			my $s3 = formatter-call-to-string( $fn, $i );
 			unless $s1 eq $s2 and $s2 eq $s3 {
 				@collected.append( [ $i, $s1, $s2, $s3 ] );
 			}
 		}
 		@collected;
 	}, [ ]
-), Q{format.b.8};
+	), Q{format.b.8};
 
-#`(
-# (deftest format.b.9
-#   (let ((fn (formatter "~:b")))
-#     (with-standard-io-syntax
-#      (loop for x = (ash 1 (+ 2 (random 80)))
-#            for i = (- (random (+ x x)) x)
-#            for commachar = #\,
-#            for s1 = (format nil "~b" i)
-#            for s2 = (format nil "~:B" i)
-#            for s3 = (formatter-call-to-string fn i)
-#            repeat 1000
-#            unless (and (string= s1 (remove commachar s2))
-#                        (string= s2 s3)
-#                        (not (eql (elt s2 0) commachar))
-#                        (or (>= i 0) (not (eql (elt s2 1) commachar)))
-#                        (let ((len (length s2))
-#                              (ci+1 4))
-#                          (loop for i from (if (< i 0) 2 1) below len
-#                                always (if (= (mod (- len i) ci+1) 0)
-#                                           (eql (elt s2 i) commachar)
-#                                         (find (elt s2 i) "01")))))
-#            collect (list x i commachar s1 s2 s3))))
-#   nil)
-# 
-ok deftest(
-	{
+	#`(
+	# (deftest format.b.9
+	#   (let ((fn (formatter "~:b")))
+	#     (with-standard-io-syntax
+	#      (loop for x = (ash 1 (+ 2 (random 80)))
+	#            for i = (- (random (+ x x)) x)
+	#            for commachar = #\,
+	#            for s1 = (format nil "~b" i)
+	#            for s2 = (format nil "~:B" i)
+	#            for s3 = (formatter-call-to-string fn i)
+	#            repeat 1000
+	#            unless (and (string= s1 (remove commachar s2))
+	#                        (string= s2 s3)
+	#                        (not (eql (elt s2 0) commachar))
+	#                        (or (>= i 0) (not (eql (elt s2 1) commachar)))
+	#                        (let ((len (length s2))
+	#                              (ci+1 4))
+	#                          (loop for i from (if (< i 0) 2 1) below len
+	#                                always (if (= (mod (- len i) ci+1) 0)
+	#                                           (eql (elt s2 i) commachar)
+	#                                         (find (elt s2 i) "01")))))
+	#            collect (list x i commachar s1 s2 s3))))
+	#   nil)
+	# 
+	ok deftest( {
 		my @collected;
 		my $fn = $*fl.formatter( Q{~@B} );
 		for 1 .. 1000 {
 			my $x = 2 ** ( 2 + 80.rand.Int );
 			my $i = ( ( $x + $x ).rand - $x );
 			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
+			my $s2 = formatter-call-to-string( $fn, $i );
 			# XXX convert $s1 to base-10
 		}
 		@collected;
 	}, [ ]
-), Q{format.b.7};
-)
+	), Q{format.b.7};
+	)
 
-#`(
-# (deftest format.b.10
-#   (let ((fn (formatter "~,,v:B")))
-#     (with-standard-io-syntax
-#      (loop for x = (ash 1 (+ 2 (random 80)))
-#            for i = (- (random (+ x x)) x)
-#            for commachar = (random-from-seq +standard-chars+)
-#            for s1 = (format nil "~b" i)
-#            for s2 = (format nil "~,,v:b" commachar i)
-#            for s3 = (formatter-call-to-string fn commachar i)
-#            repeat 1000
-#            unless (and
-#                    (eql (elt s1 0) (elt s2 0))
-#                    (string= s2 s3)
-#                    (if (< i 0) (eql (elt s1 1) (elt s2 1)) t)
-#                    (let ((len (length s2))
-#                          (ci+1 4)
-#                          (j (if (< i 0) 1 0)))
-#                      (loop for i from (if (< i 0) 2 1) below len
-#                            always (if (= (mod (- len i) ci+1) 0)
-#                                       (eql (elt s2 i) commachar)
-#                                  (eql (elt s1 (incf j)) (elt s2 i))))))
-#            collect (list x i commachar s1 s2 s3))))
-#   nil)
-# 
-ok deftest(
-	{
+	#`(
+	# (deftest format.b.10
+	#   (let ((fn (formatter "~,,v:B")))
+	#     (with-standard-io-syntax
+	#      (loop for x = (ash 1 (+ 2 (random 80)))
+	#            for i = (- (random (+ x x)) x)
+	#            for commachar = (random-from-seq +standard-chars+)
+	#            for s1 = (format nil "~b" i)
+	#            for s2 = (format nil "~,,v:b" commachar i)
+	#            for s3 = (formatter-call-to-string fn commachar i)
+	#            repeat 1000
+	#            unless (and
+	#                    (eql (elt s1 0) (elt s2 0))
+	#                    (string= s2 s3)
+	#                    (if (< i 0) (eql (elt s1 1) (elt s2 1)) t)
+	#                    (let ((len (length s2))
+	#                          (ci+1 4)
+	#                          (j (if (< i 0) 1 0)))
+	#                      (loop for i from (if (< i 0) 2 1) below len
+	#                            always (if (= (mod (- len i) ci+1) 0)
+	#                                       (eql (elt s2 i) commachar)
+	#                                  (eql (elt s1 (incf j)) (elt s2 i))))))
+	#            collect (list x i commachar s1 s2 s3))))
+	#   nil)
+	# 
+	ok deftest( {
 		my @collected;
 		my $fn = $*fl.formatter( Q{~@B} );
 		for 1 .. 1000 {
 			my $x = 2 ** ( 2 + 80.rand.Int );
 			my $i = ( ( $x + $x ).rand - $x );
 			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
+			my $s2 = formatter-call-to-string( $fn, $i );
 			# XXX convert $s1 to base-10
 		}
 		@collected;
 	}, [ ]
-), Q{format.b.7};
-)
+	), Q{format.b.7};
+	)
 
-#`(
-# (deftest format.b.11
-#   (with-standard-io-syntax
-#    (loop for x = (ash 1 (+ 2 (random 80)))
-#          for i = (- (random (+ x x)) x)
-#          for commachar = (random-from-seq +standard-chars+)
-#          for s1 = (format nil "~b" i)
-#          for fmt = (format nil "~~,,'~c:~c" commachar (random-from-seq "bB"))
-#          for s2 = (format nil fmt i)
-#          repeat 1000
-#          unless (and
-#                  (eql (elt s1 0) (elt s2 0))
-#                  (if (< i 0) (eql (elt s1 1) (elt s2 1)) t)
-#                  (let ((len (length s2))
-#                       (ci+1 4)
-#                       (j (if (< i 0) 1 0)))
-#                   (loop for i from (if (< i 0) 2 1) below len
-#                         always (if (= (mod (- len i) ci+1) 0)
-#                                    (eql (elt s2 i) commachar)
-#                                  (eql (elt s1 (incf j)) (elt s2 i))))))
-#          collect (list x i commachar s1 s2)))
-#   nil)
-# 
-ok deftest(
-	{
+	#`(
+	# (deftest format.b.11
+	#   (with-standard-io-syntax
+	#    (loop for x = (ash 1 (+ 2 (random 80)))
+	#          for i = (- (random (+ x x)) x)
+	#          for commachar = (random-from-seq +standard-chars+)
+	#          for s1 = (format nil "~b" i)
+	#          for fmt = (format nil "~~,,'~c:~c" commachar (random-from-seq "bB"))
+	#          for s2 = (format nil fmt i)
+	#          repeat 1000
+	#          unless (and
+	#                  (eql (elt s1 0) (elt s2 0))
+	#                  (if (< i 0) (eql (elt s1 1) (elt s2 1)) t)
+	#                  (let ((len (length s2))
+	#                       (ci+1 4)
+	#                       (j (if (< i 0) 1 0)))
+	#                   (loop for i from (if (< i 0) 2 1) below len
+	#                         always (if (= (mod (- len i) ci+1) 0)
+	#                                    (eql (elt s2 i) commachar)
+	#                                  (eql (elt s1 (incf j)) (elt s2 i))))))
+	#          collect (list x i commachar s1 s2)))
+	#   nil)
+	# 
+	ok deftest( {
 		my @collected;
 		my $fn = $*fl.formatter( Q{~@B} );
 		for 1 .. 1000 {
 			my $x = 2 ** ( 2 + 80.rand.Int );
 			my $i = ( ( $x + $x ).rand - $x );
 			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
+			my $s2 = formatter-call-to-string( $fn, $i );
 			# XXX convert $s1 to base-10
 		}
 		@collected;
 	}, [ ]
-), Q{format.b.7};
-)
+	), Q{format.b.7};
+	)
 
-#`(
-# (deftest formatter.b.11
-#   (with-standard-io-syntax
-#    (loop for x = (ash 1 (+ 2 (random 80)))
-#          for i = (- (random (+ x x)) x)
-#          for commachar = (random-from-seq +standard-chars+)
-#          for s1 = (format nil "~b" i)
-#          for fmt = (format nil "~~,,'~c:~c" commachar (random-from-seq "bB"))
-#          for fn = (eval `(formatter ,fmt))
-#          for s2 = (formatter-call-to-string fn i)
-#          repeat 100
-#          unless (and
-#                  (eql (elt s1 0) (elt s2 0))
-#                  (if (< i 0) (eql (elt s1 1) (elt s2 1)) t)
-#                  (let ((len (length s2))
-#                       (ci+1 4)
-#                       (j (if (< i 0) 1 0)))
-#                   (loop for i from (if (< i 0) 2 1) below len
-#                         always (if (= (mod (- len i) ci+1) 0)
-#                                    (eql (elt s2 i) commachar)
-#                                  (eql (elt s1 (incf j)) (elt s2 i))))))
-#          collect (list x i commachar s1 s2)))
-#   nil)
-# 
-ok deftest(
-	{
+	#`(
+	# (deftest formatter.b.11
+	#   (with-standard-io-syntax
+	#    (loop for x = (ash 1 (+ 2 (random 80)))
+	#          for i = (- (random (+ x x)) x)
+	#          for commachar = (random-from-seq +standard-chars+)
+	#          for s1 = (format nil "~b" i)
+	#          for fmt = (format nil "~~,,'~c:~c" commachar (random-from-seq "bB"))
+	#          for fn = (eval `(formatter ,fmt))
+	#          for s2 = (formatter-call-to-string fn i)
+	#          repeat 100
+	#          unless (and
+	#                  (eql (elt s1 0) (elt s2 0))
+	#                  (if (< i 0) (eql (elt s1 1) (elt s2 1)) t)
+	#                  (let ((len (length s2))
+	#                       (ci+1 4)
+	#                       (j (if (< i 0) 1 0)))
+	#                   (loop for i from (if (< i 0) 2 1) below len
+	#                         always (if (= (mod (- len i) ci+1) 0)
+	#                                    (eql (elt s2 i) commachar)
+	#                                  (eql (elt s1 (incf j)) (elt s2 i))))))
+	#          collect (list x i commachar s1 s2)))
+	#   nil)
+	# 
+	ok deftest( {
 		my @collected;
 		my $fn = $*fl.formatter( Q{~@B} );
 		for 1 .. 1000 {
 			my $x = 2 ** ( 2 + 80.rand.Int );
 			my $i = ( ( $x + $x ).rand - $x );
 			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
+			my $s2 = formatter-call-to-string( $fn, $i );
 			# XXX convert $s1 to base-10
 		}
 		@collected;
 	}, [ ]
-), Q{format.b.7};
-)
+	), Q{format.b.7};
+	)
 
-#`(
-# (deftest format.b.12
-#   (let ((fn (formatter "~,,V,V:b")))
-#     (with-standard-io-syntax
-#      (loop for x = (ash 1 (+ 2 (random 80)))
-#            for i = (- (random (+ x x)) x)
-#            for commachar = (random-from-seq +standard-chars+)
-#            for commaint = (1+ (random 20))
-#            for s1 = (format nil "~b" i)
-#            for s2 = (format nil "~,,v,v:B" commachar commaint i)
-#            for s3 = (formatter-call-to-string fn commachar commaint i)
-#            repeat 1000
-#            unless (and
-#                    (eql (elt s1 0) (elt s2 0))
-#                    (string= s2 s3)
-#                    (if (< i 0) (eql (elt s1 1) (elt s2 1)) t)
-#                    (let ((len (length s2))
-#                          (ci+1 (1+ commaint))
-#                          (j (if (< i 0) 1 0)))
-#                      (loop for i from (if (< i 0) 2 1) below len
-#                            always (if (= (mod (- len i) ci+1) 0)
-#                                       (eql (elt s2 i) commachar)
-#                                     (eql (elt s1 (incf j)) (elt s2 i))))))
-#            collect (list x i commachar s1 s2 s3))))
-#   nil)
-# 
-ok deftest(
-	{
+	#`(
+	# (deftest format.b.12
+	#   (let ((fn (formatter "~,,V,V:b")))
+	#     (with-standard-io-syntax
+	#      (loop for x = (ash 1 (+ 2 (random 80)))
+	#            for i = (- (random (+ x x)) x)
+	#            for commachar = (random-from-seq +standard-chars+)
+	#            for commaint = (1+ (random 20))
+	#            for s1 = (format nil "~b" i)
+	#            for s2 = (format nil "~,,v,v:B" commachar commaint i)
+	#            for s3 = (formatter-call-to-string fn commachar commaint i)
+	#            repeat 1000
+	#            unless (and
+	#                    (eql (elt s1 0) (elt s2 0))
+	#                    (string= s2 s3)
+	#                    (if (< i 0) (eql (elt s1 1) (elt s2 1)) t)
+	#                    (let ((len (length s2))
+	#                          (ci+1 (1+ commaint))
+	#                          (j (if (< i 0) 1 0)))
+	#                      (loop for i from (if (< i 0) 2 1) below len
+	#                            always (if (= (mod (- len i) ci+1) 0)
+	#                                       (eql (elt s2 i) commachar)
+	#                                     (eql (elt s1 (incf j)) (elt s2 i))))))
+	#            collect (list x i commachar s1 s2 s3))))
+	#   nil)
+	# 
+	ok deftest( {
 		my @collected;
 		my $fn = $*fl.formatter( Q{~@B} );
 		for 1 .. 1000 {
 			my $x = 2 ** ( 2 + 80.rand.Int );
 			my $i = ( ( $x + $x ).rand - $x );
 			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
+			my $s2 = formatter-call-to-string( $fn, $i );
 			# XXX convert $s1 to base-10
 		}
 		@collected;
 	}, [ ]
-), Q{format.b.7};
-)
+	), Q{format.b.7};
+	)
 
-#`(
-# (deftest format.b.13
-#   (let ((fn (formatter "~,,V,V@:B")))
-#     (with-standard-io-syntax
-#      (loop for x = (ash 1 (+ 2 (random 80)))
-#            for i = (- (random (+ x x)) x)
-#            for commachar = (random-from-seq +standard-chars+)
-#            for commaint = (1+ (random 20))
-#            for s1 = (format nil "~@B" i)
-#            for s2 = (format nil "~,,v,v:@b" commachar commaint i)
-#            for s3 = (formatter-call-to-string fn commachar commaint i)
-#            repeat 1000
-#            unless (and
-#                    (string= s2 s3)
-#                    (eql (elt s1 0) (elt s2 0))
-#                    (eql (elt s1 1) (elt s2 1))
-#                    (let ((len (length s2))
-#                          (ci+1 (1+ commaint))
-#                          (j 1))
-#                      (loop for i from 2 below len
-#                            always (if (= (mod (- len i) ci+1) 0)
-#                                       (eql (elt s2 i) commachar)
-#                                     (eql (elt s1 (incf j)) (elt s2 i))))))
-#            collect (list x i commachar s1 s2 s3))))
-#   nil)
-# 
-ok deftest(
-	{
+	#`(
+	# (deftest format.b.13
+	#   (let ((fn (formatter "~,,V,V@:B")))
+	#     (with-standard-io-syntax
+	#      (loop for x = (ash 1 (+ 2 (random 80)))
+	#            for i = (- (random (+ x x)) x)
+	#            for commachar = (random-from-seq +standard-chars+)
+	#            for commaint = (1+ (random 20))
+	#            for s1 = (format nil "~@B" i)
+	#            for s2 = (format nil "~,,v,v:@b" commachar commaint i)
+	#            for s3 = (formatter-call-to-string fn commachar commaint i)
+	#            repeat 1000
+	#            unless (and
+	#                    (string= s2 s3)
+	#                    (eql (elt s1 0) (elt s2 0))
+	#                    (eql (elt s1 1) (elt s2 1))
+	#                    (let ((len (length s2))
+	#                          (ci+1 (1+ commaint))
+	#                          (j 1))
+	#                      (loop for i from 2 below len
+	#                            always (if (= (mod (- len i) ci+1) 0)
+	#                                       (eql (elt s2 i) commachar)
+	#                                     (eql (elt s1 (incf j)) (elt s2 i))))))
+	#            collect (list x i commachar s1 s2 s3))))
+	#   nil)
+	# 
+	ok deftest( {
 		my @collected;
 		my $fn = $*fl.formatter( Q{~@B} );
 		for 1 .. 1000 {
 			my $x = 2 ** ( 2 + 80.rand.Int );
 			my $i = ( ( $x + $x ).rand - $x );
 			my $s1 = $*fl.format( Q{~~~d@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
+			my $s2 = formatter-call-to-string( $fn, $i );
 			# XXX convert $s1 to base-10
 		}
 		@collected;
 	}, [ ]
-), Q{format.b.7};
-)
-
-# ;;; NIL arguments
-# 
+	), Q{format.b.7};
+	)
+}, Q{Comma tests};
 
 subtest {
 	# (def-format-test format.b.14
@@ -684,15 +664,14 @@ subtest {
 	# (def-format-test format.b.17
 	#   "~,,'*,v:B" (nil #b10110) "10*110")
 	# 
-	is $*fl.format(
+	ok def-format-test(
 		Q{~,,'*,v:B}, ( Nil, 0b10110 ), Q{10*110}
 	), Q{format.b.17};
 	)
 }, Q{NIL arguments};
 
 subtest {
-	plan 0; # XXX remove this when a test works
-
+	1;
 	#`(
 	# (deftest format.b.18
 	#   (let ((fn (formatter "~b")))
@@ -704,23 +683,22 @@ subtest {
 	#           collect (list x s1 s2 s3)))
 	#   nil)
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~b} );
-			for @MINI-UNIVERSE -> $x {
-				my $s1 = $*fl.format( Q{~b}, $x );
-				my $s2 = do {
-					my $*PRINT-BASE = 2;
-					return $*fl.format( Q{~A}, $x );
-				};
-				my $s3 = $*fl.formatter-call-to-string( $fn, $x );
-				unless $x ~~ Int or ( $s1 eq $s2 and $s1 eq $s3 ) {
-					@collected.append( [ $i, $s1, $s2, $s3 ] );
-				}
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~b} );
+		for @MINI-UNIVERSE -> $x {
+			my $s1 = $*fl.format( Q{~b}, $x );
+			my $s2 = do {
+				my $*PRINT-BASE = 2;
+				return $*fl.format( Q{~A}, $x );
+			};
+			my $s3 = formatter-call-to-string( $fn, $x );
+			unless $x ~~ Int or ( $s1 eq $s2 and $s1 eq $s3 ) {
+				@collected.append( [ $i, $s1, $s2, $s3 ] );
 			}
-			@collected;
-		}, [ ]
+		}
+		@collected;
+	}, [ ]
 	), Q{format.b.18};
 	)
 
@@ -735,23 +713,22 @@ subtest {
 	#           collect (list x s1 s2 s3)))
 	#   nil)
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~:b} );
-			for @MINI-UNIVERSE -> $x {
-				my $s1 = $*fl.format( Q{~:B}, $x );
-				my $s2 = do {
-					my $*PRINT-BASE = 2;
-					return $*fl.format( Q{~A}, $x );
-				};
-				my $s3 = $*fl.formatter-call-to-string( $fn, $x );
-				unless $x ~~ Int or ( $s1 eq $s2 and $s1 eq $s3 ) {
-					@collected.append( [ $i, $s1, $s2, $s3 ] );
-				}
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~:b} );
+		for @MINI-UNIVERSE -> $x {
+			my $s1 = $*fl.format( Q{~:B}, $x );
+			my $s2 = do {
+				my $*PRINT-BASE = 2;
+				return $*fl.format( Q{~A}, $x );
+			};
+			my $s3 = formatter-call-to-string( $fn, $x );
+			unless $x ~~ Int or ( $s1 eq $s2 and $s1 eq $s3 ) {
+				@collected.append( [ $i, $s1, $s2, $s3 ] );
 			}
-			@collected.elems;
-		}, [ ]
+		}
+		@collected.elems;
+	}, [ ]
 	), Q{format.b.19};
 	)
 
@@ -766,23 +743,22 @@ subtest {
 	#           collect (list x s1 s2 s3)))
 	#   nil)
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~@b} );
-			for @MINI-UNIVERSE -> $x {
-				my $s1 = $*fl.format( Q{~@b}, $x );
-				my $s2 = do {
-					my $*PRINT-BASE = 2;
-					return $*fl.format( Q{~A}, $x );
-				};
-				my $s3 = $*fl.formatter-call-to-string( $fn, $x );
-				unless $x ~~ Int or ( $s1 eq $s2 and $s1 eq $s3 ) {
-					@collected.append( [ $i, $s1, $s2, $s3 ] );
-				}
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~@b} );
+		for @MINI-UNIVERSE -> $x {
+			my $s1 = $*fl.format( Q{~@b}, $x );
+			my $s2 = do {
+				my $*PRINT-BASE = 2;
+				return $*fl.format( Q{~A}, $x );
+			};
+			my $s3 = formatter-call-to-string( $fn, $x );
+			unless $x ~~ Int or ( $s1 eq $s2 and $s1 eq $s3 ) {
+				@collected.append( [ $i, $s1, $s2, $s3 ] );
 			}
-			@collected.elems;
-		}, [ ]
+		}
+		@collected.elems;
+	}, [ ]
 	), Q{format.b.20};
 	)
 
@@ -799,23 +775,22 @@ subtest {
 	#           collect (list x s1 s2 s3)))
 	#   nil)
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~:@b} );
-			for @MINI-UNIVERSE -> $x {
-				my $s1 = $*fl.format( Q{~@:b}, $x );
-				my $s2 = do {
-					my $*PRINT-BASE = 2;
-					return $*fl.format( Q{~A}, $x );
-				};
-				my $s3 = $*fl.formatter-call-to-string( $fn, $x );
-				unless $x ~~ Int or ( $s1 eq $s2 and $s1 eq $s3 ) {
-					@collected.append( [ $i, $s1, $s2, $s3 ] );
-				}
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~:@b} );
+		for @MINI-UNIVERSE -> $x {
+			my $s1 = $*fl.format( Q{~@:b}, $x );
+			my $s2 = do {
+				my $*PRINT-BASE = 2;
+				return $*fl.format( Q{~A}, $x );
+			};
+			my $s3 = formatter-call-to-string( $fn, $x );
+			unless $x ~~ Int or ( $s1 eq $s2 and $s1 eq $s3 ) {
+				@collected.append( [ $i, $s1, $s2, $s3 ] );
 			}
-			@collected.elems;
-		}, [ ]
+		}
+		@collected.elems;
+	}, [ ]
 	), Q{format.b.21};
 	)
 }, Q{When the argument is not an integer, print as if using ~A and base 10};
@@ -852,32 +827,30 @@ subtest {
 	#   "     11001"
 	#   "      11001")
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~#B} );
-			my $bv = 0b11001;
-			for 0 .. 10 -> $i {
-		#		my @args = 
-		##		my $s = $*fl.format( Q{~v,,2A}, $i, Q{ABC} );
-		#		my $s2 = $*fl.formatter-call-to-string( $fn, $i, Q{ABC} );
-		#		is $s, $s2;
-		#		@collected.append( $s );
-			}
-			@collected;
-		}, [
-			Q{11001},
-			Q{11001},
-			Q{11001},
-			Q{11001},
-			Q{11001},
-			Q{ 11001},
-			Q{  11001},
-			Q{   11001},
-			Q{    11001},
-			Q{     11001},
-			Q{      11001}
-		]
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~#B} );
+		my $bv = 0b11001;
+		for 0 .. 10 -> $i {
+	#		my @args = 
+	##		my $s = $*fl.format( Q{~v,,2A}, $i, Q{ABC} );
+	#		my $s2 = formatter-call-to-string( $fn, $i, Q{ABC} );
+	#		is $s, $s2;
+	#		@collected.append( $s );
+		}
+		@collected;
+	}, [	Q{11001},
+		Q{11001},
+		Q{11001},
+		Q{11001},
+		Q{11001},
+		Q{ 11001},
+		Q{  11001},
+		Q{   11001},
+		Q{    11001},
+		Q{     11001},
+		Q{      11001}
+	]
 	), Q{format.b.22};
 	)
 
@@ -907,32 +880,30 @@ subtest {
 	#   "1100100010"
 	#   "1100100010")
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~#B} );
-			my $bv = 0b11001;
-			for 0 .. 10 -> $i {
-		#		my @args = 
-		##		my $s = $*fl.format( Q{~v,,2A}, $i, Q{ABC} );
-		#		my $s2 = $*fl.formatter-call-to-string( $fn, $i, Q{ABC} );
-		#		is $s, $s2;
-		#		@collected.append( $s );
-			}
-			@collected;
-		}, [
-			Q{1,1,0,0,1,0,0,0,1,0},
-			Q{11,00,10,00,10},
-			Q{1,100,100,010},
-			Q{11,0010,0010},
-			Q{11001,00010},
-			Q{1100,100010},
-			Q{110,0100010},
-			Q{11,00100010},
-			Q{1,100100010},
-			Q{1100100010},
-			Q{1100100010}
-		]
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~#B} );
+		my $bv = 0b11001;
+		for 0 .. 10 -> $i {
+	#		my @args = 
+	##		my $s = $*fl.format( Q{~v,,2A}, $i, Q{ABC} );
+	#		my $s2 = formatter-call-to-string( $fn, $i, Q{ABC} );
+	#		is $s, $s2;
+	#		@collected.append( $s );
+		}
+		@collected;
+	}, [	Q{1,1,0,0,1,0,0,0,1,0},
+		Q{11,00,10,00,10},
+		Q{1,100,100,010},
+		Q{11,0010,0010},
+		Q{11001,00010},
+		Q{1100,100010},
+		Q{110,0100010},
+		Q{11,00100010},
+		Q{1,100100010},
+		Q{1100100010},
+		Q{1100100010}
+	]
 	), Q{format.b.23};
 	)
 
@@ -962,32 +933,30 @@ subtest {
 	#   "+1100100010"
 	#   "+1100100010")
 	# 
-	ok deftest(
-		{
-			my @collected;
-			my $fn = $*fl.formatter( Q{~,,,#@:B} );
-			my $bv = 0b1100100010;
-			for 0 .. 10 -> $i {
-		#		my @args = 
-		#		my $s = $*fl.format( Q{~v,,2A}, $i, 'ABC' );
-		#		my $s2 = $*fl.formatter-call-to-string( $fn, $i, 'ABC' );
-		#		is $s, $s2;
-		#		@collected.append( $s );
-			}
-			@collected;
-		}, [
-			Q{+1,1,0,0,1,0,0,0,1,0},
-			Q{+11,00,10,00,10},
-			Q{+1,100,100,010},
-			Q{+11,0010,0010},
-			Q{+11001,00010},
-			Q{+1100,100010},
-			Q{+110,0100010},
-			Q{+11,00100010},
-			Q{+1,100100010},
-			Q{+1100100010},
-			Q{+1100100010}
-		]
+	ok deftest( {
+		my @collected;
+		my $fn = $*fl.formatter( Q{~,,,#@:B} );
+		my $bv = 0b1100100010;
+		for 0 .. 10 -> $i {
+	#		my @args = 
+	#		my $s = $*fl.format( Q{~v,,2A}, $i, 'ABC' );
+	#		my $s2 = formatter-call-to-string( $fn, $i, 'ABC' );
+	#		is $s, $s2;
+	#		@collected.append( $s );
+		}
+		@collected;
+	}, [	Q{+1,1,0,0,1,0,0,0,1,0},
+		Q{+11,00,10,00,10},
+		Q{+1,100,100,010},
+		Q{+11,0010,0010},
+		Q{+11001,00010},
+		Q{+1100,100010},
+		Q{+110,0100010},
+		Q{+11,00100010},
+		Q{+1,100100010},
+		Q{+1100100010},
+		Q{+1100100010}
+	]
 	), Q{format.b.24};
 	)
 
@@ -1051,19 +1020,18 @@ subtest {
 #      collect (list mincol padchar commachar commaint fmt x s1 s2)))
 #   nil)
 #
-ok deftest(
-	{
-		my @collected;
-		my $fn = $*fl.formatter( Q{~V,V,V,VB} );
-		for 1 .. 1000 {
-			my $x = 2 ** ( 2 + 80.rand.Int );
-			my $i = ( ( $x + $x ).rand - $x );
-			my $s1 = $*fl.format( Q{~@b}, $i );
-			my $s2 = $*fl.formatter-call-to-string( $fn, $i );
-			# XXX convert $s1 to base-10
-		}
-		@collected;
-	}, [ ]
+ok deftest( {
+	my @collected;
+	my $fn = $*fl.formatter( Q{~V,V,V,VB} );
+	for 1 .. 1000 {
+		my $x = 2 ** ( 2 + 80.rand.Int );
+		my $i = ( ( $x + $x ).rand - $x );
+		my $s1 = $*fl.format( Q{~@b}, $i );
+		my $s2 = formatter-call-to-string( $fn, $i );
+		# XXX convert $s1 to base-10
+	}
+	@collected;
+}, [ ]
 ), Q{format.b.30};
 )
 

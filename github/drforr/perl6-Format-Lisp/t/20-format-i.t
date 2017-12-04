@@ -5,10 +5,12 @@ use lib 't/lib';
 use Utils;
 use Format::Lisp;
 
-my $fl = Format::Lisp.new;
+my $*fl = Format::Lisp.new;
 
-# ;;; pprint-indent.9
-# 
+subtest {
+	is $*fl.format( Q{~<~i~>}, Q{} ), Q{}, Q{non-nil};
+}, Q{missing coverage};
+
 #`(
 # (def-pprint-test format.i.1
 #   (format nil "~<M~3:i~:@_M~:>" '(M M))
@@ -16,35 +18,30 @@ my $fl = Format::Lisp.new;
 #     M")
 # 
 is $fl.format(
-	Q{~<M~3:i~:@_M~:>},
-	[ Q{M}, Q{M} ]
+	Q{~<M~3:i~:@_M~:>}, [ Q{M}, Q{M} ]
 ), qq{M\n    M}, Q{format.i.1};
 )
 
-# ;;; See pprint-indent.10
 #`(
 # (def-pprint-test format.i.2
 #   (format nil "~:<M~1:I~@:_M~:>" '(M M))
 #   "(M
 #    M)")
 # 
-is $fl.format(
-	Q{~<M~1:I~:@_M~:>},
-	[ Q{M}, Q{M} ]
-), qq{(M\n   M)}, Q{format.i.2};
+ok def-format-test(
+	Q{~<M~1:I~:@_M~:>}, ( [ Q{M}, Q{M} ] ), qq{(M\n   M)}
+), Q{format.i.2};
 )
 
-# ;;; See pprint-indent.11
 #`(
 # (def-pprint-test format.i.3
 #   (format nil "~<(~;M~-1:i~:@_M~;)~:>" '(M M))
 #   "(M
 #  M)")
 # 
-is $fl.format(
-	Q{~<(~;M~-1:i~:@_M~;)~:>},
-	[ Q{M}, Q{M} ]
-), qq[(M\n M)], Q{format.i.3};
+ok def-format-test(
+	Q{~<(~;M~-1:i~:@_M~;)~:>}, ( [ Q{M}, Q{M} ] ), qq[(M\n M)]
+), Q{format.i.3};
 )
 
 #`(
@@ -53,10 +50,9 @@ is $fl.format(
 #   "(M
 #  M)")
 # 
-is $fl.format(
-	Q{~:<M~-1:i~:@_M~:>},
-	[ Q{M}, Q{M} ]
-), qq{(M\n M)}, Q{format.i.4};
+ok def-format-test(
+	Q{~:<M~-1:i~:@_M~:>}, ( [ Q{M}, Q{M} ] ), qq{(M\n M)}
+), Q{format.i.4};
 )
 
 #`(
@@ -65,10 +61,9 @@ is $fl.format(
 #   "(M
 #   M)")
 # 
-is $fl.format(
-	Q{~<(~;M~:I~:@_M~;)~:>},
-	[ Q{M}, Q{M} ]
-), qq{(M\n  M)}, Q{format.i.5};
+ok def-format-test(
+	Q{~<(~;M~:I~:@_M~;)~:>}, ( [ Q{M}, Q{M} ] ), qq{(M\n  M)}
+), Q{format.i.5};
 )
 
 #`(
@@ -77,10 +72,9 @@ is $fl.format(
 #   "(M
 #   M)")
 # 
-is $fl.format(
-	Q{~<(~;M~v:i~:@_M~;)~:>},
-	[ Nil ]
-), qq{(M\n  M)}, Q{format.i.6};
+ok def-format-test(
+	Q{~<(~;M~v:i~:@_M~;)~:>}, ( [ Nil ] ), qq{(M\n  M)}
+), Q{format.i.6};
 )
 
 #`(
@@ -89,10 +83,9 @@ is $fl.format(
 #   "(M
 # M)")
 # 
-is $fl.format(
-	Q{~:<M~-2:i~:@_M~:>},
-	[ Q{M}, Q{M} ]
-), qq{(M\nM)}, Q{format.i.7};
+ok def-format-test(
+	Q{~:<M~-2:i~:@_M~:>}, ( [ Q{M}, Q{M} ] ), qq{(M\nM)}
+), Q{format.i.7};
 )
 
 #`(
@@ -101,23 +94,20 @@ is $fl.format(
 #   "M
 #  M")
 # 
-is $fl.format(
-	Q{~<M~:i~:@_M~:>},
-	[ Q{M}, Q{M} ]
-), qq{(M\n M)}, Q{format.i.8};
+ok def-format-test(
+	Q{~<M~:i~:@_M~:>}, ( [ Q{M}, Q{M} ] ), qq{(M\n M)}
+), Q{format.i.8};
 )
 
-# ;;; See pprint-indent.13
 #`(
 # (def-pprint-test format.i.9
 #   (format nil "~<MMM~I~:@_MMMMM~:>" '(M M))
 #   "MMM
 # MMMMM")
 # 
-is $fl.format(
-	Q{~<MMM~I~:@_MMMMM~:>},
-	[ Q{M}, Q{M} ]
-), qq{(MMM\nMMMMM)}, Q{format.i.9};
+ok def-format-test(
+	Q{~<MMM~I~:@_MMMMM~:>}, ( [ Q{M}, Q{M} ] ), qq{(MMM\nMMMMM)}
+), Q{format.i.9};
 )
 
 #`(
@@ -126,10 +116,9 @@ is $fl.format(
 #   "(MMM
 #  MMMMM)")
 # 
-is $fl.format(
-	Q{~:<MMM~I~:@_MMMMM~:>},
-	[ Q{M}, Q{M} ]
-), qq{(MMM\nMMMMM)}, Q{format.i.10};
+ok def-format-test(
+	Q{~:<MMM~I~:@_MMMMM~:>}, ( [ Q{M}, Q{M} ] ), qq{(MMM\nMMMMM)}
+), Q{format.i.10};
 )
 
 #`(
@@ -138,10 +127,9 @@ is $fl.format(
 #   "MMM
 #  MMMMM")
 # 
-is $fl.format(
-	Q{~<MMM~1I~:@_MMMMM~:>},
-	[ Q{M}, Q{M} ]
-), qq{(MMM\n MMMMM)}, Q{format.i.11};
+ok def-format-test(
+	Q{~<MMM~1I~:@_MMMMM~:>}, ( [ Q{M}, Q{M} ] ), qq{(MMM\n MMMMM)}
+), Q{format.i.11};
 )
 
 #`(
@@ -150,10 +138,9 @@ is $fl.format(
 #   "XXXMMM
 #     MMMMM")
 # 
-is $fl.format(
-	Q{XXX~<MMM~1I~:@_MMMMM~:>},
-	[ Q{M}, Q{M} ]
-), qq{(XXXMMM\n    MMMMM)}, Q{format.i.12};
+ok def-format-test(
+	Q{XXX~<MMM~1I~:@_MMMMM~:>}, ( [ Q{M}, Q{M} ] ), qq{(XXXMMM\n    MMMMM)}
+), Q{format.i.12};
 )
 
 #`(
@@ -162,10 +149,9 @@ is $fl.format(
 #   "XXXMMM
 #    MMMMM")
 # 
-is $fl.format(
-	Q{XXX~<MMM~I~:@_MMMMM~:>},
-	[ Q{M}, Q{M} ]
-), qq{(XXXMMM\n   MMMMM)}, Q{format.i.13};
+ok def-format-test(
+	Q{XXX~<MMM~I~:@_MMMMM~:>}, ( [ Q{M}, Q{M} ] ), qq{(XXXMMM\n   MMMMM)}
+), Q{format.i.13};
 )
 
 #`(
@@ -174,10 +160,9 @@ is $fl.format(
 #   "XXXMMM
 #   MMMMM")
 # 
-is $fl.format(
-	Q{XXX~<MMM~-1I~:@_MMMMM~:>},
-	[ Q{M}, Q{M} ]
-), qq{(XXXMMM\n  MMMMM)}, Q{format.i.14};
+ok def-format-test(
+	Q{XXX~<MMM~-1I~:@_MMMMM~:>}, ( [ Q{M}, Q{M} ] ), qq{(XXXMMM\n  MMMMM)}
+), Q{format.i.14};
 )
 
 #`(
@@ -186,9 +171,9 @@ is $fl.format(
 #   "XXXMMM
 #    MMMMM")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{XXX~<MMM~vI~:@_MMMMM~:>},
-	[ Nil ]
+	( [ Nil ] )
 ), qq{(XXXMMM\n   MMMMM)}, Q{format.i.15};
 )
 
@@ -198,9 +183,9 @@ is $fl.format(
 #   "XXXMMM
 #      MMMMM")
 # 
-is $fl.format(
+is $*fl.format(
 	Q{XXX~<MMM~vI~:@_MMMMM~:>},
-	[ 2 ]
+	( [ 2 ] )
 ), qq{(XXXMMM\n     MMMMM)}, Q{format.i.16};
 )
 
