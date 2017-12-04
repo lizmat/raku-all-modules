@@ -34,7 +34,7 @@ class CSS::Declarations::Font {
 
         $pat ~= ':weight='
         #    000  100        200   300  400    500    600      700  800       900
-          ~ <thin extralight light book normal medium semibold bold extrabold black>[$!weight div 100]
+          ~ <thin extralight light book regular medium semibold bold extrabold black>[$!weight div 100]
             unless $!weight == 400;
 
         # [ultra|extra][condensed|expanded]
@@ -145,6 +145,16 @@ class CSS::Declarations::Font {
             default                 { self.font-length($_) }
         }
 	self;
+    }
+
+    method find-font(Str $name = $.fontconfig-pattern) {
+        my $cmd =  run('fc-match',  '-f', '%{file}', $name, :out, :err);
+        given $cmd.err.slurp {
+            note $_ if $_;
+        }
+        my $file = $cmd.out.slurp;
+        $file
+          || die "unable to resolve font-name: $name"
     }
 }
 
