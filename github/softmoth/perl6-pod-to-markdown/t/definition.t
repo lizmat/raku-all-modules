@@ -14,7 +14,7 @@ asdf1
 
 ```
 sub asdf(
-    Str $asdf1, 
+    Str $asdf1,
     Str :$asdf2 = "asdf"
 ) returns Str
 ```
@@ -48,7 +48,7 @@ asdf1
 ### sub asdf
 
     sub asdf(
-        Str $asdf1, 
+        Str $asdf1,
         Str :$asdf2 = "asdf"
     ) returns Str
 
@@ -81,7 +81,7 @@ is pod2markdown($=pod, :no-fenced-codeblocks).trim, $markdown-no-fenced.trim,
 module Asdf1 {
     #| Sub asdf1
     sub asdf(Str $asdf1, Str :$asdf2? = 'asdf') returns Str {
-	return '';
+        return '';
     }
 }
 
@@ -89,11 +89,9 @@ module Asdf1 {
 class Asdf2 does Positional  {
     #| t
     has Str $.t = 'asdf';
-    
+
     #| Method asdf2
     method asdf(Str :$asdf? = 'asdf') returns Str {
-	
+
     }
 }
-
-

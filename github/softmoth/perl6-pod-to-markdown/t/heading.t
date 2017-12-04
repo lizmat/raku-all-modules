@@ -37,7 +37,6 @@ asdf};
 is pod2markdown($=pod).trim, $markdown.trim,
    'Various types of headings convert correctly';
 
-		    
 
 =begin pod
 =head1 Abbreviated heading
@@ -51,11 +50,11 @@ asdf
 
 =begin head1
 Delimited
-	
+
 heading
 =end head1
 
-	
+
 
 asdf
 

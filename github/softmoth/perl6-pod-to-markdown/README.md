@@ -10,7 +10,7 @@ SYNOPSIS
 
 From command line:
 
-    $ perl6 --doc=Markdown lib/to/class.pm
+    $ perl6 --doc=Markdown lib/To/Class.pm
 
 From Perl6:
 
@@ -26,13 +26,11 @@ foobar.pl
 say pod2markdown($=pod);
 ```
 
-To render without fenced codeblocks ```` ``` ````, as some markdown engines don't support this, use the :no-fenced-codeblocks option. If you want to have code show up as ```` ```perl6```` to enable syntax highlighting on certain markdown renderers, use: `=begin code :lang<perl6>`
-
 EXPORTS
 =======
 
-    class Pod::To::Markdown;
-    sub pod2markdown; # See below
+    class Pod::To::Markdown
+    sub pod2markdown
 
 DESCRIPTION
 ===========
@@ -50,3 +48,12 @@ sub pod2markdown(
 ```
 
 Render Pod as Markdown
+
+To render without fenced codeblocks (```` ``` ````), as some markdown engines don't support this, use the :no-fenced-codeblocks option. If you want to have code show up as ```` ```perl6```` to enable syntax highlighting on certain markdown renderers, use:
+
+    =begin code :lang<perl6>
+
+LICENSE
+=======
+
+This is free software; you can redistribute it and/or modify it under the terms of the [Artistic License 2.0](http://www.perlfoundation.org/artistic_license_2_0).

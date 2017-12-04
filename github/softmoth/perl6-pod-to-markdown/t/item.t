@@ -8,9 +8,9 @@ plan 1;
 
 my $markdown = q{asdf
 
-  * Abbriviated 1
+  * Abbreviated 1
 
-  * Abbriviated 2
+  * Abbreviated 2
 
 asdf
 
@@ -22,7 +22,7 @@ asdf
 
 asdf
 
-  * Abbriviated
+  * Abbreviated
 
   * Paragraph item
 
@@ -41,8 +41,8 @@ is pod2markdown($=pod).trim, $markdown.trim,
 =begin pod
 asdf
 
-=item Abbriviated 1
-=item Abbriviated 2
+=item Abbreviated 1
+=item Abbreviated 2
 
 asdf
 
@@ -59,7 +59,7 @@ item
 
 asdf
 
-=item Abbriviated
+=item Abbreviated
 
 =for item
 Paragraph

@@ -1,3 +1,6 @@
+# v0.1.2
+* Use Pod::To::HTML for formatting tables
+
 # v0.1.1
 * Add support for properly escaping  backticks inside `C<code tags>`
 

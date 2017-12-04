@@ -12,7 +12,7 @@ This is the next paragraph.
 
 This is the third paragraph.
 
-Abbriviated paragraph
+Abbreviated paragraph
 
 Paragraph paragraph
 
@@ -32,7 +32,7 @@ This is the
 third paragraph.
 =end pod
 
-=para Abbriviated paragraph
+=para Abbreviated paragraph
 
 =for para
 Paragraph

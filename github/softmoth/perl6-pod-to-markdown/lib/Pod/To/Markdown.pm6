@@ -4,7 +4,7 @@ Pod::To::Markdown - Render Pod as Markdown
 =begin SYNOPSIS
 From command line:
 
-    $ perl6 --doc=Markdown lib/to/class.pm
+    $ perl6 --doc=Markdown lib/To/Class.pm
 
 From Perl6:
 =begin code :lang<perl6>
@@ -18,30 +18,27 @@ foobar.pl
 
 say pod2markdown($=pod);
 =end code
-To render without fenced codeblocks C<```>, as some markdown engines don't support
-this, use the :no-fenced-codeblocks option.
-If you want to have code show up as C<```perl6> to enable syntax highlighting on
-certain markdown renderers, use:
-C<=begin code :lang<perl6>>
 =end SYNOPSIS
 
-=begin EXPORTS
-    class Pod::To::Markdown;
-    sub pod2markdown; # See below
-=end EXPORTS
+=for EXPORTS
+    class Pod::To::Markdown
+    sub pod2markdown
 
 =DESCRIPTION
 
+
 class Pod::To::Markdown {
+
+use Pod::To::HTML;
 
 my Bool $in-code-block = False;
 
 multi sub pod2markdown(Pod::Heading $pod, Bool :$no-fenced-codeblocks) is export {
     my Str $head = pod2markdown(
-	$pod.contents,
-	# Collapse contents without newlines, is this correct behaviour?
-	:positional-separator(' '),
-	:$no-fenced-codeblocks,
+        $pod.contents,
+        # Collapse contents without newlines, is this correct behaviour?
+        :positional-separator(' '),
+        :$no-fenced-codeblocks,
     );
     head2markdown($pod.level, $head);
 }
@@ -58,12 +55,12 @@ multi sub pod2markdown(Pod::Block::Code $pod, Bool :$no-fenced-codeblocks) is ex
 
 multi sub pod2markdown(Pod::Block::Named $pod, Bool :$no-fenced-codeblocks) is export {
     given $pod.name {
-	when 'pod'    { pod2markdown($pod.contents, :$no-fenced-codeblocks) }
+        when 'pod'    { pod2markdown($pod.contents, :$no-fenced-codeblocks) }
         when 'para'   { $pod.contents>>.&pod2markdown(:$no-fenced-codeblocks).join(' ') }
-	when 'defn'   { pod2markdown($pod.contents, :$no-fenced-codeblocks) }
-	when 'config' { }
-	when 'nested' { }
-	default       { head2markdown(1, $pod.name) ~ "\n\n" ~ pod2markdown($pod.contents, :$no-fenced-codeblocks); }
+        when 'defn'   { pod2markdown($pod.contents, :$no-fenced-codeblocks) }
+        when 'config' { }
+        when 'nested' { }
+        default       { head2markdown(1, $pod.name) ~ "\n\n" ~ pod2markdown($pod.contents, :$no-fenced-codeblocks); }
     }
 }
 
@@ -76,27 +73,7 @@ sub entity-escape($str) {
 }
 
 multi sub pod2markdown(Pod::Block::Table $pod, Bool :$no-fenced-codeblocks) is export {
-    my Str $table = '';
-    $table ~= "<table>\n";
-    if $pod.headers {
-	$table ~= "  <thead>\n";
-	$table ~= "    <tr>\n";
-	for $pod.headers.item[0..*] -> $thead { # TODO: 0..* is needed, but why
-	                                        #       won't it work without?
-	    $table ~= "      <td>" ~ entity-escape(pod2markdown($thead, :$no-fenced-codeblocks)) ~ "</td>\n";
-	}
-	$table ~= "    </tr>\n";
-	$table ~= "  </thead>\n";
-    }
-    for $pod.contents -> @cols {
-	$table ~= "  <tr>\n";
-	for @cols -> $td {
-	    $table ~= "    <td>" ~ entity-escape(pod2markdown($td, :$no-fenced-codeblocks)) ~ "</td>\n";
-	}
-	$table ~= "  </tr>\n";
-    }
-    $table ~= "</table>";
-    $table;
+    return node2html($pod).trim;
 }
 
 multi sub pod2markdown(Pod::Block::Declarator $pod, Bool :$no-fenced-codeblocks) {
@@ -105,45 +82,45 @@ multi sub pod2markdown(Pod::Block::Declarator $pod, Bool :$no-fenced-codeblocks)
     my $ret = '';
     my $what = do given $pod.WHEREFORE {
         when Method {
-	    my $returns = ($_.signature.returns.WHICH.perl eq 'Mu')
-		?? ''
-		!! (' returns ' ~ $_.signature.returns.perl);
+            my $returns = ($_.signature.returns.WHICH.perl eq 'Mu')
+                ?? ''
+                !! (' returns ' ~ $_.signature.returns.perl);
             my @params = $_.signature.params[1..*];
                @params.pop if @params[*-1].name eq '%_';
-	    my $name = $_.name;
-	    $ret ~= head2markdown($lvl+1, "method $name") ~ "\n\n";
-	    $ret ~= $no-fenced-codeblocks
+            my $name = $_.name;
+            $ret ~= head2markdown($lvl+1, "method $name") ~ "\n\n";
+            $ret ~= $no-fenced-codeblocks
             ?? ("method $name" ~ signature2markdown(@params) ~ "$returns").indent(4)
             !! "```\nmethod $name" ~ signature2markdown(@params) ~ "$returns\n```";
         }
         when Sub {
-	    my $returns = ($_.signature.returns.WHICH.perl eq 'Mu')
-		?? ''
-		!! (' returns ' ~ $_.signature.returns.perl);
-	    my @params = $_.signature.params;
-	    my $name = $_.name;
-	    $ret ~= head2markdown($lvl+1, "sub $name") ~ "\n\n";
-	    $ret ~= $no-fenced-codeblocks
+            my $returns = ($_.signature.returns.WHICH.perl eq 'Mu')
+                ?? ''
+                !! (' returns ' ~ $_.signature.returns.perl);
+            my @params = $_.signature.params;
+            my $name = $_.name;
+            $ret ~= head2markdown($lvl+1, "sub $name") ~ "\n\n";
+            $ret ~= $no-fenced-codeblocks
             ?? ("sub $name" ~ signature2markdown(@params) ~ "$returns").indent(4)
             !! "```\nsub $name" ~ signature2markdown(@params) ~ "$returns\n```";
         }
         when .HOW ~~ Metamodel::ClassHOW {
-	    if ($_.WHAT.perl eq 'Attribute') {
-		my $name = $_.gist.subst('!', '.');
-		$ret ~= head2markdown($lvl+1, "has $name");
-	    }
-	    else {
-		my $name = $_.perl;
-		$ret ~= head2markdown($lvl, "class $name");
-	    }
+            if ($_.WHAT.perl eq 'Attribute') {
+                my $name = $_.gist.subst('!', '.');
+                $ret ~= head2markdown($lvl+1, "has $name");
+            }
+            else {
+                my $name = $_.perl;
+                $ret ~= head2markdown($lvl, "class $name");
+            }
         }
         when .HOW ~~ Metamodel::ModuleHOW {
-	    my $name = $_.perl;
-	    $ret ~= head2markdown($lvl, "module $name");
+            my $name = $_.perl;
+            $ret ~= head2markdown($lvl, "module $name");
         }
         when .HOW ~~ Metamodel::PackageHOW {
-	    my $name = $_.perl;
-	    $ret ~= head2markdown($lvl, "package $name");
+            my $name = $_.perl;
+            $ret ~= head2markdown($lvl, "package $name");
         }
         default {
             ''
@@ -216,8 +193,8 @@ multi sub pod2markdown(Pod::FormattingCode $pod, Bool :$no-fenced-codeblocks) is
     $text = sprintf '<%s>%s</%s>',
         %HTMLformats{$pod.type},
         $text,
- 	%HTMLformats{$pod.type}
-	if %HTMLformats.EXISTS-KEY: $pod.type;
+        %HTMLformats{$pod.type}
+        if %HTMLformats.EXISTS-KEY: $pod.type;
 
     $text;
 }
@@ -232,6 +209,17 @@ multi sub pod2markdown(Pod::Config $pod, Bool :$no-fenced-codeblocks) is export 
 multi sub pod2markdown($pod, Str :$positional-separator? = "\n\n", Bool :$no-fenced-codeblocks) returns Str is export {
     $pod.Str
 }
+=begin pod
+To render without fenced codeblocks (C<```>), as some markdown engines
+don't support this, use the :no-fenced-codeblocks option. If you want to
+have code show up as C<```perl6> to enable syntax highlighting on
+certain markdown renderers, use:
+
+=begin code
+=begin code :lang<perl6>
+=end code
+
+=end pod
 
 method render($pod, Bool :$no-fenced-codeblocks) {
     pod2markdown($pod, :$no-fenced-codeblocks);
@@ -240,9 +228,9 @@ method render($pod, Bool :$no-fenced-codeblocks) {
 sub head2markdown(Int $lvl, Str $head) {
     my $level = ($lvl < 6) ?? $lvl !! 6;
     given $level {
-	when 1  { $head ~ "\n" ~ ('=' x $head.chars) }
-	when 2  { $head ~ "\n" ~ ('-' x $head.chars) }
-	default { '#' x $level ~ ' ' ~ $head }
+        when 1  { $head ~ "\n" ~ ('=' x $head.chars) }
+        when 2  { $head ~ "\n" ~ ('-' x $head.chars) }
+        default { '#' x $level ~ ' ' ~ $head }
     }
 }
 
@@ -250,29 +238,32 @@ sub head2markdown(Int $lvl, Str $head) {
 #     my @rows = $pod.contents;
 #     my @maxes;
 #     for @rows, $pod.headers.item -> @row {
-# 	for 0..^@row -> $i {
-# 	    @maxes[$i] = max @maxes[$i], @row[$i].chars;
-# 	}
+#       for 0..^@row -> $i {
+#           @maxes[$i] = max @maxes[$i], @row[$i].chars;
+#       }
 #     }
 #     my $fmt = Arr@maxes>>.sprintf('%%-%ds)
 #     @rows.map({
-# 	my @cols = @_;
-# 	my @ret;
-# 	for 0..@_ -> $i {
-# 	    @ret.push: sprintf('%-'~$i~'s',
+#       my @cols = @_;
+#       my @ret;
+#       for 0..@_ -> $i {
+#           @ret.push: sprintf('%-'~$i~'s',
 
 #     if $pod.headers {
-# 	@rows.unshift([$pod.headers.item>>.chars.map({'-' x $_})]);
-# 	@rows.unshift($pod.headers.item);
+#       @rows.unshift([$pod.headers.item>>.chars.map({'-' x $_})]);
+#       @rows.unshift($pod.headers.item);
 #     }
 #     @rows>>.join(' | ') ==> join("\n");
 # }
 
 sub signature2markdown($params) {
       $params.elems ??
-      "(\n    " ~ $params.map({ $_.perl }).join(", \n    ") ~ "\n)"
+      "(\n    " ~ $params.map({ $_.perl }).join(",\n    ") ~ "\n)"
       !! "()";
 }
+
+=LICENSE
+This is free software; you can redistribute it and/or modify it under the terms of the L<Artistic License 2.0|http://www.perlfoundation.org/artistic_license_2_0>.
 
 }
 
