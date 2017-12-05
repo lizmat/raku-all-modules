@@ -17,26 +17,6 @@ has $!so-file-name;
 # Temporary directory
 has $!temp-dir;
 
-# Golang to p6 type mapping
-my %go-to-p6-type-map =
-    "uint8"   => "uint8",
-    "uint16"  => "uint16",
-    "uint32"  => "uint32",
-    "uint64"  => "uint64",
-    "int8"    => "int8",
-    "int16"   => "int16",
-    "int32"   => "int32",
-    "int64"   => "int64",
-    "int"     => "int32",
-    "rune"    => "int32",
-    "float32" => "num32",
-    "float64" => "num64",
-    "*C.char" => "Str",
-    ;
-    #TODO C.xyz types also
-    #TODO "complex64"
-    #TODO "complex128"
-
 method import-all {
     # Create a temporary build directory
     $!temp-dir = tempdir.IO.add( "perl6-inline-go" )
@@ -84,18 +64,21 @@ method find-exported-go-functions {
     my @exports = $!code.match( / '//export' \s+ (\w+) /, :global );
     my %results;
     for @exports {
-        my $func-name          = ~$_[0];
-        %results{ $func-name } = $func-name => 1;
+        #say "Found exported go function: " ~ $_[0];
+        my $func-name = ~$_[0];
+        %results{$func-name} = $func-name => 1;
     }
     %results;
 }
 
 method find-go-parameters(Str:D $signature) {
+    #say "Parsing signature: '$signature'";
     my @parameters = $signature.split(",");
     my $results    = gather {
         for @parameters {
+            #TODO support all go types
             my $parameter = $_.trim;
-            if $parameter ~~ / (\w+) \s+ (\*? \w+ (\. \w+)? )? / {
+            if $parameter ~~ / (\w+) \s+ (\w+)?/ {
                 my $parameter-name = $/[0];
                 my $parameter-type = $/[1];
                 take {
@@ -108,10 +91,7 @@ method find-go-parameters(Str:D $signature) {
 }
 
 method find-go-functions {
-    my @functions = $!code.match(
-        / 'func' \s+ (\w+) \s* '(' (.*?) ')' \s+ (\*? \w+ (\. \w+)? )? /,
-        :global
-    );
+    my @functions = $!code.match( /'func' \s+ (\w+) \s* '(' (.*?) ')' \s+ (\w+)? /, :global);
     my $results = gather {
         for @functions {
             my $function-name = ~$_[0];
@@ -124,6 +104,7 @@ method find-go-functions {
                 parameters  => $parameters,
                 return-type => $return-type,
             }
+            #say "Found go function: " ~ $function-name;
         }
     };
     $results;
@@ -133,40 +114,46 @@ method find-go-functions {
 method import(Str:D $func-name) {
     # Check whether it is exportable
     my %exports   = self.find-exported-go-functions;
-    die "Function'$func-name' is not exported.
-Please add cgo's '//export $func-name' comment before your go function
-declaration." unless %exports{$func-name}.defined;
+    die "Function'$func-name' is not exported. Please add cgo's '//export $func-name' comment before your go function declaration." unless %exports{$func-name}.defined;
 
     # Import function
     my $functions = self.find-go-functions;
-    my $func-decl;
+    my $imported = False;
     for @$functions {
         next if $func-name ne $_<name>.trim;
-        $func-decl = self._import_function($_).defined ?? True !! False;
+        $imported = self._import_function($_).defined ?? True !! False;
     }
-
-    die "Failed to import '$func-name'" unless $func-decl.defined;
-
-    my $role-decl = "
-        role GoFunctionWrappers \{
-            $func-decl
-        \}
-    ";
-    self._apply-role( $role-decl );
-
+    die "Failed to import '$func-name'" unless $imported;
 }
 
 method _import_function($function) {
     my %exports   = self.find-exported-go-functions;
-    my $func-name = $function<name>.trim;
+    my %go-to-p6-type-map =
+        "uint8"   => "uint8",
+        "uint16"  => "uint16",
+        "uint32"  => "uint32",
+        "uint64"  => "uint64",
+        "int8"    => "int8",
+        "int16"   => "int16",
+        "int32"   => "int32",
+        "int64"   => "int64",
+        "int"     => "int32",
+        "rune"    => "int32",
+        "float32" => "num32",
+        "float64" => "num64";
+        #TODO "complex64"
+        #TODO "complex128"
 
-    # Return if the function is not exportable
+    my $func-name = $function<name>.trim;
+    # Make sure function is exportable
     return unless %exports{$func-name}.defined;
 
     my $parameters  = $function<parameters>;
     my $return-type = $function<return-type>.defined
         ?? %go-to-p6-type-map{$function<return-type>}
         !! $function<return-type>;
+    #say "Processing $func-name";
+    #say "Parameters: $( @$parameters.perl )";
     my $signature   = @$parameters.map({
         my $name = $_<name>;
         my $type = $_<type>;
@@ -175,8 +162,9 @@ method _import_function($function) {
         my $p6-type = '';
         if $type.defined {
             $p6-type = %go-to-p6-type-map{$type};
-        } else {
-            die "No type defined for '$name'";
+        }
+        else {
+            warn "No type defined for '$name'";
         }
         "$p6-type \$$name";
     }).join(", ");
@@ -186,7 +174,8 @@ method _import_function($function) {
     }).join(", ");
 
     my $ret-decl = $return-type.defined ?? "returns $return-type" !! '';
-
+    #say $ret-decl;
+    use MONKEY-SEE-NO-EVAL;
     my $func-decl = "
         method $func-name ( $signature ) \{
             my sub _$func-name\( $signature )
@@ -199,38 +188,19 @@ method _import_function($function) {
         \}
     ";
     say $func-decl if $!debug;
+    my $func = EVAL $func-decl;
+    # say "function definition: '$( $func.perl )'";
+    no MONKEY-SEE-NO-EVAL;
 
-    return $func-decl;
+    return $func;
 }
 
 method parse-go-functions-and-import-them {
     my %exports   = self.find-exported-go-functions;
     my $functions = self.find-go-functions;
-    my @func-decls;
+    #say "functions: " ~ @functions.perl;
     for @$functions {
-        my $func-name = $_<name>;
-        next unless %exports{ $func-name }.defined;
-
-        my $func-decl = self._import_function($_);
-        die "Failed to import '$func-name'" unless $func-decl.defined;
-        @func-decls.append( $func-decl )
+        self._import_function($_)
     }
 
-    my $role-decl = "
-        role GoFunctionWrappers \{
-            $( @func-decls.join("\n") )
-        \}
-    ";
-    self._apply-role( $role-decl );
-
-    return;
-}
-
-method _apply-role($role-decl) {
-    use MONKEY-SEE-NO-EVAL;
-    my $role = EVAL $role-decl;
-    no MONKEY-SEE-NO-EVAL;
-    # Apply the role which adds the methods we need to the current object
-    # instead of the class
-    self does $role;
 }
