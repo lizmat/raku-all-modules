@@ -1,3 +1,7 @@
+# 0.0.36 2017-12-04
+
+- docker exec do not allocate pseudo tty
+
 # 0.0.35 2017-10-16
 
 - Git scm - add user and debug parameters

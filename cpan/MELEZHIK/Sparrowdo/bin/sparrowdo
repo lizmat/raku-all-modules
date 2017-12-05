@@ -236,7 +236,7 @@ sub ssh_shell ( $cmd ) {
 
   } elsif input_params('Docker') {
 
-      $ssh_cmd = "docker exec -it " ~ input_params('Docker') ~ ' ';
+      $ssh_cmd = "docker exec -i " ~ input_params('Docker') ~ ' ';
 
       if input_params('NoSudo') {
         $ssh_cmd ~= "sh -c '" ~ ( join ' ; ', @bash_commands ) ~ "'";
