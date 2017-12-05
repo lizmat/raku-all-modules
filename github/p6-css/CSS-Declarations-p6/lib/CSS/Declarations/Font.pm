@@ -5,7 +5,7 @@ class CSS::Declarations::Font {
 
     has Numeric $.em is rw = 10;
     has Numeric $.ex is rw = $!em * 0.75;
-    my subset FontWeight of Numeric where { $_ ~~ 100 .. 900 && $_ %% 100 }
+    my subset FontWeight of Numeric where { 100 <= $_ <= 900 && $_ %% 100 }
     has FontWeight $.weight is rw = 400;
     has Str @!family = ['times-roman'];
     method family { @!family[0] }
@@ -33,7 +33,7 @@ class CSS::Declarations::Font {
             unless $!style eq 'normal';
 
         $pat ~= ':weight='
-        #    000  100        200   300  400    500    600      700  800       900
+        #    000  100        200   300   400    500    600      700  800       900
           ~ <thin extralight light book regular medium semibold bold extrabold black>[$!weight div 100]
             unless $!weight == 400;
 
@@ -80,17 +80,21 @@ class CSS::Declarations::Font {
 
     #| converts a weight name to a three digit number:
     #| 100 lightest ... 900 heaviest
-    method !weight($_) returns FontWeight {
+    method !font-weight($_) returns FontWeight {
         given .lc {
-            when FontWeight       { $_ }
-            when /^ <[1..9]>00 $/ { .Int }
+            when FontWeight       { .Int }
             when 'normal'         { 400 }
             when 'bold'           { 700 }
             when 'lighter'        { max($!weight - 100, 100) }
             when 'bolder'         { min($!weight + 100, 900) }
             default {
-                warn "unhandled font-weight: $_";
-                400;
+                if /^ <[1..9]>00 $/ {
+                    .Int
+                }
+                else {
+                    warn "unhandled font-weight: $_";
+                    400;
+                }
             }
         }
     }
@@ -136,7 +140,7 @@ class CSS::Declarations::Font {
         $_ = 'arial' without @!family[0];
 
         $!style = $css.font-style;
-        $!weight = self!weight($css.font-weight);
+        $!weight = self!font-weight($css.font-weight);
         $!em = self.font-length($css.font-size);
         $!stretch = $css.font-stretch;
         $!line-height = do given $css.line-height {
