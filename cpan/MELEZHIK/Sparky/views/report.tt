@@ -1,0 +1,31 @@
+% my ( $css, $project, $build_id, $path ) = @_;
+
+%= $css
+
+<html>
+
+    <head>
+      %= "<title>~SPARKY CI WEB~ | build: $project@$build_id </title>"
+    </head>
+
+    <ul class="nav nav-tabs">
+      <li role="presentation"><a href="/">Recent Builds</a></li>
+      <li role="presentation"><a href="/about">About</a></li>
+    </ul>
+    
+
+    <!-- <div class="jumbotron">  -->
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          %= "Report: $project@$build_id" 
+       </h3>
+      </div>
+      <div class="panel-body">
+        % my $text = slurp $path
+        %= "<pre>" ~ $text ~ "</pre>"
+      </div>
+    </div>
+    <!-- </div> -->
+
+</html>
