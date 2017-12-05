@@ -42,7 +42,6 @@ DESCRIPTION
 ```
 sub pod2markdown(
     $pod,
-    Str :$positional-separator = "\n\n",
     Bool :$no-fenced-codeblocks
 ) returns Str
 ```
@@ -52,6 +51,17 @@ Render Pod as Markdown
 To render without fenced codeblocks (```` ``` ````), as some markdown engines don't support this, use the :no-fenced-codeblocks option. If you want to have code show up as ```` ```perl6```` to enable syntax highlighting on certain markdown renderers, use:
 
     =begin code :lang<perl6>
+
+### method render
+
+```
+method render(
+    $pod,
+    Bool :$no-fenced-codeblocks
+) returns Str
+```
+
+Render Pod as Markdown, see pod2markdown
 
 LICENSE
 =======

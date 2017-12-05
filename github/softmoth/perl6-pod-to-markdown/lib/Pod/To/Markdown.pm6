@@ -26,57 +26,95 @@ say pod2markdown($=pod);
 
 =DESCRIPTION
 
+# Trying to process this file itself results in the following:
+# $ perl6 --doc=Markdown lib/Pod/To/Markdown.pm6
+# ===SORRY!===
+# P6M Merging GLOBAL symbols failed: duplicate definition of symbol Markdown
+#
+# Here is a hack to generate README.md from this Pod:
+# perl6 lib/Pod/To/Markdown.pm6 > README.md
 
-class Pod::To::Markdown {
+sub MAIN() {
+    print ::('Pod::To::Markdown').render($=pod);
+}
+
+
+unit class Pod::To::Markdown;
 
 use Pod::To::HTML;
 
-my Bool $in-code-block = False;
 
-multi sub pod2markdown(Pod::Heading $pod, Bool :$no-fenced-codeblocks) is export {
-    my Str $head = pod2markdown(
-        $pod.contents,
-        # Collapse contents without newlines, is this correct behaviour?
-        :positional-separator(' '),
-        :$no-fenced-codeblocks,
-    );
-    head2markdown($pod.level, $head);
+#| Render Pod as Markdown
+multi sub pod2markdown($pod, Bool :$no-fenced-codeblocks)
+returns Str
+is export
+{
+    my Bool $*FENCED-CODEBLOCKS = !$no-fenced-codeblocks;
+    my Bool $*IN-CODE-BLOCK = False;
+    my $*POSITIONAL-SEPARATOR = "\n\n";
+    node2md($pod);
 }
 
-multi sub pod2markdown(Pod::Block::Code $pod, Bool :$no-fenced-codeblocks) is export {
-    temp $in-code-block = True;
-    if $pod.config<lang> and !$no-fenced-codeblocks {
+=begin pod
+To render without fenced codeblocks (C<```>), as some markdown engines
+don't support this, use the :no-fenced-codeblocks option. If you want to
+have code show up as C<```perl6> to enable syntax highlighting on
+certain markdown renderers, use:
+    =begin code
+    =begin code :lang<perl6>
+    =end code
+=end pod
+
+
+#| Render Pod as Markdown, see pod2markdown
+method render($pod, Bool :$no-fenced-codeblocks)
+returns Str
+{
+    pod2markdown($pod, :$no-fenced-codeblocks);
+}
+
+
+multi sub node2md(Pod::Heading $pod) {
+    # Collapse contents without newlines, is this correct behaviour?
+    my $*POSITIONAL-SEPARATOR = ' ';
+    my Str $head = node2md($pod.contents);
+    head2md($pod.level, $head);
+}
+
+multi sub node2md(Pod::Block::Code $pod) {
+    my $*IN-CODE-BLOCK = True;
+    if $pod.config<lang> and $*FENCED-CODEBLOCKS {
         ("```", $pod.config<lang>, "\n", $pod.contents.join, "```").join;
     }
     else {
-        $pod.contents>>.&pod2markdown(:$no-fenced-codeblocks).join.trim-trailing.indent(4);
+        $pod.contents>>.&node2md.join.trim-trailing.indent(4);
     }
 }
 
-multi sub pod2markdown(Pod::Block::Named $pod, Bool :$no-fenced-codeblocks) is export {
+multi sub node2md(Pod::Block::Named $pod) {
     given $pod.name {
-        when 'pod'    { pod2markdown($pod.contents, :$no-fenced-codeblocks) }
-        when 'para'   { $pod.contents>>.&pod2markdown(:$no-fenced-codeblocks).join(' ') }
-        when 'defn'   { pod2markdown($pod.contents, :$no-fenced-codeblocks) }
+        when 'pod'    { node2md($pod.contents) }
+        when 'para'   { $pod.contents>>.&node2md.join(' ') }
+        when 'defn'   { node2md($pod.contents) }
         when 'config' { }
         when 'nested' { }
-        default       { head2markdown(1, $pod.name) ~ "\n\n" ~ pod2markdown($pod.contents, :$no-fenced-codeblocks); }
+        default       { head2md(1, $pod.name) ~ "\n\n" ~ node2md($pod.contents); }
     }
 }
 
-multi sub pod2markdown(Pod::Block::Para $pod, Bool :$no-fenced-codeblocks) is export {
-    $pod.contents>>.&pod2markdown(:$no-fenced-codeblocks).join
+multi sub node2md(Pod::Block::Para $pod) {
+    $pod.contents>>.&node2md.join
 }
 
 sub entity-escape($str) {
     $str.trans([ '&', '<', '>' ] => [ '&amp;', '&lt;', '&gt;' ])
 }
 
-multi sub pod2markdown(Pod::Block::Table $pod, Bool :$no-fenced-codeblocks) is export {
+multi sub node2md(Pod::Block::Table $pod) {
     return node2html($pod).trim;
 }
 
-multi sub pod2markdown(Pod::Block::Declarator $pod, Bool :$no-fenced-codeblocks) {
+multi sub node2md(Pod::Block::Declarator $pod) {
     my $lvl = 2;
     next unless $pod.WHEREFORE.WHY;
     my $ret = '';
@@ -88,10 +126,11 @@ multi sub pod2markdown(Pod::Block::Declarator $pod, Bool :$no-fenced-codeblocks)
             my @params = $_.signature.params[1..*];
                @params.pop if @params[*-1].name eq '%_';
             my $name = $_.name;
-            $ret ~= head2markdown($lvl+1, "method $name") ~ "\n\n";
-            $ret ~= $no-fenced-codeblocks
-            ?? ("method $name" ~ signature2markdown(@params) ~ "$returns").indent(4)
-            !! "```\nmethod $name" ~ signature2markdown(@params) ~ "$returns\n```";
+            $ret ~= head2md($lvl+1, "method $name") ~ "\n\n";
+            $ret ~= $*FENCED-CODEBLOCKS
+                ?? "```\nmethod $name" ~ signature2md(@params) ~ "$returns\n```"
+                !! ("method $name" ~ signature2md(@params) ~ "$returns").indent(4)
+            ;
         }
         when Sub {
             my $returns = ($_.signature.returns.WHICH.perl eq 'Mu')
@@ -99,28 +138,29 @@ multi sub pod2markdown(Pod::Block::Declarator $pod, Bool :$no-fenced-codeblocks)
                 !! (' returns ' ~ $_.signature.returns.perl);
             my @params = $_.signature.params;
             my $name = $_.name;
-            $ret ~= head2markdown($lvl+1, "sub $name") ~ "\n\n";
-            $ret ~= $no-fenced-codeblocks
-            ?? ("sub $name" ~ signature2markdown(@params) ~ "$returns").indent(4)
-            !! "```\nsub $name" ~ signature2markdown(@params) ~ "$returns\n```";
+            $ret ~= head2md($lvl+1, "sub $name") ~ "\n\n";
+            $ret ~= $*FENCED-CODEBLOCKS
+                ?? "```\nsub $name" ~ signature2md(@params) ~ "$returns\n```"
+                !! ("sub $name" ~ signature2md(@params) ~ "$returns").indent(4)
+                ;
         }
         when .HOW ~~ Metamodel::ClassHOW {
             if ($_.WHAT.perl eq 'Attribute') {
                 my $name = $_.gist.subst('!', '.');
-                $ret ~= head2markdown($lvl+1, "has $name");
+                $ret ~= head2md($lvl+1, "has $name");
             }
             else {
                 my $name = $_.perl;
-                $ret ~= head2markdown($lvl, "class $name");
+                $ret ~= head2md($lvl, "class $name");
             }
         }
         when .HOW ~~ Metamodel::ModuleHOW {
             my $name = $_.perl;
-            $ret ~= head2markdown($lvl, "module $name");
+            $ret ~= head2md($lvl, "module $name");
         }
         when .HOW ~~ Metamodel::PackageHOW {
             my $name = $_.perl;
-            $ret ~= head2markdown($lvl, "package $name");
+            $ret ~= head2md($lvl, "package $name");
         }
         default {
             ''
@@ -129,12 +169,12 @@ multi sub pod2markdown(Pod::Block::Declarator $pod, Bool :$no-fenced-codeblocks)
     "$what\n\n{$pod.WHEREFORE.WHY.contents}";
 }
 
-multi sub pod2markdown(Pod::Block::Comment $pod, Bool :$no-fenced-codeblocks) is export { }
+multi sub node2md(Pod::Block::Comment $pod) { }
 
-multi sub pod2markdown(Pod::Item $pod, Bool :$no-fenced-codeblocks) is export {
+multi sub node2md(Pod::Item $pod) {
     my $level = $pod.level // 1;
-    my $markdown = '* ' ~ pod2markdown($pod.contents[0], :$no-fenced-codeblocks);
-    $markdown ~= "\n\n" ~ pod2markdown($pod.contents[1..Inf], :$no-fenced-codeblocks).indent(2)
+    my $markdown = '* ' ~ node2md($pod.contents[0]);
+    $markdown ~= "\n\n" ~ node2md($pod.contents[1..Inf]).indent(2)
         if $pod.contents.elems > 1;
     $markdown.indent($level * 2);
 }
@@ -155,12 +195,12 @@ my %Mformats =
 my %HTMLformats =
     R => 'var';
 
-multi sub pod2markdown(Pod::FormattingCode $pod, Bool :$no-fenced-codeblocks) is export {
+multi sub node2md(Pod::FormattingCode $pod) {
     return '' if $pod.type eq 'Z';
-    my $text = $pod.contents>>.&pod2markdown(:$no-fenced-codeblocks).join;
+    my $text = $pod.contents>>.&node2md.join;
 
     # It is safer to strip formatting in code blocks
-    return $text if $in-code-block;
+    return $text if $*IN-CODE-BLOCK;
 
     if $pod.type eq 'L' {
         if $pod.meta.elems > 0 {
@@ -199,33 +239,18 @@ multi sub pod2markdown(Pod::FormattingCode $pod, Bool :$no-fenced-codeblocks) is
     $text;
 }
 
-multi sub pod2markdown(Positional $pod, Str :$positional-separator = "\n\n", Bool :$no-fenced-codeblocks) is export {
-    $pod>>.&pod2markdown(:$no-fenced-codeblocks).join($positional-separator)
+multi sub node2md(Positional $pod) {
+    $pod>>.&node2md.join($*POSITIONAL-SEPARATOR)
 }
 
-multi sub pod2markdown(Pod::Config $pod, Bool :$no-fenced-codeblocks) is export { }
+multi sub node2md(Pod::Config $pod) { }
 
-#| Render Pod as Markdown
-multi sub pod2markdown($pod, Str :$positional-separator? = "\n\n", Bool :$no-fenced-codeblocks) returns Str is export {
+multi sub node2md($pod) returns Str {
     $pod.Str
 }
-=begin pod
-To render without fenced codeblocks (C<```>), as some markdown engines
-don't support this, use the :no-fenced-codeblocks option. If you want to
-have code show up as C<```perl6> to enable syntax highlighting on
-certain markdown renderers, use:
 
-=begin code
-=begin code :lang<perl6>
-=end code
 
-=end pod
-
-method render($pod, Bool :$no-fenced-codeblocks) {
-    pod2markdown($pod, :$no-fenced-codeblocks);
-}
-
-sub head2markdown(Int $lvl, Str $head) {
+sub head2md(Int $lvl, Str $head) {
     my $level = ($lvl < 6) ?? $lvl !! 6;
     given $level {
         when 1  { $head ~ "\n" ~ ('=' x $head.chars) }
@@ -234,49 +259,41 @@ sub head2markdown(Int $lvl, Str $head) {
     }
 }
 
-# sub table2markdown($pod) {
-#     my @rows = $pod.contents;
-#     my @maxes;
-#     for @rows, $pod.headers.item -> @row {
-#       for 0..^@row -> $i {
-#           @maxes[$i] = max @maxes[$i], @row[$i].chars;
-#       }
-#     }
-#     my $fmt = Arr@maxes>>.sprintf('%%-%ds)
-#     @rows.map({
-#       my @cols = @_;
-#       my @ret;
-#       for 0..@_ -> $i {
-#           @ret.push: sprintf('%-'~$i~'s',
-
-#     if $pod.headers {
-#       @rows.unshift([$pod.headers.item>>.chars.map({'-' x $_})]);
-#       @rows.unshift($pod.headers.item);
-#     }
-#     @rows>>.join(' | ') ==> join("\n");
-# }
-
-sub signature2markdown($params) {
+sub signature2md($params) {
       $params.elems ??
       "(\n    " ~ $params.map({ $_.perl }).join(",\n    ") ~ "\n)"
       !! "()";
 }
 
+=begin comment
+This isn't useful as long as all tables are rendered as HTML. It
+could still come in handy if, esthetically, we'd want simple
+tables rendered as plain Markdown.
+
+sub table2md(Pod::Block::Table $pod) {
+    my @rows = $pod.contents;
+    my @maxes;
+    for @rows, $pod.headers.item -> @row {
+      for 0..^@row -> $i {
+          @maxes[$i] = max @maxes[$i], @row[$i].chars;
+      }
+    }
+    my $fmt = Arr@maxes>>.sprintf('%%-%ds)
+    @rows.map({
+      my @cols = @_;
+      my @ret;
+      for 0..@_ -> $i {
+          @ret.push: sprintf('%-'~$i~'s',
+
+    if $pod.headers {
+      @rows.unshift([$pod.headers.item>>.chars.map({'-' x $_})]);
+      @rows.unshift($pod.headers.item);
+    }
+    @rows>>.join(' | ') ==> join("\n");
+}
+=end comment
+
 =LICENSE
 This is free software; you can redistribute it and/or modify it under the terms of the L<Artistic License 2.0|http://www.perlfoundation.org/artistic_license_2_0>.
-
-}
-
-# Trying to process this file itself results in the following:
-# $ perl6 --doc=Markdown lib/Pod/To/Markdown.pm6
-# ===SORRY!===
-# P6M Merging GLOBAL symbols failed: duplicate definition of symbol Markdown
-#
-# Here's a hack to generate README.md from this POD:
-# perl6 lib/Pod/To/Markdown.pm6 > README.md
-
-sub MAIN() {
-    print Pod::To::Markdown.render($=pod);
-}
 
 # vim: ts=8
