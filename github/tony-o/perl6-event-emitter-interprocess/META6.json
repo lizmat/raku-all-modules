@@ -1,0 +1,13 @@
+{
+  "name"        : "Event::Emitter::Inter-Process",
+  "version"     : "0.1.0",
+  "perl"        : "6.*",
+  "description" : "Event::Emitter plugin to assist in cross process communication",
+  "auth"        : "github:tony-o",
+  "authors"     : [ "Tony O'Dell" ],
+  "depends"     : ["Event::Emitter"],
+  "provides"    : {
+    "Event::Emitter::Inter-Process": "lib/Event/Emitter/Inter-Process.pm6"
+  },
+  "source-url"  : "git://github.com/tony-o/perl6-event-emitter-interprocess.git"
+} 
