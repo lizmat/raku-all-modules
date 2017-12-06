@@ -16,16 +16,7 @@ use v6.c;
 unit grammar Inline::Go::Grammar;
 
 # SourceFile = PackageClause ";" { ImportDecl ";" } { TopLevelDecl ";" } .
-rule TOP { ^ <PackageClause> <eos> (<ImportDecl> <eos>)* ( <TopLevelDecl> <eos> )* $ }
-
-#
-# End of Stream
-#
-#  https://golang.org/doc/effective_go.html#semicolons
-#
-rule eos {
-    ';' | \n | ''
-}
+rule TOP { <PackageClause> (';')? (<ImportDecl> ';'?)* ( <TopLevelDecl> ';'? )* }
 
 # PackageClause  = "package" PackageName .
 # PackageName    = identifier .
