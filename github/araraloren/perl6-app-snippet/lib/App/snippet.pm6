@@ -74,16 +74,23 @@ class Support {
 	has $.bin;
 }
 
+# the base role compiler provide a interface
+# of clang and gcc
 role Compiler {
     has $.compiler;
     has @.args;
     has $.lang;
 	has @.library;
 	has $.mode = CompileMode::LINK;
+	has $!debug;
 
 	method name() { ... }
 
 	method supports() { ... }
+
+	method openDebugMode() {
+		$!debug = True;
+	}
 
 	method setLanguage($lang) {
 		if self.supports().grep({.lang eq $lang}) {
@@ -99,6 +106,10 @@ role Compiler {
 	method autoDetecte() {
 		without $!compiler {
 			$!compiler = which(self.supports().first({ .lang eq $!lang }).bin);
+			without $!compiler {
+				die "Can not find the compiler of language: $!lang";
+			}
+			note "Get compiler => ", $!compiler if $!debug;
 		}
 		return defined($!compiler);
 	}
@@ -113,9 +124,9 @@ role Compiler {
 		$proc.stdout.tap(&print) if $out;
 		$proc.stderr.tap(&print) if $err;
 		$promise = $proc.start;
-		$proc.say($_) for @codes;
+		await [ $proc.say($_) for @codes ];
 		$proc.close-stdin;
-		$promise;	
+		$promise;
 	}
 
 	multi method compile(@args, :$out, :$err) {
@@ -132,17 +143,17 @@ role Compiler {
 
 		if $!mode eq CompileMode::LINK {
 			@realargs.push("-l{$_}") for @!library
-			
 		}
 		@realargs.push($!mode.Str) if $!mode.Str ne "";
 		@realargs.append("-o", $output, "-x{$!lang}", "-");
 		try {
+			note "Compile code with args => [{@realargs}]" if $!debug;
 			await self.compile(@realargs, @codes, :$out, :$err);
 			return Target.new(target => $output);
 			CATCH {
 				default {
-					return Target.new;	
-				}	
+					return Target.new;
+				}
 			}
 		}
 	}
@@ -153,13 +164,14 @@ role Compiler {
 		@realargs.push($!mode.Str) if $!mode.Str ne "";
 		@realargs.append("-o", $output, $file);
 		try {
+			note "Compile file with args => [{@realargs}]" if $!debug;
 			await self.compile(@realargs, :$out, :$err);
 			return Target.new(target => $output);
 			CATCH {
 				default {
-					return Target.new;	
-				}	
-			}	
+					return Target.new;
+				}
+			}
 		}
 	}
 
@@ -171,27 +183,28 @@ role Compiler {
 		@realargs.append(@objects);
 		@realargs.append("-o", $output);
 		try {
+			note "Link objects with args => [{@realargs}]" if $!debug;
 			await self.compile(@realargs, :$out, :$err);
 			return Target.new(target => $output);
 			CATCH {
 				default {
-					return Target.new;	
-				}	
-			}	
-		}		
+					return Target.new;
+				}
+			}
+		}
 	}
-	
+
 
     method setOptimizeLevel(int $level) {
-        self.addArg("-O{$level}");
+        self.addArg("O{$level}", :short);
     }
 
     method setStandard(Str $std) {
-        self.addArg("-std={$std}");
+        self.addArg("std={$std}", :short);
     }
 
 	multi method addMacro($macro) {
-        self.addArg("-D{$macro}");
+        self.addArg("D{$macro}", :short);
     }
 
 	multi method addMacro(@macro) {
@@ -199,7 +212,7 @@ role Compiler {
     }
 
     multi method addMacro($macro, $value) {
-        self.addArg("-D{$macro}={$value}");
+        self.addArg("D{$macro}={$value}", :short);
     }
 
 	multi method addMacro(*%args) {
@@ -207,7 +220,7 @@ role Compiler {
 	}
 
 	multi method addIncludePath($path) {
-        self.addArg("-I{$path}");
+        self.addArg("I{$path}", :short);
     }
 
 	multi method addIncludePath(@path) {
@@ -215,7 +228,7 @@ role Compiler {
 	}
 
 	multi method addLibraryPath($path) {
-        self.addArg("-L{$path}");
+        self.addArg("L{$path}", :short);
     }
 
 	multi method addLibraryPath(@path) {
@@ -230,20 +243,20 @@ role Compiler {
 		self.linkLibrary($_) for @libname;
 	}
 
-    multi method addArg(Str $option) {
-        @!args.push($option);
+    multi method addArg(Str $option, :$short) {
+        @!args.push("{$short.so ?? '-' !! '--'}{$option}");
     }
 
-	multi method addArg(@option) {
-		self.addArg($_) for @option;
+	multi method addArg(@option, |c) {
+		self.addArg($_, |c) for @option;
 	}
 
-    multi method addArg(Str $option, Str $arg) {
-        @!args.append($option, $arg);
+    multi method addArg(Str $option, Str $arg, :$short) {
+        @!args.append("{$short.so ?? '-' !! '--'}{$option}", $arg);
     }
 
-	multi method addArg(*%args) {
-	 	self.addArg(.key, .value) for %args;
+	multi method addArg(:$short, *%args) {
+	 	self.addArg(.key, .value, :$short) for %args;
 	}
 }
 
@@ -288,7 +301,7 @@ sub incodeFromOV($optionset, Str $prefix, Str $postfix, $opt) is export {
 	}
 }
 
-sub argsFromOV($optionset, Str $prefix, $opt) is export {
+sub argsFromOV($optionset, $opt, Str $prefix = "") is export {
 	if $optionset.get($opt).has-value {
 		my @value := $optionset{$opt};
 		@value.map({ $prefix ~ $_ });
@@ -328,7 +341,7 @@ sub simpleFormater(Str $command, Str $style) is export {
 		$proc.stdout.tap({ $code ~= $^a; });
 		$proc.stderr.tap(&print);
 		my $promise = $proc.start;
-		$proc.say($_) for @code;
+		await [ $proc.say($_) for @code ];
 		$proc.close-stdin;
 		await $promise;
 		return $code.chomp;

@@ -14,15 +14,16 @@ submethod TWEAK() {
 		my $tmppath = tmppath();
 
         # generate compile arguments
+        $compiler.openDebugMode() if $optset<debug>;
         $compiler.autoDetecte(); # ??user defined compiler!!
-        $compiler.addArg(&argsFromOV($optset, '-', 'f'));
-        $compiler.addArg(&argsFromOV($optset, '--', 'flag'));
-        $compiler.addIncludePath(&argsFromOV($optset, '-I', 'I'));
-        $compiler.addMacro(&argsFromOV($optset, '-D', 'D'));
-        $compiler.addLibraryPath(&argsFromOV($optset, '-L', 'L'));
-        $compiler.linkLibrary(&argsFromOV($optset, '-l', 'l'));
+        $compiler.addArg(&argsFromOV($optset, 'f'), :short);
+        $compiler.addArg(&argsFromOV($optset, 'flag'));
+        $compiler.addIncludePath(&argsFromOV($optset, 'I'));
+        $compiler.addMacro(&argsFromOV($optset, 'D'));
+        $compiler.addLibraryPath(&argsFromOV($optset, 'L'));
+        $compiler.linkLibrary(&argsFromOV($optset, 'l'));
         $compiler.setStandard($optset<std>);
-        $compiler.addArg(< -Wall -Wextra -Werror >) if $optset<w>;
+        $compiler.addArg(< Wall Wextra Werror >, :short) if $optset<w>;
 		$tmppath.IO.dirname.IO.mkdir;
         # generate code or file
         if +@args == 1 {
@@ -30,8 +31,8 @@ submethod TWEAK() {
 
             @incode.append(&incodeFromOV($optset, '#include <', '>', 'i'));
             @incode.append(&incodeFromOV($optset, '#', '', 'pp'));
-				@incode.append(&incodeFromOV($optset, 'using ', ';', 'u'));
-				@incode.append(&incodeFromOV($optset, 'using namespace ', ';', 'ns'));
+			@incode.append(&incodeFromOV($optset, 'using ', ';', 'u'));
+			@incode.append(&incodeFromOV($optset, 'using namespace ', ';', 'ns'));
             if $optset<r> {
                 my $prompt = qq:to/EOF/;
 Please input your code, make sure your code correct.
@@ -110,4 +111,3 @@ method lang() {
 method optionset() is rw {
     $!optset;
 }
-

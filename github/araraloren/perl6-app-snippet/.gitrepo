@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/araraloren/perl6-app-snippet.git
 	branch = master
-	commit = eb943a5f9425c45d62f861983b6c2aa48b31e1cc
-	parent = b72701c15dd0741c5ffa56dadbeb2d8d26796d3c
+	commit = 714751e3d7f4eddd93d1f81772edcb0bd22d9f14
+	parent = c0dbd2ab4a9836fd9edf0067c5fd7d4f0d26ef0f
 	cmdver = 0.4.0

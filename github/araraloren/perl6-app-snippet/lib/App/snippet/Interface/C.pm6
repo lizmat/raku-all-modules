@@ -14,17 +14,18 @@ submethod TWEAK() {
 		my $tmppath = tmppath();
 
         # generate compile arguments
+        $compiler.openDebugMode() if $optset<debug>;
         $compiler.autoDetecte(); # ??user defined compiler!!
-        $compiler.addArg(&argsFromOV($optset, '-', 'f'));
-        $compiler.addArg(&argsFromOV($optset, '--', 'flag'));
-        $compiler.addIncludePath(&argsFromOV($optset, '-I', 'I'));
-        $compiler.addMacro(&argsFromOV($optset, '-D', 'D'));
-        $compiler.addLibraryPath(&argsFromOV($optset, '-L', 'L'));
-        $compiler.linkLibrary(&argsFromOV($optset, '-l', 'l'));
+        $compiler.addArg(&argsFromOV($optset, 'f'), :short);
+        $compiler.addArg(&argsFromOV($optset, 'flag'));
+        $compiler.addIncludePath(&argsFromOV($optset, 'I'));
+        $compiler.addMacro(&argsFromOV($optset, 'D'));
+        $compiler.addLibraryPath(&argsFromOV($optset, 'L'));
+        $compiler.linkLibrary(&argsFromOV($optset, 'l'));
         $compiler.setStandard($optset<std>);
-        $compiler.addArg(< -Wall -Wextra -Werror >) if $optset<w>;
+        $compiler.addArg(Q :w ! Wall Wextra Werror !, :short) if $optset<w>;
 		$tmppath.IO.dirname.IO.mkdir;
-		
+
         # generate code or file
         if +@args == 1 {
             my @incode = [];
@@ -76,7 +77,7 @@ EOF
                     fail "Not a file: $file";
                 }
             }
-				$compiler.setMode(CompileMode::LINK);
+			$compiler.setMode(CompileMode::LINK);
             $target = $compiler.linkObject(
                 @objects,
                 $optset<o> // &sourceNameToExecutable($tmppath),
