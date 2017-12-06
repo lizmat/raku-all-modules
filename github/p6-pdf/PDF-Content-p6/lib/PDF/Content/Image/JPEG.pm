@@ -15,7 +15,7 @@ class PDF::Content::Image::JPEG
         has uint8 ($.ff, $.mark);
         has uint16 $.len
     }
-    # work-around for Rakudo RT #131122 - sign handling\
+    # work-around for Rakudo RT #131122 - sign handling
     has Atts $!atts;
     has Bool $!is-dct;
     has Str $!encoded;
@@ -23,7 +23,7 @@ class PDF::Content::Image::JPEG
     # work-around for Rakudo RT #131122 - sign handling
     sub u8(uint8 $v) { $v }
 
-    method read($fh!) {
+    method read($fh = $.source) {
         my Bool $is-dct;
 
         $fh.seek(0, SeekFromBeginning);
@@ -81,8 +81,5 @@ class PDF::Content::Image::JPEG
         PDF::DAO.coerce: :stream{ :%dict, :$!encoded };
     }
 
-    method open($fh) {
-        self.new.read($fh).to-dict;
-    }
 }
 

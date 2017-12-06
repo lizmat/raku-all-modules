@@ -18,8 +18,14 @@ class X::PDF::Image::UnknownType is Exception {
 
 class PDF::Content::Image {
     use PDF::DAO;
+    use PDF::DAO::Stream;
     use PDF::Content::XObject;
     use PDF::IO;
+
+    has Str $.data-uri;
+    my subset Str-or-IOHandle where Str|IO::Handle;
+    has Str-or-IOHandle $.source;
+    has Str $.image-type;
 
     method !image-type($_, :$path!) {
         when m:i/^ jpe?g $/    { 'JPEG' }
@@ -65,60 +71,33 @@ class PDF::Content::Image {
         self!open($type, $fh);
     }
 
-    method !open(Str $image-type, $fh, |c) {
-        my Hash $image-dict = (require ::('PDF::Content::Image')::($image-type)).open($fh);
-        $image-dict does PDF::Content::XObject[$image-dict<Subtype>]
-            unless $image-dict ~~ PDF::Content::XObject;
-
-        $image-dict.?set-source(:source($fh), :$image-type, |c);
-        $image-dict;
+    method !open(Str $image-type, $source, |c) {
+        my $image-obj = (require ::('PDF::Content::Image')::($image-type)).new(:$image-type, :$source);
+        $image-obj.read;
+        my PDF::DAO::Stream $image-xobject = $image-obj.to-dict;
+        $image-xobject does PDF::Content::XObject[$image-xobject<Subtype>]
+            unless $image-xobject ~~ PDF::Content::XObject;
+        $image-xobject.image-obj = $image-obj;
+        $image-xobject;
     }
 
-    method inline-to-xobject(Hash $inline-dict, Bool :$invert) {
-
-        my constant %Abbreviations = %(
-            # [PDF 1.7 TABLE 4.43 Entries in an inline image object]
-            :BPC<BitsPerComponent>,
-            :CS<ColorSpace>,
-            :D<Decode>,
-            :DP<DecodeParms>,
-            :F<Filter>,
-            :H<Height>,
-            :IM<ImageMask>,
-            :I<Interpolate>,
-            :W<Width>,
-            # [PDF 1.7 TABLE 4.44 Additional abbreviations in an inline image object]
-            :G<DeviceGray>,
-            :RGB<DeviceRGB>,
-            :CMYK<DeviceCMYK>,
-            # Notes:
-            # 1. ambiguous 'Indexed' entry seems to be a typo in the spec
-            # 2. filter abbreviations are handled in PDF::IO::Filter
-            );
-        my constant %Expansions = %( %Abbreviations.invert );
-
-        my $alias = $invert ?? %Expansions !! %Abbreviations;
-
-        my %xobject-dict = $inline-dict.pairs.map: {
-            ($alias{.key} // .key) => .value
-        }
-
-        %xobject-dict;
+    method data-uri is rw {
+        Proxy.new(
+            FETCH => sub ($) {
+                $!data-uri //= do with $!source {
+		    use Base64::Native;
+		    my Str $bytes = .isa(Str)
+			?? .substr(0)
+			!! .path.IO.slurp(:enc<latin-1>);
+		    my $enc = base64-encode($bytes, :str, :enc<latin-1>);
+		    'data:image/%s;base64,%s'.sprintf($.image-type.lc, $enc);
+		}
+		else {
+		    fail 'image is not associated with a source';
+		}
+            },
+            STORE => sub ($, $!data-uri) {},
+        )
     }
 
-    method inline-content {
-
-        # for serialization to content stream ops: BI dict ID data EI
-        use PDF::Content::Ops :OpCode;
-        use PDF::DAO::Util :ast-coerce;
-        # serialize to content ops
-        my %dict = ast-coerce(self).value.list;
-        %dict<Type Subtype Length>:delete;
-        %dict = self.inline-to-xobject( %dict, :invert );
-
-        [ (BeginImage) => [ :%dict ],
-          (ImageData)  => [ :$.encoded ],
-          (EndImage)   => [],
-        ]
-    }
 }

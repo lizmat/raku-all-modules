@@ -61,9 +61,7 @@ class PDF::Content
 	    die "'BI' op not followed by 'ID' in content stream"
 		unless $v1 ~~ Pair && $v1.key eq 'ID';
 
-	    my %dict = ( :Type( :name<XObject> ), :Subtype( :name<Image> ),
-			 PDF::Content::Image.inline-to-xobject($v.value[0]<dict>),
-		);
+	    my %dict = PDF::Content::XObject['Image'].inline-to-xobject($v.value[0]<dict>);
 	    my $encoded = $v1.value[0]<encoded>;
 
 	    @images.push: PDF::DAO.coerce( :stream{ :%dict, :$encoded } );

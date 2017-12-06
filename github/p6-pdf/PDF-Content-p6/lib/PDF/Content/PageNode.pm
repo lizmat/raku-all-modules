@@ -5,7 +5,7 @@ use PDF::DAO::Tie::Hash;
 role PDF::Content::PageNode {
 
     #| source: http://www.gnu.org/software/gv/
-    my subset Box of Array;# where {.elems == 4}
+    my subset Box of List where {.elems == 4}
 
     #| e.g. $.to-landscape(PagesSizes::A4)
     method to-landscape(Box $p --> Box) {
@@ -22,10 +22,19 @@ role PDF::Content::PageNode {
         self."$bbox"();
     }
 
-    method bbox(BoxName $_) is rw {
-	when 'media' { self.MediaBox //= [0, 0, 612, 792] }
-	when 'crop'  { self.CropBox // self.bbox('media') }
-	default      { self!get-prop($_) // self.bbox('crop') }
+    method bbox(BoxName $box-name) is rw {
+        my &fetch-sub := do given $box-name {
+            when 'media' { sub ($) { self.MediaBox // [0, 0, 612, 792] } }
+            when 'crop'  { sub ($) { self.CropBox // self.bbox('media') } }
+            default      { sub ($) { self!get-prop($box-name) // self.bbox('crop') } }
+        };
+
+        Proxy.new(
+            FETCH => &fetch-sub,
+            STORE => sub ($, Box $rect) {
+                self!get-prop($box-name) = $rect;
+            },
+           );
     }
 
     method media-box(|c) is rw { self.bbox('media', |c) }

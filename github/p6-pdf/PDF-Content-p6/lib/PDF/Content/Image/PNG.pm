@@ -44,7 +44,7 @@ class PDF::Content::Image::PNG
         $crc;
     }
 
-    method read($fh!) is default {
+    method read($fh = $.source) {
 
         my Str $header = $fh.read(8).decode('latin-1');
 
@@ -304,10 +304,6 @@ class PDF::Content::Image::PNG
 
 	my $decoded = $rgb-channels.decode: 'latin-1';
 	PDF::DAO.coerce: :stream{ :%dict, :$decoded };
-    }
-
-    method open($fh) {
-        self.new.read($fh).to-dict;
     }
 
 }

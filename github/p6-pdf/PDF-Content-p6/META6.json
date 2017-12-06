@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "PDF::Content",
-    "version"     : "0.0.9",
+    "version"     : "0.1.0",
     "license"     : "Artistic-2.0",
     "api"         : "PDF-1.7",
     "auth"        : "github:p6-pdf",

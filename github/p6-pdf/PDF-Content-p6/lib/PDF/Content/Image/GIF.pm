@@ -6,7 +6,6 @@ use PDF::Content::Image;
 class PDF::Content::Image::GIF
     is PDF::Content::Image {
 
-        use trace;
     use Native::Packing :Endian;
 
     class LogicalDescriptor does Native::Packing[Vax] {
@@ -102,7 +101,7 @@ class PDF::Content::Image::GIF
     method width { ($!img // $!descr).width; }
     method height { ($!img // $!descr).height; }
 
-    method read($fh!) {
+    method read($fh = $.source) {
         my Str $encoded = '';
 
         my $header = $fh.read(6).decode: 'latin-1';
@@ -212,7 +211,4 @@ class PDF::Content::Image::GIF
         PDF::DAO.coerce: :stream{ :%dict, :$encoded };
     }
 
-    method open($fh) {
-        self.new.read($fh).to-dict;
-    }
 }
