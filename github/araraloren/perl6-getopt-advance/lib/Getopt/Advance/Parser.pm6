@@ -418,7 +418,6 @@ sub process-pos($optset, @noa is copy) {
                 if $cmd.match-name(@noa[0].value) {
                     if $cmd.($optset, @cmdargs) {
                         # exclude the cmd name
-                        @noa.shift;
                         $cmd-matched = True;
                         last;
                     }
@@ -426,19 +425,24 @@ sub process-pos($optset, @noa is copy) {
             }
         }
     }
-    # if cmd match, pos check start from the next non-option argument
+
+    # pos index base on 0
+    # classify the pos base on index
     for %pos.values -> $pos {
         %need-sort-pos{
-            -> $index { # cmd pos index base on 0
+            -> $index {
                 $index ~~ WhateverCode ?? $index.(+@noa) !! $index;
             }($pos.index)
         }.push: $pos;
     }
 
-    my @fix-noa = $cmd-matched ?? @noa.map({ $^a.clone(index => $^a.index - 1); }) !! @noa;
+    my @fix-noa := @noa;
 
     # check front pos
-    if +@noa > 0 && (%need-sort-pos{0}:exists) {
+    # maybe add by insert-pos :front or
+    # insert-pos with index 0 or
+    # insert-pos with * - 1
+    if (not $cmd-matched) && +@noa > 0 && (%need-sort-pos{0}:exists) {
         for @(%need-sort-pos{0}) -> $front {
             try {
                 if $front.($optset, @fix-noa[0]) {
@@ -456,14 +460,17 @@ sub process-pos($optset, @noa is copy) {
     }
 
     if (%cmd.elems > 0 && not $cmd-matched)
-        && (%need-sort-pos{0}.elems > 0 && not $front-matched) {
+        && ((%need-sort-pos{0}:exists)
+            && %need-sort-pos{0}.elems > 0 && not $front-matched) {
         # no cmd or pos matched, and pos is optional
         ga-try-next("Not recongnize command: {@noa[0].value}.");
     }
 
     # check other pos
-    for %need-sort-pos.keys.sort.[1..*-1] -> $index {
-        if +@noa > $index {
+    # remove 0 pos
+    %need-sort-pos{0}:delete;
+    for %need-sort-pos.keys.sort -> $index {
+        if +@fix-noa > $index && $index >= 0 {
             for @(%need-sort-pos{$index}) -> $pos {
                 try {
                     if $pos.($optset, @fix-noa[$index]) {
