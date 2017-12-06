@@ -30,7 +30,6 @@ get '/' => sub {
 
 
 get '/report/:project/:build_id' => sub ( $project, $build_id ) {
-  "$reports-dir/$project/build-$build_id.txt";
   if "$reports-dir/$project/build-$build_id.txt".IO ~~ :f {
     template 'report.tt', css(), $project, $build_id, "$reports-dir/$project/build-$build_id.txt";
   } else {

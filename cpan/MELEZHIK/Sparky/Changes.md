@@ -1,3 +1,8 @@
+# 0.0.23
+
+- remove old debug code 
+- language correction in readme file
+
 # 0.0.22
 
 * Sparky distributuin moved to CPAN
