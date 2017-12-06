@@ -1,25 +1,9 @@
 use v6;
-use lib <blib/lib lib>;
 
 use Test;
 use Pod::To::Markdown;
 
 plan 1;
-
-my $markdown = q{This is all a paragraph.
-
-This is the next paragraph.
-
-This is the third paragraph.
-
-Abbreviated paragraph
-
-Paragraph paragraph
-
-Block paragraph};
-
-is pod2markdown($=pod), $markdown,
-    'Paragraphs convert correctly.';
 
 =begin pod
 This is all
@@ -43,3 +27,19 @@ Block
 
 paragraph
 =end para
+
+is pod2markdown($=pod), q:to/EOF/, 'Paragraphs convert correctly';
+This is all a paragraph.
+
+This is the next paragraph.
+
+This is the third paragraph.
+
+Abbreviated paragraph
+
+Paragraph paragraph
+
+Block paragraph
+EOF
+
+# vim:set ft=perl6:

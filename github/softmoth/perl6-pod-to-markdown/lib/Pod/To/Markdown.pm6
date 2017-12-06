@@ -7,8 +7,8 @@ From command line:
     $ perl6 --doc=Markdown lib/To/Class.pm
 
 From Perl6:
-=begin code :lang<perl6>
-use Pod::To::Markdown;
+=begin code :lang<perl6> :allow<B>
+B<use Pod::To::Markdown;>
 
 =NAME
 foobar.pl
@@ -16,7 +16,7 @@ foobar.pl
 =SYNOPSIS
     foobar.pl <options> files ...
 
-say pod2markdown($=pod);
+print B<pod2markdown($=pod)>;
 =end code
 =end SYNOPSIS
 
@@ -43,16 +43,18 @@ unit class Pod::To::Markdown;
 
 use Pod::To::HTML;
 
+#my sub Debug(&code) { &code() }
+my sub Debug(&code) { }
 
 #| Render Pod as Markdown
 multi sub pod2markdown($pod, Bool :$no-fenced-codeblocks)
 returns Str
 is export
 {
-    my Bool $*FENCED-CODEBLOCKS = !$no-fenced-codeblocks;
-    my Bool $*IN-CODE-BLOCK = False;
-    my $*POSITIONAL-SEPARATOR = "\n\n";
-    node2md($pod);
+    my Bool $*fenced-codeblocks = !$no-fenced-codeblocks;
+    my Bool $*in-code-block = False;
+    my $*positional-separator = "\n\n";
+    node2md($pod) ~ "\n";
 }
 
 =begin pod
@@ -64,7 +66,8 @@ certain markdown renderers, use:
     =begin code :lang<perl6>
     =end code
 =end pod
-
+#`[ Fake Pod directive to help syntax highlighters cope:
+    =end code ]
 
 #| Render Pod as Markdown, see pod2markdown
 method render($pod, Bool :$no-fenced-codeblocks)
@@ -76,19 +79,15 @@ returns Str
 
 multi sub node2md(Pod::Heading $pod) {
     # Collapse contents without newlines, is this correct behaviour?
-    my $*POSITIONAL-SEPARATOR = ' ';
+    my $*positional-separator = ' ';
     my Str $head = node2md($pod.contents);
     head2md($pod.level, $head);
 }
 
 multi sub node2md(Pod::Block::Code $pod) {
-    my $*IN-CODE-BLOCK = True;
-    if $pod.config<lang> and $*FENCED-CODEBLOCKS {
-        ("```", $pod.config<lang>, "\n", $pod.contents.join, "```").join;
-    }
-    else {
-        $pod.contents>>.&node2md.join.trim-trailing.indent(4);
-    }
+    my $*in-code-block = True;
+    code2md($pod.contents>>.&node2md.join.trim-trailing,
+        :lang($pod.config<lang>));
 }
 
 multi sub node2md(Pod::Block::Named $pod) {
@@ -96,8 +95,8 @@ multi sub node2md(Pod::Block::Named $pod) {
         when 'pod'    { node2md($pod.contents) }
         when 'para'   { $pod.contents>>.&node2md.join(' ') }
         when 'defn'   { node2md($pod.contents) }
-        when 'config' { }
-        when 'nested' { }
+        when 'config' { Debug { die "NAMED CONFIG" }; '' }
+        when 'nested' { Debug { die "NAMED NESTED" }; '' }
         default       { head2md(1, $pod.name) ~ "\n\n" ~ node2md($pod.contents); }
     }
 }
@@ -116,75 +115,48 @@ multi sub node2md(Pod::Block::Table $pod) {
 
 multi sub node2md(Pod::Block::Declarator $pod) {
     my $lvl = 2;
-    next unless $pod.WHEREFORE.WHY;
-    my $ret = '';
+    return '' unless $pod.WHEREFORE.WHY;
     my $what = do given $pod.WHEREFORE {
         when Method {
-            my $returns = ($_.signature.returns.WHICH.perl eq 'Mu')
-                ?? ''
-                !! (' returns ' ~ $_.signature.returns.perl);
-            my @params = $_.signature.params[1..*];
-               @params.pop if @params[*-1].name eq '%_';
-            my $name = $_.name;
-            $ret ~= head2md($lvl+1, "method $name") ~ "\n\n";
-            $ret ~= $*FENCED-CODEBLOCKS
-                ?? "```\nmethod $name" ~ signature2md(@params) ~ "$returns\n```"
-                !! ("method $name" ~ signature2md(@params) ~ "$returns").indent(4)
-            ;
+            signature2md($lvl, $_, :method);
         }
         when Sub {
-            my $returns = ($_.signature.returns.WHICH.perl eq 'Mu')
-                ?? ''
-                !! (' returns ' ~ $_.signature.returns.perl);
-            my @params = $_.signature.params;
-            my $name = $_.name;
-            $ret ~= head2md($lvl+1, "sub $name") ~ "\n\n";
-            $ret ~= $*FENCED-CODEBLOCKS
-                ?? "```\nsub $name" ~ signature2md(@params) ~ "$returns\n```"
-                !! ("sub $name" ~ signature2md(@params) ~ "$returns").indent(4)
-                ;
+            signature2md($lvl, $_, :!method);
         }
         when .HOW ~~ Metamodel::ClassHOW {
-            if ($_.WHAT.perl eq 'Attribute') {
-                my $name = $_.gist.subst('!', '.');
-                $ret ~= head2md($lvl+1, "has $name");
+            if (.WHAT =:= Attribute) {
+                my $name = .gist;
+                $name .= subst('!', '.') if .has_accessor;
+                head2md($lvl+1, "has $name");
             }
             else {
-                my $name = $_.perl;
-                $ret ~= head2md($lvl, "class $name");
+                head2md($lvl, "class $_.perl()");
             }
         }
         when .HOW ~~ Metamodel::ModuleHOW {
-            my $name = $_.perl;
-            $ret ~= head2md($lvl, "module $name");
+            head2md($lvl, "module $_.perl()");
         }
         when .HOW ~~ Metamodel::PackageHOW {
-            my $name = $_.perl;
-            $ret ~= head2md($lvl, "package $name");
+            head2md($lvl, "package $_.perl()");
         }
         default {
             ''
         }
     }
-    "$what\n\n{$pod.WHEREFORE.WHY.contents}";
+    $what ~ "\n\n" ~ node2md($pod.WHEREFORE.WHY.contents);
 }
 
-multi sub node2md(Pod::Block::Comment $pod) { }
+multi sub node2md(Pod::Block::Comment $pod) {
+    ''
+}
 
 multi sub node2md(Pod::Item $pod) {
     my $level = $pod.level // 1;
     my $markdown = '* ' ~ node2md($pod.contents[0]);
-    $markdown ~= "\n\n" ~ node2md($pod.contents[1..Inf]).indent(2)
+    $markdown ~= "\n\n" ~ node2md($pod.contents[1..*]).indent(2)
         if $pod.contents.elems > 1;
     $markdown.indent($level * 2);
 }
-
-my %formats =
-  C => "bold",
-  L => "underline",
-  D => "underline",
-  R => "inverse"
-;
 
 my %Mformats =
     U => '_',
@@ -200,7 +172,7 @@ multi sub node2md(Pod::FormattingCode $pod) {
     my $text = $pod.contents>>.&node2md.join;
 
     # It is safer to strip formatting in code blocks
-    return $text if $*IN-CODE-BLOCK;
+    return $text if $*in-code-block;
 
     if $pod.type eq 'L' {
         if $pod.meta.elems > 0 {
@@ -227,42 +199,67 @@ multi sub node2md(Pod::FormattingCode $pod) {
     }
     else {
         $text = %Mformats{$pod.type} ~ $text ~ %Mformats{$pod.type}
-            if %Mformats.EXISTS-KEY: $pod.type;
+            if %Mformats{$pod.type} :exists;
     }
 
     $text = sprintf '<%s>%s</%s>',
         %HTMLformats{$pod.type},
         $text,
         %HTMLformats{$pod.type}
-        if %HTMLformats.EXISTS-KEY: $pod.type;
+        if %HTMLformats{$pod.type} :exists;
 
     $text;
 }
 
 multi sub node2md(Positional $pod) {
-    $pod>>.&node2md.join($*POSITIONAL-SEPARATOR)
+    $pod>>.&node2md.grep(*.?chars).join($*positional-separator)
 }
 
-multi sub node2md(Pod::Config $pod) { }
+multi sub node2md(Pod::Config $pod) {
+    ''
+}
 
-multi sub node2md($pod) returns Str {
+multi sub node2md($pod) {
     $pod.Str
 }
 
 
 sub head2md(Int $lvl, Str $head) {
-    my $level = ($lvl < 6) ?? $lvl !! 6;
-    given $level {
+    given min($lvl, 6) {
         when 1  { $head ~ "\n" ~ ('=' x $head.chars) }
         when 2  { $head ~ "\n" ~ ('-' x $head.chars) }
-        default { '#' x $level ~ ' ' ~ $head }
+        default { '#' x $_ ~ ' ' ~ $head }
     }
 }
 
-sub signature2md($params) {
-      $params.elems ??
-      "(\n    " ~ $params.map({ $_.perl }).join(",\n    ") ~ "\n)"
-      !! "()";
+sub code2md(Str $code, :$lang) {
+    if $lang and $*fenced-codeblocks {
+        "```$lang\n$code\n```"
+    }
+    else {
+        $code.indent(4)
+    }
+}
+
+sub signature2md(Int $lvl, Callable $sig, Bool :$method!) {
+    # TODO Add multi / proto? How?
+    my $name = join ' ', $method ?? 'method' !! 'sub', $sig.name;
+    my @params = $sig.signature.params;
+    if $method {
+        # Ignore invocant
+        @params.shift;
+        # Ignore default slurpy named parameter
+        @params.pop
+            if do given @params[*-1] { .slurpy and .name eq '%_'; };
+    }
+    my $code = $name;
+    $code ~= @params.elems
+        ?? "(\n{ @params.map({ .perl.indent(4) }).join(",\n") }\n)"
+        !! "()";
+    $code ~= ' returns ' ~ $sig.signature.returns.perl
+        unless $sig.signature.returns.WHICH =:= Mu;
+    $code = code2md($code, :lang<perl6>);
+    head2md($lvl+1, $name) ~ "\n\n" ~ $code;
 }
 
 =begin comment
@@ -294,6 +291,7 @@ sub table2md(Pod::Block::Table $pod) {
 =end comment
 
 =LICENSE
-This is free software; you can redistribute it and/or modify it under the terms of the L<Artistic License 2.0|http://www.perlfoundation.org/artistic_license_2_0>.
+This is free software; you can redistribute it and/or modify it under the terms of
+The L<Artistic License 2.0|http://www.perlfoundation.org/artistic_license_2_0>.
 
 # vim: ts=8

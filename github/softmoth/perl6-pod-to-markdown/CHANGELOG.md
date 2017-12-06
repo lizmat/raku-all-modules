@@ -1,3 +1,9 @@
+# v0.1.3
+* Handle formatting codes in fenced code blocks (Bug #13)
+* Add a final newline to pod2markdown() output
+* Eliminate warning when processing =comment blocks (Bug #14)
+* Various code cleanups
+
 # v0.1.2
 * Use Pod::To::HTML for formatting tables
 

@@ -1,42 +1,9 @@
 use v6;
-use lib 'lib';
 
 use Test;
 use Pod::To::Markdown;
 
 plan 1;
-
-my $markdown = q{Abbreviated heading
-===================
-
-asdf
-
-Paragraph heading
-=================
-
-asdf
-
-Delimited heading
-=================
-
-asdf
-
-Head2
------
-
-asdf
-
-### Head3
-
-asdf
-
-#### Head4
-
-asdf};
-
-is pod2markdown($=pod).trim, $markdown.trim,
-   'Various types of headings convert correctly';
-
 
 =begin pod
 =head1 Abbreviated heading
@@ -71,3 +38,36 @@ asdf
 asdf
 
 =end pod
+
+
+is pod2markdown($=pod), q:to/EOF/, 'Various types of headings convert correctly';
+Abbreviated heading
+===================
+
+asdf
+
+Paragraph heading
+=================
+
+asdf
+
+Delimited heading
+=================
+
+asdf
+
+Head2
+-----
+
+asdf
+
+### Head3
+
+asdf
+
+#### Head4
+
+asdf
+EOF
+
+# vim:set ft=perl6:

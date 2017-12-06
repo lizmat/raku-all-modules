@@ -4,6 +4,7 @@ NAME
 Pod::To::Markdown - Render Pod as Markdown
 
 [![Build Status](https://travis-ci.org/softmoth/perl6-pod-to-markdown.svg?branch=master)](https://travis-ci.org/softmoth/perl6-pod-to-markdown)
+[![Windows status](https://ci.appveyor.com/api/projects/status/github/softmoth/perl6-pod-to-markdown?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true)](https://ci.appveyor.com/project/softmoth/perl6-pod-to-markdown/branch/master)
 
 SYNOPSIS
 ========
@@ -23,7 +24,7 @@ foobar.pl
 =SYNOPSIS
     foobar.pl <options> files ...
 
-say pod2markdown($=pod);
+print pod2markdown($=pod);
 ```
 
 EXPORTS
@@ -39,7 +40,7 @@ DESCRIPTION
 
 ### sub pod2markdown
 
-```
+```perl6
 sub pod2markdown(
     $pod,
     Bool :$no-fenced-codeblocks
@@ -54,7 +55,7 @@ To render without fenced codeblocks (```` ``` ````), as some markdown engines do
 
 ### method render
 
-```
+```perl6
 method render(
     $pod,
     Bool :$no-fenced-codeblocks
@@ -66,4 +67,4 @@ Render Pod as Markdown, see pod2markdown
 LICENSE
 =======
 
-This is free software; you can redistribute it and/or modify it under the terms of the [Artistic License 2.0](http://www.perlfoundation.org/artistic_license_2_0).
+This is free software; you can redistribute it and/or modify it under the terms of The [Artistic License 2.0](http://www.perlfoundation.org/artistic_license_2_0).

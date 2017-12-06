@@ -1,49 +1,9 @@
 use v6;
-use lib <blib/lib lib>;
 
 use Test;
 use Pod::To::Markdown;
 
 plan 1;
-
-my $markdown = q{asdf
-
-    indented
-
-asdf
-
-    indented
-    multi
-    line
-
-asdf
-
-    indented
-    multi
-    line
-
-    and
-    broken
-    up
-
-asdf
-
-    Abbriviated
-
-asdf
-
-    Paragraph
-    code
-
-asdf
-
-    Delimited
-    code
-
-asdf};
-
-is pod2markdown($=pod).trim, $markdown.trim,
-   'Various types of code blocks convert correctly.';
 
 =begin pod
 asdf
@@ -61,14 +21,14 @@ asdf
     indented
     multi
     line
-    
+
     and
     broken
     up
 
 asdf
 
-=code Abbriviated
+=code Abbreviated
 
 asdf
 
@@ -85,3 +45,43 @@ code
 
 asdf
 =end pod
+
+is pod2markdown($=pod), q:to/EOF/, 'Various types of code blocks convert correctly.';
+asdf
+
+    indented
+
+asdf
+
+    indented
+    multi
+    line
+
+asdf
+
+    indented
+    multi
+    line
+
+    and
+    broken
+    up
+
+asdf
+
+    Abbreviated
+
+asdf
+
+    Paragraph
+    code
+
+asdf
+
+    Delimited
+    code
+
+asdf
+EOF
+
+# vim:set ft=perl6:
