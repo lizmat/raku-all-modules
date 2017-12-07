@@ -1,5 +1,10 @@
 # Common mathematical sequences for Perl 6
 
+Install this file using
+
+	zef install Math::Sequences
+	
+
 ## Included components
 
 * `Math::Sequences::Integer` - Integer sequences
@@ -55,7 +60,7 @@ To gain access to these, use:
   for pi to the given number of digits. e.g. `FatPi(17).nude` gives:
   `(7853981633974483 2500000000000000)`.
 
-##About Unicode
+## About Unicode
 
 This library used a few non-ASCII unicode characters that are widely used
 within the mathematical community. They are entirely optional, however, and
