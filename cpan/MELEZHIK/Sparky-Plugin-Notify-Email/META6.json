@@ -1,0 +1,26 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparky"
+  ],
+  "description" : "Sparky plugin to send email notifications upon completed builds",
+  "license" : "Artistic-2.0",
+  "name" : "Sparky::Plugin::Notify::Email",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparky::Plugin::Notify::Email" : "lib/Sparky/Plugin/Notify/Email.pm6"
+  },
+  "resources" : [ ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparky-plugin-notify-email.git",
+  "support" : {
+    "bugtracker" : "https://github.com/melezhik/sparky-plugin-notify-email/issues",
+    "source" : "https://github.com/melezhik/sparky-plugin-notify-email.git"
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
