@@ -19,7 +19,7 @@ class IRC::Client::Plugin::Github does IRC::Client::Plugin
 	{
 		start {
 			# Set up the web hook for Github notification POSTs
-			post "/" => sub {
+			post /.*/ => sub {
 				my Str $event = request.headers<X_GITHUB_EVENT>.subst("_", " ").wordcase().subst(" ", "");
 				my Str $module = "IRC::Client::Plugin::Github::WebhookEvents::$event";
 
