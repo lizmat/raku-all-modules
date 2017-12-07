@@ -10,8 +10,8 @@ use v6;
 use PDF::Lite;
 
 my PDF::Lite $pdf .= new;
+$pdf.media-box = [0, 0, 200, 100];
 my $page = $pdf.add-page;
-$page.MediaBox = [0, 0, 200, 100];
 
 my $text-block = $page.text: {
     .font = .core-font( :family<Helvetica>, :weight<bold>, :style<italic> );
@@ -42,8 +42,8 @@ determine the actual width and height of the displayed text block;
 ```
 use PDF::Lite;
 my $pdf = PDF::Lite.new;
+$pdf.media-box = [0, 0, 500, 150];
 my $page = $pdf.add-page;
-$page.MediaBox = [0, 0, 500, 150];
 my $font = $page.core-font( :family<Helvetica> );
 
 $page.text: -> $txt {
@@ -78,8 +78,8 @@ The `.do` method can them be used to render it.
 ```
 use PDF::Lite;
 my $pdf = PDF::Lite.new;
+$pdf.media-box = [0, 0, 450, 250];
 my $page = $pdf.add-page;
-$page.MediaBox = [0, 0, 450, 250];
 
 $page.graphics: -> $gfx {
     my $img = $gfx.load-image("t/images/snoopy-happy-dance.jpg");
@@ -109,8 +109,8 @@ To display card suits symbols, using the ZapfDingbats core-font, with diamonds a
 ```
 use PDF::Lite;
 my $pdf = PDF::Lite.new;
+$pdf.media-box = [0, 0, 400, 120];
 my $page = $pdf.add-page;
-$page.MediaBox = [0, 0, 400, 120];
 
 $page.graphics: {
 
@@ -154,9 +154,11 @@ The companion module PDF::Font can be used to handle a wider range of fonts:
     use PDF::Lite;
     use PDF::Font;
     my $pdf = PDF::Lite.new;
+    $pdf.media-box = [0, 0, 400, 120];
     my $page = $pdf.add-page;
-    $page.MediaBox = [0, 0, 400, 120];
-    my $noto = PDF::Font.load-font: "t/fonts/NotoSans-Regular.ttf";
+    my $noto = PDF::Font.load-font: :file<t/fonts/NotoSans-Regular.ttf>;
+    # or lookup by font name (requires fontconfig)
+    # $noto = PDF::Font.load-font: :name<NotoSans-Regular>;
 
     $page.text: {
         .text-position = [10,100];
@@ -179,8 +181,8 @@ A pattern can be used to fill an area with a repeating graphic.
 ```
 use PDF::Lite;
 my $pdf = PDF::Lite.new;
+$pdf.media-box = [0, 0, 400, 120];
 my $page = $pdf.add-page;
-$page.MediaBox = [0, 0, 400, 120];
 
 $page.graphics: {
     my $font = .core-font( :family<Helvetica> );
@@ -235,10 +237,10 @@ my $pdf-with-images = PDF::Lite.open: "t/images.pdf";
 my $pdf-with-text = PDF::Lite.open: "examples/sample-text.pdf";
 
 my $new-doc = PDF::Lite.new;
+$new-doc.media-box = [0, 0, 500, 400];
 
 # add a page; layup imported pages and images
 my $page = $new-doc.add-page;
-$page.MediaBox = [0, 0, 500, 400];
 
 my $xobj-image = $pdf-with-images.page(1).images[6];
 my $xobj-with-text  = $pdf-with-text.page(1).to-xobject;

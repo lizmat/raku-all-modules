@@ -28,7 +28,7 @@ $page.graphics: {
 # should wrap this in 'q' .. 'Q' when re-read
 $page.gfx.strict = False;
 $page.gfx.SetStrokeRGB(.3, .4, .5);
-is-json-equiv $page.gfx.content-dump[0..6], (
+is-json-equiv $page.gfx.content-dump.head(7).list, (
     "BT",
     "1 0 0 1 200 200 Tm",
     "/F1 18 Tf",
@@ -44,7 +44,7 @@ lives-ok { $pdf.save-as("t/01-pdf-lite.pdf") }, 'save-as';
 throws-like { $pdf.unknown-method }, X::Method::NotFound, '$pdf unknown method';
 
 lives-ok { $pdf = PDF::Lite.open("t/01-pdf-lite.pdf") }, 'open';
-is-json-equiv $pdf.page(1).gfx.content-dump[0..6], (
+is-json-equiv $pdf.page(1).gfx.content-dump.head(7).list, (
     "q",
     "BT",
     "1 0 0 1 200 200 Tm",
@@ -54,7 +54,7 @@ is-json-equiv $pdf.page(1).gfx.content-dump[0..6], (
     "T*",
     ), 'reloaded graphics (head)';
 
-is-json-equiv $pdf.page(1).gfx.ops[*-2..*], (
+is-json-equiv $pdf.page(1).gfx.ops.tail(2).list, (
     :RG[:real(.3), :real(.4), :real(.5)],
     :Q[],), 'reloaded graphics (tail)';
 

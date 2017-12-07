@@ -113,7 +113,7 @@ class PDF::Lite
 	self<Root> //= { :Type( :name<Catalog> ), :Pages{ :Type( :name<Pages> ), :Kids[], :Count(0), } };
     }
 
-    BEGIN for <page add-page add-pages delete-page insert-page page-count> -> $meth {
+    BEGIN for <page add-page add-pages delete-page insert-page page-count media-box crop-box bleed-box trim-box art-box core-font> -> $meth {
         $?CLASS.^add_method($meth,  method (|a) { self.Root.Pages."$meth"(|a) });
     }
 
