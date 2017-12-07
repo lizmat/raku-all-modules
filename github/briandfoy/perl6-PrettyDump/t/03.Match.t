@@ -11,13 +11,19 @@ my $p = $class.new;
 can-ok $p, 'dump' or bail-out "{$p.^name} cannot .dump";
 can-ok $p, 'Match' or bail-out "{$p.^name} cannot .Match";
 
-subtest {
-	'abcdef' ~~ / cd /;
-	ok $/ ~~ Match, 'Data structure is a Match';
+my %outputs;
 
-	my $string = $p.dump: $/;
-	isa-ok $string, Str, 'Got Str back';
-	my $expected = Q/Match=(
+%outputs<Any> = Q/Match=(
+	:from(2),
+	:hash(Map=()),
+	:list(List=()),
+	:made(Any),
+	:orig("abcdef"),
+	:pos(4),
+	:to(4)
+)/;
+
+%outputs<Mu> = Q/Match=(
 	:from(2),
 	:hash(Map=()),
 	:list(List=()),
@@ -27,7 +33,14 @@ subtest {
 	:to(4)
 )/;
 
-	is $string, $expected, 'Dumping Match works';
+subtest {
+	'abcdef' ~~ / cd /;
+	ok $/ ~~ Match, 'Data structure is a Match';
+
+	my $string = $p.dump: $/;
+	isa-ok $string, Str, 'Got Str back';
+
+	is $string, any( %outputs.values ), 'Dumping Match works';
 	}, 'Match';
 
 done-testing();
