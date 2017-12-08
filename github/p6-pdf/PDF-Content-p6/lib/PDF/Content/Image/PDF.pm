@@ -18,4 +18,9 @@ class PDF::Content::Image::PDF
     method to-dict {
         $!page.to-xobject;
     }
+
+    method open(PDF::Content::Image::IOish $fh) {
+        self.load: :$fh, :image-type<PDF>, :class(self);
+    }
 }
+

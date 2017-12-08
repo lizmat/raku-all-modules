@@ -2,15 +2,16 @@ Release 0.1.0
 - Changed structure of PDF::Content::XObject[Image] to match
   PDF::Content::Font. It now has a $.image-obj handler object,
   similar to the PDF::Content::Font $.font-obj attribute.
+- Fixed assignment to page boxes, e.g.: $page.art-box
 
 Release 0.0.9
-- PDF::Content::Font::Enc::Type1 - Optimised encoding to always include
-  up to the maximum of 255 glyphs. Glyphs are mapped as they
-  are encountered:
-    -- firstly to the requested encoding
+- PDF::Content::Font::Enc::Type1 - Optimised encoding to always
+  handle subsets up to a maximum of 255 characters. Glyphs are
+  mapped as they are encountered:
+    -- firstly, as defined by the requested encoding scheme
     -- secondly to unmapped codes in the encoding scheme
     -- thirdly to mapped, but unused character encodings
-  - PDF::Content::Graphics - fixed graphics update bug
+- PDF::Content::Graphics - fixed graphics update bug
 
 Release 0.0.8
 - Replace PDF::Content::Util::Font module with class

@@ -147,7 +147,7 @@ class PDF::Content::Image::PNG
         my $encoded = $stream.decode: 'latin-1';
         PDF::DAO.coerce: :stream{ :%dict, :$encoded };
     }
-    
+
     multi sub png-to-stream(PNG-CS::RGB,
                             $bpc where 8|16,
                             UInt :$w!,
@@ -169,7 +169,7 @@ class PDF::Content::Image::PNG
         my $encoded = $stream.decode: 'latin-1';
         PDF::DAO.coerce: :stream{ :%dict, :$encoded };
     }
-    
+
     multi sub png-to-stream(PNG-CS::RGB-Palette,
                             $bpc where 1|2|4|8,
                             UInt :$w!,
@@ -194,7 +194,7 @@ class PDF::Content::Image::PNG
             my uint $padding = $w * $h  -  +$decoded;
             $decoded.append( 0xFF xx $padding)
                 if $padding;
-		
+
             %dict<SMask> = PDF::DAO.coerce: :stream{
                 :dict{:Type( :name<XObject> ),
 		      :Subtype( :name<Image> ),
@@ -210,7 +210,7 @@ class PDF::Content::Image::PNG
 	$encoded = $stream.decode: 'latin-1';
 	PDF::DAO.coerce: :stream{ :%dict, :$encoded };
     }
-    
+
     multi sub png-to-stream(PNG-CS::Gray-Alpha,
 			    $bpc where 8|16,
 			    UInt :$w!,
@@ -258,7 +258,7 @@ class PDF::Content::Image::PNG
 	my $decoded = $gray-channel.decode: 'latin-1';
 	PDF::DAO.coerce: :stream{ :%dict, :$decoded };
     }
-    
+
     multi sub png-to-stream(PNG-CS::RGB-Alpha,
 			    $bpc where 8|16,
 			    UInt :$w!,
@@ -306,6 +306,9 @@ class PDF::Content::Image::PNG
 	PDF::DAO.coerce: :stream{ :%dict, :$decoded };
     }
 
+    method open(PDF::Content::Image::IOish $fh) {
+        self.load: :$fh, :image-type<PNG>, :class(self);
+    }
 }
 
 =begin rfc

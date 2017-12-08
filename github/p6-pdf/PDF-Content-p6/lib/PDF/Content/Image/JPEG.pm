@@ -24,15 +24,13 @@ class PDF::Content::Image::JPEG
     sub u8(uint8 $v) { $v }
 
     method read($fh = $.source) {
-        my Bool $is-dct;
-
         $fh.seek(0, SeekFromBeginning);
         my Str $header = $fh.read(2).decode: 'latin-1';
         die X::PDF::Image::WrongHeader.new( :type<JPEG>, :$header, :path($fh.path) )
             unless $header ~~ "\xFF\xD8";
 
         loop {
-            my BlockHeader $hdr .= unpack: $fh.read(4);
+            my BlockHeader $hdr .= read: $fh;
             last if u8($hdr.ff) != 0xFF;
             last if u8($hdr.mark) == 0xDA | 0xD9;  # SOS/EOI
             last if $hdr.len < 2;
@@ -43,7 +41,7 @@ class PDF::Content::Image::JPEG
                 if 0xC0 <= $mark <= 0xCF
                 && $mark != 0xC4 | 0xC8 | 0xCC {
                     $!is-dct = ?( $mark == 0xC0 | 0xC2);
-                    $!atts = Atts.unpack($buf);
+                    $!atts .= unpack($buf);
                     last;
                 }
             }
@@ -81,5 +79,8 @@ class PDF::Content::Image::JPEG
         PDF::DAO.coerce: :stream{ :%dict, :$!encoded };
     }
 
+    method open(PDF::Content::Image::IOish $fh) {
+        self.load: :$fh, :image-type<JPEG>, :class(self);
+    }
 }
 

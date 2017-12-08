@@ -211,4 +211,8 @@ class PDF::Content::Image::GIF
         PDF::DAO.coerce: :stream{ :%dict, :$encoded };
     }
 
+    method open(PDF::Content::Image::IOish $fh) {
+        self.load: :$fh, :image-type<GIF>, :class(self);
+    }
+
 }
