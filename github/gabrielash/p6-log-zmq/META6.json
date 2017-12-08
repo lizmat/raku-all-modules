@@ -4,7 +4,7 @@
   "support": {
     "source": null
   },
-  "perl": "6.c",
+  "perl": "6.d",
   "resources": [
   ],
   "build-depends": [
@@ -18,7 +18,7 @@
     "JSON::Tiny"
   ],
   "tags": [
-
+      "Net", "Log", "Messaging"
   ],
   "license": "Artistic-2.0",
   "test-depends": [

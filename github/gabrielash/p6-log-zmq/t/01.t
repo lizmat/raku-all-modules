@@ -37,7 +37,7 @@ $logsys.unset-suppress-level;
 my $log2 = Logging::instance;
 
 
-sleep 2;
+#sleep 1;
 
 my $logger = $logsys.logger;
 my $logger2 = $log2.logger;
@@ -53,14 +53,14 @@ my $promise = start {
       say "log subscriber ready"; 
       loop {
           my $m = $s1.receive(:slurp) ; 
-          say "LOG SUBS\n { $m.perl}";
+          say "LOG\n { $m.perl}";
           $cnt++;
           last if $m ~~ / critical /;
       }
     }
 
 
-
+sleep 1;
 
 $logger.log('nice day');
 $logger2.log('another day', :debug);
@@ -68,7 +68,7 @@ $logger.log('another nice day', :critical);
 
 
 await $promise;
-ok $cnt == 3, "correct messages seen";
+ok $cnt == 3, "correct messages seen $cnt";
 
 
 done-testing;
