@@ -1,8 +1,8 @@
 {
     "perl"          : "6.*",
     "name"          : "Cro::Core",
-    "version"       : "0.7.1",
-    "description"   : "Libraries for building reactive services in Perl 6 - core.",
+    "version"       : "0.7.2",
+    "description"   : "Implements the asynchronous pipeline at the heart of all Cro libraries.",
     "authors"       : [ "Jonathan Worthington <jnthn@jnthn.net>" ],
     "license"       : "Artistic-2.0",
     "depends"       : [ ],
