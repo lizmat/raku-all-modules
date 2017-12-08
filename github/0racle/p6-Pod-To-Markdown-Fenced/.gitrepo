@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/0racle/p6-Pod-To-Markdown-Fenced.git
 	branch = master
-	commit = 82f7d72259145cd152a3398be3e4f5612fd5e29a
-	parent = 0ff0a6e1795564109d5f5af4f6fa51882cc79af3
+	commit = cf26efef1ffb151a85daeedbebc7e0e68b3dae25
+	parent = fe01fcace65cddf1f1b2679777023bc941bdf261
 	cmdver = 0.4.0

@@ -1,5 +1,7 @@
 unit class Pod::To::Markdown::Fenced;
 
+die "!!! THIS MODULE IS DEPRECATED !!! Use `Pod::To::Markdown` instead.";
+
 use Pod::To::Markdown;
 
 multi sub pod2markdown(Pod::Block::Code $pad) is export is default {
