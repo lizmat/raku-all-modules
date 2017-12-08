@@ -4,7 +4,7 @@
   "support": {
     "source": null
   },
-  "perl": "6.c",
+  "perl": "6.d",
   "resources": [
 
   ],
@@ -15,7 +15,7 @@
   "depends": [
   ],
   "tags": [
-
+      "Net", "Messaging", "Native"
   ],
   "license": "Artistic-2.0",
   "test-depends": [

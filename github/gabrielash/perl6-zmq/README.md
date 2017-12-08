@@ -19,13 +19,11 @@ one, please share bugs and fixes!
 
 #### ZMQ Versions
 
-Current development is with ZeroMQ 4.2. Unfathomably, version 4
-is installed on my system as libzmq.so.5. The NativeCall calls are
-therefore to v5.
+Current development is with ZeroMQ 4.2. 
 
 #### Portability
 
-Development is on linux/x64. Due to some pointer voodoo, it is likely the code
+Development is on linux/x64. Due to some pointer voodoo, it is possible the code
 will break on other architectures/OSes. This should not be too hard to fix, but
 it depends on other people trying it on other platforms.
 
