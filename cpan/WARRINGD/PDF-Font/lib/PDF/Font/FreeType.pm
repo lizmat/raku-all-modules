@@ -247,7 +247,7 @@ class PDF::Font::FreeType {
         my $struct = $!face.struct;
         my $glyph-slot = $struct.glyph;
         my Numeric $stringwidth = 0;
-        my $scale = 1000 / $!face.units-per-EM;
+        my $scale = 1000 / ($!face.units-per-EM || 1000);
 
         for $text.ords -> $char-code {
             my FT_UInt $this-idx = $struct.FT_Get_Char_Index( $char-code );

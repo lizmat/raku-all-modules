@@ -26,7 +26,7 @@ class PDF::Font {
 
     # resolve font name via fontconfig
     multi method load-font(Str :$name!, |c) {
-        my $file = self.find-font($name);
+        my $file = self.find-font($name, |c);
         self.load-font: :$file, |c;
     }
 
@@ -34,14 +34,22 @@ class PDF::Font {
         die "unsupported font format: {$face.font-format}";
     }
 
-    method find-font(Str $name) {
-        my $cmd =  run('fc-match',  '-f', '%{file}', $name, :out, :err);
+    subset Weight  of Str where /^[thin|extralight|light|book|regular|medium|semibold|bold|extrabold|black]$/;
+    subset Stretch of Str where /^[[ultra|extra]?[condensed|expanded]]|normal$/;
+    subset Slant   of Str where /^[normal|oblique|italic]$/;
+    method find-font(Str $family-name, Weight :$weight='medium', Stretch :$stretch='normal', Slant :$slant='normal') {
+        my $pat = $family-name;
+        $pat ~= ':weight=' ~ $weight  unless $weight eq 'medium';
+        $pat ~= ':width='  ~ $stretch unless $stretch eq 'normal';
+        $pat ~= ':slant='  ~ $slant   unless $slant eq 'normal';
+
+        my $cmd =  run('fc-match',  '-f', '%{file}', $pat, :out, :err);
         given $cmd.err.slurp {
             note $_ if $_;
         }
         my $file = $cmd.out.slurp;
         $file
-          || die "unable to resolve font-name: $name"
+          || die "unable to resolve font: $pat"
     }
 }
 
@@ -114,9 +122,15 @@ Name of an installed system font to load.
 
 =head3 find-font
 
-Locates a font-file bya fontconfig name/pattern. Doesn't actually load it.
+  find-font(Str $family-name,
+            Str :$weight,     # thin|extralight|light|book|regular|medium|semibold|bold|extrabold|black
+            Str :$stretch,    # normal|[ultra|extra]?[condensed|expanded]
+            Str :$slant,      # normal|oblique|italic
+            );
 
-   my $file = PDF::Font.find-font('Deja:weight=bold:width=condensed:slant=italic');
+Locates a matching font-file. Doesn't actually load it.
+
+   my $file = PDF::Font.find-font('Deja', :weight<bold>, :width<condensed>, :slant<italic>);
    say $file;  # /usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-BoldOblique.ttf
    my $font = PDF::Font.load-font( :$file )';
 

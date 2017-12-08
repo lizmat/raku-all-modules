@@ -68,9 +68,15 @@ parameters:
 
 ### find-font
 
-Locates a font-file bya fontconfig name/pattern. Doesn't actually load it.
+    find-font(Str $family-name,
+              Str :$weight,     # thin|extralight|light|book|regular|medium|semibold|bold|extrabold|black
+              Str :$stretch,    # normal|[ultra|extra]?[condensed|expanded]
+              Str :$slant,      # normal|oblique|italic
+              );
 
-    my $file = PDF::Font.find-font('Deja:weight=bold:width=condensed:slant=italic');
+Locates a matching font-file. Doesn't actually load it.
+
+    my $file = PDF::Font.find-font('Deja', :weight<bold>, :width<condensed>, :slant<italic>);
     say $file;  # /usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-BoldOblique.ttf
     my $font = PDF::Font.load-font( :$file )';
 

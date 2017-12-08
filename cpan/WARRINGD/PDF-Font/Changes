@@ -1,6 +1,8 @@
+Release 0.1.2
+    - Add .find-font, :weight, :width, :slant options
+
 Release 0.1.1
-    - Restrict type-1 font to Win encoding, freetype to
-      Identity-H.
+    - Restrict type-1 font to Win encoding, freetype to Identity-H.
     - Added PDF::Font.find-font method
 
 Release 0.1.0
