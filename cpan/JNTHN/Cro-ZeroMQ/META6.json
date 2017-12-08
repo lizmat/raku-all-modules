@@ -1,8 +1,9 @@
 {
     "perl"          : "6.*",
     "name"          : "Cro::ZeroMQ",
-    "version"       : "0.7.1",
-    "description"   : "Libraries for building reactive services in Perl 6 - ZeroMQ part.",
+    "version"       : "0.7.2",
+    "description"   : "Support for building ZeroMQ services with Cro.",
+    "tags"          : [ "ZeroMQ" ],
     "authors"       : [ "Jonathan Worthington <jnthn@jnthn.net>" ],
     "license"       : "Artistic-2.0",
     "depends"       : [ "Net::ZMQ", "Cro::Core", "Cro" ],
