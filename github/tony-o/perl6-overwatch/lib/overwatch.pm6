@@ -9,6 +9,7 @@ class overwatch {
   has Supply   $.events       is rw;
   has Int      $.git-interval is rw;
   has Bool     $.dying        is rw;
+  has Int      $.sleep         = 1;
 
   has $.git = -1;
   has @.filters;
@@ -17,7 +18,7 @@ class overwatch {
   has $.proc is rw;
   has $.killer is rw;
 
-  method BUILD(:$!execute, :$!keep-alive, :$!exit-on-error, :$!filter, :$!git-interval = Int, :$!git, :@!filters, :@!watch) {
+  method BUILD(:$!sleep, :$!execute, :$!keep-alive, :$!exit-on-error, :$!filter, :$!git-interval = Int, :$!git, :@!filters, :@!watch) {
     $.supplier .=new;
     $.events = $.supplier.Supply; 
   }
@@ -42,6 +43,7 @@ class overwatch {
       watch        => @.watch,
       git-interval => $.git-interval,
       args         => @args,
+      sleep        => $.sleep,
     });
 
     self!do-watch;
@@ -91,6 +93,7 @@ class overwatch {
         });
         exit 0;
       }
+      await Promise.in($.sleep);
       $.supplier.emit({
         action  => 'restart',
         execute => "$.execute {@args.map({ "'$_'" }).Slip.join(' ')}",
@@ -118,7 +121,7 @@ class overwatch {
         }
         if @.filters.elems == 0 || (@.filters.elems > 0 && $restart) {
           try {
-            $.proc.kill(SIGQUIT);
+            $.proc.kill(SIGTERM);
             CATCH { 
               default { 
                 $.supplier.emit({

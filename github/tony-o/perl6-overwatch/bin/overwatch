@@ -11,6 +11,7 @@ sub MAIN (
   Str :f(:$filter) = '',
   :w(:$watch) = [],
   :p(:$pargs) = [],
+  :s(:$sleep) = 1,
   *@args, 
 ) {
 
@@ -26,40 +27,44 @@ sub MAIN (
     :$git,
     :$quiet,
     :$filter,
-    :$watch
+    :$sleep,
+    :$watch,
   );
-
 
   if !$quiet {
     $overwatch.events.tap(-> $event {
-      try given $event<action> {
-        when 'start' {
-          '[INFO] Starting overseer with options:'.say;
-          "[INFO]   --execute: {$event<execute>}".say;
-          "[INFO]   --restart: {$event<execute>}".say;
-          "[INFO]   --filters: {$event<filters>.join(', ')}".say;
-          "[INFO]     --watch: {$event<watch>.join(', ')}".say;
-          "[INFO]       --git: {$event<git-interval> <= 0 ?? 'disabled' !! "{$event<git-interval>}m"}".say;
-          "[INFO]      script: {$event<args>.map({ "'$_'" }).join(' ')}".say;
+      try {
+        given $event<action> {
+          when 'start' {
+            '[INFO] Starting overseer with options:'.say;
+            "[INFO]   --execute: {$event<execute>}".say;
+            "[INFO]   --restart: {$event<execute>}".say;
+            "[INFO]   --filters: {$event<filters>.join(', ')}".say;
+            "[INFO]     --watch: {$event<watch>.join(', ')}".say;
+            "[INFO]     --sleep: {$event<sleep>.join(', ')}".say;
+            "[INFO]       --git: {$event<git-interval> <= 0 ?? 'disabled' !! "{$event<git-interval>}m"}".say;
+            "[INFO]      script: {$event<args>.map({ "'$_'" }).join(' ')}".say;
+          }
+          when 'error' {
+            "[ERROR] {$event<msg>}".say;
+          }
+          when 'file-changed' {
+            "[ERROR] Restarting process, file changed: {$event<file-path>}".say;
+          }
+          when 'git-pull' {
+            '[INFO] Pulling from remote repository'.say;
+          }
+          when 'kill-proc' {
+            "[INFO] Killing process with {$event<signal>}".say;
+          }
+          when 'proc-died' {
+            "[INFO] Exit code ({$event<code>}) caught, exiting".say;
+          }
+          when 'restart' {
+            "[INFO] Restarting {$event<execute>}".say;
+          }
         }
-        when 'error' {
-          "[ERROR] {$event<msg>}".say;
-        }
-        when 'file-changed' {
-          "[ERROR] Restarting process, file changed: {$event<file-path>}".say;
-        }
-        when 'git-pull' {
-          '[INFO] Pulling from remote repository'.say;
-        }
-        when 'kill-proc' {
-          "[INFO] Killing process with {$event<signal>}".say;
-        }
-        when 'proc-died' {
-          "[INFO] Exit code ({$event<code>}) caught, exiting".say;
-        }
-        when 'restart' {
-          "[INFO] Restarting {$event<execute>}".say;
-        }
+        CATCH { default { .say; } }
       }
     });
   }
