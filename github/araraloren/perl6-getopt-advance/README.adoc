@@ -26,223 +26,9 @@ non-option argument, it provide `main`、`pos` and `cmd` feature.
 
 = Usage
 
-link:README.zh.adoc[中文帮助]
+== Document
 
-== OptionSet
-
-`OptionSet` is a set of `Option` as the literal mean. Provide interface manage your
-`Option`.
-
-=== new
-
-There are no argument of new:
-
-`my OptionSet $optset .= new();`
-
-=== Add Option
-
-* `push(::OptionSet::D: Str:D $opt, :$value, :&callback) of ::OptionSet`
-* `push(::OptionSet::D: Str:D $opt, Str:D $annotation, :$value, :&callback) of ::OptionSet`
-* `append(::OptionSet::D: Str:D $opts) of ::OptionSet`
-* `append(::OptionSet::D: *@optpairs where all(@optpairs) ~~ Pair) of ::OptionSet`
-
-`$optset.push("c|count=i", "set something int", value \=> 3);`
-
-This is add an option with short name **c** and long name **count**. And the second
-parameter set annotation of option is `"set something int"`, it will be display with
-usage generate by `&helper` (helper generator pass to `&getopt`). The third parameter is
-an named argument, it set the default value of option is **3**.And if you provide
-`&callback`, it will be called when option value are set.
-
-`$optset.append("c|count=i" \=> "set something int", "s|string=s" \=> "set something string")`
-
-This is append two option with their name and annotation.
-
-=== Add Group
-
-* `append(::OptionSet::D: Str:D $opts, :$optional = True, :$radio, :$multi) of ::OptionSet`
-* `append(::OptionSet::D: :$optional = True, :$radio, :$multi, *@optpairs where all(@optpairs) ~~ Pair) of ::OptionSet`
-
-`$optset.append("c|count=c;s|string=s", :radio);`
-
-This is add a radio group, it has two option: `c|count=c`、`s|string=s`.
-
-=== Add NonOption
-
-* `insert-main(::OptionSet::D: &callback) of Int`
-* `insert-cmd(::OptionSet::D: Str:D $name) of Int`
-* `insert-cmd(::OptionSet::D: Str:D $name, &callback) of Int`
-* `insert-pos(::OptionSet::D: Str:D $name, &callback, :$front!) of Int`
-* `insert-pos(::OptionSet::D: Str:D $name, &callback, :$last!) of Int`
-* `insert-pos(::OptionSet::D: Str:D $name, $index where Int:D | WhateverCode , &callback) of Int`
-
-`$optset.insert-main(sub main (@args) { .say of @args; });`
-
-This is insert a main to `$optset`, it print all non-option argument.
-
-=== Get Option Value
-
-`my $x = $optset<x>;`
-`my @x := $optset<x>;`
-
-NOTE: Use bind operator when you want bind `Option::Array`'s value to
-an Positional/Association variable.
-
-== Option
-
-`Option` can be create by a string. For example, `"a|action=b"` represent an option
-with two kind name, long name is `action`, and short name is `a`, and the option
-type is `boolean`. So you can set **action** argument to true by append `-a` or `--action`
-after your program.
-
-The list of Option type:
-
-.OptionType
-[cols="h,^.^,^.^,^.^m,^.^2m,^.^3m",options="header",width="100%"]
-|==================================
-| type | has argument | represent | create example | set example | support style
-| boolean | no  | b | a\|action=b | -a   | unix gnu x bsd deactivate
-| integer | yes | i | a\|action=i | -a=1 | unix gnu x
-| float   | yes | f | a\|action=f | -a 0.1| unix gnu x
-| string  | yes | s | a\|action=s | --action "u" | unix gnu x
-| array   | yes | a | a\|action=a | --action "item" | unix gnu x
-| hash    | yes | h | a\|action=h | -a ":answer(42)" | unix gnu x
-|==================================
-
-== NonOption
-
-`NonOption` can be use to handle `NOA`(short for non-option argument). You can get
-specific `NOA`, match them or call `callback` when matched. The `NOA` index begin from
-**0**.
-
-NOTE: The parser will check `NonOption` after all option argument matched.
-
-=== pos
-
-`NonOption` `pos` capture `NOA` of specific postion, but it's not force user supply an
-`NOA`. The parser will call it's callback when the `NOA` index matched.
-
-NOTE: The parser will check `pos` after `cmd`, and before `main`.
-
-=== cmd
-
-`NonOption` `cmd` always capture the first NOA, and it's force user supply one of
-available cmd. The parser will call it's callback when the `NOA` name matched.
-
-NOTE: The parser will check `cmd` first. If a front `pos` (with index 0) provide,
-parser will not throw exception when `pos` matched, otherwise it will raise an exception
-when all `cmd` not matched.
-
-=== main
-
-`NonOption` `main` capture all NOA, and it's callback will be called when `main`
-exists.
-
-NOTE: The parser will check `main` last.
-
-== Group
-
-`Group` provide a way set up association between multi `Option`, and it has a check method.
-The parser will call it's check method before return to `&getopt`.
-
-=== radio
-
-In `radio` `Group`, `Option` can be set only one at the same time. And it force user
-supply an option when `Option` is not optional.
-
-=== multi
-
-`multi` `Group` is just provide a possibility in having better style of source code.
-Also it force user supply an option when `Option` is not optional.
-
-== getopt
-
-* `multi sub getopt(       Str $optstring, *%args) of Getopt::Advance::ReturnValue`
-* `multi sub getopt(@args, Str $optstring, *%args) of Getopt::Advance::ReturnValue`
-* `multi sub getopt(       *@optsets,      *%args) of Getopt::Advance::ReturnValue`
-* `multi sub getopt(@args, *@optsets,      *%args) of Getopt::Advance::ReturnValue`
-
-Sub `&getopt` accept one or multi `OptionSet`, pass it and command line argument to the `&parser`.
-`&getopt` can accept traditional getopt(in C) string, and convert it to `OptionSet`.
-Once an `OptionSet` matching success, it will return `Getopt::Advance::ReturnValue`.
-This class contain matched `OptionSet`、all `NOA(Non-Option Argument)`, and `main`'s id and
-return value.
-
-NOTE: The definition of Getopt::Advance::ReturnValue:
-[source, perl6]
--------------------
-class Getopt::Advance::ReturnValue {
-    has $.optionset;
-    has @.noa;
-    has %.return-value;
-}
--------------------
-
-When match failed, consider follow serveral situation:
-
-* default
-+
-`&getopt` will print helper(when `&helper` defined) of current `OptionSet`,
-print error message, and rethrow the exception.
-
-* X::GA::ParseFailed
-+
-The `&parser` will call `&ga-try-next` throw an X::GA::ParseFailed exception when `OptionSet` match
-failed. When `&getopt` caught this exception, it will try next `OptionSet` supplied. If no more `OptionSet`,
-it will print helper(when `&helper` defined) of all `OptionSet`,  print error message,
-and rethrow the exception.
-
-* X::GA::WantPrintHelper
-+
-`&getopt` will print helper(when `&helper` defined) of current `OptionSet` and exit with 0.
-
-* X::GA::WantPrintAllHelper
-+
-`&getopt` will print helper(when `&helper` defined) of all `OptionSet` and exit with 0.
-
-=== named argument
-
-* :&helper = &ga-helper
-+
-`&helper` will generate and display help message of `OptionSet`, default is `&ga-helper`.
-
-* :$stdout = $*OUT
-+
-Help message will print to `$stdout`, default is `$*OUT`.
-
-* :$stderr = $*ERR
-+
-Error message will print to `$stderr`, default is `$*ERR`.
-
-* :$parser = &ga-parser
-+
-Command line argument parser, default is `&ga-parser`.
-
-* :$strict = True
-+
-When `$strict` is True, argument of option should not be begin with `-` or `--`.
-
-* :$autohv = False
-+
-When `$autohv` is True, `&getopt` will automate print `$version` information and help message.
-The `:autohv` will not work if you don't have a option named `help` and `version`.
-Without `:autohv`, you need deal the `help` or `version` manually.
-
-* :$version
-+
-Program version information.
-
-* :$bsd-style
-+
-When `$bsd-style` is True, `&parser` will accept bsd style option.
-
-* :$x-style
-+
-When `$x-style` is True, x-style have priority over unix-style.
-
-== Pod Document
-
-link:doc/Getopt/Advance.pod6[Getopt-Advance]
+link:doc/Getopt/Advance.adoc[Getopt-Advance]
 
 == Example
 
@@ -251,6 +37,8 @@ link:doc/Getopt/Advance.pod6[Getopt-Advance]
 link:https://github.com/araraloren/perl6-app-snippet[an app used Getopt::Advance]
 
 === find-file
+
+link:sample/find-file.p6[find-file]
 
 ==== usage
 
@@ -284,11 +72,6 @@ $ ./find-file.p6 ../t '1\d.*t$'
 ../t/10-x-style.t
 ----------------------
 
-====  source code
-
-.find-file
-link:sample/find-file.p6[find-file]
-
 = Installation
 
 * install with zef
@@ -303,3 +86,4 @@ The MIT License (MIT).
 
 * add option can reference variable.
 * add callback only mode
+* let user set option name autohv
