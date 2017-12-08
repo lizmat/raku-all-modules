@@ -190,19 +190,27 @@ refuses 'The TRACE method, as it is not implemented by default', q:to/REQUEST/,
     REQUEST
     *.status == 501;
 
-refuses 'The PATCH method, as it is not implemented by default', q:to/REQUEST/,
-    PATCH / HTTP/1.1
-
-    REQUEST
-    *.status == 501;
-
-parses 'The PATCH method if included in allowed-methods',
-    allowed-methods => <GET PUT POST DELETE PATCH>,
-    q:to/REQUEST/,
+parses 'Simple PATCH request with no headers', q:to/REQUEST/,
     PATCH / HTTP/1.1
 
     REQUEST
     *.method eq 'PATCH',
+    *.target eq '/',
+    *.http-version eq '1.1';
+
+refuses 'The TRACE method, as it is not implemented by default', q:to/REQUEST/,
+    TRACE / HTTP/1.1
+
+    REQUEST
+    *.status == 501;
+
+parses 'The TRACE method if included in allowed-methods',
+    allowed-methods => <GET PUT POST DELETE TRACE>,
+    q:to/REQUEST/,
+    TRACE / HTTP/1.1
+
+    REQUEST
+    *.method eq 'TRACE',
     *.target eq '/',
     *.http-version eq '1.1';
 

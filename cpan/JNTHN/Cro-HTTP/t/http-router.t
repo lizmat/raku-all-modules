@@ -102,6 +102,11 @@ throws-like { response }, X::Cro::HTTP::Router::OnlyInHandler, what => 'response
             response.append-header('Content-type', 'text/html');
             response.set-body('A DELETE request'.encode('ascii'));
         }
+        patch -> 'product' {
+            response.status = 200;
+            response.append-header('Content-type', 'text/html');
+            response.set-body('A PATCH request'.encode('ascii'));
+        }
     }
     my $source = Supplier.new;
     my $responses = $app.transformer($source.Supply).Channel;
@@ -134,6 +139,14 @@ throws-like { response }, X::Cro::HTTP::Router::OnlyInHandler, what => 'response
         is $r.status, 200, 'Got 200 response';
         is $r.header('Content-type'), 'text/html', 'Got expected header';
         is-deeply body-text($r), 'A DELETE request', 'Got expected body';
+    }
+
+    $source.emit(Cro::HTTP::Request.new(:method<PATCH>, :target</product>));
+    given $responses.receive -> $r {
+        ok $r ~~ Cro::HTTP::Response, 'Route set routes PATCH';
+        is $r.status, 200, 'Got 200 response';
+        is $r.header('Content-type'), 'text/html', 'Got expected header';
+        is-deeply body-text($r), 'A PATCH request', 'Got expected body';
     }
 }
 
@@ -1790,6 +1803,44 @@ throws-like { response }, X::Cro::HTTP::Router::OnlyInHandler, what => 'response
         $source.emit(Cro::HTTP::Request.new(method => 'GET', :$target));
         given $responses.receive -> $r {
             is body-text($r), $expected, "Can match URL segments with encoded bits ($target)";
+        }
+    }
+}
+
+{
+    my $app = route {
+        get -> :$value is query {
+            content 'text/plain', "got $value";
+        }
+    }
+
+    my $source = Supplier.new;
+    my $responses = $app.transformer($source.Supply).Channel;
+    my %expected =
+        '/?value=1' => 'got 1';
+    for %expected.kv -> $target, $expected {
+        $source.emit(Cro::HTTP::Request.new(method => 'GET', :$target));
+        given $responses.receive -> $r {
+            is body-text($r), $expected, "Can pass query argument without path components ($target)";
+        }
+    }
+}
+{
+    my $app = route {
+        get -> *@path, :$value is query {
+            content 'text/plain', "got <{@path}> and $value";
+        }
+    }
+
+    my $source = Supplier.new;
+    my $responses = $app.transformer($source.Supply).Channel;
+    my %expected =
+        '/?value=1' => 'got <> and 1',
+        '/x?value=1' => 'got <x> and 1';
+    for %expected.kv -> $target, $expected {
+        $source.emit(Cro::HTTP::Request.new(method => 'GET', :$target));
+        given $responses.receive -> $r {
+            is body-text($r), $expected, "Can pass query arguments with slurpy path signature ($target)";
         }
     }
 }

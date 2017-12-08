@@ -3,6 +3,7 @@ use Cro::HTTP::BodyParser;
 use Cro::HTTP::BodyParserSelector;
 use Cro::HTTP::BodySerializer;
 use Cro::HTTP::BodySerializerSelector;
+use Cro::HTTP::Middleware;
 use Cro::HTTP::Request;
 use Cro::HTTP::Response;
 use IO::Path::ChildSecure;
@@ -65,6 +66,34 @@ module Cro::HTTP::Router {
                     );
                 }
             }
+
+            method !append-body-serializers(Supply $pipeline --> Supply) {
+                supply whenever $pipeline {
+                    self!add-body-serializers($_);
+                    emit $_;
+                }
+            }
+
+            method !append-middleware(Supply $pipeline, @middleware, %connection-state --> Supply) {
+                my $current = $pipeline;
+                for @middleware -> $comp {
+                    if $comp ~~ Cro::ConnectionState {
+                        my $cs-type = $comp.connection-state-type;
+                        with %connection-state{$cs-type} {
+                            $current = $comp.transformer($current, :connection-state($_));
+                        }
+                        else {
+                            my $cs = $cs-type.new;
+                            %connection-state{$cs-type} = $cs;
+                            $current = $comp.transformer($current, :connection-state($cs));
+                        }
+                    }
+                    else {
+                        $current = $comp.transformer($current);
+                    }
+                }
+                $current
+            }
         }
 
         my class RouteHandler does Handler {
@@ -93,7 +122,7 @@ module Cro::HTTP::Router {
                 start {
                     {
                         $request.path eq '/'
-                            ?? &!implementation()
+                            ?? &!implementation(|%($args))
                             !! &!implementation(|$args);
                         CATCH {
                             when X::Cro::HTTP::Router::NoRequestBodyMatch {
@@ -116,16 +145,14 @@ module Cro::HTTP::Router {
             method invoke(Cro::HTTP::Request $request, Capture $args) {
                 if @!before || @!after {
                     my $current = supply emit $request;
-                    { $current = $_.transformer($current) } for @!before;
-                    supply {
-                        whenever $current -> $req {
-                            whenever self!invoke-internal($req, $args) {
-                                my $response = supply emit $_;
-                                $response = $_.transformer($response) for @!after;
-                                whenever $response { .emit }
-                            }
+                    my %connection-state{Mu};
+                    $current = self!append-middleware($current, @!before, %connection-state);
+                    my $response = supply whenever $current -> $req {
+                        whenever self!invoke-internal($req, $args) {
+                            emit $_;
                         }
                     }
+                    return self!append-middleware($response, @!after, %connection-state);
                 } else {
                     return self!invoke-internal($request, $args);
                 }
@@ -154,15 +181,12 @@ module Cro::HTTP::Router {
                 my $req = $request.without-first-path-segments(@!prefix.elems);
                 self!add-body-parsers($req);
                 my $current = supply emit $req;
-                $current = $_.transformer($current) for @!before;
-                supply {
-                    whenever $!transform.transformer($current) -> $response {
-                        self!add-body-serializers($response);
-                        my $res = supply emit $response;
-                        $res = $_.transformer($res) for @!after;
-                        whenever $res { .emit }
-                    }
-                }
+                my %connection-state{Mu};
+                $current = self!append-middleware($current, @!before, %connection-state);
+                $current = $!transform.transformer($current);
+                $current = self!append-body-serializers($current);
+                $current = self!append-middleware($current, @!after, %connection-state);
+                $current
             }
         }
 
@@ -533,6 +557,10 @@ module Cro::HTTP::Router {
         $*CRO-ROUTE-SET.add-handler('DELETE', &handler);
     }
 
+    sub patch(&handler --> Nil) is export {
+        $*CRO-ROUTE-SET.add-handler('PATCH', &handler);
+    }
+
     sub body-parser(Cro::HTTP::BodyParser $parser --> Nil) is export {
         $*CRO-ROUTE-SET.add-body-parser($parser);
     }
@@ -765,11 +793,71 @@ module Cro::HTTP::Router {
         $resp.status = $status;
     }
 
-    sub before($middleware) is export {
-        $middleware ~~ Cro::Transform ?? $*CRO-ROUTE-SET.before($middleware) !! ();
+    my class BeforeMiddleTransform does Cro::HTTP::Middleware::Conditional {
+        has &.block;
+
+        method process(Supply $pipeline --> Supply) {
+            supply {
+                whenever $pipeline -> $request {
+                    my $*CRO-ROUTER-REQUEST := $request;
+                    my $*CRO-ROUTER-RESPONSE := Cro::HTTP::Response.new(:$request);
+                    &!block($request);
+                    emit $*CRO-ROUTER-RESPONSE.status.defined
+                        ?? $*CRO-ROUTER-RESPONSE
+                        !! $request;
+                }
+            }
+        }
     }
-    sub after($middleware) is export {
-        $middleware ~~ Cro::Transform ?? $*CRO-ROUTE-SET.after($middleware) !! ();
+
+    my class AfterMiddleTransform does Cro::Transform {
+        has &.block;
+
+        method consumes() { Cro::HTTP::Response }
+        method produces() { Cro::HTTP::Response }
+
+        method transformer(Supply $pipeline --> Supply) {
+            supply {
+                whenever $pipeline -> $response {
+                    my $*CRO-ROUTER-RESPONSE := $response;
+                    &!block($response);
+                    emit $response;
+                }
+            }
+        }
+    }
+
+    multi sub before(Cro::Transform $middleware --> Nil) is export {
+        $_ = $middleware;
+        if .consumes ~~ Cro::HTTP::Request
+        && .produces ~~ Cro::HTTP::Request {
+            $*CRO-ROUTE-SET.before($_)
+        } else {
+            die "before middleware must consume and produce Cro::HTTP::Request, got ({.consumes.perl}) and ({.produces.perl}) instead";
+        }
+    }
+    multi sub before(&middleware --> Nil) is export {
+        my $conditional = BeforeMiddleTransform.new(block => &middleware);
+        $*CRO-ROUTE-SET.before($conditional.request);
+        $*CRO-ROUTE-SET.after($conditional.response);
+    }
+    multi sub before(Cro::HTTP::Middleware::Pair $pair --> Nil) {
+        before($pair.request);
+        after($pair.response);
+    }
+
+    multi sub after(Cro::Transform $middleware --> Nil) is export {
+        $_ = $middleware;
+        if .consumes ~~ Cro::HTTP::Response
+        && .produces ~~ Cro::HTTP::Response {
+            $*CRO-ROUTE-SET.after($_)
+        } else {
+            die "after middleware must consume and produce Cro::HTTP::Response, got ({.consumes.perl}) and ({.produces.perl}) instead";
+        }
+    }
+    multi sub after(&middleware --> Nil) is export {
+        my $transformer = AfterMiddleTransform.new(block => &middleware);
+        $*CRO-ROUTE-SET.after($transformer);
     }
 
     sub cache-control(:$public, :$private, :$no-cache, :$no-store,
