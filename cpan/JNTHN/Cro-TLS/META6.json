@@ -1,11 +1,12 @@
 {
     "perl"          : "6.*",
     "name"          : "Cro::TLS",
-    "version"       : "0.7.1",
-    "description"   : "Libraries for building reactive services in Perl 6 - TLS part.",
+    "version"       : "0.7.2",
+    "description"   : "Cro pipeline components for building services that use TLS.",
+    "tags"          : [ "SSL", "TLS" ],
     "authors"       : [ "Jonathan Worthington <jnthn@jnthn.net>" ],
     "license"       : "Artistic-2.0",
-    "depends"       : [  "Cro::Core", "IO::Socket::Async::SSL" ],
+    "depends"       : [ "Cro::Core", "IO::Socket::Async::SSL" ],
     "provides"      : {
         "Cro::TLS": "lib/Cro/TLS.pm6"
     },
