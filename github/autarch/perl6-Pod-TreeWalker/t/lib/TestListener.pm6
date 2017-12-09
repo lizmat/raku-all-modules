@@ -1,3 +1,4 @@
+use Pod::TreeWalker::Listener;
 class TestListener does Pod::TreeWalker::Listener {
     has @.events;
 

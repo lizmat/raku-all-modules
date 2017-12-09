@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/autarch/perl6-Pod-TreeWalker.git
 	branch = master
-	commit = 003b0f8e91708789d4707dcf14e52dc77fabbf86
-	parent = 037b95b87b149275043efdc49beeb57f09c2e057
+	commit = db52d6071d44a3432c4954302598f87e602a6e27
+	parent = c97a160a2523ff7282fe0a94335b6012eeff2651
 	cmdver = 0.4.0

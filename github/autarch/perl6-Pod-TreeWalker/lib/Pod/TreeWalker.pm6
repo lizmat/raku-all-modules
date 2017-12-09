@@ -29,7 +29,7 @@ method walk-pod (Any:D $node, Int $depth = 0) {
             elsif $!list-level > $node.level {
                 self!end-lists-to( $node.level );
             }
-            
+
             self!send-events-for-node( $node, $depth );
         }
         # See https://rt.perl.org/Ticket/Display.html?id=114480 - table
