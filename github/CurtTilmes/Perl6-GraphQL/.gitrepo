@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/CurtTilmes/Perl6-GraphQL.git
 	branch = master
-	commit = 3abd909b12eabde5a2133d4a27b4328f9c4cf443
-	parent = 10cb8951d68702065a436486130469870f689abe
+	commit = 886e79e5684f1e53e839abc6f66dbf7b8f724b4b
+	parent = d74c60407181adb530b346b9a7216155d44b5fcd
 	cmdver = 0.4.0
