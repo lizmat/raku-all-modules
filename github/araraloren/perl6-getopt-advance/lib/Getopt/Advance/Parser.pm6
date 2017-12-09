@@ -452,7 +452,7 @@ sub process-pos($optset, @noa is copy) {
                 CATCH {
                     when X::GA::PosCallFailed {}
                     default {
-                        ...
+                        .throw();
                     }
                 }
             }
@@ -479,7 +479,7 @@ sub process-pos($optset, @noa is copy) {
                     CATCH {
                         when X::GA::PosCallFailed {}
                         default {
-                            ...
+                            .throw();
                         }
                     }
                 }
