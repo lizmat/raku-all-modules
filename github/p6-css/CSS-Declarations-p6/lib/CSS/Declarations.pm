@@ -526,8 +526,8 @@ class CSS::Declarations {
 
                 my constant DefaultIdx = [Mu, Mu, 0, 0, 1];
                 @asts.pop
-                while +@asts > 1
-                && same( @asts.tail, @asts[ DefaultIdx[+@asts] ] );
+                    while +@asts > 1
+                    && same( @asts.tail, @asts[ DefaultIdx[+@asts] ] );
 
                 %prop-ast{$prop} = { :expr[ @asts.map: *<expr> ] };
                 %prop-ast{$prop}<prio> = $_
@@ -543,30 +543,38 @@ class CSS::Declarations {
 
             next unless $.optimizable(prop, :@children);
 
-            # take the simple approach of building the compound property, iff
-            # all children are consistant
+            # building the compound property from a group of related children
             # -- if child properties are 'initial', or 'inherit', they all
             #    need to be present and the same
             # -- otherwise they need to all need to have or lack
             #    the !important indicator
 
-            my @child-types = @children.map: {
+            my %groups = @children.classify: {
                 given %prop-ast{$_} {
-                    when .<keyw> ~~ Handling {.<keyw>}
+                    when .<expr>.elems > 1 { 'multi' }
+                    when .<keyw> ~~ Handling {.<keyw>}    # 'default', 'initial'
                     when .<prio> ~~ 'important' {.<prio>}
                     default { 'normal' }
                 }
             }
 
-            if +(@child-types.unique) == 1 {
+            %groups<multi>:delete; # eg. border-color: red green blue yellow;
+
+            #| find largest consolidation group
+            my $type;
+            for %groups.pairs.sort {
+                my $n = + .value;
+                $type = .key
+                    if $n > 1
+                    && (! $type || $n > +%groups{$type});
+            }
+
+            with $type {
                 # all of the same type
-                given @child-types[0] {
+                given %groups{$type}.list -> @children {
                     when Handling {
-                        if .Num == metadata{prop}<children> {
-                            # all child properties need to be present
-                            %prop-ast{$_}:delete for @children;
-                            %prop-ast{prop} = { expr => [ :keyw($_) ] };
-                        }
+                        %prop-ast{$_}:delete for @children;
+                        %prop-ast{prop} = { expr => [ :keyw($_) ] };
                     }
                     when 'important'|'normal' {
                         my %ast = expr => [ @children.map: {

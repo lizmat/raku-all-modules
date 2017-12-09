@@ -1,5 +1,5 @@
 # perl6-CSS-Declarations
-CSS::Declarations is a class for parsing and generation of CSS property lists, including box-model, parsing, inheritance, and defaults.
+CSS::Declarations is a class for parsing and generation of CSS property lists, including box-model, inheritance, and defaults.
 
 
 ## Basic Construction
@@ -126,13 +126,13 @@ Most properties have a default value. If a property is reset to its default valu
 
 A child class can inherit from one or more parent classes. This follows CSS standards:
 
-- all properties are inherited by default; for example `color` is inherited, but `margin` is not.
+- not all properties are inherited; for example `color` is inherited, but `margin` is not.
 
 - the `inherit` keyword can be used in the child property to ensure inheritance.
 
 - `initial` will reset the child property to the default value
 
-- the `!important` modifier can be used in parent properties to force the parent value to override the child. The property becomes 'important' in the child and will be passed on to any CSS::Declarations objects that inherit from it.
+- the `!important` modifier can be used in parent properties to force the parent value to override the child. The property remains 'important' in the child and will be passed on to any CSS::Declarations objects that inherit from it.
 
 To inherit a css object or style string:
 
@@ -143,13 +143,13 @@ To inherit a css object or style string:
 ```
 use CSS::Declarations;
 
-my $inherit = "margin-top:5pt; margin-left: 15pt; color:rgb(0,0,255) !important";
+my $parent-style = "margin-top:5pt; margin-left: 15pt; color:rgb(0,0,255) !important";
 my $style = "margin-top:25pt; margin-right: initial; margin-left: inherit; color:purple";
-my $css = CSS::Declarations.new: :$style, :$inherit;
+my $css = CSS::Declarations.new: :$style, :inherit($parent-style);
 
-say $css.color; # #FF0000 (red)
+say $css.color;                     # #FF0000 (red)
 say $css.handling("margin-left");   # inherit
-say $css.margin-left; # 15pt
+say $css.margin-left;               # 15pt
 ```
 
 ## Optimization and Serialization
@@ -160,7 +160,7 @@ The `.write` or `.Str` methods can be used to produce CSS. Properties are optimi
 
 - simple properties are consolidated to containers (e.g. `font-family` to `font`).
 
-- rgb masks are translated to color-names, if possible
+- rgb masks are translated to color-names, where possible
 
 ```
 use CSS::Declarations;
@@ -197,8 +197,8 @@ my $actions = $module.actions.new;
 my $writer = CSS::Writer.new: :color-names, :terse;
 my $declarations = "border-bottom-color:red; border-bottom-style:solid; border-bottom-width:1px; border-left-color:red; border-left-style:solid; border-left-width:1px; border-right-color:red; border-right-style:solid; border-right-width:1px; border-top-color:red; border-top-style:solid; border-top-width:1px;";
 my $p = $module.grammar.parse($declarations, :$actions, :rule<declaration-list>);
-my $ast = $css.optimize($p.ast);
-say $writer.write(|$ast); # border:1px solid red;
+my %ast = $css.optimize($p.ast);
+say $writer.write(|%ast); # border:1px solid red;
 ```
 
 ## Property Meta-data
@@ -255,7 +255,31 @@ say "%.2f mm".sprintf(0mm ➕ $_) for $css.margin.list;
 
 ## Box Model
 
-`CSS::Declarations::Box` is an abstract class for modelling Box elements.
+### Overview
+
+Excerpt from [CSS 2.2 Specification Chapter 8 - Box Model](https://www.w3.org/TR/CSS22/box.html#box-dimensions):
+
+![Box Model](doc/boxdim.png)
+
+The margin, border, and padding can be broken down into top, right, bottom, and left segments (e.g., in the diagram, "LM" for left margin, "RP" for right padding, "TB" for top border, etc.).
+
+The perimeter of each of the four areas (content, padding, border, and margin) is called an "edge", so each box has four edges:
+
+- *Content Edge* or *Inner Edge* - 
+  The content edge surrounds the rectangle given by the width and height of the box, which often depend on the element's rendered content. The four content edges define the box's content box.
+
+- *Padding Edge* -
+The padding edge surrounds the box padding. If the padding has 0 width, the padding edge is the same as the content edge. The four padding edges define the box's padding box.
+
+- *Border Edge* -
+The border edge surrounds the box's border. If the border has 0 width, the border edge is the same as the padding edge. The four border edges define the box's border box.
+
+- *Margin Edge or Outer Edge* -
+The margin edge surrounds the box margin. If the margin has 0 width, the margin edge is the same as the border edge. The four margin edges define the box's margin box.
+
+### Description
+
+`CSS::Declarations::Box` is an abstract class for modelling Box Model elements.
 
 ```
 use CSS::Declarations;
