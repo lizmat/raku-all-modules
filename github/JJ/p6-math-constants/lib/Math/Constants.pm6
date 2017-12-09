@@ -1,5 +1,5 @@
 use v6;
-unit class Math::Constants;
+unit class Math::Constants:ver<0.0.4>:auth<github:JJ>;
 
 # Universal Constants
 my constant phi is export = 1.61803398874989e0;
