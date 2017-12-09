@@ -1,6 +1,6 @@
 use v6.c;
 
-class Game::Sudoku:ver<0.1.0>:auth<simon.proctor@gmail.com> {
+class Game::Sudoku:ver<0.2.0>:auth<simon.proctor@gmail.com> {
 
     subset GridCode of Str where * ~~ /^ <[0..9]> ** 81 $/;
     subset Idx of Int where 0 <= * <= 8;
@@ -9,28 +9,38 @@ class Game::Sudoku:ver<0.1.0>:auth<simon.proctor@gmail.com> {
     has @!grid; 
     has $!valid-all;
     has $!complete-all;
-
+    has $!none-all;
+    
     multi submethod BUILD( GridCode :$code = ("0" x 81) ) {
         my @tmp = $code.comb.map( *.Int );
         (^9 X ^9).map( -> ($x,$y) { @!grid[$y][$x] = @tmp[($y*9)+$x] } );
 
-        my @all;
-        my @valid;
-        for ^9 -> $c {
-            @valid.push( one( none( self.row( $c ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
-                              one( self.row( $c ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ) ) )
-            .push( one( none( self.col( $c ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
-                              one( self.col( $c ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ) ) )
-            .push( one( none( self.square( $c ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
-                              one( self.square( $c ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ) ) );
-            @all.push(
-                one( self.row( $c ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
-                one( self.col( $c ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
-                one( self.square( $c ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) )
-            );
-        }
-        $!complete-all = all( @all );
-        $!valid-all = all( @valid );
+        $!valid-all = all(
+            (^9).map(
+                {
+                    |(
+                        one( none( self.row( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
+                             one( self.row( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ) ),
+                        one( none( self.col( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
+                             one( self.col( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ) ),
+                        one( none( self.square( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
+                             one( self.square( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ) )
+                    )
+                }
+            )
+        );
+        $!complete-all = all(
+            (^9).map(
+                {
+                    |(
+                        one( self.row( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
+                        one( self.col( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
+                        one( self.square( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) )
+                    )
+                }
+            )
+        );
+        $!none-all = none( (^9 X ^9).map( -> ($x,$y) { @!grid[$y][$x] } ) );
     }
 
     multi method Str {
@@ -60,7 +70,7 @@ class Game::Sudoku:ver<0.1.0>:auth<simon.proctor@gmail.com> {
     }
 
     method full {
-        [&&] @!grid.map( { [&&] $_.map( { $_ != 0 } ) } )
+        so $!none-all == 0;
     }
 
     method row( Idx $y ) {
@@ -86,13 +96,11 @@ class Game::Sudoku:ver<0.1.0>:auth<simon.proctor@gmail.com> {
     method possible( Idx $x, Idx $y ) {
         return () if @!grid[$y][$x] > 0;
 
-        my $current = set(
-            ( self.row($y).map( -> ( $x, $y ) { @!grid[$y][$x] } ).grep( * > 0 ) ),
-            ( self.col($x).map( -> ( $x, $y ) { @!grid[$y][$x] } ).grep( * > 0 ) ),
-            ( self.square($x,$y).map( -> ( $x, $y ) { @!grid[$y][$x] } ).grep( * > 0 ) )
-        );
-
-        ( (1..9) (^) $current ).keys.sort;
+        ( (1..9) (-) set(
+              ( self.row($y).map( -> ( $x, $y ) { @!grid[$y][$x] } ).grep( * > 0 ) ),
+              ( self.col($x).map( -> ( $x, $y ) { @!grid[$y][$x] } ).grep( * > 0 ) ),
+              ( self.square($x,$y).map( -> ( $x, $y ) { @!grid[$y][$x] } ).grep( * > 0 ) )
+          ) ).keys.sort;
     }
 
     multi method cell( Idx $x, Idx $y ) {
