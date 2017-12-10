@@ -13,7 +13,7 @@ zef install Acme::Cow
 
 Examples
 --------
-```Perl6
+```Perl 6
 use Acme::Cow;
 
 # Default
