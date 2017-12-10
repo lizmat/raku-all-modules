@@ -1,6 +1,6 @@
 use v6;
 
-use PDF:ver(v0.2.1+);
+use PDF:ver(v0.2.6+);
 
 #| A minimal class for manipulating PDF graphical content
 class PDF::Lite
@@ -12,7 +12,7 @@ class PDF::Lite
     use PDF::DAO::Loader;
     use PDF::DAO::Stream;
 
-    use PDF::Content:ver(v0.0.7+);
+    use PDF::Content:ver(v0.1.0+);
     use PDF::Content::Graphics;
     use PDF::Content::Page;
     use PDF::Content::PageNode;
@@ -45,13 +45,13 @@ class PDF::Lite
     }
 
     my class Loader is PDF::DAO::Loader {
-        multi method load(Hash :$dict! where {from-ast($_) ~~ 'Form' given  .<Subtype>}) {
+        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Form' given  .<Subtype>}) {
             XObject-Form
         }
-        multi method load(Hash :$dict! where {from-ast($_) ~~ 'Image' given  .<Subtype>}) {
+        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Image' given  .<Subtype>}) {
             XObject-Image
         }
-        multi method load(Hash :$dict! where {from-ast($_) ~~ 'Pattern' given  .<Type>}) {
+        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Pattern' given  .<Type>}) {
             XObject-Form
         }
     }
@@ -113,7 +113,7 @@ class PDF::Lite
 	self<Root> //= { :Type( :name<Catalog> ), :Pages{ :Type( :name<Pages> ), :Kids[], :Count(0), } };
     }
 
-    BEGIN for <page add-page add-pages delete-page insert-page page-count media-box crop-box bleed-box trim-box art-box core-font> -> $meth {
+    BEGIN for <page add-page add-pages delete-page insert-page page-count media-box crop-box bleed-box trim-box art-box core-font use-font> -> $meth {
         $?CLASS.^add_method($meth,  method (|a) { self.Root.Pages."$meth"(|a) });
     }
 

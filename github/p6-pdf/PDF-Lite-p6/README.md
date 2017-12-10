@@ -148,7 +148,7 @@ $pdf.save-as: "examples/text-effects.pdf";
 
 This module has build-in support for the PDF core fonts: Courier, Times, Helvetica, ZapfDingbats and Symbol.
 
-The companion module PDF::Font can be used to handle a wider range of fonts:
+The companion module PDF::Font can be used to access a wider range of fonts:
 
 ```
     use PDF::Lite;
