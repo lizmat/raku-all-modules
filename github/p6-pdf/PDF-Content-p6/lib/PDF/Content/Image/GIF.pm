@@ -212,7 +212,7 @@ class PDF::Content::Image::GIF
     }
 
     method open(PDF::Content::Image::IOish $fh) {
-        self.load: :$fh, :image-type<GIF>, :class(self);
+        self.load-image: :$fh, :image-type<GIF>, :class(self);
     }
 
 }

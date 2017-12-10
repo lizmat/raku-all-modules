@@ -307,7 +307,7 @@ class PDF::Content::Image::PNG
     }
 
     method open(PDF::Content::Image::IOish $fh) {
-        self.load: :$fh, :image-type<PNG>, :class(self);
+        self.load-image: :$fh, :image-type<PNG>, :class(self);
     }
 }
 

@@ -38,7 +38,7 @@ class PDF::Content::Image {
         }
     }
 
-    method load(IOish :$fh!, ImageType :$image-type!,
+    method load-image(IOish :$fh!, ImageType :$image-type!,
                 :$class = (require ::('PDF::Content::Image')::($image-type))) {
         my $image-obj = $class.new: :$image-type, :source($fh);
         $image-obj.read;
@@ -66,7 +66,7 @@ class PDF::Content::Image {
 	}
 
         my $fh = PDF::IO.coerce($data, :$path);
-        self.load(:$fh, :$image-type, :$data-uri);
+        self.load-image(:$fh, :$image-type, :$data-uri);
     }
 
     multi method open(Str $path! ) {
@@ -80,7 +80,7 @@ class PDF::Content::Image {
     multi method open(IO::Handle $fh!) {
         my $path = $fh.path;
         my Str $image-type = self!image-type($path.extension, :$path);
-        self.load(:$fh, :$image-type);
+        self.load-image(:$fh, :$image-type);
     }
 
     method data-uri is rw {

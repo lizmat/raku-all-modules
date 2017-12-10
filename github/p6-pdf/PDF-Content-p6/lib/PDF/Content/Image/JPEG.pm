@@ -80,7 +80,7 @@ class PDF::Content::Image::JPEG
     }
 
     method open(PDF::Content::Image::IOish $fh) {
-        self.load: :$fh, :image-type<JPEG>, :class(self);
+        self.load-image: :$fh, :image-type<JPEG>, :class(self);
     }
 }
 

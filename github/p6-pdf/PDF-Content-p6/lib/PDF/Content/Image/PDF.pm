@@ -20,7 +20,7 @@ class PDF::Content::Image::PDF
     }
 
     method open(PDF::Content::Image::IOish $fh) {
-        self.load: :$fh, :image-type<PDF>, :class(self);
+        self.load-image: :$fh, :image-type<PDF>, :class(self);
     }
 }
 
