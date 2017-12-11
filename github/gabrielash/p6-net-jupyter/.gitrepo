@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/gabrielash/p6-net-jupyter.git
+	branch = master
+	commit = 2a48ee37f2a5a804f0bd7fd49e20c9afcfaa00bd
+	parent = 0dea5e9e4f188e71f4780c170aa24bcd268fee40
+	cmdver = 0.4.0

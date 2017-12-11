@@ -1,0 +1,13 @@
+lib/.precomp
+bin/k.pl
+bin/eval*
+bin/*.pm
+example/simple_kernel.py
+conex
+Makefile
+*.swp
+*.bak
+*~
+*.out
+*.so
+*.o

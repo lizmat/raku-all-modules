@@ -1,0 +1,9 @@
+{
+  "display_name": "Perl 6.d",
+  "argv": [
+    "/home/docker/workspace/perl6-jupyter/bin/kernel.pl",
+    "{connection_file}"
+  ], 
+
+  "language": "Perl6"
+}

@@ -1,0 +1,45 @@
+{
+  "name": "Net::Jupyter",
+  "source-url": "https://github.com/gabrielash/p6-net-jupyter.git",
+  "support": {
+    "source": null
+  },
+  "perl": "6.d",
+  "resources": [
+    "kernels/perl6/logo-32x32.png",
+    "kernels/perl6/logo-64x64.png"
+  ],
+  "build-depends": [
+    "Test::META"
+  ],
+  "auth": "github:gabrielash",
+  "depends": [
+    "Net::ZMQ:auth('github:gabrielash')",
+    "Log::ZMQ",
+    "JSON::Tiny",
+    "MIME::Base64",
+    "Digest::HMAC",
+    "Digest::SHA256::Native",
+    "UUID"
+  ],
+  "tags": [
+      "Net", "Tools", "Web"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "Test::META"
+  ],
+  "provides": {
+        "Net::Jupyter::Common":         "lib/Net/Jupyter/Common.pm",
+        "Net::Jupyter::EvalError":      "lib/Net/Jupyter/EvalError.pm",
+        "Net::Jupyter::ContextREPL":    "lib/Net/Jupyter/ContextREPL.pm",
+        "Net::Jupyter::Executer":       "lib/Net/Jupyter/Executer.pm",
+        "Net::Jupyter::Messenger":      "lib/Net/Jupyter/Messenger.pm",
+        "Net::Jupyter::Messages":       "lib/Net/Jupyter/Messages.pm"
+  },
+  "production": false,
+  "version": "0.1.0",
+  "meta-version": "0",
+  "authors": ["Gabriel Ash", "github:gabrielash" ],
+  "description": "Perl6 ikernel for Jupyter"
+}
