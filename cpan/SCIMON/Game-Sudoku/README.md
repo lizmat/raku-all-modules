@@ -67,7 +67,7 @@ cell( Int, Int -> Int )
 cell( Int, Int, Int -> Game::Sudoku )
 -------------------------------------
 
-Getter / Setter for individual cells. The setter returns the updated game allowing for method chaining.
+Getter / Setter for individual cells. The setter returns the updated game allowing for method chaining. Note that attempting to set a value defined in the constructor will not work, returning the unchanged game object.
 
 row( Int -> List(List) )
 ------------------------

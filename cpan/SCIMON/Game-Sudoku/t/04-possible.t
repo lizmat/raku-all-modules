@@ -24,6 +24,7 @@ is $game.valid, False, "Game state is invalid as we have 2 2's";
 my $code = "003020600900305001001806400008102900700000008006708200002609500800203009005010300",
 $game =  Game::Sudoku.new( :code($code) );
 is $game.Str, $code, "Game as expected";
+is $game.cell(2,0,5).Str, $code, "Can't modify initial values";
 is $game.possible(5,0),(1,4,7),"Got expected possibilites";
 
 while [+] (^9 X ^9).map( -> ($x,$y) { ($x,$y) => $game.possible($x,$y) } ).grep( *.value.elems == 1 ).map( -> $p { my ( $x, $y ) = $p.key; $game.cell($x,$y,$p.value[0]); 1; } ) {

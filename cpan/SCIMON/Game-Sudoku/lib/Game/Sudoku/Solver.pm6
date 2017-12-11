@@ -4,23 +4,53 @@ use Game::Sudoku;
 
 sub solve-puzzle( Game::Sudoku $game ) is export {
 
-    my $initial = $game.Str;
+    my $initial;
     my $result = Game::Sudoku.new( :code($game.Str) );
-    my $count;
     repeat {
-        $count = [+] (^9 X ^9)
-        .map( -> ($x,$y) { ($x,$y) => $result.possible($x,$y) } )
-        .grep( *.value.elems == 1 )
-        .map( -> $p { my ( $x, $y ) = $p.key; $result.cell($x,$y,$p.value[0]); 1; } );
-    } while ( $count > 0 && ! $result.complete );
+        $initial = $result.Str;
+        $result = simple-solutions( $result );
+    } while ( ! $result.complete && $result.Str ne $initial );
 
     return $result if $result.complete;
+
+    my $options = ( (^9 X ^9)
+    .map( -> ($x,$y) { ($x,$y) => $result.possible($x,$y).Array } )
+    .grep( *.value.elems > 0 )
+    .sort( *.value.elems <=> *.value.elems ) )[0];
+
+    return $result unless $options;
+    
+    my $cell = $options.key;
+    my @possible = $options.value;
+
+    while ( ! $result.complete && @possible.elems > 0 ) {
+        my $value = shift @possible;
+        my ($x,$y) = $cell;
+        my $original = $result.Str;
+        $result.cell( $x, $y, $value );
+        $result = solve-puzzle( $result );
+        $result = Game::Sudoku.new( :code($original) ) unless $result.complete;
+    }
+    
+    return $result;
+}
+
+sub simple-solutions( Game::Sudoku $game ) {
+    my $result = find-single-options( $game );
+    
+    return $result if $result.complete;
+
+    return find-uniques( $result );
+}
+
+sub find-uniques( Game::Sudoku $game ) {
+    my $result = Game::Sudoku.new( :code($game.Str) );
 
     my @changes;
 
     for ^9 -> $idx {
         for <row col square> -> $method-name {
-            my $method = $result.^lookup($method-name);
+            my $method = $result.^find_method($method-name);
             my $only = [(^)] $result.$method($idx).map( -> ( $x,$y ) { $result.possible($x,$y) } );
 
             for $only.keys -> $val {
@@ -37,11 +67,21 @@ sub solve-puzzle( Game::Sudoku $game ) is export {
         my ( $x, $y ) = $pair.key;
         $result.cell($x,$y,$pair.value[0]);
     }
-    if ( ! $result.complete && $result.Str ne $initial ) {
-        $result = solve-puzzle($result);
-    }
 
     return $result;
+}
+
+sub find-single-options( Game::Sudoku $game ) {
+    my $result = Game::Sudoku.new( :code($game.Str) );
+    my $count;
+    repeat {
+        $count = [+] (^9 X ^9)
+        .map( -> ($x,$y) { ($x,$y) => $result.possible($x,$y) } )
+        .grep( *.value.elems == 1 )
+        .map( -> $p { my ( $x, $y ) = $p.key; $result.cell($x,$y,$p.value[0]); 1; } );
+    } while ( $count > 0 && ! $result.complete );
+    
+    return $result
 }
 
 =begin pod
@@ -57,11 +97,13 @@ of it's abilities.
 
 =head1 FUNCTIONS
 
-The following function is expoted by default when is module is used.
+The following function is exported by default when is module is used.
 
 =head2 solve-puzzle( Game::Sudoku -> Game::Sudoku )
 
 Takes a Game::Sudoku object and attempts to solve it by a series of simple tests looking for unique values. 
+
+Once it's run out of simple solutions it will then try depth first tree solutions on the result. 
 
 =head1 AUTHOR
 

@@ -1,19 +1,27 @@
 use v6.c;
 
-class Game::Sudoku:ver<0.2.0>:auth<simon.proctor@gmail.com> {
+class Game::Sudoku:ver<1.0.0>:auth<simon.proctor@gmail.com> {
 
     subset GridCode of Str where * ~~ /^ <[0..9]> ** 81 $/;
     subset Idx of Int where 0 <= * <= 8;
-    subset CellValue of Int where 1 <= * <= 9;
+    subset CellValue of Int where 0 <= * <= 9;
 
-    has @!grid; 
+    has @!grid;
+    has $!initial;
     has $!valid-all;
     has $!complete-all;
     has $!none-all;
     
     multi submethod BUILD( GridCode :$code = ("0" x 81) ) {
         my @tmp = $code.comb.map( *.Int );
-        (^9 X ^9).map( -> ($x,$y) { @!grid[$y][$x] = @tmp[($y*9)+$x] } );
+        my @initial-list = ();
+        (^9 X ^9).map(
+            -> ($x,$y) {
+                @!grid[$y][$x] = @tmp[($y*9)+$x];
+                @initial-list.push( "$x,$y" ) if @tmp[($y*9)+$x] > 0;
+            }
+        );
+        $!initial = set( @initial-list );
 
         $!valid-all = all(
             (^9).map(
@@ -108,10 +116,10 @@ class Game::Sudoku:ver<0.2.0>:auth<simon.proctor@gmail.com> {
     }
 
     multi method cell( Idx $x, Idx $y, CellValue $val ) {
+        return self if $!initial{"$x,$y"};
         @!grid[$y][$x] = $val;
         return self;
     }
-
 
 }
 
@@ -175,6 +183,8 @@ Returns an empty List if the cell already has a value set or if there are no pos
 =head2 cell( Int, Int, Int -> Game::Sudoku )
 
 Getter / Setter for individual cells. The setter returns the updated game allowing for method chaining.
+Note that attempting to set a value defined in the constructor will not work, returning the unchanged
+game object.
 
 =head2 row( Int -> List(List) )
 
