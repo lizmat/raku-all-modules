@@ -47,9 +47,7 @@ use Pod::To::HTML;
 my sub Debug(&code) { }
 
 #| Render Pod as Markdown
-multi sub pod2markdown($pod, Bool :$no-fenced-codeblocks)
-returns Str
-is export
+method render($pod, Bool :$no-fenced-codeblocks --> Str)
 {
     my Bool $*fenced-codeblocks = !$no-fenced-codeblocks;
     my Bool $*in-code-block = False;
@@ -69,11 +67,11 @@ certain markdown renderers, use:
 #`[ Fake Pod directive to help syntax highlighters cope:
     =end code ]
 
-#| Render Pod as Markdown, see pod2markdown
-method render($pod, Bool :$no-fenced-codeblocks)
-returns Str
+#| Render Pod as Markdown, see .render()
+sub pod2markdown($pod, Bool :$no-fenced-codeblocks --> Str)
+is export
 {
-    pod2markdown($pod, :$no-fenced-codeblocks);
+    return Pod::To::Markdown.render($pod, :$no-fenced-codeblocks);
 }
 
 
@@ -242,8 +240,8 @@ sub code2md(Str $code, :$lang) {
 }
 
 sub signature2md(Int $lvl, Callable $sig, Bool :$method!) {
-    # TODO Add multi / proto? How?
-    my $name = join ' ', $method ?? 'method' !! 'sub', $sig.name;
+    # TODO Add proto? How?
+    my $name = join ' ', $sig.multi ?? 'multi' !! (), $method ?? 'method' !! 'sub', $sig.name;
     my @params = $sig.signature.params;
     if $method {
         # Ignore invocant

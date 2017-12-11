@@ -20,7 +20,7 @@ class Asdf2 does Positional  {
     has Str $!b = 'private';
 
     #| Method asdf2
-    method asdf(Str :$asdf? = 'asdf') returns Str {
+    multi method asdf(Str :$asdf? = 'asdf') returns Str {
 
     }
 }
@@ -55,10 +55,10 @@ a is public
 
 b is private
 
-### method asdf
+### multi method asdf
 
 ```perl6
-method asdf(
+multi method asdf(
     Str :$asdf = "asdf"
 ) returns Str
 ```
@@ -95,9 +95,9 @@ a is public
 
 b is private
 
-### method asdf
+### multi method asdf
 
-    method asdf(
+    multi method asdf(
         Str :$asdf = "asdf"
     ) returns Str
 
