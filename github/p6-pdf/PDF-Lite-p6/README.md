@@ -148,17 +148,17 @@ $pdf.save-as: "examples/text-effects.pdf";
 
 This module has build-in support for the PDF core fonts: Courier, Times, Helvetica, ZapfDingbats and Symbol.
 
-The companion module PDF::Font can be used to access a wider range of fonts:
+The companion module PDF::Font::Loader can be used to access a wider range of fonts:
 
 ```
     use PDF::Lite;
-    use PDF::Font;
+    use PDF::Font::Loader;
     my $pdf = PDF::Lite.new;
     $pdf.media-box = [0, 0, 400, 120];
     my $page = $pdf.add-page;
-    my $noto = PDF::Font.load-font: :file<t/fonts/NotoSans-Regular.ttf>;
+    my $noto = PDF::Font::Loader.load-font: :file<t/fonts/NotoSans-Regular.ttf>;
     # or lookup by font name (requires fontconfig)
-    # $noto = PDF::Font.load-font: :name<NotoSans-Regular>;
+    # $noto = PDF::Font::Loader.load-font: :name<NotoSans-Regular>;
 
     $page.text: {
         .text-position = [10,100];
@@ -416,7 +416,7 @@ $pdf.page(1).gfx(:&callback).ops;
 
 ## See also
 
-- [PDF::Font](https://github.com/p6-pdf/PDF-Font-p6) for rendering Postscript and TrueType fonts.
+- [PDF::Font::Loader](https://github.com/p6-pdf/PDF-Font-Loader-p6) for rendering Postscript and TrueType fonts.
 
 - This module (PDF::Lite) is based on [PDF](https://github.com/p6-pdf/PDF-p6) and has all of it methods available. This includes:
 
