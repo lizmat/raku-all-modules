@@ -1,0 +1,35 @@
+{
+  "api" : "PDF-1.7",
+  "auth" : "github:p6-pdf",
+  "authors" : [
+    "David Warring"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "PDF::Lite",
+    "PDF::Content",
+    "Font::FreeType",
+    "PDF",
+    "Native::Packing"
+  ],
+  "description" : "Font classes for the PDF Tool-chain",
+  "license" : "Artistic-2.0",
+  "name" : "PDF::Font::Loader",
+  "perl" : "6.*",
+  "provides" : {
+    "PDF::Font::Loader" : "lib/PDF/Font/Loader.pm",
+    "PDF::Font::Loader::Enc::Identity-H" : "lib/PDF/Font/Loader/Enc/Identity-H.pm",
+    "PDF::Font::Loader::Enc::Type1" : "lib/PDF/Font/Loader/Enc/Type1.pm",
+    "PDF::Font::Loader::FreeType" : "lib/PDF/Font/Loader/FreeType.pm",
+    "PDF::Font::Loader::Type1" : "lib/PDF/Font/Loader/Type1.pm",
+    "PDF::Font::Loader::Type1::Stream" : "lib/PDF/Font/Loader/Type1/Stream.pm"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/p6-pdf/PDF-Font-Loader-p6.git",
+  "tags" : [
+    "pdf",
+    "font"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.1.4"
+}
