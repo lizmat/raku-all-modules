@@ -140,7 +140,7 @@ sub parse_record_body (Int $type, Int $request-id, Buf $content) is export
   $content-length <= FCGI_MAX_CONTENT_LEN
     || throw ERRMSG_OCTETS_LE, 'content', FCGI_MAX_CONTENT_LEN;
   
-  my %record = { :$type, :$request-id };
+  my %record := { :$type, :$request-id };
   
   given $type
   {
