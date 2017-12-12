@@ -24,6 +24,12 @@ sub blo ("test") is fuzzed {
 	"ok"
 }
 
+sub blu (Str $blu) {
+	"ok";
+}
+
+fuzz &blu;
+
 multi MAIN(Bool :$fuzz!) {
 	run-tests
 }
@@ -31,7 +37,7 @@ multi MAIN(Bool :$fuzz!) {
 
 ## Description
 `Test::Fuzz` is a tool for `generative/fuzz testing`.
-Add the `is fuzzed` trait and `Test::Fuzz` will try to figure out the best generators to use to test your function.
+Add the `is fuzzed` trait and `Test::Fuzz` will try to figure out the best generators to use to test your function. If the function was already made, pass it to the `fuzz` function for the same effect.
 
 To run the tests, just call the `run-tests` function.
 
@@ -40,7 +46,7 @@ To run the tests, just call the `run-tests` function.
 ```
     # with zef
     > zef install Test::Fuzz
-    
+
     # or, with 6pm (https://github.com/FCO/6pm)
     > $ 6pm install Test::Fuzz    
 ```

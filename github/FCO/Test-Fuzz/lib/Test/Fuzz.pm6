@@ -24,6 +24,13 @@ multi trait_mod:<is> (Routine $func, Bool :$fuzzed!) is export {
 	add-func $func
 }
 
+#| fuzz an existing sub
+sub fuzz(&func) is export {
+	for (&func.candidates) -> $f {
+		&trait_mod:<is>($f, :fuzzed);
+	}
+}
+
 #| function that run fuzzed tests
 sub run-tests(
 	@funcs = %funcs.keys.sort, #= if no specified the functions, it runs all fuzzed tests
