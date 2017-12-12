@@ -30,20 +30,23 @@ Net::Jupyter is a Perl6 Jupyter kernel
   relies on Net::ZMQ
 
 
-### Documentation
+## Documentation
 
   see http://jupyter.org/
 
 ## Installation
 
-  The module files are installed normally, but the kernel must be installed separately.
+First, install the  module: 
 
-  There is an installation script in the bin directory. It can also be run with 'make install.'
+    git clone https://github.com/gabrielash/p6-net-jupyter
+    cd p6-net-jupyter
+    zef install .
 
-  Assuming jupyter is already installed on your system, and  LOCAL_HOME is defined,
+then, install the kernel:
 
-  it will try to install in the correct .local subdir that Anaconda recognizes
+    bin/kernel-install.sh
 
-  for jupyter kernels.  You can also specify a custom dirctory as an argument
-
-  or you can read the script and install manually.
+Assuming jupyter is already installed on your system, and  LOCAL_HOME is defined,
+it will try to install in the correct .local subdir that Anaconda recognizes
+for jupyter kernels.  You can also specify a custom dirctory as an argument
+or you can read the script and install manually.
