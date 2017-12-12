@@ -152,7 +152,7 @@ role SAST is rw {
     # forces a node to return this type and itemization in the future
     method force($type, $itemize) {
         my $original-type = $.type;
-        self does SAST::Force unless self ~~ SAST::Force;
+        self.^mixin(SAST::Force) unless self ~~ SAST::Force;
         $.type = $type;
         $.original-type = $original-type;
         $.itemize = $itemize;
@@ -1556,6 +1556,9 @@ class SAST::Type does SAST {
     method gist { $.node-name ~ "({$.class-name || $.class-type.name})" }
     method compile-time { self.class-type }
     method declaration { $.class-type.^declaration }
+
+    # Some rakudobug requires this to be here
+    method TWEAK { }
 }
 
 class SAST::Blessed is SAST::MutableChildren is SAST::Type {
