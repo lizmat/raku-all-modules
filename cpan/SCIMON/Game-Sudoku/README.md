@@ -54,12 +54,14 @@ complete( -> Bool )
 
 Returns True is the sudoku game is both valid and full.
 
-possible( Int, Int -> List )
-----------------------------
+possible( Int, Int, Bool :$set -> List )
+----------------------------------------
 
-Returns the List of numbers that can be put in the current cell. Note this performs a simple check of the row, column and square the cell is in it does not perform more complex logical checks.
+Returns the sorted Sequence of numbers that can be put in the current cell. Note this performs a simple check of the row, column and square the cell is in it does not perform more complex logical checks.
 
 Returns an empty List if the cell already has a value set or if there are no possible values.
+
+If the optional :set parameter is passed then returns a Set of the values instead.
 
 cell( Int, Int -> Int )
 -----------------------
@@ -92,6 +94,11 @@ Returns the list of (x,y) co-ordinates in the given square of the grid. A square
     3|4|5
     -----
     6|7|8
+
+reset( Str :$code )
+-------------------
+
+Resets the puzzle to the state given in the $code argument. If the previous states initial values are all contained in the new puzzle then they will not be updated. Otherwise the puzzle will be treated as a fresh one with the given state.
 
 AUTHOR
 ======

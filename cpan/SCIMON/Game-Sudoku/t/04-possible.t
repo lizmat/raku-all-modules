@@ -11,6 +11,10 @@ is $game.cell(0,0),1,"Can also get a cells current value";
 is $game.cell(0,1),Nil,"Requesting an unset cell returns Nil";
 is $game.possible(0,0).sort,(),"We have no options";
 is $game.possible(0,1).sort,(2...9),"We have options";
+is $game.possible(0,1).WHAT,Seq,"We have a sequence";
+is $game.possible(0,1,:set).WHAT,Set,"We have a set";
+is $game.possible(0,0).WHAT,List,"We have a list when there's no options";
+is $game.possible(0,0,:set).WHAT,Set,"We have a set";
 is $game.valid, True, "Game state is valid";
 
 is $game.cell(0,0,2).Str,"2" ~ ( "0" x 80 ), "Now we have a cell";
