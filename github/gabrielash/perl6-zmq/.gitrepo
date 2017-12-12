@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/gabrielash/perl6-zmq.git
 	branch = master
-	commit = 6141f0b03da17c76a33c4d23cc08b0bfb4078e39
-	parent = 6c6f40af7d40a8a8e6b341d9e73cf0bdd3148170
+	commit = 939a21a3abe624ca83dbcc15f9f9830d5eed0fbc
+	parent = 4bdf2d2af996f46c97a8a496b4161721bef291d5
 	cmdver = 0.4.0
