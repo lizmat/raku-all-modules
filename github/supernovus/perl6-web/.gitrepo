@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-web.git
 	branch = master
-	commit = 495c00b98f914c4d92f90713cf51786547e63bd9
-	parent = 56d224d3f68b9ea4bfddaf14d2347fb4a7e96b43
+	commit = 419350529a503cde8af8b8e74b72d32edf50bc71
+	parent = da0632c4040d0fbe121645d5c7cd46ed23bfc626
 	cmdver = 0.4.0
