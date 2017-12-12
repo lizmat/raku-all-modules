@@ -55,7 +55,7 @@ method open {
                                                      $_.arguments[0]);
         if $_.arguments[0] {
             if $!flow-stopped {
-                $!conn.real.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $flow-ok.Buf).Buf);
+                $!conn.real.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $flow-ok).Buf);
                 $!write-lock.unlock();
                 $!flow-stopped = 0;
             }
@@ -63,7 +63,7 @@ method open {
             unless $!flow-stopped {
                 $!flow-stopped = 1;
                 $!write-lock.lock();
-                $!conn.real.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $flow-ok.Buf).Buf);
+                $!conn.real.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $flow-ok).Buf);
             }
         }
 
@@ -75,7 +75,7 @@ method open {
     });
 
     my $open = Net::AMQP::Payload::Method.new("channel.open", "");
-    $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $open.Buf).Buf);
+    $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $open).Buf);
 
     return $p;
 }
@@ -100,7 +100,7 @@ method close($reply-code, $reply-text, $class-id = 0, $method-id = 0) {
                                                 $class-id,
                                                 $method-id);
         $!channel-lock.protect: {
-            $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $close.Buf).Buf);
+            $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $close).Buf);
         };
     }
     return $p;
@@ -179,7 +179,7 @@ method qos($prefetch-size, $prefetch-count, $global = 0){
                                              $prefetch-count,
                                              $global);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $qos.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $qos).Buf);
     };
     return $p;
 }
@@ -197,7 +197,7 @@ method flow($status) {
     my $flow = Net::AMQP::Payload::Method.new("channel.flow",
                                              $status);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $flow.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $flow).Buf);
     }
     return $p;
 }
@@ -215,13 +215,17 @@ method recover($requeue) {
     my $recover = Net::AMQP::Payload::Method.new("basic.recover",
                                               $requeue);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $recover.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $recover).Buf);
     }
     return $p;
 }
 
 method ack(Int() $delivery-tag, Bool :$multiple) returns Promise {
     self!basic-method('basic.ack', 'basic.ack-ok', $delivery-tag, $multiple);
+}
+
+method reject(Int() $delivery-tag, Bool :$requeue --> Promise ) {
+    self!basic-method('basic.reject', 'basic.reject-ok', $delivery-tag, $requeue);
 }
 
 # Helper to make implementing/refactoring basic methods on channel easier
@@ -238,7 +242,7 @@ method !basic-method(Str:D $method, Str:D $ok-method, *@args ) returns Promise {
 
     my $method-payload = Net::AMQP::Payload::Method.new($method, @args);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $method-payload.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $method-payload).Buf);
     }
     return $p;
 }

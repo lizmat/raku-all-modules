@@ -22,7 +22,7 @@ has Str $.consumer-tag;
 
 submethod BUILD(:$!name, :$!passive, :$!durable, :$!exclusive, :$!auto-delete, :$!conn, :$!methods,
                 :$!headers, :$!bodies, :$!channel, :$!channel-lock, :$!arguments) { }
-                
+
 method Str {
     $.name;
 }
@@ -51,7 +51,7 @@ method declare {
                                                  0,
                                                  $.arguments);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $declare.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $declare).Buf);
     };
 
     return $p;
@@ -75,7 +75,7 @@ method bind($exchange, $routing-key = '', *%arguments) {
                                                0,
                                                $%arguments);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $bind.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $bind).Buf);
     };
 
     return $p;
@@ -98,7 +98,7 @@ method unbind($exchange, $routing-key = '', *%arguments) {
                                                $routing-key,
                                                $%arguments);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $bind.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $bind).Buf);
     };
 
     return $p;
@@ -119,7 +119,7 @@ method purge {
                                                $.name,
                                                0);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $purge.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $purge).Buf);
     };
 
     return $p;
@@ -142,7 +142,7 @@ method delete(:$if-unused, :$if-empty) {
                                                 $if-empty,
                                                 0);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $delete.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $delete).Buf);
     };
 
     return $p;
@@ -178,7 +178,7 @@ method consume(:$consumer-tag = "", :$exclusive, :$no-local, :$ack, *%arguments)
                                                 0,
                                                 $%arguments);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $consume.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $consume).Buf);
     };
 
     return $p;
@@ -194,7 +194,7 @@ class Message {
     has $.redelivered;
     has $.exchange-name;
     has $.routing-key;
-                                                                                                                    
+
     has %.headers;
     has $.body;
 }

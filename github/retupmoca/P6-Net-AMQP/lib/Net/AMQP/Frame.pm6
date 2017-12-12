@@ -36,7 +36,7 @@ method Buf {
     return pack('CnN', ($!type, $!channel, self.size)) ~ $!payload ~ Buf.new(0xCE);
 }
 
-multi method new(Blob $data){
+multi method new(Buf() $data){
     my ($type, $channel, $size) = $data.unpack('CnN');
     my $payload = $data.subbuf(7, $size);
     if $data[7+$size] != 0xCE {
@@ -45,7 +45,7 @@ multi method new(Blob $data){
     self.bless(:$type, :$channel, :$payload);
 }
 
-multi method new(:$type, :$channel, :$payload) {
+multi method new(:$type, :$channel, Buf() :$payload) {
     self.bless(:$type, :$channel, :$payload);
 }
 

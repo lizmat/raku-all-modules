@@ -43,7 +43,7 @@ method declare {
                                                  0,
                                                  Nil);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $declare.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $declare).Buf);
     };
 
     return $p;
@@ -65,12 +65,12 @@ method delete($if-unused = 0) {
                                                 $if-unused,
                                                 0);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $delete.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $delete).Buf);
     };
     return $p;
 }
 
-method publish(:$routing-key = "", :$mandatory, :$immediate, :$content-type, :$content-encoding ,
+method publish(:$routing-key = "", Bool :$mandatory, Bool :$immediate, :$content-type, :$content-encoding ,
                :$persistent, :$priority, :$correlation-id, :$reply-to ,
                :$expiration, :$message-id, :$timestamp, :$type,
                :$app-id, :$body is copy, *%headers) {
@@ -84,7 +84,7 @@ method publish(:$routing-key = "", :$mandatory, :$immediate, :$content-type, :$c
                                                      $routing-key,
                                                      $mandatory,
                                                      $immediate);
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $publish.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $publish).Buf);
 
         # header
         my $delivery-mode = 1;
@@ -104,7 +104,7 @@ method publish(:$routing-key = "", :$mandatory, :$immediate, :$content-type, :$c
                                                     :$type,
                                                     user-id => $!login,
                                                     :$app-id);
-        $!conn.write(Net::AMQP::Frame.new(type => 2, channel => $!channel, payload => $header.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 2, channel => $!channel, payload => $header).Buf);
 
         # content
         my $max-frame-size = $!frame-max;
@@ -124,8 +124,8 @@ method publish(:$routing-key = "", :$mandatory, :$immediate, :$content-type, :$c
     };
 }
 
-method return-supply {
-
+method return-supply(--> Supply) {
+    $!methods.grep(*.method-name eq 'basic.return');
 }
 
 method ack-supply {

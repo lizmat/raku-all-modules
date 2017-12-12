@@ -2,7 +2,7 @@ use v6;
 
 use Test;
 
-plan 3;
+plan 6;
 
 use Net::AMQP;
 
@@ -26,6 +26,24 @@ is $exchange-promise.status, Kept, "Can passively declare amq.direct exchange";
 $exchange-promise = $channel.declare-exchange("foobaz", "direct");
 await $exchange-promise;
 is $exchange-promise.status, Kept, "Can declare new exchange";
+
+my $exchange = $exchange-promise.result;
+
+my $return-promise = Promise.new;
+
+my $routing = ('a' .. 'z').pick(8).join ~ $*PID;
+
+$exchange.return-supply.tap( -> $v {
+    is $v.arguments[3], $routing, "return-supply got the expected message";
+    $return-promise.keep: True;
+});
+
+
+lives-ok { $exchange.publish(routing-key => $routing, body => "Hello, World".encode, :mandatory) }, "publish with mandatory flag to non-existent routing key";
+
+await Promise.anyof( $return-promise, Promise.in(5));
+
+ok $return-promise.status ~~ Kept, "return supply got the message from mandatory";
 
 my $exchange-delete-promise = $exchange-promise.result.delete;
 await $exchange-delete-promise;

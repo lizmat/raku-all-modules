@@ -45,7 +45,7 @@ method connect(){
 
     $!header-supply = $!frame-supply.grep({ $_.type == 2 }).map({ (channel => $_.channel, header  => Net::AMQP::Payload::Header.new($_.payload)).hash });
     $!body-supply = $!frame-supply.grep({ $_.type == 3 }).map({ (channel => $_.channel, payload  => $_.payload).hash });
-    
+
     ###
     # initial connection setup
     #
@@ -60,7 +60,7 @@ method connect(){
                                                       "PLAIN",
                                                       "\0"~$.login~"\0"~$.password,
                                                       "en_US");
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $start-ok.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $start-ok).Buf);
     });
     my $conntune = $!method-supply.grep( { $_<method>.method-name eq 'connection.tune' }).tap({
         $conntune.close;
@@ -96,7 +96,7 @@ method connect(){
                                   $tmp).then({
                         unless $tmp.status == Kept {
                             self.write(Net::AMQP::Frame.new(type => 8, channel => 0,
-                                                            payload => Net::AMQP::Payload::Heartbeat.new.Buf).Buf);
+                                                            payload => Net::AMQP::Payload::Heartbeat.new).Buf);
                         }
                     });
                 }
@@ -109,13 +109,11 @@ method connect(){
                                                      $!channel-max,
                                                      $!frame-max,
                                                      $to);
-                                                     #say $tune-ok.perl;
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $tune-ok.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $tune-ok).Buf);
 
         my $open = Net::AMQP::Payload::Method.new("connection.open",
                                                   $.vhost, "", 0);
-                                                  #say $open.perl;
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $open.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $open).Buf);
     });
 
     my $connopen = $!method-supply.grep({ $_<method>.method-name eq 'connection.open-ok' }).tap({
@@ -133,7 +131,7 @@ method connect(){
 
     $!method-supply.grep({ $_<method>.method-name eq 'connection.close' }).tap({
         my $close-ok = Net::AMQP::Payload::Method.new("connection.close-ok");
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $close-ok.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $close-ok).Buf);
         $!conn.close();
         $!vow.keep(1);
     });
@@ -185,7 +183,7 @@ method close($reply-code, $reply-text, $class-id = 0, $method-id = 0) {
                                                $reply-text,
                                                $class-id,
                                                $method-id);
-    $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $close.Buf).Buf);
+    $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $close).Buf);
     $!promise;
 }
 
