@@ -35,11 +35,12 @@ lives-ok  {$s2.connect($uri)}, 's2 connects succesfully' ;;
 
 
 my $ex = shell "cd lib/Local && make hello";
+if $ex {
 
 my $filename = 'dump';
 $ex = shell "rm -f $filename > /dev/null 2>&1" ;
 
-if $ex {
+
 
 my buf8 $raw = slurp "lib/Local/hello", :bin;
 
