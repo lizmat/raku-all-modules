@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/gabrielash/p6-log-zmq.git
 	branch = master
-	commit = a28dfa30ff487359014b8fa235015e968a6c6e7b
-	parent = 997e72ab63a893220d727e808ef6df0d44bfd079
+	commit = c0fc3bd4ac74e155e05f218089d2bc4fe8da3afa
+	parent = 8bf1775421ca3ab3e054b0ab88af05e83ab67407
 	cmdver = 0.4.0

@@ -8,7 +8,7 @@ use Test;
 
 BEGIN %*ENV<PERL6_TEST_DIE_ON_FAIL> = 1;
 
-plan 3;
+#plan ;
 
 say "testing Logger";
 
@@ -31,17 +31,13 @@ my $logsys = Logging::instance($prefix, $uri
 
 $logsys.suppress-level = 'critical';
 $logsys.set-suppress-level :info;
-#dies-ok { $logsys.set-suppress-level( :info , :critical) } ;
+dies-ok { $logsys.set-suppress-level( :info , :critical) } ;
 $logsys.unset-suppress-level;
 
 my $log2 = Logging::instance;
 
-
-#sleep 1;
-
 my $logger = $logsys.logger;
 my $logger2 = $log2.logger;
-
 
 my $cnt = 0;
 my $promise = start { 
