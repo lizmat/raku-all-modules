@@ -34,7 +34,7 @@ my $m = META6.new(   name        => 'META6',
 
 print $m.to-json;
 
-my $m = META6.new('./META6.json');
+my $m = META6.new(file => './META6.json');
 $m<version description> = v0.0.2, 'Work with Perl 6 META files even better';
 spurt('./META6.json', $m.to-json);
 ```

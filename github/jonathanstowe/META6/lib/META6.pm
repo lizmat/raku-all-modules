@@ -39,7 +39,7 @@ my $m = META6.new(   name        => 'META6',
 
 print $m.to-json;
 
-my $m = META6.new('./META6.json');
+my $m = META6.new(file => './META6.json');
 $m<version description> = v0.0.2, 'Work with Perl 6 META files even better';
 spurt('./META6.json', $m.to-json);
 
@@ -136,7 +136,7 @@ role AutoAssoc {
     }
 }
 
-class META6:ver<0.0.18>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
+class META6:ver<0.0.19>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
 
     enum Optionality <Mandatory Optional>;
 

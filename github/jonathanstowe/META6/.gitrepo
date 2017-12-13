@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/META6.git
 	branch = master
-	commit = 7995858756c3787de9f270689a26072a58588e75
-	parent = 4ae400de5ae6767b481e1eaaadd3f8f8d5f4c4ac
+	commit = f106c5e00fa4b23df14b275d80a4b6c1da42efec
+	parent = 19f2884b9a325153e6aa79ef39a5802252ea276f
 	cmdver = 0.4.0
