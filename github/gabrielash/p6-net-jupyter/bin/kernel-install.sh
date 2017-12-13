@@ -9,6 +9,7 @@ fi
 
 if [ -d "$1" ]; then 
   dir="$1"
+  shift
 elif [ -d "$LOCAL_HOME" ]; then
   dir="$LOCAL_HOME/share/jupyter/kernels/iperl6"
 else
@@ -18,7 +19,12 @@ else
   exit -1
 fi
 
-read -r -p "Installing Jupyter Kernel in [ $dir ]? y|N" CONFIRM
+if [ "$1" == "-y" ]; then
+  CONFIRM="Y"
+else
+  read -r -p "Installing Jupyter Kernel in [ $dir ]? y|N" CONFIRM
+fi
+
 if [[ "$CONFIRM" =~ ^[Yy]$ ]] ; then
 
   mkdir -p "$dir"
