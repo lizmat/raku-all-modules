@@ -1,6 +1,6 @@
 use v6.c;
 
-class Game::Sudoku:ver<1.1.1>:auth<simon.proctor@gmail.com> {
+class Game::Sudoku:ver<1.1.2>:auth<simon.proctor@gmail.com> {
 
     subset GridCode of Str where * ~~ /^ <[0..9]> ** 81 $/;
     subset Idx of Int where 0 <= * <= 8;
@@ -16,10 +16,10 @@ class Game::Sudoku:ver<1.1.1>:auth<simon.proctor@gmail.com> {
     multi submethod BUILD( GridCode :$code = ("0" x 81) ) {
         my @tmp = $code.comb.map( *.Int );
         my @initial-list = ();
-        (^9 X ^9).map(
-            -> ($x,$y) {
+        (^9 X ^9).flat.map(
+            -> $x,$y {
                 @!grid[$y][$x] = @tmp[($y*9)+$x];
-                @initial-list.push( "$x,$y" ) if @tmp[($y*9)+$x] > 0;
+                @initial-list.push( $x*10+$y ) if @tmp[($y*9)+$x] > 0;
             }
         );
         $!initial = set( @initial-list );
@@ -28,10 +28,10 @@ class Game::Sudoku:ver<1.1.1>:auth<simon.proctor@gmail.com> {
     method reset( GridCode :$code ) {
         my @tmp = $code.comb.map( *.Int );
         my @initial-list = ();
-        (^9 X ^9).map(
-            -> ($x,$y) {
+        (^9 X ^9).flat.map(
+            -> $x,$y {
                 @!grid[$y][$x] = @tmp[($y*9)+$x];
-                @initial-list.push( "$x,$y" ) if @tmp[($y*9)+$x] > 0;
+                @initial-list.push( $x*10+$y ) if @tmp[($y*9)+$x] > 0;
             }
         );
         %!poss-cache = ();
@@ -42,7 +42,7 @@ class Game::Sudoku:ver<1.1.1>:auth<simon.proctor@gmail.com> {
     }
 
     method !compute-none {
-        none( (^9 X ^9).map( -> ($x,$y) { @!grid[$y][$x] } ) );
+        none( (^9 X ^9).flat.map( -> $x,$y { @!grid[$y][$x] } ) );
     }
 
     method !compute-valid {
@@ -50,12 +50,12 @@ class Game::Sudoku:ver<1.1.1>:auth<simon.proctor@gmail.com> {
             (^9).map(
                 {
                     |(
-                        one( none( self.row( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
-                             one( self.row( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ) ),
-                        one( none( self.col( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
-                             one( self.col( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ) ),
-                        one( none( self.square( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ),
-                             one( self.square( $_ ).map( -> ( $x, $y ) { @!grid[$y][$x] } ) ) )
+                        one( none( self.row( $_ ).flat.map( -> $x, $y { @!grid[$y][$x] } ) ),
+                             one( self.row( $_ ).flat.map( -> $x, $y { @!grid[$y][$x] } ) ) ),
+                        one( none( self.col( $_ ).flat.map( -> $x, $y { @!grid[$y][$x] } ) ),
+                             one( self.col( $_ ).flat.map( -> $x, $y { @!grid[$y][$x] } ) ) ),
+                        one( none( self.square( $_ ).flat.map( -> $x, $y { @!grid[$y][$x] } ) ),
+                             one( self.square( $_ ).flat.map( -> $x, $y { @!grid[$y][$x] } ) ) )
                     )
                 }
             )
@@ -123,15 +123,15 @@ class Game::Sudoku:ver<1.1.1>:auth<simon.proctor@gmail.com> {
 
     method possible( Idx $x, Idx $y, Bool :$set = False ) {
         return $set ?? set() !! () if @!grid[$y][$x] > 0;
-        if ! ( %!poss-cache{"$x,$y"}:exists ) {
-            %!poss-cache{"$x,$y"} = ( (1..9) (-) set(
-                                          ( self.row($y).map( -> ( $x, $y ) { @!grid[$y][$x] } ).grep( * > 0 ) ),
-                                          ( self.col($x).map( -> ( $x, $y ) { @!grid[$y][$x] } ).grep( * > 0 ) ),
-                                          ( self.square($x,$y).map( -> ( $x, $y ) { @!grid[$y][$x] } ).grep( * > 0 ) )
+        if ! ( %!poss-cache{$x*10+$y}:exists ) {
+            %!poss-cache{$x*10+$y} = ( (1..9) (-) set(
+                                          ( self.row($y).flat.map( -> $x, $y { @!grid[$y][$x] } ).grep( * > 0 ) ),
+                                          ( self.col($x).flat.map( -> $x, $y { @!grid[$y][$x] } ).grep( * > 0 ) ),
+                                          ( self.square($x,$y).flat.map( -> $x, $y { @!grid[$y][$x] } ).grep( * > 0 ) )
                                       ) );
         }
 
-        $set ?? %!poss-cache{"$x,$y"} !! %!poss-cache{"$x,$y"}.keys.sort;
+        $set ?? %!poss-cache{$x*10+$y} !! %!poss-cache{$x*10+$y}.keys.sort;
     }
 
     multi method cell( Idx $x, Idx $y ) {
@@ -139,11 +139,11 @@ class Game::Sudoku:ver<1.1.1>:auth<simon.proctor@gmail.com> {
     }
 
     multi method cell( Idx $x, Idx $y, CellValue $val ) {
-        return self if $!initial{"$x,$y"};
+        return self if $!initial{$x*10+$y};
         @!grid[$y][$x] = $val;
-        self.row($y).map( -> ( $tx, $ty ) { %!poss-cache{"$tx,$ty"}:delete } );
-        self.col($x).map( -> ( $tx, $ty ) { %!poss-cache{"$tx,$ty"}:delete } );
-        self.square($x,$y).map( -> ( $tx, $ty ) { %!poss-cache{"$tx,$ty"}:delete } );
+        self.row($y).flat.map( -> $tx, $ty { %!poss-cache{$tx*10+$ty}:delete } );
+        self.col($x).flat.map( -> $tx, $ty { %!poss-cache{$tx*10+$ty}:delete } );
+        self.square($x,$y).flat.map( -> $tx, $ty { %!poss-cache{$tx*10+$ty}:delete } );
         %!test-cache = ();
         return self;
     }

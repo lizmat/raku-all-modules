@@ -16,7 +16,8 @@ sub find-solution( Game::Sudoku $result ) {
     return $result if $result.complete;
 
     my $options = ( (^9 X ^9)
-                    .map( -> ($x,$y) { ($x,$y) => $result.possible($x,$y).Array } )
+                    .flat
+                    .map( -> $x, $y { ($x,$y) => $result.possible($x,$y).Array } )
                     .grep( *.value.elems > 0 )
                     .sort( *.value.elems <=> *.value.elems ) )[0];
 
@@ -51,10 +52,10 @@ sub find-uniques( Game::Sudoku $result ) {
     for <row col square> -> $method-name {
         my $method = $result.^find_method($method-name);
         for ^9 -> $idx {
-            my $only = [(^)] $result.$method($idx).map( -> ( $x,$y ) { $result.possible($x,$y,:set) } );
+            my $only = [(^)] $result.$method($idx).flat.map( -> $x,$y { $result.possible($x,$y,:set) } );
 
             for $only.keys -> $val {
-                for $result.$method($idx) -> ($x,$y) {
+                for $result.$method($idx).flat -> $x, $y {
                     if $val (elem) $result.possible($x,$y,:set) {
                         @changes.push( ($x,$y) => $val );
                     }
@@ -75,7 +76,8 @@ sub find-single-options( Game::Sudoku $result ) {
     my @changes;
     repeat {
         @changes = (^9 X ^9)
-        .map( -> ($x,$y) { ($x,$y) => $result.possible($x,$y) } )
+        .flat
+        .map( -> $x, $y { ($x,$y) => $result.possible($x,$y) } )
         .grep( *.value.elems == 1 );
 
         for @changes -> $p {
