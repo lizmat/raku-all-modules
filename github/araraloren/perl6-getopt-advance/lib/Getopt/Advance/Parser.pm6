@@ -168,13 +168,13 @@ class Option::Actions {
 
         if +@opts > 1 {
             if $optset.get(@opts[* - 1]) -> $opt {
-                if $opt.need-argument and $!value == False {
-                    &ga-try-next("Option {$opt.usage}: not support deactivate style!")
+                if (!$opt.need-argument) and (!$!value) {
+                    &ga-try-next("Option {$opt.usage}: component option not support deactivate style!")
                         if $can-throw;
                     return ();
                 }
-                for @opts {
-                    if $optset.get($_).need-argument {
+                for @opts[0,*-2] {
+                    if (!$optset.has($_)) || $optset.get($_).need-argument {
                         &ga-try-next("Option {$optset.get($_).usage}: need argument!")
                             if $can-throw;
                         return ();
