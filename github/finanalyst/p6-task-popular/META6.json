@@ -40,9 +40,7 @@
     "JSON::Pretty",
     "URI::Encode"
   ],
-  "provides": [
-    
-  ],
+  "provides": {},
   "test-depends": [
     
   ],
