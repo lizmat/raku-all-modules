@@ -1,0 +1,30 @@
+{
+  "authors" : [
+    "koorchik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "JSON::Tiny",
+    "Email::Valid"
+  ],
+  "description" : "Lightweight Perl validator supporting Language Independent Validation Rules Specification (LIVR)",
+  "license" : "Artistic-2.0",
+  "name" : "LIVR",
+  "perl" : "6.c",
+  "provides" : {
+    "LIVR" : "lib/LIVR.pm6",
+    "LIVR::Rules::Common" : "lib/LIVR/Rules/Common.pm6",
+    "LIVR::Rules::Meta" : "lib/LIVR/Rules/Meta.pm6",
+    "LIVR::Rules::Modifiers" : "lib/LIVR/Rules/Modifiers.pm6",
+    "LIVR::Rules::Numeric" : "lib/LIVR/Rules/Numeric.pm6",
+    "LIVR::Rules::Special" : "lib/LIVR/Rules/Special.pm6",
+    "LIVR::Rules::String" : "lib/LIVR/Rules/String.pm6",
+    "LIVR::Utils" : "lib/LIVR/Utils.pm6",
+    "LIVR::Validator" : "lib/LIVR/Validator.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/koorchik/perl6-livr.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "2.0.1"
+}
