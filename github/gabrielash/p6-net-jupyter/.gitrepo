@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/gabrielash/p6-net-jupyter.git
 	branch = master
-	commit = 9f57a817a120c5342025e9cadba25dcf9afe30ac
-	parent = 6391b011782ec6ae40499ab4cfad6ed5394ad6e4
+	commit = 9afb35534692ce4d07ed641f2c5ad44a997862f9
+	parent = 21cb50486ce8e88c7e450f31048e45b832584617
 	cmdver = 0.4.0

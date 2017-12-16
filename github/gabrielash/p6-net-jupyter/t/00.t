@@ -18,6 +18,7 @@ use-ok 'Net::Jupyter::ContextREPL';
 use-ok 'Net::Jupyter::EvalError';
 use-ok 'Net::Jupyter::Executer';
 use-ok 'Net::Jupyter::Messenger';
+use-ok 'Net::Jupyter::Magic';
 
 use Net::Jupyter::Common;
 use Net::Jupyter::Messages;
@@ -25,7 +26,7 @@ use Net::Jupyter::ContextREPL;
 use Net::Jupyter::EvalError;
 use Net::Jupyter::Executer;
 use Net::Jupyter::Messenger;
-
+use Net::Jupyter::Magic;
 
 pass "loaded...";
 

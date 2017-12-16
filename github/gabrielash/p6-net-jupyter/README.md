@@ -10,12 +10,14 @@ Net::Jupyter is a Perl6 Jupyter kernel
 
   only the minumum required messages are implemented: kernel_info_request and execute_request
 
+#### Version 0.1.1
+
 #### Status
 
   In development.
 
   Todo:
-  1. Implement Magic statements
+  1. Implement Magic statements (see section below)
   2. Implement additional messages
 
 
@@ -27,14 +29,14 @@ Net::Jupyter is a Perl6 Jupyter kernel
 
 
 #### Portability
-  relies on Net::ZMQ
+  relies on [Net::ZMQ](https://github.com/gabrielash/perl6-zmq)
 
 
 ## Documentation
 
-  see http://jupyter.org/
+  see also http://jupyter.org/
 
-## Installation
+### Installation
 
 First, install the  module: 
 
@@ -44,20 +46,20 @@ First, install the  module:
 
 then, install the kernel:
 
-    bin/kernel-install.sh
+    bin/kernel-install.sh [ dir ]?
+
 
 Assuming jupyter is already installed on your system, and  LOCAL_HOME is defined,
 it will try to install in the correct .local subdir that Anaconda recognizes
-for jupyter kernels.  You can also specify a custom dirctory as an argument
-or you can read the script and install manually.
+for jupyter kernels.  You can also specify a custom dirctory as an argument.
 
 ###  Docker Installation
 
-      docker run -d --name jupyter-base \
+      docker run -d --name jupyter-als \
         -p 8888:8888 \
         -v $CONFIG:/home/jovyan/.jupyter \
         -v $NOTEBOOKS:/home/jovyan/work \
-        gabrielash/base-notebook
+        gabrielash/all-spark-notebook
 
   1.    set CONFIG to the directory (Full Path) for overriding jupyter settings. For example 
         to substitute a fixed authentification token. There is a demo
@@ -65,4 +67,19 @@ or you can read the script and install manually.
   2.    set NOTEBOOKS to the directory that will hold all notebooks created. It will be the top directory
         for the Jupyter server.
 
- see also [Jupyter's base-notebook docker image ](https://github.com/jupyter/docker-stacks/tree/master/base-notebook)
+see also [Jupyter's all-spark-notebook docker image ](https://github.com/jupyter/docker-stacks/tree/master/all-spark-notebook)
+
+An alternative minimal image based on jupyter base-notebook is also provided. 
+see the docker directory.
+
+### Magic declarations
+
+magic declrations are lines beginning and ending with %%.
+
+All magic declarations apply to the whole cell, must come at the top, and cannot be interleaved 
+with Perl6 code.
+
+#### Implemented: 
+
+    %% timeout 5 %%  
+    # sets a timeout on execution

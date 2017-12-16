@@ -13,17 +13,23 @@ BEGIN %*ENV<PERL6_TEST_DIE_ON_FAIL> = 1;
 say 'testing Executer -  Basic'; 
 use Net::Jupyter::Executer;
 
+my $*so = $*OUT;
+my $timeout = 4;
+ok run-with-timeout(  { say "RUNNING WITH TIMEOUT " } , :$timeout);
+$timeout = 1;
+dies-ok {run-with-timeout(  { say "SLEEPING WITH TIMEOUT ";sleep 3;1 } , :$timeout)};
+
 sub fy(*@args) { return @args.join("\n") ~ "\n"};
 
 sub test-result($exec, $v, $o, $e) {
-  if $exec.value.starts-with('sub') {
+  if $exec.value.defined && $exec.value.starts-with('sub') {
     ok 'sub' eq $v, "return value sub { $v.gist } ";
   }else {
-    ok $exec.value  === $v.gist, "return value {$exec.value}<=>{ $v.gist } correct";
+    ok $exec.value  === $v.gist, "return value {$exec.value}<=>{ $v.gist }";
   }
-  ok $exec.out    === $o, "output -->" ~ $o ~"<-- correct";
-  if $e.defined {
-    ok $exec.err.index($e).defined, ":{ $exec.err }";
+  ok $exec.out  eq $o, "output -->" ~ $exec.out.chomp ~ "::" ~ $o.chomp ~ "<--";
+  if $e  {
+    ok $exec.err.index($e).defined, "err $e";  #":{ $exec.err }";
   } else {
     ok $exec.err  === Str, "No error test";
   }
@@ -56,7 +62,10 @@ my @code = [
       'use NO::SUCH::MODULE;'
     ],
     [ '{'  ],
-    [ '15/0' ]
+    [ '15/0' ],
+    [ '%% timeout 1 %%', 'sleep 10' ],
+    [ '%% timeout 10 %%', 'sleep 1;','say 7;' ]
+
 
 ];
 
@@ -77,9 +86,12 @@ lives-ok { test-result(get-exec(7), Any, '', 'find NO::SUCH::MODULE') }, "test {
 lives-ok { get-exec(0).reset }, 'reset' ; 
 lives-ok { test-result(get-exec(2), Any, '', 'not declared') }, "test {++$t} lives";
 lives-ok { test-result(get-exec(8), Any, '', 'Missing block') }, "test {++$t} lives";
-}
+
 lives-ok { get-exec(9) }, "15/0 exec";
 lives-ok { test-result(get-exec(9), Any, '', 'by zero') }, "test {++$t} lives";
+}
+lives-ok { test-result(get-exec(10), Any, '', 'timed out') }, "test {++$t} lives";
+lives-ok { test-result(get-exec(11), True, "7\n", Any) }, "test {++$t} lives";
 pass "...";
 
 done-testing;

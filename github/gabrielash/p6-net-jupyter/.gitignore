@@ -2,6 +2,7 @@ lib/.precomp
 bin/k.pl
 bin/eval*
 bin/*.pm
+lib/Net/Jupyter/_/*
 example/simple_kernel.py
 conex
 Makefile

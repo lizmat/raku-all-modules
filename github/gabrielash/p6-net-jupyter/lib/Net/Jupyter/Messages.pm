@@ -9,12 +9,13 @@ use MIME::Base64;
 
 my MIME::Base64 $m64 .= new;
 
-sub is-display($type)  is export {
+sub is-display($type)  is export {  
   return True if  $type.starts-with('image');
   return False;
 }
 
 sub get-mime-type($data)  is export {
+#  return 'text/plain' without $data;
   return 'image/svg+xml' if $data.starts-with('<svg');
   return 'image/gif' if $data.starts-with('GIF89a');
   return 'image/gif' if $data.starts-with('GIF87a');

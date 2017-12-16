@@ -4,7 +4,7 @@
   "support": {
     "source": null
   },
-  "perl": "6.d",
+  "perl": "6.c",
   "resources": [
     "kernels/perl6/logo-32x32.png",
     "kernels/perl6/logo-64x64.png"
@@ -35,10 +35,11 @@
         "Net::Jupyter::ContextREPL":    "lib/Net/Jupyter/ContextREPL.pm",
         "Net::Jupyter::Executer":       "lib/Net/Jupyter/Executer.pm",
         "Net::Jupyter::Messenger":      "lib/Net/Jupyter/Messenger.pm",
+        "Net::Jupyter::Magic":          "lib/Net/Jupyter/Magic.pm",
         "Net::Jupyter::Messages":       "lib/Net/Jupyter/Messages.pm"
   },
   "production": false,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "meta-version": "0",
   "authors": ["Gabriel Ash", "github:gabrielash" ],
   "description": "Perl6 ikernel for Jupyter"
