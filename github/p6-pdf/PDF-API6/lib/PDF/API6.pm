@@ -1,8 +1,8 @@
 use v6;
-use PDF::Lite:ver(v0.0.2+);
+use PDF::Zen;
 
-class PDF::API6:ver<0.0.1>
-    is PDF::Lite {
+class PDF::API6:ver<0.1.0>
+    is PDF::Zen {
 
     use PDF::DAO;
     use PDF::Content::Page;
@@ -20,59 +20,7 @@ class PDF::API6:ver<0.0.1>
 
     subset PageRef where {!.defined || $_ ~~ UInt|PDF::Content::Page};
 
-    method open(|c) {
-	my $doc = callsame;
-	die "PDF file has wrong type: " ~ $doc.reader.type
-	    unless $doc.reader.type eq 'PDF';
-	$doc;
-    }
-
     method catalog { self<Root> }
-
-    method save-as($spec, Bool :$preserve is copy, |c) {
-
-	if !$preserve and self.reader {
-            with $.catalog<AcroForm> {
-                # guard against signature invalidation
-                with .<SigFlags> {
-                    constant AppendOnly = 2;
-                    if .flag-is-set(AppendOnly) {
-                        with $preserve {
-                            die "This PDF contains digital signatures that will be invalidated with .save-as :!preserve"
-                        }
-                        else {
-                            # save in :preserve mode to preserve digital signatures
-                            $_ = True
-                        }
-                    }
-                }
-            }
-	}
-
-        do {
-            my $now = DateTime.now;
-            my $info = self.info;
-
-            with self.reader {
-                # updating
-                $info<ModDate> = $now;
-            }
-            else {
-                # creating
-                $info<Producer> //= "Perl 6 PDF::API6 {self.^ver}";
-                $info<CreationDate> //= $now
-            }
-        }
-	nextwith($spec, :$preserve, |c);
-    }
-
-    method update(|c) {
-        # for the benefit of the test suite
-        my $now = DateTime.now;
-        my $Info = self<Info> //= {};
-        $Info<ModDate> = $now;
-        nextsame;
-    }
 
     method preferences(
         Bool :$hide-toolbar,
@@ -108,32 +56,32 @@ class PDF::API6:ver<0.0.1>
             :none<UseNone>,
             );
 
-        $catalog<PageMode> = to-name( %PageModes{$page-mode} );
+        $catalog.PageMode = %PageModes{$page-mode};
 
-        $catalog<PageLayout> = to-name( %(
+        $catalog.PageLayout = %(
             :single-page<SinglePage>,
             :one-column<OneColumn>,
             :two-column-left<TwoColumnLeft>,
             :two-column-right<TwoColumnRight>,
             :single-page<SinglePage>,
-            ){$page-layout});
+            ){$page-layout};
 
-        given $catalog<ViewerPreferences> //= { } {
-            .<HideToolbar> = True if $hide-toolbar;
-            .<HideMenubar> = True if $hide-menubar;
-            .<HideWindowUI> = True if $hide-windowui;
-            .<FitWindow> = True if $fit-window;
-            .<CenterWindow> = True if $center-window;
-            .<DisplayDocTitle> = True if $display-title;
-            .<Direction> = to-name(.uc) with $direction;
-            .<NonFullScreenPageMode> = to-name( %PageModes{$after-fullscreen});
-            .<PrintScaling> = to-name('None') if $print-scaling ~~ 'none';
+        given $catalog.ViewerPreferences //= { } {
+            .HideToolbar = True if $hide-toolbar;
+            .HideMenubar = True if $hide-menubar;
+            .HideWindowUI = True if $hide-windowui;
+            .FitWindow = True if $fit-window;
+            .CenterWindow = True if $center-window;
+            .DisplayDocTitle = True if $display-title;
+            .Direction = .uc with $direction;
+            .NonFullScreenPageMode = %PageModes{$after-fullscreen};
+            .PrintScaling = 'None' if $print-scaling ~~ 'none';
             with $duplex -> $dpx {
-                .<Duplex> = to-name( %(
+                .Duplex = %(
                       :simplex<Simplex>,
                       :flip-long-edge<DuplexFlipLongEdge>,
                       :flip-short-edge<DuplexFlipShortEdge>,
-                    ){$dpx});
+                    ){$dpx};
             }
         }
         if $page {
@@ -173,30 +121,17 @@ class PDF::API6:ver<0.0.1>
                     .push: to-name('Fit');
                 }
             }
-            $catalog<OpenAction> = $open-action;
+            $catalog.OpenAction = $open-action;
         }
-    }
-
-    method version {
-        Proxy.new(
-            FETCH => sub ($) {
-                Version.new: $.catalog<Version> // self.reader.?version // '1.3'
-            },
-            STORE => sub ($, Version $v) {
-                $.catalog<Version> = to-name( $v.Str );
-            },
-        );
     }
 
     method is-encrypted { ? self.Encrypt }
     method info { self.Info //= {} }
     method xmp-metadata is rw {
-        my $metadata = $.catalog<Metadata> //= PDF::DAO.coerce: :stream{
-            :dict{
-                :Type( to-name(<Metadata>) ),
-                :Subtype( to-name(<XML>) ),
-            }
-        };
+        my $metadata = $.catalog.Metadata //= {
+            :Type( to-name(<Metadata>) ),
+            :Subtype( to-name(<XML>) ),
+        }; # autoloads PDF::Metadata::XML
 
         $metadata.decoded; # rw target
     }
@@ -209,20 +144,20 @@ class PDF::API6:ver<0.0.1>
 
     sub to-page-label(Hash $l) {
         my % = $l.keys.map: {
-            when 'style'|'S'  { S  => to-name($l{$_}.Str) }
-            when 'start'|'St' { St => $l{$_}.Int }
-            when 'prefix'|'P' { P  => to-name($l{$_}.Str) }
+            when 'style'  { S  => to-name($l{$_}.Str) }
+            when 'start'  { St => $l{$_}.Int }
+            when 'prefix' { P  => to-name($l{$_}.Str) }
             default { warn "ignoring PageLabel field: $_" } 
         }
     }
 
     subset PageLabelEntry of Pair where {.key ~~ UInt && .value ~~ Hash }
 
-    sub to-page-labels($labels) {
+    sub to-page-labels(Pair @labels) {
         my @page-labels;
         my UInt $seq;
         my UInt $n = 0;
-        for $labels.list {
+        for @labels {
             my $idx  = .key;
             my $dict = .value;
             ++$n;
@@ -235,7 +170,7 @@ class PDF::API6:ver<0.0.1>
         @page-labels;
     }
 
-    sub from-page-label(Hash $l) {
+    sub from-page-label(Hash $l --> Hash) {
         my % = $l.keys.map: {
             when 'S'  { style  => $l{$_} }
             when 'St' { start  => $l{$_} }
@@ -245,7 +180,7 @@ class PDF::API6:ver<0.0.1>
     }
 
     sub from-page-labels(Hash $labels) {
-        my @page-labels;
+        my PageLabelEntry @page-labels;
         my UInt $n = 0;
         with $labels<Nums> {
             my $elems = .elems;
@@ -268,12 +203,12 @@ class PDF::API6:ver<0.0.1>
         Proxy.new(
             STORE => sub ($, List $_) {
                 my PageLabelEntry @labels = .list;
-                $.catalog<PageLabels> = %( Nums => to-page-labels(@labels) );
+                $.catalog.PageLabels = %( Nums => to-page-labels(@labels) );
             },
             FETCH => sub ($) {
-                from-page-labels($.catalog<PageLabels>);
-            }
-            )
+                from-page-labels($.catalog.PageLabels);
+            },
+        )
     }
 
 }

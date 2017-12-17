@@ -7,14 +7,14 @@ constant PageLabel = PDF::API6::PageLabel;
 
 my PDF::API6 $pdf .= new;
 my $page = $pdf.add-page;
-$pdf.preferences: :hide-toolbar, :first-page{ :$page, :fit };
+$pdf.preferences: :hide-toolbar, :first-page{ :page(1), :fit };
 my $catalog = $pdf.Root;
 
-is $catalog<PageLayout>, 'SinglePage', 'PageLayout';
-is $catalog<PageMode>, 'UseNone', 'PageMode';
-my $viewer-prefs = $catalog<ViewerPreferences>;
-is $viewer-prefs<HideToolbar>, True, 'viewer HideToolbar';
-is $viewer-prefs<NonFullScreenPageMode>, 'UseNone', 'viewer non-full page-mode';
+is $catalog.PageLayout, 'SinglePage', 'PageLayout';
+is $catalog.PageMode, 'UseNone', 'PageMode';
+my $viewer-prefs = $catalog.ViewerPreferences;
+is $viewer-prefs.HideToolbar, True, 'viewer HideToolbar';
+is $viewer-prefs.NonFullScreenPageMode, 'UseNone', 'viewer non-full page-mode';
 
 my $open-action = $catalog<OpenAction>;
 
@@ -32,14 +32,16 @@ my @page-labels = 0 => { :style(PageLabel::RomanUpper) },
 $pdf.page-labels = @page-labels;
 
 is-json-equiv $pdf.page-labels, @page-labels, '.page-labels';
-is-json-equiv $pdf.catalog<PageLabels>, {
+is-json-equiv $pdf.catalog.PageLabels, {
     :Nums[ 0, {:S<R>},
            4, {:S<d>},
           32, {:P<A->, :St(1)},
           36, {:P<B->, :St(1)},
           40, {:P<B->, :S<R>, :St(1)}
         ],
-}, 'raw <PageLabels>';
+}, 'raw .PageLabels';
+
+$pdf.save-as: "tmp/preferences.pdf";
 
 done-testing;
 

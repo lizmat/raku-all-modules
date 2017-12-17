@@ -5,7 +5,7 @@ use PDF::API6;
 
 my PDF::API6 $pdf .= new;
 
-is $pdf.version, v1.3, 'PDF default version';
+is $pdf.version, v1.4, 'PDF default version';
 lives-ok { $pdf.version = v1.5 }, 'set version';
 is $pdf.version, v1.5, 'PDF updated version';
 
@@ -35,7 +35,7 @@ lives-ok { $pdf.xmp-metadata = $xml}, 'set xmp metadata';
 is $pdf.xmp-metadata, $xml, 'get xmp metadata';
 
 my $page = $pdf.add-page;
-dies-ok {$page.Rotate = 89}, 'invalid rotation';
+quietly dies-ok {$page.Rotate = 89}, 'invalid rotation';
 lives-ok {$page.Rotate = 90}, '90 degree rotation';
 
 $page.text: {

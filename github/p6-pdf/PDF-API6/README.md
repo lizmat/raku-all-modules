@@ -1,4 +1,4 @@
-PDF::API6 - A Perl 6 PDF Tool-chain
+PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
 ===
 
 - [NAME](#name)
