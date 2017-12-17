@@ -97,7 +97,7 @@ my %homoglyphs =
     '}' => "\xFF5D\xFE5C",
     '~' => "\xFF5E\x02DC\x2053\x223C";
 
-sub homoglyphs(Str $string where $string.chars == 1) is export(*) {
+sub homoglyphs(Str $string where $string.chars == 1) is export {
     return $string, |%homoglyphs{$string}.comb;
 }
 
