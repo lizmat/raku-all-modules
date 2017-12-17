@@ -74,9 +74,13 @@ class Executer is export {
       %!user-expressions = Hash.new unless %!user-expressions.defined;
       @!payload = [] unless @!payload.defined;
       %!metadata = Hash.new unless %!metadata.defined;
+
       $magic = Magic.parse( $!code );
       $!code = $magic.perl-code;
-
+      with $magic.classname {
+        $!code = remove-class-code($_) ~ "\nclass $_  \n$!code"
+          if $magic.class-status == single;
+      }
       self!run-code;
 
       self!run-expressions

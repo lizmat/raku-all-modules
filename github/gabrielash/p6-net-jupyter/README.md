@@ -8,9 +8,10 @@ Net::Jupyter is a Perl6 Jupyter kernel
 
   This is a perl6 kernel for jupyter
 
-  only the minumum required messages are implemented: kernel_info_request and execute_request
+  the minumum required messages are implemented: kernel_info_request and execute_request
+  also implemented: shutdown_request
 
-#### Version 0.1.1
+#### Version 0.1.3
 
 #### Status
 
@@ -83,3 +84,11 @@ with Perl6 code.
 
     %% timeout 5 %%  
     # sets a timeout on execution
+
+    %% class Classname %%
+    does Positional {
+      ...
+    }
+
+    # defines a class. Note that the magic declaration replaces the beginning 
+    # of the class declaration, but any qualification must follow outside it

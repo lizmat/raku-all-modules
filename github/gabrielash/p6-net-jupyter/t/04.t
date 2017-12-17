@@ -46,6 +46,18 @@ my @code-good = [  [],
     '%% timeout 7 %%',  #5
     'my $y=7+(11/1);'
     ],
+   [
+    '%% class MyClass %%',           #6
+    '%%   class  MyClass2 %%',
+    '{ method a {say "I am method a" } };'
+    ],
+  [
+    '%% class  MyClass begin  %%',    #7
+    '%% class  MyClass end  %%',
+    '%% class  MyClass cont  %%',
+    '%% class  MyClass continue  %%',
+    'my $y=7+(11/1);'
+    ],
 
   ];
 
@@ -74,7 +86,6 @@ my @code-bad = [ [],
     '% timeout 2 %%',                
     'my $y=7+(11/1);'
     ],
-
   ];
 
 say 'syntax magic tests' ;
@@ -84,7 +95,8 @@ test-magic( @code-good[2] );
 test-magic( @code-good[3] );
 test-magic( @code-good[4] );
 test-magic( @code-good[5] );
-
+test-magic( @code-good[6] );
+#test-magic( @code-good[7] );  not implemented yet
 
 test-magic( @code-bad[1], :f);
 test-magic( @code-bad[2], :f);

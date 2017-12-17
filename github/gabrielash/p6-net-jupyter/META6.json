@@ -35,11 +35,11 @@
         "Net::Jupyter::ContextREPL":    "lib/Net/Jupyter/ContextREPL.pm",
         "Net::Jupyter::Executer":       "lib/Net/Jupyter/Executer.pm",
         "Net::Jupyter::Messenger":      "lib/Net/Jupyter/Messenger.pm",
-        "Net::Jupyter::Magic":          "lib/Net/Jupyter/Magic.pm",
-        "Net::Jupyter::Messages":       "lib/Net/Jupyter/Messages.pm"
+        "Net::Jupyter::Messages":       "lib/Net/Jupyter/Messages.pm",
+        "Net::Jupyter::Magic":          "lib/Net/Jupyter/Magic.pm"
   },
   "production": false,
-  "version": "0.1.1",
+  "version": "0.1.3",
   "meta-version": "0",
   "authors": ["Gabriel Ash", "github:gabrielash" ],
   "description": "Perl6 ikernel for Jupyter"

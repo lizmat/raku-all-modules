@@ -8,6 +8,12 @@ class X::Jupyter::MalformedMagic is Exception {
 }
 
 
+sub remove-class-code(Str $class-name ) is export {
+
+  return "GLOBAL::<$class-name>:delete;";
+}
+
+
 role ActionParser[::Actions, ::Grammar ] {
 
   has $._g is rw;
@@ -23,6 +29,8 @@ role ActionParser[::Actions, ::Grammar ] {
   }
 }
 
+enum ClassStatus  is export < single begin cont end >;
+
 grammar MagicGrammar {...}
 class Magic {...}
 
@@ -30,12 +38,25 @@ class Magic is export does ActionParser[Magic, MagicGrammar ] {
 
   has Str $.perl-code;
   has Int $.timeout;
+  has Str $.classname;
+  has ClassStatus $.class-status;
+
 
   method TOP($/)     { make $!perl-code }
   method code($/)    { $!perl-code = $/.Str }
 
   method declaration:sym<timeout>($/) {
     $!timeout = $<timeout>.Int;
+  }
+  method declaration:sym<class>($/) {
+    $!classname = $<classname>.Str;
+    with $<class_status>  {
+      X::Jupyter::MalformedMagic.new(message =>
+           'Malformed Magic: class status not implemented :' ~ $<class_status>.Str
+           ).throw;
+    } else {
+      $!class-status = single ;
+    }
   }
 
 }#Magic
@@ -51,15 +72,19 @@ grammar MagicGrammar {
 
   rule magic  { <.ws> '%%' ~ '%%' [ <declaration> ] <.eol>  }
 
-  proto token declaration { * }
+  proto rule declaration { * }
 
     rule declaration:sym<timeout>  {
         <sym> [ <timeout=.number> || <.malformed> ]
     }
+    rule declaration:sym<class>  {
+        <sym> [ <classname=.identifier> <class_status>? ]
+    }
 
-  token identifier    {  <:alpha> \w+ }
+  token class_status  {:i [ 'begin' | 'cont' ['inue']? | 'end' ] }
+  token identifier    {  <:alpha> \w* }
   token eol           { <.n>+ }
-  token n             { \n \s* { ++$*lineno } }  #*
+  token n             { \n \h* { ++$*lineno } }  #*
   token number        { \d+ }
   token malformed     {
                         .*

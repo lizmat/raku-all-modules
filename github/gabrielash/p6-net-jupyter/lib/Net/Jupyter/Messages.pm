@@ -9,7 +9,7 @@ use MIME::Base64;
 
 my MIME::Base64 $m64 .= new;
 
-sub is-display($type)  is export {  
+sub is-display($type)  is export {
   return True if  $type.starts-with('image');
   return False;
 }
@@ -31,6 +31,13 @@ sub get-mime-type($data)  is export {
 
   return  'text/plain';
 }
+
+multi sub shutdown_reply-content(Bool $restart) is export {
+   my %dict = Hash.new;
+   %dict< restart > = $restart;
+   return to-json( %dict);
+}
+
 
 multi sub error-content(%dict) is export {
     return to-json( %dict< ename evalue traceback>);

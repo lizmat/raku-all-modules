@@ -76,6 +76,7 @@ class Messenger is export {
   method store-history   {return from-json(self.content)< store_history > }
   method expressions    {return from-json(self.content)< user_expressions > }
 
+  method content-value($key)  {return from-json(self.content)<< $key >> }
 
   method auth(Str $signature --> Bool) {
     return True unless $.key.defined;
