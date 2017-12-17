@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-Acme-Advent-Highlighter.git
 	branch = master
-	commit = ffb25748bf892c106ebe7c271445fce35efa090a
-	parent = a719f6537717f2e492bca080dcf74e945d2683c6
+	commit = 1b5b738dc242cba442365de0591d9f5cfdce349f
+	parent = 91400e22789d5c205e07df3ce5f2f833394b62c8
 	cmdver = 0.4.0

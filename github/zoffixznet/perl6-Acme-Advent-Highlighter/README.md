@@ -33,7 +33,7 @@ script grabs syntax highlighted code from it, and then *deletes it*.
 3. Run:
 
     ```bash
-    advent-highligher.p6 Your-Article Your-Gist-Token > out.html
+    advent-highlighter.p6 Your-Article Your-Gist-Token > out.html
     ```
 
     The [gist token](https://github.com/settings/tokens/new) can alternatively be given via
@@ -51,7 +51,7 @@ script grabs syntax highlighted code from it, and then *deletes it*.
 
 ## `--wrap` option
 
-    advent-highligher.p6 --wrap Your-Article Your-Gist-Token > out.html
+    advent-highlighter.p6 --wrap Your-Article Your-Gist-Token > out.html
 
 If you'd like to have a rough idea of how the thing will look like on Wordpress,
 you can pass `--wrap` option to the script. It'll wrap the output into a bit
@@ -61,7 +61,7 @@ overflow if you don't want readers scrolling).
 
 ## `--multi` option for Multi Markdown
 
-    advent-highligher.p6 --multi Your-Article Your-Gist-Token > out.html
+    advent-highlighter.p6 --multi Your-Article Your-Gist-Token > out.html
 
 I found `Text::Markdown` to be a bit of a weak sauce and it failed to render
 some things I thought it would. If you
