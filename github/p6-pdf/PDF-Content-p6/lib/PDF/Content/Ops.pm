@@ -34,7 +34,7 @@ class PDF::Content::Ops {
     has Pair @!ops;
     has Bool $.comment-ops is rw = False;
     has Bool $.strict is rw = True;
-    has $.parent handles <resource-key resource-entry core-font use-font xobject-form tiling-pattern use-pattern>;
+    has $.parent handles <resource-key resource-entry core-font use-font xobject-form tiling-pattern use-pattern width height>;
 
 
     # some convenient mnemomic names

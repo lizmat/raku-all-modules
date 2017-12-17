@@ -46,11 +46,20 @@ class PDF::Content::Font::Enc::Type1 {
     }
 
     method lookup-glyph(UInt $chr-code) {
-          $!glyphs{$chr-code.chr}
+        $!glyphs{$chr-code.chr}
     }
 
-    method !add-encoding($chr-code) {
-        my $idx = %!from-unicode{$chr-code} // 0;
+    method glyph-map {
+        %( $!glyphs.invert );
+    }
+
+    method !add-encoding($chr-code, $idx) {
+        %!from-unicode{$chr-code} = $idx;
+        @!to-unicode[$idx] = $chr-code;
+        %!subset{$chr-code} = $idx;
+        @!differences.push: $idx;
+    }
+    method add-encoding($chr-code, :$idx is copy = %!from-unicode{$chr-code} // 0) {
         if $idx {
             %!subset{$chr-code} = $idx;
         }
@@ -67,11 +76,8 @@ class PDF::Content::Font::Enc::Type1 {
                     }
                     else {
                         # add it to the encoding scheme
-                        %!from-unicode{$chr-code} = $idx;
-                        @!to-unicode[$idx] = $chr-code;
-                        %!subset{$chr-code} = $idx;
-                        @!differences.push: $idx;
-                    }
+                        self!add-encoding($chr-code, $idx);
+                   }
                 }
             }
         }
@@ -81,7 +87,7 @@ class PDF::Content::Font::Enc::Type1 {
         self.encode($text).decode: 'latin-1';
     }
     multi method encode(Str $text --> buf8) is default {
-        buf8.new: $text.ords.map({%!subset{$_} || self!add-encoding($_) }).grep: {$_};
+        buf8.new: $text.ords.map({%!subset{$_} || self.add-encoding($_) }).grep: {$_};
     }
 
     multi method decode(Str $encoded, :$str! --> Str) {
@@ -92,14 +98,32 @@ class PDF::Content::Font::Enc::Type1 {
     }
 
     method differences {
-        my @diffs;
-        my uint8 $cur-idx = 0;
-        for @!differences {
-            @diffs.push: $_
-                unless $_ == $cur-idx;
-            @diffs.push: 'name' => self.lookup-glyph( @!to-unicode[$_] );
-            $cur-idx = $_ + 1;
-        }
-        @diffs;
+        Proxy.new(
+            STORE => sub ($, @differences) {
+                my %glyph-map := self.glyph-map;
+                my uint32 $idx = 0;
+                for @differences {
+                    when UInt { $idx  = $_ }
+                    when Str {
+                        self!add-encoding(.ord, $idx)
+                            with %glyph-map{$_};
+                        $idx++;
+                    }
+                }
+            },
+            FETCH => sub ($) {
+                my %seen;
+                my @diffs;
+                my uint8 $cur-idx = 0;
+                for @!differences {
+                    @diffs.push: $_
+                        unless $_ == $cur-idx;
+                    my $glyph-name = 
+                        @diffs.push: 'name' => self.lookup-glyph( @!to-unicode[$_] ) // '.notdef';
+                    $cur-idx = $_ + 1;
+                }
+                @diffs
+            },
+        )
     }
 }

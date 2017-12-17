@@ -181,11 +181,11 @@ class PDF::Content::Font::CoreFont {
     }
 
     method cb-finish {
-        my @Differences = $!encoder.differences;
-        if @Differences {
+        my $Differences = $!encoder.differences;
+        if $Differences {
             my $Encoding = %(
                 :Type( :name<Encoding> ),
-                :@Differences,
+                :$Differences,
                );
             $Encoding<BaseEncoding> = $_
                 with self!encoding-name;

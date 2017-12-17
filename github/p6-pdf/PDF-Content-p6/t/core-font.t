@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 43;
+plan 45;
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content::Font;
 use PDF::Content::Font::CoreFont;
@@ -88,5 +88,16 @@ isa-ok $sym.metrics, 'Font::Metrics::symbol';
 is $sym.enc, 'sym', '.enc';
 is $sym.encode("ΑΒΓ", :str), "ABG", '.encode(...)'; # /Alpha /Beta /Gamma
 is $sym.decode("ABG", :str), "ΑΒΓ", '.decode(...)';
+
+use Font::AFM;
+use PDF::Content::Font::Enc::Type1;
+my $metrics = Font::AFM.core-font('times-roman');
+my @differences = [1, 'x', 'y', 10, 'a', 'b'];
+my PDF::Content::Font::Enc::Type1 $encoder .= new: :enc<win>;
+$encoder.differences = @differences;
+my PDF::Content::Font::CoreFont $tr .= new: :$metrics, :$encoder;
+is-deeply $tr.encode('abcxyz'), buf8.new(10,11,99,1,2,122), 'differences encoding';
+$tr.cb-finish;
+is-json-equiv $tr.to-dict<Encoding><Differences>, [1, "x", "y", 10, "a", "b"], 'dfferences to-dict';
 
 done-testing;
