@@ -174,14 +174,13 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
     Misc Methods
         doc(-->Str) ;this
 
-    The Message class is an OO interface to the zero-copy mechanism.
-    It uses a builder to build an immutable message that can be sent (and re-sent)
-    zero-copied. See example above for useage.
-
+The Message classes is an OO interface to the zero-copy mechanism.
+It uses a builder to build an immutable message that can be sent (and re-sent)
+zero-copied. See example above for useage.
 
 #####    MsgBuilder
-      builds a Message object that can be used to send complex messages.
-      uses zero-copy internally.
+builds a Message object that can be used to send complex messages.
+uses zero-copy internally.
 
       USAGE example
 
@@ -204,7 +203,7 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
         finalize( --> Message)
 
 #####   Message
-  	Immutable message     
+Immutable message     
 
     Methods
         send(Socket, :part, :async, Callable:($,$ --> Int:D) :callback  --> Int)                  
@@ -214,9 +213,10 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
         copy(:enc --> Str)
 
 #####  MsgRecv
-    MsgRecv accumulates message parts received on one or more sockets with minimal copying.
-    parts can be examined, slectevely sent over sockets. and transforming functions can be
-    queued on each part.
+
+MsgRecv accumulates message parts received on one or more sockets with minimal copying.
+parts can be examined, slectevely sent over sockets. and transforming functions can be
+queued on each part.
 
     methods:
         slurp(Socket, :async)
@@ -240,7 +240,8 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
 
 
 #####   PollBuilder
-    PollBuilder builds a polled set of receiving sockets
+
+PollBuilder builds a polled set of receiving sockets
 
     (Silly) Usage
     my $poll = PollBuilder.new\
@@ -261,8 +262,9 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
       finalize( --> Poll)
 
 #####  PollHandler
-    PollHandler is an an abstract class that represents an action to do on a socket when
-    it polls positive. It has four readymade subclasses that feed the action a different
+PollHandler is an an abstract class that represents an action to do on a socket when
+it polls positive. It has four readymade subclasses that feed the action a different
+
     argument:
         * StrPollHandler
         * MessagePollHandler
@@ -276,7 +278,7 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
 
 
 #####  Poll
-    Poll holds and polls an  immutable collection of receiving sockets
+Poll holds and polls an  immutable collection of receiving sockets
 
     Methods
     poll()   
@@ -287,14 +289,14 @@ These are the main classes providing a higher-level Perl6 OO interface to ZMQ
       socket, or Any. The order is defined by the building invocation.
 
 #####  Proxy
-    runs a steerable proxy
+runs a steerable proxy
 
     new( :frontend!($socket.as-ptr), :backend!($socket.as-ptr)
             :capture($socket.as-ptr) , :control($socket.as-ptr))
     run()
 
 #####  EchoServer
-    runs an echo server  (connect with :client )
+runs an echo server  (connect with :client )
   
     methods
       new( :uri )

@@ -203,7 +203,7 @@ class Socket does SocketOptions is export {
 
     #buf
   multi method send( buf8:D $buf, :$async, :$part
-                    , Int :$max-send-bytes where positive($max-send-bytes)  = $!max-send-bytes ) {
+            , Int :$max-send-bytes where positive($max-send-bytes)  = $!max-send-bytes ) {
       my $doc := q:to/END/;
       This is the plain vnilla send for a message or message part
 

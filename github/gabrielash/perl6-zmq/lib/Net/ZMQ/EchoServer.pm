@@ -18,7 +18,7 @@ class EchoServer is export {
   has Socket $!terminator;
   has Callable $!start;
 
-my $ctrl-uri := 'inproc://';
+my $ctrl-uri := 'inproc://ctrl';
 
   method TWEAK {
     $!start = sub () {
