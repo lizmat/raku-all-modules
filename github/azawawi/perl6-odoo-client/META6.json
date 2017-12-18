@@ -1,5 +1,6 @@
 {
     "name"          : "Odoo::Client",
+    "license"       : "MIT",
     "version"       : "0.0.2",
     "perl"          : "6.c",
     "description"   : "A simple Odoo ERP client that uses JSON RPC",
