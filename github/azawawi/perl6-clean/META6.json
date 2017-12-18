@@ -1,5 +1,6 @@
 {
   "name"          : "Clean",
+  "license"       : "MIT",
   "version"       : "*",
   "perl"          : "6.c",
   "description"   : "Scoped object oriented automatic cleanup",
