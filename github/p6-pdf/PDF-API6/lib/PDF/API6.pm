@@ -1,11 +1,14 @@
 use v6;
-use PDF::Zen;
+use PDF::Class;
 
 class PDF::API6:ver<0.1.0>
-    is PDF::Zen {
+    is PDF::Class {
 
     use PDF::DAO;
-    use PDF::Content::Page;
+    use PDF::Catalog;
+    use PDF::Info;
+    use PDF::Metadata::XML;
+    use PDF::Page;
 
     sub nums($a, Int $n) {
         with $a {
@@ -18,9 +21,9 @@ class PDF::API6:ver<0.1.0>
     }
     sub to-name(Str $name) { PDF::DAO.coerce: :$name }
 
-    subset PageRef where {!.defined || $_ ~~ UInt|PDF::Content::Page};
+    subset PageRef where {!.defined || $_ ~~ UInt|PDF::Page};
 
-    method catalog { self<Root> }
+    method catalog returns PDF::Catalog { self<Root> }
 
     method preferences(
         Bool :$hide-toolbar,
@@ -47,7 +50,7 @@ class PDF::API6:ver<0.1.0>
             List    :$xyz where nums($_, 3),
         ) where { .keys == 0 || .<page> }
         ) {
-        my $catalog = $.catalog;
+        my PDF::Catalog $catalog = $.catalog;
 
         constant %PageModes = %(
             :fullscreen<FullScreen>,
@@ -67,12 +70,12 @@ class PDF::API6:ver<0.1.0>
             ){$page-layout};
 
         given $catalog.ViewerPreferences //= { } {
-            .HideToolbar = True if $hide-toolbar;
-            .HideMenubar = True if $hide-menubar;
-            .HideWindowUI = True if $hide-windowui;
-            .FitWindow = True if $fit-window;
-            .CenterWindow = True if $center-window;
-            .DisplayDocTitle = True if $display-title;
+            .HideToolbar = $_ with $hide-toolbar;
+            .HideMenubar = $_ with $hide-menubar;
+            .HideWindowUI = $_ with $hide-windowui;
+            .FitWindow = $_ with $fit-window;
+            .CenterWindow = $_ with $center-window;
+            .DisplayDocTitle = $_ with $display-title;
             .Direction = .uc with $direction;
             .NonFullScreenPageMode = %PageModes{$after-fullscreen};
             .PrintScaling = 'None' if $print-scaling ~~ 'none';
@@ -126,12 +129,12 @@ class PDF::API6:ver<0.1.0>
     }
 
     method is-encrypted { ? self.Encrypt }
-    method info { self.Info //= {} }
+    method info returns PDF::Info { self.Info //= {} }
     method xmp-metadata is rw {
-        my $metadata = $.catalog.Metadata //= {
+        my PDF::Metadata::XML $metadata = $.catalog.Metadata //= {
             :Type( to-name(<Metadata>) ),
             :Subtype( to-name(<XML>) ),
-        }; # autoloads PDF::Metadata::XML
+        };
 
         $metadata.decoded; # rw target
     }

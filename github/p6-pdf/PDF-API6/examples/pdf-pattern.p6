@@ -1,10 +1,13 @@
 use v6;
 use PDF::API6;
+use PDF::Page;
+use PDF::Pattern;
+
 my PDF::API6 $pdf .= new;
-my $page = $pdf.add-page;
-$page.MediaBox = [0, 0, 230, 210];
+my PDF::Page $page = $pdf.add-page;
+$page.media-box = [0, 0, 230, 210];
 my @Matrix = PDF::Content::Matrix::scale(.4);
-my $pattern = $page.tiling-pattern: :BBox[0, 0, 100, 100], :@Matrix;
+my PDF::Pattern $pattern = $page.tiling-pattern: :BBox[0, 0, 100, 100], :@Matrix;
 my $zfont = $pattern.core-font('ZapfDingbats');
 $pattern.graphics: {
     .text: {

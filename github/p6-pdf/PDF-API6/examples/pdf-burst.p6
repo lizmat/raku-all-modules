@@ -1,6 +1,7 @@
 #!/usr/bin/env perl6
 use v6;
 use PDF::API6;
+use PDF::Catalog;
 
 #| reading from stdin
 multi sub output-filename('-') {"pdf-page%03d.pdf"}
@@ -25,8 +26,8 @@ sub MAIN(Str $infile,            #| input PDF
         ?? $*IN
 	!! $infile;
 
-    my $doc = PDF::API6.open( $input, :$password);
-    my $catalog = $doc.catalog;
+    my PDF::API6 $doc .= open( $input, :$password);
+    my PDF::Catalog $catalog = $doc.catalog;
 
     my UInt $pages = $doc.page-count;
 

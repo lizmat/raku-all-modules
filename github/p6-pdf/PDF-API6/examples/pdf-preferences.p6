@@ -1,15 +1,16 @@
 use v6;
 use PDF::API6;
+use PDF::Page;
 
 my PDF::API6 $pdf .= new;
-my $page;
+$pdf.preferences: :hide-toolbar, :first-page{ :$page, :fit };
 
 for 1..2 -> $page-no {
-    $page = $pdf.add-page;
-    $page.MediaBox = [0, 0, 450, 400];
+    my PDF::Page $page = $pdf.add-page;
+    $page.media-box = [0, 0, 450, 400];
     $page.text: {
         .font = .core-font( :family<Courier>, :weight<bold> );
-        .TextMove = [10, 350];
+        .text-position = [10, 350];
 
         .say: "Page $page-no/2";
         .say;
@@ -20,7 +21,6 @@ for 1..2 -> $page-no {
     }
 }
 
-$pdf.preferences: :hide-toolbar, :first-page{ :$page, :fit };
 $pdf.save-as: "preferences.pdf";
 
 

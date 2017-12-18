@@ -19,7 +19,7 @@ for @<code> {
 	    sub say(|c) { }
 
 	    lives-ok {EVAL $snippet}, 'code sample'
-		or die "eval error: $snippet";
+		or warn "eval error: $snippet";
 	}
     }
 }

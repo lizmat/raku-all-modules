@@ -3,12 +3,12 @@ use v6;
 use PDF::API6;
 use PDF::DAO::Type::Encrypt :PermissionsFlag;
 
-sub MAIN(*@files, Str :$save-as, Bool :$force)  {
-
-    my $pdf = PDF::API6.open: @files.shift;
+sub MAIN(Str $out-file, *@in-files, Str :$save-as, Bool :$force)  {
 
     die "nothing to do"
-	unless @files;
+	unless @in-files;
+
+    my PDF::API6 $pdf .= open: $out-file;
 
     die "PDF forbids modification\n"
 	unless $force || $pdf.permitted( PermissionsFlag::Modify );
@@ -16,7 +16,7 @@ sub MAIN(*@files, Str :$save-as, Bool :$force)  {
     # create a new page root. 
     my $pages = $pdf.Root.Pages;
 
-    for @files -> $in-file {
+    for @in-files -> $in-file {
 	my $in-pdf = PDF::API6.open: $in-file;
 
 	die "PDF forbids copy: $in-file"
