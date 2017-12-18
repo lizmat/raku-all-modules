@@ -16,7 +16,7 @@ class Proxy is export {
   has Bool   $.throw = True;
   has ZMQError $.error;
 
- method TWEAK {}
+  method TWEAK {}
 
   method run() {
      my $r = zmq_proxy_steerable($!frontend.as-ptr

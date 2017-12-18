@@ -16,41 +16,60 @@ class EchoServer is export {
   has Socket $!socket;
   has Socket $!control;
   has Socket $!terminator;
-  has Callable $!start;
-
-my $ctrl-uri := 'inproc://ctrl';
+  has Promise $!promise;
+  has Bool $!terminate;
+  my Str $ctrl-uri := 'inproc://';
 
   method TWEAK {
-    $!start = sub () {
-                      die "EchoServer: cannot reuse EchoServer" if $!ctx.defined;
-                      $!ctx .= new;
-                      $!socket .= new($!ctx, :server);
-                      $!socket.bind($!uri);
-                      $!control .= new($!ctx, :pull);
-                      $!terminator .= new($!ctx, :push);
-                      $!control.bind($ctrl-uri ~ self.WHICH );
-                      $!terminator.connect($ctrl-uri ~ self.WHICH );
-                      }
-  } 
+    $!ctx .= new;
+  }
+
+method _test {
+  die "No Context" without $!ctx;
+  die "No Socket" without $!socket;
+  die "No Control" without $!control;
+  die "No Terminator" without $!terminator;
+  say "Promise EchoServer = " ~ $!promise.status;
+  return  $!promise.status;
+ }
+
+  method !start {
+    die "EchoServer: cannot reuse EchoServer" with $!socket;
+    $!socket .= new($!ctx, :server);
+    #say $!socket.perl;
+    $!socket.bind($!uri);
+    $!control .= new($!ctx, :pull);
+    $!control.connect($ctrl-uri ~ self.WHICH );
+    Proxy.new(:frontend($!socket), :backend($!socket), :$!control ).run();
+    CATCH { default { say $_.perl; $_.rethrow }}
+  }
 
   method DESTROY {
-   if $.socket.defined {
+   with $.socket {
       $!ctx.shutdown;
       $!socket.unbind.close;
-      $!control.unbind.close;
+      $!control.disconnect.close;
       $!terminator.unbind.close;
    }
   }
 
-  method detach( --> Promise) {
-    return  start { self.run() };
+  method detach( --> EchoServer) {
+    $!promise =  Promise.start( { self!start  });
+    $!terminator .= new($!ctx, :push);
+    $!terminator.bind($ctrl-uri ~ self.WHICH );
+    return self;
   }
 
-  method run() {
-    $!start();
-    Proxy.new(:frontend($!socket), :backend($!socket), :$!control ).run();
+
+  method run( --> EchoServer) {
+    self!start();
+    $!terminator .= new($!ctx, :push);
+    $!terminator.connect($ctrl-uri ~ self.WHICH );
+    return self;
   }
 
-  method shutdown() { $!terminator.send('TERMINATE'); }
+  method shutdown() {
+    $!terminator.send('TERMINATE');    
+  }
 
 }

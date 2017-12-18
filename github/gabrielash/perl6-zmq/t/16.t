@@ -26,31 +26,38 @@ use Net::ZMQ::EchoServer;
 my $ctx = Context.new(:throw-everything);
 
 my Socket $c = Socket.new($ctx, :client, :throw-everything);
-my $uri = 'tcp://127.0.0.1:45000';
+my $uri = 'tcp://127.0.0.1:45002';
 
-$c.connect($uri);
+#my $uri = 'inproc://echo';
 
 
-my $e = EchoServer.new(:$uri);
-my $r = $e.detach;
 
-ok $r.defined && $r.isa(Promise), 'EchoServer is running: ' ~ $r.perl;
+sub testing {
 
-$c.send("TESTING ECHO"); 
+  my EchoServer $e;
+  lives-ok {$e = EchoServer.new(:$uri) }, "EchoServer created";
+  lives-ok {$e = $e.detach }, "EchoServer detached";
+  ok 1, "After Detach"; 
+  sleep 1; 
+  lives-ok { $e._test }, "testing State";
 
-my $reply = $c.receive :slurp;
+  $c.connect($uri);
+  $c.send("TESTING ECHO"); 
 
-ok $reply eq 'TESTING ECHO', 'Echo replies correctly';
+  my $reply = $c.receive :slurp;
 
-$e.shutdown;
-sleep 1;
-$c.send("TESTING ECHO");# }, "echo no longer responding"; 
-$reply = $c.receive(:slurp, :async) ;
-ok $reply === Any, "no reply after shutdown";
+  ok $reply eq 'TESTING ECHO', 'Echo replies correctly';
 
-await $r;
-pass "promise arrived";
-
-$c.disconnect.close;
+  lives-ok { $e.shutdown }, 'Echoserver Shutdown';
+  sleep 1;
+  $c.send("TESTING ECHO");# }, "echo no longer responding"; 
+  sleep 1;
+  $reply = $c.receive(:slurp, :async) ;
+  ok $reply === Any, "no reply after shutdown";
+  $c.disconnect.close;
+  return True
+}
+#testing();
+lives-ok {testing()}, "EchoServer out of scope";
 
 done-testing;
