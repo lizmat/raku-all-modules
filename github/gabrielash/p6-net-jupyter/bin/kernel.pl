@@ -2,7 +2,7 @@
 
 use v6;
 
-use lib '/home/docker/workspace/perl6-jupyter/lib';
+
 
 use Net::ZMQ::Context:auth('github:gabrielash');
 use Net::ZMQ::Socket:auth('github:gabrielash');
@@ -132,7 +132,6 @@ sub shell-handler(MsgRecv $m) {
     }#when
 
     when 'shutdown_request' {
-        $leaving = True;
         my $restart = $recv.content-value( 'restart' );
         $recv.send($shell, 'shutdown_reply'
             , shutdown_reply-content( $restart )
