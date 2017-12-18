@@ -15,6 +15,11 @@ class LIVR::Validator {
         %DEFAULT-RULES ,= %rules;
     }
 
+    method register-aliased-default-rule(Hash $alias) {
+        die 'Alias name required' unless $alias<name>;
+        %DEFAULT-RULES{ $alias<name> } = self!build-aliased-rule(%$alias);
+    }
+
     method get-default-rules() {
         return %DEFAULT-RULES;
     }

@@ -26,5 +26,5 @@
   "source-url" : "git://github.com/koorchik/perl6-livr.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "2.0.1"
+  "version" : "2.1.0"
 }
