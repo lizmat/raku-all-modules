@@ -460,8 +460,10 @@ sub process-pos($optset, @noa is copy) {
     }
 
     if (%cmd.elems > 0 && not $cmd-matched)
-        && ((%need-sort-pos{0}:exists)
-            && %need-sort-pos{0}.elems > 0 && not $front-matched) {
+        && ((not %need-sort-pos{0}:exists)
+            || ((%need-sort-pos{0}:exists)
+                && %need-sort-pos{0}.elems > 0
+                && not $front-matched)) {
         # no cmd or pos matched, and pos is optional
         ga-try-next("Not recongnize command: {@noa[0].value}.");
     }
