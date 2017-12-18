@@ -1,5 +1,6 @@
 {
     "name"         : "GTK::Simpler",
+    "license"      : "MIT",
     "version"      : "0.0.5",
     "perl"         : "6.c",
     "description"  : "A simpler and more efficient API for GTK::Simple",

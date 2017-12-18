@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-gtk-simpler.git
 	branch = master
-	commit = cc1a84c20cf36b1d604e1ba0420dbd3a1b6fe8cd
-	parent = 23c28beafdc9ae7604c7c922f412f03478b8b80d
+	commit = 668a5602327ce4f97048045885adb2cf9507d721
+	parent = d8053f3e4efea0b66c137a6615a96bf3f88494bc
 	cmdver = 0.4.0
