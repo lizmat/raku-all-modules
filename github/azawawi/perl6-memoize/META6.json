@@ -1,5 +1,6 @@
 {
   "name"          : "Memoize",
+  "license"       : "MIT",
   "version"       : "*",
   "perl"          : "6.c",
   "description"   : "Make routines faster by trading space for time",
