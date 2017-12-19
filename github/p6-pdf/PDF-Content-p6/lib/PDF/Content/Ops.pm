@@ -782,8 +782,9 @@ class PDF::Content::Ops {
 	    if @!gsave;
         warn "unexpected end of content stream in $!context context"
             unless $!context == Page;
+
         with $!parent {
-            .cb-finish for .resources('Font').values;
+            try .cb-finish for .resources('Font').values;
         }
     }
 
