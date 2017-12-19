@@ -1,0 +1,4 @@
+Release 0.0.2
+- Fix syntax of PDF::Content::XObject['PS'] and PDF::Font::Type3
+Release 0.0.1
+- initial release
