@@ -1,7 +1,7 @@
 use v6;
 use PDF::Class;
 
-class PDF::API6:ver<0.1.0>
+class PDF::API6:ver<0.0.2>
     is PDF::Class {
 
     use PDF::DAO;
@@ -69,18 +69,18 @@ class PDF::API6:ver<0.1.0>
             :single-page<SinglePage>,
             ){$page-layout};
 
-        given $catalog.ViewerPreferences //= { } {
-            .HideToolbar = $_ with $hide-toolbar;
-            .HideMenubar = $_ with $hide-menubar;
-            .HideWindowUI = $_ with $hide-windowui;
-            .FitWindow = $_ with $fit-window;
-            .CenterWindow = $_ with $center-window;
-            .DisplayDocTitle = $_ with $display-title;
-            .Direction = .uc with $direction;
-            .NonFullScreenPageMode = %PageModes{$after-fullscreen};
-            .PrintScaling = 'None' if $print-scaling ~~ 'none';
+        given $catalog.ViewerPreferences //= { } -> $p {
+            $p.HideToolbar = $_ with $hide-toolbar;
+            $p.HideMenubar = $_ with $hide-menubar;
+            $p.HideWindowUI = $_ with $hide-windowui;
+            $p.FitWindow = $_ with $fit-window;
+            $p.CenterWindow = $_ with $center-window;
+            $p.DisplayDocTitle = $_ with $display-title;
+            $p.Direction = $p.uc with $direction;
+            $p.NonFullScreenPageMode = %PageModes{$after-fullscreen};
+            $p.PrintScaling = 'None' if $print-scaling ~~ 'none';
             with $duplex -> $dpx {
-                .Duplex = %(
+                $p.Duplex = %(
                       :simplex<Simplex>,
                       :flip-long-edge<DuplexFlipLongEdge>,
                       :flip-short-edge<DuplexFlipShortEdge>,

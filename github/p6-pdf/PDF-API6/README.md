@@ -363,7 +363,7 @@ A page can have several different bounding boxes:
 Example:
 
     use PDF::Content::Page :PageSizes;
-    sub postfix:<mm>( 2.83 );
+    sub postfix:<mm>(Numeric $v)( $v * 2.83 );
     $page.media-box = Letter;
     # set-up symmetrical 3mm bleed
     $page-bleed-box = .[0] - 3mm, .[1] - 3mm, .[2] + 3mm, [.3] + 3mm
@@ -434,12 +434,12 @@ is equivalent to:
 
 Read/write accessor to set, or get the current font.
 
-Note: Other fonts can be loaded via the PDF::Font::Loader module:
+Note: other fonts can be loaded via the PDF::Font::Loader module:
 
     use PDF::Font::Loader :load-font;
-    $gfx.font = load-font: :file</usr/share/fonts/truetype/tlwg/Garuda-BoldOblique.ttf>;
+    $gfx.font = load-font( :file</usr/share/fonts/truetype/tlwg/Garuda-BoldOblique.ttf> );
     # this also requires the fontconfig package on your system
-    $gfx.font = load-font: :name<Garuda>, :weight<Bold>, :slant<Oblique>;
+    $gfx.font = load-font( 'Garuda', :weight<bold>, :slant<oblique> );
 
 ### text-position
 
@@ -466,7 +466,7 @@ Applies text transforms, such as translation, rotation, scaling, etc.
     my PDF::Content::Text::Block $text-block;
     
     $gfx.WordSpacing = 2; # add extra spacing between words
-    my $font = PDF::Content::Util::Font::core-font( :family<Helvetica>, :weight<bold> );
+    my $font = $gfx.core-font( :family<Helvetica>, :weight<bold> );
     my $font-size = 16;
     my $text = "Hello.  Ting, ting-ting. Attention! … ATTENTION! ";
     
@@ -631,7 +631,7 @@ writing PDF files. Direct calls to instructions are camel-cased, such as:
 
     $gfx.TextMove(10,20);
 
-It is also possible to directly call the TextMove operator 'Td' directly:
+It is also possible to directly call the TextMove operator 'Td':
 
     use PDF::Content::Ops :OpCode
     $gfx.op(OpCode::TextMove, 10,20);
