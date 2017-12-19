@@ -1090,8 +1090,11 @@ X<|$*CWD>X<|$*KERNEL>X<|$*DISTRO>X<|$*VM>X<|$*PERL>X<|$*PID>X<|$*PROGRAM-NAME>
 X<|$*PROGRAM>X<|$*EXECUTABLE>X<|$*EXECUTABLE-NAME>X<|$*USER>X<|$*GROUP>X<|$*HOME>
 X<|$*SPEC>X<|$*TMPDIR>X<|$*THREAD>X<|$*SCHEDULER>X<|$*USAGE>
 =begin table
-    $*ARGFILES        | An IO::CatHandle that uses @*ARGS as source files, if
-                      | it contains any files, or $*IN otherwise
+    $*ARGFILES        | An L<IO::ArgFiles> (an empty subclass of L<IO::CatHandle>)
+                      | that uses C<@*ARGS> as source files, if
+                      | it contains any files, or C<$*IN> otherwise. When C<$*IN>
+                      | is used, its C<:nl-in>, C<:chomp>, C<:encoding>, 
+                      | and C<:bin> will be set on the L<IO::ArgFiles> object.
     ------------------+--------------------------------------------
     @*ARGS            | Arguments from the command line.
     ------------------+--------------------------------------------
@@ -1130,6 +1133,10 @@ X<|$*SPEC>X<|$*TMPDIR>X<|$*THREAD>X<|$*SCHEDULER>X<|$*USAGE>
     ------------------+--------------------------------------------
     $*PROGRAM         | Location (in the form of an C<IO::Path> object) of the
                       | Perl program being executed.
+    ------------------+--------------------------------------------
+    &*EXIT            | Code that will be executed when doing an exit().  Intended
+                      | to be used in situations where Perl 6 is embedded in
+                      | another language runtime (such as Inline::Perl6 in Perl 5)
     ------------------+--------------------------------------------
     $*EXECUTABLE      | Absolute path of the perl executable that is currently running.
     ------------------+--------------------------------------------
@@ -1170,6 +1177,10 @@ X<|$*SPEC>X<|$*TMPDIR>X<|$*THREAD>X<|$*SCHEDULER>X<|$*USAGE>
     ------------------+--------------------------------------------
     $*SCHEDULER       | A L<ThreadPoolScheduler> object representing the current default
                       | scheduler. (see note below)
+    ------------------+--------------------------------------------
+    $*SAMPLER         | The current L<Telemetry::Sampler> used for making
+                      | snapshots of system state.  Only available if
+                      | L<Telemetry> has been loaded.
     ------------------+--------------------------------------------
 =end table
 
