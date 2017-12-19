@@ -1,0 +1,79 @@
+#!/usr/bin/env perl6
+use v6;
+
+use Bamboo;
+use File::Find;
+
+multi sub MAIN('install', :$path = '.') {
+    my $bamboo = Bamboo.new(:$path);
+    $bamboo.install;
+}
+
+multi sub MAIN('init') {
+    my @files = find(:dir<lib>, :type<file>, exclude => /'.' precomp/).flat;
+
+    my %meta;
+    my $cur-dir = get-dir;
+    my $cur-usr = $*USER.Str;
+
+    # TODO: what is the order?
+    %meta<name> = prompt("name [$cur-dir]> ") || $cur-dir;
+    %meta<description> = prompt("description [$cur-dir]> ") || $cur-dir;
+    %meta<version> = "0.0.1";
+    %meta<author> = prompt("author [$cur-usr]> ") || $cur-usr;
+    %meta<depends> = get-dependencies(@files);
+    %meta<provides> = get-provides(@files);
+    %meta<source-url> = get-source;
+
+    my $bamboo = Bamboo.new;
+    $bamboo.generate-meta(%meta);
+}
+
+sub get-dir() {
+    my $dir = $*CWD.Str;
+
+    $dir .= substr(rindex($dir, '/') + 1);
+    $dir ~~ s/'-'/::/;
+
+    return $dir;
+}
+
+sub get-dependencies(@files) {
+    sub get-deps($file) {
+        gather for $file.lines.grep({ $_ ~~ m/^use/ }) {
+            my $module = .substr(4, $_.chars - 4 - 1);
+
+            when $module ~~ "v6" | "Panda" {
+                next;
+            }
+
+            take $module;
+        }
+    }
+
+    my @dependencies = flat gather for @files -> $file {
+        take get-deps($file);
+    }
+}
+
+sub get-provides(@files) {
+    sub get-module($path) {
+        my $module = $path;
+
+        # extract the module name from the path
+        $module .= substr(0, rindex $module, '.');
+        $module .= substr(index($module, '/') + 1);
+        $module ~~ s/'/'/::/;
+
+        return $module, $path;
+    }
+
+    my %modules = flat gather for @files>>.Str -> $file {
+        take get-module($file);
+    };
+}
+
+sub get-source() {
+    # TODO: get it from .git/config
+    prompt "source url> "
+}
