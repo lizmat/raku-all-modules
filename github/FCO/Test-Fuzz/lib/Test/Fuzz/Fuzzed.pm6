@@ -26,7 +26,9 @@ method compose {
 method run-tests(Int:D $size = 100) {
 	subtest {
 		@!data = $.signature.generate-samples($size);
+		my Int $tests = 0;
 		for @.data -> $data {
+			++$tests;
 			my $return = self.(|$data);
 			$return.exception.throw if $return ~~ Failure;
 			CATCH {
@@ -47,5 +49,6 @@ method run-tests(Int:D $size = 100) {
 			}
 			pass "{ $.name }{ $data.perl.subst(/\\/, "") }"
 		}
+		flunk "Can not generate parameters for this function" if $tests == 0;
 	}, $.name
 }

@@ -30,6 +30,9 @@ role Test::Fuzz::AggGenerators {
 
 	#| generate Captures for the signature
 	method generate-samples(Int:D $size = 100 --> Iterable) {
-		([X] self!build-possibilities($size), ToRemove.new).pick($size).map({.grep(* !~~ ToRemove).Array}).map: {.Capture}
+		([X] self!build-possibilities($size), ToRemove.new)
+			.pick($size)
+			.map({.grep(* !~~ ToRemove).Array})
+			.map: {.Capture};
 	}
 }

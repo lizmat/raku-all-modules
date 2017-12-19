@@ -37,15 +37,17 @@ method generate(Int() $size = 100) {
 
 	my %indexes	:= BagHash.new;
 	my %gens	:= @types.map(*.^name) ∩ %generator.keys;
-	while @ret.elems < $size {
-		@ret.push: $hcoded but Unique if $hcoded.defined;
-		for %gens.keys -> $sub {
-			my $item = %generator{$sub}[%indexes{$sub}++];
-			@ret.push: $item if $item ~~ test-type & $constraints;
+	if $hcoded.defined {
+		@ret = ($hcoded but Unique) xx $size;
+	} else {
+		while (@ret.elems < $size and %gens) {
+			for %gens.keys -> $sub {
+				my $item = %generator{$sub}[%indexes{$sub}++];
+				@ret.push: $item if $item ~~ test-type & $constraints;
+			}
+			@ret .= unique: :with({$^a === $^b and not $^a ~~ Unique})
 		}
-		@ret .= unique: :with({$^a === $^b and not $^a ~~ Unique})
 	}
 	@ret.unshift: |@undefined if @undefined;
 	@ret
 }
-
