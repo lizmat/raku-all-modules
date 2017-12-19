@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FCO/6pm.git
 	branch = master
-	commit = 31789fed7770c60d1d570347ad080fb3ee5401f2
-	parent = 0ab61b7482ae9e8e32c907700eb966748df249a1
+	commit = a0bc6b1c6330a0d88f8a56c3d148bb396bebee64
+	parent = c8bf03933d8f3a68cb611ecc04338de799b8fbdf
 	cmdver = 0.4.0
