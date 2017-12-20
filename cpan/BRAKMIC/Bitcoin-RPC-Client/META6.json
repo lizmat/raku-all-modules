@@ -1,0 +1,17 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Bitcoin::RPC::Client",
+    "license"      : "Artistic-2.0",
+    "version"      : "0.0.1",
+    "description"  : "query Bitcoin transactions, wallet info and more",
+    "depends"      : [
+        "WWW",
+        "JSON::Tiny"
+    ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "Bitcoin::RPC::Client": "lib/Bitcoin/RPC/Client.pm6"
+    },
+    "authors"      : [ "Harris Brakmic" ],
+    "support"      : { "source"   : "git://github.com/brakmic/Perl6-Bitcoin-Client.git" }
+}
