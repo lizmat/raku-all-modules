@@ -7,28 +7,17 @@
 
 ## Introduction
 
-The developers of Perl6 decided early on that the implementation
+The developers of Perl6 decided that the implementation
 of the language (eg. Rakudo) would be available with a bare minimum of "core" modules.
 Some modules are essential, such as Test, or the module manager (previously `panda`, currently `zef`).
 
 The intention is for users / user groups to contribute distributions that meet a specific topic area.
-Rakudo is available in a package called `Rakudo Star` with a minimal number of modules.
-
-However, for someone coming to Perl6 for the first time, there is a natural question as to which
-modules 'should' be installed first to provide the dependencies most other modules will need.
-Since 'should' can be quite subjective, and space is a limited resource, there no solution for newcomers has yet been agreed.
-
-Another problem (at the time of writing) is that Perl6 has a rapidly expanding Ecosystem (available modules),
-whilst the language itself
-continues to evolve. This means that modules which were well-tested and useful at one moment in time are being
-replaced by other modules or get out of date. Consequently, any list of 'necessary' modules has to
-be monitored on a regular basis.
+Rakudo itself is available in a package called `Rakudo Star` with a minimal number of modules.
 
 This distribution list takes another, data driven, approach.
 
-Some modules provide common functionality, and so are `use`d or **cited** by other modules in the Ecosystem.
-Consequently, by chosing a set of modules that are
-frequently used, it can be fairly safely assumed they will be regularly maintained. Failures in these modules will affect other modules.
+Modules are intended to provide common functionality, and so are `use`d or **cited** by other modules in the Ecosystem. A set of modules that are
+frequently used can be fairly safely assumed will be regularly maintained. Failures in these modules will affect many other modules, and there will be pressure to get them fixed. 
 
 This list uses [Citation Indices](http://finanalyst.github.io/ModuleCitation/) to identify the 30 modules most recursively popular modules in the Ecosystem.
 
@@ -36,40 +25,40 @@ This list uses [Citation Indices](http://finanalyst.github.io/ModuleCitation/) t
 
 | Module Name | Recursive Citation Index | Module Description |
 |---| :---: | :--- |
-| JSON::Fast | 34.46 | A naive, fast json parser and serializer; drop-in replacement for JSON::Tiny |
-| URI | 28.72 | A URI implementation using Perl 6 grammars to implement RFC 3986 BNF |
-| MIME::Base64 | 26.01 | Encoding and decoding Base64 ASCII strings |
-| File::Directory::Tree | 23.31 | Port of File::Path::Tiny - create and delete directory trees |
-| File::Temp | 22.64 | Create temporary files & directories |
-| HTTP::Status | 21.28 | Get the text message associated with an HTTP status code |
-| JSON::Tiny | 17.23 | A minimal JSON (de)serializer |
-| OpenSSL | 15.88 | OpenSSL bindings |
-| JSON::Name | 15.2 | Provides a trait to store an alternative JSON Name |
-| Encode | 14.19 | Character encodings in Perl 6 |
-| JSON::Unmarshal | 14.19 | Turn JSON into objects |
-| DateTime::Parse | 13.85 | DateTime parser |
-| JSON::Marshal | 13.85 | Simple serialisation of objects to JSON |
-| HTTP::UserAgent | 13.51 | Web user agent |
-| Terminal::ANSIColor | 13.51 | Colorize terminal output |
-| JSON::Class | 13.18 | role to provide simple serialisation/deserialisation of objects to/from JSON |
-| File::Find | 10.81 | File::Find for Perl 6 |
-| XML | 10.81 | A full-featured, pure-perl XML library (parsing, manipulation, emitting, queries, etc.) |
-| META6 | 10.47 | Work with Perl 6 META files |
-| Digest | 10.14 | Pure perl6 implementation of digest algorigthms. |
-| LibraryMake | 9.8 | An attempt to simplify native compilation |
-| Test::META | 9.12 | Test a distributions META file |
-| PSGI | 8.78 | A PSGI helper library. |
-| IO::Socket::SSL | 8.45 | IO::Socket::SSL for Perl 6 using OpenSSL |
-| File::Which | 8.11 | Cross platform Perl 6 executable path finder (aka which on UNIX) |
-| DateTime::Format | 7.09 | strftime and other DateTime formatting libraries |
-| Digest::HMAC | 7.09 | Generic HMAC implementation |
-| HTTP::Easy | 6.76 | HTTP servers made easy, including PSGI |
-| JSON::Pretty | 6.08 | A minimal JSON (de)serializer that produces easily readable JSON |
-| URI::Encode | 5.74 | Encode and decode URIs according to RFC 3986 |
+| JSON::Fast | 37 | OOps description not found, please file issue at github repository of p6-task-popular |
+| URI | 31 | A URI implementation using Perl 6 grammars to implement RFC 3986 BNF |
+| MIME::Base64 | 28.33 | Encoding and decoding Base64 ASCII strings |
+| File::Directory::Tree | 26 | Port of File::Path::Tiny - create and delete directory trees |
+| File::Temp | 25.33 | Create temporary files & directories |
+| HTTP::Status | 23 | Get the text message associated with an HTTP status code |
+| JSON::Tiny | 19.33 | OOps description not found, please file issue at github repository of p6-task-popular |
+| OpenSSL | 17.33 | OpenSSL bindings |
+| JSON::Name | 15.67 | Provides a trait to store an alternative JSON Name |
+| Encode | 15 | Character encodings in Perl 6 |
+| Terminal::ANSIColor | 15 | Colorize terminal output |
+| DateTime::Parse | 14.67 | DateTime parser |
+| JSON::Unmarshal | 14.67 | Turn JSON into objects |
+| HTTP::UserAgent | 14.33 | Web user agent |
+| JSON::Marshal | 14.33 | Simple serialisation of objects to JSON |
+| JSON::Class | 13.67 | role to provide simple serialisation/deserialisation of objects to/from JSON |
+| HTML::Escape | 13 | Utility of HTML escaping |
+| File::Find | 11.33 | File::Find for Perl 6 |
+| LibraryMake | 11.33 | An attempt to simplify native compilation |
+| Digest | 11 | Pure perl6 implementation of digest algorigthms. |
+| META6 | 11 | Work with Perl 6 META files |
+| XML | 10.67 | A full-featured, pure-perl XML library (parsing, manipulation, emitting, queries, etc.) |
+| Test::META | 9.67 | Test a distributions META file |
+| IO::Socket::SSL | 9.33 | IO::Socket::SSL for Perl 6 using OpenSSL |
+| PSGI | 9.33 | A PSGI helper library. |
+| URI::Encode | 9 | Encode and decode URIs according to RFC 3986 |
+| File::Which | 8.33 | Cross platform Perl 6 executable path finder (aka which on UNIX) |
+| Digest::HMAC | 8 | Generic HMAC implementation |
+| HTTP::Easy | 7.33 | HTTP servers made easy, including PSGI |
+| JSON::Pretty | 7.33 | A minimal JSON (de)serializer that produces easily readable JSON |
 
 ## Date of Compilation
 
-This list was compiled on 2017-10-02.
+This list was compiled on 2017-12-20.
 
 ## Problems
 
