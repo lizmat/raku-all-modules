@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/GildedHonour/TelegramBot.git
 	branch = master
-	commit = 97a1f4f58ad25e66f7b4b1b7428a59f336b21504
-	parent = 1751cb74bf6a3df2e82c5bb9b9183e143e3bafe9
+	commit = 8cc1b7dd51f65025e2ed83d7b9116e02c0df464e
+	parent = c1604f151598faf66b467379e2f127c308b9c78c
 	cmdver = 0.4.0
