@@ -1,3 +1,7 @@
+Release 0.1.5
+    - Add :find-font, :load-font export subs
+    - Add load-font :enc and :embed options
+
 Release 0.1.4
     - Renamed dist PDF::Font -> PDF::Font::Loader
 

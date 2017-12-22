@@ -4,7 +4,7 @@ plan 15;
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Font::Loader;
 
-my $vera = PDF::Font::Loader.load-font: :file<t/fonts/Vera.ttf>, :enc<win>;
+my $vera = PDF::Font::Loader.load-font: :file<t/fonts/Vera.ttf>;
 is $vera.font-name, 'BitstreamVeraSans-Roman', 'font-name';
 
 is $vera.height.round, 1164, 'font height';

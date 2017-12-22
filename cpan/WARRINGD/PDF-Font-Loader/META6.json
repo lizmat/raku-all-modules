@@ -18,6 +18,7 @@
   "perl" : "6.*",
   "provides" : {
     "PDF::Font::Loader" : "lib/PDF/Font/Loader.pm",
+    "PDF::Font::Loader::Enc::CMap" : "lib/PDF/Font/Loader/Enc/CMap.pm",
     "PDF::Font::Loader::Enc::Identity-H" : "lib/PDF/Font/Loader/Enc/Identity-H.pm",
     "PDF::Font::Loader::Enc::Type1" : "lib/PDF/Font/Loader/Enc/Type1.pm",
     "PDF::Font::Loader::FreeType" : "lib/PDF/Font/Loader/FreeType.pm",
@@ -31,5 +32,5 @@
     "font"
   ],
   "test-depends" : [ ],
-  "version" : "0.1.4"
+  "version" : "0.1.5"
 }

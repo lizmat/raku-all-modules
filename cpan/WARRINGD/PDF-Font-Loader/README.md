@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/p6-pdf/PDF-Font-p6.svg?branch=master)](https://travis-ci.org/p6-pdf/PDF-Font-p6)
+[![Build Status](https://travis-ci.org/p6-pdf/PDF-Font-Loader-p6.svg?branch=master)](https://travis-ci.org/p6-pdf/PDF-Font-Loader-p6)
 
 NAME
 ====
@@ -12,8 +12,16 @@ SYNPOSIS
     use PDF::Font::Loader;
     my $deja = PDF::Font::Loader.load-font: :file<t/fonts/DejaVuSans.ttf>;
 
+    use PDF::Font::Loader :load-font;
+    my $deja = load-font( :file<t/fonts/DejaVuSans.ttf> );
+
     # requires fontconfig
-    my $deja-vu = PDF::Font::Loader.load-font: :name<DejaVuSans>;
+    use PDF::Font::Loader :load-font. :find-font;
+
+    my $deja = load-font: :name<DejaVu>, :slope<italic>;
+
+    my $file = find-font: :name<DejaVu>, :slope<italic>;
+    my $deja-vu = load-font: :$file;
 
     my PDF::Lite $pdf .= new;
     $pdf.add-page.text: {
@@ -53,10 +61,10 @@ parameters:
 
 #### `PDF::Font::Loader.load-font(Str :$name);`
 
-    my $vera = PDF::Font::Loader.load-font('vera');
-    my $deja = PDF::Font::Loader.load-font('Deja:weight=bold:width=condensed:slant=italic');
+    my $vera = PDF::Font::Loader.load-font: :name<vera>;
+    my $deja = PDF::Font::Loader.load-font: :name<Deja>, :weight<bold>, :width<condensed> :slant<italic>);
 
-Loads a font by a fontconfig name.
+Loads a font by a fontconfig name and attributes.
 
 Note: Requires fontconfig to be installed on the system.
 
