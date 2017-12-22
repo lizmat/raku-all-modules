@@ -114,13 +114,13 @@ class PDF::Content::Font::Enc::Type1 {
             FETCH => sub ($) {
                 my %seen;
                 my @diffs;
-                my uint8 $cur-idx = 0;
-                for @!differences {
-                    @diffs.push: $_
-                        unless $_ == $cur-idx;
-                    my $glyph-name = 
-                        @diffs.push: 'name' => self.lookup-glyph( @!to-unicode[$_] ) // '.notdef';
-                    $cur-idx = $_ + 1;
+                my int $cur-idx = -2;
+                for @!differences.list.sort {
+                    unless $_ == ++$cur-idx {
+                        @diffs.push: $_;
+                        $cur-idx = $_;
+                    }
+                    @diffs.push: 'name' => self.lookup-glyph( @!to-unicode[$_] ) // '.notdef';
                 }
                 @diffs
             },
