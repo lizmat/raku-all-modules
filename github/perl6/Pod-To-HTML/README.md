@@ -46,3 +46,7 @@ say Pod::To::HTML.render($pod,
 `Pod::To::HTML` takes a Pod tree and outputs correspondingly formatted HTML.  
 Generally this is done via the command line, using`perl6 --doc=HTML`, which extracts the pod from the document and feeds it to `Pod::To::HTML`.  
 The other route is with the `render` method (called by `--doc=HTML`), which creates a complete HTML document from the Pod tree it is called with. Optionally, a custom header/fooder/head-fields can be provided. These can be used to link to custom css stylesheets and javascript libraries.
+
+## DEBUGGING
+
+You can set `P6DOC_DEBUG` environmental variable to make the module produce some debugging information.

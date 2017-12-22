@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6/Pod-To-HTML.git
 	branch = master
-	commit = 0ae43c1fd1c07fac0aafdbc2f074c2b6a8bd6489
-	parent = 09dc97939cdd148c370bcf2e20f6d24e7b51c33c
+	commit = 98cc35eb05ac02979d0b2d0d9a7f7853d6f81dc8
+	parent = 4ca9cc41ed8296519672924d9391e6a230691f1b
 	cmdver = 0.4.0
