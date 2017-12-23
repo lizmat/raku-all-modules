@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Event::Emitter",
-    "version"     : "1.0.1",
+    "version"     : "1.0.2",
     "description" : "Awesome event emitter.  Threaded, or not.",
     "depends"     : [ ],
     "provides"    : {
