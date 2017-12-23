@@ -1,7 +1,7 @@
 {
     "perl" : "6.c",
     "name" : "Algorithm::BitMap",
-    "version" : "0.0.1",
+    "version" : "0.0.2",
     "description" : "Efficient way to handle Boolean vector",
     "authors" : [ "Alex Chen" ],
     "license" : "Artistic-2.0",
@@ -9,5 +9,5 @@
         "Algorithm::BitMap" : "lib/Algorithm/BitMap.pm6"
     },
     "depends" : [ ],
-    "source-url" : "git://github.com/W4anD0eR96/Algorithm-BitMap.git"
+    "source-url" : "git://github.com/W4anD0eR96/perl6-Algorithm-BitMap.git"
 }

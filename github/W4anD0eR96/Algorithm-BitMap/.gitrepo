@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/W4anD0eR96/Algorithm-BitMap.git
 	branch = master
-	commit = ebb48656fdb91440dcc76baf551169c7c4be8952
-	parent = 5cd5333b776fbde73db2bd3d0d5d161f1ed033c3
+	commit = 16dca52c4ccc159aba7c5aff50ffb1e19496cc42
+	parent = 75d8230b25ddd629d78f8b925b990aa6a7188151
 	cmdver = 0.4.0
