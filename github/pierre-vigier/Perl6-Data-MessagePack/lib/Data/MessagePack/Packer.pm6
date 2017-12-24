@@ -72,9 +72,10 @@ module Data::MessagePack::Packer {
     }
 
     my multi _pack( Str:D $s ) {
-        my $length = $s.chars;
-
+        my @stringdata = $s.encode.list;
+        my $length = @stringdata.elems;
         my @header;
+
         given $length {
             when $length < 32 { @header.push( 0xa0 + $length ) }
             when $length < 2**8 { @header.push( 0xd9, $length ) }

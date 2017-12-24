@@ -31,11 +31,11 @@ Data::MessagePack - Perl 6 implementation of MessagePack
 
 Or for streaming:
 
-    use Data::MessagePack::StreanmingUnpacker;
+    use Data::MessagePack::StreamingUnpacker;
 
     my $supplier = Some Supplier; #Could be from IO::Socket::Async for instance
 
-    my $unpacker = Data::MessagePack::StreanmingUnpacker.new(
+    my $unpacker = Data::MessagePack::StreamingUnpacker.new(
         source => $supplier.Supply
     );
 
@@ -74,6 +74,10 @@ the deserialized data structure.
 =head1 Author
 
 Pierre VIGIER
+
+=head1 Contributors
+
+Timo Paulssen
 
 =head1 License
 

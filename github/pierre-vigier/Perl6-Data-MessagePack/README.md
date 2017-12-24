@@ -64,6 +64,11 @@ Author
 
 Pierre VIGIER
 
+Contributors
+============
+
+Timo Paulssen
+
 License
 =======
 
