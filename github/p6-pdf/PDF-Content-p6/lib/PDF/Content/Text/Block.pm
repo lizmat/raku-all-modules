@@ -15,7 +15,7 @@ class PDF::Content::Text::Block {
     has Alignment $.align = 'left';
     my subset VerticalAlignment of Str is export(:VerticalAlignment) where 'top'|'center'|'bottom';
     has VerticalAlignment $.valign = 'top';
-    has PDF::Content::Text::Style $!style handles <font font-size leading kern WordSpacing CharSpacing HorizScaling TextRise baseline-shift space-width>; 
+    has PDF::Content::Text::Style $!style handles <font font-size leading kern WordSpacing CharSpacing HorizScaling TextRise baseline-shift space-width>;
     has @.lines;
     has @.overflow is rw;
     has ParagraphTags $.type = Paragraph;
@@ -149,11 +149,18 @@ class PDF::Content::Text::Block {
         $word-gap * $.HorizScaling / 100;
     }
 
-    #| calculates WordSpacing needed to achieve a given word-gap
-    method !word-spacing($word-gap is copy) returns Numeric {
-        $word-gap /= $.HorizScaling / 100
-            unless $.HorizScaling =~= 100;
-        $word-gap - $.space-width - $.CharSpacing;
+    #| calculates ShowSpaceText(TD) atom for the given word-gap
+    method !word-spacer($word-gap is copy) {
+        if $word-gap =~= $.space-width && $.WordSpacing =~= 0 && $.CharSpacing =~= 0 {
+            # A real space fits. use it.
+            $!style.space;
+        }
+        else {
+            my Numeric \scale = -1000 / $.font-size;
+            $word-gap /= $.HorizScaling / 100
+                unless $.HorizScaling =~= 100;
+            scale * ($word-gap - $.CharSpacing);
+        }
     }
 
     method width  { $!width  // self.content-width }
@@ -177,7 +184,7 @@ class PDF::Content::Text::Block {
 	Bool :$preserve = True, # restore text state
 	) {
 	my %saved;
-	for :$.WordSpacing, :$.CharSpacing, :$.HorizScaling, :$.TextRise {
+	for :$.CharSpacing, :$.HorizScaling, :$.TextRise {
 	    my $gfx-val = $gfx."{.key}"();
 	    %saved{.key} = $gfx-val
 		if $preserve;
@@ -213,9 +220,7 @@ class PDF::Content::Text::Block {
 	    .<Tr> = $.TextRise;
         }
 
-        my $word-spacing = $gfx.WordSpacing;
         my $leading = $gfx.TextLeading;
-        my Str $space = $.font.encode(' ', :str);
 
         for @!lines.pairs {
 	    my \line = .value;
@@ -226,10 +231,7 @@ class PDF::Content::Text::Block {
 		@content.push: OpCode::TextNextLine;
 	    }
 
-            with self!word-spacing(line.word-gap) {
-                @content.push( OpCode::SetWordSpacing => [ $word-spacing = $_ ])
-                    unless $_ =~= $word-spacing || +line.words <= 1;
-            }
+            my $space = self!word-spacer(line.word-gap);
             @content.push: line.content(:$.font-size, :$x-shift, :$space);
         }
 

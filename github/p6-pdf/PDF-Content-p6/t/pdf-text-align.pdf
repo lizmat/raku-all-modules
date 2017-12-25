@@ -27,7 +27,7 @@ endobj
 endobj
 
 4 0 obj <<
-  /Length 3938
+  /Length 4091
 >> stream
 BT
   /F1 10 Tf
@@ -85,29 +85,21 @@ BT
   0 Ts
   1 0 0 1 110 190 Tm
   -9.31 Ts
-  0.17333 Tw
-  (*** top justify*** Lorem) Tj
+  [ (***) -295 (top) -295 (justify***) -295 (Lorem) ] TJ
   T*
-  2.58333 Tw
-  (ipsum dolor sit amet,) Tj
+  [ (ipsum) -536 (dolor) -536 (sit) -536 (amet,) ] TJ
   T*
-  1.07 Tw
-  (consectetur adipiscing) Tj
+  [ (consectetur) -385 (adipiscing) ] TJ
   T*
-  3.69 Tw
-  (elit, sed do eiusmod) Tj
+  [ (elit,) -647 (sed) -647 (do) -647 (eiusmod) ] TJ
   T*
-  6.37 Tw
-  (tempor incididunt ut) Tj
+  [ (tempor) -915 (incididunt) -915 (ut) ] TJ
   T*
-  15.26 Tw
-  (labore et dolore) Tj
+  [ (labore) -1804 (et) -1804 (dolore) ] TJ
   T*
-  37.19 Tw
-  (magna aliqua.) Tj
+  [ (magna) -3997 (aliqua.) ] TJ
   T*
   0 Ts
-  0 Tw
   1 0 0 1 235 700 Tm
   -9.31 Ts
   0 40 Td
@@ -165,29 +157,21 @@ BT
   1 0 0 1 235 190 Tm
   -9.31 Ts
   0 40 Td
-  8.875 Tw
-  (*** center justify***) Tj
+  [ (***) -1165 (center) -1165 (justify***) ] TJ
   T*
-  1.47333 Tw
-  (Lorem ipsum dolor sit) Tj
+  [ (Lorem) -425 (ipsum) -425 (dolor) -425 (sit) ] TJ
   T*
-  20.52 Tw
-  (amet, consectetur) Tj
+  [ (amet,) -2330 (consectetur) ] TJ
   T*
-  1.46667 Tw
-  (adipiscing elit, sed do) Tj
+  [ (adipiscing) -424 (elit,) -424 (sed) -424 (do) ] TJ
   T*
-  28.31 Tw
-  (eiusmod tempor) Tj
+  [ (eiusmod) -3109 (tempor) ] TJ
   T*
-  1.65 Tw
-  (incididunt ut labore et) Tj
+  [ (incididunt) -443 (ut) -443 (labore) -443 (et) ] TJ
   T*
-  3.31 Tw
-  (dolore magna aliqua.) Tj
+  [ (dolore) -609 (magna) -609 (aliqua.) ] TJ
   T*
   0 Ts
-  0 Tw
   1 0 0 1 360 700 Tm
   -9.31 Ts
   0 80 Td
@@ -245,29 +229,21 @@ BT
   1 0 0 1 360 190 Tm
   -9.31 Ts
   0 80 Td
-  7.485 Tw
-  (*** bottom justify***) Tj
+  [ (***) -1026 (bottom) -1026 (justify***) ] TJ
   T*
-  1.47333 Tw
-  (Lorem ipsum dolor sit) Tj
+  [ (Lorem) -425 (ipsum) -425 (dolor) -425 (sit) ] TJ
   T*
-  20.52 Tw
-  (amet, consectetur) Tj
+  [ (amet,) -2330 (consectetur) ] TJ
   T*
-  1.46667 Tw
-  (adipiscing elit, sed do) Tj
+  [ (adipiscing) -424 (elit,) -424 (sed) -424 (do) ] TJ
   T*
-  28.31 Tw
-  (eiusmod tempor) Tj
+  [ (eiusmod) -3109 (tempor) ] TJ
   T*
-  1.65 Tw
-  (incididunt ut labore et) Tj
+  [ (incididunt) -443 (ut) -443 (labore) -443 (et) ] TJ
   T*
-  3.31 Tw
-  (dolore magna aliqua.) Tj
+  [ (dolore) -609 (magna) -609 (aliqua.) ] TJ
   T*
   0 Ts
-  0 Tw
 ET
 endstream
 endobj
@@ -287,7 +263,7 @@ xref
 0000000068 00000 n 
 0000000134 00000 n 
 0000000289 00000 n 
-0000004282 00000 n 
+0000004435 00000 n 
 trailer
 <<
   /ID [ <d743a886fcdcf87b69c36548219ea941> <d743a886fcdcf87b69c36548219ea941> ]
@@ -295,5 +271,5 @@ trailer
   /Size 6
 >>
 startxref
-4388
+4541
 %%EOF

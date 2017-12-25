@@ -3,6 +3,8 @@ Release 0.1.0
   PDF::Content::Font. It now has a $.image-obj handler object,
   similar to the PDF::Content::Font $.font-obj attribute.
 - Fixed assignment to page boxes, e.g.: $page.art-box
+- Work-around PDF WordSpacing restrictions in multiple-byte
+  encoded fonts (issue #2)
 
 Release 0.0.9
 - PDF::Content::Font::Enc::Type1 - Optimised encoding to always

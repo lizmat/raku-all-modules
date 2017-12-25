@@ -4,6 +4,7 @@ class PDF::Content::Text::Style is rw {
     has         $.font is required;
     has Numeric $.font-size = 16;
     has Numeric $.leading = 1.1;
+    has Str     $.space = $!font.encode(' ').decode('latin-1');
     has Bool $.kern;
 
     # directly mapped to graphics state

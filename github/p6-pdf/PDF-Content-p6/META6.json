@@ -1,45 +1,52 @@
 {
-    "perl"        : "6.*",
-    "name"        : "PDF::Content",
-    "version"     : "0.1.0",
-    "license"     : "Artistic-2.0",
-    "api"         : "PDF-1.7",
-    "auth"        : "github:p6-pdf",
-    "description" : "PDF content related classes; including text, images, fonts and graphics",
-    "depends"     : [ "PDF", "PDF::Grammar", "Font::AFM", "Base64::Native", "Native::Packing", "Compress::Zlib::Raw" ],
-    "source-url"  : "git://github.com/p6-pdf/PDF-Content-p6.git",
-    "provides"    : {
-
-        "PDF::Content"                  : "lib/PDF/Content.pm",
-
-        "PDF::Content::Graphics"        : "lib/PDF/Content/Graphics.pm",
-        "PDF::Content::Font"            : "lib/PDF/Content/Font.pm",
-        "PDF::Content::Marked"          : "lib/PDF/Content/Marked.pm",
-        "PDF::Content::Matrix"          : "lib/PDF/Content/Matrix.pm",
-        "PDF::Content::Page"            : "lib/PDF/Content/Page.pm",
-        "PDF::Content::PageNode"        : "lib/PDF/Content/PageNode.pm",
-        "PDF::Content::PageTree"        : "lib/PDF/Content/PageTree.pm",
-        "PDF::Content::Resourced"       : "lib/PDF/Content/Resourced.pm",
-        "PDF::Content::ResourceDict"    : "lib/PDF/Content/ResourceDict.pm",
-
-        "PDF::Content::Ops"             : "lib/PDF/Content/Ops.pm",
-
-        "PDF::Content::Image"           : "lib/PDF/Content/Image.pm",
-        "PDF::Content::Image::GIF"      : "lib/PDF/Content/Image/GIF.pm",
-        "PDF::Content::Image::JPEG"     : "lib/PDF/Content/Image/JPEG.pm",
-        "PDF::Content::Image::PNG"      : "lib/PDF/Content/Image/PNG.pm",
-        "PDF::Content::Image::PDF"      : "lib/PDF/Content/Image/PDF.pm",
-        "PDF::Content::XObject"         : "lib/PDF/Content/XObject.pm",
-
-        "PDF::Content::Font"            : "lib/PDF/Content/Font.pm",
-        "PDF::Content::Font::CoreFont"  : "lib/PDF/Content/Font/CoreFont.pm",
-        "PDF::Content::Font::Enc::Type1": "lib/PDF/Content/Font/Enc/Type1.pm",
-        "PDF::Content::Font::Encodings" : "lib/PDF/Content/Font/Encodings.pm",
-
-        "PDF::Content::Text::Block"     : "lib/PDF/Content/Text/Block.pm",
-        "PDF::Content::Text::Line"      : "lib/PDF/Content/Text/Line.pm",
-        "PDF::Content::Text::Reserved"  : "lib/PDF/Content/Text/Reserved.pm",
-        "PDF::Content::Text::Style"     : "lib/PDF/Content/Text/Style.pm"
-
-     }
+  "api" : "PDF-1.7",
+  "auth" : "github:p6-pdf",
+  "authors" : [
+    "David Warring"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "PDF",
+    "PDF::Grammar",
+    "Font::AFM",
+    "Base64::Native",
+    "Native::Packing",
+    "Compress::Zlib::Raw"
+  ],
+  "description" : "PDF content related classes; including text, images, fonts and graphics",
+  "license" : "Artistic-2.0",
+  "name" : "PDF::Content",
+  "perl" : "6.*",
+  "provides" : {
+    "PDF::Content" : "lib/PDF/Content.pm",
+    "PDF::Content::Font" : "lib/PDF/Content/Font.pm",
+    "PDF::Content::Font::CoreFont" : "lib/PDF/Content/Font/CoreFont.pm",
+    "PDF::Content::Font::Enc::Type1" : "lib/PDF/Content/Font/Enc/Type1.pm",
+    "PDF::Content::Font::Encodings" : "lib/PDF/Content/Font/Encodings.pm",
+    "PDF::Content::Fontish" : "lib/PDF/Content/Fontish.pm",
+    "PDF::Content::Graphics" : "lib/PDF/Content/Graphics.pm",
+    "PDF::Content::Image" : "lib/PDF/Content/Image.pm",
+    "PDF::Content::Image::GIF" : "lib/PDF/Content/Image/GIF.pm",
+    "PDF::Content::Image::JPEG" : "lib/PDF/Content/Image/JPEG.pm",
+    "PDF::Content::Image::PDF" : "lib/PDF/Content/Image/PDF.pm",
+    "PDF::Content::Image::PNG" : "lib/PDF/Content/Image/PNG.pm",
+    "PDF::Content::Marked" : "lib/PDF/Content/Marked.pm",
+    "PDF::Content::Matrix" : "lib/PDF/Content/Matrix.pm",
+    "PDF::Content::Ops" : "lib/PDF/Content/Ops.pm",
+    "PDF::Content::Page" : "lib/PDF/Content/Page.pm",
+    "PDF::Content::PageNode" : "lib/PDF/Content/PageNode.pm",
+    "PDF::Content::PageTree" : "lib/PDF/Content/PageTree.pm",
+    "PDF::Content::ResourceDict" : "lib/PDF/Content/ResourceDict.pm",
+    "PDF::Content::Resourced" : "lib/PDF/Content/Resourced.pm",
+    "PDF::Content::Text::Block" : "lib/PDF/Content/Text/Block.pm",
+    "PDF::Content::Text::Line" : "lib/PDF/Content/Text/Line.pm",
+    "PDF::Content::Text::Reserved" : "lib/PDF/Content/Text/Reserved.pm",
+    "PDF::Content::Text::Style" : "lib/PDF/Content/Text/Style.pm",
+    "PDF::Content::XObject" : "lib/PDF/Content/XObject.pm"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/p6-pdf/PDF-Content-p6.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.1.0"
 }
