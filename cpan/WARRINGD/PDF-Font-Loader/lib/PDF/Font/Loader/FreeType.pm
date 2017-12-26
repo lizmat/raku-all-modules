@@ -26,10 +26,13 @@ class PDF::Font::Loader::FreeType {
     has EncodingScheme $!enc;
     has Bool $.embed = True;
 
-    submethod TWEAK(:@differences) {
-        $!enc = self!font-format eq 'Type1' || ! $!embed
+    submethod TWEAK(:@differences, :$!enc = self!font-format eq 'Type1' || ! $!embed || $!face.num-glyphs <= 255
             ?? 'win'
-            !! 'identity-h';
+            !! 'identity-h') {
+        die "can't use identity-h encoding with type-1 fonts"
+            if self!font-format eq 'Type1' && $!enc eq 'identity-h';
+        die "can't use identity-h encoding with unembedded fonts"
+            if ! $!embed && $!enc eq 'identity-h';
         $!encoder = $!enc eq 'identity-h'
             ?? PDF::Font::Loader::Enc::Identity-H.new: :$!face
             !! PDF::Font::Loader::Enc::Type1.new: :$!enc, :$!face;
@@ -164,13 +167,15 @@ class PDF::Font::Loader::FreeType {
     }
 
     method !unicode-cmap {
+        my $CMapName = :name('p6-cmap-' ~ $.font-name);
         my $dict = {
             :Type( :name<CMap> ),
-              :CIDSystemInfo{
-                  :Ordering<Identity>,
-                    :Registry($.font-name),
-                    :Supplement(0),
-                },
+            :$CMapName,
+            :CIDSystemInfo{
+                :Ordering<Identity>,
+                :Registry($.font-name),
+                :Supplement(0),
+            },
         };
 
         my $to-unicode := $!encoder.to-unicode;
@@ -204,7 +209,7 @@ class PDF::Font::Loader::FreeType {
         }
 
         my $writer = PDF::Writer.new;
-        my $cmap-name = $writer.write: :name('pdf-font-p6-' ~ $.font-name);
+        my $cmap-name = $writer.write: $CMapName;
         my $postscript-name = $writer.write: :literal($.font-name);
 
         my $decoded = qq:to<--END-->.chomp;
@@ -344,9 +349,9 @@ class PDF::Font::Loader::FreeType {
                         $str = '';
                     }
                 }
-                $str ~= $char-code.chr;
-                $prev-idx = $this-idx;
             }
+            $str ~= $char-code.chr;
+            $prev-idx = $this-idx;
         }
 
         @chunks.push: $str

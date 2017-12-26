@@ -1,3 +1,6 @@
+Release 0.1.7
+    - fix kern method
+
 Release 0.1.6
     - Add FontDescriptor dictionary required fields:
           ItalicAngle, StemV, CapHeight, XHeight,
