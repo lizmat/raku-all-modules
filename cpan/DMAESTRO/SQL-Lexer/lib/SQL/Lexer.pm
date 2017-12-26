@@ -3,7 +3,7 @@ use v6;
 
 # largely based on https://ronsavage.github.io/SQL/sql-2003-2.bnf
 
-grammar Keyword {
+grammar Keyword:ver<0.1.1> {
     token keyword               { <non-reserved-word> | <reserved-word> }
 
     token non-reserved-word {
@@ -512,7 +512,7 @@ grammar Keyword {
     }
 }
 
-grammar Lexer is Keyword is export {
+grammar Lexer:ver<0.2.0> is Keyword is export {
     my Str $oq;
 
     regex ascii-digit           { <:N> & <:Block(｢Basic Latin｣)> }
@@ -604,13 +604,13 @@ grammar Lexer is Keyword is export {
     rule time-literal { TIME <time-string> }
     rule timestamp-literal { TIMESTAMP <timestamp-string> }
     token date-string {
-        $<opening-quote>=<quote> <unquoted-date-string> $<opening-quote>
+        $<opening-quote>=<quote> <unquoted-date-string> {} $($<opening-quote>)
     }
     token time-string {
-        $<opening-quote>=<quote> <unquoted-time-string> $<opening-quote>
+        $<opening-quote>=<quote> <unquoted-time-string> {} $($<opening-quote>)
     }
     token timestamp-string {
-        $<opening-quote>=<quote> <unquoted-timestamp-string> $<opening-quote>
+        $<opening-quote>=<quote> <unquoted-timestamp-string> {} $($<opening-quote>)
     }
     token unquoted-date-string      { <date-value> }
     token unquoted-time-string      { <time-value> <time-zone-interval>? }
@@ -619,15 +619,15 @@ grammar Lexer is Keyword is export {
         <years-value> <minus-sign> <months-value> <minus-sign> <days-value>
     }
     token time-value {
-        <hours-value> <minus-sign> <minutes-value> <minus-sign> <seconds-value>
+        <hours-value> <colon> <minutes-value> <colon> <seconds-value>
     }
     token time-zone-interval {
-        <sign> <hours value> <colon> <minutes value>
+        <sign> <hours-value> <colon> <minutes-value>
     }
 
     rule interval-literal { INTERVAL <sign>? <interval-string> <interval-qualifier> }
     token interval-string {
-        $<opening-quote>=<quote> <unquoted-interval-string> $<opening-quote>
+        $<opening-quote>=<quote> <unquoted-interval-string> {} $($<opening-quote>)
     }
     token unquoted-interval-string  { <sign>? [ <year-month-literal> | <day-time-literal> ] }
     token year-month-literal { <years-value> | [ <years-value> <minus-sign> ]? <months-value> }
@@ -728,6 +728,13 @@ grammar Lexer is Keyword is export {
     # not in the SQL2003 bnf
     regex backquote                         { '`' }
     token quoted-label                      { <backquote> <regular-identifier> <backquote> }
+
+    token variable                          {
+        [ <system-variable-sigil> | <session-variable-sigil> ]
+        <regular-identifier>
+    }
+    regex system-variable-sigil             { '@@' }
+    regex session-variable-sigil            { '@' }
 }
 
 # some tokens not yet implemented

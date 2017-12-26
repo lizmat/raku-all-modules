@@ -1,6 +1,6 @@
 # SQL::Lexer #
 
-** Under Construction **
+** Under Construction - Pull requests welcome **
 
 ## Description ##
 
@@ -40,6 +40,9 @@ lexical constructs of SQL.
 * `char-sting-literal`
 * `datetime-literal`
 * `interval-literal`
+* `date-string`
+* `time-string`
+* `timestamp-string`
 * `boolean-literal`
 
 ### Operators ###
@@ -63,3 +66,7 @@ lexical constructs of SQL.
 * `keyword`
 * `non-reserved-word`
 * `reserved-word`
+
+=== Other ===
+
+* `variable`
