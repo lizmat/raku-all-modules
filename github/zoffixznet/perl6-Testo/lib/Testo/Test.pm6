@@ -1,8 +1,4 @@
 unit package Testo::Test;
-
-use RakudoPrereq v2016.10.177.g.9409.d.68, # TWEAK added
-    'Testo::Test module requires Rakudo v2016.11 or newer';
-
 use Testo::Test::Result;
 
 sub desc-perl (Mu $v) {

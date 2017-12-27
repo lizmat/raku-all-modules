@@ -8,8 +8,8 @@ my &colored = sub {
 }();
 
 has UInt:D $.group-level = 0;
-has $.out = $*OUT;
-has $.err = $*ERR;
+has $.out = $*OUT.open: :w, :!out-buffer;
+has $.err = $*ERR.open: :w, :!out-buffer;
 has $!count = 0;
 
 method !indents { "\c[SPACE]" x 4*$!group-level }

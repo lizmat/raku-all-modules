@@ -1,11 +1,9 @@
 {
     "perl"         : "6.c",
     "name"         : "Testo",
-    "version"      : "1.003003",
+    "version"      : "1.003004",
     "description"  : "Perl 6 Testing Done Right",
-    "depends"      : [
-        "RakudoPrereq"
-    ],
+    "depends"      : [],
     "test-depends" : [ ],
     "provides"     : {
         "Testo" : "lib/Testo.pm6",
