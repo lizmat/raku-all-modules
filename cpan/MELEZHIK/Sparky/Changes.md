@@ -1,3 +1,9 @@
+# 0.0.24
+
+- Sparky modules support
+- Skip bootstrap by using `bootstrap: false` in sparky.yaml file
+- Ssh private key hotfix 
+
 # 0.0.23
 
 - remove old debug code 

@@ -7,7 +7,9 @@ state $DIR;
 state $MAKE-REPORT;
 
 state %CONFIG;
-state $BUILD_STATE;
+state $SPARKY-BUILD-STATE;
+state $SPARKY-PROJECT;
+state $SPARKY-BUILD-ID;
 
 sub MAIN (
   Str  :$dir = "$*CWD",
@@ -22,16 +24,11 @@ sub MAIN (
 
   my $project = $dir.IO.basename;
 
+  $SPARKY-PROJECT = $project;
+
   my $reports-dir = "$dir/../.reports/$project".IO.absolute;
 
-  my %config = Hash.new;
-
-  if "$dir/sparky.yaml".IO ~~ :f {
-
-    %config = load-yaml(slurp "$dir/sparky.yaml");
-    %CONFIG = %config;
-
-  }
+  my %config = read-config($dir);
 
   mkdir $dir;
 
@@ -64,6 +61,8 @@ sub MAIN (
   
     $sth.finish;
   
+    $SPARKY-BUILD-ID = $build_id;
+
     say "RUN BUILD $project" ~ '@' ~ $build_id;
 
   } else {
@@ -104,8 +103,8 @@ sub MAIN (
     $sparrowdo-run ~= " --ssh_user=" ~ %sparrowdo-config<ssh_user>;
   }
 
-  if  %config<ssh_private_key> {
-    $sparrowdo-run ~= " --ssh_private_key=" ~ %config<ssh_private_key>;
+  if  %sparrowdo-config<ssh_private_key> {
+    $sparrowdo-run ~= " --ssh_private_key=" ~ %sparrowdo-config<ssh_private_key>;
   }
 
   if %sparrowdo-config<ssh_port> {
@@ -124,25 +123,31 @@ sub MAIN (
     $sparrowdo-run ~= " --verbose";
   }
 
+  %sparrowdo-config<bootstrap> = True unless %sparrowdo-config<bootstrap>:exists;
+
+  if  %sparrowdo-config<bootstrap> {
+    $sparrowdo-run ~= " --bootstrap";
+  }
+
   if $make-report {
     my $report-file = "$reports-dir/build-$build_id.txt";
-    shell("$sparrowdo-run --task_run=directory" ~ '@path=' ~  "/var/data/sparky/$project --bootstrap 1>$report-file" ~ ' 2>&1');
+    shell("$sparrowdo-run --task_run=directory" ~ '@path=' ~  "/var/data/sparky/$project 1>$report-file" ~ ' 2>&1');
     shell("echo >> $report-file && cd $dir && $sparrowdo-run --cwd=/var/data/sparky/$project 1>>$report-file" ~ ' 2>&1');
   } else{
-    shell("$sparrowdo-run --task_run=directory" ~ '@path=' ~  "/var/data/sparky/$project --bootstrap"  ~ ' 2>&1');
+    shell("$sparrowdo-run --task_run=directory" ~ '@path=' ~  "/var/data/sparky/$project"  ~ ' 2>&1');
     shell("echo && cd $dir && $sparrowdo-run --cwd=/var/data/sparky/$project" ~ ' 2>&1');
   }
+
 
   if $make-report {
     $dbh.do("UPDATE builds SET state = 1 WHERE id = $build_id");
     say "BUILD SUCCEED $project" ~ '@' ~ $build_id;
-    $BUILD_STATE="OK";
+    $SPARKY-BUILD-STATE="OK";
   } else {
-    $BUILD_STATE="OK";
+    $SPARKY-BUILD-STATE="OK";
     say "BUILD SUCCEED <$project>";
 
   }
-
 
   CATCH {
 
@@ -152,11 +157,11 @@ sub MAIN (
         if $make-report {
           say "BUILD FAILED $project" ~ '@' ~ $build_id;
           $dbh.do("UPDATE builds SET state = -1 WHERE id = $build_id");
-          $BUILD_STATE="FAILED";
+          $SPARKY-BUILD-STATE="FAILED";
 
         } else {
           say "BUILD FAILED <$project>";
-          $BUILD_STATE="FAILED";
+          $SPARKY-BUILD-STATE="FAILED";
         }
       }
 
@@ -237,29 +242,80 @@ sub get-dbh ( $dir ) {
 
 }
 
+sub read-config ( $dir ) {
+
+  my %config = Hash.new;
+
+  if "$dir/sparky.yaml".IO ~~ :f {
+    my $yaml-str = slurp "$dir/sparky.yaml";
+    $yaml-str ~~ s:g/'%' BUILD '-' ID '%'/$SPARKY-BUILD-ID/  if $SPARKY-BUILD-ID;
+    $yaml-str ~~ s:g/'%' BUILD '-' STATE '%'/$SPARKY-BUILD-STATE/ if $SPARKY-BUILD-STATE;
+    $yaml-str ~~ s:g/'%' PROJECT '%'/$SPARKY-PROJECT/ if $SPARKY-PROJECT;
+    %config = load-yaml($yaml-str);
+    
+  }
+
+  return %config;
+
+}
+
 LEAVE {
 
-  my $project = $DIR.IO.basename;
+  # Run Sparky plugins
+
+  my %config =  read-config($DIR);
+
+  if  %config<plugins> {
+    my $i =  %config<plugins>.iterator;
+    for 1 .. %config<plugins>.elems {
+      my $plg = $i.pull-one;
+      my $plg-name = $plg.keys[0];
+      my %plg-params = $plg{$plg-name}<parameters>;
+      my $run-scope = $plg{$plg-name}<run_scope> || 'anytime'; 
+
+      #say "$plg-name, $run-scope, $SPARKY-BUILD-STATE";
+      if ( $run-scope eq "fail" and $SPARKY-BUILD-STATE ne "FAILED" ) {
+        next;
+      }
+
+      if ( $run-scope eq "success" and $SPARKY-BUILD-STATE ne "OK" ) {
+        next;
+      }
+
+      say "Load Sparky plugin $plg-name ...";
+      require ::($plg-name); 
+      say "Run Sparky plugin $plg-name ...";
+      ::($plg-name ~ '::&run')(
+          { 
+            project => $SPARKY-PROJECT, 
+            build-id => $SPARKY-BUILD-ID,  
+            build-state => $SPARKY-BUILD-STATE,
+          }, 
+          %plg-params
+      );
+  
+    }
+  }
 
   say ">>>>>>>>>>>>>>>>>>>>>>>>>>>";
   say "BUILD SUMMARY";
-  say "STATE: $BUILD_STATE";
-  say "PROJECT: $project";
-  say "CONFIG: " ~ Dump(%CONFIG, :color(!$MAKE-REPORT));
+  say "STATE: $SPARKY-BUILD-STATE";
+  say "PROJECT: $SPARKY-PROJECT";
+  say "CONFIG: " ~ Dump(%config, :color(!$MAKE-REPORT));
   say ">>>>>>>>>>>>>>>>>>>>>>>>>>>";
 
 
   # run downstream project
-  if %CONFIG<downstream> {
+  if %config<downstream> {
   
-    say "SCHEDULE BUILD for DOWNSTREAM project <" ~ %CONFIG<downstream> ~ "> ... \n";
+    say "SCHEDULE BUILD for DOWNSTREAM project <" ~ %config<downstream> ~ "> ... \n";
 
-    my $downstream_dir = ("$DIR/../" ~ %CONFIG<downstream>).IO.absolute;
+    my $downstream_dir = ("$DIR/../" ~ %config<downstream>).IO.absolute;
 
     if $MAKE-REPORT {
       shell(
         'sparky-runner.pl6' ~ 
-        " --marker=$project" ~ 
+        " --marker=$SPARKY-PROJECT" ~ 
         " --dir=" ~ $downstream_dir ~
         " --make-report" ~ 
         ' &'
@@ -267,7 +323,7 @@ LEAVE {
     } else {
       shell(
         'sparky-runner.pl6' ~ 
-        " --marker=$project" ~ 
+        " --marker=$SPARKY-PROJECT" ~ 
         " --dir=" ~ $downstream_dir ~
         ' &'
       ); 

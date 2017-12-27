@@ -122,6 +122,14 @@ to _any remote host_ setting Sparrowdo related parameters in the `sparky.yaml` f
 
 You can read about the all [available parameters](https://github.com/melezhik/sparrowdo#sparrowdo-client-command-line-parameters) in Sparrowdo documentation.
 
+# Skip bootstrap
+
+Sparrowdo bootstrap takes a while, if you don't need bootstrap ( sparrow client is already installed at a target host )
+use `bootstrap: false` option:
+
+    sparrowdo:
+      bootstrap: false
+
 # Purging old builds
 
 To remove old build set `keep_builds` parameter in `sparky.yaml`:
@@ -168,6 +176,124 @@ And the by setting `is_downstream` field to `true` at the downstream project `sp
     $ nano ~/.sparky/projects/downstream-project/sparky.yaml
 
     is_downstream: true
+
+# Sparky plugins
+
+Sparky plugins are extensions points to add extra functionality to Sparky builds.
+
+These are Perl6 modules get run _after_ a Sparky project finishes or in other words when a build is completed.
+
+To use Sparky plugins you should:
+
+* Install plugins as Perl6 modules
+
+* Configure plugins in project's `sparky.yaml` file
+
+## Install Sparky plugins
+
+You should install a module on the same server where you run Sparky at. For instance:
+
+    $ zef install Sparky::Plugin::Email # Sparky plugin to send email notifications
+
+## Configure Sparky
+
+In project's `sparky.yaml` file define plugins section, it should be list of Plugins and its configurations.
+
+For instance:
+
+    $ cat sparky.yaml
+
+    plugins:
+      - Sparky::Plugin::Email:
+        parameters:
+          subject: "I finished"
+          to: "happy@user.email"
+          text: "here will be log"
+      - Sparky::Plugin::Hello:
+        parameters:
+          name: Sparrow
+
+## Creating Sparky plugins
+
+Technically speaking  Sparky plugins should be just Perl6 modules. 
+
+For instance, for mentioned module Sparky::Plugin::Email we might have this header lines:
+
+    use v6;
+
+    unit module Sparky::Plugin::Hello;
+
+
+That is it.
+
+The module should have `run` routine which is invoked when Sparky processes a plugin:
+
+    our sub run ( %config, %parameters ) {
+
+    }
+
+As we can see the `run` routine consumes its parameters as Perl6 Hash, these parameters are defined at mentioned `sparky.yaml` file,
+at plugin `parameters:` section, so this is how you might handle them:
+
+    sub run ( %config, %parameters ) {
+
+      say "Hello " ~ %parameters<name>;
+
+    }
+
+You can use `%config` Hash to access Sparky guts:
+
+* `%config<project>`      - the project name
+* `%config<build-id>`     - the build number of current project build
+* `%cofig<build-state>`   - the state of the current build
+
+For example:
+
+    sub run ( %config, %parameters ) {
+
+      say "build id is: " ~ %parameters<build-id>;
+
+    }
+
+Alternatively you may pass _some_ predefined parameters plugins:
+
+* %PROJECT% - equivalent of `%config<project>`
+* %BUILD-STATE% - equivalent of `%config<build-state>`
+* %BUILD-ID% - equivalent of `%config<build-id>`
+
+For example:
+
+
+    $ cat sparky.yaml
+
+    plugins:
+      - Sparky::Plugin::Hello:
+        parameters:
+          name: Sparrow from project %PROJECT%
+
+## Limit plugin run scope
+
+You can defined _when_ to run plugin, here are 3 run scopes:
+
+* `anytime` - run plugin irrespectively of a build state. This is default value
+* `success` - run plugin only if build has succeeded
+* `fail`    - run plugin only if build has  failed
+
+Scopes are defined at `run_scope:` parameter:
+
+
+      - Sparky::Plugin::Hello:
+        run_scope: fail
+        parameters:
+          name: Sparrow
+
+
+## An example Sparky plugins
+
+An example Sparky plugins are:
+
+* [Sparky::Plugin::Hello](https://github.com/melezhik/sparky-plugin-hello)
+* [Sparky::Plugin::Notify::Email](https://github.com/melezhik/sparky-plugin-notify-email)
 
 # Command line client
 

@@ -63,7 +63,7 @@ if $engine ~~ /:i sqlite/ {
           id          SERIAL,
           project     varchar(255),
           state       int,
-          dt datetime default current_timestamp
+          dt timestamp default CURRENT_TIMESTAMP
       )
       STATEMENT
 
