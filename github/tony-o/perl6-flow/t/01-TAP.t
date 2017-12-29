@@ -1,6 +1,6 @@
-use Flow::Plugins::TAP;
-
 use Test;
+use lib 'lib';
+use Flow::Plugins::TAP;
 
 plan 5;
 

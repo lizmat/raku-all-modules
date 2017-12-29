@@ -1,5 +1,5 @@
-#flow
-##a pp6 implementation of prove with the ability to adapt to _newer_ methods of testing
+# flow
+## a pp6 implementation of prove with the ability to adapt to _newer_ methods of testing
 
 [![Build Status](https://travis-ci.org/tony-o/perl6-flow.svg?branch=master)](https://travis-ci.org/tony-o/perl6-flow)
 
@@ -7,20 +7,20 @@
 
 with `flow`, there isn't any need to translate your test files into TAP as long as there is a `::Plugin` available for how you write your tests.
 
-#current state
+# current state
 
 `flow` ships with only parsing `TAP` output, there are other testing harnesses out there but they're not widely used if at all.
 
 `flow` is being released in the environment to try and help test the TAP output parsing and provide a speedier alternative to plain `prove` (`prove -j9` is faster on my system for modules with very few tests/scripts but `prove` isn't commonly run this way by package installers)
 
-#`flow` vs `prove`
+# `flow` vs `prove`
 
 Here is the benchmark for `Bailador` module - chosen since it has a medium level of testing -
 
-###Script
+### Script
 
 ```perl6
-#!/usr/bin/env perl6
+# !/usr/bin/env perl6
 
 use Bench;
 
@@ -36,7 +36,7 @@ $b.cmpthese(500, {
 });
 ```
 
-###Benchmark
+### Benchmark
 
 ```
 tonyo@mbp:~/projects/benchmark/Bailador$ ./prove-vs-flow.pl6
@@ -52,13 +52,13 @@ Timing 500 iterations of flow, prove...
            ---------------------------------
 ```
 
-#what is being worked on now
+# what is being worked on now
 
 * interface changes
 * having the tests stream live results instead of just the end result 
 * more configuration options
 
-#usage
+# usage
 
 Current directory:
 
@@ -68,7 +68,7 @@ Some other directory or directories:
 
 `flow test [<dir>]`
 
-#installation
+# installation
 
 `zef install flow`
 
@@ -76,6 +76,6 @@ or
 
 `panda install flow`
 
-#license
+# license
 
 [WTFPL](http://www.wtfpl.net/about/)

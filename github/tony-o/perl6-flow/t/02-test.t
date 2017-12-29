@@ -1,5 +1,6 @@
-use Flow::App;
 use Test;
+use lib 'lib';
+use Flow::App;
 
 plan 3;
 
