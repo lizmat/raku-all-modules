@@ -32,7 +32,7 @@
   "provides": {
     "JSON::Marshal": "lib/JSON/Marshal.pm"
   },
-  "version": "0.0.13",
+  "version": "0.0.14",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],

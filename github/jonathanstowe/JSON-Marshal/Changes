@@ -1,3 +1,5 @@
+v0.0.14		Thu 28 Dec 14:52:18 GMT 2017
+	* Fix for marshalling of class and aggregate type objects
 v0.0.13		Sat Jul 22 09:26:54 2017 +0100 
 	* Fix version matching from @ugexe in #6
 v0.0.12		Sat Apr 22 15:32:30 2017 +0100 

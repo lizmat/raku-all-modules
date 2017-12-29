@@ -57,7 +57,7 @@ above.
 
 use JSON::Name;
 
-module JSON::Marshal:ver<0.0.13>:auth<github:jonathanstowe> {
+module JSON::Marshal:ver<0.0.14>:auth<github:jonathanstowe> {
 
     use JSON::Fast:ver(v0.4+);
 
@@ -107,7 +107,10 @@ module JSON::Marshal:ver<0.0.13>:auth<github:jonathanstowe> {
         $value;
     }
 
-    multi sub _marshal(%obj, Bool :$skip-null) returns Hash {
+    multi sub _marshal(Associative:U $, Bool :$skip-null --> Nil ) {
+        Nil;
+    }
+    multi sub _marshal(%obj, Bool :$skip-null --> Hash ) {
         my %ret;
 
         for %obj.kv -> $key, $value {
@@ -117,7 +120,10 @@ module JSON::Marshal:ver<0.0.13>:auth<github:jonathanstowe> {
         %ret;
     }
 
-    multi sub _marshal(@obj, Bool :$skip-null) returns Array {
+    multi sub _marshal(Positional:U $, Bool :$skip-null --> Nil ) {
+        Nil;
+    }
+    multi sub _marshal(@obj, Bool :$skip-null --> Array) {
         my @ret;
 
         for @obj -> $item {
@@ -126,7 +132,11 @@ module JSON::Marshal:ver<0.0.13>:auth<github:jonathanstowe> {
         @ret;
     }
 
-    multi sub _marshal(Mu $obj, Bool :$skip-null) returns Hash {
+    multi sub _marshal(Mu:U $, Bool :$skip-null --> Nil ) {
+        Nil;
+    }
+
+    multi sub _marshal(Mu:D $obj, Bool :$skip-null --> Hash ) {
         my %ret;
         my %local-attrs =  $obj.^attributes(:local).map({ $_.name => $_.package });
         for $obj.^attributes -> $attr {
@@ -155,7 +165,7 @@ module JSON::Marshal:ver<0.0.13>:auth<github:jonathanstowe> {
         %ret;
     }
 
-    sub serialise-ok(Attribute $attr, $value, Bool $skip-null ) returns Bool {
+    sub serialise-ok(Attribute $attr, $value, Bool $skip-null --> Bool ) {
         my $rc = True;
         if $skip-null || ( $attr ~~ SkipNull ) {
             if $attr.type ~~ Associative|Positional {
@@ -168,7 +178,7 @@ module JSON::Marshal:ver<0.0.13>:auth<github:jonathanstowe> {
         $rc;
     }
 
-    sub marshal(Any $obj, Bool :$skip-null) returns Str is export {
+    sub marshal(Any $obj, Bool :$skip-null --> Str ) is export {
         my $ret = _marshal($obj, :$skip-null);
         to-json($ret);
     }
