@@ -1,0 +1,21 @@
+{
+    "perl"         : "6.c",
+    "name"         : "p6lert",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001002",
+    "description"  : "Command line utility to fetch alerts.perl6.org alerts",
+    "tags"         : [ "command line" ],
+    "depends"      : [
+        "JSON::Fast",
+        "WWW::P6lerts"
+    ],
+    "test-depends" : [
+        "JSON::Fast",
+        "Testo",
+        "Test::When"
+    ],
+    "provides"     : {
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source" : "https://github.com/zoffixznet/perl6-p6lert.git"}
+}

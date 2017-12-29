@@ -1,0 +1,91 @@
+#!/usr/bin/env perl6
+
+use WWW::P6lert;
+use JSON::Fast;
+
+my $color = (try require Terminal::ANSIColor) === Nil
+    && {''} || ::('Terminal::ANSIColor::EXPORT::DEFAULT::&color');
+
+my @severities := <info low normal high critical>;
+subset Severity of Str where {
+    not .defined
+    or $_ ∈ @severities
+    or say "--block-on severity must be one of @severities.perl()" and exit 1
+}
+
+my $alerts := WWW::P6lert.new: |(:api-url($_) with %*ENV<WWW_P6LERT_API_URL>);
+
+my %*SUB-MAIN-OPTS = :named-anywhere;
+multi MAIN (UInt:D $alert-id, Bool:D :$no-color = False) {
+    with $alerts.alert: $alert-id {
+        print-alert $_, :$no-color;
+    }
+    else -> $_ {
+        when WWW::P6lert::X::NotFound { say "No such alert" }
+        say "Could not fetch alert: " ~ .exception.message;
+    }
+}
+multi MAIN (
+    Severity :$block-on,
+    Str:D    :$config = ($*HOME || '.'.IO).add('.p6lert.conf').absolute,
+    Bool:D   :$no-color = False,
+) {
+    my %conf := load-config-from $config.IO;
+
+    with $alerts.since: %conf<last-fetch-time> -> @alerts {
+        %conf<last-fetch-time> = DateTime.now.Instant.to-posix.head.Int;
+        $config.IO.spurt: to-json %conf;
+
+        my %s = @severities.antipairs;
+        my Bool:D $block-exit = False;
+        for @alerts {
+            $block-exit = True if $block-on and %s{$block-on} ≤ %s{.severity};
+            print-alert $_, :$no-color;
+        }
+        @alerts or say "No new alerts";
+
+        if $block-exit {
+            loop {
+                print $color('bold yellow on_black')
+                    ~ "\nSeen important alerts. Proceed? [y/N]: "
+                    ~ $color('reset');
+                $*OUT.flush;
+                with $*IN.get.lc {
+                    when <y yes>.any { exit   }
+                    when <n no>.any  { exit 1 }
+                    say ｢Please enter "yes" or "no"｣;
+                }
+            }
+        }
+    }
+    else {
+        say "Could not fetch alerts: " ~ $^e.exception.message;
+    }
+}
+
+sub load-config-from (IO::Path:D $config) {
+    return %(:0last-fetch-time) if $config.absolute eq $*SPEC.devnull;
+
+    unless $config.IO.e {
+        say "Creating new config file $config\n";
+        $config.IO.spurt: '{ "last-fetch-time": 0 }';
+    }
+    from-json slurp $config;
+}
+
+sub print-alert (WWW::P6lert::Alert:D $_, Bool:D :$no-color = False) {
+    temp $color = {''} if $no-color;
+
+    say $color(.severity eq 'critical'
+          ?? 'bold red on_black'
+          !! .severity eq 'info'
+              ?? 'bold blue on_black'
+              !! 'bold white on_black'
+        ) ~ (join ' | ', "ID#{.id}", DateTime.new(.time),
+          "severity: {.severity}")
+        ~ $color('reset');
+    say join ' | ', ("affects: {.affects}" if .affects),
+        "posted by: {.creator}";
+    say $color('bold white on_black') ~ .alert ~ $color('reset');
+    say();
+}
