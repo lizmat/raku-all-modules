@@ -21,7 +21,8 @@ multi sub MAIN(
 	Bool :l($lib), Bool :b($blib), Bool :$timer = False, Int :j($jobs) = 1,
 	Bool :$ignore-exit = False, Bool :$trap = False, Bool :v($verbose) = False,
 	Bool :$shuffle = False, Str :$err = 'stderr', Bool :$reverse = False,
-	Str :e($exec), Str :$harness, Str :$reporter, :I($incdir), Bool :$loose = False,
+	Str :e($exec), Str :$harness, Str :$reporter, :I($incdir),
+	Bool :$loose = $*PERL.compiler.version before 2017.09,
 	*@files) {
 	@files = 't' if not @files;
 	die "Invalid value '$err' for --err\n" if $err ne any('stderr','merge','ignore');
@@ -63,7 +64,7 @@ multi sub MAIN(Bool :$help!) {
 	}
 }
 multi sub MAIN(Bool :$version!) {
-	say "prove6 0.0.1 with TAP::Harness 0.001 on $*PERL";
+	say "prove6 0.0.3 on $*PERL";
 }
 
 =begin pod
