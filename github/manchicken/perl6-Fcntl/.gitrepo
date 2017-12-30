@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/manchicken/perl6-Fcntl.git
+	branch = master
+	commit = b21489c85ef21061929df0a117c18729d24aa62a
+	parent = ebb8da405871abd37e27262bf38d997fd15bb9a4
+	cmdver = 0.4.0

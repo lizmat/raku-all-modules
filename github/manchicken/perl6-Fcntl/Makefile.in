@@ -1,0 +1,37 @@
+SRC=src
+LD=-lc
+all : bin lib pm
+
+bin : resources/bin/P6-Fcntl%EXE%
+lib : resources/lib/libjust-for-tests%SO%
+pm : lib/Fcntl.pm
+
+resources/bin/P6-Fcntl%EXE% : $(SRC)/P6-Fcntl.c
+	%CC% -I $(SRC) %CCFLAGS% %CCOUT%resources/bin/P6-Fcntl%EXE% $(SRC)/P6-Fcntl.c
+
+resources/lib/libjust-for-tests%SO% : $(SRC)/just-for-tests%O% $(SRC)/P6-Fcntl%O%
+	%LD% %LDSHARED% -v %LDFLAGS% \
+		%LDOUT%resources/lib/libjust-for-tests%SO% \
+		$(SRC)/just-for-tests%O% \
+		$(SRC)/P6-Fcntl%O% \
+		$(LD)
+
+$(SRC)/just-for-tests%O% : $(SRC)/just-for-tests.c $(SRC)/P6-Fcntl.c
+	%CC% -I $(SRC) -v -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/just-for-tests%O% $(SRC)/just-for-tests.c
+	%CC% -I $(SRC) -v -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/P6-Fcntl%O% $(SRC)/P6-Fcntl.c
+
+lib/Fcntl.pm : src/Fcntl.prefix.pm resources/bin/P6-Fcntl%EXE%
+	@cp src/Fcntl.prefix.pm Fcntl.pm
+	resources/bin/P6-Fcntl%EXE%
+	@mv Fcntl.pm lib/Fcntl.pm
+
+test : all
+	@prove -e"perl6 -I lib" -v t
+
+clean :
+	@rm -f $(SRC)/*.o
+	@rm -f resources/bin/P6-Fcntl%EXE%
+	@rm -f resources/lib/libsimplestruct%SO%
+
+realclean : clean
+	@rm -f Makefile
