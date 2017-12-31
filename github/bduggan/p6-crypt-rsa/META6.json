@@ -6,7 +6,8 @@
     "description" : "Pure Perl6 implementation of RSA public key encryption.",
     "depends" : [ ],
     "provides" : {
-        "Crypt::RSA" : "lib/Crypt/RSA.pm6"
+        "Crypt::RSA" : "lib/Crypt/RSA.pm6",
+        "Crypt::RSA::Key" : "lib/Crypt/RSA/Key.pm6"
     },
     "authors" : [ "Brian Duggan" ],
     "source-url" : "git://github.com/bduggan/p6-crypt-rsa.git"
