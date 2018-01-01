@@ -51,19 +51,52 @@ use nqp;
 
 unit module JSON::Fast;
 
+multi sub to-surrogate-pair(Int $ord) {
+    my int $base = $ord - 0x10000;
+    my $top = $base +& 0b111111111110000000000 +> 10;
+    my $bottom = $base +&         0b1111111111;
+    "\\u" ~ (0xD800 + $top).base(16) ~ "\\u" ~ (0xDC00 + $bottom).base(16);
+}
+
+multi sub to-surrogate-pair(Str $input) {
+    to-surrogate-pair(nqp::ordat($input, 0));
+}
+
 sub str-escape(str $text is copy) {
-    $text .= subst('\\', '\\\\', :g);
+    return $text unless $text ~~ /:m <[\x[5C] \x[22] \x[00]..\x[1F] \x[10000]..\x[10FFFF]]>/;
+
+    $text .= subst(/ :m <[\\ "]> /,
+        -> $/ {
+            my str $str = $/.Str;
+            if $str eq "\\" {
+                "\\\\"
+            } elsif nqp::ordat($str, 0) == 92 {
+                "\\\\" ~ tear-off-combiners($str, 0)
+            } elsif $str eq "\"" {
+                "\\\""
+            } else {
+                "\\\"" ~ tear-off-combiners($str, 0)
+            }
+        }, :g);
+    $text .= subst(/ <[\x[10000]..\x[10FFFF]]> /,
+        -> $/ {
+            to-surrogate-pair($/.Str);
+        }, :g);
+    $text .= subst(/ :m <[\x[10000]..\x[10FFFF]]> /,
+        -> $/ {
+            to-surrogate-pair($/.Str) ~ tear-off-combiners($/.Str, 0);
+        }, :g);
     for flat 0..8, 11, 12, 14..0x1f -> $ord {
         my str $chr = chr($ord);
         if $text.contains($chr) {
             $text .= subst($chr, '\\u' ~ $ord.fmt("%04x"), :g);
         }
     }
-    return $text.subst("\r\n", '\\r\\n',:g)\
+    $text = $text.subst("\r\n", '\\r\\n',:g)\
                 .subst("\n", '\\n',     :g)\
                 .subst("\r", '\\r',     :g)\
-                .subst("\t", '\\t',     :g)\
-                .subst('"',  '\\"',     :g);
+                .subst("\t", '\\t',     :g);
+    $text;
 }
 
 sub to-json($obj is copy, Bool :$pretty = True, Int :$level = 0, Int :$spacing = 2, Bool :$sorted-keys = False) is export {
@@ -163,8 +196,14 @@ my sub nom-ws(str $text, int $pos is rw) {
 
 my sub tear-off-combiners(str $text, int $pos) {
     my str $combinerstuff = nqp::substr($text, $pos, 1);
-    my Uni $parts = $combinerstuff.NFD;
-    return $parts[1..*].map({$^ord.chr()}).join()
+    my @parts = $combinerstuff.NFD.list;
+    return @parts.skip(1).map({
+            if $^ord > 0x10000 {
+                to-surrogate-pair($ord);
+            } else {
+                $ord.chr()
+            }
+        }).join()
 }
 
 my Mu $hexdigits := nqp::hash(
@@ -243,6 +282,7 @@ my sub parse-string(str $text, int $pos is rw) {
                 } else {
                     nqp::bindkey($treacherous, $treach_ord, 1)
                 }
+                $pos++;
             } else {
                 die "don't understand escape sequence '\\{ nqp::substr($text, $pos, 1) }' at $pos";
             }
@@ -257,7 +297,7 @@ my sub parse-string(str $text, int $pos is rw) {
     if $startcombiner {
         $raw = $startcombiner ~ $raw
     }
-    if not $has_treacherous {
+    if not $has_treacherous and not $has_hexcodes {
         my @a;
         my @b;
         if nqp::existskey($escape_counts, "n") and nqp::existskey($escape_counts, "r") {
@@ -276,44 +316,43 @@ my sub parse-string(str $text, int $pos is rw) {
             @a.push('\\"'); @b.push('"');
         }
         if nqp::existskey($escape_counts, "/") {
-            @a.push("\\/"); @b.push("/");
+            @a.push("/"), @b.push("\\/");
         }
         if nqp::existskey($escape_counts, "\\") {
             @a.push("\\\\"); @b.push("\\");
         }
-
         $raw .= trans(@a => @b) if @a;
-    } else {
-        $raw = $raw.subst(/ \\ (<-[uU]>) /,
+    } elsif $has_hexcodes or nqp::elems($escape_counts) {
+        $raw = $raw.subst(/ \\ (<-[uU]>) || [\\ (<[uU]>) (<[a..f 0..9 A..F]> ** 3)]+ %(<[a..f 0..9 A..F]>) (:m <[a..f 0..9 A..F]>) /,
             -> $/ {
-                if nqp::ordat($0.Str, 0) == 117 || nqp::ordat($0.Str, 0) == 85 {
-                    $has_hexcodes++;
-                    "\\u" # to be replaced in the next step.
-                } elsif nqp::existskey($escapees, nqp::ordat($0.Str, 0)) {
-                    my str $replacement = nqp::atkey($escapees, nqp::ordat($0.Str, 0));
-                    $replacement ~ tear-off-combiners($0.Str, 0);
+                if $0.elems > 1 || $0.Str eq "u" || $0.Str eq "U" {
+                    my str @caps = $/.caps>>.value>>.Str;
+                    my $result = $/;
+                    my str $endpiece = "";
+                    if my $lastchar = nqp::chr(nqp::ord(@caps.tail)) ne @caps.tail {
+                        $endpiece = tear-off-combiners(@caps.tail, 0);
+                        @caps.pop;
+                        @caps.push($lastchar);
+                    }
+                    my int @hexes;
+                    for @caps -> $u, $first, $second {
+                        @hexes.push(:16($first ~ $second).self);
+                    }
+
+                    CATCH {
+                        die "Couldn't decode hexadecimal unicode escape { $result.Str } at { $startpos + $result.from }";
+                    }
+
+                    utf16.new(@hexes).decode ~ $endpiece;
                 } else {
-                    die "stumbled over unexpected escape code \\{ chr(nqp::ordat($0.Str, 0)) } at { $startpos + $/.from }";
+                    if nqp::existskey($escapees, nqp::ordat($0.Str, 0)) {
+                        my str $replacement = nqp::atkey($escapees, nqp::ordat($0.Str, 0));
+                        $replacement ~ tear-off-combiners($0.Str, 0);
+                    } else {
+                        die "stumbled over unexpected escape code \\{ chr(nqp::ordat($0.Str, 0)) } at { $startpos + $/.from }";
+                    }
                 }
             }, :g);
-    }
-    if $has_hexcodes {
-        $raw = $raw.subst(/ [\\ <[uU]> (<[a..z 0..9 A..Z]> ** 3)]+ %(<[a..z 0..9 A..Z]>) (:m <[a..z 0..9 A..Z]>) /,
-            -> $/ {
-                my str @caps = $/.caps>>.value>>.Str;
-                my str $endpiece = "";
-                if my $lastchar = nqp::chr(nqp::ord(@caps.tail)) ne @caps.tail {
-                    $endpiece = tear-off-combiners(@caps.tail, 0);
-                    @caps.pop;
-                    @caps.push($lastchar);
-                }
-                my int @hexes;
-                for @caps -> $first, $second {
-                    @hexes.push(:16($first ~ $second));
-                }
-
-                utf16.new(@hexes).decode ~ $endpiece;
-            }, :x($has_hexcodes));
     }
 
     $pos = $pos - 1;
