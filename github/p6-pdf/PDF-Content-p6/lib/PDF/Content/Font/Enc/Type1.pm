@@ -22,6 +22,9 @@ class PDF::Content::Font::Enc::Type1 {
 	    when 'sym' {
 		$encoding = $PDF::Content::Font::Encodings::sym-encoding;
 	    }
+	    when 'std' {
+		$encoding = $PDF::Content::Font::Encodings::std-encoding;
+	    }
 	    when 'zapf' {
 		$!glyphs = $PDF::Content::Font::Encodings::zapf-glyphs;
 		$encoding = $PDF::Content::Font::Encodings::zapf-encoding;

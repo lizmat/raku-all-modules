@@ -20,7 +20,7 @@ class Build {
         die "unable to load encodings: $encoding-path"
             unless $encoding-path ~~ :e;
 
-        my %encodings = :mac(array[uint16].new(0 xx 256)), :win(array[uint16].new(0 xx 256));
+        my %encodings = :mac(array[uint16].new(0 xx 256)), :win(array[uint16].new(0 xx 256)), :std(array[uint16].new(0 xx 256));
 
         for $encoding-path.lines {
             next if /^ '#'/ || /^ $/;
@@ -38,14 +38,15 @@ class Build {
             my $chr = $<char>.Str;
 
             for :mac(@enc[1]),
-                :win(@enc[2]) {
+                :win(@enc[2]),
+                :std(@enc[0]) {
                 my ($scheme, $byte) = .kv;
                 next unless $byte.defined;
                 my $enc := %encodings{$scheme};
                 $enc[$byte] = $chr.ord;
             }
         }
-        for <mac win> -> $type {
+        for <mac win std> -> $type {
             say "    #-- {$type.uc} encoding --#";
             say "    constant \${$type}-encoding = {%encodings{$type}.perl};";
             say "";
@@ -77,9 +78,7 @@ class Build {
         say "    #-- {$type.uc} encoding --#";
         say "    constant \${$type}-glyphs = {%glyphs.perl};"
             if $glyphs;
-              
         say "    constant \${$type}-encoding = {@encodings.perl};";
-            
         say ""
     }
 

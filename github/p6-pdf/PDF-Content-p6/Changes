@@ -5,6 +5,7 @@ Release 0.1.0
 - Fixed assignment to page boxes, e.g.: $page.art-box
 - Work-around PDF WordSpacing restrictions in multiple-byte
   encoded fonts (issue #2)
+- Add 'std' (StandardEncoding) encoding table
 
 Release 0.0.9
 - PDF::Content::Font::Enc::Type1 - Optimised encoding to always
