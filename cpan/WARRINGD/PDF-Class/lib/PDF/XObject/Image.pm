@@ -127,7 +127,6 @@ class PDF::XObject::Image
             $stream = buf8.new: PDF::IO::Filter.encode(
                 self.decoded, :%dict,
             );
-            warn { :img(self), :$stream, :%dict }.perl;
         }
 
         my PDF::Content::Image::PNG $png .= new: :$hdr, :$stream;

@@ -1,3 +1,5 @@
+Release 0.0.3
+- Correct attribute name: Bound -> Bounds in PDF::Function::Stitching
 Release 0.0.2
 - Fix syntax of PDF::Content::XObject['PS'] and PDF::Font::Type3
 Release 0.0.1

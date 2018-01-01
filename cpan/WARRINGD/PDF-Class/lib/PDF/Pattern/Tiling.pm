@@ -3,7 +3,7 @@ use v6;
 use PDF::DAO::Stream;
 use PDF::Pattern;
 
-#| /ShadingType 2 - Axial
+#| /ShadingType 1 - Tiling
 
 my class Tiling
     is PDF::DAO::Stream
