@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose:ver<1.0.3>;
+unit class Term::Choose:ver<1.1.0>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -27,11 +27,36 @@ constant KEY_q         = 0x71;
 has @!orig_list;
 has @!list;
 
-has %!defaults;
-has %!o;
-
-has WINDOW $!win;
+has WINDOW $.win;
 has Bool   $!reset_win;
+
+subset PInt     of Int where * > 0;
+subset Int_gt_1 of Int where * > 1;
+subset Int_012  of Int where * == 0|1|2;
+subset Int_01   of Int where * == 0|1;
+
+has Int_01   $.beep        = 0;
+has Int_01   $.index       = 0;
+has Int_01   $.mouse       = 0;
+has Int_01   $.order       = 1;
+has Int_01   $.page        = 1;
+has Int_012  $.justify     = 0;
+has Int_012  $.layout      = 1;
+has PInt     $.keep        = 5;
+has PInt     $.ll;
+has PInt     $.max-height;
+has Int_gt_1 $.max-width;
+has UInt     $.default     = 0;
+has UInt     $.pad         = 2;
+has UInt     $.pad-one-row; # ###
+has List     $.lf;
+has List     $.mark;
+has List     $.no-spacebar;
+has Str      $.prompt;
+has Str      $.empty       = '<empty>';
+has Str      $.undef       = '<undef>';
+
+has %!o;
 
 has Int   $!term_w;
 has Int   $!term_h;
@@ -39,7 +64,6 @@ has Int   $!avail_w;
 has Int   $!avail_h;
 has Int   $!col_w;
 has Int   @!length;
-has Int   $!layout;
 has Int   $!rest;
 has Int   $!print_pp_row;
 has Str   $!pp_line_fmt;
@@ -52,97 +76,11 @@ has Array $!marked;
 has Bool  $!ext_mouse;
 
 
-method new () { # to add 'new' to the error-message from BUILD/_valid_options
-    self.bless( defaults => %_ );
-}
-
-submethod BUILD( :$defaults ) {
-    %!defaults := $defaults.Hash;
-    $!win = %!defaults<win>:delete // WINDOW;
-    _validate_options( %!defaults );
-    _set_defaults( %!defaults );
-}
-
 method num-threads {
     return %*ENV<TC_NUM_THREADS> if %*ENV<TC_NUM_THREADS>;
+    # return Kernel.cpu-cores;      # Perl 6.d
     my $proc = run( 'nproc', :out );
     return $proc.out.get.Int || 2;
-}
-
-
-sub _set_defaults ( %opt ) {
-    %opt<beep>          //= 0;
-    %opt<default>       //= 0;
-    %opt<empty>         //= '<empty>';
-    %opt<index>         //= 0;
-    %opt<justify>       //= 0;
-    %opt<keep>          //= 5;
-    %opt<layout>        //= 1;
-    %opt<lf>            //= List;
-    %opt<ll>            //= Int;
-    %opt<mark>          //= List;
-    %opt<max-height>    //= Int;
-    %opt<max-width>     //= Int;
-    %opt<mouse>         //= 0;
-    %opt<no-spacebar>   //= List;
-    %opt<order>         //= 1;
-    %opt<pad>           //= 2;
-    %opt<page>          //= 1;
-    %opt<undef>         //= '<undef>';
-}
-
-
-sub _valid_options {
-    return {
-        beep            => '<[ 0 1 ]>',
-        index           => '<[ 0 1 ]>',
-        mouse           => '<[ 0 1 ]>',
-        order           => '<[ 0 1 ]>',
-        page            => '<[ 0 1 ]>',
-        justify         => '<[ 0 1 2 ]>',
-        layout          => '<[ 0 1 2 ]>',
-        keep            => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
-        ll              => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
-        max-height      => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
-        max-width       => '<[ 2 .. 9 ]>|<[ 1 .. 9 ]><[ 0 .. 9 ]>+',
-        default         => '<[ 0 .. 9 ]>+',
-        pad             => '<[ 0 .. 9 ]>+',
-        pad-one-row     => '<[ 0 .. 9 ]>+',
-        lf              => 'List',
-        mark            => 'List',
-        no-spacebar     => 'List',
-        empty           => 'Str',
-        prompt          => 'Str',
-        undef           => 'Str',
-    };
-};
-
-sub _validate_options ( %opt ) {
-    my $valid = _valid_options(); # %
-    for %opt.kv -> $key, $value {
-        when $valid{$key}:!exists {
-            die "'$key' is not a valid option name";
-        }
-        when ! $value.defined {
-            next;
-        }
-        when $valid{$key} eq 'Str' {
-             next;
-        }
-        when $valid{$key} eq 'List' {
-            die "$key => {$value.perl} is not an List." if ! $value.isa( List );
-            die "$key => invalid list element"          if $value.grep( { $_ !~~ UInt } );
-            die "$key => too many list elemnts."        if $key eq 'lf' and $value.elems > 2;
-        }
-        default {
-            when ! $value.isa( Int ) {
-                die "$key => {$value.perl} is not an integer.";
-            }
-            when $value !~~ / ^ <{$valid{$key}}> $ / {
-                die "$key => '$value' is not a valid value.";
-            }
-        }
-    }
 }
 
 
@@ -251,24 +189,49 @@ method !_end_term {
 }
 
 
-method !_choose ( @!orig_list, %!o, Int $multiselect ) {
+method !_choose (
+    @!orig_list,
+    % (
+        Int_01  :$beep        = $!beep,
+        Int_01  :$index       = $!index,
+        Int_01  :$mouse       = $!mouse,
+        Int_01  :$order       = $!order,
+        Int_01  :$page        = $!page,
+        Int_012  :$justify     = $!justify,
+        Int_012  :$layout      = $!layout,
+        PInt     :$keep        = $!keep,
+        PInt     :$ll          = $!ll,
+        PInt     :$max-height  = $!max-height,
+        Int_gt_1 :$max-width   = $!max-width,
+        UInt     :$default     = $!default,
+        UInt     :$pad         = $!pad,
+        UInt     :$pad-one-row = $!pad-one-row, # ###
+        List     :$lf          = $!lf,
+        List     :$mark        = $!mark,
+        List     :$no-spacebar = $!no-spacebar,
+        Str      :$prompt      = $!prompt,
+        Str      :$empty       = $!empty,
+        Str      :$undef       = $!undef
+    ),
+    Int $multiselect ) {
     if ! @!orig_list.elems {
         return;
     }
     CATCH {
         endwin();
     }
-    _validate_options( %!o );
-    for %!defaults.kv -> $key, $value {
-        %!o{$key} //= $value;
-    }
+    %!o = :$beep, :$index, :$mouse, :$order, :$page, :$justify, :$layout, :$keep, :$ll, :$max-height, :$max-width,
+              :$default, :$pad, :$lf, :$mark, :$no-spacebar, :$prompt, :$empty, :$undef;
     if ! %!o<prompt>.defined {
         %!o<prompt> = $multiselect.defined ?? 'Your choice' !! 'Continue with ENTER';
     }
-    if ! %!o<pad-one-row>.defined {
-        %!o<pad-one-row> = %!o<pad>;
+# ###
+    if $pad-one-row.defined {
+        %!o<prompt> ~= ' ["pad-one-row" removed - complaints to cuer2s@gmail.com, subject: "pad-one-row"]';
     }
-    self!_init_term;
+# ###
+
+    self!_init_term();
     self!_wr_first_screen( $multiselect );
     my Int $pressed;
 
@@ -282,7 +245,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
             }
             %!o<default> = $!rc2idx[ $!p[R] ][ $!p[C] ]; #
             if $!marked.elems {
-                %!o<mark> = self!_marked_rc2idx;
+                %!o<mark> = self!_marked_rc2idx();
             }
             self!_wr_first_screen( $multiselect );
             next GET_KEY;
@@ -308,7 +271,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
             #}
             when KEY_DOWN | KEY_j {
                 if ! $!rc2idx[ $!p[R]+1 ] || ! $!rc2idx[ $!p[R]+1 ][ $!p[C] ] {
-                    self!_beep;
+                    self!_beep();
                 }
                 else {
                     $!p[R]++;
@@ -320,13 +283,13 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                         $!row_top    = $!row_bottom + 1;
                         $!row_bottom = $!row_bottom + $!avail_h;
                         $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
-                        self!_wr_screen;
+                        self!_wr_screen();
                     }
                 }
             }
             when KEY_UP | KEY_k {
                 if $!p[R] == 0 {
-                    self!_beep;
+                    self!_beep();
                 }
                 else {
                     $!p[R]--;
@@ -338,13 +301,13 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                         $!row_bottom = $!row_top - 1;
                         $!row_top    = $!row_top - $!avail_h;
                         $!row_top    = 0 if $!row_top < 0;
-                        self!_wr_screen;
+                        self!_wr_screen();
                     }
                 }
             }
             when KEY_TAB {
                 if $!p[R] == $!rc2idx.end && $!p[C] == $!rc2idx[ $!p[R] ].end {
-                    self!_beep;
+                    self!_beep();
                 }
                 else {
                     if $!p[C] < $!rc2idx[ $!p[R] ].end {
@@ -363,14 +326,14 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                             $!row_top    = $!row_bottom + 1;
                             $!row_bottom = $!row_bottom + $!avail_h;
                             $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
-                            self!_wr_screen;
+                            self!_wr_screen();
                         }
                     }
                 }
             }
             when KEY_BACKSPACE | CONTROL_H | KEY_BTAB {
                 if $!p[C] == 0 && $!p[R] == 0 {
-                    self!_beep;
+                    self!_beep();
                 }
                 else {
                     if $!p[C] > 0 {
@@ -389,14 +352,14 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                             $!row_bottom = $!row_top - 1;
                             $!row_top    = $!row_top - $!avail_h; #
                             $!row_top    = 0 if $!row_top < 0;
-                            self!_wr_screen;
+                            self!_wr_screen();
                         }
                     }
                 }
             }
             when KEY_RIGHT | KEY_l {
                 if $!p[C] == $!rc2idx[ $!p[R] ].end {
-                    self!_beep;
+                    self!_beep();
                 }
                 else {
                     $!p[C]++;
@@ -406,7 +369,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
             }
             when KEY_LEFT | KEY_h {
                 if $!p[C] == 0 {
-                    self!_beep;
+                    self!_beep();
                 }
                 else {
                     $!p[C]--;
@@ -416,18 +379,18 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
             }
             when KEY_PPAGE | CONTROL_B {
                 if $!row_top <= 0 {
-                    self!_beep;
+                    self!_beep();
                 }
                 else {
                     $!row_top    = $!avail_h * ( $!p[R] div $!avail_h - 1 );
                     $!row_bottom = $!row_top + $!avail_h - 1;
                     $!p[R] -= $!avail_h; # after $!row_top
-                    self!_wr_screen;
+                    self!_wr_screen();
                 }
             }
             when KEY_NPAGE | CONTROL_F {
                 if $!row_bottom >= $!rc2idx.end {
-                    self!_beep;
+                    self!_beep();
                 }
                 else {
                     $!row_top    = $!avail_h * ( $!p[R] div $!avail_h + 1 );
@@ -447,12 +410,12 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                             $!p[R] = $!rc2idx.end - 1;
                         }
                     }
-                    self!_wr_screen;
+                    self!_wr_screen();
                 }
             }
             when KEY_HOME | CONTROL_A {
                 if $!p[C] == 0 && $!p[R] == 0 {
-                    self!_beep;
+                    self!_beep();
                 }
                 else {
                     $!p[R] = 0;
@@ -460,13 +423,13 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                     $!row_top    = 0;
                     $!row_bottom = $!row_top + $!avail_h - 1;
                     $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
-                    self!_wr_screen;
+                    self!_wr_screen();
                 }
             }
             when KEY_END | CONTROL_E {
                 if %!o<order> == 1 && $!rest {
                     if $!p[R] == $!rc2idx.end - 1 && $!p[C] == $!rc2idx[ $!p[R] ].end {
-                        self!_beep;
+                        self!_beep();
                     }
                     else {
                         $!p[R] = $!rc2idx.end - 1;
@@ -479,19 +442,19 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                         else {
                             $!row_bottom   = $!rc2idx.end;
                         }
-                        self!_wr_screen;
+                        self!_wr_screen();
                     }
                 }
                 else {
                     if $!p[R] == $!rc2idx.end && $!p[C] == $!rc2idx[ $!p[R] ].end {
-                        self!_beep;
+                        self!_beep();
                     }
                     else {
                         $!p[R] = $!rc2idx.end;
                         $!p[C] = $!rc2idx[ $!p[R] ].end;
                         $!row_top    = $!rc2idx.elems - ( $!rc2idx.elems % $!avail_h || $!avail_h );
                         $!row_bottom = $!rc2idx.end;
-                        self!_wr_screen;
+                        self!_wr_screen();
                     }
                 }
             }
@@ -510,7 +473,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                 }
                 else {
                     $!marked[ $!p[R] ][ $!p[C] ] = True;
-                    return %!o<index> || %!o<ll> ?? self!_marked_rc2idx.List !! @!orig_list[self!_marked_rc2idx()];
+                    return %!o<index> || %!o<ll> ?? self!_marked_rc2idx().List !! @!orig_list[self!_marked_rc2idx()]; #
                 }
             }
             when KEY_SPACE {
@@ -525,7 +488,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                         }
                     }
                     if $locked {
-                        self!_beep;
+                        self!_beep();
                     }
                     else {
                         $!marked[ $!p[R] ][ $!p[C] ] = ! $!marked[ $!p[R] ][ $!p[C] ];
@@ -550,12 +513,12 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                         }
                     }
                     if %!o<no-spacebar> {
-                        self!_marked_idx2rc( %!o<no-spacebar>, False );
+                        self!_marked_idx2rc( $no-spacebar, False );
                     }
-                    self!_wr_screen;
+                    self!_wr_screen();
                 }
                 else {
-                    self!_beep;
+                    self!_beep();
                 }
             }
             when KEY_MOUSE {
@@ -613,7 +576,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                 next GET_KEY;
             }
             default {
-                self!_beep;
+                self!_beep();
             }
         }
         nc_refresh();
@@ -631,16 +594,15 @@ method !_mouse_xy2pos ( Int $abs_mouse_x, Int $abs_mouse_y ) {
     if $mouse_row > $!rc2idx.end {
         return;
     }
-    my Int $pad = $!rc2idx.end == 0 ?? %!o<pad-one-row> !! %!o<pad>;
     my Int $row = $mouse_row + $!row_top;
     my Int $matched_col;
     my Int $end_prev_col = 0;
     COL: for ^$!rc2idx[$row] -> $col {
         my Int $end_this_col = $end_prev_col
                              + ( $!rc2idx.end == 0 ?? print-columns( @!list[$!rc2idx[0][$col]] ) !! $!col_w )
-                             + $pad;
+                             + %!o<pad>;
         if $col == 0 {
-            $end_this_col -= $pad div 2;
+            $end_this_col -= %!o<pad> div 2;
         }
         if $col == $!rc2idx[$row].end && $end_this_col > $!avail_w {
             $end_this_col = $!avail_w;
@@ -700,7 +662,7 @@ method !_pos_to_default {
 }
 
 
-method !_wr_first_screen( Int $multiselect ) {
+method !_wr_first_screen ( Int $multiselect ) {
     $!term_w = getmaxx( $!win );
     $!term_h = getmaxy( $!win );
     ( $!avail_w, $!avail_h ) = ( $!term_w, $!term_h );
@@ -711,14 +673,14 @@ method !_wr_first_screen( Int $multiselect ) {
         die "Terminal width to small!";
     }
     $!print_pp_row = %!o<page>;
-    self!_prepare_new_copy_of_list;
+    self!_prepare_new_copy_of_list();
     @!prompt_lines = ();
-    self!_prepare_prompt;
+    self!_prepare_prompt();
     if %!o<max-height> && %!o<max-height> < $!avail_h {
         $!avail_h = %!o<max-height>;
     }
-    $!layout = %!o<layout>;
-    self!_list_index2rowcol;
+    %!o<tmp_layout> = %!o<layout>;
+    self!_list_index2rowcol();
     if %!o<page> {
         self!_set_pp_print_fmt;
     }
@@ -728,10 +690,10 @@ method !_wr_first_screen( Int $multiselect ) {
     $!p = [ 0, 0 ];
     $!marked = [];
     if %!o<mark> && $multiselect {
-        self!_marked_idx2rc( %!o<mark>, True );
+        self!_marked_idx2rc( %!o<mark>, True ); #
     }
     if %!o<default>.defined && %!o<default> <= @!list.end {
-        self!_pos_to_default;
+        self!_pos_to_default();
     }
     clear();
     if %!o<prompt> ne '' {
@@ -739,7 +701,7 @@ method !_wr_first_screen( Int $multiselect ) {
             mvaddstr( $row, 0, @!prompt_lines[$row] );
         }
     }
-    self!_wr_screen;
+    self!_wr_screen();
     nc_refresh();
 }
 
@@ -762,7 +724,7 @@ method !_set_pp_print_fmt {
     }
 }
 
-method !_wr_screen {
+method !_wr_screen () {
     move( @!prompt_lines.elems, 0 );
     clrtobot();
     if $!print_pp_row {
@@ -789,7 +751,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         if $col > 0 {
             for ^$col -> $c { #
                 $lngth += print-columns( @!list[ $!rc2idx[$row][$c] ] );
-                $lngth += %!o<pad-one-row>;
+                $lngth += %!o<pad>;
             }
         }
         attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
@@ -806,7 +768,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         mvaddstr(
             $row - $!row_top + @!prompt_lines.elems,
             ( $!col_w + %!o<pad> ) * $col,
-            self!_pad_str_to_colwidth: $i
+            self!_pad_str_to_colwidth( $i )
         );
     }
     attroff( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
@@ -835,16 +797,16 @@ method !_pad_str_to_colwidth ( Int $i ) {
 }
 
 
-method !_list_index2rowcol {
+method !_list_index2rowcol () {
     $!rc2idx = [];
     if $!col_w + %!o<pad> >= $!avail_w {
-        $!layout = 2;
+        %!o<tmp_layout> = 2;
     }
-    my Str $all_in_first_row;
-    if $!layout == 0|1 {
+    my Str $all_in_first_row = '';
+    if %!o<tmp_layout> == 0|1 {
         for ^@!list -> $i {
             $all_in_first_row ~= @!list[$i];
-            $all_in_first_row ~= ' ' x %!o<pad-one-row> if $i < @!list.end;
+            $all_in_first_row ~= ' ' x %!o<pad> if $i < @!list.end;
             if print-columns( $all_in_first_row ) > $!avail_w {
                 $all_in_first_row = '';
                 last;
@@ -854,7 +816,7 @@ method !_list_index2rowcol {
     if $all_in_first_row {
         $!rc2idx[0] = [ ^@!list ];
     }
-    elsif $!layout == 2 {
+    elsif %!o<tmp_layout> == 2 {
         for ^@!list -> $i {
             $!rc2idx[$i][0] = $i;
         }
@@ -863,7 +825,7 @@ method !_list_index2rowcol {
         my Int $col_with_pad_w = $!col_w + %!o<pad>;
         my Int $tmp_avail_w = $!avail_w + %!o<pad>;
         # auto_format
-        if $!layout == 1 {
+        if %!o<tmp_layout> == 1 {
             my Int $tmc = @!list.elems div $!avail_h;
             $tmc++ if @!list.elems % $!avail_h;
             $tmc *= $col_with_pad_w;
@@ -916,7 +878,7 @@ method !_list_index2rowcol {
 
 
 method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
-    if $!layout == 2 {
+    if %!o<tmp_layout> == 2 {
         for $indexes.list -> $i {
             $!marked[$i][0] = $yesno;
         }
@@ -950,7 +912,7 @@ method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
     }
 }
 
-method !_marked_rc2idx {
+method !_marked_rc2idx () {
     my Int @idx;
     if %!o<order> == 1 {
         for ^$!rc2idx[0] -> $col {
@@ -1196,7 +1158,7 @@ From broad to narrow: 0 > 1 > 2
 
 =head2 lf
 
-If I<prompt> lines are folded, the option I<lf> allows to insert spaces at beginning of the folded lines.
+If I<prompt> lines are folded, the option I<lf> allows one to insert spaces at beginning of the folded lines.
 
 The option I<lf> expects a list with one or two elements:
 
@@ -1271,13 +1233,6 @@ If the output has more than one row and more than one column:
 =head2 pad
 
 Sets the number of whitespaces between columns. (default: 2)
-
-Allowed values: 0 or greater
-
-=head2 pad-one-row
-
-Sets the number of whitespaces between elements: I<pad-one-row> is used instead of I<pad>, if all items separated
-with I<pad-one-row> fit in one row. (default: value of the option I<pad>)
 
 Allowed values: 0 or greater
 

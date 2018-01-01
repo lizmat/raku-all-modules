@@ -213,7 +213,7 @@ From broad to narrow: 0 > 1 > 2
 lf
 --
 
-If *prompt* lines are folded, the option *lf* allows to insert spaces at beginning of the folded lines.
+If *prompt* lines are folded, the option *lf* allows one to insert spaces at beginning of the folded lines.
 
 The option *lf* expects a list with one or two elements:
 
@@ -294,13 +294,6 @@ Sets the number of whitespaces between columns. (default: 2)
 
 Allowed values: 0 or greater
 
-pad-one-row
------------
-
-Sets the number of whitespaces between elements: *pad-one-row* is used instead of *pad*, if all items separated with *pad-one-row* fit in one row. (default: value of the option *pad*)
-
-Allowed values: 0 or greater
-
 page
 ----
 
@@ -368,3 +361,4 @@ LICENSE AND COPYRIGHT
 Copyright (C) 2016-2017 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
+

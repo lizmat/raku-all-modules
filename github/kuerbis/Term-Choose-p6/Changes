@@ -1,6 +1,14 @@
 Revision history for Term::Choose
 
 
+1.1.0   2017-12-31
+        - Removed option "pad-one-row"
+
+1.0.4   2017-12-31
+        - Refactoring parameter handling
+        - Bugfix in "all_in_first_row"
+        - Improved language in POD
+
 1.0.3   2017-08-29
         - Added tags to the META6.json file
 
@@ -58,10 +66,10 @@ Revision history for Term::Choose
         - Pod: num-threads
 
 0.126   2017-05-15
-        - Added option pad_one_row
+        - Added option pad-one-row
 
 0.125   2017-05-14
-        - Removed option pad_one_row
+        - Removed option pad-one-row
         - Code refactoring
 
 0.124   2017-05-13
