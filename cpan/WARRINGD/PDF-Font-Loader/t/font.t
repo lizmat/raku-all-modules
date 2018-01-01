@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 15;
+plan 16;
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Font::Loader;
 
@@ -19,6 +19,7 @@ is $times.encode("A♥♣✔˚B", :str), "A\x[1]B", '.encode(...) sanity';
 is $vera.stringwidth("RVX", :!kern), 2064, 'stringwidth :!kern';
 is $vera.stringwidth("RVX", :kern), 2064 - 55, 'stringwidth :kern';
 is-deeply $vera.kern("RVX" ), (['R', -55, 'VX'], 2064 - 55), '.kern(...)';
+is-deeply $vera.kern('ABCD' ), (['AB', -18, 'CD'], 2820), '.kern(...)';
 
 my $times-dict = $times.to-dict;
 my $descriptor-dict = $times-dict<FontDescriptor>:delete;

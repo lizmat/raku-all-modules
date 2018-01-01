@@ -1,3 +1,7 @@
+Release 0.1.8
+    - support for PDF::Render::Cairo font (WIP)
+
+
 Release 0.1.7
     - fix kern method
 

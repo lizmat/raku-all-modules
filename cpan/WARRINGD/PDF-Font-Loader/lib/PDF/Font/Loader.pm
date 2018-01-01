@@ -1,6 +1,6 @@
 use v6;
 
-class PDF::Font::Loader:ver<0.1.7> {
+class PDF::Font::Loader:ver<0.1.8> {
 
     use Font::FreeType;
     use Font::FreeType::Face;
@@ -17,9 +17,14 @@ class PDF::Font::Loader:ver<0.1.7> {
 
     multi method load-font(Str :$file!, |c) is default {
         my $free-type = Font::FreeType.new;
-        my $font-stream = $file.IO.open(:r, :bin).slurp: :bin;
+        my Blob $font-stream = $file.IO.open(:r, :bin).slurp: :bin;
         my $face = $free-type.face($font-stream);
         self.load-font(:$face, :$font-stream, |c);
+    }
+
+    multi method load-font(:$face!, Str :$font-stream!, |c) {
+        PDF::Font::Loader::FreeType.new( :$face, :font-stream($_), |c)
+            given $font-stream.encode: "latin-1";
     }
 
     multi method load-font(TrueTypish :$face!, TrueTypeData :$font-stream!, |c) {
@@ -43,11 +48,20 @@ class PDF::Font::Loader:ver<0.1.7> {
     sub find-font(|c) is export(:find-font) {
         $?CLASS.find-font(|c);
     }
-    subset Weight  of Str where /^[thin|extralight|light|book|regular|medium|semibold|bold|extrabold|black]$/;
+    subset Weight  of Str where /^[thin|extralight|light|book|regular|medium|semibold|bold|extrabold|black|[1..9]00]$/;
     subset Stretch of Str where /^[[ultra|extra]?[condensed|expanded]]|normal$/;
     subset Slant   of Str where /^[normal|oblique|italic]$/;
-    method find-font(Str $family-name, Weight :$weight='medium', Stretch :$stretch='normal', Slant :$slant='normal') {
+    method find-font(Str $family-name,
+                     Weight :$weight is copy = 'medium',
+                     Stretch :$stretch = 'normal',
+                     Slant :$slant = 'normal') {
         my $pat = $family-name;
+        with $weight {
+            # convert CSS/PDF numeric weights for fontconfig
+            #      000  100        200   300  400     500    600      700  800       900
+            $_ =  <thin extralight light book regular medium semibold bold extrabold black>[$0]
+                if /^(0..9)00$/;
+        }
         $pat ~= ':weight=' ~ $weight  unless $weight eq 'medium';
         $pat ~= ':width='  ~ $stretch unless $stretch eq 'normal';
         $pat ~= ':slant='  ~ $slant   unless $slant eq 'normal';

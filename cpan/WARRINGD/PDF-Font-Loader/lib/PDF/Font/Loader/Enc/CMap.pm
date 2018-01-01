@@ -1,7 +1,9 @@
 use v6;
 use PDF::DAO::Stream;
+use PDF::Font::Loader::Enc;
 
-class PDF::Font::Loader::Enc::CMap {
+class PDF::Font::Loader::Enc::CMap
+    is PDF::Font::Loader::Enc {
     has uint32 @!to-unicode;
 
     submethod TWEAK(PDF::DAO::Stream :$cmap!) {

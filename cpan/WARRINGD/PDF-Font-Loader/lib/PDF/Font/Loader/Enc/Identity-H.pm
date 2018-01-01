@@ -1,4 +1,6 @@
-class PDF::Font::Loader::Enc::Identity-H {
+use PDF::Font::Loader::Enc;
+class PDF::Font::Loader::Enc::Identity-H
+    is PDF::Font::Loader::Enc {
 
     use Font::FreeType::Face;
     use Font::FreeType::Native;
