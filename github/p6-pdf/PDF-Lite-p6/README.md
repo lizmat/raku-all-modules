@@ -152,13 +152,13 @@ The companion module PDF::Font::Loader can be used to access a wider range of fo
 
 ```
     use PDF::Lite;
-    use PDF::Font::Loader;
+    use PDF::Font::Loader :load-font;
     my $pdf = PDF::Lite.new;
     $pdf.media-box = [0, 0, 400, 120];
     my $page = $pdf.add-page;
-    my $noto = PDF::Font::Loader.load-font: :file<t/fonts/NotoSans-Regular.ttf>;
+    my $noto = load-font( :file<t/fonts/NotoSans-Regular.ttf> );
     # or lookup by font name (requires fontconfig)
-    # $noto = PDF::Font::Loader.load-font: :name<NotoSans-Regular>;
+    # $noto = load-font: :name<NotoSans>;
 
     $page.text: {
         .text-position = [10,100];
@@ -425,7 +425,7 @@ $pdf.page(1).gfx(:&callback).ops;
     - `update` to perform an in-place incremental update of the PDF
     - `Info` to access document meta-data
 
-- [PDF::API6](https://github.com/p6-pdf/PDF-API6) is based on this module (PDF::Lite). Please see the [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a description of available operators and graphics, which are also applicable to this module.
+- Please see the [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a description of available operators and graphics, which are also applicable to this module.
 
 
 

@@ -21,7 +21,7 @@ for @<code> {
 	    sub say(|c) { }
 
             ++$n;
-            todo 'needs PDF::Font to be installed' if $n == 5;
+            todo 'needs PDF::Font::Loader to be installed' if $n == 5;
             todo 'code sample not working from EVAL' if $n == 7;
 	    lives-ok {EVAL $snippet}, 'code sample'
 		or warn "eval error: $snippet";
