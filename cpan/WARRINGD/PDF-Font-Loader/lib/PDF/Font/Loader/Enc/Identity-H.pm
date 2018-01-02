@@ -11,6 +11,7 @@ class PDF::Font::Loader::Enc::Identity-H
     has uint32 @!to-unicode;
     has UInt $.min-index;
     has UInt $.max-index;
+    has Bool $!init;
 
     multi method encode(Str $text, :$str! --> Str) {
         my $hex-string = self.encode($text).decode: 'latin-1';
@@ -31,6 +32,7 @@ class PDF::Font::Loader::Enc::Identity-H
         my FT_Face $struct = $!face.struct;
         my FT_UInt $glyph-idx;
         my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
+        @!to-unicode[$!face.num-glyphs] = 0;
         while $glyph-idx {
             @!to-unicode[ $glyph-idx ] = $char-code;
             $char-code = $struct.FT_Get_Next_Char( $char-code, $glyph-idx);
@@ -38,17 +40,16 @@ class PDF::Font::Loader::Enc::Identity-H
     }
 
     method to-unicode {
-        state $ = self!setup-decoding;
+        $!init //= do { self!setup-decoding; True }
         @!to-unicode;
     }
 
     multi method decode(Str $encoded, :$str! --> Str) {
-        my @to-unicode := self.to-unicode;
-        $encoded.ords.map( -> \hi, \lo {@to-unicode[hi +< 8 + lo]}).grep({$_}).map({.chr}).join;
+        $.decode($encoded).map({.chr}).join;
     }
     multi method decode(Str $encoded --> buf32) {
         my @to-unicode := self.to-unicode;
-        buf16.new: $encoded.ords.map( -> \hi, \lo {@to-unicode[hi +< 8 + lo]}).grep: {$_};
+        buf32.new: $encoded.ords.map( -> \hi, \lo {@to-unicode[hi +< 8 + lo]}).grep: {$_};
     }
 
 }

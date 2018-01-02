@@ -1,6 +1,10 @@
-Release 0.1.8
-    - support for PDF::Render::Cairo font (WIP)
+Release 0.1.9
+    - fix scoping issues with Identity-H encoding
+    - don't compress Type1 fonts. These are already encrypted.
+    - simplify load-font multi-methods
 
+Release 0.1.8
+    support for PDF::Render::Cairo font (WIP)
 
 Release 0.1.7
     - fix kern method

@@ -1,6 +1,6 @@
 use v6;
 
-class PDF::Font::Loader:ver<0.1.8> {
+class PDF::Font::Loader:ver<0.1.9> {
 
     use Font::FreeType;
     use Font::FreeType::Face;
@@ -9,30 +9,30 @@ class PDF::Font::Loader:ver<0.1.8> {
 
     subset TrueTypish of Font::FreeType::Face where .font-format eq 'TrueType'|'CFF';
     subset Type1ish of Font::FreeType::Face where .font-format eq 'Type 1';
-    subset TrueTypeData of Blob where { .subbuf(0,4).decode('latin-1') ne 'ttcf' }
 
     sub load-font(|c) is export(:load-font) {
         $?CLASS.load-font(|c);
     }
 
-    multi method load-font(Str :$file!, |c) is default {
-        my $free-type = Font::FreeType.new;
+    multi method load-font(Str :$file!, |c) {
         my Blob $font-stream = $file.IO.open(:r, :bin).slurp: :bin;
+        self.load-font(:$font-stream, |c);
+    }
+
+    multi method load-font(Blob :$font-stream!, |c) is default {
+        my $free-type = Font::FreeType.new;
         my $face = $free-type.face($font-stream);
-        self.load-font(:$face, :$font-stream, |c);
-    }
-
-    multi method load-font(:$face!, Str :$font-stream!, |c) {
-        PDF::Font::Loader::FreeType.new( :$face, :font-stream($_), |c)
-            given $font-stream.encode: "latin-1";
-    }
-
-    multi method load-font(TrueTypish :$face!, TrueTypeData :$font-stream!, |c) {
-        PDF::Font::Loader::FreeType.new( :$face, :$font-stream, |c);
-    }
-
-    multi method load-font(Type1ish :$face!, TrueTypeData :$font-stream!, |c) {
-        PDF::Font::Loader::Type1.new( :$face, :$font-stream, |c);
+        given $face {
+            when TrueTypish {
+                die "unable to handle TrueType Collections"
+                    if $font-stream.subbuf(0,4).decode('latin-1') eq 'ttcf';
+                PDF::Font::Loader::FreeType.new( :$face, :$font-stream, |c);
+            }
+            when Type1ish {
+                PDF::Font::Loader::Type1.new( :$face, :$font-stream, |c);
+            }
+            default { die "unable to handle font of format {.font-format}"; }
+        }
     }
 
     # resolve font name via fontconfig

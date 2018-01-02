@@ -99,17 +99,14 @@ class PDF::Font::Loader::FreeType {
 
     method !font-file {
         my $decoded = PDF::IO::Blob.new: $!font-stream;
-        my $font-file = PDF::DAO.coerce: :stream{
-            :$decoded,
-            :dict{
-                :Length1($!font-stream.bytes),
-                :Filter( :name<FlateDecode> ),
-            },
-        };
-        $font-file<Subtype> = :name<CIDFontType0C>
+
+        my %dict = :Length1($!font-stream.bytes);
+        %dict<Filter> = :name<FlateDecode>
+            unless self!font-format eq 'Type1';
+        %dict<Subtype> = :name<CIDFontType0C>
             unless self!font-format eq 'TrueType';
 
-        $font-file;
+        PDF::DAO.coerce: :stream{ :$decoded, :%dict, };
     }
 
     sub bit(\n) { 1 +< (n-1) }
@@ -134,11 +131,11 @@ class PDF::Font::Loader::FreeType {
         my $Flags;
         $Flags +|= FixedPitch if $!face.is-fixed-width;
         $Flags +|= Italic if $!face.is-italic;
+        my $CapHeight = (self!char-height( 'X'.ord) || $Ascent * 0.9).round;
+        my $XHeight   = (self!char-height( 'x'.ord) || $Ascent * 0.7).round;
         # estimates for required fields
         my $ItalicAngle = $!face.is-italic ?? -12 !! 0;
         my $StemV = $!face.is-bold ?? 110 !! 80;
-        my $CapHeight = self!char-height( 'X'.ord) || ($Ascent * 0.9).round;
-        my $XHeight = self!char-height( 'x'.ord) || ($Ascent * 0.7).round;
 
         my $dict = {
             :Type( :name<FontDescriptor> ),
