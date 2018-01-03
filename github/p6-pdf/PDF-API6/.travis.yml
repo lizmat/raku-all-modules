@@ -2,7 +2,7 @@ language: perl6
 sudo: false
 perl6:
   - latest
-  - '2017.07'
+  - '2017.08'
 branches:
   except:
     - zen
