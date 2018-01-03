@@ -1,0 +1,27 @@
+{
+  "authors" : [
+    "Spigell"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparky",
+    "TelegramBot"
+  ],
+  "description" : "Sparky plugin to send notifications to telegram chat upon completed tasks",
+  "license" : "Artistic-2.0",
+  "name" : "Sparky::Plugin::Notify::Telegram",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparky::Plugin::Notify::Telegram" : "lib/Sparky/Plugin/Notify/Telegram.pm6"
+  },
+  "resources" : [ ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/Spigell/sparky-plugin-notify-telegram.git",
+  "support" : {
+    "bugtracker" : "https://github.com/Spigell/sparky-plugin-notify-telegram/issues",
+    "source" : "https://github.com/Spigell/sparky-plugin-notify-telegram.git"
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
