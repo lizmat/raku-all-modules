@@ -3,7 +3,7 @@ use Test;
 
 use LWP::Simple;
 
-plan 4;
+plan 5;
 
 if %*ENV<NO_NETWORK_TESTING> {
     diag "NO_NETWORK_TESTING was set";
@@ -23,5 +23,7 @@ my $fh = open($fname);
 ok($fh, 'Opened file handle written by getstore()');
 
 ok $fh.slurp-rest ~~ /Opera \s+ browser/, 'Found pattern in downloaded file';
+
+ok($fh.close, 'Close the temporary file');
 
 ok(unlink($fname), 'Delete the temporary file');
