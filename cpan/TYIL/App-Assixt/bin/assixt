@@ -1,0 +1,19 @@
+#! /usr/bin/env perl6
+
+use v6.c;
+
+use App::Assixt::Commands::Bootstrap::Config;
+use App::Assixt::Commands::Bootstrap::Man;
+use App::Assixt::Commands::Bump;
+use App::Assixt::Commands::Clean;
+use App::Assixt::Commands::Depend;
+use App::Assixt::Commands::Dist;
+use App::Assixt::Commands::Help;
+use App::Assixt::Commands::New;
+use App::Assixt::Commands::Push;
+use App::Assixt::Commands::Test;
+use App::Assixt::Commands::Touch::Bin;
+use App::Assixt::Commands::Touch::Lib;
+use App::Assixt::Commands::Touch::Resource;
+use App::Assixt::Commands::Touch::Test;
+use App::Assixt::Commands::Upload;
