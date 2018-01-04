@@ -1,0 +1,10 @@
+#! /usr/bin/env perl6
+
+use v{{ perl }};
+
+sub MAIN
+{
+	…
+}
+
+{{ vim }}
