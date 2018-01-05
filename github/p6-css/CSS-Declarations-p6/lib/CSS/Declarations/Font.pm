@@ -33,8 +33,8 @@ class CSS::Declarations::Font {
             unless $!style eq 'normal';
 
         $pat ~= ':weight='
-        #    000  100        200   300   400    500    600      700  800       900
-          ~ <thin extralight light book regular medium semibold bold extrabold black>[$!weight div 100]
+        #    000  100        200   300  400     500    600      700  800       900
+          ~ <thin extralight light book regular medium semibold bold extrabold black>[$!weight.substr(0,1)]
             unless $!weight == 400;
 
         # [ultra|extra][condensed|expanded]

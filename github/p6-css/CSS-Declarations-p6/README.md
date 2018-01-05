@@ -1,4 +1,8 @@
 # perl6-CSS-Declarations
+
+<a href="https://travis-ci.org/p6-css/CSS-Declarations-p6"><img src="https://travis-ci.org/p6-css/CSS-Declarations-p6.svg?branch=master"></a>
+ <a href="https://ci.appveyor.com/project/dwarring/CSS-Declarations-p6/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/p6-css/CSS-Declarations-p6?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
+
 CSS::Declarations is a class for parsing and generation of CSS property lists, including box-model, inheritance, and defaults.
 
 
