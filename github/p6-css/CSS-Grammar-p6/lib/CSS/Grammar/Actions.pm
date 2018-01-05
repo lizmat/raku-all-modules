@@ -41,7 +41,7 @@ class CSS::Grammar::Actions
 
     # variable encoding - not yet supported
     has Str $.encoding is rw = 'UTF-8';
-    has Bool $.lax is rw = False;
+    has Bool $.lax = False;
 
     # accumulated warnings
     has X::CSS::Ignored @.warnings;
@@ -268,8 +268,8 @@ class CSS::Grammar::Actions
     method unicode-range($/) {
         my Str ($lo, $hi);
 
-        if $<mask> {
-            my $mask = ~$<mask>;
+        with $<mask> {
+            my $mask = .Str;
             $lo = $mask.subst('?', '0'):g;
             $hi = $mask.subst('?', 'F'):g;
         }
