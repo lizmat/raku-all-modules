@@ -1,6 +1,6 @@
 unit module Verge::RPC;
 
-our $VERSION = '1.0';
+our $VERSION = '0.0.2';
 
 use v6;
 use WWW;
@@ -63,112 +63,178 @@ class Client is export {
   }
   # returns API command
   method !get-command($name) returns Str {
-    my %commands = <addmultisigaddress
-                    addmultisigaddress
-                    backupwallet
-                    backupwallet
-                    createrawtransaction
-                    createrawtransaction
-                    decoderawtransaction
-                    decoderawtransaction
-                    dumpprivkey
-                    dumpprivkey
-                    encryptwallet
-                    encryptwallet
-                    getaccount
-                    getaccount
-                    getaccountaddress
-                    getaccountaddress
-                    getaddressesbyaccount
-                    getaddressesbyaccount
-                    getbalance
-                    getbalance
-                    getblock
-                    getblock
-                    getblockbynumber
-                    getblockbynumber
+    my %commands = <help
+                    help
+                    stop
+                    stop
                     getblockcount
                     getblockcount
-                    getblockhash
-                    getblockhash
                     getconnectioncount
                     getconnectioncount
+                    getpeerinfo
+                    getpeerinfo
                     getdifficulty
                     getdifficulty
                     getgenerate
                     getgenerate
+                    setgenerate
+                    setgenerate
                     gethashespersec
                     gethashespersec
                     getinfo
                     getinfo
-                    getmemorypool
-                    getmemorypool
                     getmininginfo
                     getmininginfo
                     getnewaddress
                     getnewaddress
-                    getrawtransaction
-                    getrawtransaction
-                    getreceivedbyaccount
-                    getreceivedbyaccount
-                    getreceivedbyaddress
-                    getreceivedbyaddress
-                    gettransaction
-                    gettransaction
-                    getwork
-                    getwork
-                    help
-                    help
-                    importprivkey
-                    importprivkey
-                    importaddress
-                    importaddress
-                    keypoolrefill
-                    keypoolrefill
-                    listaccounts
-                    listaccounts
-                    listreceivedbyaccount
-                    listreceivedbyaccount
-                    listreceivedbyaddress
-                    listreceivedbyaddress
-                    listsinceblock
-                    listsinceblock
-                    listtransactions
-                    listtransactions
-                    listunspent
-                    listunspent
-                    move
-                    move
-                    sendfrom
-                    sendfrom
-                    sendmany
-                    sendmany
-                    sendrawtransaction
-                    sendrawtransaction
-                    sendtoaddress
-                    sendtoaddress
+                    getnewpubkey
+                    getnewpubkey
+                    getaccountaddress
+                    getaccountaddress
                     setaccount
                     setaccount
-                    setgenerate
-                    setgenerate
-                    settxfee
-                    settxfee
-                    signmessage
-                    signmessage
-                    signrawtransaction
-                    signrawtransaction
-                    stop
-                    stop
-                    validateaddress
-                    validateaddress
-                    verifymessage
-                    verifymessage
-                    walletlock
-                    walletlock
+                    getaccount
+                    getaccount
+                    getaddressesbyaccount
+                    getaddressesbyaccount
+                    sendtoaddress
+                    sendtoaddress
+                    getreceivedbyaddress
+                    getreceivedbyaddress
+                    getreceivedbyaccount
+                    getreceivedbyaccount
+                    listreceivedbyaddress
+                    listreceivedbyaddress
+                    listreceivedbyaccount
+                    listreceivedbyaccount
+                    backupwallet
+                    backupwallet
+                    keypoolrefill
+                    keypoolrefill
                     walletpassphrase
                     walletpassphrase
                     walletpassphrasechange
-                    walletpassphrasechange>;
+                    walletpassphrasechange
+                    walletlock
+                    walletlock
+                    encryptwallet
+                    encryptwallet
+                    validateaddress
+                    validateaddress
+                    validatepubkey
+                    validatepubkey
+                    getbalance
+                    getbalance
+                    move
+                    movecmd
+                    sendfrom
+                    sendfrom
+                    sendmany
+                    sendmany
+                    addmultisigaddress
+                    addmultisigaddress
+                    getrawmempool
+                    getrawmempool
+                    getblock
+                    getblock
+                    getblockbynumber
+                    getblockbynumber
+                    getrawblockbynumber
+                    getrawblockbynumber
+                    getblockhash
+                    getblockhash
+                    gettransaction
+                    gettransaction
+                    listtransactions
+                    listtransactions
+                    listaddressgroupings
+                    listaddressgroupings
+                    signmessage
+                    signmessage
+                    verifymessage
+                    verifymessage
+                    getwork
+                    getwork
+                    getworkex
+                    getworkex
+                    listaccounts
+                    listaccounts
+                    settxfee
+                    settxfee
+                    getblocktemplate
+                    getblocktemplate
+                    submitblock
+                    submitblock
+                    listsinceblock
+                    listsinceblock
+                    dumpprivkey
+                    dumpprivkey
+                    importprivkey
+                    importprivkey
+                    listunspent
+                    listunspent
+                    getrawtransaction
+                    getrawtransaction
+                    createrawtransaction
+                    createrawtransaction
+                    decoderawtransaction
+                    decoderawtransaction
+                    signrawtransaction
+                    signrawtransaction
+                    sendrawtransaction
+                    sendrawtransaction
+                    getcheckpoint
+                    getcheckpoint
+                    reservebalance
+                    reservebalance
+                    checkwallet
+                    checkwallet
+                    repairwallet
+                    repairwallet
+                    resendtx
+                    resendtx
+                    makekeypair
+                    makekeypair
+                    sendalert
+                    sendalert
+                    getnewstealthaddress
+                    getnewstealthaddress
+                    liststealthaddresses
+                    liststealthaddresses
+                    importstealthaddress
+                    importstealthaddress
+                    sendtostealthaddress
+                    sendtostealthaddress
+                    scanforalltxns
+                    scanforalltxns
+                    scanforstealthtxns
+                    scanforstealthtxns
+                    smsgenable
+                    smsgenable
+                    smsgdisable
+                    smsgdisable
+                    smsglocalkeys
+                    smsglocalkeys
+                    smsgoptions
+                    smsgoptions
+                    smsgscanchain
+                    smsgscanchain
+                    smsgscanbuckets
+                    smsgscanbuckets
+                    smsgaddkey
+                    smsgaddkey
+                    smsggetpubkey
+                    smsggetpubkey
+                    smsgsend
+                    smsgsend
+                    smsgsendanon
+                    smsgsendanon
+                    smsginbox
+                    smsginbox
+                    smsgoutbox
+                    smsgoutbox
+                    smsgbuckets
+                    smsgbuckets>;
       return %commands{$name};
   }
 }

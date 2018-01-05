@@ -2,7 +2,7 @@
     "perl"         : "6.c",
     "name"         : "Verge::RPC::Client",
     "license"      : "Artistic-2.0",
-    "version"      : "0.0.1",
+    "version"      : "0.0.2",
     "description"  : "query Verge transactions, wallet info and more",
     "depends"      : [
         "WWW",
