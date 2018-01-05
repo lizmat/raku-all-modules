@@ -40,9 +40,9 @@ subtest "assixt clean", {
 	put-meta(:%meta);
 
 	# Test
-	ok MAIN("clean", :force);
-	nok "resources/alpha".IO.e;
-	nok get-meta()<provides><Local::Test::Clean::Orphan>:exists;
+	ok MAIN("clean", :force), "Command runs succesful";
+	nok "resources/alpha".IO.e, "Orphan file has been deleted";
+	nok get-meta()<provides><Local::Test::Clean::Orphan>:exists, "Unavailable provides reference has been removed";
 }
 
 subtest "assixt --no-files clean", {
@@ -54,9 +54,9 @@ subtest "assixt --no-files clean", {
 	put-meta(:%meta);
 
 	# Test
-	ok MAIN("clean", :force, :no-files);
-	ok "resources/beta".IO.e;
-	nok get-meta()<provides><Local::Test::Clean::Orphan>:exists;
+	ok MAIN("clean", :force, :no-files), "Command runs succesful";
+	ok "resources/beta".IO.e, "Orphan file was skipped";
+	nok get-meta()<provides><Local::Test::Clean::Orphan>:exists, "Unavailable provides reference has been removed";
 }
 
 subtest "assixt --no-meta clean", {
@@ -68,9 +68,9 @@ subtest "assixt --no-meta clean", {
 	put-meta(:%meta);
 
 	# Test
-	ok MAIN("clean", :force, :no-meta);
-	nok "resources/gamma".IO.e;
-	ok get-meta()<provides><Local::Test::Clean::Orphan>:exists;
+	ok MAIN("clean", :force, :no-meta), "Command runs succesful";
+	nok "resources/gamma".IO.e, "Orphan file has been deleted";
+	ok get-meta()<provides><Local::Test::Clean::Orphan>:exists, "Unaivalable provides reference was skipped";
 }
 
 # vim: ft=perl6 noet

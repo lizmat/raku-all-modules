@@ -67,9 +67,9 @@ multi sub MAIN(
 	mkdir "resources" unless $force && "r".IO.d;
 	mkdir "t" unless $force && "t".IO.d;
 
-	say template("editorconfig", ".editorconfig", context => $config<style>, clobber => $force);
-	say template("gitignore", ".gitignore", clobber => $force) if $config<external><git> && !$no-git;
-	say template("travis.yml", ".travis.yml", clobber => $force) if $config<external><travis> && !$no-travis;
+	template("editorconfig", ".editorconfig", context => $config<style>, clobber => $force);
+	template("gitignore", ".gitignore", clobber => $force) if $config<external><git> && !$no-git;
+	template("travis.yml", ".travis.yml", clobber => $force) if $config<external><travis> && !$no-travis;
 
 	# Write some files
 	put-meta(:%meta);
