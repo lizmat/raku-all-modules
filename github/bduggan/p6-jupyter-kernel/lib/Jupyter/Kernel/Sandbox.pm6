@@ -10,7 +10,7 @@ use nqp;
 
 my class Result does Jupyter::Kernel::Response {
     has Str $.output;
-    has $.output-raw;
+    has $.output-raw is default(Nil);
     has $.exception;
     has Bool $.incomplete;
     has $.stdout;
@@ -55,7 +55,10 @@ class Jupyter::Kernel::Sandbox is export {
         my $stdout;
         my $*CTXSAVE = $!repl;
         my $*MAIN_CTX;
-        my $*OUT = class { method print(*@args) { $stdout ~= @args.join }
+        my $*OUT = class { method print(*@args) {
+                              $stdout ~= @args.join;
+                              return True but role { method __hide { True } }
+                           }
                            method flush { } }
         my $exception;
         my $eval-code = $code;
@@ -71,9 +74,9 @@ class Jupyter::Kernel::Sandbox is export {
         if $no-persist {
             # use a temporary package
             $eval-code = qq:to/DONE/;
-            my \$out;
+            my \$out is default(Nil);
             package JupTemp \{
-                \$out = $( $code)
+                \$out = $( $code )
             \}
             for (JupTemp::).keys \{
                 (JupTemp::)\{\$_\}:delete;
@@ -81,13 +84,19 @@ class Jupyter::Kernel::Sandbox is export {
             \$out;
             DONE
         }
-        my $output =
+
+        my $output is default(Nil) =
             try $!repl.repl-eval(
                 $eval-code,
                 $exception,
                 :outer_ctx($!save_ctx),
                 :interactive(1)
             );
+        given $output {
+            $_ = Nil if .?__hide;
+            $_ = Nil if $_ ~~ List and .elems and .[*-1].?__hide;
+            $_ = Nil if $_ === Any;
+        }
         my $caught;
         $caught = $! if $!;
 

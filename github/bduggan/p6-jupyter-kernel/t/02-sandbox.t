@@ -3,7 +3,7 @@ use lib 'lib';
 use Test;
 use Jupyter::Kernel::Sandbox;
 
-plan 40;
+plan 46;
 
 my $r = Jupyter::Kernel::Sandbox.new;
 
@@ -15,10 +15,10 @@ is $r.eval('my $x = 12; 123;').output, '123', 'made a var';
 is $r.eval('$x + 10;').output, "22", 'saved state';
 
 my $res = $r.eval('say "hello"');
+ok !$res.output-raw, 'no output, sent to stdout';
+is $res.stdout, "hello\n", 'right value on stdout';
 
 ok !$res.incomplete, 'not incomplete';
-ok $res.output, 'sent to stdout';
-is $res.stdout, "hello\n", 'right value on stdout';
 is $res.stdout-mime-type, 'text/plain', 'right mime-type on stdout';
 
 $res = $r.eval('floobody doop');
@@ -49,8 +49,8 @@ $res = $r.eval('"<svg></svg>";');
 is $res.output, '<svg></svg>', 'generated svg output';
 is $res.output-mime-type, 'image/svg+xml', 'svg output mime type';
 
-$res = $r.eval('Any');
-is $res.output.perl, '"(Any)"', 'Any works';
+$res = $r.eval('Int');
+is $res.output.perl, '"(Int)"', 'Any works';
 
 $res = $r.eval('die');
 is $res.output, 'Died', 'Die trapped';
@@ -77,3 +77,12 @@ ok $res, "Produced output when ending with a comment";
 is $res.output, "hi", "got right output when ending with a comment";
 
 ok 1, 'still here';
+
+ok $r.eval('Any').output-raw === Nil, "Any becomes Nil";
+ok $r.eval('Nil').output-raw === Nil, "Nil becomes Nil";
+ok $r.eval('say 12').output-raw === Nil, "say becomes Nil";
+is $r.eval('my Int $x;').output, "(Int)", "Output from a type (undefined)";
+
+my $result = $r.eval('.say for 1..10', :store(7));
+ok $result.output-raw === Nil, "No output for multiple say's";
+is $result.stdout, (1..10).join("\n") ~ "\n", "right stdout for multiple say's";
