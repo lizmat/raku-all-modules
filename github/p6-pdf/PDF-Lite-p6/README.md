@@ -1,5 +1,8 @@
 # PDF::Lite
 
+ <a href="https://travis-ci.org/p6-pdf/PDF-Lite-p6"><img src="https://travis-ci.org/p6-pdf/PDF-Lite-p6.svg?branch=master"></a>
+ <a href="https://ci.appveyor.com/project/dwarring/PDF-Lite-p6/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/p6-pdf/PDF-Lite-p6?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
+
 `PDF::Lite` is a minimal class for creating or editing PDF documents, including:
 - Basic Text
 - Simple forms and images (GIF, JPEG & PNG)
