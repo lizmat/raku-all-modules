@@ -1,6 +1,9 @@
 PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
 ===
 
+<a href="https://travis-ci.org/p6-pdf/PDF-API6"><img src="https://travis-ci.org/p6-pdf/PDF-API6.svg?branch=master"></a>
+ <a href="https://ci.appveyor.com/project/dwarring/PDF-API6/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/p6-pdf/PDF-API6?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
+
 - [NAME](#name)
 - [DESCRIPTION](#description)
 - [EXAMPLE](#example)
