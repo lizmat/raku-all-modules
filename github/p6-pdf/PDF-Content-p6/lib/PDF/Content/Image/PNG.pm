@@ -30,9 +30,9 @@ class PDF::Content::Image::PNG
         has uint32 $.Numeric;
     }
     has Header $.hdr;
-    has buf8 $.palette is rw;
-    has buf8 $.trns is rw;
-    has buf8 $.stream .= new;
+    has Blob $.palette is rw;
+    has Blob $.trns is rw;
+    has Blob $.stream;
     constant PNG-Header = [~] 0x89.chr, "PNG", 0xD.chr, 0xA.chr, 0x1A.chr, 0xA.chr;
     constant \NullPointer = nativecast(CArray,Pointer.new(0));
 
@@ -47,9 +47,12 @@ class PDF::Content::Image::PNG
     method read($fh = $.source) {
 
         my Str $header = $fh.read(8).decode('latin-1');
-
         die X::PDF::Image::WrongHeader.new( :type<PNG>, :$header, :path($fh.path) )
             unless $header eq PNG-Header;
+
+        $!stream  = Nil;
+        $!palette = Nil;
+        $!trns    = Nil;
 
         while !$fh.eof {
             my Quad $len .= read($fh);
@@ -75,6 +78,7 @@ class PDF::Content::Image::PNG
                     $!palette = $buf;
                 }
                 when 'IDAT' {
+                    $!stream //= buf8.new;
                     $!stream.append: $buf.list;
                 }
                 when 'tRNS' {
@@ -89,7 +93,7 @@ class PDF::Content::Image::PNG
         self;
     }
 
-    method !add-chunk(buf8 $buf, Str $hdr, buf8:D $data) {
+    method !add-chunk(buf8 $buf, Str $hdr, Blob:D $data) {
         my Quad $len .= new: :Numeric($data.bytes);
         $len.pack($buf);
         $buf.append: $hdr.encode.list;
@@ -116,9 +120,8 @@ class PDF::Content::Image::PNG
         my %dict = :Type( :name<XObject> ), :Subtype( :name<Image> );
         %dict<Width>  = $!hdr.width;
         %dict<Height> = $!hdr.height;
-        my $stream = $!stream;
 
-        my %opts = :w($!hdr.width), :h($!hdr.height), :%dict, :$stream, :$alpha;
+        my %opts = :w($!hdr.width), :h($!hdr.height), :%dict, :$!stream, :$alpha;
         %opts<trns> = $_ with $!trns;
         %opts<palette> = $_ with $!palette;
         png-to-stream(PNG-CS($!hdr.color-type), $!hdr.bit-depth, |%opts);
