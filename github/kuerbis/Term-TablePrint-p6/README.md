@@ -95,9 +95,7 @@ print-table
 
 The first argument is an list of arrays. The first array of these arrays holds the column names. The following arrays are the table rows where the elements are the field values.
 
-The following arguments set the options.
-
-Passing the options as a hash is deprecated. The support of passing the options as a hash may be removed with the next release.
+The following arguments set the options (key-values pairs).
 
 OPTIONS
 =======
@@ -297,6 +295,7 @@ Matthäus Kiem <cuer2s@gmail.com>
 LICENSE AND COPYRIGHT
 =====================
 
-Copyright 2016-2017 Matthäus Kiem.
+Copyright 2016-2018 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
+

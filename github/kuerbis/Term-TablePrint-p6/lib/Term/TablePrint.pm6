@@ -1,5 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<1.0.3>;
+unit class Term::TablePrint:ver<1.0.4>;
 
 
 use NCurses;
@@ -163,15 +163,15 @@ method !_end_term {
 }
 
 
-sub print-table ( @orig_table, %deprecated?, *%opt ) is export( :DEFAULT, :print-table ) {
-    return Term::TablePrint.new().print-table( @orig_table, %deprecated || %opt );
+sub print-table ( @orig_table, *%opt ) is export( :DEFAULT, :print-table ) {
+    return Term::TablePrint.new().print-table( @orig_table, |%opt );
 }
 
-method print-table ( @orig_table, %deprecated?, *%opt ) {
+method print-table ( @orig_table, *%opt ) {
     CATCH {
         endwin();
     }
-    %!o = %deprecated || %opt;
+    %!o = %opt;
     if ! @orig_table.elems {
         my $tc = Term::Choose.new( :win( $!win ) :mouse( %!o<mouse> ) );
         $tc.pause( [ 'Close with ENTER' ], :prompt<'print-table': Empty table!> );
@@ -243,8 +243,6 @@ method !_inner_print_tbl {
         }
         @list.push: unicode-sprintf( $reached_limit, $len, 0 );
     }
-    
-    
     my Str $header_sep = '';
     if %!o<grid> {
         my $tab = ( '-' x ( %!o<tab-w> div 2 ) ) ~ '|' ~ ( '-' x ( %!o<tab-w> div 2 ) );
@@ -276,6 +274,11 @@ method !_inner_print_tbl {
         if getmaxx( $!win ) != $term_w {
             $term_w = getmaxx( $!win );
             self!_inner_print_tbl();
+            return;
+        }
+        if ( %!o<keep-header> && ! @list.elems ) || ( @list.elems == 1 ) {
+            # Choose
+            pause( ( Any, |$!table[0] ), :prompt( 'EMPTY table!' ), :0layout, :mouse( %!o<mouse> ), :undef( '<<' ) );
             return;
         }
         # Choose
@@ -338,7 +341,7 @@ method !_print_single_row ( Int $row ) {
         ).[0];
         my Str $sep = $separator;
         @lines.push: ' ';
-        if  $!table[$row][$col].defined && ! $!table[$row][$col].chars {
+        if  $!table[$row][$col].defined && ! $!table[$row][$col].chars { ##
             @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, '';
         }
         else {
@@ -392,14 +395,14 @@ method !_calc_col_width {
     @portions[0][0] = 1;
     @portions[@portions.end][1] = $!table.elems;
     my @promise;
-#    my atomicint $count = 0;                                # 2017.34
+#    my atomicint $count = 0;                                # Perl 6.d
     my $lock = Lock.new();
     my Int $count = 0;
     for @portions -> $range {
         @promise.push: start {
             do for $range[0] ..^ $range[1] -> $row {
                 if $step {
-#                    atomic-fetch-inc( $count );             # 2017.34
+#                    atomic-fetch-inc( $count );             # Perl 6.d
                     $lock.protect( { ++$count } );
                     self!_progressbar_update( $count ) if $count %% $step;
                 }
@@ -534,7 +537,7 @@ method !_cols_to_avail_width( @list ) {
     my @portions = ( ^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
     @portions[@portions.end][1] = $!table.elems;
     my @promise;
-#    my atomicint $count = 0;                                # 2017.34
+#    my atomicint $count = 0;                                # Perl 6.d
     my $lock = Lock.new();
     my Int $count = 0;
     for @portions -> $range {
@@ -546,7 +549,7 @@ method !_cols_to_avail_width( @list ) {
                     $str ~= $tab if $col != @!new_cols_w.end;
                 }
                 if $step {
-#                    atomic-fetch-inc( $count );             # 2017.34
+#                    atomic-fetch-inc( $count );             # Perl 6.d
                     $lock.protect( { ++$count } );
                     self!_progressbar_update( $count ) if $count %% $step;
                 }
@@ -677,10 +680,7 @@ C<print-table> prints the table passed with the first argument.
 The first argument is an list of arrays. The first array of these arrays holds the column names. The following arrays
 are the table rows where the elements are the field values.
 
-The following arguments set the options.
-
-Passing the options as a hash is deprecated. The support of passing the options as a hash may be removed with the next
-release.
+The following arguments set the options (key-values pairs).
 
 =head1 OPTIONS
 
@@ -892,7 +892,7 @@ Matthäus Kiem <cuer2s@gmail.com>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2016-2017 Matthäus Kiem.
+Copyright 2016-2018 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

@@ -1,6 +1,11 @@
 Revision history for Term::TablePrint
 
 
+1.0.4   2018-01-05
+        - Bugfix signature
+        - Print the column names if the table is empty
+        - Removed deprecated parameter-passing
+
 1.0.3   2017-08-29
         - Added tags to the META6.json file
 
