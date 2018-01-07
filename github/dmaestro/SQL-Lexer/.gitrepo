@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/dmaestro/SQL-Lexer.git
+	branch = master
+	commit = ff59f0f1c806e86e8f3d229dcd3904059e50567e
+	parent = acbed5d059916bf66ee9ff483bf1e8796581e1fd
+	cmdver = 0.4.0

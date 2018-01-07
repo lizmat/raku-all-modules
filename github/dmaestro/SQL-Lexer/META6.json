@@ -1,0 +1,38 @@
+{
+  "name": "SQL::Lexer",
+  "source-url": "git://github.com/dmaestro/SQL-Lexer.git",
+  "support": {
+    "email": "dmaestro@cpan.org",
+    "source": "git://github.com/dmaestro/SQL-Lexer.git",
+    "bugtracker": "https://github.com/dmaestro/SQL-Lexer/issues"
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "auth": "github:dmaestro",
+  "depends": [
+    
+  ],
+  "tags": [
+    
+  ],
+  "license": "MIT",
+  "test-depends": [
+    
+  ],
+  "provides": {
+    "SQL::Keyword": "lib/SQL/Lexer.pm",
+    "SQL::Lexer": "lib/SQL/Lexer.pm",
+    "SQL::Basic": "lib/SQL/Basic.pm"
+  },
+  "version": "0.2.0",
+  "meta-version": "0",
+  "authors": [
+    "Douglas L. Schrag <dmaestro@cpan.org>"
+  ],
+  "description": "Grammar for lexical analysis of SQL"
+}
