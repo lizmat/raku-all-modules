@@ -6,11 +6,17 @@ class Data::MessagePack::StreamingUnpacker {
 
     has           $!next = &get-next;
 
-    submethod BUILD ( :$!source ){
-        $!supplier = Supplier.new;
-        $!source.tap( -> $v { self.process_input( $v) }, done => {
-            $!supplier.done();
-        });
+    submethod TWEAK ( :$!source ){
+        $!supplier = Supplier::Preserving.new;
+        $!source.tap(
+            -> $v { self.process_input( $v ) },
+            done => {
+                $!supplier.done();
+            },
+            quit => {
+                $!supplier.quit($_)
+            }
+        );
     }
 
     method Supply returns Supply {

@@ -137,7 +137,8 @@ module Data::MessagePack::Unpacker {
                 _unpack($b, $position)
             );
         }
-        return @array;
+
+        @array;
     }
 
     sub _unpack-map( Blob $b, Int $position is rw, Int $elems ) {
@@ -145,7 +146,8 @@ module Data::MessagePack::Unpacker {
         for ^$elems {
             %map{ _unpack($b, $position) } = _unpack($b, $position);
         }
-        return %map;
+
+        %map;
     }
 
 
@@ -155,21 +157,24 @@ sub _unpack-uint( Blob $b, Int $position is rw, Int $byte-count ) {
         $res +<= 8;
         $res += $b[$position++];
     }
-    return $res;
+
+    $res;
 }
 
 sub _unpack-bin( Blob $b, Int $position is rw, Int $length ) {
-    my $blob = Blob.new( $b[$position .. ($position + $length - 1)] );
+    my $blob = $b.subbuf($position, $length);
     $position += $length;
-    return $blob;
+
+    $blob;
 }
 
 
 
 sub _unpack-string( Blob $b, Int $position is rw, Int $length ) {
-    my $str = Blob.new( $b[$position .. ($position + $length - 1)] ).decode;
+    my $str = $b.subbuf($position, $length).decode;
     $position += $length;
-    return $str;
+
+    $str;
 }
 
 sub _unpack-float( Blob $b, Int $position is rw ) {
@@ -185,7 +190,8 @@ sub _unpack-float( Blob $b, Int $position is rw ) {
     $exp -= 127;
     my $mantissa = $raw +& 0x7FFFFF;
     $mantissa = 1 + ( $mantissa / 2**23 );
-    return $s * $mantissa * 2**$exp;
+
+    $s * $mantissa * 2**$exp;
 }
 sub _unpack-double( Blob $b, Int $position is rw ) {
     my $raw = 0;
@@ -200,6 +206,7 @@ sub _unpack-double( Blob $b, Int $position is rw ) {
     $exp -= 1023;
     my $mantissa = $raw +& 0x0FFFFFFFFFFFFF;
     $mantissa = 1 + ( $mantissa / 2**52 );
-    return $s * $mantissa * 2**$exp;
+
+    $s * $mantissa * 2**$exp;
 }
 # vim: ft=perl6
