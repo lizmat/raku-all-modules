@@ -1,0 +1,9 @@
+GET    /V1/configurable-products/:sku/children
+DELETE /V1/configurable-products/:sku/children/:childSku
+PUT    /V1/configurable-products/variation
+POST   /V1/configurable-products/:sku/child
+GET    /V1/configurable-products/:sku/options/:id
+GET    /V1/configurable-products/:sku/options/all
+POST   /V1/configurable-products/:sku/options
+PUT    /V1/configurable-products/:sku/options/:id
+DELETE /V1/configurable-products/:sku/options/:id

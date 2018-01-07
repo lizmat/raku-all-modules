@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# delete the old running containers
+docker kill perl6magento_web_1 perl6magento_db_1 perl6magento_rakudo_1
+docker rm perl6magento_web_1 perl6magento_db_1 perl6magento_rakudo_1
+
+# rebuild / bring up all the instances (we have a third one now running rakudo)
+docker-compose up --build -d;
+
+# Setup magento / sample data
+./scripts/magento-post-configuration;
+
+# install my module dependencies and run xt tests
+./scripts/perl6-Magento-tests

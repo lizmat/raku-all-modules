@@ -1,0 +1,5 @@
+GET    /V1/gift-wrappings/:id
+POST   /V1/gift-wrappings
+PUT    /V1/gift-wrappings/:wrappingId
+GET    /V1/gift-wrappings
+DELETE /V1/gift-wrappings/:id

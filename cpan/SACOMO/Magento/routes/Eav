@@ -1,0 +1,5 @@
+GET    /V1/eav/attribute-sets/list
+GET    /V1/eav/attribute-sets/:attributeSetId
+DELETE /V1/eav/attribute-sets/:attributeSetId
+POST   /V1/eav/attribute-sets
+PUT    /V1/eav/attribute-sets/:attributeSetId

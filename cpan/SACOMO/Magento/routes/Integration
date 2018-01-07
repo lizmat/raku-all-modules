@@ -1,0 +1,2 @@
+POST   /V1/integration/admin/token
+POST   /V1/integration/customer/token

@@ -1,0 +1,12 @@
+GET    /V1/carts/:cartId/gift-message
+GET    /V1/carts/:cartId/gift-message/:itemId
+POST   /V1/carts/:cartId/gift-message
+POST   /V1/carts/:cartId/gift-message/:itemId
+GET    /V1/carts/mine/gift-message
+GET    /V1/carts/mine/gift-message/:itemId
+POST   /V1/carts/mine/gift-message
+POST   /V1/carts/mine/gift-message/:itemId
+GET    /V1/guest-carts/:cartId/gift-message
+GET    /V1/guest-carts/:cartId/gift-message/:itemId
+POST   /V1/guest-carts/:cartId/gift-message
+POST   /V1/guest-carts/:cartId/gift-message/:itemId

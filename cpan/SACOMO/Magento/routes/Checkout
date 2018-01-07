@@ -1,0 +1,12 @@
+POST   /V1/guest-carts/:cartId/shipping-information
+POST   /V1/carts/mine/shipping-information
+POST   /V1/carts/:cartId/shipping-information
+POST   /V1/carts/:cartId/totals-information
+POST   /V1/guest-carts/:cartId/totals-information
+POST   /V1/carts/mine/totals-information
+POST   /V1/guest-carts/:cartId/payment-information
+GET    /V1/guest-carts/:cartId/payment-information
+POST   /V1/carts/mine/payment-information
+GET    /V1/carts/mine/payment-information
+POST   /V1/guest-carts/:cartId/set-payment-information
+POST   /V1/carts/mine/set-payment-information<Paste>

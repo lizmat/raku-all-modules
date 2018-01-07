@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# delete the old running containers
+docker kill perl6magento_web_1 perl6magento_db_1 perl6magento_rakudo_1
+docker rm perl6magento_web_1 perl6magento_db_1 perl6magento_rakudo_1

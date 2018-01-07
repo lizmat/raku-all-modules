@@ -1,0 +1,24 @@
+version: '2'
+services:
+  db:
+    image: mysql:latest
+    env_file:
+      - xt/env
+    ports:
+      - "33061:3306"
+  web:
+    image: cnstechnicalgroup/docker-magento2
+    env_file:
+      - xt/env
+    ports:
+      - "80:80"
+    links:
+      - db:mysql
+  rakudo:
+    image: rakudo-star
+    links:
+      - web
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/app

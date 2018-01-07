@@ -1,0 +1,7 @@
+GET    /V1/carts/:quoteId/giftCards
+PUT    /V1/carts/:cartId/giftCards
+DELETE /V1/carts/:quoteId/giftCards/:giftCardCode
+POST   /V1/carts/mine/giftCards
+POST   /V1/carts/guest-carts/:cartId/giftCards
+GET    /V1/carts/guest-carts/:cartId/checkGiftCard/:giftCardCode
+GET    /V1/carts/mine/checkGiftCard/:giftCardCode
