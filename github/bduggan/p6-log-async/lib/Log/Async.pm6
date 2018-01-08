@@ -2,7 +2,7 @@ enum Loglevels <<:TRACE(1) DEBUG INFO WARNING ERROR FATAL>>;
 
 use Log::Async::Context;
 
-class Log::Async:ver<0.0.3>:auth<github:bduggan> {
+class Log::Async:ver<0.0.6>:auth<github:bduggan> {
     has $.source = Supplier.new;
     has Tap @.taps;
     has Supply $.messages;
@@ -52,7 +52,7 @@ class Log::Async:ver<0.0.3>:auth<github:bduggan> {
     }
 
     multi method send-to(Str $path, Code :$formatter, |args --> Tap) {
-        my $fh = open($path, :a, :!buffer) or die "error opening $path";
+        my $fh = open($path, :a, :!out-buffer) or die "error opening $path";
         self.send-to($fh, :$formatter, |args);
     }
 
