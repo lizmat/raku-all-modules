@@ -3,7 +3,7 @@ use v6;
 use PDF::DAO::Dict;
 use PDF::Class::Type;
 
-# /Type /Outlines - the Outlines dictionary
+#| /Type /Outlines - the Outlines dictionary
 
 class PDF::Outlines
     is PDF::DAO::Dict

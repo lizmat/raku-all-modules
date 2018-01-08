@@ -3,7 +3,7 @@ use v6;
 use PDF::DAO::Dict;
 use PDF::Class::Type;
 
-# /Type /OBJR - a node in the page tree
+#| /Type /OBJR - a node in the page tree
 class PDF::OBJR
     is PDF::DAO::Dict
     does PDF::Class::Type {

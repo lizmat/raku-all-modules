@@ -2,7 +2,7 @@ use v6;
 
 use PDF::DAO::Tie::Hash;
 
-# /Type /Border
+#| /Type /Border
 
 role PDF::Border
     does PDF::DAO::Tie::Hash {

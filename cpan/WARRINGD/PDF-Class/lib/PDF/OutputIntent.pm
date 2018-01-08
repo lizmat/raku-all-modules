@@ -3,7 +3,7 @@ use v6;
 use PDF::DAO::Dict;
 use PDF::Class::Type;
 
-# /Type /OutputIntent
+#| /Type /OutputIntent
 
 class PDF::OutputIntent
     is PDF::DAO::Dict

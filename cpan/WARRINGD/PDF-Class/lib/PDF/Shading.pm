@@ -2,7 +2,7 @@ use v6;
 
 use PDF::DAO::Dict;
 
-# /ShadingType 1..7 - the Shading dictionary delegates
+#| /ShadingType 1..7 - the Shading dictionary delegates
 
 class PDF::Shading
     is PDF::DAO::Dict {

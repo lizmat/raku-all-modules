@@ -3,7 +3,7 @@ use v6;
 use PDF::DAO::Dict;
 use PDF::Class::Type;
 
-# /Type /ExtGState
+#| /Type /ExtGState
 
 class PDF::ExtGState
     is PDF::DAO::Dict
@@ -13,7 +13,7 @@ class PDF::ExtGState
     use PDF::DAO::Name;
 
     method !dual-entry(Str $entry, Str $entry2) is rw {
-	Proxy.new( 
+	Proxy.new(
 	    FETCH => sub (\p) {
 		my \val   = self{$entry};
 		my \val2  = self{$entry2};

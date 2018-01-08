@@ -3,7 +3,7 @@ use v6;
 use PDF::DAO::Tie;
 use PDF::DAO::Tie::Hash;
 
-# ViewPreferences role - see PDF::Catalog - /ViewPreferences entry
+#| ViewPreferences role - see PDF::Catalog - /ViewPreferences entry
 
 role PDF::ViewerPreferences
     does PDF::DAO::Tie::Hash {

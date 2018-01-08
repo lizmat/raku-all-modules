@@ -1,3 +1,5 @@
+Release 0.0.4
+- Add etc/make-quick-ref.pl use it to generate table of classes in README.md
 Release 0.0.3
 - Correct attribute name: Bound -> Bounds in PDF::Function::Stitching
 Release 0.0.2

@@ -4,9 +4,9 @@ use PDF::DAO::Dict;
 use PDF::Class::Type;
 use PDF::Content::Resourced;
 
-# /Type /Catalog - usually the document root in a PDF
-# See [PDF 1.7 Section 3.6.1 Document Catalog]
-my class Catalog
+#| /Type /Catalog - usually the document root in a PDF
+#| See [PDF 1.7 Section 3.6.1 Document Catalog]
+class PDF::Catalog
     is PDF::DAO::Dict
     does PDF::Class::Type
     does PDF::Content::Resourced {
@@ -117,4 +117,3 @@ my class Catalog
     }
 }
 
-class PDF::Catalog is Catalog {} # help rakudo

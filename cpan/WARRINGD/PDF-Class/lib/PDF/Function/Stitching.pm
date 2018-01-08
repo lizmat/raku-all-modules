@@ -3,7 +3,7 @@ use v6;
 use PDF::Function;
 
 #| /FunctionType 3 - Stitching
-# see [PDF 1.7 Section 3.9.3 Type 3 (Stitching) Functions]
+#| see [PDF 1.7 Section 3.9.3 Type 3 (Stitching) Functions]
 class PDF::Function::Stitching
     is PDF::Function {
 

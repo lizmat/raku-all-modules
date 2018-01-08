@@ -1,10 +1,9 @@
 use v6;
 
 use PDF::DAO::Dict;
-use PDF::DAO::Stream;
 use PDF::Class::Type;
 
-# /Type /FontDescriptor - the FontDescriptor dictionary
+#| /Type /FontDescriptor - the FontDescriptor dictionary
 
 class PDF::FontDescriptor
     is PDF::DAO::Dict
@@ -12,6 +11,7 @@ class PDF::FontDescriptor
 
     use PDF::DAO::Tie;
     use PDF::DAO::Name;
+    use PDF::DAO::Stream;
 
     # see [PDF 1.7 TABLE 5.19 Entries common to all font descriptors]
     my subset Name-FontDescriptor of PDF::DAO::Name where 'FontDescriptor';

@@ -5,7 +5,7 @@ use PDF::Pattern;
 
 #| /ShadingType 1 - Tiling
 
-my class Tiling
+class PDF::Pattern::Tiling
     is PDF::DAO::Stream
     does PDF::Pattern {
 
@@ -27,5 +27,3 @@ my class Tiling
     use PDF::Resources;
     has PDF::Resources $.Resources is entry(:required);        #| (Required) A resource dictionary containing all of the named resources required by the pattern’s content stream (see Section 3.7.2, “Resource Dictionaries”).
 }
-
-class PDF::Pattern::Tiling is Tiling {} # help rakudo

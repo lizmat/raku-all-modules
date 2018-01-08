@@ -2,8 +2,7 @@ use v6;
 
 use PDF::DAO::Tie::Hash;
 
-# AcroForm role - see PDF::Catalog - /AcroForm entry
-
+#| AcroForm role - see PDF::Catalog - /AcroForm entry
 role PDF::AcroForm
     does PDF::DAO::Tie::Hash {
 

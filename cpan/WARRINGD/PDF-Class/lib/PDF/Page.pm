@@ -5,9 +5,9 @@ use PDF::Class::Type;
 use PDF::Content::Page;
 use PDF::Content::PageNode;
 
-# /Type /Page - describes a single PDF page
+#| /Type /Page - describes a single PDF page
 
-my class Page
+class PDF::Page
     is PDF::DAO::Dict
     does PDF::Class::Type
     does PDF::Content::Page
@@ -56,4 +56,3 @@ my class Page
 
 }
 
-class PDF::Page is Page {} # help rakudo

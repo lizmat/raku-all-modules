@@ -20,7 +20,7 @@ my subset DestinationArray of Array where is-destination(|$_);
 role PDF::Action {...}
 subset PDF::Action::Destination of PDF::DAO where DestinationArray | PDF::Action; #| e.g. for Catalog /OpenAction entry
 
-# /Type /Action
+#| /Type /Action
 
 role PDF::Action
     does PDF::DAO::Tie::Hash {

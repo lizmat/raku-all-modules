@@ -2,7 +2,7 @@ use v6;
 
 use PDF::DAO::Stream;
 
-# /FunctionType 1..7 - the Function dictionary delegates
+#| /FunctionType 1..7 - the Function dictionary delegates
 
 class PDF::Function
     is PDF::DAO::Stream {

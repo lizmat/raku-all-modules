@@ -3,8 +3,8 @@ use v6;
 use PDF::DAO::Stream;
 use PDF::Class::Type;
 
-# /Type /XObject - describes an abstract XObject. See also
-# PDF::XObject::Form, PDF::XObject::Image
+#| /Type /XObject - describes an abstract XObject. See also
+#| PDF::XObject::Form, PDF::XObject::Image
 
 class PDF::XObject
     is PDF::DAO::Stream

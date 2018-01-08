@@ -3,7 +3,7 @@ use v6;
 use PDF::Function;
 
 #| /FunctionType 2 - Exponential
-# see [PDF 1.7 Section 3.9.2 Type 2 (Exponential Interpolation) Functions]
+#| see [PDF 1.7 Section 3.9.2 Type 2 (Exponential Interpolation) Functions]
 class PDF::Function::Exponential
     is PDF::Function {
 

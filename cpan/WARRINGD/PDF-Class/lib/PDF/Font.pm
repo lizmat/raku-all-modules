@@ -4,7 +4,7 @@ use PDF::DAO::Dict;
 use PDF::Content::Font;
 use PDF::Class::Type;
 
-# /Type /Font - Describes a font
+#| /Type /Font - Describes a font
 
 class PDF::Font
     is PDF::DAO::Dict

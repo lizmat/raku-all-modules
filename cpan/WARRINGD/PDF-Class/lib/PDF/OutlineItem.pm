@@ -2,7 +2,8 @@ use v6;
 
 use PDF::DAO::Tie::Hash;
 
-# /Type /Outlines - the Outlines dictionary
+#| OutlineItem - an entry in the Outlines Dictionary
+#| See /First and /Last Accessors in the PDF::Outlines
 
 role PDF::OutlineItem
     does PDF::DAO::Tie::Hash {

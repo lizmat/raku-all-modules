@@ -3,6 +3,7 @@ use v6;
 use PDF::DAO::Tie::Hash;
 use PDF::Content::ResourceDict;
 
+#| Resource Dictionary
 role PDF::Resources
     does PDF::DAO::Tie::Hash
     does PDF::Content::ResourceDict {

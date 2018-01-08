@@ -4,7 +4,7 @@ use PDF::Content::XObject;
 use PDF::Content::Graphics;
 use PDF::Content::Resourced;
 
-my role Pattern
+role PDF::Pattern
     does PDF::Content::XObject['Form']
     does PDF::Content::Graphics
     does PDF::Content::Resourced {
@@ -72,5 +72,3 @@ my role Pattern
     }
 
 }
-
-role PDF::Pattern does Pattern {} # help rakudo

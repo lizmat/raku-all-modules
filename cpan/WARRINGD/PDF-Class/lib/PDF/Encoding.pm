@@ -3,8 +3,8 @@ use v6;
 use PDF::DAO::Dict;
 use PDF::Class::Type;
 
-# /Type /Encoding - a node in the page tree
-# see [PDF 1.7 Section 5.5.5 Character Encoding]
+#| /Type /Encoding
+#| see [PDF 1.7 Section 5.5.5 Character Encoding]
 class PDF::Encoding
     is PDF::DAO::Dict
     does PDF::Class::Type {

@@ -5,7 +5,7 @@ use PDF::Class::Type;
 use PDF::Content::PageNode;
 use PDF::Content::PageTree;
 
-# /Type /Pages - a node in the page tree
+#| /Type /Pages - a node in the page tree
 
 class PDF::Pages
     is PDF::DAO::Dict

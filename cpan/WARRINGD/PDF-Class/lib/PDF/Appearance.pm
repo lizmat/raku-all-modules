@@ -4,7 +4,7 @@ use PDF::Class::Type; # just to help rakudo
 use PDF::DAO::Tie;
 use PDF::DAO::Tie::Hash;
 
-# Appearance role - see PDF::Annot - /AP entry
+#| Appearance role - see PDF::Annot - /AP entry
 
 role PDF::Appearance
     does PDF::DAO::Tie::Hash {

@@ -7,7 +7,7 @@ use PDF::Content::Graphics;
 
 #| XObject Forms - /Type /Xobject /Subtype Form
 #| See [PDF Spec 1.7 4.9 Form XObjects]
-my class Form
+class PDF::XObject::Form
     is PDF::XObject
     does PDF::Content::XObject['Form']
     does PDF::Content::Graphics
@@ -34,5 +34,3 @@ my class Form
     has Hash $.OC is entry;                 #| (Optional; PDF 1.5) An optional content group or optional content membership dictionary
 
 }
-
-class PDF::XObject::Form is Form {} # help rakudo
