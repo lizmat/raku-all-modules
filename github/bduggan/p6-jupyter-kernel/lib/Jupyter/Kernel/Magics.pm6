@@ -54,6 +54,20 @@ my class Magic::JS is Magic {
             stdout-mime-type => 'application/javascript';
     }
 }
+
+my class Magic::Bash is Magic {
+    method preprocess($code!) {
+        my $cmd = (shell $code, :out, :err);
+
+        return Result.new:
+            output => $cmd.out.slurp(:close),
+            output-mime-type => 'text/plain',
+            stdout => $cmd.err.slurp(:close),
+            stdout-mime-type => 'text/plain',
+            ;
+    }
+}
+
 class Magic::Filters is Magic {
     # Attributes match magic-params in grammar.
     has Magic::Filter $.out;
@@ -77,7 +91,7 @@ grammar Magic::Grammar {
         [ <simple> | <filter> ]
     }
     token simple {
-       $<key>='javascript'
+       $<key>=[ 'javascript' | 'bash' ]
     }
     rule filter {
        [
@@ -102,7 +116,14 @@ class Magic::Actions {
         $/.make: $<simple>.made // $<filter>.made
     }
     method simple($/) {
-        $/.make: Magic::JS.new;
+        given "$<key>" {
+            when 'javascript' {
+                $/.make: Magic::JS.new;
+            }
+            when 'bash' {
+                $/.make: Magic::Bash.new;
+            }
+        }
     }
     method filter($/) {
         my %args =

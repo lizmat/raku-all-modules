@@ -146,6 +146,28 @@ class MockResult {
        is .stdout-mime-type, 'text/html', 'but html on stdout';
     }
 }
+{
+    my $cell = ( '%% bash', 'echo hello').join("\n");
+    my $magic = $m.find-magic($cell);
+    ok $magic.perl, 'found bash magic';
+    given $magic.preprocess("echo hello") {
+        is .output, "hello\n", 'got output';
+        is .output-mime-type, 'text/plain', 'got right mime type';
+       }
+
+
+}
+{
+    my $cmd = 'ls /no/such/file/i/hope';
+    my $cell = ( '%% bash', $cmd).join("\n");
+    my $magic = $m.find-magic($cell);
+    ok $magic.perl, 'found bash magic';
+    given $magic.preprocess($cmd) {
+        is .output, "", 'no output';
+        is .output-mime-type, 'text/plain', 'got right mime type';
+        like .stdout, /:i 'no such file'/, 'errors on stdout';
+       }
+}
 done-testing;
 
 # vim: syn=perl6
