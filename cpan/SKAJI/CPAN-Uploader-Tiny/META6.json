@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Shoichi Kaji"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "HTTP::Tinyish"
+  ],
+  "description" : "Upload tarballs to CPAN",
+  "license" : "Artistic-2.0",
+  "name" : "CPAN::Uploader::Tiny",
+  "perl" : "6.c",
+  "provides" : {
+    "CPAN::Uploader::Tiny" : "lib/CPAN/Uploader/Tiny.pm6",
+    "CPAN::Uploader::Tiny::MultiPart" : "lib/CPAN/Uploader/Tiny/MultiPart.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/skaji/perl6-CPAN-Uploader-Tiny.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.3"
+}
