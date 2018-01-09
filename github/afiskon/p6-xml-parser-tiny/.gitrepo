@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/afiskon/p6-xml-parser-tiny.git
 	branch = master
-	commit = 1e29becf2c717b099bcd6e6b8afdad7837512deb
-	parent = c7140c9ce4a7080048460156efdac16cb8866aa3
+	commit = fdb5aab5f2f012df599a82cb3f8693852e330ec5
+	parent = 4c274a4cf2f0d0e1562bed369480025149178ea4
 	cmdver = 0.4.0
