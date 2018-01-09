@@ -16,5 +16,5 @@
   "source-url" : "https://github.com/skaji/perl6-Acme-Test-Module.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "1.0.3"
+  "version" : "1.0.4"
 }
