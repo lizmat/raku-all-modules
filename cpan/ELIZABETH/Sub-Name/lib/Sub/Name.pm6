@@ -1,15 +1,17 @@
 use v6.c;
-unit class Sub::Name:ver<0.0.1>;
+unit class Sub::Name:ver<0.0.3>;
 
 # only export the proto
 proto sub subname(|) is export {*}
 # handle name, { ... } case
 multi sub subname($name, &callable) { set-subname($name,     &callable)   }
-# handle foo => { ... } case
+# handle "foo" => { ... } case
 multi sub subname(Pair:D $pair)     { set-subname($pair.key, $pair.value) }
+# handle foo => { ... } case
+multi sub subname(*%_ where * == 1) { set-subname(|%_.kv) }
 
 # the workhorse
-sub set-subname($name is copy, &callable) {
+sub set-subname($name, &callable) {
     &callable.set_name(
       $name.contains('::')
         ?? $name
@@ -63,3 +65,5 @@ Copyright 2018 Elizabeth Mattijsen
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
 =end pod
+
+# vim: ft=perl6 expandtab sw=4
