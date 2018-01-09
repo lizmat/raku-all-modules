@@ -1,0 +1,21 @@
+{
+  "authors": "Patrick Spek <p.spek@tyil.work>",
+  "depends": [
+    
+  ],
+  "description": "Nondescript",
+  "license": "GPL-3.0",
+  "meta-version": 0,
+  "name": "IO::Path::Dirstack",
+  "perl": "6.c",
+  "provides": {
+    "IO::Path::Dirstack": "lib/IO/Path/Dirstack.pm6"
+  },
+  "resources": [
+    
+  ],
+  "tags": [
+    
+  ],
+  "version": "0.1.0"
+}
