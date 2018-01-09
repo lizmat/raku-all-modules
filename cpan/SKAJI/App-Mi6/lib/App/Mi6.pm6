@@ -2,11 +2,11 @@ use v6;
 use App::Mi6::Template;
 use App::Mi6::JSON;
 use App::Mi6::INI;
+use App::Mi6::Release;
 use File::Find;
 use Shell::Command;
-use CPAN::Uploader::Tiny;
 
-unit class App::Mi6:ver<0.0.7>;
+unit class App::Mi6:ver<0.1.2>;
 
 has $!author = run(<git config --global user.name>,  :out).out.slurp(:close).chomp;
 has $!email  = run(<git config --global user.email>, :out).out.slurp(:close).chomp;
@@ -46,6 +46,7 @@ multi method cmd('new', $module is copy) {
         dist => $module.subst("::", "-", :g),
     );
     my %map = <<
+        Changes      Changes
         dist.ini     dist
         $module-file module
         t/01-basic.t test
@@ -69,29 +70,18 @@ multi method cmd('build') {
     build();
 }
 
-multi method cmd('test', @file, Bool :$verbose, Int :$jobs) {
+multi method cmd('test', *@file, Bool :$verbose, Int :$jobs) {
     self.cmd('build');
     my $exitcode = test(@file, :$verbose, :$jobs);
-    exit $exitcode;
+    $exitcode;
 }
 
 multi method cmd('release') {
-    self.cmd('build');
-    my ($module, $module-file) = guess-main-module();
-    my ($user, $repo) = guess-user-and-repo();
-    die "Cannot find user and repository setting" unless $repo;
-    my $meta-file = <META6.json META.info>.grep({.IO ~~ :f & :!l})[0];
-    print "\n" ~ qq:to/EOF/ ~ "\n";
-      Are you ready to release your module? Congrats!
-      For this, follow these steps:
-
-      1. Fork https://github.com/perl6/ecosystem repository.
-      2. Add https://raw.githubusercontent.com/$user/$repo/master/$meta-file to META.list.
-      3. And raise a pull request!
-
-      Once your pull request is merged, we can install your module by:
-      \$ zef install $module
-    EOF
+    my ($main-module, $main-module-file) = guess-main-module();
+    my $dist = $main-module.subst("::", "-", :g);
+    my $release-date = DateTime.now.truncated-to('second').Str;
+    my $release = App::Mi6::Release.new;
+    $release.run(dir => "lib", app => self, :$main-module, :$main-module-file, :$release-date, :$dist);
 }
 
 multi method cmd('dist') {
@@ -100,32 +90,6 @@ multi method cmd('dist') {
     my $tarball = self.make-dist-tarball($module);
     say "Created $tarball";
     return $tarball;
-}
-
-multi method cmd('upload') {
-    my $tarball = self.cmd('dist');
-    my @line = run("git", "status", "-s", :out).out.lines(:close);
-    if @line.elems != 0 {
-        note "You need to commit the following files before uploading $tarball";
-        note "";
-        note " * $_" for @line.map({s/\s*\S+\s+//; $_});
-        note "";
-        note "If you want to ignore these files, then list them in .gitignore or MANIFEST.SKIP";
-        note "";
-        die;
-    }
-    my $config = $*HOME.add: ".pause";
-    die "To upload tarball to CPAN, you need to prepare $config first\n" unless $config.IO.e;
-    my $client = CPAN::Uploader::Tiny.new-from-config($config);
-    $*OUT.print("Are you sure to upload $tarball to CPAN? (y/N) ");
-    $*OUT.flush;
-    my $line = $*IN.get;
-    if $line !~~ rx:i/^y/ {
-        $*OUT.print("Abort.\n");
-        return;
-    }
-    $client.upload($tarball, subdirectory => "Perl6");
-    say "Successfully uploaded $tarball to CPAN.";
 }
 
 sub withp6lib(&code) {
@@ -155,7 +119,7 @@ sub test(@file, Bool :$verbose, Int :$jobs) {
         note "==> Set PERL6LIB=%*ENV<PERL6LIB>";
         note "==> @command[]";
         my $proc = run |@command;
-        $proc.exitcode;
+        die "Test failed" unless ?$proc;
     };
 }
 
@@ -320,7 +284,7 @@ sub find-source-url() {
     }
     return "" unless $url;
     $url .= Str;
-    $url .= subst(/^ 'git:' /, 'https');
+    $url .= subst(/^ 'git:' /, 'https:');
     if $url ~~ m/'git@' $<host>=[.+] ':' $<repo>=[<-[:]>+] $/ {
         $url = "https://$<host>/$<repo>";
     } elsif $url ~~ m/'ssh://git@' $<rest>=[.+] / {
@@ -398,7 +362,7 @@ App::Mi6 - minimal authoring tool for Perl6
   > mi6 new Foo::Bar # create Foo-Bar distribution
   > mi6 build        # build the distribution and re-generate README.md/META6.json
   > mi6 test         # run tests
-  > mi6 upload       # upload distribution tarball to CPAN
+  > mi6 release      # release your distribution to CPAN
 
 =head1 INSTALLATION
 
@@ -413,6 +377,8 @@ App::Mi6 is a minimal authoring tool for Perl6. Features are:
 =item Generate README.md from lib/Main/Module.pm6's pod
 
 =item Run tests by C<mi6 test>
+
+=item Release your distribution tarball to CPAN
 
 =head1 FAQ
 
@@ -441,13 +407,13 @@ Use C<dist.ini>:
 
 Write them to META6.json directly :)
 
-=head2 Where is Changes file?
-
-TODO
-
 =head2 Where is the spec of META6.json?
 
 http://design.perl6.org/S22.html
+
+=head1 TODO
+
+documentation
 
 =head1 SEE ALSO
 
