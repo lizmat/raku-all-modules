@@ -1,3 +1,8 @@
+***
+I'm sorry, but this module is not supported anymore since I have little
+interest in Perl 6. Feel free to create a fork.
+***
+
 NAME
 
 DateTime::Format::W3CDTF - A Perl 6 module to deal with W3CDTF dates.
@@ -27,7 +32,7 @@ Converts DateTime object to the W3C-formatted date string. Throws an exception i
 
 AUTHOR
 
-Alexandr Alexeev, <eax at cpan.org> (http://eax.me/)
+Alexandr Alexeev, <eax at cpan.org> (https://eax.me/)
 
 COPYRIGHT
 
