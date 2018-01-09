@@ -1,3 +1,8 @@
+***
+I'm sorry, but this module is not supported anymore since I have little
+interest in Perl 6. Feel free to create a fork.
+***
+
 NAME
 
 Sitemap::XML::Parser is a module for parsing sitemap.xml files.
@@ -34,7 +39,7 @@ METHODS
 
 AUTHOR
 
-Alexandr Alexeev, <eax at cpan.org> (http://eax.me/)
+Alexandr Alexeev, <eax at cpan.org> (https://eax.me/)
 
 COPYRIGHT
 
