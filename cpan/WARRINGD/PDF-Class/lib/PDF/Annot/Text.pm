@@ -13,7 +13,7 @@ class PDF::Annot::Text
 
     # See [PDF 1.7 TABLE 8.23 Additional entries specific to a text annotation]
     has Bool $.Open is entry;                        #| (Optional) A flag specifying whether the annotation should initially be displayed open. Default value: false (closed).
-    has PDF::DAO::Name $.Name is entry;              #| (Optional) The name of an icon to be used in displaying the annotation. Viewer applications should provide predefined icon appearances for at least the following standard names:
+    has PDF::DAO::Name $.Name is entry(:alias<icon-name>);              #| (Optional) The name of an icon to be used in displaying the annotation. Viewer applications should provide predefined icon appearances for at least the following standard names:
                                                      #|  - Comment, Key, Note, Help, NewParagraph, Paragraph, Insert
                                                      #| Additional names may be supported as well. Default value: Note.
     has PDF::DAO::TextString $.State is entry;       #| (Optional; PDF 1.5) The state to which the original annotation should be set; see “Annotation States,” above.

@@ -1,3 +1,5 @@
+Release 0.0.5
+- Set up accessor aliases, e.g. D(dash) in PDF::Appearance
 Release 0.0.4
 - Add etc/make-quick-ref.pl use it to generate table of classes in README.md
 Release 0.0.3

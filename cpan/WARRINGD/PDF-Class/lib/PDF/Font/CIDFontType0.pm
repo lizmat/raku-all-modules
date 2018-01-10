@@ -20,5 +20,5 @@ class PDF::Font::CIDFontType0
     my subset Identity of PDF::DAO::Name where 'Identity';
     my subset StreamOrIdentity where PDF::DAO::Stream | Identity;
     has StreamOrIdentity $.CIDToGIDMap                        #| to glyph indices. If the value is a stream, the bytes in the stream contain the mapping from CIDs to glyph indices: the glyph index for a particular CID value c is a 2-byte value stored in bytes 2 × c and 2 × c + 1, where the first byte is the high-order byte. If the value of CIDToGIDMap is a name, it must be Identity, indicating that the mapping between CIDs and glyph indices is the identity mapping
-    
+
 }

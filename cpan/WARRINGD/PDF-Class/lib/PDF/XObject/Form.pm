@@ -31,6 +31,6 @@ class PDF::XObject::Form
     has UInt $.StructParent is entry;       #| (Required if the form XObject is a structural content item; PDF 1.3) The integer key of the form XObject’s entry in the structural parent tree
     has UInt $.StructParents is entry;      #| (Required if the form XObject contains marked-content sequences that are structural content items; PDF 1.3) The integer key of the form XObject’s entry in the structural parent tree
     has Hash $.OPI is entry;                #| (Optional; PDF 1.2) An OPI version dictionary for the form XObject
-    has Hash $.OC is entry;                 #| (Optional; PDF 1.5) An optional content group or optional content membership dictionary
+    has Hash $.OC is entry(:alias<optional-content-group>);                 #| (Optional; PDF 1.5) An optional content group or optional content membership dictionary
 
 }

@@ -23,7 +23,7 @@ class PDF::ColorSpace
 
 		die "bad class-name $class-name: $class-name"
 		    unless ~$0 eq $.type;
-		
+
                 my Str $subtype = ~$1;
 
 		self[0] //= PDF::DAO.coerce( :name($subtype) );

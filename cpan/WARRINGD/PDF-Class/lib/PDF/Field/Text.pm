@@ -15,8 +15,8 @@ role PDF::Field::Text
     multi sub coerce(Str $s is rw, TextOrStream) {
 	PDF::DAO.coerce($s, PDF::DAO::TextString)
     }
-    has TextOrStream $.V is entry(:&coerce, :inherit);
-    has TextOrStream $.DV is entry(:&coerce, :inherit);
+    has TextOrStream $.V is entry(:&coerce, :inherit, :alias<value>);
+    has TextOrStream $.DV is entry(:&coerce, :inherit, :alias<default-value>);
 
     has UInt $.MaxLen is entry; #| (Optional; inheritable) The maximum length of the field’s text, in characters.
 }

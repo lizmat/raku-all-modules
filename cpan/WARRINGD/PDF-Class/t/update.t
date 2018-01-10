@@ -18,7 +18,7 @@ ok $pdf.save-as('t/pdf/update-resaved.json', :!info), 'save-as json';
 
 $pdf = PDF::Class.open('t/pdf/update-resaved.json');
 is $pdf<Info><Author>, 't/helloworld.t', '$pdf<Info><Author>';
-is $pdf<Info><Creator>, 'PDF::Tools', '$pdf<Info><Creator>';
+is $pdf<Info><Creator>, 'PDF::Class', '$pdf<Info><Creator>';
 ok my $p2 = $pdf.page(2), 'pdf reload from json';
 
 my $p2-again;

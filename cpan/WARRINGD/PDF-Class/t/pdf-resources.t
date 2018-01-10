@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 65;
+plan 66;
 
 use PDF::Class;
 use PDF::Class::Type;
@@ -154,12 +154,13 @@ is $gs-obj.TR, (:ind-ref[36, 0]), 'ExtGState TR';
 $gs-obj.transparency = .5;
 is $gs-obj.CA, 0.5, 'transparency setter';
 is $gs-obj.ca, 0.5, 'transparency setter';
-lives-ok {$gs-obj.FillAlpha = .7}, 'transparency setter - alias';
-is $gs-obj.FillAlpha, .7, 'transparency getter - alias';
-is $gs-obj.StrokeAlpha, .5, 'transparency getter - alias';
+lives-ok {$gs-obj.fill-alpha = .7}, 'transparency setter - alias';
+is $gs-obj.fill-alpha, .7, 'transparency getter - alias';
+is $gs-obj.stroke-alpha, .5, 'transparency getter - alias';
 throws-like { $gs-obj.wtf }, X::Method::NotFound, 'ExtGState - unknown method';
 
-$gs-obj.BG = {};
+$gs-obj.black-generation = {};
+is-json-equiv $gs-obj.BG2, {}, 'BG2 accessor';
 is-json-equiv $gs-obj.black-generation, {}, 'black-generation accessor';
 $gs-obj.black-generation = PDF::DAO.coerce: :name<MyFunc>;
 is $gs-obj.BG2, 'MyFunc', 'BG2 accessor';

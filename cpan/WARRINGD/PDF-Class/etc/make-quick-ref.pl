@@ -8,11 +8,11 @@ use PDF::Content::XObject;
 
 my %classes;
 
-my Set $std-methods .= new: flat( <cb-init cb-finish type subtype <anon> delegate-function>, (PDF::DAO::Stream, PDF::DAO::Array).map: *.^methods>>.name);
+my Set $std-methods .= new: flat( <cb-init cb-finish type subtype <anon> delegate-function delegate-shading>, (PDF::DAO::Stream, PDF::DAO::Array).map: *.^methods>>.name);
 my Set $stream-accessors .= new: <Length Filter DecodeParms F FFilter FDecodeParms DL>;
 
 sub scan-classes($path) {
-    for $path.dir {
+    for $path.dir.sort {
         next if /[^|'/']['.'|t|Type|Loader]/;
         if .d {
             scan-classes($_);
@@ -23,7 +23,6 @@ sub scan-classes($path) {
             @class.shift;
             @class.tail ~~ s/'.pm'$//;
             my $name = @class.join: "::";
-warn $name;
             (require ::($name)).so;
             %classes{$name} = ::($name);
         }
@@ -43,11 +42,18 @@ for %classes.keys.sort({ when 'PDF::Class' {'A'}; when 'PDF::Catalog' {'B'}; def
         when PDF::DAO::Array|PDF::DAO::Tie::Array  {'array'}
         when PDF::DAO::Stream|PDF::Content::XObject['Form'] {'stream'}
         when PDF::DAO::Dict|PDF::DAO::Tie::Hash   {'dict'}
-        default { next }
+        default {
+            warn "ignoring class: $name";
+            next;
+        }
     };
 
     my $doc = $class.WHY // '';
-    my @accessors = $class.^attributes.grep({.name !~~ /descriptor/ && (.can('entry') || .can('index')) }).map(*.name.subst(/^.'!'/, '')).grep(* ∉ $stream-accessors).sort.unique;
+    my @accessors = $class\
+        .^attributes\
+        .grep({.name !~~ /descriptor/ && (.can('entry') || .can('index')) })\
+        .map({my $name = .name.subst(/^.'!'/, ''); with .tied.alias { "{$name}($_)" } else { $name } })\
+        .grep(* ∉ $stream-accessors).sort.unique;
     my @methods = $class.^methods.map(*.name).grep(* ∉ $std-methods).sort.unique;
     say "$name | $type | {@accessors.join: ', '} | {@methods.join: ', '} | $doc"
         if @accessors || @methods;

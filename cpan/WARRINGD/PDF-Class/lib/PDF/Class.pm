@@ -3,7 +3,7 @@ use v6;
 use PDF:ver(v0.2.1+);
 
 #| PDF entry-point. either a trailer dict or an XRef stream
-class PDF::Class:ver<0.0.4> #:api<PDF-1.7>
+class PDF::Class:ver<0.0.5> #:api<PDF-1.7>
     is PDF {
 
     # base class declares: $.Size, $.Encrypt, $.ID
@@ -13,7 +13,7 @@ class PDF::Class:ver<0.0.4> #:api<PDF-1.7>
     need PDF::Info;
     has PDF::Info $.Info is entry(:indirect);  #| (Optional; must be an indirect reference) The document’s information dictionary
     my subset Catalog of PDF::Class::Type where { .type eq 'Catalog' };  # autoloaded PDF::Catalog
-    has Catalog $.Root is entry(:required,:indirect);
+    has Catalog $.Root is entry(:required, :indirect, :alias<catalog>);
 
     method type { 'PDF' }
     method version {

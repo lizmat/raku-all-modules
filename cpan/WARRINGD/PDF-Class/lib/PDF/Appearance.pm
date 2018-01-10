@@ -27,8 +27,8 @@ role PDF::Appearance
 	PDF::DAO.coerce($dict,  AppearanceStatus)
     }
 
-    has AppearanceEntry $.N is entry(:&coerce, :required); 
-    has AppearanceEntry $.R is entry(:&coerce);
-    has AppearanceEntry $.D is entry(:&coerce);
+    has AppearanceEntry $.N is entry(:&coerce, :alias<normal>, :required); #| (Required) The annotation’s normal appearance.
+    has AppearanceEntry $.R is entry(:&coerce, :alias<rollover>);          #| (Optional) The annotation’s rollover appearance. Default value: the value of the N entry.
+    has AppearanceEntry $.D is entry(:&coerce, :alias<down>);              #| (Optional) The annotation’s down appearance. Default value: the value of the N entry.
 
 }

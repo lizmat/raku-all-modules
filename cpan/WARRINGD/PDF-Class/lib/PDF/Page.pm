@@ -36,23 +36,24 @@ class PDF::Page
     has NinetyDegreeAngle $.Rotate is entry(:inherit);     #| (Optional; inheritable) The number of degrees by which the page should be rotated clockwise when displayed or printed
     has Hash $.Group is entry;                   #| (Optional; PDF 1.4) A group attributes dictionary specifying the attributes of the page’s page group for use in the transparent imaging model
     has PDF::DAO::Stream $.Thumb is entry;       #| (Optional) A stream object defining the page’s thumbnail image
-    has @.B is entry(:indirect);                 #| (Optional; PDF 1.1; recommended if the page contains article beads) An array of indirect references to article beads appearing on the page
+    has @.B is entry(:indirect, :alias<beads>);                 #| (Optional; PDF 1.1; recommended if the page contains article beads) An array of indirect references to article beads appearing on the page
     has Numeric $.Dur is entry;                  #| (Optional; PDF 1.1) The page’s display duration (also called its advance timing): the maximum length of time, in seconds, that the page is displayed during presentations before the viewer application automatically advances to the next page
     has Hash $.Trans is entry;                   #| (Optional; PDF 1.1) A transition dictionary describing the transition effect to be used when displaying the page during presentations
     my subset Annot of Hash where { .<Type> ~~ 'Annot' }
     has Annot @.Annots is entry; #| (Optional) An array of annotation dictionaries representing annotations associated with the page
-    has Hash $.AA is entry;                      #| (Optional; PDF 1.2) An additional-actions dictionary defining actions to be performed when the page is opened or closed
+    use PDF::Action;
+    has PDF::Action $.AA is entry(:alias<additional-actions>);                      #| (Optional; PDF 1.2) An additional-actions dictionary defining actions to be performed when the page is opened or closed
     has PDF::DAO::Stream $.Metadata is entry;    #| (Optional; PDF 1.4) A metadata stream containing metadata for the page
     has Hash $.PieceInfo is entry;               #| (Optional; PDF 1.3) A page-piece dictionary associated with the page
     has UInt $.StructParents is entry;           #| (Required if the page contains structural content items; PDF 1.3) The integer key of the page’s entry in the structural parent tree
     has Str $.ID is entry;                       #| (Optional; PDF 1.3; indirect reference preferred) The digital identifier of the page’s parent Web Capture content set
-    has Numeric $.PZ is entry;                   #| (Optional; PDF 1.3) The page’s preferred zoom (magnification) factor
+    has Numeric $.PZ is entry(:alias<preferred-zoom>); #| (Optional; PDF 1.3) The page’s preferred zoom (magnification) factor
     has Hash $.SeparationInfo is entry;          #| (Optional; PDF 1.3) A separation dictionary containing information needed to generate color separations for the page
     has PDF::DAO::Name $.Tabs is entry;          #| (Optional; PDF 1.5) A name specifying the tab order to be used for annotations on the page
     has PDF::DAO::Name $.TemplateInstantiated is entry; #| (Required if this page was created from a named page object; PDF 1.5) The name of the originating page object
     has Hash $.PressSteps is entry;              #| (Optional; PDF 1.5) A navigation node dictionary representing the first node on the pag
     has Numeric $.UserUnit is entry;             #| (Optional; PDF 1.6) A positive number giving the size of default user space units, in multiples of 1 ⁄ 72 inch
-    has $.VP is entry;                           #| Optional; PDF 1.6) An array of viewport dictionaries
+    has Hash @.VP is entry(:alias<view-ports>);  #| Optional; PDF 1.6) An array of viewport dictionaries
 
 }
 

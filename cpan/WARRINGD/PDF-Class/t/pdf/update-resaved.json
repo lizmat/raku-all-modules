@@ -39,13 +39,13 @@
               {
                 "dict": {
                   "Producer": {
-                    "literal": "Perl 6 PDF::Class 0.0.3"
+                    "literal": "Perl 6 PDF::Class 0.0.5"
                   },
                   "CreationDate": {
                     "literal": "D:20151225000000Z00'00'"
                   },
                   "Creator": {
-                    "literal": "PDF::Tools"
+                    "literal": "PDF::Class"
                   },
                   "Author": {
                     "literal": "t/helloworld.t"

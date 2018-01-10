@@ -32,7 +32,7 @@ role PDF::Field::Signature
 	    has  DigestMethodName $.DigestMethod is entry; #| (Optional; PDF 1.7) An array of names indicating acceptable digest algorithms to use while signing. The valid values are SHA1, SHA256, SHA384, SHA512 and RIPEMD160. The default value is implementation-specific.
 	    #| Note: This property is only applicable if the digital credential signing contains RSA public/private keys. If it contains DSA public/ private key, the digest algorithm is always SHA1 and this attribute is ignored.
 
-	    has  Numeric $.V is entry;                     #| (Optional) The minimum required capability of the signature field seed value dictionary parser. A value of 1 specifies that the parser must be able to recognize all seed value dictionary entries specified in PDF 1.5. A value of 2 specifies that it must be able to recognize all seed value dictionary entries specified in PDF 1.7 and earlier.
+	    has  Numeric $.V is entry(:alias<value>);       #| (Optional) The minimum required capability of the signature field seed value dictionary parser. A value of 1 specifies that the parser must be able to recognize all seed value dictionary entries specified in PDF 1.5. A value of 2 specifies that it must be able to recognize all seed value dictionary entries specified in PDF 1.7 and earlier.
 	    #| The Ff entry indicates whether this is a required constraint.
 	    #| Note: The PDF Reference fifth edition (PDF 1.6) and earlier, erroneously indicates that the V entry is of type integer. This entry is of type real
 
@@ -59,5 +59,5 @@ role PDF::Field::Signature
 
     }
 
-    has SeedValueDict $.SV is entry;     #| (Optional; must be an indirect reference; PDF 1.5) A seed value dictionary (see Table 8.83) containing information that constrains the properties of a signature that is applied to this field.
+    has SeedValueDict $.SV is entry(:indirect);           #| (Optional; must be an indirect reference; PDF 1.5) A seed value dictionary (see Table 8.83) containing information that constrains the properties of a signature that is applied to this field.
 }

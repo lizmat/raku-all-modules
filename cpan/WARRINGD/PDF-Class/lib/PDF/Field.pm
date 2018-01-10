@@ -60,7 +60,7 @@ role PDF::Field
 	PDF::DAO.coerce( $dict, $field.field-delegate( $dict ) );
     }
 
-    has FieldTypeName $.FT is entry(:inherit);  #| Required for terminal fields; inheritable) The type of field that this dictionary describes
+    has FieldTypeName $.FT is entry(:inherit, :alias<field-type>);  #| Required for terminal fields; inheritable) The type of field that this dictionary describes
     has PDF::Field $.Parent is entry(:indirect);      #| (Required if this field is the child of another in the field hierarchy; absent otherwise) The field that is the immediate parent of this one (the field, if any, whose Kids array includes this field). A field can have at most one parent; that is, it can be included in the Kids array of at most one other field.
 
     my subset AnnotOrField of Hash where { is-annot-only($_) || $_ ~~ PDF::Field }
@@ -109,11 +109,11 @@ role PDF::Field
 	flat @annots;
     }
 
-    has PDF::DAO::TextString $.T is entry;      #| Optional) The partial field name
+    has PDF::DAO::TextString $.T is entry(:alias<key>);      #| Optional) The partial field name
 
-    has PDF::DAO::TextString $.TU is entry;     #| (Optional; PDF 1.3) An alternate field name to be used in place of the actual field name wherever the field must be identified in the user interface (such as in error or status messages referring to the field). This text is also useful when extracting the document’s contents in support of accessibility to users with disabilities or for other purposes
+    has PDF::DAO::TextString $.TU is entry(:alias<label>);     #| (Optional; PDF 1.3) An alternate field name to be used in place of the actual field name wherever the field must be identified in the user interface (such as in error or status messages referring to the field). This text is also useful when extracting the document’s contents in support of accessibility to users with disabilities or for other purposes
 
-    has PDF::DAO::TextString $.TM is entry;     #| (Optional; PDF 1.3) The mapping name to be used when exporting interactive form field data from the document.
+    has PDF::DAO::TextString $.TM is entry(:alias<tag>);     #| (Optional; PDF 1.3) The mapping name to be used when exporting interactive form field data from the document.
 
     has UInt $.Ff is entry(:inherit);           #| Optional; inheritable) A set of flags specifying various characteristics of the field
 
