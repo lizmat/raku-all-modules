@@ -17,11 +17,13 @@ multi MAIN('test', *@dirs, :$depth = 1) is export {
   my $ending-out = '';
   my $index      = 0;
   my $str-r      = $*CWD.absolute;
+  my $pass       = True;
 
   "    # | Plan // Pass | File Name".say;
   $app.supply.act(-> $test {
     if $test<msg> eq 'tested' {
       $index++;
+      $pass = $pass && $test<data>.pass;
       "[{ $test<data>.pass ?? '+' !! '-' }] $index | {s-m($test<data>.planned, 5)}//{s-m($test<data>.passed, 5, :!ltr)} | { $test<path>.substr($str-r.chars+1) }".say;
       my $eout = ''; 
       $eout ~= $test<data>.noks.join("\n").lines.map({ .subst(/^^/, '   ') }).join("\n");
@@ -36,5 +38,6 @@ multi MAIN('test', *@dirs, :$depth = 1) is export {
 
   $app.wait;
   "\n$ending-out".say if $ending-out.trim ne '';
+  $pass;
 }
 

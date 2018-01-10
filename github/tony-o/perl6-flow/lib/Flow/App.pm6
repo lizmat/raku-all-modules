@@ -21,8 +21,8 @@ class Flow::App {
   method wait {
     for @!ongoing {
       .result;
-      await $_;
     }
+    await @!ongoing;
   }
 
   multi method test-dir(*@paths, :$DIR-RECURSION) {
@@ -37,7 +37,7 @@ class Flow::App {
     return if $DIR-RECURSION < 0;
     if $dir.IO.e && $dir.IO.f && $dir.IO.absolute ~~ /'.' $<ext>=\w+? $/ {
       next unless $/<ext> eq any @extensions;
-      @!ongoing.append: start { 
+      @!ongoing.append( start { 
         my $path = $dir.IO.absolute;
         my $data = self!test-file($path);
         $!result-receiver.send({
@@ -46,7 +46,7 @@ class Flow::App {
           path => $path,
         });
         CATCH { default { .say; } };
-      };
+      } );
     } elsif $dir.IO.e {
       self.test-dir($dir.IO.dir, :DIR-RECURSION($DIR-RECURSION - 1));
     } else {
