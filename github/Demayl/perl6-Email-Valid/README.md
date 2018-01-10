@@ -15,6 +15,9 @@ say "Mailbox is: " ~ $email.parse('test@domain.tld')<email><mailbox>;
 say "Domain is: "  ~ $email.parse('test@domain.tld')<email><domain>;
 # Mailbox is: test
 # Domain is: domain.tld
+
+# Variant with custom type
+my Email $str = 'test@test.com';
 ```
 
 ## Description

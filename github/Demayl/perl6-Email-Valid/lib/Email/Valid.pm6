@@ -1,5 +1,6 @@
 use v6;
-unit class Email::Valid:ver<1.0.1>:auth<github:demayl>;
+
+class Email::Valid:ver<1.0.2>:auth<github:demayl> {
 
 use Net::DNS; # Required only when :mx_check( True )
 #use Net::SMTP;
@@ -173,6 +174,8 @@ method mx_validate(Str $email!) {
 
     return self!validate_domain( $domain );
 }
+}
 
+subset Email of Str is export where { Email::Valid.new().validate( $^email ) };
 
 # '0_O';
