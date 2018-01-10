@@ -1,0 +1,59 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    background: #ddc;
+    color: #333;
+}
+
+body {
+    width: 1200px;
+    margin: 20px auto;
+}
+
+li {
+    list-style: none;
+}
+li li {
+    padding-left: 2em;
+    border-left: 1px dotted #333;
+}
+
+.node-with-kids:before {
+    content: "[-]";
+    font-size: 80%;
+    font-family: monospace;
+    color: #66c;
+}
+.node-with-kids.collapsed:before {
+    content: "[+]";
+}
+
+.qast-sunk {
+    background: rgba(150, 150, 200, .1);
+}
+.qast-sunk .qast-sunk .qast-sunk .qast-sunk .qast-sunk {
+    background: none;
+}
+
+.qast-name-vm {
+    opacity: .5;
+}
+.qast-name-var {
+    color: #d0d;
+}
+.qast-name-wval {
+    color: #00a;
+}
+.qast-static-call {
+    color: green;
+}
+.qast-call {
+    color: red;
+}
+.qast-want-v {
+    color: #999;
+    opacity: .5;
+}

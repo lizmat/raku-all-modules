@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/q.git
+	branch = master
+	commit = bddb8ab48f8f9914b7db6a89b76ddd11817b6cde
+	parent = acb3608904fceff38ef162f6cc0b86608ce67967
+	cmdver = 0.4.0
