@@ -54,7 +54,7 @@ Specify a regex (or any other smartmatchable type) to exclude files / directorie
 **type**
 
 Given a type, `find()` will only return files being the given type.
-The available types are `file`, `dir` or `symlink.
+The available types are `file`, `dir` or `symlink`.
 
 **keep-going**
 

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/File-Find.git
 	branch = master
-	commit = db68541eb86eeb4eb405987d96b42212bf70b9c3
-	parent = afa149acaa57d761acfb5fa930cfbc894f96d771
+	commit = 5754d97b25cbf3b6abe997a9d829eac4e5aba7d9
+	parent = 472d5da9bf7510389cd7839ef613b865e51c6ecc
 	cmdver = 0.4.0
