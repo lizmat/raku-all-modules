@@ -1,6 +1,9 @@
 Revision history for Term::Choose
 
 
+1.1.1   2018-01-10
+        - Bugfix: reset object attribute @!length for each _choose call
+
 1.1.0   2017-12-31
         - Removed option "pad-one-row"
 

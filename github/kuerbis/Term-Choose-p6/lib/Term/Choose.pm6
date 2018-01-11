@@ -1,5 +1,9 @@
 use v6;
-unit class Term::Choose:ver<1.1.0>;
+
+#use ClassX::StrictConstructor;
+#unit class Term::Choose:ver<1.1.1> does ClassX::StrictConstructor;
+
+unit class Term::Choose:ver<1.1.1>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -30,31 +34,30 @@ has @!list;
 has WINDOW $.win;
 has Bool   $!reset_win;
 
-subset PInt     of Int where * > 0;
-subset Int_gt_1 of Int where * > 1;
-subset Int_012  of Int where * == 0|1|2;
-subset Int_01   of Int where * == 0|1;
+subset Positive_Int     of Int where * > 0;
+subset Int_2_or_greater of Int where * > 1;
+subset Int_0_to_2          of Int where * == 0|1|2;
+subset Int_0_or_1           of Int where * == 0|1;
 
-has Int_01   $.beep        = 0;
-has Int_01   $.index       = 0;
-has Int_01   $.mouse       = 0;
-has Int_01   $.order       = 1;
-has Int_01   $.page        = 1;
-has Int_012  $.justify     = 0;
-has Int_012  $.layout      = 1;
-has PInt     $.keep        = 5;
-has PInt     $.ll;
-has PInt     $.max-height;
-has Int_gt_1 $.max-width;
-has UInt     $.default     = 0;
-has UInt     $.pad         = 2;
-has UInt     $.pad-one-row; # ###
-has List     $.lf;
-has List     $.mark;
-has List     $.no-spacebar;
-has Str      $.prompt;
-has Str      $.empty       = '<empty>';
-has Str      $.undef       = '<undef>';
+has Int_0_or_1       $.beep        = 0;
+has Int_0_or_1       $.index       = 0;
+has Int_0_or_1       $.mouse       = 0;
+has Int_0_or_1       $.order       = 1;
+has Int_0_or_1       $.page        = 1;
+has Int_0_to_2       $.justify     = 0;
+has Int_0_to_2       $.layout      = 1;
+has Positive_Int     $.keep        = 5;
+has Positive_Int     $.ll;
+has Positive_Int     $.max-height;
+has Int_2_or_greater $.max-width;
+has UInt             $.default     = 0;
+has UInt             $.pad         = 2;
+has List             $.lf;
+has List             $.mark;
+has List             $.no-spacebar;
+has Str              $.prompt;
+has Str              $.empty       = '<empty>';
+has Str              $.undef       = '<undef>';
 
 has %!o;
 
@@ -64,6 +67,7 @@ has Int   $!avail_w;
 has Int   $!avail_h;
 has Int   $!col_w;
 has Int   @!length;
+has Int   $!curr_layout;
 has Int   $!rest;
 has Int   $!print_pp_row;
 has Str   $!pp_line_fmt;
@@ -139,6 +143,7 @@ method !_prepare_new_copy_of_list {
                 }
             };
         }
+        @!length = ();
         for await @promise -> @portion {
             for @portion {
                 @!list[.[0]] := .[1];
@@ -154,9 +159,9 @@ sub choose       ( @list, *%opt ) is export( :DEFAULT, :choose )       { Term::C
 sub choose-multi ( @list, *%opt ) is export( :DEFAULT, :choose-multi ) { Term::Choose.new().choose-multi( @list, |%opt ) }
 sub pause        ( @list, *%opt ) is export( :DEFAULT, :pause )        { Term::Choose.new().pause(        @list, |%opt ) }
 
-method choose       ( @list, *%opt ) { self!_choose( @list, %opt, 0   ) }
-method choose-multi ( @list, *%opt ) { self!_choose( @list, %opt, 1   ) }
-method pause        ( @list, *%opt ) { self!_choose( @list, %opt, Int ) }
+method choose       ( @list, *%opt ) { self!_choose( 0,   @list, |%opt ) }
+method choose-multi ( @list, *%opt ) { self!_choose( 1,   @list, |%opt ) }
+method pause        ( @list, *%opt ) { self!_choose( Int, @list, |%opt ) }
 
 
 
@@ -189,48 +194,41 @@ method !_end_term {
 }
 
 
-method !_choose (
-    @!orig_list,
-    % (
-        Int_01  :$beep        = $!beep,
-        Int_01  :$index       = $!index,
-        Int_01  :$mouse       = $!mouse,
-        Int_01  :$order       = $!order,
-        Int_01  :$page        = $!page,
-        Int_012  :$justify     = $!justify,
-        Int_012  :$layout      = $!layout,
-        PInt     :$keep        = $!keep,
-        PInt     :$ll          = $!ll,
-        PInt     :$max-height  = $!max-height,
-        Int_gt_1 :$max-width   = $!max-width,
-        UInt     :$default     = $!default,
-        UInt     :$pad         = $!pad,
-        UInt     :$pad-one-row = $!pad-one-row, # ###
-        List     :$lf          = $!lf,
-        List     :$mark        = $!mark,
-        List     :$no-spacebar = $!no-spacebar,
-        Str      :$prompt      = $!prompt,
-        Str      :$empty       = $!empty,
-        Str      :$undef       = $!undef
-    ),
-    Int $multiselect ) {
+method !_choose ( Int $multiselect, @!orig_list,
+        Int_0_or_1       :$beep        = $!beep,
+        Int_0_or_1       :$index       = $!index,
+        Int_0_or_1       :$mouse       = $!mouse,
+        Int_0_or_1       :$order       = $!order,
+        Int_0_or_1       :$page        = $!page,
+        Int_0_to_2       :$justify     = $!justify,
+        Int_0_to_2       :$layout      = $!layout,
+        Positive_Int     :$keep        = $!keep,
+        Positive_Int     :$ll          = $!ll,
+        Positive_Int     :$max-height  = $!max-height,
+        Int_2_or_greater :$max-width   = $!max-width,
+        UInt             :$default     = $!default,
+        UInt             :$pad         = $!pad,
+        List             :$lf          = $!lf,
+        List             :$mark        = $!mark,
+        List             :$no-spacebar = $!no-spacebar,
+        Str              :$prompt      = $!prompt,
+        Str              :$empty       = $!empty,
+        Str              :$undef       = $!undef
+    ) {
+    #if %_ {
+    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
+    #}
     if ! @!orig_list.elems {
         return;
     }
     CATCH {
         endwin();
     }
-    %!o = :$beep, :$index, :$mouse, :$order, :$page, :$justify, :$layout, :$keep, :$ll, :$max-height, :$max-width,
-              :$default, :$pad, :$lf, :$mark, :$no-spacebar, :$prompt, :$empty, :$undef;
+    %!o = :$beep, :$index, :$mouse, :$order, :$page, :$justify, :$layout, :$keep, :$ll, :$max-height,
+          :$max-width, :$default, :$pad, :$lf, :$mark, :$no-spacebar, :$prompt, :$empty, :$undef;
     if ! %!o<prompt>.defined {
         %!o<prompt> = $multiselect.defined ?? 'Your choice' !! 'Continue with ENTER';
     }
-# ###
-    if $pad-one-row.defined {
-        %!o<prompt> ~= ' ["pad-one-row" removed - complaints to cuer2s@gmail.com, subject: "pad-one-row"]';
-    }
-# ###
-
     self!_init_term();
     self!_wr_first_screen( $multiselect );
     my Int $pressed;
@@ -632,7 +630,10 @@ method !_beep {
 
 
 method !_prepare_prompt {
-    return if %!o<prompt> eq '';
+    if %!o<prompt> eq '' {
+        @!prompt_lines = ();
+        return;
+    }
     my Int $init   = %!o<lf>[0] // 0;
     my Int $subseq = %!o<lf>[1] // 0;
     @!prompt_lines = line-fold( %!o<prompt>, $!avail_w, ' ' x $init, ' ' x $subseq );
@@ -674,12 +675,11 @@ method !_wr_first_screen ( Int $multiselect ) {
     }
     $!print_pp_row = %!o<page>;
     self!_prepare_new_copy_of_list();
-    @!prompt_lines = ();
     self!_prepare_prompt();
     if %!o<max-height> && %!o<max-height> < $!avail_h {
         $!avail_h = %!o<max-height>;
     }
-    %!o<tmp_layout> = %!o<layout>;
+    $!curr_layout = %!o<layout>;
     self!_list_index2rowcol();
     if %!o<page> {
         self!_set_pp_print_fmt;
@@ -724,7 +724,7 @@ method !_set_pp_print_fmt {
     }
 }
 
-method !_wr_screen () {
+method !_wr_screen {
     move( @!prompt_lines.elems, 0 );
     clrtobot();
     if $!print_pp_row {
@@ -797,13 +797,13 @@ method !_pad_str_to_colwidth ( Int $i ) {
 }
 
 
-method !_list_index2rowcol () {
+method !_list_index2rowcol {
     $!rc2idx = [];
     if $!col_w + %!o<pad> >= $!avail_w {
-        %!o<tmp_layout> = 2;
+        $!curr_layout = 2;
     }
     my Str $all_in_first_row = '';
-    if %!o<tmp_layout> == 0|1 {
+    if $!curr_layout == 0|1 {
         for ^@!list -> $i {
             $all_in_first_row ~= @!list[$i];
             $all_in_first_row ~= ' ' x %!o<pad> if $i < @!list.end;
@@ -816,7 +816,7 @@ method !_list_index2rowcol () {
     if $all_in_first_row {
         $!rc2idx[0] = [ ^@!list ];
     }
-    elsif %!o<tmp_layout> == 2 {
+    elsif $!curr_layout == 2 {
         for ^@!list -> $i {
             $!rc2idx[$i][0] = $i;
         }
@@ -825,7 +825,7 @@ method !_list_index2rowcol () {
         my Int $col_with_pad_w = $!col_w + %!o<pad>;
         my Int $tmp_avail_w = $!avail_w + %!o<pad>;
         # auto_format
-        if %!o<tmp_layout> == 1 {
+        if $!curr_layout == 1 {
             my Int $tmc = @!list.elems div $!avail_h;
             $tmc++ if @!list.elems % $!avail_h;
             $tmc *= $col_with_pad_w;
@@ -878,7 +878,7 @@ method !_list_index2rowcol () {
 
 
 method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
-    if %!o<tmp_layout> == 2 {
+    if $!curr_layout == 2 {
         for $indexes.list -> $i {
             $!marked[$i][0] = $yesno;
         }
@@ -912,7 +912,7 @@ method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
     }
 }
 
-method !_marked_rc2idx () {
+method !_marked_rc2idx {
     my Int @idx;
     if %!o<order> == 1 {
         for ^$!rc2idx[0] -> $col {
