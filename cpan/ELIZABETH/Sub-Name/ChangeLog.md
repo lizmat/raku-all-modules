@@ -12,3 +12,6 @@ Added support for
 (a Pair) and associated tests.
 
 Also added this ChangeLog
+
+# Version 0.0.4
+Added UTILS and CPAN5 META tags
