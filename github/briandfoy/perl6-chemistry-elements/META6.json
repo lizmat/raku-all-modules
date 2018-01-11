@@ -11,10 +11,11 @@
 	"Chemistry::Elements": "lib/Chemistry/Elements.pm6"
 	},
 "support": {
-	"source": "git@github.com:briandfoy/perl6-chemistry-elements.git"
+	"source": "https://github.com/briandfoy/perl6-chemistry-elements"
 	},
 "test-depends": [
-	"Test"
+	"Test",
+	"Test::META"
 	],
 "version": "0.001003",
 "tags": [ "chemistry", "Z", "atomic number" ],

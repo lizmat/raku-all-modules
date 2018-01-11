@@ -19,13 +19,12 @@ before_install:
     - perl6 -v
 install:
     # must do *something* in the install phase
-    - rakudobrew build-panda
+    - perl6 -e 'put "Hello World!"'
 script:
     # Pull in the dependencies before running tests
-    - panda installdeps .
+    - zef install .
     # tests that module passes tests *before* compile
     - prove -v -j$(test-jobs) -e "perl6 --ll-exception -Ilib" $(test-files)
     # runs tests again, but catches some heisenbugs (mostly with precompiled modules)
-    - PANDA_SUBMIT_TESTREPORTS=1 panda install .
 after_success:
-    - panda list --installed --verbose
+    - zef list --installed --verbose
