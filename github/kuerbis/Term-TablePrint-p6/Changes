@@ -1,6 +1,12 @@
 Revision history for Term::TablePrint
 
 
+1.0.5   2018-01-10
+        - Refactoring parameter handling
+        - Code refactoring
+        - The option "choose_columns" has now only two valid values
+        - Fix disabled option "table-expand"
+
 1.0.4   2018-01-05
         - Bugfix signature
         - Print the column names if the table is empty

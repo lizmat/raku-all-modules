@@ -1,5 +1,8 @@
 use v6;
-unit class Term::TablePrint:ver<1.0.4>;
+unit class Term::TablePrint:ver<1.0.5>;
+
+#use ClassX::StrictConstructor;
+#unit class Term::TablePrint:ver<1.0.5> does ClassX::StrictConstructor;
 
 
 use NCurses;
@@ -10,11 +13,27 @@ use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
 use Term::Choose::Util     :insert-sep, :unicode-sprintf;
 
 
-has %!defaults;
 has %!o;
 
-has WINDOW $!win;
+has WINDOW $.win;
 has Bool $!reset_win;
+
+subset Int_0_to_2 of Int where * == 0|1|2;
+subset Int_0_or_1 of Int where * == 0|1;
+
+has UInt       $.max-rows       = 50_000;
+has UInt       $.min-col-width  = 30;
+has UInt       $.progress-bar   = 5_000;
+has UInt       $.tab-width      = 2;
+has Int_0_or_1 $.add-header     = 0;
+has Int_0_or_1 $.grid           = 0;
+has Int_0_or_1 $.keep-header    = 1;
+has Int_0_or_1 $.mouse          = 0;
+has Int_0_to_2 $.choose-columns = 0; # Int_0_or_1
+has Int_0_to_2 $.table-expand   = 1;
+has Str        $.prompt         = '';
+has Str        $.undef          = '';
+has Str        $.no-col         = 'col'; #
 
 has List $!table;
 has Int  @!cols_w;
@@ -22,130 +41,13 @@ has Int  @!heads_w;
 has Int  @!new_cols_w;
 has Int  @!not_a_number;
 
+has Int $!tab_w; #
 has Int $!show_progress;
-has Str $!computing = 'Computing:';
 has Int $!total;
 has Int $!bar_w;
 has Str $!progressbar_fmt;
 
-
-method new() {
-    self.bless( defaults => %_ );
-}
-
-submethod BUILD( :$defaults ) {
-    %!defaults := $defaults.Hash;
-    $!win = %!defaults<win>:delete // WINDOW;
-    _validate_options( %!defaults );
-    _set_defaults( %!defaults );
-}
-
-sub _set_defaults ( %opt ) {
-    %opt<add-header>     //= 0;
-    %opt<choose-columns> //= 0;
-    %opt<grid>           //= 0;
-    %opt<keep-header>    //= 1;
-    %opt<max-rows>       //= 50_000;
-    %opt<min-col-width>  //= 30;
-    %opt<mouse>          //= 0;
-    %opt<progress-bar>   //= 5_000;
-    %opt<prompt>         //= '';
-    %opt<tab-width>      //= 2;
-    %opt<table-expand>   //= 1;
-    %opt<undef>          //= '';
-    %opt<no-col> = 'col'; #
-    %opt<tab-w> = %opt<tab-width>;
-}
-
-sub _valid_options {
-    return {
-        max-rows        => '<[ 0 .. 9 ]>+',
-        min-col-width   => '<[ 0 .. 9 ]>+',
-        progress-bar    => '<[ 0 .. 9 ]>+',
-        tab-width       => '<[ 0 .. 9 ]>+',
-        add-header      => '<[ 0 1 ]>',
-        grid            => '<[ 0 1 ]>',
-        keep-header     => '<[ 0 1 ]>',
-        choose-columns  => '<[ 0 1 2 ]>',
-        table-expand    => '<[ 0 1 2 ]>',
-        mouse           => '<[ 0 1 ]>',
-        prompt          => 'Str',
-        undef           => 'Str',
-        #no-col         => 'Str', #
-    };
-}
-
-sub _validate_options ( %opt ) {
-    my $valid = _valid_options();
-    for %opt.kv -> $key, $value {
-        when $valid{$key}:!exists { #
-            die "'$key' is not a valid option name";
-        }
-        when ! $value.defined {
-            next;
-        }
-        when $valid{$key} eq 'Str' {
-             die "$key => {$value.perl} is not a string." if ! $value.isa: Str;
-        }
-        default {
-            when ! $value.isa( Int ) {
-                die "$key => {$value.perl} is not an integer.";
-            }
-            when $value !~~ / ^ <{$valid{$key}}> $ / {
-                die "$key => '$value' is not a valid value.";
-            }
-        }
-    }
-}
-
-method !_choose_cols_with_order ( @avail_cols ) {
-    my Str $init_prompt = 'Columns: ';
-    my Int $subseq_tab = $init_prompt.chars;
-    my Str $ok = '-ok-';
-    my Str @pre = ( $ok );
-    my @col_idxs;
-    my $tc = Term::Choose.new( :win( $!win ), :lf( 0, $subseq_tab ), :no-spacebar( |^@pre ), :mouse( %!o<mouse> ) );
-
-    loop {
-        my Str @chosen_cols = @col_idxs.list ?? @avail_cols[@col_idxs] !! '*';
-        my Str $prompt = $init_prompt ~ @chosen_cols.join: ', ';
-        my Str @choices = |@pre, |@avail_cols;
-        # Choose
-        my Int @idx = $tc.choose-multi( @choices, :prompt( $prompt ), :index( 1 ) );
-        if ! @idx[0].defined || ! @choices[@idx[0]].defined { ##
-            if @col_idxs.elems {
-                @col_idxs = [];
-                next;
-            }
-            else {
-                return;
-            }
-        }
-        elsif @choices[@idx[0]] eq $ok {
-            @idx.shift;
-            @col_idxs.append: @idx >>->> @pre.elems;
-            return @col_idxs;
-        }
-        else {
-            @col_idxs.append: @idx >>->> @pre.elems;
-        }
-    }
-}
-
-method !_choose_cols_simple ( @avail_cols ) {
-    my $tc = Term::Choose.new( :win( $!win ), :mouse( %!o<mouse> ) );
-    my Str $all = '-*-';
-    my Str @pre = ( $all );
-    my @choices = |@pre, |@avail_cols;
-    my Int @idx = $tc.choose-multi( @choices, :prompt<Choose: >, :no-spacebar( |^@pre ), :index( 1 ) );
-    if ! @idx[0].defined { ##
-        return;
-    }
-    if @choices[@idx[0]] eq $all {
-        return [];
-    }
-    return @idx >>->> @pre.elems;
-}
+has Term::Choose $!tc;
 
 
 method !_init_term {
@@ -155,6 +57,7 @@ method !_init_term {
         setlocale( LC_ALL, "" );
         $!win = initscr();
     }
+    $!tc =Term::Choose.new( :win( $!win ), :mouse( %!o<mouse> ) );
 }
 
 method !_end_term {
@@ -167,39 +70,61 @@ sub print-table ( @orig_table, *%opt ) is export( :DEFAULT, :print-table ) {
     return Term::TablePrint.new().print-table( @orig_table, |%opt );
 }
 
-method print-table ( @orig_table, *%opt ) {
+method print-table (
+        @orig_table,
+        UInt       :$max-rows       = $!max-rows,
+        UInt       :$min-col-width  = $!min-col-width,
+        UInt       :$progress-bar   = $!progress-bar,
+        UInt       :$tab-width      = $!tab-width,
+        Int_0_or_1 :$add-header     = $!add-header,
+        Int_0_or_1 :$grid           = $!grid,
+        Int_0_or_1 :$keep-header    = $!keep-header,
+        Int_0_or_1 :$mouse          = $!mouse,
+        Int_0_to_2 :$choose-columns = $!choose-columns, # Int_0_or_1
+        Int_0_to_2 :$table-expand   = $!table-expand,
+        Str        :$prompt         = $!prompt,
+        Str        :$undef          = $!undef,
+        Str        :$no-col         = $!no-col #
+    ) {
+    #if %_ {
+    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
+    #}
+    %!o = :$max-rows, :$min-col-width, :$progress-bar, :$tab-width, :$add-header, :$grid,
+          :$keep-header, :$mouse, :$choose-columns, :$table-expand, :$prompt, :$undef, :$no-col;
     CATCH {
         endwin();
+    } 
+    self!_init_term();
+
+    # ### remove
+    if $choose-columns == 2 {
+        $!tc.pause( ( 'Close with ENTER', ), :prompt( 'Option "choose-columns": 2 is no longer a valid value!' ) );
     }
-    %!o = %opt;
+    # ###
+
     if ! @orig_table.elems {
-        my $tc = Term::Choose.new( :win( $!win ) :mouse( %!o<mouse> ) );
-        $tc.pause( [ 'Close with ENTER' ], :prompt<'print-table': Empty table!> );
+        $!tc.pause( ( 'Close with ENTER', ), :prompt( '"print-table": Empty table!' ) );
+        self!_end_term;
         return;
     }
-    _validate_options( %!o );
-    for %!defaults.kv -> $key, $value {
-        %!o{$key} //= $value;
-    }
+    $!tab_w = %!o<tab-width>;
     if %!o<grid> && %!o<tab-width> %% 2 {
-        %!o<tab-w>++;
+        $!tab_w++;
     }
     if %!o<add-header> {
         @orig_table.unshift: [ ( 1 .. @orig_table[0].elems ).map: { $_ ~ '_' ~ %!o<no-col> } ];
     }
-    self!_init_term();
-    my Int @col_idxs;
+    my Int @chosen;
     if %!o<choose-columns> {
-        @col_idxs = self!_choose_cols_simple(     @orig_table[0] ) if %!o<choose-columns> == 1;
-        @col_idxs = self!_choose_cols_with_order( @orig_table[0] ) if %!o<choose-columns> == 2;
-        if @col_idxs.elems && ! @col_idxs[0].defined {##
+        @chosen = self!_choose_columns( @orig_table[0] ) if %!o<choose-columns>;
+        if @chosen.elems && ! @chosen[0].defined {
             self!_end_term();
             return;
         }
     }
     my Int $last_row_idx = %!o<max-rows> && %!o<max-rows> < @orig_table.elems ?? %!o<max-rows> !! @orig_table.end;
-    if @col_idxs.elems {
-        $!table = [ ( 0 .. $last_row_idx ).map: { [ @orig_table[$_][@col_idxs] ] } ];
+    if @chosen.elems {
+        $!table = [ ( 0 .. $last_row_idx ).map: { [ @orig_table[$_][@chosen] ] } ];
     }
     else {
         if $last_row_idx == @orig_table.end {
@@ -213,97 +138,79 @@ method print-table ( @orig_table, *%opt ) {
         $!show_progress = ( $!table.elems * $!table[0].elems / %!o<progress-bar> ).Int;
         if $!show_progress >= 1 {
             curs_set( 0 );
-            $!progressbar_fmt = $!computing ~ ' [%s%s]';
+            $!progressbar_fmt = 'Computing: [%s%s]';
             $!total = $!table.elems;
         }
     }
-
     self!_calc_col_width();
-    self!_inner_print_tbl();
+    self!_win_size_dependet_code();
     self!_end_term();
     return;
 }
 
 
-method !_inner_print_tbl {
+method !_win_size_dependet_code {
     my Int $term_w = getmaxx( $!win );
-    my Bool $term_w_ok = self!_calc_avail_width( $term_w );
-    if ! $term_w_ok {
-        return;
-    }
+    my $table_w = self!_calc_avail_col_width( $term_w );
+    return if ! $table_w;
     my @list;
-    self!_cols_to_avail_width( @list );
-    my Int $len = [+] |@!new_cols_w, %!o<tab-w> * @!new_cols_w.end;
+    self!_col_to_avail_col_width( @list );
     if %!o<max-rows> && @list.elems - 1 >= %!o<max-rows> {
-        my Str $limit = insert-sep( %!o<max-rows>, ' ' );
-        my Str $reached_limit = 'REACHED LIMIT "MAX_ROWS": ' ~ $limit;
-        if $reached_limit.chars > $len {
-            $reached_limit = '=LIMIT= ' ~ $limit;
-            $reached_limit.=substr: 0, $len;
-        }
-        @list.push: unicode-sprintf( $reached_limit, $len, 0 );
-    }
-    my Str $header_sep = '';
-    if %!o<grid> {
-        my $tab = ( '-' x ( %!o<tab-w> div 2 ) ) ~ '|' ~ ( '-' x ( %!o<tab-w> div 2 ) );
-        for ^@!new_cols_w {
-            $header_sep ~= '-' x @!new_cols_w[$_];
-            if $_ != @!new_cols_w.end {
-                $header_sep ~= $tab;
-            }
-        }
+        @list.push: self!_limit_message( $table_w );
     }
     my Str @header;
     if %!o<prompt> {
         @header.push: %!o<prompt>;
     }
     if %!o<keep-header> {
-        my $col_names = @list.shift;
-        @header.push: $col_names;
-        @header.push: $header_sep if %!o<grid>;
+        @header.push: @list.shift;
+        @header.push: self!_header_separator if %!o<grid>;
     }
     else {
-        @list.splice( 1, 0, $header_sep ) if %!o<grid>;
+        @list.splice( 1, 0, self!_header_separator ) if %!o<grid>;
     }
     my Int $old_row = 0;
     my Int $auto_jumped_to_row_0 = 2;
-    my Int $expanded = 0;
-    my $tc = Term::Choose.new( :win( $!win ), :ll( $len ), :layout( 2 ), :mouse( %!o<mouse> ) );
+    my Int $row_is_expanded = 0;
 
     loop {
         if getmaxx( $!win ) != $term_w {
             $term_w = getmaxx( $!win );
-            self!_inner_print_tbl();
+            self!_win_size_dependet_code();
             return;
         }
         if ( %!o<keep-header> && ! @list.elems ) || ( @list.elems == 1 ) {
             # Choose
-            pause( ( Any, |$!table[0] ), :prompt( 'EMPTY table!' ), :0layout, :mouse( %!o<mouse> ), :undef( '<<' ) );
+            $!tc.pause( ( Any, |$!table[0] ), :prompt( 'EMPTY!' ), :0layout, :undef( '<<' ) );
             return;
         }
         # Choose
-        my Int $row = $tc.choose( @list, :prompt( @header.join: "\n" ), :default( $old_row ), :index( 1 ) );
+        my Int $row = $!tc.choose( @list, :prompt( @header.join: "\n" ), :ll( $table_w ),
+                                          :default( $old_row ), :1index, :2layout );
         return if ! $row.defined;
         next   if $row == -1; # ll + changed window size: choose returns -1
-        return if ! %!o<table-expand> && $row == 0;
+        if ! %!o<table-expand> {
+            return if $row == 0;
+            next;
+        }
         if $old_row == $row {
             if $row == 0 {
                 if ! %!o<keep-header> {
                     return;
                 }
                 elsif %!o<table-expand> == 1 {
-                    return if $expanded;
+                    return if $row_is_expanded;
                     return if $auto_jumped_to_row_0 == 1;
                 }
                 elsif %!o<table-expand> == 2 {
-                    return if $expanded;
+                    return if $row_is_expanded;
                 }
                 $auto_jumped_to_row_0 = 0;
             }
             else {
                 $old_row = 0;
                 $auto_jumped_to_row_0 = 1;
-                $expanded = 0;
+                $row_is_expanded = 0;
                 next;
             }
         }
@@ -312,18 +219,18 @@ method !_inner_print_tbl {
             $row++;
         }
         else {
-            if %!o<grid> {
+            if %!o<grid> { # handle header_sep
                 next   if $row == 1;
                 $row-- if $row > 1;
             }
         }
-        $expanded = 1;
-        self!_print_single_row( $row );
+        $row_is_expanded = 1;
+        self!_print_single_table_row( $row );
     }
 }
 
 
-method !_print_single_row ( Int $row ) {
+method !_print_single_table_row ( Int $row ) {
     my Int $term_w = getmaxx( $!win );
     my Int $key_w = @!heads_w.max + 1; #
     if $key_w > $term_w div 100 * 33 {
@@ -352,22 +259,7 @@ method !_print_single_row ( Int $row ) {
             }
         }
     }
-    my $tc = Term::Choose.new( :win( $!win ), :mouse( %!o<mouse> ) );
-    $tc.pause( @lines, :prompt( '' ), :layout( 2 ) );
-}
-
-
-sub _sanitized_string ( $str ) {
-    $str.trim.subst( / \s+ /, ' ', :g ).subst( / <:C> /, '', :g );
-}
-
-
-method !_progressbar_update( Int $count ) {
-    my $multi = ( $count / ( $!total / $!bar_w ) ).ceiling;
-    #my $ext ~= ' ' ~ ( $multi * ( 100 / $!bar_w ) ).Int ~ "%";
-    clear();
-    mvaddstr( 0, 0, sprintf $!progressbar_fmt, '=' x $multi, ' ' x $!bar_w - $multi );
-    nc_refresh();
+    $!tc.pause( @lines, :prompt( '' ), :2layout );
 }
 
 
@@ -403,8 +295,8 @@ method !_calc_col_width {
             do for $range[0] ..^ $range[1] -> $row {
                 if $step {
 #                    atomic-fetch-inc( $count );             # Perl 6.d
-                    $lock.protect( { ++$count } );
-                    self!_progressbar_update( $count ) if $count %% $step;
+                    $lock.protect( { ++$count; } );
+                    $lock.protect( { self!_progressbar_update( $count ) } ) if $count %% $step;
                 }
                 do for @col_idx -> $col {
                     if ! $!table[$row][$col].defined {
@@ -437,9 +329,9 @@ method !_calc_col_width {
 }
 
 
-method !_calc_avail_width ( Int $term_w ) {
+method !_calc_avail_col_width ( Int $term_w ) {
     @!new_cols_w  = @!cols_w;
-    my Int $avail_w = $term_w - %!o<tab-w> * @!new_cols_w.end;
+    my Int $avail_w = $term_w - $!tab_w * @!new_cols_w.end;
     my Int $sum = [+] @!new_cols_w;
     if $sum < $avail_w {
         HEAD: loop {
@@ -458,12 +350,8 @@ method !_calc_avail_width ( Int $term_w ) {
     elsif $sum > $avail_w {
         my Int $mininum_w = %!o<min-col-width> || 1;
         if @!heads_w.elems > $avail_w {
-            my $tc = Term::Choose.new( :win( $!win ), :mouse( %!o<mouse> ) );
-            my $prompt1 = 'Terminal window is not wide enough to print this table.';
-            $tc.pause( [ 'Press ENTER to show the column names.' ], :prompt( $prompt1 ) );
-            my Str $prompt2 = 'Reduce the number of columns".' ~ "\n" ~ 'Close with ENTER.';
-            $tc.pause( $!table[0], :prompt( $prompt2 ) );
-            return False;
+            self!_print_term_not_wide_enough_message();
+            return;
         }
         my Int @tmp_cols_w = @!new_cols_w;
         my Int $percent = 0;
@@ -505,16 +393,11 @@ method !_calc_avail_width ( Int $term_w ) {
         }
         @!new_cols_w = [ @tmp_cols_w ] if @tmp_cols_w.elems;
     }
-    return True;
-}
-
-sub _minus_x_percent ( Int $value, Int $percent ) {
-    my Int $new = ( $value - ( $value / 100 * $percent ) ).Int;
-    return $new > 0 ?? $new !! 1;
+    return [+] |@!new_cols_w, $!tab_w * @!new_cols_w.end;
 }
 
 
-method !_cols_to_avail_width( @list ) {
+method !_col_to_avail_col_width( @list ) {
     my Int $step;
     if $!show_progress {
         $!bar_w = getmaxx( $!win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
@@ -523,13 +406,13 @@ method !_cols_to_avail_width( @list ) {
     my Int @col_idx = 0 .. @!new_cols_w.end;
     my Str $tab;
     if %!o<grid> {
-        $tab = ( ' ' x ( %!o<tab-w> div 2 ) ) ~ '|' ~ ( ' ' x ( %!o<tab-w> div 2 ) );
+        $tab = ( ' ' x $!tab_w div 2 ) ~ '|' ~ ( ' ' x $!tab_w div 2 );
     }
     else {
-        $tab = ' ' x %!o<tab-w>;
+        $tab = ' ' x $!tab_w;
     }
     my $threads = Term::Choose.new.num-threads();
-    while $threads > $!table.elems {
+    while $threads > $!table.elems { #
         last if $threads == 1;
         $threads = $threads div 2;
     }
@@ -550,8 +433,8 @@ method !_cols_to_avail_width( @list ) {
                 }
                 if $step {
 #                    atomic-fetch-inc( $count );             # Perl 6.d
-                    $lock.protect( { ++$count } );
-                    self!_progressbar_update( $count ) if $count %% $step;
+                    $lock.protect( { ++$count; } );
+                    $lock.protect( { self!_progressbar_update( $count ) } ) if $count %% $step;
                 }
                 $row, $str;
             }
@@ -564,6 +447,83 @@ method !_cols_to_avail_width( @list ) {
     }
     self!_progressbar_update( $!total ) if $step && $!total % $step;
 }
+
+
+method !_choose_columns ( @avail_cols ) {
+    my Str $init_prompt = 'Columns: ';
+    my Str $ok = '-ok-';
+    my Str @pre = ( $ok );
+    my Int @col_idxs;
+
+    loop {
+        my Str @chosen_cols = @col_idxs.list ?? @avail_cols[@col_idxs] !! '*';
+        my Str $prompt = $init_prompt ~ @chosen_cols.map( { $_ // %!o<undef> } ).join: ', ';
+        my Str @choices = |@pre, |@avail_cols;
+        # Choose
+        my Int @idx = $!tc.choose-multi( @choices, :prompt( $prompt ), :1index, :lf( 0, $init_prompt.chars ),
+                                                   :no-spacebar( |^@pre ) );
+        if ! @idx[0].defined {
+            if @col_idxs.elems {
+                @col_idxs = [];
+                next;
+            }
+            return;
+        }
+        elsif @choices[@idx[0]].defined && @choices[@idx[0]] eq $ok {
+            @idx.shift;
+            @col_idxs.append: @idx >>->> @pre.elems;
+            return @col_idxs;
+        }
+        @col_idxs.append: @idx >>->> @pre.elems;
+    }
+}
+
+method !_limit_message ( $table_w ) {
+    my Str $limit = insert-sep( %!o<max-rows>, ' ' );
+    my Str $reached_limit = 'REACHED LIMIT "MAX_ROWS": ' ~ $limit;
+    if $reached_limit.chars > $table_w {
+        $reached_limit = '=LIMIT= ' ~ $limit;
+        $reached_limit.=substr: 0, $table_w;
+    }
+    return $reached_limit;
+}
+
+method !_header_separator { 
+    my Str $header_sep = '';
+    my Str $tab = ( '-' x $!tab_w div 2 ) ~ '|' ~ ( '-' x $!tab_w div 2 );
+    for ^@!new_cols_w {
+        $header_sep ~= '-' x @!new_cols_w[$_];
+        $header_sep ~= $tab if $_ != @!new_cols_w.end;
+    }
+    return $header_sep;
+}
+
+sub _sanitized_string ( $str ) {
+    $str.trim.subst( / \s+ /, ' ', :g ).subst( / <:C> /, '', :g );
+}
+
+method !_progressbar_update( Int $count ) {
+    my $multi = ( $count / ( $!total / $!bar_w ) ).ceiling;
+    #my $ext ~= ' ' ~ ( $multi * ( 100 / $!bar_w ) ).Int ~ "%";
+    clear();
+    mvaddstr( 0, 0, sprintf $!progressbar_fmt, '=' x $multi, ' ' x $!bar_w - $multi );
+    nc_refresh();
+}
+
+method !_print_term_not_wide_enough_message {
+    my $prompt1 = 'Terminal window is not wide enough to print this table.';
+    $!tc.pause( [ 'Press ENTER to show the column names.' ], :prompt( $prompt1 ) );
+    my Str $prompt2 = 'Reduce the number of columns".' ~ "\n" ~ 'Close with ENTER.';
+    $!tc.pause( $!table[0], :prompt( $prompt2 ) );
+}
+
+sub _minus_x_percent ( Int $value, Int $percent ) {
+    my Int $new = ( $value - ( $value / 100 * $percent ) ).Int;
+    return $new > 0 ?? $new !! 1;
+}
+
+
+
 
 
 
@@ -597,7 +557,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
     my $pt = Term::TablePrint.new();
 
-    $pt.print-table( @table, :mouse(1), :choose-columns(2) );
+    $pt.print-table( @table, :mouse(1), :choose-columns(1) );
 
 =end code
 
@@ -696,11 +656,8 @@ Default: 0
 
 =head2 choose-columns
 
-If I<choose-columns> is set to 1, the user can choose which columns to print. The columns can be marked with the
-C<SpaceBar>. The list of marked columns including the highlighted column are printed as soon as C<Return> is pressed.
-
-If I<choose-columns> is set to 2, it is possible to change the order of the columns. Columns can be added (with
-the C<SpaceBar> and the C<Return> key) until the user confirms with the I<-ok-> menu entry.
+If I<choose-columns> is set to 1, the user can choose which columns to print. Columns can be added (with the
+C<SpaceBar> and the C<Return> key) until the user confirms with the I<-ok-> menu entry.
 
 Default: 0
 
@@ -874,7 +831,8 @@ will overwrite the autodetected ncurses library location.
 
 =head2 libncurses
 
-Requires C<libncursesw> to be installed.
+Requires C<libncursesw> to be installed. If the list elements contain wide characters, it is required an approprirate
+ncurses library else wide character will break the output.
 
 =head2 Monospaced font
 

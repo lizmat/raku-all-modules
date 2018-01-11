@@ -27,7 +27,7 @@ SYNOPSIS
 
         my $pt = Term::TablePrint.new();
 
-        $pt.print-table( @table, :mouse(1), :choose-columns(2) );
+        $pt.print-table( @table, :mouse(1), :choose-columns(1) );
 
 DESCRIPTION
 ===========
@@ -115,9 +115,7 @@ Default: 0
 choose-columns
 --------------
 
-If *choose-columns* is set to 1, the user can choose which columns to print. The columns can be marked with the `SpaceBar`. The list of marked columns including the highlighted column are printed as soon as `Return` is pressed.
-
-If *choose-columns* is set to 2, it is possible to change the order of the columns. Columns can be added (with the `SpaceBar` and the `Return` key) until the user confirms with the *-ok-* menu entry.
+If *choose-columns* is set to 1, the user can choose which columns to print. Columns can be added (with the `SpaceBar` and the `Return` key) until the user confirms with the *-ok-* menu entry.
 
 Default: 0
 
@@ -275,7 +273,7 @@ REQUIREMENTS
 libncurses
 ----------
 
-Requires `libncursesw` to be installed.
+Requires `libncursesw` to be installed. If the list elements contain wide characters, it is required an approprirate ncurses library else wide character will break the output.
 
 Monospaced font
 ---------------
