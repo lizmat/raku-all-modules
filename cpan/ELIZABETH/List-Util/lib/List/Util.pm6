@@ -6,9 +6,9 @@ class P5Pair is List {
     method value() is raw { self[1] }
 }
 
-class List::Util:ver<0.0.2> {
+class List::Util:ver<0.0.3> {
 
-    our sub reduce(&block, *@args) is export {
+    our sub reduce(&block, *@args) is export(:SUPPORTED) {
         if @args > 1 {
             my $result = @args.shift;
             $result = block($result,@args.shift) while @args;
@@ -18,25 +18,27 @@ class List::Util:ver<0.0.2> {
             @args ?? @args[0] !! Nil
         }
     }
-    our sub any(&block, *@args --> Bool:D) is export {
+    our sub any(&block, *@args --> Bool:D) is export(:SUPPORTED) {
         return True if block($_) for @args;
         False
     }
-    our sub all(&block, *@args --> Bool:D) is export {
+    our sub all(&block, *@args --> Bool:D) is export(:SUPPORTED) {
         return False unless block($_) for @args;
         True
     }
-    our sub none(&block, *@args --> Bool:D) is export {
+    our sub none(&block, *@args --> Bool:D) is export(:SUPPORTED) {
         return False if block($_) for @args;
         True
     }
-    our sub notall(&block, *@args --> Bool:D) is export {
+    our sub notall(&block, *@args --> Bool:D) is export(:SUPPORTED) {
         return True unless block($_) for @args;
         False
     }
-    our sub first(&block, *@args) is raw is export { @args.first(&block) }
+    our sub first(&block, *@args) is raw is export(:SUPPORTED) {
+        @args.first(&block)
+    }
 
-    our sub max(*@args) is export {
+    our sub max(*@args) is export(:SUPPORTED) {
         if @args > 1 {
             my $result = @args.shift;
             my $value;
@@ -47,7 +49,7 @@ class List::Util:ver<0.0.2> {
             @args ?? @args.shift !! Nil
         }
     }
-    our sub maxstr(*@args) is export {
+    our sub maxstr(*@args) is export(:SUPPORTED) {
         if @args > 1 {
             my $result = @args.shift;
             my $value;
@@ -58,7 +60,7 @@ class List::Util:ver<0.0.2> {
             @args ?? @args.shift !! Nil
         }
     }
-    our sub min(*@args) is export {
+    our sub min(*@args) is export(:SUPPORTED) {
         if @args > 1 {
             my $result = @args.shift;
             my $value;
@@ -69,7 +71,7 @@ class List::Util:ver<0.0.2> {
             @args ?? @args.shift !! Nil
         }
     }
-    our sub minstr(*@args) is export {
+    our sub minstr(*@args) is export(:SUPPORTED) {
         if @args > 1 {
             my $result = @args.shift;
             my $value;
@@ -80,20 +82,20 @@ class List::Util:ver<0.0.2> {
             @args ?? @args.shift !! Nil
         }
     }
-    our sub product(*@args) is export { [*] @args }
-    our sub sum(*@args) is export { @args ?? @args.sum !! Nil }
-    our sub sum0(*@args) is export { @args.sum }
+    our sub product(*@args) is export(:SUPPORTED) { [*] @args }
+    our sub sum(*@args) is export(:SUPPORTED) { @args ?? @args.sum !! Nil }
+    our sub sum0(*@args) is export(:SUPPORTED) { @args.sum }
 
-    our sub pairs(*@args) is export {
+    our sub pairs(*@args) is export(:SUPPORTED) {
         my @result;
         @result.push(P5Pair.new(@args.shift, @args ?? @args.shift !! Nil))
           while @args;
         @result.List
     }
-    our sub unpairs(*@args) is export {
+    our sub unpairs(*@args) is export(:SUPPORTED) {
         @args.map( { .elems == 1 ?? |($_[0],Nil) !! |($_[0],$_[1]) } ).List
     }
-    our sub pairkeys(*@args) is export {
+    our sub pairkeys(*@args) is export(:SUPPORTED) {
         my @result;
         my int $i;
         my int $elems = @args.elems;
@@ -103,7 +105,7 @@ class List::Util:ver<0.0.2> {
         }
         @result.List
     }
-    our sub pairvalues(*@args is raw) is export {
+    our sub pairvalues(*@args is raw) is export(:SUPPORTED) {
         my @result is default(Nil);
         my int $i;
         my int $elems = @args.elems;
@@ -112,7 +114,7 @@ class List::Util:ver<0.0.2> {
         }
         @result.List
     }
-    our sub pairfirst(&block, *@args is raw) is export {
+    our sub pairfirst(&block, *@args is raw) is export(:SUPPORTED) {
         my int $i;
         my int $elems = @args.elems;
         while $i < $elems {
@@ -122,7 +124,7 @@ class List::Util:ver<0.0.2> {
         }
         ()
     }
-    our sub pairgrep(&block, *@args is raw) is export {
+    our sub pairgrep(&block, *@args is raw) is export(:SUPPORTED) {
         my @result is default(Nil);
         my int $i;
         my int $elems = @args.elems;
@@ -133,7 +135,7 @@ class List::Util:ver<0.0.2> {
         }
         @result.List
     }
-    our sub pairmap(&block, *@args is raw) is export {
+    our sub pairmap(&block, *@args is raw) is export(:SUPPORTED) {
         my @result is default(Nil);
         my int $i;
         my int $elems = @args.elems;
@@ -145,22 +147,31 @@ class List::Util:ver<0.0.2> {
         @result.List
     }
 
-    our sub shuffle(*@args) is export { @args.pick(*).List }
-    our sub uniq(*@args) is export {
+    our sub shuffle(*@args) is export(:SUPPORTED) { @args.pick(*).List }
+    our sub uniq(*@args) is export(:SUPPORTED) {
         @args.unique(:as( { .defined ?? .Str !! $_ } )).List
     }
-    our sub uniqnum(*@args) is export {
+    our sub uniqnum(*@args) is export(:SUPPORTED) {
         @args.map(*.Numeric).unique(:with(&infix:<==>)).List
     }
-    our sub uniqstr(*@args) is export {
+    our sub uniqstr(*@args) is export(:SUPPORTED) {
         @args.map(*.Str).unique.List
     }
 }
 
 sub EXPORT(*@args) {
-    @args
-      ?? Map.new( |(EXPORT::DEFAULT::{ @args.map: '&' ~ * }:p) )
-      !! Map.new
+
+    if @args {
+        my $imports := Map.new( |(EXPORT::SUPPORTED::{ @args.map: '&' ~ * }:p) );
+        if $imports != @args {  
+            die "List::Util doesn't know how to export: "
+              ~ @args.grep( { !$imports{$_} } ).join(', ')
+        }
+        $imports
+    }
+    else {
+        Map.new
+    }
 }
 
 =begin pod
@@ -259,17 +270,17 @@ functions).
                               $code->(local $_ = $b) ? $b :
                                                 Nil } Nil, @list; # first
 
-    $foo = reduce -> $a, $b { $a > $b ? $a : $b } 1..10;       # max
-    $foo = reduce -> $a, $b { $a gt $b ? $a : $b } 'A'..'Z';   # maxstr
-    $foo = reduce -> $a, $b { $a < $b ? $a : $b } 1..10;       # min
-    $foo = reduce -> $a, $b { $a lt $b ? $a : $b } 'aa'..'zz'; # minstr
-    $foo = reduce -> $a, $b { $a + $b } 1 .. 10;               # sum
-    $foo = reduce -> $a, $b { $a . $b } @bar;                  # concat
+    $foo = reduce -> $a, $b { $a > $b ?? $a !! $b } 1..10;       # max
+    $foo = reduce -> $a, $b { $a gt $b ?? $a !! $b } 'A'..'Z';   # maxstr
+    $foo = reduce -> $a, $b { $a < $b ?? $a !! $b } 1..10;       # min
+    $foo = reduce -> $a, $b { $a lt $b ?? $a !! $b } 'aa'..'zz'; # minstr
+    $foo = reduce -> $a, $b { $a + $b } 1 .. 10;                 # sum
+    $foo = reduce -> $a, $b { $a ~ $b } @bar;                    # concat
 
-    $foo = reduce -> $a, $b { $a || $code->(local $_ = $b) } 0, @bar;   # any
-    $foo = reduce -> $a, $b { $a && $code->(local $_ = $b) } 1, @bar;   # all
-    $foo = reduce -> $a, $b { $a && !$code->(local $_ = $b) } 1, @bar;  # none
-    $foo = reduce -> $a, $b { $a || !$code->(local $_ = $b) } 0, @bar;  # notall
+    $foo = reduce -> $a, $b { $a || $b }   0, @bar;  # any
+    $foo = reduce -> $a, $b { $a && $b }   1, @bar;  # all
+    $foo = reduce -> $a, $b { $a && !$b }  1, @bar;  # none
+    $foo = reduce -> $a, $b { $a || !$b) } 0, @bar;  # notall
     # Note that these implementations do not fully short-circuit
 
 If your algorithm requires that C<reduce> produce an identity value, then make

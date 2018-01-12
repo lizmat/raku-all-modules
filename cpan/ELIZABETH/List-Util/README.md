@@ -71,17 +71,17 @@ The following examples all demonstrate how `reduce` could be used to implement t
                               $code->(local $_ = $b) ? $b :
                                                 Nil } Nil, @list; # first
 
-    $foo = reduce -> $a, $b { $a > $b ? $a : $b } 1..10;       # max
-    $foo = reduce -> $a, $b { $a gt $b ? $a : $b } 'A'..'Z';   # maxstr
-    $foo = reduce -> $a, $b { $a < $b ? $a : $b } 1..10;       # min
-    $foo = reduce -> $a, $b { $a lt $b ? $a : $b } 'aa'..'zz'; # minstr
-    $foo = reduce -> $a, $b { $a + $b } 1 .. 10;               # sum
-    $foo = reduce -> $a, $b { $a . $b } @bar;                  # concat
+    $foo = reduce -> $a, $b { $a > $b ?? $a !! $b } 1..10;       # max
+    $foo = reduce -> $a, $b { $a gt $b ?? $a !! $b } 'A'..'Z';   # maxstr
+    $foo = reduce -> $a, $b { $a < $b ?? $a !! $b } 1..10;       # min
+    $foo = reduce -> $a, $b { $a lt $b ?? $a !! $b } 'aa'..'zz'; # minstr
+    $foo = reduce -> $a, $b { $a + $b } 1 .. 10;                 # sum
+    $foo = reduce -> $a, $b { $a ~ $b } @bar;                    # concat
 
-    $foo = reduce -> $a, $b { $a || $code->(local $_ = $b) } 0, @bar;   # any
-    $foo = reduce -> $a, $b { $a && $code->(local $_ = $b) } 1, @bar;   # all
-    $foo = reduce -> $a, $b { $a && !$code->(local $_ = $b) } 1, @bar;  # none
-    $foo = reduce -> $a, $b { $a || !$code->(local $_ = $b) } 0, @bar;  # notall
+    $foo = reduce -> $a, $b { $a || $b }   0, @bar;  # any
+    $foo = reduce -> $a, $b { $a && $b }   1, @bar;  # all
+    $foo = reduce -> $a, $b { $a && !$b }  1, @bar;  # none
+    $foo = reduce -> $a, $b { $a || !$b) } 0, @bar;  # notall
     # Note that these implementations do not fully short-circuit
 
 If your algorithm requires that `reduce` produce an identity value, then make sure that you always pass that identity value as the first argument to prevent `Nil` being returned

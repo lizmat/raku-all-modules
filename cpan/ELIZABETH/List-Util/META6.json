@@ -13,7 +13,10 @@
   },
   "resources" : [ ],
   "source-url" : "https://github.com/lizmat/List-Util.git",
-  "tags" : [ ],
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
   "test-depends" : [ ],
-  "version" : "0.0.2"
+  "version" : "0.0.3"
 }
