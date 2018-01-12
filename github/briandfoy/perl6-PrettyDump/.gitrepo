@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/briandfoy/perl6-PrettyDump
 	branch = master
-	commit = 3381e6e424b6eb9840d7249ade05e138971bffbd
-	parent = 7c0e21662088624af31d5e3281b77f086fbe3c28
+	commit = a5e6b9943e21921e4d9d143f65a9a5c770eaca0a
+	parent = 1541644b9f3849560795bd64c4dea302d1e8bb84
 	cmdver = 0.4.0

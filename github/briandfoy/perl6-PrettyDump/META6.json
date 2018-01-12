@@ -14,6 +14,9 @@
   "resources" : [ ],
   "source-url" : "git@github.com:briandfoy/perl6-PrettyDump.git",
   "tags" : [ ],
-  "test-depends" : [ ],
-  "version" : "1.1.6"
+  "test-depends" : [
+  	"Test",
+  	"Test::META"
+  	],
+  "version" : "1.1.7"
 }

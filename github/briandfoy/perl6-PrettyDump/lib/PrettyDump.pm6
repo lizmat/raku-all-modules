@@ -191,7 +191,7 @@ L<https://github.com/briandfoy/perl6-PrettyDump>
 
 =head1 COPYRIGHT
 
-Copyright © 2017, brian d foy C<< <bdfoy@cpan.org> >>
+Copyright © 2017-2018, brian d foy C<< <bdfoy@cpan.org> >>
 
 =head1 LICENSE
 
@@ -205,7 +205,7 @@ use v6;
 
 ###############################################################################
 
-class PrettyDump:auth<BDFOY>:ver<1.1.6> {
+class PrettyDump:auth<github:briandfoy>:ver<1.1.7> {
 	has Str $.pre-item-spacing       = "\n";
 	has Str $.post-item-spacing      = "\n";
 
