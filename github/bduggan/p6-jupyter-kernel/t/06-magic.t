@@ -6,7 +6,7 @@ use Jupyter::Kernel::Magics;
 
 logger.add-tap( -> $msg { diag $msg<msg> } );
 
-# plan 21;
+plan 56;
 
 my $m = Jupyter::Kernel::Magics.new;
 class MockResult {
@@ -149,25 +149,66 @@ class MockResult {
 {
     my $cell = ( '%% bash', 'echo hello').join("\n");
     my $magic = $m.find-magic($cell);
-    ok $magic.perl, 'found bash magic';
+    ok $magic, 'found bash magic';
     given $magic.preprocess("echo hello") {
         is .output, "hello\n", 'got output';
         is .output-mime-type, 'text/plain', 'got right mime type';
        }
-
-
 }
 {
     my $cmd = 'ls /no/such/file/i/hope';
     my $cell = ( '%% bash', $cmd).join("\n");
     my $magic = $m.find-magic($cell);
-    ok $magic.perl, 'found bash magic';
+    ok $magic, 'found bash magic';
     given $magic.preprocess($cmd) {
         is .output, "", 'no output';
         is .output-mime-type, 'text/plain', 'got right mime type';
         like .stdout, /:i 'no such file'/, 'errors on stdout';
        }
 }
-done-testing;
+{
+    my $code =  q:to/DONE/;
+        my $x = 1;
+        my $y = 2;
+        my $z = $x + $y;
+        42;
+        DONE
+    my $file will leave {.unlink} = $*TMPDIR.child("test.$*PID");
+    $file.spurt: $code;
+    my $cell = "%% run $file";
+    my $magic = $m.find-magic($cell);
+    ok $magic, 'found run magic';
+    nok $magic.preprocess($cell), 'no return value from preprocess';
+    is $cell, $code, "Cell now has code";
+}
+{
+    my $code =  q:to/CODE/;
+        my $x = 1;
+        my $y = 2;
+        my $z = $x + $y;
+        42;
+        CODE
+    my $more = q:to/MORE/;
+        my $pdq = 99;
+        MORE
+    my $file will leave {.unlink} = $*TMPDIR.child("test.$*PID");
+    $file.spurt: $code;
+    my $cell = qq:to/CELL/;
+        %% run $file
+        $more
+        CELL
+    my $magic = $m.find-magic($cell);
+    ok $magic, 'found run magic';
+    nok $magic.preprocess($cell), 'no return value from preprocess';
+    is $cell, ($code,$more).join("\n") ~ "\n", "Cell now has more code";
+}
+
+{
+    my $cell = '%% run nosuchfile.abc';
+    my $magic = $m.find-magic($cell);
+    my $result = $magic.preprocess($cell);
+    ok $result, 'Handled missing file';
+    like $result.stdout, / 'not find' /, 'error message';
+}
 
 # vim: syn=perl6
