@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Port of Perl 5's Scalar::Util 1.49",
+  "license" : "Artistic-2.0",
+  "name" : "Scalar::Util",
+  "perl" : "6.c",
+  "provides" : {
+    "Scalar::Util" : "lib/Scalar/Util.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Scalar-Util.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
