@@ -1,0 +1,30 @@
+{
+    "name" : "epoll",
+
+    "version" : "0.1",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-epoll.git",
+
+    "perl" : "6.c",
+
+    "tags" : [ "IO", "NET", "ASYNC", "LINUX", "NATIVECALL" ],
+
+    "provides" : {
+        "epoll" : "lib/epoll.pm6"
+    },
+
+    "depends" : [ "NativeCall" ],
+
+    "description" : "Perl 6 bindings for epoll(7), async IO event notification",
+
+    "test-depends" : [ "Test", "Test::When", "Test::META" ],
+
+    "license" : "NASA-1.3",
+
+    "authors" : [ "Curt Tilmes <Curt.Tilmes@nasa.gov>" ],
+
+    "support" : {
+      "source" : "https://github.com/CurtTilmes/perl6-epoll.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-epoll/issues"
+    }
+}
