@@ -121,7 +121,7 @@ choose-dirs
 
 The "back"-menu-entry ( "`E<lt> `" ) resets the list of chosen directories if any. If the list of chosen directories is empty, "`E<lt> `" causes `choose-dirs` to return nothing.
 
-`choose-dirs` uses the same option as `choose-a-dir`. Instead *current-dir* `choose_dirs` has *current-dirs*.  *current-dirs* expects as its value a list (directories shown as the current directories).
+`choose-dirs` uses the same option as `choose-a-dir`. Instead *current-dir* `choose_dirs` has *current-dirs*. *current-dirs* expects as its value a list (directories shown as the current directories).
 
 choose-a-number
 ---------------
@@ -214,3 +214,4 @@ LICENSE AND COPYRIGHT
 Copyright 2016-2017 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
+
