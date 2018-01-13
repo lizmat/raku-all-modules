@@ -20,13 +20,13 @@
 
 # SYNOPSIS
 
-```perl6
+```perl-6
     use Proxee;
 ```
 
 Coercers:
 
-```perl6
+```perl-6
     # Coercer types on variables:
     my $integral := Proxee.new: Int();
     $integral = ' 42.1e0 ';
@@ -45,7 +45,7 @@ Coercers:
 
 General use:
 
-```perl6
+```perl-6
     # No `self` as first arg; simply use a regular block in both code blocks:
     my @stuff;
     my $stuff := Proxee.new: :STORE{ @stuff.push: $_ }, :FETCH{ @stuff.join: ' | ' }
@@ -66,7 +66,7 @@ General use:
 
 Special shared dynvar:
 
-```perl6
+```perl-6
     # Or just use the special shared variable:
     my $stuff2 := Proxee.new: :STORE{ $*PROXEE.push: $_ }, :FETCH{ $*PROXEE.join: ' | ' }
     $stuff2 = 42;
@@ -98,7 +98,7 @@ provides an alternative, improved interface, with a few extra features.
 
 ## `new`
 
-```perl6
+```perl-6
 multi method new (\coercer where {.HOW ~~ Metamodel::CoercionHOW})
 multi method new (:&PROXEE, :&STORE, :&FETCH)
 multi method new (&block)
@@ -113,7 +113,7 @@ functionality offered by `Proxee`. Possible arguments are:
 Simply pass a coercer as a positional argument to create a coercing proxy that
 coerces stored values to specified type:
 
-```perl6
+```perl-6
 my  $Cool-to-Int := Proxee.new: Int(Cool);
     $Cool-to-Int = ' 42.70 ';
 say $Cool-to-Int; # OUTPUT: «42␤»
@@ -131,7 +131,7 @@ remains, except the `Proxy` object is no longer passed to neither `:FETCH`
 nor `:STORE` callables. `:FETCH` gets no args; `:STORE` gets 1 arg, the value
 being stored:
 
-```perl6
+```perl-6
     my @stuff;
     my $stuff := Proxee.new: :STORE{ @stuff.push: $_ }, :FETCH{ @stuff.join: ' | ' }
     $stuff = 42;
@@ -155,7 +155,7 @@ The `:FETCH` argument is optional and **defaults to** `{ $*PROXEE }`.
 The `:PROXEE` argument is like `:STORE`, except it also assigns its return
 value to `$*PROXEE`:
 
-```perl6
+```perl-6
     my $squarer := Proxee.new: :PROXEE{ $_² };
     $squarer = 11;
     say $squarer; # OUTPUT: «121␤»
@@ -172,7 +172,7 @@ massaging to make `Pair`s in a `List` be passed as named args).
 
 This feature exists to make it slightly simpler to use closures with a Proxy:
 
-```
+```perl-6
     my $stuff2 := Proxee.new: {
         my @stuff;
         :STORE{ @stuff.push: $_    },
@@ -185,7 +185,7 @@ This feature exists to make it slightly simpler to use closures with a Proxy:
 
 The above is equivalent to:
 
-```
+```perl-6
     my $stuff2 := do {
         my @stuff;
         Proxee.new: :STORE{ @stuff.push: $_    },
@@ -199,7 +199,7 @@ The above is equivalent to:
 Watch out you don't accidentally pass a block that would be interpreted
 as a `Hash`:
 
-```perl6
+```perl-6
     Proxy.new:    { :STORE{;}, :FETCH{;} } # WRONG; It's a Hash
     Proxy.new: -> { :STORE{;}, :FETCH{;} } # RIGHT; It's a Block
 ```
