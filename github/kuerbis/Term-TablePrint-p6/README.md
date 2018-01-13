@@ -215,7 +215,7 @@ Default: 0
 progress-bar
 ------------
 
-Set the progress bar threshold. If the number of fields (rows x columns) is higher than the threshold, a progress bar is shown while preparing the data for the output.
+Set the progress bar threshold. If the number of fields (rows x columns) is higher than the threshold, a progress bar is shown while preparing the data for the output. Setting the value to `0` disables the progress bar.
 
 Default: 10_000
 

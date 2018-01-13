@@ -1,8 +1,8 @@
 use v6;
-unit class Term::TablePrint:ver<1.0.5>;
+unit class Term::TablePrint:ver<1.0.6>;
 
 #use ClassX::StrictConstructor;
-#unit class Term::TablePrint:ver<1.0.5> does ClassX::StrictConstructor;
+#unit class Term::TablePrint:ver<1.0.6> does ClassX::StrictConstructor;
 
 
 use NCurses;
@@ -42,10 +42,10 @@ has Int  @!new_cols_w;
 has Int  @!not_a_number;
 
 has Int $!tab_w; #
-has Int $!show_progress;
 has Int $!total;
 has Int $!bar_w;
-has Str $!progressbar_fmt;
+has Int $!show_progress = 0;
+has Str $!progressbar_fmt = 'Computing: [%s%s]';;
 
 has Term::Choose $!tc;
 
@@ -135,10 +135,9 @@ method print-table (
         }
     }
     if %!o<progress-bar> {
-        $!show_progress = ( $!table.elems * $!table[0].elems / %!o<progress-bar> ).Int;
-        if $!show_progress >= 1 {
+        $!show_progress = $!table.elems * $!table[0].elems div %!o<progress-bar>;
+        if $!show_progress {
             curs_set( 0 );
-            $!progressbar_fmt = 'Computing: [%s%s]';
             $!total = $!table.elems;
         }
     }
@@ -287,16 +286,13 @@ method !_calc_col_width {
     @portions[0][0] = 1;
     @portions[@portions.end][1] = $!table.elems;
     my @promise;
-#    my atomicint $count = 0;                                # Perl 6.d
     my $lock = Lock.new();
     my Int $count = 0;
     for @portions -> $range {
         @promise.push: start {
             do for $range[0] ..^ $range[1] -> $row {
                 if $step {
-#                    atomic-fetch-inc( $count );             # Perl 6.d
-                    $lock.protect( { ++$count; } );
-                    $lock.protect( { self!_progressbar_update( $count ) } ) if $count %% $step;
+                    $lock.protect( { ++$count; self!_progressbar_update( $count ) if $count %% $step } );
                 }
                 do for @col_idx -> $col {
                     if ! $!table[$row][$col].defined {
@@ -420,7 +416,6 @@ method !_col_to_avail_col_width( @list ) {
     my @portions = ( ^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
     @portions[@portions.end][1] = $!table.elems;
     my @promise;
-#    my atomicint $count = 0;                                # Perl 6.d
     my $lock = Lock.new();
     my Int $count = 0;
     for @portions -> $range {
@@ -432,9 +427,7 @@ method !_col_to_avail_col_width( @list ) {
                     $str ~= $tab if $col != @!new_cols_w.end;
                 }
                 if $step {
-#                    atomic-fetch-inc( $count );             # Perl 6.d
-                    $lock.protect( { ++$count; } );
-                    $lock.protect( { self!_progressbar_update( $count ) } ) if $count %% $step;
+                    $lock.protect( { ++$count; self!_progressbar_update( $count ) if $count %% $step } );
                 }
                 $row, $str;
             }
@@ -770,7 +763,7 @@ Default: 0
 =head2 progress-bar
 
 Set the progress bar threshold. If the number of fields (rows x columns) is higher than the threshold, a progress bar is
-shown while preparing the data for the output.
+shown while preparing the data for the output. Setting the value to C<0> disables the progress bar.
 
 Default: 10_000
 

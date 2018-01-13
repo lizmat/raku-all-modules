@@ -1,6 +1,9 @@
 Revision history for Term::TablePrint
 
 
+1.0.6   2018-01-12
+        - Bugfix: allow "progress-bar" to be 0
+
 1.0.5   2018-01-10
         - Refactoring parameter handling
         - Code refactoring
