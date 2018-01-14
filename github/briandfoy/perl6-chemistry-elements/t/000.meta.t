@@ -14,3 +14,5 @@ else {
      skip-rest "Skipping author test";
      exit;
 }
+
+done-testing();
