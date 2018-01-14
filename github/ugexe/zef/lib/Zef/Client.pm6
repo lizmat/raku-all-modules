@@ -137,33 +137,33 @@ class Zef::Client {
                 });
 
                 my @prereq-candidates = self!find-candidates(:$upgrade, |@identities);
+                my $not-found := @needed.grep({ not @prereq-candidates.first(*.dist.contains-spec($_)) }).map(*.identity);
 
                 # The failing part of this should ideally be handled in Zef::CLI I think
-                +@prereq-candidates == +@needed
-                    ??  do {
-                            for @prereq-candidates.classify({.from}).kv -> $from, $found {
-                                self.logger.emit({
-                                    level   => VERBOSE,
-                                    stage   => RESOLVE,
-                                    phase   => AFTER,
-                                    payload => $found,
-                                    message => "Found dependencies: {$found.map(*.dist.identity).join(', ')} [via {$from}]",
-                                })
-                            }
-                        }
-                    !!  do {
-                            my @not-found = @needed.grep({ not @prereq-candidates.first(*.dist.contains-spec($_)) }).map(*.identity);
-                            self.logger.emit({
-                                level   => ERROR,
-                                stage   => RESOLVE,
-                                phase   => AFTER,
-                                payload => @prereq-candidates,
-                                message => "Failed to find dependencies: {@not-found.join(', ')}",
-                            });
-                            $!force-resolve
-                                ?? say('Failed to resolve missing dependencies, but continuing with --force-resolve')
-                                !! die('Failed to resolve some missing dependencies');
-                        };
+                if +@prereq-candidates == +@needed || $not-found.cache.elems == 0 {
+                    for @prereq-candidates.classify({.from}).kv -> $from, $found {
+                        self.logger.emit({
+                            level   => VERBOSE,
+                            stage   => RESOLVE,
+                            phase   => AFTER,
+                            payload => $found,
+                            message => "Found dependencies: {$found.map(*.dist.identity).join(', ')} [via {$from}]",
+                        })
+                    }
+                }
+                else {
+                    self.logger.emit({
+                        level   => ERROR,
+                        stage   => RESOLVE,
+                        phase   => AFTER,
+                        payload => @prereq-candidates,
+                        message => "Failed to find dependencies: {$not-found.join(', ')}",
+                    });
+
+                    $!force-resolve
+                        ?? say('Failed to resolve missing dependencies, but continuing with --force-resolve')
+                        !! die('Failed to resolve some missing dependencies');
+                };
 
                 @skip.append: @prereq-candidates.map(*.dist);
                 @specs = self.list-dependencies(@prereq-candidates);
@@ -258,6 +258,9 @@ class Zef::Client {
             die "failed to create directory: {$tmp.absolute}"
                 unless ($tmp.IO.e || mkdir($tmp));
 
+            my $meta6-prefix = $!extractor.ls-files($candi.uri).sort.first({ .IO.basename eq 'META6.json' });
+            warn 'Failed to find a META6.json file -- failure is likely' unless $meta6-prefix;
+
             my $extracted-to = $!extractor.extract($candi.uri, $extract-to, :$!logger);
 
             if !$extracted-to {
@@ -285,7 +288,7 @@ class Zef::Client {
                 });
             }
 
-            $candi.uri = $extracted-to;
+            $candi.uri = $extracted-to.child($meta6-prefix);
             take $candi;
         }
     }
