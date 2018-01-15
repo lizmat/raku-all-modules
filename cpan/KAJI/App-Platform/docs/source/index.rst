@@ -8,16 +8,18 @@ Welcome to Platform's documentation!
 
 Here you'll find Platform's documentation. Tool for quickly define and launch experimental architectures in a new layout where your software will sit and serve others.
 
-TODO: make correct architecture diagram here
-
 .. uml::
 
    @startuml
-   user -> (use PlantUML)
-
-   note left of user
-      Hello Plantweb!
-   end note
+   node system1
+   node system2
+   node system3
+   node system4
+   node system5
+   system1 -- system2
+   system1 .. system3
+   system1 ~~ system4
+   system1 == system5
    @enduml
 
 .. toctree::
@@ -26,7 +28,9 @@ TODO: make correct architecture diagram here
 
    overview
    getting_started
-   environments
+   advanced_configurations
+   specifications
+   host_configurations
 
 
 Indices and tables

@@ -19,7 +19,7 @@ class App::Platform::Output {
     method text(*@args, *%args) {
         unless $.width {
             my $proc = run <tput cols>, :out;
-            $.width = $proc.out.slurp-rest.trim.Int;
+            $.width = $proc.out.slurp-rest.trim.Int - 5;
             $.width ||= 80;
         }
         wrap-text(|@args, |%args, :$.width);

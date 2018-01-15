@@ -3,6 +3,7 @@ use JSON::Tiny;
 use Terminal::ANSIColor;
 use App::Platform::Docker::DNS;
 use App::Platform::Output;
+use App::Platform::Docker::Command;
 
 class App::Platform::Docker::DNS::Linux does App::Platform::Docker::DNS {
 
@@ -10,7 +11,7 @@ class App::Platform::Docker::DNS::Linux does App::Platform::Docker::DNS {
         $.hostname = $.name.lc ~ ".{$.domain}";
         my $proc;
         loop (my $port = $.dns-port; $port <= ($.dns-port+10); $port++) {
-            $proc = run
+            $proc = App::Platform::Docker::Command.new(
                 <docker run -d --rm --name>,
                 'platform-' ~ self.name.lc,
                 ([<--network>, $.network] if $.network-exists),
@@ -21,13 +22,13 @@ class App::Platform::Docker::DNS::Linux does App::Platform::Docker::DNS {
                 <--publish>, "$port:53/udp",
                 <--volume /var/run/docker.sock:/var/run/docker.sock:ro>,
                 <--label dns.tld=localhost>,
-                <zetaron/docker-dns-gen>,
-                :out, :err;
+                <zetaron/docker-dns-gen>)
+                .run;
             self.last-result = self.result-as-hash($proc);
-            if $port > 53 and self.last-result<err>.chars == 0 {
+            if $port > 53 and $proc.err.chars == 0 {
                 put " {App::Platform::Output.after-prefix}" ~ BOLD, "notice: connected dns to port $port", RESET;
                 last;
-            } elsif self.last-result<err> ~~ / "address already in use" / {
+            } elsif $proc.err ~~ / "address already in use" / {
                 put " {App::Platform::Output.after-prefix}" ~ BOLD, "notice: dns port $port was already reserved", RESET;
             }
         }

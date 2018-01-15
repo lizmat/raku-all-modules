@@ -27,9 +27,9 @@ class App::Platform::Command is Proc::Async is App::Platform::Output {
     }
 
     method run(:$cwd = $*CWD) {
-        my Str $wrapped-cmd = App::Platform::Output.text(self.path ~ ' ' ~ self.args);
+        my Str $wrapped-cmd = self.text(self.path ~ ' ' ~ self.args);
         put self.x-prefix ~ color('cyan') ~ $wrapped-cmd.lines.join(color('reset') ~ "\n {self.after-prefix}" ~ color('cyan')) ~ color('reset');
-        try sink await self.start(:$cwd);
+        try sink await self.start :$cwd;
         self;
     }
 

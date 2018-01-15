@@ -13,6 +13,7 @@ class App::Platform::Project is App::Platform::Output {
     has Str $.network = 'acme';
     has Str $.domain = 'localhost';
     has Str $.data-path is rw;
+    has Bool $.skip-dotfiles = False;
     has %.override;
 
     has %.defaults =
@@ -67,7 +68,7 @@ class App::Platform::Project is App::Platform::Output {
 
         if $config{'exec'} {
             my Bool $sleep = $cont.need-sleep-before-exec;
-            print self.x-prefix, color('yellow'), "Exec", color('reset');
+            print self.x-prefix, color('yellow'), "Execute post-project commands", color('reset');
             if $sleep {
                 print ' (waiting for services';
                 for 1..3 {
@@ -78,6 +79,11 @@ class App::Platform::Project is App::Platform::Output {
             }
             put '';
             $cont.exec;
+        }
+
+        if "{self.data-path}/config.yml".IO.e {
+            put self.x-prefix, color('yellow'), "Apply local configuration", color('reset');
+            $cont.local-post-config;
         }
 
         $res;
@@ -98,6 +104,7 @@ class App::Platform::Project is App::Platform::Output {
         %values<data-path> = self.data-path;
         %values<network> = self.network;
         %values<domain> = self.domain;
+        %values<skip-dotfiles> = self.skip-dotfiles;
         try require ::($class);
         ::($class).new(|%values);
     }

@@ -13,7 +13,8 @@ use App::Platform::Environment;
 
 #| Initialize single project or environment with collection of projects
 multi cli('run',
-    $path,              #= PATH
+    $path, #= PATH
+    Bool :skip-dotfiles($skip-dotfiles) = False, #= Skip configuring dotfiles. See $HOME/.platform/config.yml
     ) is export {
     try {
         CATCH {
@@ -26,9 +27,9 @@ multi cli('run',
         }
         #put '🚩' ~ App::Platform::Output.after-prefix ~ color('yellow') ~ 'Summary' ~ color('reset');
         if App::Platform.is-environment($path) {
-            put App::Platform::Environment.new(:environment($path), :$domain, :$network, :$data-path).run.as-string;
+            put App::Platform::Environment.new(:environment($path), :$domain, :$network, :$data-path, :$skip-dotfiles).run.as-string;
         } else {
-            put App::Platform::Project.new(:project($path), :$network, :$domain, :$data-path).run.as-string;
+            put App::Platform::Project.new(:project($path), :$network, :$domain, :$data-path, :$skip-dotfiles).run.as-string;
         }
     }
 }

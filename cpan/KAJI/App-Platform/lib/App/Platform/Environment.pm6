@@ -10,6 +10,7 @@ class App::Platform::Environment {
     has Str $.data-path is rw;
     has Str $.environment;
     has Str @.reserved-keys = [ 'type', 'name', 'desc' ];
+    has Bool $.skip-dotfiles = False;
 
     has App::Platform::Project @.projects;
     has App::Platform::Container @.containers;
@@ -27,13 +28,19 @@ class App::Platform::Environment {
 
             my $project-path = $project ~~ / ^ \/ / ?? $project !! "{self.environment.IO.dirname}/{$project}".IO.absolute;
             if $data ~~ Bool and $data {
-                @!projects.push: App::Platform::Project.new(:domain($!domain), :data-path($!data-path), :project($project-path));
+                @!projects.push: App::Platform::Project.new(
+                    :domain($!domain),
+                    :data-path($!data-path),
+                    :project($project-path),
+                    :skip-dotfiles($!skip-dotfiles)
+                    );
             } elsif $data ~~ Hash {
                 @!projects.push: App::Platform::Project.new(
                     :domain($!domain),
                     :data-path($!data-path),
                     :project($project-path),
-                    :override($data.Hash)
+                    :override($data.Hash),
+                    :skip-dotfiles($!skip-dotfiles)
                     );
             }
         }

@@ -13,7 +13,13 @@ class App::Platform is App::Platform::Container {
         mkdir self.data-path if not self.data-path.IO.e;
     }
 
-    method create { @.services.map: { ::("App::Platform::Docker::$_").new(:$.network, :$.domain, :$.data-path, :$.dns-port).start } }
+    method create {
+        @.services.map: {
+            ::("App::Platform::Docker::$_")
+                .new(:$.network, :$.domain, :$.data-path, :$.dns-port)
+                .start
+            }
+    }
 
     method destroy { @.services.map: { ::("App::Platform::Docker::$_").new(:$.network, :$.domain, :$.data-path).stop } }
 
@@ -37,7 +43,7 @@ class App::Platform is App::Platform::Container {
         if $path.IO.f {
             my $dir = $path.IO.dirname;
             my $config = load-yaml $path.IO.slurp;
-            if $config<type> eq 'environment' {
+            if $config<type> and $config<type> eq 'environment' {
                 $is-environment = True;
             } else { # Fallback
                 my $first-entry = $config.keys[0];

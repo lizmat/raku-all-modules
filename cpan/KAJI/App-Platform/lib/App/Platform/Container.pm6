@@ -18,6 +18,7 @@ class App::Platform::Container is App::Platform::Output {
     has Hash $.config-data;
     has %.last-result;
     has Str $.help-hint is rw;
+    has Bool $.skip-dotfiles = False;
 
     submethod TWEAK {
         $!data-path .= subst(/\~/, $*HOME);
@@ -34,6 +35,7 @@ class App::Platform::Container is App::Platform::Output {
     method result-as-hash($proc) {
         my $out = ($proc ~~ App::Platform::Command) ?? $proc.out !! $proc.out.slurp-rest(:close);
         my $err = ($proc ~~ App::Platform::Command) ?? $proc.err !! $proc.err.slurp-rest;
+        $err = '' if $err ~~ / ^ "Unable to find image" /; # Normal fetch operation
         my %result =
             ret => $err.chars == 0,
             out => $out,

@@ -1,4 +1,5 @@
 use v6;
+use YAMLish;
 use App::Platform::Container;
 use App::Platform::Docker::Command;
 
@@ -8,7 +9,8 @@ class App::Platform::Docker::Container is App::Platform::Container {
     has Str $.variant;
     has Str $.shell;
     has @.extra-args;
-    has @.volumes;
+    has @.volumes; 
+    has Str $.dotfiles = '/root/Dotfiles';
 
     submethod BUILD {
         $!dockerfile-loc = $_ if not $!dockerfile-loc and "$_/Dockerfile".IO.e for self.projectdir ~ "/docker", self.projectdir;
@@ -18,7 +20,22 @@ class App::Platform::Docker::Container is App::Platform::Container {
             "$!dockerfile-loc/Dockerfile".IO.slurp ~~ / ^ FROM \s .* alpine / 
             ) ?? 'alpine' !! 'debian';
         $!shell = $!variant eq 'alpine' ?? 'ash' !! 'bash';
-        @!volumes = self.config-data<volumes>.Array.map({ <--volume>, self.projectdir.IO.absolute ~ '/' ~ $_ }).flat if self.config-data<volumes>;
+        @!volumes = self.config-data<volumes>
+            .Array
+            .map({
+                my ($from, $to) = split / ":" /, $_;
+                <--volume>, $from.IO.resolve ~ ":" ~ $to
+            })
+            .flat if self.config-data<volumes>;
+
+        # Local Configuration File
+        my $config-file = self.data-path ~ '/config.yml';
+        if $config-file.IO.e {
+            my $config = load-yaml $config-file.IO.slurp;
+            @!volumes.push: <--volume>, "$_" for $config<volumes>.Array;
+            $!dotfiles = $config<dotfiles> if $config<dotfiles>;
+        }
+
         self.hostname = self.name ~ '.' ~ self.domain;
     }
 
@@ -166,6 +183,9 @@ class App::Platform::Docker::Container is App::Platform::Container {
         # DNS
         @.extra-args.push: <--dns>, $.dns.Str if $.dns.Str.chars > 0;
 
+        # Publish
+        if self.config-data<publish> { @.extra-args.push: <--publish>, $_ for self.config-data<publish>.Array }
+
         # Compute arbitrary amount of args
         my @args = flat self.env-cmd-opts, @.volumes, @.extra-args;
       
@@ -201,13 +221,17 @@ class App::Platform::Docker::Container is App::Platform::Container {
     method env-cmd-opts {
         my $config = self.config-data;
         my @env = <--env>, "VIRTUAL_HOST={self.hostname}";
-        @env.push: <--env>, "PS1=foo ";
         if $config<environment> {
             my $proc = run <git -C>, self.projectdir, <rev-parse --abbrev-ref HEAD>, :out, :err;
             my $branch = $proc.out.slurp-rest.trim;
             @env = flat @env, $config<environment>.Array.map({<--env>, $_.subst(/ \$\(GIT_BRANCH\) /, $branch)}).flat;
         }
-say @env;
         @env;
     }
+    
+    method local-post-config {
+        # Tries to find init.* scripts under dotfiles dir
+        App::Platform::Docker::Command.new(<docker>, <exec>, self.name, $!shell, <-c>, "[ -x {self.dotfiles}/init.{self.variant} ] && {self.dotfiles}/init.{self.variant}").run unless self.skip-dotfiles;
+    }
+
 }

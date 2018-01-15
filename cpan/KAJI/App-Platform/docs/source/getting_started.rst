@@ -5,14 +5,14 @@ Prerequisites
 -------------
 
 * Latest stable version of Rakudo Star distribution which includes Rakudo Perl6 + Zef package manager. See http://rakudo.org/
-* Latest stable version of Docker CE. See https://www.docker.com/
+* Latest stable version of Docker CE. See https://www.docker.com/ (and be sure to configure docker allowed run without sudo e.g. "`usermod -a -G docker <username>`")
 
 Installation and Setup
 ----------------------
 
 Installation using `zef`::
 
-   $ zef install Platform
+   $ zef install App::Platform
    $ platform create
 
 These will install Platform tool and launch proxy and dns services for you.
@@ -113,5 +113,4 @@ Example projects are found on `examples/` directory, but here is simple example 
       $ platform run project-dir
 
 #. See what you've gained here and open browser to your project address http://project-butterfly.local
-
 

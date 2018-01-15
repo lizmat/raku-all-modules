@@ -1,5 +1,6 @@
 use v6;
 use App::Platform::Container;
+use App::Platform::Docker::Command;
 
 class App::Platform::Docker::Proxy is App::Platform::Container {
 
@@ -8,15 +9,15 @@ class App::Platform::Docker::Proxy is App::Platform::Container {
 
     method start {
         $.hostname = $.name.lc ~ ".{$.domain}";
-        my $proc = run
+        my $proc = App::Platform::Docker::Command.new(
             <docker run -d --rm --name>,
             'platform-' ~ $.name.lc,
             ([<--network>, $.network] if $.network-exists),
             <--dns>, $.dns,
             <--env>, "VIRTUAL_HOST={$.hostname}",
             <--publish 80:80 --volume /var/run/docker.sock:/tmp/docker.sock:ro>,
-            <jwilder/nginx-proxy:alpine>,
-            :out, :err;
+            <jwilder/nginx-proxy:alpine>)
+            .run;
         self.last-result = self.result-as-hash($proc);
         self;
     }
