@@ -13,7 +13,7 @@ method body-parameters() returns Hash {
         $!body_params = parse-params(callsame.all-pairs);
     }
 
-    return EVAL($!body_params.perl);
+    return EVAL($!body_params.gist);
 }
 
 method body-params() { return self.body-parameters; }
@@ -23,7 +23,7 @@ method query-parameters() returns Hash {
         $!query_params = parse-params(callsame.all-pairs);
     }
 
-    return EVAL($!query_params.perl);
+    return EVAL($!query_params.gist);
 }
 
 method query-params() { return self.query-parameters; }

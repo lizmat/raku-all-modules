@@ -96,9 +96,9 @@ method _prepare-routes(Str $parent_pattern, @middlewares is copy) returns Array 
     }
 
     # sub-routers
-    for %!groups.kv -> $pattern, $router {
+    for %!groups.kv -> $pattern is copy, $router {
         $pattern = $parent_pattern ~ $pattern;
-        my @group_routes = $router._prepare_routes($pattern, @middlewares);
+        my @group_routes = $router._prepare-routes($pattern, @middlewares);
         @routes.append(@group_routes);
     }
 

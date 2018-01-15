@@ -7,7 +7,12 @@ has $.app;
 has Callable $.stack;
 
 method CALL-ME(Hash $env) {
-    my Hematite::Context $ctx = Hematite::Context.new(self.app, $env);
+    my $context_class = self.app.config{'context_class'};
+    if (!$context_class.isa(Hematite::Context)) {
+        $context_class = Hematite::Context;
+    }
+
+    my Hematite::Context $ctx = $context_class.new(self.app, $env);
 
     try {
         # call middleware stack
