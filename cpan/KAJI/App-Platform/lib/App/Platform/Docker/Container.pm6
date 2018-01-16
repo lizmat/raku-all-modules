@@ -24,7 +24,8 @@ class App::Platform::Docker::Container is App::Platform::Container {
             .Array
             .map({
                 my ($from, $to) = split / ":" /, $_;
-                <--volume>, $from.IO.resolve ~ ":" ~ $to
+                $from = self.projectdir ~ "/$from" if $from !~~ / ^ "/" /;
+                <--volume>, $from.IO.resolve ~ ":" ~ $to;
             })
             .flat if self.config-data<volumes>;
 

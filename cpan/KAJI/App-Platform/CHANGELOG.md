@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.1]
+### Fixed
+- Volume paths were resolved wrong when not in projectdir
+
 ## [0.2.0]
 ### Added
 - New: ~/.platform/config.yml packages option for installing own devtools on every project launched
@@ -87,7 +91,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Proxy + DNS services
 - Project and Environment support
 
-[Unreleased]: https://github.com/7ojo/perl6-platform/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/7ojo/perl6-platform/compare/0.2.1...HEAD
+[0.2.1]: https://github.com/7ojo/perl6-platform/compare/0.2.0...0.2.1
+[0.2.0]: https://github.com/7ojo/perl6-platform/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/7ojo/perl6-platform/compare/0.0.6...0.1.0
 [0.0.6]: https://github.com/7ojo/perl6-platform/compare/0.0.5...0.0.6
 [0.0.5]: https://github.com/7ojo/perl6-platform/compare/0.0.4...0.0.5
