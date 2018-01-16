@@ -4,36 +4,34 @@ unit class Term::Choose::LineFold;
 use Terminal::WCWidth;
 
 
-sub to-printwidth( $str, Int $avail_w, Bool $dot=False ) is export( :to-printwidth ) {
+sub to-printwidth( $str, Int $avail_w, Bool $dot=False, @cache? ) is export( :to-printwidth ) {
     # no check if wcwidth returns -1 because no invalid characters (s:g/<:C>//)
-    my $res = 0;
+    my Int $width = 0;
     my @graph;
-    my %cache;
     for $str.NFC {
-        my \char = .chr;
         my $w;
-        if %cache.EXISTS-KEY: char {
-            $w := %cache.AT-KEY: char;
+        if @cache.EXISTS-POS( $_ ) {
+            $w := @cache.AT-POS( $_ );
         }
         else {
-            $w := %cache.BIND-KEY: char, wcwidth( $_ );
+            $w := @cache.BIND-POS( $_, wcwidth( $_ ) );
         }
-        if $res + $w > $avail_w {
+        if $width + $w > $avail_w {
             if $dot && $avail_w > 5 {
                 my \tail = '...';
-                my \tail_len = 3;
-                while $res > $avail_w - tail_len {
-                    $res -= %cache{ @graph.pop };
+                my \tail_w = 3;
+                while $width > $avail_w - tail_w {
+                    $width -= @cache[ @graph.pop.ord ];
                 }
-                return @graph.join ~ '.' ~ tail, $res + tail_len + 1 if $res < $avail_w - tail_len;
-                return @graph.join       ~ tail, $res + tail_len;
+                return @graph.join( '' ) ~ '.' ~ tail, $width + tail_w + 1 if $width < $avail_w - tail_w;
+                return @graph.join( '' )       ~ tail, $width + tail_w;
             }
-            return @graph.join, $res;
+            return @graph.join( '' ), $width;
         }
-        $res = $res + $w;
-        @graph.push: char;
+        $width = $width + $w;
+        @graph.push: .chr;
     }
-    return @graph.join, $res;
+    return @graph.join( '' ), $width;
 }
 
 
@@ -64,23 +62,23 @@ sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is cop
             else {
                 my Str $tmp;
                 if $i == 0 {
-                    $tmp = $init_tab ~ @words[$i];;
+                    $tmp = $init_tab ~ @words[$i];
                 }
                 else {
                     @lines.push: $line;
-                    $tmp = $subseq_tab ~ @words[$i].subst: / ^ \s+ /, '';
+                    $tmp = $subseq_tab ~ @words[$i].subst( / ^ \s+ /, '' );
                 }
                 $line = to-printwidth( $tmp, $avail_w, False ).[0];
-                my Str $remainder = $tmp.substr: $line.chars;
+                my Str $remainder = $tmp.substr( $line.chars );
                 while $remainder.chars {
-                    @lines.push: $line;
+                    @lines.push( $line );
                     $tmp = $subseq_tab ~ $remainder;
                     $line = to-printwidth( $tmp, $avail_w, False ).[0];
-                    $remainder = $tmp.substr: $line.chars;
+                    $remainder = $tmp.substr( $line.chars );
                 }
             }
             if $i == @words.end {
-                @lines.push: $line;
+                @lines.push( $line );
             }
         }
     }
@@ -89,20 +87,18 @@ sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is cop
 }
 
 
-sub print-columns( $str ) returns Int is export( :print-columns ) {
+sub print-columns( $str, @cache? ) returns Int is export( :print-columns ) {
     # no check if wcwidth returns -1 because no invalid characters (s:g/<:C>//)
-    my %cache;
-    my Int $res = 0;
+    my Int $width = 0;
     for $str.NFC {
-        my \char = .chr;
-        if %cache.EXISTS-KEY: char {
-            $res = $res + %cache.AT-KEY: char;
+        if @cache.EXISTS-POS( $_ ) {
+            $width = $width + @cache.AT-POS( $_ );
         }
         else {
-            $res = $res + %cache.BIND-KEY: char, wcwidth( $_ );
+            $width = $width + @cache.BIND-POS( $_, wcwidth( $_ ) );
         }
     }
-    $res;
+    $width;
 }
 
 

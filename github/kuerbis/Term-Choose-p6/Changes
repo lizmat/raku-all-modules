@@ -1,6 +1,10 @@
 Revision history for Term::Choose
 
 
+1.1.2   2018-01-15
+        - Only one cache file for each thread
+        - Code refactoring
+
 1.1.1   2018-01-10
         - Bugfix: reset object attribute @!length for each _choose call
 

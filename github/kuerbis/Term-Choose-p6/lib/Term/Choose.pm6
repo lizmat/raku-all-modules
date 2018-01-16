@@ -1,9 +1,6 @@
 use v6;
 
-#use ClassX::StrictConstructor;
-#unit class Term::Choose:ver<1.1.1> does ClassX::StrictConstructor;
-
-unit class Term::Choose:ver<1.1.1>;
+unit class Term::Choose:ver<1.1.2>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -28,16 +25,14 @@ constant KEY_k         = 0x6b;
 constant KEY_l         = 0x6c;
 constant KEY_q         = 0x71;
 
-has @!orig_list;
-has @!list;
 
 has WINDOW $.win;
 has Bool   $!reset_win;
 
 subset Positive_Int     of Int where * > 0;
 subset Int_2_or_greater of Int where * > 1;
-subset Int_0_to_2          of Int where * == 0|1|2;
-subset Int_0_or_1           of Int where * == 0|1;
+subset Int_0_to_2       of Int where * == 0|1|2;
+subset Int_0_or_1       of Int where * == 0|1;
 
 has Int_0_or_1       $.beep        = 0;
 has Int_0_or_1       $.index       = 0;
@@ -59,6 +54,8 @@ has Str              $.prompt;
 has Str              $.empty       = '<empty>';
 has Str              $.undef       = '<undef>';
 
+has @!orig_list;
+has @!list;
 has %!o;
 
 has Int   $!term_w;
@@ -66,11 +63,11 @@ has Int   $!term_h;
 has Int   $!avail_w;
 has Int   $!avail_h;
 has Int   $!col_w;
-has Int   @!length;
+has Int   @!w_list;
 has Int   $!curr_layout;
 has Int   $!rest;
 has Int   $!print_pp_row;
-has Str   $!pp_line_fmt;
+has Str   $!pp_row_fmt;
 has Str   @!prompt_lines;
 has Int   $!row_top;
 has Int   $!row_bottom;
@@ -100,7 +97,7 @@ method !_prepare_new_copy_of_list {
         else {
             $!col_w = %!o<ll>;
         }
-        @!length = $!col_w xx @!list.elems;
+        @!w_list = $!col_w xx @!list.elems;
     }
     else {
         @!list = ();
@@ -114,13 +111,15 @@ method !_prepare_new_copy_of_list {
         @portions[*-1][1] = @!orig_list.elems;
         my @promise;
         for @portions -> $range {
+            my @cache;
             @promise.push: start {
                 do for $range[0] ..^ $range[1] -> $i {
                     if ! @!orig_list[$i].defined {
                         my ( $str, $len ) := to-printwidth(
                             %!o<undef>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ),
                             $!avail_w,
-                            True
+                            True,
+                            @cache
                         );
                         $i, $str, $len;
                     }
@@ -128,7 +127,8 @@ method !_prepare_new_copy_of_list {
                         my ( $str, $len ) := to-printwidth(
                             %!o<empty>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ),
                             $!avail_w,
-                            True
+                            True,
+                            @cache
                         );
                         $i, $str, $len;
                     }
@@ -136,21 +136,22 @@ method !_prepare_new_copy_of_list {
                         my ( $str, $len ) := to-printwidth(
                             @!orig_list[$i].subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ),
                             $!avail_w,        #                        #
-                            True
+                            True,
+                            @cache
                         );
                         $i, $str, $len;
                     }
                 }
             };
         }
-        @!length = ();
+        @!w_list = ();
         for await @promise -> @portion {
             for @portion {
                 @!list[.[0]] := .[1];
-                @!length[.[0]] := .[2];
+                @!w_list[.[0]] := .[2];
             }
         }
-        $!col_w = @!length.max;
+        $!col_w = @!w_list.max;
     }
 }
 
@@ -215,9 +216,6 @@ method !_choose ( Int $multiselect, @!orig_list,
         Str              :$empty       = $!empty,
         Str              :$undef       = $!undef
     ) {
-    #if %_ {
-    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
-    #}
     if ! @!orig_list.elems {
         return;
     }
@@ -710,12 +708,12 @@ method !_set_pp_print_fmt {
         $!avail_h -= $!print_pp_row;
         my $total_pp = $!rc2idx.end div $!avail_h + 1;
         my $pp_w = $total_pp.chars;
-        $!pp_line_fmt = "--- Page \%0{$pp_w}d/{$total_pp} ---";
-        if sprintf( $!pp_line_fmt, $total_pp ).chars > $!avail_w {
-            $!pp_line_fmt = "\%0{$pp_w}d/{$total_pp}";
-            if sprintf( $!pp_line_fmt, $total_pp ).chars > $!avail_w {
+        $!pp_row_fmt = "--- Page \%0{$pp_w}d/{$total_pp} ---";
+        if sprintf( $!pp_row_fmt, $total_pp ).chars > $!avail_w {
+            $!pp_row_fmt = "\%0{$pp_w}d/{$total_pp}";
+            if sprintf( $!pp_row_fmt, $total_pp ).chars > $!avail_w {
                 $pp_w = $!avail_w if $pp_w > $!avail_w;
-                $!pp_line_fmt = "\%0{$pp_w}.{$pp_w}s";
+                $!pp_row_fmt = "\%0{$pp_w}.{$pp_w}s";
             }
         }
     }
@@ -728,11 +726,11 @@ method !_wr_screen {
     move( @!prompt_lines.elems, 0 );
     clrtobot();
     if $!print_pp_row {
-        my Str $pp_line = sprintf $!pp_line_fmt, $!row_top div $!avail_h + 1;
+        my Str $pp_row = sprintf $!pp_row_fmt, $!row_top div $!avail_h + 1;
         mvaddstr(
             $!avail_h + @!prompt_lines.elems,
             0,
-            $pp_line
+            $pp_row
         );
      }
     for $!row_top .. $!row_bottom -> $row {
@@ -777,7 +775,7 @@ method !_wr_cell ( Int $row, Int $col ) {
 
 
 method !_pad_str_to_colwidth ( Int $i ) {
-    my Int $str_w = @!length[$i];
+    my Int $str_w = @!w_list[$i];
     if $str_w < $!col_w {
         if %!o<justify> == 0 {
             return @!list[$i] ~ " " x ( $!col_w - $str_w );
@@ -1293,7 +1291,7 @@ help.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2016-2017 Matthäus Kiem.
+Copyright (C) 2016-2018 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
