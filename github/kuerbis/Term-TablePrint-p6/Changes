@@ -1,6 +1,11 @@
 Revision history for Term::TablePrint
 
 
+1.0.7   2018-01-15
+        - Adapt methods to the new Term::Choose version
+        - Modified "Reached Limit" single row output
+        - Code clean up
+
 1.0.6   2018-01-12
         - Bugfix: allow "progress-bar" to be 0
 

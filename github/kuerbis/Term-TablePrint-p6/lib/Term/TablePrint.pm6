@@ -1,9 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<1.0.6>;
-
-#use ClassX::StrictConstructor;
-#unit class Term::TablePrint:ver<1.0.6> does ClassX::StrictConstructor;
-
+unit class Term::TablePrint:ver<1.0.7>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -36,16 +32,16 @@ has Str        $.undef          = '';
 has Str        $.no-col         = 'col'; #
 
 has List $!table;
-has Int  @!cols_w;
-has Int  @!heads_w;
-has Int  @!new_cols_w;
+has Int  @!w_cols;
+has Int  @!w_heads;
+has Int  @!new_w_cols;
 has Int  @!not_a_number;
 
 has Int $!tab_w; #
 has Int $!total;
 has Int $!bar_w;
 has Int $!show_progress = 0;
-has Str $!progressbar_fmt = 'Computing: [%s%s]';;
+has Str $!progressbar_fmt = 'Computing: [%s%s]';
 
 has Term::Choose $!tc;
 
@@ -86,9 +82,6 @@ method print-table (
         Str        :$undef          = $!undef,
         Str        :$no-col         = $!no-col #
     ) {
-    #if %_ {
-    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
-    #}
     %!o = :$max-rows, :$min-col-width, :$progress-bar, :$tab-width, :$add-header, :$grid,
           :$keep-header, :$mouse, :$choose-columns, :$table-expand, :$prompt, :$undef, :$no-col;
     CATCH {
@@ -112,7 +105,7 @@ method print-table (
         $!tab_w++;
     }
     if %!o<add-header> {
-        @orig_table.unshift: [ ( 1 .. @orig_table[0].elems ).map: { $_ ~ '_' ~ %!o<no-col> } ];
+        @orig_table.unshift: [ ( 1 .. @orig_table[0].elems ).map: { $_ ~ %!o<no-col> } ];
     }
     my Int @chosen;
     if %!o<choose-columns> {
@@ -218,12 +211,18 @@ method !_win_size_dependet_code {
             $row++;
         }
         else {
-            if %!o<grid> { # handle header_sep
+            if %!o<grid> {
                 next   if $row == 1;
                 $row-- if $row > 1;
             }
         }
         $row_is_expanded = 1;
+        if $row > %!o<max-rows> {
+            $row-- if   %!o<keep-header>;
+            $row++ if ! %!o<keep-header> && %!o<grid>;
+            $!tc.pause( ( self!_limit_message( $term_w ), ), :prompt( '' ), :2layout );
+            next;
+        }
         self!_print_single_table_row( $row );
     }
 }
@@ -231,7 +230,7 @@ method !_win_size_dependet_code {
 
 method !_print_single_table_row ( Int $row ) {
     my Int $term_w = getmaxx( $!win );
-    my Int $key_w = @!heads_w.max + 1; #
+    my Int $key_w = @!w_heads.max + 1; #
     if $key_w > $term_w div 100 * 33 {
         $key_w = $term_w div 100 * 33;
     }
@@ -266,7 +265,7 @@ method !_calc_col_width {
     my Int @col_idx = 0 .. $!table[0].end; #
     for @col_idx -> $col {
        $!table[0][$col] = _sanitized_string( ( $!table[0][$col] // %!o<undef> ) );
-       @!heads_w[$col] = print-columns( $!table[0][$col] );
+       @!w_heads[$col] = print-columns( $!table[0][$col] );
     }
     my Bool $undef_n = %!o<undef> !~~ Numeric;
     my Str $undef    = _sanitized_string( %!o<undef> );
@@ -289,6 +288,7 @@ method !_calc_col_width {
     my $lock = Lock.new();
     my Int $count = 0;
     for @portions -> $range {
+        my @cache;
         @promise.push: start {
             do for $range[0] ..^ $range[1] -> $row {
                 if $step {
@@ -301,19 +301,19 @@ method !_calc_col_width {
                     else {
                         my $nan := $!table[$row][$col] !~~ Numeric;
                         my $str := _sanitized_string( $!table[$row][$col] );
-                        $row, $col, $str, print-columns( $str ), $nan;
+                        $row, $col, $str, print-columns( $str, @cache ), $nan;
                     }
                 }
             }
         };
     }
-    @!cols_w = 1 xx $!table[0].elems;
+    @!w_cols = 1 xx $!table[0].elems;
     for await @promise -> @portion {
         for @portion -> @p_rows {
             for @p_rows {
                 $!table[.[0]][.[1]] := .[2];
-                if .[3] > @!cols_w[.[1]] {
-                    @!cols_w[.[1]] := .[3];
+                if .[3] > @!w_cols[.[1]] {
+                    @!w_cols[.[1]] := .[3];
                 }
                 if .[4] {
                     ++@!not_a_number[.[1]];
@@ -326,15 +326,15 @@ method !_calc_col_width {
 
 
 method !_calc_avail_col_width ( Int $term_w ) {
-    @!new_cols_w  = @!cols_w;
-    my Int $avail_w = $term_w - $!tab_w * @!new_cols_w.end;
-    my Int $sum = [+] @!new_cols_w;
+    @!new_w_cols  = @!w_cols;
+    my Int $avail_w = $term_w - $!tab_w * @!new_w_cols.end;
+    my Int $sum = [+] @!new_w_cols;
     if $sum < $avail_w {
         HEAD: loop {
             my Int $count = 0;
-            for ^@!heads_w -> $i {
-                if @!heads_w[$i] > @!new_cols_w[$i] {
-                    ++@!new_cols_w[$i];
+            for ^@!w_heads -> $i {
+                if @!w_heads[$i] > @!new_w_cols[$i] {
+                    ++@!new_w_cols[$i];
                     ++$count;
                     last HEAD if ( $sum + $count ) == $avail_w;
                 }
@@ -345,11 +345,11 @@ method !_calc_avail_col_width ( Int $term_w ) {
     }
     elsif $sum > $avail_w {
         my Int $mininum_w = %!o<min-col-width> || 1;
-        if @!heads_w.elems > $avail_w {
+        if @!w_heads.elems > $avail_w {
             self!_print_term_not_wide_enough_message();
             return;
         }
-        my Int @tmp_cols_w = @!new_cols_w;
+        my Int @tmp_cols_w = @!new_w_cols;
         my Int $percent = 0;
 
         MIN: while $sum > $avail_w {
@@ -377,7 +377,7 @@ method !_calc_avail_col_width ( Int $term_w ) {
             REST: loop {
                 my $count = 0;
                 for ^@tmp_cols_w -> $i {
-                    if @tmp_cols_w[$i] < @!new_cols_w[$i] {
+                    if @tmp_cols_w[$i] < @!new_w_cols[$i] {
                         @tmp_cols_w[$i]++;
                         $rest--;
                         $count++;
@@ -387,9 +387,9 @@ method !_calc_avail_col_width ( Int $term_w ) {
                 last REST if $count == 0;
             }
         }
-        @!new_cols_w = [ @tmp_cols_w ] if @tmp_cols_w.elems;
+        @!new_w_cols = [ @tmp_cols_w ] if @tmp_cols_w.elems;
     }
-    return [+] |@!new_cols_w, $!tab_w * @!new_cols_w.end;
+    return [+] |@!new_w_cols, $!tab_w * @!new_w_cols.end;
 }
 
 
@@ -399,7 +399,7 @@ method !_col_to_avail_col_width( @list ) {
         $!bar_w = getmaxx( $!win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
         $step = $!total div $!bar_w || 1;    #
     }
-    my Int @col_idx = 0 .. @!new_cols_w.end;
+    my Int @col_idx = 0 .. @!new_w_cols.end;
     my Str $tab;
     if %!o<grid> {
         $tab = ( ' ' x $!tab_w div 2 ) ~ '|' ~ ( ' ' x $!tab_w div 2 );
@@ -419,12 +419,13 @@ method !_col_to_avail_col_width( @list ) {
     my $lock = Lock.new();
     my Int $count = 0;
     for @portions -> $range {
+        my @cache;
         @promise.push: start {
             do for $range[0] ..^ $range[1] -> $row {
                 my Str $str = '';
                 for @col_idx -> $col {
-                    $str ~= unicode-sprintf( $!table[$row][$col], @!new_cols_w[$col], ! @!not_a_number[$col] );
-                    $str ~= $tab if $col != @!new_cols_w.end;
+                    $str ~= unicode-sprintf( $!table[$row][$col], @!new_w_cols[$col], ! @!not_a_number[$col], @cache );
+                    $str ~= $tab if $col != @!new_w_cols.end;
                 }
                 if $step {
                     $lock.protect( { ++$count; self!_progressbar_update( $count ) if $count %% $step } );
@@ -484,9 +485,9 @@ method !_limit_message ( $table_w ) {
 method !_header_separator { 
     my Str $header_sep = '';
     my Str $tab = ( '-' x $!tab_w div 2 ) ~ '|' ~ ( '-' x $!tab_w div 2 );
-    for ^@!new_cols_w {
-        $header_sep ~= '-' x @!new_cols_w[$_];
-        $header_sep ~= $tab if $_ != @!new_cols_w.end;
+    for ^@!new_w_cols {
+        $header_sep ~= '-' x @!new_w_cols[$_];
+        $header_sep ~= $tab if $_ != @!new_w_cols.end;
     }
     return $header_sep;
 }
