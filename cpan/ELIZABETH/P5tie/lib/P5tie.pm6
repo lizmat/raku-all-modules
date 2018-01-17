@@ -1,11 +1,13 @@
 use v6.c;
-unit module P5tie:ver<0.0.3>;  # must be different from "tie"
+unit module P5tie:ver<0.0.5>;  # must be different from "tie"
 
 sub tie(\subject, $class, *@extra is raw) is export {
 
-    # get the stash for easier lookups
+    # get the stash for easier lookups, and the name of the subject
     my $stash := $class.WHO;
+    my $name  := subject.VAR.name;
 
+    # fetch API sub / method from given class
     sub check($method, :$test) is raw {
         if $stash{'&' ~ $method} // $class.can($method)[0] -> &code {
             &code
@@ -18,6 +20,9 @@ sub tie(\subject, $class, *@extra is raw) is export {
         }
     }
 
+    # generic prefix for .perl methods
+    sub perl-preamble(--> Str:D) { "tie my $name, {$class.^name}; $name = " }
+
     # handle tieing a scalar
     if check('TIESCALAR', :test) -> &tiescalar {
         my \this    := tiescalar($class, |@extra);
@@ -29,7 +34,7 @@ sub tie(\subject, $class, *@extra is raw) is export {
         # This is a bit fragile, but the only way to bind the replace the
         # original container given by the Proxy that we need to actually
         # get the tied behaviour.
-        CALLER::CALLER::.BIND-KEY(subject.VAR.name,Proxy.new(
+        CALLER::CALLER::.BIND-KEY($name,Proxy.new(
           FETCH => -> $       { fetch(this)                  },
           STORE => -> $, \val { store(this,val); fetch(this) }
         ));
@@ -96,6 +101,7 @@ sub tie(\subject, $class, *@extra is raw) is export {
 
             method elems(--> Int:D)      { &!FETCHSIZE($!tied)     }
             method Bool(--> Bool:D)      { ?&!FETCHSIZE($!tied)    }
+            method Numeric(--> Int:D)    { &!FETCHSIZE($!tied)     }
             method push(\value)          { &!PUSH($!tied,value)    }
             method pop()                 { &!POP($!tied)           }
             method shift()               { &!SHIFT($!tied)         }
@@ -107,6 +113,7 @@ sub tie(\subject, $class, *@extra is raw) is export {
                 for @args.kv -> $index, \value {
                     &!STORE($!tied,$index,value)
                 }
+                self
             }
 
             method iterator() {
@@ -117,7 +124,9 @@ sub tie(\subject, $class, *@extra is raw) is export {
                     has int $!elems;
                     has int $!index;
 
-                    method new(\t,\fe,\st,\el) { self.CREATE!SET-SELF(t,fe,st,el) }
+                    method new(\t,\fe,\st,\el) {
+                        self.CREATE!SET-SELF(t,fe,st,el)
+                    }
                     method !SET-SELF($!tied,&!FETCH,&!STORE,$!elems) {
                         $!index = -1;
                         self
@@ -134,6 +143,21 @@ sub tie(\subject, $class, *@extra is raw) is export {
                 }.new($!tied,&!FETCH,&!STORE,&!FETCHSIZE(self))
             }
 
+            method join($delimiter = "" --> Str:D) {
+                my str @strings;
+                @strings.push(&!FETCH($!tied,$_).Str) for ^&!FETCHSIZE($!tied);
+                @strings.join($delimiter)
+            }
+
+            method Str( --> Str:D) { self.join(" ") }
+            method gist(--> Str:D) { self.join(" ") }
+
+            method perl(--> Str:D) {
+                my str @strings;
+                @strings.push(&!FETCH($!tied,$_).perl) for ^&!FETCHSIZE($!tied);
+                perl-preamble() ~ @strings.join(',') ~ ';'
+            }
+
             method DESTROY() { &!DESTROY($!tied) }
 
             method untie() { ::($!tied.^name ~ '::&UNTIE')($!tied) }
@@ -142,7 +166,7 @@ sub tie(\subject, $class, *@extra is raw) is export {
         # This is a bit fragile, but the only way to bind the replace the
         # original container given by the object that we need to actually
         # get the tied behaviour.
-        CALLER::CALLER::.BIND-KEY(subject.VAR.name,TiedArray.new(this));
+        CALLER::CALLER::.BIND-KEY($name,TiedArray.new(this));
 
         this
     }
@@ -197,6 +221,7 @@ sub tie(\subject, $class, *@extra is raw) is export {
                 for @args -> $key, \value {
                     &!STORE($!tied,$key,value)
                 }
+                self
             }
 
             method iterator(
@@ -209,8 +234,12 @@ sub tie(\subject, $class, *@extra is raw) is export {
                     has &!mapper;
                     has Mu $!lastkey;
 
-                    method new(\t,\fk,\nk,\ma) { self.CREATE!SET-SELF(t,fk,nk,ma) }
-                    method !SET-SELF($!tied,&!FIRSTKEY,&!NEXTKEY,&!mapper) { self }
+                    method new(\t,\fk,\nk,\ma) {
+                        self.CREATE!SET-SELF(t,fk,nk,ma)
+                    }
+                    method !SET-SELF($!tied,&!FIRSTKEY,&!NEXTKEY,&!mapper) {
+                        self
+                    }
 
                     method pull-one() is raw {
                         if $!lastkey =:= Mu {       # first time
@@ -242,12 +271,24 @@ sub tie(\subject, $class, *@extra is raw) is export {
                 $elems
             }
             method Bool(--> Bool:D) { &!FIRSTKEY($!tied).defined }
+            method Numeric(--> Int:D) { self.elems }
 
             method pairs()  { Seq.new(self.iterator) }
             method keys()   { Seq.new(self.iterator: { $_ } ) }
             method values() { Seq.new(self.iterator: { self.AT-KEY($_) } ) }
             method antipairs() {
                 Seq.new(self.iterator( { Pair.new(self.AT-KEY($_),$_) } ))
+            }
+
+            method join($delimiter = "" --> Str:D) {
+                self.pairs.map( { .key ~ "\t" ~ .value } ).join($delimiter)
+            }
+
+            method Str( --> Str:D) { self.join(" ") }
+            method gist(--> Str:D) { self.join(" ") }
+
+            method perl(--> Str:D) {
+                perl-preamble() ~ self.pairs.map( *.perl ).join(',') ~ ';'
             }
 
             method DESTROY() { &!DESTROY($!tied) }
@@ -258,7 +299,7 @@ sub tie(\subject, $class, *@extra is raw) is export {
         # This is a bit fragile, but the only way to bind the replace the
         # original container given by the object that we need to actually
         # get the tied behaviour.
-        CALLER::CALLER::.BIND-KEY(subject.VAR.name,TiedHash.new(this));
+        CALLER::CALLER::.BIND-KEY($name,TiedHash.new(this));
 
         this
     }
