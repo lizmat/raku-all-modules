@@ -198,6 +198,57 @@ Values: 0,[1].
 
 The default value is "- " if the *layout* is 2 else the default is the empty string ("").
 
+choose-a-subset
+---------------
+
+        my @menu = (
+            ( 'enable_logging', "- Enable logging", ( 'NO', 'YES' )   ),
+            ( 'case_sensitive', "- Case sensitive", ( 'NO', 'YES' )   ),
+            ( 'attempts',       "- Attempts"      , ( '1', '2', '3' ) )
+        );
+
+        my %config = (
+            'enable_logging' => 0,
+            'case_sensitive' => 1,
+            'attempts'       => 2
+        );
+
+
+        my %tmp_config = settings-menu( @menu, %config, in-place => 0 );
+        if %tmp_config {
+            for %tmp_config.kv -> $key, $value {
+                %config{$key} = $value;
+            }
+        }
+
+
+        my $changed = settings-menu( @menu, %config, in-place => 1 );
+        if $changed {
+            say "Settings have been changed.";
+        }
+
+The first argument is a list of lists. Each of the lists have three elements:
+
+    the option name
+
+    the prompt string
+
+    a list of the available values for the option
+
+The second argument is a hash:
+
+    the hash key is the option name
+
+    the hash value (zero based index) sets the current value for the option.
+
+The following arguments can be the different options.
+
+  * in-place
+
+If enabled, the configuration hash (second argument) is edited in place.
+
+Values: 0,[1].
+
 AUTHOR
 ======
 
@@ -211,7 +262,7 @@ Thanks to the people from [Perl-Community.de](http://www.perl-community.de), fro
 LICENSE AND COPYRIGHT
 =====================
 
-Copyright 2016-2017 Matthäus Kiem.
+Copyright 2016-2018 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

@@ -1,8 +1,5 @@
 use v6;
-unit class Term::Choose::Util:ver<1.0.3>;
-
-#use ClassX::StrictConstructor;
-#unit class Term::Choose::Util:ver<1.0.3> does ClassX::StrictConstructor;
+unit class Term::Choose::Util:ver<1.0.4>;
 
 use NCurses;
 use Term::Choose              :choose, :choose-multi, :pause;
@@ -73,12 +70,9 @@ method choose-dirs (
         Str        :$prompt         = $!prompt,
         List       :$current-dirs   = $!current-dirs,
     ) {
-    #if %_ {
-    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
-    #}
-    #CATCH {
-    #    endwin();
-    #}
+    CATCH {
+        endwin();
+    }
     %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout, :$dir, :$prompt, :$current-dirs;
     my @chosen_dirs;
     my IO::Path $tmp_dir = %!o<dir>.IO;
@@ -169,12 +163,9 @@ method choose-a-dir (
         Str        :$prompt         = $!prompt,
         Str        :$current-dir    = $!current-dir
     --> IO::Path ) {
-    #if %_ {
-    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
-    #}
-    #CATCH {
-    #    endwin();
-    #}
+    CATCH {
+        endwin();
+    }
     %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout, :$dir, :$prompt, :$current-dir;
     self!_choose_a_path( 0 );
 }
@@ -192,12 +183,9 @@ method choose-a-file (
         Str        :$prompt         = $!prompt,
         Str        :$current-file   = $!current-file
     --> IO::Path ) {
-    #if %_ {
-    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
-    #}
-    #CATCH {
-    #    endwin();
-    #}
+    CATCH {
+        endwin();
+    }
     %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout, :$dir, :$prompt, :$current-file;
     self!_choose_a_path( 1 );
 }
@@ -359,12 +347,9 @@ method choose-a-number ( Int $digits,
         Str        :$name           = $!name,
         Str        :$thsd-sep       = $!thsd-sep
     ) {
-    #if %_ {
-    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
-    #}
-    #CATCH {
-    #    endwin();
-    #}
+    CATCH {
+        endwin();
+    }
     %!o = :$mouse, :$prompt, :$current-number, :$name, :$thsd-sep;
     my Str $sep = %!o<thsd-sep>;
     my Int $longest = $digits + ( $sep eq '' ?? 0 !! ( $digits - 1 ) div 3 );
@@ -472,11 +457,11 @@ method choose-a-number ( Int $digits,
 }
 
 
-sub choose-a-subset ( @available, *%opt ) is export( :DEFAULT, :choose-a-subset ) {
-    Term::Choose::Util.new().choose-a-subset( @available, |%opt );
+sub choose-a-subset ( @list, *%opt ) is export( :DEFAULT, :choose-a-subset ) {
+    Term::Choose::Util.new().choose-a-subset( @list, |%opt );
 }
 
-method choose-a-subset ( @available,
+method choose-a-subset ( @list,
         Int_0_or_1 :$index          = $!index,
         Int_0_or_1 :$mouse          = $!mouse,
         Int_0_or_1 :$order          = $!order,
@@ -486,17 +471,13 @@ method choose-a-subset ( @available,
         Str        :$prompt         = 'Choose:',
         List       :$current-list   = $!current-list
     ) {
-    #if %_ {
-    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
-    #}
-    #CATCH {
-    #    endwin();
-    #}
+    CATCH {
+        endwin();
+    }
     %!o = :$mouse, :$order, :$index, :$justify, :$layout, :$prefix, :$prompt, :$current-list;
     my Str $tmp_prefix  = %!o<prefix> // ( %!o<layout> == 2 ?? '- ' !! '' );
     my Str $confirm = 'CONFIRM';
     my Str $back    = 'BACK';
-    #if $tmp_prefix.chars {
     if %!o<layout> == 2 && $tmp_prefix.chars {
         $confirm = ( ' ' x $tmp_prefix.chars ) ~ $confirm;
         $back    = ( ' ' x $tmp_prefix.chars ) ~ $back;
@@ -519,9 +500,9 @@ method choose-a-subset ( @available,
             $prompt ~= $key_new ~ _array_gist( @new_val ) ~ "\n";
         }
         $prompt ~= "\n" ~ %!o<prompt> if %!o<prompt>.defined;
-        my Str @avail_with_prefix = @available.map( { $tmp_prefix ~ $_ } );
+        my Str @list_prefixed = @list.map( { $tmp_prefix ~ $_ } );
         # Choose
-        my Int @idx = $!tc.choose-multi( [ |@pre, |@avail_with_prefix  ], :prompt( $prompt ), :no-spacebar( |^@pre ),
+        my Int @idx = $!tc.choose-multi( [ |@pre, |@list_prefixed ], :prompt( $prompt ), :no-spacebar( |^@pre ),
                                            :undef( $back ), :lf( 0, $len_key ), :justify( %!o<justify> ), :1index,
                                            :layout( %!o<layout> ), :order( %!o<order> ) );
         if ! @idx[0] { #
@@ -537,38 +518,15 @@ method choose-a-subset ( @available,
         }
         if @idx[0] == 1 {
             @idx.shift;
-            @new_val.append: @available[@idx >>->> @pre.elems];
+            @new_val.append: @list[@idx >>->> @pre.elems];
             @new_idx.append: @idx >>->> @pre.elems;
             self!_end_term();
             return %!o<index> ?? @new_idx !! @new_val;
         }
-        @new_val.append: @available[@idx >>->> @pre.elems]; #
+        @new_val.append: @list[@idx >>->> @pre.elems]; #
         @new_idx.append: @idx >>->> @pre.elems; #
     }
 }
-
-
-#`<<< example 'settings_menu':
-
-my @menu = (
-    [ 'enable_logging', "- Enable logging", [ 'NO', 'YES' ] ],
-    [ 'case_sensitive', "- Case sensitive", [ 'NO', 'YES' ] ],
-);
-
-my %config = (
-    'enable_logging' => 0,
-    'case_sensitive' => 1,
-);
-
-my %tmp_config = settings_menu( @menu, %config, { in-place => 0 } );
-if %tmp_config {
-    for %tmp_config.kv -> $key, $value {
-        %config{$key} = $value;
-    }
-}
-
-my $changed = settings_menu( @menu, %config, { in-place => 1 } );
->>>
 
 
 sub settings-menu ( @menu, %setup, *%opt ) is export( :settings-menu ) {
@@ -580,20 +538,15 @@ method settings-menu ( @menu, %setup,
         Int_0_or_1 :$mouse          = $!mouse,
         Str        :$prompt         = 'Choose:'
     ) {
-    #if %_ {
-    #    die "The following parameters are not declared: {%_.keys.join(', ')}";
-    #}
-    #CATCH {
-    #    endwin();
-    #}
+    CATCH {
+        endwin();
+    }
     %!o = :$mouse, :$in-place, :$prompt;
     my Str $confirm = '  CONFIRM';
     my Str $back    = '  BACK';
     my Int $name_w = 0;
     my %new_setup;
-    for @menu -> @entry {
-        my Str $key  = @entry[0];
-        my Str $name = @entry[1];
+    for @menu -> ( Str $key, Str $name, $ ) {
         my Int $len = print-columns( $name );
         $name_w = $len if $len > $name_w;
         %setup{$key} //= 0;
@@ -605,10 +558,8 @@ method settings-menu ( @menu, %setup,
 
     loop {
         my Str @print_keys;
-        for @menu -> @entry {
-            my ( Str $key, Str $name, $avail_values ) = @entry;
-            my @current = $avail_values[%new_setup{$key}];
-            @print_keys.push: sprintf "%-*s [%s]", $name_w, $name, @current;
+        for @menu -> ( Str $key, Str $name, @values ) {
+            @print_keys.push: sprintf "%-*s [%s]", $name_w, $name, @values[%new_setup{$key}];
         }
         my @pre = ( Any, $confirm );
         my @choices = |@pre, |@print_keys;
@@ -626,14 +577,9 @@ method settings-menu ( @menu, %setup,
         elsif $choice eq $confirm {
             my Int $change = 0;
             if $count {
-                for @menu -> @entry {
-                    my Str $key = @entry[0];
-                    if %setup{$key} == %new_setup{$key} {
-                        next;
-                    }
-                    if %!o<in-place> {
-                        %setup{$key} = %new_setup{$key};
-                    }
+                for @menu -> ( Str $key, $, $ ) {
+                    next                            if %setup{$key} == %new_setup{$key};
+                    %setup{$key} = %new_setup{$key} if %!o<in-place>;
                     $change++;
                 }
             }
@@ -642,10 +588,10 @@ method settings-menu ( @menu, %setup,
             return 1          if %!o<in-place>;
             return %new_setup;
         }
-        my Str   $key          = @menu[$idx-@pre][0];
-        my Array $avail_values = @menu[$idx-@pre][2];
+        my Str $key = @menu[$idx-@pre][0];
+        my @values  = @menu[$idx-@pre][2];
         %new_setup{$key}++;
-        %new_setup{$key} = 0 if %new_setup{$key} == $avail_values.elems;
+        %new_setup{$key} = 0 if %new_setup{$key} == @values.elems;
         $count++;
     }
 }
@@ -668,10 +614,10 @@ sub insert-sep ( $num, $sep = ' ' ) is export( :insert-sep ) {
 }
 
 
-sub unicode-sprintf ( Str $str, Int $avail_col_w, Int $justify ) is export( :unicode-sprintf ) {
+sub unicode-sprintf ( Str $str, Int $avail_col_w, Int $justify, @cache? ) is export( :unicode-sprintf ) {
     my Int $str_length = print-columns( $str );
     if $str_length > $avail_col_w {
-        return to-printwidth( $str, $avail_col_w, False ).[0];
+        return to-printwidth( $str, $avail_col_w, False, @cache ).[0];
     }
     elsif $str_length < $avail_col_w {
         if $justify == 0 {
@@ -918,6 +864,60 @@ printing. The chosen elements are returned without this I<prefix>.
 
 The default value is "- " if the I<layout> is 2 else the default is the empty string ("").
 
+=head2 choose-a-subset
+
+=begin code
+
+    my @menu = (
+        ( 'enable_logging', "- Enable logging", ( 'NO', 'YES' )   ),
+        ( 'case_sensitive', "- Case sensitive", ( 'NO', 'YES' )   ),
+        ( 'attempts',       "- Attempts"      , ( '1', '2', '3' ) )
+    );
+
+    my %config = (
+        'enable_logging' => 0,
+        'case_sensitive' => 1,
+        'attempts'       => 2
+    );
+
+
+    my %tmp_config = settings-menu( @menu, %config, in-place => 0 );
+    if %tmp_config {
+        for %tmp_config.kv -> $key, $value {
+            %config{$key} = $value;
+        }
+    }
+
+
+    my $changed = settings-menu( @menu, %config, in-place => 1 );
+    if $changed {
+        say "Settings have been changed.";
+    }
+
+=end code
+
+The first argument is a list of lists. Each of the lists have three elements:
+
+    the option name
+
+    the prompt string
+
+    a list of the available values for the option
+
+The second argument is a hash:
+
+    the hash key is the option name
+
+    the hash value (zero based index) sets the current value for the option.
+
+The following arguments can be the different options.
+
+=item1 in-place
+
+If enabled, the configuration hash (second argument) is edited in place.
+
+Values: 0,[1].
+
 =head1 AUTHOR
 
 Matthäus Kiem <cuer2s@gmail.com>
@@ -930,7 +930,7 @@ help.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2016-2017 Matthäus Kiem.
+Copyright 2016-2018 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
