@@ -9,6 +9,7 @@ use UUID;
 use Jupyter::Kernel::Service;
 use Jupyter::Kernel::Sandbox;
 use Jupyter::Kernel::Magics;
+use Jupyter::Kernel::Comms;
 
 has $.engine-id = ~UUID.new: :version(4);
 has $.kernel-info = {
@@ -24,6 +25,7 @@ has $.kernel-info = {
     banner => "Welcome to Perl 6 ({ $*PERL.compiler.name } { $*PERL.compiler.version }).",
 }
 has $.magics = Jupyter::Kernel::Magics.new;
+method comms { $*JUPYTER.comms }
 
 method resources {
     return %?RESOURCES;
@@ -62,7 +64,9 @@ method run($spec-file!) {
     # Shell
     my $execution_count = 1;
     my $sandbox = Jupyter::Kernel::Sandbox.new;
-    my $promise = start loop {
+    my $promise = start {
+    my $*JUPYTER = Jupyter::Kernel::Handler.new;
+    loop {
     try {
         my $msg = $shell.read-message;
         $iopub.parent = $msg;
@@ -92,7 +96,8 @@ method run($spec-file!) {
                         $iopub.send: 'stream', { :text( $result.stdout ), :name<stdout> };
                     } else {
                         $iopub.send: 'display_data', {
-                            :data( $result.stdout-mime-type => $result.stdout );
+                            :data( $result.stdout-mime-type => $result.stdout ),
+                            :metadata(Hash.new());
                         }
                     }
                 }
@@ -100,6 +105,7 @@ method run($spec-file!) {
                     $iopub.send: 'execute_result',
                                 { :$execution_count,
                                 :data( $result.output-mime-type => $result.output ),
+                                :metadata(Hash.new());
                                 }
                 }
                 $iopub.send: 'status', { :execution_state<idle>, }
@@ -151,6 +157,22 @@ method run($spec-file!) {
                 # > The notebook interface does not use history messages at all.
                 # − http://jupyter-client.readthedocs.io/en/latest/messaging.html#history
             }
+            when 'comm_open' {
+                my ($comm_id,$data,$name) = $msg<content><comm_id data target_name>;
+                with self.comms.add-comm(:id($comm_id), :$data, :$name) {
+                    start react whenever .out -> $data {
+                        debug "sending a message from $name";
+                        $iopub.send: 'comm_msg', { :$comm_id, :$data }
+                    }
+                } else {
+                    $iopub.send( 'comm_close', {} );
+                }
+            }
+            when 'comm_msg' {
+                my ($comm_id, $data) = $msg<content><comm_id data>;
+                debug "comm_msg for $comm_id";
+                self.comms.send-to-comm(:id($comm_id),:$data);
+            }
             default {
                 warning "unimplemented message type: $_";
             }
@@ -159,7 +181,6 @@ method run($spec-file!) {
             error "shell: $_";
             error "trace: { .backtrace.list.map: ~* }";
         }
-    }
-    }
+    }}}
     await $promise;
 }

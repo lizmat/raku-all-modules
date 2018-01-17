@@ -3,6 +3,7 @@
 use Log::Async;
 use Jupyter::Kernel::Sandbox::Autocomplete;
 use Jupyter::Kernel::Response;
+use Jupyter::Kernel::Handler;
 use nqp;
 
 %*ENV<RAKUDO_LINE_EDITOR> = 'none';
@@ -55,6 +56,7 @@ class Jupyter::Kernel::Sandbox is export {
         my $stdout;
         my $*CTXSAVE = $!repl;
         my $*MAIN_CTX;
+        my $*JUPYTER = CALLERS::<$*JUPYTER> // Jupyter::Kernel::Handler.new;
         my $*OUT = class { method print(*@args) {
                               $stdout ~= @args.join;
                               return True but role { method __hide { True } }
@@ -67,6 +69,7 @@ class Jupyter::Kernel::Sandbox is export {
                 my \\_$store = \$(
                     $code
                 );
+                \$*JUPYTER.add-lexicals( MY::.keys );
                 \$Out[$store] := _$store;
                 _ = _$store;
                 DONE
