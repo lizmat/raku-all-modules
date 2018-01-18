@@ -1,0 +1,24 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's Tie::StdHash core module",
+  "license" : "Artistic-2.0",
+  "name" : "Tie::StdHash",
+  "perl" : "6.c",
+  "provides" : {
+    "Tie::StdHash" : "lib/Tie/StdHash.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Tie-StdHash.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [
+    "P5tie"
+  ],
+  "version" : "0.0.1"
+}
