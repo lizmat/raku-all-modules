@@ -1,0 +1,24 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's Tie::StdArray core module",
+  "license" : "Artistic-2.0",
+  "name" : "Tie::StdArray",
+  "perl" : "6.c",
+  "provides" : {
+    "Tie::StdArray" : "lib/Tie/StdArray.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Tie-StdArray.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [
+    "P5tie"
+  ],
+  "version" : "0.0.1"
+}
