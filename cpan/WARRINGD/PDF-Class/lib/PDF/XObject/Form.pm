@@ -5,7 +5,7 @@ use PDF::Content::XObject;
 use PDF::Content::Resourced;
 use PDF::Content::Graphics;
 
-#| XObject Forms - /Type /Xobject /Subtype Form
+#| XObject Forms - /Type /XObject /Subtype Form
 #| See [PDF Spec 1.7 4.9 Form XObjects]
 class PDF::XObject::Form
     is PDF::XObject

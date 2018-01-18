@@ -20,38 +20,37 @@ role PDF::Field
 	      | 'Sig' # Signature
 	      );
 
-    multi method field-delegate( PDF::DAO::Dict $dict where { .<FT>:exists && .<FT> ~~ FieldTypeName }) {
-	my $field-role = do given $dict<FT> {
+    method field-delegate( PDF::DAO::Dict $dict) {
+        my $field-role = do with $dict<FT> {
 	    when 'Btn' {'Button'}
             when 'Tx'  {'Text'}
             when 'Ch'  {'Choice'}
             when 'Sig' {'Signature'}
-	};
-	PDF::DAO.loader.find-delegate( 'Field', $field-role );
-    }
+            default { warn "ignoring Field /FT entry: $_"; Nil }
+        }
+        else {
+            warn "terminal Field lacks /FT entry"
+                unless $dict<Kids>:exists
+        }
 
-    multi method field-delegate( PDF::DAO::Dict $dict)  {
-	if $dict<FT> {
-	    warn "ignoring Field /FT entry: $dict<FT>"
-	}
-	else {
-	    warn "terminal Field lacks /FT entry"
-		unless $dict<Kids>:exists
-	}
-	PDF::Field;
+        with $field-role {
+            PDF::DAO.loader.find-delegate( 'Field', $field-role );
+        }
+        else {
+            PDF::Field
+        }
     }
 
     #| pure annotation or field/annotation union
-    sub is-annot($dict) returns Bool {
-	   ?( ($dict<Type>:exists)
-	      && $dict<Type> eq 'Annot' );
+    sub is-annot($_) returns Bool {
+	   ?( .<Type> ~~ 'Annot' );
     }
 
     #| pure annotation only
-    sub is-annot-only($dict) returns Bool {
-	?( is-annot($dict)
-	   && !($dict<FT>:exists)
-	   && !($dict<Kids>:exists))
+    sub is-annot-only($_) returns Bool {
+	?( is-annot($_)
+	   && !(.<FT>:exists)
+	   && !(.<Kids>:exists))
     }
 
     proto sub coerce( $, $ ) is export(:coerce) {*}
@@ -72,8 +71,12 @@ role PDF::Field
                                                 #| In a non-terminal field, the Kids array is required to refer to field dictionaries that are immediate descendants of this field. In a terminal field, the Kids array ordinarily must refer to one or more separate widget annotations that are associated with this field. However, if there is only one associated widget annotation, and its contents have been merged into the field dictionary, Kids must be omitted.
 
     method is-terminal returns Bool {
-	! ($.Kids.defined
-	   && $.Kids.keys.first: {! is-annot-only($.Kids[$_]) })
+	with $.Kids {
+            ! .keys.first: -> $k {! is-annot-only(.[$k]) }
+        }
+        else {
+            True;
+        }
     }
 
     #| return ourself, if terminal, any children otherwise
@@ -115,32 +118,31 @@ role PDF::Field
 
     has PDF::DAO::TextString $.TM is entry(:alias<tag>);     #| (Optional; PDF 1.3) The mapping name to be used when exporting interactive form field data from the document.
 
-    has UInt $.Ff is entry(:inherit);           #| Optional; inheritable) A set of flags specifying various characteristics of the field
+    has UInt $.Ff is entry(:inherit, :alias<flags>);           #| Optional; inheritable) A set of flags specifying various characteristics of the field
 
 ## type specific - see individual field definitions
 ##    has Any $.V is entry(:inherit);           #| (Optional; inheritable) The field’s value, whose format varies depending on the field type
 
 ##    has Any $.DV is entry(:inherit);          #| (Optional; inheritable) The default value to which the field reverts when a reset-form action is executed. The format of this value is the same as that of V.
 
-    has Hash $.AA is entry;                     #| (Optional; PDF 1.2) An additional-actions dictionary defining the field’s behavior in response to various trigger events. This entry has exactly the same meaning as the AA entry in an annotation dictionary
+    has Hash $.AA is entry(:alias<additional-actions>);                     #| (Optional; PDF 1.2) An additional-actions dictionary defining the field’s behavior in response to various trigger events. This entry has exactly the same meaning as the AA entry in an annotation dictionary
 
     # see [PDF 1.7 TABLE 8.71 Additional entries common to all fields containing variable text]
 
-    has Str $.DA is entry(:inherit);            #| (Required; inheritable) The default appearance string containing a sequence of valid page-content graphics or text state operators that define such properties as the field’s text size and color.
+    has Str $.DA is entry(:inherit, :alias<default-appearance>);            #| (Required; inheritable) The default appearance string containing a sequence of valid page-content graphics or text state operators that define such properties as the field’s text size and color.
 
     my subset QuaddingFlags of UInt where 0..3;
-    has QuaddingFlags $.Q is entry(:inherit);   #| (Optional; inheritable) A code specifying the form of quadding (justification) to be used in displaying the text:
+    has QuaddingFlags $.Q is entry(:inherit, :alias<quadding>);   #| (Optional; inheritable) A code specifying the form of quadding (justification) to be used in displaying the text:
                                                 #| 0: Left-justified
                                                 #| 1: 1Centered
                                                 #| 2: Right-justified
 
-    has PDF::DAO::TextString $.DS is entry;     #| Optional; PDF 1.5) A default style string
+    has PDF::DAO::TextString $.DS is entry(:alias<default-style>);     #| Optional; PDF 1.5) A default style string
 
     use PDF::DAO::Stream;
     my subset TextOrStream where PDF::DAO::TextString | PDF::DAO::Stream;
     multi sub coerce(Str $value is rw, TextOrStream) {
 	$value = PDF::DAO.coerce( $value, PDF::DAO::TextString );
     }
-    has TextOrStream $.RV is entry( :&coerce );             #| (Optional; PDF 1.5) A rich text string
-    
+    has TextOrStream $.RV is entry( :&coerce, :alias<rich-text> );  #| (Optional; PDF 1.5) A rich text string
 }

@@ -9,6 +9,8 @@ my $read-me = "README.md".IO.slurp;
 $read-me ~~ /^ $<waffle>=.*? +%% ["```" \n? $<code>=.*? "```" \n?] $/
     or die "README.md parse failed";
 
+my $n = 0;
+
 for @<code> {
     my $snippet = ~$_;
     given $snippet {
@@ -18,7 +20,8 @@ for @<code> {
 	    # disable say
 	    sub say(|c) { }
 
-            todo "Class from an eval";
+            todo "Class from an eval"
+                 if ++$n == 5;
             lives-ok {EVAL $snippet}, 'code sample'
 		or warn "eval error: $snippet";
 	}

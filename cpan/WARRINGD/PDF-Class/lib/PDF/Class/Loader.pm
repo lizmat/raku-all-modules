@@ -25,7 +25,7 @@ PDF::DAO.loader = class PDF::Class::Loader
             my $class-name = $class-path ~ '::' ~ $subclass;
             $handler-class = PDF::DAO.required($class-name);
             if $handler-class ~~ Failure {
-                warn "failed to load: $class-name";
+                warn "failed to load: $class-name: {$handler-class.exception.message}";
             }
             else {
                 $resolved = True;

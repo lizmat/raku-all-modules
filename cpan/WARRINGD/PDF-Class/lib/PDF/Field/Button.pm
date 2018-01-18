@@ -9,7 +9,6 @@ role PDF::Field::Button
     use PDF::DAO::Tie;
     use PDF::DAO::TextString;
 
-
     has PDF::DAO::Name $.V is entry(:inherit, :alias<value>);
     has PDF::DAO::Name $.DV is entry(:inherit, :alias<default-value>);
 

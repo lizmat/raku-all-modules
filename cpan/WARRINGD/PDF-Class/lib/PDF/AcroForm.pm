@@ -15,28 +15,21 @@ role PDF::AcroForm
     #| returns an inorder array of all descendant fields
     method fields returns Array {
 	my PDF::Field @fields;
-	for $.Fields.keys {
-	    @fields.append( $.Fields[$_].fields )
+        my $flds = $.Fields;
+	for $flds.keys {
+	    @fields.append( $flds[$_].fields )
 	}
 	@fields;
     }
     #| return fields mapped to a hash. Default keys are $.T and $.TU field entries
-    method fields-hash( Array $fields-arr = self.fields,
-			Bool :$T  = True,
-			Bool :$TU = True,
-			Bool :$TM = False
+        method fields-hash( Array $fields-arr = self.fields,
+                            :$key where 'T'|'TU'|'TR' = 'T'
 			--> Hash) {
-	my @keys;
-	push @keys: 'T' if $T;
-	push @keys: 'TU' if $TU;
-	push @keys: 'TM' if $TM;
 	my %fields;
 
 	for $fields-arr.list -> $field {
-	    for @keys -> $key {
-		%fields{ $field{$key} } = $field
-		    if $field{$key}:exists;
-	    }
+            %fields{ $_ } = $field
+                with $field{$key};
 	}
 
 	%fields;
@@ -55,9 +48,9 @@ role PDF::AcroForm
 
     has Hash $.DR is entry(:alias<default-resources>);                    #| (Optional) A resource dictionary containing default resources (such as fonts, patterns, or color spaces) to be used by form field appearance streams. At a minimum, this dictionary must contain a Font entry specifying the resource name and font dictionary of the default font for displaying text.
 
-    has Str $.DA is entry;                     #| (Optional) A document-wide default value for the DA attribute of variable text fields
+    has Str $.DA is entry(:alias<default-appearance>);                     #| (Optional) A document-wide default value for the DA attribute of variable text fields
 
-    has UInt $.Q is entry;                     #| (Optional) A document-wide default value for the Q attribute of variable text fields
+    has UInt $.Q is entry(:alias<quadding>);                     #| (Optional) A document-wide default value for the Q attribute of variable text fields
 
     use PDF::DAO::Stream;
     my subset StreamOrArray where PDF::DAO::Stream | Array;

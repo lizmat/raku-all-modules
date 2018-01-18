@@ -22,12 +22,13 @@ role PDF::ViewerPreferences
     has Bool $.CenterWindow is entry;           #| (Optional; PDF 1.4) A flag specifying whether the window’s title bar should display the document title taken from the Title entry of the document information dictionary (see Section 10.2.1, “Document Information Dictionary”). If false, the title bar should instead display the name of the PDF file containing the document. Default value: false.
 
     use PDF::DAO::Name;
-    my subset PageModes of PDF::DAO::Name where 'UseNone' | 'UseOutlines' | 'UseThumbs' | 'UseOC';
+    my subset PageModes of PDF::DAO::Name where 'UseNone' | 'UseOutlines' | 'UseThumbs' | 'UseOC' | 'UseAttachments';
     has PageModes $.NonFullScreenPageMode is entry; #| (Optional) The document’s page mode, specifying how to display the document on exiting full-screen mode:
-                                                #|  - UseNoneNeither      : document outline nor thumbnail images visible
-                                                #|  - UseOutlinesDocument : outline visible
-                                                #|  - UseThumbsThumbnail  : images visible
-                                                #|  - UseOCOptional       : content group panel visible
+                                                #|  - UseNone        : Neither document outline nor thumbnail images visible
+                                                #|  - UseOutlines    : Document outline visible
+                                                #|  - UseThumbs      : Thumbnail images visible
+                                                #|  - UseOC          : (PDF 1.5) Optional content group panel visible
+                                                #|  - UseAttachments : (PDF 1.6) Attachments panel visable
                                                 #| This entry is meaningful only if the value of the PageMode entry in the catalog dictionary is FullScreen; it is ignored otherwise. Default value: UseNone.
 
     my subset ReadingOrder of PDF::DAO::Name where 'L2R' | 'R2L';

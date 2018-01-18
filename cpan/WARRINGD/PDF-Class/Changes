@@ -1,3 +1,5 @@
+Release 0.0.6
+- Fix PDF::Page.Annots accessor. Now coerces fields to PDF::Field
 Release 0.0.5
 - Set up accessor aliases, e.g. D(dash) in PDF::Appearance
 Release 0.0.4
