@@ -1,7 +1,7 @@
 use v6;
-use PDF::Class;
+use PDF::Class:ver;
 
-class PDF::API6:ver<0.0.2>
+class PDF::API6:ver<0.0.3>
     is PDF::Class {
 
     use PDF::DAO;
@@ -22,8 +22,6 @@ class PDF::API6:ver<0.0.2>
     sub to-name(Str $name) { PDF::DAO.coerce: :$name }
 
     subset PageRef where {!.defined || $_ ~~ UInt|PDF::Page};
-
-    method catalog returns PDF::Catalog { self<Root> }
 
     method preferences(
         Bool :$hide-toolbar,
@@ -214,4 +212,12 @@ class PDF::API6:ver<0.0.2>
         )
     }
 
+
+    method fields {
+        .fields with $.catalog.AcroForm;
+    }
+
+    method fields-hash {
+        .fields-hash with $.catalog.AcroForm;
+    }
 }

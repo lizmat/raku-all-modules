@@ -1,0 +1,6 @@
+0.0.3
+   - add fields and fields-hash methods
+0.0.2
+   - rebase from PDF::Content to PDF::Class
+0.0.1
+   - initial release

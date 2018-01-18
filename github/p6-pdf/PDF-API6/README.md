@@ -58,6 +58,7 @@ PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
        - [Painting](#painting)
    - [Rendering Methods](#rendering-methods)
        - [render](#render)
+   - [AcroForm Fields](#acroform-fields)
 - [SECTION III: PDF::API6 Specific Methods](#section-iii-pdfapi6-specific-methods)
    - [Metadata Methods](#metadata-methods)
        - [info](#info)
@@ -626,7 +627,6 @@ Synopsis: `$gfx.FillColor = $gfx.use-pattern($pattern)`
 
 Use a pattern; registering it as graphics resource.
 
-
 ## Low Level Graphics
 
 PDF::API6 fully supports the PDF graphics instruction set, both for reading and
@@ -748,6 +748,52 @@ my sub callback($op, *@args) {
 my $gfx = $page.new-gfx: :&callback;
 $page.render($gfx);
 ```
+
+## AcroForm Fields
+
+PDF::API6 has some experimental abilities to read and manipulate AcroFields.
+
+The individual fields are returned as PDF::Field sub-roles (see PDF::Class).
+
+If the field is displayed it is also a subclass of PDF::Annot, most commonly PDF::Annot::Widget.
+
+    use PDF::API6;
+    use PDF::Field;
+    use PDF::Field::Button;
+    use PDF::Field::Choice;
+    use PDF::Field::Text;
+    use PDF::Field::Signature;
+    use PDF::Annot::Widget;
+
+    my PDF::API6 $pdf .= open: "t/pdf/OoPdfFormExample.pdf";
+    my PDF::Field @fields = $pdf.fields;
+    # display field names and values
+    for @fields -> $field {
+        my $field-type = do given $field {
+           when PDF::Field::Button { 'button' }
+           when PDF::Field::Choice { 'button' }
+           when PDF::Field::Text   { 'text' }
+           when PDF::Field::Signature   { 'text' }
+           default { 'unknown' }
+        }
+        my $annot-type = do given $field {
+           when PDF::Annot::Widget {'widget'}
+           when PDF::Annot {'annot'}
+           default {'hidden'}
+        }
+        say "{$field.key}: {$field.value} is of type $field-type $annot-type";
+    }
+
+
+- The `fields` method returns all fields in the PDF as an array.
+- The `fields-hash` method returns fields hashed each fields `.key()`
+
+There are also PDF::Page `fields`, and `fields-hash` methods that return all fields on a given page.
+
+    my PDF::API6 $pdf .= open: "my-form.pdf";
+    my PDF::Field @page-1-fields = $pdf.page(1).fields;
+
+More work needs to be done in PDF::Class to fully support all possible field types;
 
 # SECTION III: PDF::API6 Specific Methods
 
