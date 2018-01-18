@@ -1,0 +1,24 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's Tie::Hash core module",
+  "license" : "Artistic-2.0",
+  "name" : "Tie::Hash",
+  "perl" : "6.c",
+  "provides" : {
+    "Tie::Hash" : "lib/Tie/Hash.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Tie-Hash.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [
+    "P5tie"
+  ],
+  "version" : "0.0.1"
+}
