@@ -213,16 +213,7 @@ choose-a-subset
             'attempts'       => 2
         );
 
-
-        my %tmp_config = settings-menu( @menu, %config, in-place => 0 );
-        if %tmp_config {
-            for %tmp_config.kv -> $key, $value {
-                %config{$key} = $value;
-            }
-        }
-
-
-        my $changed = settings-menu( @menu, %config, in-place => 1 );
+        my $changed = settings-menu( @menu, %config );
         if $changed {
             say "Settings have been changed.";
         }
@@ -241,13 +232,9 @@ The second argument is a hash:
 
     the hash value (zero based index) sets the current value for the option.
 
+This hash is edited in place: the changes made by the user are saved as new current values.
+
 The following arguments can be the different options.
-
-  * in-place
-
-If enabled, the configuration hash (second argument) is edited in place.
-
-Values: 0,[1].
 
 AUTHOR
 ======

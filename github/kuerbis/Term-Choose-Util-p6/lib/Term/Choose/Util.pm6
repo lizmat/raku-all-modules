@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose::Util:ver<1.0.4>;
+unit class Term::Choose::Util:ver<1.0.5>;
 
 use NCurses;
 use Term::Choose              :choose, :choose-multi, :pause;
@@ -16,7 +16,7 @@ subset Int_0_to_2 of Int where * == 0|1|2;
 subset Int_0_or_1 of Int where * == 0|1;
 
 has Int_0_or_1 $.index          = 0;
-has Int_0_or_1 $.in-place       = 1;
+has Int_0_or_1 $.in-place;              # remove
 has Int_0_or_1 $.mouse          = 0;
 has Int_0_or_1 $.order          = 1;
 has Int_0_or_1 $.show-hidden    = 1;
@@ -529,7 +529,7 @@ method choose-a-subset ( @list,
 }
 
 
-sub settings-menu ( @menu, %setup, *%opt ) is export( :settings-menu ) {
+sub settings-menu ( @menu, %setup, *%opt ) is export( :DEFAULT, :settings-menu ) {
     Term::Choose::Util.new().settings-menu( @menu, %setup, |%opt );
 }
 
@@ -552,9 +552,18 @@ method settings-menu ( @menu, %setup,
         %setup{$key} //= 0;
         %new_setup{$key} = %setup{$key};
     }
-    my $no_change = %!o<in-place> ?? 0 !! {};
     my $count = 0;
     self!_init_term();
+    # ###
+    if %!o<in-place>.defined {
+        my $m = 'Please remove the option "in-place". In the next release the option "in-place" will be removed and "settings-menu" will always do an in-place edit of the configuration %hash.';
+        $!tc.pause( ( 'Close with ENTER', ), :prompt( $m ) );
+    }
+    else {
+        %!o<in-place> = 1;
+    }
+    # ###
+    my $no_change = %!o<in-place> ?? 0 !! {};
 
     loop {
         my Str @print_keys;
@@ -880,16 +889,7 @@ The default value is "- " if the I<layout> is 2 else the default is the empty st
         'attempts'       => 2
     );
 
-
-    my %tmp_config = settings-menu( @menu, %config, in-place => 0 );
-    if %tmp_config {
-        for %tmp_config.kv -> $key, $value {
-            %config{$key} = $value;
-        }
-    }
-
-
-    my $changed = settings-menu( @menu, %config, in-place => 1 );
+    my $changed = settings-menu( @menu, %config );
     if $changed {
         say "Settings have been changed.";
     }
@@ -910,13 +910,9 @@ The second argument is a hash:
 
     the hash value (zero based index) sets the current value for the option.
 
+This hash is edited in place: the changes made by the user are saved as new current values.
+
 The following arguments can be the different options.
-
-=item1 in-place
-
-If enabled, the configuration hash (second argument) is edited in place.
-
-Values: 0,[1].
 
 =head1 AUTHOR
 
