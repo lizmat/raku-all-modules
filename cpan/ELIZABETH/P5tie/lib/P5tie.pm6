@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5tie:ver<0.0.5>;  # must be different from "tie"
+unit module P5tie:ver<0.0.6>;  # must be different from "tie"
 
 sub tie(\subject, $class, *@extra is raw) is export {
 
@@ -225,41 +225,37 @@ sub tie(\subject, $class, *@extra is raw) is export {
             }
 
             method iterator(
-              &mapper = -> \key { Pair.new(key,$!tied.AT-KEY(key)) }
+              &mapper = -> \key { Pair.new(key,&!FETCH($!tied,key)) }
             ) {
                 class :: does Iterator {
                     has $!tied;
                     has &!FIRSTKEY;
                     has &!NEXTKEY;
                     has &!mapper;
-                    has Mu $!lastkey;
+                    has $!lastkey;
 
                     method new(\t,\fk,\nk,\ma) {
                         self.CREATE!SET-SELF(t,fk,nk,ma)
                     }
                     method !SET-SELF($!tied,&!FIRSTKEY,&!NEXTKEY,&!mapper) {
+                        $!lastkey := Mu;
                         self
                     }
 
                     method pull-one() is raw {
+                        use fatal;
                         if $!lastkey =:= Mu {       # first time
-                            with $!lastkey := &!FIRSTKEY($!tied) {
-                                &!mapper($_)
-                            }
-                            else {                  # empty hash
-                                IterationEnd
-                            }
+                            ($!lastkey := &!FIRSTKEY($!tied)) =:= Nil
+                              ?? IterationEnd         # empty hash
+                              !! &!mapper($!lastkey)  # first element
                         }
-                        elsif $!lastkey.defined {   # consecutive time
-                            with $!lastkey := &!NEXTKEY($!tied,$!lastkey) {
-                                &!mapper($_)
-                            }
-                            else {                  # exhausted now
-                                IterationEnd
-                            }
-                        }
-                        else {                      # exhausted before
+                        elsif $!lastkey =:= Nil {   # exhausted before
                             IterationEnd
+                        }
+                        else {                      # not exhausted yet
+                            ($!lastkey := &!NEXTKEY($!tied,$!lastkey)) =:= Nil
+                              ?? IterationEnd         # exhausted now
+                              !! &!mapper($!lastkey)  # next element
                         }
                     }
                 }.new($!tied,&!FIRSTKEY,&!NEXTKEY,&mapper)
@@ -270,21 +266,23 @@ sub tie(\subject, $class, *@extra is raw) is export {
                 self.iterator({ ++$elems }).sink-all;
                 $elems
             }
-            method Bool(--> Bool:D) { &!FIRSTKEY($!tied).defined }
+            method Bool(--> Bool:D) { &!FIRSTKEY($!tied) !=== Nil }
             method Numeric(--> Int:D) { self.elems }
 
             method pairs()  { Seq.new(self.iterator) }
             method keys()   { Seq.new(self.iterator: { $_ } ) }
-            method values() { Seq.new(self.iterator: { self.AT-KEY($_) } ) }
+            method values() { Seq.new(self.iterator: { &!FETCH($!tied,$_) } ) }
             method antipairs() {
-                Seq.new(self.iterator( { Pair.new(self.AT-KEY($_),$_) } ))
+                Seq.new(self.iterator( { Pair.new(&!FETCH($!tied,$_),$_) } ))
             }
 
             method join($delimiter = "" --> Str:D) {
-                self.pairs.map( { .key ~ "\t" ~ .value } ).join($delimiter)
+                my str @strings;
+                self.iterator({ "$_\t&!FETCH($!tied,$_)" }).push-all(@strings);
+                @strings.join($delimiter)
             }
 
-            method Str( --> Str:D) { self.join(" ") }
+            method Str( --> Str:D) { self.join("\n") }
             method gist(--> Str:D) { self.join(" ") }
 
             method perl(--> Str:D) {

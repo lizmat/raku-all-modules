@@ -17,3 +17,6 @@ Added some stringification methods: .Str, .perl and .join.
 # Version 0.0.5
 Fixed .perl for tied arrays, added .gist method
 Added .Str, .perl, .gist, .join for tied hashes
+
+# Version 0.0.6
+Fixed various issues with tied hashes, spotted when working on Tie::Hash
