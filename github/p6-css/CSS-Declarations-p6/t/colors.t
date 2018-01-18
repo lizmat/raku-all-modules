@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 27;
+plan 29;
 
 use CSS::Declarations;
 use Color;
@@ -50,5 +50,9 @@ is $css.border-top-color, '#008000', 'border-*-color default';
 $css.color = 'red';
 is $css.border-top-color, '#FF0000', 'border-*-color default';
 is $css.border-right-color, '#FF0000', 'border-*-color default';
+
+$css.color = Color.new(0, 255, 0);
+is $css.color, '#00FF00', 'color assignment';
+is ~$css, 'color:lime;', 'color assigment';
 
 done-testing;

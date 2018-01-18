@@ -1,21 +1,31 @@
 {
-    "perl"        : "6.*",
-    "name"        : "CSS::Declarations",
-    "tags"        : ["css"],
-    "version"     : "0.3.5",
-    "auth"        : "github:p6-css",
-    "license"     : "Artistic-2.0",
-    "description" : "CSS property manipulation library",
-    "depends"     : [ "CSS::Module", "CSS::Writer", "Color" ],
-    "source-url"  : "git://github.com/p6-css/CSS-Declarations-p6.git",
-    "provides"    : {
-        "CSS::Declarations" : "lib/CSS/Declarations.pm",
-        "CSS::Declarations::Box" : "lib/CSS/Declarations/Box.pm",
-        "CSS::Declarations::Edges" : "lib/CSS/Declarations/Edges.pm",
-        "CSS::Declarations::Font" : "lib/CSS/Declarations/Font.pm",
-        "CSS::Declarations::Property" : "lib/CSS/Declarations/Property.pm",
-        "CSS::Declarations::Units" : "lib/CSS/Declarations/Units.pm"
-     }
+  "auth" : "github:p6-css",
+  "authors" : [
+    "David Warring"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "CSS::Module",
+    "CSS::Writer",
+    "Color"
+  ],
+  "description" : "CSS property manipulation library",
+  "license" : "Artistic-2.0",
+  "name" : "CSS::Declarations",
+  "perl" : "6.*",
+  "provides" : {
+    "CSS::Declarations" : "lib/CSS/Declarations.pm",
+    "CSS::Declarations::Box" : "lib/CSS/Declarations/Box.pm",
+    "CSS::Declarations::Edges" : "lib/CSS/Declarations/Edges.pm",
+    "CSS::Declarations::Font" : "lib/CSS/Declarations/Font.pm",
+    "CSS::Declarations::Property" : "lib/CSS/Declarations/Property.pm",
+    "CSS::Declarations::Units" : "lib/CSS/Declarations/Units.pm"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/p6-css/CSS-Declarations-p6.git",
+  "tags" : [
+    "css"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.3.6"
 }
-
- 

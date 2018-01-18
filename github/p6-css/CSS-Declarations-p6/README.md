@@ -55,11 +55,15 @@ say $css.font-family.type;  # 'ident'
 say $css.font<font-family>; # 'Helvetica;
 ```
 
-The simplest ways of setting a property is to assign a string value.  The value will be parsed as CSS. This works for both simple and container properties. Unit values are also recognized. Also the type and value can be assigned as a pair.
+- The simplest ways of setting a property is to assign a string value which is parsed as CSS.
+- Unit values are also recognized. E.g. `16pt`.
+- Colors can be assigned to color objects
+- Also the type and value can be assigned as a pair.
 
 ```
 use CSS::Declarations;
 use CSS::Declarations::Units :pt;
+use Color;
 my CSS::Declarations $css .= new;
 
 # assign to container
@@ -68,6 +72,7 @@ $css.font = "14pt Helvetica";
 # assign to simple properties
 $css.font-weight = 'bold'; # string
 $css.line-height = 16pt;   # unit value
+$css.border-color = Color.new(0, 255, 0);
 $css.font-style = :keyw<italic>; # type/value pair
 
 say ~$css; # font:italic bold 14pt/16pt Helvetica;
@@ -281,7 +286,7 @@ The border edge surrounds the box's border. If the border has 0 width, the borde
 - *Margin Edge or Outer Edge* -
 The margin edge surrounds the box margin. If the margin has 0 width, the margin edge is the same as the border edge. The four margin edges define the box's margin box.
 
-### Description
+### `CSS::Declarations::Box`
 
 `CSS::Declarations::Box` is an abstract class for modelling Box Model elements.
 

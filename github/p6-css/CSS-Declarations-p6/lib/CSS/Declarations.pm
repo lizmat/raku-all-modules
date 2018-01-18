@@ -1,7 +1,7 @@
 use v6;
 
 #| management class for a set of CSS::Declarations
-class CSS::Declarations {
+class CSS::Declarations:ver<0.3.6> {
 
     use CSS::Module:ver(v0.4.6+);
     use CSS::Module::CSS3;
@@ -329,7 +329,7 @@ class CSS::Declarations {
             (%!prop-cache{$prop}{$_} //= $.module.parse-property($prop, $_, :$!warn))
         }
         else {
-            $val
+            $val;
         }
         self.from-ast(expr);
     }
@@ -343,24 +343,26 @@ class CSS::Declarations {
 
     multi method to-ast($v, :$get = True) is default {
         my $key = $v.?type if $get;
-
         my $val = do given $v {
             when Color {
-                my \type = .type;
-                if type eq 'hsl' {
-                    my (\h, \s, \l) = .hsl;
-                    [ :num(h), :percent(s), :percent(l) ];
-                }
-                elsif type eq 'hsla' {
-                    my (\h, \s, \l) = .hsl;
-                    [ :num(h), :percent(s), :percent(l), alpha(.a) ];
-                }
-                elsif type eq 'rgba' {
-                    my (\r, \g, \b, \a) = .rgba;
-                    [ :num(r), :num(g), :num(b), alpha(a) ];
-                }
-                else {
-                     [ $v."$key"().map: -> $num { :$num } ]
+                given .?type {
+                    when 'hsl' {
+                        my (\h, \s, \l) = $v.hsl;
+                        [ :num(h), :percent(s), :percent(l) ];
+                    }
+                    when 'hsla' {
+                        my (\h, \s, \l) = $v.hsl;
+                        [ :num(h), :percent(s), :percent(l), alpha($v.a) ];
+                    }
+                    when 'rgba' {
+                        my (\r, \g, \b, \a) = $v.rgba;
+                        [ :num(r), :num(g), :num(b), alpha(a) ];
+                    }
+                    default {
+                        $key //= 'rgb';
+                        my (\r, \g, \b) = $v.rgb;
+                        [ :num(r), :num(g), :num(b) ];
+                    }
                 }
             }
             when List  {
