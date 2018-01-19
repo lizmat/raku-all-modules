@@ -84,11 +84,17 @@ method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
     my ($status, $resp_headers, $resp_content) =
         self.make_request($rt, $hostname, $port, $path, %headers, $content, :$ssl);
 
+    # HTML header names can be mixed case. To find the desired names, transform
+    # them into lowercase.
+    my %resp_header_lowercase;
+    for $resp_headers.keys -> $header_name {
+        %resp_header_lowercase{$header_name.lc} = $resp_headers{$header_name};
+    }
+
     given $status {
 
         when / 30 <[12]> / {
-            my %resp_headers = $resp_headers.hash;
-            my $new_url = %resp_headers<Location>;
+            my $new_url = %resp_header_lowercase<location>;
             if ! $new_url {
                 die "Redirect $status without a new URL?";
             }
@@ -109,8 +115,8 @@ method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
             if ($.force_encoding) {
                 return $resp_content.decode($.force_encoding);
             }
-            elsif (not $.force_no_encode) && $resp_headers<Content-Type> &&
-                $resp_headers<Content-Type> ~~
+            elsif (not $.force_no_encode) && %resp_header_lowercase<content-type> &&
+                %resp_header_lowercase<content-type> ~~
                     /   $<media-type>=[<-[/;]>+]
                         [ <[/]> $<media-subtype>=[<-[;]>+] ]? /  &&
                 (   $<media-type> eq 'text' ||
@@ -120,9 +126,11 @@ method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
                 )
             {
                 my $charset =
-                    ($resp_headers<Content-Type> ~~ /charset\=(<-[;]>*)/)[0];
+                    (%resp_header_lowercase<content-type> ~~ /charset\=(<-[;]>*)/)[0];
+
                 $charset = $charset ?? $charset.Str !!
                     self ?? $.default_encoding !! $.class_default_encoding;
+
                 return $resp_content.decode($charset);
             }
             else {
