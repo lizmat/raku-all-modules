@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose::Util:ver<1.0.5>;
+unit class Term::Choose::Util:ver<1.0.6>;
 
 use NCurses;
 use Term::Choose              :choose, :choose-multi, :pause;
@@ -552,7 +552,6 @@ method settings-menu ( @menu, %setup,
         %setup{$key} //= 0;
         %new_setup{$key} = %setup{$key};
     }
-    my $count = 0;
     self!_init_term();
     # ###
     if %!o<in-place>.defined {
@@ -585,12 +584,10 @@ method settings-menu ( @menu, %setup,
         }
         elsif $choice eq $confirm {
             my Int $change = 0;
-            if $count {
-                for @menu -> ( Str $key, $, $ ) {
-                    next                            if %setup{$key} == %new_setup{$key};
-                    %setup{$key} = %new_setup{$key} if %!o<in-place>;
-                    $change++;
-                }
+            for @menu -> ( Str $key, $, $ ) {
+                next                            if %setup{$key} == %new_setup{$key};
+                %setup{$key} = %new_setup{$key} if %!o<in-place>;
+                $change++;
             }
             self!_end_term();
             return $no_change if ! $change;
@@ -601,7 +598,6 @@ method settings-menu ( @menu, %setup,
         my @values  = @menu[$idx-@pre][2];
         %new_setup{$key}++;
         %new_setup{$key} = 0 if %new_setup{$key} == @values.elems;
-        $count++;
     }
 }
 
@@ -873,7 +869,7 @@ printing. The chosen elements are returned without this I<prefix>.
 
 The default value is "- " if the I<layout> is 2 else the default is the empty string ("").
 
-=head2 choose-a-subset
+=head2 settings-menu
 
 =begin code
 
@@ -889,10 +885,7 @@ The default value is "- " if the I<layout> is 2 else the default is the empty st
         'attempts'       => 2
     );
 
-    my $changed = settings-menu( @menu, %config );
-    if $changed {
-        say "Settings have been changed.";
-    }
+    settings-menu( @menu, %config );
 
 =end code
 
@@ -913,6 +906,10 @@ The second argument is a hash:
 This hash is edited in place: the changes made by the user are saved as new current values.
 
 The following arguments can be the different options.
+
+When C<settings-menu> is called, it displays for each list entry a row with the prompt string and the current value.
+It is possible to scroll through the rows. If a row is selected, the set and displayed value changes to the next. If the
+end of the list of the values is reached, it begins from the beginning of the list.
 
 =head1 AUTHOR
 

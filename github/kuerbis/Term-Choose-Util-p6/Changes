@@ -1,6 +1,9 @@
 Revision history for Term::Choose::Util
 
 
+1.0.6   2018-01-18
+        - Bugfix documentation
+
 1.0.5   2018-01-17
         - "settings_menu": the option "in-place" will be removed
 

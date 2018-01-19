@@ -198,8 +198,8 @@ Values: 0,[1].
 
 The default value is "- " if the *layout* is 2 else the default is the empty string ("").
 
-choose-a-subset
----------------
+settings-menu
+-------------
 
         my @menu = (
             ( 'enable_logging', "- Enable logging", ( 'NO', 'YES' )   ),
@@ -213,10 +213,7 @@ choose-a-subset
             'attempts'       => 2
         );
 
-        my $changed = settings-menu( @menu, %config );
-        if $changed {
-            say "Settings have been changed.";
-        }
+        settings-menu( @menu, %config );
 
 The first argument is a list of lists. Each of the lists have three elements:
 
@@ -235,6 +232,8 @@ The second argument is a hash:
 This hash is edited in place: the changes made by the user are saved as new current values.
 
 The following arguments can be the different options.
+
+When `settings-menu` is called, it displays for each list entry a row with the prompt string and the current value. It is possible to scroll through the rows. If a row is selected, the set and displayed value changes to the next. If the end of the list of the values is reached, it begins from the beginning of the list.
 
 AUTHOR
 ======

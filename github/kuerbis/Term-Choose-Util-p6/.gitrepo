@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/kuerbis/Term-Choose-Util-p6.git
 	branch = master
-	commit = 213405e46c11746b356a2f3eb42099d8674c287b
-	parent = 9b6c2358d1408745807d8c74f6984aef8e97c128
+	commit = 9506610399f74ee7d85dc79812d28c7f10fb917d
+	parent = 4af17541b5544b07013ef3bfa28cdd67c18744db
 	cmdver = 0.4.0
