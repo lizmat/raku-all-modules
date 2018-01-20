@@ -68,6 +68,19 @@ $gfx.EndText;
 say $gfx.Str;
 ```
 
+### `PDF::Content::Color`
+
+Simple Color specification functions:
+
+    use PDF::Content;
+    use PDF::Content::Color :color, :ColorName;
+    PDF::Content $gfx .= new;
+    $gfx.FillColor = color Blue; # named color
+    $gfx.StrokeColor = color '#fa9'; # RGB mask, 3 digit
+    $gfx.StrokeColor = color '#ffaa99'; # RGB mask, 6 digit
+    $gfx.StrokeColor = color [1, .8, .1, .2]; # CMYK color values
+    $gfx.StrokeColor = color [1, .8, .1];     # RGB color values
+
 ## See Also
 
 - [PDF::Lite](https://github.com/p6-pdf/PDF-Lite-p6) put these classes to work for the creation and manipulation of PDF documents.

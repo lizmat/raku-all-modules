@@ -36,7 +36,6 @@ class PDF::Content::Ops {
     has Bool $.strict is rw = True;
     has $.parent handles <resource-key resource-entry core-font use-font xobject-form tiling-pattern use-pattern width height>;
 
-
     # some convenient mnemomic names
     my Str enum OpCode is export(:OpCode) «
         :BeginImage<BI> :ImageData<ID> :EndImage<EI>
@@ -229,7 +228,7 @@ class PDF::Content::Ops {
                                                @!DashPattern = [ [$a.map: *.value], $p]; 
                                            }) is rw = [[], 0];
     my subset ColorSpace of Str where 'DeviceRGB'|'DeviceGray'|'DeviceCMYK'|'DeviceN'|'Pattern'|'Separation'|'ICCBased'|'Indexed'|'Lab'|'CalGray'|'CalRGB';
-    method !custom-colorspace($cs) {
+    method !colorspace-resource($cs) {
         self.resources('ColorSpace'){$cs};
     }
     has Str $.StrokeColorSpace is graphics(method ($!StrokeColorSpace) {}) is rw = 'DeviceGray';
@@ -243,7 +242,7 @@ class PDF::Content::Ops {
                         my $cs = ~ $0;
                         self."SetStroke$cs"(|.value);
                     }
-                    elsif .key ~~ ColorSpace || self!custom-colorspace(.key) {
+                    elsif .key ~~ ColorSpace || self!colorspace-resource(.key) {
                         self.SetStrokeColorSpace(.key);
                         self.SetStrokeColorN(|.value);
                     }
@@ -259,18 +258,18 @@ class PDF::Content::Ops {
     method FillColor is rw {
         Proxy.new(
             FETCH => sub ($) {$!FillColorSpace => @!FillColor},
-            STORE => sub ($, Pair $color) {
-                unless $color eqv self.FillColor {
-                    if $color.key ~~ /^ Device(RGB|Gray|CMYK) $/ {
+            STORE => sub ($, Pair $_) {
+                unless .key eq $!FillColorSpace && .value eqv @!FillColor {
+                    if .key ~~ /^ Device(RGB|Gray|CMYK) $/ {
                         my $cs = ~ $0;
-                        self."SetFill$cs"(|$color.value);
+                        self."SetFill$cs"(|.value);
                     }
-                    elsif $color.key ~~ ColorSpace || self!custom-colorspace($color.key) {
-                        self.SetFillColorSpace($color.key);
-                        self.SetFillColorN(|$color.value);
+                    elsif .key ~~ ColorSpace || self!colorspace-resource(.key) {
+                        self.SetFillColorSpace(.key);
+                        self.SetFillColorN(|.value);
                     }
                     else {
-                       die "unknown colorspace: {$color.key}";
+                       die "unknown colorspace: {.key}";
                    }
                }
             });
@@ -480,7 +479,7 @@ class PDF::Content::Ops {
             die "too few arguments to: $op"
                 unless @args;
 
-            @args = @args.map({ 
+            @args = @args.map({
                 when Pair    {$_}
                 when Numeric { :real($_) }
                 default {
@@ -494,13 +493,13 @@ class PDF::Content::Ops {
         # c1, ..., cn [name]      scn | SCN
         'scn'|'SCN' => sub (Str $op, *@_args) {
 
-            my @args = @_args;
+            my @args = @_args.list;
+            die "too few arguments to: $op"
+                unless @args;
+
             # scn & SCN have an optional trailing name
             my Str $name = @args.pop
-                if +@args && @args.tail ~~ Str;
-
-            die "too few arguments to: $op"
-                unless $name.defined || @args;
+                if @args.tail ~~ Str;
 
             @args = @args.map({ 
                 when Pair    {$_}

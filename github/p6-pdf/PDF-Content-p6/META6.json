@@ -8,6 +8,7 @@
   "depends" : [
     "PDF",
     "PDF::Grammar",
+    "Color",
     "Font::AFM",
     "Base64::Native",
     "Native::Packing",
@@ -19,6 +20,7 @@
   "perl" : "6.*",
   "provides" : {
     "PDF::Content" : "lib/PDF/Content.pm",
+    "PDF::Content::Color" : "lib/PDF/Content/Color.pm",
     "PDF::Content::Font" : "lib/PDF/Content/Font.pm",
     "PDF::Content::Font::CoreFont" : "lib/PDF/Content/Font/CoreFont.pm",
     "PDF::Content::Font::Enc::Type1" : "lib/PDF/Content/Font/Enc/Type1.pm",
