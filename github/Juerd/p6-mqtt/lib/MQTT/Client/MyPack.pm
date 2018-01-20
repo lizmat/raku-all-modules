@@ -44,7 +44,7 @@ sub mypack ($template, *@list is copy) is export {
                 # Special mqtt number encoding, only used for packet length.
                 my $v = $packed.elems;
                 my @o;
-                my $d = 0;
+                my int $d = 0;
                 while ($d == 0 or $d +& 0x80) {
                     $d = $v % 128;
                     $v = floor($v / 128);
