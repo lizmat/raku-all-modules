@@ -395,8 +395,12 @@ Examples:
     # checkout under user
     git-scm 'https://github.com/melezhik/sparrow.git', %( to => '/tmp/foo', user => 'alexey' );
 
+    # checkout a branch
+    git-scm 'https://github.com/melezhik/sparrow.git', %( branch => 'dev/foo-bar' );
+
     # enable debug
     git-scm 'https://github.com/melezhik/sparrow.git', %( to => '/tmp/foo', debug => True );
+
 
 ## Ssh
 
