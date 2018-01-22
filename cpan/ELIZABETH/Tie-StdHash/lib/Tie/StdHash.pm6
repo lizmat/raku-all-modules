@@ -1,6 +1,6 @@
 use v6.c;
 
-class Tie::StdHash:ver<0.0.1> {
+class Tie::StdHash:ver<0.0.2> {
 
     # Note that we *must* have an embedded Hash rather than just subclassing
     # from Hash, because .STORE on Hash has different semantics than the
@@ -12,7 +12,7 @@ class Tie::StdHash:ver<0.0.1> {
     method FETCH($k)             is raw { %!tied.AT-KEY($k)           }
     method STORE($k,\value)      is raw { %!tied.ASSIGN-KEY($k,value) }
     method EXISTS($k --> Bool:D)        { %!tied.EXISTS-KEY($k)       }
-    method DELETE($k --> Bool:D) is raw { %!tied.DELETE-KEY($k)       }
+    method DELETE($k)            is raw { %!tied.DELETE-KEY($k)       }
     method CLEAR()                      { %!tied = ()                 }
     method FIRSTKEY() {
         $!iterator := %!tied.keys.iterator;
