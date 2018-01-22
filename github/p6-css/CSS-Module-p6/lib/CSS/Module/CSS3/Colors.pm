@@ -82,8 +82,6 @@ class CSS::Module::CSS3::Colors::Actions {
 
     use CSS::Grammar::AST :CSSValue;
 
-    method colors { %CSS::Grammar::AST::CSS3-Colors }
-
     method color-angle($/) {
         make $<number>.ast;
     }

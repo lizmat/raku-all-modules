@@ -18,7 +18,6 @@ is-deeply css1-module.parse-property('width', '5pt' ), [{ :pt(5) }, ], 'module.p
 
 nok css1-module.parse-property('border-style', 'flashy', :!warn), 'module.parse-property failure';
 
-nok css1-module.colors<gold>:exists, "css1 does not have gold color";
 is-deeply css1-module.colors<red>, [ 255, 0,   0 ], "colors";
 
 my \css21-module = CSS::Module::CSS21.module;
@@ -29,7 +28,6 @@ ok css21-prop<azimuth>:exists, 'css21 has azimuth';
 is-deeply css21-prop<border>, {:box, :children["border-width", "border-style", "border-color"], :edges["border-top", "border-right", "border-bottom", "border-left"], :!inherit, :synopsis("[ 'border-width' || 'border-style' || 'border-color' ]")}, 'css21 border';
 is-deeply css21-prop<border-style>, {:box, :edges[<border-top-style border-right-style border-bottom-style border-left-style>], :!inherit, :synopsis("<border-style>\{1,4}") }, 'css21 border-style';
 
-nok css21-module.colors<gold>:exists, "css21 does not have gold color";
 is-deeply css21-module.colors<red>, [ 255, 0,   0 ], "colors";
 
 my \css3-module = CSS::Module::CSS3.module;
