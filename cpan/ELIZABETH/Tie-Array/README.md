@@ -13,7 +13,9 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Tie::Array is a module intended to be subclassed by classes using the </P5tie|tie()> interface. It uses the standard `Array` implementation as its "backend".
+Tie::Array is a module intended to be subclassed by classes using the </P5tie|tie()> interface. It depends on the implementation of methods `FETCH`, `STORE`, `FETCHSIZE` and `STORESIZE`.
+
+The `EXISTS` method should be implemented if `exists` functionality is needed. The `DELETE` method should be implemented if `delete` functionality is needed. Apart from these, all other interfaces methods are provided in terms of `FETCH`, `STORE`, `FETCHSIZE` and `STORESIZE`.
 
 SEE ALSO
 ========
