@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/CurtTilmes/perl6-dbi-async.git
 	branch = master
-	commit = 346875e8113365f9d1faee3dbf58ae3a7310fb79
-	parent = d54361e79d528a8df18c0c86a100db8f33f82085
+	commit = 977a23a98584812fb0a279e9dcb6d4301383de0f
+	parent = d3cee2d3430df83c4d1db71b0efb97e7360ebe5c
 	cmdver = 0.4.0

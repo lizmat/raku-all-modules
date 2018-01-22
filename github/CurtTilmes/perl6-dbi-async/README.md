@@ -58,6 +58,8 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
+This is deprecated in favor of DB::Pg.
+
 `DBI::Async` is an experimental wrapper around DBIish that does all the heavy lifting. It manages a pool of connections and as queries are issued, it queues them and allocates them to a connection, gets the results and returns them asynchronously. You can issue queries from multiple threads without worrying about managing connections. It also wraps some of the mechanics of dealing with results.
 
 Passes all arguments to DBI::Async.new() through to DBIish.connect() except connections.
