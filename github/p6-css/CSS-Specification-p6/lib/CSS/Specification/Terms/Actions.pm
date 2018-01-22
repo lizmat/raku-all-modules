@@ -1,8 +1,8 @@
 use v6;
 
-use CSS::Grammar::AST :CSSValue;
-
 class CSS::Specification::Terms::Actions {
+
+    use CSS::Grammar::AST :CSSValue;
 
     method decl($/, :@proforma = [] ) {
 
@@ -129,7 +129,21 @@ class CSS::Specification::Terms::Actions {
         make $.token(0, :type<hz>)
     }
 
-    method colors { state Hash $colors //= %CSS::Grammar::AST::CSS21-Colors };
+    use Color::Names::CSS3 :colors;
+    my constant %Colors = do {
+        my %v;
+        for COLORS.pairs {
+            my (Str $name, Hash $val) = .kv;
+            my List $rgb = $val<rgb>;
+            %v{$name} = $rgb;
+            with $name.index("gray") {
+                $name.substr-rw($_, 4) = 'grey';
+                %v{$name} = $rgb;
+            }
+        }
+        %v;
+    }
+    method colors { %Colors }
 
     method color:sym<named>($/) {
         my Str $color-name = $<keyw>.ast.value;

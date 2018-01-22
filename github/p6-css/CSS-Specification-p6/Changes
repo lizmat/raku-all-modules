@@ -1,3 +1,4 @@
+0.4.5 Use color chart from Color::Names::CSS3 (Color::Names module)
 0.4.4 Fixed whitespace handling on quantifiers
 0.4.3 Move test classes into lib path; t::CSS::Aural::Grammar, etc.
 0.4.2 Bugfix a length can be a percentage quantity
