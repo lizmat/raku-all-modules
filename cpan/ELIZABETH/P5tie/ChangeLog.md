@@ -20,3 +20,6 @@ Added .Str, .perl, .gist, .join for tied hashes
 
 # Version 0.0.6
 Fixed various issues with tied hashes, spotted when working on Tie::Hash
+
+# Version 0.0.7
+.push and .unshift should return number of elements.
