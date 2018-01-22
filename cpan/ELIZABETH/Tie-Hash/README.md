@@ -13,7 +13,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Tie::Hash is a module intended to be subclassed by classes using the [P5tie](tie()) interface. It uses the standard `Hash` implementation as its "backend".
+Tie::Hash is a module intended to be subclassed by classes using the [P5tie](tie()) interface. It provides implementations of the `CLEAR`, `UNTIE` and `DESTROY` methods. It also provides a stub for the `EXISTS` method, but one needs to supply an `EXISTS` method for real `exists` functionality. All other `tie` methods should be provided.
 
 SEE ALSO
 ========

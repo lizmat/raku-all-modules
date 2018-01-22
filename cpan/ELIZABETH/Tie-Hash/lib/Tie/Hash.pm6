@@ -1,29 +1,22 @@
 use v6.c;
 
-class Tie::Hash:ver<0.0.1> {
+class Tie::Hash:ver<0.0.2> {
 
-    # Note that we *must* have an embedded Hash rather than just subclassing
-    # from Hash, because .STORE on Hash has different semantics than the
-    # .STORE that is being expected by tie().
-    has %.tied;
-    has $!iterator;
+    method EXISTS($) { die self.^name ~ " doesn't define an EXISTS method" }
 
-    method TIEHASH() { self.new }
-    method FETCH($k)             is raw { %!tied.AT-KEY($k)           }
-    method STORE($k,\value)      is raw { %!tied.ASSIGN-KEY($k,value) }
-    method EXISTS($k --> Bool:D)        { %!tied.EXISTS-KEY($k)       }
-    method DELETE($k --> Bool:D) is raw { %!tied.DELETE-KEY($k)       }
-    method CLEAR()                      { %!tied = ()                 }
-    method FIRSTKEY() {
-        $!iterator := %!tied.keys.iterator;
-        (my $key := $!iterator.pull-one) =:= IterationEnd ?? Nil !! $key
+    method CLEAR(*@args) {
+        my @keys;
+
+        my $key = self.FIRSTKEY;
+        while $key.defined {
+            push @keys, $key;
+            $key = self.NEXTKEY($key);
+        }
+        self.DELETE($_) for @keys;
+        ()
     }
-    method NEXTKEY(Mu $) {
-        (my $key := $!iterator.pull-one) =:= IterationEnd ?? Nil !! $key
-    }
-    method SCALAR()  { %!tied.elems }
-    method UNTIE()   {              }
-    method DESTROY() {              }
+    method UNTIE()   { }
+    method DESTROY() { }
 }
 
 =begin pod
@@ -39,8 +32,10 @@ Tie::Hash - Implement Perl 5's Tie::Hash core module
 =head1 DESCRIPTION
 
 Tie::Hash is a module intended to be subclassed by classes using the
-L<P5tie|tie()> interface.  It uses the standard C<Hash> implementation as its
-"backend".
+L<P5tie|tie()> interface.  It provides implementations of the C<CLEAR>,
+C<UNTIE> and C<DESTROY> methods.  It also provides a stub for the C<EXISTS>
+method, but one needs to supply an C<EXISTS> method for real C<exists>
+functionality.  All other C<tie> methods should be provided.
 
 =head1 SEE ALSO
 

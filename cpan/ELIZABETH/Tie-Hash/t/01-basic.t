@@ -6,8 +6,27 @@ use Tie::Hash;
 
 plan 8;
 
-my $object = tie my %h, Tie::Hash;
-isa-ok $object, Tie::Hash, "is the object a Tie::Hash?";
+class Foo is Tie::Hash {
+    has %.tied;
+    has $!iterator;
+
+    method TIEHASH() { self.new }
+    method FETCH($k)             is raw { %!tied.AT-KEY($k)           }
+    method STORE($k,\value)      is raw { %!tied.ASSIGN-KEY($k,value) }
+    method EXISTS($k --> Bool:D)        { %!tied.EXISTS-KEY($k)       }
+    method DELETE($k)            is raw { %!tied.DELETE-KEY($k)       }
+    method FIRSTKEY() {
+        $!iterator := %!tied.keys.iterator;
+        (my $key := $!iterator.pull-one) =:= IterationEnd ?? Nil !! $key
+    }
+    method NEXTKEY(Mu $) {
+        (my $key := $!iterator.pull-one) =:= IterationEnd ?? Nil !! $key
+    }
+    method SCALAR()  { %!tied.elems }
+}
+
+my $object = tie my %h, Foo;
+isa-ok $object, Foo, "is the object a Foo?";
 is %h<a>, Any, 'did we get Any';
 
 %h<a> = 666;
