@@ -20,7 +20,7 @@ EXAMPLE 1
     my Algorithm::LibSVM::Parameter $parameter .= new(svm-type => C_SVC,
                                                       kernel-type => RBF);
     my Algorithm::LibSVM::Problem $problem = $libsvm.load-problem('heart_scale');
-    my @r = $libsvm.cross-validation($problem, $param, 10);
+    my @r = $libsvm.cross-validation($problem, $parameter, 10);
     $libsvm.evaluate($problem.y, @r).say; # {acc => 81.1111111111111, mse => 0.755555555555556, scc => 1.01157627463546}
 
 EXAMPLE 2
