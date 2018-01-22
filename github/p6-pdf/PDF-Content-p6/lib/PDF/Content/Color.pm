@@ -4,16 +4,16 @@ module PDF::Content::Color {
     use Color;
 
     my Array enum ColorName is export(:ColorName) «
-        :Cyan[1, 0, 0, 0]    :Magenta[0, 1, 0, 0]
-        :Yellow[0, 0, 1, 0]  :Black[0, 0, 0, 1]
-        :White[0, 0, 0, 0]   :Registration[1, 1, 1, 1]
-        :Aqua[1, 0, 0, 0]    :Blue[1, 1, 0, 0]
-        :Fuchsia[0, 1, 0, 0] :Gray[0, 0, 0, .5]
-        :Green[1, 0, 1, .5]  :Lime[1, 0, 1, 0]
-        :Maroon[0, 1, 1, .5] :Navy[1, 1, 0, .5]
-        :Olive[0, 0, 1, .5]  :Purple[0, 1, 0, .5]
-        :Red[0, 1, 1, 0]     :Silver[0, 0, 0, .25]
-        :Teal[1, 0, 0, .5]
+        :Aqua[0, 1, 1]      :Black[0, 0, 0]
+        :Blue[0, 0, 1]      :Fuchsia[1, 0, 1]
+        :Gray[.5, .5, .5]   :Green[0, .5, 0]
+        :Lime[0, 1, 0]      :Maroon[.5, 0, 0]
+        :Navy[0, 0, .5]     :Olive[.5, .5, 0]
+        :Orange[1, 0.65, 0] :Purple[.5, 0, .5]
+        :Red[1, 0, 0]       :Silver[.75, .75, .75]
+        :Teal[0, .5, .5]    :White[1, 1, 1]
+        :Yellow[1, 1, 0]    :Cyan[0, 1, 1]
+        :Magenta[1, 0, 1]   :Registration[1, 1, 1, 1]
        »;
     constant %CMYK = ColorName.enums.Hash;
 

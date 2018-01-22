@@ -5,7 +5,7 @@ use Color;
 
 use PDF::Content::Color :color, :ColorName;
 
-is color(Blue), (:DeviceCMYK[1,1,0,0]), 'color name';
+is color(Blue), (:DeviceRGB[0,0,1]), 'color name';
 is color([1,1,0,0]), (:DeviceCMYK[1,1,0,0]), 'cmyk color list';
 is color([255,255,0,0]), (:DeviceCMYK[1,1,0,0]), 'cmyk color list';
 is color([.1,.2,.3]), (:DeviceRGB[.1,.2,.3]), 'rgb color list';

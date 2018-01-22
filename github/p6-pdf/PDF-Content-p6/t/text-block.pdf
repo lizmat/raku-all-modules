@@ -27,12 +27,12 @@ endobj
 endobj
 
 4 0 obj <<
-  /Length 210
+  /Length 209
 >> stream
 q
   BT
     1 0 0 1 100 350 Tm
-    1 1 0 0 k
+    0 0 1 rg
     /F1 16 Tf
     (Hello. Ting, ting-ting. Attention! … ATTENTION!) Tj
     17.6 TL
@@ -59,7 +59,7 @@ xref
 0000000068 00000 n 
 0000000134 00000 n 
 0000000289 00000 n 
-0000000553 00000 n 
+0000000552 00000 n 
 trailer
 <<
   /ID [ <d743a886fcdcf87b69c36548219ea941> <d743a886fcdcf87b69c36548219ea941> ]
@@ -67,5 +67,5 @@ trailer
   /Size 6
 >>
 startxref
-664
+663
 %%EOF
