@@ -4,22 +4,38 @@ class CSS::Writer {
 
     use CSS::Grammar::AST;
     use CSS::Grammar::CSS3;
+    use Color::Names::CSS3 :colors;
 
     has Str $.indent is rw = '';
     has Bool $.terse is rw = False;
     has Bool $.color-masks is rw = $!terse;
-    has %!color-values;   #- maps color names to rgb values
     has %!color-names;    #- maps rgb hex codes to named colors
+    has %!color-values;   #- maps color names to rgb values
     has $.ast is rw;
 
     sub build-color-names(%colors) {
         %(
-            %colors.grep({.key !~~ /grey/}).map: {
-                my (Str $name, List $rgb) = .kv;
+            %colors.pairs.map: {
+                my (Str $name, Hash $val) = .kv;
+                my List $rgb = $val<rgb>;
                 my $hex = 256 * (256 * $rgb[0]  +  $rgb[1])  +  $rgb[2];
                 $hex => $name;
             }
         )
+    }
+
+    sub build-color-values(%colors) {
+        my %v;
+        for %colors.pairs {
+            my (Str $name, Hash $val) = .kv;
+            my List $rgb = $val<rgb>;
+            %v{$name} = $rgb;
+            with $name.index("gray") {
+                $name.substr-rw($_, 4) = 'grey';
+                %v{$name} = $rgb;
+            }
+        }
+        %v;
     }
 
     my subset BoolOrHash where { !.defined || $_ ~~ Bool|Hash }
@@ -29,13 +45,13 @@ class CSS::Writer {
             die ":color-names and :color-values are mutually exclusive options"
                 with $color-values;
 
-	    when Bool { %!color-names = build-color-names( %CSS::Grammar::AST::CSS3-Colors )
+	    when Bool { %!color-names = build-color-names( COLORS )
                                 if $_; }
 	    when Hash { %!color-names = build-color-names( $_ ) }
         }
         else {
             with $color-values {
-                when Bool { %!color-values = %CSS::Grammar::AST::CSS3-Colors
+                when Bool { %!color-values = build-color-values( COLORS )
                                 if $_; }
                 when Hash { %!color-values = %$_ }
             }
@@ -117,7 +133,7 @@ class CSS::Writer {
 
             $sep = '' if $term<op> && $term<op>;
 
-            if %!color-values && $term<ident> && my $rgb = %!color-values{ $term<ident>.lc } {
+            if %!color-values && $term<ident> && my List $rgb = %!color-values{ $term<ident>.lc } {
                 # substitute a named color with it's rgb value
                 $term = {rgb => [ $rgb.map({ num => $_}) ]};
             }
