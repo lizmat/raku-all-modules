@@ -1,0 +1,10 @@
+Revision history for Terminal-Getpass
+
+0.0.3  2018-01-21T01:15:39+09:00
+    - Call .makeraw before setting flags
+
+0.0.2  2018-01-20T16:34:37+09:00
+    - Add synopsis
+
+0.0.1  2018-01-20T16:27:45+09:00
+    - Initial version
