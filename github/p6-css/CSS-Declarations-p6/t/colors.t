@@ -10,10 +10,11 @@ isa-ok $css.border-top-color, Color, ':values constructor';
 is $css.border-top-color, '#FF0000', ':values constructor';
 is ~$css, 'border-top-color:red;', 'serialization';
 
-$css = CSS::Declarations.new :border-top-color<rgb(50%,0,0)>;
+$css = CSS::Declarations.new :border-top-color<rgb(127,0,0)>;
 isa-ok $css.border-top-color, Color, ':values constructor';
-is $css.border-top-color, '#800000', ':values constructor';
+is $css.border-top-color, '#7F0000', ':values constructor';
 is-approx $css.border-top-color.a, 255, ':values constructor';
+todo "may fail on older versions of CSS::Module";
 is ~$css, 'border-top-color:maroon;', 'serialization';
 
 $css = CSS::Declarations.new :border-top-color<rgba(50%,0,0,1.0)>;
