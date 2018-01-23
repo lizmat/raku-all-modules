@@ -1,0 +1,27 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo",
+    "Data::Dump"
+  ],
+  "description" : "Sparrowdo provision for Terraform backed instances",
+  "license" : "Artistic-2.0",
+  "name" : "Sparrowform",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowform" : "lib/Sparrowform.pm6"
+  },
+  "resources" : [ ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowform.git",
+  "support" : {
+    "bugtracker" : "https://github.com/melezhik/sparrowform/issues",
+    "source" : "https://github.com/melezhik/sparrowform.git"
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.3"
+}

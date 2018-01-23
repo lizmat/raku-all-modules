@@ -1,0 +1,50 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Data::Dump;
+
+my $tf-show = run 'terraform', 'show', '-no-color', :out;
+
+my $resource-id;
+my %resources = Hash.new;
+
+for $tf-show.out.lines -> $line {
+  if $line ~~ /^ (\S+) ':' $/ { # set new resource
+    $resource-id = "$0";
+    %resources{$resource-id} = Hash.new;
+    next;
+  }
+    
+   if $line ~~ /^ \s+ (\S+) \s+ '=' \s+ (.*) $/ { # read resource attrubutes
+    #say $0;
+    %resources{$resource-id}{"$0"} = "$1";
+    next;
+   }
+}
+
+
+$tf-show.out.close();
+
+say Dump(%resources) if %*ENV<SPF_DEBUG>;
+my $sparrow-params = join " ", @*ARGS;
+
+for %resources.keys -> $r {
+  next unless %resources{$r}<public_ip>;
+  my $public-ip = %resources{$r}<public_ip>;
+  if $sparrow-params ~~ /task_run/ or $sparrow-params ~~ /module_run/ {
+    say "provision $r <$public-ip> ...";
+    my $cmd = "sparrowdo --host=$public-ip $sparrow-params";
+    say "run $cmd" if %*ENV<SPF_DEBUG>;
+    next if %*ENV<SPF_DRYRUN>;
+    shell $cmd;
+  } elsif "$r.sparrowfile".IO.e  {
+    say "provision $r <$public-ip> ...";
+    my $cmd = "sparrowdo --sparrowfile=$r.sparrowfile --host=$public-ip $sparrow-params";
+    say "run $cmd" if %*ENV<SPF_DEBUG>;
+    next if %*ENV<SPF_DRYRUN>;
+    shell $cmd;
+  } else {
+    say "skip provision $r <$public-ip>, file $r.sparrowfile does not exist";
+  }
+}
+
