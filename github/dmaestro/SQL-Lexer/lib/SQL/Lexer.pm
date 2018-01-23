@@ -512,7 +512,7 @@ grammar Keyword:ver<0.1.1> {
     }
 }
 
-grammar Lexer:ver<0.2.0> is Keyword is export {
+grammar Lexer:ver<0.2.1> is Keyword {
     my Str $oq;
 
     regex ascii-digit           { <:N> & <:Block(｢Basic Latin｣)> }
