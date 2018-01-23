@@ -843,9 +843,9 @@ an element of the resulting L<Match> object:
 
     my $str =  'number 42';
     if $str ~~ /'number ' (\d+) / {
-        say "The number is $0";         # the number is 42
+        say "The number is $0";         # OUTPUT: The number is 42
         # or
-        say "The number is $/[0]";      # the number is 42
+        say "The number is $/[0]";      # OUTPUT: The number is 42
     }
 
 Pairs of parentheses are numbered left to right, starting from zero.
@@ -877,10 +877,11 @@ instead.
         say ~$0;                # OUTPUT: «c␤»
     }
 
-If you do not need the captures, using non-capturing groups provides
-three benefits: they more cleanly communicate the regex intent; they
-make it easier to count the capturing groups that you do care about;
-and matching is bit faster.
+If you do not need the captures, using non-capturing C<[ ... ]>
+groups provides the following benefits:
+=item  they more cleanly communicate the regex intent;
+=item  they make it easier to count the capturing groups that do mean;
+=item  they make matching a bit faster.
 
 =head2 Capture numbers
 
@@ -913,8 +914,8 @@ the one with the most captures determines the index of the next capture:
 Captures can be nested, in which case they are numbered per level
 
     if 'abc' ~~ / ( a (.) (.) ) / {
-        say "Outer: $0";                # Outer: abc
-        say "Inner: $0[0] and $0[1]";   # Inner: b and c
+        say "Outer: $0";                # OUTPUT: Outer: abc
+        say "Inner: $0[0] and $0[1]";   # OUTPUT: Inner: b and c
     }
 
 If you need to refer to a capture from within another capture, store
@@ -977,7 +978,8 @@ C<\K>.
     say 'abc' ~~ / <(a <( b )> c)>/;        # OUTPUT: «｢bc｣␤»
 
 As the example above, you can see C«<(» sets the start point and C«)>» sets the
-endpoint. They are actually independent.
+endpoint; since they are actually independent each other, the inner-most start point
+wins (the one attache to C<b>) and the outer-most end wins (the one attached to C<c>).
 
 =head1 Substitution
 
@@ -1947,7 +1949,7 @@ Capture 1 = SQL
 Capture 2 =  is an
 [Postgre][SQL][ is an ]
 
-showing that the string has been splitted around the second occurency of I<SQL>, that
+showing that the string has been split around the second occurrence of I<SQL>, that
 is the repetition of the first capture (C<$/[1]>).
 
 With that in place, it is now possible to see how the engine backtracks
@@ -2002,8 +2004,8 @@ in particular one character back (removing thus the final I<!>) and try to match
 in a fail since again the I<SQL> is still kept within I<PostgreSQL>.
 After several iterations, the final result is match.
 
-It is worth noting that the final itaration is number I<24>, and that such number is exactly
-the distance, in number of chars, from the end of the string to the first I<SQL> occurency:
+It is worth noting that the final iteration is number I<24>, and that such number is exactly
+the distance, in number of chars, from the end of the string to the first I<SQL> occurrence:
 
 =begin code :preamble<my $string = '';>
 say $string.chars - $string.index: 'SQL'; # OUTPUT: 23
@@ -2026,7 +2028,7 @@ say $string ~~ / :r (.+)(SQL) (.+) $1/;  # OUTPUT: Nil
 
 The fact is that, as shown in the I<iteration 1> output, the first match
 of the regular expression engine will be C<PostgreSQL is an >, C<SQL>, C< database>
-that does not leave out any room for matching another occurency of the word I<SQL>
+that does not leave out any room for matching another occurrence of the word I<SQL>
 (as C<$1> in the regular expression). Since the engine is not able to get backward and change the
 path to match, the regular expression fails.
 

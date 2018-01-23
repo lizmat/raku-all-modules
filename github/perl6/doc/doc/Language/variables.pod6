@@ -144,12 +144,13 @@ See L<operators|/language/operators> for more details on precedence.
 =head2 Sigilless variables
 X<|\ (sigilless variables)>
 
-It's possible to create "variables" in Perl 6 that do not have sigils:
+In Perl 6 it's possible to create variables that do not have a sigil, thru
+the C<\> operator:
 
     my \degrees = pi / 180;
     my \θ       = 15 * degrees;
 
-Note that these do not create L<containers|/language/containers>. This means C<degrees>
+Note that sigilless variable do not have associated  L<containers|/language/containers>. This means C<degrees>
 and C<θ>, above, actually directly represent C<Num>s. To illustrate, try
 assigning to one after you've defined it:
 
@@ -185,8 +186,8 @@ only depends on the C<$>.
     ======  =====
      none   Based only on declarator
      *      Dynamic
-     !      Attribute (class member)
      ?      Compile-time variable
+     !      Attribute (class member)
      .      Method (not really a variable)
      <      Index into match object (not really a variable)
      ^      Self-declared formal positional parameter
@@ -215,20 +216,17 @@ run the file.
         say "$lexical, $*dynamic1, $*dynamic2";
     }
 
-    # prints 1, 10, 100
-    say-all();
+    say-all();    # OUTPUT: 1, 10, 100
 
     {
         my $lexical   = 2;
         my $*dynamic1 = 11;
         $*dynamic2    = 101;
 
-        # prints 1, 11, 101
-        say-all();
+        say-all(); # OUTPUT: 1, 11, 101
     }
 
-    # prints 1, 10, 101
-    say-all();
+    say-all();  # OUTPUT: 1, 10, 101
     =end code
 
 The first time C<&say-all> is called, it prints "C<1, 10, 100>" just as one
@@ -261,6 +259,21 @@ boolean context before using it for anything else:
 
 Dynamic variables can have lexical scope when declared with C<my> or package scope when declared with C<our>. Dynamic resolution and resolution through symbol tables introduced with C<our> are two orthogonal issues.
 
+
+=head2 The C<?> Twigil
+X<|$?>
+
+Compile-time variables may be addressed via the C<?> twigil. They are known
+to the compiler and may not be modified after being compiled in. A popular
+example for this is:
+
+    say "$?FILE: $?LINE"; # OUTPUT: "hello.pl: 23"
+                          # if this is the line 23 of a
+                          # file named "hello.pl"
+
+For a list of these special variables, see
+L<compile-time variables|/language/variables#Compile-time_variables>.
+
 =head2 The C<!> Twigil
 X<|$!>
 
@@ -283,18 +296,6 @@ C<$!attribute-name>. Perl 6 may automatically generate accessor methods for
 you though. For more details on objects, classes and their attributes see
 L<object orientation|/language/objects>.
 
-=head2 The C<?> Twigil
-X<|$?>
-
-Compile-time variables may be addressed via the C<?> twigil. They are known
-to the compiler and may not be modified after being compiled in. A popular
-example for this is:
-
-    say "$?FILE: $?LINE"; # prints "hello.pl: 23" if this is the 23 line of a
-                          # file named "hello.pl".
-
-For a list of these special variables, see
-L<compile-time variables|/language/variables#Compile-time_variables>.
 
 =head2 The C<.> Twigil
 X<|$.>
