@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's lcfirst() built-in",
+  "license" : "Artistic-2.0",
+  "name" : "P5lcfirst",
+  "perl" : "6.c",
+  "provides" : {
+    "P5lcfirst" : "lib/P5lcfirst.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5lcfirst.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
