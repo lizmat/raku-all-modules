@@ -52,6 +52,19 @@ You may pass ssh connection parameters by specifying [sparrowdo cli](https://git
     # install packages
     $ sparrowform --task_run=package-generic@list="'nano mc'"
 
+## Default Sparrowdo scenario
+
+If you don't want bother with creating scenarios for every instance, you may choose to defined _default_ scenario.
+
+Create scenario named `sparrowfile`:
+
+
+    $ nano sparrowfile
+
+    bash "apt-get update";
+
+So, these instances which do not have a related Sparrowdo scenarios files will use this _default_ scenario.
+
 ## Debugging
 
 If something goes awry ... Enable SPF_DEBUG variable to see internal output:

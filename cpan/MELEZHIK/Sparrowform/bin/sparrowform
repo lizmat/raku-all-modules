@@ -28,23 +28,64 @@ $tf-show.out.close();
 say Dump(%resources) if %*ENV<SPF_DEBUG>;
 my $sparrow-params = join " ", @*ARGS;
 
+my %commands = Hash.new;
+
 for %resources.keys -> $r {
   next unless %resources{$r}<public_ip>;
   my $public-ip = %resources{$r}<public_ip>;
   if $sparrow-params ~~ /task_run/ or $sparrow-params ~~ /module_run/ {
     say "provision $r <$public-ip> ...";
-    my $cmd = "sparrowdo --host=$public-ip $sparrow-params";
+    my $cmd = "sparrowdo --host=$public-ip " ~ (join " ", @*ARGS);
     say "run $cmd" if %*ENV<SPF_DEBUG>;
-    next if %*ENV<SPF_DRYRUN>;
-    shell $cmd;
+    %commands{$public-ip} = $cmd;
   } elsif "$r.sparrowfile".IO.e  {
     say "provision $r <$public-ip> ...";
-    my $cmd = "sparrowdo --sparrowfile=$r.sparrowfile --host=$public-ip $sparrow-params";
+    my $cmd = "sparrowdo --sparrowfile=$r.sparrowfile --host=$public-ip " ~  (join " ", @*ARGS);
     say "run $cmd" if %*ENV<SPF_DEBUG>;
-    next if %*ENV<SPF_DRYRUN>;
-    shell $cmd;
+    %commands{$public-ip} = $cmd;
+  } elsif "sparrowfile".IO.e  {
+    say "provision $r <$public-ip> ...";
+    my $cmd = "sparrowdo --sparrowfile=sparrowfile --host=$public-ip " ~  (join " ", @*ARGS);
+    say "run $cmd" if %*ENV<SPF_DEBUG>;
+    %commands{$public-ip} = $cmd;
   } else {
     say "skip provision $r <$public-ip>, file $r.sparrowfile does not exist";
   }
 }
+
+exit if %*ENV<SPF_DRYRUN>;
+
+mkdir ".reports";
+
+my @promises;
+my $i=0;
+for %commands.keys -> $host {
+  mkdir ".sparrowdo-cache/$host";
+  my $c = %commands{$host};
+  my $cmd = "$c --sparrow_root=$*CWD/sparrowdo-cache/$host 1>.reports/r$host.txt 2>&1 &";
+  say "run sparrowdo provsion for host $host ... ; report is being written to .reports/r$host.txt ...";
+  shell $cmd;
+}
+
+my %exists = %commands;
+
+sleep 3;
+
+while %exists.keys {
+
+  for %commands.keys -> $host {
+    next unless %exists{$host}:exists;
+    my @proc-check-cmd = ("bash", "-c", "ps aux | grep sparrowdo | grep '\\--host=$host ' | grep -v grep");
+    my $proc-run = run @proc-check-cmd, :out; 
+    if $proc-run.exitcode != 0 {
+      %exists{$host}:delete;
+      say "host $host finished ..."
+    }
+  }
+
+}
+
+
+
+
 
