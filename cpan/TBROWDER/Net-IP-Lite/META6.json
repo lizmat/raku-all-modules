@@ -1,14 +1,15 @@
 {
-    "perl"        : "6.c",
+    "perl"        : "6.*",
     "name"        : "Net::IP::Lite",
-    "version"     : "0.1.4",
+    "version"     : "1.0.0",
     "description" : "Provides utility functions for dealing with IPv4 and IPv6 addresses.",
-    "authors"     : [ "github:tbrowder" ],
-    "license"     : "Artistic 2.0",
-    "source-url"  : "https://github.com/tbrowder/Net-IP-Lite-Perl6/archive/0.1.4.zip",
+    "auth"        : "github:tbrowder",
+    "author"      : "github:tbrowder",
+    "authors"     : [ "Tom Browder <tom.browder@gmail.com>" ],
+    "license"     : "Artistic-2.0",
+    "source-url"  : "https://github.com/tbrowder/Net-IP-Lite-Perl6.git",
     "support"     : {
-        "bugtracker" : "https://github.com/tbrowder/Net-IP-Lite-Perl6/issues",
-        "source"     : "https://github.com/tbrowder/Net-IP-Lite-Perl6"
+        "bugtracker" : "https://github.com/tbrowder/Net-IP-Lite-Perl6/issues"
     },
     "provides"    : {
         "Net::IP::Lite" : "lib/Net/IP/Lite.pm6"
@@ -16,9 +17,13 @@
     "test-depends"     : [
 	"Test::META"
     ],
+    "depends" : [
+        "Number::More",
+	"Text::More"
+    ],
     "resources" : [
     ],
     "tags" : [
-	"Net", "IP", "IP address", "IPv4", "IPv6"
+	"Net", "IP", "IP address", "IPv4", "IPv6", "CPAN5"
     ]
 }

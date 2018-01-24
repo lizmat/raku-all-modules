@@ -1,7 +1,9 @@
 use v6;
 use Test;
 
-use Net::IP::Lite;
+use Net::IP::Lite :ALL;
+
+plan 19;
 
 # valid
 ok ip-is-ipv4('10.10.10.10'), '4 octets';
@@ -35,5 +37,3 @@ is ip-compress-address('00.023.255', 4), '0.23.255';
 # reverse
 is ip-reverse-address('00.023.255', 4), '255.23.0';
 is ip-reverse-address('042.00.023.255', 4), '255.23.0.42';
-
-done-testing;

@@ -1,7 +1,5 @@
 # Net::IP::Lite
-
-[![Build Status](https://travis-ci.org/tbrowder/Net-IP-Lite-Perl6.svg?branch=master)]
-  (https://travis-ci.org/tbrowder/Net-IP-Lite-Perl6)
+[![Build Status](https://travis-ci.org/tbrowder/Net-IP-Lite-Perl6.svg?branch=master)](https://travis-ci.org/tbrowder/Net-IP-Lite-Perl6)
 
 This is a limited Perl 6 version of CPAN's Perl 5 module
 [Net::IP](https://metacpan.org/pod/Net::IP).  It provides a subset of
@@ -40,29 +38,9 @@ use Net::IP::Lite;
 ```
 
 See
-[DEFAULT-SUBS](https://github.com/tbrowder/Net-IP-Lite-Perl6/blob/master/docs/DEFAULT-SUBS.md)
-for a list of default-exported subroutines, each with a short
+[ALL-SUBS](https://github.com/tbrowder/Net-IP-Lite-Perl6/blob/master/docs/DEFAULT-SUBS.md)
+for a list of subroutines exported with the ':ALL' export tag, each with a short
 description along with its complete signature.
-
-## Additional Subroutines Exported with Named Parameter `:util`
-
-```Perl6
-use Net::IP::Lite :util;
-```
-
-The `:util` subroutines are used internally by the default exported
-subroutines. Users should not normally need them, but there are some
-handy numerical base conversion routines that may not be available elsewhere:
-
-- bin2hex
-- bin2dec
-- hex2bin
-- hex2dec
-- dec2hex
-- dec2bin
-
-See [UTIL-SUBS](https://github.com/tbrowder/Net-IP-Lite-Perl6/blob/master/docs/UTIL-SUBS.md)
-for details of each plus some other utility subroutines.
 
 ## Current Limitations
 
@@ -80,25 +58,15 @@ zef install Net::IP::Lite
 panda install Net::IP::Lite
 ```
 
-If either attempt shows that the module isn't found or available, ensure your installer is current:
+If either attempt shows that the module isn't found or available,
+ensure your installer is current:
 
 ```Perl6
 zef update
 panda update
 ```
 
-If you want to use the latest version in the git repository, clone it and then:
-
-```Perl6
-cd /path/to/cloned/repository/directory
-zef install .
-```
-
-or
-
-```Perl6
-panda install .
-```
+and try again.
 
 ## Development
 
@@ -112,9 +80,6 @@ While testing will be normally be done as part of the zef or panda
 installation, cloning this project will result in a Makefile that can
 be used in fine-tuning tests and yielding more verbose results during
 the development process. The Makefile can be tailored as desired.
-
- Note the bin directory has a utility program to generate markdown
-files with certain formatting.
 
 ## Acknowledgements
 
