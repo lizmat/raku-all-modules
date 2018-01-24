@@ -206,60 +206,67 @@ method !p5_scalar_ref_to_capture(Pointer $sv) {
     return \(self.p5_to_p6($!p5.p5_sv_rv($sv)));
 }
 
-method p5_to_p6(Pointer $value, int32 $type is copy = 0) {
-    return Any unless defined $value;
-    $type ||= $!p5.p5_get_type($value);
+multi method p5_to_p6(Pointer \value) {
+    return Any unless defined value;
+
+    my int32 $type = $!p5.p5_get_type(value);
+    self.p5_to_p6(value, $type)
+}
+
+multi method p5_to_p6(Pointer \value, \type) {
+    return Any unless defined value;
 
     my enum P5Types <Unknown Object SubRef NV IV PV Array Hash P6Hash Undef ScalarRef>;
 
-    if $type == IV {
-        return $!p5.p5_sv_iv($value);
+    if type == IV {
+        $!p5.p5_sv_iv(value);
     }
-    if $type == PV {
-        if $!p5.p5_sv_utf8($value) {
-            return $!p5.p5_sv_to_char_star($value);
+    elsif type == PV {
+        if $!p5.p5_sv_utf8(value) {
+            $!p5.p5_sv_to_char_star(value);
         }
         else {
             my $string_ptr = CArray[CArray[int8]].new;
             $string_ptr[0] = CArray[int8];
-            my $len = $!p5.p5_sv_to_buf($value, $string_ptr);
+            my $len = $!p5.p5_sv_to_buf(value, $string_ptr);
             my $string := $string_ptr[0];
-            return blob8.new(do for ^$len { $string.AT-POS($_) });
+            blob8.new(do for ^$len { $string.AT-POS($_) });
         }
     }
-    if $type == Object {
-        if $!p5.p5_is_wrapped_p6_object($value) {
-            return $objects.get($!p5.p5_unwrap_p6_object($value));
+    elsif type == Object {
+        if $!p5.p5_is_wrapped_p6_object(value) {
+            $objects.get($!p5.p5_unwrap_p6_object(value));
         }
         else {
-            $!p5.p5_sv_refcnt_inc($value);
-            return Inline::Perl5::Object.new(perl5 => self, ptr => $value);
+            $!p5.p5_sv_refcnt_inc(value);
+            Inline::Perl5::Object.new(perl5 => self, ptr => value);
         }
     }
-    if $type == NV {
-        return $!p5.p5_sv_nv($value);
+    elsif type == NV {
+        $!p5.p5_sv_nv(value);
     }
-    if $type == Array {
-        return self!p5_array_to_writeback_p6_array($value);
+    elsif type == Array {
+        self!p5_array_to_writeback_p6_array(value);
     }
-    if $type == Hash {
-        return self!p5_hash_to_writeback_p6_hash($value);
+    elsif type == Hash {
+        self!p5_hash_to_writeback_p6_hash(value);
     }
-    if $type == P6Hash {
-        return $objects.get($!p5.p5_unwrap_p6_hash($value));
+    elsif type == P6Hash {
+        $objects.get($!p5.p5_unwrap_p6_hash(value));
     }
-    if $type == Undef {
-        return Any;
+    elsif type == Undef {
+        Any;
     }
-    if $type == SubRef {
-        $!p5.p5_sv_refcnt_inc($value);
-        return Inline::Perl5::Callable.new(perl5 => self, ptr => $value);
+    elsif type == SubRef {
+        $!p5.p5_sv_refcnt_inc(value);
+        Inline::Perl5::Callable.new(perl5 => self, ptr => value);
     }
-    if $type == ScalarRef {
-        return self!p5_scalar_ref_to_capture($value);
+    elsif type == ScalarRef {
+        self!p5_scalar_ref_to_capture(value);
     }
-
-    die "Unsupported type $value in p5_to_p6";
+    else {
+        die "Unsupported type {value} in p5_to_p6";
+    }
 }
 
 method handle_p5_exception() is hidden-from-backtrace {
@@ -280,7 +287,7 @@ multi method setup_arguments(@args) {
     my @svs := CArray[Pointer].new();
     my Int $i = 0;
     for @args {
-        if $_.isa(Pair) {
+        if $_.WHAT =:= Pair {
             @svs[$i++] = self.p6_to_p5($_.key);
             @svs[$i++] = self.p6_to_p5($_.value);
         }
@@ -295,7 +302,7 @@ multi method setup_arguments(@args, %args) {
     my @svs := CArray[Pointer].new();
     my Int $j = 0;
     for @args {
-        if $_.isa(Pair) {
+        if $_.WHAT =:= Pair {
             @svs[$j++] = self.p6_to_p5($_.key);
             @svs[$j++] = self.p6_to_p5($_.value);
         }
@@ -310,15 +317,15 @@ multi method setup_arguments(@args, %args) {
     return $j, @svs;
 }
 
-method !unpack_return_values($av, int32 $count, int32 $type = 0) {
-    if defined $av {
-        if $count == 1 {
-            my $retval = self.p5_to_p6($av, $type);
-            $!p5.p5_sv_refcnt_dec($av);
+method !unpack_return_values(\av, int32 \count, int32 \type) {
+    if defined av {
+        if count == 1 {
+            my $retval = self.p5_to_p6(av, type);
+            $!p5.p5_sv_refcnt_dec(av);
             $retval
         }
         else {
-            Inline::Perl5::Array.new(ip5 => self, p5 => $!p5, :$av)
+            Inline::Perl5::Array.new(ip5 => self, p5 => $!p5, :av(av))
         }
     }
     else {
@@ -377,7 +384,6 @@ multi method invoke(Pointer $obj, Str $function) {
     my int32 $err;
     my int32 $type;
     my $av = $!p5.p5_call_method(
-        Str,
         $obj,
         0,
         $function,
@@ -412,7 +418,6 @@ method invoke-args(Pointer $obj, Str $function, Capture $args) {
     my int32 $err;
     my int32 $type;
     my $av = $!p5.p5_call_method(
-        Str,
         $obj,
         0,
         $function,
@@ -431,7 +436,7 @@ multi method invoke(Pointer $obj, Str $function, *@args, *%args) {
     my Int $j = 0;
     @svs[$j++] = $obj;
     for @args {
-        if $_.isa(Pair) {
+        if $_.WHAT =:= Pair {
             @svs[$j++] = self.p6_to_p5($_.key);
             @svs[$j++] = self.p6_to_p5($_.value);
         }
@@ -447,7 +452,6 @@ multi method invoke(Pointer $obj, Str $function, *@args, *%args) {
     my int32 $err;
     my int32 $type;
     my $av = $!p5.p5_call_method(
-        Str,
         $obj,
         0,
         $function,
@@ -466,7 +470,7 @@ method invoke-parent(Str $package, Pointer $obj, Bool $context, Str $function, @
     my int32 $err;
     my int32 $type;
     my ($j, @svs) := self.setup_arguments(@args, %args);
-    my $av = $!p5.p5_call_method(
+    my $av = $!p5.p5_call_parent_method(
         $package,
         $obj,
         $context ?? 1 !! 0,
@@ -530,7 +534,7 @@ class Perl6Callbacks {
         }
     }
     method invoke(Str $package, Str $name, @args) {
-        my %named = classify * ~~ Pair, @args;
+        my %named = classify {$_.WHAT =:= Pair}, @args;
         %named<False> //= [];
         %named<True> //= [];
         return ::($package)."$name"(|%named<False>, |%(%named<True>));

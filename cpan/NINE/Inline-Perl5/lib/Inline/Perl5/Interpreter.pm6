@@ -115,7 +115,22 @@ class Inline::Perl5::Interpreter is repr('CPointer') {
     method p5_av_store(Pointer, int32, Pointer) is native($p5helper)
         { ... }
 
+    method p5_av_pop(Pointer) is native($p5helper)
+        returns Pointer { ... }
+
     method p5_av_push(Pointer, Pointer) is native($p5helper)
+        { ... }
+
+    method p5_av_shift(Pointer) is native($p5helper)
+        returns Pointer { ... }
+
+    method p5_av_unshift(Pointer, Pointer) is native($p5helper)
+        { ... }
+
+    method p5_av_delete(Pointer, int32) is native($p5helper)
+        { ... }
+
+    method p5_av_clear(Pointer) is native($p5helper)
         { ... }
 
     method p5_hv_iterinit(Pointer) is native($p5helper)
@@ -160,7 +175,10 @@ class Inline::Perl5::Interpreter is repr('CPointer') {
     method p5_call_function(Str, int32, CArray[Pointer], int32 is rw, int32 is rw, int32 is rw) is native($p5helper)
         returns Pointer { ... }
 
-    method p5_call_method(Str, Pointer, int32, Str, int32, Pointer, int32 is rw, int32 is rw, int32 is rw) is native($p5helper)
+    method p5_call_method(Pointer, int32, Str, int32, Pointer, int32 is rw, int32 is rw, int32 is rw) is native($p5helper)
+        returns Pointer { ... }
+
+    method p5_call_parent_method(Str, Pointer, int32, Str, int32, Pointer, int32 is rw, int32 is rw, int32 is rw) is native($p5helper)
         returns Pointer { ... }
 
     method p5_call_package_method(Str, Str, int32, CArray[Pointer], int32 is rw, int32 is rw, int32 is rw) is native($p5helper)

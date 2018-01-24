@@ -328,9 +328,37 @@ void p5_av_store(PerlInterpreter *my_perl, AV *av, I32 key, SV *val) {
     return;
 }
 
+SV *p5_av_pop(PerlInterpreter *my_perl, AV *av) {
+    PERL_SET_CONTEXT(my_perl);
+    return av_pop(av);
+}
+
 void p5_av_push(PerlInterpreter *my_perl, AV *av, SV *sv) {
     PERL_SET_CONTEXT(my_perl);
     av_push(av, sv);
+}
+
+SV *p5_av_shift(PerlInterpreter *my_perl, AV *av) {
+    PERL_SET_CONTEXT(my_perl);
+    return av_shift(av);
+}
+
+void p5_av_unshift(PerlInterpreter *my_perl, AV *av, SV *sv) {
+    PERL_SET_CONTEXT(my_perl);
+    av_unshift(av, 1);
+    SvREFCNT_inc(sv);
+    if (av_store(av, 0, sv) == NULL)
+        SvREFCNT_dec(sv);
+}
+
+void p5_av_delete(PerlInterpreter *my_perl, AV *av, I32 key) {
+    PERL_SET_CONTEXT(my_perl);
+    av_delete(av, key, G_DISCARD);
+}
+
+void p5_av_clear(PerlInterpreter *my_perl, AV *av) {
+    PERL_SET_CONTEXT(my_perl);
+    av_clear(av);
 }
 
 I32 p5_hv_iterinit(PerlInterpreter *my_perl, HV *hv) {
@@ -565,7 +593,57 @@ SV *p5_call_package_method(PerlInterpreter *my_perl, char *package, char *name, 
     }
 }
 
-SV *p5_call_method(PerlInterpreter *my_perl, char *package, SV *obj, I32 context, char *name, int len, SV *args[], I32 *count, I32 *err, I32 *type) {
+SV *p5_call_method(PerlInterpreter *my_perl, SV *obj, I32 context, char *name, int len, SV *args[], I32 *count, I32 *err, I32 *type) {
+    PERL_SET_CONTEXT(my_perl);
+    {
+        dSP;
+        int i;
+        SV * retval = NULL;
+        int flags = (context ? G_SCALAR : G_ARRAY) | G_EVAL;
+
+        ENTER;
+        SAVETMPS;
+
+        HV * const pkg = SvSTASH((SV*)SvRV(obj));
+        GV * const gv = Perl_gv_fetchmethod_autoload(aTHX_ pkg, name, TRUE);
+        if (gv && isGV(gv)) {
+            PUSHMARK(SP);
+
+            if (len > 1) {
+                XPUSHs(args[0]);
+                for (i = 1; i < len; i++) {
+                    if (args[i] != NULL) /* skip Nil which gets turned into NULL */
+                        XPUSHs(sv_2mortal(args[i]));
+                }
+            }
+            else if (len > 0)
+                if (args != NULL) /* skip Nil which gets turned into NULL */
+                    XPUSHs((SV*)args);
+
+            PUTBACK;
+
+            SV * const rv = sv_2mortal(newRV((SV*)GvCV(gv)));
+
+            *count = call_sv(rv, flags);
+            SPAGAIN;
+
+            handle_p5_error(err);
+            retval = pop_return_values(my_perl, sp, *count, type);
+            SPAGAIN;
+        }
+        else {
+            ERRSV = newSVpvf("Could not find method \"%s\" of \"%s\" object", name, HvNAME(pkg));
+        }
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+
+        return retval;
+    }
+}
+
+SV *p5_call_parent_method(PerlInterpreter *my_perl, char *package, SV *obj, I32 context, char *name, int len, SV *args[], I32 *count, I32 *err, I32 *type) {
     PERL_SET_CONTEXT(my_perl);
     {
         dSP;
@@ -884,7 +962,7 @@ int p5_is_wrapped_p6_object(PerlInterpreter *my_perl, SV *obj) {
         SV * const obj_deref = SvRV(obj);
         /* check for magic! */
         MAGIC * const mg = mg_find(obj_deref, '~');
-        return (mg && ((_perl6_magic*)(mg->mg_ptr))->key == PERL6_MAGIC_KEY);
+        return (mg && mg->mg_ptr && ((_perl6_magic*)(mg->mg_ptr))->key == PERL6_MAGIC_KEY);
     }
 }
 

@@ -19,6 +19,11 @@ class Inline::Perl5::Object {
         return $stringify ?? $stringify(self) !! callsame;
     }
 
+    method Numeric() {
+        my $numify = $!perl5.call('overload::Method', self, '0+');
+        return $numify ?? $numify(self) !! callsame;
+    }
+
     submethod DESTROY {
         $!perl5.sv_refcnt_dec($!ptr) if $!ptr;
         $!ptr = Pointer;
@@ -26,10 +31,11 @@ class Inline::Perl5::Object {
 
     method FALLBACK($name, *@args, *%kwargs) {
         my $role := Metamodel::ParametricRoleHOW.new_type;
-        $role.^add_method($name, method (|args) {
-            args
-                ?? $!perl5.invoke-args($!ptr, $name, args)
-                !! $!perl5.invoke($!ptr, $name);
+        $role.^add_multi_method($name, method (|args) {
+            $!perl5.invoke-args($!ptr, $name, args)
+        });
+        $role.^add_multi_method($name, method () {
+            $!perl5.invoke($!ptr, $name)
         });
         $role.^set_body_block(-> |args {});
         $role.^compose;
