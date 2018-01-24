@@ -14,9 +14,9 @@
   "resources" : [ ],
   "source-url" : "https://github.com/lizmat/Sys-Hostname.git",
   "tags" : [
-    "PERL5",
+    "UTILS",
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.2"
 }

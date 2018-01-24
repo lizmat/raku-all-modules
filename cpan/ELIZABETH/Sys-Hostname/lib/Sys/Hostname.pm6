@@ -1,5 +1,5 @@
 use v6.c;
-unit class Sys::Hostname:ver<0.0.1>;
+unit class Sys::Hostname:ver<0.0.2>;
 
 #use NativeCall;
 
