@@ -8,7 +8,6 @@
     "HTTP::MultiPartParser" : "lib/HTTP/MultiPartParser.pm6"
   },
   "depends" : [ "JSON::Fast" ],
-  "description" : "",
   "version" : "*",
   "authors" : [
     "Tokuhiro Matsuno"
