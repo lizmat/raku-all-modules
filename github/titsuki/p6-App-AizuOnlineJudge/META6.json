@@ -11,7 +11,6 @@
   "description" : "a perl6 implementation of the unofficial code submitter for Aizu Online Judge( http://judge.u-aizu.ac.jp/onlinejudge/index.jsp ).",
   "license" : "Artistic-2.0",
   "name" : "App::AizuOnlineJudge",
-  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "App::AizuOnlineJudge" : "lib/App/AizuOnlineJudge.pm6",
@@ -23,5 +22,5 @@
   "source-url" : "git://github.com/titsuki/p6-App-AizuOnlineJudge.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "*"
+  "version" : "1.001001"
 }
