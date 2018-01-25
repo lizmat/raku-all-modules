@@ -1,9 +1,9 @@
 use v6.c;
-unit class P5ucfirst:ver<0.0.1>;
+unit class P5ucfirst:ver<0.0.2>;
 
 proto sub ucfirst(|) is export {*}
 multi sub ucfirst(--> Str:D) {
-    ucfirst(CALLER::<$_>)
+    ucfirst(CALLERS::<$_>)
 }
 multi sub ucfirst(Str() $string --> Str:D) {
     $string
