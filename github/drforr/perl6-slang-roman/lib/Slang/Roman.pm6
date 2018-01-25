@@ -195,13 +195,11 @@ sub EXPORT(|)
 
   # Patch the running grammar with our Grammar and Actions roles.
   #
-  nqp::bindkey(%*LANG,
-               'MAIN',
-               %*LANG<MAIN>.HOW.mixin(%*LANG<MAIN>,
-               Roman::Grammar));
-  nqp::bindkey(%*LANG,
-               'MAIN-actions',
-               %*LANG<MAIN-actions>.HOW.mixin(%*LANG<MAIN-actions>,
-               Roman::Actions));
+  $*LANG.define_slang(
+    'MAIN',
+    $*LANG.slang_grammar('MAIN').^mixin(Roman::Grammar),
+    $*LANG.slang_actions('MAIN').^mixin(Roman::Actions),
+  );
+
   {}
   }
