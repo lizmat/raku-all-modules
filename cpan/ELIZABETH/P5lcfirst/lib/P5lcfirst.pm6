@@ -1,9 +1,9 @@
 use v6.c;
-unit class P5lcfirst:ver<0.0.1>;
+unit class P5lcfirst:ver<0.0.2>;
 
 proto sub lcfirst(|) is export {*}
 multi sub lcfirst(--> Str:D) {
-    lcfirst(CALLER::<$_>)
+    lcfirst(CALLERS::<$_>)
 }
 multi sub lcfirst(Str() $string --> Str:D) {
     $string
