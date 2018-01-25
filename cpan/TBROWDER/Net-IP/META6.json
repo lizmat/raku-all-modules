@@ -1,0 +1,29 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Net::IP",
+    "version"     : "1.0.0",
+    "description" : "Provides utility functions for dealing with IPv4 and IPv6 addresses.",
+    "auth"        : "github:tbrowder",
+    "author"      : "github:tbrowder",
+    "authors"     : [ "Tom Browder <tom.browder@gmail.com>" ],
+    "license"     : "Artistic-2.0",
+    "source-url"  : "https://github.com/tbrowder/Net-IP-Perl6.git",
+    "support"     : {
+        "bugtracker" : "https://github.com/tbrowder/Net-IP-Perl6/issues"
+    },
+    "provides"    : {
+        "Net::IP" : "lib/Net/IP.pm6"
+    },
+    "test-depends"     : [
+	"Test::META"
+    ],
+    "depends" : [
+        "Number::More",
+	"Text::More"
+    ],
+    "resources" : [
+    ],
+    "tags" : [
+	"Net", "IP", "IP address", "IPv4", "IPv6", "CPAN5"
+    ]
+}
