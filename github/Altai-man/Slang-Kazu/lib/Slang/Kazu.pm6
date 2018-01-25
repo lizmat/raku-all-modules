@@ -98,8 +98,11 @@ sub EXPORT(|) {
         }
     }
 
-
-    $*LANG.define_slang('MAIN', Kazu::Grammar, Kazu::Actions);
+    $*LANG.define_slang(
+      'MAIN',
+      $*LANG.slang_grammar('MAIN').^mixin(Kazu::Grammar),
+      $*LANG.slang_actions('MAIN').^mixin(Kazu::Actions),
+    );
     {}
 }
 
