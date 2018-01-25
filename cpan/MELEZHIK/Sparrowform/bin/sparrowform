@@ -2,6 +2,8 @@
 
 use v6;
 use Data::Dump;
+use Terminal::ANSIColor;
+use Terminal::Print;
 
 my $tf-show = run 'terraform', 'show', '-no-color', :out;
 
@@ -34,36 +36,53 @@ for %resources.keys -> $r {
   next unless %resources{$r}<public_ip>;
   my $public-ip = %resources{$r}<public_ip>;
   if $sparrow-params ~~ /task_run/ or $sparrow-params ~~ /module_run/ {
-    say "provision $r <$public-ip> ...";
     my $cmd = "sparrowdo --host=$public-ip " ~ (join " ", @*ARGS);
-    say "run $cmd" if %*ENV<SPF_DEBUG>;
-    %commands{$public-ip} = $cmd;
+    %commands{$r} = $cmd;
+    if %*ENV<SPF_DRYRUN> and %*ENV<SPF_DEBUG> {
+      say "[$r] >>> would be provisioned. provision command: $cmd";
+    } elsif %*ENV<SPF_DRYRUN> {
+      say "[$r] >>> would be provisioned. scenario: runtime ( module or task )";
+    }
   } elsif "$r.sparrowfile".IO.e  {
-    say "provision $r <$public-ip> ...";
     my $cmd = "sparrowdo --sparrowfile=$r.sparrowfile --host=$public-ip " ~  (join " ", @*ARGS);
-    say "run $cmd" if %*ENV<SPF_DEBUG>;
-    %commands{$public-ip} = $cmd;
+    %commands{$r} = $cmd;
+    if %*ENV<SPF_DRYRUN> and %*ENV<SPF_DEBUG> {
+      say "[$r] >>> would be provisioned. provision command: $cmd";
+    } elsif %*ENV<SPF_DRYRUN> {
+      say "[$r] >>> would be provisioned. scenario: custom ($r.sparrowfile)";
+    }
   } elsif "sparrowfile".IO.e  {
-    say "provision $r <$public-ip> ...";
     my $cmd = "sparrowdo --sparrowfile=sparrowfile --host=$public-ip " ~  (join " ", @*ARGS);
-    say "run $cmd" if %*ENV<SPF_DEBUG>;
-    %commands{$public-ip} = $cmd;
+    %commands{$r} = $cmd;
+    if %*ENV<SPF_DRYRUN> and %*ENV<SPF_DEBUG> {
+      say "[$r] >>> would be provisioned. provision command: $cmd";
+    } elsif %*ENV<SPF_DRYRUN> {
+      say "[$r] >>> would be provisioned. scenario: default (sparrowfile)";
+    }
   } else {
-    say "skip provision $r <$public-ip>, file $r.sparrowfile does not exist";
+    say "[$r] would be skipped. reason: file $r.sparrowfile does not exist" if %*ENV<SPF_DRYRUN>;
   }
 }
 
 exit if %*ENV<SPF_DRYRUN>;
 
-mkdir ".reports";
+mkdir ".sparrowform";
+mkdir ".sparrowform/sparrowdo-cache";
+rmdir ".sparrowform/reports";
+mkdir ".sparrowform/reports";
+mkdir ".sparrowform/failures";
 
 my @promises;
 my $i=0;
-for %commands.keys -> $host {
-  mkdir ".sparrowdo-cache/$host";
-  my $c = %commands{$host};
-  my $cmd = "$c --sparrow_root=$*CWD/sparrowdo-cache/$host 1>.reports/r$host.txt 2>&1 &";
-  say "run sparrowdo provsion for host $host ... ; report is being written to .reports/r$host.txt ...";
+for %commands.keys -> $r {
+  unlink ".sparrowform/failures/$r";
+  my $c = %commands{$r};
+  my $cmd = "$c --sparrow_root=/opt/sparrow/sparrowform/$r 1>.sparrowform/reports/$r.txt 2>&1 || touch .sparrowform/failures/$r &";
+  if %*ENV<SPF_DEBUG> {
+    say "[$r] >>> run provision: $cmd" 
+  } else {
+    say "[$r] >>> run provision. report file: .sparrowform/reports/$r.txt" 
+  }
   shell $cmd;
 }
 
@@ -71,21 +90,64 @@ my %exists = %commands;
 
 sleep 3;
 
-while %exists.keys {
+my $screen = Terminal::Print.new;
 
-  for %commands.keys -> $host {
-    next unless %exists{$host}:exists;
-    my @proc-check-cmd = ("bash", "-c", "ps aux | grep sparrowdo | grep '\\--host=$host ' | grep -v grep");
+$screen.initialize-screen; 
+
+$i=0;
+for %commands.keys -> $r {
+  $i++;
+  $screen.print-cell(1,$i, colored("[$r]",'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored( sprintf("%-10s", 'running'), 'bold yellow on_black'));
+}
+
+my @stat;
+my $succ = 0;
+my $fail = 0;
+while %exists.keys {
+  $i=0;
+  for %commands.keys -> $r {
+    $i++;
+
+    next unless %exists{$r}:exists;
+
+    my $sec-elapsed = (now - $*INITTIME//$*INIT-INSTANT).Int;
+
+    my $public-ip = %resources{$r}<public_ip>;
+    my @proc-check-cmd = ("bash", "-c", "ps aux | grep sparrowdo | grep '\\--host=$public-ip ' | grep -v grep");
     my $proc-run = run @proc-check-cmd, :out; 
     if $proc-run.exitcode != 0 {
-      %exists{$host}:delete;
-      say "host $host finished ..."
+      %exists{$r}:delete;
+      my $st = "$*CWD/.sparrowform/failures/$r".IO.e ?? 'failed' !! 'succeeded';
+      $fail++ if $st eq "failed";
+      $succ++ if $st eq "succeeded";
+
+      if $st eq 'succeeded' {
+        $screen.print-cell(1,$i, colored("[$r]",'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored(sprintf("%-10s", $st), 'bold green on_black') ~ ' ' ~ colored(sprintf("%.6d", $sec-elapsed) ~ " s", 'bold black'));
+      } else {
+        $screen.print-cell(1,$i, colored("[$r]",'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored(sprintf("%-10s", $st), 'bold red on_black') ~ ' ' ~ colored(sprintf("%.6d", $sec-elapsed) ~ " s", 'bold black'));
+      }
+      push @stat, [ $r, $st, $sec-elapsed ];
+    } else {
+        $screen.print-cell(1,$i, colored("[$r]",'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored(sprintf("%-10s", 'running') ,'bold yellow on_black') ~ ' ' ~ colored(sprintf("%.6d", $sec-elapsed) ~ " s", 'bold black'));
     }
   }
 
 }
 
 
+$screen.shutdown-screen;
+my $total = @stat.elems;
 
+say "===== $succ out of $total succeeded ===== ";
 
+for @stat -> $s {
+  my $r = $s[0];
+  my $st = $s[1];
+  my $se = $s[2];
+  if $st eq 'succeeded' {
+      say colored("[$r]",'bold blue on_black'), colored(" >>> ", 'bold black' ), colored(sprintf("%-10s", $st),'bold green on_black') ~ ' ' ~ colored( sprintf("%.6d", $se) ~ " s", 'bold black');
+  } else {
+      say colored("[$r]",'bold blue on_black'), colored(" >>> ", 'bold black' ), colored(sprintf("%-10s", $st),'bold red on_black') ~ ' ' ~ colored( sprintf("%.6d", $se) ~ " s", 'bold black');
+  }
+}
 

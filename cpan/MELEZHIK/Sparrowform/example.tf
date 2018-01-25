@@ -10,6 +10,6 @@ resource "aws_instance" "example" {
   associate_public_ip_address  = true
   tags = {  foo = "bar" }
   security_groups = [ "sg-0fb45e7b", "sg-9aa248ee" ]
-  count = 2
+  count = 5
 }
 

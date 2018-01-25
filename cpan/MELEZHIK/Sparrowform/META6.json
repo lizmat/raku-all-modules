@@ -5,7 +5,9 @@
   "build-depends" : [ ],
   "depends" : [
     "Sparrowdo",
-    "Data::Dump"
+    "Data::Dump",
+    "Terminal::Print",
+    "Terminal::ANSIColor"
   ],
   "description" : "Sparrowdo provision for Terraform backed instances",
   "license" : "Artistic-2.0",
@@ -23,5 +25,5 @@
   },
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.0.6"
+  "version" : "0.0.11"
 }

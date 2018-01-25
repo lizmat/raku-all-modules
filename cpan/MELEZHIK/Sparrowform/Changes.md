@@ -1,3 +1,23 @@
+# 0.0.11
+
+Prettifying reports using Perl6 sprintf ( this one is cool BTW :)
+
+# 0.0.10
+
+Add seconds elapsed to reports
+
+# 0.0.9
+
+Better path for sparrow root
+
+# 0.0.8
+
+Occasional sleep in the end of the main program is removed
+
+# 0.0.7
+
+Colorful dynamic reports using Terminal::Print and Terminal::ANSIColor
+
 # 0.0.6
 
 Bugfix for multihosts provisioning 
