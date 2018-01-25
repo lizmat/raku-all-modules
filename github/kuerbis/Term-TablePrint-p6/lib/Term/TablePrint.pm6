@@ -1,5 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<1.0.7>;
+unit class Term::TablePrint:ver<1.0.9>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -21,7 +21,7 @@ has UInt       $.max-rows       = 50_000;
 has UInt       $.min-col-width  = 30;
 has UInt       $.progress-bar   = 5_000;
 has UInt       $.tab-width      = 2;
-has Int_0_or_1 $.add-header     = 0;
+has Int_0_or_1 $.add-header; # DEPRECATED
 has Int_0_or_1 $.grid           = 0;
 has Int_0_or_1 $.keep-header    = 1;
 has Int_0_or_1 $.mouse          = 0;
@@ -29,7 +29,6 @@ has Int_0_to_2 $.choose-columns = 0; # Int_0_or_1
 has Int_0_to_2 $.table-expand   = 1;
 has Str        $.prompt         = '';
 has Str        $.undef          = '';
-has Str        $.no-col         = 'col'; #
 
 has List $!table;
 has Int  @!w_cols;
@@ -38,8 +37,10 @@ has Int  @!new_w_cols;
 has Int  @!not_a_number;
 
 has Int $!tab_w; #
+has Str $!info_row;
 has Int $!total;
 has Int $!bar_w;
+has Str $!thsd_sep = ',';
 has Int $!show_progress = 0;
 has Str $!progressbar_fmt = 'Computing: [%s%s]';
 
@@ -72,7 +73,7 @@ method print-table (
         UInt       :$min-col-width  = $!min-col-width,
         UInt       :$progress-bar   = $!progress-bar,
         UInt       :$tab-width      = $!tab-width,
-        Int_0_or_1 :$add-header     = $!add-header,
+        Int_0_or_1 :$add-header     = $!add-header, # DEPRECATED
         Int_0_or_1 :$grid           = $!grid,
         Int_0_or_1 :$keep-header    = $!keep-header,
         Int_0_or_1 :$mouse          = $!mouse,
@@ -80,16 +81,15 @@ method print-table (
         Int_0_to_2 :$table-expand   = $!table-expand,
         Str        :$prompt         = $!prompt,
         Str        :$undef          = $!undef,
-        Str        :$no-col         = $!no-col #
     ) {
     %!o = :$max-rows, :$min-col-width, :$progress-bar, :$tab-width, :$add-header, :$grid,
-          :$keep-header, :$mouse, :$choose-columns, :$table-expand, :$prompt, :$undef, :$no-col;
+          :$keep-header, :$mouse, :$choose-columns, :$table-expand, :$prompt, :$undef;
     CATCH {
         endwin();
     } 
     self!_init_term();
 
-    # ### remove
+    # ### remove and choose-columns datatype to Int_0_or_1
     if $choose-columns == 2 {
         $!tc.pause( ( 'Close with ENTER', ), :prompt( 'Option "choose-columns": 2 is no longer a valid value!' ) );
     }
@@ -100,12 +100,19 @@ method print-table (
         self!_end_term;
         return;
     }
+
+    # ### remove and pod
+    if %!o<add-header>.defined {
+        $!tc.pause( ( 'Close with ENTER', ), :prompt( 'The \'print-table\' option "add-header" is deprecated and will be removed.' ) );
+        if %!o<add-header> {
+            @orig_table.unshift: [ ( 1 .. @orig_table[0].elems ).map: { $_ ~ 'col' } ];
+        }
+    }
+    # ###
+
     $!tab_w = %!o<tab-width>;
     if %!o<grid> && %!o<tab-width> %% 2 {
         $!tab_w++;
-    }
-    if %!o<add-header> {
-        @orig_table.unshift: [ ( 1 .. @orig_table[0].elems ).map: { $_ ~ %!o<no-col> } ];
     }
     my Int @chosen;
     if %!o<choose-columns> {
@@ -115,23 +122,28 @@ method print-table (
             return;
         }
     }
-    my Int $last_row_idx = %!o<max-rows> && %!o<max-rows> < @orig_table.elems ?? %!o<max-rows> !! @orig_table.end;
+    my Int $table_row_count = @orig_table.elems - 1;
     if @chosen.elems {
-        $!table = [ ( 0 .. $last_row_idx ).map: { [ @orig_table[$_][@chosen] ] } ];
+        # max-rows is index because first row in @orig_table is header row
+        my $idx_last = %!o<max-rows> && $table_row_count >= %!o<max-rows> ?? %!o<max-rows> !! @orig_table.end;
+        $!table = [ ( 0 .. $idx_last ).map: { [ @orig_table[$_][@chosen] ] } ];
+    }
+    elsif %!o<max-rows> && $table_row_count >= %!o<max-rows> {
+        $!info_row = sprintf( 'Reached the row LIMIT %d', insert-sep( %!o<max-rows>, $!thsd_sep ) );
+        if $table_row_count > %!o<max-rows> {
+            $!info_row ~= sprintf( '  (total %d)', insert-sep( $table_row_count, $!thsd_sep ) );
+        }
+        $!table = @orig_table[0 .. %!o<max-rows>];
+        #$!total = %!o<max-rows> + 1;
     }
     else {
-        if $last_row_idx == @orig_table.end {
-            $!table = @orig_table;
-        }
-        else {
-            $!table = @orig_table[0..$last_row_idx];
-        }
+        $!table = @orig_table;
     }
+    $!total = $!table.elems;
     if %!o<progress-bar> {
-        $!show_progress = $!table.elems * $!table[0].elems div %!o<progress-bar>;
+        $!show_progress = $!total * $!table[0].elems div %!o<progress-bar>;
         if $!show_progress {
             curs_set( 0 );
-            $!total = $!table.elems;
         }
     }
     self!_calc_col_width();
@@ -143,13 +155,10 @@ method print-table (
 
 method !_win_size_dependet_code {
     my Int $term_w = getmaxx( $!win );
-    my $table_w = self!_calc_avail_col_width( $term_w );
+    my Int $table_w = self!_calc_avail_col_width( $term_w );
     return if ! $table_w;
     my @list;
     self!_col_to_avail_col_width( @list );
-    if %!o<max-rows> && @list.elems - 1 >= %!o<max-rows> {
-        @list.push: self!_limit_message( $table_w );
-    }
     my Str @header;
     if %!o<prompt> {
         @header.push: %!o<prompt>;
@@ -160,6 +169,15 @@ method !_win_size_dependet_code {
     }
     else {
         @list.splice( 1, 0, self!_header_separator ) if %!o<grid>;
+    }
+
+    if $!info_row {
+        if print-columns( $!info_row ) > $table_w {
+            @list.push: to-printwidth( $!info_row, $table_w - 3 ) ~ '...';
+        }
+        else {
+            @list.push: $!info_row;
+        }
     }
     my Int $old_row = 0;
     my Int $auto_jumped_to_row_0 = 2;
@@ -207,6 +225,11 @@ method !_win_size_dependet_code {
             }
         }
         $old_row = $row;
+        $row_is_expanded = 1;
+        if $!info_row && $row == @list.end {
+            $!tc.pause( ( 'Close', ), :prompt( $!info_row ), :mouse( %!o<mouse> ) );
+            next;
+        }
         if %!o<keep-header> {
             $row++;
         }
@@ -215,13 +238,6 @@ method !_win_size_dependet_code {
                 next   if $row == 1;
                 $row-- if $row > 1;
             }
-        }
-        $row_is_expanded = 1;
-        if $row > %!o<max-rows> {
-            $row-- if   %!o<keep-header>;
-            $row++ if ! %!o<keep-header> && %!o<grid>;
-            $!tc.pause( ( self!_limit_message( $term_w ), ), :prompt( '' ), :2layout );
-            next;
         }
         self!_print_single_table_row( $row );
     }
@@ -276,14 +292,14 @@ method !_calc_col_width {
         $step = $!total div $!bar_w || 1;
     }
     my Int $threads = Term::Choose.new.num-threads();
-    while $threads * 2 > $!table.elems { ##
+    while $threads * 2 > $!total {
         last if $threads == 1;
         $threads = $threads div 2;
     }
-    my $size = $!table.elems div $threads;
+    my $size = $!total div $threads;
     my @portions = ( ^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
-    @portions[0][0] = 1;
-    @portions[@portions.end][1] = $!table.elems;
+    @portions[0][0] = 1; # 0 already done
+    @portions[@portions.end][1] = $!total;
     my @promise;
     my $lock = Lock.new();
     my Int $count = 0;
@@ -408,13 +424,13 @@ method !_col_to_avail_col_width( @list ) {
         $tab = ' ' x $!tab_w;
     }
     my $threads = Term::Choose.new.num-threads();
-    while $threads > $!table.elems { #
+    while $threads > $!total {
         last if $threads == 1;
         $threads = $threads div 2;
     }
-    my $size = $!table.elems div $threads;
+    my $size = $!total div $threads;
     my @portions = ( ^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
-    @portions[@portions.end][1] = $!table.elems;
+    @portions[@portions.end][1] = $!total;
     my @promise;
     my $lock = Lock.new();
     my Int $count = 0;
@@ -446,17 +462,18 @@ method !_col_to_avail_col_width( @list ) {
 method !_choose_columns ( @avail_cols ) {
     my Str $init_prompt = 'Columns: ';
     my Str $ok = '-ok-';
-    my Str @pre = ( $ok );
+    my Str @pre = ( Str, $ok );
     my Int @col_idxs;
+    my @cols = @avail_cols.map( { $_ // %!o<undef> } );
 
     loop {
-        my Str @chosen_cols = @col_idxs.list ?? @avail_cols[@col_idxs] !! '*';
-        my Str $prompt = $init_prompt ~ @chosen_cols.map( { $_ // %!o<undef> } ).join: ', ';
-        my Str @choices = |@pre, |@avail_cols;
+        my Str @chosen_cols = @col_idxs.list ?? @cols[@col_idxs] !! '*';
+        my Str $prompt = $init_prompt ~ @chosen_cols.join: ', ';
+        my Str @choices = |@pre, |@cols;
         # Choose
         my Int @idx = $!tc.choose-multi( @choices, :prompt( $prompt ), :1index, :lf( 0, $init_prompt.chars ),
-                                                   :no-spacebar( |^@pre ) );
-        if ! @idx[0].defined {
+                                                   :no-spacebar( |^@pre ), :undef( '<<' ) );
+        if ! @idx[0].defined || @idx[0] == 0 {
             if @col_idxs.elems {
                 @col_idxs = [];
                 next;
@@ -470,16 +487,6 @@ method !_choose_columns ( @avail_cols ) {
         }
         @col_idxs.append: @idx >>->> @pre.elems;
     }
-}
-
-method !_limit_message ( $table_w ) {
-    my Str $limit = insert-sep( %!o<max-rows>, ' ' );
-    my Str $reached_limit = 'REACHED LIMIT "MAX_ROWS": ' ~ $limit;
-    if $reached_limit.chars > $table_w {
-        $reached_limit = '=LIMIT= ' ~ $limit;
-        $reached_limit.=substr: 0, $table_w;
-    }
-    return $reached_limit;
 }
 
 method !_header_separator { 
@@ -638,11 +645,17 @@ The following arguments set the options (key-values pairs).
 
 =head1 OPTIONS
 
+Defaults may change in future releases.
+
 =head2 prompt
 
 String displayed above the table.
 
-=head2 add-header
+=head2 add-header DEPRECATED
+
+This option is deprecated and will be removed.
+
+Enabling I<add-header> alters the passed list.
 
 If I<add-header> is set to 1, C<print-table> adds a header row - the columns are numbered starting with 1.
 
@@ -735,7 +748,7 @@ If set to 0 the table is shown with no grid.
 
 =end code
 
-Default: 0;
+Default: 0
 
 =head2 max-rows
 

@@ -1,6 +1,15 @@
 Revision history for Term::TablePrint
 
 
+1.0.9   2018-01-24
+        - Bugfix in deprecated option "add-header"
+
+1.0.8   2018-01-24
+        - Options "add-header" is deprecated and will be removed
+        - "choose-columns": allow the user to reset the made choices
+        - Code refactoring
+        - Update documentation
+
 1.0.7   2018-01-15
         - Adapt methods to the new Term::Choose version
         - Modified "Reached Limit" single row output
