@@ -1,9 +1,9 @@
 use v6.c;
-unit module P5oct:ver<0.0.1>;
+unit module P5oct:ver<0.0.2>;
 
 proto sub oct(|) is export {*}
 multi sub oct() { oct CALLERS::<$_> }
-multi sub oct(Str() $s is copy) is export {
+multi sub oct(Str() $s is copy) {
     $s .= trim-leading;
     if $s ~~ / \D / {                            # something non-numeric there
         with $s ~~ / ^0 <[xob]> \d+ $/ {           # standard 0x string
