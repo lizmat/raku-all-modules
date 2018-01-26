@@ -1,9 +1,9 @@
 use v6.c;
-unit module P5hex:ver<0.0.1>;
+unit module P5hex:ver<0.0.2>;
 
 proto sub hex(|) is export {*}
 multi sub hex() { hex CALLERS::<$_> }
-multi sub hex(Str() $s) is export {
+multi sub hex(Str() $s) {
     $s ~~ / ^ <[a..f A..F 0..9]>* $ /
       ?? ($s ?? $s.parse-base(16) !! 0)
       !! +$s  # let numerification handle parse errors
