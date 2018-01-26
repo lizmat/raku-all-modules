@@ -2,7 +2,7 @@
 
 [Sparrowdo](https://github.com/melezhik/sparrowdo) provision for [Terraform](https://www.terraform.io) backed instances.
 
-![Sparrowform Running Tasks](https://raw.githubusercontent.com/melezhik/sparrowform/master/shot.png)
+[![asciicast](https://asciinema.org/a/158919.png)](https://asciinema.org/a/158919)
 
 # Install
 

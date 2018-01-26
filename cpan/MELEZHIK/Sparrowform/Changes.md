@@ -1,3 +1,7 @@
+# 0.0.12
+
+Prettifying reports using Perl6 sprintf, part2
+
 # 0.0.11
 
 Prettifying reports using Perl6 sprintf ( this one is cool BTW :)

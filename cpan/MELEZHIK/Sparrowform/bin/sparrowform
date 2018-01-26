@@ -88,7 +88,7 @@ for %commands.keys -> $r {
 
 my %exists = %commands;
 
-sleep 3;
+#sleep 3;
 
 my $screen = Terminal::Print.new;
 
@@ -97,7 +97,7 @@ $screen.initialize-screen;
 $i=0;
 for %commands.keys -> $r {
   $i++;
-  $screen.print-cell(1,$i, colored("[$r]",'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored( sprintf("%-10s", 'running'), 'bold yellow on_black'));
+  $screen.print-cell(1,$i, colored(sprintf("[%40s]", $r),'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored( sprintf("%-10s", 'running'), 'bold yellow on_black'));
 }
 
 my @stat;
@@ -122,13 +122,13 @@ while %exists.keys {
       $succ++ if $st eq "succeeded";
 
       if $st eq 'succeeded' {
-        $screen.print-cell(1,$i, colored("[$r]",'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored(sprintf("%-10s", $st), 'bold green on_black') ~ ' ' ~ colored(sprintf("%.6d", $sec-elapsed) ~ " s", 'bold black'));
+        $screen.print-cell(1,$i, colored(sprintf("[%40s]", $r),'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored(sprintf("%-10s", $st), 'bold green on_black') ~ ' ' ~ colored(sprintf("%.6d", $sec-elapsed) ~ " s", 'bold black'));
       } else {
-        $screen.print-cell(1,$i, colored("[$r]",'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored(sprintf("%-10s", $st), 'bold red on_black') ~ ' ' ~ colored(sprintf("%.6d", $sec-elapsed) ~ " s", 'bold black'));
+        $screen.print-cell(1,$i, colored(sprintf("[%40s]", $r),'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored(sprintf("%-10s", $st), 'bold red on_black') ~ ' ' ~ colored(sprintf("%.6d", $sec-elapsed) ~ " s", 'bold black'));
       }
       push @stat, [ $r, $st, $sec-elapsed ];
     } else {
-        $screen.print-cell(1,$i, colored("[$r]",'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored(sprintf("%-10s", 'running') ,'bold yellow on_black') ~ ' ' ~ colored(sprintf("%.6d", $sec-elapsed) ~ " s", 'bold black'));
+        $screen.print-cell(1,$i, colored(sprintf("[%40s]", $r),'bold blue on_black') ~ colored(" >>> ", 'bold black' ) ~ colored(sprintf("%-10s", 'running') ,'bold yellow on_black') ~ ' ' ~ colored(sprintf("%.6d", $sec-elapsed) ~ " s", 'bold black'));
     }
   }
 
@@ -145,9 +145,9 @@ for @stat -> $s {
   my $st = $s[1];
   my $se = $s[2];
   if $st eq 'succeeded' {
-      say colored("[$r]",'bold blue on_black'), colored(" >>> ", 'bold black' ), colored(sprintf("%-10s", $st),'bold green on_black') ~ ' ' ~ colored( sprintf("%.6d", $se) ~ " s", 'bold black');
+      say colored(sprintf("[%40s]", $r),'bold blue on_black'), colored(" >>> ", 'bold black' ), colored(sprintf("%-10s", $st),'bold green on_black') ~ ' ' ~ colored( sprintf("%.6d", $se) ~ " s", 'bold black');
   } else {
-      say colored("[$r]",'bold blue on_black'), colored(" >>> ", 'bold black' ), colored(sprintf("%-10s", $st),'bold red on_black') ~ ' ' ~ colored( sprintf("%.6d", $se) ~ " s", 'bold black');
+      say colored(sprintf("[%40s]", $r),'bold blue on_black'), colored(" >>> ", 'bold black' ), colored(sprintf("%-10s", $st),'bold red on_black') ~ ' ' ~ colored( sprintf("%.6d", $se) ~ " s", 'bold black');
   }
 }
 
