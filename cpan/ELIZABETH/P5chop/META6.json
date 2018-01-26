@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's chop() built-in",
+  "license" : "Artistic-2.0",
+  "name" : "P5chop",
+  "perl" : "6.c",
+  "provides" : {
+    "P5chop" : "lib/P5chop.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5chop.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
