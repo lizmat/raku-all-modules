@@ -3,7 +3,7 @@
 NAME
 ====
 
-Algorithm::GooglePolylineEncoding - blah blah blah
+Algorithm::GooglePolylineEncoding - Encode and Decode lat/lon polygons using Google Maps string encoding.
 
 SYNOPSIS
 ========
@@ -17,7 +17,7 @@ DESCRIPTION
 
 Algorithm::GooglePolylineEncoding is intended to be used to encoded and decode Google Map polylines.
 
-Note this is a lossy encoded, any decimal values beyon the 5th place in a latitude of longitude will be lost.
+Note this is a lossy encoded, any decimal values beyond the 5th place in a latitude of longitude will be lost.
 
 USAGE
 -----
@@ -28,7 +28,7 @@ USAGE
 
 ### encode-polyline( Real, Real, ... ) --> Str
 
-Encodes a polyline list (supplied in any of the listed formats and returns a Str of the encoded data.
+Encodes a polyline list (supplied in any of the listed formats) and returns a Str of the encoded data.
 
 ### decode-polyline( Str ) --> [ { :lat(Real), :lon(Real) }, ... ]
 

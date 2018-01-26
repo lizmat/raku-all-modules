@@ -4,7 +4,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [ ],
-  "description" : "blah blah blah",
+  "description" : "Encode and Decode lat/lon polygons using Google Maps string encoding.",
   "license" : "Artistic-2.0",
   "name" : "Algorithm::GooglePolylineEncoding",
   "perl" : "6.c",
@@ -13,7 +13,10 @@
   },
   "resources" : [ ],
   "source-url" : "https://github.com/Scimon/p6-Algorithm-GooglePolylineEncoding.git",
-  "tags" : [ ],
+  "tags" : [
+    "geo",
+    "google"
+  ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.2"
 }

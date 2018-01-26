@@ -1,5 +1,5 @@
 use v6.c;
-module Algorithm::GooglePolylineEncoding:ver<0.0.1>:auth<simon.proctor@gmail.com> {
+module Algorithm::GooglePolylineEncoding:ver<0.0.2>:auth<simon.proctor@gmail.com> {
 
     class PosPair {
         has Real $.lat where -90 .. 90;
@@ -97,7 +97,7 @@ module Algorithm::GooglePolylineEncoding:ver<0.0.1>:auth<simon.proctor@gmail.com
 
 =head1 NAME
 
-Algorithm::GooglePolylineEncoding - blah blah blah
+Algorithm::GooglePolylineEncoding - Encode and Decode lat/lon polygons using Google Maps string encoding.
 
 =head1 SYNOPSIS
 
@@ -109,7 +109,7 @@ Algorithm::GooglePolylineEncoding - blah blah blah
 
 Algorithm::GooglePolylineEncoding is intended to be used to encoded and decode Google Map polylines.
 
-Note this is a lossy encoded, any decimal values beyon the 5th place in a latitude of longitude will be lost.
+Note this is a lossy encoded, any decimal values beyond the 5th place in a latitude of longitude will be lost.
 
 =head2 USAGE
 
@@ -117,7 +117,7 @@ Note this is a lossy encoded, any decimal values beyon the 5th place in a latitu
 =head3 encode-polyline( [ { :lat(Real), :lon(Real) }, ... ] ) --> Str
 =head3 encode-polyline( Real, Real, ... ) --> Str
 
-Encodes a polyline list (supplied in any of the listed formats and returns a Str of the encoded data.
+Encodes a polyline list (supplied in any of the listed formats) and returns a Str of the encoded data.
 
 =head3 decode-polyline( Str ) --> [ { :lat(Real), :lon(Real) }, ... ]
 
