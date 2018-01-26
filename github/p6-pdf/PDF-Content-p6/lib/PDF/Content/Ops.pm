@@ -34,7 +34,7 @@ class PDF::Content::Ops {
     has Pair @!ops;
     has Bool $.comment-ops is rw = False;
     has Bool $.strict is rw = True;
-    has $.parent handles <resource-key resource-entry core-font use-font xobject-form tiling-pattern use-pattern width height>;
+    has $.parent handles <resource-key resource-entry core-font use-font use-resource xobject-form tiling-pattern use-pattern width height>;
 
     # some convenient mnemomic names
     my Str enum OpCode is export(:OpCode) «
