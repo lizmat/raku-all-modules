@@ -1,0 +1,205 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Pod::PerlTricks - Perl 6 parser for PerlTricks pseudopod with to-HTML and to-JSON serializers
+
+=head1 SYNOPSIS
+
+  use Pod::PerlTricks::Grammar;
+  use Pod::PerlTricks::ToHTML;
+
+  my $actions = Pod::PerlTricks::ToHTML.new;
+  my $match = Pod::PerlTricks::Grammar.parsefile('example.pod', :$actions);
+
+  my $html  = $match.made;
+  my $html_head = $actions.head;
+  my $html_body = $actions.body;
+
+=head1 DESCRIPTION
+
+C<Pod::PerlTricks> extends ordinary L<pod|http://perldoc.perl.org/perlpod.html> with new syntax for blogging / publishing. C<Pod::PerlTricks::Grammar> supports all of regular pod, plus new directives. It comes with action classes for converting PerlTricks pod to HTML (C<Pod::PerlTricks::ToHTML>)  and to JSON (C<Pod::PerlTricks::ToJSON>) with the document body serialized as HTML and the meta attributes in key value pairs (mostly for use with AngularJS).
+
+If you're just interested in parsing normal pod syntax, take a look at L<Pod::Perl5|https://github.com/dnmfarrell/Pod-Perl5>. It can translate pod into both HTML and Markdown.
+
+=head2 new command blocks
+
+=head3 include filepath
+
+The C<=include> directive takes a filepath to one or more pod files. When an action class parses C<=include> it will open and parse each referenced pod file. The files can contain inline pod too.
+
+This is useful if you have boilerplate text you want t include in every pod file, (like author details) but don't want to type out every time.
+
+  =include L<file://path/to/author.pod>
+
+Or maybe you want to make a manifest of pod files:
+
+  =include
+
+  L<file://chapter1.pod>
+  L<file://chapter2.pod>
+  L<file://chapter3.pod>
+  L<file://chapter4.pod>
+  L<file://chapter5.pod>
+  L<file://chapter6.pod>
+  L<file://chapter7.pod>
+  L<file://chapter8.pod>
+  L<file://index.pod>
+
+This file will be processed into a single match object containing all of the pod content from the files. The links can be separated by vertical or horizontal whitespace.
+
+=head3 =author-name, author-bio, author-image
+
+The C<=author-*> command directives are to represent author details.
+
+  =author-name Jane Smith
+
+  =author-bio Jane Smith is a professional programmer with 12 years of experience, specializing in acme code ...
+
+  =author-image path/to/j_smith.jpg
+
+=head3 tags
+
+C<=tags> accepts a horizontal whitespace-separated list of tags to be used as metadata
+
+  =tags programming perl io
+
+=head3 image, cover-image
+
+Both C<=image> and C<=cover-image> are intended to include images, the only difference between them is C<=cover-image> is supposed to denote the primary image for the article, whereas C<=image> represents an image inline in the article.
+
+  =image L<Image caption|/path/to/image.png>
+
+  =cover-image L</path/to/image.png>
+
+=head3 table
+
+C<=table> indicates the start of a pipe-separated table. The directive must be followed by a blank line, and then the table itself. The first row is the header row. The table is terminted by a blank line.
+
+  =table
+
+  | Team           | Score |
+  | The Farmers    | 54    |
+  | Timeout United | 21    |
+
+The whitespace around the pipes is optional and will not be associated with the text in the cell.
+
+=head3 begin data, terminal & code
+
+C<Pod::PerlTricks> supports 3 new types of begin/end blocks:
+
+=over 4
+
+=item * data - this is meant to represent data
+
+=item * terminal - for terminal output, commands etc
+
+=item * code - for programming code
+
+=back
+
+So you can do:
+
+  =begin code
+
+    use Some::Lib;
+
+    my $foo = Bar.new();
+
+  =end code
+
+And get
+
+  <pre><code>use Some::Lib;
+
+  my $foo = Bar.new();<code></pre>
+
+
+C<terminal> and C<data> add a matching class attribute to the C<pre> tag, e.g.
+
+  <pre class="terminal">...
+
+=head3 chapter, title, subtitle, section
+
+These are document metadata directives, e.g.:
+
+  =title 5 Ways to Optimize Your Code
+
+For C<Pod::PerlTricks::ToHTML> This will be rendered in a div node with the class attribute C<title>, and added to the head node. For C<Pod::PerlTricks::ToJSON> article metadata directives are included as a key/pair value in the head key, but not rendered in the body. There is nothing special about these directives except C<=chapter> increments the chapter count, and flushes the footnotes cache.
+
+=head3 publish-date
+
+C<=publish-date> takes an ISO8601 datetime, with an optional timezone component. This can be used to determine when an article "goes live" on a blog site, and is also just useful metadata.
+
+  =publish-date 2015-09-30T18:00:00
+
+=head3 lang
+
+Specify the language that the article is written in. In C<Pod::PerlTricks::ToHTML> this is added to the root HTML node.
+
+=head2 New formatting codes
+
+=head3 DE<lt>dataE<gt>, TE<lt>terminalE<gt>
+
+D stands for data, and T for terminal to complement the CE<lt>E<gt> formatting code. These should be styled accordingly (monospaced font, possibly colored background).
+
+=head3 GE<lt>github/repoE<gt>
+
+G stands for GitHub. It builds a hyperlink to a Github repo or user page:
+
+  G<dnmfarrell/Pod-PerlTricks>
+
+Becomes
+
+  <a href="https://github.com/dnmfarrell/Pod-PerlTricks">Pod-PerlTricks</a>
+
+And
+
+  G<dnmfarrell>
+
+Becomes
+
+  <a href="https://github.com/dnmfarrell">dnmfarrell</a>
+
+=head3 #E<lt>hashtagE<gt>, @E<lt>handleE<gt>
+
+# is for hashtag. This builds a hashtag search to Twitter. @ is for Twitter handle, and links to a particular user's Twitter feed.
+
+=head3 NE<lt>noteE<gt>
+
+N is for footnote or notation. The text inside the angle brackets should be formatted as a footnote in the article, with a link to the footnote created inplace of the formatting code. Footnotes are per chapter - if there are none / one C<=chapter> directives, all footnotes will appear at the bottom of the document.
+
+  Some important fact N<Smith & Smith 2015 Oxford Press>
+
+Becomes
+
+  <p>Some important fact<sup><a href="#1">1</a></sup></p>
+
+And later ...
+
+  <div class="footnotes">
+    <ul>
+      <li id="1">[1] Smith & Smith 2015 Oxford Press</li>
+    </ul>
+  </div>
+
+=head3 WE<lt>wikipedia entryE<gt>
+
+W is for Wikipedia. The text should be replaced with a link to Wikipedia search for the content.
+
+  W<Perl>
+
+Becomes
+
+  <a href="https://en.wikipedia.org/Perl">Perl</a>
+
+
+=head1 AUTHOR
+
+David Farrell E<copy> 2015
+
+=head1 LICENSE
+
+FreeBSD, see LICENSE
