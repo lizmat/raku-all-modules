@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's rindex() built-in",
+  "license" : "Artistic-2.0",
+  "name" : "P5rindex",
+  "perl" : "6.c",
+  "provides" : {
+    "P5rindex" : "lib/P5rindex.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5rindex.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
