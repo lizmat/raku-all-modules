@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's index() built-in",
+  "license" : "Artistic-2.0",
+  "name" : "P5index",
+  "perl" : "6.c",
+  "provides" : {
+    "P5index" : "lib/P5index.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5index.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
