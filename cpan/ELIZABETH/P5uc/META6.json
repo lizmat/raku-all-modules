@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's uc() built-in",
+  "license" : "Artistic-2.0",
+  "name" : "P5uc",
+  "perl" : "6.c",
+  "provides" : {
+    "P5uc" : "lib/P5uc.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5uc.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
