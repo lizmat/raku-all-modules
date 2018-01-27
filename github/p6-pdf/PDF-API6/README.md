@@ -55,7 +55,6 @@ PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
        - [use-pattern](#use-pattern)
    - [Low Level Graphics](#low-level-graphics)
        - [Colors](#colors)
-       - [Painting](#painting)
    - [Rendering Methods](#rendering-methods)
        - [render](#render)
    - [AcroForm Fields](#acroform-fields)
@@ -67,6 +66,9 @@ PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
        - [preferences](#preferences)
        - [version](#version)
        - [page-labels](#page-labels)
+   - [Color Management](#color-management)
+       - [color-separation](#color-separation)
+       - [color-devicen](#color-devicen)
 - [APPENDIX](#appendix)
    - [Appendix I: Graphics](#appendix-i-graphics)
        - [Graphics Variables](#graphics-variables)
@@ -134,11 +136,6 @@ Some PDF::API2 features that are not yet available in PDF::API6
 - Images. PDF::API6 supports PNG, JPEG and GIF images
 
     - currently not supported are: TIFF, PNM and GIF images.
-
-- Color-Spaces. PDF::API6 supports Gray, RGB and CMYK colors. Not supported yet:
-
-    - Separation color-spaces
-    - DeviceN color-spaces
 
 - Annotations
 
@@ -537,7 +534,6 @@ Synopsis: `$gfx.paint( :close, :stroke, :fill, :even-odd)`
     $gfx.Rectangle(0, 20, 100, 250);
     $gfx.paint: :fill, :stroke;
 
-
 ## Image Methods
 
 ### load-image
@@ -708,44 +704,30 @@ These are identical to `FillColor`, and `FillAlpha`, except that they are applie
     $gfx.Rectangle(10,10,50,75);
     $gfx.Stroke;
 
-#### Named Colors
+#### Color Specification
 
-This PDF::Content::Color `:ColorName` asd `color` exports provide a selection of built in named colors.
+This PDF::Content::Color `:ColorName` and `color` exports provide a selection of built in named colors.
 
 -  Aqua, Black, Blue, Fuchsia, Gray, Green, Lime, Maroon Navy, Olive Orange, Purple,
    Red, Silver, Teal, Yellow, Cyan, Magenta
 
-A wider selection is available via the `Color::Named` module.
+Note: A wider selection of named colors is available via the `Color::Named` module.
 
-    use PDF::Content::Content :ColorName;
+    use PDF::Content::Content :ColorName, :color;
     use Color::Named;
     $gfx.FillAlpha = color Blue;
     $gfx.StrokeAlpha = color Color::Named.new( :name<azure> );
     
-#### Other Color Formats
+#### Other Color Specifications
 
 The `PDF::Content::Color` `color`  function also supports:
 
-- 3 or six digit RGB hex values, e.g.: `$gfx.FillColor = color '#ca9';`
-- 4 or 8 digit CMYK hex values, e.g. `$gfx.FillColor = color '%ab1020';`
-- 3 value RGB values, e.g.: `$gfx.FillColor = color [200, 50, 0];`
-- 4 digit CMYK values, e.g.: `$gfx.FillColor = color [ 255, 0, 0, 64];`
-- or equivalently `$gfx.FillColor = color [1, 0, 0, .25];`
-
-
-### Painting
-
-PDF has some [Path Construction](#path-construction) operators, including `MoveTo`,
-`LineTo`, `CurveTo` and `ClosePath`. These are normally
-followed by either a [Painting](#path-painting-operators) or [Clipping](#path-clipping)
-operation. For example:
-
-    $gfx.FillColor = :DeviceRGB[.9, .5, .5];
-    $gfx.StrokeColor = :DeviceRGB[.5, .5, .9];
-    $gfx.MoveTo(50, 50);
-    $gfx.LineTo(175,50);
-    $gfx.LineTo(112.5,158.25);
-    $gfx.CloseFillStroke; # or $gfx.paint: :close, :fill, :stroke;
+- 3 or six digit RGB hex values: `$gfx.FillColor = color '#ca9';`
+- 4 or 8 digit CMYK hex values: `$gfx.FillColor = color '%ab1020';`
+- 3 value RGB values: `$gfx.FillColor = color [200, 50, 0];`
+- 4 digit CMYK values: `$gfx.FillColor = color [ 255, 0, 0, 64];`
+- or equivalently: `$gfx.FillColor = color [1, 0, 0, .25];`
+- `Color` (or Color::Named) objects: `$gfx.FillColor = Color.new(200, 50, 0);`
 
 ## Rendering Methods
 
@@ -1053,6 +1035,31 @@ by a page entry hash. For example
                       32  => { :start(1), :prefix<A-> },
                       36  => { :start(1), :prefix<B-> },
                       40  => { :Style(PageLabel::Roman), :start(1), :prefix<B-> };
+
+## Color Management
+
+### color-separation
+
+    use PDF::Content :color;
+
+    my $c = $pdf.color-separation('Cyan',    color '%f000');
+    my $m = $pdf.color-separation('Magenta', color '%0f00');
+    my $y = $pdf.color-separation('Yellow',  color '%00f0');
+    my $k = $pdf.color-separation('Black',   color '%000f');
+
+    # use a separation color directly
+    my $pms023 = $pdf.color-separation('PANTONE 032CV', color '%0ff0');
+    $gfx.FillColor = $pms023 => .75;
+
+### color-devicen
+
+    # create a DeviceN color-space for color mixing
+    my $color-mix = $pdf.color-devicen( [ $c, $m, $y, $k, $pms023 ] );
+    $gfx.FillColor = $color-mix => [0, 0, 0, .25, .75];
+
+The current version of PDF::API6 only supports CMYK separations as DeviceN
+components.
+
 
 # APPENDIX
 

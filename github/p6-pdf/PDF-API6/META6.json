@@ -5,6 +5,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [
+    "PDF",
     "PDF::Class",
     "PDF::Content"
   ],
@@ -21,5 +22,5 @@
     "pdf"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.3"
+  "version" : "0.0.4"
 }

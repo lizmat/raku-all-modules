@@ -1,7 +1,7 @@
 use v6;
 use PDF::Class:ver;
 
-class PDF::API6:ver<0.0.3>
+class PDF::API6:ver<0.0.4>
     is PDF::Class {
 
     use PDF::DAO;
@@ -212,12 +212,79 @@ class PDF::API6:ver<0.0.3>
         )
     }
 
-
     method fields {
         .fields with $.catalog.AcroForm;
     }
 
     method fields-hash {
         .fields-hash with $.catalog.AcroForm;
+    }
+
+    use PDF::Function::Sampled;
+    use PDF::ColorSpace::Separation;
+    subset DeviceColor of Pair where .key eq 'DeviceRGB'|'DeviceCMYK'|'DeviceGray';
+    method color-separation(Str $name, DeviceColor $color --> PDF::ColorSpace::Separation) {
+        my @Range;
+        my List $v = $color.value;
+        my Str $encoded;
+        given $color.key {
+            when 'DeviceRGB' {
+                @Range = $v[0],1, $v[1],1, $v[2],1;
+                $encoded = 'FF' x 3   ~  '00' x 3  ~  '>';
+            }
+            when 'DeviceCMYK' {
+                @Range = 0,$v[0], 0,$v[1], 0,$v[2], 0,$v[3];
+                $encoded = '00' x 4  ~  'FF' x 4  ~  '>';
+            }
+            when 'DeviceGray' {
+                @Range = 0,$v[1];
+                $encoded = 'FF00>';
+            }
+        }
+
+        my %dict = :Domain[0,1], :@Range, :Size[2,], :BitsPerSample(8), :Filter( :name<ASCIIHexDecode> );
+        my PDF::Function::Sampled $function .= new: :%dict, :$encoded;
+        PDF::DAO.coerce: [ :name<Separation>, :$name, :name($color.key), $function ];
+    }
+    method color-devicen(@colors) {
+        my $nc = +@colors;
+        my @Domain = flat (0, 1) xx $nc;
+        my @Range = flat (0, 1) xx 4;
+        my @Size = 2 xx $nc;
+        for @colors {
+           die "unsupported colorspace type: {.WHAT}"
+               unless $_ ~~ PDF::ColorSpace::Separation;
+        }
+        my @colorspaces = @colors>>.[2].unique;
+        die "unsupported colorspace(s): @colorspaces[]"
+            unless +@colorspaces == 1 && @colorspaces[0] eq 'DeviceCMYK';
+
+        # ported from Perl 5's PDF::API2::Resource::ColorSpace::DeviceN
+        my @xclr = @colors.map({ [ .[1], .[3], .[5], .[7] ] given .TintTransform.Range});
+        my constant Sampled = 2;
+        my Numeric @spec[Sampled ** $nc;4];
+
+        for 0 ..^ $nc -> $xc {
+            for 0 ..^ (Sampled ** $nc) -> $n {
+                my \factor = ($n div (Sampled**$xc)) % Sampled;
+                my @thiscolor = @xclr[$xc].map: { ($_ * factor)/(Sampled-1) };
+                for 0..3 -> $s {
+                    given @spec[$n;$s] {
+                        $_ += @thiscolor[$s];
+                        $_ = 1 if $_ > 1
+                    }
+                }
+            }
+        }
+
+        my buf8 $buf .= new: @spec.flat.map: {($_ * 255).round};
+        my $decoded = $buf.decode('latin-1');
+
+        my %dict = :@Domain, :@Range, :@Size, :BitsPerSample(8), :Filter( :name<ASCIIHexDecode> );
+        my @names = @colors.map: *.Name;
+        my %Colorants = @names Z=> @colors;
+
+        my PDF::Function::Sampled $function .= new: :%dict, :$decoded;
+        PDF::DAO.coerce: [ :name<DeviceN>, @names, @colorspaces[0], $function, { :%Colorants } ];
     }
 }
