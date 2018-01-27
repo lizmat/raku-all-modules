@@ -7,7 +7,8 @@
     "Sparrowdo",
     "Data::Dump",
     "Terminal::Print",
-    "Terminal::ANSIColor"
+    "Terminal::ANSIColor",
+    "JSON::Tiny"
   ],
   "description" : "Sparrowdo provision for Terraform backed instances",
   "license" : "Artistic-2.0",
@@ -25,5 +26,5 @@
   },
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.0.12"
+  "version" : "0.0.15"
 }

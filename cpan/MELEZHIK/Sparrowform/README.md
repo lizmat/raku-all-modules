@@ -10,8 +10,15 @@
 
 # Limitations
 
-Currently only ***ssh instances with public IPs are supported*** ( usually is what one has when deploy aws ec2 instances with public IPs ).
-Ping me if you need more flavors/ways support.
+Currently only ***ssh accessed instances with public IPs are supported*** ( aws ec2 / google compute instances with public IPs ).
+
+Terrafrom resources supported:
+
+* [aws_instances](https://www.terraform.io/docs/providers/aws/r/instance.html)
+* [google_compute_instance](https://www.terraform.io/docs/providers/google/r/compute_instance.html)
+
+
+Ping me if you need more Terraform resourses support.
 
 # Usage
 
@@ -66,6 +73,41 @@ Create scenario named `sparrowfile`:
     bash "apt-get update";
 
 So, these instances which do not have a related Sparrowdo scenarios files will use this _default_ scenario.
+
+## Terraform resources access 
+
+Sparrowform exposes nice API to access Terraform internal guts inside Sparrowdo scenarios.
+ 
+The function `tf-resources` returns Perl6 Array of all Terraform resources. 
+Each elements consists of two elements, the first one holds resource identificator, the
+second one holds resource data, represented as Perl6 Hash.
+
+Here is usage example:
+
+    $ cat sparrowfile 
+
+    # let's insert all ec2 instances DNS names into ever instance's /etc/hosts file:
+ 
+    use Sparrowform;
+    
+    my @hosts = (
+      "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4",
+      "::1         localhost localhost.localdomain localhost6 localhost6.localdomain6"
+    );
+    
+    for tf-resources() -> $r {
+      my $rd = $r[1]; # resource data
+      next unless $rd<public_ip>;
+      next unless $rd<public_dns>;
+      next if $rd<public_ip> eq input_params('Host');
+      push @hosts, $rd<public_ip> ~ ' ' ~ $rd<public_dns>;
+    }
+    
+    file '/etc/hosts', %(
+      action  => 'create',
+      content => @hosts.join("\n")
+    );
+        
 
 ## Debugging
 
