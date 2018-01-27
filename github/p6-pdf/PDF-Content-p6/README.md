@@ -70,11 +70,10 @@ say $gfx.Str;
 
 ### `PDF::Content::Color`
 
-Simple Color specification functions:
+Simple Color construction functions:
 
     use PDF::Content;
     use PDF::Content::Color :color, :ColorName;
-    use Color;
     PDF::Content $gfx .= new;
     $gfx.FillColor = color Blue; # named color
     $gfx.StrokeColor = color '#fa9'; # RGB mask, 3 digit
@@ -82,15 +81,16 @@ Simple Color specification functions:
     $gfx.StrokeColor = color [1, .8, .1, .2]; # CMYK color values (0..1)
     $gfx.StrokeColor = color [1, .5, .1];     # RGB color values (0..1)
     $gfx.StrokeColor = color [255, 127, 25];  # RGB color values (0..255)
-    $gfx.StrokeColor = Color.new(0xff, 0x0a, 0x0a); # Color objects
+    $gfx.StrokeColor = color .7; # Shade of gray
+    use Color;
+    my Color $red .= new(0xff, 0x0a, 0x0a)
+    $gfx.StrokeColor = color $red; # Color objects
 
 ## See Also
 
 - [PDF::Lite](https://github.com/p6-pdf/PDF-Lite-p6) minimal creation and manipulation of PDF documents.
 
 - [PDF::API6](https://github.com/p6-pdf/PDF-API6) PDF manipulation library.
-
-- [PDF::Render::Cairo](https://github.com/p6-pdf/PDF-Render-Cairo-p6)  experimental lightweight PDF renderer to Cairo supported formats including PNG and SVG.
 
 
 

@@ -34,7 +34,7 @@ class PDF::Content::Ops {
     has Pair @!ops;
     has Bool $.comment-ops is rw = False;
     has Bool $.strict is rw = True;
-    has $.parent handles <resource-key resource-entry core-font use-font use-resource xobject-form tiling-pattern use-pattern width height>;
+    has $.parent handles <resource-key resource-entry core-font use-font resources xobject-form tiling-pattern use-pattern width height>;
 
     # some convenient mnemomic names
     my Str enum OpCode is export(:OpCode) «
@@ -237,17 +237,18 @@ class PDF::Content::Ops {
         Proxy.new(
             FETCH => sub ($) {$!StrokeColorSpace => @!StrokeColor},
             STORE => sub ($, Pair $_) {
-                unless .key eq $!StrokeColorSpace && .value eqv @!StrokeColor {
-                    if .key ~~ /^ Device(RGB|Gray|CMYK) $/ {
+                my Str $key = .key ~~ Str ?? .key !! $.resource-key(.key);
+                unless $key eq $!StrokeColorSpace && .value eqv @!StrokeColor {
+                    if $key ~~ /^ Device(RGB|Gray|CMYK) $/ {
                         my $cs = ~ $0;
                         self."SetStroke$cs"(|.value);
                     }
-                    elsif .key ~~ ColorSpace || self!colorspace-resource(.key) {
-                        self.SetStrokeColorSpace(.key);
+                    elsif $key ~~ ColorSpace || self!colorspace-resource(.key) {
+                        self.SetStrokeColorSpace($key);
                         self.SetStrokeColorN(|.value);
                     }
                     else {
-                       die "unknown colorspace: {.key}";
+                       die "unknown colorspace: {$key}";
                    }
                }
             });
@@ -259,17 +260,18 @@ class PDF::Content::Ops {
         Proxy.new(
             FETCH => sub ($) {$!FillColorSpace => @!FillColor},
             STORE => sub ($, Pair $_) {
-                unless .key eq $!FillColorSpace && .value eqv @!FillColor {
-                    if .key ~~ /^ Device(RGB|Gray|CMYK) $/ {
+                my Str $key = .key ~~ Str ?? .key !! $.resource-key(.key);
+                unless $key eq $!FillColorSpace && .value eqv @!FillColor {
+                    if $key ~~ /^ Device(RGB|Gray|CMYK) $/ {
                         my $cs = ~ $0;
                         self."SetFill$cs"(|.value);
                     }
-                    elsif .key ~~ ColorSpace || self!colorspace-resource(.key) {
-                        self.SetFillColorSpace(.key);
+                    elsif $key ~~ ColorSpace || self!colorspace-resource($key) {
+                        self.SetFillColorSpace($key);
                         self.SetFillColorN(|.value);
                     }
                     else {
-                       die "unknown colorspace: {.key}";
+                       die "unknown colorspace: {$key}";
                    }
                }
             });
