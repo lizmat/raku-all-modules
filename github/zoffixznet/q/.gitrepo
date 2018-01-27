@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/q.git
 	branch = master
-	commit = bddb8ab48f8f9914b7db6a89b76ddd11817b6cde
-	parent = acb3608904fceff38ef162f6cc0b86608ce67967
+	commit = 30780f1fcc037d26c203ec32a358b33e82c7c6b4
+	parent = 21b1a66e0c1f3c9606d238e6111303418e94e879
 	cmdver = 0.4.0

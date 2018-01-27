@@ -4,7 +4,7 @@ QAST tree visualizer
 
 # DESCRIPTION
 
-Installs `q-corehackers.p6` command line script that parses out QAST trees
+Installs `q` command line script that parses out QAST trees
 from a program and makes an HTML file from them.
 
 The HTML page provides these extra features unavailable in plain
@@ -23,14 +23,14 @@ Example output:
 
 ```
     Usage:
-      q-corehackers.p6 a '[<args> ...]'
-      q-corehackers.p6 o '[<args> ...]'
+      q a '[<args> ...]'
+      q o '[<args> ...]'
 ```
 
 ## `a` command
 
 ```bash
-$ q-corehackers.p6 a perl6 -e 'say "hello"' > out.html; google-chrome out.html
+$ q a perl6 -e 'say "hello"' > out.html; google-chrome out.html
 ```
 
 `a` stands for `--target=ast` and the args that follow is a `perl6` invocation
@@ -42,7 +42,7 @@ an HTML file to STDOUT. View the file in any browser to examine the QAST tree.
 ## `o` command
 
 ```bash
-$ q-corehackers.p6 o perl6 -e 'say "hello"' > out.html; google-chrome out.html
+$ q o perl6 -e 'say "hello"' > out.html; google-chrome out.html
 ```
 
 `o` stands for `--target=optimize`. Same as `a`, except parses
@@ -53,7 +53,7 @@ $ q-corehackers.p6 o perl6 -e 'say "hello"' > out.html; google-chrome out.html
 ## `z` command
 
 ```bash
-$ q-corehackers.p6 z perl6 -e 'say "hello"'
+$ q z perl6 -e 'say "hello"'
 ```
 
 Just runs the perl6 command as is. Mnemonic: "zero". This command exists simply
