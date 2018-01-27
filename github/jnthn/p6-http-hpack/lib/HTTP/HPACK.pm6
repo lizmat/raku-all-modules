@@ -230,6 +230,13 @@ role HTTP::HPACK::Tables {
     has @!dynamic-table;
     has Int $.dynamic-table-limit = 512;
 
+    method set-dynamic-table-limit(Int $new-size) {
+        $!dynamic-table-limit = $new-size;
+        while self.dynamic-table-size > $!dynamic-table-limit {
+            @!dynamic-table.pop;
+        }
+    }
+
     method dynamic-table-size() returns Int {
         [+] @!dynamic-table.map({ 32 + .key.chars + .value.chars })
     }
@@ -315,7 +322,6 @@ class HTTP::HPACK::Decoder does HTTP::HPACK::Tables {
                 }
             }
         }
-
         return @headers;
     }
 
