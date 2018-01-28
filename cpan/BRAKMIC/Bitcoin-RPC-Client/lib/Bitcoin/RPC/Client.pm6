@@ -1,131 +1,178 @@
 unit module Bitcoin::RPC;
 
-our $VERSION = '1.0';
+our $VERSION = '0.0.2';
 
 use v6;
 use WWW;
-use JSON::Tiny;
+use JSON::Fast;
+use URI::Escape;
+use LWP::Simple;
+use Base64::Native;
+use Bitcoin::Helpers::Config;
 
 # client for querying the public Bitcoin REST API
-# https://github.com/bitcoin/bitcoin/blob/master/doc/REST-interface.md
+# https://bitcoin.org/en/developer-reference
 class Client is export {
-  has Str $.url is rw where {$_ ne ''};
-  has Str $.port is rw = '8332';
-  has Str $!proto = 'http';
-  has Str $!root = 'rest';
-  has %!api = (tx => 'tx', block => 'block',
-                   headers => 'headers', wallet => 'wallet',
-                   chaininfo => 'chaininfo', mempool => 'mempool',
-                   getutxos => 'getutxos');
+  has Str $!url;
+  has Str $!port;
+  has Str $!proto;
+  has Str $!user;
+  has Str $!password;
+  has Str $!auth_header;
+  has Str $!api;
   has Bool $.debug is rw = False;
-  my Str $Format = 'json';
+  has UInt $!call_counter = 0;
+  has Config $!config;
 
-  # alternative constructor
-  multi method new(Str $url, Str $port = '8332',
-                   Str $proto = 'http', Str $root = 'rest',
-                   %api = (tx => 'tx', block => 'block',
-                           headers => 'headers', wallet => 'wallet',
-                           chaininfo => 'chaininfo', mempool => 'mempool',
-                           getutxos => 'getutxos')) {
-      self.bless(:url($url), :port($port), :proto($proto),
-                 :root($root), :api(%api));
+  submethod BUILD(Str :$url, Bool :$secure) {
+    $!config = Config.new;
+    $!url = $url;
+    $!user = $!config.get-value-for('rpcuser');
+    $!password = $!config.get-value-for('rpcpassword');
+    $!port = $!config.get-value-for('rpcport');
+    $!proto = $secure == True ?? 'https' !! 'http';
+    $!auth_header = base64-encode($!user ~ ':' ~ $!password, :str);
+    $!api = $!proto ~ '://' ~ $!url ~ ':' ~ $!port ~ '/';
   }
-  # get transaction information
-  method getTx(Str $tx-hash,
-               Str $format where {$format ne ''} = $Format) returns Str {
-    my $target = $!proto ~ '://' ~
-                 $.url ~ ':' ~
-                 $.port ~ '/' ~
-                 $!root ~ '/' ~
-                 $%!api<tx> ~ '/' ~
-                 $tx-hash ~ '.' ~ $format;
-    return self!queryData($target, $format)
-
-  }
-  # get block information
-  method getBlock(Str $block-hash where {$block-hash ne ''},
-                  Str $format where {$format ne ''} = $Format) returns Str {
-    my $target = $!proto ~ '://' ~
-                 $.url ~ ':' ~
-                 $.port ~ '/' ~
-                 $!root ~ '/' ~
-                 $%!api<block> ~ '/' ~
-                 $block-hash ~ '.' ~ $format;
-    return self!queryData($target, $format)
-  }
-  # get block headers
-  method getHeaders(UInt $count, Str $block-hash where {$block-hash ne ''},
-                    Str $format where {$format ne ''} = $Format) returns Str {
-    my $target = $!proto ~ '://' ~
-                 $.url ~ ':' ~
-                 $.port ~ '/' ~
-                 $!root ~ '/' ~
-                 $%!api<headers> ~ '/' ~
-                 $count ~ '/' ~
-                 $block-hash ~ '.json';
-    return self!queryData($target, $format)
-  }
-  # get blockchain info
-  method getChainInfo(Str $format where {$format ne ''} = $Format) returns Str {
-    my $target = $!proto ~ '://' ~
-                 $.url ~ ':' ~
-                 $.port ~ '/' ~
-                 $!root ~ '/' ~
-                 $%!api<chaininfo> ~ '.json';
-    return self!queryData($target, $format)
-  }
-  # get memory pool info (supports only JSON format)
-  method getMemPool(Str $format where {$format ne ''} = $Format) returns Str {
-    my $target = $!proto ~ '://' ~
-                 $.url ~ ':' ~
-                 $.port ~ '/' ~
-                 $!root ~ '/' ~
-                 $%!api<mempool> ~ '/info.json';
-    return self!queryData($target, $format)
-  }
-
-  # get UTXO set
-  method getUtxos(%utxos where {%utxos.elems > 0},
-                  Str $format where {$format ne ''} = $Format) returns Str {
-    my $target = $!proto ~ '://' ~
-                 $.url ~ ':' ~
-                 $.port ~ '/' ~
-                 $!root ~ '/' ~
-                 $%!api<getutxos> ~ '/' ~
-                 'checkmempool' ~
-                 self!createUtxoQueryPath(%utxos) ~ '.json';
-    return self!queryData($target, $format)
-  }
-  # helper method to concatenate "UTXO"-"UTXO_INDEX"
-  method !createUtxoQueryPath(%utxos) returns Str {
-    gather for %utxos -> $pair {
-        take '/' ~ $pair.key ~ '-' ~ $pair.value;
-    }.join();
-  }
-  # helper method to query Bitcoin API, decode binary data,
-  # and pack exceptions, if any
-  method !queryData(Str $target,
-                     Str $format where {$format ne ''} = $Format) returns Str {
-    my $response = '';
-    if $format eq 'json' {
-      $response = jget($target);
-    } else {
-      $response = get($target);
+  # execute API command
+  method execute(Str $api, *@params) returns Str {
+    my Str $call = self!get-command($api);
+    given $call ne '' {
+      return LWP::Simple.new.post($!api, self!get-request-headers(),
+                to-json(self!get-request-parameters($call, @params)));
     }
-    if $response.WHAT === Failure {
-       my $ex = $response.exception;
-       my $exinfo = $ex.message;
-       return to-json('{ "error": "Query Failed", "exception": ' ~ $exinfo ~ ' }');
-    }
-    if $format eq 'json' {
-       return to-json($response);
-    }
-    elsif $format eq 'bin' {
-       $response = $response.decode('utf8-c8');
-    }
-    return $response;
- }
-
+  }
+  method !get-request-parameters(Str $method, *@method_params) {
+    my %params =
+     'version' => '1.1',
+     'method' => $method,
+     'params' => @method_params,
+     'id' => $!call_counter++
+    ;
+    return %params;
+  }
+  # componses HTTP call headers
+  method !get-request-headers() {
+     my %headers =
+      'Host' => 'localhost',
+      'User-Agent' => 'Perl6Client/0.1',
+      'Authorization' => 'Basic ' ~ $!auth_header,
+      'Content-Type' => 'application/json'
+     ;
+     return %headers;
+  }
+  # returns API command
+  method !get-command($name) returns Str {
+    my %commands = <addmultisigaddress
+                    addmultisigaddress
+                    backupwallet
+                    backupwallet
+                    createrawtransaction
+                    createrawtransaction
+                    decoderawtransaction
+                    decoderawtransaction
+                    dumpprivkey
+                    dumpprivkey
+                    encryptwallet
+                    encryptwallet
+                    getaccount
+                    getaccount
+                    getaccountaddress
+                    getaccountaddress
+                    getaddressesbyaccount
+                    getaddressesbyaccount
+                    getbalance
+                    getbalance
+                    getblock
+                    getblock
+                    getblockbynumber
+                    getblockbynumber
+                    getblockcount
+                    getblockcount
+                    getblockhash
+                    getblockhash
+                    getconnectioncount
+                    getconnectioncount
+                    getdifficulty
+                    getdifficulty
+                    getgenerate
+                    getgenerate
+                    gethashespersec
+                    gethashespersec
+                    getinfo
+                    getinfo
+                    getmemorypool
+                    getmemorypool
+                    getmininginfo
+                    getmininginfo
+                    getnewaddress
+                    getnewaddress
+                    getrawtransaction
+                    getrawtransaction
+                    getreceivedbyaccount
+                    getreceivedbyaccount
+                    getreceivedbyaddress
+                    getreceivedbyaddress
+                    gettransaction
+                    gettransaction
+                    gettxout
+                    gettxout
+                    getwork
+                    getwork
+                    help
+                    help
+                    importprivkey
+                    importprivkey
+                    importaddress
+                    importaddress
+                    keypoolrefill
+                    keypoolrefill
+                    listaccounts
+                    listaccounts
+                    listreceivedbyaccount
+                    listreceivedbyaccount
+                    listreceivedbyaddress
+                    listreceivedbyaddress
+                    listsinceblock
+                    listsinceblock
+                    listtransactions
+                    listtransactions
+                    listunspent
+                    listunspent
+                    move
+                    move
+                    sendfrom
+                    sendfrom
+                    sendmany
+                    sendmany
+                    sendrawtransaction
+                    sendrawtransaction
+                    sendtoaddress
+                    sendtoaddress
+                    setaccount
+                    setaccount
+                    setgenerate
+                    setgenerate
+                    settxfee
+                    settxfee
+                    signmessage
+                    signmessage
+                    signrawtransaction
+                    signrawtransaction
+                    stop
+                    stop
+                    validateaddress
+                    validateaddress
+                    verifymessage
+                    verifymessage
+                    walletlock
+                    walletlock
+                    walletpassphrase
+                    walletpassphrase
+                    walletpassphrasechange
+                    walletpassphrasechange>;
+      return %commands{$name};
+  }
 }
 
 =begin pod
