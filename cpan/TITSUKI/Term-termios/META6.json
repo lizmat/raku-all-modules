@@ -1,0 +1,28 @@
+{
+  "author" : "github:titsuki",
+  "authors" : [
+    "titsuki"
+  ],
+  "build-depends" : [
+    "LibraryMake"
+  ],
+  "depends" : [ ],
+  "description" : "termios routines for Rakudo Perl 6",
+  "license" : "Artistic-2.0",
+  "name" : "Term::termios",
+  "perl" : "6.c",
+  "provides" : {
+    "Term::termios" : "lib/Term/termios.pm6"
+  },
+  "repo-type" : "git",
+  "resources" : [
+    "libraries/myhelper"
+  ],
+  "source-url" : "git://github.com/titsuki/term-termios.git",
+  "support" : {
+    "irc" : "irc://irc.freenode.org/#perl6"
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}

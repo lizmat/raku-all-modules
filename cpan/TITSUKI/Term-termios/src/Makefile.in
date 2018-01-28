@@ -1,0 +1,9 @@
+
+name = %myhelper%
+
+all: %DESTDIR%/resources/libraries/%myhelper%
+clean:
+	rm %DESTDIR%/resources/libraries/%myhelper%
+
+%DESTDIR%/resources/libraries/%myhelper%: myhelper.c
+	%CC% -shared %CCSHARED% %CCFLAGS% myhelper.c -o %DESTDIR%/resources/libraries/%myhelper%
