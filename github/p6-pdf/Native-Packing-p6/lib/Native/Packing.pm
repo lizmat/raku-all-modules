@@ -97,7 +97,7 @@ role Native::Packing {
     }
 
     multi sub unpack-foreign-attribute($type, Buf $buf, UInt $off is rw) is default {
-        my uint $byte-count = $type.^nativesize div 8;
+        my uint $byte-count = nativesizeof($type);
         my buf8 $native .= new: $buf.subbuf($off, $byte-count).reverse;
         $off += $byte-count;
         my $cval = nativecast(CArray[$type], $native);
@@ -120,7 +120,7 @@ role Native::Packing {
     }
 
     multi sub read-foreign-attribute($type, \fh) is default {
-        my uint $byte-count = $type.^nativesize div 8;
+        my uint $byte-count = nativesizeof($type);
         my $native = CArray[uint8].new: fh.read($byte-count).reverse;
         my $cval = nativecast(CArray[$type], $native);
         $cval[0];
@@ -145,7 +145,7 @@ role Native::Packing {
     }
 
     multi sub unpack-host-attribute($type, Buf $buf, UInt $off is rw) is default {
-        my uint $byte-count = $type.^nativesize div 8;
+        my uint $byte-count = nativesizeof($type);
         my Buf $raw = $buf.subbuf($off, $byte-count);
         my $cval = nativecast(CArray[$type], $raw);
         $off += $byte-count;
@@ -168,7 +168,7 @@ role Native::Packing {
     }
 
     multi sub read-host-attribute($type, \fh) is default {
-        my uint $byte-count = $type.^nativesize div 8;
+        my uint $byte-count = nativesizeof($type);
         my buf8 $raw = fh.read( $byte-count);
         my $cval = nativecast(CArray[$type], $raw);
         $cval[0];
@@ -190,7 +190,7 @@ role Native::Packing {
     }
 
     multi sub pack-foreign-attribute($type, Buf $buf, $val) is default {
-        my uint $byte-count = $type.^nativesize div 8;
+        my uint $byte-count = nativesizeof($type);
         my $cval = CArray[$type].new;
         $cval[0] = $val;
         my $bytes = nativecast(CArray[uint8], $cval);
@@ -220,7 +220,7 @@ role Native::Packing {
     }
 
     multi sub pack-host-attribute($type, Buf $buf, $val) is default {
-        my uint $byte-count = $type.^nativesize div 8;
+        my uint $byte-count = nativesizeof($type);
         my $cval = CArray[$type].new;
         $cval[0] = $val;
         my $bytes = nativecast(CArray[uint8], $cval);
@@ -247,7 +247,7 @@ role Native::Packing {
         [+] self.^attributes.map: {
             given .type {
                 when Native::Packing { .bytes }
-                default { .^nativesize div 8 }
+                default { nativesizeof($_) }
             }
         }
     }
