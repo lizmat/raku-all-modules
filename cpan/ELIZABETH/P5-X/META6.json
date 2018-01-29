@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's -X built-ins",
+  "license" : "Artistic-2.0",
+  "name" : "P5-X",
+  "perl" : "6.c",
+  "provides" : {
+    "P5-X" : "lib/P5-X.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5-X.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
