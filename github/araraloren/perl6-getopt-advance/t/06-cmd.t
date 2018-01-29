@@ -55,5 +55,5 @@ $osb.insert-cmd("b");
 $osc.insert-cmd("c");
 
 for < a b c > -> $cmd {
-    is &getopt(<< $cmd >>, $osa, $osb, $osc).optionset, {a => $osa, b => $osb, c => $osc}{$cmd}, "match cmd ok";
+    is &getopt(<< $cmd >>.List, $osa, $osb, $osc).optionset, {a => $osa, b => $osb, c => $osc}{$cmd}, "match cmd ok";
 }
