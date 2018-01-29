@@ -83,8 +83,7 @@ method check-res($res) {
     if $res.is-success {
         True
     } else {
-        warn $res.status-line;
-        warn $res.content;
+        warn "Error with response: {$res.status-line}: {$res.content}";
         False
     }
 }
@@ -123,14 +122,12 @@ method avatar-url(Str :$user-id?) {
     $data<avatar_url> // ""
 }
 
-method change-avatar(Str:D $avatar!, Bool :$upload) {
-    my $mxc-url;
-    if so $upload {
-        $mxc-url = $.upload($avatar);
-    } else {
-        $mxc-url = $avatar;
-    }
+multi method change-avatar(IO::Path $avatar) {
+    my $mxc-url = $.upload($avatar.IO);
+    samewith($mxc-url);
+}
 
+multi method change-avatar(Str:D $mxc-url!) {
     my $res = $.put("/profile/" ~ $.user-id ~ "/avatar_url",
                     avatar_url => $mxc-url);
     return $.check-res($res);
@@ -165,7 +162,11 @@ multi method sync(:$sync-filter is copy, :$since = "") {
 # Rooms
 
 method join-room($room-id!) {
-    $.post("/join/" ~ $room-id)
+    $.post("/join/$room-id")
+}
+
+method leave-room($room-id) {
+    $.post("/rooms/$room-id/leave");
 }
 
 method rooms(Bool :$sync = False) {
@@ -187,16 +188,43 @@ method rooms(Bool :$sync = False) {
     @!rooms
 }
 
+method joined-rooms() {
+    my $res = $.get('/joined_rooms');
+
+    unless $res.is-success {
+        note "Error getting joined rooms: {$res.status}";
+        return ();
+    }
+    my $data = from-json($res.content);
+    return $data<joined_rooms>.Seq.map(-> $room-id {
+        Matrix::Client::Room.new(
+            id => $room-id,
+            home-server => $!home-server,
+            access-token => $!access-token
+        )
+    });
+}
+
+method public-rooms() {
+    $.get('/publicRooms')
+}
+
 method send(Str $room-id, Str $body, :$type? = "m.text") {
     $Matrix::Client::Common::TXN-ID++;
-    $.put("/rooms/$room-id/send/m.room.message/{$Matrix::Client::Common::TXN-ID}", msgtype => $type, body => $body)
+    $.put("/rooms/$room-id/send/m.room.message/{$Matrix::Client::Common::TXN-ID}",
+          msgtype => $type, body => $body
+    )
 }
 
 # Media
 
-method upload(Str $path where *.IO.f) {
+method upload(IO::Path $path, Str $filename?) {
     my $buf = slurp $path, :bin;
-    my $res = $.post-bin("/upload", $buf, content-type => "image/png");
+    my $fn = $filename ?? $filename !! $path.basename;
+    my $res = $.post-bin("/upload", $buf,
+        content-type => "image/png",
+        filename => $fn,
+    );
     $.check-res($res);
     my $data = from-json($res.content);
     $data<content_uri> // "";
