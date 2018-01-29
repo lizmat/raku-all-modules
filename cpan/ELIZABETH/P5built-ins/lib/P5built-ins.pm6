@@ -1,7 +1,7 @@
 use v6.c;
 
-my %export;  # there must be a better way to do this, but this will work for now
-module P5built-ins:ver<0.0.2> {
+my %export;
+module P5built-ins:ver<0.0.3> {
     use P5caller;
     use P5chomp;
     use P5chop;
@@ -24,11 +24,10 @@ module P5built-ins:ver<0.0.2> {
     use P5times;
     use P5uc;
     use P5ucfirst;
+    use P5-X;
 
-    BEGIN %export{'&' ~ .name} := $_
-      for &caller, &chomp, &chop, &chr, &each, &fc, &hex, &index, &lc, &lcfirst,
-          &length, &oct, &ord, &pack, &quotemeta, &ref, &rindex, &substr, &tie,
-          &tied, &times, &uc, &ucfirst, &unpack, &untie;
+    # there must be a better way to do this, but this will work for now
+    %export = MY::.keys.grep( *.starts-with('&') ).map: { $_ => ::($_) };
 }
 
 multi sub EXPORT() { %export }
@@ -62,6 +61,10 @@ of Perl 5 in Perl 6.  Currently supported at:
 
   caller chomp chop chr each hex index lcfirst length oct ord pack quotemeta
   ref rindex substr tie tied times ucfirst unpack untie
+  
+The following file test operators are also available:
+
+  -r -w -x -e -f -d -s -z -l
 
 =head1 PORTING CAVEATS
 
@@ -77,6 +80,7 @@ provide the functionality:
   P5ref       | ref
   P5tie       | tie, tied, untie
   P5times     | times
+  P5-X        | -r -w -x -e -f -d -s -z -l
 
 =head1 AUTHOR
 

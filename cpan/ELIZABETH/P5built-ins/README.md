@@ -22,6 +22,10 @@ This module provides an easy way to import a growing number of built-in function
     caller chomp chop chr each hex index lcfirst length oct ord pack quotemeta
     ref rindex substr tie tied times ucfirst unpack untie
 
+The following file test operators are also available:
+
+    -r -w -x -e -f -d -s -z -l
+
 PORTING CAVEATS
 ===============
 
@@ -36,6 +40,7 @@ Please look at the porting caveats of the underlying modules that actually provi
     P5ref       | ref
     P5tie       | tie, tied, untie
     P5times     | times
+    P5-X        | -r -w -x -e -f -d -s -z -l
 
 AUTHOR
 ======

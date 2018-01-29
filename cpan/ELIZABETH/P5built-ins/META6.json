@@ -25,7 +25,8 @@
     "P5tie",
     "P5times",
     "P5uc",
-    "P5ucfirst"
+    "P5ucfirst",
+    "P5-X"
   ],
   "description" : "Implement Perl 5's built-in functions",
   "license" : "Artistic-2.0",
@@ -41,5 +42,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.2"
+  "version" : "0.0.3"
 }
