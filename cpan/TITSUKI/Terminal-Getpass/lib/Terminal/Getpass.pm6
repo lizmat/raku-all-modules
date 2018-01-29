@@ -1,5 +1,5 @@
 use v6.c;
-unit module Terminal::Getpass:ver<0.0.4>;
+unit module Terminal::Getpass:ver<0.0.5>;
 
 sub getpass(Str $prompt = "Password: ", IO::Handle $stream = $*ERR --> Str) is export {
     if $*DISTRO.is-win {
@@ -11,6 +11,7 @@ sub getpass(Str $prompt = "Password: ", IO::Handle $stream = $*ERR --> Str) is e
 
 my sub unix-getpass(Str $prompt!, IO::Handle $stream! --> Str) {
     use Term::termios;
+    use experimental :pack;
 
     my $old := Term::termios.new(fd => 1).getattr;
     my $new := Term::termios.new(fd => 1).getattr;
@@ -24,6 +25,10 @@ my sub unix-getpass(Str $prompt!, IO::Handle $stream! --> Str) {
     loop {
         my $c = $*IN.read(1);
         last if $c.decode("utf-8") ~~ /\n/;
+        if $c.unpack("C*") == 3 {
+            $old.setattr(:DRAIN);
+            die;
+        }
         $phrase ~= $c.decode("utf-8");
     }
     $old.setattr(:DRAIN);
