@@ -1,0 +1,44 @@
+= `IRC::Client::Plugin::NickServ`
+
+Handle NickServ interaction for `IRC::Client` projects. Currently only does
+identification with NickServ.
+
+== Usage
+Install this module through the Perl 6 package manager
+(https://github.com/ugexe/zef[`zef`]):
+
+[source,sh]
+----
+zef install IRC::Client::Plugin::NickServ
+----
+
+Next, enable it as a plugin in your `IRC::Client` project:
+
+[source,perl6]
+----
+use Config;
+use IRC::Client;
+use IRC::Client::Plugin::NickServ;
+
+sub MAIN
+{
+	my Config $config = Config.new;
+
+	$config.read: %(
+		nickserv => %(
+			nickname => "testbot",
+			password => "testpassword",
+		),
+	);
+
+	.run with IRC::Client.new(
+		:nick($config<nickserv><nickname>),
+		:plugins(
+			IRC::Client::Plugin::NickServ.new(:$config)
+		)
+	);
+}
+----
+
+== License
+This sourcecode is distributed under the GPLv3 license.
