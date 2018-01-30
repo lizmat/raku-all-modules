@@ -1,9 +1,9 @@
 use v6.c;
-unit module P5ref:ver<0.0.1>;
+unit module P5ref:ver<0.0.2>;
 
 proto sub ref(|) is export {*}
 multi sub ref() { ref CALLERS::<$_> }
-multi sub ref(\a) is export {
+multi sub ref(\a) {
     a ~~ Array
       ?? 'ARRAY'
       !! a ~~ Hash
