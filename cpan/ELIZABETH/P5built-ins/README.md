@@ -20,7 +20,7 @@ DESCRIPTION
 This module provides an easy way to import a growing number of built-in functions of Perl 5 in Perl 6. Currently supported at:
 
     caller chomp chop chr each hex index lcfirst length oct ord pack quotemeta
-    ref rindex substr tie tied times ucfirst unpack untie
+    ref rindex study substr tie tied times ucfirst unpack untie
 
 The following file test operators are also available:
 
@@ -38,6 +38,7 @@ Please look at the porting caveats of the underlying modules that actually provi
     P5length    | length
     P5pack      | pack unpack
     P5ref       | ref
+    P5study     | study
     P5tie       | tie, tied, untie
     P5times     | times
     P5-X        | -r -w -x -e -f -d -s -z -l

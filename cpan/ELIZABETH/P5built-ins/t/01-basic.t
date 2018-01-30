@@ -4,7 +4,7 @@ use P5built-ins;
 
 my @supported = <
  caller chomp chop chr each fc hex index lc lcfirst length oct ord pack quotemeta
- ref rindex substr tie tied times uc ucfirst unpack untie
+ ref rindex study substr tie tied times uc ucfirst unpack untie
 
  prefix:<-r> prefix:<-w> prefix:<-x> prefix:<-e> prefix:<-d> prefix:<-f>
  prefix:<-s> prefix:<-z> prefix:<-l>
