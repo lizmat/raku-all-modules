@@ -1,7 +1,7 @@
 use v6.c;
 
 my %export;
-module P5built-ins:ver<0.0.4> {
+module P5built-ins:ver<0.0.5> {
     use P5caller;
     use P5chomp;
     use P5chop;
@@ -19,6 +19,7 @@ module P5built-ins:ver<0.0.4> {
     use P5quotemeta;
     use P5ref;
     use P5rindex;
+    use P5sleep;
     use P5study;
     use P5substr;
     use P5tie;
@@ -61,7 +62,7 @@ This module provides an easy way to import a growing number of built-in function
 of Perl 5 in Perl 6.  Currently supported at:
 
   caller chomp chop chr each hex index lcfirst length oct ord pack quotemeta
-  ref rindex study substr tie tied times ucfirst unpack untie
+  ref rindex sleep study substr tie tied times ucfirst unpack untie
   
 The following file test operators are also available:
 

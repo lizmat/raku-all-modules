@@ -21,6 +21,7 @@
     "P5quotemeta",
     "P5ref",
     "P5rindex",
+    "P5sleep",
     "P5study",
     "P5substr",
     "P5tie",
@@ -43,5 +44,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.4"
+  "version" : "0.0.5"
 }

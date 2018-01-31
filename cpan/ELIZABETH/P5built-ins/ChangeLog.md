@@ -9,3 +9,6 @@ Add support for -r, -w, -x, -e, -f, -d, -z, -s, -l
 
 # Version 0.0.4
 Add support for study()
+
+# Version 0.0.5
+Add support for sleep()
