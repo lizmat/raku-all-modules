@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/araraloren/perl6-terminal-table.git
 	branch = master
-	commit = a163ac360e8b4f22c5d924c1e28bee73e1e36090
-	parent = 1d6f77165ab1bd77a028c1301ac7f4e4d7196b11
+	commit = 3192c774a386dc690934acf345f577d20a28c00d
+	parent = 2564527bc028f736da217d8cac0100dbdfc55385
 	cmdver = 0.4.0
