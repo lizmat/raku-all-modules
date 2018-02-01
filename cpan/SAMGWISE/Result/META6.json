@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Sam Gillespie"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Functional error handling ala Rust",
+  "license" : "Artistic-2.0",
+  "name" : "Result",
+  "perl" : "6.c",
+  "provides" : {
+    "Result" : "lib/Result.pm6",
+    "Result::OK" : "lib/Result/OK.pm6",
+    "Result::Err" : "lib/Result/Err.pm6",
+    "Result::Imports" : "lib/Result/Imports.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/samgwise/p6-result.git",
+  "tags" : ["Rust", "Functional", "Error", "FP" ],
+  "test-depends" : [ ],
+  "version" : "0.1.0"
+}
