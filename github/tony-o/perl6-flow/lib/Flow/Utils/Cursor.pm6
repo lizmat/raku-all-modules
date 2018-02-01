@@ -1,10 +1,6 @@
 unit module Flow::Utils::Cursor;
 
-$_ = qx[stty -a </dev/tty 2>&1];
-
-
-my $rows = +m/<(\d+)> ' rows'/;
-my $cols = +m/<(\d+)> ' columns'/;
+my ($rows, $cols) = <lines cols>.map: { (run 'tput', $_, :out).out.slurp(:close).Int };
 
 my %moves = 
   left  => 'tput cub1',
