@@ -1,0 +1,19 @@
+{
+  "authors" : [
+    "Sam Gillespie"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Asynchronously pre-fetch the next item of a Seq",
+  "license" : "Artistic-2.0",
+  "name" : "Seq::PreFetch",
+  "perl" : "6.c",
+  "provides" : {
+    "Seq::PreFetch" : "lib/Seq/PreFetch.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.1.0"
+}
