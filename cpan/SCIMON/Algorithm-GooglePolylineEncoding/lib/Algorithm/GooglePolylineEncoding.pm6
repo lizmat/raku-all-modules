@@ -1,10 +1,13 @@
 use v6.c;
-module Algorithm::GooglePolylineEncoding:ver<0.0.2>:auth<simon.proctor@gmail.com> {
+subset Latitude of Real where -90 <= * <= 90;
+subset Longitude of Real where -180 <= * <= 180;
+
+module Algorithm::GooglePolylineEncoding:ver<0.0.3>:auth<simon.proctor@gmail.com> {
 
     class PosPair {
-        has Real $.lat where -90 .. 90;
-        has Real $.lon where -180 .. 180;
-
+        has Latitude $.lat;
+        has Longitude $.lon;
+        
         method Hash {
             return { :lat($.lat), :lon($.lon) };
         }
@@ -72,8 +75,8 @@ module Algorithm::GooglePolylineEncoding:ver<0.0.2>:auth<simon.proctor@gmail.com
     multi sub decode-polyline( Str $encoded is copy ) returns Array is export {
         my ( $lat, $lon ) = ( 0, 0 );
         my @out = [];
-        
-        my @values = $encoded.comb(/ .*?(.) <?{ $/[0] ~~ any( (63..92).map( *.chr ) ); }> /).map( &decode-str );
+       
+        my @values = $encoded.comb(/ .*?(.) <?{ $/[0] ~~ any( (63..94).map( *.chr ) ); }> /).map( &decode-str );
         
         for @values -> $dlat, $dlon {
             @out.push( PosPair.new( :lat($lat+$dlat), :lon($lon+$dlon) ).Hash );
