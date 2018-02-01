@@ -38,6 +38,7 @@ Please look at the porting caveats of the underlying modules that actually provi
     P5length    | length
     P5pack      | pack unpack
     P5ref       | ref
+    P5reverse   | reverse
     P5study     | study
     P5tie       | tie, tied, untie
     P5times     | times

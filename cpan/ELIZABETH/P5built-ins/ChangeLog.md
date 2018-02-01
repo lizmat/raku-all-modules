@@ -12,3 +12,6 @@ Add support for study()
 
 # Version 0.0.5
 Add support for sleep()
+
+# Version 0.0.6
+Add support for reverse()

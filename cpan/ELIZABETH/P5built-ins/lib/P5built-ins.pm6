@@ -1,7 +1,7 @@
 use v6.c;
 
 my %export;
-module P5built-ins:ver<0.0.5> {
+module P5built-ins:ver<0.0.6> {
     use P5caller;
     use P5chomp;
     use P5chop;
@@ -18,6 +18,7 @@ module P5built-ins:ver<0.0.5> {
     use P5pack;
     use P5quotemeta;
     use P5ref;
+    use P5reverse;
     use P5rindex;
     use P5sleep;
     use P5study;
@@ -80,6 +81,7 @@ provide the functionality:
   P5length    | length
   P5pack      | pack unpack
   P5ref       | ref
+  P5reverse   | reverse
   P5study     | study
   P5tie       | tie, tied, untie
   P5times     | times
