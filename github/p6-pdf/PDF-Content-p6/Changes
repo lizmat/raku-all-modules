@@ -1,3 +1,6 @@
+Release 0.1.1
+- $gfx.FillColor, $gfx.StrokeColor now register unknown colors in the
+  graphics parent's resource dictionary.
 Release 0.1.0
 - Changed structure of PDF::Content::XObject[Image] to match
   PDF::Content::Font. It now has a $.image-obj handler object,

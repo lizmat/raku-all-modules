@@ -617,7 +617,7 @@ class PDF::Content::Ops {
     method parse(Str $content) {
 	use PDF::Grammar::Content::Fast;
 	use PDF::Grammar::Content::Actions;
-	state $actions //= PDF::Grammar::Content::Actions.new;
+	state $actions //= PDF::Grammar::Content::Actions.new: :strict;
 	my \p = PDF::Grammar::Content::Fast.parse($content, :$actions)
 	    // die "unable to parse content stream: $content";
 	p.ast
