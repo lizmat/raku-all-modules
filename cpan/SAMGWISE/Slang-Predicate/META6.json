@@ -1,0 +1,23 @@
+{
+  "authors" : [
+    "Sam Gillespie"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Predicates in perl6",
+  "license" : "Artistic-2.0",
+  "name" : "Slang::Predicate",
+  "perl" : "6.c",
+  "provides" : {
+    "Slang::Predicate" : "lib/Slang/Predicate.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "",
+  "tags" : [
+    "logic",
+    "predicate",
+    "Slang"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
