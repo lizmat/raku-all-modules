@@ -2,6 +2,8 @@ use v6.c;
 use Test;
 use Algorithm::GooglePolylineEncoding;
 
+plan 3;
+
 my $encoded = q[_p~iF~ps|U_ulLnnqC_mqNvxq`@];
 
 is decode-polyline( $encoded ), [ { :lat(38.5), :lon(-120.2) }, { :lat(40.7), :lon(-120.95) }, { :lat(43.252), :lon(-126.453) } ], "String decoded OK";
@@ -48,6 +50,3 @@ is decode-polyline( $encoded ), [
     { 'lat' => '51.3423',  'lon' => '0.3392',  },
     { 'lat' => '51.36589', 'lon' => '0.36736', },
 ];
-
-
-done-testing;

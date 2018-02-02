@@ -2,6 +2,8 @@ use v6.c;
 use Test;
 use Algorithm::GooglePolylineEncoding;
 
+plan :skip-all<Skipping round robin test> if %*ENV<SKIP_ROUND_ROBIN>:exists;
+plan 25920;
 for (-90, * + 5 ... 85 ) -> $lat1 { 
     for ( -180, * + 5 ... 175 ) -> $lon1 {
         for ( 0.01, * + 0.01 ... 0.1 ) -> $d1 {
@@ -17,4 +19,4 @@ for (-90, * + 5 ... 85 ) -> $lat1 {
     }
 }
 
-done-testing;
+

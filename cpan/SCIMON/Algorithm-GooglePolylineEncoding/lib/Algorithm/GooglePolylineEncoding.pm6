@@ -1,8 +1,8 @@
 use v6.c;
-subset Latitude of Real where -90 <= * <= 90;
-subset Longitude of Real where -180 <= * <= 180;
+subset Latitude of Real where { -90 <= $_ <= 90 or note "Latitude $_ out of range" and False };
+subset Longitude of Real where { -180 <= $_ <= 180 or note "Longitude $_ out of range" and False };
 
-module Algorithm::GooglePolylineEncoding:ver<0.0.3>:auth<simon.proctor@gmail.com> {
+module Algorithm::GooglePolylineEncoding:ver<0.0.4>:auth<simon.proctor@gmail.com> {
 
     class PosPair {
         has Latitude $.lat;
@@ -47,7 +47,7 @@ module Algorithm::GooglePolylineEncoding:ver<0.0.3>:auth<simon.proctor@gmail.com
         return @chunks.map( { $_ + 63 } ).map( { chr( $_ ) } ).join("");
     }
 
-    multi sub encode-polyline( @pairs where { $_.all ~~ PosPair } ) returns Str is export {
+    multi sub encode-polyline( PosPair @pairs ) returns Str {
         my ( $cur-lat, $cur-lon ) = ( 0,0 );
         my @list = ();
         
@@ -61,22 +61,27 @@ module Algorithm::GooglePolylineEncoding:ver<0.0.3>:auth<simon.proctor@gmail.com
     }
     
     multi sub encode-polyline( @pairs where { $_.all ~~ Hash } ) returns Str is export {
-        encode-polyline( @pairs.map( -> %p { PosPair.new( |%p ) } ).Array );
+        my PosPair @values = @pairs.map( -> %p { PosPair.new( |%p ) } );
+        encode-polyline( @values );
     }
 
     multi sub encode-polyline( **@pairs where { $_.all ~~ Hash } ) returns Str is export {
-        encode-polyline( @pairs.map( -> %p { PosPair.new( |%p ) } ).Array );
+        my PosPair @values = @pairs.map( -> %p { PosPair.new( |%p ) } );
+        encode-polyline( @values );
     }
     
     multi sub encode-polyline( *@points where { $_.all ~~ Real && $_.elems %% 2 } ) returns Str is export {
-        encode-polyline( @points.map( -> $la,$lo { PosPair.new( :lat($la), :lon($lo) ) } ).Array );
+        my PosPair @values =  @points.map( -> $la,$lo { PosPair.new( :lat($la), :lon($lo) ) } );
+        encode-polyline( @values );
     }
-
-    multi sub decode-polyline( Str $encoded is copy ) returns Array is export {
+    
+    constant END-VALUES = any( (63..94).map( *.chr ) );
+    
+    multi sub decode-polyline( Str $encoded ) returns Array is export {
         my ( $lat, $lon ) = ( 0, 0 );
         my @out = [];
        
-        my @values = $encoded.comb(/ .*?(.) <?{ $/[0] ~~ any( (63..94).map( *.chr ) ); }> /).map( &decode-str );
+        my @values = $encoded.comb(/ .*? (.) <?{ $/[0] ~~ END-VALUES }> /).map( &decode-str );
         
         for @values -> $dlat, $dlon {
             @out.push( PosPair.new( :lat($lat+$dlat), :lon($lon+$dlon) ).Hash );
@@ -86,7 +91,7 @@ module Algorithm::GooglePolylineEncoding:ver<0.0.3>:auth<simon.proctor@gmail.com
         return @out;
     }
 
-    sub decode-str( Str $encoded is copy ) returns Real {
+    sub decode-str( Str $encoded ) returns Real {
         my $value = ( $encoded.comb().reverse.map( *.ord - 63 ).map( * +& 0x1f ).map( *.base(2) ).map( { '0' x ( $_.chars %% 5 ?? 0 !! 5 - $_.chars % 5 ) ~ $_ } ).join() ).parse-base(2);
         $value = +^ $value if $value +& 1;
         $value = $value +> 1;

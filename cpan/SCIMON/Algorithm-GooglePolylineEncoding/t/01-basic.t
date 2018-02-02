@@ -1,7 +1,6 @@
 use v6.c;
 use Test;
-use Algorithm::GooglePolylineEncoding;
+
+plan 1;
 
 use-ok "Algorithm::GooglePolylineEncoding";
-
-done-testing;
