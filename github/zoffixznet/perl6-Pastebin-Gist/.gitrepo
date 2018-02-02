@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Pastebin-Gist.git
 	branch = master
-	commit = f0679410c51287857544525ca331397fa5908a0f
-	parent = ddeabfa364c94e801f0cc793fbc3b56d2c8ae08f
+	commit = d1f9d69756ba8182b098da187d3e1f4fd6f71e14
+	parent = 59026fbd65ccee9a70e1c010ca1a5d18b0b61fbd
 	cmdver = 0.4.0

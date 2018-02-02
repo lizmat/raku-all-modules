@@ -10,7 +10,7 @@ constant PASTE-URL = 'https://gist.github.com/';
 constant %UA       = :User-Agent('Rakudo Pastebin::Gist');
 
 subset ValidGistToken of Str where /:i <[a..f 0..9]> ** 40/;
-has ValidGistToken $.token = %*ENV<PASTEBIN_GIST_TOKEN>;
+has ValidGistToken $.token = %*ENV<PASTEBIN_GIST_TOKEN> // Nil;
 
 method paste (
     $paste,
@@ -25,7 +25,8 @@ method paste (
                                     !! { $filename => { content => $paste } };
 
     my $res = jpost API-URL ~ 'gists', %content.&to-json,
-        |%UA, :Authorization("token $!token"), :Content-Type<application/json>
+        |%UA, :Authorization($!token.defined ?? "token $!token" !! Empty),
+        :Content-Type<application/json>
     orelse die X.new: :message(.exception.message);
 
     return PASTE-URL ~ $res<id>;
