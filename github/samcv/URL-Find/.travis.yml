@@ -1,7 +1,6 @@
 language: perl6
 perl6:
     - latest
-    - nom
 
 install:
     - rakudobrew build-zef
