@@ -1,7 +1,8 @@
 {
   "perl" : "6.*",
   "name" : "Text::Wrap",
-  "version" : "0.0.1",
+  "license" : "Artistic-2.0",
+  "version" : "0.0.2",
   "description" : "Wrap text.",
   "author" : "Jonas Kramer <jkramer@mark17.net>",
   "repo-type": "git",

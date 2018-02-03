@@ -6,6 +6,7 @@ module Text::Wrap {
     Regex :$paragraph = rx/\n ** 2..*/,
     Bool :$hard-wrap = False,
     Str :$prefix = '',
+    Str :$postfix = ''
   ) is export {
     my $result = '';
 
@@ -22,13 +23,13 @@ module Text::Wrap {
             $line ~= $line ?? ' ' ~ $word !! $word;
         }
         else {
-          $result ~= $prefix ~ $line ~ "\n";
+          $result ~= $prefix ~ $line ~ $postfix ~ "\n";
 
           if $hard-wrap {
             my $copy = $word;
 
             while $copy.chars > $width {
-              $result ~= $prefix ~ $copy.substr(0, $width) ~ "\n";
+              $result ~= $prefix ~ $copy.substr(0, $width) ~ $postfix ~ "\n";
               $copy.=substr($width);
             }
 
@@ -40,10 +41,10 @@ module Text::Wrap {
         }
       }
 
-      $result ~= $prefix ~ $line if $line;
+      $result ~= $prefix ~ $line ~ $postfix if $line;
       $result ~= "\n" ~ $prefix ~ "\n" if @paragraphs;
     }
-
+    $result ~~ s/$postfix$//; # Trailing postfix useless
     return $result.trim-leading;
   }
 }
@@ -84,10 +85,13 @@ paragraphs in the source text in order to retain them in the result. The
 default is C<<\n ** 2..*>> (two or more consecutive linebreaks). To discard any
 paragraphs from the source text, you can set this to C<<Regex:U>>.
 
-=tem C<<:prefix('')>> takes a string that's inserted in front of every line of
+=item C<<:prefix('')>> takes a string that's inserted in front of every line of
 the wrapped text. The length of the prefix string counts into the total line
 width, meaning it's subtracted from the given C<<:width>>.
 
+=item C<<:postfix('')>> takes a string that's inserted after every line of
+the wrapped text. Same behavior as C<<prefix>> regarding line width.
+						  
 =head1 AUTHOR
 
 Jonas Kramer <jkramer@mark17.net>

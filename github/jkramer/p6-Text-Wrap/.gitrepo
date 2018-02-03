@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jkramer/p6-Text-Wrap.git
 	branch = master
-	commit = e173cb384694ad7e3184a80740e6ff99fbd1b224
-	parent = 399852dfd31b20d5e4fa2e14046265b970f2d87e
+	commit = 16ffb9558874a1f3c8ad91dc1a51b592cb333add
+	parent = 467c5ef66bc2e83125fddf9c78c8a0117630b094
 	cmdver = 0.4.0
