@@ -2,7 +2,7 @@ use v6.c;
 use Test;
 use Algorithm::GooglePolylineEncoding;
 
-plan :skip-all<Skipping round robin test> if %*ENV<SKIP_ROUND_ROBIN>:exists;
+plan :skip-all<Skipping round robin test. Set ENV TEST_ROUND_ROBIN to run tests.> unless %*ENV<TEST_ROUND_ROBIN>:exists;
 plan 25920;
 for (-90, * + 5 ... 85 ) -> $lat1 { 
     for ( -180, * + 5 ... 175 ) -> $lon1 {
