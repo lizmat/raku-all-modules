@@ -206,16 +206,18 @@ method !p5_scalar_ref_to_capture(Pointer $sv) {
     return \(self.p5_to_p6($!p5.p5_sv_rv($sv)));
 }
 
-multi method p5_to_p6(Pointer \value) {
-    return Any unless defined value;
+multi method p5_to_p6(Pointer:U \value --> Any) {
+}
 
+multi method p5_to_p6(Pointer:D \value) {
     my int32 $type = $!p5.p5_get_type(value);
     self.p5_to_p6(value, $type)
 }
 
-multi method p5_to_p6(Pointer \value, \type) {
-    return Any unless defined value;
+multi method p5_to_p6(Pointer:U \value, \type --> Any) {
+}
 
+multi method p5_to_p6(Pointer:D \value, \type) {
     my enum P5Types <Unknown Object SubRef NV IV PV Array Hash P6Hash Undef ScalarRef>;
 
     if type == IV {
@@ -317,19 +319,17 @@ multi method setup_arguments(@args, %args) {
     return $j, @svs;
 }
 
-method !unpack_return_values(\av, int32 \count, int32 \type) {
-    if defined av {
-        if count == 1 {
-            my $retval = self.p5_to_p6(av, type);
-            $!p5.p5_sv_refcnt_dec(av);
-            $retval
-        }
-        else {
-            Inline::Perl5::Array.new(ip5 => self, p5 => $!p5, :av(av))
-        }
+multi method unpack_return_values(Pointer:U \av, int32 \count, int32 \type --> Nil) {
+}
+
+multi method unpack_return_values(Pointer:D \av, int32 \count, int32 \type) {
+    if count == 1 {
+        my $retval = self.p5_to_p6(av, type);
+        $!p5.p5_sv_refcnt_dec(av);
+        $retval
     }
     else {
-        Nil
+        Inline::Perl5::Array.new(ip5 => self, p5 => $!p5, :av(av))
     }
 }
 
@@ -345,7 +345,7 @@ method call(Str $function, *@args, *%args) {
         $type,
     );
     self.handle_p5_exception() if $err;
-    self!unpack_return_values($av, $retvals, $type);
+    self.unpack_return_values($av, $retvals, $type);
 }
 
 method call-args(Str $function, Capture \args) {
@@ -360,7 +360,26 @@ method call-args(Str $function, Capture \args) {
         $type,
     );
     self.handle_p5_exception() if $err;
-    self!unpack_return_values($av, $retvals, $type);
+    self.unpack_return_values($av, $retvals, $type);
+}
+
+method call-simple-args(Str $function, *@args) {
+    my int32 $retvals;
+    my int32 $err;
+    my int32 $type;
+    my Int $j = 0;
+    my @svs := CArray[Pointer].new();
+    @svs.ASSIGN-POS($j++, self.p6_to_p5($_)) for @args;
+    my $av = $!p5.p5_call_function(
+        $function,
+        $j,
+        @svs,
+        $retvals,
+        $err,
+        $type,
+    );
+    self.handle_p5_exception() if $err;
+    self.unpack_return_values($av, $retvals, $type);
 }
 
 multi method invoke(Str $package, Str $function, *@args, *%args) {
@@ -376,7 +395,7 @@ multi method invoke(Str $package, Str $function, *@args, *%args) {
         $type,
     );
     self.handle_p5_exception() if $err;
-    self!unpack_return_values($av, $retvals, $type);
+    self.unpack_return_values($av, $retvals, $type);
 }
 
 multi method invoke(Pointer $obj, Str $function) {
@@ -394,7 +413,61 @@ multi method invoke(Pointer $obj, Str $function) {
         $type,
     );
     self.handle_p5_exception() if $err;
-    self!unpack_return_values($av, $retvals, $type);
+    self.unpack_return_values($av, $retvals, $type);
+}
+
+method look-up-method(Pointer $obj, Str $name) {
+    $!p5.p5_look_up_method($obj, $name)
+}
+
+method stash-name(Pointer $obj) {
+    $!p5.p5_stash_name($obj)
+}
+
+multi method invoke(Pointer $obj, Pointer $function) {
+    my int32 $retvals;
+    my int32 $err;
+    my int32 $type;
+    my $av = $!p5.p5_call_gv(
+        $obj,
+        0,
+        $function,
+        1,
+        $obj,
+        $retvals,
+        $err,
+        $type,
+    );
+    self.handle_p5_exception() if $err;
+    self.unpack_return_values($av, $retvals, $type);
+}
+
+method invoke-gv-arg(Pointer $obj, Pointer $function, $arg) {
+    my @svs := CArray[Pointer].new();
+    my Int $j = 0;
+    @svs[0] = $obj;
+    if $arg.WHAT =:= Pair {
+        @svs[1] = self.p6_to_p5($arg.key);
+        @svs[2] = self.p6_to_p5($arg.value);
+    }
+    else {
+        @svs[1] = self.p6_to_p5($arg);
+    }
+    my int32 $retvals;
+    my int32 $err;
+    my int32 $type;
+    my $av = $!p5.p5_call_gv(
+        $obj,
+        0,
+        $function,
+        2,
+        nativecast(Pointer, @svs),
+        $retvals,
+        $err,
+        $type,
+    );
+    self.handle_p5_exception() if $err;
+    self.unpack_return_values($av, $retvals, $type);
 }
 
 method invoke-args(Pointer $obj, Str $function, Capture $args) {
@@ -428,7 +501,41 @@ method invoke-args(Pointer $obj, Str $function, Capture $args) {
         $type,
     );
     self.handle_p5_exception() if $err;
-    self!unpack_return_values($av, $retvals, $type);
+    self.unpack_return_values($av, $retvals, $type);
+}
+
+method invoke-gv-args(Pointer $obj, Pointer $function, Capture $args) {
+    my @svs := CArray[Pointer].new();
+    my Int $j = 0;
+    @svs[$j++] = $obj;
+    for $args.list {
+        if $_.WHAT =:= Pair {
+            @svs[$j++] = self.p6_to_p5($_.key);
+            @svs[$j++] = self.p6_to_p5($_.value);
+        }
+        else {
+            @svs[$j++] = self.p6_to_p5($_);
+        }
+    }
+    for $args.hash {
+        @svs[$j++] = self.p6_to_p5($_.key);
+        @svs[$j++] = self.p6_to_p5($_.value);
+    }
+    my int32 $retvals;
+    my int32 $err;
+    my int32 $type;
+    my $av = $!p5.p5_call_gv(
+        $obj,
+        0,
+        $function,
+        $j,
+        nativecast(Pointer, @svs),
+        $retvals,
+        $err,
+        $type,
+    );
+    self.handle_p5_exception() if $err;
+    self.unpack_return_values($av, $retvals, $type);
 }
 
 multi method invoke(Pointer $obj, Str $function, *@args, *%args) {
@@ -462,7 +569,7 @@ multi method invoke(Pointer $obj, Str $function, *@args, *%args) {
         $type,
     );
     self.handle_p5_exception() if $err;
-    self!unpack_return_values($av, $retvals, $type);
+    self.unpack_return_values($av, $retvals, $type);
 }
 
 method invoke-parent(Str $package, Pointer $obj, Bool $context, Str $function, @args, %args) {
@@ -482,7 +589,7 @@ method invoke-parent(Str $package, Pointer $obj, Bool $context, Str $function, @
         $type,
     );
     self.handle_p5_exception() if $err;
-    self!unpack_return_values($av, $retvals, $type);
+    self.unpack_return_values($av, $retvals, $type);
 }
 
 method execute(Pointer $code_ref, *@args) {
@@ -491,7 +598,7 @@ method execute(Pointer $code_ref, *@args) {
     my int32 $type;
     my $av = $!p5.p5_call_code_ref($code_ref, |self.setup_arguments(@args), $retvals, $err, $type);
     self.handle_p5_exception() if $err;
-    self!unpack_return_values($av, $retvals, $type);
+    self.unpack_return_values($av, $retvals, $type);
 }
 
 method global(Str $name) {
@@ -553,7 +660,7 @@ class Perl6Callbacks {
 method init_callbacks {
     self.run($=finish);
 
-    self.call('v6::init', Perl6Callbacks.new(:p5(self)));
+    self.call-simple-args('v6::init', Perl6Callbacks.new(:p5(self)));
 
     if $!external_p5 {
         $!p5.p5_inline_perl6_xs_init();
@@ -571,7 +678,7 @@ method rebless(Inline::Perl5::Object $obj, Str $package, $p6obj) {
 }
 
 method install_wrapper_method(Str:D $package, Str $name, *@attributes) {
-    self.call('v6::install_p6_method_wrapper', $package, $name, |@attributes);
+    self.call-simple-args('v6::install_p6_method_wrapper', $package, $name, |@attributes);
 }
 
 method subs_in_module(Str $module) {
@@ -592,8 +699,8 @@ method import (Str $module, *@args) {
 method require(Str $module, Num $version?, Bool :$handle) {
     # wrap the load_module call so exceptions can be translated to Perl 6
     my @packages = $version
-        ?? self.call('v6::load_module', $module, $version)
-        !! self.call('v6::load_module', $module);
+        ?? self.call-simple-args('v6::load_module', $module, $version)
+        !! self.call-simple-args('v6::load_module', $module);
 
     return unless self eq $default_perl5; # Only create Perl 6 packages for the primary interpreter to avoid confusion
 
@@ -753,7 +860,7 @@ class X::Inline::Perl5::NoMultiplicity is Exception {
 }
 
 method init_data($data) {
-    self.call('v6::init_data', $data);
+    self.call-simple-args('v6::init_data', $data);
 }
 
 method BUILD(*%args) {
