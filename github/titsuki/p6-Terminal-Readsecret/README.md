@@ -1,4 +1,4 @@
-# [DEPRECATE] Use [Terminal::Getpass](https://github.com/titsuki/p6-Terminal-Getpass) instead.
+# [OBSOLETE] Use [Terminal::Getpass](https://github.com/titsuki/p6-Terminal-Getpass) instead.
 
 [![Build Status](https://travis-ci.org/titsuki/p6-Terminal-Readsecret.svg?branch=master)](https://travis-ci.org/titsuki/p6-Terminal-Readsecret)
 
