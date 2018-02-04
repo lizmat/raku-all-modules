@@ -28,18 +28,18 @@ BEGIN {
 
             # placeholder variables cannot be passed-through
             # so dispatch has to be done manually depending on nature of passed params
-            method ( *@positional, *%named ) {
+            method ( *@params, *%params ) {
 
-                if @positional  and %named {
+                if @params  and %params {
                     X::JSON::RPC::ProtocolError.new(
                         message => 'Cannot use positional and named params at the same time'
-                    ).throw;
+                    ).throw( );
                 }
-                elsif @positional {
-                    $object!handler( :$method, params => @positional );
+                elsif @params {
+                    $object!handler( :$method, :@params );
                 }
-                elsif %named {
-                    $object!handler( :$method, params => %named );
+                elsif %params {
+                    $object!handler( :$method, :%params );
                 }
                 else {
                     $object!handler( :$method );
@@ -51,22 +51,18 @@ BEGIN {
 
 }
 
-multi submethod BUILD ( URI :$uri!, Code :$sequencer? ) {
+multi submethod BUILD ( URI :$uri!, Code :$!sequencer = &sequencer ) {
 
     $!transport = &transport.assuming( uri => $uri );
-    $!sequencer = $sequencer // &sequencer;
 }
 
-multi submethod BUILD ( Str :$url!, Code :$sequencer? ) {
+multi submethod BUILD ( Str :$url!, Code :$!sequencer = &sequencer ) {
 
     $!transport = &transport.assuming( uri => URI.new( $url, :is_validating ) );
-    $!sequencer = $sequencer // &sequencer;
 }
 
-multi submethod BUILD ( Code :$transport!, Code :$sequencer? ) {
+multi submethod BUILD ( Code :$!transport!, Code :$!sequencer = &sequencer ) {
 
-    $!transport = $transport;
-    $!sequencer = $sequencer // &sequencer;
 }
 
 sub transport ( URI :$uri, Str :$json, Bool :$get_response ) {
@@ -112,7 +108,7 @@ method !handler( Str :$method!, :$params ) {
     # SPEC: A Structured value that holds the parameter values
     # to be used during the invocation of the method.
     # This member MAY be omitted.
-    %request{'params'} = $params if $params.defined;
+    %request{'params'} = $_ with $params;
 
     # Requests in Batch are not processed until rpc.flush method is called.
     if $.is_batch {
@@ -128,25 +124,25 @@ method !handler( Str :$method!, :$params ) {
     # SPEC: A Request object that is a Notification signifies
     # the Client's lack of interest in the corresponding Response object.
     if $.is_notification {
-        $!transport( json => $request, get_response => False );
+        $!transport( json => $request, :!get_response );
         return;
     }
     else {
-        $response = $!transport( json => $request, get_response => True );
+        $response = $!transport( json => $request, :get_response );
     }
 
     $response = self!parse_json( $response );
     my $out = self!validate_response( $response );
 
     # failed procedure call, throw exception.
-    $out.throw if $out ~~ X::JSON::RPC;
+    $out.throw( ) if $out ~~ X::JSON::RPC;
 
     # SPEC: This member is REQUIRED.
     # It MUST be the same as the value of the id member in the Request Object.
     X::JSON::RPC::ProtocolError.new(
         message => 'Request id is different than response id',
         data => { 'request' => %request, 'response' => $response }
-    ).throw unless %request{'id'} eqv $response{'id'};
+    ).throw( ) unless %request{'id'} eqv $response{'id'};
 
     # successful remote procedure call
     return $out;
@@ -170,19 +166,19 @@ method ::('rpc.flush') {
     my $responses;
 
     if @!stack.grep: { $_{'id'}:exists } {
-        $responses = $!transport( json => $requests, get_response => True );
+        $responses = $!transport( json => $requests, :get_response );
     }
     # SPEC: If the batch rpc call itself fails to be recognized (...)
     # as an Array with at least one value,
     # the response from the Server MUST be a single Response object.
     elsif not @!stack.elems {
-        $responses = $!transport( json => $requests, get_response => True );
+        $responses = $!transport( json => $requests, :get_response );
     }
     # SPEC: If there are no Response objects contained within the Response array
     # as it is to be sent to the client, the server MUST NOT return an empty Array
     # and should return nothing at all.
     else {
-        $!transport( json => $requests, get_response => False );
+        $!transport( json => $requests, :!get_response );
         @!stack = ( );
 
         return;
@@ -193,7 +189,7 @@ method ::('rpc.flush') {
     # throw Exception if Server was unable to process Batch
     # and returned single Response object with error
     if $responses ~~ Hash {
-        self!bind_error( $responses{'error'} ).throw;
+        self!bind_error( $responses{'error'} ).throw( );
     }
 
     for $responses.list -> $response {
@@ -252,13 +248,13 @@ method ::('rpc.flush') {
         X::JSON::RPC::ProtocolError.new(
             message => 'Cannot match context between Requests and Responses in Batch',
             data => { 'requests' => @!stack, 'responses' => $responses }
-        ).throw unless $found;
+        ).throw( ) unless $found;
 
         LAST {
             X::JSON::RPC::ProtocolError.new(
                 message => 'Amount of Responses in Batch higher than expected',
                 data => { 'requests' => @!stack, 'responses' => $responses }
-            ).throw if $position != $responses.elems - 1;
+            ).throw( ) if $position != $responses.elems - 1;
         }
     }
 
@@ -274,8 +270,8 @@ method !parse_json ( Str $body ) {
 
     try { $parsed = from-json( $body ); };
 
-    X::JSON::RPC::ProtocolError.new( data => ~$! ).throw if defined $!;
-    X::JSON::RPC::ProtocolError.new.throw unless $parsed ~~ Array|Hash;
+    X::JSON::RPC::ProtocolError.new( data => ~$! ).throw( ) if defined $!;
+    X::JSON::RPC::ProtocolError.new.throw( ) unless $parsed ~~ Array|Hash;
 
     return $parsed;
 }
@@ -315,7 +311,7 @@ method !validate_response ( $response ) {
             X::JSON::RPC::ProtocolError.new(
                 message => 'Invalid Response',
                 data => $response
-            ).throw;
+            ).throw( );
         }
     }
 }
@@ -342,7 +338,7 @@ method !bind_error ( $error ) {
     X::JSON::RPC::ProtocolError.new(
         message => 'Invalid Error',
         data => $error
-    ).throw unless $error ~~ :( ErrorMemberCode :$code!, ErrorMemberMessage :$message!, ErrorMemberData :$data? );
+    ).throw( ) unless $error ~~ :( ErrorMemberCode :$code!, ErrorMemberMessage :$message!, ErrorMemberData :$data? );
 
     given $error{'code'} {
         when -32700 {

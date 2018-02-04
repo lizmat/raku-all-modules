@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bbkr/jsonrpc.git
 	branch = master
-	commit = e590eb0730f1b1c2c9232b8c82ae09fb93d58bbc
-	parent = 67f1436985f1d709f6146c050bf29d0cbf6802d7
+	commit = 74dcedfab9e882bc69aa137fd13d1a72f757d2a6
+	parent = 7572bd9f2a2fb37e4818263d107ff8745c289d3d
 	cmdver = 0.4.0
