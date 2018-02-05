@@ -1,6 +1,9 @@
 Revision history for Term::TablePrint
 
 
+1.0.10  2018-02-04
+        - Bugfix: no output if one table row and "keep_header" enabled
+
 1.0.9   2018-01-24
         - Bugfix in deprecated option "add-header"
 

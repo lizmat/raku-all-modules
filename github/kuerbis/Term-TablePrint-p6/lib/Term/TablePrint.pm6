@@ -1,5 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<1.0.9>;
+unit class Term::TablePrint:ver<1.0.10>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -189,7 +189,7 @@ method !_win_size_dependet_code {
             self!_win_size_dependet_code();
             return;
         }
-        if ( %!o<keep-header> && ! @list.elems ) || ( @list.elems == 1 ) {
+        if ( %!o<keep-header> && ! @list.elems ) || ( ! %!o<keep-header> && @list.elems == 1 ) {
             # Choose
             $!tc.pause( ( Any, |$!table[0] ), :prompt( 'EMPTY!' ), :0layout, :undef( '<<' ) );
             return;
