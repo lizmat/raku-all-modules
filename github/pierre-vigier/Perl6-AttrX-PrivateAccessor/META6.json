@@ -8,5 +8,5 @@
     "provides" : {
         "AttrX::PrivateAccessor"    : "lib/AttrX/PrivateAccessor.pm6"
     },
-    "source-url"    : "git@github.com:pierre-vigier/Perl6-AttrX-PrivateAccessor.git"
+    "source-url"    : "git://github.com/pierre-vigier/Perl6-AttrX-PrivateAccessor.git"
 }
