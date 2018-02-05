@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/pierre-vigier/Perl6-AttrX-Lazy.git
 	branch = master
-	commit = c635c276f2a585a1034d45b59cfb3e2307c952f9
-	parent = 564a67908a0889515c154f84c28b5f577e8a5fb9
+	commit = 8d9b1f91db88ba5223b5b82126958f7433c427b2
+	parent = bd9629843ad18f29a295089e5dc2e53af2394011
 	cmdver = 0.4.0

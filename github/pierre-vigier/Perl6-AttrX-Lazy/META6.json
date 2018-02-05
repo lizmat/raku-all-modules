@@ -9,5 +9,5 @@
     "provides"      : {
         "AttrX::Lazy"    : "lib/AttrX/Lazy.pm6"
     },
-    "source-url"    : "git@github.com:pierre-vigier/Perl6-AttrX-Lazy.git"
+    "source-url"    : "git://github.com/pierre-vigier/Perl6-AttrX-Lazy.git"
 }
