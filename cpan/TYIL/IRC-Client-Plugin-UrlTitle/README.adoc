@@ -1,0 +1,36 @@
+= IRC::Client::Plugin::UrlTitle
+:toc: preamble
+
+A plugin to https://github.com/zoffixznet/perl6-IRC-Client[IRC::Client] to post
+the title of the webpage whose URL has been posted in an IRC channel.
+
+== Usage
+Install this module through the Perl 6 package manager
+(https://github.com/ugexe/zef[`zef`]):
+
+[source,sh]
+----
+zef install IRC::Client::Plugin::UrlTitle
+----
+
+Next, enable it as a plugin in your `IRC::Client` project:
+
+[source,perl6]
+----
+use Config;
+use IRC::Client;
+use IRC::Client::Plugin::UrlTitle;
+
+sub MAIN
+{
+	.run with IRC::Client.new(
+		:nick("testbot"),
+		:plugins(
+			IRC::Client::Plugin::UrlTitle.new,
+		)
+	);
+}
+----
+
+== License
+This sourcecode is distributed under the GPLv3 license.
