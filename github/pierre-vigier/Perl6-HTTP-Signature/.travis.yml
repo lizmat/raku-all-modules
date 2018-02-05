@@ -4,8 +4,8 @@ perl6:
   - latest
 
 install:
-  - rakudobrew build-panda
-  - panda installdeps .
+  - rakudobrew build zef
+  - zef install --deps-only .
 
 script:
   - PERL6LIB=$PWD/lib prove -e perl6 -r t/

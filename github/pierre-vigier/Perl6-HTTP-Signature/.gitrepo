@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/pierre-vigier/Perl6-HTTP-Signature.git
 	branch = master
-	commit = 3e0942528e791ac2afc1f67bfedd9ed1ac7983fd
-	parent = 042262dc9e34787aec4898519fa6a7bb8d10f885
+	commit = f0ba83425c38e37784d68aa427d60179a2b14bb1
+	parent = 5433c996e32cf99954ca3d645fd6eebffbaf15bb
 	cmdver = 0.4.0
