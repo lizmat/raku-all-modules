@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Test::Harness",
-    "version"     : "*",
+    "version"     : "0.0.1",
     "description" : "Read TAP output",
     "provides"    : {
         "Test::Harness" : "lib/Test/Harness.pm"
