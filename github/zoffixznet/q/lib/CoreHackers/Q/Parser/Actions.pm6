@@ -1,10 +1,12 @@
 unit class CoreHackers::Q::Parser::Actions;
 use HTML::Escape;
 
+has Str:D $.code is required;
+
 sub prefix:<E> { $^t.Str.&escape-html }
 
 method TOP($/) {
-    make Q:to/♥/ ~ ｢<ul class="nodes">｣ ~ $<node>».made.join("\n") ~ ｢</ul>｣;
+    make q:to/♥/ ~ ｢<ul class="nodes">｣ ~ $<node>».made.join("\n") ~ ｢</ul>｣;
       <!DOCTYPE html>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,13 +19,30 @@ method TOP($/) {
       }
 
       html {
-          background: #ddc;
+          background: #ddddd2;
           color: #333;
       }
 
       body {
           width: 1200px;
           margin: 20px auto;
+      }
+
+      #info-panel {
+          padding: 20px;
+          border: 1px solid #999;
+          margin-bottom: 10px;
+          background: #ddc;
+      }
+
+      h1 code {
+          display: block;
+          color: #707;
+          font-size: 16px;
+          font-weight: normal;
+          margin-bottom: 10px;
+          border-bottom: 1px solid #999;
+          padding-bottom: 10px;
       }
 
       li {
@@ -83,16 +102,23 @@ method TOP($/) {
 
       function setup_nodes() {
           $('body').css({'height': document.body.scrollHeight + 'px'});
+
           $('.node-with-kids').on('click', function(e) {
-              e.stopPropagation();
-              console.log("meow");
-              $(this).find('> ul').toggle('fast', function() {
-                  $(this).parent('.node-with-kids').toggleClass('collapsed');
-              });
+              if (e.ctrlKey) {
+                  e.stopPropagation();
+                  $(this).find('> ul').toggle('fast', function() {
+                      $(this).parent('.node-with-kids').toggleClass('collapsed');
+                  });
+              }
           });
       }
 
       </script><!-- JS INSERT END -->
+
+      <div id="info-panel">
+        <p><i><kbd>Ctrl+Click</kbd> to collapse/uncollapse nodes</i></p>
+      </diV>
+      <h1><code>\qq[$!code]</code></h1>
       ♥
 }
 

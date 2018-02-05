@@ -4,13 +4,30 @@
 }
 
 html {
-    background: #ddc;
+    background: #ddddd2;
     color: #333;
 }
 
 body {
     width: 1200px;
     margin: 20px auto;
+}
+
+#info-panel {
+    padding: 20px;
+    border: 1px solid #999;
+    margin-bottom: 10px;
+    background: #ddc;
+}
+
+h1 code {
+    display: block;
+    color: #707;
+    font-size: 16px;
+    font-weight: normal;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #999;
+    padding-bottom: 10px;
 }
 
 li {

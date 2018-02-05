@@ -2,7 +2,7 @@
     "perl"         : "6.c",
     "name"         : "CoreHackers::Q",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001004",
+    "version"      : "1.001005",
     "description"  : "Perl 6 QAST Visualizer",
     "tags"         : [ "core dev" ],
     "depends"      : [
