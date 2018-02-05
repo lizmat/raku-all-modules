@@ -2,7 +2,7 @@
 
 use v6.c;
 
-use Terminal::Readsecret;
+use Terminal::Getpass;
 
 unit module App::Assixt::Input;
 
@@ -67,7 +67,9 @@ multi sub confirm(
 	confirm($prompt, :$default);
 }
 
-sub password(Str $prompt = "Password" --> Str) is export
-{
-	getsecret("$prompt: ");
+sub password(
+	Str:D $prompt = "Password",
+	--> Str
+) is export {
+	getpass("$prompt: ");
 }
