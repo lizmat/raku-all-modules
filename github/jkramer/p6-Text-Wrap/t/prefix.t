@@ -19,9 +19,9 @@ is(
   '-- as prefix'
 );
 
-my $spaces = '-' x 3;
+my $spaces = ' ' x 3;
 is(
-    wrap-text("foo bar baz quux test 123", :width(10), :prefix( $spaces )),
+    wrap-text("foo bar baz quux test 123", :width(10), :prefix($spaces)),
     $spaces~"foo bar\n"~$spaces~"baz\n"~$spaces~"quux\n"~$spaces~"test\n"~$spaces~"123",
     'Spaces as prefix'
 );
