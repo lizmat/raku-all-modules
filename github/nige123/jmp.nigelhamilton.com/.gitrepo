@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/nige123/jmp.nigelhamilton.com.git
 	branch = master
-	commit = 2805138c1f4d4c25e0637ff5be0272a6371ac4bc
-	parent = 675caf307ae9ff3eca4b1ccb00d2e6399f13266e
+	commit = 41e43d093ea7ed9d536c518251ca6714982a708e
+	parent = 5ddf3f3d4b5809db81a6552de1ec4b0bf764f899
 	cmdver = 0.4.0
