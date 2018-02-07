@@ -25,31 +25,47 @@ class Cro::WebSocket::Handler does Cro::Transform {
                 }
             }
 
+            my class CloseMessage {
+                has $.message;
+            }
+            my $block-feed = $supplier.Supply.Channel.Supply.grep: -> $msg {
+                if $msg ~~ CloseMessage {
+                    $msg.defined
+                        ?? keep-close-promise($msg.message)
+                        !! keep-close-promise();
+                    False
+                }
+                else {
+                    True
+                }
+            }
             my $block = &!block.count == 1
-                        ?? &!block($supplier.Supply)
-                        !! &!block($supplier.Supply, $on-close);
+                        ?? &!block($block-feed)
+                        !! &!block($block-feed, $on-close);
+
+            sub close(Bool $end, Blob $code) {
+                unless $end {
+                    emit Cro::WebSocket::Message.new(
+                        opcode => Cro::WebSocket::Message::Close,
+                        fragmented => False,
+                        body-byte-stream => supply { emit $code });
+                    $supplier.emit(CloseMessage);
+                    done;
+                }
+            }
 
             whenever $block {
-                sub close(Bool $end, Blob $code) {
-                    unless $end {
-                        emit Cro::WebSocket::Message.new(
-                            opcode => Cro::WebSocket::Message::Close,
-                            fragmented => False,
-                            body-byte-stream => supply { emit $code });
-                        keep-close-promise();
-                        done;
-                    }
-                }
-
                 when Cro::WebSocket::Message {
                     emit $_;
-                    if $_.opcode == Cro::WebSocket::Message::Close {
-                        keep-close-promise();
+                    if .opcode == Cro::WebSocket::Message::Close {
+                        $supplier.emit(CloseMessage);
                         $end = True;
                         done;
                     }
                 }
-                when Blob|Str|Supply { emit Cro::WebSocket::Message.new($_) }
+                default {
+                    emit Cro::WebSocket::Message.new($_)
+                }
 
                 LAST {
                     close($end, Blob.new([3, 232])); # bytes of 1000
@@ -81,7 +97,7 @@ class Cro::WebSocket::Handler does Cro::Transform {
                                     emit (await $m.body-blob);
                                     done;
                                 });
-                            keep-close-promise($m);
+                            $supplier.emit(CloseMessage.new(message => $m));
                             $supplier.done;
                         }
                         default {}

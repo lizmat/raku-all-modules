@@ -2,12 +2,37 @@ use Base64;
 use Cro::HTTP::Client;
 use Cro::HTTP::Header;
 use Cro::Uri;
+use Cro::WebSocket::BodyParsers;
+use Cro::WebSocket::BodySerializers;
 use Cro::WebSocket::Client::Connection;
 use Crypt::Random;
 use Digest::SHA1::Native;
 
 class Cro::WebSocket::Client {
     has $.uri;
+    has $.body-serializers;
+    has $.body-parsers;
+
+    submethod BUILD(:$!uri, :$body-serializers, :$body-parsers, :$json --> Nil) {
+        if $json {
+            if $body-parsers === Any {
+                $!body-parsers = Cro::WebSocket::BodyParser::JSON;
+            }
+            else {
+                die "Cannot use :json together with :body-parsers";
+            }
+            if $body-serializers === Any {
+                $!body-serializers = Cro::WebSocket::BodySerializer::JSON;
+            }
+            else {
+                die "Cannot use :json together with :body-serializers";
+            }
+        }
+        else {
+            $!body-parsers = $body-parsers;
+            $!body-serializers = $body-serializers;
+        }
+    }
 
     method connect($uri = '', :%ca? --> Promise) {
         my $parsed-url;
@@ -45,7 +70,10 @@ class Cro::WebSocket::Client {
                 # No extensions for now
                 # die unless $resp.header('Sec-WebSocket-Extensions') eq Nil;
                 # die unless $resp.header('Sec-WebSocket-Protocol') eq 'echo-protocol'; # XXX
-                Cro::WebSocket::Client::Connection.new(in => $resp.body-byte-stream, :$out)
+                Cro::WebSocket::Client::Connection.new(
+                    in => $resp.body-byte-stream, :$out,
+                    |(%(:$!body-parsers, :$!body-serializers) with self)
+                )
             } else {
                 die 'Server failed to upgrade web socket connection';
             }
