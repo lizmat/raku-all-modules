@@ -1,0 +1,20 @@
+{
+    "name" : "Cro::HTTP::Session::Redis",
+    "description" : "Redis-based session support for the Cro library for building distributed systems in Perl 6.",
+    "perl" : "6.*",
+    "version" : "0.7.3",
+
+    "license" : "Artistic-2.0",
+    "test-depends" : [
+        "Test::META"
+    ],
+    "depends": [ "Cro::HTTP", "Redis::Async" ],
+    "provides" : {
+        "Cro::HTTP::Session::Redis" : "lib/Cro/HTTP/Session/Redis.pm6"
+    },
+    "authors" : [
+        "Altai-man"
+    ],
+    "source-url" : "https://github.com/croservices/cro-http-session-redis.git",
+    "meta-version" : "0"
+}
