@@ -1,6 +1,8 @@
+use Cro::BodyParserSelector;
+use Cro::BodySerializerSelector;
 use Cro::HTTP::Cookie;
-use Cro::HTTP::BodyParserSelector;
-use Cro::HTTP::BodySerializerSelector;
+use Cro::HTTP::BodyParserSelectors;
+use Cro::HTTP::BodySerializerSelectors;
 use Cro::HTTP::Message;
 use Cro::Uri::HTTP;
 
@@ -14,9 +16,9 @@ class X::Cro::HTTP::Request::Incomplete is Exception {
 class Cro::HTTP::Request does Cro::HTTP::Message {
     has Cro::Uri::HTTP $!cached-uri;
     has Str $!cached-uri-target = '';
-    has Cro::HTTP::BodyParserSelector $.body-parser-selector is rw =
+    has Cro::BodyParserSelector $.body-parser-selector is rw =
         Cro::HTTP::BodyParserSelector::RequestDefault;
-    has Cro::HTTP::BodySerializerSelector $.body-serializer-selector is rw =
+    has Cro::BodySerializerSelector $.body-serializer-selector is rw =
         Cro::HTTP::BodySerializerSelector::RequestDefault;
     has $.connection is rw;
 
@@ -37,6 +39,13 @@ class Cro::HTTP::Request does Cro::HTTP::Message {
     subset Target of Str where /^<[\x21..\xFF]>+$/;
     has Target $.target is rw;
     has Str $.original-target;
+
+    # This property carries information about the authority making the request
+    # and may be populated with whatever object the application chooses. In a
+    # HTTP service it may contain information from a verified web token; in a
+    # HTTP application it may contain information about an ongoing session,
+    # together with information on - or a way to check - user rights.
+    has $.auth is rw;
 
     multi method Str(Cro::HTTP::Request:D:) {
         die X::Cro::HTTP::Request::Incomplete.new(:missing<method>) unless $!method;

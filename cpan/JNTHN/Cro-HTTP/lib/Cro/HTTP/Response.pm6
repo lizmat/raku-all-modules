@@ -1,8 +1,11 @@
+use Cro::BodyParserSelector;
+use Cro::BodySerializerSelector;
 use Cro::HTTP::Cookie;
-use Cro::HTTP::BodyParserSelector;
-use Cro::HTTP::BodySerializerSelector;
+use Cro::HTTP::BodyParserSelectors;
+use Cro::HTTP::BodySerializerSelectors;
 use Cro::HTTP::Message;
 use Cro::HTTP::Request;
+use Cro::HTTP::PushPromise;
 
 my constant %reason-phrases = {
     100 => "Continue",
@@ -52,10 +55,11 @@ class Cro::HTTP::Response does Cro::HTTP::Message {
     subset StatusCode of Int where { 100 <= $_ <= 599 }
     has Cro::HTTP::Request $.request;
     has StatusCode $.status is rw;
-    has Cro::HTTP::BodyParserSelector $.body-parser-selector is rw =
+    has Cro::BodyParserSelector $.body-parser-selector is rw =
         Cro::HTTP::BodyParserSelector::ResponseDefault;
-    has Cro::HTTP::BodySerializerSelector $.body-serializer-selector is rw =
+    has Cro::BodySerializerSelector $.body-serializer-selector is rw =
         Cro::HTTP::BodySerializerSelector::ResponseDefault;
+    has $!push-promises = Supplier::Preserving.new;
 
     multi method Str(Cro::HTTP::Response:D:) {
         my $status = $!status // (self.has-body ?? 200 !! 204);
@@ -81,5 +85,19 @@ class Cro::HTTP::Response does Cro::HTTP::Message {
 
     method get-response-phrase() {
         "Server responded with $!status {%reason-phrases{$!status} // 'Unknown'}";
+    }
+
+    method add-push-promise(Cro::HTTP::PushPromise $pp --> Nil) {
+        $!push-promises.emit: $pp;
+    }
+
+    method push-promises(--> Supply) {
+        ($!http-version // '') eq '2.0' ??
+        $!push-promises.Supply !!
+        supply { done };
+    }
+
+    method close-push-promises() {
+        $!push-promises.done;
     }
 }

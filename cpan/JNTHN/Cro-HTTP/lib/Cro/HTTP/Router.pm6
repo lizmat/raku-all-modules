@@ -1,13 +1,15 @@
 use Cro;
-use Cro::HTTP::BodyParser;
-use Cro::HTTP::BodyParserSelector;
-use Cro::HTTP::BodySerializer;
-use Cro::HTTP::BodySerializerSelector;
+use Cro::BodyParser;
+use Cro::BodyParserSelector;
+use Cro::BodySerializer;
+use Cro::BodySerializerSelector;
+use Cro::HTTP::Auth;
 use Cro::HTTP::Middleware;
+use Cro::HTTP::MimeTypes;
+use Cro::HTTP::PushPromise;
 use Cro::HTTP::Request;
 use Cro::HTTP::Response;
 use IO::Path::ChildSecure;
-use Cro::HTTP::MimeTypes;
 
 class X::Cro::HTTP::Router::OnlyInHandler is Exception {
     has $.what;
@@ -36,6 +38,10 @@ module Cro::HTTP::Router {
     multi trait_mod:<is>(Parameter:D $param, :$cookie! --> Nil) is export {
         $param does Cookie;
     }
+    role Auth {}
+    multi trait_mod:<is>(Parameter:D $param, :$auth! --> Nil) is export {
+        $param does Auth;
+    }
 
     class RouteSet does Cro::Transform {
         my role Handler {
@@ -51,7 +57,7 @@ module Cro::HTTP::Router {
 
             method !add-body-parsers(Cro::HTTP::Request $request --> Nil) {
                 if @!body-parsers {
-                    $request.body-parser-selector = Cro::HTTP::BodyParserSelector::Prepend.new(
+                    $request.body-parser-selector = Cro::BodyParserSelector::Prepend.new(
                         parsers => @!body-parsers,
                         next => $request.body-parser-selector
                     );
@@ -60,7 +66,7 @@ module Cro::HTTP::Router {
 
             method !add-body-serializers(Cro::HTTP::Response $response --> Nil) {
                 if @!body-serializers {
-                    $response.body-serializer-selector = Cro::HTTP::BodySerializerSelector::Prepend.new(
+                    $response.body-serializer-selector = Cro::BodySerializerSelector::Prepend.new(
                         serializers => @!body-serializers,
                         next => $response.body-serializer-selector
                     );
@@ -121,14 +127,12 @@ module Cro::HTTP::Router {
                 self!add-body-serializers($response);
                 start {
                     {
-                        $request.path eq '/'
-                            ?? &!implementation(|%($args))
-                            !! &!implementation(|$args);
+                        &!implementation(|$args);
                         CATCH {
                             when X::Cro::HTTP::Router::NoRequestBodyMatch {
                                 $response.status = 400;
                             }
-                            when X::Cro::HTTP::BodyParserSelector::NoneApplicable {
+                            when X::Cro::BodyParserSelector::NoneApplicable {
                                 $response.status = 400;
                             }
                             default {
@@ -138,6 +142,8 @@ module Cro::HTTP::Router {
                         }
                     }
                     $response.status //= 204;
+                    # Close push promises as we don't get a new ones
+                    $response.close-push-promises();
                     $response
                 }
             }
@@ -192,8 +198,8 @@ module Cro::HTTP::Router {
 
         has Handler @!handlers;
         has $!path-matcher;
-        has Cro::HTTP::BodyParser @!body-parsers;
-        has Cro::HTTP::BodySerializer @!body-serializers;
+        has Cro::BodyParser @!body-parsers;
+        has Cro::BodySerializer @!body-serializers;
         has @!includes;
         has @!before;
         has @!after;
@@ -234,8 +240,13 @@ module Cro::HTTP::Router {
                                 $imp(|cap);
                                 CATCH {
                                     when X::TypeCheck::Binding::Parameter {
-                                        if .parameter.named {
+                                        my $param = .parameter;
+                                        if $param.named {
                                             $status = 400;
+                                            last;
+                                        }
+                                        elsif $param ~~ Auth || $param.type ~~ Cro::HTTP::Auth {
+                                            $status = 401;
                                             last;
                                         }
                                     }
@@ -253,11 +264,11 @@ module Cro::HTTP::Router {
             @!handlers.push(RouteHandler.new(:$method, :&implementation, :@!before, :@!after));
         }
 
-        method add-body-parser(Cro::HTTP::BodyParser $parser --> Nil) {
+        method add-body-parser(Cro::BodyParser $parser --> Nil) {
             @!body-parsers.push($parser);
         }
 
-        method add-body-serializer(Cro::HTTP::BodySerializer $serializer --> Nil) {
+        method add-body-serializer(Cro::BodySerializer $serializer --> Nil) {
             @!body-serializers.push($serializer);
         }
 
@@ -299,213 +310,9 @@ module Cro::HTTP::Router {
         method !generate-route-matcher(--> Nil) {
             my @route-matchers;
             my @handlers = @!handlers; # This is closed over in the EVAL'd regex
-            for @handlers.kv -> $index, $handler {
-                # Things we need to do to prepare segments for binding and unpack
-                # request data.
-                my @checks;
-                my @make-tasks;
-                my @types = int8, int16, int32, int64, uint8, uint16, uint32, uint64;
-
-                # If we need a signature bind test (due to subset/where).
-                my $need-sig-bind = False;
-
-                # The prefix is a set of segments that are part of the route
-                # that we match, but excluded from the invocation capture that
-                # we produce. These are used in include/delegate.
-                my @prefix = $handler.prefix.map({ "'$_'" });
-                my $prefix-elems = @prefix.elems;
-
-                # Positionals are URL segments, nameds are unpacks of other
-                # request data.
-                my $signature = $handler.signature;
-                my (:@positional, :@named) := $signature.params.classify:
-                    { .named ?? 'named' !! 'positional' };
-
-                # Compile segments definition into a matcher.
-                my @segments-required;
-                my @segments-optional;
-                my $segments-terminal = '';
-
-                sub match-types($type,
-                                :$lookup, :$target-name,
-                                :$seg-index, :@matcher-target, :@constraints) {
-                    for @types {
-                        if $type === $_ {
-                            if $lookup {
-                                pack-range($type.^nativesize, !$type.^unsigned,
-                                           target => $lookup, :$target-name);
-                            } else {
-                                pack-range($type.^nativesize, !$type.^unsigned,
-                                           :$seg-index, :@matcher-target, :@constraints);
-                            }
-                            return True;
-                        }
-                    }
-                    False;
-                }
-
-                sub pack-range($bits, $signed,
-                               :$target, :$target-name, # named
-                               :$seg-index, :@matcher-target, :@constraints) {
-                    my $bound = 2 ** ($bits - 1);
-
-                    if $target.defined && $target-name.defined {
-                        push @checks, '(with ' ~ $target ~ ' { ' ~
-                                               ( if $signed {
-                                                       -$bound ~ ' <= $_ <= ' ~ $bound - 1
-                                                   } else {
-                                                     '0 <= $_ <= ' ~ 2 ** $bits - 1
-                                                 }
-                                               )
-                                               ~ '|| !($*MISSING-UNPACK = True)'
-                                               ~ ' } else { True })';
-                        # we coerce to Int here for two reasons:
-                        # * Str cannot be coerced to native types;
-                        # * We already did a range check;
-                        @make-tasks.push: '%unpacks{Q[' ~ $target-name ~ ']} = .Int with ' ~ $target;
-                    } else {
-                        my Str $range = $signed ?? -$bound ~ ' <= $_ <= ' ~ $bound - 1 !! '0 <= $_ <= ' ~ 2 ** $bits - 1;
-                        my Str $check = '<?{('
-                                      ~ Q:c/with @segs[{$prefix-elems + $seg-index}]/
-                                      ~ ' {( '~ $range
-                                      ~ ' )} else { True }) }>';
-                        @matcher-target.push: Q['-'?\d+:] ~ $check;
-                        @make-tasks.push: Q:c/.=Int with @segs[{$prefix-elems + $seg-index}]/;
-                        $need-sig-bind = True if @constraints;
-                    }
-                }
-
-                for @positional.kv -> $seg-index, $param {
-                    if $param.slurpy {
-                        $segments-terminal = '{} .*:';
-                    }
-                    else {
-                        my @matcher-target := $param.optional
-                            ?? @segments-optional
-                            !! @segments-required;
-                        my $type := $param.type;
-                        my @constraints = extract-constraints($param);
-                        if $type =:= Mu || $type =:= Any || $type =:= Str {
-                            if @constraints == 1 && @constraints[0] ~~ Str:D {
-                                # Literal string constraint; matches literally.
-                                @matcher-target.push("'&encode(@constraints[0])'");
-                            }
-                            else {
-                                # Any match will do, but need bind check.
-                                @matcher-target.push('<-[/]>+:');
-                                $need-sig-bind = True;
-                            }
-                        }
-                        elsif $type =:= Int || $type =:= UInt {
-                            @matcher-target.push(Q['-'?\d+:]);
-                            my Str $coerce-prefix = $type =:= Int ?? '.=Int' !! '.=UInt';
-                            @make-tasks.push: $coerce-prefix ~
-                                Q:c/ with @segs[{$prefix-elems + $seg-index}]/;
-                            $need-sig-bind = True if @constraints;
-                        }
-                        else {
-                            my $matched = match-types($type, :$seg-index,
-                                                      :@matcher-target, :@constraints);
-                            die "Parameter type $type.^name() not allowed on a request unpack parameter" unless $matched;
-                        }
-                    }
-                }
-                my $segment-matcher = " '/' " ~
-                    (flat @prefix, @segments-required).join(" '/' ") ~
-                    @segments-optional.map({ "[ '/' $_ " }).join ~ (' ]? ' x @segments-optional) ~
-                    $segments-terminal;
-
-                # Turned nameds into unpacks.
-                for @named -> $param {
-                    my $target-name = $param.named_names[0];
-                    my ($exists, $lookup) = do given $param {
-                        when Cookie {
-                            '$req.has-cookie(Q[' ~ $target-name ~ '])',
-                            '$req.cookie-value(Q[' ~ $target-name ~ '])'
-                        }
-                        when Header {
-                            '$req.has-header(Q[' ~ $target-name ~ '])',
-                            '$req.header(Q[' ~ $target-name ~ '])'
-                        }
-                        default {
-                            '$req.query-hash{Q[' ~ $target-name ~ ']}:exists',
-                            '$req.query-value(Q[' ~ $target-name ~ '])'
-                        }
-                    }
-                    unless $param.optional {
-                        push @checks, '(' ~ $exists ~ ' || !($*MISSING-UNPACK = True))';
-                    }
-
-                    my $type := $param.type;
-                    if $type =:= Mu || $type =:= Any || $type =:= Str {
-                        push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $_ with ' ~ $lookup;
-                    }
-                    elsif $type =:= Int || $type =:= UInt {
-                        push @checks, '(with ' ~ $lookup ~ ' { so /^"-"?\d+$/ } else { True })';
-                        push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = ' ~
-                                                        ($type =:= Int ?? '.Int' !! '.UInt')
-                                                        ~ ' with ' ~ $lookup;
-                    }
-                    elsif $type =:= Positional {
-                        given $param {
-                            when Header {
-                                push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $req.headers';
-                            }
-                            when Cookie {
-                                die "Cookies cannot be extracted to List. Maybe you want '%' instead of '@'";
-                            }
-                            default {
-                                push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $req.query-hash.List';
-                            }
-                        }
-                    }
-                    elsif $type =:= Associative {
-                        given $param {
-                            when Cookie {
-                                push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $req.cookie-hash';
-                            }
-                            when Header {
-                                push @make-tasks,
-                                'my %result;'
-                                    ~ '$req.headers.map({ %result{$_.name} = $_.value });'
-                                    ~ '%unpacks{Q['
-                                    ~ $target-name
-                                    ~ ']} = %result;';
-                            }
-                            default {
-                                push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $req.query-hash'
-                            }
-                        }
-                    }
-                    else {
-                        my $matched = match-types($type, :$lookup, :$target-name);
-                        die "Parameter type $type.^name() not allowed on a request unpack parameter" unless $matched;
-                    }
-                    $need-sig-bind = True if extract-constraints($param);
-                }
-
-                my $method-check = $handler.can('method')
-                    ?? '<?{ $req.method eq "' ~ $handler.method ~
-                        '" || !($*WRONG-METHOD = True) }>'
-                    !! '';
-                my $checks = @checks
-                    ?? '<?{ ' ~ @checks.join(' and ') ~ ' }>'
-                    !! '';
-                my $form-cap = '{ my %unpacks; ' ~ @make-tasks.join(';') ~
-                    '; $cap = Capture.new(:list(@segs' ~
-                    ($prefix-elems ?? "[$prefix-elems..*]" !! "") ~
-                    '), :hash(%unpacks)); }';
-                my $bind-check = $need-sig-bind
-                    ?? '<?{ my $han = @handlers[' ~ $index ~ ']; ' ~
-                            '$han.signature.ACCEPTS($cap) || ' ~
-                            '!(@*BIND-FAILS.push($han.implementation, $cap)) }>'
-                    !! '';
-                my $make = '{ make (' ~ $index ~ ', $cap) }';
-                push @route-matchers, join " ",
-                    $segment-matcher, $method-check, $checks, $form-cap,
-                    $bind-check, $make;
+            for @handlers.kv -> Int $index, Handler $handler {
+                push @route-matchers, compile-route($index, $handler);
             }
-
             use MONKEY-SEE-NO-EVAL;
             push @route-matchers, '<!>';
             $!path-matcher = EVAL 'regex { ^ ' ~
@@ -514,6 +321,229 @@ module Cro::HTTP::Router {
                 ':my $cap; ' ~
                 '[ '  ~ @route-matchers.join(' | ') ~ ' ] ' ~
                 '$ }';
+        }
+
+        sub compile-route(Int $index, Handler $handler) {
+            # Things we need to do to prepare segments for binding and unpack
+            # request data.
+            my @checks;
+            my @make-tasks;
+
+            # If we need a signature bind test (due to subset/where).
+            my $need-sig-bind = False;
+
+            # The prefix is a set of segments that are part of the route
+            # that we match, but excluded from the invocation capture that
+            # we produce. These are used in include/delegate.
+            my @prefix = $handler.prefix.map({ "'$_'" });
+            my $prefix-elems = @prefix.elems;
+
+            # Positionals are URL segments, nameds are unpacks of other
+            # request data.
+            my $signature = $handler.signature;
+            my (:@positional, :@named) := $signature.params.classify:
+                { .named ?? 'named' !! 'positional' };
+
+            # If the first segment is an authorization constraint, extract
+            # and it and compile the check.
+            my $have-auth-param = False;
+            with @positional[0] -> $param {
+                if $param ~~ Auth || $param.type ~~ Cro::HTTP::Auth {
+                    @positional.shift;
+                    $have-auth-param = True;
+                    $need-sig-bind = True;
+                }
+            }
+
+            # Compile segments definition into a matcher.
+            my @segments-required;
+            my @segments-optional;
+            my $segments-terminal = '';
+
+            sub match-types($type,
+                            :$lookup, :$target-name,
+                            :$seg-index, :@matcher-target, :@constraints) {
+                my constant @types = int8, int16, int32, int64, uint8, uint16, uint32, uint64;
+                for @types {
+                    if $type === $_ {
+                        if $lookup {
+                            pack-range($type.^nativesize, !$type.^unsigned,
+                                       target => $lookup, :$target-name);
+                        } else {
+                            pack-range($type.^nativesize, !$type.^unsigned,
+                                       :$seg-index, :@matcher-target, :@constraints);
+                        }
+                        return True;
+                    }
+                }
+                False;
+            }
+
+            sub pack-range($bits, $signed,
+                           :$target, :$target-name, # named
+                           :$seg-index, :@matcher-target, :@constraints) {
+                my $bound = 2 ** ($bits - 1);
+
+                if $target.defined && $target-name.defined {
+                    push @checks, '(with ' ~ $target ~ ' { ' ~
+                                           ( if $signed {
+                                                   -$bound ~ ' <= $_ <= ' ~ $bound - 1
+                                               } else {
+                                                 '0 <= $_ <= ' ~ 2 ** $bits - 1
+                                             }
+                                           )
+                                           ~ '|| !($*MISSING-UNPACK = True)'
+                                           ~ ' } else { True })';
+                    # we coerce to Int here for two reasons:
+                    # * Str cannot be coerced to native types;
+                    # * We already did a range check;
+                    @make-tasks.push: '%unpacks{Q[' ~ $target-name ~ ']} = .Int with ' ~ $target;
+                } else {
+                    my Str $range = $signed ?? -$bound ~ ' <= $_ <= ' ~ $bound - 1 !! '0 <= $_ <= ' ~ 2 ** $bits - 1;
+                    my Str $check = '<?{('
+                                  ~ Q:c/with @segs[{$prefix-elems + $seg-index}]/
+                                  ~ ' {( '~ $range
+                                  ~ ' )} else { True }) }>';
+                    @matcher-target.push: Q['-'?\d+:] ~ $check;
+                    @make-tasks.push: Q:c/.=Int with @segs[{$prefix-elems + $seg-index}]/;
+                    $need-sig-bind = True if @constraints;
+                }
+            }
+
+            for @positional.kv -> $seg-index, $param {
+                if $param.slurpy {
+                    $segments-terminal = '{} .*:';
+                }
+                else {
+                    my @matcher-target := $param.optional
+                        ?? @segments-optional
+                        !! @segments-required;
+                    my $type := $param.type;
+                    my @constraints = extract-constraints($param);
+                    if $type =:= Mu || $type =:= Any || $type =:= Str {
+                        if @constraints == 1 && @constraints[0] ~~ Str:D {
+                            # Literal string constraint; matches literally.
+                            @matcher-target.push("'&encode(@constraints[0])'");
+                        }
+                        else {
+                            # Any match will do, but need bind check.
+                            @matcher-target.push('<-[/]>+:');
+                            $need-sig-bind = True;
+                        }
+                    }
+                    elsif $type =:= Int || $type =:= UInt {
+                        @matcher-target.push(Q['-'?\d+:]);
+                        my Str $coerce-prefix = $type =:= Int ?? '.=Int' !! '.=UInt';
+                        @make-tasks.push: $coerce-prefix ~
+                            Q:c/ with @segs[{$prefix-elems + $seg-index}]/;
+                        $need-sig-bind = True if @constraints;
+                    }
+                    else {
+                        my $matched = match-types($type, :$seg-index,
+                                                  :@matcher-target, :@constraints);
+                        die "Parameter type $type.^name() not allowed on a request unpack parameter" unless $matched;
+                    }
+                }
+            }
+            my $segment-matcher = " '/' " ~
+                (flat @prefix, @segments-required).join(" '/' ") ~
+                @segments-optional.map({ "[ '/' $_ " }).join ~ (' ]? ' x @segments-optional) ~
+                $segments-terminal;
+
+            # Turned nameds into unpacks.
+            for @named -> $param {
+                my $target-name = $param.named_names[0];
+                my ($exists, $lookup) = do given $param {
+                    when Cookie {
+                        '$req.has-cookie(Q[' ~ $target-name ~ '])',
+                        '$req.cookie-value(Q[' ~ $target-name ~ '])'
+                    }
+                    when Header {
+                        '$req.has-header(Q[' ~ $target-name ~ '])',
+                        '$req.header(Q[' ~ $target-name ~ '])'
+                    }
+                    default {
+                        '$req.query-hash{Q[' ~ $target-name ~ ']}:exists',
+                        '$req.query-value(Q[' ~ $target-name ~ '])'
+                    }
+                }
+                unless $param.optional {
+                    push @checks, '(' ~ $exists ~ ' || !($*MISSING-UNPACK = True))';
+                }
+
+                my $type := $param.type;
+                if $type =:= Mu || $type =:= Any || $type =:= Str {
+                    push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $_ with ' ~ $lookup;
+                }
+                elsif $type =:= Int || $type =:= UInt {
+                    push @checks, '(with ' ~ $lookup ~ ' { so /^"-"?\d+$/ } else { True })';
+                    push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = ' ~
+                                                    ($type =:= Int ?? '.Int' !! '.UInt')
+                                                    ~ ' with ' ~ $lookup;
+                }
+                elsif $type =:= Positional {
+                    given $param {
+                        when Header {
+                            push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $req.headers';
+                        }
+                        when Cookie {
+                            die "Cookies cannot be extracted to List. Maybe you want '%' instead of '@'";
+                        }
+                        default {
+                            push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $req.query-hash.List';
+                        }
+                    }
+                }
+                elsif $type =:= Associative {
+                    given $param {
+                        when Cookie {
+                            push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $req.cookie-hash';
+                        }
+                        when Header {
+                            push @make-tasks,
+                            'my %result;'
+                                ~ '$req.headers.map({ %result{$_.name} = $_.value });'
+                                ~ '%unpacks{Q['
+                                ~ $target-name
+                                ~ ']} = %result;';
+                        }
+                        default {
+                            push @make-tasks, '%unpacks{Q[' ~ $target-name ~ ']} = $req.query-hash'
+                        }
+                    }
+                }
+                else {
+                    my $matched = match-types($type, :$lookup, :$target-name);
+                    die "Parameter type $type.^name() not allowed on a request unpack parameter" unless $matched;
+                }
+                $need-sig-bind = True if extract-constraints($param);
+            }
+
+            my $method-check = $handler.can('method')
+                ?? '<?{ $req.method eq "' ~ $handler.method ~
+                    '" || !($*WRONG-METHOD = True) }>'
+                !! '';
+            my $checks = @checks
+                ?? '<?{ ' ~ @checks.join(' and ') ~ ' }>'
+                !! '';
+            my $form-cap = '{ my %unpacks; ' ~ @make-tasks.join(';') ~
+                '; $cap = Capture.new(:list(' ~
+                ($have-auth-param
+                    ?? '$req.auth' ~ (@positional ?? ', |' !! ',')
+                    !! '') ~
+                (@positional == 0
+                    ?? ''
+                    !! '@segs' ~ ($prefix-elems ?? "[$prefix-elems..*]" !! "")) ~
+                '), :hash(%unpacks)); }';
+            my $bind-check = $need-sig-bind
+                ?? '<?{ my $han = @handlers[' ~ $index ~ ']; ' ~
+                        '$han.signature.ACCEPTS($cap) || ' ~
+                        '!(@*BIND-FAILS.push($han.implementation, $cap)) }>'
+                !! '';
+            my $make = '{ make (' ~ $index ~ ', $cap) }';
+            return join " ",
+                $segment-matcher, $method-check, $checks, $form-cap,
+                $bind-check, $make;
         }
 
         sub encode($target) {
@@ -525,13 +555,13 @@ module Cro::HTTP::Router {
                         !! $encodee.encode('utf-8').list.map({ '%' ~ .base(16) }).join
             }
         }
-    }
 
-    sub extract-constraints(Parameter:D $param) {
-        my @constraints;
-        sub extract($v --> Nil) { @constraints.push($v) }
-        extract($param.constraints);
-        return @constraints;
+        sub extract-constraints(Parameter:D $param) {
+            my @constraints;
+            sub extract($v --> Nil) { @constraints.push($v) }
+            extract($param.constraints);
+            return @constraints;
+        }
     }
 
     sub route(&route-definition) is export {
@@ -561,11 +591,11 @@ module Cro::HTTP::Router {
         $*CRO-ROUTE-SET.add-handler('PATCH', &handler);
     }
 
-    sub body-parser(Cro::HTTP::BodyParser $parser --> Nil) is export {
+    sub body-parser(Cro::BodyParser $parser --> Nil) is export {
         $*CRO-ROUTE-SET.add-body-parser($parser);
     }
 
-    sub body-serializer(Cro::HTTP::BodySerializer $serializer --> Nil) is export {
+    sub body-serializer(Cro::BodySerializer $serializer --> Nil) is export {
         $*CRO-ROUTE-SET.add-body-serializer($serializer);
     }
 
@@ -630,7 +660,7 @@ module Cro::HTTP::Router {
                         $*CRO-ROUTE-SET.delegate([$prefix], $transform);
                     }
                     default {
-                        die "Paris passed to 'delegate' must have a Str or Iterable key, not " ~ .^name;
+                        die "Pairs passed to 'delegate' must have a Str or Iterable key, not " ~ .^name;
                     }
                 }
             }
@@ -791,6 +821,35 @@ module Cro::HTTP::Router {
         my $resp = $*CRO-ROUTER-RESPONSE //
             die X::Cro::HTTP::Router::OnlyInHandler.new(:what<content>);
         $resp.status = $status;
+    }
+
+    sub push-promise(Str $path, :$headers) is export {
+        with $headers {
+            if $headers ~~ Hash {
+                push-promise-internal($path, $headers.List)
+            } elsif $headers ~~ List {
+                push-promise-internal($path, $headers)
+            } else {
+                die "push-promise headers argument must be a Hash or a List, got {$headers.^name} instead";
+            }
+        }
+        else {
+            push-promise-internal($path, []);
+        }
+    }
+    sub push-promise-internal(Str $path, @headers) {
+        my $resp = $*CRO-ROUTER-RESPONSE //
+            die X::Cro::HTTP::Router::OnlyInHandler.new(:what<push-promise>);
+        # TODO: We don't set http-version anywhere really, so check a request instead.
+        # To fix we need to introduce some rules to set appropriate http version
+        # during $*CRO-ROUTER-RESPONSE creation.
+        return unless ($*CRO-ROUTER-REQUEST.http-version // '') eq '2.0';
+        $resp.http-version = '2.0';
+        # TODO: target resolution
+        my $pp = Cro::HTTP::PushPromise.new(:method<GET>,
+                                            target => $path);
+        $pp.append-header($_) for @headers;
+        $resp.add-push-promise($pp);
     }
 
     my class BeforeMiddleTransform does Cro::HTTP::Middleware::Conditional {
