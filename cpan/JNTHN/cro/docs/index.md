@@ -42,6 +42,8 @@ Server side:
 
 * [Cro::HTTP::Router](docs/reference/cro-http-router)
 * [Cro::HTTP::Server](docs/reference/cro-http-server)
+* [Cro::HTTP::Middleware](docs/reference/cro-http-middleware)
+* [HTTP Sessions and Authentication](docs/http-auth-and-sessions)
 
 Requests, responses, and related types:
 

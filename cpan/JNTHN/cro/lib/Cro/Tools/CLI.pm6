@@ -27,7 +27,6 @@ multi MAIN('stub', Str $service-type, Str $id, Str $path, $options = '') {
     %options .= grep({ not .key eq 'link' });
 
     my (@generated-links, @links);
-    say @option-links;
     populate-links(@option-links, @generated-links, @links);
 
     my @templates = get-available-templates(Cro::Tools::Template);
@@ -184,13 +183,13 @@ multi MAIN('services') {
 }
 
 multi MAIN('link', 'add', $from-service-id, $to-service-id, $to-endpoint-id?) {
-    add-link($from-service-id, $to-service-id, $to-endpoint-id);
+    say add-link($from-service-id, $to-service-id, $to-endpoint-id);
 }
 multi MAIN('link', 'show', $service-id?) {
     show-link($service-id);
 }
 multi MAIN('link', 'code', $from-service-id, $to-service-id, $to-endpoint-id?) {
-    code-link($from-service-id, $to-service-id, $to-endpoint-id);
+    say code-link($from-service-id, $to-service-id, $to-endpoint-id);
 }
 multi MAIN('link', 'rm', $from-service-id, $to-service-id, $to-endpoint-id?) {
     rm-link($from-service-id, $to-service-id, $to-endpoint-id);

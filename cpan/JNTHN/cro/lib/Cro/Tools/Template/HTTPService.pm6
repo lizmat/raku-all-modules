@@ -47,15 +47,18 @@ class Cro::Tools::Template::HTTPService does Cro::Tools::Template does Cro::Tool
 
     method generate(IO::Path $where, Str $id, Str $name,
                     %options, $generated-links, @links) {
-        my $lib = $where.add('lib');
-        mkdir $lib;
+        my %dir = self.make-directories($where);
         self.write-fake-tls($where) if %options<secure>;
-        self.write-app-module($lib.add('Routes.pm6'), $name, %options<websocket>, $generated-links);
+        self.write-app-module(%dir<lib>.add('Routes.pm6'), $name, %options<websocket>, $generated-links);
         self.generate-common($where, $id, $name, %options, $generated-links, @links);
     }
 
+    method new-directories($where) {
+        lib => $where.add('lib'),
+    }
+
     method write-fake-tls($where) {
-        my $res = $where.add('RESOURCES/');
+        my $res = $where.add('resources/');
         mkdir $res;
         mkdir $res.add('fake-tls');
         for <fake-tls/ca-crt.pem fake-tls/server-crt.pem fake-tls/server-key.pem> -> $fn {
@@ -68,16 +71,31 @@ class Cro::Tools::Template::HTTPService does Cro::Tools::Template does Cro::Tool
     method app-module-contents($name, $include-websocket, $links) {
         my $module = "use Cro::HTTP::Router;\n";
         $module ~= "use Cro::HTTP::Router::WebSocket;\n" if $include-websocket;
-        $module ~= "\nsub routes(";
-        $module ~= $links ?? ':' ~ $links.map({ .setup-variable }).join(', :') !! '';
-        $module ~= ") is export \{\n";
+
+        my $args = $links ?? ':' ~ $links.map({ .setup-variable }).join(', :') !! '';
+        my $static = self.static-routes($name, $include-websocket, $links);
+        my $websocket = $include-websocket ?? self.websocket-routes($name, $links) !! '';
         $module ~= q:s:to/CODE/;
+
+            sub routes($args) is export {
                 route {
+            $static$websocket    }
+            }
+            CODE
+
+        $module
+    }
+
+    method static-routes($name, $include-websocket, $links) {
+        q:s:to/CODE/;
                     get -> {
                         content 'text/html', "<h1> $name </h1>";
                     }
             CODE
-        $module ~= q:to/CODE/ if $include-websocket;
+    }
+
+    method websocket-routes($name, $links) {
+        q:to/CODE/;
 
                     my $chat = Supplier.new;
                     get -> 'chat' {
@@ -93,12 +111,6 @@ class Cro::Tools::Template::HTTPService does Cro::Tools::Template does Cro::Tool
                         }
                     }
             CODE
-        $module ~= q:s:to/CODE/;
-                }
-            }
-            CODE
-
-        $module
     }
 
     method write-app-module($file, $name, $include-websocket, $links) {
@@ -136,13 +148,13 @@ class Cro::Tools::Template::HTTPService does Cro::Tools::Template does Cro::Tool
                         private-key-file => %*ENV<{$env-name}_TLS_KEY> ||
                 CODE
             $entrypoint ~= Q:to/CODE/;
-                            %?RESOURCES<fake-tls/server-key.pem>,
+                            %?RESOURCES<fake-tls/server-key.pem> || "resources/fake-tls/server-key.pem",
                 CODE
             $entrypoint ~= q:c:to/CODE/;
                         certificate-file => %*ENV<{$env-name}_TLS_CERT> ||
                 CODE
             $entrypoint ~= Q:to/CODE/;
-                            %?RESOURCES<fake-tls/server-crt.pem>
+                            %?RESOURCES<fake-tls/server-crt.pem> || "resources/fake-tls/server-crt.pem",
                     ),
                 CODE
         }

@@ -1,7 +1,7 @@
 {
     "perl"          : "6.*",
     "name"          : "cro",
-    "version"       : "0.7.2",
+    "version"       : "0.7.3",
     "description"   : "Libraries and tools for building reactive services in Perl 6. This installs the cro command line and web tool, along with HTTP (including HTTPS and HTTP/2.0) and WebSocket support.",
     "tags"          : [ "HTTP", "WebSocket" ],
     "authors"       : [ "Jonathan Worthington <jnthn@jnthn.net>" ],
@@ -27,6 +27,7 @@
                 "Cro::Tools::TemplateLocator": "lib/Cro/Tools/TemplateLocator.pm6",
                 "Cro::Tools::Template::Common": "lib/Cro/Tools/Template/Common.pm6",
                 "Cro::Tools::Template::HTTPService": "lib/Cro/Tools/Template/HTTPService.pm6",
+                "Cro::Tools::Template::ReactReduxSPA": "lib/Cro/Tools/Template/ReactReduxSPA.pm6",
                 "Cro::Tools::Template::ZeroMQWorkSinkService": "lib/Cro/Tools/Template/ZeroMQWorkSinkService.pm6",
                 "Cro::Tools::Template::ZeroMQWorkerService": "lib/Cro/Tools/Template/ZeroMQWorkerService.pm6",
                 "Cro::Tools::Web": "lib/Cro/Tools/Web.pm6"

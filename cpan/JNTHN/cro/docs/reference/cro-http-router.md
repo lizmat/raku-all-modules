@@ -602,8 +602,8 @@ argument.
 
 ## Adding custom response body serializers
 
-Custom body serializers implement the `Cro::HTTP::BodySerializer` role. They
-can decide when they are applicable by considering the type of the body and/or
+Custom body serializers implement the `Cro::BodySerializer` role. They can
+decide when they are applicable by considering the type of the body and/or
 the response headers (most typically the `content-type` header).
 
 Body serializers can be applied when configuring `Cro::HTTP::Server`, in which
@@ -667,6 +667,60 @@ However, given differing interpretations by different user-agents, it is wise
 to instead use:
 
     cache-control :no-store, :no-cache;
+
+## Push Promises
+
+**Upcoming Feature::** *This section describes a feature that will be included
+in an upcoming Cro release.*
+
+HTTP/2.0 allows the response to include push promises. A push promise is used
+to push content associated with the response to the client. For example, CSS,
+JavaScript, or images needed for a page might be pushed, so as to save the
+client from needing to request them as it parses the page.
+
+The `push-promise` function provided by the router is the most convenient way
+to include a push promise with the current response. The simplest approach is
+to call it with the route of the resource to respond with:
+
+```
+get -> {
+    push-promise '/css/main.css';
+    content 'text/html', $some-content;
+}
+get 'css', *@path {
+    cache-control :public, :maxage(300);
+    static 'assets/css', @path;
+}
+```
+
+In the case that the route is reached via an `include` or `delegate` with a
+prefix, the leading `/` will be interpreted as relative the enclosing `route`
+block (put another way, any prefixes will be prepended to form the URL that
+is being promised).
+
+Push promises are processed like requests; they are emitted by the HTTP/2.0
+message parser, and thus will go through all middleware that a normal request
+would.
+
+By default, no headers are included in the push promise request. To include
+them, pass the `headers` named parameter, with either a `Hash` or a `List` of
+`Pair` (the latter form exists in case header ordering or multiple headers of
+the same name are desired). To simply pass on any headers as they appear in
+the request currently being processed, use `*` as the value; if the current
+request doesn't have such a header, it will not be included into the push
+promise.
+
+```
+get -> {
+    push-promise '/js/strings.js', headers => {
+        Accept-language => *
+    };
+    content 'text/html', $some-content;
+}
+```
+
+In the case that the request currently being processed was not a HTTP/2.0
+request, the `push-promise` function does nothing.
 
 ## Composing routers
 
@@ -810,8 +864,8 @@ bit worse.
 In Cro, middleware is a component in the request processing pipeline. It may
 be installed at the server level (see `Cro::HTTP::Server` for more), but also
 per `route` block using the `before` and `after` functions. For readers new to
-middleware in Cro, the [HTTP middleware guide](docs/cro-http-middleware) gives
-an overview of what middleware is, and the trade-offs between the different
+middleware in Cro, the [HTTP middleware guide](docs/reference/cro-http-middleware)
+gives an overview of what middleware is, and the trade-offs between the different
 ways of writing and using HTTP middleware in Cro.
 
 The `before` function is used to install middleware that operates on requests
