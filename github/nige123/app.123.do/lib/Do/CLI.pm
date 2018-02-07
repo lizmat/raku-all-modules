@@ -46,7 +46,7 @@ sub USAGE is export {
         shell> 123 rm 777 888                           # delete tasks with id 777 and 888
 
         shell> 123 find <search terms>                  # search for matching entries
-        shell> 123 edit                                 # use your $EDITOR to make bulk changes
+        shell> 123 edit                                 # 'jmp' to your editor to make bulk changes
         shell> 123 edit 777                             # edit task with id 777
 
     USAGE
