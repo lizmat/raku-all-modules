@@ -27,12 +27,14 @@ Serialise::Map - a composable interface for serialising objects
 
   my $obj = Foo.new( :value('Bar') );
 
+  # Test your implementations!
   is-deeply $obj.to-map, $obj.from-map($obj.to-map), "";
 
 =head1 DESCRIPTION
 
 Serialise::Map is a simple interface that specifies a simple contract.
 I can give you a map, which represents my current state and consume a map to recreate my current state.
+Although round trip safe behaviour is not guaranteed it is probably expected so it is recommended for your users to keep this in mind.
 
 
 =head1 AUTHOR
