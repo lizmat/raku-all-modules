@@ -5,7 +5,8 @@
   "build-depends" : [ ],
   "depends" : [
     "Serialise::Map",
-    "Result"
+    "Result",
+    "JSON::Tiny"
   ],
   "description" : "A flexible yet accurate music representation system.",
   "license" : "Artistic-2.0",
@@ -22,7 +23,6 @@
     "ScaleVec::Chord::System" : "lib/ScaleVec/Chord/System.pm6",
     "ScaleVec::Chord::System::Foundation" : "lib/ScaleVec/Chord/System/Foundation.pm6",
     "ScaleVec::Chord::System::Foundation::Element" : "lib/ScaleVec/Chord/System/Foundation/Element.pm6",
-    "ScaleVec::Chord::Utils" : "lib/ScaleVec/Chord/Utils.pm6",
     "ScaleVec::Chord::Voicer" : "lib/ScaleVec/Chord/Voicer.pm6",
     "ScaleVec::Network" : "lib/ScaleVec/Network.pm6",
     "ScaleVec::Scale" : "lib/ScaleVec/Scale.pm6",
@@ -44,5 +44,5 @@
     "Transposition"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.3"
 }
