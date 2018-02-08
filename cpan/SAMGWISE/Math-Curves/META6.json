@@ -1,0 +1,26 @@
+{
+  "authors" : [
+    "Sam Gillespie"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Simple functions for simple curves.",
+  "license" : "Artistic-2.0",
+  "name" : "Math::Curves",
+  "perl" : "6.c",
+  "provides" : {
+    "Math::Curves" : "lib/Math/Curves.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/samgwise/p6-Math-Curves.git",
+  "tags" : [
+    "Math",
+    "Geometry",
+    "Trajectory",
+    "Simple",
+    "Plot",
+    "Length"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
