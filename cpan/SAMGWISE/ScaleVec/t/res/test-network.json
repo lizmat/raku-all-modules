@@ -1,0 +1,52 @@
+{
+  "goals" : [ ],
+  "rhythm" : {
+    "repeat-interval" : 800,
+    "vector" : [
+      0
+    ]
+  },
+  "pitch" : {
+    "repeat-interval" : 1,
+    "vector" : [
+      44
+    ]
+  },
+  "nested" : [
+    {
+      "goals" : [
+        {
+          "values" : {
+            "pitch" : 0
+          },
+          "delta" : 0
+        },
+        {
+          "values" : {
+            "pitch" : 1
+          },
+          "delta" : 1
+        },
+        {
+          "values" : {
+            "pitch" : 2
+          },
+          "delta" : 2
+        }
+      ],
+      "pitch" : {
+        "repeat-interval" : 12,
+        "vector" : [
+          0,
+          2,
+          4,
+          5,
+          7,
+          9,
+          11
+        ]
+      },
+      "nested" : [ ]
+    }
+  ]
+}

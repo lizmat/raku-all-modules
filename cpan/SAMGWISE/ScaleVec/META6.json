@@ -1,0 +1,48 @@
+{
+  "authors" : [
+    "Sam Gillespie"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Serialise::Map",
+    "Result"
+  ],
+  "description" : "A flexible yet accurate music representation system.",
+  "license" : "Artistic-2.0",
+  "name" : "ScaleVec",
+  "perl" : "6.c",
+  "provides" : {
+    "ScaleVec" : "lib/ScaleVec.pm6",
+    "ScaleVec::Chord::Graph" : "lib/ScaleVec/Chord/Graph.pm6",
+    "ScaleVec::Chord::Map" : "lib/ScaleVec/Chord/Map.pm6",
+    "ScaleVec::Chord::Set" : "lib/ScaleVec/Chord/Set.pm6",
+    "ScaleVec::Chord::Set::Major" : "lib/ScaleVec/Chord/Set/Major.pm6",
+    "ScaleVec::Chord::Set::Minor::Harm" : "lib/ScaleVec/Chord/Set/Minor/Harm.pm6",
+    "ScaleVec::Chord::Set::Minor::Nat" : "lib/ScaleVec/Chord/Set/Minor/Nat.pm6",
+    "ScaleVec::Chord::System" : "lib/ScaleVec/Chord/System.pm6",
+    "ScaleVec::Chord::System::Foundation" : "lib/ScaleVec/Chord/System/Foundation.pm6",
+    "ScaleVec::Chord::System::Foundation::Element" : "lib/ScaleVec/Chord/System/Foundation/Element.pm6",
+    "ScaleVec::Chord::Utils" : "lib/ScaleVec/Chord/Utils.pm6",
+    "ScaleVec::Chord::Voicer" : "lib/ScaleVec/Chord/Voicer.pm6",
+    "ScaleVec::Network" : "lib/ScaleVec/Network.pm6",
+    "ScaleVec::Scale" : "lib/ScaleVec/Scale.pm6",
+    "ScaleVec::Scale::EqualTemperment" : "lib/ScaleVec/Scale/EqualTemperment.pm6",
+    "ScaleVec::Scale::Fence" : "lib/ScaleVec/Scale/Fence.pm6",
+    "ScaleVec::Scale::Intervalic" : "lib/ScaleVec/Scale/Intervalic.pm6",
+    "ScaleVec::Scale::Stack" : "lib/ScaleVec/Scale/Stack.pm6",
+    "ScaleVec::Utils" : "lib/ScaleVec/Utils.pm6",
+    "ScaleVec::Vector" : "lib/ScaleVec/Vector.pm6",
+    "ScaleVec::Vectorable" : "lib/ScaleVec/Vectorable.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/samgwise/p6-ScaleVec.git",
+  "tags" : [
+    "Music",
+    "Scale",
+    "Chord",
+    "Rhythmn",
+    "Transposition"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
