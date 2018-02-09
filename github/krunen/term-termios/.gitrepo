@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/krunen/term-termios.git
 	branch = master
-	commit = 6f58e904d768f09967ca7023b832101041806b5e
-	parent = 57eda73b8a22694e83ae358e367940160a061b76
+	commit = f4c84e1d95cb11be7655c489d2e470011ff269c8
+	parent = 665c8342c27cfdd68da57c1c9f8df77e616b02ee
 	cmdver = 0.4.0

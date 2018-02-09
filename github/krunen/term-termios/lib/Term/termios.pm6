@@ -142,9 +142,33 @@ class Term::termios is repr('CStruct') {
   sub tcgetattr(int32, Term::termios) returns int32 is native {*}
   sub tcsetattr(int32, int32, Term::termios) returns int32 is native {*}
   sub cfmakeraw(Term::termios) is native {*}
+  my constant $library = %?RESOURCES<libraries/myhelper>.Str;
+
+  class termios_constants is repr('CPointer') {};
+  sub termios_create_constant() returns termios_constants is native($library) {*}
+  sub termios_get_next_constant(termios_constants) returns termios_constants is native($library) {*}
+  sub termios_get_name(termios_constants) returns Str is native($library) {*}
+  sub termios_get_value(termios_constants) returns int64 is native($library) {*}
+
+  method !overwrite_constant {
+      my $p = termios_create_constant();
+      loop {
+          my Str $name = termios_get_name($p);
+          my Int $value = termios_get_value($p);
+          last unless $name.defined;
+
+          %iflags{$name} = $value if %iflags{$name}:exists;
+          %oflags{$name} = $value if %oflags{$name}:exists;
+          %cflags{$name} = $value if %cflags{$name}:exists;
+          %lflags{$name} = $value if %lflags{$name}:exists;
+
+          $p = termios_get_next_constant($p);
+      }
+  }
 
   submethod BUILD(:$fd) {
     $!fd = $fd;
+    self!overwrite_constant;
   }
 
   method getattr () {
