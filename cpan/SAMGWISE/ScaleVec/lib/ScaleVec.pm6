@@ -2,7 +2,7 @@ use v6.c;
 use ScaleVec::Vector;
 use Serialise::Map;
 
-unit class ScaleVec:ver<0.0.3> does ScaleVec::Vector does Serialise::Map;
+unit class ScaleVec:ver<0.0.4> does ScaleVec::Vector does Serialise::Map;
 use ScaleVec::Scale;
 use ScaleVec::Vectorable;
 

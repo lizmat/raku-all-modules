@@ -30,7 +30,6 @@
     "ScaleVec::Scale::Fence" : "lib/ScaleVec/Scale/Fence.pm6",
     "ScaleVec::Scale::Intervalic" : "lib/ScaleVec/Scale/Intervalic.pm6",
     "ScaleVec::Scale::Stack" : "lib/ScaleVec/Scale/Stack.pm6",
-    "ScaleVec::Utils" : "lib/ScaleVec/Utils.pm6",
     "ScaleVec::Vector" : "lib/ScaleVec/Vector.pm6",
     "ScaleVec::Vectorable" : "lib/ScaleVec/Vectorable.pm6"
   },
@@ -44,5 +43,5 @@
     "Transposition"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.3"
+  "version" : "0.0.4"
 }
