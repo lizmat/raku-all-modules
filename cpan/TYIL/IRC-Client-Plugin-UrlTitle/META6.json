@@ -3,6 +3,7 @@
   "depends": [
     "HTML::Parser::XML",
     "HTTP::UserAgent",
+    "IO::Socket::SSL",
     "IRC::Client",
     "IRC::TextColor",
     "URL::Find"
@@ -21,5 +22,5 @@
   "tags": [
     
   ],
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
