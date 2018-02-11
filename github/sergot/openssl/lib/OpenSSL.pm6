@@ -214,14 +214,17 @@ multi method write(Blob $b) {
 
 method read(Int $n, Bool :$bin) {
     my int32 $count = $n;
-    my $carray = buf8.allocate($n);
+    my $carray = buf8.allocate($n min 16384);
     my $total-read = 0;
     my $buf = buf8.new;
     loop {
         my $read = OpenSSL::SSL::SSL_read($!ssl, $carray, $count - $total-read);
 
-        $total-read += $read if $read > 0;
-        $buf ~= $carray.subbuf(0, $read) if $read > 0;
+        if $read > 0 {
+            $buf.reallocate($total-read + $read);
+            $buf.splice($total-read, $read, $carray.subbuf(0, $read));
+            $total-read += $read;
+        }
 
         last if $total-read >= $n;
 
