@@ -1,3 +1,9 @@
+Release 0.0.7
+Add PDF function calculator and evaluate methods, classes:
+- PDF::Function::PostScript
+- PDF::Function::Sampled
+- PDF::Function::Exponential
+- PDF::Function::Stitching
 Release 0.0.6
 - Fix PDF::Page.Annots accessor. Now coerces fields to PDF::Field
 Release 0.0.5

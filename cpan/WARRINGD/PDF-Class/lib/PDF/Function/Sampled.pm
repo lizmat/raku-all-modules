@@ -23,4 +23,80 @@ class PDF::Function::Sampled
     has Numeric @.Decode is entry;        #| (Optional) An array of 2 × n numbers specifying the linear mapping of sample values into the range appropriate for the function’s output values. Default value: same as the value of Range.
 
     # (Optional) Other attributes of the stream that provides the sample values, as appropriate
+
+    use PDF::IO::Util :pack;
+    class Transform
+        is PDF::Function::Transform {
+        has UInt $.bpc is required;
+        has UInt @.size is required;
+        has Range @.encode = @!size.map: { 0..$_ };
+        has Range @.decode = self.range;
+        has Blob $.samples is required;
+        has UInt $!m;
+        has UInt $!n;
+
+        submethod TWEAK {
+            $!m = self.domain.elems;
+            $!n = self.range.elems;
+            die "size/domain lengths differ" unless +@!size == $!m;
+            die "encode/domain lengths differ" unless +@!encode == $!m;
+            die "decode/range lengths differ" unless +@!decode == $!n;
+        }
+
+        method !sample(\x, \y) {
+            # stub
+            my \r = $!n * $!m;
+            my \s0 = x + y;
+            my \s1 = x + y + r;
+            $!samples[s0] .. $!samples[s1];
+        }
+
+        method calc(@in where .elems == $!m) {
+            my Numeric @x = (@in.list Z @.domain).map: { $.clip(.[0], .[1]) };
+            my Numeric @e = (@x Z @.domain Z @!encode).map: { $.interpolate(.[0], .[1], .[2]) };
+            @e = (@e Z @!size).map: { $.clip(.[0], 0 .. (.[1]-1)) }
+            my @out;
+            my $fun0 = $!samples[0 ..^ $!n];
+            # todo: proper m-linear interpolation
+            # only interpolating (f000, f100, f010, f001..)
+
+            for 0 ..^ $!m -> \x {
+                my $s0 = (2 ** x) * $!n;
+                my $s1 = $s0 + $!n;
+                my $fun = $!samples[$s0 ..^ $s1];
+                for 0 ..^ $!n -> \y {
+                    given $.interpolate(@e[x], @.domain[x], $fun0[y] .. $fun[y]) {
+                        @out[y] += $.interpolate($_, 0 .. 2 ** $!bpc - 1, @!decode[y]);
+                    }
+                }
+            }
+            # map input values into sample array
+            [(@out Z @.range).map: { $.clip(.[0], .[1]) }];
+        }
+    }
+    method calculator {
+        my Range @domain = @.Domain.map: -> $a, $b { Range.new($a, $b) };
+        my Range @range = @.Range.map: -> $a, $b { Range.new($a, $b) };
+        my @size = @.Size;
+        my Range @encode = do with $.Encode {
+            .keys.map: -> $k1, $k2 { .[$k1] .. .[$k2] }
+        }
+        else {
+            @size.map: { 0 .. ($_-1) };
+        }
+        my Range @decode = do with $.Decode {
+            .keys.map: -> $k1, $k2 { .[$k1] .. .[$k2] }
+        }
+        else {
+            @range;
+        }
+        my $bpc = $.BitsPerSample;
+        my Blob $samples = unpack($.decoded, $bpc);
+
+        Transform.new: :@domain, :@range, :@size, :@encode, :@decode, :$samples, :$bpc;
+    }
+    #| run the calculator function
+    method calc(@in) {
+        $.calculator.calc(@in);
+    }
 }

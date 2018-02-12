@@ -38,6 +38,20 @@ class PDF::Function
 	PDF::DAO.loader.find-delegate( 'Function', $subtype );
     }
 
+    class Transform {
+        has Range @.domain is required;
+        has Range @.range is required;
+
+        method clip(Numeric $v, Range $r) {
+            min($r.max, max($r.min, $v));
+        }
+
+        method interpolate($x, Range \X, Range \Y) {
+            Y.min + ($x - X.min) * (Y.max - Y.min) / (X.max - X.min);
+        }
+
+    }
+
     method cb-init {
         for self.^mro {
             my Str $class-name = .^name;

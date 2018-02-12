@@ -2,7 +2,7 @@
 use v6;
 
 use PDF::Class;
-use PDF::Content;
+use PDF::Content::Graphics;
 use PDF::Annot;
 use PDF::Writer;
 
@@ -44,7 +44,7 @@ multi sub check(Hash $obj, UInt :$depth is copy = 0, Str :$ent = '') {
     my Str @unknown-entries;
 
     check-contents($obj, :$ref)
-	if $*contents && $obj.does(PDF::Content);
+	if $*contents && $obj.does(PDF::Content::Graphics);
 
     for $obj.keys.sort {
 

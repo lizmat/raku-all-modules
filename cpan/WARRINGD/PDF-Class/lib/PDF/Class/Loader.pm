@@ -113,7 +113,7 @@ PDF::DAO.loader = class PDF::Class::Loader
          && $t ~~ PDF::DAO::Name
          && $t eq 'CalGray'|'CalRGB'|'Lab'|'ICCBased';
         )
-        || ( 
+        || (
             #| PDF Spec 1.7 Section 4.5.5 Special Color Spaces
             3 <= $elems <= 5
             && $t ~~ PDF::DAO::Name
