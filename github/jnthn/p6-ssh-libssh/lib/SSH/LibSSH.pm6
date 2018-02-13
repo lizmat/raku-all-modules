@@ -190,6 +190,7 @@ class SSH::LibSSH {
         has Str $.user;
         has Str $!password;
         has Str $.private-key-file;
+        has Str $.private-key-file-password;
         has Int $.timeout;
         has LogLevel $!log-level;
         has &.on-server-unknown;
@@ -199,6 +200,7 @@ class SSH::LibSSH {
 
         submethod BUILD(Str :$!host!, Int :$!port = 22, Str :$!user = $*USER.Str,
                         Str :$!private-key-file = Str, Str :$!password = Str,
+                        Str :$!private-key-file-password = Str,
                         Int :$!timeout, LogLevel :$!log-level = None,
                         :&!on-server-unknown = &default-server-unknown,
                         :&!on-server-known-changed = &default-server-known-changed,
@@ -368,7 +370,7 @@ class SSH::LibSSH {
                 my $key-out = CArray[SSHKey].new;
                 $key-out[0] = SSHKey;
                 error-check("read private key file $_",
-                    ssh_pki_import_privkey_file($_, Str, Pointer, Pointer, $key-out));
+                    ssh_pki_import_privkey_file($_, $!private-key-file-password, Pointer, Pointer, $key-out));
                 $key = $key-out[0];
             }
 
