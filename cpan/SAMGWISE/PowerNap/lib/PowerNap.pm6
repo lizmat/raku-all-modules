@@ -1,5 +1,5 @@
 use v6.c;
-unit module PowerNap:ver<0.0.1>;
+unit module PowerNap:ver<0.0.2>;
 
 =begin pod
 
@@ -55,7 +55,7 @@ role Result does Serialise::Map {
   method is-ok( --> Bool) { ... }
   method is-err( --> Bool) { ... }
 
-  method to-map( --> Str) { %(:$!code, :$!payload) }
+  method to-map( --> Map) { %(:$!code, :$!payload) }
   method from-map(Map $map --> Result) { self.new(|$map) }
 }
 

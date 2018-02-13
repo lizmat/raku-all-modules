@@ -26,9 +26,10 @@ role PowerNap::Controller {
     try {
       CATCH {
         when X::TypeCheck {
+          warn $_.perl;
           return result-err(501, "Type error, this endpoint cannot accept the arguments provided. Please refer to your API documentation.")
         }
-        default {
+        when X::AdHoc {
           if .payload.starts-with('Required named parameter') {
             # Hack for handdling missing named parameters in a signiture
             return result-err(501, "Missing property error.\n{ .payload }.")
@@ -37,6 +38,10 @@ role PowerNap::Controller {
             warn $_.perl;
             return result-err(500, "This endpoint encountered an error when trying to service your request.")
           }
+        }
+        default {
+          warn $_.perl;
+          return result-err(500, "This endpoint encountered an error when trying to service your request.")
         }
       }
 
