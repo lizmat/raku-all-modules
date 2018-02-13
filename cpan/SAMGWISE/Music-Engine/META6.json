@@ -1,0 +1,28 @@
+{
+  "authors" : [
+    "Sam Gillespie"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "ScaleVec",
+    "Math::Curves",
+    "Net::OSC"
+  ],
+  "description" : "Generate music in realtime",
+  "license" : "Artistic-2.0",
+  "name" : "Music::Engine",
+  "perl" : "6.c",
+  "provides" : {
+    "Music::Engine" : "lib/Music/Engine.pm6",
+    "Music::Engine::Conductor" : "lib/Music/Engine/Conductor.pm6",
+    "Music::Engine::CounterPoint" : "lib/Music/Engine/CounterPoint.pm6",
+    "Music::Engine::Generator::CurveMD" : "lib/Music/Engine/Generator/CurveMD.pm6",
+    "Music::Engine::Section" : "lib/Music/Engine/Section.pm6",
+    "Music::Engine::Section::Context" : "lib/Music/Engine/Section/Context.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/samgwise/p6-Music-Engine.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
