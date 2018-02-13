@@ -86,6 +86,46 @@ MeCab depends on the following:
 
 Once the build starts, it automatically downloads `mecab-0.996` and `mecab-ipadic-2.7.0-20070801` with `wget` and installs these stuffs under the `$HOME/.p6mecab` directory, where `$HOME` is your home directory.
 
+Use 3rd-party dictionary
+========================
+
+mecab-ipadic-neologd
+--------------------
+
+  * Step1: download and install neologd
+
+Example:
+
+    $ git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
+    $ cd mecab-ipadic-neologd
+    $ export PATH=$HOME/.p6mecab/bin:$PATH
+    $ ./bin/install-mecab-ipadic-neologd -p $HOME/.p6mecab/lib/mecab/dic/ipadic-neologd
+
+  * Step2: Use .new(:dicdir(PATH_TO_THE_DIR))
+
+Example:
+
+    use MeCab;
+    use MeCab::Tagger;
+
+    my Str $text = "トランプ大統領 ワシントンで大規模軍事パレードを指示";
+    my $mecab-tagger = MeCab::Tagger.new(:dicdir("$*HOME/.p6mecab/lib/mecab/dic/ipadic-neologd"));
+    loop ( my MeCab::Node $node = $mecab-tagger.parse-tonode($text); $node; $node = $node.next ) {
+           say ($node.surface, $node.feature).join("\t");
+    }
+
+    # OUTPUT«
+    #         BOS/EOS,*,*,*,*,*,*,*,*
+    # トランプ大統領  名詞,固有名詞,人名,一般,*,*,ドナルド・トランプ,トランプダイトウリョウ,トランプダイトウリョー
+    # ワシントン      名詞,固有名詞,地域,一般,*,*,ワシントン,ワシントン,ワシントン
+    # で      助詞,格助詞,一般,*,*,*,で,デ,デ
+    # 大規模  名詞,一般,*,*,*,*,大規模,ダイキボ,ダイキボ
+    # 軍事パレード    名詞,固有名詞,一般,*,*,*,軍事パレード,グンジパレード,グンジパレード
+    # を      助詞,格助詞,一般,*,*,*,を,ヲ,ヲ
+    # 指示    名詞,サ変接続,*,*,*,*,指示,シジ,シジ
+    #         BOS/EOS,*,*,*,*,*,*,*,*
+    # »
+
 AUTHOR
 ======
 
@@ -99,3 +139,4 @@ Copyright 2016 titsuki
 libmecab ( http://taku910.github.io/mecab/ ) by Taku Kudo is licensed under the GPL, LGPL or BSD Licenses.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
+

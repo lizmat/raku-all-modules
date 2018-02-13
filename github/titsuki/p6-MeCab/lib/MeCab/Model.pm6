@@ -1,5 +1,5 @@
 use v6;
-unit class MeCab::Model is repr('CPointer');
+unit class MeCab::Model:auth<titsuki>:ver<0.0.6> is repr('CPointer');
 
 use NativeCall;
 use MeCab::Tagger;
@@ -13,14 +13,42 @@ my sub mecab_model_new2(Str) returns MeCab::Model is native($library) { * }
 my sub mecab_model_new_tagger(MeCab::Model) returns MeCab::Tagger is native($library) { * }
 my sub mecab_model_new_lattice(MeCab::Model) returns MeCab::Lattice is native($library) { * }
 
-multi method new {
-    my Str $argv = "-C";
-    mecab_model_new2($argv)
+multi submethod new {
+    mecab_model_new2("-C")
 }
 
-multi method new(Str $extra-argv) {
-    my Str $argv = "-C " ~ $extra-argv;
-    mecab_model_new2($argv)
+multi submethod new(Str $argv) {
+    mecab_model_new2($argv);
+}
+
+multi submethod new(
+    Str :$rcfile,
+    Str :$dicdir,
+    Str :$userdic,
+) {
+    my @args;
+    @args.push('-C'); # allocate-sentence
+
+    if $rcfile.defined {
+        $rcfile.IO.f or die "$rcfile doesn't exist.";
+        $dicdir.defined or die ":rcfile requires :dicdir.";
+        $dicdir.IO.d or die "$dicdir doesn't exist.";
+
+        @args.push(sprintf('-r %s', $rcfile));
+    }
+
+    if $dicdir.defined {
+        $dicdir.IO.d or die "$dicdir doesn't exist.";
+
+        @args.push(sprintf('-d %s', $dicdir));
+    }
+
+    if $userdic.defined {
+        $userdic.IO.f or die "$userdic doesn't exist.";
+
+        @args.push(sprintf('-u %s', $userdic))
+    }
+    mecab_model_new2(@args.join(' '));
 }
 
 method create-tagger {

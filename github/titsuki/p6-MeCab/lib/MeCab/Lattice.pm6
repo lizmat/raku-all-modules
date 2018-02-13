@@ -2,7 +2,7 @@ use v6;
 use NativeCall;
 use experimental :pack;
 
-unit class MeCab::Lattice is repr('CPointer');
+unit class MeCab::Lattice:auth<titsuki>:ver<0.0.6> is repr('CPointer');
 
 use MeCab;
 

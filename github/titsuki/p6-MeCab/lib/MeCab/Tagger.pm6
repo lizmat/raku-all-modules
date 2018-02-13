@@ -1,5 +1,5 @@
 use v6;
-unit class MeCab::Tagger is repr('CPointer');
+unit class MeCab::Tagger:auth<titsuki>:ver<0.0.6> is repr('CPointer');
 
 use NativeCall;
 use MeCab;
@@ -23,12 +23,42 @@ my sub mecab_sparse_tostr3(MeCab::Tagger, size_t, Str, size_t, CArray[int8], siz
 my sub mecab_dictionary_info(MeCab::Tagger) returns MeCab::DictionaryInfo is native($library) { * }
 my sub mecab_strerror(MeCab::Tagger) returns Str is native($library) { * }
 
-multi method new(Str $arg) {
-    mecab_new2($arg);
+multi submethod new {
+    mecab_new2("-C");
 }
 
-multi method new {
-    mecab_new2("-C");
+multi submethod new(Str $argv) {
+    mecab_new2($argv);
+}
+
+multi submethod new(
+    Str :$rcfile,
+    Str :$dicdir,
+    Str :$userdic,
+) {
+    my @args;
+    @args.push('-C'); # allocate-sentence
+
+    if $rcfile.defined {
+        $rcfile.IO.f or die "$rcfile doesn't exist.";
+        $dicdir.defined or die ":rcfile requires :dicdir.";
+        $dicdir.IO.d or die "$dicdir doesn't exist.";
+
+        @args.push(sprintf('-r %s', $rcfile));
+    }
+
+    if $dicdir.defined {
+        $dicdir.IO.d or die "$dicdir doesn't exist.";
+
+        @args.push(sprintf('-d %s', $dicdir));
+    }
+
+    if $userdic.defined {
+        $userdic.IO.f or die "$userdic doesn't exist.";
+
+        @args.push(sprintf('-u %s', $userdic));
+    }
+    mecab_new2(@args.join(' '));
 }
 
 method version {

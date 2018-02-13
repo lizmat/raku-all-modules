@@ -3,8 +3,8 @@ use NativeCall;
 
 my constant $library = %?RESOURCES<libraries/mecab>.Str;
 
-class MeCab::Path is repr('CStruct') { ... }
-class MeCab::Node is repr('CStruct') is export {
+class MeCab::Path:auth<titsuki>:ver<0.0.6> is repr('CStruct') { ... }
+class MeCab::Node:auth<titsuki>:ver<0.0.6> is repr('CStruct') is export {
     enum Stat is export (
         :MECAB_NOR_NODE(0),
         :MECAB_UNK_NODE(1),
@@ -140,6 +140,45 @@ MeCab depends on the following:
 =item1 mecab-ipadic-2.7.0-20070801
 
 Once the build starts, it automatically downloads C<mecab-0.996> and C<mecab-ipadic-2.7.0-20070801> with C<wget> and installs these stuffs under the C<$HOME/.p6mecab> directory, where C<$HOME> is your home directory.
+
+=head1 Use 3rd-party dictionary
+
+=head2 mecab-ipadic-neologd
+
+=item1 Step1: download and install neologd
+
+Example:
+
+       $ git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
+       $ cd mecab-ipadic-neologd
+       $ export PATH=$HOME/.p6mecab/bin:$PATH
+       $ ./bin/install-mecab-ipadic-neologd -p $HOME/.p6mecab/lib/mecab/dic/ipadic-neologd
+
+
+=item1 Step2: Use .new(:dicdir(PATH_TO_THE_DIR))
+
+Example:
+
+       use MeCab;
+       use MeCab::Tagger;
+       
+       my Str $text = "トランプ大統領 ワシントンで大規模軍事パレードを指示";
+       my $mecab-tagger = MeCab::Tagger.new(:dicdir("$*HOME/.p6mecab/lib/mecab/dic/ipadic-neologd"));
+       loop ( my MeCab::Node $node = $mecab-tagger.parse-tonode($text); $node; $node = $node.next ) {
+              say ($node.surface, $node.feature).join("\t");
+       }
+       
+       # OUTPUT«
+       #         BOS/EOS,*,*,*,*,*,*,*,*
+       # トランプ大統領  名詞,固有名詞,人名,一般,*,*,ドナルド・トランプ,トランプダイトウリョウ,トランプダイトウリョー
+       # ワシントン      名詞,固有名詞,地域,一般,*,*,ワシントン,ワシントン,ワシントン
+       # で      助詞,格助詞,一般,*,*,*,で,デ,デ
+       # 大規模  名詞,一般,*,*,*,*,大規模,ダイキボ,ダイキボ
+       # 軍事パレード    名詞,固有名詞,一般,*,*,*,軍事パレード,グンジパレード,グンジパレード
+       # を      助詞,格助詞,一般,*,*,*,を,ヲ,ヲ
+       # 指示    名詞,サ変接続,*,*,*,*,指示,シジ,シジ
+       #         BOS/EOS,*,*,*,*,*,*,*,*
+       # »
 
 =head1 AUTHOR
 

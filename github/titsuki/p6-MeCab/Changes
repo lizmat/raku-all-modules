@@ -1,0 +1,43 @@
+Revision history for MeCab
+
+{{$NEXT}}
+
+0.0.6  2018-02-12T20:31:45+09:00
+    - Fixes:
+      - Fix constructor to introduce 3rd-party dictionary such as mecab-ipadic-neologd [#19]
+    - Additions:
+      - Add description to introduce mecab-ipadic-neologd [#19]
+    - Efficiency:
+
+0.0.5:
+    - Fixes:
+      - Use %vars<mecab> instead of if-else [#13]
+      - Use SPDX identifier in license field of META6.json [#14]
+      - Use zef instead of panda [#16]
+    - Additions:
+    - Efficiency:
+
+0.0.4:
+    - Fixes:
+      - Delete both all-begin-nodes and all-end-nodes method, because they call internal functions
+      - Add MeCab::Lattice.begin-nodes and MeCab::Lattice.end-nodes methods
+    - Additions:
+    - Efficiency:
+
+0.0.3:
+    - Fixes:
+      - Fix some typos
+      - Improve the documentation
+      - Make MeCab::Tagger.new multi method
+    - Additions:
+    - Efficiency:
+
+0.0.2:
+    - Fixes:
+      - Fix some typos
+      - Make patch license more clearly
+    - Additions:
+    - Efficiency:
+
+0.0.1:
+    - Initial release

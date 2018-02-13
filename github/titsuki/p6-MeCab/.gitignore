@@ -5,3 +5,7 @@
 /resources/*.so
 /resources/*.dylib
 .precomp/
+/mecab-ipadic*
+/mecab-*
+*.so
+*~
