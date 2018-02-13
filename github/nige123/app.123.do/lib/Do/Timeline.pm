@@ -69,7 +69,11 @@ class Do::Timeline does Do::Timeline::Viewport {
 
     submethod open-editor-at-line ($line-number = 1) {
 
-        # open at the line after NOW
+        # time may have passed since the last edit
+        # refresh the timeline view relative to NOW
+        self.load;
+        self.save;
+
         Do::Editor.new.open($!file, $line-number);
 
         # reload the 123.do file and save any changes
