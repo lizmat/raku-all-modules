@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/awwaiid/p6-lrep.git
 	branch = master
-	commit = 2164524b59a1a76ab5304ee76dca82cc6733fc25
-	parent = f187f4ea207e372c2f3c51564bcffa62598c5160
+	commit = 6e0eff5fd8eafd27d3bf246f96beabe5d4918653
+	parent = 6deb00f7221294e36c7be5343e618903c6345ee3
 	cmdver = 0.4.0
