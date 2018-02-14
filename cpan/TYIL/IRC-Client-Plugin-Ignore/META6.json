@@ -1,0 +1,22 @@
+{
+  "authors": "Patrick Spek <p.spek@tyil.work>",
+  "depends": [
+    "IRC::Client"
+  ],
+  "description": "Add an ignore list to IRC::Client",
+  "license": "GPL-3.0",
+  "meta-version": 0,
+  "name": "IRC::Client::Plugin::Ignore",
+  "perl": "6.c",
+  "provides": {
+    "IRC::Client::Plugin::Ignore": "lib/IRC/Client/Plugin/Ignore.pm6",
+    "IRC::Client::Plugin::Ignore::TargetList": "lib/IRC/Client/Plugin/Ignore/TargetList.pm6"
+  },
+  "resources": [
+    
+  ],
+  "tags": [
+    
+  ],
+  "version": "0.1.0"
+}
