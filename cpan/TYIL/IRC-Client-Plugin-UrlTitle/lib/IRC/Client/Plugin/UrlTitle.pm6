@@ -2,9 +2,9 @@
 
 use v6.c;
 
-use HTML::Parser::XML;
 use HTTP::UserAgent;
 use IRC::Client;
+use IRC::Client::Plugin::UrlTitle::TypeFormatters;
 use IRC::TextColor;
 use URL::Find;
 
@@ -50,22 +50,19 @@ class IRC::Client::Plugin::UrlTitle does IRC::Client::Plugin
 				return irc-style-text(~$_, :color<red>);
 			}
 
-			my $response = $!ua.get($url);
+			my HTTP::Response $response = $!ua.get($url);
 
-			if ($response.is-success) {
-				my HTML::Parser::XML $parser .= new;
-				$parser.parse($response.content);
+			return irc-style-text($response.status-line, :color<yellow>) unless $response.is-success;
 
-				my $head = $parser.xmldoc.root.elements(:TAG<head>, :SINGLE);
-				return "No title tag" if $head ~~ Bool;
+			my %headers = $response.header.hash;
 
-				my $title-tag = $head.elements(:TAG<title>, :SINGLE);
-				return "No title tag" if $title-tag ~~ Bool;
+			# It seems all headers are given as a list, so be sure to get the
+			# first element of the list if you want the actual value.
+			my $content-type = %headers<Content-Type>[0] // %headers<content-type>[0] // "";
 
-				return $title-tag.contents[0].text;
-			}
-
-			return irc-style-text($response.status-line, :color<yellow>),
+			# Use a multi sub format-type to give differing responses based on the
+			# Content-Type header.
+			return format-type($response, $content-type);
 		}
 	}
 

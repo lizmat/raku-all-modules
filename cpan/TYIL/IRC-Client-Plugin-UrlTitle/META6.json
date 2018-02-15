@@ -1,6 +1,7 @@
 {
   "authors": "Patrick Spek <p.spek@tyil.work>",
   "depends": [
+    "HTML::Entity",
     "HTML::Parser::XML",
     "HTTP::UserAgent",
     "IO::Socket::SSL",
@@ -14,7 +15,9 @@
   "name": "IRC::Client::Plugin::UrlTitle",
   "perl": "6.c",
   "provides": {
-    "IRC::Client::Plugin::UrlTitle": "lib/IRC/Client/Plugin/UrlTitle.pm6"
+    "IRC::Client::Plugin::UrlTitle": "lib/IRC/Client/Plugin/UrlTitle.pm6",
+    "IRC::Client::Plugin::UrlTitle::TypeFormatters": "lib/IRC/Client/Plugin/UrlTitle/TypeFormatters.pm6",
+    "IRC::Client::Plugin::UrlTitle::TypeFormatters::HTML": "lib/IRC/Client/Plugin/UrlTitle/TypeFormatters/HTML.pm6"
   },
   "resources": [
     
@@ -22,5 +25,5 @@
   "tags": [
     
   ],
-  "version": "1.0.1"
+  "version": "1.1.1"
 }
