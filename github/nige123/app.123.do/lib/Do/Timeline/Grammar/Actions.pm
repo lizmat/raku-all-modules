@@ -1,4 +1,3 @@
-#!/usr/bin/env perl6
 
 use Do::Timeline::Entry;
 
@@ -45,7 +44,6 @@ class Do::Timeline::Grammar::Actions {
     }
 
     method timeline-section ($/) {
-
         my $days-ago  = Date.today.daycount - $<heading><date>.made.daycount;
         my $days-away = $<heading><days-away>.made // Nil;
         
@@ -59,7 +57,6 @@ class Do::Timeline::Grammar::Actions {
                 daycount    => get-daycount($entry<entry-icon>.made, $<heading>, $entry<move-to-offset>.made)
             );
         }
-
         make @timeline-entries;
     } 
 

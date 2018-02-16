@@ -1,4 +1,3 @@
-#!/usr/bin/env perl6
 
 #use Grammar::Debugger; # uncomment this to turn on tracing
 use Do::Timeline::Grammar::Actions;

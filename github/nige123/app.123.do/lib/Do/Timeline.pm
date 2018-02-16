@@ -20,7 +20,6 @@ class Do::Timeline does Do::Timeline::Viewport {
     has %.entries;
 
     multi method add ($icon, $move-to-offset, $entry-text) {
-
         my $entry = Do::Timeline::Entry.new(
                        id       => self.new-entry-id, 
                        icon     => $icon, 
@@ -68,7 +67,6 @@ class Do::Timeline does Do::Timeline::Viewport {
     }
 
     submethod open-editor-at-line ($line-number = 1) {
-
         # time may have passed since the last edit
         # refresh the timeline view relative to NOW
         self.load;
@@ -79,26 +77,21 @@ class Do::Timeline does Do::Timeline::Viewport {
         # reload the 123.do file and save any changes
         self.load;
         self.save;
-
     }
 
     multi method edit (UInt $entry-id) {
-
         # where is entry-id in the file?
         my $entry-at-line = $.file.IO.slurp.match(/^ .*? '[' $entry-id ']'/).lines.elems // 1;    
         self.open-editor-at-line($entry-at-line);
-        
     }
     
     multi method edit {
-
         # which line is NOW on in the 123.do file?
         my $now-at-line = $.file.IO.slurp.match(/^.*?^^NOW/).lines.elems // 0;
         self.open-editor-at-line(1 + $now-at-line);
     }
 
     submethod estimate-tasks-per-day {
-
         my %past-entries = self.entries.values.map(*.Slip).grep(*.is-past).classify(*.daycount);
 
         # default to 6 tasks per day
@@ -108,7 +101,6 @@ class Do::Timeline does Do::Timeline::Viewport {
 
         # average daily velocity previously in the past    
         return @past-day-entry-counts.sum div @past-day-entry-counts.elems; 
-        
     }
 
     method find ($search-terms) {
@@ -138,7 +130,6 @@ class Do::Timeline does Do::Timeline::Viewport {
     }
 
     submethod limit-now-entries {
-
         my ($first-entry, @extra-now-entries) = |%!entries{Date.today.daycount}.grep(*.is-now);
         
         # move to later today
@@ -146,7 +137,6 @@ class Do::Timeline does Do::Timeline::Viewport {
     }
 
     submethod get-next-entries {
-
         my $today = Date.today.daycount;
         my @next-entries;
         
@@ -156,11 +146,11 @@ class Do::Timeline does Do::Timeline::Viewport {
             }
         }
         return @next-entries;
-
     }
 
     submethod limit-next-entries {
 
+        # apply a daily velocity to next entries - based on the estimated tasks per day
         return unless my @next-entries = self.get-next-entries;
 
         my $current-daycount        = Date.today.daycount;
@@ -168,7 +158,6 @@ class Do::Timeline does Do::Timeline::Viewport {
         my $current-day-spaces-left = $tasks-per-day;
 
         for @next-entries -> $next-entry {
-
             if $current-day-spaces-left {
                 $next-entry.set-daycount($current-daycount);
             }
@@ -189,7 +178,6 @@ class Do::Timeline does Do::Timeline::Viewport {
     }
 
     method load {
-
         self.init unless $.file.IO.e;
 
         %!entries = Do::Timeline::Grammar.parse-timeline($.file);     
@@ -202,11 +190,9 @@ class Do::Timeline does Do::Timeline::Viewport {
 
         # push entries onto the next day if greater than average daily velocity
         self.limit-next-entries;
-
     }
     
     method move ($entry-id, $icon, $move-to-offset = 0) {
-
         return unless my $entry = self.get-entry($entry-id);
 
         # remove the existing entry 
@@ -220,8 +206,7 @@ class Do::Timeline does Do::Timeline::Viewport {
                 text     => $entry.text,
                 daycount => get-daycount($icon, $move-to-offset)
             )
-        );         
-
+        );
         self.save;
     }
 
@@ -244,6 +229,5 @@ class Do::Timeline does Do::Timeline::Viewport {
     method save { 
         self.file.IO.spurt(self.render); 
     }
-
 }
 
