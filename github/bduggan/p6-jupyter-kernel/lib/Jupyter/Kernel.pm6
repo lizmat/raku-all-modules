@@ -90,10 +90,10 @@ method run($spec-file!) {
                 }
                 my %extra;
                 $status = 'error' with $result.exception;
-                $iopub.send: 'execute_input', { :$code, :$execution_count, :metadata(Hash.new()) };
+                $iopub.send: 'execute_input', { :$code, :$execution_count, :metadata(Hash.new()) }
                 if defined( $result.stdout ) {
                     if $result.stdout-mime-type eq 'text/plain' {
-                        $iopub.send: 'stream', { :text( $result.stdout ), :name<stdout> };
+                        $iopub.send: 'stream', { :text( $result.stdout ), :name<stdout> }
                     } else {
                         $iopub.send: 'display_data', {
                             :data( $result.stdout-mime-type => $result.stdout ),
@@ -110,7 +110,7 @@ method run($spec-file!) {
                 }
                 $iopub.send: 'status', { :execution_state<idle>, }
                 my $content = { :$status, |%extra, :$execution_count,
-                       user_variables => {}, payload => [], user_expressions => {} };
+                       user_variables => {}, payload => [], user_expressions => {} }
                 $shell.send: 'execute_reply',
                     $content,
                     :metadata({
@@ -129,7 +129,7 @@ method run($spec-file!) {
                 $status = 'invalid' if $result.exception;
                 $status = 'incomplete' if $result.incomplete;
                 debug "sending is_complete_reply: $status";
-                $shell.send: 'is_complete_reply', { :$status };
+                $shell.send: 'is_complete_reply', { :$status }
             }
             when 'complete_request' {
                 my $code = ~$msg<content><code>;
@@ -137,6 +137,7 @@ method run($spec-file!) {
                 my (Int $cursor_start, Int $cursor_end, $completions)
                     = $sandbox.completions($code,$cursor_pos);
                 $completions //= [];
+                $completions .= grep: *.defined;
                 $shell.send: 'complete_reply',
                       { matches => $completions,
                         :$cursor_end,
@@ -148,7 +149,7 @@ method run($spec-file!) {
             when 'shutdown_request' {
                 my $restart = $msg<content><restart>;
                 $restart = False;
-                $shell.send: 'shutdown_reply', { :$restart };
+                $shell.send: 'shutdown_reply', { :$restart }
                 exit;
             }
             when 'history_request' {

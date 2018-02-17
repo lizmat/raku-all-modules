@@ -3,11 +3,13 @@ use lib 'lib';
 use Test;
 use Jupyter::Kernel::Sandbox;
 use Jupyter::Kernel::Handler;
+use Log::Async;
+
+logger.send-to($*ERR);
 
 unless %*ENV<P6_JUPYTER_TEST_AUTOCOMPLETE> {
     plan :skip-all<Set P6_JUPYTER_TEST_AUTOCOMPLETE to run these>;
 }
-plan 16;
 
 unless %*ENV<MVM_SPESH_DISABLE> {
     diag "You may need to set MVM_SPESH_DISABLE=1 for these to pass";
@@ -42,7 +44,7 @@ is-deeply $completions, $('is-prime', ), 'method with a -';
 is-deeply $completions, $( 'is-prime', ), 'is-prime for a number';
 
 ($pos,$end,$completions) = $r.completions('if "hello world".sa');
-is-deeply $completions, $( 'say', ), 'say for a string';
+is-deeply $completions, $("samecase", "samemark", "samespace", "say"), 'string methods';
 
 $res = $r.eval('my $ghostbusters = 99', :store);
 is $res.output, 99, 'made a var';
@@ -51,13 +53,24 @@ is-deeply $completions, $( '$ghostbusters', ), 'completed a variable';
 is $pos, 4, 'position is correct';
 
 # Generate an error but still get something sane
-my $from-here = q[my $d = Flannel.new; $d.ch].chars;
-my $str = q[my $d = Flannel.new; $d.ch  and say 'ok'];
+$r.eval('class Flannel { }; my $d = Flannel.new;', :11store); 
+my $from-here = q[$d.c].chars;
+my $str = q[$d.c  and say 'ok'];
 ($pos,$end,$completions) = $r.completions($str,$from-here);
-is $completions, <chars chdir chmod chomp chop chr chrs>, 'got something sane despite error';
+is $completions, <cache can categorize classify clone collate combinations>, 'Mu class';
 
-$res = $r.eval(q|sub flubber { 99 };|, :11store );
+$res = $r.eval(q|sub flubber { 99 };|, :12store );
 ($pos,$end,$completions) = $r.completions('flubb');
 is-deeply $completions, [ <flubber>, ], 'found a subroutine declaration';
+
+{
+    my $str = '(1..100).';
+    $res = $r.eval(q|(1..100).|, :13store );
+    ($pos,$end,$completions) = $r.completions($str);
+    ok 'max' ∈ $completions, 'complete an expression';
+}
+
+
+done-testing;
 
 # vim: syn=perl6
