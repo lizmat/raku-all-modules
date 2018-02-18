@@ -246,21 +246,28 @@ class PDF::API6:ver<0.0.4>
         my PDF::Function::Sampled $function .= new: :%dict, :$encoded;
         PDF::DAO.coerce: [ :name<Separation>, :$name, :name($color.key), $function ];
     }
+
     method color-devicen(@colors) {
         my $nc = +@colors;
+        my @functions;
+        for @colors {
+            die "color is not a seperation"
+                unless $_ ~~ PDF::ColorSpace::Separation;
+            die "unsupported colorspace(s): {.[2]}"
+                unless .[2] ~~ 'DeviceCMYK';
+            my $function = .TintTransform.calculator;
+            die "unsupported colorspace transform: {.TintTransform.perl}"
+                unless $function.domain.elems == 1
+                && $function.range.elems == 4;
+            @functions.push: $function;
+        }
         my @Domain = flat (0, 1) xx $nc;
         my @Range = flat (0, 1) xx 4;
         my @Size = 2 xx $nc;
-        for @colors {
-           die "unsupported colorspace type: {.WHAT}"
-               unless $_ ~~ PDF::ColorSpace::Separation;
-        }
-        my @colorspaces = @colors>>.[2].unique;
-        die "unsupported colorspace(s): @colorspaces[]"
-            unless +@colorspaces == 1 && @colorspaces[0] eq 'DeviceCMYK';
 
-        # ported from Perl 5's PDF::API2::Resource::ColorSpace::DeviceN
-        my @xclr = @colors.map({ [ .[1], .[3], .[5], .[7] ] given .TintTransform.Range});
+        # create approximate compound function based on ranges only.
+        # Adapted from Perl 5's PDF::API2::Resource::ColorSpace::DeviceN
+        my @xclr = @functions.map: *.range>>.max;
         my constant Sampled = 2;
         my Numeric @spec[Sampled ** $nc;4];
 
@@ -269,22 +276,18 @@ class PDF::API6:ver<0.0.4>
                 my \factor = ($n div (Sampled**$xc)) % Sampled;
                 my @thiscolor = @xclr[$xc].map: { ($_ * factor)/(Sampled-1) };
                 for 0..3 -> $s {
-                    given @spec[$n;$s] {
-                        $_ += @thiscolor[$s];
-                        $_ = 1 if $_ > 1
-                    }
+                    @spec[$n;$s] += @thiscolor[$s];
                 }
             }
         }
 
-        my buf8 $buf .= new: @spec.flat.map: {($_ * 255).round};
-        my $decoded = $buf.decode('latin-1');
+        my buf8 $decoded .= new: @spec.flat.map: {(min($_,1.0) * 255).round};
 
         my %dict = :@Domain, :@Range, :@Size, :BitsPerSample(8), :Filter( :name<ASCIIHexDecode> );
         my @names = @colors.map: *.Name;
         my %Colorants = @names Z=> @colors;
 
         my PDF::Function::Sampled $function .= new: :%dict, :$decoded;
-        PDF::DAO.coerce: [ :name<DeviceN>, @names, @colorspaces[0], $function, { :%Colorants } ];
+        PDF::DAO.coerce: [ :name<DeviceN>, @names, :name<DeviceCMYK>, $function, { :%Colorants } ];
     }
 }

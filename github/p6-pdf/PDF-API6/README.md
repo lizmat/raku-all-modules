@@ -137,6 +137,8 @@ Some PDF::API2 features that are not yet available in PDF::API6
 
     - currently not supported are: TIFF, PNM and GIF images.
 
+- Fonts. A variety of formats are handled by the PDF::Font::Loader module (available on CPAN).  Font subsetting (to reduce PDF file sizes) is not yet implemented. 
+
 - Annotations
 
 - Outlines
@@ -170,7 +172,7 @@ Some PDF::API2 features that are not yet available in PDF::API6
     # Add a built-in font to the PDF
     $font = $pdf.core-font('Helvetica-Bold');
 
-    # Add an external TTF font to the PDF
+    # Add an external TrueType font to the PDF
     # (requires PDF::Font::Loader module)
     $font = PDF::Font::Loader.load-font: :file</path/to/font.ttf>;
     # (requires PDF::Font::Loader and fontconfig)
@@ -218,7 +220,7 @@ Opens an existing PDF or JSON file.
 
 Open an encrypted document:
 
-    PDF::API6.open( "enc.pdf", :password<shh1> );
+    PDF::API6.open( "enc.pdf", :password<sshh!> );
 
 
 Open a PDF, ignoring the cross reference index and stream lengths:
@@ -229,7 +231,7 @@ Open a PDF, ignoring the cross reference index and stream lengths:
 
 Performs a fast incremental save of a previously opened document.
 
-    PDF::API6 $pdf .= open('our/to/be/updated.pdf');
+    my PDF::API6 $pdf .= open('our/to/be/updated.pdf');
     #...
     $pdf.update();
 
@@ -237,7 +239,7 @@ Performs a fast incremental save of a previously opened document.
 
 Save the document to a file
 
-    PDF::API6 $pdf .= new;
+    my PDF::API6 $pdf .= new;
     #...
     $pdf.save-as: 'our/new.pdf';
 
@@ -378,8 +380,7 @@ Read/write accessor to rotate the page, clockwise. Angles must be multiples of 9
 
 ## Introduction to Graphics
 
-Graphics form the basis of PDF rendering and display. This includes text, images,
-graphics, colors and painting.
+Graphics form the basis of PDF rendering and display. This includes text, images, graphics, colors and painting.
 
 Each page has associated graphics these can be access by the`.gfx` method.
 
@@ -447,7 +448,7 @@ Note: other fonts can be loaded via the PDF::Font::Loader module:
     $gfx.text-position = 10,20;
     $gfx.say('text @10,20');
 
-Gets or sets the current text output position.
+Gets or sets the current text output position. Origin `(0, 0)` is at the bottom left corner.
 
 ### text-transform
 
@@ -704,28 +705,30 @@ These are identical to `FillColor`, and `FillAlpha`, except that they are applie
     $gfx.Rectangle(10,10,50,75);
     $gfx.Stroke;
 
-#### Color Specification
+#### Colors
 
-This PDF::Content::Color `:ColorName` and `color` exports provide a selection of built in named colors.
+##### Named Colors
+
+The PDF::Content::Color `:ColorName` and `color` exports provide a selection of built in named colors.
 
 -  Aqua, Black, Blue, Fuchsia, Gray, Green, Lime, Maroon Navy, Olive Orange, Purple,
    Red, Silver, Teal, Yellow, Cyan, Magenta
 
-Note: A wider selection of named colors is available via the `Color::Named` module.
+A wider selection of named colors is available via the `Color::Named` module.
 
     use PDF::Content::Content :ColorName, :color;
     use Color::Named;
     $gfx.FillAlpha = color Blue;
     $gfx.StrokeAlpha = color Color::Named.new( :name<azure> );
     
-#### Other Color Specifications
+##### Other Color Formats
 
-The `PDF::Content::Color` `color`  function also supports:
+The `PDF::Content::Color` `color` function recognizes:
 
 - 3 or six digit RGB hex values: `$gfx.FillColor = color '#ca9';`
 - 4 or 8 digit CMYK hex values: `$gfx.FillColor = color '%ab1020';`
-- 3 value RGB values: `$gfx.FillColor = color [200, 50, 0];`
-- 4 digit CMYK values: `$gfx.FillColor = color [ 255, 0, 0, 64];`
+- 3 element RGB values: `$gfx.FillColor = color [200, 50, 0];`
+- 4 element CMYK values: `$gfx.FillColor = color [ 255, 0, 0, 64];`
 - or equivalently: `$gfx.FillColor = color [1, 0, 0, .25];`
 - `Color` (or Color::Named) objects: `$gfx.FillColor = Color.new(200, 50, 0);`
 
@@ -761,7 +764,7 @@ PDF::API6 has some experimental abilities to read and manipulate AcroFields.
 
 The individual fields are returned as PDF::Field sub-roles (see PDF::Class).
 
-If the field is displayed it is also a subclass of PDF::Annot, most commonly PDF::Annot::Widget.
+Displayed fields are also a subclass of PDF::Annot, most commonly PDF::Annot::Widget.
 
     use PDF::API6;
     use PDF::Field;
