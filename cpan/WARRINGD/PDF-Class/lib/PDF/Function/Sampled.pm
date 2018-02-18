@@ -43,34 +43,45 @@ class PDF::Function::Sampled
             die "decode/range lengths differ" unless +@!decode == $!n;
         }
 
-        method !sample(\x, \y) {
-            # stub
-            my \r = $!n * $!m;
-            my \s0 = x + y;
-            my \s1 = x + y + r;
-            $!samples[s0] .. $!samples[s1];
+        method !base-index(@e) {
+            my Int $index = 0;
+            my $factor = $!n;
+            for 0 ..^ $!m -> \x {
+                $index += @e[x].floor * $factor;
+                $factor *= @!size[x];
+            }
+            $index;
+        }
+
+        method !approximate(@e) {
+            my \index = self!base-index(@e);
+            my \n-samples = $!samples.elems;
+            my @base = (0 ..^ $!n).map: -> \y { $!samples[index + y] }
+            my @samples = @base.list;
+            my $offset = $!n;
+            for 0 ..^ $!m -> \x {
+                my \weight = @e[x] - @e[x].floor;
+                unless weight =~= 0 {
+                    my \neighbour = index + $offset;
+                    last if neighbour >= n-samples;
+                    for 0 ..^ $!n -> \y {
+                        my \this = $!samples[neighbour + y];
+                        @samples[y] += (this - @base[y]) * weight;
+                    }
+                }
+                $offset *= @!size[x];
+            }
+            @samples;
         }
 
         method calc(@in where .elems == $!m) {
             my Numeric @x = (@in.list Z @.domain).map: { $.clip(.[0], .[1]) };
             my Numeric @e = (@x Z @.domain Z @!encode).map: { $.interpolate(.[0], .[1], .[2]) };
             @e = (@e Z @!size).map: { $.clip(.[0], 0 .. (.[1]-1)) }
-            my @out;
-            my $fun0 = $!samples[0 ..^ $!n];
-            # todo: proper m-linear interpolation
-            # only interpolating (f000, f100, f010, f001..)
-
-            for 0 ..^ $!m -> \x {
-                my $s0 = (2 ** x) * $!n;
-                my $s1 = $s0 + $!n;
-                my $fun = $!samples[$s0 ..^ $s1];
-                for 0 ..^ $!n -> \y {
-                    given $.interpolate(@e[x], @.domain[x], $fun0[y] .. $fun[y]) {
-                        @out[y] += $.interpolate($_, 0 .. 2 ** $!bpc - 1, @!decode[y]);
-                    }
-                }
+            my @samples = self!approximate(@e);
+            my @out = (0 ..^ $!n).map: -> \y {
+                $.interpolate(@samples[y], 0 .. 2 ** $!bpc - 1, @!decode[y]);
             }
-            # map input values into sample array
             [(@out Z @.range).map: { $.clip(.[0], .[1]) }];
         }
     }
