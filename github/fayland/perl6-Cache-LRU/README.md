@@ -9,11 +9,11 @@ use Cache::LRU;
 
 my $cache = Cache::LRU.new(size => 1024);
 
-$cache->set($key, $value);
+$cache.set($key, $value);
 
-my $value = $cache->get($key);
+my $value = $cache.get($key);
 
-my $removed_value = $cache->remove($key);
+my $removed_value = $cache.remove($key);
 
 ```
 
@@ -24,21 +24,21 @@ pure perl.
 
 ## FUNCTIONS
 
-### Cache::LRU->new(size => $max_num_of_entries)
+### Cache::LRU.new(size => $max_num_of_entries)
 Creates a new cache object. Takes a hash as the only argument. The only
 parameter currently recognized is the "size" parameter that specifies
 the maximum number of entries to be stored within the cache object.
 size is default 1024.
 
-### $cache->get($key)
+### $cache.get($key)
 Returns the cached object if exists, or undef otherwise.
 
-### $cache->set($key => $value)
+### $cache.set($key => $value)
 Stores the given key-value pair.
 
-### $cache->remove($key)
+### $cache.remove($key)
 Removes data associated to the given key and returns the old value, if
 any.
 
-### $cache->clear($key)
+### $cache.clear($key)
 Removes all entries from the cache.
