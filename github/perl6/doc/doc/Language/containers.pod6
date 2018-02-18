@@ -104,9 +104,9 @@ container. The sigil C<&> is required when declaring the container and has to be
 omitted when executing the C<Callable>. The default type constraint is
 L<Callable|/type/Callable>.
 
-   my &c = -> Int $a { say "$a is whole" }
-   c;
-   c();
+   my &callable = -> $ν { say "$ν is", $ν ~~ Int??" whole"!!" not whole" }
+   callable( ⅓ );
+   callable( 3 );
 
 The sigil has to be provided when referring to the value stored in the
 container. This in turn allows C<Routine>s to be uses as
@@ -149,7 +149,7 @@ You've seen this situation before: it is exactly what happened with the
 signature parameter marked as C<is rw>.
 
 X<|\ (container binding)>
-Sigilless variables also bind by default and so do parameters with the trait C<is raw>.
+Sigilless variables bind by default and so do parameters with the trait C<is raw>.
 
     my $a = 42;
     my \b = $a;
