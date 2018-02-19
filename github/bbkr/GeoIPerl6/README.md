@@ -78,7 +78,7 @@ In terminal enter:
     sudo ln -s /usr/share/GeoIP/GeoLiteCityv6.dat /usr/share/GeoIP/GeoIPCityv6.dat
 ```
 
-### Mac OS X
+### MacOS
 
 Install [Xcode](https://developer.apple.com/xcode/) from AppStore, then install [HomeBrew](http://brew.sh).
 
@@ -103,6 +103,14 @@ To obtain databases through [geoipupdate](http://dev.maxmind.com/geoip/geoipupda
 
 ***Warning:*** Do not use old REV0 databases (for example paid ```ProductIds``` = ```132```).
 
+### custom library location
+
+If you installed GeoIP library in nonstandard location (for example as private MacOS brew folder)
+you can pass it as environment variable:
+
+```perl6
+PERL6_LIBGEOIP='/Users/me/.brew/lib/libGeoIP.1.dylib' perl6 -e 'use GeoIP::City; ...'
+```
 
 ## CONTACT
 

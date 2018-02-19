@@ -1,6 +1,7 @@
-unit class GeoIP::City:auth<github:bbkr>:ver<1.0.0>;
+unit class GeoIP::City:auth<github:bbkr>:ver<1.0.1>;
 
-use GeoIP:ver<1.0.0>;
+use GeoIP:ver<1.0.1>;
+use NativeCall;
 
 has GeoIP %!db;
 
@@ -9,7 +10,7 @@ class X::DatabaseMissing is Exception is export { };
 submethod BUILD ( Str :$directory where { .defined.not or .IO ~~ :d } ) {
     
     # change default directory
-    GeoIP_setup_custom_directory( $directory ) if defined $directory;
+    GeoIP_setup_custom_directory( CArray[ uint8 ].new( .encode.list, 0 ) ) with $directory;
     
     # initialize GeoIPCity.dat and GeoIPCityv6.dat databases
     for GEOIP_CITY_EDITION_REV1, GEOIP_CITY_EDITION_REV1_V6 {
@@ -18,10 +19,10 @@ submethod BUILD ( Str :$directory where { .defined.not or .IO ~~ :d } ) {
         next unless GeoIP_db_avail( +$_ );
         
         # open database
-        %!db{$_} = GeoIP_open_type( +$_, 0 );
+        %!db{ $_ } = GeoIP_open_type( +$_, 0 );
         
         # set UTF-8 encoding
-        GeoIP_set_charset( %!db{$_}, 1 );
+        GeoIP_set_charset( %!db{ $_ }, 1 );
     }
     
     # clean up directory paths
@@ -39,40 +40,30 @@ method !locate ( Record $record! ) {
 
     my %result;
 
-    %result{'area_code'} = $record.area_code
-        if defined $record.area_code;
+    %result{ 'area_code' } = $_ with $record.area_code;
 
-    %result{'city'} = $record.city
-        if defined $record.city;
+    %result{ 'city' } = $_ with $record.city;
 
-    %result{'continent_code'} = $record.continent_code
-        if defined $record.continent_code;
+    %result{ 'continent_code' } = $_ with $record.continent_code;
 
-    %result{'country'} = $record.country_name
-        if defined $record.country_name;
+    %result{ 'country' } = $_ with $record.country_name;
 
-    %result{'country_code'} = $record.country_code
-        if defined $record.country_code;
+    %result{ 'country_code' } = $_ with $record.country_code;
 
-    %result{'dma_code'} = $record.dma_code
-        if defined $record.dma_code;
+    %result{ 'dma_code' } = $_ with $record.dma_code;
 
-    %result{'latitude'} = $record.latitude.round(0.000001)
-        if defined $record.latitude;
+    %result{ 'latitude' } = .round( 0.000001 ) with $record.latitude;
 
-    %result{'longitude'} = $record.longitude.round(0.000001)
-        if defined $record.longitude;
+    %result{ 'longitude' } = .round( 0.000001 ) with $record.longitude;
 
-    %result{'postal_code'} = $record.postal_code
-        if defined $record.postal_code;
+    %result{ 'postal_code' } = $_ with $record.postal_code;
 
-    %result{'region'} = GeoIP_region_name_by_code( $record.country_code, $record.region )
+    %result{ 'region' } = GeoIP_region_name_by_code( $record.country_code, $record.region )
         if defined $record.country_code and defined $record.region;
 
-    %result{'region_code'} = $record.region
-        if defined $record.region;
+    %result{ 'region_code' } = $_ with $record.region;
 
-    %result{'time_zone'} = GeoIP_time_zone_by_country_and_region( $record.country_code, $record.region )
+    %result{ 'time_zone' } = GeoIP_time_zone_by_country_and_region( $record.country_code, $record.region )
         if defined $record.country_code and defined $record.region;
 
     return %result;
@@ -81,7 +72,7 @@ method !locate ( Record $record! ) {
 # locate by IPv4
 multi method locate ( Str:D $ip! where / ^ [\d ** 1..3] ** 4 % '.' $ / ) {
     
-    my $db = %!db{GEOIP_CITY_EDITION_REV1} or X::DatabaseMissing.new.throw( );
+    my $db = %!db{ GEOIP_CITY_EDITION_REV1 } or X::DatabaseMissing.new.throw( );
     
     return self!locate( GeoIP_record_by_addr( $db, $ip ) );
 }
@@ -89,7 +80,7 @@ multi method locate ( Str:D $ip! where / ^ [\d ** 1..3] ** 4 % '.' $ / ) {
 # locate by IPv6
 multi method locate ( Str:D $ip! where / ^ [<xdigit> ** 0..4] ** 3..8 % ':' $ / ) {
     
-    my $db = %!db{GEOIP_CITY_EDITION_REV1_V6} or X::DatabaseMissing.new.throw( );
+    my $db = %!db{ GEOIP_CITY_EDITION_REV1_V6 } or X::DatabaseMissing.new.throw( );
     
     return self!locate( GeoIP_record_by_addr_v6( $db, $ip ) );
 }
