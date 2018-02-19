@@ -1,10 +1,11 @@
 use v6;
 use Test;
-plan 9;
+plan 10;
 use Color;
 
-use PDF::Content::Color :color, :ColorName;
+use PDF::Content::Color :rgb, :color, :ColorName;
 
+is rgb(.7,.2,.1), (:DeviceRGB[.7,.2,.1]), 'rgb export';
 is color(Blue), (:DeviceRGB[0,0,1]), 'color name';
 is color([1,1,0,0]), (:DeviceCMYK[1,1,0,0]), 'cmyk color list';
 is color([255,255,0,0]), (:DeviceCMYK[1,1,0,0]), 'cmyk color list';

@@ -17,17 +17,17 @@ module PDF::Content::Color {
        »;
     constant %CMYK = ColorName.enums.Hash;
 
-    sub rgb(\r, \g, \b) {
+    our sub rgb(\r, \g, \b) is export(:rgb) {
         :DeviceRGB[r, g, b]
     }
-    sub cmyk(\c, \m, \y, \k) {
+    our sub cmyk(\c, \m, \y, \k) is export(:cmyk) {
         :DeviceCMYK[c, m, y, k];
     }
-    sub gray(\g) {
+    our sub gray(\g) is export(:gray) {
         :DeviceGray[g];
     }
 
-    proto sub color($) is export(:color) {*};
+    our proto sub color($) is export(:color) {*};
     multi sub color(Color $_) { color([.rgb]) }
     multi sub color(List $_) {
         when .max >= 2   {color .map(*/255).list}
