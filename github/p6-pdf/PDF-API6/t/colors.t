@@ -66,5 +66,5 @@ $gfx.graphics: {
     }
 }
 
-$pdf.save-as: "t/colors.pdf";
+$pdf.save-as: "tmp/colors.pdf";
 

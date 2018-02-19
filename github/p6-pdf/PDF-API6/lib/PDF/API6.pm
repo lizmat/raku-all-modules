@@ -267,7 +267,7 @@ class PDF::API6:ver<0.0.4>
 
         # create approximate compound function based on ranges only.
         # Adapted from Perl 5's PDF::API2::Resource::ColorSpace::DeviceN
-        my @xclr = @functions.map: *.range>>.max;
+        my @xclr = @functions.map: {.calc([.domain>>.max])};
         my constant Sampled = 2;
         my Numeric @spec[Sampled ** $nc;4];
 
