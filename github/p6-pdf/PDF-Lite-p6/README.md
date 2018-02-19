@@ -75,7 +75,7 @@ $pdf.save-as: "examples/sample-text.pdf";
 
 #### Images (`.load-image` and  `.do` methods):
 
-The `.image` method can be used to open an image.
+The `.load-image` method can be used to open an image.
 The `.do` method can them be used to render it.
 
 ```
@@ -103,14 +103,13 @@ $pdf.save-as: "examples/sample-image.pdf";
 
 Note: at this stage, only the `JPEG`, `GIF` and `PNG` image formats are supported.
 
-For a full table of `.set-graphics` options, please see PDF::Content::Ops, ExtGState enumeration.
-
 ### Text effects
 
 To display card suits symbols, using the ZapfDingbats core-font, with diamonds and hearts colored red:
 
 ```
 use PDF::Lite;
+use PDF::Content::Color :rgb;
 my $pdf = PDF::Lite.new;
 $pdf.media-box = [0, 0, 400, 120];
 my $page = $pdf.add-page;
@@ -122,7 +121,7 @@ $page.graphics: {
 	.font = [ .core-font('ZapfDingbats'), 24];
 	.WordSpacing = 16;
 	.print("♠ ♣\c[NO-BREAK SPACE]");
-	.FillColor = :DeviceRGB[ 1, .3, .3];  # reddish
+	.FillColor = rgb(1, .3, .3);  # reddish
 	.say("♦ ♥");
     }
 
@@ -136,7 +135,7 @@ $page.graphics: {
 	.TextRender = TextMode::FillOutlineText;
 	.LineWidth = .5;
         .text-transform( :skew[0, -6], :translate[10, 30] );
-	.FillColor = :DeviceRGB[ .6, .7, .9];
+	.FillColor = rgb(.6, .7, .9);
 	.print('Outline Slanted Text @(10,30)');
     }
 }
@@ -183,6 +182,7 @@ A pattern can be used to fill an area with a repeating graphic.
 
 ```
 use PDF::Lite;
+use PDF::Content::Color :rgb;
 my $pdf = PDF::Lite.new;
 $pdf.media-box = [0, 0, 400, 120];
 my $page = $pdf.add-page;
@@ -192,11 +192,11 @@ $page.graphics: {
     my $form = .xobject-form(:BBox[0, 0, 95, 25]);
     $form.graphics: {
         # Set a background color
-        .FillColor = :DeviceRGB[.8, .9, .9];
+        .FillColor = rgb(.8, .9, .9);
         .Rectangle: |$form<BBox>;
         .paint: :fill;
         .font = $font;
-        .FillColor = :DeviceRGB[ 1, .3, .3];  # reddish
+        .FillColor = rgb(1, .3, .3);  # reddish
         .say("Simple Form", :position[2, 5]);
     }
      # display a simple form a couple of times
@@ -205,12 +205,11 @@ $page.graphics: {
     .do($form, 10, 10);
 }
 
-
 $page.graphics: {
     my $pattern = .tiling-pattern(:BBox[0, 0, 25, 25], );
     $pattern.graphics: {
         # Set a background color
-        .FillColor = :DeviceRGB[.8, .8, .9];
+        .FillColor = rgb(.8, .8, .9);
         .Rectangle: |$pattern<BBox>;
         .paint: :fill;
         # Display an image
