@@ -1,6 +1,6 @@
 use v6;
 
-unit class Term::Choose:ver<1.1.2>;
+unit class Term::Choose:ver<1.1.3>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -878,6 +878,7 @@ method !_list_index2rowcol {
 method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
     if $!curr_layout == 2 {
         for $indexes.list -> $i {
+            next if $i > @!list.end;
             $!marked[$i][0] = $yesno;
         }
         return;
@@ -886,6 +887,7 @@ method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
     my Int $cols_per_row = $!rc2idx[0].elems;
     if %!o<order> == 0 {
         for $indexes.list -> $i {
+            next if $i > @!list.end;
             $row = $i div $cols_per_row;
             $col = $i % $cols_per_row;
             $!marked[$row][$col] = $yesno;
@@ -895,7 +897,7 @@ method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
         my Int $rows_per_col = $!rc2idx.elems;
         my Int $end_last_full_col = $rows_per_col * ( $!rest || $cols_per_row );
         for $indexes.list -> $i {
-            next if $i > @!list.end; #
+            next if $i > @!list.end;
             if $i <= $end_last_full_col {
                 $row = $i % $rows_per_col;
                 $col = $i div $rows_per_col;
