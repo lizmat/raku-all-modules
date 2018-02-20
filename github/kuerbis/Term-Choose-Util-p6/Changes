@@ -1,6 +1,10 @@
 Revision history for Term::Choose::Util
 
 
+1.0.7   2018-02-19
+        - Removed deprecated option "in-place"
+        - Bugfix in reset numbers
+
 1.0.6   2018-01-18
         - Bugfix documentation
 
