@@ -14,8 +14,9 @@ Font::FreeType::Native - bindings to the freetype library
     use Font::FreeType::Native::Types;
 
     sub face-unicode-map(Font::FreeType::Face $face) {
-        my @to-unicode[$face.num-glyphs];
-        my FT_Face $struct = $!face.struct;  # get the native face object
+        my uint16 @to-unicode[$face.num-glyphs];
+        my FT_Face $struct = $face.struct;  # get the native face object
+        my FT_UInt  $glyph-idx;
         my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
         while $glyph-idx {
             @to-unicode[ $glyph-idx ] = $char-code;
@@ -383,7 +384,7 @@ class FT_Face is export {
         FT_SfntName $sfnt)
     returns FT_Error is native($ftlib) {*};
 
-    #| Retrieve the ASCII name of a given glyph in a face. 
+    #| Retrieve the ASCII name of a given glyph in a face.
     method FT_Get_Glyph_Name(
         FT_UInt $glyph-index,
         buf8    $buffer,
@@ -393,6 +394,11 @@ class FT_Face is export {
     #| Return the glyph index of a given character code. This function uses the currently selected charmap to do the mapping.
     method FT_Get_Char_Index(
         FT_ULong  $charcode )
+    returns FT_UInt is native($ftlib) {*};
+
+    #| Return the glyph index of a given glyph name.
+    method FT_Get_Name_Index(
+        FT_String  $glyph-name )
     returns FT_UInt is native($ftlib) {*};
 
     #| Load a glyph into the glyph slot of a face object.

@@ -12,8 +12,9 @@ SYNOPSIS
     use Font::FreeType::Native::Types;
 
     sub face-unicode-map(Font::FreeType::Face $face) {
-        my @to-unicode[$face.num-glyphs];
-        my FT_Face $struct = $!face.struct;  # get the native face object
+        my uint16 @to-unicode[$face.num-glyphs];
+        my FT_Face $struct = $face.struct;  # get the native face object
+        my FT_UInt  $glyph-idx;
         my FT_ULong $char-code = $struct.FT_Get_First_Char( $glyph-idx);
         while $glyph-idx {
             @to-unicode[ $glyph-idx ] = $char-code;
@@ -34,43 +35,36 @@ Other high level classes in this have a `struct()` accessor, which can be used, 
       <td>Class</td>
       <td>struct() binding</td>
       <td>Description</td>
-      <td></td>
     </tr>
   </thead>
   <tr>
     <td>Font::FreeType</td>
-    <td>L&lt;FT_Library</td>
-    <td>https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library&gt;</td>
+    <td>L&lt;FT_Library|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Library&gt;</td>
     <td>A handle to a freetype library instance</td>
   </tr>
   <tr>
     <td>Font::FreeType::Face</td>
-    <td>L&lt;FT_Face</td>
-    <td>https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face&gt;</td>
+    <td>L&lt;FT_Face|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_Face&gt;</td>
     <td>A Handle to a typographic face object</td>
   </tr>
   <tr>
     <td>Font::FreeType::Glyph</td>
-    <td>L&lt;FT_GlyphSlot</td>
-    <td>https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_GlyphSlot&gt;</td>
+    <td>L&lt;FT_GlyphSlot|https://www.freetype.org/freetype2/docs/reference/ft2-base_interface.html#FT_GlyphSlot&gt;</td>
     <td>A handle to a glyph container</td>
   </tr>
   <tr>
     <td>Font::FreeType::GlyphImage</td>
-    <td>L&lt;FT_Glyph</td>
-    <td>https://www.freetype.org/freetype2/docs/reference/ft2-glyph_management.html&gt;</td>
+    <td>L&lt;FT_Glyph|https://www.freetype.org/freetype2/docs/reference/ft2-glyph_management.html&gt;</td>
     <td>A specific glyph bitmap or outline object</td>
   </tr>
   <tr>
     <td>Font::FreeType::BitMap</td>
-    <td>L&lt;FT_Bitmap</td>
-    <td>https://www.freetype.org/freetype2/docs/reference/ft2-bitmap_handling.html&gt;</td>
+    <td>L&lt;FT_Bitmap|https://www.freetype.org/freetype2/docs/reference/ft2-bitmap_handling.html&gt;</td>
     <td>A rendered bitmap for a glyph</td>
   </tr>
   <tr>
     <td>Font::FreeType::Outline</td>
-    <td>L&lt;FT_Outline</td>
-    <td>https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html&gt;</td>
+    <td>L&lt;FT_Outline|https://www.freetype.org/freetype2/docs/reference/ft2-outline_processing.html&gt;</td>
     <td>A scalable glyph outline</td>
   </tr>
 </table>
@@ -271,6 +265,16 @@ method FT_Get_Char_Index(
 ```
 
 Return the glyph index of a given character code. This function uses the currently selected charmap to do the mapping.
+
+### method FT_Get_Name_Index
+
+```
+method FT_Get_Name_Index(
+    Str $glyph-name
+) returns uint32
+```
+
+Return the glyph index of a given glyph name.
 
 ### method FT_Load_Glyph
 

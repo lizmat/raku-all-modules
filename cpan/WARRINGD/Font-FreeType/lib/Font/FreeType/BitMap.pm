@@ -40,23 +40,25 @@ class Font::FreeType::BitMap {
 
     method pixels(Bool :$color = False) {
         my $buf = $!struct.buffer;
-        my uint8 @pixels[$.rows;$.width];
+        my \rows = $.rows;
+        my \width = $.width;
+        my uint8 @pixels[rows;width];
         my uint32 $bits;
         given $.pixel-mode {
             when FT_PIXEL_MODE_GRAY
                 | FT_PIXEL_MODE_LCD
                 | FT_PIXEL_MODE_LCD_V {
-                for ^$.rows -> int $y {
+                for ^rows -> int $y {
                     my int $i = $y * $.pitch;
-                    for ^$.width -> int $x {
+                    for ^width -> int $x {
                         @pixels[$y;$x] = $buf[$i++];
                     }
                 }
             }
             when FT_PIXEL_MODE_MONO {
-                for ^$.rows -> int $y {
+                for ^rows -> int $y {
                     my int $i = $y * $.pitch;
-                    for ^$.width -> int $x {
+                    for ^width -> int $x {
                         $bits = $buf[$i++]
                             if $x %% 8;
                         @pixels[$y;$x] = $bits +& 0x80 ?? 0xFF !! 0x00;
@@ -65,9 +67,9 @@ class Font::FreeType::BitMap {
                 }
             }
             when FT_PIXEL_MODE_GRAY2 {
-                for ^$.rows -> int $y {
+                for ^rows -> int $y {
                     my int $i = $y * $.pitch;
-                    for ^$.width -> int $x {
+                    for ^width -> int $x {
                         $bits = $buf[$i++]
                             if $x %% 4;
                         @pixels[$y;$x] = $bits +& 0xC0;
@@ -76,9 +78,9 @@ class Font::FreeType::BitMap {
                 }
             }
             when FT_PIXEL_MODE_GRAY4 {
-                for ^$.rows -> int $y {
+                for ^rows -> int $y {
                     my int $i = $y * $.pitch;
-                    for ^$.width -> int $x {
+                    for ^width -> int $x {
                         $bits = $buf[$i++]
                             if $x %% 2;
                         @pixels[$y;$x] = $bits +& 0xF0;
