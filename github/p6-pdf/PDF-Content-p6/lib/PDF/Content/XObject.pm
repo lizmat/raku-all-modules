@@ -19,7 +19,7 @@ role PDF::Content::XObject['Image'] {
     method width  { $!width //= self<Width> }
     method height { $!height //= self<Height> }
     has $.image-obj is rw handles <data-uri source image-type>;
-    method Str { self.data-uri }
+    method Str { with $!image-obj  {.data-uri} else {nextsame} }
 
     method inline-to-xobject(Hash $inline-dict, Bool :$invert) {
 

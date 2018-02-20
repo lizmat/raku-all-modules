@@ -42,7 +42,6 @@
     "PDF::Content::Resourced" : "lib/PDF/Content/Resourced.pm",
     "PDF::Content::Text::Block" : "lib/PDF/Content/Text/Block.pm",
     "PDF::Content::Text::Line" : "lib/PDF/Content/Text/Line.pm",
-    "PDF::Content::Text::Reserved" : "lib/PDF/Content/Text/Reserved.pm",
     "PDF::Content::Text::Style" : "lib/PDF/Content/Text/Style.pm",
     "PDF::Content::XObject" : "lib/PDF/Content/XObject.pm"
   },
@@ -50,5 +49,5 @@
   "source-url" : "git://github.com/p6-pdf/PDF-Content-p6.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.1.1"
+  "version" : "0.1.2"
 }

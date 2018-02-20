@@ -1,13 +1,14 @@
 use v6;
 use Test;
-plan 3;
+plan 1;
 use lib '.';
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content::Text::Block;
 use PDF::Content::Font::CoreFont;
-use PDF::Content::Text::Reserved;
 use PDF::Content::Image;
 use t::PDFTiny;
+
+# experimental feature to flow text and images
 
 # ensure consistant document ID generation
 srand(123456);
@@ -19,6 +20,13 @@ my @chunks = PDF::Content::Text::Block.comb: 'I must go down to the seas';
 @chunks.append: ' ', 'aga','in';
 my $font = PDF::Content::Font::CoreFont.load-font( :family<helvetica>, :weight<bold> );
 my $font-size = 16;
+my $image = PDF::Content::Image.open: "t/images/lightbulb.gif";
+
+my $image-padded = $page.xobject-form(:BBox[0, 0, $image.width + 1, $image.height + 4]);
+$image-padded.gfx;
+$image-padded.graphics: {
+    .do($image,1,0);
+}
 
 my $text-block;
 
@@ -26,37 +34,19 @@ $page.text: -> $gfx {
     $gfx.TextMove(100, 500);
     $text-block = $gfx.text-block( :@chunks, :$font, :$font-size, :width(220) );
     $gfx.say($text-block);
-    my $unreserved-width  = $text-block.content-width;
-    my $unreserved-height = $text-block.content-height;
     for @chunks.grep('the'|'aga') -> $source is rw {
-        my $width = $font.stringwidth($source, $font-size);
-        my $height = 1;
-        $source = PDF::Content::Text::Reserved.new: :$width, :$height, :$source;
+        $source = $image-padded;
     }
     $text-block = $gfx.text-block( :@chunks, :$font, :$font-size, :width(220) );
     $gfx.say($text-block);
-    is-approx $text-block.content-width, $unreserved-width, '$.content-width';
-    is-approx $text-block.content-height, $unreserved-height, '$.content-height';
 
-    is-json-equiv $text-block.reserved, [
-        {:Tm[1, 0, 0, 1, 241.344, 464.8], :Tx(141.344), :Ty(0), :Tr(0), :source("the")},
-        {:Tm[1, 0, 0, 1, 100.0, 447.2], :Tx(0.0), :Ty(-17.6), :Tr(0), :source("aga")}
-    ], 'reservations';
+    is-json-equiv [$text-block.images.map({[ .<Tx>, .<Ty> ]})], [
+        [141.344, 0],
+        [0.0, -25.3]
+    ], 'images';
 }
 
-reserve-text($page, $text-block);
-
-sub reserve-text($page, $text-block) {
-    # put the reserved words back; in color
-    my $image = PDF::Content::Image.open: "t/images/lightbulb.gif";
-    $page.graphics: -> $gfx {
-        for $text-block.reserved {
-            my $x = .<Tm>[4];
-            my $y = .<Tm>[5] + .<Tr>;
-            $gfx.do($image, $x, $y, );
-        }
-    }
-}
+$text-block.place-images($page.gfx);
 
 $page.graphics: -> $gfx {
     $gfx.HorizScaling = 120;
@@ -76,13 +66,14 @@ $page.graphics: -> $gfx {
     for @chunks.grep('the') -> $source is rw {
         my $width = $font.stringwidth($source, $font-size);
         my $height = $font-size * 1.5;
-        $source = PDF::Content::Text::Reserved.new: :$width, :$height, :$source;
+        $source = $image-padded;
     }
     $text-block = $gfx.text-block( :@chunks, :$font, :$font-size, :width(250) );
     $page.text: {
         $gfx.print($text-block, :position[100, 400]);
     }
-    reserve-text($page, $text-block);
- }
+}
 
-$pdf.save-as: "t/text-reserved.pdf";
+$text-block.place-images($page.gfx);
+
+$pdf.save-as: "t/text-block-images.pdf";

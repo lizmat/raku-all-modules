@@ -1,7 +1,7 @@
 use v6;
 use PDF::Content::Ops :OpCode, :GraphicsContext, :ExtGState;
 
-class PDF::Content:ver<0.1.1>
+class PDF::Content:ver<0.1.2>
     is PDF::Content::Ops {
 
     use PDF::DAO;
@@ -294,7 +294,7 @@ class PDF::Content:ver<0.1.1>
                 @v[0] = .use-font(@v[0]) with $.parent;
                 self.set-font(|@v);
             },
-            );
+        );
     }
 
     multi method print(Str $text, :$font = self!current-font[0], |c) {

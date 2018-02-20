@@ -1,3 +1,5 @@
+Release 0.1.2
+- Widthdrew PDF::Content::Text::Reserved.
 Release 0.1.1
 - $gfx.FillColor, $gfx.StrokeColor now register unknown colors in the
   graphics parent's resource dictionary.

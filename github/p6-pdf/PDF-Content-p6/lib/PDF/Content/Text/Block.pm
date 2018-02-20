@@ -5,9 +5,9 @@ class PDF::Content::Text::Block {
 
     use PDF::Content::Text::Style;
     use PDF::Content::Text::Line;
-    use PDF::Content::Text::Reserved;
     use PDF::Content::Ops :OpCode, :TextMode;
     use PDF::Content::Marked :ParagraphTags;
+    use PDF::Content::XObject;
 
     has Numeric $.width;
     has Numeric $.height;
@@ -19,7 +19,7 @@ class PDF::Content::Text::Block {
     has @.lines;
     has @.overflow is rw;
     has ParagraphTags $.type = Paragraph;
-    has @.reserved;
+    has @.images;
     has Str $.text;
 
     method content-width  { @!lines.map( *.content-width ).max }
@@ -59,8 +59,8 @@ class PDF::Content::Text::Block {
 	@!lines = [ $line ];
 
         while @atoms {
-            my subset StrOrReserved where Str | PDF::Content::Text::Reserved;
-            my StrOrReserved $atom = @atoms.shift;
+            my subset StrOrImage where Str | PDF::Content::XObject;
+            my StrOrImage $atom = @atoms.shift;
             my Bool $reserving = False;
 	    my $word-width;
             my $word;
@@ -88,7 +88,7 @@ class PDF::Content::Text::Block {
                         }
                     }
                 }
-                when PDF::Content::Text::Reserved {
+                when PDF::Content::XObject {
                     $reserving = True;
                     $word = [-$atom.width * $.HorizScaling * 10 / $!style.font-size, ];
                     $word-width = $atom.width;
@@ -120,7 +120,7 @@ class PDF::Content::Text::Block {
                 my $Ty = @!lines
                     ?? @!lines[0].height * $.leading  -  self.content-height
                     !! 0.0;
-                @!reserved.push( { :$Tx, :$Ty, :source($atom.source) } )
+                @!images.push( { :$Tx, :$Ty, :xobject($atom) } )
             }
 
             @line-atoms.push: $atom;
@@ -211,13 +211,12 @@ class PDF::Content::Text::Block {
             default       { 0.0 }
         }
         my $x-shift = $left ?? $dx * $.width !! 0.0;
-        # compute text positions of reserved content
-        for @!reserved {
+        # compute text positions of images content
+        for @!images {
             my Numeric @Tm[6] = $gfx.TextMatrix.list;
-            @Tm[4] += $x-shift + .<Tx>;
+            @Tm[4] += $x-shift + .<Tx> + $.TextRise;
             @Tm[5] += $y-shift + .<Ty>;
             .<Tm> = @Tm;
-	    .<Tr> = $.TextRise;
         }
 
         my $leading = $gfx.TextLeading;
@@ -250,6 +249,18 @@ class PDF::Content::Text::Block {
 	}
 
 	@content;
+    }
+
+    # flow any xobject images. This needs to be done
+    # after rendering and exiting text block
+    method place-images($gfx) {
+        for self.images {
+            $gfx.Save;
+            $gfx.ConcatMatrix(|.<Tm>);
+            .<xobject>.finish;
+            $gfx.XObject($gfx.resource-key(.<xobject>));
+            $gfx.Restore;
+        }
     }
 
 }
