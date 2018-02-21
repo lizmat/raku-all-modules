@@ -1,5 +1,6 @@
 {
   "name" : "Crust::Middleware::Session",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/lestrrat/p6-Crust-Middleware-Session.git",
   "perl" : "v6",
   "build-depends" : [ ],

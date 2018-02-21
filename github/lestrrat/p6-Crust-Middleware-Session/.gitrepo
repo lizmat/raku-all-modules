@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/lestrrat/p6-Crust-Middleware-Session.git
 	branch = master
-	commit = 7cae54efa4ceb0bff2f56a6450cb4220be33cb1f
-	parent = 9183fcafa6dcd814635e72b284ba6b3ec9b26293
+	commit = dda68790dd32589f9372e885e6d1aea2f085b35f
+	parent = 906d92e166ff64510ca7d0a04f434c1674caf63d
 	cmdver = 0.4.0
