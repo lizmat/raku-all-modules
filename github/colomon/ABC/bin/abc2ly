@@ -135,12 +135,14 @@ sub get-field-if-there($header, $field) {
     ?@things ?? @things[0] !! "";
 }
 
-sub HeaderToLilypond(ABC::Header $header, $out) {
+sub HeaderToLilypond(ABC::Header $header, $out, :$title?) {
+    dd $title;
     $out.say: "\\header \{";
     
-    my $title = $header.get-first-value("T") // "Untitled";
-    $title .=subst('"', "'", :g);
-    $out.say: "    title = \" $title \"";
+    my $working-title = $title // $header.get-first-value("T") // "Unworking-titled";
+    dd $working-title;
+    $working-title .=subst('"', "'", :g);
+    $out.say: "    title = \" $working-title \"";
     my $composer = get-field-if-there($header, "C");
     my $origin = get-field-if-there($header, "O");
     if $origin {
@@ -383,8 +385,9 @@ class TuneConvertor {
         $out.say: " \}";
     }
     
-    method BodyToLilypond(@elements, $out) {
+    method BodyToLilypond(@elements, $out, :$prefix?) {
         $out.say: "\{";
+        $out.say: $prefix if $prefix;
 
         # if tune contains M: none sections, turn off barnumber display
         if @elements.grep({ $_.key eq "inline_field" && $_.value.key eq "M" && $_.value.value eq "none" }) {
@@ -467,6 +470,14 @@ class TuneConvertor {
     
 }
 
+sub TuneBodyToLilypondStream($tune, $out, :$prefix?) {
+    my $key = $tune.header.get-first-value("K");
+    my $meter = $tune.header.get-first-value("M");
+    my $length = $tune.header.get-first-value("L") // default-length-from-meter($meter);
+    my $convertor = TuneConvertor.new($key, $meter, $length);
+    $convertor.BodyToLilypond($tune.music, $out, :$prefix);
+}
+
 sub TuneStreamToLilypondStream($in, $out, $filter = *, :$fancy?) {
     my $actions = ABC::Actions.new;
     my $match = ABC::Grammar.parse($in.slurp-rest, :rule<tune_file>, :$actions);
@@ -493,16 +504,8 @@ sub TuneStreamToLilypondStream($in, $out, $filter = *, :$fancy?) {
         $*ERR.say: "Working on { $tune.header.get-first-value("T") // $tune.header.get-first-value("X") }";
         $out.say: "\\score \{";
 
-        # say ~$tune.music;
-
-        # dd $tune.header;
-        my $key = $tune.header.get-first-value("K");
-        my $meter = $tune.header.get-first-value("M");
-        my $length = $tune.header.get-first-value("L") // default-length-from-meter($meter);
-
-        my $convertor = TuneConvertor.new($key, $meter, $length);
-        $convertor.BodyToLilypond($tune.music, $out);
-        HeaderToLilypond($tune.header, $out);
+            TuneBodyToLilypondStream($tune, $out);
+            HeaderToLilypond($tune.header, $out);
 
         $out.say: "}\n\n";
         
@@ -533,11 +536,49 @@ sub TuneStreamToLilypondStream($in, $out, $filter = *, :$fancy?) {
     }
 }
 
+# This is from https://rosettacode.org/wiki/Longest_common_prefix#Perl_6
+# Bit wonky looking but seems to work!
+sub longest-common-prefix(@s) { 
+    substr @s[0], 0, [+] [\and] [Zeqv] |@s».ords 
+}
+
+sub TunesStreamToScore($in, $out) {
+    my $actions = ABC::Actions.new;
+    my $match = ABC::Grammar.parse($in.slurp-rest, :rule<tune_file>, :$actions);
+    die "Did not match ABC grammar: last tune understood:\n { $actions.current-tune }" unless $match;
+    my @tunes = @( $match.ast );
+
+    my @names = @tunes.map({ $_.header.get-first-value("T") });
+    my $name = longest-common-prefix(@names).trim;
+    dd $name;
+    @names .= map(-> $full-name { $full-name.substr($name.chars).trim });
+    dd @names;
+
+    $out.say: '\\version "2.12.3"';
+    $out.say: "#(set-default-paper-size \"{$paper-size}\")";
+    $out.say: "\\paper \{ print-all-headers = ##t \}";
+
+    $out.say: "\\score \{";
+    $out.say: '<<';
+
+    for @tunes Z, @names -> ($tune, $name) {
+        dd $name;
+        $*ERR.say: "Working on { $tune.header.get-first-value("T") // $tune.header.get-first-value("X") }";
+
+        $out.say: "\\new Staff ";
+        TuneBodyToLilypondStream($tune, $out, prefix => qq[\\set Staff.instrumentName = "$name"]);
+    }
+
+    $out.say: '>>';
+    HeaderToLilypond(@tunes[0].header, $out, title => $name);
+    $out.say: "}\n\n";
+}
+
 multi sub MAIN() {
     TuneStreamToLilypondStream($*IN, $*OUT);
 }
 
-multi sub MAIN($first-abc-file, *@other-abc-files, :x($index)?, :$o?, :$mc?, :$fancy?) {
+multi sub MAIN($first-abc-file, *@other-abc-files, :x($index)?, :$o?, :$mc?, :$fancy?, :$score?) {
     my @abc-files = $first-abc-file, |@other-abc-files;
     for @abc-files -> $abc-file {
         my $ly-file;
@@ -554,7 +595,9 @@ multi sub MAIN($first-abc-file, *@other-abc-files, :x($index)?, :$o?, :$mc?, :$f
         my $in = open $abc-file, :r or die "Unable to open $abc-file";
         my $out = open $ly-file, :w or die "Unable to open $ly-file";
     
-        if $index {
+        if $score {
+            TunesStreamToScore($in, $out);
+        } elsif $index {
             TuneStreamToLilypondStream($in, $out, -> $tune { $tune.header.get-first-value("X") == $index }, :$fancy);
         } else {
             TuneStreamToLilypondStream($in, $out, :$fancy);
