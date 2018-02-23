@@ -2,12 +2,12 @@
     "perl"         : "6.c",
     "name"         : "p6lert",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001002",
+    "version"      : "1.002001",
     "description"  : "Command line utility to fetch alerts.perl6.org alerts",
     "tags"         : [ "command line" ],
     "depends"      : [
         "JSON::Fast",
-        "WWW::P6lerts"
+        "WWW::P6lert"
     ],
     "test-depends" : [
         "JSON::Fast",

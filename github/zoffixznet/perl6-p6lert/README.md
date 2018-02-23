@@ -57,12 +57,12 @@ $ p6lert 42
 
 ## `--block-on`
 
-`Str` where valid values are `info`, `low`,  `normal`, `high`, and  `critical`,
-specifies the minimum severity of alerts to watch for. `info` is the lowest
-severity and `critical` is highest. Thus, if you specify `--block-on=normal`,
-the program will watch for `normal`, `high`, and `critical` alerts, but not
-for `low` or `info` (they latter would still be displayed, but program won't
-block exit).
+`Str` where valid values are `info`, `low`,  `normal`, `high`, and  `critical`.
+Defaults to `critical`. Specifies the minimum severity of alerts to watch for.
+`info` is the lowest severity and `critical` is highest. Thus, if you specify
+`--block-on=normal`, the program will watch for `normal`, `high`, and `critical`
+alerts, but not for `low` or `info` (they latter would still be displayed, but
+program won't block exit).
 
 If the alert for wanted severity is seen, the program will block exit and wait
 for user input. It will be a yes/no prompt and if the user enters "no", the
