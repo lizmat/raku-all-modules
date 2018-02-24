@@ -99,7 +99,7 @@ sub str-escape(str $text is copy) {
     $text;
 }
 
-sub to-json($obj is copy, Bool :$pretty = True, Int :$level = 0, Int :$spacing = 2, Bool :$sorted-keys = False) is export {
+our sub to-json($obj is copy, Bool :$pretty = True, Int :$level = 0, Int :$spacing = 2, Bool :$sorted-keys = False) is export {
     return $obj ?? 'true' !! 'false' if $obj ~~ Bool;
 
     return 'null' if not $obj.defined;
@@ -212,7 +212,7 @@ my Mu $hexdigits := nqp::hash(
     '65', 1, '66', 1, '67', 1, '68', 1, '69', 1, '70', 1);
 
 my Mu $escapees := nqp::hash(
-    '34', '"', '47', '/', '92', '\\', '98', 'b', '102', 'f', '110', 'n', '114', 'r', '116', 't');
+    "34", '"', "47", "/", "92", "\\", "98", "\b", "102", "\f", "110", "\n", "114", "\r", "116", "\t");
 
 my sub parse-string(str $text, int $pos is rw) {
     # first we gallop until the end of the string
@@ -297,7 +297,7 @@ my sub parse-string(str $text, int $pos is rw) {
     if $startcombiner {
         $raw = $startcombiner ~ $raw
     }
-    if not $has_treacherous and not $has_hexcodes {
+    if not $has_treacherous and not $has_hexcodes and $escape_counts {
         my @a;
         my @b;
         if nqp::existskey($escape_counts, "n") and nqp::existskey($escape_counts, "r") {
@@ -316,7 +316,7 @@ my sub parse-string(str $text, int $pos is rw) {
             @a.push('\\"'); @b.push('"');
         }
         if nqp::existskey($escape_counts, "/") {
-            @a.push("/"), @b.push("\\/");
+            @a.push("\\/"), @b.push("/");
         }
         if nqp::existskey($escape_counts, "\\") {
             @a.push("\\\\"); @b.push("\\");
@@ -521,7 +521,7 @@ my sub parse-thing(str $text, int $pos is rw) {
     }
 }
 
-sub from-json(Str() $text) is export {
+our sub from-json(Str() $text) is export {
     my str $ntext = $text;
     my int $length = $text.chars;
 
