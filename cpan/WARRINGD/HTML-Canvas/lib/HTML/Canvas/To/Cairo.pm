@@ -275,18 +275,19 @@ class HTML::Canvas::To::Cairo {
         }
     }
     my subset Drawable where HTML::Canvas|HTML::Canvas::Image|HTML::Canvas::ImageData;
+    has %!image-cache{Any};
     method !to-surface(Drawable $_,
                         :$width! is rw,
                         :$height! is rw --> Cairo::Surface) {
         when HTML::Canvas {
             $width = $_ with .html-width;
             $height = $_ with .html-height;
-            self!canvas-to-surface($_, :$width, :$height);
+            %!image-cache{$_} //= self!canvas-to-surface($_, :$width, :$height);
         }
         when HTML::Canvas::ImageData {
             $width = .sw;
             $height = .sh;
-            .image;
+            %!image-cache{$_} //= .image;
         }
         when .image-type eq 'PNG' {
             with (%!canvas-surface-cache{$_} //= Cairo::Image.create(.Blob)) {

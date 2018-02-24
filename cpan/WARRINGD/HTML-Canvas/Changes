@@ -1,2 +1,6 @@
+Release 0.0.2
+- fix tests
+  -- add tmp directory
+  -- more forgiving measureText test in t/render-pdf-test-sheets.t 
 Release 0.0.1
 - initial release
