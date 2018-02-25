@@ -52,11 +52,14 @@ use HTML::Canvas::To::Cairo;
 # create a 128 X 128 point PDF
 my $surface = Cairo::Surface::PDF.create("examples/read-me-example.pdf", 128, 128);
 
-# create two pages
+# create a PDF with two pages
+# use a common cache for objects shared between pages such as
+# fonts and images. This reduces both processing times and PDF file sizes.
+my $cache = HTML::Canvas::To::Cairo::Cache.new;
 
 for 1..2 -> $page {
     my HTML::Canvas $canvas .= new;
-    my $feed = HTML::Canvas::To::Cairo.new: :$surface, :$canvas;
+    my $feed = HTML::Canvas::To::Cairo.new: :$surface, :$canvas, :$cache;
     $canvas.context({
 
         .font = "10pt times-roman bold";
@@ -110,6 +113,8 @@ Backend                 | PNG | GIF |JPEG | PNG | BMP
 HTML::Canvas (HTML)     | X   | X   | X   | X   | X
 HTML::Canvas::To::Cairo | X   |     |     |     |
 HTML::Canvas::To::PDF   | X   | X   | X   | X   |
+
+
 
 
 ## Methods

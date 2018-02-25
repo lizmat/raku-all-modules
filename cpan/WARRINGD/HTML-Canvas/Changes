@@ -1,3 +1,7 @@
+Release 0.0.3
+- Create HTML::Canvas::To::Cairo::Cache for shared objects.
+  Significantly reduces processing times and file sizes for
+  multiple page PDF files
 Release 0.0.2
 - fix tests
   -- add tmp directory

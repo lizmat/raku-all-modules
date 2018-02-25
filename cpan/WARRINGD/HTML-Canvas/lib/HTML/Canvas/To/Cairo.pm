@@ -12,7 +12,14 @@ class HTML::Canvas::To::Cairo {
     has HTML::Canvas $.canvas is rw .= new;
     has Cairo::Surface $.surface handles <width height>;
     has Cairo::Context $.ctx;
-    class FontCache
+    my subset Drawable where HTML::Canvas|HTML::Canvas::Image|HTML::Canvas::ImageData;
+    class Cache {
+        has %.image{Drawable};
+        has %.gradient{HTML::Canvas::Gradient};
+        has %.pattern{HTML::Canvas::Pattern};
+        has %.font;
+    }
+    class Font
         is CSS::Declarations::Font {
 
         use Font::FreeType;
@@ -21,10 +28,9 @@ class HTML::Canvas::To::Cairo {
         has Font::FreeType $!freetype .= new;
         has FT_Face $.font-obj;
 
-        method font-obj {
-            state %cache;
+        method font-obj(:$cache!) {
             my Str $file = $.find-font;
-            %cache{$file} //= do {
+            $cache.font{$file} //= do {
                 my Font::FreeType::Face $face = $!freetype.face($file);
                 my FT_Face $ft-face = $face.struct;
                 $ft-face.FT_Reference_Face;
@@ -32,7 +38,8 @@ class HTML::Canvas::To::Cairo {
             };
         }
     }
-    has FontCache $!font .= new;
+    has Font $!font .= new;
+    has Cache $.cache .= new;
 
     submethod TWEAK(Numeric :$width = $!canvas.width, Numeric :$height = $!canvas.height) {
         $!surface //= Cairo::Image.create(Cairo::FORMAT_ARGB32, $width // 128, $height // 128);
@@ -76,9 +83,8 @@ class HTML::Canvas::To::Cairo {
         $!ctx.restore;
         $!font.css = $!canvas.css;
     }
-    has %!pattern-cache{Any};
     method !make-pattern(HTML::Canvas::Pattern $pattern) {
-        %!pattern-cache{$pattern} //= do {
+        $!cache.pattern{$pattern} //= do {
             my Bool \repeat-x = ? ($pattern.repetition eq 'repeat'|'repeat-x');
             my Bool \repeat-y = ? ($pattern.repetition eq 'repeat'|'repeat-y');
             my Bool \tiling = repeat-x || repeat-y;
@@ -106,29 +112,31 @@ class HTML::Canvas::To::Cairo {
         }
     }
     method !make-gradient(HTML::Canvas::Gradient $gradient --> Cairo::Pattern) {
-        my @color-stops;
-        for $gradient.colorStops.sort(*.offset) {
-            my @rgb = (.r, .g, .b).map: (*/255)
-                with .color;
-            @color-stops.push: %( :offset(.offset), :@rgb );
-        };
-        @color-stops.push({ :rgb[1, 1, 1] })
-            unless @color-stops;
-        @color-stops[0]<offset> = 0.0;
+        $!cache.gradient{$gradient} //= do {
+            my @color-stops;
+            for $gradient.colorStops.sort(*.offset) {
+                my @rgb = (.r, .g, .b).map: (*/255)
+                    with .color;
+                @color-stops.push: %( :offset(.offset), :@rgb );
+            };
+            @color-stops.push({ :rgb[1, 1, 1] })
+                unless @color-stops;
+            @color-stops[0]<offset> = 0.0;
 
-        my $patt = do given $gradient.type {
-            when 'Linear' {
-              Cairo::Pattern::Gradient::Linear.create(.x0, .y0, .x1, .y1)
-                  with $gradient;
+            my $patt = do given $gradient.type {
+                when 'Linear' {
+                  Cairo::Pattern::Gradient::Linear.create(.x0, .y0, .x1, .y1)
+                      with $gradient;
+                }
+                when 'Radial' {
+                    Cairo::Pattern::Gradient::Radial.create(.x0, .y0, .r0, .x1, .y1, .r1)
+                        with $gradient;
+                }
             }
-            when 'Radial' {
-                Cairo::Pattern::Gradient::Radial.create(.x0, .y0, .r0, .x1, .y1, .r1)
-                    with $gradient;
-            }
+            $patt.add_color_stop_rgb(.<offset>, |.<rgb>)
+                for @color-stops;
+            $patt;
         }
-        $patt.add_color_stop_rgb(.<offset>, |.<rgb>)
-            for @color-stops;
-        $patt;
     }
     method !make-color($_, $color) {
 	when HTML::Canvas::Pattern {
@@ -185,7 +193,7 @@ class HTML::Canvas::To::Cairo {
     method font(Str $?) {
         $!font.css = $!canvas.css;
         $!ctx.set_font_size( $!canvas.adjusted-font-size($!font.em) );
-        $!ctx.set_font_face( $!font.font-obj );
+        $!ctx.set_font_face( $!font.font-obj(:$!cache) );
     }
     method !baseline-shift {
 	my \t = $!ctx.text_extents("Q");
@@ -265,32 +273,28 @@ class HTML::Canvas::To::Cairo {
     method clip() {
         $!ctx.clip;
     }
-    has Cairo::Surface %!canvas-cache{HTML::Canvas};
-    has Cairo::Surface %!canvas-surface-cache{HTML::Canvas::Image};
     method !canvas-to-surface(HTML::Canvas $sub-canvas, Numeric :$width!, Numeric :$height! ) {
-        %!canvas-cache{$sub-canvas} //= do {
-            my $renderer = self.new: :$width, :$height;
+        $!cache.image{$sub-canvas} //= do {
+            my $renderer = self.new: :$width, :$height, :$!cache;
             $sub-canvas.render($renderer);
             $renderer.surface;
         }
     }
-    my subset Drawable where HTML::Canvas|HTML::Canvas::Image|HTML::Canvas::ImageData;
-    has %!image-cache{Any};
     method !to-surface(Drawable $_,
                         :$width! is rw,
                         :$height! is rw --> Cairo::Surface) {
         when HTML::Canvas {
             $width = $_ with .html-width;
             $height = $_ with .html-height;
-            %!image-cache{$_} //= self!canvas-to-surface($_, :$width, :$height);
+            $!cache.image{$_} //= self!canvas-to-surface($_, :$width, :$height);
         }
         when HTML::Canvas::ImageData {
             $width = .sw;
             $height = .sh;
-            %!image-cache{$_} //= .image;
+            $!cache.image.{$_} //= .image;
         }
         when .image-type eq 'PNG' {
-            with (%!canvas-surface-cache{$_} //= Cairo::Image.create(.Blob)) {
+            with ($!cache.image{$_} //= Cairo::Image.create(.Blob)) {
                 $width = .width;
                 $height = .height;
                 $_

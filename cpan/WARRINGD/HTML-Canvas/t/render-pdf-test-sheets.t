@@ -17,10 +17,11 @@ my $y = 0;
 my \h = 20;
 my \pad = 10;
 my \textHeight = 20;
+my $cache = HTML::Canvas::To::Cairo::Cache.new;
 
 sub test-sheet(&markup) {
     my HTML::Canvas $canvas .= new;
-    my $feed = HTML::Canvas::To::Cairo.new: :$surface, :$canvas;
+    my $feed = HTML::Canvas::To::Cairo.new: :$surface, :$canvas, ; #:$cache;
     my Bool $clean = True;
     $sheet-no++;
 

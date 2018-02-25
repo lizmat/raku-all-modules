@@ -1,6 +1,6 @@
 use v6;
 
-class HTML::Canvas:ver<0.0.2> {
+class HTML::Canvas:ver<0.0.3> {
     use CSS::Declarations:ver;
     use HTML::Canvas::Gradient;
     use HTML::Canvas::Pattern;
@@ -127,7 +127,7 @@ class HTML::Canvas:ver<0.0.2> {
             STORE => sub ($, ColorSpec $!fillStyle) {
                 $!css.background-color = $!fillStyle
                     if $!fillStyle ~~ Str;
-                self!call('fillStyle', $!fillStyle);
+                @!calls.push('fillStyle' => [$!fillStyle]);
             }
         );
     }
@@ -138,7 +138,7 @@ class HTML::Canvas:ver<0.0.2> {
             STORE => sub ($, ColorSpec $!strokeStyle) {
                 $!css.color = $!strokeStyle
                     if $!strokeStyle ~~ Str;
-                self!call('strokeStyle', $!strokeStyle);
+                @!calls.push('strokeStyle' => [$!strokeStyle]);
             }
         );
     }
@@ -344,8 +344,8 @@ class HTML::Canvas:ver<0.0.2> {
             .($name, |@args) for @!callback;
         }
     }
-    method !setup-fill { .('fillStyle', self.fillStyle) for @!callback; }
-    method !setup-stroke { .('strokeStyle', self.strokeStyle) for @!callback; }
+    method !setup-fill { .('fillStyle', $!fillStyle) for @!callback; }
+    method !setup-stroke { .('strokeStyle', $!strokeStyle) for @!callback; }
     method !draw-subpath {
 
         @!subpath-new = [];
