@@ -1,0 +1,32 @@
+{
+   "meta6" : "0",
+   "tags" : [
+	"CommonMark",
+	"Markdown"
+   ],
+   "provides" : {
+      "CommonMark" : "lib/CommonMark.pm6"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "https://github.com/drforr/perl6-CommonMark.git"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "test-depends" : [
+   ],
+   "auth" : "github:drforr",
+   "source-url" : "https://github.com/drforr/perl6-CommonMark.git",
+   "depends" : [
+       "Test::META"
+   ],
+   "name" : "CommonMark",
+   "authors" : [
+      "Jeffrey Goff <drforr@pobox.com>"
+   ],
+   "version" : "0.0.1",
+   "license" : "Artistic-2.0",
+   "description" : "Interface to the CommonMark library"
+}
