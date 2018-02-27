@@ -39,10 +39,10 @@ multi sub MAIN(
 
 	chdir $source.IO.parent.path;
 
-	run « a2x -f manpage {$verbose ?? "-v" !! ""} {$source.IO.path} »;
+	run « a2x -f manpage {$verbose ?? "-v" !! ""} "{$source.IO.path}" »;
 	say $source.IO.path;
 	say $page;
-	run « gzip $page »;
+	run « gzip "$page" »;
 	mkdir $destination.IO.parent.path;
 
 	if (!move "$page.gz", $destination) {

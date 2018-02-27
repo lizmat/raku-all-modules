@@ -20,7 +20,7 @@ multi sub MAIN("depend", Str $module, Bool :$no-install = False) is export
 
 	# Install the new dependency with zef
 	if (!$no-install) {
-		my $zef = run « zef --cpan install $module »;
+		my $zef = run « zef --cpan install "$module" »;
 
 		die "Zef failed, bailing" if 0 < $zef.exitcode;
 	}

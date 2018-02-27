@@ -51,15 +51,15 @@ multi sub MAIN(
 	}
 
 	if ($verbose) {
-		say "tar czf $output {@tar-flags} .";
+		say "tar czf {$output.perl} {@tar-flags} .";
 	}
 
-	run « tar czf $output {@tar-flags} .», :err;
+	run « tar czf "$output" {@tar-flags} .», :err;
 
 	say "Created {$output}";
 
 	if ($verbose) {
-		my $list = run « tar tf $output », :out;
+		my $list = run « tar tf "$output" », :out;
 
 		for $list.out.lines -> $line {
 			say "  {$line}";

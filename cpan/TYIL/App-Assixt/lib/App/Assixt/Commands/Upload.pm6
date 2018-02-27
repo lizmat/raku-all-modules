@@ -45,7 +45,7 @@ multi sub MAIN("upload", Str $dist, Str :$pause-id = "", Str :$pause-password = 
 
 	die "'tar' is not available on this system" unless which("tar");
 
-	run « tar xzf $dist -C $tempdir »;
+	run « tar xzf "$dist" -C "$tempdir" »;
 
 	my %meta = get-meta($tempdir.IO.add($dist.IO.extension("", :parts(2)).basename).absolute);
 	my $distname = "{%meta<name>.subst("::", "-", :g)}-{%meta<version>}";
@@ -66,7 +66,7 @@ multi sub MAIN("upload", Str $dist, Str :$pause-id = "", Str :$pause-password = 
 		-F "pause99_add_uri_httpupload=@$dist"
 		-F "SUBMIT_pause99_add_uri_httpupload=$submitvalue"
 		https://pause.perl.org/pause/authenquery
-	», :out;
+	», :out, :err;
 
 	my @curl-out = $curl.out.lines(:close);
 
@@ -86,12 +86,20 @@ multi sub MAIN("upload", Str $dist, Str :$pause-id = "", Str :$pause-password = 
 
 	if (!%http-status) {
 		note "Could not find HTTP status in curl response";
-		next;
+
+		my @curl-err = $curl.err.lines(:close);
+
+		for @curl-err -> $line {
+			note $line.indent(2);
+		}
+
+		exit 1;
 	}
 
 	if (%http-status<code> ne "200") {
 		note "Upload for {%meta<name>} failed: {%http-status<message>}";
-		next;
+
+		exit 2;
 	}
 
 	# Report success to the user

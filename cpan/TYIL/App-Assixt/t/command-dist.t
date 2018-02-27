@@ -9,7 +9,7 @@ use File::Temp;
 use File::Which;
 use Test;
 
-plan 4;
+plan 5;
 
 skip-rest "'tar' is not available" and exit unless which("tar");
 
@@ -55,6 +55,19 @@ subtest ":output-dir overrides config-set output-dir", {
 
 	ok "$output-dir/Local-Test-Dist-0.0.0.tar.gz".IO.e, "Tarball exists";
 };
+
+subtest ":output-dir set to a path with spaces", {
+	plan 2;
+
+	my Str $output-dir = "$root/output gamma";
+
+	ok MAIN(
+		"dist",
+		:$output-dir,
+	), "assixt dist";
+
+	ok "$output-dir/Local-Test-Dist-0.0.0.tar.gz".IO.e, "Tarball exists";
+}
 
 subtest "Dist in other path can be created", {
 	plan 2;
