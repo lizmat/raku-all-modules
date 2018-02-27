@@ -1,7 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "App::ecogen",
-    "version"     : "0.0.2",
+    "version"     : "0.0.3",
     "auth"        : "github:ugexe",
     "authors"     : ["ugexe"],
     "license"     : "Artistic-2.0",

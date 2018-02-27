@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/Perl6-App--ecogen.git
 	branch = master
-	commit = 11916b039144a25da66ad6ae412738fd9f1f3775
-	parent = 33d99d513ee1dbe912214b4423af9d1bf7e6136a
+	commit = 67a7766e010695530842d634c1a32fcb022e63cd
+	parent = ed1cbcc28c8a4f054e4945c64f33b7e593d25a6b
 	cmdver = 0.4.0

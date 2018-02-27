@@ -7,23 +7,20 @@ sub from-json($text) { Rakudo::Internals::JSON.from-json($text) }
 sub to-json(|c)      { Rakudo::Internals::JSON.to-json(|c)      }
 
 sub powershell-webrequest($uri) {
-    state $probe = $*DISTRO.is-win && try { shell('cmd /c powershell -help', :!out, :!err).so };
-    return Nil unless $probe;
-    my $content = shell("cmd /c powershell -executionpolicy bypass -command (Invoke-WebRequest -UseBasicParsing -URI $uri).Content", :out).out.slurp(:close);
+    return Nil unless once { $*DISTRO.is-win && so try run('powershell', '-help', :!out, :!err) };
+    my $content = shell("cmd /c powershell -executionpolicy bypass -command (Invoke-WebRequest -UseBasicParsing -URI $uri).Content", :out).out.slurp-rest(:close);
     return $content;
 }
 
 sub curl($uri) {
-    state $probe = try { run('curl', '--help', :!out, :!err).so };
-    return Nil unless $probe;
-    my $content = run('curl', '--max-time', 60, '-s', '-L', $uri, :out).out.slurp(:close);
+    return Nil unless once { so try run('curl', '--help', :!out, :!err) };
+    my $content = run('curl', '--max-time', 60, '-s', '-L', $uri, :out).out.slurp-rest(:close);
     return $content;
 }
 
 sub wget($uri) {
-    state $probe = try { run('wget', '--help', :!out, :!err).so };
-    return Nil unless $probe;
-    my $content = run('wget', '--timeout=60', '-qO-', $uri, :out).out.slurp(:close);
+    return Nil unless once { so try run('wget', '--help', :!out, :!err) };
+    my $content = run('wget', '--timeout=60', '-qO-', $uri, :out).out.slurp-rest(:close);
     return $content;
 }
 
@@ -41,9 +38,23 @@ role Ecosystem {
             @meta-uris;
     }
 
-    method update-local-package-list(@metas = $.package-list) {
-        my $json = to-json( @metas );
-        return self.index-file.spurt( $json );
+    method update-local-package-list(@metas is copy = $.package-list) {
+        my $handle = (self.index-file.absolute ~ ".tmp." ~ now.Int).IO.open(:w);
+        LEAVE { try $handle.close; try $handle.unlink; }
+
+        $handle.print("[\n");
+        while @metas.shift -> $meta {
+            $handle.print(~to-json($meta));
+            $handle.print("\n,\n") if @metas.elems;
+        }
+        $handle.print("\n]");
+        $handle.close;
+
+        self.index-file.unlink;
+        sleep 1;
+        $handle.path.rename(self.index-file);
+
+        return self.index-file.slurp;
     }
 
     method update-remote-package-list($remote-uri) {
@@ -67,3 +78,4 @@ role Ecosystem {
         return powershell-webrequest($uri) // curl($uri) // wget($uri);
     }
 }
+
