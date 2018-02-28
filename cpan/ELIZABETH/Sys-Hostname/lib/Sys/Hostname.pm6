@@ -1,27 +1,7 @@
 use v6.c;
-unit class Sys::Hostname:ver<0.0.2>;
+unit class Sys::Hostname:ver<0.0.3>;
 
-#use NativeCall;
-
-#my sub gethostname(Str $name, size_t $len --> int32) is native {*}
-
-#my class UnameStruct is repr('CStruct') {
-#    has Str $.sysname;
-#    has Str $.nodename;
-#    has Str $.release;
-#    has Str $.version;
-#    has Str $.machine;
-#}
-#my sub uname(UnameStruct:D $ --> int32) is native {*}
-
-my sub clean($name is copy) { $name.subst(/ \s | \0 /,'',:g) }
-
-sub hostname() is export {
-    clean(qx/hostname/)
-      || clean(qx/uname -n/)
-      || clean(slurp "/com/host")
-      // die "Cannot get host name of local machine"
-}
+sub hostname() is export { gethostname.subst(/ \s | \0 /,'',:g) }
 
 =begin pod
 
@@ -36,17 +16,14 @@ Sys::Hostname - Implement Perl 5's Sys::Hostname core module
 
 =head1 DESCRIPTION
 
-Attempts several methods of getting the system hostname and then caches the
-result. It tries the first available of the C library's gethostname(),
-uname(2), syscall(SYS_gethostname), `hostname`, `uname -n`, and the file
-/com/host. If all that fails it dies.
+Obtain the system hostname as Perl 6 sees it.
 
 All NULs, returns, and newlines are removed from the result.
 
 =head1 PORTING CAVEATS
 
-At present, only `hostname`, `uname -n` and /com/host are attempted before
-dieing.
+At present, the behaviour of the built-in C<gethostname> sub is used.  Any
+bugs in its behaviour should be fixed there.
 
 =head1 AUTHOR
 

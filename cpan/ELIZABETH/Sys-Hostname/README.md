@@ -14,14 +14,14 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Attempts several methods of getting the system hostname and then caches the result. It tries the first available of the C library's gethostname(), uname(2), syscall(SYS_gethostname), `hostname`, `uname -n`, and the file /com/host. If all that fails it dies.
+Obtain the system hostname as Perl 6 sees it.
 
 All NULs, returns, and newlines are removed from the result.
 
 PORTING CAVEATS
 ===============
 
-At present, only `hostname`, `uname -n` and /com/host are attempted before dieing.
+At present, the behaviour of the built-in `gethostname` sub is used. Any bugs in its behaviour should be fixed there.
 
 AUTHOR
 ======
