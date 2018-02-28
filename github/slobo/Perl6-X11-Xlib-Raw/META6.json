@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "X11::Xlib::Raw",
+    "license" : "Artistic-2.0 AND X11",
     "version" : "*",
     "description" : "Xlib binding using NativeCall",
     "depends" : [ "NativeHelpers::Blob" ],

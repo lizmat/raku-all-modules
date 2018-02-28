@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/slobo/Perl6-X11-Xlib-Raw.git
 	branch = master
-	commit = bd2ba17232e0c247bfbf3df6d9db7fa3d4c9be3e
-	parent = dde1be1ffac8551f543042edcf1457f151ca454e
+	commit = 96c67229a79d3bc6d085f6851aa0d413632a26b9
+	parent = aab24cdc103dd9cee992e9e75ba1888a406deea3
 	cmdver = 0.4.0

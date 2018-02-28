@@ -5,12 +5,15 @@ os:
   - osx
 
 perl6:
-  - 2016.05
+  - 2017.07
   - latest
 
 install:
-  - rakudobrew build panda
   - rakudobrew build zef
-  - panda installdeps .
+  - zef --depsonly install .
+  - zef install Test::META
+  - zef build .
 
-script: prove -v -e "perl6 -Ilib" t/ && zef install .
+script: 
+  - AUTHOR_TESTING=1 prove -v -e "perl6 -Ilib" t/
+  - zef install .
