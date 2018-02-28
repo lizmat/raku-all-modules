@@ -55,7 +55,12 @@ role PDF::Content::Graphics {
     }
 
     method contents returns Str {
-	$.decoded // '';
+	with $.decoded {
+           .isa(Str) ?? $_ !! .Str;
+        }
+        else {
+            ''
+        }
     }
 
     method new-gfx(|c) {
