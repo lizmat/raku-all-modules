@@ -1,7 +1,7 @@
 #!/usr/bin/env perl6
 
 use Test;
-use CSS::Grammar::Test;
+use CSS::Grammar::Test :parse-tests;
 use CSS::Grammar::CSS1;
 use CSS::Grammar::CSS21;
 use CSS::Grammar::CSS3;
@@ -11,21 +11,21 @@ use CSS::Grammar::CSS3;
 my $tiny = 'H1 { color: blue; }';
 my $small = 'A:link IMG { border: 2px solid blue !important}';
 
-my $body = 'BODY { 
+my $body = 'BODY {
   margin: 1em;
   font-family: serif;
   line-height: 1.1;
   background: white;
-  color: black; 
+  color: black;
 }
 ';
 
 my $sample = q:to/END_SAMPLE/;
 
-H1, H2, H3, H4, H5, H6, P, UL, OL, DIR, MENU, DIV, 
-DT, DD, ADDRESS, BLOCKQUOTE, PRE, BR, HR, FORM, DL { 
+H1, H2, H3, H4, H5, H6, P, UL, OL, DIR, MENU, DIV,
+DT, DD, ADDRESS, BLOCKQUOTE, PRE, BR, HR, FORM, DL {
   display: block }
-B, STRONG, I, EM, CITE, VAR, TT, CODE, KBD, SAMP, 
+B, STRONG, I, EM, CITE, VAR, TT, CODE, KBD, SAMP,
 IMG, SPAN { display: inline }
 
 LI { display: list-item }
@@ -81,9 +81,9 @@ for @tests {
         css3  => CSS::Grammar::CSS3 {
 	    my ($level, $class) = .kv;
 
-	    CSS::Grammar::Test::parse-tests( $class, $input,
-					     :suite($level),
-					     :rule<stylesheet> );
+	    parse-tests( $class, $input,
+			 :suite($level),
+			 :rule<stylesheet> );
     }
 }
 

@@ -38,7 +38,7 @@ module CSS::Grammar::Test {
 
     our sub parse-tests($class, $input, :$parse is copy, :$actions,
 			:$rule = 'TOP', :$suite = '', :$writer,
-                        :%expected) {
+                        :%expected) is export(:parse-tests) {
 
         $parse //= do { 
             $actions.reset if $actions.can('reset');

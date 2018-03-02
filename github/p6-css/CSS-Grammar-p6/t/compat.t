@@ -8,7 +8,7 @@
 use Test;
 use JSON::Fast;
 
-use CSS::Grammar::Test;
+use CSS::Grammar::Test :parse-tests;
 use CSS::Grammar::CSS1;
 use CSS::Grammar::CSS21;
 use CSS::Grammar::CSS3;
@@ -41,23 +41,23 @@ for 't/compat.json'.IO.lines {
 	    next;
 	}
 
-	CSS::Grammar::Test::parse-tests($class, $input,
-					:$actions,
-					:$rule,
-					:suite($level),
-                                        :$writer,
-					:%expected);
+	parse-tests($class, $input,
+                    :$actions,
+                    :$rule,
+                    :suite($level),
+                    :$writer,
+                    :%expected);
     }
 
     if CSS::Grammar::Core.can( '_' ~ $rule ) {
         my %core-tests = $test<core> // {};
 	my %expected = %$test, ast => Any, warnings => Any, %core-tests;
         %expected<warnings> //= Any;
-        CSS::Grammar::Test::parse-tests(CSS::Grammar::Core, $input,
-					    :$actions,
-					    :rule('_' ~ $rule),
-					    :suite<core>,
-					    :%expected);
+        parse-tests(CSS::Grammar::Core, $input,
+                    :$actions,
+                    :rule('_' ~ $rule),
+                    :suite<core>,
+                    :%expected);
     }
 }
 
