@@ -22,7 +22,7 @@ class App::Platform::Git {
             mkdir $target-path.IO.parent;
             App::Platform::Git::Command.new(<git>, <clone>, $uri, $target-path).run;
         } else {
-            put " {App::Platform::Output.after-prefix}" ~ BOLD, "notice: skipping git clone, path already exists", RESET;
+            put " {App::Platform::Output.after-prefix}" ~ BOLD, "notice: skipping git clone. {$target-path.IO.relative} already exists", RESET;
         }
     }
 

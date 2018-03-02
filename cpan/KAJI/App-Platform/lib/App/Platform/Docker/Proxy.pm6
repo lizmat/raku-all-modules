@@ -23,7 +23,9 @@ class App::Platform::Docker::Proxy is App::Platform::Container {
     }
 
     method stop {
-        my $proc = run <docker stop -t 0>, 'platform-' ~ $.name.lc, :out, :err;
+        my $proc;
+        $proc = App::Platform::Docker::Command.new(<docker stop -t 0>, 'platform-' ~ $.name.lc).run;
+        $proc = App::Platform::Docker::Command.new(<docker rm -v>, 'platform-' ~ $.name.lc).run;
         self.result-as-hash($proc);
     }
 

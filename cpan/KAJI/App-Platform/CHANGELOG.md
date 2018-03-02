@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3]
+### Added
+- Added Template::Mustache support to files + exec sections
+- info command added for giving status information
+
+### Changed
+- Git repository clone little bit more clearer
+
+### Fixed
+- Replace run with App::Platform::Command on ssh+ssl
+- `platform attach <projectname>` to match beginning of container name
+- Project name is the hostname
+- Regression on using --domain=<your domain> option
+- Print out errors coming to STDERR
+- Setup test docker check is always true (#29)
+- DNS service tried to launch too many times on Linux
+
 ## [0.2.1]
 ### Fixed
 - Volume paths were resolved wrong when not in projectdir
@@ -91,7 +108,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Proxy + DNS services
 - Project and Environment support
 
-[Unreleased]: https://github.com/7ojo/perl6-platform/compare/0.2.1...HEAD
+[Unreleased]: https://github.com/7ojo/perl6-platform/compare/0.3.0...HEAD
+[0.3.0]: https://github.com/7ojo/perl6-platform/compare/0.2.1...0.3.0
 [0.2.1]: https://github.com/7ojo/perl6-platform/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/7ojo/perl6-platform/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/7ojo/perl6-platform/compare/0.0.6...0.1.0

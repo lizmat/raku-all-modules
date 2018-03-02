@@ -5,6 +5,8 @@ our $network;
 our $domain;
 
 use CommandLine::Usage;
+use App::Platform::Output;
+use Terminal::ANSIColor;
 
 #| Attach to a running container through shell
 multi cli('attach',
@@ -20,13 +22,18 @@ multi cli('attach',
         my $name = $container;
         my $proc = run <docker ps --format>, <{{.Names}}>, <--filter>, "name={$container}", :out, :err;
         my $out = $proc.out.slurp-rest;
-        $name = $out.lines[0].trim;
+        $name = $out.lines.grep({ / ^ $container / }).trim;
+        if $name.chars == 0 {
+           put BOLD, "error: did not find any matching container", RESET;
+           exit;
+        }
 
         # Figure out which shell is supported
         my $shell = 'bash';
         $proc = run <docker exec -it>, $name, $shell, <-c>, "echo shelltest", :out, :err;
-        $shell = 'ash' unless $proc.out.slurp-rest ~~ / ^ shelltest /; 
+        $shell = 'ash' unless $proc.out.slurp-rest ~~ / ^ shelltest /;
 
+        # Open shell under container
         run <docker exec -it>, $name, $shell;
     }
 }

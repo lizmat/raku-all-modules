@@ -68,9 +68,13 @@ File: $HOME/.platform/config.yml
    * - volumes
      - *string*
      - Mount volume from host to container e.g. /home/user/Dotfiles:/root/Dotfiles
+   * - domain
+     - *string*
+     - Define domain name to use when launching services and projects. Default: localhost
 
 Examples of ``init.debian``, ``init.alpine`` etc files you can find here https://github.com/7ojo/Dotfiles and here's example for ``~/.platform/config.yml`` file::
    
+   domain: localhost
    dotfiles: /root/Dotfiles
    volumes:
       - /Users/tojo/Dotfiles:/root/Dotfiles

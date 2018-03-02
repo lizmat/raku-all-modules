@@ -1,7 +1,7 @@
 {
     "name"          : "App::Platform",
     "license"       : "MIT",
-    "version"       : "0.2.1",
+    "version"       : "0.3",
     "perl"          : "6",
     "description"   : "Tool for constructing development environments",
     "authors"       : [ "Jarkko Haapalainen <jarkko@viidakko.fi>" ],
@@ -34,14 +34,16 @@
         "App::Platform::CLI::SSH"                    : "lib/App/Platform/CLI/SSH.pm6",
         "App::Platform::CLI::SSL"                    : "lib/App/Platform/CLI/SSL.pm6",
         "App::Platform::CLI::Start"                  : "lib/App/Platform/CLI/Start.pm6",
-        "App::Platform::CLI::Stop"                   : "lib/App/Platform/CLI/Stop.pm6"
+        "App::Platform::CLI::Stop"                   : "lib/App/Platform/CLI/Stop.pm6",
+        "App::Platform::CLI::Info"                   : "lib/App/Platform/CLI/Info.pm6"
     },
     "depends"       : [
         "Text::Wrap",
         "YAMLish",
         "JSON::Tiny",
         "Terminal::ANSIColor",
-        "CommandLine::Usage"
+        "CommandLine::Usage",
+        "Template::Mustache"
     ],
     "source-url"    : "https://github.com/7ojo/perl6-platform.git"
 }

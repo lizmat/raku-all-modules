@@ -23,6 +23,9 @@ class App::Platform::Command is Proc::Async is App::Platform::Output {
         });
         self.stderr.tap( -> $str {
             self.err ~= $str;
+            for $str.lines {
+                put $prefix ~ color('red') ~ $_ ~ color('reset') if $_.chars > 0;
+            }
         });
     }
 

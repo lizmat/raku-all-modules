@@ -10,6 +10,8 @@ use App::Platform::CLI::Start;
 use App::Platform::CLI::Stop;
 use App::Platform::CLI::SSL;
 use App::Platform::CLI::SSH;
+use App::Platform::CLI::Info;
+use YAMLish;
 
 our $data-path is export(:vars);
 
@@ -20,21 +22,30 @@ multi cli is export {
 multi set-defaults(
     :D( :debug($debug) ),                                   #= Enable debug mode
     :a( :data-path($data-path) )    = '$HOME/.platform',    #= Location of resource files
-    :d( :domain( $domain ) )        = 'localhost',          #= Domain address 
+    :d( :domain( $_domain ) )       = 'localhost',          #= Domain address 
     :n( :network( $network ) )      = 'acme',               #= Network name
     ) is export {
+
+    # load some defaults from config.yml
+    my $domain = $_domain;
+    my $config-file = $data-path ~ '/config.yml';
+    $config-file = $config-file.subst(/ '$HOME' /, $*HOME);
+    if $config-file.IO.e {
+        my $config = load-yaml $config-file.IO.slurp;
+        $domain = $config<domain> if $config<domain>;
+    }
+    
     set-defaults(
         data-path   => $data-path,
         debug       => $debug,
         domain      => $domain,
-        fallback    => 1,
         network     => $network,
+        fallback    => 1, # force select set-defaults function below
         );
 }
 
 multi set-defaults(*@args, *%args) {
     
-    # TODO: Refactor some how. Duplicates default values.
     %args<data-path> ||= '$HOME/.platform';
     %args<domain>    ||= 'localhost';
     %args<network>   ||= 'acme';
@@ -51,6 +62,7 @@ multi set-defaults(*@args, *%args) {
             Stop
             SSL
             SSH
+            Info
             > -> $module {
             my $class-name = "App::Platform::CLI::$module";
             if %args{$class-var}:exists {

@@ -1,6 +1,7 @@
 use v6;
 use App::Platform::Container;
 use App::Platform::Util::OS;
+use App::Platform::Docker::Command;
 
 role App::Platform::Docker::DNS is App::Platform::Container {
     
@@ -37,7 +38,9 @@ role App::Platform::Docker::DNS is App::Platform::Container {
                 return App::Platform::Docker::DNS::Windows.new(:$.network, :$.domain, :$.data-path).stop;
             }
             default {
-                my $proc = run <docker stop -t 0>, 'platform-' ~ self.name.lc, :out, :err;
+                my $proc;
+                $proc = App::Platform::Docker::Command.new(<docker stop -t 0>, 'platform-' ~ self.name.lc).run;
+                $proc = App::Platform::Docker::Command.new(<docker rm -v>, 'platform-' ~ self.name.lc).run;
                 self.last-result = self.result-as-hash($proc);
                 return self;
             }

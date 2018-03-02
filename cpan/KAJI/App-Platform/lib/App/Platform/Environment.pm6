@@ -2,6 +2,8 @@ use v6;
 use YAMLish;
 use App::Platform::Project;
 use App::Platform::Git;
+use App::Platform::Output;
+use Terminal::ANSIColor;
 
 class App::Platform::Environment {
 
@@ -17,14 +19,20 @@ class App::Platform::Environment {
 
     submethod TWEAK {
         my $config = load-yaml $!environment.IO.slurp;
+
+        # Git support. Try to fetch repository if it does not exists 
+        put '🐱' ~ App::Platform::Output.after-prefix ~ color('yellow'), ~ 'Repositories' ~ color('reset');
         for $config.Hash.sort(*.key)>>.kv.flat -> $project, $data {
             next if @!reserved-keys.contains($project);
 
-            # Git support. Try to fetch repository if it does not exists
             App::Platform::Git.new(
                 data    => $data<git>, 
                 target  => $!environment.IO.parent ~ '/' ~ $project
                 ).clone if $data<git>;
+        }
+        
+        for $config.Hash.sort(*.key)>>.kv.flat -> $project, $data {
+            next if @!reserved-keys.contains($project);
 
             my $project-path = $project ~~ / ^ \/ / ?? $project !! "{self.environment.IO.dirname}/{$project}".IO.absolute;
             if $data ~~ Bool and $data {

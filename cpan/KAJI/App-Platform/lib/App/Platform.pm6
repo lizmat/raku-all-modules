@@ -2,6 +2,7 @@ use v6;
 use App::Platform::Container;
 use App::Platform::Docker::DNS;
 use App::Platform::Docker::Proxy;
+use App::Platform::Command;
 use YAMLish;
 
 class App::Platform is App::Platform::Container {
@@ -29,13 +30,13 @@ class App::Platform is App::Platform::Container {
         my $proc = run <openssl genrsa -out>, "$ssl-dir/server-key.key", <4096>, :out, :err;
         my $out = $proc.out.slurp-rest;
         my $err = $proc.err.slurp-rest;
-        run <openssl rsa -in>, "$ssl-dir/server-key.key", <-pubout -out>, "$ssl-dir/server-key.crt";
+        App::Platform::Command.new(<openssl rsa -in>, "$ssl-dir/server-key.key", <-pubout -out>, "$ssl-dir/server-key.crt").run;
     }
 
     method ssh('keygen') {
         my $ssh-dir = $.data-path ~ '/' ~ self.domain ~ '/ssh';
         mkdir $ssh-dir if not $ssh-dir.IO.e;
-        run <ssh-keygen -t rsa -q -N>, '', '-f', "$ssh-dir/id_rsa";
+        App::Platform::Command.new(<ssh-keygen -t rsa -q -N>, '', '-f', "$ssh-dir/id_rsa").run;
     }
 
     method is-environment(Str $path) {

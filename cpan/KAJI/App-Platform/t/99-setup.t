@@ -7,9 +7,9 @@ use nqp;
 
 plan 6;
 
-constant DOCKER = ( ( run <docker --version>, :out, :err ).out.slurp ~~ / ^ Docker / ).Bool;
+constant DOCKER = ( run "docker", "ps", :out, :err).exitcode;
 
-if not DOCKER {
+if DOCKER.Bool {
      skip-rest "Skipping tests because docker is not available";
      exit;
 }

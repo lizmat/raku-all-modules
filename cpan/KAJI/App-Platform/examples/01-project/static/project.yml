@@ -25,3 +25,9 @@ files:
       use v6;
       
       say "Hello Perl 6 World";
+  /template-variables.txt: |
+    hostname: {{hostname}}
+    domain:   {{domain}}
+exec:
+  - echo 'hostname={{hostname}} domain={{domain}}'
+

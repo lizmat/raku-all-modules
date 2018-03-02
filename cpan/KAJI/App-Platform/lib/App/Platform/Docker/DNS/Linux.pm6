@@ -30,6 +30,10 @@ class App::Platform::Docker::DNS::Linux does App::Platform::Docker::DNS {
                 last;
             } elsif $proc.err ~~ / "address already in use" / {
                 put " {App::Platform::Output.after-prefix}" ~ BOLD, "notice: dns port $port was already reserved", RESET;
+            } elsif $proc.err.chars == 0 {
+                last;
+            } else {
+                put " {App::Platform::Output.after-prefix}" ~ BOLD, "error: " ~ $proc.err, RESET;
             }
         }
         sleep 0.1;
@@ -46,7 +50,8 @@ class App::Platform::Docker::DNS::Linux does App::Platform::Docker::DNS {
         }
         
         # If all went fine then check the name if its working
-        if $proc.exitcode == 0 {
+        # TODO: Currently we disable this check if TLD is something else than "localhost"
+        if self.domain eq 'localhost' and $proc.exitcode == 0 {
             my Proc $ping = run <ping -c 1 dns.localhost>, :out, :err;
             self.last-result = self.result-as-hash($ping);
             self.help-hint = q:heredoc/END/;

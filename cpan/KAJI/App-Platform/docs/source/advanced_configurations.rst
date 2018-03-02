@@ -57,4 +57,35 @@ By default platform creates domain (dns) name from folder name, but you can spec
    environment:
       - VIRTUAL_HOST=*.foo.bar.localhost,foo.bar.localhost
 
+Running Projects Under Own Domain Name
+--------------------------------------
+
+It's possible to run projects under given domain address. You have to configure domain names by your own to point your server so that its foundable from your network or internet. For example you can use AWS Lightsail instances for development.
+
+1. Configure platform to use your domain name. Use text editor or just execute:
+
+   $ echo 'domain: <yourdomainname>' >> ~/.platform/config.yml
+
+You can also define domain from the command line per command basis:
+
+   $ platform --domain=<yourdomainname> <command> ..
+
+#. Launch platform services
+
+   $ platform [--domain=<yourdomainname>] create
+
+#. Launch environment
+
+   $ platform [--domain=<yourdomainname] run your-environment.yml
+
+#. Check your configuration with `platform info`. You should see something like this:
+
+   Platform
+    status:    running
+    ssl-certs: available
+    ssh-keys:  available
+    domain:    <yourdomainname>
+    network:   acme
+    data-path: /home/user/.platform
+
 

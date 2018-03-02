@@ -59,7 +59,7 @@ class App::Platform::Project is App::Platform::Output {
         }, <users dirs files>;
         @active.unshift('build');
        
-        put '🏗️', self.after-prefix, color('170,85,0'), "Project: ", $.project-dir.IO.relative, color('reset'); 
+        put '🏗️', self.after-prefix, color('170,85,0'), "Project: ", "{$cont.name}, {$cont.hostname}", color('reset'); 
         for @active {
             put self.x-prefix, color('yellow'), $_.samecase('Ab'), color('reset');
             $cont."{$_.lc}"();

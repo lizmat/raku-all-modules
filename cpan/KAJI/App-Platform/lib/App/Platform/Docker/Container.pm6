@@ -2,6 +2,7 @@ use v6;
 use YAMLish;
 use App::Platform::Container;
 use App::Platform::Docker::Command;
+use Template::Mustache;
 
 class App::Platform::Docker::Container is App::Platform::Container {
 
@@ -11,6 +12,7 @@ class App::Platform::Docker::Container is App::Platform::Container {
     has @.extra-args;
     has @.volumes; 
     has Str $.dotfiles = '/root/Dotfiles';
+    has %.template;
 
     submethod BUILD {
         $!dockerfile-loc = $_ if not $!dockerfile-loc and "$_/Dockerfile".IO.e for self.projectdir ~ "/docker", self.projectdir;
@@ -38,6 +40,7 @@ class App::Platform::Docker::Container is App::Platform::Container {
         }
 
         self.hostname = self.name ~ '.' ~ self.domain;
+        self.template = hostname => self.hostname, domain => self.domain;
     }
 
     method build {
@@ -135,7 +138,7 @@ class App::Platform::Docker::Container is App::Platform::Container {
                     my $local_target = $target;
                     $local_target ~~ s'^\/'';
                     mkdir "$path/{self.name}/" ~ $local_target.IO.dirname;
-                    spurt "$path/{self.name}/{$local_target}", $content;
+                    spurt "$path/{self.name}/{$local_target}", Template::Mustache.render($content, self.template);
                     @.volumes.push: <--volume>, "$path/{self.name}/{$local_target}:{$target}{$flags}";
                     next;
                 } else {
@@ -150,7 +153,7 @@ class App::Platform::Docker::Container is App::Platform::Container {
             $content = '' unless $content;
             my $file_tpl = "$path/{self.name}/" ~ $target;
             mkdir $file_tpl.IO.dirname;
-            spurt $file_tpl, $content;
+            spurt $file_tpl, Template::Mustache.render($content, self.template);
             App::Platform::Docker::Command.new(<docker>, <exec>, self.name, 'mkdir', '-p', $target.IO.dirname).run;
             App::Platform::Docker::Command.new(<docker>, <cp>, $file_tpl, self.name ~ ":$target").run;
             my @perm;
@@ -165,7 +168,14 @@ class App::Platform::Docker::Container is App::Platform::Container {
 
     method exec {
         return if not self.config-data<exec>;
-        App::Platform::Docker::Command.new(<docker>, <exec>, self.name, $!shell, <-c>, $_).run for self.config-data<exec>.Array;
+        App::Platform::Docker::Command.new(
+            <docker>, 
+            <exec>,
+            self.name,
+            $!shell,
+            <-c>,
+            Template::Mustache.render($_, self.template)
+        ).run for self.config-data<exec>.Array;
     }
 
     method run {
@@ -221,11 +231,21 @@ class App::Platform::Docker::Container is App::Platform::Container {
 
     method env-cmd-opts {
         my $config = self.config-data;
-        my @env = <--env>, "VIRTUAL_HOST={self.hostname}";
+        my @env;
         if $config<environment> {
             my $proc = run <git -C>, self.projectdir, <rev-parse --abbrev-ref HEAD>, :out, :err;
             my $branch = $proc.out.slurp-rest.trim;
-            @env = flat @env, $config<environment>.Array.map({<--env>, $_.subst(/ \$\(GIT_BRANCH\) /, $branch)}).flat;
+            @env = flat @env, $config<environment>.Array.map({
+                <--env>, $_
+                    .subst(/ \$\(GIT_BRANCH\) /, $branch)
+                    .subst(/ VIRTUAL_HOST\= /, "VIRTUAL_HOST=*.{self.hostname},{self.hostname},")
+            }).flat;
+        }
+        if @env.Str !~~ / VIRTUAL_HOST / {
+            @env.push: <--env>, "VIRTUAL_HOST=*.{self.hostname},{self.hostname}";
+        }
+        if @env.Str !~~ / DOMAIN / {
+            @env.push: <--env>, "DOMAIN={self.domain}";
         }
         @env;
     }
