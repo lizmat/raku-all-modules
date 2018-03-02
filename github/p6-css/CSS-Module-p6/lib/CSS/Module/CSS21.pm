@@ -2,10 +2,9 @@ use v6;
 
 # specification: http://www.w3.org/TR/2011/REC-CSS2-20110607/propidx.html
 
+use CSS::Grammar::CSS21;
 use CSS::Module;
 use CSS::Specification::Terms;
-use CSS::Grammar:ver(v0.3.1..*);
-use CSS::Grammar::CSS21;
 use CSS::Module::CSS21::Spec::Interface;
 use CSS::Module::CSS21::Spec::Grammar;
 

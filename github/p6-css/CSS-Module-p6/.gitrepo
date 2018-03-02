@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-css/CSS-Module-p6.git
 	branch = master
-	commit = a9aa158c740b41e40eb9492af25d35de16305128
-	parent = dba80b079f56803201fd3848649fc95f129bdadd
+	commit = a64b6ac89a68b2f7c52b85c6cc5fa79a79415fcd
+	parent = 3ac3736dd3d8df4b04ae8521f6819c02ae683e9b
 	cmdver = 0.4.0
