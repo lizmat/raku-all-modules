@@ -22,8 +22,6 @@ This module also provides some mixin grammars and actions as follows:
 
 - `CSS::Specification::Terms` + `CSS::Specification::Terms::Actions` - is a grammar which maps property specification terminology to CSS Core syntax and defines any newly introduced terms. For example `integer` is mapped to `int`.
 
-- `CSS::Specification::Terms::CSS3` + `CSS::Specification::Terms::CSS3::Actions` - further extends this adding terminology introduced in CSS3.
-
 ## Programs
 This module provides `css-gen-properties`. A program for translating property definitions
 to grammars, actions or interface classes.

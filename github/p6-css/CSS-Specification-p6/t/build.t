@@ -4,6 +4,7 @@ use Test;
 use CSS::Grammar::Test;
 use CSS::Grammar::CSS21;
 use CSS::Specification::Build;
+use lib '.';
 
 sub capture($code, $output-path?) {
     my $output;
@@ -14,7 +15,7 @@ sub capture($code, $output-path?) {
             method print(*@args) {
                 $output ~= @args.join;
             }
-            multi method write(Buf $b){$output ~= $b.decode}
+            method write($, Buf $b){$output ~= $b.decode}
         }
 
     $code();
@@ -34,17 +35,17 @@ is-deeply [@summary.grep({ .<box> })], [{:box, :!inherit, :name<border-color>, :
 
 capture({
     CSS::Specification::Build::generate( 'grammar', $grammar-name, :$input-path );
-}, 'lib/t/CSS/Aural/Spec/Grammar.pm');
+}, 't/CSS/Aural/Spec/Grammar.pm');
 lives-ok {require ::($grammar-name)}, "$grammar-name compilation";
 
 capture({
     CSS::Specification::Build::generate( 'actions', $actions-name, :$input-path );
-}, 'lib/t/CSS/Aural/Spec/Actions.pm');
+}, 't/CSS/Aural/Spec/Actions.pm');
 lives-ok {require ::($actions-name)}, "$actions-name compilation";
 
 capture({
     CSS::Specification::Build::generate( 'interface', $interface-name, :$input-path );
-}, 'lib/t/CSS/Aural/Spec/Interface.pm');
+}, 't/CSS/Aural/Spec/Interface.pm');
 lives-ok {require ::($interface-name)}, "$interface-name compilation";
 
 dies-ok {require ::("t::CSS::Aural::BadGrammar")}, 'grammar composition, unimplemented interface - dies';
@@ -83,7 +84,7 @@ for ('.aural-test { stress: 42; speech-rate: fast; volume: inherit; voice-family
     ) {
     my ($input, $expected) = .kv;
 
-    CSS::Grammar::Test::parse-tests($aural-class, $input, 
-                                    :$actions, :$expected);
+    &CSS::Grammar::Test::parse-tests($aural-class, $input, 
+                                     :$actions, :$expected);
 }
 done-testing;

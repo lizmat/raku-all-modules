@@ -56,11 +56,11 @@ for :number<123.45>        => :num(123.45),
 
     my %expected = :$ast;
 
-    CSS::Grammar::Test::parse-tests(CSS3Terms, $input,
-                                    :$actions,
-                                    :$rule,
-                                    :suite('css3 terms'),
-                                    :%expected);
+    &CSS::Grammar::Test::parse-tests(CSS3Terms, $input,
+                                     :$actions,
+                                     :$rule,
+                                     :suite('css3 terms'),
+                                     :%expected);
 }
 
 done-testing;
