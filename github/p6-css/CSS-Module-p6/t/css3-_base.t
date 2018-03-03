@@ -1,6 +1,6 @@
 use v6;
 use Test;
-use CSS::Grammar::Test;
+use CSS::Grammar::Test :parse-tests;
 
 use CSS::Module::CSS3::_Base;
 use CSS::Module::CSS3::_Base::Actions;
@@ -39,7 +39,7 @@ my $actions = CSS3Terms::Actions.new;
 
 for :number<123.45>        => :num(123.45),
     :integer<123>          => :int(123),
-    :uri("url(foo.jpg)")   => :url<foo.jpg>,
+    :uri<url(foo.jpg)>   => :url<foo.jpg>,
     :keyw<Abc>             => :keyw<abc>,
     :identifier<Foo>       => :ident<Foo>,
     :identifiers("Aaa bb") => :ident("Aaa bb") {
@@ -49,11 +49,11 @@ for :number<123.45>        => :num(123.45),
 
     my %expected = :$ast;
 
-    CSS::Grammar::Test::parse-tests(CSS3Terms, $input,
-                                    :$actions,
-                                    :$rule,
-                                    :suite('css3 terms'),
-                                    :%expected);
+    parse-tests(CSS3Terms, $input,
+                :$actions,
+                :$rule,
+                :suite('css3 terms'),
+                :%expected);
 }
 
 done-testing;

@@ -21,12 +21,12 @@ for ( 't/error-handling.json'.IO.lines ) {
     my ($rule, $expected) = @( from-json($_) );
     my $input = $expected<input>;
 
-    CSS::Grammar::Test::parse-tests($grammar, $input,
-				    :$rule,
-				    :$actions,
-				    :suite<css3>,
-                                    :$writer,
-				    :$expected );
+    &CSS::Grammar::Test::parse-tests($grammar, $input,
+                                     :$rule,
+                                     :$actions,
+                                     :suite<css3>,
+                                     :$writer,
+                                     :$expected );
 }
 
 done-testing;

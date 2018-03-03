@@ -21,7 +21,7 @@ for 't/css3x-fonts.json'.IO.lines {
 
     my $input = $expected<input>;
 
-    CSS::Grammar::Test::parse-tests( CSS::Module::CSS3::Fonts, $input,
+    &CSS::Grammar::Test::parse-tests( CSS::Module::CSS3::Fonts, $input,
 				     :$rule,
 				     :actions($css3x-actions),
                                      :$writer,
@@ -29,7 +29,7 @@ for 't/css3x-fonts.json'.IO.lines {
 				     :$expected );
 
     my $css21 = $expected<css21> // {};
-    CSS::Grammar::Test::parse-tests(CSS::Module::CSS21, $input,
+    &CSS::Grammar::Test::parse-tests(CSS::Module::CSS21, $input,
 				    :$rule,
 				    :actions($css21-actions),
 				    :suite<css21>,
