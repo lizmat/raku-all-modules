@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-css/CSS-Module-CSS3-Selectors-p6.git
 	branch = master
-	commit = 0ce689ed3768d3047edce258e63f6b6348b2a882
-	parent = 1f7abe38e4e6bec5ab482508aecdbfdd5bb3c92f
+	commit = df7324941066d5cc238d5866a2d76c73b4be79e6
+	parent = ef689d6039babb2146aa6e6c7ad7c17c77b0fae6
 	cmdver = 0.4.0

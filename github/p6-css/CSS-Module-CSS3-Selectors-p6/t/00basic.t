@@ -16,11 +16,11 @@ for ( 't/00basic.json'.IO.lines ) {
     my ($rule, $expected) = @( from-json($_) );
     my $input = $expected<input>;
 
-    CSS::Grammar::Test::parse-tests(CSS::Module::CSS3::Selectors, $input,
-				    :$rule,
-				    :$actions,
-				    :suite<css3x-selectors>,
-				    :$expected );
+    &CSS::Grammar::Test::parse-tests(CSS::Module::CSS3::Selectors, $input,
+                                     :$rule,
+                                     :$actions,
+                                     :suite<css3x-selectors>,
+                                     :$expected );
 }
 
 done-testing;
