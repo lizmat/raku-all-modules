@@ -341,7 +341,9 @@ Example:
 
     # Add it to the new PDF's first page at 1/2 scale
     my $width = $xo.width / 2;
-    $gfx.do($xo, 0, 0, :$width);
+    my $bottom = 5;
+    my $left = 10;
+    $gfx.do($xo, $bottom, $left, :$width);
 
     $pdf.save-as('our/new.pdf');
 
@@ -349,7 +351,7 @@ Example:
 
 Synopsis: `my PDF::Content::XObject[Image] @images = $gfx.images: :inline;`
 
-This method returns image objects for a given page, or other graphical element:
+This method extracts image objects for a given page, or other graphical element:
 
 The `:inline` flag will check for any image objects in the graphical content stream.
 
@@ -370,7 +372,7 @@ Example:
     $page.media-box = Letter;
     # set-up symmetrical 3mm bleed
     $page-bleed-box = .[0] - 3mm, .[1] - 3mm, .[2] + 3mm, [.3] + 3mm
-        with $page.media-box;
+        given $page.media-box;
 
 ### Rotate
 
@@ -676,14 +678,21 @@ To set an RGB color for filling, or for displaying text:
     $gfx.FillColorSpace = 'DeviceRGB';
     $gfx.FillColorN = [1.0, .5, .5];
 
-Or more commonly:
+Alternatives:
 
     $gfx.FillColor = :DeviceRGB[1.0, .5, .5];
+
+    use PDF::Content::Color :rgb;
+    $gfx.FillColor = rgb(1.0, .5, .5);
 
 There are also Gray and CMYK color-spaces
 
     $gfx.FillColor = :DeviceGray[.7];
     $gfx.FillColor = :DeviceCMYK[.3, .2, .2, .15];
+
+    use PDF::Content::Color :gray, :cmyk;
+    $gfx.FillColor = gray(.7);
+    $gfx.FillColor = cmyk(.3, .2, .2, .15);
 
 Also settable is the `FillAlpha`. This is a value between 0.0 (fully transparent) and
 1.0 (fully opaque).
@@ -700,14 +709,13 @@ Note that `FillAlpha` can also be used to draw semi-transparent images:
 These are identical to `FillColor`, and `FillAlpha`, except that they are applied to stroking colors:
 
     # draw a semi-transparent rectangle with red border
+    use PDF::Content::Color :rgb;
     $gfx.StrokeAlpha = .5;  # make the stroke color semi-transparent
-    $gfx.StrokeColor = :DeviceRGB[.9, .1, .1];
+    $gfx.StrokeColor = rgb(.9, .1, .1);
     $gfx.Rectangle(10,10,50,75);
     $gfx.Stroke;
 
-#### Colors
-
-##### Named Colors
+#### Named Colors
 
 The PDF::Content::Color `:ColorName` and `color` exports provide a selection of built in named colors.
 
@@ -721,23 +729,12 @@ A wider selection of named colors is available via the `Color::Named` module.
     $gfx.FillAlpha = color Blue;
     $gfx.StrokeAlpha = color Color::Named.new( :name<azure> );
     
-##### Other Color Formats
-
-The `PDF::Content::Color` `color` function recognizes:
-
-- 3 or six digit RGB hex values: `$gfx.FillColor = color '#ca9';`
-- 4 or 8 digit CMYK hex values: `$gfx.FillColor = color '%ab1020';`
-- 3 element RGB values: `$gfx.FillColor = color [200, 50, 0];`
-- 4 element CMYK values: `$gfx.FillColor = color [ 255, 0, 0, 64];`
-- or equivalently: `$gfx.FillColor = color [1, 0, 0, .25];`
-- `Color` (or Color::Named) objects: `$gfx.FillColor = Color.new(200, 50, 0);`
-
 ## Rendering Methods
 
 ### render
 
 This method is used to process graphics; normally after installing
-callbacks. These callbacks have access to the graphics state via
+callbacks. Callback invocations have access to the graphics state via
 the `$*gfx` dynamic variable.
 
 ```
@@ -795,7 +792,7 @@ Displayed fields are also a subclass of PDF::Annot, most commonly PDF::Annot::Wi
 
 
 - The `fields` method returns all fields in the PDF as an array.
-- The `fields-hash` method returns fields hashed each fields `.key()`
+- The `fields-hash` method returns fields hashed on each fields `.key()` value
 
 There are also PDF::Page `fields`, and `fields-hash` methods that return all fields on a given page.
 
@@ -1043,7 +1040,7 @@ by a page entry hash. For example
 
 ### color-separation
 
-    use PDF::Content :color;
+    use PDF::Content::Color :color;
 
     my $c = $pdf.color-separation('Cyan',    color '%f000');
     my $m = $pdf.color-separation('Magenta', color '%0f00');
@@ -1058,6 +1055,7 @@ by a page entry hash. For example
 
     # create a DeviceN color-space for color mixing
     my $color-mix = $pdf.color-devicen( [ $c, $m, $y, $k, $pms023 ] );
+    # apply it
     $gfx.FillColor = $color-mix => [0, 0, 0, .25, .75];
 
 The current version of PDF::API6 only supports CMYK separations as DeviceN
