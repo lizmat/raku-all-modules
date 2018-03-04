@@ -1,0 +1,14 @@
+{
+    "perl"          : "6.*",
+    "name"          : "Concurrent::Queue",
+    "version"       : "1.0",
+    "description"   : "A lock-free concurrent queue data structure.",
+    "authors"       : [ "Jonathan Worthington <jnthn@jnthn.net>" ],
+    "license"       : "Artistic-2.0",
+    "depends"       : [ ],
+    "provides"      : {
+        "Concurrent::Queue": "lib/Concurrent/Queue.pm6"
+    },
+    "resources": [],
+    "source-url"    : "https://github.com/jnthn/p6-concurrent-queue.git"
+}
