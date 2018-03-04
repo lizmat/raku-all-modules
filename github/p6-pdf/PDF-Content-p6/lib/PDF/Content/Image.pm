@@ -88,10 +88,10 @@ class PDF::Content::Image {
             FETCH => sub ($) {
                 $!data-uri //= do with $!source {
 		    use Base64::Native;
-		    my Str $bytes = .isa(Str)
-			?? .substr(0)
-			!! .path.IO.slurp(:enc<latin-1>);
-		    my $enc = base64-encode($bytes, :str, :enc<latin-1>);
+		    my Blob $bytes = .isa(Str)
+			?? .encode("latin-1")
+			!! .path.IO.slurp(:bin);
+		    my $enc = base64-encode($bytes.decode("latin-1"), :str, :enc<latin-1>);
 		    'data:image/%s;base64,%s'.sprintf($.image-type.lc, $enc);
 		}
 		else {

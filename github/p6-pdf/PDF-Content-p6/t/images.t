@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 179;
+plan 180;
 use PDF::Grammar::Test :is-json-equiv;
 use lib '.';
 use PDF::Content::Image;
@@ -64,6 +64,13 @@ if lives-ok({$image3 = PDF::Content::Image.open: $image-data;}, "open PNG data u
     @images.push: 'Data URI (PNG)' => $image3;
 }
 is $image3.data-uri, $image-data, 'data-uri from source string';
+
+my $png-data-uri = '?';
+lives-ok {
+    $png-data-uri = PDF::Content::Image.open("t/images/basn0g01.png").data-uri;
+    PDF::Content::Image.open($png-data-uri);
+}, 'round-trip open of PNG uri'
+    or note "round-trip uri: {$png-data-uri.substr(0,32)}...";
 
 for (
     'png-1bit-gray' => {
