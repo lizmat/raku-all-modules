@@ -217,7 +217,7 @@ in L<EVAL|/routine/EVAL>-able code.
 
 If you're using the L<rakudo|http://rakudo.org> implementation, you can use
 the L«rakudo-specific C<dd> routine|/programs/01-debugging#Dumper_function_dd»
-for dumping, whose output is similar to L<.perl>, but with more information.
+for dumping, whose output is similar to L<perl>, but with more information.
 
 Examples:
 
@@ -281,7 +281,7 @@ say $bar; # OUTPUT: «70␤»
 =end code
 
 To test whether a variable has any defined values, see
-L<DEFINITE|/classtut#index-entry-DEFINITE> and L<defined>
+L<DEFINITE|/language/classtut#index-entry-.DEFINITE> and L<defined>
 routines. Several other constructs exist that test for definiteness, such as
 L«C<with>, C<orwith>, and C<without>|/syntax/with%20orwith%20without»
 statements, L«C<//>|/routine/$SOLIDUS$SOLIDUS», L<andthen>, L<notandthen>, and
