@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/shinobi/Data-StaticTable.git
+	branch = master
+	commit = a949817fcf4a4b89639b32d7c5a97201c3714f8d
+	parent = 129e7f7656f457209a6b9ca45270c24b85e27738
+	cmdver = 0.4.0

@@ -1,0 +1,19 @@
+{
+  "name": "Data::StaticTable",
+  "source-url": "https://github.com/shinobi/Data-StaticTable.git",
+  "perl": "6.*",
+  "author": "github:shinobi",
+  "depends": [
+
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "StaticTable": "lib/Data/StaticTable.pm6",
+    "StaticTable::Position": "lib/Data/StaticTable.pm6",
+    "StaticTable::Query": "lib/Data/StaticTable.pm6",
+    "X::Data::StaticTable": "lib/X/Data/StaticTable.pm6"
+  },
+  "version": "0.1.0",
+  "tags" : [ "data", "table", "bidimensional", "spreadsheet" , "static", "immutable", "cells", "rows", "columns"],
+  "description": "A static memory structure in Perl6, bidimensional, that uses String for column names and rows starting from one. Provides basic search and indexing features."
+}
