@@ -1,5 +1,5 @@
 use v6;
-unit module JSON::Hjson;
+unit module JSON::Hjson:ver<0.0.1>;
 
 use JSON::Hjson::Actions;
 use JSON::Hjson::Grammar;
