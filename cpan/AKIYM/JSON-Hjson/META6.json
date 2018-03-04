@@ -1,0 +1,24 @@
+{
+  "authors" : [
+    "Takumi Akiyama"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Human JSON (Hjson) deserializer",
+  "license" : "Artistic-2.0",
+  "name" : "JSON::Hjson",
+  "perl" : "6.c",
+  "provides" : {
+    "JSON::Hjson" : "lib/JSON/Hjson.pm6",
+    "JSON::Hjson::Actions" : "lib/JSON/Hjson/Actions.pm6",
+    "JSON::Hjson::Grammar" : "lib/JSON/Hjson/Grammar.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/akiym/JSON-Hjson.git",
+  "tags" : [ ],
+  "test-depends" : [
+    "JSON::Tiny",
+    "Test::META"
+  ],
+  "version" : "0.0.1"
+}
