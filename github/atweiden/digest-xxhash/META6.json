@@ -4,7 +4,7 @@
     "version"     : "1.0.0",
     "authors"     : [
         "Bartłomiej Palmowski",
-        "Andy Weidenbaum",
+        "atweiden",
         "Steve Schulze (thundergnat)"
     ],
     "description" : "xxHash bindings for Perl6",
