@@ -1,8 +1,8 @@
 {
     "perl"        : "6.*",
     "name"        : "Crane",
-    "version"     : "*",
-    "author"      : "Andy Weidenbaum",
+    "version"     : "0.0.1",
+    "author"      : "atweiden",
     "description" : "Navigate Perl6 containers and perform tasks",
     "license"     : "Unlicense",
     "source-type" : "git",

@@ -5,17 +5,20 @@ use Test;
 use Crane;
 use TestCrane;
 
-plan 2;
+plan(2);
 
-subtest
-{
+subtest({
     # Any
     my $x = 1;
-    is-deeply Crane.list($x), List({:path(()), :value(1)}), 'Is expected value';
+    is-deeply(
+        Crane.list($x),
+        List({:path(()), :value(1)}),
+        'Is expected value'
+    );
 
     # Associative
     my %h = :a<alpha>,:b<bravo>,:c<charlie>;
-    is-deeply
+    is-deeply(
         Crane.list(%h),
         (
             {
@@ -31,11 +34,12 @@ subtest
                 :value("charlie")
             }
         ),
-        'Is expected value';
+        'Is expected value'
+    );
 
     # Positional
     my $a = qw<zero one two>;
-    is-deeply
+    is-deeply(
         Crane.list($a),
         (
             {
@@ -51,10 +55,11 @@ subtest
                 :value("two")
             }
         ),
-        'Is expected value';
+        'Is expected value'
+    );
 
     my %data = %TestCrane::data;
-    is-deeply
+    is-deeply(
         Crane.list(%data),
         (
             {
@@ -106,24 +111,33 @@ subtest
                 :value("lbs")
             }
         ),
-        'Is expected value';
-}
+        'Is expected value'
+    );
+});
 
-subtest
-{
+subtest({
     # my Str $toml = "[hello]\n";
     my %from-toml = :hello({});
-    is-deeply Crane.list(%from-toml), List({:path["hello"], :value({})}),
-        'Is expected value';
+    is-deeply(
+        Crane.list(%from-toml),
+        List({:path["hello"], :value({})}),
+        'Is expected value'
+    );
 
     # $toml = "[[hello]]\n";
     %from-toml = :hello([{}]);
-    is-deeply Crane.list(%from-toml), List({:path["hello"], :value([{}])}),
-        'Is expected value';
+    is-deeply(
+        Crane.list(%from-toml),
+        List({:path["hello"], :value([{}])}),
+        'Is expected value'
+    );
 
     %from-toml = :hello([]);
-    is-deeply Crane.list(%from-toml), List({:path["hello"], :value([])}),
-        'Is expected value';
-}
+    is-deeply(
+        Crane.list(%from-toml),
+        List({:path["hello"], :value([])}),
+        'Is expected value'
+    );
+});
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:
