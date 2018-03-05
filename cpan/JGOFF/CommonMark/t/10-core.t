@@ -20,7 +20,7 @@ is $cmn.type-string, 'custom_block', 'CommonMark node has correct type name';
 my $cmi = CommonMark::Iterator.new;
 isa-ok( $cmi, 'CommonMark::Iterator' );
 
-my $cmp = CommonMark::Parser.new;
+my $cmp = CommonMark::Parser.new( 0 );
 isa-ok( $cmp, 'CommonMark::Parser' );
 
 done-testing;
