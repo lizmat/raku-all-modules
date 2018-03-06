@@ -2,7 +2,7 @@ use PDF::API6;
 use Test;
 use PDF::ColorSpace::Separation;
 use PDF::Function::Sampled;
-use PDF::Content::Color :color;
+use PDF::Content::Color :color, :rgb, :cmyk;
 plan 17;
 
 my PDF::API6 $pdf .= new;
@@ -54,12 +54,12 @@ $gfx.graphics: {
         .FillColor = color '%0ff0';
         .say: "(CMYK)";
 
-        .FillColor = :DeviceRGB[0, 1, 0];
+        .FillColor = rgb(0, 1, 0);
         .print: "Green (regular) --> ";
         .FillColor = $green-rgb => 1;
         .say: " (separation)";
 
-        .FillColor = :DeviceCMYK[1, 1, 0, .2];
+        .FillColor = cmyk(1, 1, 0, .2);
         .print: "Blue (regular) --> ";
         .FillColor = $device-n => [1, 1, 0, .2, 0];
         .say: " (devicen)";

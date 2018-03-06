@@ -296,7 +296,8 @@ Returns the number of pages in a PDF.
 
 ### page
 
-    my $second-page = $pdf.page(2);
+    use PDF::Page;
+    my PDF::Page $second-page = $pdf.page(2);
 
 Returns the nth page from the PDF
 
@@ -304,7 +305,6 @@ Returns the nth page from the PDF
 
 Synopsis: `$pdf.add-page($page-object?)`
 
-    use PDF::Page;
     my PDF::Page page = $pdf.add-page;
 
 Adds a page to the end of a PDF. Creates a new blank page by default.
@@ -313,7 +313,7 @@ Adds a page to the end of a PDF. Creates a new blank page by default.
 
 Deletes a page, by page-number
 
-    my $moved-page = $pdf.delete-page(2);
+    my PDF::Page $moved-page = $pdf.delete-page(2);
     # re-add the to the end of the PDF
     $pdf.add-page($moved-page);
 
@@ -357,7 +357,7 @@ The `:inline` flag will check for any image objects in the graphical content str
 
 ### media-box, crop-box, trim-box, bleed-box, art-box
 
-A page can have several different bounding boxes:
+A page has several different bounding boxes:
 
 - media-box -- width and height of the printed page
 - crop-box -- the region of the PDF that is displayed or printed
@@ -447,8 +447,10 @@ Note: other fonts can be loaded via the PDF::Font::Loader module:
 
 ### text-position
 
-    $gfx.text-position = 10,20;
-    $gfx.say('text @10,20');
+    $page.text: {
+        .text-position = 10,20;
+        .say('text @10,20');
+    }
 
 Gets or sets the current text output position. Origin `(0, 0)` is at the bottom left corner.
 
@@ -467,14 +469,13 @@ Applies text transforms, such as translation, rotation, scaling, etc.
 ### print
 
     need PDF::Content::Text::Block;
-    my PDF::Content::Text::Block $text-block;
     
     $gfx.WordSpacing = 2; # add extra spacing between words
     my $font = $gfx.core-font( :family<Helvetica>, :weight<bold> );
     my $font-size = 16;
     my $text = "Hello.  Ting, ting-ting. Attention! … ATTENTION! ";
     
-    $text-block = $gfx.print: $text, :$font, :$font-size, :width(120);
+     my PDF::Content::Text::Block $text-block = $gfx.print: $text, :$font, :$font-size, :width(120);
     
     note "text block has size {.width} X {.height}"
         with $text-block;
@@ -490,7 +491,7 @@ Outputs a text string, or [Text Block](https://github.com/p6-pdf/PDF-Content-p6/
 
 ### say
 
-Takes the same parameters as `print`. Sets the final text position (`$.text-position`) to the next line.
+Takes the same parameters as `print`. Sets the final text position (`$.text-position`) to the start pf the next line.
 
 ## Graphics Methods
 
@@ -531,8 +532,9 @@ Synopsis: `$gfx.paint( :close, :stroke, :fill, :even-odd)`
 `paint` is a general purpose method for closing, stroking and filling shapes.
 
     # fill and stroke a rectangle
-    $gfx.FillColor = :DeviceRGB[.7, .7, .9];
-    $gfx.StrokeColor = :DeviceRGB[.9, .5, .5];
+    use PDF::Content::Color :rgb;
+    $gfx.FillColor = rgb(.7, .7, .9);
+    $gfx.StrokeColor = rgb(.9, .5, .5);
     $gfx.LineWidth = 2.5; # set stroking line-width
     $gfx.Rectangle(0, 20, 100, 250);
     $gfx.paint: :fill, :stroke;
@@ -567,17 +569,20 @@ This graphical method is used to create a new, empty form object:
 ```
 use v6;
 use PDF::API6;
+use PDF::Page;
+use PDF::XObject;
+use PDF::Content::Color :rgb;
 
 my PDF::API6 $pdf .= new;
-my $page = $pdf.add-page;
+my PDF::Page $page = $pdf.add-page;
 $page.media-box = [0, 0, 275, 100];
 # create a new XObject form of size 120 x 50
 my @BBox = [0, 0, 120, 50];
-my $form = $page.xobject-form: :@BBox;
+my PDF::XObject $form = $page.xobject-form: :@BBox;
 
 $form.graphics: {
     # color the entire form
-    .FillColor = :DeviceRGB[.9, .8, .8];
+    .FillColor = rgb(.9, .8, .8);
     .Rectangle: |@BBox;
     .paint: :fill, :stroke;
 }
@@ -609,7 +614,7 @@ A Pattern is another graphical sub-element. Its construction is similar to a for
 
 Patterns are typically used to achieve advanced tiling or shading effects.
 
-Please see [examples/pattern.p6](examples/pattern.p6), which produced:
+Please see [examples/pdf-pattern.p6](examples/pdf-pattern.p6), which produced:
 
 ![pattern.pdf](tmp/.previews/pattern-001.png)
 
@@ -1014,7 +1019,7 @@ the page magnified by the factor zoom. A zero (0) value for any of the
 parameters left, top, or zoom specifies that the current value of that
 parameter is to be retained unchanged.
 
-see also [examples/preferences.p6](examples/preferences.p6)
+see also [examples/pdf-preferences.p6](examples/pdf-preferences.p6)
 
 ### version
 
