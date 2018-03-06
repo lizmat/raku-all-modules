@@ -5,8 +5,8 @@ use Digest::xxHash;
 
 plan(1);
 
-my Str:D $file = $*PROGRAM-NAME.IO.dirname() ~ '/digest-from-file';
-die("File '$file' does not exist.") unless $file.IO.e() && $file.IO.f();
+my Str:D $file = $*PROGRAM-NAME.IO.dirname ~ '/digest-from-file';
+die("File '$file' does not exist.") unless $file.IO.e && $file.IO.f;
 
 # should return equal values in both 32 and 64-bit OSs
 subtest('test 32-bit routines', {

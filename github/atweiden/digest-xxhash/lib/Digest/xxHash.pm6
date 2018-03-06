@@ -33,7 +33,7 @@ multi sub xxHash(
     --> Int
 ) is export
 {
-    my Int @data = $string.encode($enc).list();
+    my Int @data = $string.encode($enc).list;
     build-xxhash(@data, $seed);
 }
 
@@ -49,7 +49,7 @@ multi sub xxHash(IO $fh, Int :$seed = 0 --> Int) is export
 
 multi sub xxHash(Buf[uint8] $buf-u8, Int :$seed = 0 --> Int) is export
 {
-    my Int @data = $buf-u8.list();
+    my Int @data = $buf-u8.list;
     build-xxhash(@data, $seed);
 }
 
@@ -83,7 +83,7 @@ multi sub xxHash32(
     --> Int
 ) is export
 {
-    my Int @data = $string.encode($enc).list();
+    my Int @data = $string.encode($enc).list;
     build-xxhash32(@data, $seed);
 }
 
@@ -99,13 +99,13 @@ multi sub xxHash32(IO $fh, Int :$seed = 0 --> Int) is export
 
 multi sub xxHash32(Buf[uint8] $buf-u8, Int :$seed = 0 --> Int) is export
 {
-    my Int @data = $buf-u8.list();
+    my Int @data = $buf-u8.list;
     build-xxhash32(@data, $seed);
 }
 
 sub build-xxhash32(Int @data, uint $seed = 0 --> uint)
 {
-    my @input := CArray[int8].new();
+    my @input := CArray[int8].new;
     my Int $len = 0;
     @data.map({ @input[$len++] = $_ });
     XXH32(@input, $len, $seed);
@@ -121,7 +121,7 @@ multi sub xxHash64(
     --> Int
 ) is export
 {
-    my Int @data = $string.encode($enc).list();
+    my Int @data = $string.encode($enc).list;
     build-xxhash64(@data, $seed);
 }
 
@@ -137,13 +137,13 @@ multi sub xxHash64(IO $fh, Int :$seed = 0 --> Int) is export
 
 multi sub xxHash64(Buf[uint8] $buf-u8, Int :$seed = 0 --> Int) is export
 {
-    my Int @data = $buf-u8.list();
+    my Int @data = $buf-u8.list;
     build-xxhash64(@data, $seed);
 }
 
 sub build-xxhash64(Int @data, ulonglong $seed = 0 --> ulonglong)
 {
-    my @input := CArray[int8].new();
+    my @input := CArray[int8].new;
     my Int $len = 0;
     @data.map({ @input[$len++] = $_ });
     XXH64(@input, $len, $seed);

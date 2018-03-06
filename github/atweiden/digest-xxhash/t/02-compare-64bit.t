@@ -7,8 +7,8 @@ $*KERNEL.bits == 64
     ?? plan(1)
     !! plan(:skip-all('Not a 64 bit OS, skip 64 bit tests'));
 
-my Str:D $file = $*PROGRAM-NAME.IO.dirname() ~ '/digest-from-file';
-die("File '$file' does not exist.") unless $file.IO.e() && $file.IO.f();
+my Str:D $file = $*PROGRAM-NAME.IO.dirname ~ '/digest-from-file';
+die("File '$file' does not exist.") unless $file.IO.e && $file.IO.f;
 
 subtest('test 64-bit routines', {
     is(
