@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-css/CSS-Declarations-p6.git
 	branch = master
-	commit = 254998d31ecdbde7dbe4c6de7546c336c73b6dde
-	parent = ef4f726cb14fa0ca97bef1570f5c32b7df92a077
+	commit = 6afa4a96b8ade938e3ddef63722c458881616815
+	parent = 00d8971efb65d6e2dfe45a8af1bf6f80c429750b
 	cmdver = 0.4.0

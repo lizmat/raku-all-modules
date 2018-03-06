@@ -1,3 +1,6 @@
+0.3.7
+    CSS::Declarations::measure replaces CSS::Declarations::Font::pt
+
 0.3.6
     CSS::Declarations
     - Support Color object assignments, e.g.:

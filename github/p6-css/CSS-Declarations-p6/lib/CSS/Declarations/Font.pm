@@ -1,7 +1,7 @@
 use v6;
 class CSS::Declarations::Font {
-    use CSS::Declarations;
-    use CSS::Declarations::Units :Scale, :pt;
+    use CSS::Declarations :measure;
+    use CSS::Declarations::Units :pt;
 
     has Numeric $.em is rw = 10;
     has Numeric $.ex is rw = $!em * 0.75;
@@ -55,27 +55,8 @@ class CSS::Declarations::Font {
             });
     }
 
-    sub pt($_, Numeric :$em = 12, Numeric :$ex = $em * 3/4) is export(:pt) {
-        when Numeric {
-            (if $_ {
-                    my $units = .?type // 'pt';
-                    my $scale = do given $units {
-                        when 'em' { $em }
-                        when 'ex' { $ex }
-                        when 'percent' { 0 }
-                        default { Scale.enums{$units} }
-                    } // die "unknown units: $units";
-                    (.Num * $scale).Num;
-                }
-             else {
-                 0
-             }) does CSS::Declarations::Units::Type["pt"];
-        }
-        default { Nil }
-    }
-
     method length($v) {
-        pt($v, :$!em, :$!ex);
+        measure($v, :$!em, :$!ex);
     }
 
     #| converts a weight name to a three digit number:

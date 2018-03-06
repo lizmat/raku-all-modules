@@ -1,7 +1,7 @@
 use v6;
 
 #| management class for a set of CSS::Declarations
-class CSS::Declarations:ver<0.3.6> {
+class CSS::Declarations:ver<0.3.7> {
 
     use CSS::Module:ver(v0.4.6+);
     use CSS::Module::CSS3;
@@ -10,7 +10,7 @@ class CSS::Declarations:ver<0.3.6> {
     use Color::Conversion;
     use CSS::Declarations::Property;
     use CSS::Declarations::Edges;
-    use CSS::Declarations::Units;
+    use CSS::Declarations::Units :Scale;
 
     my %module-metadata{CSS::Module};     # per-module metadata
     my %module-properties{CSS::Module};   # per-module property attributes
@@ -26,6 +26,33 @@ class CSS::Declarations:ver<0.3.6> {
     has CSS::Module $.module = CSS::Module::CSS3.module; #| associated CSS module
     has @.warnings;
     has Bool $.warn = True;
+
+    our sub measure($_,
+                    Numeric :$em = 12,
+                    Numeric :$ex = $em * 3/4,
+                    Numeric :$vw,
+                    Numeric :$vh) is export(:measure) {
+        when Numeric {
+            (if $_ {
+                    my $units = .?type // 'pt';
+                    my $scale = do given $units {
+                        when 'em' { $em }
+                        when 'ex' { $ex }
+                        when 'vw' { $vw // die 'Viewport width is unknown' }
+                        when 'vh' { $vh // die 'Viewport height is unknown' }
+                        when 'vmin' { min($vw // die 'Viewport dimensions are unknown', $vh) }
+                        when 'vmax' { max($vw // die 'Viewport dimensions are unknown', $vh) }
+                        when 'percent' { 0 }
+                        default { Scale.enums{$units} }
+                    } // die "unknown units: $units";
+                    (.Num * $scale).Num;
+                }
+             else {
+                 0
+             }) does CSS::Declarations::Units::Type["pt"];
+        }
+        default { Nil }
+    }
 
     sub make-property(CSS::Module $m, Str $name) {
         %module-properties{$m}{$name} //= do with %module-metadata{$m}{$name} -> %defs {
