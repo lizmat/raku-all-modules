@@ -2,7 +2,7 @@
     "perl"        : "6.*",
     "name"        : "TXN::Parser",
     "version"     : "*",
-    "author"      : "Andy Weidenbaum",
+    "author"      : "atweiden",
     "description" : "Double-entry accounting ledger parser",
     "depends"     : ["Digest::xxHash"],
     "license"     : "Unlicense",

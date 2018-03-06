@@ -3,54 +3,46 @@ use lib 'lib';
 use Test;
 use TXN::Parser::Grammar;
 
-plan 3;
+plan(3);
 
 # include grammar tests {{{
 
-subtest
-{
-    my Str @include-lines;
-
-    push @include-lines, Q:to/EOF/;
-    include 'includes/2014'
-    EOF
-
-    push @include-lines, Q:to/EOF/;
-    include "includes/2014"
-    EOF
-
-    push @include-lines, Q:to/EOF/;
-    include 'ledger includes/file with whitespace'
-    EOF
-
-    push @include-lines, Q:to/EOF/;
-    include "ledger includes/file with whitespace"
-    EOF
-
-    push @include-lines, Q:to/EOF/;
-    include <basic>
-    EOF
-
-    push @include-lines, Q:to/EOF/;
-    include <FY/2011/Q1>
-    EOF
-
-    push @include-lines, Q:to/EOF/;
-    include <ledger\ includes/lib\ with\ whitespace>
-    EOF
-
-    push @include-lines, Q:to/EOF/;
-    include <includes\\/\>・ï\/©ㄦﬁ>
-    EOF
+subtest({
+    my Str @include-lines =
+        Q:to/EOF/.trim,
+        include 'includes/2014'
+        EOF
+        Q:to/EOF/.trim,
+        include "includes/2014"
+        EOF
+        Q:to/EOF/.trim,
+        include 'ledger includes/file with whitespace'
+        EOF
+        Q:to/EOF/.trim,
+        include "ledger includes/file with whitespace"
+        EOF
+        Q:to/EOF/.trim,
+        include <basic>
+        EOF
+        Q:to/EOF/.trim,
+        include <FY/2011/Q1>
+        EOF
+        Q:to/EOF/.trim,
+        include <ledger\ includes/lib\ with\ whitespace>
+        EOF
+        Q:to/EOF/.trim;
+        include <includes\\/\>・ï\/©ㄦﬁ>
+        EOF
 
     sub is-valid-include-line(Str:D $include-line --> Bool:D)
     {
-        TXN::Parser::Grammar.parse($include-line.trim, :rule<include-line>).so;
+        TXN::Parser::Grammar.parse($include-line, :rule<include-line>).so;
     }
 
     ok(
-        @include-lines.grep({is-valid-include-line($_)}).elems ==
-            @include-lines.elems,
+        @include-lines
+            .grep({is-valid-include-line($_)})
+            .elems == @include-lines.elems,
         q:to/EOF/
         ♪ [Grammar.parse($include-line, :rule<include-line>)] - 1 of 4
         ┏━━━━━━━━━━━━━┓
@@ -60,53 +52,49 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end include grammar tests }}}
 # entry grammar tests {{{
 
-subtest
-{
-    my Str @entries;
+subtest({
+    my Str @entries =
+        Q:to/EOF/.trim,
+        2015-01-01--comment
+          ASSETS."∅"."First Bank Checking"  $440.00 USD
+          INCOME."∅".interest               $440.00 USD
+        EOF
+        Q:to/EOF/.trim,
+        2015-01-01 "I bought fuel at Shell station"-- EODESC comment
+          -- comment
+          expenses.personal.fuel.shell  $57.00 USD--comment
+          -- comment
+          liabilities.personal.amex     $57.00 USD--comment
+        EOF
+        Q:to/EOF/.trim;
+        2015-01-01
 
-    push @entries, Q:to/EOF/;
-    2015-01-01--comment
-      ASSETS."∅"."First Bank Checking"  $440.00 USD
-      INCOME."∅".interest               $440.00 USD
-    EOF
+        -- comment
+        -- comment
+        -- comment
 
-    push @entries, Q:to/EOF/;
-    2015-01-01 "I bought fuel at Shell station"-- EODESC comment
-      -- comment
-      expenses.personal.fuel.shell  $57.00 USD--comment
-      -- comment
-      liabilities.personal.amex     $57.00 USD--comment
-    EOF
+        #tag1 #tag2 #tag3 !!!
+        """
+        This is a multiline description.
+        """
+        #more1 #more2 #more3
 
-    push @entries, Q:to/EOF/;
-    2015-01-01
+        -- comment
+        -- comment
+        -- comment
 
-    -- comment
-    -- comment
-    -- comment
-
-    #tag1 #tag2 #tag3 !!!
-    """
-    This is a multiline description.
-    """
-    #more1 #more2 #more3
-
-    -- comment
-    -- comment
-    -- comment
-
-    Assets:Business:Cats        1 XCAT @ $1200.00 USD
-    Expenses:Business:Cats      $1200.00 USD
-    EOF
+        Assets:Business:Cats        1 XCAT @ $1200.00 USD
+        Expenses:Business:Cats      $1200.00 USD
+        EOF
 
     sub is-valid-entry(Str:D $entry --> Bool:D)
     {
-        TXN::Parser::Grammar.parse($entry.trim, :rule<entry>).so;
+        TXN::Parser::Grammar.parse($entry, :rule<entry>).so;
     }
 
     ok(
@@ -120,16 +108,15 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end entry grammar tests }}}
 # ledger grammar tests {{{
 
-subtest
-{
-    my Str $ledger = slurp 't/data/sample/sample.txn';
+subtest({
+    my Str $ledger = slurp('t/data/sample/sample.txn');
     my Str $ledger-quoted =
-        slurp 't/data/quoted-asset-codes/quoted-asset-codes.txn';
+        slurp('t/data/quoted-asset-codes/quoted-asset-codes.txn');
 
     my $ledger-match = TXN::Parser::Grammar.parse($ledger);
     my $ledger-quoted-match = TXN::Parser::Grammar.parse($ledger-quoted);
@@ -158,7 +145,7 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end ledger grammar tests }}}
 

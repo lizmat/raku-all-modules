@@ -3,12 +3,11 @@ use lib 'lib';
 use Test;
 use TXN::Parser::Grammar;
 
-plan 4;
+plan(4);
 
 # date grammar tests {{{
 
-subtest
-{
+subtest({
     my Str @dates =
         Q{2014-01-01},
         Q{2014-01-01T08:48:00Z},
@@ -34,17 +33,16 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end date grammar tests }}}
 # metainfo grammar tests {{{
 
-subtest
-{
+subtest({
     my Str @metainfo =
         Q{#tag1 ! #TAG2 !! #TAG5 #bliss !!!!!},
         Q{#"∅" !! #96 !!!!};
-    my Str $metainfo-multiline = Q:to/EOF/;
+    my Str $metainfo-multiline = Q:to/EOF/.trim;
     !!!-- comment
     #tag1 -- comment
     -- comment
@@ -53,7 +51,7 @@ subtest
     #tag3--comment
     !!!!!
     EOF
-    push @metainfo, $metainfo-multiline.trim;
+    push(@metainfo, $metainfo-multiline);
 
     sub is-valid-metainfo(Str:D $metainfo --> Bool:D)
     {
@@ -71,25 +69,24 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end metainfo grammar tests }}}
 # description grammar tests {{{
 
-subtest
-{
+subtest({
     my Str @descriptions =
         Q{"Transaction\tDescription"},
         Q{"""Transaction\nDescription"""},
         Q{'Transaction Description\'};
         Q{'''Transaction Description\'''};
-    my Str $description-multiline = Q:to/EOF/;
+    my Str $description-multiline = Q:to/EOF/.trim;
     """
     Multiline description line one. \
     Multiline description line two.
     """
     EOF
-    push @descriptions, $description-multiline.trim;
+    push(@descriptions, $description-multiline);
 
     sub is-valid-description(Str:D $description --> Bool:D)
     {
@@ -97,8 +94,9 @@ subtest
     }
 
     ok(
-        @descriptions.grep({is-valid-description($_)}).elems ==
-            @descriptions.elems,
+        @descriptions
+            .grep({is-valid-description($_)})
+            .elems == @descriptions.elems,
         q:to/EOF/
         ♪ [Grammar.parse($description, :rule<description>)] - 3 of 8
         ┏━━━━━━━━━━━━━┓
@@ -108,23 +106,17 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end description grammar tests }}}
 # header grammar tests {{{
 
-subtest
-{
-    my Str @headers;
-
-    push @headers,
-        qq{2014-01-01 "I started with 1000 USD" ! #TAG1 #TAG2 -- COMMENT\n};
-
-    push @headers, qq{2014-01-02 "I paid Exxon Mobile 10 USD"\n};
-
-    push @headers, qq{2014-01-02\n};
-
-    push @headers, qq{2014-01-03 "I bought ฿0.80000000 BTC for 800 USD#@*!%"\n};
+subtest({
+    my Str @headers =
+        qq{2014-01-01 "I started with 1000 USD" ! #TAG1 #TAG2 -- COMMENT\n},
+        qq{2014-01-02 "I paid Exxon Mobile 10 USD"\n},
+        qq{2014-01-02\n},
+        qq{2014-01-03 "I bought ฿0.80000000 BTC for 800 USD#@*!%"\n};
 
     my Str $header-multiline = Q:to/EOF/;
     2014-05-09-- comment
@@ -208,7 +200,7 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     )
-}
+});
 
 # end header grammar tests }}}
 

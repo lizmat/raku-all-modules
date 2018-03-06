@@ -3,12 +3,11 @@ use lib 'lib';
 use Test;
 use TXN::Parser::Grammar;
 
-plan 7;
+plan(7);
 
 # posting account grammar tests {{{
 
-subtest
-{
+subtest({
     my Str @accounts =
         Q{assets.personal.co-ro-na.coolers},
         Q{AsSeTs:Business:Cats},
@@ -42,15 +41,14 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end posting account grammar tests }}}
 # posting amount grammar tests {{{
 
 # --- plus or minus {{{
 
-subtest
-{
+subtest({
     my Str @plus-or-minus = Q{+}, Q{-};
 
     sub is-valid-plus-or-minus(Str:D $plus-or-minus --> Bool:D)
@@ -62,8 +60,9 @@ subtest
     }
 
     ok(
-        @plus-or-minus.grep({is-valid-plus-or-minus($_)}).elems ==
-            @plus-or-minus.elems,
+        @plus-or-minus
+            .grep({is-valid-plus-or-minus($_)})
+            .elems == @plus-or-minus.elems,
         q:to/EOF/
         ♪ [Grammar.parse($plus-or-minus, :rule<plus-or-minus>)] - 2 of 9
         ┏━━━━━━━━━━━━━┓
@@ -73,13 +72,12 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end plus or minus }}}
 # --- asset code and symbol {{{
 
-subtest
-{
+subtest({
     # asset code and symbol, indexed by name
     my List %asset-code-symbol{Str} =
         bitcoin                        => Qw{BTC ฿},
@@ -174,8 +172,9 @@ subtest
     }
 
     ok(
-        %asset-code-symbol.grep({is-valid-asset-code(.values[0][0])}).elems ==
-            %asset-code-symbol.elems,
+        %asset-code-symbol
+            .grep({is-valid-asset-code(.values[0][0])})
+            .elems == %asset-code-symbol.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 3 of 9
         ┏━━━━━━━━━━━━━┓
@@ -187,8 +186,9 @@ subtest
     );
 
     ok(
-        %asset-code-symbol.grep({is-valid-asset-symbol(.values[0][1])}).elems ==
-            %asset-code-symbol.elems,
+        %asset-code-symbol
+            .grep({is-valid-asset-symbol(.values[0][1])})
+            .elems == %asset-code-symbol.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-symbol, :rule<asset-symbol>)] - 4 of 9
         ┏━━━━━━━━━━━━━┓
@@ -200,8 +200,9 @@ subtest
     );
 
     ok(
-        @quoted-asset-codes.grep({is-valid-asset-code($_)}).elems ==
-            @quoted-asset-codes.elems,
+        @quoted-asset-codes
+            .grep({is-valid-asset-code($_)})
+            .elems == @quoted-asset-codes.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 5 of 9
         ┏━━━━━━━━━━━━━┓
@@ -211,13 +212,12 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end asset code and symbol }}}
 # --- asset quantity {{{
 
-subtest
-{
+subtest({
     my Str @asset-quantities =
         Q{10000},
         Q{10_000},
@@ -233,8 +233,9 @@ subtest
     }
 
     ok(
-        @asset-quantities.grep({is-valid-asset-quantity($_)}).elems ==
-            @asset-quantities.elems,
+        @asset-quantities
+            .grep({is-valid-asset-quantity($_)})
+            .elems == @asset-quantities.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-quantity, :rule<asset-quantity>)] - 6 of 9
         ┏━━━━━━━━━━━━━┓
@@ -244,13 +245,12 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end asset quantity }}}
 # --- exchange rate {{{
 
-subtest
-{
+subtest({
     my Str @exchange-rates =
         Q{@ 10_000 USD},
         Q{@ USD 10_000},
@@ -307,8 +307,9 @@ subtest
     }
 
     ok(
-        @exchange-rates.grep({is-valid-exchange-rate($_)}).elems ==
-            @exchange-rates.elems,
+        @exchange-rates
+            .grep({is-valid-exchange-rate($_)})
+            .elems == @exchange-rates.elems,
         q:to/EOF/
         ♪ [Grammar.parse($exchange-rate, :rule<xe>)] - 7 of 9
         ┏━━━━━━━━━━━━━┓
@@ -318,13 +319,12 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end exchange rate }}}
 # --- amount {{{
 
-subtest
-{
+subtest({
     my Str @amounts =
         Q{100 BTC},
         Q{1_0_0 BTC},
@@ -379,15 +379,14 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end amount }}}
 
 # end posting amount grammar tests }}}
 # posting grammar tests {{{
 
-subtest
-{
+subtest({
     my Str @postings =
         Q{Assets:Personal:Coinbase    -฿100.00 BTC @ $5000.00 USD},
         Q{Assets:Personal:FirstBank +฿1_000_000.00 USD},
@@ -409,7 +408,7 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end posting grammar tests }}}
 

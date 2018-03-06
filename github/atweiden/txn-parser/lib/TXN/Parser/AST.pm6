@@ -174,6 +174,7 @@ class Entry::Posting
         Entry::Posting::ID:D :$!id!,
         DecInc:D :$!decinc!,
         Entry::Posting::Annot :$annot
+        --> Nil
     )
     {
         $!annot = $annot if $annot;
@@ -191,6 +192,7 @@ class Entry::Posting
             DecInc:D :$decinc!,
             Entry::Posting::Annot :$annot
         )
+        --> Entry::Posting:D
     )
     {
         self.bless(|%opts);
@@ -244,7 +246,6 @@ class Entry::Posting
 
 class Entry
 {
-
     has Entry::ID:D $.id is required;
     has Entry::Header:D $.header is required;
     has Entry::Posting:D @.posting is required;
@@ -255,10 +256,9 @@ class Entry
         Entry::ID:D :$!id!,
         Entry::Header:D :$!header!,
         Entry::Posting:D :@!posting!
+        --> Nil
     )
-    {
-
-    }
+    {*}
 
     # end submethod BUILD }}}
     # method new {{{
@@ -269,6 +269,7 @@ class Entry
             Entry::Header:D :$header!,
             Entry::Posting:D :@posting!
         )
+        --> Entry:D
     )
     {
         # verify entry is limited to one entity
@@ -276,9 +277,11 @@ class Entry
             @posting.map({ .account.entity }).unique.elems;
         unless $number-entities == 1
         {
-            die X::TXN::Parser::Entry::MultipleEntities.new(
-                :$number-entities,
-                :entry-text($id.text)
+            die(
+                X::TXN::Parser::Entry::MultipleEntities.new(
+                    :$number-entities,
+                    :entry-text($id.text)
+                )
             );
         }
 
@@ -291,7 +294,8 @@ class Entry
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        %(:header($.header.hash), :id($.id.hash), :posting(@.posting».hash));
+        my @posting = @.posting.map({ .hash });
+        %(:header($.header.hash), :id($.id.hash), :@posting);
     }
 
     # end method hash }}}

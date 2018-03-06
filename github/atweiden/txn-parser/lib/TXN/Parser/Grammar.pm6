@@ -71,7 +71,7 @@ token string-basic-char:escape-sequence
 
         .
         {
-            die X::TXN::Parser::String::EscapeSequence.new(:esc(~$/));
+            die(X::TXN::Parser::String::EscapeSequence.new(:esc(~$/)));
         }
     ]
 }
@@ -161,7 +161,7 @@ token string-basic-multiline-char:escape-sequence
 
         .
         {
-            die X::TXN::Parser::String::EscapeSequence.new(:esc(~$/));
+            die(X::TXN::Parser::String::EscapeSequence.new(:esc(~$/)));
         }
     ]
 }
@@ -306,7 +306,7 @@ token txnlib-string-char:escape-sequence
 
         .
         {
-            die X::TXN::Parser::String::EscapeSequence.new(:esc(~$/));
+            die(X::TXN::Parser::String::EscapeSequence.new(:esc(~$/)));
         }
     ]
 }
@@ -621,13 +621,13 @@ proto token asset-quantity {*}
 token asset-quantity:float
 {
     <float-unsigned>
-    { +$/ !== 0 or die X::TXN::Parser::AssetQuantityIsZero.new(:text(~$/)) }
+    { +$/ !== 0 or die(X::TXN::Parser::AssetQuantityIsZero.new(:text(~$/))) }
 }
 
 token asset-quantity:integer
 {
     <integer-unsigned>
-    { +$/ !== 0 or die X::TXN::Parser::AssetQuantityIsZero.new(:text(~$/)) }
+    { +$/ !== 0 or die(X::TXN::Parser::AssetQuantityIsZero.new(:text(~$/))) }
 }
 
 # --- --- end posting amount grammar }}}
@@ -724,7 +724,7 @@ token inherit
 {
     <inherit-symbol> \h+ <inherit-rate=xe-rate>
     {
-        die X::TXN::Parser::Annot::Inherit::BadSilo.new unless $silo == ASSETS
+        die(X::TXN::Parser::Annot::Inherit::BadSilo.new) unless $silo == ASSETS
     }
 }
 
@@ -746,7 +746,7 @@ token lot:acquisition
 {
     <lot-acquisition-symbol> \h+ <lot-name>
     {
-        die X::TXN::Parser::Annot::Lot::BadSilo.new unless $silo == ASSETS
+        die(X::TXN::Parser::Annot::Lot::BadSilo.new) unless $silo == ASSETS
     }
 }
 
@@ -755,7 +755,7 @@ token lot:disposition
 {
     <lot-disposition-symbol> \h+ <lot-name>
     {
-        die X::TXN::Parser::Annot::Lot::BadSilo.new unless $silo == ASSETS
+        die(X::TXN::Parser::Annot::Lot::BadSilo.new) unless $silo == ASSETS
     }
 }
 
