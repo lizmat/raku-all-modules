@@ -29,7 +29,7 @@ sub find-urls ( Str $string, Num :$limit? is copy, :$ascii?, :$any? ) is export 
     my $protocol = $any   ?? &anyprotocol !! &protocol;
 
     my $url-regex = regex { <$protocol> '://' <$base> [<after>+]? '/'?  };
-    $string.comb($url-regex, $limit);
+    $string.comb($url-regex, $limit).List;
 }
 
 =AUTHOR Samantha McVey (samcv) samantham@posteo.net
