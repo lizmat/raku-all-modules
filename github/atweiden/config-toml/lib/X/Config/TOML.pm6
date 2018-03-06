@@ -19,30 +19,32 @@ class DuplicateKeys is Exception
         {'-' x 72}
         Keys seen:
         {
-            @.keys-seen.sort».subst(
-                /(.*)/,
-                -> $/
-                {
-                    state Int:D $i = 1;
-                    my Str:D $replacement = "$i.「$0」 \n";
-                    $i++;
-                    $replacement;
-                }
-            );
+            @.keys-seen.sort.hyper.map({
+                .subst(
+                    /(.*)/,
+                    -> $/ {
+                        state Int:D $i = 1;
+                        my Str:D $replacement = "$i.「$0」 \n";
+                        $i++;
+                        $replacement;
+                    }
+                )
+            });
         }
         {'-' x 72}
         Keys seen (unique):
         {
-            @.keys-seen.unique.sort».subst(
-                /(.*)/,
-                -> $/
-                {
-                    state Int:D $i = 1;
-                    my Str:D $replacement = "$i.「$0」 \n";
-                    $i++;
-                    $replacement;
-                }
-            );
+            @.keys-seen.unique.sort.hyper.map({
+                .subst(
+                    /(.*)/,
+                    -> $/ {
+                        state Int:D $i = 1;
+                        my Str:D $replacement = "$i.「$0」 \n";
+                        $i++;
+                        $replacement;
+                    }
+                )
+            });
         }
         EOF
     }

@@ -3,10 +3,9 @@ use lib 'lib';
 use Test;
 use Config::TOML;
 
-plan 1;
+plan(1);
 
-subtest
-{
+subtest({
     # parse toml from string
     my $toml = Q:to/EOF/;
     [server]
@@ -81,6 +80,6 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

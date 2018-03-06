@@ -67,7 +67,7 @@ token string-basic-char:escape-sequence
 
         .
         {
-            die X::Config::TOML::String::EscapeSequence.new(:esc(~$/));
+            die(X::Config::TOML::String::EscapeSequence.new(:esc(~$/)));
         }
     ]
 }
@@ -157,7 +157,7 @@ token string-basic-multiline-char:escape-sequence
 
         .
         {
-            die X::Config::TOML::String::EscapeSequence.new(:esc(~$/));
+            die(X::Config::TOML::String::EscapeSequence.new(:esc(~$/)));
         }
     ]
 }

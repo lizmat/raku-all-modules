@@ -4,31 +4,35 @@ use Test;
 use Config::TOML::Parser::Actions;
 use Config::TOML::Parser::Grammar;
 
-plan 1;
+plan(1);
 
 # document grammar tests {{{
 
-subtest
-{
-    my Str $document = slurp 't/data/example-v0.4.0.toml';
-    my Str $document-hard = slurp 't/data/hard_example.toml';
-    my Str $document-standard = slurp 't/data/example.toml';
+subtest({
+    my Str $document = slurp('t/data/example-v0.4.0.toml');
+    my Str $document-hard = slurp('t/data/hard_example.toml');
+    my Str $document-standard = slurp('t/data/example.toml');
 
-    my Config::TOML::Parser::Actions $actions .= new;
-    my $match-document = Config::TOML::Parser::Grammar.parse(
-        $document,
-        :$actions
-    );
-    my Config::TOML::Parser::Actions $actions-hard .= new;
-    my $match-document-hard = Config::TOML::Parser::Grammar.parse(
-        $document-hard,
-        :actions($actions-hard)
-    );
-    my Config::TOML::Parser::Actions $actions-standard .= new;
-    my $match-document-standard = Config::TOML::Parser::Grammar.parse(
-        $document-standard,
-        :actions($actions-standard)
-    );
+    my Config::TOML::Parser::Actions $actions .= new();
+    my $match-document =
+        Config::TOML::Parser::Grammar.parse(
+            $document,
+            :$actions
+        );
+
+    my Config::TOML::Parser::Actions $actions-hard .= new();
+    my $match-document-hard =
+        Config::TOML::Parser::Grammar.parse(
+            $document-hard,
+            :actions($actions-hard)
+        );
+
+    my Config::TOML::Parser::Actions $actions-standard .= new();
+    my $match-document-standard =
+        Config::TOML::Parser::Grammar.parse(
+            $document-standard,
+            :actions($actions-standard)
+        );
 
     is(
         $match-document.WHAT,
@@ -1574,7 +1578,7 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end table grammar tests }}}
 

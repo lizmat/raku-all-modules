@@ -4,10 +4,9 @@ use Test;
 use Config::TOML::Parser::Actions;
 use Config::TOML::Parser::Grammar;
 
-plan 17;
+plan(17);
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     [a]
@@ -15,9 +14,9 @@ subtest
     b = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::DuplicateKeys,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 1 of 17
@@ -28,18 +27,17 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     a = { b = 1, b = 2, c = 3 }
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::InlineTable::DuplicateKeys,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 2 of 17
@@ -50,19 +48,18 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     a = 2
     a = 3
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::KeypairLine::DuplicateKeys,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 3 of 17
@@ -73,10 +70,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     [a]
@@ -86,9 +82,9 @@ subtest
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 4 of 17
@@ -99,19 +95,18 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     [a]
     [a]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 5 of 17
@@ -122,10 +117,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     [a.b]
@@ -135,9 +129,9 @@ subtest
     b = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::Keypath::AOH,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 6 of 17
@@ -148,19 +142,18 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     [a]
     [[a]]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::AOH::OverwritesHOH,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 7 of 17
@@ -171,10 +164,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     [[a]]
@@ -184,9 +176,9 @@ subtest
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::AOH,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 8 of 17
@@ -197,19 +189,18 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     [[a]]
     [a]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::AOH,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 9 of 17
@@ -220,10 +211,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     [fruit]
@@ -233,9 +223,9 @@ subtest
     apple = "yes"
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 10 of 17
@@ -246,10 +236,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     a = 1
@@ -258,9 +247,9 @@ subtest
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 11 of 17
@@ -271,10 +260,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     a = 1
@@ -283,9 +271,9 @@ subtest
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 12 of 17
@@ -296,10 +284,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     a = { b = 1 }
@@ -308,9 +295,9 @@ subtest
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 13 of 17
@@ -321,10 +308,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     a = [ { a = 1, b = 2, c = 3 }, { d = 4, e = 5, f = 6 } ]
@@ -335,9 +321,9 @@ subtest
     i = 9
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::AOH::OverwritesKey,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 14 of 17
@@ -348,10 +334,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     [header1]
@@ -361,9 +346,9 @@ subtest
     number = 9
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 15 of 17
@@ -374,10 +359,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     a = { b = 1 }
@@ -386,9 +370,9 @@ subtest
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 16 of 17
@@ -399,10 +383,9 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
+subtest({
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     places = [
@@ -415,9 +398,9 @@ subtest
     a = [ ["AN", "Andromeda"], ["AQ", "Aquarius"] ]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     throws-like(
-        {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
+        { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::AOH::OverwritesKey,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 17 of 17
@@ -428,6 +411,6 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

@@ -4,10 +4,9 @@ use Test;
 use Config::TOML::Parser::Actions;
 use Config::TOML::Parser::Grammar;
 
-plan 1;
+plan(1);
 
-subtest
-{
+subtest({
     # https://github.com/toml-lang/toml/issues/331#issuecomment-111769128
     # This config is possible. The order is not important as long as no
     # key-value pair is redefined:
@@ -20,7 +19,7 @@ subtest
     item = "ok"
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     my $match-toml = Config::TOML::Parser::Grammar.parse($toml, :$actions);
 
     is(
@@ -72,6 +71,6 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

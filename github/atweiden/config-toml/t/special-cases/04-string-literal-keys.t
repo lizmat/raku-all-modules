@@ -4,10 +4,9 @@ use Test;
 use Config::TOML::Parser::Actions;
 use Config::TOML::Parser::Grammar;
 
-plan 1;
+plan(1);
 
-subtest
-{
+subtest({
     # https://github.com/toml-lang/toml/commit/27dc0ad209931ebb336be7769501ff091cffd355
     # Clarify that literal strings can be table keys
     my Str $toml = Q:to/EOF/;
@@ -16,7 +15,7 @@ subtest
     'quoted "value"' = "value"
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new;
+    my Config::TOML::Parser::Actions $actions .= new();
     my $match-toml = Config::TOML::Parser::Grammar.parse($toml, :$actions);
 
     is(
@@ -55,6 +54,6 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

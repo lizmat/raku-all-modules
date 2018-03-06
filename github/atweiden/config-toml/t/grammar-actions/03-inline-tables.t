@@ -4,13 +4,12 @@ use Test;
 use Config::TOML::Parser::Actions;
 use Config::TOML::Parser::Grammar;
 
-plan 1;
+plan(1);
 
 # commented inline table grammar tests {{{
 
-subtest
-{
-    my Str $commented-inline-table-difficult = Q:to/EOF/;
+subtest({
+    my Str $commented-inline-table-difficult = Q:to/EOF/.trim;
     {# this is ok 1
         # this is ok 2
         # this is ok 3
@@ -119,14 +118,14 @@ subtest
     # this is ok 89
     }
     EOF
-    $commented-inline-table-difficult .= trim;
 
-    my Config::TOML::Parser::Actions $actions .= new;
-    my $match-commented-inline-table-difficult = Config::TOML::Parser::Grammar.parse(
-        $commented-inline-table-difficult,
-        :$actions,
-        :rule<table-inline>
-    );
+    my Config::TOML::Parser::Actions $actions .= new();
+    my $match-commented-inline-table-difficult =
+        Config::TOML::Parser::Grammar.parse(
+            $commented-inline-table-difficult,
+            :$actions,
+            :rule<table-inline>
+        );
 
     is(
         $match-commented-inline-table-difficult.WHAT,
@@ -194,7 +193,7 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end commented inline table grammar tests }}}
 

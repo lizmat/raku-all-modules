@@ -3,10 +3,9 @@ use lib 'lib';
 use Config::TOML;
 use Test;
 
-plan 4;
+plan(4);
 
-subtest
-{
+subtest({
     my %h =
         :a({
             :b({
@@ -49,7 +48,7 @@ subtest
         }),
         :i<irene>;
 
-    my Str $expected = q:to/EOF/;
+    my Str $expected = q:to/EOF/.trim;
     i = "irene"
     [a.b]
     c = [ 1, 2, 3 ]
@@ -79,23 +78,21 @@ subtest
     [[a.h.zoology.charlie]]
     h = "charlie-here"
     EOF
-    $expected .= trim;
 
     my Str $toml = to-toml(%h);
-    is $toml, $expected, 'Is expected value';
-}
+    is($toml, $expected, 'Is expected value');
+});
 
-subtest
-{
+subtest({
     my Str $s = 'Hello, world!';
     my Int $n = 1111111;
     my Rat $r = 1.11111;
     my Bool $b = True;
-    my Date $d = Date.new('2011-11-11');
-    my DateTime $dt = DateTime.new('2011-11-11T00:00:00Z');
+    my Date $d .= new('2011-11-11');
+    my DateTime $dt .= new('2011-11-11T00:00:00Z');
     my %h = :$s, :$n, :$r, :$b, :$d, :$dt;
 
-    my Str $expected = q:to/EOF/;
+    my Str $expected = q:to/EOF/.trim;
     b = true
     d = 2011-11-11
     dt = 2011-11-11T00:00:00Z
@@ -103,14 +100,12 @@ subtest
     r = 1.11111
     s = "Hello, world!"
     EOF
-    $expected .= trim;
 
     my Str $toml = to-toml(%h);
-    is $toml, $expected, 'Is expected value';
-}
+    is($toml, $expected, 'Is expected value');
+});
 
-subtest
-{
+subtest({
     my %h =
         'hello world' => {
             'again and again' => {
@@ -122,7 +117,7 @@ subtest
         'this is an arraytable header' => [ {:arraytable}, {:!table} ],
         'which way to the Sun?' => 'up';
 
-    my Str $expected = q:to/EOF/;
+    my Str $expected = q:to/EOF/.trim;
     "which way to the Sun?" = "up"
     ["hello world"."again and again"."and again"]
     yes = true
@@ -131,14 +126,12 @@ subtest
     [["this is an arraytable header"]]
     table = false
     EOF
-    $expected .= trim;
 
     my Str $toml = to-toml(%h);
-    is $toml, $expected, 'Is expected value';
-}
+    is($toml, $expected, 'Is expected value');
+});
 
-subtest
-{
+subtest({
     my %h =
         "" => {
             '' => {
@@ -156,7 +149,7 @@ subtest
             }
         };
 
-    my Str $expected = q:to/EOF/;
+    my Str $expected = q:to/EOF/.trim;
     ["".""]
     "" = "empty"
     [[""."an empty quoted".arraytable."".""]]
@@ -164,10 +157,9 @@ subtest
     [[""."an empty quoted".arraytable."".""]]
     end = true
     EOF
-    $expected .= trim;
 
     my Str $toml = to-toml(%h);
-    is $toml, $expected, 'Is expected value';
-}
+    is($toml, $expected, 'Is expected value');
+});
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

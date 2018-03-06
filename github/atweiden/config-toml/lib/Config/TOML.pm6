@@ -11,7 +11,7 @@ multi sub from-toml(
 ) is export
 {
     Config::TOML::Parser.parse($content, |%opts).made
-        or die X::Config::TOML::ParseFailed.new(:$content);
+        or die(X::Config::TOML::ParseFailed.new(:$content));
 }
 
 multi sub from-toml(
@@ -21,7 +21,7 @@ multi sub from-toml(
 ) is export
 {
     Config::TOML::Parser.parsefile($file, |%opts).made
-        or die X::Config::TOML::ParsefileFailed.new(:$file);
+        or die(X::Config::TOML::ParsefileFailed.new(:$file));
 }
 
 sub to-toml(

@@ -4,20 +4,18 @@ use Test;
 use Config::TOML::Parser::Actions;
 use Config::TOML::Parser::Grammar;
 
-plan 7;
+plan(7);
 
 # string grammar-actions tests {{{
 # --- basic string equivalency tests {{{
 
-subtest
-{
+subtest({
     # The following strings are byte-for-byte equivalent:
-    my Str $str1 = Q:to/EOF/;
+    my Str $str1 = Q:to/EOF/.trim;
     "The quick brown fox jumps over the lazy dog."
     EOF
-    $str1 .= trim;
 
-    my Str $str2 = Q:to/EOF/;
+    my Str $str2 = Q:to/EOF/.trim;
     """
     The quick brown \
 
@@ -25,33 +23,34 @@ subtest
       fox jumps over \
         the lazy dog."""
     EOF
-    $str2 .= trim;
 
-    my Str $str3 = Q:to/EOF/;
+    my Str $str3 = Q:to/EOF/.trim;
     """\
            The quick brown \
            fox jumps over \
            the lazy dog.\
            """
     EOF
-    $str3 .= trim;
 
-    my Config::TOML::Parser::Actions $actions .= new;
-    my $match-str1 = Config::TOML::Parser::Grammar.parse(
-        $str1,
-        :$actions,
-        :rule<string>
-    );
-    my $match-str2 = Config::TOML::Parser::Grammar.parse(
-        $str2,
-        :$actions,
-        :rule<string>
-    );
-    my $match-str3 = Config::TOML::Parser::Grammar.parse(
-        $str3,
-        :$actions,
-        :rule<string>
-    );
+    my Config::TOML::Parser::Actions $actions .= new();
+    my $match-str1 =
+        Config::TOML::Parser::Grammar.parse(
+            $str1,
+            :$actions,
+            :rule<string>
+        );
+    my $match-str2 =
+        Config::TOML::Parser::Grammar.parse(
+            $str2,
+            :$actions,
+            :rule<string>
+        );
+    my $match-str3 =
+        Config::TOML::Parser::Grammar.parse(
+            $str3,
+            :$actions,
+            :rule<string>
+        );
 
     is(
         $match-str1.WHAT,
@@ -130,14 +129,13 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end basic string equivalency tests }}}
 # --- literal string equivalency tests {{{
 
-subtest
-{
-    my Str $str4 = Q:to/EOF/;
+subtest({
+    my Str $str4 = Q:to/EOF/.trim;
     '''
     The first newline is
     trimmed in raw strings.
@@ -145,28 +143,28 @@ subtest
        is preserved.
     '''
     EOF
-    $str4 .= trim;
 
-    my Str $str5 = Q:to/EOF/;
+    my Str $str5 = Q:to/EOF/.trim;
     '''The first newline is
     trimmed in raw strings.
        All other whitespace
        is preserved.
     '''
     EOF
-    $str5 .= trim;
 
-    my Config::TOML::Parser::Actions $actions .= new;
-    my $match-str4 = Config::TOML::Parser::Grammar.parse(
-        $str4,
-        :$actions,
-        :rule<string>
-    );
-    my $match-str5 = Config::TOML::Parser::Grammar.parse(
-        $str5,
-        :$actions,
-        :rule<string>
-    );
+    my Config::TOML::Parser::Actions $actions .= new();
+    my $match-str4 =
+        Config::TOML::Parser::Grammar.parse(
+            $str4,
+            :$actions,
+            :rule<string>
+        );
+    my $match-str5 =
+        Config::TOML::Parser::Grammar.parse(
+            $str5,
+            :$actions,
+            :rule<string>
+        );
 
     is(
         $match-str4.WHAT,
@@ -206,17 +204,15 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end literal string equivalency tests }}}
 # --- base64 tests {{{
 
-subtest
-{
+subtest({
     # t/data/openssl.pem
-    my Str $openssl-pem-perl = slurp 't/data/openssl.pem';
-    $openssl-pem-perl .= trim;
-    my Str $openssl-pem-toml = Q:to/EOF/;
+    my Str $openssl-pem-perl = slurp('t/data/openssl.pem').trim;
+    my Str $openssl-pem-toml = Q:to/EOF/.trim;
     '''
     -----BEGIN RSA PRIVATE KEY-----
     MIIEpQIBAAKCAQEA58VK2N1YSSMWtAVSHQJRYrITij3LVbsZkcavx0ljZe8N0QeA
@@ -246,12 +242,10 @@ subtest
     8kC2NCdXD7B2vJSC8KYh1QLDCB99wQOprti9JsgGWAQB369zNZmXxkk=
     -----END RSA PRIVATE KEY-----'''
     EOF
-    $openssl-pem-toml .= trim;
 
     # t/data/ssh-ed25519
-    my Str $ssh-ed25519-perl = slurp 't/data/ssh-ed25519';
-    $ssh-ed25519-perl .= trim;
-    my Str $ssh-ed25519-toml = Q:to/EOF/;
+    my Str $ssh-ed25519-perl = slurp('t/data/ssh-ed25519').trim;
+    my Str $ssh-ed25519-toml = Q:to/EOF/.trim;
     '''
     -----BEGIN OPENSSH PRIVATE KEY-----
     b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
@@ -261,33 +255,33 @@ subtest
     YgKaJqNTnQRgV+Ii0xPaAAAACmhlbGxvQHRvbWwBAgM=
     -----END OPENSSH PRIVATE KEY-----'''
     EOF
-    $ssh-ed25519-toml .= trim;
 
     # t/data/ssh-ed25519.pub
-    my Str $ssh-ed25519-pub-perl = slurp 't/data/ssh-ed25519.pub';
-    $ssh-ed25519-pub-perl .= trim;
-    my Str $ssh-ed25519-pub-toml = Q:to/EOF/;
+    my Str $ssh-ed25519-pub-perl = slurp('t/data/ssh-ed25519.pub').trim;
+    my Str $ssh-ed25519-pub-toml = Q:to/EOF/.trim;
     '''
     ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZFvfg/A7kwROAKeTlhkkwhYgKaJqNTnQRgV+Ii0xPa hello@toml'''
     EOF
-    $ssh-ed25519-pub-toml .= trim;
 
-    my Config::TOML::Parser::Actions $actions .= new;
-    my $match-openssl-pem-toml = Config::TOML::Parser::Grammar.parse(
-        $openssl-pem-toml,
-        :$actions,
-        :rule<string>
-    );
-    my $match-ssh-ed25519-toml = Config::TOML::Parser::Grammar.parse(
-        $ssh-ed25519-toml,
-        :$actions,
-        :rule<string>
-    );
-    my $match-ssh-ed25519-pub-toml = Config::TOML::Parser::Grammar.parse(
-        $ssh-ed25519-pub-toml,
-        :$actions,
-        :rule<string>
-    );
+    my Config::TOML::Parser::Actions $actions .= new();
+    my $match-openssl-pem-toml =
+        Config::TOML::Parser::Grammar.parse(
+            $openssl-pem-toml,
+            :$actions,
+            :rule<string>
+        );
+    my $match-ssh-ed25519-toml =
+        Config::TOML::Parser::Grammar.parse(
+            $ssh-ed25519-toml,
+            :$actions,
+            :rule<string>
+        );
+    my $match-ssh-ed25519-pub-toml =
+        Config::TOML::Parser::Grammar.parse(
+            $ssh-ed25519-pub-toml,
+            :$actions,
+            :rule<string>
+        );
 
     is(
         $match-openssl-pem-toml.WHAT,
@@ -366,15 +360,14 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end base64 tests }}}
 # end string grammar-actions tests }}}
 # number grammar-actions tests {{{
 # --- integer tests {{{
 
-subtest
-{
+subtest({
     # Integers are whole numbers. Positive numbers may be prefixed with
     # a plus sign. Negative numbers are prefixed with a minus sign.
     my Str $int1 = Q{+99};
@@ -393,52 +386,61 @@ subtest
     my Str $int8 = Q{-9223372036854775808};
     my Str $int9 = Q{9223372036854775807};
 
-    my Config::TOML::Parser::Actions $actions .= new;
-    my $match-int1 = Config::TOML::Parser::Grammar.parse(
-        $int1,
-        :$actions,
-        :rule<number>
-    );
-    my $match-int2 = Config::TOML::Parser::Grammar.parse(
-        $int2,
-        :$actions,
-        :rule<number>
-    );
-    my $match-int3 = Config::TOML::Parser::Grammar.parse(
-        $int3,
-        :$actions,
-        :rule<number>
-    );
-    my $match-int4 = Config::TOML::Parser::Grammar.parse(
-        $int4,
-        :$actions,
-        :rule<number>
-    );
-    my $match-int5 = Config::TOML::Parser::Grammar.parse(
-        $int5,
-        :$actions,
-        :rule<number>
-    );
-    my $match-int6 = Config::TOML::Parser::Grammar.parse(
-        $int6,
-        :$actions,
-        :rule<number>
-    );
-    my $match-int7 = Config::TOML::Parser::Grammar.parse(
-        $int7,
-        :$actions,
-        :rule<number>
-    );
-    my $match-int8 = Config::TOML::Parser::Grammar.parse(
-        $int8,
-        :$actions,
-        :rule<number>
-    );
-    my $match-int9 = Config::TOML::Parser::Grammar.parse(
-        $int9,
-        :$actions,
-        :rule<number>
-    );
+    my Config::TOML::Parser::Actions $actions .= new();
+    my $match-int1 =
+        Config::TOML::Parser::Grammar.parse(
+            $int1,
+            :$actions,
+            :rule<number>
+        );
+    my $match-int2 =
+        Config::TOML::Parser::Grammar.parse(
+            $int2,
+            :$actions,
+            :rule<number>
+        );
+    my $match-int3 =
+        Config::TOML::Parser::Grammar.parse(
+            $int3,
+            :$actions,
+            :rule<number>
+        );
+    my $match-int4 =
+        Config::TOML::Parser::Grammar.parse(
+            $int4,
+            :$actions,
+            :rule<number>
+        );
+    my $match-int5 =
+        Config::TOML::Parser::Grammar.parse(
+            $int5,
+            :$actions,
+            :rule<number>
+        );
+    my $match-int6 =
+        Config::TOML::Parser::Grammar.parse(
+            $int6,
+            :$actions,
+            :rule<number>
+        );
+    my $match-int7 =
+        Config::TOML::Parser::Grammar.parse(
+            $int7,
+            :$actions,
+            :rule<number>
+        );
+    my $match-int8 =
+        Config::TOML::Parser::Grammar.parse(
+            $int8,
+            :$actions,
+            :rule<number>
+        );
+    my $match-int9 =
+        Config::TOML::Parser::Grammar.parse(
+            $int9,
+            :$actions,
+            :rule<number>
+        );
 
     is(
         $match-int1.WHAT,
@@ -766,13 +768,12 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end integer tests }}}
 # --- float tests {{{
 
-subtest
-{
+subtest({
     # A float consists of an integer part (which may be prefixed with a
     # plus or minus sign) followed by a fractional part and/or an exponent
     # part. If both a fractional part and exponent part are present,
@@ -802,52 +803,61 @@ subtest
     my Str $float8 = Q{9_224_617.445_991_228_313};
     my Str $float9 = Q{1e1_000};
 
-    my Config::TOML::Parser::Actions $actions .= new;
-    my $match-float1 = Config::TOML::Parser::Grammar.parse(
-        $float1,
-        :$actions,
-        :rule<number>
-    );
-    my $match-float2 = Config::TOML::Parser::Grammar.parse(
-        $float2,
-        :$actions,
-        :rule<number>
-    );
-    my $match-float3 = Config::TOML::Parser::Grammar.parse(
-        $float3,
-        :$actions,
-        :rule<number>
-    );
-    my $match-float4 = Config::TOML::Parser::Grammar.parse(
-        $float4,
-        :$actions,
-        :rule<number>
-    );
-    my $match-float5 = Config::TOML::Parser::Grammar.parse(
-        $float5,
-        :$actions,
-        :rule<number>
-    );
-    my $match-float6 = Config::TOML::Parser::Grammar.parse(
-        $float6,
-        :$actions,
-        :rule<number>
-    );
-    my $match-float7 = Config::TOML::Parser::Grammar.parse(
-        $float7,
-        :$actions,
-        :rule<number>
-    );
-    my $match-float8 = Config::TOML::Parser::Grammar.parse(
-        $float8,
-        :$actions,
-        :rule<number>
-    );
-    my $match-float9 = Config::TOML::Parser::Grammar.parse(
-        $float9,
-        :$actions,
-        :rule<number>
-    );
+    my Config::TOML::Parser::Actions $actions .= new();
+    my $match-float1 =
+        Config::TOML::Parser::Grammar.parse(
+            $float1,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float2 =
+        Config::TOML::Parser::Grammar.parse(
+            $float2,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float3 =
+        Config::TOML::Parser::Grammar.parse(
+            $float3,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float4 =
+        Config::TOML::Parser::Grammar.parse(
+            $float4,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float5 =
+        Config::TOML::Parser::Grammar.parse(
+            $float5,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float6 =
+        Config::TOML::Parser::Grammar.parse(
+            $float6,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float7 =
+        Config::TOML::Parser::Grammar.parse(
+            $float7,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float8 =
+        Config::TOML::Parser::Grammar.parse(
+            $float8,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float9 =
+        Config::TOML::Parser::Grammar.parse(
+            $float9,
+            :$actions,
+            :rule<number>
+        );
 
     is(
         $match-float1.WHAT,
@@ -1176,29 +1186,30 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # --- end float tests }}}
 # end number grammar-actions tests }}}
 # boolean grammar-actions tests {{{
 
-subtest
-{
+subtest({
     # Booleans are just the tokens you're used to. Always lowercase.
     my Str $bool1 = Q{true};
     my Str $bool2 = Q{false};
 
-    my Config::TOML::Parser::Actions $actions .= new;
-    my $match-bool1 = Config::TOML::Parser::Grammar.parse(
-        $bool1,
-        :$actions,
-        :rule<boolean>
-    );
-    my $match-bool2 = Config::TOML::Parser::Grammar.parse(
-        $bool2,
-        :$actions,
-        :rule<boolean>
-    );
+    my Config::TOML::Parser::Actions $actions .= new();
+    my $match-bool1 =
+        Config::TOML::Parser::Grammar.parse(
+            $bool1,
+            :$actions,
+            :rule<boolean>
+        );
+    my $match-bool2 =
+        Config::TOML::Parser::Grammar.parse(
+            $bool2,
+            :$actions,
+            :rule<boolean>
+        );
 
     is(
         $match-bool1.WHAT,
@@ -1274,13 +1285,12 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end boolean grammar-actions tests }}}
 # datetime grammar-actions tests {{{
 
-subtest
-{
+subtest({
     # Datetimes are RFC 3339 dates.
     my Str $date-time1 = Q{1979-05-27T07:32:00Z};
     my Str $date-time2 = Q{1979-05-27T00:32:00-07:00};
@@ -1291,36 +1301,42 @@ subtest
 
     # assume UTC when local offset unspecified in TOML dates
     my Config::TOML::Parser::Actions $actions .= new(:date-local-offset(0));
-    my $match-date-time1 = Config::TOML::Parser::Grammar.parse(
-        $date-time1,
-        :$actions,
-        :rule<date>
-    );
-    my $match-date-time2 = Config::TOML::Parser::Grammar.parse(
-        $date-time2,
-        :$actions,
-        :rule<date>
-    );
-    my $match-date-time3 = Config::TOML::Parser::Grammar.parse(
-        $date-time3,
-        :$actions,
-        :rule<date>
-    );
-    my $match-date-time4 = Config::TOML::Parser::Grammar.parse(
-        $date-time4,
-        :$actions,
-        :rule<date>
-    );
-    my $match-date-time5 = Config::TOML::Parser::Grammar.parse(
-        $date-time5,
-        :$actions,
-        :rule<date>
-    );
-    my $match-full-date1 = Config::TOML::Parser::Grammar.parse(
-        $full-date1,
-        :$actions,
-        :rule<date>
-    );
+    my $match-date-time1 =
+        Config::TOML::Parser::Grammar.parse(
+            $date-time1,
+            :$actions,
+            :rule<date>
+        );
+    my $match-date-time2 =
+        Config::TOML::Parser::Grammar.parse(
+            $date-time2,
+            :$actions,
+            :rule<date>
+        );
+    my $match-date-time3 =
+        Config::TOML::Parser::Grammar.parse(
+            $date-time3,
+            :$actions,
+            :rule<date>
+        );
+    my $match-date-time4 =
+        Config::TOML::Parser::Grammar.parse(
+            $date-time4,
+            :$actions,
+            :rule<date>
+        );
+    my $match-date-time5 =
+        Config::TOML::Parser::Grammar.parse(
+            $date-time5,
+            :$actions,
+            :rule<date>
+        );
+    my $match-full-date1 =
+        Config::TOML::Parser::Grammar.parse(
+            $full-date1,
+            :$actions,
+            :rule<date>
+        );
 
     is(
         $match-date-time1.WHAT,
@@ -1540,7 +1556,7 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # end datetime grammar-actions tests }}}
 

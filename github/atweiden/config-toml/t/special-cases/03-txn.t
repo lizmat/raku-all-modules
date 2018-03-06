@@ -4,12 +4,11 @@ use Test;
 use Config::TOML::Parser::Actions;
 use Config::TOML::Parser::Grammar;
 
-plan 2;
+plan(2);
 
-subtest
-{
-    my Str $toml = slurp 't/data/sample.txn.toml';
-    my Config::TOML::Parser::Actions $actions .= new;
+subtest({
+    my Str $toml = slurp('t/data/sample.txn.toml');
+    my Config::TOML::Parser::Actions $actions .= new();
     my $match-toml = Config::TOML::Parser::Grammar.parse($toml, :$actions);
 
     is(
@@ -240,12 +239,11 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
-subtest
-{
-    my Str $toml = slurp 't/data/txnjrnl.toml';
-    my Config::TOML::Parser::Actions $actions .= new;
+subtest({
+    my Str $toml = slurp('t/data/txnjrnl.toml');
+    my Config::TOML::Parser::Actions $actions .= new();
     my $match-toml = Config::TOML::Parser::Grammar.parse($toml, :$actions);
 
     is(
@@ -620,6 +618,6 @@ subtest
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-}
+});
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:
