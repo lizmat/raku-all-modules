@@ -268,7 +268,7 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting:D $posting --> Str:D)
     my TXN::Parser::AST::Entry::Posting::Annot:D $annot = $posting.annot
         if $posting.annot;
 
-    my Bool:D $needs-minus = so $decinc ~~ DEC;
+    my Bool:D $needs-minus = so($decinc ~~ DEC);
 
     # check if $amount includes C<:plus-or-minus('-')>
     # if so, we don't need to negate the posting amount
@@ -343,9 +343,9 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot:D $annot --> Str:D)
         $annot.xe if $annot.xe;
 
     my Str:D @a;
-    push @a, to-txn($xe) if $xe;
-    push @a, to-txn($inherit) if $inherit;
-    push @a, to-txn($lot) if $lot;
+    push(@a, to-txn($xe)) if $xe;
+    push(@a, to-txn($inherit)) if $inherit;
+    push(@a, to-txn($lot)) if $lot;
 
     my Str:D $s = '';
     $s ~= join(' ', @a);

@@ -21,6 +21,7 @@ multi sub MAIN(
     Str:D :if(:input-format($)) where /:i json/,
     Str:D :of(:output-format($)) where /:i txn/,
     Str :o(:$output)
+    --> Nil
 )
 {
     my @e = remarshal($*IN.lines.join("\n"), :if<json>, :of<hash>);
@@ -35,6 +36,7 @@ multi sub MAIN(
     Str:D :if(:input-format($)) where /:i json/,
     Str:D :of(:output-format($)) where /:i txn/,
     Str :o(:$output)
+    --> Nil
 )
 {
     my Str:D $file = resolve-path($input);
@@ -51,6 +53,7 @@ multi sub MAIN(
     Str:D :if(:input-format($)) where /:i txn/,
     Str:D :of(:output-format($)) where /:i json/,
     Str :o(:$output)
+    --> Nil
 )
 {
     my TXN::Parser::AST::Entry:D @entry = from-txn($*IN.lines.join("\n"));
@@ -65,6 +68,7 @@ multi sub MAIN(
     Str:D :if(:input-format($)) where /:i txn/,
     Str:D :of(:output-format($)) where /:i json/,
     Str :o(:$output)
+    --> Nil
 )
 {
     my Str:D $file = resolve-path($input);
@@ -81,6 +85,7 @@ multi sub MAIN(
     Str :o(:$output),
     Str :if(:$input-format),
     Str :of(:$output-format)
+    --> Nil
 )
 {
     my Str:D $remarshal =
@@ -89,21 +94,21 @@ multi sub MAIN(
 }
 
 # output is to stdout
-multi sub output(Str:D $remarshal, '-')
+multi sub output(Str:D $remarshal, '-' --> Nil)
 {
-    say $remarshal.trim;
+    say($remarshal.trim);
 }
 
 # output is to file
-multi sub output(Str:D $remarshal, Str:D $output where *.so)
+multi sub output(Str:D $remarshal, Str:D $output where *.so --> Nil)
 {
-    $output.IO.spurt($remarshal, :createonly);
+    spurt($output, $remarshal, :createonly);
 }
 
 # output is to stdout (default)
 multi sub output(Str:D $remarshal, Str $?)
 {
-    say $remarshal.trim;
+    say($remarshal.trim);
 }
 
 sub resolve-path(Str:D $path where *.so --> Str:D)
@@ -120,7 +125,7 @@ sub resolve-path(Str:D $path where *.so --> Str:D)
 
 sub USAGE()
 {
-    constant $HELP = q:to/EOF/;
+    constant $HELP = q:to/EOF/.trim;
     Usage:
       txn-remarshal [-h] [-i=<file>] [-o=<file>] -if=<format> -of=<format>
 
@@ -150,7 +155,7 @@ sub USAGE()
       txn
         TXN
     EOF
-    say $HELP.trim;
+    say($HELP);
 }
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

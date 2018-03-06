@@ -2,7 +2,7 @@
     "perl"        : "6.*",
     "name"        : "TXN::Remarshal",
     "version"     : "*",
-    "author"      : "Andy Weidenbaum",
+    "author"      : "atweiden",
     "description" : "Double-entry accounting ledger file format converter",
     "depends"     : ["File::Presence", "TXN::Parser"],
     "license"     : "Unlicense",
