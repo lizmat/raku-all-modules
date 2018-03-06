@@ -42,6 +42,6 @@ is './datafile1'.IO.slurp, "some data\n", 'file extraction';
 $a = archive_read_new;
 archive_read_support_format_all($a);
 archive_read_support_filter_all($a);
-is archive_read_open_filename($a, $path ~ "broken.tar.gz", 10240), ARCHIVE_FATAL, 'open broken file';
+ok archive_read_open_filename($a, $path ~ "broken.tar.gz", 10240) != ARCHIVE_OK, 'open broken file';
 
 done-testing;

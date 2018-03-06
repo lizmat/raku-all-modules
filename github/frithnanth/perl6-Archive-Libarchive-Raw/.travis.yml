@@ -8,8 +8,12 @@ language: perl6
 perl6:
   - latest
 
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install libarchive13
+
 install:
-  - rakudobrew build-zef && zef install --debug .
+  - rakudobrew build-zef && zef --debug --depsonly install .
 
 script:
   - PERL6LIB=$PWD/lib prove -e perl6 -vr t/
