@@ -6,9 +6,9 @@ class Build
 {
     method build($)
     {
-        run qw<git clone https://github.com/atweiden/txn-examples t/data>;
-        chdir 't/data';
-        run qw<git checkout ff3b16b206267b312ddd44ef6e3710917b5e9999>;
+        run(qw<git clone https://github.com/atweiden/txn-examples t/data>);
+        chdir('t/data');
+        run(qw<git checkout ff3b16b206267b312ddd44ef6e3710917b5e9999>);
     }
 }
 

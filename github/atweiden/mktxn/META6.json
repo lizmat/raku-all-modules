@@ -2,7 +2,7 @@
     "perl"        : "6.*",
     "name"        : "TXN",
     "version"     : "0.0.7",
-    "author"      : "Andy Weidenbaum",
+    "author"      : "atweiden",
     "description" : "Double-entry accounting ledger packager",
     "depends"     : [
         "Config::TOML",

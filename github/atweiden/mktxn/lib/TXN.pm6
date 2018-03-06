@@ -46,39 +46,41 @@ my class TXN::Package::Prepare
     # --- end submethod BUILD }}}
     # --- method new {{{
 
-    method new(
+    # merge build settings from TOML template if one is provided
+    multi method new(
+        Str:D :$template! where *.so,
         Str :$pkgname,
         Str :$pkgver,
         Int :$pkgrel,
         Str :$pkgdesc,
         Int :$date-local-offset,
-        Str :$txn-dir,
-        Str :$template
+        Str :$txn-dir
     )
     {
         my %prepare;
-
-        # merge build settings from TOML template if one is provided
-        if $template
-        {
+        my %template = do {
             my %h;
             %h<date-local-offset> = $date-local-offset if $date-local-offset;
-            my %template = from-toml(:file($template), |%h);
+            from-toml(:file($template), |%h);
+        }
 
-            %prepare<pkgname> = %template<pkgname> if %template<pkgname>;
-            %prepare<pkgver> = %template<pkgver> if %template<pkgver>;
-            %prepare<pkgrel> = %template<pkgrel>.UInt if %template<pkgrel>;
-            %prepare<pkgdesc> = %template<pkgdesc> if %template<pkgdesc>;
-            if %template<txn-dir>
-            {
-                %prepare<txn-dir> = %template<txn-dir>.IO.is-relative
-                    # resolve C<txn-dir> path relative to template file
-                    ?? join('/', $template.IO.dirname, %template<txn-dir>)
-                    # absolute path for C<txn-dir> given, use it directly
-                    !! %template<txn-dir>;
-            }
-            %prepare<date-local-offset> = Int(%template<date-local-offset>)
-                if %template<date-local-offset>;
+        %prepare<pkgname> = %template<pkgname> if %template<pkgname>;
+        %prepare<pkgver> = %template<pkgver> if %template<pkgver>;
+        %prepare<pkgrel> = %template<pkgrel>.UInt if %template<pkgrel>;
+        %prepare<pkgdesc> = %template<pkgdesc> if %template<pkgdesc>;
+
+        if %template<txn-dir>
+        {
+            %prepare<txn-dir> = %template<txn-dir>.IO.is-relative
+                # resolve C<txn-dir> path relative to template file
+                ?? join('/', $template.IO.dirname, %template<txn-dir>)
+                # absolute path for C<txn-dir> given, use it directly
+                !! %template<txn-dir>;
+        }
+
+        if %template<date-local-offset>
+        {
+            %prepare<date-local-offset> = Int(%template<date-local-offset>);
         }
 
         # overwrite template options if conflicts arise
@@ -89,6 +91,26 @@ my class TXN::Package::Prepare
         %prepare<date-local-offset> = $date-local-offset if $date-local-offset;
         %prepare<txn-dir> = $txn-dir if $txn-dir;
 
+        self.bless(|%prepare);
+    }
+
+    multi method new(
+        Str :$pkgname,
+        Str :$pkgver,
+        Int :$pkgrel,
+        Str :$pkgdesc,
+        Int :$date-local-offset,
+        Str :$txn-dir,
+        Str :$template
+    )
+    {
+        my %prepare;
+        %prepare<pkgname> = $pkgname if $pkgname;
+        %prepare<pkgver> = $pkgver if $pkgver;
+        %prepare<pkgrel> = $pkgrel.UInt if $pkgrel;
+        %prepare<pkgdesc> = $pkgdesc if $pkgdesc;
+        %prepare<date-local-offset> = $date-local-offset if $date-local-offset;
+        %prepare<txn-dir> = $txn-dir if $txn-dir;
         self.bless(|%prepare);
     }
 
@@ -176,7 +198,7 @@ my class TXN::Package
 
         my DateTime:D $dt = now.DateTime;
 
-        say "Making txn pkg: $pkgname $pkgver-$pkgrel ($dt)" if $verbose;
+        say("Making txn pkg: $pkgname $pkgver-$pkgrel ($dt)") if $verbose;
 
         my Str:D $compiler = "$PROGRAM v$VERSION $dt";
 
@@ -233,9 +255,14 @@ my class TXN::Package
 
     sub get-entities-seen(TXN::Parser::AST::Entry:D @entry --> Array:D)
     {
-        my VarName:D @entities-seen = @entry.flatmap({
-            .posting.map({ .account.entity })
-        }).unique.sort;
+        my VarName:D @entities-seen =
+            @entry
+            .flatmap({
+                .posting
+                .map({ .account.entity })
+            })
+            .unique
+            .sort;
     }
 
     # --- end sub get-entities-seen }}}
@@ -323,42 +350,42 @@ multi sub mktxn(
 # serialize to JSON files on disk
 sub package(% (TXN::Parser::AST::Entry :@entry!, :%txn-info!))
 {
-    say "Creating txn pkg \"%txn-info<pkgname>\"…";
+    say("Creating txn pkg \"%txn-info<pkgname>\"…");
 
     # make build directory
     my Str:D $build-dir = "$*CWD/build";
     my Str:D $txn-info-file = "$build-dir/.TXNINFO";
     my Str:D $txn-json-file = "$build-dir/txn.json";
-    $build-dir.IO.mkdir;
+    mkdir($build-dir);
 
     # serialize .TXNINFO to JSON
-    $txn-info-file.IO.spurt(Rakudo::Internals::JSON.to-json(%txn-info) ~ "\n");
+    spurt($txn-info-file, Rakudo::Internals::JSON.to-json(%txn-info) ~ "\n");
 
     # serialize ledger AST to JSON
-    $txn-json-file.IO.spurt(
+    spurt(
+        $txn-json-file,
         Rakudo::Internals::JSON.to-json(
             remarshal(@entry, :if<entry>, :of<hash>)
-        )
-        ~ "\n"
+        ) ~ "\n"
     );
 
     # compress
     my Str:D $tarball =
         "%txn-info<pkgname>-%txn-info<pkgver>-%txn-info<pkgrel>\.txn.tar.xz";
-    shell "tar \\
+    shell("tar \\
              -C $build-dir \\
              --xz \\
              -cvf $tarball \\
-             {$txn-info-file.IO.basename} {$txn-json-file.IO.basename}";
+             {$txn-info-file.IO.basename} {$txn-json-file.IO.basename}");
 
     my Str:D $dt = %txn-info<compiler>.split(' ')[*-1];
-    say "Finished making: %txn-info<pkgname> ",
-        "%txn-info<pkgver>-%txn-info<pkgrel> ($dt)";
+    say("Finished making: %txn-info<pkgname> ",
+        "%txn-info<pkgver>-%txn-info<pkgrel> ($dt)");
 
     # clean up build directory
-    say 'Cleaning up…';
-    $build-dir.IO.dir».unlink;
-    $build-dir.IO.rmdir;
+    say('Cleaning up…');
+    dir($build-dir).race.map({ .unlink });
+    rmdir($build-dir);
 }
 
 # end sub package }}}
