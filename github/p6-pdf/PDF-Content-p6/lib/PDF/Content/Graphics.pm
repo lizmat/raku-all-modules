@@ -102,12 +102,13 @@ role PDF::Content::Graphics {
                           Numeric :$YStep = $BBox[3] - $BBox[1],
                           Int :$PaintType = 1,
                           Int :$TilingType = 1,
+                          Hash :$Resources = {},
                           *%dict
                          ) {
         %dict.push: $_
                      for (:Type(:name<Pattern>), :PatternType(1),
                           :$PaintType, :$TilingType,
-                          :$BBox, :$XStep, :$YStep);
+                          :$BBox, :$XStep, :$YStep, :$Resources);
         PDF::DAO.coerce( :stream{ :%dict });
     }
 
