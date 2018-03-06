@@ -40,7 +40,7 @@ subtest({
     is(%i<a>, 'alpha', 'Is expected value');
     is(%i<b>, 'bravo', 'Is expected value');
     is(%i<c>, 'charlie', 'Is expected value');
-    ok(%h.elems() == 0, 'Original container is unchanged');
+    ok(%h.elems == 0, 'Original container is unchanged');
 
     my Associative $t;
     my $u = Crane.add($t, :path(), :value({:a<alpha>, :b<bravo>, :c<charlie>}));
@@ -108,7 +108,7 @@ subtest({
     is(@b[2], 'two', 'Is expected value');
     my @c = Crane.add(@a, :path(), :value(True));
     is(@c[0], True, 'Is expected value');
-    ok(@a.elems() == 0, 'Original container is unchanged');
+    ok(@a.elems == 0, 'Original container is unchanged');
 
     my Positional $q;
     my $r = Crane.add($q, :path(), :value(qw<zero one two>));
@@ -308,7 +308,7 @@ subtest({
     my @aa;
     my @bb = Crane.add(@aa, :path([]), :value<foo>);
     is(@bb[0], 'foo', 'Is expected value');
-    ok(@aa.elems() == 0, 'Original container unchanged');
+    ok(@aa.elems == 0, 'Original container unchanged');
 });
 
 # end testing Positional deep container add operations }}}

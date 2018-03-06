@@ -271,7 +271,7 @@ subtest({
 
 subtest({
     my %data = %TestCrane::data;
-    my %data-orig = %data.deepmap(*.clone());
+    my %data-orig = %data.deepmap(*.clone);
     my %legume = :name("green beans"), :unit<lbs>, :instock(3);
     my %data-new = Crane.replace(%data, :path('legumes', 0), :value(%legume));
     my %data-expected =

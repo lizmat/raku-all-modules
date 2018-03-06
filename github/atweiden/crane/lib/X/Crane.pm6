@@ -47,7 +47,7 @@ class PathOutOfRange is Exception
         my Int:D $got = $.out-of-range.got;
         my RangeStrActions $actions .= new();
         my Range:D $range =
-            RangeStr.parse($.out-of-range.range, :$actions).made();
+            RangeStr.parse($.out-of-range.range, :$actions).made;
         my Str:D $reason = $got cmp $range > 0
             ?? 'creating sparse Positional not allowed'
             !! 'Positional index out of range';

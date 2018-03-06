@@ -65,7 +65,7 @@ subtest({
     is-deeply(%data, %expected, 'Is expected value');
 
     # with raises exception
-    sub foo($bar) { die 'foobar' }
+    sub foo($bar) { die('foobar') }
     throws-like(
         { Crane.transform(%data, :path(), :with(&foo)) },
         X::Crane::TransformCallableRaisedException,
