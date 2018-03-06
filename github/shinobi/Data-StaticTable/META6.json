@@ -6,7 +6,7 @@
   "depends": [
 
   ],
-  "license": "Artistic-2.0",
+  "license": "Unlicense",
   "provides": {
     "StaticTable": "lib/Data/StaticTable.pm6",
     "StaticTable::Position": "lib/Data/StaticTable.pm6",
