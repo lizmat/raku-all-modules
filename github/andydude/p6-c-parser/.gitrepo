@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/andydude/p6-c-parser.git
 	branch = master
-	commit = d1deface417808b66b6d57c04e35a801d537dbae
-	parent = 0909d54d32ea44d3455bae241f0ac95813319c16
+	commit = 8f277d3597d6fa72cc8b7276ac9f9eca8666ec9c
+	parent = 1f3457f0ecc9604dadaa24d5234df0c752661616
 	cmdver = 0.4.0
