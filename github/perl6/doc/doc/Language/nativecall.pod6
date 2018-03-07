@@ -702,7 +702,7 @@ it illustrates a number of the elements of NativeCall.
 
 The Linux manual provides the following information about the C callable function:
 
-=begin code
+=begin code :lang<C>
 int getaddrinfo(const char *node, const char *service,
        const struct addrinfo *hints,
        struct addrinfo **res);
@@ -719,7 +719,23 @@ But C<addrinfo> is a structure, which means we
 will need to write our own Type class. However, the function declaration is
 straightforward:
 
-=begin code
+=begin code :method :preamble<use NativeCall;>
+class SockAddr is repr('CStruct') {
+    has int32    $.sa_family;
+    has Str      $.sa_data;
+};
+class Addrinfo is repr('CStruct') {
+    has int32     $.ai_flags;
+    has int32     $.ai_family;
+    has int32     $.ai_socktype;
+    has int32     $.ai_protocol;
+    has int32     $.ai_addrlen;
+    has SockAddr  $.ai_addr       is rw;
+    has Str       $.ai_cannonname is rw;
+    has Addrinfo  $.ai_next       is rw;
+
+};
+>
 sub getaddrinfo( Str $node, Str $service, Addrinfo $hints, Pointer $res is rw )
     returns int32
     is native(Str)
@@ -733,7 +749,7 @@ definition or null.
 We now have to handle structure Addrinfo. The Linux Manual provides this
 information:
 
-=begin code
+=begin code :lang<C>
 struct addrinfo {
                int              ai_flags;
                int              ai_family;
@@ -754,9 +770,14 @@ to the C<uint32> type.
 The complication is C<sockaddr> which differs depending on whether C<ai_socktype>
 is undefined, INET, or INET6 (a standard v4 IP address or a v6 address).
 
-So we create a Perl 6 C<class> to map to the C C<struct addrinfo>
+So we create a Perl 6 C<class> to map to the C C<struct addrinfo>; while we're at it, we also create another class for C<SockAddr> which is needed for it.
 
 =begin code
+class SockAddr is repr('CStruct') {
+    has int32    $.sa_family;
+    has Str      $.sa_data;
+}
+
 class Addrinfo is repr('CStruct') {
     has int32     $.ai_flags;
     has int32     $.ai_family;
@@ -777,10 +798,10 @@ However, a class can have methods and C<NativeCall> does not 'touch' them for ma
 This means that we can add extra methods to the class to unpack the attributes in a more
 readable manner, e.g.,
 
-=begin code
+=begin code :skip-test<should be compiled as part of Addrinfo defined above>
 method flags {
-        do for AddrInfo-Flags.enums { .key if $!ai_flags +| .value }
-    }
+    do for AddrInfo-Flags.enums { .key if $!ai_flags +| .value }
+}
 =end code
 
 By defining an appropriate C<enum>, C<flags> will return a string of keys
@@ -797,8 +818,9 @@ a buffer with the C<addrinfo>.
 
 Putting all these together, leads to the following program:
 
-=begin code
+=begin code :skip-test<Code works as is. Error with compilation maybe related to wrapping>
 #!/usr/bin/env perl6
+
 use v6;
 use NativeCall;
 
@@ -932,7 +954,7 @@ sub MAIN() {
 
 This produces the following output:
 
-=begin code
+=begin code :lang<text>
 return val: 0
 Name: google.com
 AF_INET SOCK_STREAM
