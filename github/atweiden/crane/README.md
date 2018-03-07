@@ -64,149 +64,14 @@ Patch](http://tools.ietf.org/html/rfc6902) are for JSON.
 <!-- end description }}} -->
 
 
-<!-- exported subroutines {{{ -->
-
-## Exported Subroutines
-
-<!-- exported subroutines toc {{{ -->
-
-- [`at($container,*@path)`](#atcontainerpath)
-- [`in($container,*@path)`](#incontainerpath)
-
-<!-- end exported subroutines toc }}} -->
-
-<!-- at($container,*@path) {{{ -->
-
-### `at($container,*@path)`
-
-Navigates to and returns container `is rw`.
-
-_arguments:_
-
-* `$container`: _Container, required_ — the target container
-* `*@path`: _Path, optional_ — a list of steps for navigating container
-
-_returns:_
-
-* Container at path (`is rw`)
-
-_example:_
-
-```perl6
-my %inxi = :info({
-    :memory([1564.9, 32140.1]),
-    :processes(244),
-    :uptime<3:16>
-});
-
-at(%inxi, 'info')<uptime>:delete;
-at(%inxi, qw<info memory>)[0] = 31868.0;
-
-say %inxi.perl; # :info({ :memory(31868.0, 32140.1), :processes(244) })
-```
-
-<!-- end at($container,*@path) }}} -->
-
-<!-- in($container,*@path) {{{ -->
-
-### `in($container,*@path)`
-
-`in` works like `at`, except `in` will create the structure of nonexisting
-containers based on `@path` input instead of aborting the operation, e.g.
-
-```perl6
-at(my %h, qw<a b c>) = 5 # ✗ Crane error: associative key does not exist
-in(my %i, qw<a b c>) = 5
-say %i.perl;
-{
-    :a({
-        :b({
-            :c(5)
-        })
-    })
-}
-```
-
-If `@path` contains keys that lead to a nonexisting container, the default
-behavior is to create a Positional container there if the key is an
-`Int >= 0` or a `WhateverCode`. Otherwise `in` creates an Associative
-container there, e.g.
-
-```perl6
-my %h;
-in(%h, qw<a b>, 0, *-1) = 'here';
-say %h.perl;
-{
-    :a({
-        :b([
-            ["here"]
-        ])
-    })
-}
-```
-
-If `@path` contains keys that lead to an existing Associative container,
-it will attempt to index the existing Associative container with the
-key regardless of the key's type (be it `Int` or `WhateverCode`), e.g.
-
-```perl6
-my @a = [ :i({:want({:my<MTV>})}) ];
-in(@a, 0, 'i', 'want', 2) = 'always';
-say @a.perl;
-[
-    :i({
-        :want({
-            "2" => "always",
-            :my("MTV")
-        })
-    })
-]
-
-my @b = [ :i({:want(['my', 'MTV'])}) ];
-in(@b, 0, 'i', 'want', 2) = 'always';
-say @b.perl;
-[
-    :i({
-        :want(["my", "MTV", "always"])
-    })
-]
-```
-
-_arguments:_
-
-* `$container`: _Container, required_ — the target container
-* `*@path`: _Path, optional_ — a list of steps for navigating container
-
-_returns:_
-
-* Container at path (`is rw`)
-
-_example:_
-
-```perl6
-my %archversion = :bamboo({ :up<0.0.1>, :aur<0.0.2> });
-in(%archversion, qw<fzf up>) = '0.11.3';
-in(%archversion, qw<fzf aur>) = '0.11.3';
-say %archversion.perl;
-{
-    :bamboo({ :aur<0.0.2>, :up<0.0.1> }),
-    :fzf({ :aur<0.11.3>, :up<0.11.3> })
-}
-```
-
-<!-- end in($container,*@path) }}} -->
-
--------------------------------------------------------------------------------
-
-<!-- end exported subroutines }}} -->
-
-
 <!-- methods {{{ -->
 
 ## Methods
 
 <!-- methods toc {{{ -->
 
+- [`.at($container,*@path)`](#atcontainerpath)
+- [`.in($container,*@path)`](#incontainerpath)
 - [`.exists($container,:@path!,:$k,:$v)`](#existscontainerpathkv)
 - [`.get($container,:@path!,:$k,:$v,:$p)`](#getcontainerpathkvp)
 - [`.set($container,:@path!,:$value!)`](#setcontainerpathvalue)
@@ -254,6 +119,128 @@ my %data =
 ```
 
 <!-- end example data structure }}} -->
+
+<!-- .at($container,*@path) {{{ -->
+
+### `.at($container,*@path)`
+
+Navigates to and returns container `is rw`.
+
+_arguments:_
+
+* `$container`: _Container, required_ — the target container
+* `*@path`: _Path, optional_ — a list of steps for navigating container
+
+_returns:_
+
+* Container at path (`is rw`)
+
+_example:_
+
+```perl6
+my %inxi = :info({
+    :memory([1564.9, 32140.1]),
+    :processes(244),
+    :uptime<3:16>
+});
+
+Crane.at(%inxi, 'info')<uptime>:delete;
+Crane.at(%inxi, qw<info memory>)[0] = 31868.0;
+
+say %inxi.perl; # :info({ :memory(31868.0, 32140.1), :processes(244) })
+```
+
+<!-- end .at($container,*@path) }}} -->
+
+<!-- .in($container,*@path) {{{ -->
+
+### `.in($container,*@path)`
+
+`Crane.in` works like `Crane.at`, except `.in` will create the structure
+of nonexisting containers based on `@path` input instead of aborting
+the operation, e.g.
+
+```perl6
+Crane.at(my %h, qw<a b c>) = 5 # ✗ Crane error: associative key does not exist
+Crane.in(my %i, qw<a b c>) = 5
+say %i.perl;
+{
+    :a({
+        :b({
+            :c(5)
+        })
+    })
+}
+```
+
+If `@path` contains keys that lead to a nonexisting container, the default
+behavior is to create a Positional container there if the key is an
+`Int >= 0` or a `WhateverCode`. Otherwise `in` creates an Associative
+container there, e.g.
+
+```perl6
+my %h;
+Crane.in(%h, qw<a b>, 0, *-1) = 'here';
+say %h.perl;
+{
+    :a({
+        :b([
+            ["here"]
+        ])
+    })
+}
+```
+
+If `@path` contains keys that lead to an existing Associative container,
+it will attempt to index the existing Associative container with the
+key regardless of the key's type (be it `Int` or `WhateverCode`), e.g.
+
+```perl6
+my @a = [ :i({:want({:my<MTV>})}) ];
+Crane.in(@a, 0, 'i', 'want', 2) = 'always';
+say @a.perl;
+[
+    :i({
+        :want({
+            "2" => "always",
+            :my("MTV")
+        })
+    })
+]
+
+my @b = [ :i({:want(['my', 'MTV'])}) ];
+Crane.in(@b, 0, 'i', 'want', 2) = 'always';
+say @b.perl;
+[
+    :i({
+        :want(["my", "MTV", "always"])
+    })
+]
+```
+
+_arguments:_
+
+* `$container`: _Container, required_ — the target container
+* `*@path`: _Path, optional_ — a list of steps for navigating container
+
+_returns:_
+
+* Container at path (`is rw`)
+
+_example:_
+
+```perl6
+my %archversion = :bamboo({ :up<0.0.1>, :aur<0.0.2> });
+Crane.in(%archversion, qw<fzf up>) = '0.11.3';
+Crane.in(%archversion, qw<fzf aur>) = '0.11.3';
+say %archversion.perl;
+{
+    :bamboo({ :aur<0.0.2>, :up<0.0.1> }),
+    :fzf({ :aur<0.11.3>, :up<0.11.3> })
+}
+```
+
+<!-- end .in($container,*@path) }}} -->
 
 <!-- .exists($container,:@path!,:$k,:$v) {{{ -->
 
