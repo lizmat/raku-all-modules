@@ -4,6 +4,8 @@
 
 To install:
 
+[Install Perl 6](http://perl6intro.com/#_installing_perl_6)
+
 shell> zef install Do123
 
 shell> 123 help
