@@ -135,6 +135,18 @@ class ANTLR4::Actions::Perl6 {
 					@term.append( self.term( $term ) )
 				}
 			}
+			when 'negatedSet' {
+				@term.append(
+					'<-[ ' ~
+						join( ' ',
+							@( $ast.<term> )
+						) ~
+					' ]>'
+				);
+			}
+			default {
+				die "Unhandled terminal type '$ast.<type>'";
+			}
 		}
 		@term;
 	}
@@ -143,9 +155,11 @@ class ANTLR4::Actions::Perl6 {
 		my @rule;
 		for $ast.keys -> $name {
 			my @term;
-			@term.append(
-				self.term( $ast.{$name}.<term> )
-			);
+			if $ast.{$name}.<term> {
+				@term.append(
+					self.term( $ast.{$name}.<term> )
+				);
+			}
 			@rule.append(
 				self.to-json-comment(
 					$ast.{$name},
