@@ -12,6 +12,6 @@
         "source"     : "https://github.com/atweiden/file-presence"
     },
     "provides" : {
-        "File::Presence" : "lib/File/Presence.pm"
+        "File::Presence" : "lib/File/Presence.pm6"
     }
 }
