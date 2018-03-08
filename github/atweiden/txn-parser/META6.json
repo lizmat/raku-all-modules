@@ -13,11 +13,11 @@
         "source"     : "https://github.com/atweiden/txn-parser"
     },
     "provides" : {
-        "TXN::Parser"          : "lib/TXN/Parser.pm",
-        "TXN::Parser::Actions" : "lib/TXN/Parser/Actions.pm",
-        "TXN::Parser::AST"     : "lib/TXN/Parser/AST.pm",
-        "TXN::Parser::Grammar" : "lib/TXN/Parser/Grammar.pm",
-        "TXN::Parser::Types"   : "lib/TXN/Parser/Types.pm",
-        "X::TXN::Parser"       : "lib/X/TXN/Parser.pm"
+        "TXN::Parser"          : "lib/TXN/Parser.pm6",
+        "TXN::Parser::Actions" : "lib/TXN/Parser/Actions.pm6",
+        "TXN::Parser::AST"     : "lib/TXN/Parser/AST.pm6",
+        "TXN::Parser::Grammar" : "lib/TXN/Parser/Grammar.pm6",
+        "TXN::Parser::Types"   : "lib/TXN/Parser/Types.pm6",
+        "X::TXN::Parser"       : "lib/X/TXN/Parser.pm6"
     }
 }

@@ -529,13 +529,13 @@ method header($/ --> Nil)
     @<metainfo>.map({ .made }).map(-> @metainfo {
         $important +=
             [+] @metainfo
-                    .grep(*.keys eq 'important')
+                    .grep({ .keys eq 'important' })
                     .map({ .values })
                     .flat;
         append(
             @tag,
             |@metainfo
-                .grep(*.keys eq 'tag')
+                .grep({ .keys eq 'tag' })
                 .map({ .values })
                 .flat
                 .unique
@@ -947,7 +947,8 @@ method ledger($/ --> Nil)
     my TXN::Parser::AST::Entry:D @entry =
         @<segment>
             .map({ .made })
-            .flatmap(*.grep(TXN::Parser::AST::Entry:D));
+            .map({ .grep(TXN::Parser::AST::Entry:D) })
+            .flat;
     make(@entry);
 }
 
