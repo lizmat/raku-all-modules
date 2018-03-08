@@ -257,10 +257,11 @@ my class TXN::Package
     {
         my VarName:D @entities-seen =
             @entry
-            .flatmap({
+            .map({
                 .posting
                 .map({ .account.entity })
             })
+            .flat
             .unique
             .sort;
     }
