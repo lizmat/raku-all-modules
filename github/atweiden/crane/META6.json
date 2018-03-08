@@ -12,7 +12,7 @@
         "source"     : "https://github.com/atweiden/crane"
     },
     "provides" : {
-        "Crane"    : "lib/Crane.pm",
-        "X::Crane" : "lib/X/Crane.pm"
+        "Crane"    : "lib/Crane.pm6",
+        "X::Crane" : "lib/X/Crane.pm6"
     }
 }
