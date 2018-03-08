@@ -13,7 +13,7 @@
         "source"     : "https://github.com/atweiden/txn-remarshal"
     },
     "provides" : {
-        "TXN::Remarshal"    : "lib/TXN/Remarshal.pm",
-        "X::TXN::Remarshal" : "lib/X/TXN/Remarshal.pm"
+        "TXN::Remarshal"    : "lib/TXN/Remarshal.pm6",
+        "X::TXN::Remarshal" : "lib/X/TXN/Remarshal.pm6"
     }
 }

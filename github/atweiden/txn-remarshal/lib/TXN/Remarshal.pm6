@@ -241,12 +241,12 @@ multi sub to-txn(TXN::Parser::AST::Entry::Header:D $header --> Str:D)
 
     if $description
     {
-        my Str:D $d = qq:to/EOF/;
+        my Str:D $d = qq:to/EOF/.trim;
         '''
         $description
         '''
         EOF
-        $s ~= "\n" ~ $d.trim;
+        $s ~= "\n" ~ $d;
     }
 
     $s.trim;
@@ -265,8 +265,8 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting:D $posting --> Str:D)
     my TXN::Parser::AST::Entry::Posting::Account:D $account = $posting.account;
     my TXN::Parser::AST::Entry::Posting::Amount:D $amount = $posting.amount;
     my DecInc:D $decinc = $posting.decinc;
-    my TXN::Parser::AST::Entry::Posting::Annot:D $annot = $posting.annot
-        if $posting.annot;
+    my TXN::Parser::AST::Entry::Posting::Annot:D $annot =
+        $posting.annot if $posting.annot;
 
     my Bool:D $needs-minus = so($decinc ~~ DEC);
 
@@ -279,10 +279,7 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting:D $posting --> Str:D)
     my Str:D $s = to-txn($account) ~ ' ' x 4;
     if $needs-minus
     {
-        unless $has-minus
-        {
-            $s ~= '-';
-        }
+        $s ~= '-' unless $has-minus;
     }
 
     $s ~= to-txn($amount);
@@ -317,10 +314,10 @@ multi sub to-txn(
 {
     my AssetCode:D $asset-code = $amount.asset-code;
     my Quantity:D $asset-quantity = $amount.asset-quantity;
-    my AssetSymbol:D $asset-symbol = $amount.asset-symbol
-        if $amount.asset-symbol;
-    my PlusMinus:D $plus-or-minus = $amount.plus-or-minus
-        if $amount.plus-or-minus;
+    my AssetSymbol:D $asset-symbol =
+        $amount.asset-symbol if $amount.asset-symbol;
+    my PlusMinus:D $plus-or-minus =
+        $amount.plus-or-minus if $amount.plus-or-minus;
 
     my Str:D $s = '';
     $s ~= $plus-or-minus if $plus-or-minus;
@@ -362,8 +359,8 @@ multi sub to-txn(
 {
     my AssetCode:D $asset-code = $inherit.asset-code;
     my Price:D $asset-price = $inherit.asset-price;
-    my AssetSymbol:D $asset-symbol = $inherit.asset-symbol
-        if $inherit.asset-symbol;
+    my AssetSymbol:D $asset-symbol =
+        $inherit.asset-symbol if $inherit.asset-symbol;
 
     my Str:D $s = '« ';
     $s ~= $asset-symbol if $asset-symbol;
@@ -382,17 +379,10 @@ multi sub to-txn(
 {
     my VarName:D $name = $lot.name;
     my DecInc:D $decinc = $lot.decinc;
-
     my Str:D $s = do given $decinc
     {
-        when DEC
-        {
-            '←';
-        }
-        when INC
-        {
-            '→';
-        }
+        when DEC { '←' }
+        when INC { '→' }
     }
     $s ~= ' [' ~ $name ~ ']';
     $s;
@@ -432,32 +422,32 @@ multi sub from-hash(:@entry! --> Array:D)
 }
 
 multi sub from-hash(
-    :%entry! (
+    :entry(%)! (
         :%header!,
-        :%id!,
+        :id(%entry-id)!,
         :@posting!
     )
     --> TXN::Parser::AST::Entry:D
 )
 {
-    my %e;
+    my %entry;
 
-    my TXN::Parser::AST::Entry::Header:D $header = from-hash(:%header);
-    my TXN::Parser::AST::Entry::ID:D $id = from-hash(:entry-id(%id));
-    my TXN::Parser::AST::Entry::Posting:D @p = from-hash(:@posting);
+    my TXN::Parser::AST::Entry::Header:D $headerʹ = from-hash(:%header);
+    my TXN::Parser::AST::Entry::ID:D $entry-idʹ = from-hash(:%entry-id);
+    my TXN::Parser::AST::Entry::Posting:D @postingʹ = from-hash(:@posting);
 
-    %e<header> = $header;
-    %e<id> = $id;
-    %e<posting> = @p;
+    %entry<header> = $headerʹ;
+    %entry<id> = $entry-idʹ;
+    %entry<posting> = @postingʹ;
 
-    TXN::Parser::AST::Entry.new(|%e);
+    TXN::Parser::AST::Entry.new(|%entry);
 }
 
 # --- end Entry }}}
 # --- Entry::Header {{{
 
 multi sub from-hash(
-    :%header! (
+    :header(%)! (
         :$date!,
         :$description,
         :$important,
@@ -466,27 +456,27 @@ multi sub from-hash(
     --> TXN::Parser::AST::Entry::Header:D
 )
 {
-    my %h;
+    my %header;
 
     my TXN::Parser::Actions:D $actions = TXN::Parser::Actions.new;
-    my Dateish:D $d =
+    my Dateish:D $dateʹ =
         TXN::Parser::Grammar.parse($date, :rule<date>, :$actions).made;
-    my Str:D $s = $description if $description;
-    my UInt:D $i = $important if $important;
-    my Str:D @t = @tag if @tag;
+    my Str:D $descriptionʹ = $description if $description;
+    my UInt:D $importantʹ = $important if $important;
+    my Str:D @tagʹ = @tag if @tag;
 
-    %h<date> = $d;
-    %h<description> = $s if $s;
-    %h<important> = $i if $i;
+    %header<date> = $dateʹ;
+    %header<description> = $descriptionʹ if $descriptionʹ;
+    %header<important> = $importantʹ if $importantʹ;
 
-    TXN::Parser::AST::Entry::Header.new(|%h, :tag(@t));
+    TXN::Parser::AST::Entry::Header.new(|%header, :tag(@tagʹ));
 }
 
 # --- end Entry::Header }}}
 # --- Entry::ID {{{
 
 multi sub from-hash(
-    :%entry-id! (
+    :entry-id(%)! (
         :@number!,
         :$text!,
         :$xxhash!
@@ -494,17 +484,17 @@ multi sub from-hash(
     --> TXN::Parser::AST::Entry::ID:D
 )
 {
-    my %e;
+    my %entry-id;
 
-    my UInt:D @n = @number;
-    my Str:D $t = $text;
-    my XXHash:D $x = $xxhash;
+    my UInt:D @numberʹ = @number;
+    my Str:D $textʹ = $text;
+    my XXHash:D $xxhashʹ = $xxhash;
 
-    %e<text> = $t;
-    %e<xxhash> = $x;
+    %entry-id<text> = $textʹ;
+    %entry-id<xxhash> = $xxhashʹ;
 
     # XXX text → xxhash not checked
-    TXN::Parser::AST::Entry::ID.new(|%e, :number(@n));
+    TXN::Parser::AST::Entry::ID.new(|%entry-id, :number(@numberʹ));
 }
 
 # --- end Entry::ID }}}
@@ -516,35 +506,44 @@ multi sub from-hash(:@posting! --> Array:D)
         @posting.map({ from-hash(:posting($_)) });
 }
 
-multi sub from-hash(:%posting! --> TXN::Parser::AST::Entry::Posting:D)
+multi sub from-hash(
+    :posting(%)! (
+        :%account!,
+        :%amount!,
+        :$decinc!,
+        :id(%posting-id)!,
+        :%annot
+    )
+    --> TXN::Parser::AST::Entry::Posting:D
+)
 {
-    my %p;
+    my %posting;
 
-    my TXN::Parser::AST::Entry::Posting::Account:D $account =
-        from-hash(:account(%posting<account>));
-    my TXN::Parser::AST::Entry::Posting::Amount:D $amount =
-        from-hash(:amount(%posting<amount>));
-    my TXN::Parser::AST::Entry::Posting::Annot:D $annot =
-        from-hash(:annot(%posting<annot>)) if %posting<annot>;
-    my TXN::Parser::AST::Entry::Posting::ID:D $id =
-        from-hash(:posting-id(%posting<id>));
+    my TXN::Parser::AST::Entry::Posting::Account:D $accountʹ =
+        from-hash(:%account);
+    my TXN::Parser::AST::Entry::Posting::Amount:D $amountʹ =
+        from-hash(:%amount);
+    my TXN::Parser::AST::Entry::Posting::Annot:D $annotʹ =
+        from-hash(:%annot) if %annot;
+    my TXN::Parser::AST::Entry::Posting::ID:D $posting-idʹ =
+        from-hash(:%posting-id);
 
-    my DecInc:D $d = ::(%posting<decinc>);
+    my DecInc:D $decincʹ = ::($decinc);
 
-    %p<account> = $account;
-    %p<amount> = $amount;
-    %p<annot> = $annot if $annot;
-    %p<id> = $id;
-    %p<decinc> = $d;
+    %posting<account> = $accountʹ;
+    %posting<amount> = $amountʹ;
+    %posting<annot> = $annotʹ if $annotʹ;
+    %posting<id> = $posting-idʹ;
+    %posting<decinc> = $decincʹ;
 
-    TXN::Parser::AST::Entry::Posting.new(|%p);
+    TXN::Parser::AST::Entry::Posting.new(|%posting);
 }
 
 # --- end Entry::Posting }}}
 # --- Entry::Posting::Account {{{
 
 multi sub from-hash(
-    :%account! (
+    :account(%)! (
         :$silo!,
         :$entity!,
         :@path
@@ -552,23 +551,23 @@ multi sub from-hash(
     --> TXN::Parser::AST::Entry::Posting::Account:D
 )
 {
-    my %a;
+    my %account;
 
-    my Silo:D $s = ::($silo);
-    my VarName:D $e = $entity;
-    my VarName:D @p = @path if @path;
+    my Silo:D $siloʹ = ::($silo);
+    my VarName:D $entityʹ = $entity;
+    my VarName:D @pathʹ = @path if @path;
 
-    %a<silo> = $s;
-    %a<entity> = $e;
+    %account<silo> = $siloʹ;
+    %account<entity> = $entityʹ;
 
-    TXN::Parser::AST::Entry::Posting::Account.new(|%a, :path(@p));
+    TXN::Parser::AST::Entry::Posting::Account.new(|%account, :path(@pathʹ));
 }
 
 # --- end Entry::Posting::Account }}}
 # --- Entry::Posting::Amount {{{
 
 multi sub from-hash(
-    :%amount! (
+    :amount(%)! (
         :$asset-code!,
         :$asset-quantity!,
         :$asset-symbol,
@@ -577,47 +576,54 @@ multi sub from-hash(
     --> TXN::Parser::AST::Entry::Posting::Amount:D
 )
 {
-    my %a;
+    my %amount;
 
-    my AssetCode:D $c = $asset-code;
-    my Quantity:D $q = FatRat($asset-quantity);
-    my AssetSymbol:D $s = $asset-symbol if $asset-symbol;
-    my PlusMinus:D $p = $plus-or-minus if $plus-or-minus;
+    my AssetCode:D $asset-codeʹ = $asset-code;
+    my Quantity:D $asset-quantityʹ = FatRat($asset-quantity);
+    my AssetSymbol:D $asset-symbolʹ = $asset-symbol if $asset-symbol;
+    my PlusMinus:D $plus-or-minusʹ = $plus-or-minus if $plus-or-minus;
 
-    %a<asset-code> = $c;
-    %a<asset-quantity> = $q;
-    %a<asset-symbol> = $s if $s;
-    %a<plus-or-minus> = $p if $p;
+    %amount<asset-code> = $asset-codeʹ;
+    %amount<asset-quantity> = $asset-quantityʹ;
+    %amount<asset-symbol> = $asset-symbolʹ if $asset-symbolʹ;
+    %amount<plus-or-minus> = $plus-or-minusʹ if $plus-or-minusʹ;
 
-    TXN::Parser::AST::Entry::Posting::Amount.new(|%a);
+    TXN::Parser::AST::Entry::Posting::Amount.new(|%amount);
 }
 
 # --- end Entry::Posting::Amount }}}
 # --- Entry::Posting::Annot {{{
 
-multi sub from-hash(:%annot! --> TXN::Parser::AST::Entry::Posting::Annot:D)
+multi sub from-hash(
+    :annot(%)! (
+        :%inherit,
+        :%lot,
+        :%xe
+    )
+    --> TXN::Parser::AST::Entry::Posting::Annot:D
+)
 {
-    my %a;
+    my %annot;
 
-    my TXN::Parser::AST::Entry::Posting::Annot::Inherit:D $inherit =
-        from-hash(:inherit(%annot<inherit>)) if %annot<inherit>;
-    my TXN::Parser::AST::Entry::Posting::Annot::Lot:D $lot =
-        from-hash(:lot(%annot<lot>)) if %annot<lot>;
-    my TXN::Parser::AST::Entry::Posting::Annot::XE:D $xe =
-        from-hash(:xe(%annot<xe>)) if %annot<xe>;
+    my TXN::Parser::AST::Entry::Posting::Annot::Inherit:D $inheritʹ =
+        from-hash(:%inherit) if %inherit;
+    my TXN::Parser::AST::Entry::Posting::Annot::Lot:D $lotʹ =
+        from-hash(:%lot) if %lot;
+    my TXN::Parser::AST::Entry::Posting::Annot::XE:D $xeʹ =
+        from-hash(:%xe) if %xe;
 
-    %a<inherit> = $inherit if $inherit;
-    %a<lot> = $lot if $lot;
-    %a<xe> = $xe if $xe;
+    %annot<inherit> = $inheritʹ if $inheritʹ;
+    %annot<lot> = $lotʹ if $lotʹ;
+    %annot<xe> = $xeʹ if $xeʹ;
 
-    TXN::Parser::AST::Entry::Posting::Annot.new(|%a);
+    TXN::Parser::AST::Entry::Posting::Annot.new(|%annot);
 }
 
 # --- end Entry::Posting::Annot }}}
 # --- Entry::Posting::Annot::Inherit {{{
 
 multi sub from-hash(
-    :%inherit! (
+    :inherit(%)! (
         :$asset-code!,
         :$asset-price!,
         :$asset-symbol
@@ -625,46 +631,46 @@ multi sub from-hash(
     --> TXN::Parser::AST::Entry::Posting::Annot::Inherit:D
 )
 {
-    my %i;
+    my %inherit;
 
-    my AssetCode:D $c = $asset-code;
-    my Price:D $p = FatRat($asset-price);
-    my AssetSymbol:D $s = $asset-symbol if $asset-symbol;
+    my AssetCode:D $asset-codeʹ = $asset-code;
+    my Price:D $asset-priceʹ = FatRat($asset-price);
+    my AssetSymbol:D $asset-symbolʹ = $asset-symbol if $asset-symbol;
 
-    %i<asset-code> = $c;
-    %i<asset-price> = $p;
-    %i<asset-symbol> = $s if $s;
+    %inherit<asset-code> = $asset-codeʹ;
+    %inherit<asset-price> = $asset-priceʹ;
+    %inherit<asset-symbol> = $asset-symbolʹ if $asset-symbolʹ;
 
-    TXN::Parser::AST::Entry::Posting::Annot::Inherit.new(|%i);
+    TXN::Parser::AST::Entry::Posting::Annot::Inherit.new(|%inherit);
 }
 
 # --- end Entry::Posting::Annot::Inherit }}}
 # --- Entry::Posting::Annot::Lot {{{
 
 multi sub from-hash(
-    :%lot! (
+    :lot(%)! (
         :$decinc!,
         :$name!
     )
     --> TXN::Parser::AST::Entry::Posting::Annot::Lot:D
 )
 {
-    my %l;
+    my %lot;
 
-    my DecInc:D $d = ::($decinc);
-    my VarName:D $n = $name;
+    my DecInc:D $decincʹ = ::($decinc);
+    my VarName:D $nameʹ = $name;
 
-    %l<decinc> = $d;
-    %l<name> = $n;
+    %lot<decinc> = $decincʹ;
+    %lot<name> = $nameʹ;
 
-    TXN::Parser::AST::Entry::Posting::Annot::Lot.new(|%l);
+    TXN::Parser::AST::Entry::Posting::Annot::Lot.new(|%lot);
 }
 
 # --- end Entry::Posting::Annot::Lot }}}
 # --- Entry::Posting::Annot::XE {{{
 
 multi sub from-hash(
-    :%xe! (
+    :xe(%)! (
         :$asset-code!,
         :$asset-price!,
         :$asset-symbol
@@ -672,24 +678,24 @@ multi sub from-hash(
     --> TXN::Parser::AST::Entry::Posting::Annot::XE:D
 )
 {
-    my %x;
+    my %xe;
 
-    my AssetCode:D $c = $asset-code;
-    my Price:D $p = FatRat($asset-price);
-    my AssetSymbol:D $s = $asset-symbol if $asset-symbol;
+    my AssetCode:D $asset-codeʹ = $asset-code;
+    my Price:D $asset-priceʹ = FatRat($asset-price);
+    my AssetSymbol:D $asset-symbolʹ = $asset-symbol if $asset-symbol;
 
-    %x<asset-code> = $c;
-    %x<asset-price> = $p;
-    %x<asset-symbol> = $s if $s;
+    %xe<asset-code> = $asset-codeʹ;
+    %xe<asset-price> = $asset-priceʹ;
+    %xe<asset-symbol> = $asset-symbolʹ if $asset-symbolʹ;
 
-    TXN::Parser::AST::Entry::Posting::Annot::XE.new(|%x);
+    TXN::Parser::AST::Entry::Posting::Annot::XE.new(|%xe);
 }
 
 # --- end Entry::Posting::Annot::XE }}}
 # --- Entry::Posting::ID {{{
 
 multi sub from-hash(
-    :%posting-id! (
+    :posting-id(%)! (
         :%entry-id!,
         :$number!,
         :$text!,
@@ -698,20 +704,20 @@ multi sub from-hash(
     --> TXN::Parser::AST::Entry::Posting::ID:D
 )
 {
-    my %p;
+    my %posting-id;
 
     # XXX text → xxhash not checked
-    my TXN::Parser::AST::Entry::ID:D $e = from-hash(:%entry-id);
-    my UInt:D $n = $number;
-    my Str:D $t = $text;
-    my XXHash:D $x = $xxhash;
+    my TXN::Parser::AST::Entry::ID:D $entry-idʹ = from-hash(:%entry-id);
+    my UInt:D $numberʹ = $number;
+    my Str:D $textʹ = $text;
+    my XXHash:D $xxhashʹ = $xxhash;
 
-    %p<entry-id> = $e;
-    %p<number> = $n;
-    %p<text> = $t;
-    %p<xxhash> = $x;
+    %posting-id<entry-id> = $entry-idʹ;
+    %posting-id<number> = $numberʹ;
+    %posting-id<text> = $textʹ;
+    %posting-id<xxhash> = $xxhashʹ;
 
-    TXN::Parser::AST::Entry::Posting::ID.new(|%p);
+    TXN::Parser::AST::Entry::Posting::ID.new(|%posting-id);
 }
 
 # --- end Entry::Posting::ID }}}
