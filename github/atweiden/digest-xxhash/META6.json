@@ -16,6 +16,6 @@
         "source"     : "https://github.com/atweiden/digest-xxhash"
     },
     "provides"    : {
-        "Digest::xxHash" : "lib/Digest/xxHash.pm"
+        "Digest::xxHash" : "lib/Digest/xxHash.pm6"
     }
 }
