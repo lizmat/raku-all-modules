@@ -1,0 +1,14 @@
+{
+    "perl"          : "6.*",
+    "name"          : "Concurrent::Trie",
+    "version"       : "1.0",
+    "description"   : "A lock-free concurrent trie (Text Retrieval) data structure.",
+    "authors"       : [ "Jonathan Worthington <jnthn@jnthn.net>" ],
+    "license"       : "Artistic-2.0",
+    "depends"       : [ ],
+    "provides"      : {
+        "Concurrent::Stack": "lib/Concurrent/Trie.pm6"
+    },
+    "resources": [],
+    "source-url"    : "https://github.com/jnthn/p6-concurrent-trie.git"
+}
