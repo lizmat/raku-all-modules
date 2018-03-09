@@ -1,6 +1,6 @@
 0.3.7
-    CSS::Declarations::measure replaces CSS::Declarations::Font::pt
-
+    - CSS::Declarations::measure replaces CSS::Declarations::Font::pt
+    - Assigning Nil to a property now deletes it. 
 0.3.6
     CSS::Declarations
     - Support Color object assignments, e.g.:

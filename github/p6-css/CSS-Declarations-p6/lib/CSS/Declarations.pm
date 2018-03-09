@@ -174,16 +174,21 @@ class CSS::Declarations:ver<0.3.7> {
                 }
             },
 	    STORE => sub ($,$v) {
-		# expand and assign values to child properties
-		my @v = $v.isa(List) ?? $v.list !! [$v];
-		@v[1] //= @v[0];
-		@v[2] //= @v[0];
-		@v[3] //= @v[1];
+                if $v ~~ Nil {
+                    self.delete($prop);
+                }
+                else {
+                    # expand and assign values to child properties
+                    my @v = $v.isa(List) ?? $v.list !! [$v];
+                    @v[1] //= @v[0];
+                    @v[2] //= @v[0];
+                    @v[3] //= @v[1];
 
-		my $n = 0;
-                for $edges.list -> $prop {
-		    %!values{$prop} = $_
-                        with self!coerce( @v[$n++], :$prop )
+                    my $n = 0;
+                    for $edges.list -> $prop {
+                        %!values{$prop} = $_
+                            with self!coerce( @v[$n++], :$prop )
+                    }
                 }
 	    }
         );
@@ -202,7 +207,10 @@ class CSS::Declarations:ver<0.3.7> {
             },
 	    STORE => sub ($, $rval) {
                 my %vals;
-                if $rval ~~ Associative {
+                if $rval ~~ Nil {
+                    self.delete($prop);
+                }
+                elsif $rval ~~ Associative {
                     %vals = %$rval;
                 }
                 else {
@@ -251,8 +259,13 @@ class CSS::Declarations:ver<0.3.7> {
                 }
             },
             STORE => sub ($,$v) {
-                %!values{$prop} = $_
-                    with self!coerce( $v, :$prop )
+                if $v ~~ Nil {
+                    self.delete($prop);
+                }
+                else {
+                    %!values{$prop} = $_
+                        with self!coerce( $v, :$prop );
+                }
             }
         );
     }

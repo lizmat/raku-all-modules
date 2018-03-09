@@ -131,6 +131,16 @@ Most properties have a default value. If a property is reset to its default valu
     $css.background-image = $css.info("background-image").default;
     say ~$css; # ""
 
+## Deleting properties
+
+Properties can be deleted via the `delete` method, or by assigning the property to `Nil`:
+
+    my CSS::Declarations $css .= new: :style("background-position:top left; border-top-color:red; border-bottom-color: green; color: blue");
+    # delete background position
+    $css.background-position = Nil;
+    # delete all border colors
+    $css.delete: "border-color";
+
 ## Inheritance
 
 A child class can inherit from one or more parent classes. This follows CSS standards:

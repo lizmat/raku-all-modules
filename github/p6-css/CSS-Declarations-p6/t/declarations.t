@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 42;
+plan 47;
 
 use CSS::Declarations;
 use CSS::Declarations::Property;
@@ -34,6 +34,9 @@ $css.background-position = <top left>;
 is $css.background-position[0], 'top', 'list parse';
 is $css.background-position[0].type, 'keyw', 'list parse';
 is ~$css, 'background-position:top left; border-top-color:red;', 'list parse';
+$css.background-position = Nil;
+is-deeply $css.background-color.rgba, (0,0,0,0), 'background-color reset';
+is ~$css, 'border-top-color:red;', 'background-color reset';
 
 $css.margin-top = 10pt;
 is $css.margin-top, 10, 'updated margin-right value';
@@ -50,8 +53,12 @@ is $css.margin-left, 0, 'reset margin-left';
 $css.border-color = 'green';
 $css.border-top-color = 'blue';
 is $css.border-color, <#0000FF #008000 #008000 #008000>, 'border-color string coercement';
+$css.color = 'red';
+$css.border-color = Nil;
+is $css.border-color, <#FF0000 #FF0000 #FF0000 #FF0000>, 'border-color reset';
 
 lives-ok { $css.border-top = '1pt dashed blue'}, 'struct str assignment';
+$css.color = 'red';
 my %border-top = $css.border-top;
 is +%border-top, 3, 'border top';
 is $css.border-top-width, 1pt, 'border top width';
@@ -67,6 +74,11 @@ is %border-top<border-top-style>, 'dashed', 'border top color';
 is %border-top<border-top-color>, '#0000FF', 'border top color';
 enum Edges <Top Left Bottom Right>;
 is $css.border<border-color>[Top], '#0000FF', 'border top color';
+$css.border-top = Nil;
+%border-top = $css.border-top;
+is %border-top<border-top-width>, 'medium', 'reset border top width';
+is %border-top<border-top-style>, 'none', 'reset border top color';
+
 lives-ok { $css.info("background"); }, "info on a container property";
 
 $css = CSS::Declarations.new: :style("border-top-color:red");
