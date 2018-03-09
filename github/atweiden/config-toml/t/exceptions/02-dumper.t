@@ -37,8 +37,8 @@ subtest({
 
 # check values for validity
 subtest({
-    my Any $any .= new();
-    my Buf $buf .= new();
+    my Any $any .= new;
+    my Buf $buf .= new;
     my Complex $complex = 2i;
     my Match $match = 'hello' ~~ /hello/;
     my Range $range = 1..10;

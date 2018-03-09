@@ -32,7 +32,7 @@ subtest({
            """
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-str1 =
         Config::TOML::Parser::Grammar.parse(
             $str1,
@@ -152,7 +152,7 @@ subtest({
     '''
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-str4 =
         Config::TOML::Parser::Grammar.parse(
             $str4,
@@ -263,7 +263,7 @@ subtest({
     ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZFvfg/A7kwROAKeTlhkkwhYgKaJqNTnQRgV+Ii0xPa hello@toml'''
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-openssl-pem-toml =
         Config::TOML::Parser::Grammar.parse(
             $openssl-pem-toml,
@@ -386,7 +386,7 @@ subtest({
     my Str $int8 = Q{-9223372036854775808};
     my Str $int9 = Q{9223372036854775807};
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-int1 =
         Config::TOML::Parser::Grammar.parse(
             $int1,
@@ -803,7 +803,7 @@ subtest({
     my Str $float8 = Q{9_224_617.445_991_228_313};
     my Str $float9 = Q{1e1_000};
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-float1 =
         Config::TOML::Parser::Grammar.parse(
             $float1,
@@ -1197,7 +1197,7 @@ subtest({
     my Str $bool1 = Q{true};
     my Str $bool2 = Q{false};
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-bool1 =
         Config::TOML::Parser::Grammar.parse(
             $bool1,

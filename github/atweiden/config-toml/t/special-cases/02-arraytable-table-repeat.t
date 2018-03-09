@@ -24,7 +24,7 @@ subtest({
     region = "MX"
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-toml = Config::TOML::Parser::Grammar.parse($toml, :$actions);
 
     is(

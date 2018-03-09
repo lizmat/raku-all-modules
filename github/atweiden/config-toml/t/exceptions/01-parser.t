@@ -14,7 +14,7 @@ subtest({
     b = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::DuplicateKeys,
@@ -35,7 +35,7 @@ subtest({
     a = { b = 1, b = 2, c = 3 }
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::InlineTable::DuplicateKeys,
@@ -57,7 +57,7 @@ subtest({
     a = 3
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::KeypairLine::DuplicateKeys,
@@ -82,7 +82,7 @@ subtest({
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen,
@@ -104,7 +104,7 @@ subtest({
     [a]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen,
@@ -129,7 +129,7 @@ subtest({
     b = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::Keypath::AOH,
@@ -151,7 +151,7 @@ subtest({
     [[a]]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::AOH::OverwritesHOH,
@@ -176,7 +176,7 @@ subtest({
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::AOH,
@@ -198,7 +198,7 @@ subtest({
     [a]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::AOH,
@@ -223,7 +223,7 @@ subtest({
     apple = "yes"
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
@@ -247,7 +247,7 @@ subtest({
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
@@ -271,7 +271,7 @@ subtest({
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
@@ -295,7 +295,7 @@ subtest({
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
@@ -321,7 +321,7 @@ subtest({
     i = 9
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::AOH::OverwritesKey,
@@ -346,7 +346,7 @@ subtest({
     number = 9
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
@@ -370,7 +370,7 @@ subtest({
     c = 2
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::HOH::Seen::Key,
@@ -398,7 +398,7 @@ subtest({
     a = [ ["AN", "Andromeda"], ["AQ", "Aquarius"] ]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         { Config::TOML::Parser::Grammar.parse($toml, :$actions) },
         X::Config::TOML::AOH::OverwritesKey,

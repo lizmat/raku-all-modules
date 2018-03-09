@@ -31,7 +31,7 @@ subtest({
 		]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-empty-array =
         Config::TOML::Parser::Grammar.parse(
             $empty-array,
@@ -472,7 +472,7 @@ subtest({
     ]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-array-of-basic-strings =
         Config::TOML::Parser::Grammar.parse(
             $array-of-basic-strings,
@@ -1169,7 +1169,7 @@ subtest({
     ]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-array-of-integers =
         Config::TOML::Parser::Grammar.parse(
             $array-of-integers,
@@ -1278,7 +1278,7 @@ subtest({
     ]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-array-of-floats =
         Config::TOML::Parser::Grammar.parse(
             $array-of-floats,
@@ -1390,7 +1390,7 @@ subtest({
     ]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-array-of-booleans =
         Config::TOML::Parser::Grammar.parse(
             $array-of-booleans,
@@ -1649,7 +1649,7 @@ subtest({
     [[[[[]]]]]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-array-of-arrays =
         Config::TOML::Parser::Grammar.parse(
             $array-of-arrays,
@@ -1807,7 +1807,7 @@ subtest({
       { x = 2, y = 4, z = 8 } ]
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-array-of-inline-tables =
         Config::TOML::Parser::Grammar.parse(
             $array-of-inline-tables,

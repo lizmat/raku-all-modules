@@ -119,7 +119,7 @@ subtest({
     }
     EOF
 
-    my Config::TOML::Parser::Actions $actions .= new();
+    my Config::TOML::Parser::Actions $actions .= new;
     my $match-commented-inline-table-difficult =
         Config::TOML::Parser::Grammar.parse(
             $commented-inline-table-difficult,

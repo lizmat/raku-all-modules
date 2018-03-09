@@ -57,9 +57,9 @@ sub sort-pairs(%h --> List:D)
         }
     }
 
-    @simple-pairs .= sort();
-    @nested-pairs .= sort();
-    @table-array-pairs .= sort();
+    @simple-pairs .= sort;
+    @nested-pairs .= sort;
+    @table-array-pairs .= sort;
 
     (@simple-pairs, @nested-pairs, @table-array-pairs);
 }
