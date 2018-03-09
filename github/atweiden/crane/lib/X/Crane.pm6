@@ -45,7 +45,7 @@ class PathOutOfRange is Exception
     method message(--> Str:D)
     {
         my Int:D $got = $.out-of-range.got;
-        my RangeStrActions $actions .= new();
+        my RangeStrActions $actions .= new;
         my Range:D $range =
             RangeStr.parse($.out-of-range.range, :$actions).made;
         my Str:D $reason = $got cmp $range > 0
