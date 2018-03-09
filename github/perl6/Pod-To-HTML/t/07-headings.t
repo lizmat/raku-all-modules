@@ -18,6 +18,8 @@ plan 3;
 
 =head2 Heading 2.2
 
+=head2 <a href="/routine/message#class_Exception">(Exception) method message</a>
+
 =head3 Heading 2.2.1
 
 =head3 X<Heading> 2.2.2
@@ -28,7 +30,7 @@ plan 3;
 
 my $html = pod2html $=pod;
 
-# put $html;
+#put $html;
 
 ($html ~~ m:g/ ('2.2.2') /);
 

@@ -438,11 +438,17 @@ multi sub node2html(Pod::Heading $node) {
 
     @indexes.push: Pair.new(key => $lvl, value => %escaped);
 
+    my $content;
+    if ( node2rawtext($node.contents) ~~ m{\<\/a\>} ) {
+      $content =  %escaped<html>;
+    } else {
+      $content = qq[<a class="u" href="#___top" title="go to top of document">]
+	~ %escaped<html>
+	~ qq[</a>];
+    }
+
     return sprintf('<h%d id="%s">', $lvl, %escaped<id>)
-                ~ qq[<a class="u" href="#___top" title="go to top of document">]
-                    ~ %escaped<html>
-                ~ qq[</a>]
-            ~ qq[</h{$lvl}>\n];
+                ~ $content ~ qq[</h{$lvl}>\n];
 }
 
 # FIXME
