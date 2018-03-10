@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title></title>
+  <meta charset="UTF-8" />
+  <style>
+    /* code gets the browser-default font
+     * kbd gets a slightly less common monospace font
+     * samp gets the hard pixelly fonts
+     */
+    kbd { font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
+    samp { font-family: "Terminus", "Courier", "Lucida Console", monospace }
+    /* WHATWG HTML frowns on the use of <u> because it looks like a link,
+     * so we make it not look like one.
+     */
+    u { text-decoration: none }
+    .nested {
+        margin-left: 3em;
+    }
+    // footnote things:
+    aside, u { opacity: 0.7 }
+    a[id^="fn-"]:target { background: #ff0 }
+  </style>
+  <link rel="stylesheet" href="//design.perl6.org/perl.css">
+  
+  
+</head>
+<body class="pod">
+<div id="___top"></div>
+
+
+<nav class="indexgroup">
+<table id="TOC">
+<caption><h2 id="TOC_Title">Table of Contents</h2></caption>
+<tr class="toc-level-1"><td class="toc-number">1</td><td class="toc-text"><a href="#NAME">NAME</a></td></tr>
+  <tr class="toc-level-1"><td class="toc-number">2</td><td class="toc-text"><a href="#SYNOPSIS">SYNOPSIS</a></td></tr>
+  <tr class="toc-level-1"><td class="toc-number">3</td><td class="toc-text"><a href="#DESCRIPTION">DESCRIPTION</a></td></tr>
+    <tr class="toc-level-2"><td class="toc-number">3.1</td><td class="toc-text"><a href="#Context">Context</a></td></tr>
+                            <tr class="toc-level-1"><td class="toc-number">4</td><td class="toc-text"><a href="#METHODS">METHODS</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-number">4.1</td><td class="toc-text"><a href="#new(:cipher,_:MAC,_:zip,_:ttl,_:socket,_:uid-restriction,_:gid-restriction)">new (:cipher, :MAC, :zip, :ttl, :socket, :uid-restriction, :gid-restriction)</a></td></tr>
+     <tr class="toc-level-2"><td class="toc-number">4.2</td><td class="toc-text"><a href="#clone()">clone ()</a></td></tr>
+  <tr class="toc-level-2"><td class="toc-number">4.3</td><td class="toc-text"><a href="#encode(Blob_$buf?)">encode (Blob $buf?)</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-number">4.4</td><td class="toc-text"><a href="#encode(Str_$str)">encode (Str $str)</a></td></tr>
+  <tr class="toc-level-2"><td class="toc-number">4.5</td><td class="toc-text"><a href="#decode-buf(Str_$cred)">decode-buf (Str $cred)</a></td></tr>
+   <tr class="toc-level-2"><td class="toc-number">4.6</td><td class="toc-text"><a href="#decode(Str_$cred)">decode (Str $cred)</a></td></tr>
+   <tr class="toc-level-1"><td class="toc-number">5</td><td class="toc-text"><a href="#EXCEPTIONS">EXCEPTIONS</a></td></tr>
+   
+</table>
+</nav>
+
+<div class="pod-body
+
+">
+<h1 id="NAME"><a class="u" href="#___top" title="go to top of document">NAME</a></h1>
+<p>Munge -- MUNGE Uid &#39;N&#39; Gid Emporium Authentication Service</p>
+<h1 id="SYNOPSIS"><a class="u" href="#___top" title="go to top of document">SYNOPSIS</a></h1>
+<pre class="pod-block-code">use Munge;
+
+my $m = Munge.new;
+
+# Strings:
+my $encoded = $m.encode(&#39;this&#39;);
+say $m.decode($encoded);
+
+# Blobs:
+my $encoded = $m.encode(Buf.new(1,2,3,4));
+say $m.decode-buf($encoded);</pre>
+<h1 id="DESCRIPTION"><a class="u" href="#___top" title="go to top of document">DESCRIPTION</a></h1>
+<p>From the main Munge site: <a href="https://github.com/dun/munge/wiki">https://github.com/dun/munge/wiki</a></p>
+<p>MUNGE (MUNGE Uid &#39;N&#39; Gid Emporium) is an authentication service for creating and validating credentials. It is designed to be highly scalable for use in an HPC cluster environment. It allows a process to authenticate the UID and GID of another local or remote process within a group of hosts having common users and groups. These hosts form a security realm that is defined by a shared cryptographic key. Clients within this security realm can create and validate credentials without the use of root privileges, reserved ports, or platform-specific methods.</p>
+<h2 id="Context"><a class="u" href="#___top" title="go to top of document">Context</a></h2>
+<p>A new <code>Munge::Context</code> is created for each new Munge object, and many methods are forwarded to that context to query or manipulate it (<strong>.error</strong>, <strong>.cipher</strong>, <strong>.MAC</strong>, <strong>.zip</strong>, <strong>.ttl</strong>, <strong>.addr4</strong>, <strong>socket</strong>, <strong>encode-time</strong>, <strong>decode-time</strong>, <strong>uid-restriction</strong>, <strong>gid-restriction</strong>.</p>
+<p>Since the context is set during the decoding process, it is likely not what you want for encoding, so you probably want to use separate Munge objects for encoding/decoding.</p>
+<p>Encoding/decoding are also not thread-safe, so you should either lock the Munge object during use, or better yet, just make a new (or clone) object for separate threads.</p>
+<h1 id="METHODS"><a class="u" href="#___top" title="go to top of document">METHODS</a></h1>
+<h2 id="new(:cipher,_:MAC,_:zip,_:ttl,_:socket,_:uid-restriction,_:gid-restriction)"><a class="u" href="#___top" title="go to top of document"><strong>new</strong>(:cipher, :MAC, :zip, :ttl, :socket, :uid-restriction, :gid-restriction)</a></h2>
+<p>Create a new Munge object and context.</p>
+<p>The optional arguments are used to initialize the <code>Munge::Context</code>.</p>
+<h2 id="clone()"><a class="u" href="#___top" title="go to top of document"><strong>clone</strong>()</a></h2>
+<p>Copy an existing Munge object and context.</p>
+<h2 id="encode(Blob_$buf?)"><a class="u" href="#___top" title="go to top of document"><strong>encode</strong>(Blob $buf?)</a></h2>
+<h2 id="encode(Str_$str)"><a class="u" href="#___top" title="go to top of document"><strong>encode</strong>(Str $str)</a></h2>
+<p>Create a credential contained in a base64 string. An optional payload (either Str or Blob) can be encapsulated as well.</p>
+<h2 id="decode-buf(Str_$cred)"><a class="u" href="#___top" title="go to top of document"><strong>decode-buf</strong>(Str $cred)</a></h2>
+<p>Validates the specified credential, optionally returning the encapsulated payload as a Blob.</p>
+<p>Throws an exception for any error, including invalid credentials.</p>
+<h2 id="decode(Str_$cred)"><a class="u" href="#___top" title="go to top of document"><strong>decode</strong>(Str $cred)</a></h2>
+<p>Validates the specified credential, optionally returning the encapsulated payload as a decoded string.</p>
+<p>Throws an exception for any error, including invalid credentials.</p>
+<h1 id="EXCEPTIONS"><a class="u" href="#___top" title="go to top of document">EXCEPTIONS</a></h1>
+<p>Base exception is X::Munge::Error.</p>
+<p>$exception.code will return a Munge::Error enumeration value `EMUNGE_*`</p>
+<p>+$exception.code will give you the traditional libmunge error code.</p>
+
+</div>
+
+
+</body>
+</html>
+
