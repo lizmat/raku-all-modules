@@ -68,8 +68,8 @@ grammar CSS::Grammar:ver<0.3.2> {
     proto token dimension {*}
     token dimension:sym<length> { <length> }
 
-    token url_delim_char { < ( ) ' " \\ > | <.wc> }
-    token url-unquoted-char  { <char=.escape> | <char=.nonascii> | <- url_delim_char>+ }
+    token url-delim-char { < ( ) ' " \\ > | <.wc> }
+    token url-unquoted-char  { <char=.escape> | <char=.nonascii> | <- url-delim-char>+ }
     token url-unquoted       {<url-unquoted-char>*}
 
     rule url             {:i'url(' [ <url=.url-string> | <url=.url-unquoted> ] ')' }
@@ -133,7 +133,7 @@ grammar CSS::Grammar:ver<0.3.2> {
     rule badstring {<CSS::Grammar::Core::_badstring>}
 
     # failed declaration parse - analyse and drop
-    rule dropped-decl  { 
+    rule dropped-decl  {
 	       # - extra semicolon - just ignore
 	       ';'
 

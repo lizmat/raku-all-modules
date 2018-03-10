@@ -26,7 +26,6 @@ for css1 => CSS::Grammar::CSS1,
 
     my $expected-warnings = %level-warnings{$test};
     my $actual-warnings = ~$actions.warnings;
-    todo "issue #4";
     is $actual-warnings, $expected-warnings, $test ~ ' warnings';
 }
 
