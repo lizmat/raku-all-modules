@@ -171,8 +171,8 @@ method dotProduct
 
     my $product = $matrix1.dotProduct( $matrix2 )
     return a new Matrix, result of the dotProduct of the current matrix with matrix2
-    Call be called throug operator ⋅ or dot , like following:
-    my $c = $a ⋅ $b ;
+    Call be called throug operator ? or dot , like following:
+    my $c = $a ? $b ;
     my $c = $a dot $b ;
 
     A shortcut for multiplication is the power - operator **
