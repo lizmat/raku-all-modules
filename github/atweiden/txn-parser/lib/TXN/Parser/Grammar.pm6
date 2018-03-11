@@ -70,9 +70,7 @@ token string-basic-char:escape-sequence
         ||
 
         .
-        {
-            die(X::TXN::Parser::String::EscapeSequence.new(:esc(~$/)));
-        }
+        { die(X::TXN::Parser::String::EscapeSequence.new(:esc(~$/))) }
     ]
 }
 
@@ -160,9 +158,7 @@ token string-basic-multiline-char:escape-sequence
         ||
 
         .
-        {
-            die(X::TXN::Parser::String::EscapeSequence.new(:esc(~$/)));
-        }
+        { die(X::TXN::Parser::String::EscapeSequence.new(:esc(~$/))) }
     ]
 }
 
@@ -305,9 +301,7 @@ token txnlib-string-char:escape-sequence
         ||
 
         .
-        {
-            die(X::TXN::Parser::String::EscapeSequence.new(:esc(~$/)));
-        }
+        { die(X::TXN::Parser::String::EscapeSequence.new(:esc(~$/))) }
     ]
 }
 
@@ -723,9 +717,7 @@ token asset-price:integer { <integer-unsigned> }
 token inherit
 {
     <inherit-symbol> \h+ <inherit-rate=xe-rate>
-    {
-        die(X::TXN::Parser::Annot::Inherit::BadSilo.new) unless $silo == ASSETS
-    }
+    { $silo == ASSETS or die(X::TXN::Parser::Annot::Inherit::BadSilo.new) }
 }
 
 proto token inherit-symbol {*}
@@ -745,18 +737,14 @@ proto token lot {*}
 token lot:acquisition
 {
     <lot-acquisition-symbol> \h+ <lot-name>
-    {
-        die(X::TXN::Parser::Annot::Lot::BadSilo.new) unless $silo == ASSETS
-    }
+    { $silo == ASSETS or die(X::TXN::Parser::Annot::Lot::BadSilo.new) }
 }
 
 # lot sales (disposition)
 token lot:disposition
 {
     <lot-disposition-symbol> \h+ <lot-name>
-    {
-        die(X::TXN::Parser::Annot::Lot::BadSilo.new) unless $silo == ASSETS
-    }
+    { $silo == ASSETS or die(X::TXN::Parser::Annot::Lot::BadSilo.new) }
 }
 
 proto token lot-acquisition-symbol {*}

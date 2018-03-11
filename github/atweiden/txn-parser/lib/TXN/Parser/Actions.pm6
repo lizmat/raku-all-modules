@@ -867,10 +867,8 @@ method include:filename ($match --> Nil)
         # if absolute path given, use it directly (don't append extension)
         !! $match<filename>.made;
 
-    unless $filename.IO.e && $filename.IO.r && $filename.IO.f
-    {
-        die(X::TXN::Parser::Include.new(:$filename));
-    }
+    $filename.IO.e && $filename.IO.r && $filename.IO.f
+        or die(X::TXN::Parser::Include.new(:$filename));
 
     my UInt:D @entry-number = |@.entry-number.deepmap(*.clone), 0;
     my TXN::Parser::Actions:D $actions = TXN::Parser::Actions.new(
@@ -888,17 +886,13 @@ method include:filename ($match --> Nil)
 
 method include:txnlib ($match --> Nil)
 {
-    unless $match<txnlib>.made.IO.is-relative
-    {
-        die(X::TXN::Parser::TXNLibAbsolute(:lib($match<txnlib>.made)));
-    }
+    $match<txnlib>.made.IO.is-relative
+        or die(X::TXN::Parser::TXNLibAbsolute(:lib($match<txnlib>.made)));
 
     my Str:D $filename = join('/', $.txn-dir, $match<txnlib>.made) ~ '.txn';
 
-    unless $filename.IO.e && $filename.IO.r && $filename.IO.f
-    {
-        die(X::TXN::Parser::Include.new(:$filename));
-    }
+    $filename.IO.e && $filename.IO.r && $filename.IO.f
+        or die(X::TXN::Parser::Include.new(:$filename));
 
     my UInt:D @entry-number = |@.entry-number.deepmap(*.clone), 0;
     my TXN::Parser::Actions:D $actions = TXN::Parser::Actions.new(

@@ -275,15 +275,13 @@ class Entry
         # verify entry is limited to one entity
         my UInt:D $number-entities =
             @posting.map({ .account.entity }).unique.elems;
-        unless $number-entities == 1
-        {
-            die(
+        $number-entities == 1
+            or die(
                 X::TXN::Parser::Entry::MultipleEntities.new(
                     :$number-entities,
                     :entry-text($id.text)
                 )
             );
-        }
 
         self.bless(|%opts);
     }
