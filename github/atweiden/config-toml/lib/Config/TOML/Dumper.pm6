@@ -34,10 +34,8 @@ sub sort-pairs(%h --> List:D)
 
     for %h.kv -> $key, $val
     {
-        unless is-valid-key($key)
-        {
-            die(X::Config::TOML::Dumper::BadKey.new(:$key));
-        }
+        is-valid-key($key)
+            or die(X::Config::TOML::Dumper::BadKey.new(:$key));
 
         if $val ~~ Associative
         {
@@ -45,10 +43,8 @@ sub sort-pairs(%h --> List:D)
         }
         elsif $val ~~ List && $val[0] ~~ Associative
         {
-            unless is-valid-array($val)
-            {
-                die(X::Config::TOML::Dumper::BadArray.new(:array($val)));
-            }
+            is-valid-array($val)
+                or die(X::Config::TOML::Dumper::BadArray.new(:array($val)));
             push(@table-array-pairs, %($key => $val));
         }
         else
@@ -264,10 +260,8 @@ multi sub to-toml(Associative:U $a)
 
 multi sub to-toml(List:D $l --> Str:D)
 {
-    unless is-valid-array($l)
-    {
-        die(X::Config::TOML::Dumper::BadArray.new(:array($l)));
-    }
+    is-valid-array($l)
+        or die(X::Config::TOML::Dumper::BadArray.new(:array($l)));
 
     my Str:D @elements;
     $l.map({ push(@elements, to-toml($_)) });
