@@ -397,13 +397,15 @@ multi sub resolve-txn-file-path(
     --> Str:D
 )
 {
-    die unless exists-readable-file($file);
+    exists-readable-file($file)
+        or die;
     $file;
 }
 
 multi sub resolve-txn-file-path(Str:D $file where *.so --> Str:D)
 {
-    die unless exists-readable-file("$file.txn");
+    exists-readable-file("$file.txn")
+        or die;
     "$file.txn";
 }
 
