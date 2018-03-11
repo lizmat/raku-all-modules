@@ -40,7 +40,8 @@ multi sub MAIN(
 )
 {
     my Str:D $file = resolve-path($input);
-    die unless exists-readable-file($file);
+    exists-readable-file($file)
+        or die;
     my @e = remarshal(slurp($file), :if<json>, :of<hash>);
     my TXN::Parser::AST::Entry:D @entry = remarshal(@e, :if<hash>, :of<entry>);
     my Str:D $txn = remarshal(@entry, :if<entry>, :of<txn>);
@@ -72,7 +73,8 @@ multi sub MAIN(
 )
 {
     my Str:D $file = resolve-path($input);
-    die unless exists-readable-file($file);
+    exists-readable-file($file)
+        or die;
     my TXN::Parser::AST::Entry:D @entry = from-txn(:$file);
     my @e = remarshal(@entry, :if<entry>, :of<hash>);
     my Str:D $json = remarshal(@e, :if<hash>, :of<json>);
