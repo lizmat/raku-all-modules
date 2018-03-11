@@ -13,8 +13,8 @@ method test(
     --> Bool:D
 )
 {
-    die(X::Crane::TestPathNotFound.new)
-        unless Crane::Exists.exists($container, :@path);
+    Crane::Exists.exists($container, :@path)
+        or die(X::Crane::TestPathNotFound.new);
     Crane::At.at($container, @path) eqv $value;
 }
 

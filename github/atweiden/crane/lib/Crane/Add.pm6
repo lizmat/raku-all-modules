@@ -34,8 +34,8 @@ method add(
         {
             my rule cannot-resolve-caller-splice-list
             { 'Cannot resolve caller splice(List' }
-            die(X::Crane::Add::RO.new(:typename<List>))
-                if .message ~~ &cannot-resolve-caller-splice-list;
+            .message !~~ &cannot-resolve-caller-splice-list
+                or die(X::Crane::Add::RO.new(:typename<List>));
         }
         when X::Assignment::RO
         { die(X::Crane::Add::RO.new(:typename(.typename))) }
@@ -43,8 +43,8 @@ method add(
         {
             my rule no-such-method-splice
             { No such method \'splice\' for invocant of type \'(\w+)\' }
-            die(X::Crane::Add::RO.new(:typename(~$0)))
-                if .message ~~ &no-such-method-splice;
+            .message !~~ &no-such-method-splice
+                or die(X::Crane::Add::RO.new(:typename(~$0)));
         }
         when X::OutOfRange
         { die(X::Crane::AddPathOutOfRange.new(:operation<add>, :out-of-range($_))) }
@@ -62,8 +62,8 @@ multi sub add(
     --> Any:D
 )
 {
-    die(X::Crane::AddPathNotFound.new)
-        unless Crane::Exists.exists(container, :path(@path[0..^*-1]), :v);
+    Crane::Exists.exists(container, :path(@path[0..^*-1]), :v)
+        or die(X::Crane::AddPathNotFound.new);
     my $what = Crane::At.at(container, @path[0..^*-1]).WHAT;
     add($what, container, :@path, :$value, :$in-place);
 }
@@ -125,8 +125,8 @@ multi sub add(
     --> Any:D
 )
 {
-    die(X::Crane::AddPathNotFound.new)
-        unless Crane::Exists.exists(container, :path(), :v);
+    Crane::Exists.exists(container, :path(), :v)
+        or die(X::Crane::AddPathNotFound.new);
     add-to-associative(
         container,
         :step(@path[*-1]),
@@ -143,8 +143,8 @@ multi sub add(
     --> Any:D
 )
 {
-    die(X::Crane::AddPathNotFound.new)
-        unless Crane::Exists.exists(container, :path(), :v);
+    Crane::Exists.exists(container, :path(), :v)
+        or die(X::Crane::AddPathNotFound.new);
     is-valid-positional-index(@path[*-1]);
     add-to-positional(
         container,
@@ -162,8 +162,8 @@ multi sub add(
     --> Nil
 )
 {
-    die(X::Crane::AddPathNotFound.new)
-        unless Crane::Exists.exists(container, :path(), :v);
+    Crane::Exists.exists(container, :path(), :v)
+        or die(X::Crane::AddPathNotFound.new);
     die('✗ Crane accident: add operation failed, invalid path');
 }
 

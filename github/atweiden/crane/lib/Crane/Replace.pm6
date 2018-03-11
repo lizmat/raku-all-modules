@@ -35,15 +35,15 @@ method replace(
         {
             my rule cannot-resolve-caller-splice-list
             { 'Cannot resolve caller splice(List' }
-            die(X::Crane::Replace::RO.new(:typename<List>))
-                if .message ~~ &cannot-resolve-caller-splice-list;
+            .message !~~ &cannot-resolve-caller-splice-list
+                or die(X::Crane::Replace::RO.new(:typename<List>));
         }
         when X::Method::NotFound
         {
             my rule no-such-method-splice
             { No such method \'splice\' for invocant of type \'(\w+)\' }
-            die(X::Crane::Replace::RO.new(:typename(~$0)))
-                if .message ~~ &no-such-method-splice;
+            .message !~~ &no-such-method-splice
+                or die(X::Crane::Replace::RO.new(:typename(~$0)));
         }
     }
 
@@ -59,8 +59,8 @@ multi sub replace(
     --> Any:D
 )
 {
-    die(X::Crane::ReplacePathNotFound.new)
-        unless Crane::Exists.exists(container, :@path);
+    Crane::Exists.exists(container, :@path)
+        or die(X::Crane::ReplacePathNotFound.new);
     my $what = Crane::At.at(container, @path[0..^*-1]).WHAT;
     replace($what, container, :@path, :$value, :$in-place);
 }
@@ -122,8 +122,8 @@ multi sub replace(
     --> Any:D
 )
 {
-    die(X::Crane::ReplacePathNotFound.new)
-        unless Crane::Exists.exists(container, :@path);
+    Crane::Exists.exists(container, :@path)
+        or die(X::Crane::ReplacePathNotFound.new);
     replace-in-associative(
         container,
         :step(@path[*-1]),
@@ -140,8 +140,8 @@ multi sub replace(
     --> Any:D
 )
 {
-    die(X::Crane::ReplacePathNotFound.new)
-        unless Crane::Exists.exists(container, :@path);
+    Crane::Exists.exists(container, :@path)
+        or die(X::Crane::ReplacePathNotFound.new);
     is-valid-positional-index(@path[*-1]);
     replace-in-positional(
         container,
@@ -159,8 +159,8 @@ multi sub replace(
     --> Nil
 )
 {
-    die(X::Crane::ReplacePathNotFound.new)
-        unless Crane::Exists.exists(container, :@path);
+    Crane::Exists.exists(container, :@path)
+        or die(X::Crane::ReplacePathNotFound.new);
     die('✗ Crane accident: replace operation failed, invalid path');
 }
 

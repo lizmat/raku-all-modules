@@ -15,13 +15,13 @@ method transform(
     --> Any:D
 )
 {
-    die(X::Crane::TransformCallableSignatureParams.new)
-        unless is-valid-callable-signature(&with);
+    is-valid-callable-signature(&with)
+        or die(X::Crane::TransformCallableSignatureParams.new);
 
     if @path.elems > 0
     {
-        die(X::Crane::TransformPathNotFound.new)
-            unless Crane::Exists.exists(container, :@path);
+        Crane::Exists.exists(container, :@path)
+            or die(X::Crane::TransformPathNotFound.new);
     }
 
     transform(container, :@path, :&with, :$in-place);

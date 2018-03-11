@@ -32,22 +32,22 @@ method remove(
         {
             my rule can-not-remove
             { Can not remove [values|elements] from a (\w+) }
-            die(X::Crane::Remove::RO.new(:typename(~$0)))
-                if .payload ~~ &can-not-remove;
+            .payload !~~ &can-not-remove
+                or die(X::Crane::Remove::RO.new(:typename(~$0)));
         }
         when X::Multi::NoMatch
         {
             my rule cannot-resolve-caller-splice-list
             { 'Cannot resolve caller splice(List' }
-            die(X::Crane::Remove::RO.new(:typename<List>))
-                if .message ~~ &cannot-resolve-caller-splice-list;
+            .message !~~ &cannot-resolve-caller-splice-list
+                or die(X::Crane::Remove::RO.new(:typename<List>));
         }
         when X::Method::NotFound
         {
             my rule no-such-method-splice
             { No such method \'splice\' for invocant of type \'(\w+)\' }
-            die(X::Crane::Remove::RO.new(:typename(~$0)))
-                if .message ~~ &no-such-method-splice;
+            .message !~~ &no-such-method-splice
+                or die(X::Crane::Remove::RO.new(:typename(~$0)));
         }
     }
 
@@ -62,8 +62,8 @@ multi sub remove(
     --> Any
 )
 {
-    die(X::Crane::RemovePathNotFound.new)
-        unless Crane::Exists.exists(container, :@path);
+    Crane::Exists.exists(container, :@path)
+        or die(X::Crane::RemovePathNotFound.new);
     my $what = Crane::At.at(container, @path[0..^*-1]).WHAT;
     remove($what, container, :@path, :$in-place);
 }
@@ -119,8 +119,8 @@ multi sub remove(
     --> Any
 )
 {
-    die(X::Crane::RemovePathNotFound.new)
-        unless Crane::Exists.exists(container, :@path);
+    Crane::Exists.exists(container, :@path)
+        or die(X::Crane::RemovePathNotFound.new);
     remove-from-associative(container, :step(@path[*-1]), :$in-place);
 }
 
@@ -131,8 +131,8 @@ multi sub remove(
     --> Any
 )
 {
-    die(X::Crane::RemovePathNotFound.new)
-        unless Crane::Exists.exists(container, :@path);
+    Crane::Exists.exists(container, :@path)
+        or die(X::Crane::RemovePathNotFound.new);
     is-valid-positional-index(@path[*-1]);
     remove-from-positional(container, :step(@path[*-1]), :$in-place);
 }
@@ -144,8 +144,8 @@ multi sub remove(
     --> Nil
 )
 {
-    die(X::Crane::RemovePathNotFound.new)
-        unless Crane::Exists.exists(container, :@path);
+    Crane::Exists.exists(container, :@path)
+        or die(X::Crane::RemovePathNotFound.new);
     die('✗ Crane accident: remove operation failed, invalid path');
 }
 

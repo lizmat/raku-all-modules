@@ -56,8 +56,8 @@ method move(
     }
 
     # a location cannot be moved into one of its children
-    die(X::Crane::MoveParentToChild.new)
-        if path-is-child-of-from(@from, @path);
+    !path-is-child-of-from(@from, @path)
+        or die(X::Crane::MoveParentToChild.new);
 
     move(container, :@from, :@path, :$in-place);
 }
