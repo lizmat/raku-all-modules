@@ -48,13 +48,13 @@ different ways by different types of blocks, but is always specified using
 Perl6-ish option pairs. That is, any of:
 
 =begin table
- Value is...       Specify with...           Or with...          Or with...
- ===============   ===================       ==============      ===========
+ Value is...       Specify with...           Or with...           Or with...
+ ===============   ===================       ==============       ===========
  List              :key[$e1, $e2, ...]       :key($e1, $e2, ...)
  Hash              :key{$k1=>$v1, $k2=>$v2}
- Boolean (true)    :key                      :key(True)          :key[True]
- Boolean (false)   :!key                     :key(False)         :key[False]
- String            :key<str>                 :key('str')         :key("str")
+ Boolean (true)    :key                      :key(True)           :key[True]
+ Boolean (false)   :!key                     :key(False)          :key[False]
+ String            :key<str>                 :key('str')          :key("str")
  Int               :key(42)                  :key[42]
  Number            :key(2.3)                 :key[2.3]
 =end table
@@ -158,7 +158,7 @@ where N is greater than zero (e.g., C<=head1>, C<=head2>, …).
 
 =head2 Ordinary paragraphs
 
-Ordinary paragraph consist of text that is to be formatted into a document at the current level of nesting,
+An ordinary paragraph consists of text that is to be formatted into a document at the current level of nesting,
 with whitespace squeezed, lines filled, and any special inline mark-up applied.
 
 Ordinary paragraphs consist of one or more consecutive lines of text,
