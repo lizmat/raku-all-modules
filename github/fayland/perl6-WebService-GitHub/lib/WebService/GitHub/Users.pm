@@ -1,6 +1,6 @@
 use v6;
 
-use WebService::Github::Role;
+use WebService::GitHub::Role;
 
 class WebService::GitHub::Users does WebService::GitHub::Role {
 

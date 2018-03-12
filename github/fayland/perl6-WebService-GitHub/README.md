@@ -30,7 +30,7 @@ Patches welcome
 
  * `endpoint`
 
-useful for GitHub Enterprise. default to https://api.github.com
+Useful for GitHub Enterprise. Default to https://api.github.com
 
  * `access-token`
 
@@ -54,7 +54,7 @@ UTC by default, [Doc](https://developer.github.com/v3/#timezones)
 
  * `with`
 
- does the roles
+ Builds the object with a particular role
 
 ```
 my $gh = WebService::GitHub.new(
@@ -78,13 +78,15 @@ Get header of HTTP Response
 
  * `first-page-url`, `prev-page-url`, `next-page-url`, `last-page-url`
 
-Parsed from Link header, [Doc](https://developer.github.com/v3/#pagination)
+Parsed from the Link header, [Doc](https://developer.github.com/v3/#pagination)
 
  * `x-ratelimit-limit`, `x-ratelimit-remaining`, `x-ratelimit-reset`
 
 [Rate Limit](https://developer.github.com/v3/#rate-limiting)
 
 ## Examples
+
+Some of them are, or will be, included in the `examples` directory. 
 
 ### Public Access without access-token
 
