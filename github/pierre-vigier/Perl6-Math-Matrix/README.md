@@ -2,13 +2,16 @@
 
 [![Build Status](https://travis-ci.org/pierre-vigier/Perl6-Math-Matrix.svg?branch=master)](https://travis-ci.org/pierre-vigier/Perl6-Math-Matrix)
 
-NAME Math::Matrix - Simple Matrix mathematics
-=============================================
+NAME Math::Matrix - create, compare, compute and measure 2D matrices
+====================================================================
 
 SYNOPSIS
 ========
 
-Matrix stuff, transposition, dot Product, and so on
+Matrices are tables with rows (counting from 0) and columns of numbers: 
+
+    transpose, invert, negate, add, subtract, multiply, dot product, size, determinant, 
+    rank, kernel, trace, norm, decompositions and so on
 
 DESCRIPTION
 ===========
@@ -17,24 +20,20 @@ Perl6 already provide a lot of tools to work with array, shaped array, and so on
 
 I should probably use shaped array for the implementation, but i am encountering some issues for now. Problem being it might break the syntax for creation of a Matrix, use with consideration...
 
+Type Conversion
+===============
+
+In Str context you will see a tabular representation, in Int the number of cells and in Bool conect if the matrix is zero (all cells are zero as in is-zero).
+
 METHODS
 =======
 
-method new method new( [[1,2],[3,4]])
--------------------------------------
+method new( [[1,2],[3,4]])
+--------------------------
 
-    A constructor, takes parameters like:
-
-  * rows : an array of row, each row being an array of cells
-
-    Number of cells per row must be identical
-
-method new-identity
--------------------
-
-    my $matrix = Math::Matrix.new-identity( 3 );
-    This method is a constructor that returns an identity matrix of the size given in parameter
-    All the cells are set to 0 except the top/left to bottom/right diagonale, set to 1
+    The default constructor, takes arrays of arrays of numbers.
+    Each second level array represents a row in the matrix.
+    That is why their length has to be the same.
 
 method new-zero
 ---------------
@@ -43,10 +42,18 @@ method new-zero
     This method is a constructor that returns an zero matrix of the size given in parameter.
     If only one parameter is given, the matrix is quadratic. All the cells are set to 0.
 
+method new-identity
+-------------------
+
+    my $matrix = Math::Matrix.new-identity( 3 );
+    This method is a constructor that returns an identity matrix of the size given in parameter
+    All the cells are set to 0 except the top/left to bottom/right diagonale, set to 1
+
 method new-diagonal
 -------------------
 
     my $matrix = Math::Matrix.new-diagonal( 2, 4, 5 );
+
     This method is a constructor that returns an diagonal matrix of the size given
     by count of the parameter.
     All the cells are set to 0 except the top/left to bottom/right diagonal,
@@ -62,13 +69,53 @@ method new-vector-product
     the matrix product (method dotProduct, or operator dot) of a column vector
     (first argument) and a row vector (second argument).
 
-method equal
-------------
+method cell
+-----------
 
-    if $matrixa.equal( $matrixb ) {
-    if $matrixa ~~ $matrixb {
+    my $value = $matrix.cell(2,3);
 
-    Checks two matrices for Equality
+    Gets value of element in third row and fourth column.
+
+method row
+----------
+
+    my @values = $matrix.row();
+
+    Gets values of diagonal elements.
+    That would be (1, 4) if matrix is [[1,2][3,4]].
+
+method column
+-------------
+
+    my @values = $matrix.row();
+
+    Gets values of diagonal elements.
+    That would be (1, 4) if matrix is [[1,2][3,4]].
+
+method diagonal
+---------------
+
+    my @values = $matrix.diagonal();
+
+    Gets values of diagonal elements.
+    That would be (1, 4) if matrix is [[1,2][3,4]].
+
+method submatrix
+----------------
+
+    Return a subset of a given matrix. 
+    Given $matrix = Math::Matrix.new([[1,2,3][4,5,6],[7,8,9]]);
+    A submatrix with one row and two columns:
+
+    $matrix.submatrix(1,2);              # is [[1,2]]
+
+    A submatrix from cell (0,1) on to left and down till cell (1,2):
+
+    $matrix.submatrix(0,1,1,2);          # is [[2,3],[5,6]]
+
+    When I just want cells in row 0 and 2 and colum 1 and 2 I use:
+
+    $matrix.submatrix((0,2),(1..2));     # is [[2,3],[8,9]]
 
 method size
 -----------
@@ -78,19 +125,25 @@ method size
     say $matrix.size();
     my $dim = min $matrix.size();
 
-method density
---------------
+method equal
+------------
 
-    say 'this is a fully (occupied) matrix' if $matrix.density() == 1;
+    if $matrixa.equal( $matrixb ) {
+    if $matrixa ~~ $matrixb {
 
-    percentage of cells which hold a value different than 0
+    Checks two matrices for Equality
 
 method is-square
 ----------------
 
     if $matrix.is-square {
 
-    Tells if number of rows and colums are the same
+    True if number of rows and colums are the same
+
+method is-invertible
+--------------------
+
+    Is True if number of rows and colums are the same and determinant is not zero.
 
 method is-zero
 --------------
@@ -102,6 +155,16 @@ method is-identity
 
     True if every cell on the diagonal (where row index equals column index) is 1
     and any other cell is 0.
+
+method is-upper-triangular
+--------------------------
+
+    True if every cell below the diagonal (where row index is greater than column index) is 0.
+
+method is-lower-triangular
+--------------------------
+
+    True if every cell above the diagonal (where row index is smaller than column index) is 0.
 
 method is-diagonal
 ------------------
@@ -121,27 +184,12 @@ method is-diagonally-dominant
     $matrix.is-diagonally-dominant(:strict,  :along<row>)    # DE > sum of rest row
     $matrix.is-diagonally-dominant(:!strict, :along<both>)   # DE >= sum of rest row and rest column
 
-method is-upper-triangular
---------------------------
-
-    True if every cell below the diagonal (where row index is greater than column index) is 0.
-
-method is-lower-triangular
---------------------------
-
-    True if every cell above the diagonal (where row index is smaller than column index) is 0.
-
 method is-symmetric
 -------------------
 
     if $matrix.is-symmetric {
 
     Is True if every cell with coordinates x y has same value as the cell on y x.
-
-method is-positive-definite
----------------------------
-
-    True if all main minors are positive
 
 method is-orthogonal
 --------------------
@@ -151,10 +199,10 @@ method is-orthogonal
     Is True if the matrix multiplied (dotProduct) with its transposed version (T)
     is an identity matrix.
 
-method is-invertible
---------------------
+method is-positive-definite
+---------------------------
 
-    Is True if number of rows and colums are the same and determinant is not zero.
+    True if all main minors are positive
 
 method transposed, alias T
 --------------------------
@@ -166,24 +214,80 @@ method inverted
 
     return a new Matrix, which is the inverted of the current one
 
-method dotProduct
------------------
+method negated
+--------------
 
-    my $product = $matrix1.dotProduct( $matrix2 )
-    return a new Matrix, result of the dotProduct of the current matrix with matrix2
-    Call be called throug operator ? or dot , like following:
-    my $c = $a ? $b ;
-    my $c = $a dot $b ;
+    my $new = $matrix.negated();    # invert sign of all cells
+    my $neg = - $matrix;            # works too
 
-    A shortcut for multiplication is the power - operator **
-    my $c = $a **  3;      # same as $a dot $a dot $a
-    my $c = $a ** -3;      # same as ($a dot $a dot $a).inverted
-    my $c = $a **  0;      # created an right sized identity matrix
+method decompositionLUCrout
+---------------------------
 
-    Matrix can be multiplied by a Real as well, and with operator *
-    my $c = $a.multiply( 2.5 );
-    my $c = 2.5 * $a;
-    my $c = $a * 2.5;
+    my ($L, $U) = $matrix.decompositionLUCrout( );
+    $L dot $U eq $matrix;                # True
+
+    $L is a left triangular matrix and $R is a right one
+    This decomposition works only on invertible matrices (square and full ranked).
+
+method decompositionLU
+----------------------
+
+    my ($L, $U, $P) = $matrix.decompositionLU( );
+    $L dot $U eq $matrix dot $P;         # True
+    my ($L, $U) = $matrix.decompositionLUC(:!pivot);
+    $L dot $U eq $matrix;                # True
+
+    $L is a left triangular matrix and $R is a right one
+    Without pivotisation the marix has to be invertible (square and full ranked).
+    In case you whant two unipotent triangular matrices and a diagonal (D):
+    use the :diagonal option, which can be freely combined with :pivot.
+
+    my ($L, $D, $U, $P) = $matrix.decompositionLU( :diagonal );
+    $L dot $D dot $U eq $matrix dot $P;  # True
+
+method decompositionCholesky
+----------------------------
+
+    my $D = $matrix.decompositionCholesky( );
+    $D dot $D.T eq $matrix;              # True 
+
+    $D is a left triangular matrix
+    This decomposition works only on symmetric and definite positive matrices.
+
+method reduced-row-echelon-form (shortcut rref)
+-----------------------------------------------
+
+    my $rref = $matrix.reduced-row-echelon-form();
+    my $rref = $matrix.rref();
+
+    Return the reduced row echelon form of a matrix, a.k.a. row canonical form
+
+method add
+----------
+
+    my $sum = $matrix.add( $matrix2 );  # cell wise addition of 2 same sized matrices
+    my $s = $matrix + $matrix2;         # works too
+
+    my $sum = $matrix.add( $number );   # adds number from every cell 
+    my $s = $matrix + $number;          # works too
+
+method subtract
+---------------
+
+    my $diff = $matrix.subtract( $matrix2 );  # cell wise subraction of 2 same sized matrices
+    my $d = $matrix - $matrix2;               # works too
+
+    my $diff = $matrix.subtract( $number );   # subtracts number from every cell 
+    my $sd = $matrix - $number;               # works too
+
+method multiply
+---------------
+
+    my $product = $matrix.multiply( $matrix2 );  # cell wise multiplication of same size matrices
+    my $p = $matrix * $matrix2;                  # works too
+
+    my $product = $matrix.multiply( $number );   # multiply every cell with number
+    my $p = $matrix * $number;                   # works too
 
 method apply
 ------------
@@ -191,49 +295,46 @@ method apply
     my $new = $matrix.apply( * + 2 );
     return a new matrix which is the current one with the function given in parameter applied to every cells
 
-method negative
----------------
+method dotProduct
+-----------------
 
-    my $new = $matrix.negative();
-    return the negative of a matrix
+    my $product = $matrix1.dotProduct( $matrix2 )
+    return a new Matrix, result of the dotProduct of the current matrix with matrix2
+    Call be called throug operator ⋅ or dot , like following:
+    my $c = $a ⋅ $b;
+    my $c = $a dot $b;
 
-method add
-----------
+    A shortcut for multiplication is the power - operator **
+    my $c = $a **  3;               # same as $a dot $a dot $a
+    my $c = $a ** -3;               # same as ($a dot $a dot $a).inverted
+    my $c = $a **  0;               # created an right sized identity matrix
 
-    my $new = $matrix.add( $matrix2 );
-    Return addition of 2 matrices of the same size, can use operator +
-    $new = $matrix + $matrix2;
-
-method subtract
----------------
-
-    my $new = $matrix.subtract( $matrix2 );
-    Return substraction of 2 matrices of the same size, can use operator -
-    $new = $matrix - $matrix2;
-
-method multiply
----------------
-
-    my $new = $matrix.multiply( $matrix2 );
-    Return multiply of elements of 2 matrices of the same size, can use operator *
-    $new = $matrix * $matrix2;
-
-method determinant
-------------------
+method determinant (short det)
+------------------------------
 
     my $det = $matrix.determinant( );
-    Calculate the determinant of a square matrix
+    my $d = $matrix.det( );     #    Calculate the determinant of a square matrix
 
 method trace
 ------------
 
-    my $tr = $matrix.trace( );
-    Calculate the trace of a square matrix
+    my $tr = $matrix.trace( ); 
+
+    The trace of a square matrix is the sum of the cells on the main diagonal.
+    In other words: sum of cells which row and column value is identical.
+
+method density
+--------------
+
+    my $d = $matrix.density( );   
+
+    Density is the percentage of cell which are not zero.
 
 method rank
 -----------
 
     my $r = $matrix.rank( );
+
     rank is the number of independent row or column vectors
     or also called independent dimensions
     (thats why this command is sometimes calles dim)
@@ -256,47 +357,12 @@ method norm
     $matrix.norm('rowsum');              # row sum norm - biggest abs. value-sum of a row
     $matrix.norm('columnsum');           # column sum norm - same column wise
 
-method decompositionLU
-----------------------
+method condition
+----------------
 
-    my ($L, $U, $P) = $matrix.decompositionLU( );
-    $L dot $U eq $matrix dot $P;         # True
-    my ($L, $U) = $matrix.decompositionLUC(:!pivot);
-    $L dot $U eq $matrix;                # True
+    my $c = $matrix.condition( );        
 
-    $L is a left triangular matrix and $R is a right one
-    Without pivotisation the marix has to be invertible (square and full ranked).
-    In case you whant two unipotent triangular matrices and a diagonal (D):
-    use the :diagonal option, which can be freely combined with :pivot.
-
-    my ($L, $D, $U, $P) = $matrix.decompositionLU( :diagonal );
-    $L dot $D dot $U eq $matrix dot $P;  # True
-
-method decompositionLUCrout
----------------------------
-
-    my ($L, $U) = $matrix.decompositionLUCrout( );
-    $L dot $U eq $matrix;                # True
-
-    $L is a left triangular matrix and $R is a right one
-    This decomposition works only on invertible matrices (square and full ranked).
-
-method decompositionCholesky
-----------------------------
-
-    my $D = $matrix.decompositionCholesky( );
-    $D dot $D.T eq $matrix;              # True 
-
-    $D is a left triangular matrix
-    This decomposition works only on symmetric and definite positive matrices.
-
-method reduced-row-echelon-form (shortcut rref)
------------------------------------------------
-
-    my $rref = $matrix.reduced-row-echelon-form();
-    my $rref = $matrix.rref();
-
-    Return the reduced row echelon form of a matrix, a.k.a. row canonical form
+    Condition number of a matrix is L2 norm * L2 of inverted matrix.
 
 Author
 ======
@@ -312,3 +378,4 @@ License
 =======
 
 Artistic License 2.0
+

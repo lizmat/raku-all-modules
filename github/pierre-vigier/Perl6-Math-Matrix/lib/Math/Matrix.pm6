@@ -5,8 +5,10 @@ use v6.c;
 Math::Matrix - create, compare, compute and measure 2D matrices
 =head1 SYNOPSIS
 
-Matrices are tables with rows or columns of numbers: 
- new, transpose, invert, dot product, size, kernel, trace, norm, decompositions and so on
+Matrices are tables with rows (counting from 0) and columns of numbers: 
+
+ transpose, invert, negate, add, subtract, multiply, dot product, size, determinant, 
+ rank, kernel, trace, norm, decompositions and so on
 
 =head1 DESCRIPTION
 
@@ -21,14 +23,14 @@ use with consideration...
 =head1 Type Conversion
 
 In Str context you will see a tabular representation, in Int the number of cells
-and in Bool conect if the matrix is zero (all cells are zero as in is-zero).
+and in Bool context if the matrix is not zero (all cells are zero as in is-zero).
 
 =head1 METHODS
 
 =end pod
 
 
-unit class Math::Matrix:ver<0.1.2>:auth<github:pierre-vigier>;
+unit class Math::Matrix:ver<0.1.3>:auth<github:pierre-vigier>;
 use AttrX::Lazy;
 
 has @!rows is required;
@@ -58,22 +60,22 @@ method !column-count { $!column-count }
 
 subset Positive_Int of Int where * > 0 ;
 
-=begin pod
-=end pod
-
 
 =begin pod
-=head2 method new
-    method new( [[1,2],[3,4]])
+=head2 method new([[1,2],[3,4]])
 
-   A constructor, takes parameters like:
+   The default constructor, takes arrays of arrays of numbers.
+   Each second level array represents a row in the matrix.
+   That is why their length has to be the same. This examples creates:
 
-=item rows : an array of row, each row being an array of cells
-
-   Number of cells per row must be identical
+   1 2
+   3 4
 
 =end pod
 
+################################################################################
+# start constructors
+################################################################################
 
 method new( @m ) {
     die "Expect an Array of Array" unless all @m ~~ Array;
@@ -130,16 +132,16 @@ method new-identity(Math::Matrix:U: Positive_Int $size ) {
     self.bless( rows => self!identity_array($size), determinant => 1, rank => $size, diagonal => (1) xx $size );
 }
 
-
 =begin pod
 =head2 method new-diagonal
+
     my $matrix = Math::Matrix.new-diagonal( 2, 4, 5 );
+
     This method is a constructor that returns an diagonal matrix of the size given
     by count of the parameter.
     All the cells are set to 0 except the top/left to bottom/right diagonal,
     set to given values.
 =end pod
-
 
 method new-diagonal(Math::Matrix:U: *@diag ){
     fail "Expect an List of Number" unless @diag and [and] @diag >>~~>> Numeric;
@@ -178,9 +180,118 @@ method new-vector-product (Math::Matrix:U: @column_vector, @row_vector ){
     self.bless( rows => @p, determinant => 0 , rank => 1 );
 }
 
+################################################################################
+# end of constructor - start accessors
+################################################################################
+
+=begin pod
+=head2 method cell
+
+    my $value = $matrix.cell(2,3);
+
+    Gets value of element in third row and fourth column.
+
+=end pod
+
+multi method cell(Math::Matrix:D: Int:D $row, Int:D $column --> Numeric ) {
+    fail X::OutOfRange.new(
+        :what<Row index> , :got($row), :range("0..{$!row-count -1 }")
+    ) unless 0 <= $row < $!row-count;
+    fail X::OutOfRange.new(
+        :what<Column index> , :got($column), :range("0..{$!column-count -1 }")
+    ) unless 0 <= $column < $!column-count;
+    return @!rows[$row][$column];
+}
+
+=begin pod
+=head2 method row
+
+    my @values = $matrix.row();
+
+    Gets values of diagonal elements.
+    That would be (1, 4) if matrix is [[1,2][3,4]].
+
+=end pod
+
+multi method row(Math::Matrix:D: Int:D $row) {
+    fail X::OutOfRange.new(
+        :what<Row index> , :got($row), :range("0..{$!row-count -1 }")
+    ) unless 0 <= $row < $!row-count;
+    return @!rows[$row];
+}
+
+=begin pod
+=head2 method column
+
+    my @values = $matrix.row();
+
+    Gets values of diagonal elements.
+    That would be (1, 4) if matrix is [[1,2][3,4]].
+
+=end pod
+
+multi method column(Math::Matrix:D: Int:D $column) {
+    fail X::OutOfRange.new(
+        :what<Column index> , :got($column), :range("0..{$!column-count -1 }")
+    ) unless 0 <= $column < $!column-count;
+    ( gather for ^$!row-count -> $i { take @!rows[$i;$column] } ).list;
+}
+
+=begin pod
+=head2 method diagonal
+
+    my @values = $matrix.diagonal();
+
+    Gets values of diagonal elements.
+    That would be (1, 4) if matrix is [[1,2][3,4]].
+
+=end pod
+
+method !build_diagonal(Math::Matrix:D: ){
+    fail "Number of columns has to be same as number of rows" unless self.is-square;
+    ( gather for ^$!row-count -> $i { take @!rows[$i;$i] } ).list;
+}
+
+=begin pod
+=head2 method submatrix
+
+    Return a subset of a given matrix. 
+    Given $matrix = Math::Matrix.new([[1,2,3][4,5,6],[7,8,9]]);
+    A submatrix with one row and two columns:
+
+    $matrix.submatrix(1,2);              # is [[1,2]]
+
+    A submatrix from cell (0,1) on to left and down till cell (1,2):
+
+    $matrix.submatrix(0,1,1,2);          # is [[2,3],[5,6]]
+
+    When I just want cells in row 0 and 2 and colum 1 and 2 I use:
+
+    $matrix.submatrix((0,2),(1..2));     # is [[2,3],[8,9]]
+
+=end pod
+
+multi method submatrix(Math::Matrix:D: Int:D $row, Int:D $col --> Math::Matrix:D ){
+    self.submatrix((0 .. $row-1),(0 .. $col-1));
+}
+multi method submatrix(Math::Matrix:D: Int:D $row-min, Int:D $col-min, Int:D $row-max, Int:D $col-max --> Math::Matrix:D ){
+    fail "Minimum row has to be smaller than maximum row" if $row-min > $row-max;
+    fail "Minimum column has to be smaller than maximum column" if $col-min > $col-max;
+    self.submatrix(($row-min .. $row-max),($col-min .. $col-max));
+}
+
+multi method submatrix(Math::Matrix:D: @rows, @cols --> Math::Matrix:D ){
+    fail X::OutOfRange.new(
+        :what<Column index> , :got(@cols), :range("0..{$!column-count -1 }")
+    ) unless 0 <= all(@cols) < $!column-count;
+    fail X::OutOfRange.new(
+        :what<Column index> , :got(@rows), :range("0..{$!row-count -1 }")
+    ) unless 0 <= all(@rows) < $!row-count;
+    Math::Matrix.new([ @rows.map( { [ @!rows[$_][|@cols] ] } ) ]);
+}
 
 ################################################################################
-# end of constructor - start with type conversion and handy shortcuts
+# end of accessors - start with type conversion and handy shortcuts
 ################################################################################
 
 
@@ -189,7 +300,7 @@ method Str(Math::Matrix:D: --> Str) {
 }
 
 method Bool(Math::Matrix:D: --> Bool) {
-    self.is-zero;
+    !self.is-zero;
 }
 
 method Int(Math::Matrix:D: --> Int) {
@@ -222,16 +333,6 @@ method ACCEPTS(Math::Matrix $b --> Bool ) {
     self.equal( $b );
 }
 
-multi method cell(Math::Matrix:D: Int $row, Int $column --> Numeric ) {
-    fail X::OutOfRange.new(
-        :what<Row index> , :got($row), :range("0..{$!row-count -1 }")
-    ) unless 0 <= $row < $!row-count;
-    fail X::OutOfRange.new(
-        :what<Column index> , :got($column), :range("0..{$!column-count -1 }")
-    ) unless 0 <= $column < $!column-count;
-    return @!rows[$row][$column];
-}
-
 sub insert ($x, @xs) { ([flat @xs[0 ..^ $_], $x, @xs[$_ .. *]] for 0 .. @xs) }
 
 sub order ($sg, @xs) { $sg > 0 ?? @xs !! @xs.reverse }
@@ -242,35 +343,7 @@ multi σ_permutations ([$x, *@xs]) {
 }
 
 ################################################################################
-# end of type conversion and handy shortcuts - start value extraction
-################################################################################
-
-method !build_diagonal(Math::Matrix:D: ){
-    fail "Number of columns has to be same as number of rows" unless self.is-square;
-    ( gather for ^$!row-count -> $i { take @!rows[$i;$i] } ).list;
-}
-
-multi method submatrix(Math::Matrix:D: Int $row, Int $col --> Math::Matrix:D ){
-    fail "$row is not an existing row index" unless 0 <= $row < $!row-count;
-    fail "$col is not an existing column index" unless 0 <= $col < $!column-count;
-    my @clone = self!clone_rows();
-    @clone.splice($row,1);
-    @clone = map { $^r.splice($col, 1); $^r }, @clone;
-    Math::Matrix.new( @clone );
-}
-
-multi method submatrix(Math::Matrix:D: @rows, @cols --> Math::Matrix:D ){
-    fail X::OutOfRange.new(
-        :what<Column index> , :got(@cols), :range("0..{$!column-count -1 }")
-    ) unless 0 <= all(@cols) < $!column-count;
-    fail X::OutOfRange.new(
-        :what<Column index> , :got(@rows), :range("0..{$!row-count -1 }")
-    ) unless 0 <= all(@rows) < $!row-count;
-    Math::Matrix.new([ @rows.map( { [ @!rows[$_][|@cols] ] } ) ]);
-}
-
-################################################################################
-# end of value extraction - start matrix properties
+# end of type conversion and handy shortcuts - start matrix properties
 ################################################################################
 
 =begin pod
@@ -300,8 +373,6 @@ method size(Math::Matrix:D: ){
 method equal(Math::Matrix:D: Math::Matrix $b --> Bool) {
     @!rows ~~ $b!rows;
 }
-
-
 
 =begin pod
 =head2 method is-square
@@ -524,16 +595,14 @@ method inverted(Math::Matrix:D: --> Math::Matrix:D) {
 
 
 =begin pod
-=head2 method negated (negative)
+=head2 method negated
 
     my $new = $matrix.negated();    # invert sign of all cells
-    my $new = $matrix.negative();   # alias
     my $neg = - $matrix;            # works too
 
 =end pod
 
-method negated(Math::Matrix:D: --> Math::Matrix:D )   { self.negative }  # the usual short name
-method negative(Math::Matrix:D: --> Math::Matrix:D ) {
+method negated(Math::Matrix:D: --> Math::Matrix:D ) {
     self.apply( - * );
 }
 
