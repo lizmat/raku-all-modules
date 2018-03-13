@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tokuhirom/p6-Protocol-WebSocket.git
 	branch = master
-	commit = 69f6e3bdfb13f40f7caefc8b6cb2cc55bdd240db
-	parent = a9b971f5d4ed40adc688a7cac9f9f8730b23a061
+	commit = ca9ac790a556e6dc2a0c7e991c5c8717f1f1c445
+	parent = 75def457061c16b3e6720a29e954f03d34c721bd
 	cmdver = 0.4.0
