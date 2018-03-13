@@ -1,16 +1,17 @@
 use v6;
 
-use PDF:ver(v0.2.6+);
+use PDF:ver(v0.2.8+);
 
 #| A minimal class for manipulating PDF graphical content
-class PDF::Lite
+class PDF::Lite:ver<0.0.3>
     is PDF {
 
-    use PDF::DAO;
-    use PDF::DAO::Tie;
-    use PDF::DAO::Tie::Hash;
-    use PDF::DAO::Loader;
-    use PDF::DAO::Stream;
+    use PDF::COS;
+    use PDF::COS::Tie;
+    use PDF::COS::Tie::Hash;
+    use PDF::COS::Loader;
+    use PDF::COS::Stream;
+    use PDF::COS::Util :from-ast;
 
     use PDF::Content:ver(v0.1.0+);
     use PDF::Content::Graphics;
@@ -21,18 +22,17 @@ class PDF::Lite
     use PDF::Content::ResourceDict;
     use PDF::Content::XObject;
     use PDF::Content::Font;
-    use PDF::DAO::Util :from-ast;
 
     my role ResourceDict
-	does PDF::DAO::Tie::Hash
+	does PDF::COS::Tie::Hash
 	does PDF::Content::ResourceDict {
             has PDF::Content::Font %.Font  is entry;
-	    has PDF::DAO::Stream %.XObject is entry;
-            has PDF::DAO::Dict $.ExtGState is entry;
+	    has PDF::COS::Stream %.XObject is entry;
+            has PDF::COS::Dict $.ExtGState is entry;
     }
 
     my class XObject-Form
-        is PDF::DAO::Stream
+        is PDF::COS::Stream
         does PDF::Content::XObject['Form']
         does PDF::Content::Resourced
         does PDF::Content::Graphics {
@@ -40,11 +40,11 @@ class PDF::Lite
     }
 
     my class XObject-Image
-        is PDF::DAO::Stream
+        is PDF::COS::Stream
         does PDF::Content::XObject['Image'] {
     }
 
-    my class Loader is PDF::DAO::Loader {
+    my class Loader is PDF::COS::Loader {
         multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Form' given  .<Subtype>}) {
             XObject-Form
         }
@@ -55,10 +55,10 @@ class PDF::Lite
             XObject-Form
         }
     }
-    PDF::DAO.loader = Loader;
+    PDF::COS.loader = Loader;
 
     my role Page
-	does PDF::DAO::Tie::Hash
+	does PDF::COS::Tie::Hash
 	does PDF::Content::Page
 	does PDF::Content::PageNode {
 
@@ -73,7 +73,7 @@ class PDF::Lite
         my subset NinetyDegreeAngle of Int where { $_ %% 90}
         has NinetyDegreeAngle $.Rotate is entry(:inherit);
 
-	my subset StreamOrArray where PDF::DAO::Stream | Array;
+	my subset StreamOrArray where PDF::COS::Stream | Array;
 	has StreamOrArray $.Contents is entry;
 
         my subset ImageFile of Str where /:i '.'('png'|'svg'|'pdf') $/;
@@ -84,7 +84,7 @@ class PDF::Lite
     }
 
     my role Pages
-	does PDF::DAO::Tie::Hash
+	does PDF::COS::Tie::Hash
 	does PDF::Content::PageNode
 	does PDF::Content::PageTree {
 
@@ -98,7 +98,7 @@ class PDF::Lite
     }
 
     my role Catalog
-	does PDF::DAO::Tie::Hash {
+	does PDF::COS::Tie::Hash {
 	has Pages $.Pages is entry(:required, :indirect);
 
 	method cb-finish {

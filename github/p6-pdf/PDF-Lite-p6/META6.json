@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "PDF::Lite",
-    "version"     : "0.0.2",
+    "version"     : "0.0.3",
     "tags"        : ["pdf"],
     "license"     : "Artistic-2.0",
     "api"         : "PDF-1.7",

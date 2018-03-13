@@ -8,6 +8,7 @@
 - Simple forms and images (GIF, JPEG & PNG)
 - Graphics and Drawing
 - Content reuse (Pages and form objects)
+
 ```
 use v6;
 use PDF::Lite;
@@ -44,7 +45,7 @@ determine the actual width and height of the displayed text block;
 
 ```
 use PDF::Lite;
-my $pdf = PDF::Lite.new;
+my PDF::Lite $pdf .= new;
 $pdf.media-box = [0, 0, 500, 150];
 my $page = $pdf.add-page;
 my $font = $page.core-font( :family<Helvetica> );
@@ -80,7 +81,7 @@ The `.do` method can them be used to render it.
 
 ```
 use PDF::Lite;
-my $pdf = PDF::Lite.new;
+my PDF::Lite $pdf .= new;
 $pdf.media-box = [0, 0, 450, 250];
 my $page = $pdf.add-page;
 
@@ -110,7 +111,7 @@ To display card suits symbols, using the ZapfDingbats core-font, with diamonds a
 ```
 use PDF::Lite;
 use PDF::Content::Color :rgb;
-my $pdf = PDF::Lite.new;
+my PDF::Lite $pdf .= new;
 $pdf.media-box = [0, 0, 400, 120];
 my $page = $pdf.add-page;
 
@@ -155,7 +156,7 @@ The companion module PDF::Font::Loader can be used to access a wider range of fo
 ```
     use PDF::Lite;
     use PDF::Font::Loader :load-font;
-    my $pdf = PDF::Lite.new;
+    my PDF::Lite $pdf .= new;
     $pdf.media-box = [0, 0, 400, 120];
     my $page = $pdf.add-page;
     my $noto = load-font( :file<t/fonts/NotoSans-Regular.ttf> );
@@ -183,7 +184,7 @@ A pattern can be used to fill an area with a repeating graphic.
 ```
 use PDF::Lite;
 use PDF::Content::Color :rgb;
-my $pdf = PDF::Lite.new;
+my PDF::Lite $pdf .= new;
 $pdf.media-box = [0, 0, 400, 120];
 my $page = $pdf.add-page;
 
@@ -238,7 +239,7 @@ use PDF::Lite;
 my $pdf-with-images = PDF::Lite.open: "t/images.pdf";
 my $pdf-with-text = PDF::Lite.open: "examples/sample-text.pdf";
 
-my $new-doc = PDF::Lite.new;
+my PDF::Lite $new-doc .= new;
 $new-doc.media-box = [0, 0, 500, 400];
 
 # add a page; layup imported pages and images
@@ -311,7 +312,7 @@ PDF::Content inherits from PDF::Content::Op, which implements the full range of 
 
 ```
 use PDF::Lite;
-my $pdf = PDF::Lite.new;
+my PDF::Lite $pdf .= new;
 my $page = $pdf.add-page;
 
 # Draw a simple Bézier curve:
@@ -427,7 +428,9 @@ $pdf.page(1).gfx(:&callback).ops;
     - `update` to perform an in-place incremental update of the PDF
     - `Info` to access document meta-data
 
-- Please see the [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a description of available operators and graphics, which are also applicable to this module.
+- [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a description of available operators and graphics, which are also applicable to this module.
+
+- [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a description of available operators and graphics, which are also applicable to this module.
 
 
 
