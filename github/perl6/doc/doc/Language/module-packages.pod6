@@ -5,7 +5,7 @@
 =SUBTITLE Creating module packages for code reuse.
 
 
-I<N.B.> "Module" is an overloaded term in Perl 6; this document
+I<N.B.> "Module" is an overloaded term in Perl 6; this document
 focuses on use of the C<module> declarator.
 
 
@@ -175,12 +175,12 @@ that name in C<Bar.pm6>). But why is C<loud-greeting> callable even
 though we didn't mark it for export? The answer is simply that
 C<Bar.pm6> doesn't create a new package namespace—C<$?PACKAGE> is
 still set to C<GLOBAL>—so when we declare C<loud-greeting> as C<our>,
-it is registered in C<GLOBAL>'s symbol table.
+it is registered in the C<GLOBAL> symbol table.
 
 
 =head3 Lexical aliasing and safety
 
-Thankfully, Perl 6 protects us from accidentally clobbering call
+Thankfully, Perl 6 protects us from accidentally clobbering call
 site definitions (e.g. builtins). Consider the following addition
 to C<Bar.pm6>:
 
