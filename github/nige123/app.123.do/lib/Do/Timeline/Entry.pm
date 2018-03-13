@@ -1,4 +1,3 @@
-#!/usr/bin/env perl6
 
 class Do::Timeline::Entry {
 
@@ -13,7 +12,15 @@ class Do::Timeline::Entry {
     method is-next      { $.icon eq '+'; }
     method is-pinned    { $.icon eq '^'; }
         
-    method render       { $.icon  ~ " [" ~ $.id ~ "]\t" ~ $.text ~ "\n" }
+    method render       {
+		# padding keeps things readable when ID numbers get longer
+        my $id-length   = $.id.Str.chars;
+		my $padding     = $id-length < 5 
+					    ?? ' ' x (5 - $id-length)
+					    !! ' ';
+
+		$.icon  ~ " [" ~ $.id ~ "]" ~ $padding ~ $.text ~ "\n" 
+	}
     method set-daycount ($daycount) { $!daycount = $daycount }
 }
 
