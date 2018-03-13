@@ -17,8 +17,8 @@ class X::PDF::Image::UnknownType is Exception {
 }
 
 class PDF::Content::Image {
-    use PDF::DAO;
-    use PDF::DAO::Stream;
+    use PDF::COS;
+    use PDF::COS::Stream;
     use PDF::Content::XObject;
     use PDF::IO;
 
@@ -42,7 +42,7 @@ class PDF::Content::Image {
                 :$class = (require ::('PDF::Content::Image')::($image-type))) {
         my $image-obj = $class.new: :$image-type, :source($fh);
         $image-obj.read;
-        my PDF::DAO::Stream $image-xobject = $image-obj.to-dict;
+        my PDF::COS::Stream $image-xobject = $image-obj.to-dict;
         $image-xobject does PDF::Content::XObject[$image-xobject<Subtype>]
             unless $image-xobject ~~ PDF::Content::XObject;
         $image-xobject.image-obj = $image-obj;

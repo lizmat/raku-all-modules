@@ -4,7 +4,7 @@ class PDF::Content::Font::CoreFont {
     use Font::AFM:ver(v1.23.5+);
     use PDF::Content::Font;
     use PDF::Content::Font::Enc::Type1;
-    use PDF::DAO::Dict;
+    use PDF::COS::Dict;
     has Font::AFM $.metrics handles <kern>;
     has PDF::Content::Font::Enc::Type1 $.encoder handles <encode decode enc>;
     has PDF::Content::Font $!dict;
@@ -153,7 +153,7 @@ class PDF::Content::Font::CoreFont {
 
    method to-dict {
         $!dict //= PDF::Content::Font.make-font(
-            PDF::DAO::Dict.coerce(self!make-dict),
+            PDF::COS::Dict.coerce(self!make-dict),
             self);
     }
 

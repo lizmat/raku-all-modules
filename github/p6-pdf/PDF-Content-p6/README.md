@@ -26,7 +26,7 @@ say $gfx.Str;
 ```
 
 ### `PDF::Content::Image`
-supports the loading of some common image formats
+handles the loading of some common image formats
 
 It currently supports: PNG, GIF and JPEG.
 

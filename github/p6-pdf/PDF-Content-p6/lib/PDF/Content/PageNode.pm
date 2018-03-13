@@ -1,6 +1,6 @@
 use v6;
 
-use PDF::DAO::Tie::Hash;
+use PDF::COS::Tie::Hash;
 
 role PDF::Content::PageNode {
 

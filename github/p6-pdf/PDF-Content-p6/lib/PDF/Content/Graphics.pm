@@ -5,7 +5,7 @@ role PDF::Content::Graphics {
 
     use PDF::Content;
     use PDF::Content::Ops :OpCode;
-    use PDF::DAO;
+    use PDF::COS;
 
     has PDF::Content $!pre-gfx; #| prepended graphics
     method has-pre-gfx { ? .ops with $!pre-gfx }
@@ -94,7 +94,7 @@ role PDF::Content::Graphics {
         %dict<BBox> //= [0,0,612,792];
         %dict<Group> //= %( :S( :name<Transparency> ) )
             if $group;
-        PDF::DAO.coerce( :stream{ :%dict });
+        PDF::COS.coerce( :stream{ :%dict });
     }
 
     method tiling-pattern(List    :$BBox!,
@@ -109,7 +109,7 @@ role PDF::Content::Graphics {
                      for (:Type(:name<Pattern>), :PatternType(1),
                           :$PaintType, :$TilingType,
                           :$BBox, :$XStep, :$YStep, :$Resources);
-        PDF::DAO.coerce( :stream{ :%dict });
+        PDF::COS.coerce( :stream{ :%dict });
     }
 
 }

@@ -1,6 +1,6 @@
 use v6;
 
-use PDF::DAO::Util :from-ast;
+use PDF::COS::Util :from-ast;
 my role GraphicsAtt {
     has Str $.accessor-name is rw;
     method compose(Mu \package) {
@@ -142,7 +142,7 @@ class PDF::Content::Ops {
                             .keys.grep(* ne 'Type') eqv ($key, ) && .{$key} eqv v;
                         }
                         my $gs = .find-resource(&grepper, :type<ExtGState>)
-                            // PDF::DAO.coerce({ :Type{ :name<ExtGState> }, $key => v });
+                            // PDF::COS.coerce({ :Type{ :name<ExtGState> }, $key => v });
                         my Str $gs-entry = .resource-key($gs, :eqv);
 	                self.SetGraphicsState($gs-entry);
                     }

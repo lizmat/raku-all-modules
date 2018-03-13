@@ -64,7 +64,7 @@ role PDF::Content::XObject['Image'] {
 
         # for serialization to content stream ops: BI dict ID data EI
         use PDF::Content::Ops :OpCode;
-        use PDF::DAO::Util :ast-coerce;
+        use PDF::COS::Util :ast-coerce;
         # serialize to content ops
         my %dict = ast-coerce(self).value.list;
         %dict = self.inline-to-xobject( %dict, :invert );

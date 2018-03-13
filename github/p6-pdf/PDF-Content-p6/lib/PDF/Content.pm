@@ -1,11 +1,11 @@
 use v6;
 use PDF::Content::Ops :OpCode, :GraphicsContext, :ExtGState;
 
-class PDF::Content:ver<0.1.2>
+class PDF::Content:ver<0.2.0>
     is PDF::Content::Ops {
 
-    use PDF::DAO;
-    use PDF::DAO::Stream;
+    use PDF::COS;
+    use PDF::COS::Stream;
     use PDF::Content::Image;
     use PDF::Content::Text::Block;
     use PDF::Content::XObject;
@@ -54,7 +54,7 @@ class PDF::Content:ver<0.1.2>
 
     #| extract any inline images from the content stream. returns an array of XObject Images
     method inline-images returns Array {
-	my PDF::DAO::Stream @images;
+	my PDF::COS::Stream @images;
 	for $.ops.keys.grep: { $.ops[$_].key eq 'BI' } -> $i {
 	    my $v = $.ops[$i];
 	    my $v1 = $.ops[$i+1];
@@ -64,7 +64,7 @@ class PDF::Content:ver<0.1.2>
 	    my %dict = PDF::Content::XObject['Image'].inline-to-xobject($v.value[0]<dict>);
 	    my $encoded = $v1.value[0]<encoded>;
 
-	    @images.push: PDF::DAO.coerce( :stream{ :%dict, :$encoded } );
+	    @images.push: PDF::COS.coerce( :stream{ :%dict, :$encoded } );
 	}
 	@images;
     }
@@ -84,7 +84,7 @@ class PDF::Content:ver<0.1.2>
     my subset Valign of Str where 'top'  | 'center' | 'bottom';
 
     #| place an image, or form object
-    method do(PDF::DAO::Stream $obj! where .<Subtype> eq 'Image'|'Form',
+    method do(PDF::COS::Stream $obj! where .<Subtype> eq 'Image'|'Form',
               Numeric $x = 0,
               Numeric $y = 0,
               Numeric :$width is copy,
@@ -139,7 +139,7 @@ class PDF::Content:ver<0.1.2>
         };
     }
 
-    method use-pattern(PDF::DAO::Stream $pat! where .<Type> eq 'Pattern' --> Pair) {
+    method use-pattern(PDF::COS::Stream $pat! where .<Type> eq 'Pattern' --> Pair) {
         $pat.finish;
         :Pattern(self.resource-key($pat));
     }

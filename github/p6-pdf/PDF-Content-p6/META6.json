@@ -49,5 +49,5 @@
   "source-url" : "git://github.com/p6-pdf/PDF-Content-p6.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.1.2"
+  "version" : "0.2.0"
 }

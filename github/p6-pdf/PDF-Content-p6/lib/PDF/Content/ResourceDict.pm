@@ -2,8 +2,8 @@ use v6;
 
 role PDF::Content::ResourceDict {
 
-    use PDF::DAO;
-    use PDF::DAO::Name;
+    use PDF::COS;
+    use PDF::COS::Name;
     use PDF::Content::Font;
 
     has Str %!resource-key; # {Any}
@@ -15,7 +15,7 @@ role PDF::Content::ResourceDict {
        %!resource-key{$object.WHICH};
     }
 
-    method !resource-type( PDF::DAO $_ ) is default {
+    method !resource-type( PDF::COS $_ ) is default {
         when Hash {
             when .<Type>:exists {
                 given .<Type> {
@@ -29,7 +29,7 @@ role PDF::Content::ResourceDict {
                 'XObject'
             }
         }
-        when Array && .[0] ~~ PDF::DAO::Name {
+        when Array && .[0] ~~ PDF::COS::Name {
             # e.g. [ /CalRGB << /WhitePoint [ 1.0 1.0 1.0 ] >> ]
             'ColorSpace'
         }
@@ -59,7 +59,7 @@ role PDF::Content::ResourceDict {
 
     #| ensure that the object is registered as a page resource. Return a unique
     #| name for it.
-    method !register-resource(PDF::DAO $object,
+    method !register-resource(PDF::COS $object,
                              Str :$type = self!resource-type($object),
 	) {
 
@@ -89,7 +89,7 @@ role PDF::Content::ResourceDict {
 	$object;
     }
 
-    multi method resource(PDF::DAO $object, Bool :$eqv=False ) is default {
+    multi method resource(PDF::COS $object, Bool :$eqv=False ) is default {
         my Str $type = self!resource-type($object)
             // die "not a resource object: {$object.WHAT}";
 

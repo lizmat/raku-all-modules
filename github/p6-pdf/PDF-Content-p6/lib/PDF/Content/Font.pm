@@ -1,13 +1,13 @@
 use v6;
 
 role PDF::Content::Font {
-    use PDF::DAO;
-    use PDF::DAO::Dict;
+    use PDF::COS;
+    use PDF::COS::Dict;
 
     has $.font-obj is rw handles <encode decode filter font-name height kern stringwidth cb-finish>;
 
-    method make-font(PDF::DAO::Dict $dict, $font-obj) {
-        my $font-dict = PDF::DAO.coerce(
+    method make-font(PDF::COS::Dict $dict, $font-obj) {
+        my $font-dict = PDF::COS.coerce(
             $dict,
             PDF::Content::Font
             );

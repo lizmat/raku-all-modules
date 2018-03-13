@@ -8,9 +8,9 @@ role PDF::Content::Page
     does PDF::Content::Resourced
     does PDF::Content::Graphics {
 
-    use PDF::DAO;
-    use PDF::DAO::Tie;
-    use PDF::DAO::Stream;
+    use PDF::COS;
+    use PDF::COS::Tie;
+    use PDF::COS::Stream;
 
     my Array enum PageSizes is export(:PageSizes) «
 	    :Letter[0,0,612,792]
@@ -51,8 +51,8 @@ role PDF::Content::Page
         my $Resources = $from.Resources.clone,
 	# copy unflushed graphics
         my $xobject = self.xobject-form( :$BBox, :$Resources);
-        PDF::DAO.coerce($xobject, $coerce)
-            if $coerce ~~ PDF::DAO::Tie;
+        PDF::COS.coerce($xobject, $coerce)
+            if $coerce ~~ PDF::COS::Tie;
         $xobject.pre-gfx.ops($from.pre-gfx.ops);
         $xobject.gfx.ops($from.gfx.ops);
 
@@ -76,11 +76,11 @@ role PDF::Content::Page
         Proxy.new(
             FETCH => sub ($) { self.contents },
             STORE => sub ($,$decoded) {
-                if self<Contents> ~~ PDF::DAO::Stream {
+                if self<Contents> ~~ PDF::COS::Stream {
                     self<Contents>.decoded = $decoded;
                 }
                 else {
-                    self<Contents> = PDF::DAO::Stream.new: :$decoded;
+                    self<Contents> = PDF::COS::Stream.new: :$decoded;
                 }
             },
         );

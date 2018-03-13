@@ -6,8 +6,8 @@ use PDF::Content::Image;
 class PDF::Content::Image::PNG
     is PDF::Content::Image {
 
-    use PDF::DAO;
-    use PDF::DAO::Stream;
+    use PDF::COS;
+    use PDF::COS::Stream;
     use PDF::IO::Filter;
     use PDF::IO::Util :pack;
     use Native::Packing :Endian;
@@ -127,7 +127,7 @@ class PDF::Content::Image::PNG
         png-to-stream(PNG-CS($!hdr.color-type), $!hdr.bit-depth, |%opts);
     }
 
-    proto sub png-to-stream(uint $cs, uint $bpc, *%o --> PDF::DAO::Stream) {*}
+    proto sub png-to-stream(uint $cs, uint $bpc, *%o --> PDF::COS::Stream) {*}
 
     multi sub png-to-stream(PNG-CS::Gray,
                             $bpc where 1|2|4|8|16,
@@ -148,7 +148,7 @@ class PDF::Content::Image::PNG
             %dict<Mask> = [ $vals.min, $vals.max ]
         }
         my $encoded = $stream.decode: 'latin-1';
-        PDF::DAO.coerce: :stream{ :%dict, :$encoded };
+        PDF::COS.coerce: :stream{ :%dict, :$encoded };
     }
 
     multi sub png-to-stream(PNG-CS::RGB,
@@ -170,7 +170,7 @@ class PDF::Content::Image::PNG
             %dict<Mask> = [ $vals.map: { (*.min, *.max) } ];
         }
         my $encoded = $stream.decode: 'latin-1';
-        PDF::DAO.coerce: :stream{ :%dict, :$encoded };
+        PDF::COS.coerce: :stream{ :%dict, :$encoded };
     }
 
     multi sub png-to-stream(PNG-CS::RGB-Palette,
@@ -188,7 +188,7 @@ class PDF::Content::Image::PNG
         %dict<DecodeParms> = { :Predictor(15), :BitsPerComponent($bpc), :Colors(1), :Columns($w) };
 
         my $encoded = $palette.decode('latin-1');
-        my $color-stream = PDF::DAO.coerce: :stream{ :$encoded };
+        my $color-stream = PDF::COS.coerce: :stream{ :$encoded };
         my $hival = +$palette div 3  -  1;
         %dict<ColorSpace> = [ :name<Indexed>, :name<DeviceRGB>, $hival, $color-stream, ];
 
@@ -198,7 +198,7 @@ class PDF::Content::Image::PNG
             $decoded.append( 0xFF xx $padding)
                 if $padding;
 
-            %dict<SMask> = PDF::DAO.coerce: :stream{
+            %dict<SMask> = PDF::COS.coerce: :stream{
                 :dict{:Type( :name<XObject> ),
 		      :Subtype( :name<Image> ),
 		      :Width($w),
@@ -211,7 +211,7 @@ class PDF::Content::Image::PNG
 	    };
 	}
 	$encoded = $stream.decode: 'latin-1';
-	PDF::DAO.coerce: :stream{ :%dict, :$encoded };
+	PDF::COS.coerce: :stream{ :%dict, :$encoded };
     }
 
     multi sub png-to-stream(PNG-CS::Gray-Alpha,
@@ -223,7 +223,7 @@ class PDF::Content::Image::PNG
 			    Bool :$alpha,
 	) {
 
-	%dict<Filter> = PDF::DAO.coerce: :name<FlateDecode>;
+	%dict<Filter> = PDF::COS.coerce: :name<FlateDecode>;
 	%dict<ColorSpace> = :name<DeviceGray>;
 	%dict<DecodeParms> = { :Predictor(15), :Colors(2), :Columns($w), :BitsPerComponent($bpc) };
 	%dict<BitsPerComponent> = $bpc;
@@ -245,7 +245,7 @@ class PDF::Content::Image::PNG
 
 	if $alpha {
 	    my $decoded = $alpha-channel.decode: 'latin-1';
-	    %dict<SMask> = PDF::DAO.coerce: :stream{
+	    %dict<SMask> = PDF::COS.coerce: :stream{
 		:dict{:Type( :name<XObject> ),
 		      :Subtype( :name<Image> ),
 		      :Width($w),
@@ -259,7 +259,7 @@ class PDF::Content::Image::PNG
 	}
 
 	my $decoded = $gray-channel.decode: 'latin-1';
-	PDF::DAO.coerce: :stream{ :%dict, :$decoded };
+	PDF::COS.coerce: :stream{ :%dict, :$decoded };
     }
 
     multi sub png-to-stream(PNG-CS::RGB-Alpha,
@@ -271,7 +271,7 @@ class PDF::Content::Image::PNG
 			    Buf :$trns,
 			    Bool :$alpha,
 	) {
-	%dict<Filter> = PDF::DAO.coerce: :name<FlateDecode>;
+	%dict<Filter> = PDF::COS.coerce: :name<FlateDecode>;
 	%dict<ColorSpace> = :name<DeviceRGB>;
 	%dict<BitsPerComponent> = $bpc;
 	%dict<DecodeParms> = { :Predictor(15), :BitsPerComponent($bpc), :Colors(4), :Columns($w) };
@@ -292,7 +292,7 @@ class PDF::Content::Image::PNG
 
 	if $alpha {
 	    my $decoded = $alpha-channel.decode: 'latin-1';
-	    %dict<SMask> = PDF::DAO.coerce: :stream{
+	    %dict<SMask> = PDF::COS.coerce: :stream{
 		:dict{:Type( :name<XObject> ),
 		      :Subtype( :name<Image> ),
 		      :Width($w),
@@ -306,7 +306,7 @@ class PDF::Content::Image::PNG
 	}
 
 	my $decoded = $rgb-channels.decode: 'latin-1';
-	PDF::DAO.coerce: :stream{ :%dict, :$decoded };
+	PDF::COS.coerce: :stream{ :%dict, :$decoded };
     }
 
     method open(PDF::Content::Image::IOish $fh) {

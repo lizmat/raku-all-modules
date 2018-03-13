@@ -6,7 +6,7 @@ role PDF::Content::PageTree
     does PDF::Content::Resourced {
 
     use PDF::Content::PageNode;
-    use PDF::DAO;
+    use PDF::COS;
 
     #| add new last page
     method add-page( $page? is copy ) {
@@ -22,7 +22,7 @@ role PDF::Content::PageTree
 	    }
 	}
 	else {
-	    $_ = PDF::DAO.coerce: :dict{ :Type( :name<Page> ) };
+	    $_ = PDF::COS.coerce: :dict{ :Type( :name<Page> ) };
 	}
 
         if $sub-pages && $sub-pages.can('add-page') {

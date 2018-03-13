@@ -15,7 +15,7 @@ my Pair @images;
 my $jpeg;
 lives-ok {$jpeg = PDF::Content::Image.open: "t/images/jpeg.jpg";}, "open jpeg - lives";
 @images.push: 'JPEG - Content' => $jpeg;
-isa-ok $jpeg, ::('PDF::DAO::Stream'), 'jpeg object';
+isa-ok $jpeg, ::('PDF::COS::Stream'), 'jpeg object';
 is $jpeg<Type>, 'XObject', 'jpeg type';
 is $jpeg<Subtype>, 'Image', 'jpeg subtype';
 is $jpeg<Width>, 24, 'jpeg width';
@@ -30,7 +30,7 @@ is $jpeg.height, 24, 'jpeg height';
 my $gif;
 lives-ok {$gif = PDF::Content::Image.open: "t/images/lightbulb.gif";}, "open gif - lives";
 @images.push: 'GIF - Content' => $gif;
-isa-ok $gif, ::('PDF::DAO::Stream'), 'gif object';
+isa-ok $gif, ::('PDF::COS::Stream'), 'gif object';
 is $gif<Type>, 'XObject', 'gif type';
 is $gif<Subtype>, 'Image', 'gif subtype';
 is $gif<Width>, 19, 'gif width';
@@ -157,7 +157,7 @@ for (
 
     my $png;
     lives-ok { $png = PDF::Content::Image.open: $test<file>; }, "open $desc - lives";
-    isa-ok $png, ::('PDF::DAO::Stream'), "$desc object";
+    isa-ok $png, ::('PDF::COS::Stream'), "$desc object";
     @images.push: $desc => $png;
     
     is $png<Type>, 'XObject', "$desc type";

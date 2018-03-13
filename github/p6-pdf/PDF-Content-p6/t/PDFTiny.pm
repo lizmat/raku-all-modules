@@ -1,10 +1,10 @@
 use v6;
 use PDF;
 class t::PDFTiny is PDF {
-    use PDF::DAO;
-    use PDF::DAO::Tie;
-    use PDF::DAO::Loader;
-    use PDF::DAO::Util :from-ast;
+    use PDF::COS;
+    use PDF::COS::Tie;
+    use PDF::COS::Loader;
+    use PDF::COS::Util :from-ast;
     use PDF::Content::Page;
     use PDF::Content::PageNode;
     use PDF::Content::PageTree;
@@ -12,21 +12,21 @@ class t::PDFTiny is PDF {
     use PDF::Content::Resourced;
     use PDF::Content::XObject;
     my role ResourceDict
-	does PDF::DAO::Tie::Hash
+	does PDF::COS::Tie::Hash
 	does PDF::Content::ResourceDict { }
     my class XObject-Form
-        is PDF::DAO::Stream
+        is PDF::COS::Stream
         does PDF::Content::XObject['Form']
         does PDF::Content::Resourced
         does PDF::Content::Graphics {
             has ResourceDict $.Resources is entry;
     }
     my class XObject-Image
-        is PDF::DAO::Stream
+        is PDF::COS::Stream
         does PDF::Content::XObject['Image'] {
     }
     my role PageNode
-	does PDF::DAO::Tie::Hash
+	does PDF::COS::Tie::Hash
 	does PDF::Content::PageNode {
 
  	has ResourceDict $.Resources is entry(:inherit);
@@ -41,7 +41,7 @@ class t::PDFTiny is PDF {
         has UInt $.Count       is entry(:required);
     }
     my role Catalog
-	does PDF::DAO::Tie::Hash {
+	does PDF::COS::Tie::Hash {
 	has Pages $.Pages is entry(:required, :indirect);
 
 	method cb-finish {
@@ -51,7 +51,7 @@ class t::PDFTiny is PDF {
 
     has Catalog $.Root is entry(:required, :indirect);
 
-    my class Loader is PDF::DAO::Loader {
+    my class Loader is PDF::COS::Loader {
         multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Form' given  .<Subtype>}) {
             XObject-Form
         }
@@ -62,7 +62,7 @@ class t::PDFTiny is PDF {
             XObject-Form
         }
     }
-    PDF::DAO.loader = Loader;
+    PDF::COS.loader = Loader;
 
     method cb-init {
 	self<Root> //= { :Type( :name<Catalog> ), :Pages{ :Type( :name<Pages> ), :Kids[], :Count(0), } };
