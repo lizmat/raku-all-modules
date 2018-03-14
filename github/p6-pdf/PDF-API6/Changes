@@ -1,3 +1,5 @@
+0.1.0
+   - adjust to rename of PDF::DAO to PDF::COS in latest PDF::CLASS
 0.0.4
    - add color-separation() and color-devicen() methods
 0.0.3

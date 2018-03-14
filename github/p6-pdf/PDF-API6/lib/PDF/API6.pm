@@ -1,10 +1,10 @@
 use v6;
 use PDF::Class:ver;
 
-class PDF::API6:ver<0.0.4>
+class PDF::API6:ver<0.1.0>
     is PDF::Class {
 
-    use PDF::DAO;
+    use PDF::COS;
     use PDF::Catalog;
     use PDF::Info;
     use PDF::Metadata::XML;
@@ -19,7 +19,7 @@ class PDF::API6:ver<0.0.4>
         }
         True;
     }
-    sub to-name(Str $name) { PDF::DAO.coerce: :$name }
+    sub to-name(Str $name) { PDF::COS.coerce: :$name }
 
     subset PageRef where {!.defined || $_ ~~ UInt|PDF::Page};
 
@@ -244,7 +244,7 @@ class PDF::API6:ver<0.0.4>
 
         my %dict = :Domain[0,1], :@Range, :Size[2,], :BitsPerSample(8), :Filter( :name<ASCIIHexDecode> );
         my PDF::Function::Sampled $function .= new: :%dict, :$encoded;
-        PDF::DAO.coerce: [ :name<Separation>, :$name, :name($color.key), $function ];
+        PDF::COS.coerce: [ :name<Separation>, :$name, :name($color.key), $function ];
     }
 
     method color-devicen(@colors) {
@@ -288,6 +288,6 @@ class PDF::API6:ver<0.0.4>
         my %Colorants = @names Z=> @colors;
 
         my PDF::Function::Sampled $function .= new: :%dict, :$decoded;
-        PDF::DAO.coerce: [ :name<DeviceN>, @names, :name<DeviceCMYK>, $function, { :%Colorants } ];
+        PDF::COS.coerce: [ :name<DeviceN>, @names, :name<DeviceCMYK>, $function, { :%Colorants } ];
     }
 }
