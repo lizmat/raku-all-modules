@@ -1,0 +1,6 @@
+[default]
+output = json
+region = us-west-1
+
+[fun]
+region = us-east-2

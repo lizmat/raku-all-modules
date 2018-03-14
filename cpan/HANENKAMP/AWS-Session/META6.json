@@ -1,0 +1,31 @@
+{
+   "meta6" : "0",
+   "provides" : {
+       "AWS::Session" : "lib/AWS/Session.pm6",
+       "AWS::Session::Default" : "lib/AWS/Session.pm6",
+       "AWS::Credentials" : "lib/AWS/Credentials.pm6",
+       "AWS::Credentials::Refreshable" : "lib/AWS/Credentials.pm6",
+       "AWS::Credentials::Provider" : "lib/AWS/Credentials.pm6",
+       "AWS::Credentials::Provider::FromEnv" : "lib/AWS/Credentials.pm6",
+       "AWS::Credentials::Provider::SharedCredentials" : "lib/AWS/Credentials.pm6",
+       "AWS::Credentials::Provider::Resolver" : "lib/AWS/Credentials.pm6"
+   },
+   "test-depends" : [
+      "Test", "Test::META"
+   ],
+   "support" : {
+      "source" : "git://github.com/zostay/AWS-Session.git"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:zostay",
+   "source-url" : "git://github.com/zostay/AWS-Session.git",
+   "depends" : [],
+   "name" : "AWS::Session",
+   "authors" : [
+      "Sterling Hanenkamp <hanenkamp@cpan.org>"
+   ],
+   "version" : "0.1",
+   "license" : "Artistic-2.0",
+   "description" : "Tools for managing AWS configuration and credentials"
+}
