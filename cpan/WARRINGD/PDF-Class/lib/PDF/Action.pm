@@ -1,5 +1,5 @@
 use v6;
-use PDF::DAO::Tie::Hash;
+use PDF::COS::Tie::Hash;
 
 # See [PDF 1.7 TABLE 8.2 Destination syntax]
 my subset NumNull where { .does(Numeric) || !.defined };  #| UInt value or null
@@ -18,21 +18,21 @@ multi sub is-destination(|c)                      is default { False }
 
 my subset DestinationArray of Array where is-destination(|$_);
 role PDF::Action {...}
-subset PDF::Action::Destination of PDF::DAO where DestinationArray | PDF::Action; #| e.g. for Catalog /OpenAction entry
+subset PDF::Action::Destination of PDF::COS where DestinationArray | PDF::Action; #| e.g. for Catalog /OpenAction entry
 
 #| /Type /Action
 
 role PDF::Action
-    does PDF::DAO::Tie::Hash {
+    does PDF::COS::Tie::Hash {
 
     # set [PDF 1.7 TABLE 8.17 Entries in a action style dictionary]
-    use PDF::DAO::Tie;
-    use PDF::DAO::Name;
+    use PDF::COS::Tie;
+    use PDF::COS::Name;
 
-    my subset Name-Action of PDF::DAO::Name where 'Action';
+    my subset Name-Action of PDF::COS::Name where 'Action';
     has Name-Action $.Type is entry;
 
-    my subset ActionSubtype of PDF::DAO::Name where
+    my subset ActionSubtype of PDF::COS::Name where
 	'GoTo'         #| Go to a destination in the current document.
 	|'GoToR'       #| (“Go-to remote”) Go to a destination in another document.
 	|'GoToE'       #| (“Go-to embedded”; PDF 1.6) Go to a destination in an embedded file.
@@ -58,28 +58,28 @@ role PDF::Action
     proto sub coerce($,$) is export(:coerce) {*}
 
     multi sub coerce(Hash $dict is rw where { .<S> ~~ ActionSubtype }, PDF::Action) {
-	my $subclass = PDF::DAO.loader.find-delegate( 'Action', $dict<S> );
-	PDF::DAO.coerce($dict, $subclass);
+	my $subclass = PDF::COS.loader.find-delegate( 'Action', $dict<S> );
+	PDF::COS.coerce($dict, $subclass);
     }
 
     multi sub coerce(Hash $dict is rw, PDF::Action) is default {
 	warn "unknown action subtype: $dict<S>"
 	    if $dict<S>:exists;
-	PDF::DAO.coerce($dict, PDF::Action);
+	PDF::COS.coerce($dict, PDF::Action);
     }
 
     multi sub coerce(Hash $dict is rw, PDF::Action::Destination) {
 	coerce( $dict, PDF::Action );
     }
 
-    my subset NextActionArray of Array where { !.first( !*.isa(PDF::Action) ) }
+    my subset NextActionArray of Array where { [&&] .map( *.isa(PDF::Action) ) }
     my subset NextAction where PDF::Action | NextActionArray;
 
     multi sub coerce(Hash $actions, NextAction) {
-      PDF::DAO.coerce( $_, PDF::Action )
+      PDF::COS.coerce( $_, PDF::Action )
     }
     multi sub coerce(Array $actions, NextAction) {
-      PDF::DAO.coerce( $actions[$_], PDF::Action )
+      PDF::COS.coerce( $actions[$_], PDF::Action )
 	  for $actions.keys;
     }
 

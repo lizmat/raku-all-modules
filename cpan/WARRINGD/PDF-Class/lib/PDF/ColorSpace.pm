@@ -1,15 +1,15 @@
 use v6;
 
-use PDF::DAO::Array;
+use PDF::COS::Array;
 
 class PDF::ColorSpace
-    is PDF::DAO::Array {
+    is PDF::COS::Array {
 
     # See [PDF 1.7 Section 4.5 Color Spaces]
 
-    use PDF::DAO::Name;
-    use PDF::DAO::Tie;
-    has PDF::DAO::Name $.Subtype is index(0, :required);
+    use PDF::COS::Name;
+    use PDF::COS::Tie;
+    has PDF::COS::Name $.Subtype is index(0, :required);
 
     method type {'ColorSpace'}
     method subtype {$.Subtype}
@@ -26,7 +26,7 @@ class PDF::ColorSpace
 
                 my Str $subtype = ~$1;
 
-		self[0] //= PDF::DAO.coerce( :name($subtype) );
+		self[0] //= PDF::COS.coerce( :name($subtype) );
 
 		die "conflict between class-name $class-name ($subtype) and array[0] type /{self[0]}"
 		    unless self.Subtype eq $subtype;

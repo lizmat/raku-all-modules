@@ -1,7 +1,7 @@
 use v6;
 
-use PDF::DAO::Tie;
-use PDF::DAO::Name;
+use PDF::COS::Tie;
+use PDF::COS::Name;
 use PDF::Annot;
 
 class PDF::Annot::Link
@@ -11,7 +11,7 @@ class PDF::Annot::Link
     use PDF::Action;
     has PDF::Action $.A is entry(:alias<action>);             #| (Optional; PDF 1.1) An action to be performed when the link annotation is activated.
     has $.Dest is entry;               #| (Optional; not permitted if an A entry is present) A destination to be displayed when the annotation is activated
-    subset HName of PDF::DAO::Name where 'N'|'I'|'O'|'P';
+    subset HName of PDF::COS::Name where 'N'|'I'|'O'|'P';
     has HName $.H is entry(:alias<highlight-mode>);            #| (Optional; PDF 1.2) The annotation’s highlighting mode, the visual effect to be used when the mouse button is pressed or held down inside its active area:
                                        #| N(None)    - No highlighting.
                                        #| I(Invert)  - Invert the contents of the annotation rectangle.

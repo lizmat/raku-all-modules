@@ -1,13 +1,15 @@
 use v6;
 
+use PDF::COS::Stream;
 use PDF::Shading;
 
 #| /ShadingType 4 - FreeForm
 
 class PDF::Shading::FreeForm
-    is PDF::Shading {
+    is PDF::COS::Stream
+    does PDF::Shading {
     # see [PDF 1.7 TABLE 4.32 Additional entries specific to a type 4 shading dictionary]
-    use PDF::DAO::Tie;
+    use PDF::COS::Tie;
 
     has UInt $.BitsPerCoordinate is entry(:required); #| (Required) The number of bits used to represent each vertex coordinate. Valid values are 1, 2, 4, 8, 12, 16, 24, and 32.
     has UInt $.BitsPerComponent is entry(:required);  #| (Required) The number of bits used to represent each color component. Valid values are 1, 2, 4, 8, 12, and 16.

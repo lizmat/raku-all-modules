@@ -1,24 +1,24 @@
 use v6;
 
-use PDF::DAO::Dict;
+use PDF::COS::Dict;
 use PDF::Class::Type;
 
 #| /Type /FontDescriptor - the FontDescriptor dictionary
 
 class PDF::FontDescriptor
-    is PDF::DAO::Dict
+    is PDF::COS::Dict
     does PDF::Class::Type {
 
-    use PDF::DAO::Tie;
-    use PDF::DAO::Name;
-    use PDF::DAO::Stream;
+    use PDF::COS::Tie;
+    use PDF::COS::Name;
+    use PDF::COS::Stream;
 
     # see [PDF 1.7 TABLE 5.19 Entries common to all font descriptors]
-    my subset Name-FontDescriptor of PDF::DAO::Name where 'FontDescriptor';
+    my subset Name-FontDescriptor of PDF::COS::Name where 'FontDescriptor';
     has Name-FontDescriptor $.Type is entry(:required);
-    has PDF::DAO::Name $.FontName is entry(:required); #| (Required) The PostScript name of the font.
+    has PDF::COS::Name $.FontName is entry(:required); #| (Required) The PostScript name of the font.
     has Str $.FontFamily is entry;                     #| (Optional; PDF 1.5; strongly recommended for Type 3 fonts in Tagged PDF documents) A byte string specifying the preferred font family name
-    subset FontStretchName of PDF::DAO::Name where 'ExtraCondensed'|'Condensed'|'SemiCondensed'|'Normal'|'SemiExpanded'|'Expanded'|'ExtraExpanded'|'UltraExpanded';
+    subset FontStretchName of PDF::COS::Name where 'ExtraCondensed'|'Condensed'|'SemiCondensed'|'Normal'|'SemiExpanded'|'Expanded'|'ExtraExpanded'|'UltraExpanded';
     has FontStretchName $.FontStretch is entry;        #| (Optional; PDF 1.5; strongly recommended for Type 3 fonts in Tagged PDF documents) The font stretch value
     subset FontWeightValue of Int where 100|200|300|400|500|600|700|800|900;
     has FontWeightValue $.FontWeight is entry;         #| Optional; PDF 1.5; strongly recommended for Type 3 fonts in Tagged PDF documents) The weight (thickness) component of the fully-qualified font name or font specifier.
@@ -47,8 +47,8 @@ class PDF::FontDescriptor
     has Numeric $.AvgWidth is entry;                   #| (Optional) The average width of glyphs in the font
     has Numeric $.MaxWidth is entry;                   #| (Optional) The maximum width of glyphs in the font
     has Numeric $.MissingWidth is entry;               #| (Optional) The width to use for character codes whose widths are not specified in a font dictionary’s Widths array.
-    has PDF::DAO::Stream $.FontFile is entry;          #| (Optional) A stream containing a Type 1 font program
-    has PDF::DAO::Stream $.FontFile2 is entry;         #| (Optional; PDF 1.1) A stream containing a TrueType font program
+    has PDF::COS::Stream $.FontFile is entry;          #| (Optional) A stream containing a Type 1 font program
+    has PDF::COS::Stream $.FontFile2 is entry;         #| (Optional; PDF 1.1) A stream containing a TrueType font program
     use PDF::FontFile;
     has PDF::FontFile $.FontFile3 is entry;           #| (Optional; PDF 1.2) A stream containing a font program whose format is specified by the Subtype entry in the stream dictionary. type1C for Type 1 compact fonts, CIDFontType0C for Type 0 compact CIDFonts, or OpenType for OpenType fonts.
     has Str $.CharSet is entry;                        #| Optional; meaningful only in Type 1 fonts; PDF 1.1) A string listing the character names defined in a font subset

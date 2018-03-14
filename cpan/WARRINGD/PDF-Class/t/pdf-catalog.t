@@ -74,7 +74,7 @@ dies-ok { $catalog.OpenAction = [{}, 'FitH', 'blah' ] }, '$catalog.OpenAction as
 lives-ok { $catalog.OpenAction = [{}, 'FitH', 42 ] }, '$catalog.OpenAction assignment - numeric';
 is-json-equiv $catalog.OpenAction, [{}, 'FitH', 42 ], '$catalog.OpenAction assignment - numeric';
 
-my $null = PDF::DAO.coerce( :null(Any) );
+my $null = PDF::COS.coerce( :null(Any) );
 lives-ok { $catalog.OpenAction = [{}, 'FitH', $null ] }, '$catalog.OpenAction assignment - null';
 is-json-equiv $catalog.OpenAction, [{}, 'FitH', Mu ], '$catalog.OpenAction assignment - null';
 

@@ -130,6 +130,6 @@ my $exp-func = PDF::Function::Exponential.new: :dict{ :Domain[ 0, 1], :Range[fla
 is $exp-func.FunctionType, 2, '$exp-func.FunctionType';
 my $cs1 = ::('PDF')::('ColorSpace::Separation').new: :array[ 'Separation', 'My Spot 1', :name<DeviceCMYK>, $exp-func ];
 is $cs1.Name, 'My Spot 1', 'cs1.Name';
-does-ok $cs1.Name,::('PDF::DAO::Name'), 'cs1.Name';
+does-ok $cs1.Name,::('PDF::COS::Name'), 'cs1.Name';
 is-deeply $cs1.TintTransform, $exp-func, 'cs1.TintTransform';
 

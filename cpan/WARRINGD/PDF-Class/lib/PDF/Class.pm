@@ -3,12 +3,12 @@ use v6;
 use PDF:ver(v0.2.1+);
 
 #| PDF entry-point. either a trailer dict or an XRef stream
-class PDF::Class:ver<0.0.8> #:api<PDF-1.7>
+class PDF::Class:ver<0.1.0> #:api<PDF-1.7>
     is PDF {
 
     # base class declares: $.Size, $.Encrypt, $.ID
-    use PDF::DAO;
-    use PDF::DAO::Tie;
+    use PDF::COS;
+    use PDF::COS::Tie;
     use PDF::Class::Type;
     need PDF::Info;
     has PDF::Info $.Info is entry(:indirect);  #| (Optional; must be an indirect reference) The document’s information dictionary
@@ -23,7 +23,7 @@ class PDF::Class:ver<0.0.8> #:api<PDF-1.7>
             },
             STORE => sub ($, Version $_) {
                 my $name = .Str;
-                $.catalog<Version> = PDF::DAO.coerce: :$name;
+                $.catalog<Version> = PDF::COS.coerce: :$name;
             },
         );
     }

@@ -1,14 +1,21 @@
 use v6;
 use Test;
-plan 15;
+plan 18;
 
 use PDF::Class;
 
 isa-ok PDF::Class.loader.load-delegate( :dict{ :Type<Page> }), ::('PDF::Page'), 'delegation sanity';
 isa-ok PDF::Class.loader.load-delegate( :dict{ :Type<XObject>, :Subtype<Image> }), ::('PDF::XObject::Image'), 'delegation to subclass';
-isa-ok PDF::Class.loader.load-delegate( :dict{ :ShadingType(7) }),  ::('PDF::Shading::Tensor'), 'delegation by ShadingType';
-isa-ok PDF::Class.loader.load-delegate( :dict{ :ShadingType(42) }),  ::('PDF::Shading'), 'delegation by ShadingType (unknown)';
-isa-ok PDF::Class.loader.load-delegate( :dict{ :Type<Unknown> }, :fallback(Hash)), Hash, 'delegation fallback';
+my $shading-class = PDF::Class.loader.load-delegate( :dict{ :ShadingType(2) });
+isa-ok $shading-class, (require ::('PDF::Shading::Axial')), 'delegation by ShadingType';
+isa-ok $shading-class, (require ::('PDF::COS::Dict')), 'delegation by ShadingType';
+
+$shading-class = PDF::Class.loader.load-delegate( :dict{ :ShadingType(7) });
+isa-ok $shading-class, (require ::('PDF::Shading::Tensor')), 'delegation by ShadingType';
+isa-ok $shading-class, (require ::('PDF::COS::Stream')), 'delegation by ShadingType';
+
+does-ok PDF::Class.loader.load-delegate( :dict{ :ShadingType(42) }), (require ::('PDF::Shading')), 'delegation by ShadingType (unknown)';
+isa-ok PDF::Class.loader.load-delegate( :dict{ :Type<Unknown> }, :base-class(Hash)), Hash, 'delegation base-class';
 isa-ok PDF::Class.loader.load-delegate( :dict{ :FunctionType(3) }),  ::('PDF::Function::Stitching'), 'delegation by FunctionType';
 
 isa-ok PDF::Class.loader.load-delegate( :dict{ :Subtype<Link> }),  ::('PDF::Annot::Link'), 'annot defaulted /Type - implemented';

@@ -1,13 +1,13 @@
 use v6;
 
-use PDF::DAO::Stream;
+use PDF::COS::Stream;
 
 #| /FunctionType 1..7 - the Function dictionary delegates
 
 class PDF::Function
-    is PDF::DAO::Stream {
+    is PDF::COS::Stream {
 
-    use PDF::DAO::Tie;
+    use PDF::COS::Tie;
 
     # see TABLE 3.35 Entries common to all function dictionaries
 
@@ -26,7 +26,7 @@ class PDF::Function
     #| see also PDF::Class::Loader
     method delegate-function(Hash :$dict!) {
 
-	use PDF::DAO::Util :from-ast;
+	use PDF::COS::Util :from-ast;
 	my UInt $function-type = from-ast $dict<FunctionType>;
 
 	unless $function-type ~~ FunctionTypeInt {
@@ -35,7 +35,7 @@ class PDF::Function
 	}
 
 	my $subtype = FunctionTypes[$function-type];
-	PDF::DAO.loader.find-delegate( 'Function', $subtype );
+	PDF::COS.loader.find-delegate( 'Function', $subtype );
     }
 
     class Transform {

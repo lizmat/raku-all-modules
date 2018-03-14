@@ -1,22 +1,22 @@
 use v6;
 
-use PDF::DAO::Tie::Hash;
+use PDF::COS::Tie::Hash;
 
 #| /Type /Border
 
 role PDF::Border
-    does PDF::DAO::Tie::Hash {
+    does PDF::COS::Tie::Hash {
 
     # set [PDF 1.7 TABLE 8.17 Entries in a border style dictionary]
-    use PDF::DAO::Tie;
-    use PDF::DAO::Name;
+    use PDF::COS::Tie;
+    use PDF::COS::Name;
 
-    my subset BorderType of PDF::DAO::Name where 'Border';
+    my subset BorderType of PDF::COS::Name where 'Border';
     has BorderType $.Type is entry;     #| (Optional) The type of PDF object that this dictionary describes; if present, must be Border for a border style dictionary.
 
     has Numeric $.W is entry(:alias<width>);           #| (Optional) The border width in points. If this value is 0, no border is drawn. Default value: 1.
 
-    my subset BorderStyle of PDF::DAO::Name where 'S' | 'D' | 'B' | 'I' | 'U';
+    my subset BorderStyle of PDF::COS::Name where 'S' | 'D' | 'B' | 'I' | 'U';
     has BorderStyle $.S is entry(:alias<style>);       #| (Optional) The border style:
     #| S(Solid) A solid rectangle surrounding the annotation.
     #| D(Dashed) A dashed rectangle surrounding the annotation. The dash pattern is specified by the D entry (see below).

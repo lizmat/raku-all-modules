@@ -1,4 +1,4 @@
-use PDF::DAO::Type::Info;
+use PDF::COS::Type::Info;
 
-role PDF::Info does PDF::DAO::Type::Info {
+role PDF::Info does PDF::COS::Type::Info {
 }

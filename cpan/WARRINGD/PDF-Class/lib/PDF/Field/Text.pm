@@ -5,15 +5,15 @@ use PDF::Field;
 role PDF::Field::Text
     does PDF::Field {
 
-    use PDF::DAO;
-    use PDF::DAO::Tie;
-    use PDF::DAO::Stream;
-    use PDF::DAO::TextString;
+    use PDF::COS;
+    use PDF::COS::Tie;
+    use PDF::COS::Stream;
+    use PDF::COS::TextString;
 
     # [PDF 1.7 TABLE 8.78 Additional entry specific to a text field]
-    my subset TextOrStream of PDF::DAO where PDF::DAO::Stream | PDF::DAO::TextString;
+    my subset TextOrStream of PDF::COS where PDF::COS::Stream | PDF::COS::TextString;
     multi sub coerce(Str $s is rw, TextOrStream) {
-	PDF::DAO.coerce($s, PDF::DAO::TextString)
+	PDF::COS.coerce($s, PDF::COS::TextString)
     }
     has TextOrStream $.V is entry(:&coerce, :inherit, :alias<value>);
     has TextOrStream $.DV is entry(:&coerce, :inherit, :alias<default-value>);

@@ -8,7 +8,7 @@ use PDF::Class;
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Grammar::PDF;
 use PDF::Grammar::PDF::Actions;
-use PDF::DAO::Stream;
+use PDF::COS::Stream;
 
 my $actions = PDF::Grammar::PDF::Actions.new;
 
@@ -34,7 +34,7 @@ is $ind-obj.gen-num, 0, '$.gen-num';
 my $page = $ind-obj.object;
 isa-ok $page, (require ::('PDF::Page'));
 is $page.Type, 'Page', '$.Type accessor';
-my $dummy-stream = PDF::DAO::Stream.new( :decoded('%dummy stream') );
+my $dummy-stream = PDF::COS::Stream.new( :decoded('%dummy stream') );
 is $page<Parent>, (:ind-ref[3, 0]), '$page<Parent>';
 is $page.Resources, { :Font{ :F1( :ind-ref[7, 0] )}, :ProcSet( :ind-ref[6, 0]) }, '$.Resources accessor';
 

@@ -23,7 +23,7 @@ my $atts;
 lives-ok {$atts = $cs1.Attributes}, '.Attributes accessor';
 
 my $colorants = $atts.Colorants;
-isa-ok $colorants, ::('PDF::DAO::Dict'), 'Colorants';
+isa-ok $colorants, ::('PDF::COS::Dict'), 'Colorants';
 my $magenta = $colorants<Magenta>;
 isa-ok $magenta, ::('PDF::ColorSpace::Separation'), '.Colorants<Magenta>';
 is $magenta.Name, 'Magenta',  '.Colorants<Magenta>.Name';

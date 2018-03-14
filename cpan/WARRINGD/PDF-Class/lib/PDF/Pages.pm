@@ -1,6 +1,6 @@
 use v6;
 
-use PDF::DAO::Dict;
+use PDF::COS::Dict;
 use PDF::Class::Type;
 use PDF::Content::PageNode;
 use PDF::Content::PageTree;
@@ -8,15 +8,15 @@ use PDF::Content::PageTree;
 #| /Type /Pages - a node in the page tree
 
 class PDF::Pages
-    is PDF::DAO::Dict
+    is PDF::COS::Dict
     does PDF::Class::Type
     does PDF::Content::PageNode
     does PDF::Content::PageTree {
 
-    use PDF::DAO;
-    use PDF::DAO::Tie;
-    use PDF::DAO::Name;
-    my subset Name-Pages of PDF::DAO::Name where 'Pages';
+    use PDF::COS;
+    use PDF::COS::Tie;
+    use PDF::COS::Name;
+    my subset Name-Pages of PDF::COS::Name where 'Pages';
 
     # see [PDF 1.7 TABLE 3.26 Required entries in a page tree node]
     has Name-Pages $.Type is entry(:required);
@@ -31,7 +31,7 @@ class PDF::Pages
     has Numeric @.CropBox is entry(:inherit,:len(4));
 
     method cb-init {
-	self<Type> = PDF::DAO.coerce( :name<Pages> );
+	self<Type> = PDF::COS.coerce( :name<Pages> );
 	unless (self<Kids>:exists) || (self<Count>:exists) {
 	    self<Kids> = [];
 	    self<Count> = 0;

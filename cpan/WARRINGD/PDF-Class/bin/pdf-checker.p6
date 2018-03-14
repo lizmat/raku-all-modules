@@ -120,25 +120,28 @@ sub check-contents( $obj, Str :$ref!) {
     use PDF::Content::Ops;
     my PDF::Content::Ops $ops .= new(:$*strict);
 
-    for $ast.list {
-	$ops.op($_);
+    for $ast.list -> $op {
+	$ops.op($op);
 	my $entry;
 	my UInt $name-idx = 0;
 
-	my Str $type = do given .key {
-	    when 'cs' | 'CS'  { 'ColorSpace' }
+	my Str $type = do given $op.key {
 	    when 'BDC' | 'DP' { $name-idx = 1; 'Properties'}
 	    when 'Do'         { 'XObject' }
 	    when 'Tf'         { 'Font' }
 	    when 'gs'         { 'ExtGState' }
-	    when 'scn'        { 'Pattern' }
+	    when ($_ ~~ 'scn'|'SCN')
+            && $op.value.tail.key ~~ 'name' {
+                $name-idx = $op.value.elems - 1;
+                'Pattern'
+            }
 	    when 'sh'         { 'Shading' }
 	    default {''}
         };
 
-	if $type && .value[$name-idx].key eq 'name' {
-	    my Str $name = .value[$name-idx].value;
-	    warn "no resources /$type /$name entry for '{.key}' operator"
+	if $type && $op.value[$name-idx].key eq 'name' {
+	    my Str $name = $op.value[$name-idx].value;
+	    warn "no resources /$type /$name entry for '{$op.key}' operator"
 	        unless $resources{$type}:exists && ($resources{$type}{$name}:exists);
 	}
     }
@@ -147,7 +150,7 @@ sub check-contents( $obj, Str :$ref!) {
 
     CATCH {
 	default {
-	    $*ERR.say: "unable to parse {$ref}contents: $_"; 
+	    $*ERR.say: "unable to process {$ref}contents: $_"; 
 	}
     }
 }

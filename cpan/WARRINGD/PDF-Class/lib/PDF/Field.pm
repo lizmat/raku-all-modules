@@ -1,26 +1,26 @@
 use v6;
 
-use PDF::DAO::Tie::Hash;
+use PDF::COS::Tie::Hash;
 use PDF::Class::Type;
 
 role PDF::Field
-    does PDF::DAO::Tie::Hash
+    does PDF::COS::Tie::Hash
     does PDF::Class::Type['FT'] {
 
-    use PDF::DAO::Tie;
-    use PDF::DAO::TextString;
-    use PDF::DAO::Dict;
+    use PDF::COS::Tie;
+    use PDF::COS::TextString;
+    use PDF::COS::Dict;
 
     # see [PDF 1.7 TABLE 8.69 Entries common to all field dictionaries]
 
-    my subset FieldTypeName of PDF::DAO::Name
+    my subset FieldTypeName of PDF::COS::Name
 	where ( 'Btn' # Button
 	      | 'Tx'  # Text
               | 'Ch'  # Choice
 	      | 'Sig' # Signature
 	      );
 
-    method field-delegate( PDF::DAO::Dict $dict) {
+    method field-delegate( PDF::COS::Dict $dict) {
         my $field-role = do with $dict<FT> {
 	    when 'Btn' {'Button'}
             when 'Tx'  {'Text'}
@@ -34,7 +34,7 @@ role PDF::Field
         }
 
         with $field-role {
-            PDF::DAO.loader.find-delegate( 'Field', $field-role );
+            PDF::COS.loader.find-delegate( 'Field', $field-role );
         }
         else {
             PDF::Field
@@ -54,17 +54,17 @@ role PDF::Field
     }
 
     proto sub coerce( $, $ ) is export(:coerce) {*}
-    multi sub coerce( PDF::DAO::Dict $dict is rw, PDF::Field $field ) {
+    multi sub coerce( PDF::COS::Dict $dict is rw, PDF::Field $field ) {
 	# refuse to coerce an annotation as a field
-	PDF::DAO.coerce( $dict, $field.field-delegate( $dict ) );
+	PDF::COS.coerce( $dict, $field.field-delegate( $dict ) );
     }
 
     has FieldTypeName $.FT is entry(:inherit, :alias<field-type>);  #| Required for terminal fields; inheritable) The type of field that this dictionary describes
     has PDF::Field $.Parent is entry(:indirect);      #| (Required if this field is the child of another in the field hierarchy; absent otherwise) The field that is the immediate parent of this one (the field, if any, whose Kids array includes this field). A field can have at most one parent; that is, it can be included in the Kids array of at most one other field.
 
     my subset AnnotOrField of Hash where { is-annot-only($_) || $_ ~~ PDF::Field }
-    multi sub coerce( PDF::DAO::Dict $dict is rw, AnnotOrField) {
-	PDF::DAO.coerce( $dict, PDF::Field.field-delegate( $dict ) )
+    multi sub coerce( PDF::COS::Dict $dict is rw, AnnotOrField) {
+	PDF::COS.coerce( $dict, PDF::Field.field-delegate( $dict ) )
 	    unless is-annot-only($dict)
     }
     has AnnotOrField @.Kids is entry(:indirect, :&coerce); #| (Sometimes required, as described below) An array of indirect references to the immediate children of this field.
@@ -72,7 +72,7 @@ role PDF::Field
 
     method is-terminal returns Bool {
 	with $.Kids {
-            ! .keys.first: -> $k {! is-annot-only(.[$k]) }
+            [&&] .keys.map: -> $k {is-annot-only(.[$k]) }
         }
         else {
             True;
@@ -112,11 +112,11 @@ role PDF::Field
 	flat @annots;
     }
 
-    has PDF::DAO::TextString $.T is entry(:alias<key>);      #| Optional) The partial field name
+    has PDF::COS::TextString $.T is entry(:alias<key>);      #| Optional) The partial field name
 
-    has PDF::DAO::TextString $.TU is entry(:alias<label>);     #| (Optional; PDF 1.3) An alternate field name to be used in place of the actual field name wherever the field must be identified in the user interface (such as in error or status messages referring to the field). This text is also useful when extracting the document’s contents in support of accessibility to users with disabilities or for other purposes
+    has PDF::COS::TextString $.TU is entry(:alias<label>);     #| (Optional; PDF 1.3) An alternate field name to be used in place of the actual field name wherever the field must be identified in the user interface (such as in error or status messages referring to the field). This text is also useful when extracting the document’s contents in support of accessibility to users with disabilities or for other purposes
 
-    has PDF::DAO::TextString $.TM is entry(:alias<tag>);     #| (Optional; PDF 1.3) The mapping name to be used when exporting interactive form field data from the document.
+    has PDF::COS::TextString $.TM is entry(:alias<tag>);     #| (Optional; PDF 1.3) The mapping name to be used when exporting interactive form field data from the document.
 
     has UInt $.Ff is entry(:inherit, :alias<flags>);           #| Optional; inheritable) A set of flags specifying various characteristics of the field
 
@@ -137,12 +137,12 @@ role PDF::Field
                                                 #| 1: 1Centered
                                                 #| 2: Right-justified
 
-    has PDF::DAO::TextString $.DS is entry(:alias<default-style>);     #| Optional; PDF 1.5) A default style string
+    has PDF::COS::TextString $.DS is entry(:alias<default-style>);     #| Optional; PDF 1.5) A default style string
 
-    use PDF::DAO::Stream;
-    my subset TextOrStream where PDF::DAO::TextString | PDF::DAO::Stream;
+    use PDF::COS::Stream;
+    my subset TextOrStream where PDF::COS::TextString | PDF::COS::Stream;
     multi sub coerce(Str $value is rw, TextOrStream) {
-	$value = PDF::DAO.coerce( $value, PDF::DAO::TextString );
+	$value = PDF::COS.coerce( $value, PDF::COS::TextString );
     }
     has TextOrStream $.RV is entry( :&coerce, :alias<rich-text> );  #| (Optional; PDF 1.5) A rich text string
 }

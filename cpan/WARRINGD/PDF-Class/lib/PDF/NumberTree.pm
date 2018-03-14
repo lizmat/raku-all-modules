@@ -1,11 +1,11 @@
 use v6;
 
-use PDF::DAO::Tie::Hash;
+use PDF::COS::Tie::Hash;
 
 role PDF::NumberTree
-    does PDF::DAO::Tie::Hash {
+    does PDF::COS::Tie::Hash {
 
-    use PDF::DAO::Tie;
+    use PDF::COS::Tie;
     has PDF::NumberTree @.Kids is entry; #| (Root and intermediate nodes only; required in intermediate nodes; present in the root node if and only if Nums is not present) Shall be an array of indirect references to the immediate children of this node. The children may be intermediate or leaf nodes.
     has @.Nums is entry; #| Root and leaf nodes only; required in leaf nodes; present in the root node if and only if Kids is not present) An array of the form
                          #| [ key 1 value 1 key 2 value 2 ... key n value n ]

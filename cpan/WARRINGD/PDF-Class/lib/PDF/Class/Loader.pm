@@ -1,40 +1,43 @@
 use v6;
 
-use PDF::DAO::Loader;
+use PDF::COS::Loader;
 
-PDF::DAO.loader = class PDF::Class::Loader
-    is PDF::DAO::Loader {
+PDF::COS.loader = class PDF::Class::Loader
+    is PDF::COS::Loader {
 
-    use PDF::DAO::Util :from-ast;
-    use PDF::DAO::Name;
+    use PDF::COS::Util :from-ast;
+    use PDF::COS::Name;
 
-    method class-paths {<PDF PDF::DAO::Type>}
+    method class-paths {<PDF PDF::COS::Type>}
 
-    method find-delegate( Str $type!, $subtype?, :$fallback) is default {
+    method find-delegate( Str $type!, $subtype?, :$base-class) is default {
 
 	my Str $subclass = $type;
-	$subclass ~= '::' ~ $subtype if $subtype;
+	$subclass ~= '::' ~ $subtype
+            if $subtype && $type ne 'Mask';
 
 	return self.handler{$subclass}
 	    if self.handler{$subclass}:exists;
 
-        my $handler-class = $fallback;
+        my $handler-class = $base-class;
         my Bool $resolved;
 
 	for self.class-paths -> $class-path {
             my $class-name = $class-path ~ '::' ~ $subclass;
-            $handler-class = PDF::DAO.required($class-name);
+            $handler-class = PDF::COS.required($class-name);
             if $handler-class ~~ Failure {
                 warn "failed to load: $class-name: {$handler-class.exception.message}";
             }
             else {
+                $handler-class = $base-class.^mixin($handler-class)
+                    unless $handler-class.isa($base-class);
                 $resolved = True;
                 last;
             }
             CATCH {
                 when X::CompUnit::UnsatisfiedDependency {
 		    # try loading just the parent class
-		    $handler-class = $.find-delegate($type, :$fallback)
+		    $handler-class = $.find-delegate($type, :$base-class)
 			if $subtype;
 		}
             }
@@ -62,16 +65,16 @@ PDF::DAO.loader = class PDF::Class::Loader
 	$.find-delegate('CIDSystemInfo');
     }
 
-    multi method load-delegate( Hash :$dict! where {.<Type>:exists}, :$fallback) {
+    multi method load-delegate( Hash :$dict! where {.<Type>:exists}, :$base-class) {
         my $type = from-ast($dict<Type>);
         my $subtype = from-ast($dict<Subtype> // $dict<S>)
 	    unless $type eq 'Border';
 
-        $.find-delegate( $type, $subtype, :$fallback );
+        $.find-delegate( $type, $subtype, :$base-class );
     }
 
     #| Reverse lookup for classes when /Subtype is required but /Type is optional
-    multi method load-delegate(Hash :$dict! where {.<Subtype>:exists }, :$fallback) {
+    multi method load-delegate(Hash :$dict! where {.<Subtype>:exists }, :$base-class) {
 	my $subtype = from-ast $dict<Subtype>;
 
 	my $type = do given $subtype {
@@ -94,7 +97,7 @@ PDF::DAO.loader = class PDF::Class::Loader
 	}
 	else {
 	    note "unhandled subtype: PDF::*::{$subtype}";
-	    $fallback;
+	    $base-class;
 	}
     }
 
@@ -110,13 +113,13 @@ PDF::DAO.loader = class PDF::Class::Loader
 	(
          #| PDF Spec 1.7 Section 4.5.4 CIE-Based Color Spaces
          $elems == 2
-         && $t ~~ PDF::DAO::Name
+         && $t ~~ PDF::COS::Name
          && $t eq 'CalGray'|'CalRGB'|'Lab'|'ICCBased';
         )
         || (
             #| PDF Spec 1.7 Section 4.5.5 Special Color Spaces
             3 <= $elems <= 5
-            && $t ~~ PDF::DAO::Name
+            && $t ~~ PDF::COS::Name
             && $t eq 'Indexed'|'Separation'|'DeviceN';
         )
     }
@@ -126,8 +129,8 @@ PDF::DAO.loader = class PDF::Class::Loader
 	$.find-delegate('ColorSpace', $color-type);
     }
 
-    multi method load-delegate(:$fallback!) is default {
-	$fallback;
+    multi method load-delegate(:$base-class!) is default {
+	$base-class;
     }
 
 }

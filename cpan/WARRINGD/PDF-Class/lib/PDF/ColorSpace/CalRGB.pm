@@ -5,12 +5,12 @@ use PDF::ColorSpace;
 class PDF::ColorSpace::CalRGB
     is PDF::ColorSpace {
 
-   use PDF::DAO::Tie;
-   use PDF::DAO::Tie::Hash;
+   use PDF::COS::Tie;
+   use PDF::COS::Tie::Hash;
 
    # see [PDF 1.7 TABLE 4.14 Entries in a CalRGB color space dictionary]
    role CalRGBDict
-       does PDF::DAO::Tie::Hash {
+       does PDF::COS::Tie::Hash {
        has Numeric @.WhitePoint is entry(:len(3), :required);  #| (Required) An array of three numbers [ XW YW ZW ] specifying the tristimulus value, in the CIE 1931 XYZ space, of the diffuse white point; see below for further discussion. The numbers XW and ZW must be positive, and YW must be equal to 1.0.
        has Numeric @.BlackPoint is entry(:len(3));             #| (Optional) An array of three numbers [ XB YB ZB ] specifying the tristimulus value, in the CIE 1931 XYZ space, of the diffuse black point; see below for further discussion. All three of these numbers must be non-negative. Default value: [ 0.0 0.0 0.0 ].
        has Numeric @.Gamma is entry(:len(3));                  #| (Optional) An array of three numbers [ GR GG GB ] specifying the gamma for the red, green, and blue (A, B, and C) components of the color space. Default value: [ 1.0 1.0 1.0 ].

@@ -5,11 +5,11 @@ use PDF::Annot;
 class PDF::Annot::Widget
     is PDF::Annot {
 
-    use PDF::DAO::Tie;
-    use PDF::DAO::Name;
+    use PDF::COS::Tie;
+    use PDF::COS::Name;
 
     # See [PDF 1.7 TABLE 8.39 Additional entries specific to a widget annotation]
-    subset HName of PDF::DAO::Name where 'N'|'I'|'O'|'P'|'T';
+    subset HName of PDF::COS::Name where 'N'|'I'|'O'|'P'|'T';
     has HName $.H is entry(:alias<highlight-mode>);            #| (Optional; PDF 1.2) The annotation’s highlighting mode, the visual effect to be used when the mouse button is pressed or held down inside its active area:
                                        #| N(None)    - No highlighting.
                                        #| I(Invert)  - Invert the contents of the annotation rectangle.

@@ -1,14 +1,14 @@
 use v6;
 
-use PDF::DAO::Tie::Hash;
+use PDF::COS::Tie::Hash;
 
 #| OutlineItem - an entry in the Outlines Dictionary
 #| See /First and /Last Accessors in the PDF::Outlines
 
 role PDF::OutlineItem
-    does PDF::DAO::Tie::Hash {
+    does PDF::COS::Tie::Hash {
 
-    use PDF::DAO::Tie;
+    use PDF::COS::Tie;
 
     has Str $.Title is entry(:required);              #| (Required) The text to be displayed on the screen for this item.
     has Hash $.Parent is entry(:required, :indirect); #| (Required; must be an indirect reference) The parent of this item in the outline hierarchy. The parent of a top-level item is the outline dictionary itself.

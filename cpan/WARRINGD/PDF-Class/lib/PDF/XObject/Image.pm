@@ -12,21 +12,21 @@ class PDF::XObject::Image
     is PDF::Content::Image
     does PDF::Content::XObject['Image'] {
 
-    use PDF::DAO::Tie;
-    use PDF::DAO::Stream;
-    use PDF::DAO::Array;
-    use PDF::DAO::Name;
+    use PDF::COS::Tie;
+    use PDF::COS::Stream;
+    use PDF::COS::Array;
+    use PDF::COS::Name;
 
     # See [PDF 1.7 TABLE 4.39 Additional entries specific to an image dictionary]
     has Numeric $.Width is entry(:required);      #| (Required) The width of the image, in samples.
     has Numeric $.Height is entry(:required);     #| (Required) The height of the image, in samples.
     use PDF::ColorSpace;
-    my subset NameOrColorSpace of PDF::DAO where PDF::DAO::Name | PDF::ColorSpace;
+    my subset NameOrColorSpace of PDF::COS where PDF::COS::Name | PDF::ColorSpace;
     has NameOrColorSpace $.ColorSpace is entry;   #| (Required for images, except those that use the JPXDecode filter; not allowed for image masks) The color space in which image samples are specified; it can be any type of color space except Pattern.
     has UInt $.BitsPerComponent is entry;         #| (Required except for image masks and images that use the JPXDecode filter)The number of bits used to represent each color component.
-    has PDF::DAO::Name $.Intent is entry;         #| (Optional; PDF 1.1) The name of a color rendering intent to be used in rendering the image
+    has PDF::COS::Name $.Intent is entry;         #| (Optional; PDF 1.1) The name of a color rendering intent to be used in rendering the image
     has Bool $.ImageMask is entry;                #| (Optional) A flag indicating whether the image is to be treated as an image mask. If this flag is true, the value of BitsPerComponent must be 1 and Mask and ColorSpace should not be specified;
-    subset StreamOrArray of PDF::DAO where PDF::DAO::Stream | PDF::DAO::Array;
+    subset StreamOrArray of PDF::COS where PDF::COS::Stream | PDF::COS::Array;
     has StreamOrArray $.Mask is entry;            #| (Optional) A flag indicating whether the image is to be treated as an image mask (see Section 4.8.5, “Masked Images”). If this flag is true, the value of BitsPerComponent must be 1 and Mask and ColorSpace should not be specified;
     has Numeric @.Decode is entry;                #| (Optional) An array of numbers describing how to map image samples into the range of values appropriate for the image’s color space
     has Bool $.Interpolate is entry;              #| (Optional) A flag indicating whether image interpolation is to be performed
@@ -38,12 +38,12 @@ class PDF::XObject::Image
                                                   #| 1: The image’s data stream includes encoded soft-mask values. An application can create a soft-mask image from the information to be used as a source of mask shape or mask opacity in the transparency imaging model.
                                                   #| 2: The image’s data stream includes color channels that have been preblended with a background; the image data also includes an opacity channel. An application can create a soft-mask image with a Matte entry from the opacity channel information to be used as a source of mask shape or mask opacity in the transparency model.
                                                   #| If this entry has a nonzero value, SMask should not be specified
-    has PDF::DAO::Name $.Name is entry;           #| (Required in PDF 1.0; optional otherwise) The name by which this image XObject is referenced in the XObject subdictionary of the current resource dictionary.
+    has PDF::COS::Name $.Name is entry;           #| (Required in PDF 1.0; optional otherwise) The name by which this image XObject is referenced in the XObject subdictionary of the current resource dictionary.
                                                   #| Note: This entry is obsolescent and its use is no longer recommended. (See implementation note 53 in Appendix H.)
     has UInt $.StructParent is entry;             #| (Required if the image is a structural content item; PDF 1.3) The integer key of the image’s entry in the structural parent tree
     has Str $.ID is entry;                        #| (Optional; PDF 1.3; indirect reference preferred) The digital identifier of the image’s parent Web Capture content set
     has Hash $.OPI is entry;                      #| (Optional; PDF 1.2) An OPI version dictionary for the image. If ImageMask is true, this entry is ignored.
-    has PDF::DAO::Stream $.Metadata is entry;     #| (Optional; PDF 1.4) A metadata stream containing metadata for the image
+    has PDF::COS::Stream $.Metadata is entry;     #| (Optional; PDF 1.4) A metadata stream containing metadata for the image
     has Hash $.OC is entry;                       #| (Optional; PDF 1.5) An optional content group or optional content membership dictionary
 
     my subset PNGPredictor of Int where 10 .. 15;
@@ -69,7 +69,7 @@ class PDF::XObject::Image
             given self.ColorSpace {
                 when PDF::ColorSpace::Indexed {
                     $hdr.color-type = PNG-CS::RGB-Palette;
-                    my Str $data = .isa(PDF::DAO::Stream) ?? .encoded !! $_
+                    my Str $data = .isa(PDF::COS::Stream) ?? .encoded !! $_
                         with .Lookup;
                     $palette = buf8.new: .encode("latin-1") with $data;
                     with self.SMask {

@@ -1,3 +1,6 @@
+Release 0.1.0
+- Adjust to latest PDF. PDF::DAO classes have been renamed
+  to PDF::COS (Carousel Object System)
 Release 0.0.8
 - Revamped PDF::Function::Sampled::Calculator
 Release 0.0.7

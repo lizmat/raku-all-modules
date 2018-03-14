@@ -19,11 +19,11 @@ plan 10;
 
 class MyLoader is PDF::Class::Loader {
     method class-paths {
-         <t::Doc PDF PDF::DAO::Type>
+         <t::Doc PDF PDF::COS::Type>
     }
 }
 
-PDF::DAO.loader = MyLoader;
+PDF::COS.loader = MyLoader;
 
 use t::Doc::Catalog;
 

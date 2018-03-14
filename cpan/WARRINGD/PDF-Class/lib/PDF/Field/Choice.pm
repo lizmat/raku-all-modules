@@ -7,17 +7,17 @@ role PDF::Field::Choice
 
     # [PDF 1.7 TABLE 8.76 Additional entry specific to check box and radio button fields]
 
-    use PDF::DAO::Tie;
-    use PDF::DAO::TextString;
+    use PDF::COS::Tie;
+    use PDF::COS::TextString;
 
-    my subset ArrayOfTextStrings of Array where { !.first( !*.isa(PDF::DAO::TextString) ) }
-    my subset FieldOption where ArrayOfTextStrings | PDF::DAO::TextString;
+    my subset ArrayOfTextStrings of Array where { [&&] .map( *.isa(PDF::COS::TextString) ) }
+    my subset FieldOption where ArrayOfTextStrings | PDF::COS::TextString;
     multi sub coerce(Str $s is rw, FieldOption) {
-	PDF::DAO.coerce($s, PDF::DAO::TextString)
+	PDF::COS.coerce($s, PDF::COS::TextString)
     }
     multi sub coerce(Array $a is rw, FieldOption) {
 	for $a.keys {
-	    PDF::DAO.coerce( $a[$_],  PDF::DAO::TextString)
+	    PDF::COS.coerce( $a[$_],  PDF::COS::TextString)
 	}
     }
 

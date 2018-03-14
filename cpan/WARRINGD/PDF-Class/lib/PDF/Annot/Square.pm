@@ -5,8 +5,8 @@ use PDF::Annot;
 class PDF::Annot::Square
     is PDF::Annot {
 
-    use PDF::DAO::Tie;
-    use PDF::DAO::Name;
+    use PDF::COS::Tie;
+    use PDF::COS::Name;
 
     # See [PDF 1.7 TABLE 8.39 Additional entries specific to a widget annotation]
 

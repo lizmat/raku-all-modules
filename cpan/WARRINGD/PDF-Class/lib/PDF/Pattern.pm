@@ -1,19 +1,15 @@
 use v6;
 
-use PDF::Content::XObject;
-use PDF::Content::Graphics;
-use PDF::Content::Resourced;
+use PDF::COS::Tie::Hash;
 
 role PDF::Pattern
-    does PDF::Content::XObject['Form']
-    does PDF::Content::Graphics
-    does PDF::Content::Resourced {
+    does PDF::COS::Tie::Hash {
 
-    use PDF::DAO;
-    use PDF::DAO::Tie;
-    use PDF::DAO::Name;
+    use PDF::COS;
+    use PDF::COS::Tie;
+    use PDF::COS::Name;
     #| /Type entry is optional, but should be /Pattern when present
-    my subset Name-Pattern of PDF::DAO::Name where 'Pattern';
+    my subset Name-Pattern of PDF::COS::Name where 'Pattern';
     has Name-Pattern $.Type is entry;
     my subset PatternTypeInt of Int where 1|2;
     has PatternTypeInt $.PatternType is entry(:required);  #| (Required) A code identifying the type of pattern that this dictionary describes; must be 1 for a tiling pattern, or 2 for a shading pattern.
@@ -28,7 +24,7 @@ role PDF::Pattern
     #| see also PDF::Class::Loader
     method delegate-pattern(Hash :$dict!) {
 
-	use PDF::DAO::Util :from-ast;
+	use PDF::COS::Util :from-ast;
 	my Int $type-int = from-ast $dict<PatternType>;
 
 	unless $type-int ~~ PatternTypeInt {
@@ -37,7 +33,7 @@ role PDF::Pattern
 	}
 
 	my $subtype = PatternNames{~$type-int};
-	PDF::DAO.loader.find-delegate( 'Pattern', $subtype );
+	PDF::COS.loader.find-delegate( 'Pattern', $subtype );
     }
 
     method cb-init {

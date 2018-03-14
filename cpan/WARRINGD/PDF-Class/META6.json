@@ -66,6 +66,7 @@
     "PDF::Group" : "lib/PDF/Group.pm",
     "PDF::Group::Transparency" : "lib/PDF/Group/Transparency.pm",
     "PDF::Info" : "lib/PDF/Info.pm",
+    "PDF::Mask" : "lib/PDF/Mask.pm",
     "PDF::Metadata::XML" : "lib/PDF/Metadata/XML.pm",
     "PDF::NumberTree" : "lib/PDF/NumberTree.pm",
     "PDF::OBJR" : "lib/PDF/OBJR.pm",
@@ -103,5 +104,5 @@
     "pdf"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.8"
+  "version" : "0.1.0"
 }

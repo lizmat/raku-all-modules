@@ -4,11 +4,11 @@ use PDF::Group;
 
 class PDF::Group::Transparency
     is PDF::Group {
-    use PDF::DAO::Tie;
-    use PDF::DAO::Name;
-    my subset Name-Transparency of PDF::DAO::Name where 'Transparency';
+    use PDF::COS::Tie;
+    use PDF::COS::Name;
+    my subset Name-Transparency of PDF::COS::Name where 'Transparency';
     has Name-Transparency $.S is entry(:required);
-    my subset NameOrArray where PDF::DAO::Name|Array;
+    my subset NameOrArray where PDF::COS::Name|Array;
     has NameOrArray $.CS is entry(:alias<color-space>); #| (Sometimes required) The group colour space, which is used for the following purposes:
     #| • As the colour space into which colours shall be converted when painted into the group
     #| • As the blending colour space in which objects shall be composited within the group (see “Blending Colour Space”)

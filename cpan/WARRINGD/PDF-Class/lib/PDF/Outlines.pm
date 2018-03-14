@@ -1,17 +1,17 @@
 use v6;
 
-use PDF::DAO::Dict;
+use PDF::COS::Dict;
 use PDF::Class::Type;
 
 #| /Type /Outlines - the Outlines dictionary
 
 class PDF::Outlines
-    is PDF::DAO::Dict
+    is PDF::COS::Dict
     does PDF::Class::Type {
 
-    use PDF::DAO::Tie;
-    use PDF::DAO::Name;
-    my subset Name-Outlines of PDF::DAO::Name where 'Outlines';
+    use PDF::COS::Tie;
+    use PDF::COS::Name;
+    my subset Name-Outlines of PDF::COS::Name where 'Outlines';
     has Name-Outlines $.Type is entry;
     use PDF::OutlineItem;
 
