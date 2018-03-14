@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/briandfoy/perl6-chemistry-elements.git
 	branch = master
-	commit = a37d62e82c9e04aba619d0ce1cb9f59f36ca557b
-	parent = b166bdbbbe7fcf47ea7a9b00e156deaaa4972f6b
+	commit = 535014d06f01b2ba36e565256d6208c5b752301e
+	parent = fc72dffbcd158308c363fec52ffdef96eccb6fd0
 	cmdver = 0.4.0
