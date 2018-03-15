@@ -1,0 +1,25 @@
+{
+   "meta6" : "0",
+   "provides" : {
+       "HTTP::Request::FormData" : "lib/HTTP/Request/FormData.pm6",
+       "HTTP::Request::FormData::Part" : "lib/HTTP/Request/FormData.pm6"
+   },
+   "test-depends" : [
+      "Test", "Test::META"
+   ],
+   "support" : {
+      "source" : "git://github.com/zostay/HTTP-Request-FormData.git"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:zostay",
+   "source-url" : "git://github.com/zostay/HTTP-Request-FormData.git",
+   "depends" : [],
+   "name" : "HTTP::Request::FormData",
+   "authors" : [
+      "Sterling Hanenkamp <hanenkamp@cpan.org>"
+   ],
+   "version" : "0.1",
+   "license" : "Artistic-2.0",
+   "description" : "Tiny helper for making multipart/form-data documents"
+}
