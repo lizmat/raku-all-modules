@@ -243,6 +243,7 @@ class PrettyDump:auth<github:briandfoy>:ver<1.1.7> {
 		}
 
 	method Hash ( Hash:D $ds, Str:D :$start = 'Hash={', Str:D :$end = '}', Int:D :$depth = 0, *%_ () --> Str ) {
+		say "In hash";
 		my $longest-key = $ds.keys.max: :by( *.chars );
 		self!balanced: $ds.sort(*.key), :depth($depth), :start($start), :end($end);
 		}
@@ -269,6 +270,7 @@ class PrettyDump:auth<github:briandfoy>:ver<1.1.7> {
 		}
 
 	method !structure ( $ds, Int :$depth = 0, *%_ () --> Str ) {
+	say "In structure";
 		if @($ds).elems {
 			my $separator = [~] $.pre-separator-spacing, ',', $.post-separator-spacing;
 			[~]
@@ -289,10 +291,17 @@ class PrettyDump:auth<github:briandfoy>:ver<1.1.7> {
 		[~] qq/{$type}=(/, self!structure( $ds, :depth($depth) ), ')';
 		}
 
-	method Match ( Match:D $ds, Int:D :$depth = 0, *%_ () --> Str ) {
+	method Match (
+		Match:D $ds,
+		Int:D :$depth = 0,
+		Str:D :$start = 'Match=(',
+		Str:D :$end   = ')',
+		*%_ () --> Str
+		) {
+		say "In match";
 		my $type = $ds.^name;
 		my $str = qq/{$type}=(/;
-		my $hash = {
+		my $hash = %(
 			made => $ds.made,
 			to   => $ds.to,
 			from => $ds.from,
@@ -300,9 +309,11 @@ class PrettyDump:auth<github:briandfoy>:ver<1.1.7> {
 			hash => $ds.hash,
 			list => $ds.list,
 			pos  => $ds.pos,
-			};
-		$str ~= self!structure: $hash.sort(*.key), :depth($depth);
-		$str ~= ')';
+			);
+		[~]
+			$start,
+			self!structure( $hash, :depth($depth) ),
+			$end
 		}
 
 	method !Numeric ( Numeric:D $ds, Int:D :$depth = 0, *%_ () --> Str ) {
