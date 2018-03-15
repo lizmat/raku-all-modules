@@ -3,6 +3,10 @@
 use v6.c;
 use MONKEY-TYPING;
 
+# Don't use precompilation in order to not conflict with other MONKEY-TYPING
+# modules.
+no precompilation;
+
 augment class Hash
 {
     #| Merges a second hash into the hash the method is called on. Hash given as
@@ -14,11 +18,11 @@ augment class Hash
     #| becomes an Array type.
     #| Use :no-append-array to replace arrays and positionals instead, which will
     #| also retain the original type and not convert to an Array
-    #|
     multi method merge (Hash:U: %b, Bool:D :$no-append-array = False) {
         warn "Cannot merge an undefined Hash!";
         return %b;
     }
+
     multi method merge (Hash:D: %b, Bool:D :$no-append-array = False)
     {
         hashmerge self, %b, :$no-append-array;
@@ -55,3 +59,5 @@ augment class Hash
         %merge-into;
     }
 }
+
+# vim: ft=perl6 ts=4 sw=4 et
