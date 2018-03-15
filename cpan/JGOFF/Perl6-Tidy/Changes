@@ -1,4 +1,7 @@
 Revision history for Perl6-Tidy
 
+y  2018-03-14T11:30:39+01:00
+    - Add Perl6::Parser as dependency
+
 0.0.1  2018-03-12T16:17:39+01:00
     - Initial version
