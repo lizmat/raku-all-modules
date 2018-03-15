@@ -10,7 +10,7 @@ Math::Matrix - create, compare, compute and measure 2D matrices
 VERSION
 =======
 
-0.1.4
+0.1.5
 
 SYNOPSIS
 ========
@@ -39,17 +39,19 @@ METHODS
 
   * constructors: new, new-zero, new-identity, new-diagonal, new-vector-product
 
-  * accessors: cell, row, column, diagonal, submatrix
+  * accessors: cell row column diagonal submatrix
 
-  * boolean properties: equal, is-square, is-invertible, is-zero, is-identity is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant is-symmetric, is-orthogonal, is-positive-definite
+  * boolean properties: equal, is-square, is-invertible, is-zero, is-identity, is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant, is-symmetric, is-orthogonal, is-positive-definite
 
   * numeric properties: size, determinant, rank, kernel, trace, density, norm, condition
 
-  * derivative matrices: transposed, negated, inverted, reduced-row-echelon-form map
+  * derivative matrices: transposed, negated, inverted, reduced-row-echelon-form
 
   * decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
 
-  * matrix operations: add, subtract, multiply, dotProduct
+  * mathematical operations: add, subtract, multiply, dotProduct, map, reduce-rows, reduce-columns
+
+  * operators: +, -, *, **, ⋅, dot, | |, || ||
 
 Constructors
 ------------
@@ -58,7 +60,8 @@ Constructors
 
     The default constructor, takes arrays of arrays of numbers.
     Each second level array represents a row in the matrix.
-    That is why their length has to be the same. 
+    That is why their length has to be the same.
+
     Math::Matrix.new( [[1,2],[3,4]] ) creates:
 
     1 2
@@ -66,63 +69,76 @@ Constructors
 
 ### new-zero
 
-    my $matrix = Math::Matrix.new-zero( 3, 4 );
     This method is a constructor that returns an zero matrix of the size given in parameter.
     If only one parameter is given, the matrix is quadratic. All the cells are set to 0.
 
+    say Math::Matrix.new-zero( 3, 4 ) :
+
+    0 0 0 0
+    0 0 0 0
+    0 0 0 0
+
 ### new-identity
 
-    my $matrix = Math::Matrix.new-identity( 3 );
     This method is a constructor that returns an identity matrix of the size given in parameter
     All the cells are set to 0 except the top/left to bottom/right diagonale, set to 1
 
-### new-diagonal
+    say Math::Matrix.new-identity( 3 ):
+      
+    1 0 0
+    0 1 0
+    0 0 1
 
-    my $matrix = Math::Matrix.new-diagonal( 2, 4, 5 );
+### new-diagonal
 
     This method is a constructor that returns an diagonal matrix of the size given
     by count of the parameter.
     All the cells are set to 0 except the top/left to bottom/right diagonal,
     set to given values.
 
-### new-vector-product
+    say Math::Matrix.new-diagonal( 2, 4, 5 ):
 
-    my $matrixp = Math::Matrix.new-vector-product([1,2,3],[2,3,4]);
-    my $matrix = Math::Matrix.new([2,3,4],[4,6,8],[6,9,12]);       # same matrix
+    2 0 0
+    0 4 0
+    0 0 5
+
+### new-vector-product
 
     This method is a constructor that returns a matrix which is a result of 
     the matrix product (method dotProduct, or operator dot) of a column vector
     (first argument) and a row vector (second argument).
+
+    my $matrixp = Math::Matrix.new-vector-product([1,2,3],[2,3,4]);
+    my $matrix = Math::Matrix.new([2,3,4],[4,6,8],[6,9,12]);       # same matrix
 
 Accessors
 ---------
 
 ### cell
 
-    my $value = $matrix.cell(2,3);
+    Gets value of element in third row and fourth column. (counting always from 0)
 
-    Gets value of element in third row and fourth column.
+    my $value = $matrix.cell(2,3);
 
 ### row
 
-    my @values = $matrix.row();
+    Gets values of specified row (first required parameter) as a list.
+    That would be (1, 2) if matrix is [[1,2][3,4]].
 
-    Gets values of diagonal elements.
-    That would be (1, 4) if matrix is [[1,2][3,4]].
+    my @values = $matrix.row(0);
 
 ### column
 
-    my @values = $matrix.row();
-
-    Gets values of diagonal elements.
+    Gets values of specified column (first required parameter) as a list.
     That would be (1, 4) if matrix is [[1,2][3,4]].
+
+    my @values = $matrix.column(0);
 
 ### diagonal
 
-    my @values = $matrix.diagonal();
+    Gets values of diagonal elements. That would be (1, 4) if matrix is [[1,2][3,4]].
 
-    Gets values of diagonal elements.
-    That would be (1, 4) if matrix is [[1,2][3,4]].
+    my @values = $matrix.diagonal();
 
 ### submatrix
 
@@ -145,20 +161,23 @@ Boolean Properties
 
 ### equal
 
+    Checks two matrices for equality. They have to be of same size and
+    every element of the first matrix on a particular position has to be equal
+    to the element (on the same position) of the second matrix.
+
     if $matrixa.equal( $matrixb ) {
     if $matrixa ~~ $matrixb {
 
-    Checks two matrices for Equality
-
 ### is-square
+
+    True if number of rows and colums are the same.
 
     if $matrix.is-square {
 
-    True if number of rows and colums are the same
-
 ### is-invertible
 
-    Is True if number of rows and colums are the same and determinant is not zero.
+    Is True if number of rows and colums are the same (is-square)
+    and determinant is not zero.
 
 ### is-zero
 
@@ -169,17 +188,33 @@ Boolean Properties
     True if every cell on the diagonal (where row index equals column index) is 1
     and any other cell is 0.
 
+     Example:    1 0 0
+                 0 1 0
+                 0 0 1
+
 ### is-upper-triangular
 
     True if every cell below the diagonal (where row index is greater than column index) is 0.
+
+     Example:    1 2 5
+                 0 3 8
+                 0 0 7
 
 ### is-lower-triangular
 
     True if every cell above the diagonal (where row index is smaller than column index) is 0.
 
+     Example:    1 0 0
+                 2 3 0
+                 5 8 7
+
 ### is-diagonal
 
-    True if only cell on the diagonal differ from 0.
+    True if only cells on the diagonal differ from 0.
+
+     Example:    1 0 0
+                 0 3 0
+                 0 0 7
 
 ### is-diagonally-dominant
 
@@ -195,9 +230,13 @@ Boolean Properties
 
 ### is-symmetric
 
-    if $matrix.is-symmetric {
-
     Is True if every cell with coordinates x y has same value as the cell on y x.
+
+    Example:    1 2 3
+                2 5 4
+                3 4 7
+
+    if $matrix.is-symmetric {
 
 ### is-orthogonal
 
@@ -291,16 +330,6 @@ Derivative Matrices
 
     Return the reduced row echelon form of a matrix, a.k.a. row canonical form
 
-### map
-
-    Like the built in map it iterates over all elements, running a code block.
-    The results for a new matrix.
-
-    say Math::Matrix.new( [[1,2],[3,4]] ).map(* + 1);    # prints
-
-    2 3
-    4 5
-
 Decompositions
 --------------
 
@@ -373,6 +402,33 @@ Matrix Operations
     my $c = $a **  3;               # same as $a dot $a dot $a
     my $c = $a ** -3;               # same as ($a dot $a dot $a).inverted
     my $c = $a **  0;               # created an right sized identity matrix
+
+### map
+
+    Like the built in map it iterates over all elements, running a code block.
+    The results for a new matrix.
+
+    say Math::Matrix.new( [[1,2],[3,4]] ).map(* + 1);    # prints
+
+    2 3
+    4 5
+
+### reduce-rows
+
+    Like the built in reduce method, it iterates over all elements of a row 
+    and joins them into one value, by applying the given operator or method
+    to the previous result and the next element. The end result will be a list.
+    Each element of that list is the result of reducing one row.
+    In this example we calculate the sum of all elements in a row:
+
+    say Math::Matrix.new( [[1,2],[3,4]] ).reduce-rows(&[+]);     # prints (3, 7)
+
+### reduce-columns
+
+    Similarly to reduce-rows this method reduces each column to one value in the 
+    resulting list.:
+
+    say Math::Matrix.new( [[1,2],[3,4]] ).reduce-columns(&[*]);  # prints (3, 8)
 
 Author
 ======

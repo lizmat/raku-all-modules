@@ -7,7 +7,7 @@ Math::Matrix - create, compare, compute and measure 2D matrices
 
 =head1 VERSION
 
-0.1.4
+0.1.5
 
 =head1 SYNOPSIS
 
@@ -37,18 +37,20 @@ in Bool context a False if the matrix is zero (all cells are zero as in is-zero)
 =head1 METHODS
 
 =item constructors: new, new-zero, new-identity, new-diagonal, new-vector-product
-=item accessors: cell, row, column, diagonal, submatrix
-=item boolean properties: equal, is-square, is-invertible, is-zero, is-identity
-    is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant
+=item accessors: cell row column diagonal submatrix
+=item boolean properties: equal, is-square, is-invertible, is-zero, is-identity,
+    is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant,
     is-symmetric, is-orthogonal, is-positive-definite
 =item numeric properties: size, determinant, rank, kernel, trace, density, norm, condition
-=item derivative matrices: transposed, negated, inverted, reduced-row-echelon-form map
+=item derivative matrices: transposed, negated, inverted, reduced-row-echelon-form
 =item decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
-=item matrix operations: add, subtract, multiply, dotProduct
+=item mathematical operations: add, subtract, multiply, dotProduct, map, reduce-rows, reduce-columns
+=item operators:   +,   -,   *,   **,   ⋅,  dot,   | |,   || ||
 =end pod
+# =item structural operations: split join
 
 
-unit class Math::Matrix:ver<0.1.4>:auth<github:pierre-vigier>;
+unit class Math::Matrix:ver<0.1.5>:auth<github:pierre-vigier>;
 use AttrX::Lazy;
 
 has @!rows is required;
@@ -79,23 +81,24 @@ method !column-count { $!column-count }
 subset Positive_Int of Int where * > 0 ;
 
 
+################################################################################
+# start constructors
+################################################################################
+
 =begin pod
 =head2 Constructors
 =head3 new( [[...],...,[...]] )
 
    The default constructor, takes arrays of arrays of numbers.
    Each second level array represents a row in the matrix.
-   That is why their length has to be the same. 
+   That is why their length has to be the same.
+
    Math::Matrix.new( [[1,2],[3,4]] ) creates:
 
    1 2
    3 4
 
 =end pod
-
-################################################################################
-# start constructors
-################################################################################
 
 method new( @m ) {
     die "Expect an Array of Array" unless all @m ~~ Array;
@@ -125,9 +128,15 @@ method !zero_array( Positive_Int $rows, Positive_Int $cols = $rows ) {
 =begin pod
 =head3 new-zero
 
-    my $matrix = Math::Matrix.new-zero( 3, 4 );
     This method is a constructor that returns an zero matrix of the size given in parameter.
     If only one parameter is given, the matrix is quadratic. All the cells are set to 0.
+
+    say Math::Matrix.new-zero( 3, 4 ) :
+
+    0 0 0 0
+    0 0 0 0
+    0 0 0 0
+
 =end pod
 
 method new-zero(Math::Matrix:U: Positive_Int $rows, Positive_Int $cols = $rows) {
@@ -143,9 +152,16 @@ method !identity_array( Positive_Int $size ) {
 =begin pod
 =head3 new-identity
 
-    my $matrix = Math::Matrix.new-identity( 3 );
     This method is a constructor that returns an identity matrix of the size given in parameter
     All the cells are set to 0 except the top/left to bottom/right diagonale, set to 1
+
+    say Math::Matrix.new-identity( 3 ):
+  
+    1 0 0
+    0 1 0
+    0 0 1
+
+
 =end pod
 
 method new-identity(Math::Matrix:U: Positive_Int $size ) {
@@ -155,12 +171,18 @@ method new-identity(Math::Matrix:U: Positive_Int $size ) {
 =begin pod
 =head3 new-diagonal
 
-    my $matrix = Math::Matrix.new-diagonal( 2, 4, 5 );
-
     This method is a constructor that returns an diagonal matrix of the size given
     by count of the parameter.
     All the cells are set to 0 except the top/left to bottom/right diagonal,
     set to given values.
+
+    say Math::Matrix.new-diagonal( 2, 4, 5 ):
+
+    2 0 0
+    0 4 0
+    0 0 5
+
+
 =end pod
 
 method new-diagonal(Math::Matrix:U: *@diag ){
@@ -183,12 +205,13 @@ method !new-upper-triangular(Math::Matrix:U: @m ) {
 =begin pod
 =head3 new-vector-product
 
-    my $matrixp = Math::Matrix.new-vector-product([1,2,3],[2,3,4]);
-    my $matrix = Math::Matrix.new([2,3,4],[4,6,8],[6,9,12]);       # same matrix
-
     This method is a constructor that returns a matrix which is a result of 
     the matrix product (method dotProduct, or operator dot) of a column vector
     (first argument) and a row vector (second argument).
+
+    my $matrixp = Math::Matrix.new-vector-product([1,2,3],[2,3,4]);
+    my $matrix = Math::Matrix.new([2,3,4],[4,6,8],[6,9,12]);       # same matrix
+
 =end pod
 
 method new-vector-product (Math::Matrix:U: @column_vector, @row_vector ){
@@ -208,9 +231,9 @@ method new-vector-product (Math::Matrix:U: @column_vector, @row_vector ){
 =head2 Accessors
 =head3 cell
 
-    my $value = $matrix.cell(2,3);
+    Gets value of element in third row and fourth column. (counting always from 0)
 
-    Gets value of element in third row and fourth column.
+    my $value = $matrix.cell(2,3);
 
 =end pod
 
@@ -227,10 +250,10 @@ multi method cell(Math::Matrix:D: Int:D $row, Int:D $column --> Numeric ) {
 =begin pod
 =head3 row
 
-    my @values = $matrix.row();
+    Gets values of specified row (first required parameter) as a list.
+    That would be (1, 2) if matrix is [[1,2][3,4]].
 
-    Gets values of diagonal elements.
-    That would be (1, 4) if matrix is [[1,2][3,4]].
+    my @values = $matrix.row(0);
 
 =end pod
 
@@ -238,16 +261,16 @@ multi method row(Math::Matrix:D: Int:D $row) {
     fail X::OutOfRange.new(
         :what<Row index> , :got($row), :range("0..{$!row-count -1 }")
     ) unless 0 <= $row < $!row-count;
-    return @!rows[$row];
+    return @!rows[$row].list;
 }
 
 =begin pod
 =head3 column
 
-    my @values = $matrix.row();
-
-    Gets values of diagonal elements.
+    Gets values of specified column (first required parameter) as a list.
     That would be (1, 4) if matrix is [[1,2][3,4]].
+
+    my @values = $matrix.column(0);
 
 =end pod
 
@@ -261,10 +284,9 @@ multi method column(Math::Matrix:D: Int:D $column) {
 =begin pod
 =head3 diagonal
 
-    my @values = $matrix.diagonal();
+    Gets values of diagonal elements. That would be (1, 4) if matrix is [[1,2][3,4]].
 
-    Gets values of diagonal elements.
-    That would be (1, 4) if matrix is [[1,2][3,4]].
+    my @values = $matrix.diagonal();
 
 =end pod
 
@@ -289,7 +311,6 @@ method !build_diagonal(Math::Matrix:D: ){
     When I just want cells in row 0 and 2 and colum 1 and 2 I use:
 
     $matrix.submatrix((0,2),(1..2));     # is [[2,3],[8,9]]
-
 =end pod
 
 multi method submatrix(Math::Matrix:D: Int:D $row, Int:D $col --> Math::Matrix:D ){
@@ -321,7 +342,7 @@ method Str(Math::Matrix:D: --> Str) {
 }
 
 method Bool(Math::Matrix:D: --> Bool) {
-    !self.is-zero;
+    ! self.is-zero;
 }
 
 method Int(Math::Matrix:D: --> Int) {
@@ -372,10 +393,13 @@ multi σ_permutations ([$x, *@xs]) {
 =head2 Boolean Properties
 =head3 equal
 
+    Checks two matrices for equality. They have to be of same size and
+    every element of the first matrix on a particular position has to be equal
+    to the element (on the same position) of the second matrix.
+    
     if $matrixa.equal( $matrixb ) {
     if $matrixa ~~ $matrixb {
 
-    Checks two matrices for Equality
 =end pod
 
 
@@ -386,9 +410,9 @@ method equal(Math::Matrix:D: Math::Matrix $b --> Bool) {
 =begin pod
 =head3 is-square
 
-    if $matrix.is-square {
+    True if number of rows and colums are the same.
 
-    True if number of rows and colums are the same
+    if $matrix.is-square {
 =end pod
 
 method !build_is-square(Math::Matrix:D: --> Bool) {
@@ -398,7 +422,8 @@ method !build_is-square(Math::Matrix:D: --> Bool) {
 =begin pod
 =head3 is-invertible
 
-    Is True if number of rows and colums are the same and determinant is not zero.
+    Is True if number of rows and colums are the same (is-square)
+    and determinant is not zero.
 =end pod
 
 method !build_is-invertible(Math::Matrix:D: --> Bool) {
@@ -421,6 +446,10 @@ method !build_is-zero(Math::Matrix:D: --> Bool) {
 
    True if every cell on the diagonal (where row index equals column index) is 1
    and any other cell is 0.
+
+    Example:    1 0 0
+                0 1 0
+                0 0 1
 =end pod
 
 
@@ -437,6 +466,10 @@ method !build_is-identity(Math::Matrix:D: --> Bool) {
 
    True if every cell below the diagonal (where row index is greater than column index) is 0.
 
+    Example:    1 2 5
+                0 3 8
+                0 0 7
+
 =end pod
 
 method !build_is-upper-triangular(Math::Matrix:D: --> Bool) {
@@ -451,6 +484,11 @@ method !build_is-upper-triangular(Math::Matrix:D: --> Bool) {
 =head3 is-lower-triangular
 
    True if every cell above the diagonal (where row index is smaller than column index) is 0.
+
+    Example:    1 0 0
+                2 3 0
+                5 8 7
+
 =end pod
 
 method !build_is-lower-triangular(Math::Matrix:D: --> Bool) {
@@ -464,7 +502,11 @@ method !build_is-lower-triangular(Math::Matrix:D: --> Bool) {
 =begin pod
 =head3 is-diagonal
 
-   True if only cell on the diagonal differ from 0.
+   True if only cells on the diagonal differ from 0.
+
+    Example:    1 0 0
+                0 3 0
+                0 0 7
 =end pod
 
 method !build_is-diagonal(Math::Matrix:D: --> Bool) {
@@ -503,9 +545,15 @@ method is-diagonally-dominant(Math::Matrix:D: Bool :$strict = False, Str :$along
 =begin pod
 =head3 is-symmetric
 
+    Is True if every cell with coordinates x y has same value as the cell on y x.
+
+    Example:    1 2 3
+                2 5 4
+                3 4 7
+
     if $matrix.is-symmetric {
 
-    Is True if every cell with coordinates x y has same value as the cell on y x.
+    
 =end pod
 
 method !build_is-symmetric(Math::Matrix:D: --> Bool) {
@@ -849,27 +897,6 @@ method rref(Math::Matrix:D: --> Math::Matrix:D) {
     self.reduced-row-echelon-form;
 }
 
-
-=begin pod
-=head3 map
-
-    Like the built in map it iterates over all elements, running a code block.
-    The results for a new matrix.
-
-    say Math::Matrix.new( [[1,2],[3,4]] ).map(* + 1);    # prints
-
-    2 3
-    4 5
-
-=end pod
-
-method map(Math::Matrix:D: &coderef --> Math::Matrix:D) {
-    Math::Matrix.new( [ @!rows.map: {
-            [ $_.map( &coderef ) ]
-    } ] );
-}
-
-
 ################################################################################
 # end of derivative matrices - start decompositions
 ################################################################################
@@ -1084,16 +1111,82 @@ multi method multiply(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!
 
 multi method dotProduct(Math::Matrix:D: Math::Matrix $b --> Math::Matrix:D ) {
     my @product;
-    die "Number of columns of the second matrix is different from number of rows of the first operand" unless $!column-count == $b!row-count;
+    fail "Number of columns of the second matrix is different from number of rows of the first operand" unless $!column-count == $b!row-count;
     for ^$!row-count X ^$b!column-count -> ($r, $c) {
         @product[$r][$c] += @!rows[$r][$_] * $b!rows[$_][$c] for ^$b!row-count;
     }
     Math::Matrix.new( @product );
 }
 
+=begin pod
+=head3 map
+
+    Like the built in map it iterates over all elements, running a code block.
+    The results for a new matrix.
+
+    say Math::Matrix.new( [[1,2],[3,4]] ).map(* + 1);    # prints
+
+    2 3
+    4 5
+
+=end pod
+
+method map(Math::Matrix:D: &coderef --> Math::Matrix:D) {
+    Math::Matrix.new( [ @!rows.map: {
+            [ $_.map( &coderef ) ]
+    } ] );
+}
+
+
+=begin pod
+=head3 reduce-rows
+
+    Like the built in reduce method, it iterates over all elements of a row 
+    and joins them into one value, by applying the given operator or method
+    to the previous result and the next element. The end result will be a list.
+    Each element of that list is the result of reducing one row.
+    In this example we calculate the sum of all elements in a row:
+    
+    say Math::Matrix.new( [[1,2],[3,4]] ).reduce-rows(&[+]);     # prints (3, 7)
+
+=end pod
+
+method reduce-rows (Math::Matrix:D: &coderef){
+    @!rows.map: {
+        $_.flat.reduce( &coderef )
+    };
+}
+
+
+=begin pod
+=head3 reduce-columns
+
+    Similarly to reduce-rows this method reduces each column to one value in the 
+    resulting list.:
+
+    say Math::Matrix.new( [[1,2],[3,4]] ).reduce-columns(&[*]);  # prints (3, 8)
+
+=end pod
+
+method reduce-columns (Math::Matrix:D: &coderef){
+    gather for ^$!column-count -> $i {
+        take self.column($i).reduce( &coderef )
+    }
+}
+
+
+
 
 ################################################################################
-# end of matrix operations - start self made operators 
+# end of math matrix operations - start structural matrix operations
+################################################################################
+
+# method split{ }
+
+# method join{ }
+
+################################################################################
+# end of structural matrix operations - start self made operators 
 ################################################################################
 
 #=begin pod
@@ -1151,6 +1244,10 @@ multi sub infix:<**>(Math::Matrix $a where { $a.is-square }, Int $e --> Math::Ma
     $p = $p.dotProduct( $a ) for 2 .. abs $e;
     $p = $p.inverted         if  $e < 0;
     $p;
+}
+
+multi sub circumfix:<| |>(Math::Matrix $a --> Numeric) is equiv(&prefix:<!>) is export {
+    $a.determinant();
 }
 
 multi sub circumfix:<|| ||>(Math::Matrix $a --> Numeric) is equiv(&prefix:<!>) is export {
