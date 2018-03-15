@@ -6,7 +6,35 @@ my class X::DateTime::CannotParse is Exception {
 class DateTime::Parse is DateTime {
     grammar DateTime::Parse::Grammar {
         token TOP {
-            <dt=rfc1123-date> | <dt=rfc850-date> | <dt=rfc850-var-date> | <dt=asctime-date>
+            <dt=rfc3339-date> | <dt=rfc1123-date> | <dt=rfc850-date> | <dt=rfc850-var-date> | <dt=asctime-date>
+        }
+
+        token rfc3339-date {
+            <date=.date5> 'T' <time=.time2>
+        }
+
+        token date5 {
+            <year=.D4-year>  '-' <month=.D2> '-' <day=.D2>
+        }
+
+        token time2 {
+            <part=.partial-time> <offset=.time-offset>
+        }
+
+        token partial-time {
+            <hour=.D2> ':' <minute=.D2> ':' <second=.D2> <frac=.time-secfrac>?
+        }
+
+        token time-secfrac {
+            '.' \d ** 1..3
+        }
+
+        token time-offset {
+            [ 'Z' | <offset=.time-numoffset>]
+        }
+
+        token time-numoffset {
+            <sign=[+-]> <hour=.D2> ':' <minute=.D2>
         }
 
         token rfc1123-date {
@@ -83,6 +111,10 @@ class DateTime::Parse is DateTime {
             make $<dt>.made
         }
 
+        method rfc3339-date($/) {
+            make DateTime.new(|$<date>.made, |$<time>.made);
+        }
+
         method rfc1123-date($/) {
             make DateTime.new(|$<date>.made, |$<time>.made)
         }
@@ -119,8 +151,25 @@ class DateTime::Parse is DateTime {
             self!genericDate($/);
         }
 
+        method date5($/) { # e.g. 1996-12-19
+            self!genericDate($/);
+        }
+
         method time($/) {
             make { hour => +$<hour>, minute => +$<minute>, second => +$<second> }
+        }
+
+        method time2($/) {
+            my $p = $<part>;
+            my $offset;
+            unless $<offset> eq 'Z' {
+                if ~$<offset><offset><sign> eq '-' {
+                    $offset = 3600 * ~$<offset><offset><hour>.Int;
+                    $offset += 60 * ~$<offset><offset><minute>.Int;
+                }
+            }
+            my %res = hour => ~$p<hour>, minute => ~$p<minute>, second => ~$p<second>, timezone => -$offset;
+            make %res;
         }
 
         my %wkday = Mon => 0, Tue => 1, Wed => 2, Thu => 3, Fri => 4, Sat => 5, Sun => 6;

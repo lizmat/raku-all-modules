@@ -2,13 +2,15 @@ use v6;
 use Test;
 use DateTime::Parse;
 
-plan 11;
+plan *;
 
-my $rfc1123  = 'Sun, 06 Nov 1994 08:49:37 GMT';
-my $bad      = 'Bad, 06 Nov 1994 08:49:37 GMT';
-my $rfc850   = 'Sunday, 06-Nov-94 08:49:37 GMT';
-my $rfc850v  = 'Sun 06-Nov-1994 08:49:37 GMT';
-my $rfc850vb = 'Sun 06-Nov-94 08:49:37 GMT';
+my $rfc1123   = 'Sun, 06 Nov 1994 08:49:37 GMT';
+my $bad       = 'Bad, 06 Nov 1994 08:49:37 GMT';
+my $rfc850    = 'Sunday, 06-Nov-94 08:49:37 GMT';
+my $rfc850v   = 'Sun 06-Nov-1994 08:49:37 GMT';
+my $rfc850vb  = 'Sun 06-Nov-94 08:49:37 GMT';
+my $rfc3339_1 = '1985-04-12T23:20:50.52Z';
+my $rfc3339_2 = '1996-12-19T16:39:57-08:00';
 
 is DateTime::Parse.new('Sun', :rule<wkday>), 6, "'Sun' is day 6 in rule wkday";
 is DateTime::Parse.new('06 Nov 1994', :rule<date1>).sort,
@@ -25,3 +27,7 @@ nok DateTime::Parse::Grammar.parse($rfc850v)<rfc850-date>, "'$rfc850v' is NOT re
 ok DateTime::Parse::Grammar.parse($rfc850v)<rfc850-var-date>, "'$rfc850v' is recognized as rfc850-var-date";
 nok DateTime::Parse::Grammar.parse($rfc850)<rfc850-var-date>, "'$rfc850' is NOT recognized as rfc850-var-date";
 nok DateTime::Parse::Grammar.parse($rfc850vb)<rfc850-var-date>, "'$rfc850vb' is NOT recognized as rfc850-var-date";
+ok DateTime::Parse::Grammar.parse($rfc3339_1)<rfc3339-date>, "'$rfc3339_1' is recognized as rfc3339-date";
+ok DateTime::Parse::Grammar.parse($rfc3339_2)<rfc3339-date>, "'$rfc3339_2' is recognized as rfc3339-date";
+
+done-testing;
