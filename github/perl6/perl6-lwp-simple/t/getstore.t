@@ -3,7 +3,7 @@ use Test;
 
 use LWP::Simple;
 
-plan 5;
+plan 15;
 
 if %*ENV<NO_NETWORK_TESTING> {
     diag "NO_NETWORK_TESTING was set";
@@ -11,19 +11,36 @@ if %*ENV<NO_NETWORK_TESTING> {
     exit;
 }
 
-my $fname = $*SPEC.catdir($*TMPDIR, "./tmp-getstore-$*PID");
-try unlink $fname;
+# test getstore under http
+skip 'issue #25 rakudo.org is moving to https', 5;
+# need to find another site or withdraw http tests
+##getstore-tests('http://www.rakudo.org', rx/Rakudo/);
 
-ok(
-    LWP::Simple.getstore('http://www.opera.com', $fname),
-    'getstore() returned success'
-);
+try require IO::Socket::SSL;
+if $! {
+    skip-rest("IO::Socket::SSL not available");
+    exit 0;
+}
 
-my $fh = open($fname);
-ok($fh, 'Opened file handle written by getstore()');
+getstore-tests('https://www.opera.com', rx/Opera \s+ browser/);
+# Note: http://www.opera.com redirects to https
+getstore-tests('http://www.opera.com', rx/Opera \s+ browser/);
 
-ok $fh.slurp-rest ~~ /Opera \s+ browser/, 'Found pattern in downloaded file';
+sub getstore-tests($url, $rx) {
+    my $fname = $*SPEC.catdir($*TMPDIR, "./tmp-getstore-$*PID");
+    try unlink $fname;
 
-ok($fh.close, 'Close the temporary file');
+    ok(
+        LWP::Simple.getstore($url, $fname),
+        'getstore() returned success'
+       );
 
-ok(unlink($fname), 'Delete the temporary file');
+    my $fh = open($fname);
+    ok($fh, 'Opened file handle written by getstore()');
+
+    ok $fh.slurp-rest ~~ $rx, 'Found pattern in downloaded file';
+
+    ok($fh.close, 'Close the temporary file');
+
+    ok(unlink($fname), 'Delete the temporary file');
+}
