@@ -9,14 +9,15 @@ my @res;
 my @l = 'a'..'z';
 my $now = now;
 my $first-response;
+my $idx = 0;
 react whenever proc-q
     @l.map({
         $*EXECUTABLE, '-e',
-        "say '$_' ~ \$*IN.slurp; note '$_'; sleep {2*($++/5).Int}; exit {$++}"
+        "say '$_' ~ \$*IN.slurp; note '$_'; sleep {2*($idx/5).Int}; exit {$idx++}"
     }),
     :tags[@l.map: 'tag' ~ *],
     :in[@l».uc],
-    :13batch,
+    :batch,
     :timeout(3),
     :merge
 {
