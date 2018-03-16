@@ -1,3 +1,12 @@
-2018-03-11
+v0.3    2018-03-15
+
+    * Second attempt to fix type problems in assigning $!token from the
+      environment.
+
+v0.2    2018-03-15
+
+    * Fix a small type problem that breaks tests in certain cases.
+
+v0.1    2018-03-11
 
     * Initial release.
