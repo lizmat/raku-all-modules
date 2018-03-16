@@ -419,7 +419,7 @@ $pdf.page(1).gfx(:&callback).ops;
 
 ## See also
 
-- [PDF::Font::Loader](https://github.com/p6-pdf/PDF-Font-Loader-p6) for rendering Postscript and TrueType fonts.
+- [PDF::Font::Loader](https://github.com/p6-pdf/PDF-Font-Loader-p6) for using Postscript and TrueType fonts.
 
 - This module (PDF::Lite) is based on [PDF](https://github.com/p6-pdf/PDF-p6) and has all of it methods available. This includes:
 
@@ -428,9 +428,11 @@ $pdf.page(1).gfx(:&callback).ops;
     - `update` to perform an in-place incremental update of the PDF
     - `Info` to access document meta-data
 
-- [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a description of available operators and graphics, which are also applicable to this module.
+- [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a fuller description of methods, operators and graphics variables, which are also applicable to this module. In particular:
 
-- [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a description of available operators and graphics, which are also applicable to this module.
+    - [Section II: Contents Methods](https://github.com/p6-pdf/PDF-API6#section-ii-content-methods-inherited-from-pdfclass) for a description of available content methods.
+
+    - [Appendix I - Graphics](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a description of available operators and graphics.
 
 
 
