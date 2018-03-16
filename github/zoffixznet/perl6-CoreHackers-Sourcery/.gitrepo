@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-CoreHackers-Sourcery.git
 	branch = master
-	commit = a2371fada104f66dfdf090f41982bf03f6f11cb9
-	parent = 2a6469ff5480363789b6b46bd25f7155cb780f33
+	commit = fb9344f6fc155b54f46075e448d1ae09379c9765
+	parent = 31becfea4b08c8280a66fb4979bc147a4df18884
 	cmdver = 0.4.0
