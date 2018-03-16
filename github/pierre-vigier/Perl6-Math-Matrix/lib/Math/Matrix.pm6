@@ -7,7 +7,7 @@ Math::Matrix - create, compare, compute and measure 2D matrices
 
 =head1 VERSION
 
-0.1.5
+0.1.6
 
 =head1 SYNOPSIS
 
@@ -27,30 +27,11 @@ some issues for now. Problem being it might break the syntax for creation of a M
 use with consideration...
 
 Matrices are readonly - all operations and derivatives are new objects.
-
-=head1 Type Conversion
-
-In Str context you will see a tabular representation, 
-in Int context the number (count) of cells and 
-in Bool context a False if the matrix is zero (all cells are zero as in is-zero).
-
-=head1 METHODS
-
-=item constructors: new, new-zero, new-identity, new-diagonal, new-vector-product
-=item accessors: cell row column diagonal submatrix
-=item boolean properties: equal, is-square, is-invertible, is-zero, is-identity,
-    is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant,
-    is-symmetric, is-orthogonal, is-positive-definite
-=item numeric properties: size, determinant, rank, kernel, trace, density, norm, condition
-=item derivative matrices: transposed, negated, inverted, reduced-row-echelon-form
-=item decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
-=item mathematical operations: add, subtract, multiply, dotProduct, map, reduce-rows, reduce-columns
-=item operators:   +,   -,   *,   **,   ⋅,  dot,   | |,   || ||
 =end pod
 # =item structural operations: split join
+# ⊗
 
-
-unit class Math::Matrix:ver<0.1.5>:auth<github:pierre-vigier>;
+unit class Math::Matrix:ver<0.1.6>:auth<github:pierre-vigier>;
 use AttrX::Lazy;
 
 has @!rows is required;
@@ -80,6 +61,20 @@ method !column-count { $!column-count }
 
 subset Positive_Int of Int where * > 0 ;
 
+=begin pod
+=head1 METHODS
+=item constructors: new, new-zero, new-identity, new-diagonal, new-vector-product
+=item accessors: cell, row, column, diagonal, submatrix
+=item conversion: Bool, Numeric, Str, perl, gist, full
+=item boolean properties: equal, is-square, is-invertible, is-zero, is-identity,
+    is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant,
+    is-symmetric, is-orthogonal, is-positive-definite
+=item numeric properties: size, determinant, rank, kernel, trace, density, norm, condition
+=item derivative matrices: transposed, negated, inverted, reduced-row-echelon-form
+=item decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
+=item mathematical operations: add, subtract, multiply, dotProduct, map, reduce-rows, reduce-columns
+=item operators:   +,   -,   *,   **,   ⋅,  dot,   | |,   || ||
+=end pod
 
 ################################################################################
 # start constructors
@@ -336,22 +331,77 @@ multi method submatrix(Math::Matrix:D: @rows, @cols --> Math::Matrix:D ){
 # end of accessors - start with type conversion and handy shortcuts
 ################################################################################
 
+=begin pod
+=head2 Type Conversion And Output Flavour
+=head3 Bool
 
-method Str(Math::Matrix:D: --> Str) {
-    @!rows.gist;
-}
+    Conversion into Bool context. Returns False if matrix is zero
+    (all cells equal zero as in is-zero), otherwise True.
+    
+    $matrix.Bool
+    ? $matrix           # alias
+    if $matrix          # Bool context too
+
+=end pod
 
 method Bool(Math::Matrix:D: --> Bool) {
     ! self.is-zero;
 }
 
-method Int(Math::Matrix:D: --> Int) {
+=begin pod
+=head3 Numeric
+
+    Conversion into Numeric context. Returns number (amount) of cells.
+    Please note, only prefix a prefix + (as in: + $matrix) will call this Method.
+    A infix (as in $matrix + $number) calls: .add($number).
+    
+    $matrix.Numeric   or      + $matrix
+=end pod
+
+method Numeric (Math::Matrix:D: --> Int) {
     $!row-count * $!column-count;
 }
+
+=begin pod
+=head3 Str
+
+    Conversion into String context. Returns content of all cells in the
+    data structure form like "[[..,..,...],[...],...]"
+    
+    put $matrix     or      print $matrix
+=end pod
+
+method Str(Math::Matrix:D: --> Str) {
+    @!rows.gist;
+}
+
+=begin pod
+=head3 perl
+
+    Conversion into String like context that can reevaluated into the same
+    object later. ( "Math::Matrix.new([[..,..,...],[...],...])" )
+    
+    my $clone = eval $matrix.perl;
+=end pod
 
 multi method perl(Math::Matrix:D: --> Str) {
     self.WHAT.perl ~ ".new(" ~ @!rows.perl ~ ")";
 }
+
+
+=begin pod
+=head3 gist
+
+    Limited tabular view for the shell output. Just cuts off excessive
+    rows and columns. Implicitly called while:
+    
+    say $matrix;      # output when matrix has more than 100 cells
+
+    1 2 3 4 5 ...
+    3 4 5 6 7 ...
+    ...
+
+=end pod
 
 method gist(Math::Matrix:D: --> Str) {
     my $max-char = max( @!rows[*;*] ).Int.chars;
@@ -371,9 +421,33 @@ method gist(Math::Matrix:D: --> Str) {
     $str;
 }
 
-method ACCEPTS(Math::Matrix $b --> Bool) {
-    self.equal( $b );
+=begin pod
+=head3 full
+
+    Full tabular view (all rows and columns) for the shell or file output.
+    
+    say $matrix.full;
+
+=end pod
+
+method full (Math::Matrix:D: --> Str) {
+    my $max-char = max( @!rows[*;*] ).Int.chars;
+    my $fmt;
+    if all( @!rows[*;*] ) ~~ Int {
+        $fmt = " %{$max-char}d ";
+    } else {
+        my $max-decimal = max( @!rows[*;*].map( { ( .split(/\./)[1] // '' ).chars } ) );
+        $max-decimal = 5 if $max-decimal > 5; #more than that is not readable
+        $max-char += $max-decimal + 1;
+        $fmt = " \%{$max-char}.{$max-decimal}f ";
+    }
+    my $str;
+    for @!rows -> $r {
+        $str ~= ( [~] $r.map( { $_.fmt($fmt) } ) ) ~ "\n";
+    }
+    $str;
 }
+
 
 sub insert ($x, @xs) { ([flat @xs[0 ..^ $_], $x, @xs[$_ .. *]] for 0 .. @xs) }
 
@@ -405,6 +479,10 @@ multi σ_permutations ([$x, *@xs]) {
 
 method equal(Math::Matrix:D: Math::Matrix $b --> Bool) {
     @!rows ~~ $b!rows;
+}
+
+method ACCEPTS(Math::Matrix $b --> Bool) {
+    self.equal( $b );
 }
 
 =begin pod
@@ -622,8 +700,13 @@ method size(Math::Matrix:D: ){
 =begin pod
 =head3 determinant, alias det
 
+    If you see the columns as vectors, that describe the edges of a solid,
+    the determinant of a square matrix tells you the volume of that solid.
+    So if the solid is just in one dimension flat, the determinant is zero too.
+
     my $det = $matrix.determinant( );
-    my $d = $matrix.det( );     #    Calculate the determinant of a square matrix
+    my $d = $matrix.det( );             # same thing
+    my $d = |$matrix|;                  # operator shortcut
 
 =end pod
 
@@ -744,14 +827,14 @@ method !build_kernel(Math::Matrix:D: --> Int) {
 =begin pod
 =head3 norm
 
-    my $norm = $matrix.norm( );          # euclidian norm (L2, p = 2)
-    my $norm = ||$matrix||;              # operator shortcut to do the same
-    my $norm = $matrix.norm(1);          # p-norm, L1 = sum of all cells
-    my $norm = $matrix.norm(p:<4>,q:<3>);# p,q - norm, p = 4, q = 3
-    my $norm = $matrix.norm(p:<2>,q:<2>);# Frobenius norm
-    my $norm = $matrix.norm('max');      # max norm - biggest absolute value of a cell
-    $matrix.norm('rowsum');              # row sum norm - biggest abs. value-sum of a row
-    $matrix.norm('columnsum');           # column sum norm - same column wise
+    my $norm = $matrix.norm( );           # euclidian norm (L2, p = 2)
+    my $norm = ||$matrix||;               # operator shortcut to do the same
+    my $norm = $matrix.norm(1);           # p-norm, L1 = sum of all cells
+    my $norm = $matrix.norm(p:<4>,q:<3>); # p,q - norm, p = 4, q = 3
+    my $norm = $matrix.norm(p:<2>,q:<2>); # Frobenius norm
+    my $norm = $matrix.norm('max');       # max norm - biggest absolute value of a cell
+    $matrix.norm('rowsum');               # row sum norm - biggest abs. value-sum of a row
+    $matrix.norm('columnsum');            # column sum norm - same column wise
 =end pod
 
 
@@ -1174,40 +1257,58 @@ method reduce-columns (Math::Matrix:D: &coderef){
     }
 }
 
-
-
-
 ################################################################################
 # end of math matrix operations - start structural matrix operations
 ################################################################################
 
-# method split{ }
+#method split (){ 
+#}
 
-# method join{ }
+# method join (){ 
+#}
 
 ################################################################################
 # end of structural matrix operations - start self made operators 
 ################################################################################
 
-#=begin pod
-#=head1 Operators
+=begin pod
+=head1 Operators
 
-#    my $product = $matrix1.dotProduct( $matrix2 )
-#    return a new Matrix, result of the dotProduct of the current matrix with matrix2
-#    Call be called throug operator ⋅ or dot , like following:
-#    my $c = $a ⋅ $b;
-#    my $c = $a dot $b;
+    The Module overloads a range of well and less known ops.
 
-#    A shortcut for multiplication is the power - operator **
-#    my $c = $a **  3;               # same as $a dot $a dot $a
-#    my $c = $a ** -3;               # same as ($a dot $a dot $a).inverted
-#    my $c = $a **  0;               # created an right sized identity matrix
+    my $a   = +$matrix               # Num context, amount of cells (rows * columns)
+    my $b   = ?$matrix               # Bool context, True if any cell has a none zero value
+    my $str = ~$matrix               # String context, matrix content as data structure
 
-#=end pod
+    my $sum =  $matrixa + $matrixb;  # cell wise sum of two same sized matrices
+    my $sum =  $matrix  + $number;   # add number to every cell
+
+    my $dif =  $matrixa - $matrixb;  # cell wise difference of two same sized matrices
+    my $dif =  $matrix  - $number;   # subtract number from every cell
+    my $neg = -$matrix               # negate value of every cell
+
+    my $p   =  $matrixa * $matrixb;  # cell wise product of two same sized matrices
+    my $sp  =  $matrix  * $number;   # multiply number to every cell
+
+    my $dp  =  $a dot $b;            # dot product of two fitting matrices
+    my $dp  =  $a ⋅ $b;
+
+    my $c   =  $a **  3;             # same as $a dot $a dot $a
+    my $c   =  $a ** -3;             # same as ($a dot $a dot $a).inverted
+    my $c   =  $a **  0;             # created an right sized identity matrix
+
+     | $matrix |                     # determinant
+    || $matrix ||                    # Euclidean (L2) norm
+
+=end pod
 
 
 multi sub infix:<+>(Math::Matrix $a, Math::Matrix $b --> Math::Matrix:D ) is export {
     $a.add($b);
+}
+
+multi sub infix:<+>(Math::Matrix $a, Real $r --> Math::Matrix:D ) is export {
+    $a.add( $r );
 }
 
 multi sub infix:<->(Math::Matrix $a, Math::Matrix $b --> Math::Matrix:D ) is export {
