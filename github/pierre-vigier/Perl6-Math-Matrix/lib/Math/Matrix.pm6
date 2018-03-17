@@ -404,20 +404,29 @@ multi method perl(Math::Matrix:D: --> Str) {
 =end pod
 
 method gist(Math::Matrix:D: --> Str) {
-    my $max-char = max( @!rows[*;*] ).Int.chars;
+    my $max-rows = 20;
+    my $max-chars = 80;
+    my $max-nr-char = max( @!rows[*;*] ).Int.chars;  # maximal pre digit char in cell
+    my $cell_with;
     my $fmt;
     if all( @!rows[*;*] ) ~~ Int {
-        $fmt = " %{$max-char}d ";
+        $fmt = " %{$max-nr-char}d ";
+        $cell_with = $max-nr-char + 2;
     } else {
         my $max-decimal = max( @!rows[*;*].map( { ( .split(/\./)[1] // '' ).chars } ) );
         $max-decimal = 5 if $max-decimal > 5; #more than that is not readable
-        $max-char += $max-decimal + 1;
-        $fmt = " \%{$max-char}.{$max-decimal}f ";
+        $max-nr-char += $max-decimal + 1;
+        $fmt = " \%{$max-nr-char}.{$max-decimal}f ";
+        $cell_with = $max-nr-char + 3 + $max-decimal;
     }
+    my $rows = min $!row-count, $max-rows;
+    my $cols = min $!column-count, $max-chars div $cell_with;
+    my $row-addon = $!column-count > $cols ?? '..' !! '';
     my $str;
-    for @!rows -> $r {
-        $str ~= ( [~] $r.map( { $_.fmt($fmt) } ) ) ~ "\n";
+    for @!rows[0 .. $rows-1] -> $r {
+        $str ~= ( [~] $r.[0..$cols-1].map( { $_.fmt($fmt) } ) ) ~ "$row-addon\n";
     }
+    $str ~= " ...\n" if $!row-count > $max-rows;
     $str;
 }
 
@@ -1220,6 +1229,9 @@ method map(Math::Matrix:D: &coderef --> Math::Matrix:D) {
     } ] );
 }
 
+method reduce(Math::Matrix:D: &coderef ) {
+    ( @!rows.map: {$_.flat}).flat.reduce( &coderef );
+}
 
 =begin pod
 =head3 reduce-rows
@@ -1274,11 +1286,14 @@ method reduce-columns (Math::Matrix:D: &coderef){
 =begin pod
 =head1 Operators
 
-    The Module overloads a range of well and less known ops.
+    The Module overloads or uses a range of well and less known ops.
+    +, -, * are commutative.
 
     my $a   = +$matrix               # Num context, amount of cells (rows * columns)
     my $b   = ?$matrix               # Bool context, True if any cell has a none zero value
     my $str = ~$matrix               # String context, matrix content as data structure
+
+    $matrixa ~~ $matrixb             # check if both have same size and they are cell wise equal
 
     my $sum =  $matrixa + $matrixb;  # cell wise sum of two same sized matrices
     my $sum =  $matrix  + $number;   # add number to every cell
@@ -1290,12 +1305,12 @@ method reduce-columns (Math::Matrix:D: &coderef){
     my $p   =  $matrixa * $matrixb;  # cell wise product of two same sized matrices
     my $sp  =  $matrix  * $number;   # multiply number to every cell
 
-    my $dp  =  $a dot $b;            # dot product of two fitting matrices
+    my $dp  =  $a dot $b;            # dot product of two fitting matrices (cols a = rows b)
     my $dp  =  $a ⋅ $b;
 
-    my $c   =  $a **  3;             # same as $a dot $a dot $a
-    my $c   =  $a ** -3;             # same as ($a dot $a dot $a).inverted
-    my $c   =  $a **  0;             # created an right sized identity matrix
+    my $c   =  $a **  3;             # $a to the power of 3, same as $a dot $a dot $a
+    my $c   =  $a ** -3;             # alias to ($a dot $a dot $a).inverted
+    my $c   =  $a **  0;             # creats an right sized identity matrix
 
      | $matrix |                     # determinant
     || $matrix ||                    # Euclidean (L2) norm
@@ -1310,9 +1325,18 @@ multi sub infix:<+>(Math::Matrix $a, Math::Matrix $b --> Math::Matrix:D ) is exp
 multi sub infix:<+>(Math::Matrix $a, Real $r --> Math::Matrix:D ) is export {
     $a.add( $r );
 }
+multi sub infix:<+>(Real $r, Math::Matrix $a --> Math::Matrix:D ) is export {
+    $a.add( $r );
+}
 
 multi sub infix:<->(Math::Matrix $a, Math::Matrix $b --> Math::Matrix:D ) is export {
     $a.subtract($b);
+}
+multi sub infix:<->(Math::Matrix $a, Real $r --> Math::Matrix:D ) is export {
+    $a.add( -$r );
+}
+multi sub infix:<->(Real $r, Math::Matrix $a --> Math::Matrix:D ) is export {
+    $a.negated.add( $r );
 }
 
 multi sub prefix:<->(Math::Matrix $a --> Math::Matrix:D ) is export {
