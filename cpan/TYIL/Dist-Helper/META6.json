@@ -4,14 +4,14 @@
     "Patrick Spek <p.spek@tyil.work>"
   ],
   "depends": [
-    "Config:ver<1.3.2>",
+    "Config:ver<1.3.2+>",
     "File::Directory::Tree",
-    "File::Temp:ver<0.0.6>",
-    "File::Which:ver<1.0.0>",
-    "JSON::Fast:ver<0.9.6>",
-    "MIME::Base64:ver<1.2.1>",
-    "SemVer:ver<0.1.3>",
-    "Template::Mustache:ver<1.0.1>"
+    "File::Temp:ver<0.0.6+>",
+    "File::Which:ver<1.0.0+>",
+    "JSON::Fast:ver<0.9.11+>",
+    "MIME::Base64:ver<1.2.1+>",
+    "SemVer:ver<0.1.3+>",
+    "Template::Mustache:ver<1.0.1+>"
   ],
   "description": "The CPAN distribution helper",
   "license": "GPL-3.0",
@@ -41,5 +41,5 @@
     "devel",
     "ecosystems"
   ],
-  "version": "0.19.1"
+  "version": "0.19.2"
 }
