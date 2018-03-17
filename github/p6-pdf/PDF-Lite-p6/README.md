@@ -428,7 +428,7 @@ $pdf.page(1).gfx(:&callback).ops;
     - `update` to perform an in-place incremental update of the PDF
     - `Info` to access document meta-data
 
-- [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a fuller description of methods, operators and graphics variables, which are also applicable to this module. In particular:
+- [PDF::API6 Graphics Documentation](https://github.com/p6-pdf/PDF-API6#readme) for a fuller description of methods, operators and graphics variables, which are also applicable to this module. In particular:
 
     - [Section II: Contents Methods](https://github.com/p6-pdf/PDF-API6#section-ii-content-methods-inherited-from-pdfclass) for a description of available content methods.
 

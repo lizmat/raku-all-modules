@@ -75,12 +75,6 @@ class PDF::Lite:ver<0.0.3>
 
 	my subset StreamOrArray where PDF::COS::Stream | Array;
 	has StreamOrArray $.Contents is entry;
-
-        my subset ImageFile of Str where /:i '.'('png'|'svg'|'pdf') $/;
-        method save-page-as(ImageFile $outfile) {
-            require PDF::Content::Cairo;
-            PDF::Content::Cairo.save-page-as(self, $outfile);
-        }
     }
 
     my role Pages
