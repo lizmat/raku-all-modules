@@ -5,7 +5,7 @@ class PDF::Font::Loader::Enc::Identity-H
     use Font::FreeType::Face;
     use Font::FreeType::Native;
     use Font::FreeType::Native::Types;
-    use PDF::DAO;
+    use PDF::COS;
 
     has Font::FreeType::Face $.face is required;
     has uint32 @!to-unicode;
@@ -15,7 +15,7 @@ class PDF::Font::Loader::Enc::Identity-H
 
     multi method encode(Str $text, :$str! --> Str) {
         my $hex-string = self.encode($text).decode: 'latin-1';
-        PDF::DAO.coerce: :$hex-string;
+        PDF::COS.coerce: :$hex-string;
     }
     multi method encode(Str $text) is default {
         my uint16 @codes;

@@ -17,10 +17,9 @@ SYNPOSIS
 
     # requires fontconfig
     use PDF::Font::Loader :load-font. :find-font;
+    $deja = load-font( :name<DejaVu>, :slant<italic> );
 
-    my $deja = load-font: :name<DejaVu>, :slope<italic>;
-
-    my $file = find-font: :name<DejaVu>, :slope<italic>;
+    my $file = find-font( :name<DejaVu>, :slant<italic> );
     my $deja-vu = load-font: :$file;
 
     my PDF::Lite $pdf .= new;
@@ -34,7 +33,7 @@ SYNPOSIS
 DESCRIPTION
 ===========
 
-This module provdes font handling for [PDF::Lite](PDF::Lite), [PDF::API6](PDF::API6) and other PDF modules.
+This module provdes font loading and handling for [PDF::Lite](PDF::Lite), [PDF::API6](PDF::API6) and other PDF modules.
 
 METHODS
 =======
@@ -77,7 +76,7 @@ parameters:
 ### find-font
 
     find-font(Str $family-name,
-              Str :$weight,     # thin|extralight|light|book|regular|medium|semibold|bold|extrabold|black
+              Str :$weight,     # thin|extralight|light|book|regular|medium|semibold|bold|extrabold|black|100..900
               Str :$stretch,    # normal|[ultra|extra]?[condensed|expanded]
               Str :$slant,      # normal|oblique|italic
               );
@@ -92,3 +91,4 @@ BUGS AND LIMITATIONS
 ====================
 
   * Font subsetting is not yet implemented. I.E. fonts are always fully embedded, which may result in large PDF files.
+

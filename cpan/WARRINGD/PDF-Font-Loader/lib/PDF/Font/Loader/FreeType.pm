@@ -1,5 +1,5 @@
 class PDF::Font::Loader::FreeType {
-    use PDF::DAO;
+    use PDF::COS;
     use PDF::IO::Blob;
     use PDF::IO::Util :pack;
     use PDF::Writer;
@@ -106,7 +106,7 @@ class PDF::Font::Loader::FreeType {
         %dict<Subtype> = :name<CIDFontType0C>
             unless self!font-format eq 'TrueType';
 
-        PDF::DAO.coerce: :stream{ :$decoded, :%dict, };
+        PDF::COS.coerce: :stream{ :$decoded, :%dict, };
     }
 
     sub bit(\n) { 1 +< (n-1) }
@@ -125,7 +125,7 @@ class PDF::Font::Loader::FreeType {
     method !font-descriptor {
         my $Ascent = $!face.ascender;
         my $Descent = $!face.descender;
-        my $FontName = PDF::DAO.coerce: :name($.font-name);
+        my $FontName = PDF::COS.coerce: :name($.font-name);
         my $FontFamily = $!face.family-name;
         my $FontBBox = $!face.bounding-box.Array;
         my $Flags;
@@ -232,7 +232,7 @@ class PDF::Font::Loader::FreeType {
             endcmap CMapName currendict /CMap defineresource pop end end
             --END--
 
-        PDF::DAO.coerce: :stream{ :$dict, :$decoded };
+        PDF::COS.coerce: :stream{ :$dict, :$decoded };
     }
 
     method !make-index-dict {
@@ -274,7 +274,7 @@ class PDF::Font::Loader::FreeType {
 
     method to-dict {
         $!dict //= PDF::Content::Font.make-font(
-            PDF::DAO::Dict.coerce(self!make-dict),
+            PDF::COS::Dict.coerce(self!make-dict),
             self);
     }
 
@@ -384,9 +384,15 @@ class PDF::Font::Loader::FreeType {
             }
             default {
                 given $.to-dict {
-                    .<FirstChar> = $!first-char;
-                    .<LastChar> = $!last-char;
-                    .<Widths> = @!widths[$!first-char .. $!last-char];
+                    if $!first-char.defined {
+                        .<FirstChar> = $!first-char;
+                        .<LastChar> = $!last-char;
+                        .<Widths> = @!widths[$!first-char .. $!last-char];
+                    }
+                    else {
+                        warn "Font embedded, but not used: $.font-name";
+                    }
+
                     my $Differences = $!encoder.differences;
                     if $Differences {
                         .<Encoding> = %(

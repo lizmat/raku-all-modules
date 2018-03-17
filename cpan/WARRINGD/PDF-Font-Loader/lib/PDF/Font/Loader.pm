@@ -1,6 +1,6 @@
 use v6;
 
-class PDF::Font::Loader:ver<0.1.9> {
+class PDF::Font::Loader:ver<0.2.1> {
 
     use Font::FreeType;
     use Font::FreeType::Face;
@@ -93,10 +93,9 @@ PDF::Font::Loader
 
  # requires fontconfig
  use PDF::Font::Loader :load-font. :find-font;
+ $deja = load-font( :name<DejaVu>, :slant<italic> );
 
- my $deja = load-font: :name<DejaVu>, :slope<italic>;
-
- my $file = find-font: :name<DejaVu>, :slope<italic>;
+ my $file = find-font( :name<DejaVu>, :slant<italic> );
  my $deja-vu = load-font: :$file;
 
  my PDF::Lite $pdf .= new;
@@ -109,7 +108,7 @@ PDF::Font::Loader
 
 =head1 DESCRIPTION
 
-This module provdes font handling for
+This module provdes font loading and handling for
 L<PDF::Lite>,  L<PDF::API6> and other PDF modules.
 
 =head1 METHODS
@@ -153,7 +152,7 @@ Name of an installed system font to load.
 =head3 find-font
 
   find-font(Str $family-name,
-            Str :$weight,     # thin|extralight|light|book|regular|medium|semibold|bold|extrabold|black
+            Str :$weight,     # thin|extralight|light|book|regular|medium|semibold|bold|extrabold|black|100..900
             Str :$stretch,    # normal|[ultra|extra]?[condensed|expanded]
             Str :$slant,      # normal|oblique|italic
             );

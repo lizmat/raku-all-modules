@@ -1,7 +1,6 @@
 use v6;
 use Test;
 
-use PDF::DAO::Stream;
 use PDF::IO::IndObj;
 use PDF::Grammar::PDF;
 use PDF::Grammar::PDF::Actions;
