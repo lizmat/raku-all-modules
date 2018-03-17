@@ -6,7 +6,7 @@ use App::Mi6::Release;
 use File::Find;
 use Shell::Command;
 
-unit class App::Mi6:ver<0.1.4>;
+unit class App::Mi6:ver<0.1.5>;
 
 has $!author = run(<git config --global user.name>,  :out).out.slurp(:close).chomp;
 has $!email  = run(<git config --global user.email>, :out).out.slurp(:close).chomp;
@@ -76,12 +76,12 @@ multi method cmd('test', *@file, Bool :$verbose, Int :$jobs) {
     $exitcode;
 }
 
-multi method cmd('release') {
+multi method cmd('release', Bool :$keep) {
     my ($main-module, $main-module-file) = guess-main-module();
     my $dist = $main-module.subst("::", "-", :g);
     my $release-date = DateTime.now.truncated-to('second').Str;
     my $release = App::Mi6::Release.new;
-    $release.run(dir => "lib", app => self, :$main-module, :$main-module-file, :$release-date, :$dist);
+    $release.run(dir => "lib", app => self, :$main-module, :$main-module-file, :$release-date, :$dist, :$keep);
 }
 
 multi method cmd('dist') {
