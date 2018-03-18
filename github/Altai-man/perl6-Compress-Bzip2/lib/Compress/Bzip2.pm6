@@ -99,18 +99,12 @@ our sub decompress(Str $filename) is export {
 our sub internalBlobToBlob(buf8 $data, $compressing) {
     my buf8 $temp .= new;
     my uint32 $len;
-    given $data.elems {
-	when 0..50 {
-	    $len = 1024; # Numbers need check.
-	}
-	default {
-	    $len = $data.elems*2;
-	}
-    }
-    with $len {
+    # Set length to some sane initial value
+    $len = $data.elems * 2;
+    while True {
 	my Int $temp-len = $len;
+	# Allocate memory in buffer
 	$temp[$temp-len] = 0;
-	# We'll crop our buffer later.
 	my int32 $ret-code;
 	if $compressing {
 	    $ret-code = BZ2_bzBuffToBuffCompress($temp, $len, $data, $data.elems, 6, 0, 0);
@@ -118,11 +112,15 @@ our sub internalBlobToBlob(buf8 $data, $compressing) {
 	    $ret-code = BZ2_bzBuffToBuffDecompress($temp, $len, $data, $data.elems, 0, 0);
 	}
 	if $ret-code == BZ_OK {
-	    # Now $len contain length of compressed buffer and we can return subbuf.
-	    $temp.subbuf(0, $len);
-	} else {
-	    if $compressing { die X::Bzip2.new('bzBuffToBuffCompress', $ret-code); }
-	    else { die X::Bzip2.new('bzBuffToBuffDecompress', $ret-code); }
+	    # Now $len contains length of the compressed buffer and we can return subbuf.
+	    return $temp.subbuf(0, $len);
+	} elsif $ret-code == BZ_OUTBUFF_FULL {
+            # Need bigger buffer, try again with a double one
+            $len *= 2;
+            next;
+        } else {
+            my $sub-name = $compressing ?? 'bzBuffToBuffCompress' !! 'bzBuffToBuffDecompress';
+            die X::Bzip2.new($sub-name, $ret-code);
 	}
     }
 }

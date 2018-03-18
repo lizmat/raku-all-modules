@@ -3,7 +3,7 @@
     "name" : "Compress::Bzip2",
     "license" : "Artistic-2.0",
     "tags": ["Compression"],
-    "version" : "0.3.0",
+    "version" : "0.4.0",
     "author" : "github:Altai-man",
     "description" : "High-level bindings to libbzip2",
     "depends" : [ "Compress::Bzip2::Raw" ],
