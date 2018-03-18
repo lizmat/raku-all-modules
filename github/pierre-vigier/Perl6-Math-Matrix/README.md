@@ -36,17 +36,17 @@ METHODS
 
   * accessors: cell, row, column, diagonal, submatrix
 
-  * conversion: Bool, Numeric, Str, perl, gist, full
+  * conversion: Bool, Numeric, Str, perl, list, gist, full
 
   * boolean properties: equal, is-square, is-invertible, is-zero, is-identity, is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant, is-symmetric, is-orthogonal, is-positive-definite
 
-  * numeric properties: size, determinant, rank, kernel, trace, density, norm, condition
+  * numeric properties: size, elems, density, trace, determinant, rank, kernel, norm, condition
 
   * derivative matrices: transposed, negated, inverted, reduced-row-echelon-form
 
   * decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
 
-  * mathematical operations: add, subtract, multiply, dotProduct, map, reduce-rows, reduce-columns
+  * matrix math ops: add, subtract, multiply, dotProduct, map, reduce, reduce-rows, reduce-columns
 
   * operators: +, -, *, **, ⋅, dot, | |, || ||
 
@@ -167,9 +167,9 @@ Type Conversion And Output Flavour
 
 ### Numeric
 
-    Conversion into Numeric context. Returns number (amount) of cells.
+    Conversion into Numeric context. Returns number (amount) of cells (as .elems).
     Please note, only prefix a prefix + (as in: + $matrix) will call this Method.
-    A infix (as in $matrix + $number) calls: .add($number).
+    A infix (as in $matrix + $number) calls .add($number).
 
     $matrix.Numeric   or      + $matrix
 
@@ -187,6 +187,12 @@ Type Conversion And Output Flavour
 
     my $clone = eval $matrix.perl;
 
+### list
+
+    Returns a list of lists, reflecting the row-wise content of the matrix.
+
+    Math::Matrix.new( [[1,2],[3,4]] ).list ~~ ((1 2) (3 4))    # True
+
 ### gist
 
     Limited tabular view for the shell output. Just cuts off excessive
@@ -194,8 +200,8 @@ Type Conversion And Output Flavour
 
     say $matrix;      # output when matrix has more than 100 cells
 
-    1 2 3 4 5 ...
-    3 4 5 6 7 ...
+    1 2 3 4 5 ..
+    3 4 5 6 7 ..
     ...
 
 ### full
@@ -307,6 +313,26 @@ Numeric Properties
     say $matrix.size();
     my $dim = min $matrix.size();
 
+### elems
+
+    Number (count) of elements.
+
+    say $matrix.elems();
+    say +$matrix;                       # same thing
+
+### density
+
+    my $d = $matrix.density( );   
+
+    Density is the percentage of cell which are not zero.
+
+### trace
+
+    my $tr = $matrix.trace( ); 
+
+    The trace of a square matrix is the sum of the cells on the main diagonal.
+    In other words: sum of cells which row and column value is identical.
+
 ### determinant, alias det
 
     If you see the columns as vectors, that describe the edges of a solid,
@@ -316,19 +342,6 @@ Numeric Properties
     my $det = $matrix.determinant( );
     my $d = $matrix.det( );             # same thing
     my $d = |$matrix|;                  # operator shortcut
-
-### trace
-
-    my $tr = $matrix.trace( ); 
-
-    The trace of a square matrix is the sum of the cells on the main diagonal.
-    In other words: sum of cells which row and column value is identical.
-
-### density
-
-    my $d = $matrix.density( );   
-
-    Density is the percentage of cell which are not zero.
 
 ### rank
 
@@ -466,20 +479,28 @@ Matrix Operations
     2 3
     4 5
 
+### reduce
+
+    Like the built in reduce method, it iterates over all elements and joins
+    them into one value, by applying the given operator or method
+    to the previous result and the next element. I starts with the cell [0][0]
+    and moving from left to right in the first row and continue with the first
+    cell of the next row.
+
+    Math::Matrix.new( [[1,2],[3,4]] ).reduce(&[+]);      # 10
+    Math::Matrix.new( [[1,2],[3,4]] ).reduce(&[*]);      # 10
+
 ### reduce-rows
 
-    Like the built in reduce method, it iterates over all elements of a row 
-    and joins them into one value, by applying the given operator or method
-    to the previous result and the next element. The end result will be a list.
-    Each element of that list is the result of reducing one row.
-    In this example we calculate the sum of all elements in a row:
+    Reduces (as described above) every row into one value, so the overall result
+    will be a list. In this example we calculate the sum of all cells in a row:
 
     say Math::Matrix.new( [[1,2],[3,4]] ).reduce-rows(&[+]);     # prints (3, 7)
 
 ### reduce-columns
 
-    Similarly to reduce-rows this method reduces each column to one value in the 
-    resulting list.:
+    Similar to reduce-rows, this method reduces each column to one value in the 
+    resulting list:
 
     say Math::Matrix.new( [[1,2],[3,4]] ).reduce-columns(&[*]);  # prints (3, 8)
 
@@ -489,7 +510,7 @@ Operators
     The Module overloads or uses a range of well and less known ops.
     +, -, * are commutative.
 
-    my $a   = +$matrix               # Num context, amount of cells (rows * columns)
+    my $a   = +$matrix               # Num context, amount (count) of cells
     my $b   = ?$matrix               # Bool context, True if any cell has a none zero value
     my $str = ~$matrix               # String context, matrix content as data structure
 

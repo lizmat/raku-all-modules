@@ -65,14 +65,14 @@ subset Positive_Int of Int where * > 0 ;
 =head1 METHODS
 =item constructors: new, new-zero, new-identity, new-diagonal, new-vector-product
 =item accessors: cell, row, column, diagonal, submatrix
-=item conversion: Bool, Numeric, Str, perl, gist, full
+=item conversion: Bool, Numeric, Str, perl, list, gist, full
 =item boolean properties: equal, is-square, is-invertible, is-zero, is-identity,
     is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant,
     is-symmetric, is-orthogonal, is-positive-definite
-=item numeric properties: size, determinant, rank, kernel, trace, density, norm, condition
+=item numeric properties: size, elems, density, trace, determinant, rank, kernel, norm, condition
 =item derivative matrices: transposed, negated, inverted, reduced-row-echelon-form
 =item decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
-=item mathematical operations: add, subtract, multiply, dotProduct, map, reduce-rows, reduce-columns
+=item matrix math ops: add, subtract, multiply, dotProduct, map, reduce, reduce-rows, reduce-columns
 =item operators:   +,   -,   *,   **,   ⋅,  dot,   | |,   || ||
 =end pod
 
@@ -344,23 +344,19 @@ multi method submatrix(Math::Matrix:D: @rows, @cols --> Math::Matrix:D ){
 
 =end pod
 
-method Bool(Math::Matrix:D: --> Bool) {
-    ! self.is-zero;
-}
+method Bool(Math::Matrix:D: --> Bool)    {   ! self.is-zero   }
 
 =begin pod
 =head3 Numeric
 
-    Conversion into Numeric context. Returns number (amount) of cells.
+    Conversion into Numeric context. Returns number (amount) of cells (as .elems).
     Please note, only prefix a prefix + (as in: + $matrix) will call this Method.
-    A infix (as in $matrix + $number) calls: .add($number).
+    A infix (as in $matrix + $number) calls .add($number).
     
     $matrix.Numeric   or      + $matrix
 =end pod
 
-method Numeric (Math::Matrix:D: --> Int) {
-    $!row-count * $!column-count;
-}
+method Numeric (Math::Matrix:D: --> Int) {   self.elems   }
 
 =begin pod
 =head3 Str
@@ -371,9 +367,7 @@ method Numeric (Math::Matrix:D: --> Int) {
     put $matrix     or      print $matrix
 =end pod
 
-method Str(Math::Matrix:D: --> Str) {
-    @!rows.gist;
-}
+method Str(Math::Matrix:D: --> Str)      {   @!rows.gist   }
 
 =begin pod
 =head3 perl
@@ -390,6 +384,18 @@ multi method perl(Math::Matrix:D: --> Str) {
 
 
 =begin pod
+=head3 list
+
+    Returns a list of lists, reflecting the row-wise content of the matrix.
+    
+    Math::Matrix.new( [[1,2],[3,4]] ).list ~~ ((1 2) (3 4))    # True
+=end pod
+multi method list(Math::Matrix:D: --> List) {
+    (@!rows.map: {$_.flat}).list;
+}
+
+
+=begin pod
 =head3 gist
 
     Limited tabular view for the shell output. Just cuts off excessive
@@ -397,8 +403,8 @@ multi method perl(Math::Matrix:D: --> Str) {
     
     say $matrix;      # output when matrix has more than 100 cells
 
-    1 2 3 4 5 ...
-    3 4 5 6 7 ...
+    1 2 3 4 5 ..
+    3 4 5 6 7 ..
     ...
 
 =end pod
@@ -705,6 +711,49 @@ method size(Math::Matrix:D: ){
 }
 
 
+=begin pod
+=head3 elems
+
+    Number (count) of elements.
+
+    say $matrix.elems();
+    say +$matrix;                       # same thing
+=end pod
+
+method elems (Math::Matrix:D: --> Int) {
+    $!row-count * $!column-count;
+}
+
+=begin pod
+=head3 density
+
+    my $d = $matrix.density( );   
+
+    Density is the percentage of cell which are not zero.
+
+=end pod
+
+
+method !build_density(Math::Matrix:D: --> Rat) {
+    my $valcount = 0;
+    for ^$!row-count X ^$!column-count -> ($r, $c) { $valcount++ if @!rows[$r][$c] != 0 }
+    $valcount / ($!row-count * $!column-count);
+}
+
+
+=begin pod
+=head3 trace
+
+    my $tr = $matrix.trace( ); 
+
+    The trace of a square matrix is the sum of the cells on the main diagonal.
+    In other words: sum of cells which row and column value is identical.
+
+=end pod
+
+method !build_trace(Math::Matrix:D: --> Numeric) {
+    self.diagonal.sum;
+}
 
 =begin pod
 =head3 determinant, alias det
@@ -755,38 +804,6 @@ method determinant-naive(Math::Matrix:D: --> Numeric) {
     }
     $det;
 }
-
-
-=begin pod
-=head3 trace
-
-    my $tr = $matrix.trace( ); 
-
-    The trace of a square matrix is the sum of the cells on the main diagonal.
-    In other words: sum of cells which row and column value is identical.
-
-=end pod
-
-method !build_trace(Math::Matrix:D: --> Numeric) {
-    [+] self.diagonal.flat;
-}
-
-=begin pod
-=head3 density
-
-    my $d = $matrix.density( );   
-
-    Density is the percentage of cell which are not zero.
-
-=end pod
-
-
-method !build_density(Math::Matrix:D: --> Rat) {
-    my $valcount = 0;
-    for ^$!row-count X ^$!column-count -> ($r, $c) { $valcount++ if @!rows[$r][$c] != 0 }
-    $valcount / ($!row-count * $!column-count);
-}
-
 
 =begin pod
 =head3 rank
@@ -1229,6 +1246,20 @@ method map(Math::Matrix:D: &coderef --> Math::Matrix:D) {
     } ] );
 }
 
+=begin pod
+=head3 reduce
+
+    Like the built in reduce method, it iterates over all elements and joins
+    them into one value, by applying the given operator or method
+    to the previous result and the next element. I starts with the cell [0][0]
+    and moving from left to right in the first row and continue with the first
+    cell of the next row.
+    
+    Math::Matrix.new( [[1,2],[3,4]] ).reduce(&[+]);      # 10
+    Math::Matrix.new( [[1,2],[3,4]] ).reduce(&[*]);      # 10
+
+=end pod
+
 method reduce(Math::Matrix:D: &coderef ) {
     ( @!rows.map: {$_.flat}).flat.reduce( &coderef );
 }
@@ -1236,14 +1267,10 @@ method reduce(Math::Matrix:D: &coderef ) {
 =begin pod
 =head3 reduce-rows
 
-    Like the built in reduce method, it iterates over all elements of a row 
-    and joins them into one value, by applying the given operator or method
-    to the previous result and the next element. The end result will be a list.
-    Each element of that list is the result of reducing one row.
-    In this example we calculate the sum of all elements in a row:
+    Reduces (as described above) every row into one value, so the overall result
+    will be a list. In this example we calculate the sum of all cells in a row:
     
     say Math::Matrix.new( [[1,2],[3,4]] ).reduce-rows(&[+]);     # prints (3, 7)
-
 =end pod
 
 method reduce-rows (Math::Matrix:D: &coderef){
@@ -1256,8 +1283,8 @@ method reduce-rows (Math::Matrix:D: &coderef){
 =begin pod
 =head3 reduce-columns
 
-    Similarly to reduce-rows this method reduces each column to one value in the 
-    resulting list.:
+    Similar to reduce-rows, this method reduces each column to one value in the 
+    resulting list:
 
     say Math::Matrix.new( [[1,2],[3,4]] ).reduce-columns(&[*]);  # prints (3, 8)
 
@@ -1289,7 +1316,7 @@ method reduce-columns (Math::Matrix:D: &coderef){
     The Module overloads or uses a range of well and less known ops.
     +, -, * are commutative.
 
-    my $a   = +$matrix               # Num context, amount of cells (rows * columns)
+    my $a   = +$matrix               # Num context, amount (count) of cells
     my $b   = ?$matrix               # Bool context, True if any cell has a none zero value
     my $str = ~$matrix               # String context, matrix content as data structure
 
