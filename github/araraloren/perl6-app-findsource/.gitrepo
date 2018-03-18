@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/araraloren/perl6-app-findsource.git
+	branch = master
+	commit = d956ea49a8d361fdc9b48b9bb70982da54a9e843
+	parent = 9384005f48e8ed5a58e46d6d91952a44ae121156
+	cmdver = 0.4.0
