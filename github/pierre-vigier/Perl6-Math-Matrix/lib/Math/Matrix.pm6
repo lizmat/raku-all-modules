@@ -7,7 +7,7 @@ Math::Matrix - create, compare, compute and measure 2D matrices
 
 =head1 VERSION
 
-0.1.6
+0.1.7
 
 =head1 SYNOPSIS
 
@@ -31,7 +31,7 @@ Matrices are readonly - all operations and derivatives are new objects.
 # =item structural operations: split join
 # ⊗
 
-unit class Math::Matrix:ver<0.1.6>:auth<github:pierre-vigier>;
+unit class Math::Matrix:ver<0.1.7>:auth<github:pierre-vigier>;
 use AttrX::Lazy;
 
 has @!rows is required;
@@ -65,7 +65,7 @@ subset Positive_Int of Int where * > 0 ;
 =head1 METHODS
 =item constructors: new, new-zero, new-identity, new-diagonal, new-vector-product
 =item accessors: cell, row, column, diagonal, submatrix
-=item conversion: Bool, Numeric, Str, perl, list, gist, full
+=item conversion: Bool, Numeric, Str, perl, list-rows, list-columns, gist, full
 =item boolean properties: equal, is-square, is-invertible, is-zero, is-identity,
     is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant,
     is-symmetric, is-orthogonal, is-positive-definite
@@ -116,10 +116,6 @@ submethod BUILD( :@rows!, :$determinant, :$rank, :$diagonal, :$is-upper-triangul
     $!is-lower-triangular = $is-lower-triangular if $is-lower-triangular.defined;
 }
 
-method !zero_array( Positive_Int $rows, Positive_Int $cols = $rows ) {
-    return [ [ 0 xx $cols ] xx $rows ];
-}
-
 =begin pod
 =head3 new-zero
 
@@ -134,14 +130,14 @@ method !zero_array( Positive_Int $rows, Positive_Int $cols = $rows ) {
 
 =end pod
 
-method new-zero(Math::Matrix:U: Positive_Int $rows, Positive_Int $cols = $rows) {
-    self.bless( rows => self!zero_array($rows, $cols), determinant => 0, rank => 0 );
+method !zero_array( Positive_Int $rows, Positive_Int $cols = $rows ) {
+    return [ [ 0 xx $cols ] xx $rows ];
 }
 
-method !identity_array( Positive_Int $size ) {
-    my @identity;
-    for ^$size X ^$size -> ($r, $c) { @identity[$r][$c] = ($r == $c ?? 1 !! 0) }
-    return @identity;
+method new-zero(Math::Matrix:U: Positive_Int $rows, Positive_Int $cols = $rows) {
+    self.bless( rows => self!zero_array($rows, $cols),
+        determinant => 0, rank => 0, kernel => min($rows, $cols), density => 0, trace => 0,
+        is-zero => True, is-identity => False, is-diagonal => ($cols == $rows),  );
 }
 
 =begin pod
@@ -159,8 +155,16 @@ method !identity_array( Positive_Int $size ) {
 
 =end pod
 
+method !identity_array( Positive_Int $size ) {
+    my @identity;
+    for ^$size X ^$size -> ($r, $c) { @identity[$r][$c] = ($r == $c ?? 1 !! 0) }
+    return @identity;
+}
+
 method new-identity(Math::Matrix:U: Positive_Int $size ) {
-    self.bless( rows => self!identity_array($size), determinant => 1, rank => $size, diagonal => (1) xx $size );
+    self.bless( rows => self!identity_array($size), diagonal => (1) xx $size, 
+                determinant => 1, rank => $size, kernel => 0, density => 1/$size, trace => $size,
+                is-zero => False, is-identity => True, is-diagonal => True, is-symmetric => True );
 }
 
 =begin pod
@@ -184,7 +188,14 @@ method new-diagonal(Math::Matrix:U: *@diag ){
     fail "Expect an List of Number" unless @diag and [and] @diag >>~~>> Numeric;
     my @d;
     for ^@diag.elems X ^@diag.elems -> ($r, $c) { @d[$r][$c] = $r==$c ?? @diag[$r] !! 0 }
-    self.bless( rows => @d, determinant => [*](@diag.flat) , rank => +@diag, diagonal => @diag );
+
+    self.bless( rows => @d, diagonal => @diag,
+                determinant => [*](@diag.flat), trace => [+] (@diag.flat),
+                is-diagonal => True, is-symmetric => True  );
+
+#    my @d = self!zero_array(+@diag, +@diag);
+#    (^$size).map: { @d[$_][$_] = @diag[$_] };
+
 }
 
 method !new-lower-triangular(Math::Matrix:U: @m ) {
@@ -252,7 +263,7 @@ multi method cell(Math::Matrix:D: Int:D $row, Int:D $column --> Numeric ) {
 
 =end pod
 
-multi method row(Math::Matrix:D: Int:D $row) {
+multi method row(Math::Matrix:D: Int:D $row  --> List) {
     fail X::OutOfRange.new(
         :what<Row index> , :got($row), :range("0..{$!row-count -1 }")
     ) unless 0 <= $row < $!row-count;
@@ -269,7 +280,7 @@ multi method row(Math::Matrix:D: Int:D $row) {
 
 =end pod
 
-multi method column(Math::Matrix:D: Int:D $column) {
+multi method column(Math::Matrix:D: Int:D $column --> List) {
     fail X::OutOfRange.new(
         :what<Column index> , :got($column), :range("0..{$!column-count -1 }")
     ) unless 0 <= $column < $!column-count;
@@ -285,7 +296,7 @@ multi method column(Math::Matrix:D: Int:D $column) {
 
 =end pod
 
-method !build_diagonal(Math::Matrix:D: ){
+method !build_diagonal(Math::Matrix:D: --> List){
     fail "Number of columns has to be same as number of rows" unless self.is-square;
     ( gather for ^$!row-count -> $i { take @!rows[$i;$i] } ).list;
 }
@@ -384,14 +395,25 @@ multi method perl(Math::Matrix:D: --> Str) {
 
 
 =begin pod
-=head3 list
+=head3 list-rows
 
     Returns a list of lists, reflecting the row-wise content of the matrix.
     
-    Math::Matrix.new( [[1,2],[3,4]] ).list ~~ ((1 2) (3 4))    # True
+    Math::Matrix.new( [[1,2],[3,4]] ).list-rows ~~ ((1 2) (3 4))     # True
 =end pod
-multi method list(Math::Matrix:D: --> List) {
+multi method list-rows(Math::Matrix:D: --> List) {
     (@!rows.map: {$_.flat}).list;
+}
+
+=begin pod
+=head3 list-columns
+
+    Returns a list of lists, reflecting the row-wise content of the matrix.
+    
+    Math::Matrix.new( [[1,2],[3,4]] ).list-columns ~~ ((1 3) (2 4)) # True
+=end pod
+multi method list-columns(Math::Matrix:D: --> List) {
+    ((0 .. $!column-count - 1).map: {self.column($_)}).list;
 }
 
 
@@ -858,9 +880,9 @@ method !build_kernel(Math::Matrix:D: --> Int) {
     my $norm = $matrix.norm(1);           # p-norm, L1 = sum of all cells
     my $norm = $matrix.norm(p:<4>,q:<3>); # p,q - norm, p = 4, q = 3
     my $norm = $matrix.norm(p:<2>,q:<2>); # Frobenius norm
-    my $norm = $matrix.norm('max');       # max norm - biggest absolute value of a cell
-    $matrix.norm('rowsum');               # row sum norm - biggest abs. value-sum of a row
-    $matrix.norm('columnsum');            # column sum norm - same column wise
+    my $norm = $matrix.norm('max');       # maximum norm - biggest absolute value of a cell
+    $matrix.norm('row-sum');              # row sum norm - biggest abs. value-sum of a row
+    $matrix.norm('column-sum');           # column sum norm - same column wise
 =end pod
 
 
@@ -874,11 +896,11 @@ multi method norm(Math::Matrix:D: Positive_Int :$p = 2, Positive_Int :$q = 1 -->
     $norm ** (1/$q);
 }
 
-multi method norm(Math::Matrix:D: Str $which where * eq 'rowsum' --> Numeric) {
+multi method norm(Math::Matrix:D: Str $which where * eq 'row-sum' --> Numeric) {
     max map {[+] map {abs $_}, @$_}, @!rows;
 }
 
-multi method norm(Math::Matrix:D: Str $which where * eq 'columnsum' --> Numeric) {
+multi method norm(Math::Matrix:D: Str $which where * eq 'column-sum' --> Numeric) {
     max map {my $c = $_; [+](map {abs $_[$c]}, @!rows) }, ^$!column-count;
 }
 

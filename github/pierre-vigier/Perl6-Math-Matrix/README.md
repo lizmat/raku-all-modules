@@ -10,7 +10,7 @@ Math::Matrix - create, compare, compute and measure 2D matrices
 VERSION
 =======
 
-0.1.6
+0.1.7
 
 SYNOPSIS
 ========
@@ -36,7 +36,7 @@ METHODS
 
   * accessors: cell, row, column, diagonal, submatrix
 
-  * conversion: Bool, Numeric, Str, perl, list, gist, full
+  * conversion: Bool, Numeric, Str, perl, list-rows, list-columns, gist, full
 
   * boolean properties: equal, is-square, is-invertible, is-zero, is-identity, is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant, is-symmetric, is-orthogonal, is-positive-definite
 
@@ -187,11 +187,17 @@ Type Conversion And Output Flavour
 
     my $clone = eval $matrix.perl;
 
-### list
+### list-rows
 
     Returns a list of lists, reflecting the row-wise content of the matrix.
 
-    Math::Matrix.new( [[1,2],[3,4]] ).list ~~ ((1 2) (3 4))    # True
+    Math::Matrix.new( [[1,2],[3,4]] ).list-rows ~~ ((1 2) (3 4))     # True
+
+### list-columns
+
+    Returns a list of lists, reflecting the row-wise content of the matrix.
+
+    Math::Matrix.new( [[1,2],[3,4]] ).list-columns ~~ ((1 3) (2 4)) # True
 
 ### gist
 
@@ -363,9 +369,9 @@ Numeric Properties
     my $norm = $matrix.norm(1);           # p-norm, L1 = sum of all cells
     my $norm = $matrix.norm(p:<4>,q:<3>); # p,q - norm, p = 4, q = 3
     my $norm = $matrix.norm(p:<2>,q:<2>); # Frobenius norm
-    my $norm = $matrix.norm('max');       # max norm - biggest absolute value of a cell
-    $matrix.norm('rowsum');               # row sum norm - biggest abs. value-sum of a row
-    $matrix.norm('columnsum');            # column sum norm - same column wise
+    my $norm = $matrix.norm('max');       # maximum norm - biggest absolute value of a cell
+    $matrix.norm('row-sum');              # row sum norm - biggest abs. value-sum of a row
+    $matrix.norm('column-sum');           # column sum norm - same column wise
 
 ### condition
 
