@@ -27,6 +27,7 @@ sub test-promise($promise) {
 sub test-it(Str $output, Str $file) {
     my $ok = True;
 
+    my $msg = '';
     for $output.lines -> $line-orig {
         next if $line-orig ~~ / ^ '    '/;
         my $line = $line-orig;
@@ -48,12 +49,19 @@ sub test-it(Str $output, Str $file) {
         $line ~~ s:g/ << 'thing,category' >> //;
 
         if $line ~~ / ',' [ <!before ' '> & <!before $> ] / {
-            diag "Failure on line `$line-orig`";
+            $msg ~= "Must have space after comma on line `$line`\n";
+            diag "Failure on line `$line`";
+            $ok = False;
+        }
+
+        if $line-orig ~~ / <alpha> '..' (<space> | $) / {
+            $msg ~= "File contains .. in `$line-orig`\n";
+            diag "Failure on line `$line`";
             $ok = False;
         }
     }
     my $error = $file;
-    ok $ok, "$error: Must have space after comma.";
+    ok $ok, "$error: $msg";
 }
 
 my @jobs;
