@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/atweiden/txn-parser.git
 	branch = master
-	commit = fba8ac45c16c1f13b31558f6626aa89deb7c77ca
-	parent = f03a584bd7f54eb18624daf8a5090313cd5e42c8
+	commit = 8ec350be41332b51af54987d1d536e7dd67fde80
+	parent = 68e1aa5eeb10707593046b156cc5463c8022d0e1
 	cmdver = 0.4.0
