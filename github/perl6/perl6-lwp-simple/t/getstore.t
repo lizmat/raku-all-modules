@@ -12,9 +12,7 @@ if %*ENV<NO_NETWORK_TESTING> {
 }
 
 # test getstore under http
-skip 'issue #25 rakudo.org is moving to https', 5;
-# need to find another site or withdraw http tests
-##getstore-tests('http://www.rakudo.org', rx/Rakudo/);
+getstore-tests('http://www.w3c.org', rx/Web/);
 
 try require IO::Socket::SSL;
 if $! {
