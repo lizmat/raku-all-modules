@@ -10,7 +10,7 @@ Math::Matrix - create, compare, compute and measure 2D matrices
 VERSION
 =======
 
-0.1.7
+0.1.8
 
 SYNOPSIS
 ========
@@ -38,17 +38,19 @@ METHODS
 
   * conversion: Bool, Numeric, Str, perl, list-rows, list-columns, gist, full
 
-  * boolean properties: equal, is-square, is-invertible, is-zero, is-identity, is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant, is-symmetric, is-orthogonal, is-positive-definite
+  * boolean properties: equal, is-zero, is-identity, is-square, is-diagonal, is-diagonally-dominant, is-upper-triangular, is-lower-triangular, is-invertible, is-symmetric, is-unitary, is-self-adjoint, is-orthogonal, is-positive-definite, is-positive-semidefinite
 
   * numeric properties: size, elems, density, trace, determinant, rank, kernel, norm, condition
 
-  * derivative matrices: transposed, negated, inverted, reduced-row-echelon-form
+  * derived matrices: transposed, negated, conjugated, inverted, reduced-row-echelon-form
 
   * decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
 
-  * matrix math ops: add, subtract, multiply, dotProduct, map, reduce, reduce-rows, reduce-columns
+  * matrix math ops: add, subtract, multiply, dotProduct, tensorProduct
 
-  * operators: +, -, *, **, ⋅, dot, | |, || ||
+  * structural ops: map, reduce, reduce-rows, reduce-columns
+
+  * operators: +, -, *, **, ⋅, dot, ⊗, x, | |, || ||
 
 Constructors
 ------------
@@ -234,11 +236,6 @@ Boolean Properties
 
     if $matrix.is-square {
 
-### is-invertible
-
-    Is True if number of rows and colums are the same (is-square)
-    and determinant is not zero.
-
 ### is-zero
 
     True if every cell has value of 0.
@@ -291,23 +288,39 @@ Boolean Properties
 ### is-symmetric
 
     Is True if every cell with coordinates x y has same value as the cell on y x.
+    In other words: $matrix and $matrix.transposed (alias T) are the same.
 
     Example:    1 2 3
                 2 5 4
                 3 4 7
 
-    if $matrix.is-symmetric {
+### is-self-adjoint
+
+    A Hermitian or self-adjoint matrix is equal to its transposed and conjugated.
+
+### is-unitary
+
+    An unitery matrix multiplied (dotProduct) with its concjugate transposed 
+    derivative (.conj.T) is an identity matrix or said differently the 
+    concjugate transposed matrix equals the inversed matrix.
 
 ### is-orthogonal
 
-    if $matrix.is-orthogonal {
+    An orthogonal matrix multiplied (dotProduct) with its transposed derivative (T)
+    is an identity matrix or in other words transosed and inverted matrices are equal.
 
-    Is True if the matrix multiplied (dotProduct) with its transposed version (T)
-    is an identity matrix.
+### is-invertible
+
+    Is True if number of rows and colums are the same (is-square) and determinant is not zero.
+    All rows or colums have to be Independent vectors.
 
 ### is-positive-definite
 
-    True if all main minors are positive
+    True if all main minors or all Eigenvalues are strictly greater zero.
+
+### is-positive-semidefinite
+
+    True if all main minors or all Eigenvalues are greater equal zero.
 
 Numeric Properties
 ------------------
@@ -395,6 +408,11 @@ Derivative Matrices
     my $new = $matrix.negated();    # invert sign of all cells
     my $neg = - $matrix;            # works too
 
+### conjugated, alias conj
+
+    my $c = $matrix.conjugated();    # change every value to its complex conjugated
+    my $c = $matrix.conj();          # works too (official Perl 6 name)
+
 ### reduced-row-echelon-form, alias rref
 
     my $rref = $matrix.reduced-row-echelon-form();
@@ -435,8 +453,8 @@ Decompositions
 
     This decomposition works only on symmetric and definite positive matrices.
 
-Matrix Operations
------------------
+Matrix Math Operations
+----------------------
 
 ### add
 
@@ -465,15 +483,27 @@ Matrix Operations
 ### dotProduct
 
     my $product = $matrix1.dotProduct( $matrix2 )
-    return a new Matrix, result of the dotProduct of the current matrix with matrix2
-    Call be called throug operator ⋅ or dot , like following:
-    my $c = $a ⋅ $b;
+    my $c = $a ⋅ $b;                # works too as operator alias
     my $c = $a dot $b;
 
     A shortcut for multiplication is the power - operator **
     my $c = $a **  3;               # same as $a dot $a dot $a
     my $c = $a ** -3;               # same as ($a dot $a dot $a).inverted
     my $c = $a **  0;               # created an right sized identity matrix
+
+### tensorProduct
+
+    The tensor product between a matrix a of size (m,n) and a matrix b of size
+    (p,q) is a matrix c of size (a*m,b*n). The maybe simplest description of c
+    is a concatination of all matrices you get by multiplication of an element
+    of a with the complete matrix b as in $a.multiply($b.cell(..,..)).
+    Just replace in a each cell with this product and you will get c.
+
+    my $c = $matrixa.tensorProduct( $matrixb );
+    my $c = $a x $b;                            # works too as operator alias
+
+Structural Matrix Operations
+----------------------------
 
 ### map
 
@@ -514,7 +544,7 @@ Operators
 =========
 
     The Module overloads or uses a range of well and less known ops.
-    +, -, * are commutative.
+    +, -, * and ~~ are commutative.
 
     my $a   = +$matrix               # Num context, amount (count) of cells
     my $b   = ?$matrix               # Bool context, True if any cell has a none zero value
@@ -532,8 +562,11 @@ Operators
     my $p   =  $matrixa * $matrixb;  # cell wise product of two same sized matrices
     my $sp  =  $matrix  * $number;   # multiply number to every cell
 
+    my $tp  =  $a x $b;              # tensor product 
+    my $tp  =  $a ⊗ $b;              # tensor product, unicode alias
+
     my $dp  =  $a dot $b;            # dot product of two fitting matrices (cols a = rows b)
-    my $dp  =  $a ⋅ $b;
+    my $dp  =  $a ⋅ $b;              # dot product, unicode alias
 
     my $c   =  $a **  3;             # $a to the power of 3, same as $a dot $a dot $a
     my $c   =  $a ** -3;             # alias to ($a dot $a dot $a).inverted

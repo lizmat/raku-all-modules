@@ -7,7 +7,7 @@ Math::Matrix - create, compare, compute and measure 2D matrices
 
 =head1 VERSION
 
-0.1.7
+0.1.8
 
 =head1 SYNOPSIS
 
@@ -28,53 +28,62 @@ use with consideration...
 
 Matrices are readonly - all operations and derivatives are new objects.
 =end pod
-# =item structural operations: split join
-# ⊗
 
-unit class Math::Matrix:ver<0.1.7>:auth<github:pierre-vigier>;
+
+unit class Math::Matrix:ver<0.1.8>:auth<github:pierre-vigier>;
 use AttrX::Lazy;
 
 has @!rows is required;
+has $!diagonal is lazy;
+
 has Int $!row-count;
 has Int $!column-count;
-has $!diagonal is lazy;
-has Bool $!is-square is lazy;
+
+has Bool $!is-zero is lazy;
+has Bool $!is-identity is lazy;
 has Bool $!is-diagonal is lazy;
 has Bool $!is-lower-triangular is lazy;
 has Bool $!is-upper-triangular is lazy;
-has Bool $!is-invertible is lazy;
-has Bool $!is-zero is lazy;
-has Bool $!is-identity is lazy;
-has Bool $!is-orthogonal is lazy;
-has Bool $!is-positive-definite  is lazy;
+has Bool $!is-square is lazy;
 has Bool $!is-symmetric is lazy;
+has Bool $!is-self-adjoint is lazy;
+has Bool $!is-unitary is lazy;
+has Bool $!is-orthogonal is lazy;
+has Bool $!is-invertible is lazy;
+has Bool $!is-positive-definite is lazy;
+has Bool $!is-positive-semidefinite is lazy;
+
 has Numeric $!trace is lazy;
 has Numeric $!determinant is lazy;
 has Rat $!density is lazy;
 has Int $!rank is lazy;
 has Int $!kernel is lazy;
 
-method !rows      { @!rows }
-method !clone_rows { AoA_clone(@!rows) }
-method !row-count   { $!row-count }
-method !column-count { $!column-count }
+method !rows       { @!rows }
+method !clone_rows  { AoA_clone(@!rows) }
+method !row-count    { $!row-count }
+method !column-count  { $!column-count }
 
 subset Positive_Int of Int where * > 0 ;
+
 
 =begin pod
 =head1 METHODS
 =item constructors: new, new-zero, new-identity, new-diagonal, new-vector-product
 =item accessors: cell, row, column, diagonal, submatrix
 =item conversion: Bool, Numeric, Str, perl, list-rows, list-columns, gist, full
-=item boolean properties: equal, is-square, is-invertible, is-zero, is-identity,
-    is-upper-triangular, is-lower-triangular, is-diagonal, is-diagonally-dominant,
-    is-symmetric, is-orthogonal, is-positive-definite
+=item boolean properties: equal, is-zero, is-identity, is-square, is-diagonal,
+    is-diagonally-dominant, is-upper-triangular, is-lower-triangular, is-invertible,
+    is-symmetric, is-unitary, is-self-adjoint, is-orthogonal,
+    is-positive-definite, is-positive-semidefinite
 =item numeric properties: size, elems, density, trace, determinant, rank, kernel, norm, condition
-=item derivative matrices: transposed, negated, inverted, reduced-row-echelon-form
+=item derived matrices: transposed, negated, conjugated, inverted, reduced-row-echelon-form
 =item decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
-=item matrix math ops: add, subtract, multiply, dotProduct, map, reduce, reduce-rows, reduce-columns
-=item operators:   +,   -,   *,   **,   ⋅,  dot,   | |,   || ||
+=item matrix math ops: add, subtract, multiply, dotProduct, tensorProduct
+=item structural ops: map, reduce, reduce-rows, reduce-columns
+=item operators:   +,   -,   *,   **,   ⋅,  dot,  ⊗,  x,  | |,   || ||
 =end pod
+# split join
 
 ################################################################################
 # start constructors
@@ -134,7 +143,13 @@ method !zero_array( Positive_Int $rows, Positive_Int $cols = $rows ) {
     return [ [ 0 xx $cols ] xx $rows ];
 }
 
-method new-zero(Math::Matrix:U: Positive_Int $rows, Positive_Int $cols = $rows) {
+multi method new-zero(Math::Matrix:U: Positive_Int $size) {
+    self.bless( rows => self!zero_array($size, $size),
+        determinant => 0, rank => 0, kernel => $size, density => 0, trace => 0,
+        is-zero => True, is-identity => False, is-diagonal => True, 
+        is-square => True, is-symmetric => True  );
+}
+multi method new-zero(Math::Matrix:U: Positive_Int $rows, Positive_Int $cols) {
     self.bless( rows => self!zero_array($rows, $cols),
         determinant => 0, rank => 0, kernel => min($rows, $cols), density => 0, trace => 0,
         is-zero => True, is-identity => False, is-diagonal => ($cols == $rows),  );
@@ -164,7 +179,8 @@ method !identity_array( Positive_Int $size ) {
 method new-identity(Math::Matrix:U: Positive_Int $size ) {
     self.bless( rows => self!identity_array($size), diagonal => (1) xx $size, 
                 determinant => 1, rank => $size, kernel => 0, density => 1/$size, trace => $size,
-                is-zero => False, is-identity => True, is-diagonal => True, is-symmetric => True );
+                is-zero => False, is-identity => True, 
+                is-square => True, is-diagonal => True, is-symmetric => True );
 }
 
 =begin pod
@@ -186,16 +202,13 @@ method new-identity(Math::Matrix:U: Positive_Int $size ) {
 
 method new-diagonal(Math::Matrix:U: *@diag ){
     fail "Expect an List of Number" unless @diag and [and] @diag >>~~>> Numeric;
-    my @d;
-    for ^@diag.elems X ^@diag.elems -> ($r, $c) { @d[$r][$c] = $r==$c ?? @diag[$r] !! 0 }
+    my Int $size = +@diag;
+    my @d = self!zero_array($size, $size);
+    (^$size).map: { @d[$_][$_] = @diag[$_] };
 
     self.bless( rows => @d, diagonal => @diag,
                 determinant => [*](@diag.flat), trace => [+] (@diag.flat),
-                is-diagonal => True, is-symmetric => True  );
-
-#    my @d = self!zero_array(+@diag, +@diag);
-#    (^$size).map: { @d[$_][$_] = @diag[$_] };
-
+                is-square => True, is-diagonal => True, is-symmetric => True  );
 }
 
 method !new-lower-triangular(Math::Matrix:U: @m ) {
@@ -510,9 +523,7 @@ multi σ_permutations ([$x, *@xs]) {
     
     if $matrixa.equal( $matrixb ) {
     if $matrixa ~~ $matrixb {
-
 =end pod
-
 
 method equal(Math::Matrix:D: Math::Matrix $b --> Bool) {
     @!rows ~~ $b!rows;
@@ -521,6 +532,7 @@ method equal(Math::Matrix:D: Math::Matrix $b --> Bool) {
 method ACCEPTS(Math::Matrix $b --> Bool) {
     self.equal( $b );
 }
+
 
 =begin pod
 =head3 is-square
@@ -534,16 +546,6 @@ method !build_is-square(Math::Matrix:D: --> Bool) {
     $!column-count == $!row-count;
 }
 
-=begin pod
-=head3 is-invertible
-
-    Is True if number of rows and colums are the same (is-square)
-    and determinant is not zero.
-=end pod
-
-method !build_is-invertible(Math::Matrix:D: --> Bool) {
-    self.is-square and self.determinant != 0;
-}
 
 =begin pod
 =head3 is-zero
@@ -661,14 +663,12 @@ method is-diagonally-dominant(Math::Matrix:D: Bool :$strict = False, Str :$along
 =head3 is-symmetric
 
     Is True if every cell with coordinates x y has same value as the cell on y x.
+    In other words: $matrix and $matrix.transposed (alias T) are the same.
 
     Example:    1 2 3
                 2 5 4
                 3 4 7
 
-    if $matrix.is-symmetric {
-
-    
 =end pod
 
 method !build_is-symmetric(Math::Matrix:D: --> Bool) {
@@ -682,13 +682,38 @@ method !build_is-symmetric(Math::Matrix:D: --> Bool) {
     True;
 }
 
+
+=begin pod
+=head3 is-self-adjoint
+
+    A Hermitian or self-adjoint matrix is equal to its transposed and conjugated.
+=end pod
+
+method !build_is-self-adjoint(Math::Matrix:D: --> Bool) {
+    return False unless self.is-square;
+    self.T.conj ~~ self;
+}
+
+
+=begin pod
+=head3 is-unitary
+
+    An unitery matrix multiplied (dotProduct) with its concjugate transposed 
+    derivative (.conj.T) is an identity matrix or said differently the 
+    concjugate transposed matrix equals the inversed matrix.
+=end pod
+
+method !build_is-unitary(Math::Matrix:D: --> Bool) {
+    return False unless self.is-square;
+    self.dotProduct( self.T.conj ) ~~ Math::Matrix.new-identity( $!row-count );
+}
+
+
 =begin pod
 =head3 is-orthogonal
 
-    if $matrix.is-orthogonal {
-
-    Is True if the matrix multiplied (dotProduct) with its transposed version (T)
-    is an identity matrix.
+    An orthogonal matrix multiplied (dotProduct) with its transposed derivative (T)
+    is an identity matrix or in other words transosed and inverted matrices are equal.
 =end pod
 
 method !build_is-orthogonal(Math::Matrix:D: --> Bool) {
@@ -698,9 +723,21 @@ method !build_is-orthogonal(Math::Matrix:D: --> Bool) {
 
 
 =begin pod
+=head3 is-invertible
+
+    Is True if number of rows and colums are the same (is-square) and determinant is not zero.
+    All rows or colums have to be Independent vectors.
+=end pod
+
+method !build_is-invertible(Math::Matrix:D: --> Bool) {
+    self.is-square and self.determinant != 0;
+}
+
+
+=begin pod
 =head3 is-positive-definite
 
-    True if all main minors are positive
+    True if all main minors or all Eigenvalues are strictly greater zero.
 =end pod
 
 method !build_is-positive-definite (Math::Matrix:D: --> Bool) { # with Sylvester's criterion
@@ -714,6 +751,22 @@ method !build_is-positive-definite (Math::Matrix:D: --> Bool) { # with Sylvester
     True;
 }
 
+=begin pod
+=head3 is-positive-semidefinite
+
+    True if all main minors or all Eigenvalues are greater equal zero.
+=end pod
+
+method !build_is-positive-semidefinite (Math::Matrix:D: --> Bool) { # with Sylvester's criterion
+    return False unless self.is-square;
+    return False unless self.determinant >= 0;
+    my $sub = Math::Matrix.new( @!rows );
+    for $!row-count - 1 ... 1 -> $r {
+        $sub = $sub.submatrix($r,$r);
+        return False unless $sub.determinant >= 0;
+    }
+    True;
+}
 ################################################################################
 # end of boolean matrix properties - start numeric matrix properties
 ################################################################################
@@ -991,6 +1044,20 @@ method negated(Math::Matrix:D: --> Math::Matrix:D ) {
 
 
 =begin pod
+=head3 conjugated, alias conj
+
+    my $c = $matrix.conjugated();    # change every value to its complex conjugated
+    my $c = $matrix.conj();          # works too (official Perl 6 name)
+
+=end pod
+method conj(Math::Matrix:D: --> Math::Matrix:D  )         { self.conjugated }
+method conjugated(Math::Matrix:D: --> Math::Matrix:D ) {
+    self.map( { $_.conj} );
+}
+
+
+
+=begin pod
 =head3 reduced-row-echelon-form, alias rref
 
     my $rref = $matrix.reduced-row-echelon-form();
@@ -1153,7 +1220,7 @@ method decompositionCholesky(Math::Matrix:D: --> Math::Matrix:D) {
 ################################################################################
 
 =begin pod
-=head2 Matrix Operations
+=head2 Matrix Math Operations
 =head3 add
 
     my $sum = $matrix.add( $matrix2 );  # cell wise addition of 2 same sized matrices
@@ -1227,9 +1294,7 @@ multi method multiply(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!
 =head3 dotProduct
 
     my $product = $matrix1.dotProduct( $matrix2 )
-    return a new Matrix, result of the dotProduct of the current matrix with matrix2
-    Call be called throug operator ⋅ or dot , like following:
-    my $c = $a ⋅ $b;
+    my $c = $a ⋅ $b;                # works too as operator alias
     my $c = $a dot $b;
 
     A shortcut for multiplication is the power - operator **
@@ -1238,7 +1303,6 @@ multi method multiply(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!
     my $c = $a **  0;               # created an right sized identity matrix
 
 =end pod
- 
 
 multi method dotProduct(Math::Matrix:D: Math::Matrix $b --> Math::Matrix:D ) {
     my @product;
@@ -1250,6 +1314,36 @@ multi method dotProduct(Math::Matrix:D: Math::Matrix $b --> Math::Matrix:D ) {
 }
 
 =begin pod
+=head3 tensorProduct
+
+    The tensor product between a matrix a of size (m,n) and a matrix b of size
+    (p,q) is a matrix c of size (a*m,b*n). The maybe simplest description of c
+    is a concatination of all matrices you get by multiplication of an element
+    of a with the complete matrix b as in $a.multiply($b.cell(..,..)).
+    Just replace in a each cell with this product and you will get c.
+    
+    my $c = $matrixa.tensorProduct( $matrixb );
+    my $c = $a x $b;                            # works too as operator alias
+
+
+=end pod
+
+multi method tensorProduct(Math::Matrix:D: Math::Matrix $b  --> Math::Matrix:D) {
+    my @product;
+    for @!rows -> $arow {
+        for $b!rows -> $brow {
+            @product.push([ ($arow.list.map: { $brow.flat >>*>> $_ }).flat ]);
+        }
+    }
+    Math::Matrix.new( @product );
+}
+
+################################################################################
+# end of math matrix operations - start structural matrix operations
+################################################################################
+
+=begin pod
+=head2 Structural Matrix Operations
 =head3 map
 
     Like the built in map it iterates over all elements, running a code block.
@@ -1283,7 +1377,7 @@ method map(Math::Matrix:D: &coderef --> Math::Matrix:D) {
 =end pod
 
 method reduce(Math::Matrix:D: &coderef ) {
-    ( @!rows.map: {$_.flat}).flat.reduce( &coderef );
+    (@!rows.map: {$_.flat}).flat.reduce( &coderef );
 }
 
 =begin pod
@@ -1318,9 +1412,6 @@ method reduce-columns (Math::Matrix:D: &coderef){
     }
 }
 
-################################################################################
-# end of math matrix operations - start structural matrix operations
-################################################################################
 
 #method split (){ 
 #}
@@ -1336,7 +1427,7 @@ method reduce-columns (Math::Matrix:D: &coderef){
 =head1 Operators
 
     The Module overloads or uses a range of well and less known ops.
-    +, -, * are commutative.
+    +, -, * and ~~ are commutative.
 
     my $a   = +$matrix               # Num context, amount (count) of cells
     my $b   = ?$matrix               # Bool context, True if any cell has a none zero value
@@ -1354,8 +1445,11 @@ method reduce-columns (Math::Matrix:D: &coderef){
     my $p   =  $matrixa * $matrixb;  # cell wise product of two same sized matrices
     my $sp  =  $matrix  * $number;   # multiply number to every cell
 
+    my $tp  =  $a x $b;              # tensor product 
+    my $tp  =  $a ⊗ $b;              # tensor product, unicode alias
+
     my $dp  =  $a dot $b;            # dot product of two fitting matrices (cols a = rows b)
-    my $dp  =  $a ⋅ $b;
+    my $dp  =  $a ⋅ $b;              # dot product, unicode alias
 
     my $c   =  $a **  3;             # $a to the power of 3, same as $a dot $a dot $a
     my $c   =  $a ** -3;             # alias to ($a dot $a dot $a).inverted
@@ -1392,12 +1486,21 @@ multi sub prefix:<->(Math::Matrix $a --> Math::Matrix:D ) is export {
     $a.negated();
 }
 
+multi sub infix:<⊗>( Math::Matrix $a, Math::Matrix $b  --> Math::Matrix:D ) is looser(&infix:<*>) is export {
+    $a.tensorProduct( $b );
+}
+
+
+multi sub infix:<x>( Math::Matrix $a, Math::Matrix $b  --> Math::Matrix:D ) is looser(&infix:<*>) is export {
+    $a.tensorProduct( $b );
+}
+
 multi sub infix:<⋅>( Math::Matrix $a, Math::Matrix $b where { $a!column-count == $b!row-count} --> Math::Matrix:D ) is looser(&infix:<*>) is export {
     $a.dotProduct( $b );
 }
 
 multi sub infix:<dot>(Math::Matrix $a, Math::Matrix $b --> Math::Matrix:D ) is looser(&infix:<*>) is export {
-    $a ⋅ $b;
+    $a.dotProduct( $b );
 }
 
 multi sub infix:<*>(Math::Matrix $a, Real $r --> Math::Matrix:D ) is export {
