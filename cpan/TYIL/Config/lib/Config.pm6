@@ -214,6 +214,27 @@ class Config is Associative is export
         self;
     }
 
+    multi method unset(Str $key)
+    {
+        self.unset($key.split(".").Array);
+    }
+
+    multi method unset(@parts)
+    {
+        my %index := $!content;
+        my $target = @parts.pop;
+
+        for @parts.list -> $part {
+            %index{$part} = {} unless defined(%index{$part});
+
+            %index := %index{$part};
+        }
+
+        %index{$target}:delete if %index{$target}:exists;
+
+        self;
+    }
+
     #| Write the current configuration to the given path. If
     #| no parser is given, it tries to use the parser that
     #| was used when loading the configuration.
