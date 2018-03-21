@@ -609,21 +609,21 @@ our @A020652 is export = lazy gather for 2..* -> $de {
     }
 }
 # A020653 / fractal
-our @A020653 is export = 1, &NOSEQ ... *;
+our @A020653 is export = 1, 2, 1, 3, 1, 4, 3, 2, 1, 5, 1, 6, &NOSEQ ... *;
 # A027641 / Bernoulli
-our @A027641 is export = 1, &NOSEQ ... *;
+our @A027641 is export = 1, -1, 1, 0, -1, 0, 1, 0, -1, 0, 5, &NOSEQ ... *;
 # A027642 / Bernoulli
-our @A027642 is export = 1, &NOSEQ ... *;
+our @A027642 is export = 1, 2, 6, 1, 30, 1, 42, 1, 30, 1, 66, &NOSEQ ... *;
 # A035099 / j_2
-our @A035099 is export = 1, &NOSEQ ... *;
+our @A035099 is export = 1, 40, 276, -2048, 11202, -49152, 184024, &NOSEQ ... *;
 # A038566 / fractal
-our @A038566 is export = 1, &NOSEQ ... *;
+our @A038566 is export = 1, 1, 1, 2, 1, 3, 1, 2, 3, 4, 1, 5, &NOSEQ ... *;
 # A038567 / fractal
-our @A038567 is export = 1, &NOSEQ ... *;
+our @A038567 is export = 1, 2, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, &NOSEQ ... *;
 # A038568 / fractal
-our @A038568 is export = 1, &NOSEQ ... *;
+our @A038568 is export = 1, 1, 2, 1, 3, 2, 3, 1, 4, 3, 4, 1, &NOSEQ ... *;
 # A038569 / fractal
-our @A038569 is export = 1, &NOSEQ ... *;
+our @A038569 is export = 1, 2, 1, 3, 1, 3, 2, 4, 1, 4, 3, 5, &NOSEQ ... *;
 # A049310 / Chebyshev
 our @A049310 is export = 𝕀.triangle.map: -> ($n, $k) {
     if $n < $k or ($n+$k) !%% 2 { 0 }
@@ -631,15 +631,21 @@ our @A049310 is export = 𝕀.triangle.map: -> ($n, $k) {
 }
 #T(n, k) := 0 if n<k or n+k odd, else ((-1)^((n+k)/2+k))*binomial((n+k)/2, k)
 # A055512 / lattices
-our @A055512 is export = 1, &NOSEQ ... *;
+our @A055512 is export = 1, 1, 2, 6, 36, 380, 6390, 157962, 5396888, &NOSEQ ... *;
 # A070939 / binary length
 our @A070939 is export = 𝕀.map: { .base(2).chars };
 # A074206 / ordered factorizations
-our @A074206 is export = 1, &NOSEQ ... *;
+our @A074206 is export = 0, 1, 1, 1, 2, 1, 3, 1, 4, 2, 3, 1, &NOSEQ ... *;
 # A104725 / complementing systems
-our @A104725 is export = 1, &NOSEQ ... *;
+our @A104725 is export = 0, 1, 1, 1, 2, 1, 3, 1, 5, 2, 3, 1, &NOSEQ ... *;
 # A226898 / Hooley's Delta
-our @A226898 is export = 1, &NOSEQ ... *;
+#our @A226898 is export = 1, &NOSEQ ... *;
+our @A226898 is export = ℕ.map: -> $n {
+    my @div = divisors($n);
+    max(gather for 1..$n -> $u {
+        take +@div.grep: -> $f { $f >= $u and $f <= $u*e };
+    });
+};
 # A246655 / prime powers
 our @A246655 is export = 1, &NOSEQ ... *;
 

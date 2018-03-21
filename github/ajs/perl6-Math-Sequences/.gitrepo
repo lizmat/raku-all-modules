@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ajs/perl6-Math-Sequences.git
 	branch = master
-	commit = ab044a5da1cab956c7e8f6acd73840ea0c5cd193
-	parent = f1e550af7c682855276711be312f4c55269c1cb5
+	commit = fe01de360f9b51040cfe82bd20ad6658f402ae98
+	parent = 40aec1eaed1b51788281bdd00d6fb35864d2d30a
 	cmdver = 0.4.0
