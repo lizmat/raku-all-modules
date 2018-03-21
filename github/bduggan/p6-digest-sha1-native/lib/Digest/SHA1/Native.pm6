@@ -2,7 +2,7 @@ unit module Digest::SHA1::Native;
 
 use NativeCall;
 
-constant SHA1 = %?RESOURCES<libraries/sha1>.absolute;
+constant SHA1 = %?RESOURCES<libraries/sha1>;
 
 sub compute_sha1(Blob, size_t, CArray[uint8]) is native( SHA1 ) { * }
 
