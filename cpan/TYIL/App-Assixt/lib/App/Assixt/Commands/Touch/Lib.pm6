@@ -3,14 +3,49 @@
 use v6.c;
 
 use App::Assixt::Config;
+use Config;
 use Dist::Helper::Meta;
 use Dist::Helper::Template;
 
 unit module App::Assixt::Commands::Touch::Lib;
 
-multi sub MAIN("touch", "lib", Str $provide, Str :$type = "") is export
-{
-	my $config = get-config;
+multi sub assixt(
+	"touch",
+	"class",
+	Str:D $provide,
+	Config:D :$config
+) is export {
+	assixt(
+		"touch",
+		"lib",
+		$provide,
+		"class",
+		:$config
+	)
+}
+
+multi sub assixt(
+	"touch",
+	"unit",
+	Str:D $provide,
+	Config:D :$config
+) is export {
+	assixt(
+		"touch",
+		"lib",
+		$provide,
+		"unit",
+		:$config
+	)
+}
+
+multi sub assixt(
+	"touch",
+	"lib",
+	Str:D $provide,
+	Str $type = "lib",
+	Config:D :$config,
+) is export {
 	my %meta = get-meta;
 	my $path = "./lib".IO;
 
@@ -47,14 +82,4 @@ multi sub MAIN("touch", "lib", Str $provide, Str :$type = "") is export
 
 	# Inform the user of success
 	say "Added $provide to {%meta<name>}";
-}
-
-multi sub MAIN("touch", "class", Str $provide) is export
-{
-	MAIN("touch", "lib", $provide, type => "class");
-}
-
-multi sub MAIN("touch", "unit", Str $provide) is export
-{
-	MAIN("touch", "lib", $provide, type => "unit");
 }

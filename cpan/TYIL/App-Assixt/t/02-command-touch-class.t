@@ -2,30 +2,20 @@
 
 use v6.c;
 
-use App::Assixt::Commands::New;
-use App::Assixt::Commands::Touch::Lib;
+use App::Assixt::Test;
 use Dist::Helper::Meta;
 use File::Temp;
 use Test;
 
-multi sub MAIN { 0 }
-
+my $assixt = $*CWD;
 my $root = tempdir;
 
 chdir $root;
 
 plan 2;
 
-ok MAIN(
-	"new",
-	name => "Local::Test::Touch::Lib::Class",
-	author => "Patrick Spek",
-	email => "p.spek@tyil.work",
-	perl => "c",
-	description => "Nondescript",
-	license => "GPL-3.0",
-	no-user-config => True,
-), "assixt new Local::Test::Touch::Lib::Class";
+ok create-test-module($assixt, "Local::Test::Touch::Lib::Class"), "assixt new Local::Test::Touch::Lib::Class";
+chdir "$root/perl6-Local-Test-Touch-Lib-Class";
 
 subtest "Touch class files", {
 	my @tests = <
@@ -34,17 +24,11 @@ subtest "Touch class files", {
 		Third::Level::Test
 	>;
 
-	my $module-dir = "$root/perl6-Local-Test-Touch-Lib-Class";
-
 	plan 4 × @tests.elems;
 
 	for @tests -> $test {
-		chdir $module-dir;
-
 		ok get-meta()<provides>{$test}:!exists, "META6.json does not contain $test yet";
-		ok MAIN("touch", "class", $test), "assixt touch unit $test";
-
-		chdir $module-dir;
+		ok run-bin($assixt, « touch class $test »), "assixt touch class $test";
 
 		my %new-meta = get-meta;
 

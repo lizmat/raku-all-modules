@@ -3,14 +3,18 @@
 use v6.c;
 
 use App::Assixt::Config;
+use Config;
 use Dist::Helper::Meta;
 use Dist::Helper::Template;
 
 unit module App::Assixt::Commands::Touch::Bin;
 
-multi sub MAIN("touch", "bin", Str $provide) is export
-{
-	my $config = get-config;
+multi sub assixt(
+	"touch",
+	"bin",
+	Str $provide,
+	Config:D :$config,
+) is export {
 	my %meta = get-meta;
 	my $path = "./bin".IO;
 

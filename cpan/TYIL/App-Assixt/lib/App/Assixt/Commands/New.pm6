@@ -12,34 +12,23 @@ use File::Which;
 
 unit module App::Assixt::Commands::New;
 
-multi sub MAIN(
+multi sub assixt(
 	"new",
-	Str:D :$name is copy = "",
-	Str:D :$author is copy = "",
-	Str:D :$email is copy = "",
-	Str:D :$perl is copy = "",
-	Str:D :$description is copy = "",
-	Str:D :$license is copy = "",
-	Bool:D :$no-git = False,
-	Bool:D :$no-travis = False,
-	Bool:D :$force = False,
-	Bool:D :$no-user-config = False,
+	Config:D :$config,
 ) is export {
-	my Config $config = get-config(:$no-user-config);
-
 	# Ask the user about some information on the module
-	$name ||= ask("Module name");
-	$author ||= ask("Your name", $config.get("new-module.author"));
-	$email ||= ask("Your email address", $config.get("new-module.email"));
-	$perl ||= ask("Perl 6 version", $config.get("new-module.perl"));
-	$description ||= ask("Module description", "Nondescript");
-	$license ||= ask("License key", $config.get("new-module.license"));
+	$config<runtime><name> //= ask("Module name");
+	$config<runtime><author> //= ask("Your name", $config.get("new-module.author"));
+	$config<runtime><email> //= ask("Your email address", $config.get("new-module.email"));
+	$config<runtime><perl> //= ask("Perl 6 version", $config.get("new-module.perl"));
+	$config<runtime><description> //= ask("Module description", "Nondescript");
+	$config<runtime><license> //= ask("License key", $config.get("new-module.license"));
 
 	# Create a directory name for the module
-	my $dir-name = $config.get("new-module.dir-prefix") ~ $name.subst("::", "-", :g);
+	my $dir-name = $config.get("new-module.dir-prefix") ~ $config<runtime><name>.subst("::", "-", :g);
 
 	# Make sure it isn't already taken on the local system
-	if (!$force && $dir-name.IO.e && dir($dir-name)) {
+	if (!$config<force> && $dir-name.IO.e && dir($dir-name)) {
 		note "$dir-name is not empty!";
 		return;
 	}
@@ -47,11 +36,11 @@ multi sub MAIN(
 	# Create the initial %meta
 	my %meta = %(
 		meta-version => 0,
-		perl => "6.$perl",
-		name => $name,
-		description => $description,
-		license => $license,
-		authors => ("$author <$email>"),
+		perl => "6.$config<runtime><perl>",
+		name => $config<runtime><name>,
+		description => $config<runtime><description>,
+		license => $config<runtime><license>,
+		authors => ("$config<runtime><author> <$config<runtime><email>>"),
 		tags => (),
 		version => "0.0.0",
 		provides => %(),
@@ -62,14 +51,14 @@ multi sub MAIN(
 	# Create the module skeleton
 	mkdir $dir-name unless $dir-name.IO.d;
 	chdir $dir-name;
-	mkdir "bin" unless $force && "bin".IO.d;
-	mkdir "lib" unless $force && "lib".IO.d;
-	mkdir "resources" unless $force && "r".IO.d;
-	mkdir "t" unless $force && "t".IO.d;
+	mkdir "bin" unless $config<force> && "bin".IO.d;
+	mkdir "lib" unless $config<force> && "lib".IO.d;
+	mkdir "resources" unless $config<force> && "r".IO.d;
+	mkdir "t" unless $config<force> && "t".IO.d;
 
-	template("editorconfig", ".editorconfig", context => $config<style>, clobber => $force);
-	template("gitignore", ".gitignore", clobber => $force) if $config<external><git> && !$no-git;
-	template("travis.yml", ".travis.yml", clobber => $force) if $config<external><travis> && !$no-travis;
+	template("editorconfig", ".editorconfig", context => $config<style>, clobber => $config<force>);
+	template("gitignore", ".gitignore", clobber => $config<force>) if $config<external><git> && !$config<runtime><no-git>;
+	template("travis.yml", ".travis.yml", clobber => $config<force>) if $config<external><travis> && !$config<runtime><no-travis>;
 
 	# Write some files
 	put-meta(:%meta);

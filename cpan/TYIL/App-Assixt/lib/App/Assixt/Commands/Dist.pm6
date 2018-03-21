@@ -3,18 +3,17 @@
 use v6.c;
 
 use App::Assixt::Config;
+use Config;
 use Dist::Helper::Meta;
 use Dist::Helper;
 use File::Which;
 
 unit module App::Assixt::Commands::Dist;
 
-multi sub MAIN(
+multi sub assixt(
 	"dist",
 	Str:D $path,
-	Str :$output-dir,
-	Bool:D :$force = False,
-	Bool:D :$verbose = True,
+	Config:D :$config,
 ) is export {
 	chdir $path;
 
@@ -30,12 +29,12 @@ multi sub MAIN(
 	my Str $fqdn = get-dist-fqdn(%meta);
 	my Str $basename = $*CWD.IO.basename;
 	my Str $transform = "s/^\./{$fqdn}/";
-	my Str $output = "{$output-dir // get-config()<assixt><distdir>}/$fqdn.tar.gz";
+	my Str $output = "{$config<runtime><output-dir> // $config<assixt><distdir>}/$fqdn.tar.gz";
 
 	# Ensure output directory exists
 	mkdir $output.IO.parent;
 
-	if ($output.IO.e && !$force) {
+	if ($output.IO.e && !$config<force>) {
 		note "Archive already exists: {$output}";
 		return;
 	}
@@ -50,7 +49,7 @@ multi sub MAIN(
 		default { @tar-flags = « --transform $transform --exclude-vcs --exclude-vcs-ignores --exclude=.[^/]* » }
 	}
 
-	if ($verbose) {
+	if ($config<verbose>) {
 		say "tar czf {$output.perl} {@tar-flags} .";
 	}
 
@@ -58,7 +57,7 @@ multi sub MAIN(
 
 	say "Created {$output}";
 
-	if ($verbose) {
+	if ($config<verbose>) {
 		my $list = run « tar tf "$output" », :out;
 
 		for $list.out.lines -> $line {
@@ -66,26 +65,30 @@ multi sub MAIN(
 		}
 	}
 
-	True;
+	$output;
 }
 
-multi sub MAIN(
+multi sub assixt(
 	"dist",
-	Str :$output-dir,
-	Bool:D :$force = False,
-	Bool:D :$verbose = True
+	Config:D :$config,
 ) is export {
-	MAIN("dist", ".", :$output-dir, :$force, :$verbose);
+	assixt(
+		"dist",
+		".",
+		:$config,
+	)
 }
 
-multi sub MAIN(
+multi sub assixt(
 	"dist",
 	@paths,
-	Str :$output-dir,
-	Bool:D :$force = False,
-	Bool:D :$verbose = True,
+	Config:D :$config,
 ) is export {
 	for @paths -> $path {
-		MAIN("dist", $path, :$output-dir, :$force, :$verbose);
+		assixt(
+			"dist",
+			$path,
+			:$config
+		);
 	}
 }

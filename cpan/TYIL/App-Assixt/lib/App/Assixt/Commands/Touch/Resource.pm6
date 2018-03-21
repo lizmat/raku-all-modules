@@ -2,12 +2,17 @@
 
 use v6.c;
 
+use Config;
 use Dist::Helper::Meta;
 
 unit module App::Assixt::Commands::Touch::Resource;
 
-multi sub MAIN("touch", "resource", Str:D $resource) is export
-{
+multi sub assixt(
+	"touch",
+	"resource",
+	Str:D $resource,
+	Config:D :$config,
+) is export {
 	my %meta = get-meta;
 
 	mkdir "resources" unless "resources".IO.d;

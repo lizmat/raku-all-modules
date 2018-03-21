@@ -4,20 +4,18 @@ use v6.c;
 
 use App::Assixt::Config;
 use App::Assixt::Input;
+use Config;
 use Dist::Helper::Meta;
 
 unit module App::Assixt::Commands::Bootstrap::Config;
 
-multi sub MAIN(
+multi sub assixt(
 	"bootstrap",
 	"config",
 	Str:D $option,
 	Str:D $value,
-	:$config-file,
-	Bool:D :$force = False,
+	Config:D :$config,
 ) is export {
-	my $config = get-config(:$config-file);
-
 	die "Invalid config option $option" unless $config{$option}:exists;
 
 	given $config{$option} {
@@ -26,24 +24,22 @@ multi sub MAIN(
 		when Str  { $config.set($option, ~$value)                 }
 	}
 
-	if (!$force) {
+	if (!$config<force>) {
 		say "$option = {$config{$option}}";
 		exit unless confirm("Save?");
 	}
 
-	put-config(:$config, path => $config-file // "");
+	put-config(:$config, path => $config<runtime><config-file> // "");
 
 	say "Configuration updated";
 }
 
-multi sub MAIN(
+multi sub assixt(
 	"bootstrap",
 	"config",
 	Str:D $option,
-	:@config-file,
+	Config:D :$config,
 ) is export {
-	my $config = get-config(:@config-file);
-
 	die "Invalid config option $option" unless $config{$option}:exists;
 
 	given $config{$option} {
@@ -52,16 +48,21 @@ multi sub MAIN(
 		when Str  { $config.set($option, ask($option, $config.get($option, "")))        }
 	}
 
-	put-config(:$config);
+	say "$option = {$config{$option}}";
 }
 
-multi sub MAIN(
+multi sub assixt(
 	"bootstrap",
 	"config",
-	:@config-file,
+	Config:D :$config,
 ) is export {
-	for get-config.keys -> $option {
-		MAIN("bootstrap", "config", $option, :@config-file);
+	for $config.keys -> $option {
+		assixt(
+			"bootstrap",
+			"config",
+			$option,
+			:$config,
+		);
 	}
 }
 

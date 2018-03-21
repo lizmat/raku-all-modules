@@ -1,1 +1,1 @@
-App-Assixt-0.1.4esources/man/assixt.1.adoc
+App-Assixt-0.2.2esources/man/assixt.1.adoc

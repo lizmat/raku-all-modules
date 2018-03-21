@@ -2,6 +2,7 @@
 
 use v6.c;
 
+use Config;
 use App::Assixt::Commands::Dist;
 use App::Assixt::Input;
 use Dist::Helper::Meta;
@@ -15,11 +16,10 @@ my Str @bump-types = (
 	"patch",
 );
 
-multi sub MAIN(
+multi sub assixt(
 	"bump",
 	Str:D $type,
-	Bool:D :$force = False,
-	Bool:D :$no-user-config = False,
+	Config:D :$config,
 ) is export {
 	die "Illegal bump type supplied: $type" unless @bump-types ∋ $type.lc;
 
@@ -41,10 +41,9 @@ multi sub MAIN(
 	say "{%meta<name>} bumped to to {%meta<version>}";
 }
 
-multi sub MAIN(
+multi sub assixt(
 	"bump",
-	Bool:D :$force = False,
-	Bool:D :$no-user-config = False,
+	Config:D :$config,
 ) is export {
 	my Int $default-bump = 3;
 
@@ -69,5 +68,5 @@ multi sub MAIN(
 		last if $bump < @bump-types.elems;
 	}
 
-	MAIN("bump", @bump-types[$bump], :$force, :$no-user-config);
+	assixt("bump", @bump-types[$bump], :$config);
 }

@@ -3,15 +3,14 @@
 use v6.c;
 
 use App::Assixt::Config;
+use App::Assixt::Test;
 use Dist::Helper::Meta;
-use App::Assixt::Commands::New;
-use Test;
 use File::Temp;
+use Test;
 
 plan 4;
 
-multi sub MAIN { 0 } # Solves error code 2 from running the test itself
-
+my $assixt = $*CWD;
 my $root = tempdir;
 my %test-meta = %(
 	author => "Patrick Spek",
@@ -29,16 +28,15 @@ subtest "Create a new module", {
 
 	chdir $root;
 
-	ok MAIN(
-		"new",
-		name => "Local::Test::Module",
-		author => %test-meta<author>,
-		email => %test-meta<email>,
-		perl => "c",
-		description => %test-meta<description>,
-		license => %test-meta<license>,
-		no-user-config => True,
-	), "assixt new";
+	ok run-bin($assixt, «
+		new
+		"--name=\"Local::Test::Module\""
+		"--author=\"%test-meta<author>\""
+		"--email=\"%test-meta<email>\""
+		--perl=c
+		"--description=\"%test-meta<description>\""
+		"--license=%test-meta<license>"
+	»), "assixt new";
 
 	my $module-root = "$root/{$config<new-module><dir-prefix>}Local-Test-Module";
 
@@ -50,7 +48,7 @@ subtest "Create a new module", {
 	subtest "Verify META6.json", {
 		plan 10;
 
-		my %meta = get-meta;
+		my %meta = get-meta($module-root);
 
 		is %meta<meta-version>, %test-meta<meta-version>, "meta-version is correct";
 		is %meta<perl>, %test-meta<perl>, "perl is correct";
@@ -70,17 +68,16 @@ subtest "Create a new module with force", {
 
 	chdir $root;
 
-	ok MAIN(
-		"new",
-		name => "Local::Test::Module",
-		author => %test-meta<author>,
-		email => %test-meta<email>,
-		perl => "d",
-		description => "Nondescript",
-		license => %test-meta<license>,
-		force => True,
-		no-user-config => True,
-	), "assixt new";
+	ok run-bin($assixt, «
+		--force
+		new
+		"--name=\"Local::Test::Module\""
+		"--author=\"%test-meta<author>\""
+		"--email=%test-meta<email>"
+		--perl=d
+		--description=Nondescript
+		"--license=%test-meta<license>"
+	»), "assixt new --force";
 
 	my $module-root = "$root/{$config<new-module><dir-prefix>}Local-Test-Module";
 
@@ -92,7 +89,7 @@ subtest "Create a new module with force", {
 	subtest "Verify META6.json", {
 		plan 10;
 
-		my %meta = get-meta;
+		my %meta = get-meta($module-root);
 
 		is %meta<meta-version>, %test-meta<meta-version>, "meta-version is correct";
 		is %meta<perl>, "6.d", "perl is correct";
@@ -112,17 +109,16 @@ subtest "Create a new module without gitignore", {
 
 	chdir $root;
 
-	ok MAIN(
-		"new",
-		name => "Local::Test::NoGitModule",
-		author => %test-meta<author>,
-		email => %test-meta<email>,
-		perl => "c",
-		description => %test-meta<description>,
-		license => %test-meta<license>,
-		no-git => True,
-		no-user-config => True,
-	), "assixt new";
+	ok run-bin($assixt, «
+		new
+		"--name=\"Local::Test::NoGitModule\""
+		"--author=\"%test-meta<author>\""
+		"--email=%test-meta<email>"
+		--perl=c
+		"--description=\"%test-meta<description>\""
+		"--license=%test-meta<license>"
+		--no-git
+	»), "assixt new --no-git";
 
 	my $module-root = "$root/{$config<new-module><dir-prefix>}Local-Test-NoGitModule";
 
@@ -138,17 +134,16 @@ subtest "Create a new module without travis info", {
 
 	chdir $root;
 
-	ok MAIN(
-		"new",
-		name => "Local::Test::NoTravisModule",
-		author => %test-meta<author>,
-		email => %test-meta<email>,
-		perl => "c",
-		description => %test-meta<description>,
-		license => %test-meta<license>,
-		no-travis => True,
-		no-user-config => True,
-	), "assixt new";
+	ok run-bin($assixt, «
+		new
+		"--name=\"Local::Test::NoTravisModule\""
+		"--author=\"%test-meta<author>\""
+		"--email=%test-meta<email>"
+		--perl=c
+		"--description=\"%test-meta<description>\""
+		"--license=%test-meta<license>"
+		--no-travis
+	»), "assixt new --no-travis";
 
 	my $module-root = "$root/{$config<new-module><dir-prefix>}Local-Test-NoTravisModule";
 

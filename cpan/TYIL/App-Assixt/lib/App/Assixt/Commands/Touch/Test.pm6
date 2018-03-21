@@ -3,14 +3,18 @@
 use v6.c;
 
 use App::Assixt::Config;
+use Config;
 use Dist::Helper::Meta;
 use Dist::Helper::Template;
 
 unit module App::Assixt::Commands::Touch::Test;
 
-multi sub MAIN("touch", "test", Str $test) is export
-{
-	my $config = get-config;
+multi sub assixt(
+	"touch",
+	"test",
+	Str $test,
+	Config:D :$config,
+) is export {
 	my %meta = get-meta;
 	my $path = "./t".IO;
 

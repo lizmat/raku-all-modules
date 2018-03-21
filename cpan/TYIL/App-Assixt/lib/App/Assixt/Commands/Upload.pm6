@@ -4,6 +4,7 @@ use v6.c;
 
 use App::Assixt::Config;
 use App::Assixt::Input;
+use Config;
 use Dist::Helper::Meta;
 use Config;
 use File::Temp;
@@ -12,34 +13,11 @@ use MIME::Base64;
 
 unit module App::Assixt::Commands::Upload;
 
-multi sub MAIN("upload", Str @dists) is export
-{
-	for @dists -> $dist {
-		MAIN("upload", $dist.IO.absolute);
-	}
-}
-
-multi sub MAIN("upload", Str $dist) is export
-{
-	my Config $config = get-config;
-
-	# Get PAUSE ID
-	if (!$config.has("pause.id") || $config<pause><id> eq "") {
-		$config.set("pause.id", ask("PAUSE ID", default => $*USER.Str));
-
-		if (confirm("Save PAUSE ID to config?")) {
-			 $config.write("{$*HOME}/.config/assixt.toml");
-		}
-	}
-
-	# Get PAUSE password
-	$config.set("pause.password", password());
-
-	MAIN("upload", $dist.IO.absolute, pause-id => $config.get("pause.id"), pause-password => $config.get("pause.password"));
-}
-
-multi sub MAIN("upload", Str $dist, Str :$pause-id = "", Str :$pause-password = "") is export
-{
+multi sub assixt(
+	"upload",
+	Str $dist,
+	Config:D :$config,
+) is export {
 	# Get the meta info
 	my $tempdir = tempdir;
 
@@ -47,18 +25,21 @@ multi sub MAIN("upload", Str $dist, Str :$pause-id = "", Str :$pause-password = 
 
 	run « tar xzf "$dist" -C "$tempdir" »;
 
+	$config<runtime><pause-id> //= $config<pause><id> // ask("PAUSE ID", default => $*USER.Str);
+	$config<runtime><pause-password> //= $config<pause><password> // password("PAUSE password");
+
 	my %meta = get-meta($tempdir.IO.add($dist.IO.extension("", :parts(2)).basename).absolute);
 	my $distname = "{%meta<name>.subst("::", "-", :g)}-{%meta<version>}";
 
 	# Set authentication
-	my $hash = MIME::Base64.encode-str("{$pause-id}:{$pause-password}");
+	my $hash = MIME::Base64.encode-str("{$config<runtime><pause-id>}:{$config<runtime><pause-password>}");
 	my $submitvalue = " Upload this file from my disk ";
 
 	my $curl = run «
 		curl
 		-i -s
 		-H "Authorization: Basic $hash"
-		-F "HIDDENNAME={$pause-id.uc}"
+		-F "HIDDENNAME={$config<runtime><pause-id>.uc}"
 		-F "CAN_MULTIPART=1"
 		-F "pause99_add_uri_uri="
 		-F "pause99_add_uri_subdirtext=Perl6"
@@ -104,4 +85,21 @@ multi sub MAIN("upload", Str $dist, Str :$pause-id = "", Str :$pause-password = 
 
 	# Report success to the user
 	say "Uploaded {%meta<name>}:ver<{%meta<version>}> to CPAN";
+}
+
+multi sub assixt(
+	"upload",
+	Str @dists,
+	Config:D :$config,
+) is export {
+	$config<runtime><pause-id> //= $config<pause><id> // ask("PAUSE ID", default => $*USER.Str);
+	$config<runtime><pause-password> //= $config<pause><password> // password("PAUSE password");
+
+	for @dists -> $dist {
+		assixt(
+			"upload",
+			$dist.IO.absolute,
+			:$config,
+		);
+	}
 }

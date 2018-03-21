@@ -2,33 +2,39 @@
 
 use v6.c;
 
+use Config;
 use App::Assixt::Input;
 use Dist::Helper::Clean;
 use Dist::Helper::Meta;
 
 unit module App::Assixt::Commands::Clean;
 
-multi sub MAIN(
+multi sub assixt(
 	"clean",
 	Str:D $path = ".",
-	Bool:D :$no-meta = False,
-	Bool:D :$no-files = False,
-	Bool:D :$force = False,
-	Bool:D :$verbose = False,
+	Config:D :$config,
 ) is export {
 	# Clean up the META6.json
-	unless ($no-meta) {
-		my %meta = clean-meta(:$path, :$force, :$verbose);
+	unless ($config<runtime><no-meta>) {
+		my %meta = clean-meta(
+			:$path,
+			force => $config<force>,
+			verbose => $config<verbose>,
+		);
 
-		put-meta(:%meta, :$path) if $force || confirm("Save cleaned META6.json?");
+		put-meta(:%meta, :$path) if $config<force> || confirm("Save cleaned META6.json?");
 	}
 
 	# Clean up unreferenced files
-	unless ($no-files) {
-		my @orphans = clean-files(:$path, :$force, :$verbose);
+	unless ($config<runtime><no-files>) {
+		my @orphans = clean-files(
+			:$path,
+			force => $config<force>,
+			verbose => $config<verbose>,
+		);
 
 		for @orphans -> $orphan {
-			unlink($orphan) if $force || confirm("Really delete $orphan?");
+			unlink($orphan) if $config<force> || confirm("Really delete $orphan?");
 		}
 	}
 

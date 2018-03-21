@@ -2,30 +2,20 @@
 
 use v6.c;
 
-use App::Assixt::Commands::New;
-use App::Assixt::Commands::Touch::Bin;
+use App::Assixt::Test;
 use Dist::Helper::Meta;
 use File::Temp;
 use Test;
 
-multi sub MAIN { 0 }
-
+my $assixt = $*CWD;
 my $root = tempdir;
 
 chdir $root;
 
 plan 2;
 
-ok MAIN(
-	"new",
-	name => "Local::Test::Touch::Bin",
-	author => "Patrick Spek",
-	email => "p.spek@tyil.work",
-	perl => "c",
-	description => "Nondescript",
-	license => "GPL-3.0",
-	no-user-config => True,
-), "assixt new Local::Test::Touch::Bin";
+ok create-test-module($assixt, "Local::Test::Touch::Bin"), "assixt new Local::Test::Touch::Bin";
+chdir "$root/perl6-Local-Test-Touch-Bin";
 
 subtest "Touch bin files", {
 	my @tests = <
@@ -41,7 +31,7 @@ subtest "Touch bin files", {
 		chdir $module-dir;
 
 		ok get-meta()<provides>{$test}:!exists, "META6.json does not contain $test yet";
-		ok MAIN("touch", "bin", $test), "assixt touch bin $test";
+		ok run-bin($assixt, « touch bin $test »), "assixt touch bin $test";
 
 		chdir $module-dir;
 
