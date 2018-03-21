@@ -1,5 +1,5 @@
 use v6.c;
-unit module Terminal::Getpass:ver<0.0.5>;
+unit module Terminal::Getpass:ver<0.0.6>;
 
 sub getpass(Str $prompt = "Password: ", IO::Handle $stream = $*ERR --> Str) is export {
     if $*DISTRO.is-win {
