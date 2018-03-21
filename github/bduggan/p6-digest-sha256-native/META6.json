@@ -14,7 +14,7 @@
     ],
     "description" : "p6 bindings to C implementation of SHA256",
     "test-depends" : [ ],
-    "version" : "0.02",
+    "version" : "0.03",
     "license" : "Artistic-2.0",
     "authors" : [
         "Brian Duggan"

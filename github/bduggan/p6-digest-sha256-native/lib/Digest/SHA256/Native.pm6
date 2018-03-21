@@ -2,7 +2,7 @@ unit module Digest::SHA256::Fast;
 
 use NativeCall;
 
-constant SHA256 = %?RESOURCES<libraries/sha256>.absolute;
+constant SHA256 = %?RESOURCES<libraries/sha256>;
 
 sub compute_sha256(Blob, size_t, CArray[uint8]) is native( SHA256 ) { * }
 
