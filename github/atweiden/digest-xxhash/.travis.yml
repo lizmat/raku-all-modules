@@ -12,12 +12,9 @@ sudo: required
 
 before_install:
     # install libxxhash into /usr/lib/libxxhash.so
-    - curl https://codeload.github.com/Cyan4973/{xxHash}/{tar.gz}/{v0.6.3} -o "#1-#3.#2"
-    - tar xvzf xxHash-v0.6.3.tar.gz
-    - cd xxHash-0.6.3
-    - mkdir build && pushd build
-    - cmake -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_SHARED_LIBS=ON ../cmake_unofficial/
-    - make all
-    - popd
-    - sudo make install -C build/
+    - curl https://codeload.github.com/Cyan4973/{xxHash}/{tar.gz}/{v0.6.4} -o "#1-#3.#2"
+    - tar xvzf xxHash-v0.6.4.tar.gz
+    - cd xxHash-0.6.4
+    - make lib
+    - sudo make PREFIX="/usr" install
     - cd $TRAVIS_BUILD_DIR

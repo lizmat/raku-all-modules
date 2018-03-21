@@ -43,5 +43,5 @@ This is free and unencumbered public domain software. For more
 information, see http://unlicense.org/ or the accompanying UNLICENSE file.
 
 [libxxhash]: https://github.com/Cyan4973/xxHash
-[mac]: https://github.com/atweiden/homebrew-formulae/blob/master/libxxhash/libxxhash.rb
+[mac]: http://formulae.brew.sh/formula/xxhash
 [pac]: https://aur.archlinux.org/packages/libxxhash/
