@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>deadbeaf</ID><DisplayName>fred</DisplayName></Owner><Buckets><Bucket><Name>flint.stone</Name><CreationDate>2014-02-17T10:05:49.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>

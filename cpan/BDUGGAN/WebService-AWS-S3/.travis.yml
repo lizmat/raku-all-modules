@@ -1,0 +1,13 @@
+env:
+  global:
+    - ver=2018.03-01
+dist: trusty
+sudo: required
+before_install:
+  - wget -O /tmp/perl6.deb https://github.com/nxadm/rakudo-pkg/releases/download/v$ver/rakudo-pkg-Ubuntu14.04_$ver\_amd64.deb
+  - sudo dpkg -i /tmp/perl6.deb
+  - export PATH=$PATH:/.perl6/bin:/opt/rakudo-pkg/bin
+  - install-zef-as-user
+  - zef install --deps-only --/test .
+script:
+  - zef test .
