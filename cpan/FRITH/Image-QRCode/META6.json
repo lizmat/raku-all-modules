@@ -1,0 +1,14 @@
+{
+  "perl" : "6.c",
+  "tags" : [ "image", "qrcode" ],
+  "name" : "Image::QRCode",
+  "version" : "0.0.1",
+  "description" : "Interface to libqrencode",
+  "test-depends" : [ "Test" ],
+  "provides" : {
+    "Image::QRCode" : "lib/Image/QRCode.pm6"
+  },
+  "authors" : [ "Fernando Santagata" ],
+  "license": "Artistic-2.0",
+  "source-url" : "git://github.com/frithnanth/perl6-Image-QRCode.git"
+}

@@ -1,0 +1,19 @@
+dist: trusty
+
+os:
+  - linux
+
+language: perl6
+
+perl6:
+  - latest
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install libqrencode3
+
+install:
+  - rakudobrew build-zef && zef install .
+
+script:
+  - PERL6LIB=$PWD/lib prove -e perl6 -vr t/
