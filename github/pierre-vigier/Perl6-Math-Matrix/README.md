@@ -46,7 +46,7 @@ METHODS
 
   * decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
 
-  * matrix math ops: add, subtract, multiply, dotProduct, tensorProduct
+  * matrix math ops: add, subtract, add-row, add-column, multiply, dotProduct, tensorProduct
 
   * structural ops: map, reduce, reduce-rows, reduce-columns
 
@@ -141,19 +141,28 @@ Accessors
 
 ### submatrix
 
-    Return a subset of a given matrix. 
-    Given $matrix = Math::Matrix.new([[1,2,3][4,5,6],[7,8,9]]);
-    A submatrix with one row and two columns:
+    Subset of cells of a given matrix by deleting rows and/or columns. 
 
-    $matrix.submatrix(1,2);              # is [[1,2]]
+    The first and simplest usage is by choosing a cell (by coordinates).
+    Row and column of that cell will be removed.
 
-    A submatrix from cell (0,1) on to left and down till cell (1,2):
+    my $m = Math::Matrix.new([[1,2,3,4][2,3,4,5],[3,4,5,6]]);     # 1 2 3 4
+                                                                    2 3 4 5
+                                                                    3 4 5 6
+    say $m.submatrix(1,2);     # 1 2 4
+                                 3 4 6                            
 
-    $matrix.submatrix(0,1,1,2);          # is [[2,3],[5,6]]
+    If you provide two pairs of coordinates (row column), these will be counted as
+    left upper and right lower corner of and area inside the original matrix,
+    which will the resulting submatrix.
 
-    When I just want cells in row 0 and 2 and colum 1 and 2 I use:
+    say $m.submatrix(1,1,1,3); # 2 3 4        
 
-    $matrix.submatrix((0,2),(1..2));     # is [[2,3],[8,9]]
+    When provided with two lists of values (one for the rows - one for columns)
+    a new matrix will be created with the old rows and columns in that new order.
+
+    $m.submatrix((3,2),(1,2)); # 4 5
+                                 3 4
 
 Type Conversion And Output Flavour
 ----------------------------------
@@ -397,11 +406,21 @@ Derivative Matrices
 
 ### transposed, alias T
 
-    return a new Matrix, which is the transposition of the current one
+    returns a new, transposed Matrix, where rows became colums and vice versa.
+
+    Math::Matrix.new([[1,2,3],[3,4,6]]).transposed
+
+    Example:   [1 2 3].T  =  1 4       
+               [4 5 6]       2 5
+                             3 6
 
 ### inverted
 
-    return a new Matrix, which is the inverted of the current one
+    Inverse matrix regarding to matrix multiplication.
+    The dot product of a matrix with its inverted results in a identity matrix
+    (neutral element in this group).
+    Matrices that have a square form and a full rank can be inverted.
+    Check this with the method .is-invertible.
 
 ### negated
 
@@ -458,6 +477,13 @@ Matrix Math Operations
 
 ### add
 
+    Example:    1 2  +  5    =  6 7 
+                3 4             8 9
+
+                1 2  +  2 3  =  3 5
+                3 4     4 5     7 9
+
+
     my $sum = $matrix.add( $matrix2 );  # cell wise addition of 2 same sized matrices
     my $s = $matrix + $matrix2;         # works too
 
@@ -466,25 +492,61 @@ Matrix Math Operations
 
 ### subtract
 
+    Works analogous to add - it's just for convenance.
+
+    my $diff = $matrix.subtract( $number );   # subtracts number from every cell (scalar subtraction)
+    my $sd = $matrix - $number;               # works too
+    my $sd = $number - $matrix ;              # works too
+
     my $diff = $matrix.subtract( $matrix2 );  # cell wise subraction of 2 same sized matrices
     my $d = $matrix - $matrix2;               # works too
 
-    my $diff = $matrix.subtract( $number );   # subtracts number from every cell 
-    my $sd = $matrix - $number;               # works too
+### add-row
+
+    Add a vector (row or col of some matrix) to a row of the matrix.
+    In this example we add (2,3) to the second row.
+
+    Math::Matrix.new( [[1,2],[3,4]] ).add-row(1,(2,3))
+
+    Example:    1 2  +       =  1 2
+                3 4    2 3      5 7
+
+### add-column
+
+    Analog to add-row:
+    Math::Matrix.new( [[1,2],[3,4]] ).add-column(1,(2,3))
+
+    Example:    1 2  +   2   =  1 4
+                3 4      3      3 7
 
 ### multiply
 
-    my $product = $matrix.multiply( $matrix2 );  # cell wise multiplication of same size matrices
-    my $p = $matrix * $matrix2;                  # works too
+    In scalar multiplication each cell of the matrix gets multiplied with the same
+    number (scalar). In addition to that, this method can multiply two same sized
+    matrices, by multipling the cells with the came coordinates from each operand.
+
+    Example:    1 2  *  5    =   5 10 
+                3 4             15 20
+
+                1 2  *  2 3  =   2  6
+                3 4     4 5     12 20
 
     my $product = $matrix.multiply( $number );   # multiply every cell with number
     my $p = $matrix * $number;                   # works too
 
+    my $product = $matrix.multiply( $matrix2 );  # cell wise multiplication of same size matrices
+    my $p = $matrix * $matrix2;                  # works too
+
 ### dotProduct
 
+    Matrix multiplication of two fitting matrices (colums left == rows right).
+
+    Example:    1 2  *  2 3  =  10 13  =  1*2+2*4  1*3+2*5
+                3 4     4 5     22 29     3*2+4*4  3*3+4*5
+
     my $product = $matrix1.dotProduct( $matrix2 )
-    my $c = $a ⋅ $b;                # works too as operator alias
-    my $c = $a dot $b;
+    my $c = $a dot $b;              # works too as operator alias
+    my $c = $a ⋅ $b;                # unicode operator alias
 
     A shortcut for multiplication is the power - operator **
     my $c = $a **  3;               # same as $a dot $a dot $a
@@ -499,8 +561,14 @@ Matrix Math Operations
     of a with the complete matrix b as in $a.multiply($b.cell(..,..)).
     Just replace in a each cell with this product and you will get c.
 
+    Example:    1 2  *  2 3   =  1*[2 3] 2*[2 3]  =  2  3  4  6
+                3 4     4 5        [4 5]   [4 5]     4  5  8 10
+                                 3*[2 3] 4*[2 3]     6  9  8 12
+                                   [4 5]   [4 5]     8 15 16 20
+
     my $c = $matrixa.tensorProduct( $matrixb );
-    my $c = $a x $b;                            # works too as operator alias
+    my $c = $a x $b;                # works too as operator alias
+    my $c = $a ⊗ $b;                # unicode operator alias
 
 Structural Matrix Operations
 ----------------------------
