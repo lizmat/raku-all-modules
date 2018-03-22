@@ -2,7 +2,6 @@
 
 use v6.c;
 use Test;
-use lib "lib";
 
 plan 8;
 
@@ -16,8 +15,6 @@ $config.read: %(
 		d => "e",
 	),
 );
-
-dd $config.get();
 
 ok $config<a>:exists, "'a' exists";
 ok $config<a>:delete, "'a' gets deleted";

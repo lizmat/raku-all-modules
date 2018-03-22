@@ -63,7 +63,6 @@ class Config is Associative is export
     {
         return $parser if $parser ne "";
         return $!parser if $!parser ne "";
-        say $!parser;
 
         my $type = self.get-parser-type($path);
 
