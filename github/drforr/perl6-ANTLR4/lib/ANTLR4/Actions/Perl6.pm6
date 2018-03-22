@@ -55,7 +55,12 @@ class Terminal {
 	}
 }
 
-class Wildcard { method to-lines { return "." } }
+class Wildcard {
+
+	has $.modifier = '';
+
+	method to-lines { return "." ~ $.modifier }
+}
 
 class Nonterminal {
 	also does Named;
@@ -99,8 +104,10 @@ class Alternation {
 		my @content;
 		for @.content {
 			my @lines = self.indent( $_.to-lines );
-			@lines[0] = '||' ~ @lines[0] if @lines[0];
-			@content.append( @lines );
+			if @lines {
+				@lines[0] = '||' ~ @lines[0];
+				@content.append( @lines );
+			}
 		}
 		@content.flat
 	}
@@ -122,7 +129,7 @@ class Block {
 	also does Named;
 	also does Indenting;
 
-	has $.type;
+	has $.type = '';
 	has @.content;
 
 	method to-lines {
@@ -147,13 +154,19 @@ class Grouping is Block {
 			@content.append( $_.to-lines );
 		}
 		return (
-			"\(",
+			"\(" ~ self.indent-line( @content.shift ),
 			self.indent( @content ),
 			"\)" ~ $.modifier
 		).flat
 	}
 }
 
+# Though it's true that Tokens don't use any of the Block mechanisms, I'll
+# leave it as a subclass because of its X { Y } nature.
+#
+# Actually @.content should be set as a submethod, I suppose.
+# That would make hte relationship clearer. Something for later...
+#
 class Token is Block {
 	method to-lines {
 		my $lc-name = lc( $.name );
@@ -248,7 +261,7 @@ class ANTLR4::Actions::Perl6 {
 	#
 	method terminal( $/ ) {
 		if $/<ID> {
-			make Nonterminal.new( :name( $/<ID>.ast ) )
+			make Nonterminal.new( :name( $/<scalar>.ast ) )
 		}
 		else {
 			make Terminal.new( :name( $/<scalar>.ast ) )
@@ -332,24 +345,60 @@ class ANTLR4::Actions::Perl6 {
 		make $/<block>.ast
 	}
 
+	sub is-ANTLR-terminal( $str ) {
+		$str ~~ / ^ \' /;
+	}
+
 	method element( $/ ) {
-		if $/<ebnfSuffix> and $/<atom> and $/<atom><notSet> {
-			make CharacterSet.new(
-				:negated( True ),
-				:modifier( $/<ebnfSuffix>.ast ),
-				:content(
-					~$/<atom><notSet><blockSet><setElementAltList><setElement>[0]<terminal><STRING_LITERAL>[0]
+		if $/<ebnfSuffix> {
+			if $/<atom><terminal><scalar> and
+				!is-ANTLR-terminal( ~$/<atom><terminal><scalar> ) {
+				make Nonterminal.new(
+					:modifier( $/<ebnfSuffix>.ast ),
+					:name( ~$/<atom><terminal><scalar> )
 				)
-			)
-		}
-		elsif $/<ebnfSuffix> {
-			make Terminal.new(
-				:modifier( $/<ebnfSuffix>.ast ),
-				:name( $/<atom><terminal><scalar>.ast )
-			)
-		}
-		elsif $/<atom> {
-			make $/<atom>.ast
+			}
+			elsif $/<atom><DOT> {
+				make Wildcard.new(
+					:modifier( $/<ebnfSuffix>.ast )
+				)
+			}
+			elsif $/<atom><notSet><blockSet> {
+				make CharacterSet.new(
+					:negated( True ),
+					:modifier( $/<ebnfSuffix>.ast ),
+					# XXX can improve
+					:content(
+	~$/<atom><notSet><blockSet><setElementAltList><setElement>[0]<terminal><STRING_LITERAL>[0]
+					)
+				)
+			}
+			elsif $/<atom><notSet><setElement><LEXER_CHAR_SET> {
+				make CharacterSet.new(
+					:negated( True ),
+					:modifier( $/<ebnfSuffix>.ast ),
+					# XXX can improve
+					:content(
+						$/<atom><notSet><setElement><LEXER_CHAR_SET>>>.Str
+					)
+				)
+			}
+			elsif $/<atom><notSet><setElement><terminal> {
+				make CharacterSet.new(
+					:negated( True ),
+					:modifier( $/<ebnfSuffix>.ast ),
+					# XXX can improve
+					:content(
+						~$/<atom><notSet><setElement><terminal><STRING_LITERAL>[0]
+					)
+				)
+			}
+			else {
+				make Terminal.new(
+					:modifier( $/<ebnfSuffix>.ast ),
+					:name( $/<atom><terminal><scalar>.ast )
+				)
+			}
 		}
 		elsif $/<ebnf> {
 			# XXX The // '' should probably go away...
@@ -362,11 +411,13 @@ class ANTLR4::Actions::Perl6 {
 				)
 			)
 		}
+		elsif $/<atom> {
+			make $/<atom>.ast
+		}
 	}
 
 	method parserElement( $/ ) {
-		if $/<element>.elems == 1 and
-			$/<element>[0]<atom><range> and
+		if $/<element>[0]<atom><range> and
 			$/<element>[0]<ebnfSuffix> {
 			make Range.new(
 				:modifier( $/<element>[0]<ebnfSuffix>.ast ),
@@ -374,12 +425,11 @@ class ANTLR4::Actions::Perl6 {
 				:to( $/<element>[0]<atom><range><to>.ast ),
 			)
 		}
-		elsif $/<element>.elems == 4 and
-			$/<element>[0]<atom><notSet> and
+		elsif $/<element>[0]<atom><notSet> and
 			$/<element>[1]<atom><DOT> and
 			$/<element>[2]<atom><DOT> {
 			make Range.new(
-				:modifier( ),
+				:modifier( $/<element>[3]<ebnfSuffix>.ast // '' ),
 				:negated( True ),
 				:from( $/<element>[0]<atom><notSet><setElement><terminal><scalar>.ast ),
 				:to( $/<element>[3]<atom><terminal><scalar>.ast ),
@@ -395,17 +445,40 @@ class ANTLR4::Actions::Perl6 {
 	}
 
 	method lexerAtom( $/ ) {
-		make $/<LEXER_CHAR_SET>.ast
+		if $/<LEXER_CHAR_SET> {
+			my @content;
+			for $/<LEXER_CHAR_SET> {
+				@content.append( $_ )
+			}
+			make CharacterSet.new(
+				:content( @content )
+			)
+		}
+		elsif $/<terminal> {
+			make Terminal.new(
+				:name( ~$/<terminal><STRING_LITERAL>[0] )
+			)
+		}
+	}
+
+	method lexerElement( $/ ) {
+		if $/<ebnfSuffix> {
+			my @content;
+			for $/<lexerAtom><LEXER_CHAR_SET> {
+				@content.append( $_ )
+			}
+			make CharacterSet.new(
+				:modifier( $/<ebnfSuffix> ),
+				:content( @content )
+			)
+		}
+		else {
+			make $/<lexerAtom>.ast
+		}
 	}
 
 	method lexerAlt( $/ ) {
-		my @content;
-		for $/<lexerElement> {
-			@content.append( $_.<lexerAtom>.ast )
-		}
-		make CharacterSet.new(
-			:content( @content )
-		)
+		make Concatenation.new( :content( $/<lexerElement>>>.ast ) )
 	}
 
 	method parserAltList( $/ ) {
