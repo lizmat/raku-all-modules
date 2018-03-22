@@ -1,0 +1,27 @@
+{
+  "authors" : [
+    "Sam Gillespie"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Test"
+  ],
+  "description" : "A basic compilation checker",
+  "license" : "Artistic-2.0",
+  "name" : "Test::SourceFiles",
+  "perl" : "6.c",
+  "provides" : {
+    "Test::SourceFiles" : "lib/Test/SourceFiles.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/samgwise/Test-SourceFiles.git",
+  "tags" : [
+    "testing",
+    "use",
+    "development"
+  ],
+  "test-depends" : [
+    "Test"
+  ],
+  "version" : "0.0.1"
+}
