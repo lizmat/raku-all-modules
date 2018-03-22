@@ -1,5 +1,11 @@
 Revision history for ANTLR4-Grammar
 
+0.1.0  2018-03-21T21:01:31+01:00
+    - Terminal, nonterminal, concatenation and alternation all work.
+
+0.0.3  2018-03-21T15:23:59+01:00
+    - Restructure tests so that I don't miss as much, modifiers
+
 0.0.2  2018-03-19T20:22:49+01:00
     - Escape terminals correctly, add modifiers to grouping
 
