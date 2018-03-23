@@ -80,8 +80,8 @@ subset Positive_Int of Int where * > 0 ;
 =item numeric properties: size, elems, density, trace, determinant, rank, kernel, norm, condition
 =item derived matrices: transposed, negated, conjugated, inverted, reduced-row-echelon-form
 =item decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
-=item matrix math ops: add, subtract, add-row, add-column, multiply, dotProduct, tensorProduct
-=item structural ops: map, reduce, reduce-rows, reduce-columns
+=item matrix math ops: add, subtract, add-row, add-column, multiply, multiply-row, multiply-column, dotProduct, tensorProduct
+=item structural ops: map, map-row, map-column, reduce, reduce-rows, reduce-columns
 =item operators:   +,   -,   *,   **,   ⋅,  dot,  ⊗,  x,  | |,   || ||
 =end pod
 # split join
@@ -257,7 +257,7 @@ method new-vector-product (Math::Matrix:U: @column_vector, @row_vector ){
 
 =end pod
 
-multi method cell(Math::Matrix:D: Int:D $row, Int:D $column --> Numeric ) {
+method cell(Math::Matrix:D: Int:D $row, Int:D $column --> Numeric ) {
     fail X::OutOfRange.new(
         :what<Row index> , :got($row), :range("0..{$!row-count -1 }")
     ) unless 0 <= $row < $!row-count;
@@ -266,6 +266,7 @@ multi method cell(Math::Matrix:D: Int:D $row, Int:D $column --> Numeric ) {
     ) unless 0 <= $column < $!column-count;
     return @!rows[$row][$column];
 }
+
 
 =begin pod
 =head3 row
@@ -277,12 +278,13 @@ multi method cell(Math::Matrix:D: Int:D $row, Int:D $column --> Numeric ) {
 
 =end pod
 
-multi method row(Math::Matrix:D: Int:D $row  --> List) {
+method row(Math::Matrix:D: Int:D $row  --> List) {
     fail X::OutOfRange.new(
         :what<Row index> , :got($row), :range("0..{$!row-count -1 }")
     ) unless 0 <= $row < $!row-count;
     return @!rows[$row].list;
 }
+
 
 =begin pod
 =head3 column
@@ -294,12 +296,13 @@ multi method row(Math::Matrix:D: Int:D $row  --> List) {
 
 =end pod
 
-multi method column(Math::Matrix:D: Int:D $column --> List) {
+method column(Math::Matrix:D: Int:D $column --> List) {
     fail X::OutOfRange.new(
         :what<Column index> , :got($column), :range("0..{$!column-count -1 }")
     ) unless 0 <= $column < $!column-count;
-    ( gather for ^$!row-count -> $i { take @!rows[$i;$column] } ).list;
+    (@!rows.keys.map:{ @!rows[$_;$column] }).list;
 }
+
 
 =begin pod
 =head3 diagonal
@@ -314,6 +317,7 @@ method !build_diagonal(Math::Matrix:D: --> List){
     fail "Number of columns has to be same as number of rows" unless self.is-square;
     ( gather for ^$!row-count -> $i { take @!rows[$i;$i] } ).list;
 }
+
 
 =begin pod
 =head3 submatrix
@@ -340,7 +344,6 @@ method !build_diagonal(Math::Matrix:D: --> List){
     
     $m.submatrix((3,2),(1,2)); # 4 5
                                  3 4
-
 =end pod
 
 multi method submatrix(Math::Matrix:D: Int:D $row, Int:D $col --> Math::Matrix:D ){
@@ -358,7 +361,7 @@ multi method submatrix(Math::Matrix:D: Int:D $row, Int:D $col --> Math::Matrix:D
 multi method submatrix(Math::Matrix:D: Int:D $row-min, Int:D $col-min, Int:D $row-max, Int:D $col-max --> Math::Matrix:D ){
     fail "Minimum row has to be smaller than maximum row" if $row-min > $row-max;
     fail "Minimum column has to be smaller than maximum column" if $col-min > $col-max;
-    self.submatrix(($row-min .. $row-max).list,($col-min .. $col-max).list);
+    self.submatrix(($row-min .. $row-max).list, ($col-min .. $col-max).list);
 }
 
 multi method submatrix(Math::Matrix:D: @rows where .all ~~ Int, @cols where .all ~~ Int --> Math::Matrix:D ){
@@ -390,6 +393,7 @@ multi method submatrix(Math::Matrix:D: @rows where .all ~~ Int, @cols where .all
 
 method Bool(Math::Matrix:D: --> Bool)    {   ! self.is-zero   }
 
+
 =begin pod
 =head3 Numeric
 
@@ -402,6 +406,7 @@ method Bool(Math::Matrix:D: --> Bool)    {   ! self.is-zero   }
 
 method Numeric (Math::Matrix:D: --> Int) {   self.elems   }
 
+
 =begin pod
 =head3 Str
 
@@ -412,6 +417,7 @@ method Numeric (Math::Matrix:D: --> Int) {   self.elems   }
 =end pod
 
 method Str(Math::Matrix:D: --> Str)      {   @!rows.gist   }
+
 
 =begin pod
 =head3 perl
@@ -438,6 +444,7 @@ multi method list-rows(Math::Matrix:D: --> List) {
     (@!rows.map: {$_.flat}).list;
 }
 
+
 =begin pod
 =head3 list-columns
 
@@ -461,7 +468,6 @@ multi method list-columns(Math::Matrix:D: --> List) {
     1 2 3 4 5 ..
     3 4 5 6 7 ..
     ...
-
 =end pod
 
 method gist(Math::Matrix:D: --> Str) {
@@ -490,6 +496,7 @@ method gist(Math::Matrix:D: --> Str) {
     $str ~= " ...\n" if $!row-count > $max-rows;
     $str.chomp;
 }
+
 
 =begin pod
 =head3 full
@@ -531,7 +538,6 @@ multi σ_permutations ([$x, *@xs]) {
 ################################################################################
 # end of type conversion and handy shortcuts - start boolean matrix properties
 ################################################################################
-
 
 =begin pod
 =head2 Boolean Properties
@@ -589,7 +595,6 @@ method !build_is-zero(Math::Matrix:D: --> Bool) {
                 0 0 1
 =end pod
 
-
 method !build_is-identity(Math::Matrix:D: --> Bool) {
     return False unless self.is-square;
     for ^$!row-count X ^$!column-count -> ($r, $c) {
@@ -597,6 +602,7 @@ method !build_is-identity(Math::Matrix:D: --> Bool) {
     }
     True;
 }
+
 
 =begin pod
 =head3 is-upper-triangular
@@ -606,7 +612,6 @@ method !build_is-identity(Math::Matrix:D: --> Bool) {
     Example:    1 2 5
                 0 3 8
                 0 0 7
-
 =end pod
 
 method !build_is-upper-triangular(Math::Matrix:D: --> Bool) {
@@ -617,6 +622,7 @@ method !build_is-upper-triangular(Math::Matrix:D: --> Bool) {
     True;
 }
 
+
 =begin pod
 =head3 is-lower-triangular
 
@@ -625,7 +631,6 @@ method !build_is-upper-triangular(Math::Matrix:D: --> Bool) {
     Example:    1 0 0
                 2 3 0
                 5 8 7
-
 =end pod
 
 method !build_is-lower-triangular(Math::Matrix:D: --> Bool) {
@@ -635,6 +640,7 @@ method !build_is-lower-triangular(Math::Matrix:D: --> Bool) {
     }
     True;
 }
+
 
 =begin pod
 =head3 is-diagonal
@@ -649,6 +655,7 @@ method !build_is-lower-triangular(Math::Matrix:D: --> Bool) {
 method !build_is-diagonal(Math::Matrix:D: --> Bool) {
     return $.is-upper-triangular && $.is-lower-triangular;
 }
+
 
 =begin pod
 =head3 is-diagonally-dominant
@@ -679,6 +686,7 @@ method is-diagonally-dominant(Math::Matrix:D: Bool :$strict = False, Str :$along
     $colwise and $rowwise;
 }
 
+
 =begin pod
 =head3 is-symmetric
 
@@ -688,7 +696,6 @@ method is-diagonally-dominant(Math::Matrix:D: Bool :$strict = False, Str :$along
     Example:    1 2 3
                 2 5 4
                 3 4 7
-
 =end pod
 
 method !build_is-symmetric(Math::Matrix:D: --> Bool) {
@@ -771,6 +778,7 @@ method !build_is-positive-definite (Math::Matrix:D: --> Bool) { # with Sylvester
     True;
 }
 
+
 =begin pod
 =head3 is-positive-semidefinite
 
@@ -825,7 +833,6 @@ method elems (Math::Matrix:D: --> Int) {
     my $d = $matrix.density( );   
 
     Density is the percentage of cell which are not zero.
-
 =end pod
 
 
@@ -843,12 +850,12 @@ method !build_density(Math::Matrix:D: --> Rat) {
 
     The trace of a square matrix is the sum of the cells on the main diagonal.
     In other words: sum of cells which row and column value is identical.
-
 =end pod
 
 method !build_trace(Math::Matrix:D: --> Numeric) {
     self.diagonal.sum;
 }
+
 
 =begin pod
 =head3 determinant, alias det
@@ -900,6 +907,7 @@ method determinant-naive(Math::Matrix:D: --> Numeric) {
     $det;
 }
 
+
 =begin pod
 =head3 rank
 
@@ -910,7 +918,6 @@ method determinant-naive(Math::Matrix:D: --> Numeric) {
     (thats why this command is sometimes calles dim)
 
 =end pod
-
 
 method !build_rank(Math::Matrix:D: --> Int) {
     my $rank = 0;
@@ -1277,6 +1284,7 @@ multi method add(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-c
     Math::Matrix.new( @sum );
 }
 
+
 =begin pod
 =head3 subtract
 
@@ -1288,8 +1296,6 @@ multi method add(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-c
 
     my $diff = $matrix.subtract( $matrix2 );  # cell wise subraction of 2 same sized matrices
     my $d = $matrix - $matrix2;               # works too
-
-
 =end pod
 
 multi method subtract(Math::Matrix:D: Real $r --> Math::Matrix:D ) {
@@ -1304,19 +1310,20 @@ multi method subtract(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!
     Math::Matrix.new( @subtract );
 }
 
+
 =begin pod
 =head3 add-row
 
     Add a vector (row or col of some matrix) to a row of the matrix.
     In this example we add (2,3) to the second row.
 
-    Math::Matrix.new( [[1,2],[3,4]] ).add-row(1,(2,3))
+    Math::Matrix.new( [[1,2],[3,4]] ).add-row(1,(2,3));
 
     Example:    1 2  +       =  1 2
                 3 4    2 3      5 7
 =end pod
 
-multi method add-row(Math::Matrix:D: Int $row, @row where {.all ~~ Numeric} --> Math::Matrix:D ) {
+method add-row(Math::Matrix:D: Int $row, @row where {.all ~~ Numeric} --> Math::Matrix:D ) {
     fail X::OutOfRange.new(
         :what<Row Index> , :got($row), :range("0..{$!row-count - 1}")
     ) unless 0 <= $row < $!row-count;
@@ -1331,13 +1338,13 @@ multi method add-row(Math::Matrix:D: Int $row, @row where {.all ~~ Numeric} --> 
 =head3 add-column
 
     Analog to add-row:
-    Math::Matrix.new( [[1,2],[3,4]] ).add-column(1,(2,3))
+    Math::Matrix.new( [[1,2],[3,4]] ).add-column(1,(2,3));
 
     Example:    1 2  +   2   =  1 4
                 3 4      3      3 7
 =end pod
 
-multi method add-column(Math::Matrix:D: Int $col, @col where {.all ~~ Numeric} --> Math::Matrix:D ) {
+method add-column(Math::Matrix:D: Int $col, @col where {.all ~~ Numeric} --> Math::Matrix:D ) {
     fail X::OutOfRange.new(
         :what<Column Index> , :got($col), :range("0..{$!column-count - 1}")
     ) unless 0 <= $col < $!column-count;
@@ -1385,6 +1392,40 @@ multi method multiply(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!
 
 
 =begin pod
+=head3 multiply-row
+
+    Multiply scalar number to each cell of a row.
+
+    Math::Matrix.new( [[1,2],[3,4]] ).multiply-row(0,2);
+
+    Example:    1 2  * 2     =  2 4
+                3 4             3 4
+=end pod
+
+method multiply-row(Math::Matrix:D: Int $row, Numeric $factor --> Math::Matrix:D ) {
+    self.map-row($row,{$_ * $factor});
+}
+
+
+=begin pod
+=head3 multiply-column
+
+    Multiply scalar number to each cell of a column.
+
+    Math::Matrix.new( [[1,2],[3,4]] ).multiply-row(0,2);
+
+    Example:    1 2          =  2 2
+                3 4             6 4
+            
+               *2
+=end pod
+
+method multiply-column(Math::Matrix:D: Int $column, Numeric $factor --> Math::Matrix:D ) {
+    self.map-column($column,{$_ * $factor});
+}
+
+
+=begin pod
 =head3 dotProduct
 
     Matrix multiplication of two fitting matrices (colums left == rows right).
@@ -1412,14 +1453,15 @@ multi method dotProduct(Math::Matrix:D: Math::Matrix $b --> Math::Matrix:D ) {
     Math::Matrix.new( @product );
 }
 
+
 =begin pod
 =head3 tensorProduct
 
     The tensor product between a matrix a of size (m,n) and a matrix b of size
-    (p,q) is a matrix c of size (a*m,b*n). The maybe simplest description of c
-    is a concatination of all matrices you get by multiplication of an element
-    of a with the complete matrix b as in $a.multiply($b.cell(..,..)).
-    Just replace in a each cell with this product and you will get c.
+    (p,q) is a matrix c of size (m*p,n*q). All matrices you get by multiplying
+    an element (cell) of matrix a with matrix b (as in $a.multiply($b.cell(..,..))
+    concatinated result in matrix c. 
+    (Or replace in a each cell with its product with b.)
 
     Example:    1 2  *  2 3   =  1*[2 3] 2*[2 3]  =  2  3  4  6
                 3 4     4 5        [4 5]   [4 5]     4  5  8 10
@@ -1454,17 +1496,56 @@ multi method tensorProduct(Math::Matrix:D: Math::Matrix $b  --> Math::Matrix:D) 
     Like the built in map it iterates over all elements, running a code block.
     The results for a new matrix.
 
-    say Math::Matrix.new( [[1,2],[3,4]] ).map(* + 1);    # prints
+    say Math::Matrix.new([[1,2],[3,4]]).map(* + 1);    # prints:
 
     2 3
     4 5
-
 =end pod
 
 method map(Math::Matrix:D: &coderef --> Math::Matrix:D) {
     Math::Matrix.new( [ @!rows.map: {
             [ $_.map( &coderef ) ]
     } ] );
+}
+
+
+=begin pod
+=head3 map-row
+
+    Map only specified row (row number is first parameter).
+    
+    say Math::Matrix.new([[1,2],[3,4]]).map-row(1, {$_ + 1}); # prints:
+
+    1 2
+    4 5
+=end pod
+
+method map-row(Math::Matrix:D: Int $row, &coderef --> Math::Matrix:D ) {
+    fail X::OutOfRange.new(
+        :what<Row Index> , :got($row), :range("0..{$!row-count - 1}")
+    ) unless 0 <= $row < $!row-count;
+    my @m = AoA_clone(@!rows);
+    @m[$row] = @m[$row].map(&coderef);
+    Math::Matrix.new( @m );
+}
+
+=begin pod
+=head3 map-column
+
+    say Math::Matrix.new([[1,2],[3,4]]).map-column(1, {$_ + 1}); # prints:
+
+    1 3
+    3 5
+=end pod
+
+
+method map-column(Math::Matrix:D: Int $col, &coderef --> Math::Matrix:D ) {
+    fail X::OutOfRange.new(
+        :what<Column Index> , :got($col), :range("0..{$!column-count - 1}")
+    ) unless 0 <= $col < $!column-count;
+    my @m = AoA_clone(@!rows);
+    (^$!column-count).map:{ @m[$_;$col] = &coderef( @m[$_;$col] ) };
+    Math::Matrix.new( @m );
 }
 
 =begin pod
@@ -1484,6 +1565,7 @@ method map(Math::Matrix:D: &coderef --> Math::Matrix:D) {
 method reduce(Math::Matrix:D: &coderef ) {
     (@!rows.map: {$_.flat}).flat.reduce( &coderef );
 }
+
 
 =begin pod
 =head3 reduce-rows
@@ -1506,7 +1588,6 @@ method reduce-rows (Math::Matrix:D: &coderef){
     resulting list:
 
     say Math::Matrix.new( [[1,2],[3,4]] ).reduce-columns(&[*]);  # prints (3, 8)
-
 =end pod
 
 method reduce-columns (Math::Matrix:D: &coderef){
@@ -1593,7 +1674,6 @@ multi sub prefix:<->(Math::Matrix $a --> Math::Matrix:D ) is export {
 multi sub infix:<⊗>( Math::Matrix $a, Math::Matrix $b  --> Math::Matrix:D ) is looser(&infix:<*>) is export {
     $a.tensorProduct( $b );
 }
-
 
 multi sub infix:<x>( Math::Matrix $a, Math::Matrix $b  --> Math::Matrix:D ) is looser(&infix:<*>) is export {
     $a.tensorProduct( $b );

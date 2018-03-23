@@ -46,9 +46,9 @@ METHODS
 
   * decompositions: decompositionLUCrout, decompositionLU, decompositionCholesky
 
-  * matrix math ops: add, subtract, add-row, add-column, multiply, dotProduct, tensorProduct
+  * matrix math ops: add, subtract, add-row, add-column, multiply, multiply-row, multiply-column, dotProduct, tensorProduct
 
-  * structural ops: map, reduce, reduce-rows, reduce-columns
+  * structural ops: map, map-row, map-column, reduce, reduce-rows, reduce-columns
 
   * operators: +, -, *, **, ⋅, dot, ⊗, x, | |, || ||
 
@@ -506,7 +506,7 @@ Matrix Math Operations
     Add a vector (row or col of some matrix) to a row of the matrix.
     In this example we add (2,3) to the second row.
 
-    Math::Matrix.new( [[1,2],[3,4]] ).add-row(1,(2,3))
+    Math::Matrix.new( [[1,2],[3,4]] ).add-row(1,(2,3));
 
     Example:    1 2  +       =  1 2
                 3 4    2 3      5 7
@@ -514,7 +514,7 @@ Matrix Math Operations
 ### add-column
 
     Analog to add-row:
-    Math::Matrix.new( [[1,2],[3,4]] ).add-column(1,(2,3))
+    Math::Matrix.new( [[1,2],[3,4]] ).add-column(1,(2,3));
 
     Example:    1 2  +   2   =  1 4
                 3 4      3      3 7
@@ -537,6 +537,26 @@ Matrix Math Operations
     my $product = $matrix.multiply( $matrix2 );  # cell wise multiplication of same size matrices
     my $p = $matrix * $matrix2;                  # works too
 
+### multiply-row
+
+    Multiply scalar number to each cell of a row.
+
+    Math::Matrix.new( [[1,2],[3,4]] ).multiply-row(0,2);
+
+    Example:    1 2  * 2     =  2 4
+                3 4             3 4
+
+### multiply-column
+
+    Multiply scalar number to each cell of a column.
+
+    Math::Matrix.new( [[1,2],[3,4]] ).multiply-row(0,2);
+
+    Example:    1 2          =  2 2
+                3 4             6 4
+            
+               *2
+
 ### dotProduct
 
     Matrix multiplication of two fitting matrices (colums left == rows right).
@@ -556,10 +576,10 @@ Matrix Math Operations
 ### tensorProduct
 
     The tensor product between a matrix a of size (m,n) and a matrix b of size
-    (p,q) is a matrix c of size (a*m,b*n). The maybe simplest description of c
-    is a concatination of all matrices you get by multiplication of an element
-    of a with the complete matrix b as in $a.multiply($b.cell(..,..)).
-    Just replace in a each cell with this product and you will get c.
+    (p,q) is a matrix c of size (m*p,n*q). All matrices you get by multiplying
+    an element (cell) of matrix a with matrix b (as in $a.multiply($b.cell(..,..))
+    concatinated result in matrix c. 
+    (Or replace in a each cell with its product with b.)
 
     Example:    1 2  *  2 3   =  1*[2 3] 2*[2 3]  =  2  3  4  6
                 3 4     4 5        [4 5]   [4 5]     4  5  8 10
@@ -578,10 +598,26 @@ Structural Matrix Operations
     Like the built in map it iterates over all elements, running a code block.
     The results for a new matrix.
 
-    say Math::Matrix.new( [[1,2],[3,4]] ).map(* + 1);    # prints
+    say Math::Matrix.new([[1,2],[3,4]]).map(* + 1);    # prints:
 
     2 3
     4 5
+
+### map-row
+
+    Map only specified row (row number is first parameter).
+
+    say Math::Matrix.new([[1,2],[3,4]]).map-row(1, {$_ + 1}); # prints:
+
+    1 2
+    4 5
+
+### map-column
+
+    say Math::Matrix.new([[1,2],[3,4]]).map-column(1, {$_ + 1}); # prints:
+
+    1 3
+    3 5
 
 ### reduce
 
