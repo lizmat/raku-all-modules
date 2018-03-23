@@ -1,0 +1,654 @@
+#!/usr/bin/env perl6
+# Copyright © 2014-2018
+#     Aleks-Daniel Jakimenko-Aleksejev <alex.jakimenko@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+use Image::Magick:from<Perl5>;
+use JSON::Fast;
+
+# no, I'm not colorblind, it's just that
+# these colors were tweaked over time but not renamed
+my $YELLOW = ‘#F5F3B2’;
+my $BLACK  = ‘#000000’;
+my $WHITE  = ‘#FFFFFF’;
+my $GRAY   = ‘#7D6459’;
+my $RED    = ‘#CE2E29’;
+my $BLUE   = ‘#4C5B8A’;
+my $PINK   = ‘#621D5B’;
+my $TEAL   = ‘#4C8A82’;
+my $WEIRD  = ‘#C1A43A’;
+
+my $COLOR-BACKGROUND       = $BLACK;
+my $COLOR-SLEEP            = $RED;
+my $COLOR-SLEEP-WEEKEND    = $RED;
+my $COLOR-NO-DATA          = $PINK;
+my $COLOR-HEAT             = $RED; # has to be in #000000 format (TODO)
+my $COLOR-BORDER           = $GRAY;
+my $COLOR-GRID             = $GRAY ~ ‘A0’; # some alpha
+my $COLOR-ROLLING          = $WEIRD;
+my $COLOR-ROLLING-DURATION = $BLUE;
+my $COLOR-TOTAL-DURATION   = $TEAL;
+
+my $HEAT-PADDING         = 57;
+my $HEAT-WIDTH           = 22;
+# ↓ not really padding because some things are drawn there
+my $GRAPH-PADDING-LEFT   = 58;
+my $GRAPH-PADDING-RIGHT  = 7;
+my $GRAPH-PADDING-TOP    = 130;
+my $GRAPH-PADDING-BOTTOM = 70;
+
+my $ROLLING                = 14;
+my $ROLLING-SHIFT          = (-$ROLLING ÷ 2).Int;
+
+my $ROLLING-DURATION       = 7;
+my $ROLLING-DURATION-SHIFT = (-$ROLLING-DURATION ÷ 2).Int;
+
+my $NO-DATA-THRESHOLD      = (24 + 12) × 60 × 60; # seconds
+
+grammar Sleep {
+    token TOP {
+        [\N*\n]*? <line>+ %% \n
+    }
+    token date {
+        $<date>=[\d\d\d\d‘-’\d\d‘-’\d\d] [\s+ \w**3]?
+        [\s+ $<time>=[\d\d‘:’\d\d[‘:’\d\d]?]]?
+    }
+    token line {
+        ^^ \s* ‘CLOCK:’ \s ‘[’<from=.date>‘]--[’<to=.date>‘]’
+        [\s* ‘=>’ \s* \d+‘:’\d+]? $$
+    }
+}
+
+my @heat; # array of arrays
+my @sums; # sums of @heat
+
+my $image;
+my $width;
+my $height;
+my $graph-width;
+my $graph-height;
+my $graph-x = $GRAPH-PADDING-LEFT;
+my $graph-y = $GRAPH-PADDING-TOP;
+my %font;
+my $start-date;
+my $end-date;
+my @lines;
+my $title;
+my $subtitle;
+
+sub draw-dot($x, $y, :$color=‘black’) {
+    $image.Draw: fill => $color, primitive => ‘point’,
+                 strokewidth => 1, :!antialias,
+                 stroke => $color, points => “$x,$y”
+}
+
+sub draw-line($x1, $y1, $x2, $y2, :$color=‘black’,
+              :$dash-pattern=(), :$dash-offset=0, :$width=0.50) {
+    $image.Draw: fill => ‘none’, primitive => ‘line’,
+                 strokewidth => $width, :!antialias,
+                 stroke-dasharray => $dash-pattern,
+                 stroke-dashoffset => $dash-offset,
+                 stroke => $color, points => “$x1,$y1 $x2,$y2”
+}
+
+sub draw-rect($x1, $y1, $x2, $y2, :$color=‘black’) {
+    $image.Draw: fill => ‘none’, primitive => ‘rectangle’,
+                 strokewidth => 1, :!antialias,
+                 stroke => $color, points => “$x1,$y1 $x2,$y2”
+}
+
+sub fill-line($day, $start, $end, $color, :$dash-pattern=()) {
+    my $y1 = ($start × ($graph-height - 1)).round;
+    my $y2 = ($end   × ($graph-height - 1)).round;
+    { @heat[$day][$_]++ for $y1..$y2 } unless $dash-pattern;
+    $y1 = $graph-y + $graph-height - 1 - $y1;
+    $y2 = $graph-y + $graph-height - 1 - $y2;
+    my $x = $graph-x + $day;
+    draw-line $x, $y1, $x, $y2, :$color,
+              :$dash-pattern, :dash-offset($++ % 2)
+}
+
+multi sub draw-text($char where *.chars == 1, $x, $y, $color, :$size=1, :$bt) {
+    if %font{$char.ord}:!exists {
+        note “Warning: Character {$char.uniname} is not in the font”;
+        return
+    }
+    my @rows = %font{$char.ord}.list;
+    loop (my $y-shift = 0; $y-shift < @rows * $size; $y-shift++) {
+        my $row = @rows[$y-shift ÷ $size];
+        loop (my $x-shift = 0; $x-shift < $row * $size; $x-shift++) {
+            next unless $row[$x-shift ÷ $size];
+            if $bt {
+                draw-dot $x + $y-shift,     $y - $x-shift.Int, :$color
+            } else {
+                draw-dot $x + $x-shift.Int, $y + $y-shift,     :$color
+            }
+        }
+    }
+}
+
+multi sub draw-text($text, $x, $y, $color, :$size=1, :$bt) { # TODO bdf fonts with imagemagick?
+    my $shift = 0;
+    for ($bt ?? $text.flip !! $text).comb {
+        if $bt {
+            draw-text $_, $x         , $y + $shift, $color, :$size, :$bt
+        } else {
+            draw-text $_, $x + $shift, $y,          $color, :$size, :$bt
+        }
+        $shift += 4 × $size
+    }
+}
+
+sub graph-border() {
+    draw-rect $graph-x - 1, $graph-y - 1,
+              $graph-x + $graph-width, $graph-y + $graph-height, # TODO check off-by-ones
+              color => $COLOR-BORDER;
+    my $one-shift = $graph-height ÷ 24;
+    for 0..23 { # time
+        my $y = $graph-y + $graph-height - $one-shift × $_ - 1;
+        draw-line $graph-x, $y, $graph-x + $graph-width, $y,
+                dash-pattern => (2, 2), color => $COLOR-GRID; # y grid
+
+        my $text = sprintf “%02d:00”, $_;
+        my $xl = $graph-x - ②;
+        draw-line $xl, $y, $xl - ④, $y, color => $COLOR-BORDER; # y tick (left)
+        draw-text $text, $xl - ㊺, $y - ⑤, $COLOR-BORDER, :2size;
+
+        my $xr = $graph-x + $graph-width + 1;
+        draw-line $xr, $y, $xr + 4, $y, color => $COLOR-BORDER; # y tick (right)
+        draw-text $text, $xr + ⑧, $y - ⑤, $COLOR-BORDER, :2size;
+        draw-line $xr + ㊿, $y, $xr + ④ + ㊿, $y, color => $COLOR-BORDER # y tick (heat)
+    }
+    my $y = $graph-y + $graph-height + 1;
+    for 0, * + 7 …^ * ≥ $graph-width { # date
+        state $lower = True;
+        $lower .= not;
+        my $x = $graph-x + $_;
+        draw-line $x, $y, $x, $y + ③ + ⑥ × $lower, color => $COLOR-BORDER;
+        draw-line $x, $graph-y + $graph-height - 1, $x, $graph-y,
+                  dash-pattern => (2, 2), color => $COLOR-GRID; # y grid
+        #draw-text ~($start-date + $_), $x - 2, $y + 10, $COLOR-BORDER, :bt, :1size;
+        my $day = ($start-date + $_).day;
+        draw-text $day, $x - ① - ② × ($day≥10), $y + ⑥ + ⑥ × $lower, $COLOR-BORDER, :1size
+    }
+
+    # months and years
+    for $start-date, *.later(:1month) … * > $end-date.truncated-to(‘month’) {
+        my $x-shift = .truncated-to(‘month’) - $start-date;
+        next if $x-shift + 28 < 2 × ⑤ + ④;
+        $x-shift = 0 if $x-shift < 0;
+        my $x = $graph-x + $x-shift;
+        my $y = $graph-y + $graph-height;
+        draw-line $x, $y + ㉓ - ③,
+                  $x, $y + ㉓ + ⑩ - 1, color => $COLOR-BORDER;
+        draw-text .month, $x + ③, $y + ㉓,
+                  $COLOR-BORDER, :2size
+    }
+    for $start-date, *.later(:1year) … * > $end-date.truncated-to(‘year’) {
+        my $x-shift = .truncated-to(‘year’) - $start-date;
+        next if $x-shift + 365 < 3 × ⑤ + ④;
+        $x-shift = 0 if $x-shift < 0;
+        my $x = $graph-x + $x-shift;
+        my $y = $graph-y + $graph-height;
+        draw-line $x, $y + ㊴ - ③,
+                  $x, $y + ㊴ + ⑮ - 1, color => $COLOR-BORDER;
+        draw-text .year, $x + ③, $y + ㊴,
+                  $COLOR-BORDER, :3size
+    }
+}
+
+sub plot() {
+    my $last;
+    for @lines {
+        my $new-dt = graph $_;
+        next without $new-dt;
+        if $last {
+            if $new-dt - $last<datetime> ≥ $NO-DATA-THRESHOLD {
+                graph %(from => $last<endpoint>,
+                        to   => .<from>), :no-data
+            }
+        }
+        $last = %(datetime => $new-dt, endpoint => .<to>);
+    }
+    print “\n”;
+    @sums = @heat.map: *.sum
+}
+
+sub graph($_, :$no-data = False) {
+    my $date-start = Date.new: ~.<from><date>;
+    my $date-end   = Date.new: ~.<  to><date>;
+    my $weekend    = $date-start.day-of-week >= 6; # Sat or Sun
+    return if !.<from><time> or !.<to><time>;
+    for $date-start..$date-end -> $date {
+        my $start = $date == $date-start
+                    ?? datetime-to-ratio ~.<from><date>, ~.<from><time> !! 0;
+        my $end   = $date == $date-end
+                    ?? datetime-to-ratio ~.<  to><date>, ~.<  to><time> !! 1;
+        my $color = $no-data ?? $COLOR-NO-DATA
+                    !! ($weekend ?? $COLOR-SLEEP-WEEKEND !! $COLOR-SLEEP);
+        fill-line $date - $start-date, $start, $end,
+                  $color, dash-pattern => ($no-data ?? (1,1) !! ())
+    }
+    print ‘.’;
+    DateTime.new: “{.<to><date>}T{.<to><time> ~ (.<to><time>.chars < 8 ?? ‘:00’ !! ‘’)}”
+}
+
+sub datetime-to-ratio($date, $time) {
+    ($time.split(‘:’) Z* (60²,60¹,60⁰)).sum ÷ (24 × 60 × 60)
+}
+
+sub heatmap() {
+    my $rect-x = $graph-x + $graph-width + $HEAT-PADDING;
+    my $rect-y = $graph-y;
+    draw-rect $rect-x - 1, $rect-y - 1,
+              $rect-x + $HEAT-WIDTH, $rect-y + $graph-height, # TODO check off-by-ones
+              color => $COLOR-BORDER;
+    my @draw-text-later; # text that is render on top of everything
+    for ^$graph-height -> $y {
+        my $ratio = @heat.map(*[$y]).sum ÷ $graph-width;
+        my $color = $COLOR-HEAT ~ sprintf “%02x”, $ratio × 0xFF;
+        my $x1    = $graph-x + $graph-width + $HEAT-PADDING;
+        my $x2    = $x1 + $HEAT-WIDTH - 1;
+        my $y12   = $graph-y + $graph-height - 1 - $y;
+        draw-line $x1, $y12, $x2, $y12, :$color;
+        if $y %% ($graph-height ÷ 24).Int { # TODO do it properly?
+            my $x = $x1 + $HEAT-WIDTH ÷ 2 - ⑤;
+            my $yy = $y12 - ②;
+            $yy -= ③ unless $y;
+            @draw-text-later.push: \( ($ratio × 100).round ~ ‘%’, $x, $yy,
+                                      $YELLOW, :1size );
+        }
+    }
+    draw-text |$_ for @draw-text-later;
+    draw-text ‘Heatmap’, $rect-x - ②, $rect-y - ⑩, $YELLOW, :1size
+}
+
+sub heatmap-min-max() {
+    my @values = do for ^$graph-height -> $y { @heat.map(*[$y]).sum };
+    my $min = @values.pairs.min: *.value;
+    my $max = @values.pairs.max: *.value;
+    my $x   = $graph-x + $graph-width + $HEAT-PADDING + $HEAT-WIDTH + ②;
+    my $y   = $graph-y + $graph-height - 1;
+    my $min-percent = ($min.value ÷ $graph-width × 100).round(0.01);
+    my $max-percent = ($max.value ÷ $graph-width × 100).round(0.01);
+    draw-text “- $min-percent% (min)”, $x, $y - ② - $min.key, $YELLOW, :1size;
+    draw-text “- $max-percent% (max)”, $x, $y - ② - $max.key, $YELLOW, :1size;
+}
+
+sub rolling-average() {
+    class Vector is rw {
+        has $.x; has $.y;
+        method length() { sqrt $.x² + $.y² }
+        method normalize() { Vector.new: x => $.x ÷ $.length,
+                                         y => $.y ÷ $.length }
+        method add(Vector \v) { $!x += v.x; $!y += v.y }
+    }
+    my @values = do for ^$graph-height -> $y { @heat.map(*[$y]).sum };
+    return if $graph-width < $ROLLING; # not enough to roll
+    sub day-to-vectors($day) {
+        @heat[$day].grep(?*, :k).map({
+            my \α = $_ ÷ $graph-height × τ;
+            Vector.new: x => α.cos, y => α.sin
+        }).list
+    }
+    my $prev-y;
+    for (^$graph-width).map(&day-to-vectors).rotor($ROLLING => 1 - $ROLLING) {
+        my $v = Vector.new: :0x, :0y;
+        $v.add: $_ for .flat;
+        next if $v.x == 0 and $v.y == 0;
+        $v .= normalize;
+        my $α = atan2 $v.y, $v.x;
+        $α += τ if $α < 0;
+
+        my $x = $ROLLING - 1 + $++ + $graph-x + $ROLLING-SHIFT;
+        my $y = $graph-y + $graph-height - $α ÷ τ × $graph-height;
+
+        with $prev-y {
+            if abs($y - $_) < $graph-height ÷ 2 { # normal line
+                draw-line $x - 1, $_, $x, $y, color => $COLOR-ROLLING
+            } else { # wrap
+                my $rising = $y - $_ > 0;
+                my $y1 = ?$rising ?? $graph-y !! $graph-y + $graph-height - 1;
+                my $y2 = !$rising ?? $graph-y !! $graph-y + $graph-height - 1;
+                draw-line $x - 1, $_,  $x - 1, $y1, color => $COLOR-ROLLING;
+                draw-line $x,     $y2, $x,     $y,  color => $COLOR-ROLLING;
+            }
+        } else {
+            draw-dot $x, $y, color => $COLOR-ROLLING;
+        }
+        $prev-y = $y;
+        print ‘.’
+    }
+    print “\n”
+}
+
+sub duration() {
+    my $prev-y;
+    for @sums.rotor($ROLLING-DURATION => 1 - $ROLLING-DURATION) {
+        my $sum = .sum ÷ $ROLLING-DURATION;;
+        my $x = $ROLLING-DURATION - 1 + $++ + $graph-x + $ROLLING-DURATION-SHIFT;
+        my $y = $graph-y + $graph-height - $sum;
+        with $prev-y {
+            draw-line $x - 1, $_, $x, $y, color => $COLOR-ROLLING-DURATION
+        } else {
+            draw-dot $x, $y, color => $COLOR-ROLLING-DURATION;
+        }
+        $prev-y = $y;
+    }
+}
+
+sub duration-text() {
+    my $total   = (@sums.sum ÷ $graph-width).Int; # TODO may be off by 1
+    my $total-y = $graph-y + $graph-height - $total;
+    draw-line $graph-x     ,               $total-y,
+              $graph-x + $graph-width - 1, $total-y,
+              dash-pattern => (4, 3),
+              color => $COLOR-TOTAL-DURATION;
+}
+
+sub legend() {
+    # just guess the size
+    my $legend-width = 243;
+    my $x = $graph-x + $graph-width - $legend-width;
+    my $y = $graph-y - (5 + 2) × 5 - ⑩;
+
+    draw-rect $x - ④, $y - ③,
+              $x + $legend-width, $graph-y - ⑩,
+              color => $COLOR-BORDER;
+    my @legend = (
+        ‘| sleep’   => $COLOR-SLEEP,
+        ‘| no data’ => $COLOR-NO-DATA,
+        “- rolling average ($ROLLING days, $ROLLING-SHIFT shift, cyclic)”
+                    => $COLOR-ROLLING,
+        ‘- average duration per day (total)’
+                    => $COLOR-TOTAL-DURATION,
+        “- rolling average duration per day (hours, $ROLLING-DURATION days, $ROLLING-DURATION-SHIFT shift)”
+                    => $COLOR-ROLLING-DURATION,
+    );
+    for @legend {
+        draw-text .key, $x, $y, .value, :1size;
+        $y += 5 + 2
+    }
+}
+
+sub explanation() {
+    my $x = $graph-x;
+    my $y = $graph-y - ㉟;
+    my $help = q:to/END/;
+Each pixel on X axis is one day.
+Vertical lines represent durations during the day.
+Some lines show cyclic data and therefore wrap around.
+Ticks on X axis every 7 days.
+END
+    for $help.lines {
+        draw-text $_, $x, $y, $COLOR-BORDER, :1size;
+        $y += ⑦
+    }
+}
+
+sub title($text=$title) {
+    draw-text $text, $width / 2 - $text.chars×④×4 ÷ 2, $GRAPH-PADDING-TOP × ⅕,
+              $YELLOW, :4size
+}
+
+sub subtitle($text=$subtitle) {
+    draw-text $text, $width / 2 - $text.chars×④×2 ÷ 2, $GRAPH-PADDING-TOP × ½,
+              $YELLOW, :2size
+}
+
+sub MAIN(#`｢IO()｣ $file is copy, #`｢IO()｣ :$font-json is copy, :$y-scale=1÷(60×4),
+         :$title=‘Title’, :$subtitle=‘Subtitle’, :$out=‘graph.png’) {
+    $file      .= IO;
+    $font-json .= IO if $font-json;
+    OUTER::(‘$title’)    = $title;
+    OUTER::(‘$subtitle’) = $subtitle;
+    @lines = Sleep.parse($file.slurp)<line>.reverse;
+    # we will assume chronological order
+
+    $start-date = Date.new: ~@lines.head<from><date>;
+    $end-date   = Date.new: ~@lines.tail<  to><date>;
+    $graph-width  = Int($end-date - $start-date + 1);
+    $width        = $graph-width + $GRAPH-PADDING-LEFT + $GRAPH-PADDING-RIGHT
+                    + $HEAT-WIDTH + $HEAT-PADDING × 2;
+    $graph-height = Int(24 × 60 × 60 × $y-scale);
+    $height       = $graph-height + $GRAPH-PADDING-TOP + $GRAPH-PADDING-BOTTOM;
+
+    @heat = [0 xx $graph-height] xx $graph-width;
+
+    $image = Image::Magick.new: size=>“{$width}x{$height}”;
+    $image.Read: “xc:$COLOR-BACKGROUND”;
+
+    if $font-json {
+        note ‘Loading the font…’;   %font = from-json $font-json.slurp;
+    } else {
+        note ‘Using default font…’; %font = $::(‘default-font’);
+    }
+    say ‘Done!’;
+    my @steps = &title, &subtitle, &legend, &explanation, &graph-border,
+                &plot, &heatmap, &heatmap-min-max,
+                &rolling-average, &duration, &duration-text;
+    for @steps {
+        if $++ {
+            note ‘Quick-saving a partial version…’; $image.Write: $out;
+        }
+        note .name.tc, ‘…’;
+        .();
+    }
+    note ‘Saving the file…’; $image.Write: $out;
+}
+
+BEGIN my $default-font = %(
+32=>[[0,0,0,0],[],[],[],[]],
+33=>[[0,1],[0,1],[0,1],[0,0],[0,1]],
+34=>[[1,0,1],[1,0,1],[],[],[]],
+35=>[[1,0,1],[1,1,1],[1,0,1],[1,1,1],[1,0,1]],
+36=>[[0,1,1],[1,1,0],[0,1,1],[1,1,0],[0,1,0]],
+37=>[[1,0,0],[0,0,1],[0,1,0],[1,0,0],[0,0,1]],
+38=>[[1,1,0],[1,1,0],[1,1,1],[1,0,1],[0,1,1]],
+39=>[[0,1],[0,1],[],[],[]],
+40=>[[0,0,1],[0,1,0],[0,1,0],[0,1,0],[0,0,1]],
+41=>[[1,0],[0,1],[0,1],[0,1],[1,0]],
+42=>[[1,0,1],[0,1,0],[1,0,1],[],[]],
+43=>[[],[0,1,0],[1,1,1],[0,1,0],[]],
+44=>[[],[],[],[0,1],[1,0]],
+45=>[[],[],[1,1,1],[],[]],
+46=>[[],[],[],[],[0,1]],
+47=>[[0,0,1],[0,0,1],[0,1,0],[1,0,0],[1,0,0]],
+48=>[[0,1,1],[1,0,1],[1,0,1],[1,0,1],[1,1,0]],
+49=>[[0,1],[1,1],[0,1],[0,1],[0,1]],
+50=>[[1,1,0],[0,0,1],[0,1,0],[1,0,0],[1,1,1]],
+51=>[[1,1,0],[0,0,1],[0,1,0],[0,0,1],[1,1,0]],
+52=>[[1,0,1],[1,0,1],[1,1,1],[0,0,1],[0,0,1]],
+53=>[[1,1,1],[1,0,0],[1,1,0],[0,0,1],[1,1,0]],
+54=>[[0,1,1],[1,0,0],[1,1,1],[1,0,1],[1,1,1]],
+55=>[[1,1,1],[0,0,1],[0,1,0],[1,0,0],[1,0,0]],
+56=>[[1,1,1],[1,0,1],[1,1,1],[1,0,1],[1,1,1]],
+57=>[[1,1,1],[1,0,1],[1,1,1],[0,0,1],[1,1,0]],
+58=>[[],[0,1],[0,0],[0,1],[]],
+59=>[[],[0,1],[0,0],[0,1],[1,0]],
+60=>[[0,0,1],[0,1,0],[1,0,0],[0,1,0],[0,0,1]],
+61=>[[],[1,1,1],[0,0,0],[1,1,1],[]],
+62=>[[1,0,0],[0,1,0],[0,0,1],[0,1,0],[1,0,0]],
+63=>[[1,1,1],[0,0,1],[0,1,0],[0,0,0],[0,1,0]],
+64=>[[0,1,0],[1,0,1],[1,1,1],[1,0,0],[0,1,1]],
+65=>[[0,1,0],[1,0,1],[1,1,1],[1,0,1],[1,0,1]],
+66=>[[1,1,0],[1,0,1],[1,1,0],[1,0,1],[1,1,0]],
+67=>[[0,1,1],[1,0,0],[1,0,0],[1,0,0],[0,1,1]],
+68=>[[1,1,0],[1,0,1],[1,0,1],[1,0,1],[1,1,0]],
+69=>[[1,1,1],[1,0,0],[1,1,1],[1,0,0],[1,1,1]],
+70=>[[1,1,1],[1,0,0],[1,1,1],[1,0,0],[1,0,0]],
+71=>[[0,1,1],[1,0,0],[1,1,1],[1,0,1],[0,1,1]],
+72=>[[1,0,1],[1,0,1],[1,1,1],[1,0,1],[1,0,1]],
+73=>[[1,1,1],[0,1,0],[0,1,0],[0,1,0],[1,1,1]],
+74=>[[0,0,1],[0,0,1],[0,0,1],[1,0,1],[0,1,0]],
+75=>[[1,0,1],[1,0,1],[1,1,0],[1,0,1],[1,0,1]],
+76=>[[1,0,0],[1,0,0],[1,0,0],[1,0,0],[1,1,1]],
+77=>[[1,0,1],[1,1,1],[1,1,1],[1,0,1],[1,0,1]],
+78=>[[1,0,1],[1,1,1],[1,1,1],[1,1,1],[1,0,1]],
+79=>[[0,1,0],[1,0,1],[1,0,1],[1,0,1],[0,1,0]],
+80=>[[1,1,0],[1,0,1],[1,1,0],[1,0,0],[1,0,0]],
+81=>[[0,1,0],[1,0,1],[1,0,1],[1,1,1],[0,1,1]],
+82=>[[1,1,0],[1,0,1],[1,1,1],[1,1,0],[1,0,1]],
+83=>[[0,1,1],[1,0,0],[0,1,0],[0,0,1],[1,1,0]],
+84=>[[1,1,1],[0,1,0],[0,1,0],[0,1,0],[0,1,0]],
+85=>[[1,0,1],[1,0,1],[1,0,1],[1,0,1],[0,1,1]],
+86=>[[1,0,1],[1,0,1],[1,0,1],[0,1,0],[0,1,0]],
+87=>[[1,0,1],[1,0,1],[1,1,1],[1,1,1],[1,0,1]],
+88=>[[1,0,1],[1,0,1],[0,1,0],[1,0,1],[1,0,1]],
+89=>[[1,0,1],[1,0,1],[0,1,0],[0,1,0],[0,1,0]],
+90=>[[1,1,1],[0,0,1],[0,1,0],[1,0,0],[1,1,1]],
+91=>[[1,1,1],[1,0,0],[1,0,0],[1,0,0],[1,1,1]],
+92=>[[],[1,0,0],[0,1,0],[0,0,1],[]],
+93=>[[1,1,1],[0,0,1],[0,0,1],[0,0,1],[1,1,1]],
+94=>[[0,1,0],[1,0,1],[],[],[]],
+95=>[[],[],[],[],[1,1,1]],
+96=>[[1,0],[0,1],[],[],[]],
+97=>[[],[1,1,0],[0,1,1],[1,0,1],[1,1,1]],
+98=>[[1,0,0],[1,1,0],[1,0,1],[1,0,1],[1,1,0]],
+99=>[[],[0,1,1],[1,0,0],[1,0,0],[0,1,1]],
+100=>[[0,0,1],[0,1,1],[1,0,1],[1,0,1],[0,1,1]],
+101=>[[],[0,1,1],[1,0,1],[1,1,0],[0,1,1]],
+102=>[[0,0,1],[0,1,0],[1,1,1],[0,1,0],[0,1,0]],
+103=>[[],[0,1,1],[1,0,1],[1,1,1],[0,0,1],[0,1,0]],
+104=>[[1,0,0],[1,1,0],[1,0,1],[1,0,1],[1,0,1]],
+105=>[[0,1],[0,0],[0,1],[0,1],[0,1]],
+106=>[[0,0,1],[0,0,0],[0,0,1],[0,0,1],[1,0,1],[0,1,0]],
+107=>[[1,0,0],[1,0,1],[1,1,0],[1,1,0],[1,0,1]],
+108=>[[1,1,0],[0,1,0],[0,1,0],[0,1,0],[1,1,1]],
+109=>[[],[1,1,1],[1,1,1],[1,1,1],[1,0,1]],
+110=>[[],[1,1,0],[1,0,1],[1,0,1],[1,0,1]],
+111=>[[],[0,1,0],[1,0,1],[1,0,1],[0,1,0]],
+112=>[[],[1,1,0],[1,0,1],[1,0,1],[1,1,0],[1,0,0]],
+113=>[[],[0,1,1],[1,0,1],[1,0,1],[0,1,1],[0,0,1]],
+114=>[[],[0,1,1],[1,0,0],[1,0,0],[1,0,0]],
+115=>[[],[0,1,1],[1,1,0],[0,1,1],[1,1,0]],
+116=>[[0,1,0],[1,1,1],[0,1,0],[0,1,0],[0,1,1]],
+117=>[[],[1,0,1],[1,0,1],[1,0,1],[0,1,1]],
+118=>[[],[1,0,1],[1,0,1],[1,1,1],[0,1,0]],
+119=>[[],[1,0,1],[1,1,1],[1,1,1],[1,1,1]],
+120=>[[],[1,0,1],[0,1,0],[0,1,0],[1,0,1]],
+121=>[[],[1,0,1],[1,0,1],[0,1,1],[0,0,1],[0,1,0]],
+122=>[[],[1,1,1],[0,1,1],[1,1,0],[1,1,1]],
+123=>[[0,1,1],[0,1,0],[1,0,0],[0,1,0],[0,1,1]],
+124=>[[0,1],[0,1],[0,0],[0,1],[0,1]],
+125=>[[1,1,0],[0,1,0],[0,0,1],[0,1,0],[1,1,0]],
+126=>[[0,1,1],[1,1,0],[],[],[]],
+161=>[[0,1],[0,0],[0,1],[0,1],[0,1]],
+162=>[[0,1,0],[1,1,1],[1,0,0],[1,1,1],[0,1,0]],
+163=>[[0,1,1],[0,1,0],[1,1,1],[0,1,0],[1,1,1]],
+164=>[[1,0,1],[0,1,0],[1,1,1],[0,1,0],[1,0,1]],
+165=>[[1,0,1],[1,0,1],[0,1,0],[1,1,1],[0,1,0]],
+166=>[[0,1],[0,1],[0,0],[0,1],[0,1]],
+167=>[[0,1,1],[0,1,0],[1,0,1],[0,1,0],[1,1,0]],
+168=>[[1,0,1],[],[],[],[]],
+169=>[[0,1,1],[1,0,0],[0,1,1],[],[]],
+170=>[[0,1,1],[1,0,1],[1,1,1],[0,0,0],[1,1,1]],
+171=>[[0,1],[1,0],[0,1],[],[]],
+172=>[[],[1,1,1],[0,0,1],[],[]],
+173=>[[],[],[1,1],[],[]],
+174=>[[1,1,0],[1,1,0],[1,0,1],[],[]],
+175=>[[1,1,1],[],[],[],[]],
+176=>[[0,1,0],[1,0,1],[0,1,0],[],[]],
+177=>[[0,1,0],[1,1,1],[0,1,0],[0,0,0],[1,1,1]],
+178=>[[1,1,0],[0,1,0],[0,1,1],[],[]],
+179=>[[1,1,1],[0,1,1],[1,1,1],[],[]],
+180=>[[0,0,1],[0,1,0],[],[],[]],
+181=>[[1,0,1],[1,0,1],[1,0,1],[1,1,0],[1,0,0]],
+182=>[[0,1,1],[1,0,1],[0,1,1],[0,1,1],[0,1,1]],
+183=>[[],[1,1,1],[1,1,1],[1,1,1],[]],
+184=>[[],[],[0,1,0],[0,0,1],[1,1,0]],
+185=>[[0,1],[0,1],[0,1],[],[]],
+186=>[[0,1,0],[1,0,1],[0,1,0],[0,0,0],[1,1,1]],
+187=>[[0,1,0],[0,0,1],[0,1,0],[],[]],
+188=>[[1,0,0],[1,0,0],[0,0,0],[0,1,1],[0,0,1]],
+189=>[[1,0,0],[1,0,0],[0,0,0],[1,1,0],[0,1,1]],
+190=>[[1,1,0],[1,1,0],[0,0,0],[0,1,1],[0,0,1]],
+191=>[[0,1,0],[0,0,0],[0,1,0],[1,0,0],[1,1,1]],
+192=>[[0,1,0],[0,0,1],[0,1,0],[1,1,1],[1,0,1]],
+193=>[[0,1,0],[1,0,0],[0,1,0],[1,1,1],[1,0,1]],
+194=>[[1,1,1],[0,0,0],[0,1,0],[1,1,1],[1,0,1]],
+195=>[[0,1,1],[1,1,0],[0,1,0],[1,1,1],[1,0,1]],
+196=>[[1,0,1],[0,1,0],[1,0,1],[1,1,1],[1,0,1]],
+197=>[[1,1,0],[1,1,0],[1,0,1],[1,1,1],[1,0,1]],
+198=>[[0,1,1],[1,1,0],[1,1,1],[1,1,0],[1,1,1]],
+199=>[[0,1,1],[1,0,0],[1,0,0],[0,1,1],[0,0,1],[0,1,0]],
+200=>[[0,1,0],[0,0,1],[1,1,1],[1,1,0],[1,1,1]],
+201=>[[0,1,0],[1,0,0],[1,1,1],[1,1,0],[1,1,1]],
+202=>[[1,1,1],[0,0,0],[1,1,1],[1,1,0],[1,1,1]],
+203=>[[1,0,1],[0,0,0],[1,1,1],[1,1,0],[1,1,1]],
+204=>[[0,1,0],[0,0,1],[1,1,1],[0,1,0],[1,1,1]],
+205=>[[0,1,0],[1,0,0],[1,1,1],[0,1,0],[1,1,1]],
+206=>[[1,1,1],[0,0,0],[1,1,1],[0,1,0],[1,1,1]],
+207=>[[1,0,1],[0,0,0],[1,1,1],[0,1,0],[1,1,1]],
+208=>[[1,1,0],[1,0,1],[1,1,1],[1,0,1],[1,1,0]],
+209=>[[1,1,0],[0,1,1],[1,0,1],[1,1,1],[1,0,1]],
+210=>[[0,1,0],[0,0,1],[1,1,1],[1,0,1],[1,1,1]],
+211=>[[0,1,0],[1,0,0],[1,1,1],[1,0,1],[1,1,1]],
+212=>[[1,1,1],[0,0,0],[1,1,1],[1,0,1],[1,1,1]],
+213=>[[1,1,0],[0,1,1],[1,1,1],[1,0,1],[1,1,1]],
+214=>[[1,0,1],[0,0,0],[1,1,1],[1,0,1],[1,1,1]],
+215=>[[],[1,0,1],[0,1,0],[1,0,1],[]],
+216=>[[0,1,1],[1,0,1],[1,1,1],[1,0,1],[1,1,0]],
+217=>[[1,0,0],[0,1,0],[1,0,1],[1,0,1],[1,1,1]],
+218=>[[0,0,1],[0,1,0],[1,0,1],[1,0,1],[1,1,1]],
+219=>[[1,1,1],[0,0,0],[1,0,1],[1,0,1],[1,1,1]],
+220=>[[1,0,1],[0,0,0],[1,0,1],[1,0,1],[1,1,1]],
+221=>[[0,0,1],[0,1,0],[1,0,1],[1,1,1],[0,1,0]],
+222=>[[1,0,0],[1,1,1],[1,0,1],[1,1,1],[1,0,0]],
+223=>[[0,1,1],[1,0,1],[1,1,0],[1,0,1],[1,1,0],[1,0,0]],
+224=>[[0,1,0],[0,0,1],[0,1,1],[1,0,1],[1,1,1]],
+225=>[[0,1,0],[1,0,0],[0,1,1],[1,0,1],[1,1,1]],
+226=>[[1,1,1],[0,0,0],[0,1,1],[1,0,1],[1,1,1]],
+227=>[[0,1,1],[1,1,0],[0,1,1],[1,0,1],[1,1,1]],
+228=>[[1,0,1],[0,0,0],[0,1,1],[1,0,1],[1,1,1]],
+229=>[[0,1,1],[0,1,1],[0,1,1],[1,0,1],[1,1,1]],
+230=>[[],[0,1,1],[1,1,1],[1,1,1],[1,1,0]],
+231=>[[],[0,1,1],[1,0,0],[0,1,1],[0,0,1],[0,1,0]],
+232=>[[0,1,0],[0,0,1],[0,1,1],[1,1,1],[0,1,1]],
+233=>[[0,1,0],[1,0,0],[0,1,1],[1,1,1],[0,1,1]],
+234=>[[1,1,1],[0,0,0],[0,1,1],[1,1,1],[0,1,1]],
+235=>[[1,0,1],[0,0,0],[0,1,1],[1,1,1],[0,1,1]],
+236=>[[0,1,0],[0,0,1],[0,1,0],[0,1,0],[0,1,0]],
+237=>[[0,1],[1,0],[0,1],[0,1],[0,1]],
+238=>[[1,1,1],[0,0,0],[0,1,0],[0,1,0],[0,1,0]],
+239=>[[1,0,1],[0,0,0],[0,1,0],[0,1,0],[0,1,0]],
+240=>[[0,1,1],[1,1,0],[0,1,1],[1,0,1],[0,1,1]],
+241=>[[1,1,0],[0,1,1],[1,1,0],[1,0,1],[1,0,1]],
+242=>[[0,1,0],[0,0,1],[0,1,0],[1,0,1],[0,1,0]],
+243=>[[0,1,0],[1,0,0],[0,1,0],[1,0,1],[0,1,0]],
+244=>[[1,1,1],[0,0,0],[0,1,0],[1,0,1],[0,1,0]],
+245=>[[1,1,0],[0,1,1],[0,1,0],[1,0,1],[0,1,0]],
+246=>[[1,0,1],[0,0,0],[0,1,0],[1,0,1],[0,1,0]],
+247=>[[0,1,0],[0,0,0],[1,1,1],[0,0,0],[0,1,0]],
+248=>[[],[0,1,1],[1,1,1],[1,0,1],[1,1,0]],
+249=>[[1,0,0],[0,1,0],[1,0,1],[1,0,1],[0,1,1]],
+250=>[[0,0,1],[0,1,0],[1,0,1],[1,0,1],[0,1,1]],
+251=>[[1,1,1],[0,0,0],[1,0,1],[1,0,1],[0,1,1]],
+252=>[[1,0,1],[0,0,0],[1,0,1],[1,0,1],[0,1,1]],
+253=>[[0,0,1],[0,1,0],[1,0,1],[0,1,1],[0,0,1],[0,1,0]],
+254=>[[],[1,0,0],[1,1,0],[1,0,1],[1,1,0],[1,0,0]],
+255=>[[1,0,1],[0,0,0],[1,0,1],[0,1,1],[0,0,1],[0,1,0]],
+285=>[[],[],[],[],[0]],
+338=>[[0,1,1],[1,1,0],[1,1,1],[1,1,0],[0,1,1]],
+339=>[[],[0,1,1],[1,1,1],[1,1,0],[1,1,1]],
+352=>[[1,0,1],[0,1,1],[1,1,0],[0,1,1],[1,1,0]],
+353=>[[1,0,1],[0,1,1],[1,1,0],[0,1,1],[1,1,0]],
+376=>[[1,0,1],[0,0,0],[1,0,1],[0,1,0],[0,1,0]],
+381=>[[1,0,1],[1,1,1],[0,1,1],[1,1,0],[1,1,1]],
+382=>[[1,0,1],[1,1,1],[0,1,1],[1,1,0],[1,1,1]],
+8226=>[[],[],[0,1],[],[]],
+8230=>[[],[],[],[],[1,0,1]],
+8364=>[[0,1,1],[1,1,0],[1,1,1],[1,1,0],[0,1,1]],
+);
