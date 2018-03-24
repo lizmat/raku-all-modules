@@ -2,9 +2,12 @@
 
 use v6.c;
 
+use Test;
+
+BEGIN plan :skip-all<set AUTHOR_TESTING=1 to run bin tests> unless %*ENV<AUTHOR_TESTING>;
+
 use App::Assixt::Test;
 use File::Temp;
-use Test;
 
 my $assixt = $*CWD;
 my $root = tempdir;

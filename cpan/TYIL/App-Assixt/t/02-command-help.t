@@ -2,8 +2,11 @@
 
 use v6.c;
 
-use App::Assixt::Test;
 use Test;
+
+BEGIN plan :skip-all<set AUTHOR_TESTING=1 to run bin tests> unless %*ENV<AUTHOR_TESTING>;
+
+use App::Assixt::Test;
 
 plan 3;
 
