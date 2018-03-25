@@ -1,4 +1,5 @@
 {
+  "auth" : "cpan:SKAJI",
   "authors" : [
     "Shoichi Kaji"
   ],
@@ -8,7 +9,7 @@
     "JSON::Pretty",
     "Pod::To::Markdown",
     "Shell::Command",
-    "CPAN::Uploader::Tiny"
+    "CPAN::Uploader::Tiny:ver(v0.0.4 .. *)"
   ],
   "description" : "minimal authoring tool for Perl6",
   "license" : "Artistic-2.0",
@@ -40,5 +41,5 @@
   "test-depends" : [
     "File::Temp"
   ],
-  "version" : "0.1.5"
+  "version" : "0.1.6"
 }
