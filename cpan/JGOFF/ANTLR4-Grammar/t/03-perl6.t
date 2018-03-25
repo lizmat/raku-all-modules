@@ -1,14 +1,11 @@
 use v6;
-use ANTLR4::Actions::Perl6;
+use ANTLR4::Grammar;
 use Test;
 
 plan 7;
 
 sub parse( $str ) {
-	return ANTLR4::Grammar.parse(
-		$str, 
-		:actions( ANTLR4::Actions::Perl6.new )
-	).ast.to-string;
+	return ANTLR4::Grammar.to-string( $str );
 }
 
 # It's most important to test things that can easily translate into Perl 6.
@@ -152,6 +149,17 @@ subtest 'rule', {
 		grammar Lexer {
 			rule sign {
 				||	'\t'
+			}
+		}
+		END
+
+		is parse( Q:to[END] ), Q:to[END], 'Unicode terminal';
+		grammar Lexer;
+		sign : 'Hello\u236a' ;
+		END
+		grammar Lexer {
+			rule sign {
+				||	'Hello\x[236a]'
 			}
 		}
 		END
@@ -938,6 +946,17 @@ subtest 'rule', {
 		grammar Lexer {
 			rule plain {
 				||	<Str>
+			}
+		}
+		END
+
+		is parse( Q:to[END] ), Q:to[END], 'special EOF nonterminal';
+		grammar Lexer;
+		plain : EOF ;
+		END
+		grammar Lexer {
+			rule plain {
+				||	$
 			}
 		}
 		END
