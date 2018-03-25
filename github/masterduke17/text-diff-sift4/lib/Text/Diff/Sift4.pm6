@@ -33,7 +33,7 @@ sub sift4(Str:D() $s1, Str:D() $s2, Int $maxOffset = 100, Int $maxDistance = 100
 
 				nqp::while(nqp::islt_i($i, nqp::elems($offset_arr)),
 					nqp::stmts(
-						(my int $_trans = nqp::atpos_i($offset_arr, nqp::add_i($i, 0))),
+						(my int $_trans = nqp::atpos_i($offset_arr, $i)),
 						(my int $_c1    = nqp::atpos_i($offset_arr, nqp::add_i($i, 1))),
 						(my int $_c2    = nqp::atpos_i($offset_arr, nqp::add_i($i, 2))),
 
