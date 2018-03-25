@@ -1,14 +1,11 @@
 use v6;
-use ANTLR4::Actions::Perl6;
+use ANTLR4::Grammar;
 use Test;
 
-plan 7;
+plan 13;
 
 sub parse( $str ) {
-	return ANTLR4::Grammar.parse(
-		$str, 
-		:actions( ANTLR4::Actions::Perl6.new )
-	).ast.to-string;
+	return ANTLR4::Grammar.to-string( $str );
 }
 
 # It's most important to test things that can easily translate into Perl 6.
@@ -152,6 +149,17 @@ subtest 'rule', {
 		grammar Lexer {
 			rule sign {
 				||	'\t'
+			}
+		}
+		END
+
+		is parse( Q:to[END] ), Q:to[END], 'Unicode terminal';
+		grammar Lexer;
+		sign : 'Hello\u236a' ;
+		END
+		grammar Lexer {
+			rule sign {
+				||	'Hello\x[236a]'
 			}
 		}
 		END
@@ -942,6 +950,17 @@ subtest 'rule', {
 		}
 		END
 
+		is parse( Q:to[END] ), Q:to[END], 'special EOF nonterminal';
+		grammar Lexer;
+		plain : EOF ;
+		END
+		grammar Lexer {
+			rule plain {
+				||	$
+			}
+		}
+		END
+
 		subtest 'modifiers', {
 
 			# Negation is allowed in the grammar but is illegal
@@ -1463,16 +1482,12 @@ subtest 'grouping', {
 	done-testing;
 };
 
-#`(
-
 # The double comment blocks are around bits of the grammar that don't
 # necessarily translate into Perl 6.
 #
 # Taking a much more pragmatic approach this time 'round.
 
 subtest 'grammar basics', {
-#`(
-#`(
 	is parse( Q:to[END] ), Q:to[END], 'lexer grammar';
 	lexer grammar Empty;
 	END
@@ -1480,11 +1495,7 @@ subtest 'grammar basics', {
 	grammar Empty {
 	}
 	END
-)
-)
 
-#`(
-#`(
 	is parse( Q:to[END] ), Q:to[END], 'parser grammar';
 	parser grammar Empty;
 	END
@@ -1492,8 +1503,6 @@ subtest 'grammar basics', {
 	grammar Empty {
 	}
 	END
-)
-)
 
 	done-testing;
 };
@@ -1673,7 +1682,6 @@ subtest 'lexer rule with single term', {
 
 subtest 'actions', {
 #`(
-#`(
 	is parse( Q:to[END] ), Q:to[END], 'skip';
 	grammar Lexer;
 	plain : 'X' -> skip ;
@@ -1685,7 +1693,6 @@ subtest 'actions', {
 		}
 	}
 	END
-)
 )
 
 #`(
@@ -1770,8 +1777,6 @@ subtest 'actions', {
 
 	done-testing;
 };
-
-)
 
 done-testing;
 
