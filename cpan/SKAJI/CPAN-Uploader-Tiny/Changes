@@ -1,5 +1,8 @@
 Revision history for CPAN-Uploader-Tiny
 
+0.0.4  2018-03-25T12:46:31+09:00
+  - Make read-config method public
+
 0.0.3  2018-01-09T00:00:00+09:00
   - Upload to CPAN
   - Make sure we trim user name before submitting (lizmat #4)

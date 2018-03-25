@@ -1,5 +1,5 @@
 use v6;
-unit class CPAN::Uploader::Tiny:ver<0.0.3>;
+unit class CPAN::Uploader::Tiny:ver<0.0.4>:auth<cpan:SKAJI>;
 
 use CPAN::Uploader::Tiny::MultiPart;
 use HTTP::Tinyish;
@@ -19,11 +19,11 @@ submethod BUILD(:$!url, :$!user, :$!password, :$!agent) {
 }
 
 method new-from-config($file) {
-    my %config = self!read-config($file);
+    my %config = self.read-config($file);
     self.new(user => %config<user>, password => %config<password>);
 }
 
-method !read-config($file) {
+method read-config($file) {
     die "missing $file" unless $file.IO.e;
     my $is-plain = ?try {
         my $content = $file.IO.slurp(:!bin);
