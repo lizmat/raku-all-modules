@@ -40,7 +40,7 @@ METHODS
 
   * boolean properties: equal, is-zero, is-identity, is-square, is-diagonal, is-diagonally-dominant, is-upper-triangular, is-lower-triangular, is-invertible, is-symmetric, is-unitary, is-self-adjoint, is-orthogonal, is-positive-definite, is-positive-semidefinite
 
-  * numeric properties: size, elems, density, trace, determinant, rank, kernel, norm, condition
+  * numeric properties: size, density, trace, determinant, rank, kernel, norm, condition
 
   * derived matrices: transposed, negated, conjugated, inverted, reduced-row-echelon-form
 
@@ -48,7 +48,9 @@ METHODS
 
   * matrix math ops: add, subtract, add-row, add-column, multiply, multiply-row, multiply-column, dotProduct, tensorProduct
 
-  * structural ops: map, map-row, map-column, reduce, reduce-rows, reduce-columns
+  * list like ops: elems, elem, map, map-row, map-column, map-cell, reduce, reduce-rows, reduce-columns
+
+  * structural ops: move-row, move-column, swap-rows, swap-columns, prepend-vertically, append-vertically, prepend-horizontally, append-horizontally
 
   * operators: +, -, *, **, ⋅, dot, ⊗, x, | |, || ||
 
@@ -106,51 +108,43 @@ Accessors
 
 ### cell
 
-    Gets value of element in third row and fourth column. (counting always from 0)
+Gets value of element in third row and fourth column. (counting always from 0)
 
     my $value = $matrix.cell(2,3);
 
 ### row
 
-    Gets values of specified row (first required parameter) as a list.
-    That would be (1, 2) if matrix is [[1,2][3,4]].
+Gets values of specified row (first required parameter) as a list. That would be (1, 2) if matrix is [[1,2][3,4]].
 
     my @values = $matrix.row(0);
 
 ### column
 
-    Gets values of specified column (first required parameter) as a list.
-    That would be (1, 4) if matrix is [[1,2][3,4]].
+Gets values of specified column (first required parameter) as a list. That would be (1, 4) if matrix is [[1,2][3,4]].
 
     my @values = $matrix.column(0);
 
 ### diagonal
 
-    Gets values of diagonal elements. That would be (1, 4) if matrix is [[1,2][3,4]].
+Gets values of diagonal elements. That would be (1, 4) if matrix is [[1,2][3,4]].
 
     my @values = $matrix.diagonal();
 
 ### submatrix
 
-    Subset of cells of a given matrix by deleting rows and/or columns. 
-
-    The first and simplest usage is by choosing a cell (by coordinates).
-    Row and column of that cell will be removed.
+Subset of cells of a given matrix by deleting rows and/or columns. The first and simplest usage is by choosing a cell (by coordinates). Row and column of that cell will be removed.
 
     my $m = Math::Matrix.new([[1,2,3,4][2,3,4,5],[3,4,5,6]]);     # 1 2 3 4
                                                                     2 3 4 5
                                                                     3 4 5 6
     say $m.submatrix(1,2);     # 1 2 4
-                                 3 4 6                            
+                                 3 4 6
 
-    If you provide two pairs of coordinates (row column), these will be counted as
-    left upper and right lower corner of and area inside the original matrix,
-    which will the resulting submatrix.
+If you provide two pairs of coordinates (row column), these will be counted as left upper and right lower corner of and area inside the original matrix, which will the resulting submatrix.
 
-    say $m.submatrix(1,1,1,3); # 2 3 4        
+    say $m.submatrix(1,1,1,3); # 2 3 4
 
-    When provided with two lists of values (one for the rows - one for columns)
-    a new matrix will be created with the old rows and columns in that new order.
+When provided with two lists of values (one for the rows - one for columns) a new matrix will be created with the old rows and columns in that new order.
 
     $m.submatrix((3,2),(1,2)); # 4 5
                                  3 4
@@ -160,8 +154,7 @@ Type Conversion And Output Flavour
 
 ### Bool
 
-    Conversion into Bool context. Returns False if matrix is zero
-    (all cells equal zero as in is-zero), otherwise True.
+Conversion into Bool context. Returns False if matrix is zero (all cells equal zero as in is-zero), otherwise True.
 
     $matrix.Bool
     ? $matrix           # alias
@@ -169,42 +162,37 @@ Type Conversion And Output Flavour
 
 ### Numeric
 
-    Conversion into Numeric context. Returns number (amount) of cells (as .elems).
-    Please note, only prefix a prefix + (as in: + $matrix) will call this Method.
-    A infix (as in $matrix + $number) calls .add($number).
+Conversion into Numeric context. Returns number (amount) of cells (as .elems). Please note, only prefix a prefix + (as in: + $matrix) will call this Method. A infix (as in $matrix + $number) calls .add($number).
 
     $matrix.Numeric   or      + $matrix
 
 ### Str
 
-    Conversion into String context. Returns content of all cells in the
-    data structure form like "[[..,..,...],[...],...]"
+Conversion into String context. Returns content of all cells in the data structure form like "[[..,..,...],[...],...]"
 
     put $matrix     or      print $matrix
 
 ### perl
 
-    Conversion into String like context that can reevaluated into the same
-    object later. ( "Math::Matrix.new([[..,..,...],[...],...])" )
+Conversion into String like context that can reevaluated into the same object later. ( "Math::Matrix.new([[..,..,...],[...],...])" )
 
     my $clone = eval $matrix.perl;
 
 ### list-rows
 
-    Returns a list of lists, reflecting the row-wise content of the matrix.
+Returns a list of lists, reflecting the row-wise content of the matrix.
 
     Math::Matrix.new( [[1,2],[3,4]] ).list-rows ~~ ((1 2) (3 4))     # True
 
 ### list-columns
 
-    Returns a list of lists, reflecting the row-wise content of the matrix.
+Returns a list of lists, reflecting the row-wise content of the matrix.
 
     Math::Matrix.new( [[1,2],[3,4]] ).list-columns ~~ ((1 3) (2 4)) # True
 
 ### gist
 
-    Limited tabular view for the shell output. Just cuts off excessive
-    rows and columns. Implicitly called while:
+Limited tabular view for the shell output. Just cuts off excessive rows and columns. Implicitly called while:
 
     say $matrix;      # output when matrix has more than 100 cells
 
@@ -214,7 +202,7 @@ Type Conversion And Output Flavour
 
 ### full
 
-    Full tabular view (all rows and columns) for the shell or file output.
+Full tabular view (all rows and columns) for the shell or file output.
 
     say $matrix.full;
 
@@ -223,45 +211,49 @@ Boolean Properties
 
 ### equal
 
-    Checks two matrices for equality. They have to be of same size and
-    every element of the first matrix on a particular position has to be equal
-    to the element (on the same position) of the second matrix.
+Checks two matrices for equality. They have to be of same size and every element of the first matrix on a particular position has to be equal to the element (on the same position) of the second matrix.
 
     if $matrixa.equal( $matrixb ) {
     if $matrixa ~~ $matrixb {
 
+### elem
+
+Checks if this value is element of the matrix.
+
+    Math::Matrix.new( [[1,2],[3,4]] ).elem(4)     # True
+    Math::Matrix.new( [[1,2],[3,4]] ).elem(3..5)  # True (range variant)
+
 ### is-square
 
-    True if number of rows and colums are the same.
+True if number of rows and colums are the same.
 
 ### is-zero
 
-    True if every cell (element) has value of 0.
+True if every cell (element) has value of 0.
 
 ### is-identity
 
-    True if every cell on the diagonal (where row index equals column index) is 1
-    and any other cell is 0.
+True if every cell on the diagonal (where row index equals column index) is 1 and any other cell is 0.
 
-     Example:    1 0 0
-                 0 1 0
-                 0 0 1
+    Example:    1 0 0
+                0 1 0
+                0 0 1
 
 ### is-upper-triangular
 
-    True if every cell below the diagonal (where row index is greater than column index) is 0.
+True if every cell below the diagonal (where row index is greater than column index) is 0.
 
-     Example:    1 2 5
-                 0 3 8
-                 0 0 7
+    Example:    1 2 5
+                0 3 8
+                0 0 7
 
 ### is-lower-triangular
 
-    True if every cell above the diagonal (where row index is smaller than column index) is 0.
+True if every cell above the diagonal (where row index is smaller than column index) is 0.
 
-     Example:    1 0 0
-                 2 3 0
-                 5 8 7
+    Example:    1 0 0
+                2 3 0
+                5 8 7
 
 ### is-diagonal
 
@@ -285,8 +277,7 @@ Boolean Properties
 
 ### is-symmetric
 
-    Is True if every cell with coordinates x y has same value as the cell on y x.
-    In other words: $matrix and $matrix.transposed (alias T) are the same.
+Is True if every cell with coordinates x y has same value as the cell on y x. In other words: $matrix and $matrix.transposed (alias T) are the same.
 
     Example:    1 2 3
                 2 5 4
@@ -294,7 +285,7 @@ Boolean Properties
 
 ### is-self-adjoint
 
-    A Hermitian or self-adjoint matrix is equal to its transposed and conjugated.
+A Hermitian or self-adjoint matrix is equal to its transposed and conjugated.
 
     Example:    1   2   3+i
                 2   5   4
@@ -302,63 +293,57 @@ Boolean Properties
 
 ### is-unitary
 
-    An unitery matrix multiplied (dotProduct) with its concjugate transposed 
-    derivative (.conj.T) is an identity matrix, or said differently:
-    the concjugate transposed matrix equals the inversed matrix.
+An unitery matrix multiplied (dotProduct) with its concjugate transposed derivative (.conj.T) is an identity matrix, or said differently: the concjugate transposed matrix equals the inversed matrix.
 
 ### is-orthogonal
 
-    An orthogonal matrix multiplied (dotProduct) with its transposed derivative (T)
-    is an identity matrix or in other words transosed and inverted matrices are equal.
+An orthogonal matrix multiplied (dotProduct) with its transposed derivative (T) is an identity matrix or in other words transosed and inverted matrices are equal.
 
 ### is-invertible
 
-    Is True if number of rows and colums are the same (is-square) and determinant is not zero.
-    All rows or colums have to be Independent vectors.
+Is True if number of rows and colums are the same (is-square) and determinant is not zero. All rows or colums have to be Independent vectors.
 
 ### is-positive-definite
 
-    True if all main minors or all Eigenvalues are strictly greater zero.
+True if all main minors or all Eigenvalues are strictly greater zero.
 
 ### is-positive-semidefinite
 
-    True if all main minors or all Eigenvalues are greater equal zero.
+True if all main minors or all Eigenvalues are greater equal zero.
 
 Numeric Properties
 ------------------
 
 ### size
 
-    List of two values: number of rows and number of columns.
+List of two values: number of rows and number of columns.
 
     say $matrix.size();
     my $dim = min $matrix.size();
 
 ### elems
 
-    Number (count) of elements.
+Number (count) of elements.
 
     say $matrix.elems();
     say +$matrix;                       # same thing
 
 ### density
 
-    my $d = $matrix.density( );   
+Density is the percentage of cell which are not zero.
 
-    Density is the percentage of cell which are not zero.
+    my $d = $matrix.density( );
 
 ### trace
-
-    my $tr = $matrix.trace( ); 
 
     The trace of a square matrix is the sum of the cells on the main diagonal.
     In other words: sum of cells which row and column value is identical.
 
+       my $tr = $matrix.trace( );
+
 ### determinant, alias det
 
-    If you see the columns as vectors, that describe the edges of a solid,
-    the determinant of a square matrix tells you the volume of that solid.
-    So if the solid is just in one dimension flat, the determinant is zero too.
+If you see the columns as vectors, that describe the edges of a solid, the determinant of a square matrix tells you the volume of that solid. So if the solid is just in one dimension flat, the determinant is zero too.
 
     my $det = $matrix.determinant( );
     my $d = $matrix.det( );             # same thing
@@ -366,16 +351,15 @@ Numeric Properties
 
 ### rank
 
-    my $r = $matrix.rank( );
+Rank is the number of independent row or column vectors or also called independent dimensions (thats why this command is sometimes calles dim)
 
-    rank is the number of independent row or column vectors
-    or also called independent dimensions
-    (thats why this command is sometimes calles dim)
+    my $r = $matrix.rank( );
 
 ### kernel
 
+Kernel of matrix, number of dependent rows or columns (rank + kernel = dim).
+
     my $tr = $matrix.kernel( );
-    kernel of matrix, number of dependent rows or columns
 
 ### norm
 
@@ -390,16 +374,16 @@ Numeric Properties
 
 ### condition
 
-    my $c = $matrix.condition( );        
+Condition number of a matrix is L2 norm * L2 of inverted matrix.
 
-    Condition number of a matrix is L2 norm * L2 of inverted matrix.
+    my $c = $matrix.condition( );
 
 Derivative Matrices
 -------------------
 
 ### transposed, alias T
 
-    returns a new, transposed Matrix, where rows became colums and vice versa.
+Returns a new, transposed Matrix, where rows became colums and vice versa.
 
     Math::Matrix.new([[1,2,3],[3,4,6]]).transposed
 
@@ -409,11 +393,7 @@ Derivative Matrices
 
 ### inverted
 
-    Inverse matrix regarding to matrix multiplication.
-    The dot product of a matrix with its inverted results in a identity matrix
-    (neutral element in this group).
-    Matrices that have a square form and a full rank can be inverted.
-    Check this with the method .is-invertible.
+Inverse matrix regarding to matrix multiplication. The dot product of a matrix with its inverted results in a identity matrix (neutral element in this group). Matrices that have a square form and a full rank can be inverted. Check this with the method .is-invertible.
 
 ### negated
 
@@ -427,10 +407,10 @@ Derivative Matrices
 
 ### reduced-row-echelon-form, alias rref
 
+Return the reduced row echelon form of a matrix, a.k.a. row canonical form
+
     my $rref = $matrix.reduced-row-echelon-form();
     my $rref = $matrix.rref();
-
-    Return the reduced row echelon form of a matrix, a.k.a. row canonical form
 
 Decompositions
 --------------
@@ -442,10 +422,7 @@ Decompositions
     my ($L, $U) = $matrix.decompositionLUC(:!pivot);
     $L dot $U eq $matrix;                # True
 
-    $L is a left triangular matrix and $R is a right one
-    Without pivotisation the marix has to be invertible (square and full ranked).
-    In case you whant two unipotent triangular matrices and a diagonal (D):
-    use the :diagonal option, which can be freely combined with :pivot.
+$L is a left triangular matrix and $R is a right one Without pivotisation the marix has to be invertible (square and full ranked). In case you whant two unipotent triangular matrices and a diagonal (D): use the :diagonal option, which can be freely combined with :pivot.
 
     my ($L, $D, $U, $P) = $matrix.decompositionLU( :diagonal );
     $L dot $D dot $U eq $matrix dot $P;  # True
@@ -455,15 +432,14 @@ Decompositions
     my ($L, $U) = $matrix.decompositionLUCrout( );
     $L dot $U eq $matrix;                # True
 
-    $L is a left triangular matrix and $R is a right one
-    This decomposition works only on invertible matrices (square and full ranked).
+$L is a left triangular matrix and $R is a right one This decomposition works only on invertible matrices (square and full ranked).
 
 ### decompositionCholesky
 
-    my $D = $matrix.decompositionCholesky( );  # $D is a left triangular matrix
-    $D dot $D.T eq $matrix;                    # True 
+This decomposition works only on symmetric and definite positive matrices.
 
-    This decomposition works only on symmetric and definite positive matrices.
+    my $D = $matrix.decompositionCholesky( );  # $D is a left triangular matrix
+    $D dot $D.T eq $matrix;                    # True
 
 Matrix Math Operations
 ----------------------
@@ -476,7 +452,6 @@ Matrix Math Operations
                 1 2  +  2 3  =  3 5
                 3 4     4 5     7 9
 
-
     my $sum = $matrix.add( $matrix2 );  # cell wise addition of 2 same sized matrices
     my $s = $matrix + $matrix2;         # works too
 
@@ -485,7 +460,7 @@ Matrix Math Operations
 
 ### subtract
 
-    Works analogous to add - it's just for convenance.
+Works analogous to add - it's just for convenance.
 
     my $diff = $matrix.subtract( $number );   # subtracts number from every cell (scalar subtraction)
     my $sd = $matrix - $number;               # works too
@@ -496,8 +471,7 @@ Matrix Math Operations
 
 ### add-row
 
-    Add a vector (row or col of some matrix) to a row of the matrix.
-    In this example we add (2,3) to the second row.
+Add a vector (row or col of some matrix) to a row of the matrix. In this example we add (2,3) to the second row.
 
     Math::Matrix.new( [[1,2],[3,4]] ).add-row(1,(2,3));
 
@@ -506,7 +480,6 @@ Matrix Math Operations
 
 ### add-column
 
-    Analog to add-row:
     Math::Matrix.new( [[1,2],[3,4]] ).add-column(1,(2,3));
 
     Example:    1 2  +   2   =  1 4
@@ -514,9 +487,7 @@ Matrix Math Operations
 
 ### multiply
 
-    In scalar multiplication each cell of the matrix gets multiplied with the same
-    number (scalar). In addition to that, this method can multiply two same sized
-    matrices, by multipling the cells with the came coordinates from each operand.
+In scalar multiplication each cell of the matrix gets multiplied with the same number (scalar). In addition to that, this method can multiply two same sized matrices, by multipling the cells with the came coordinates from each operand.
 
     Example:    1 2  *  5    =   5 10 
                 3 4             15 20
@@ -532,7 +503,7 @@ Matrix Math Operations
 
 ### multiply-row
 
-    Multiply scalar number to each cell of a row.
+Multiply scalar number to each cell of a row.
 
     Math::Matrix.new( [[1,2],[3,4]] ).multiply-row(0,2);
 
@@ -541,7 +512,7 @@ Matrix Math Operations
 
 ### multiply-column
 
-    Multiply scalar number to each cell of a column.
+Multiply scalar number to each cell of a column.
 
     Math::Matrix.new( [[1,2],[3,4]] ).multiply-row(0,2);
 
@@ -552,7 +523,7 @@ Matrix Math Operations
 
 ### dotProduct
 
-    Matrix multiplication of two fitting matrices (colums left == rows right).
+Matrix multiplication of two fitting matrices (colums left == rows right).
 
     Example:    1 2  *  2 3  =  10 13  =  1*2+2*4  1*3+2*5
                 3 4     4 5     22 29     3*2+4*4  3*3+4*5
@@ -568,11 +539,7 @@ Matrix Math Operations
 
 ### tensorProduct
 
-    The tensor product between a matrix a of size (m,n) and a matrix b of size
-    (p,q) is a matrix c of size (m*p,n*q). All matrices you get by multiplying
-    an element (cell) of matrix a with matrix b (as in $a.multiply($b.cell(..,..))
-    concatinated result in matrix c. 
-    (Or replace in a each cell with its product with b.)
+The tensor product between a matrix a of size (m,n) and a matrix b of size (p,q) is a matrix c of size (m*p,n*q). All matrices you get by multiplying an element (cell) of matrix a with matrix b (as in $a.multiply($b.cell(..,..)) concatinated result in matrix c. (Or replace in a each cell with its product with b.)
 
     Example:    1 2  *  2 3   =  1*[2 3] 2*[2 3]  =  2  3  4  6
                 3 4     4 5        [4 5]   [4 5]     4  5  8 10
@@ -583,13 +550,12 @@ Matrix Math Operations
     my $c = $a x $b;                # works too as operator alias
     my $c = $a ⊗ $b;                # unicode operator alias
 
-Structural Matrix Operations
-----------------------------
+List Like Matrix Operations
+---------------------------
 
 ### map
 
-    Like the built in map it iterates over all elements, running a code block.
-    The results for a new matrix.
+Like the built in map it iterates over all elements, running a code block. The results for a new matrix.
 
     say Math::Matrix.new([[1,2],[3,4]]).map(* + 1);    # prints:
 
@@ -598,7 +564,7 @@ Structural Matrix Operations
 
 ### map-row
 
-    Map only specified row (row number is first parameter).
+Map only specified row (row number is first parameter).
 
     say Math::Matrix.new([[1,2],[3,4]]).map-row(1, {$_ + 1}); # prints:
 
@@ -612,21 +578,25 @@ Structural Matrix Operations
     1 0
     3 0
 
+### map-cell
+
+Changes value of one cell on row (first parameter) and column (second) with code block (third, $_ or $^... is previous value).
+
+    say Math::Matrix.new([[1,2],[3,4]]).map-cell(0, 1, {$_  * 3}); # prints:
+
+    1 6
+    3 4
+
 ### reduce
 
-    Like the built in reduce method, it iterates over all elements and joins
-    them into one value, by applying the given operator or method
-    to the previous result and the next element. I starts with the cell [0][0]
-    and moving from left to right in the first row and continue with the first
-    cell of the next row.
+Like the built in reduce method, it iterates over all elements and joins them into one value, by applying the given operator or method to the previous result and the next element. I starts with the cell [0][0] and moving from left to right in the first row and continue with the first cell of the next row.
 
     Math::Matrix.new( [[1,2],[3,4]] ).reduce(&[+]);      # 10
     Math::Matrix.new( [[1,2],[3,4]] ).reduce(&[*]);      # 10
 
 ### reduce-rows
 
-    Reduces (as described above) every row into one value, so the overall result
-    will be a list. In this example we calculate the sum of all cells in a row:
+Reduces (as described above) every row into one value, so the overall result will be a list. In this example we calculate the sum of all cells in a row:
 
     say Math::Matrix.new( [[1,2],[3,4]] ).reduce-rows(&[+]);     # prints (3, 7)
 
@@ -635,6 +605,25 @@ Structural Matrix Operations
 Similar to reduce-rows, this method reduces each column to one value in the resulting list:
 
     say Math::Matrix.new( [[1,2],[3,4]] ).reduce-columns(&[*]);  # prints (3, 8)
+
+Structural Matrix Operations
+----------------------------
+
+### move-row
+
+### move-column
+
+### swap-rows
+
+### swap-columns
+
+### prepend-vertically
+
+### append-vertically
+
+### prepend-horizontally
+
+### append-horizontally
 
 Operators
 =========
