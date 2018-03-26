@@ -6,7 +6,7 @@ sub output-breakpoint-notifications(Str $file, Int $line, Supply $notifications)
     say "Receiving breakpoint notifications for $file:$line";
     start {
         react whenever $notifications.Supply {
-            .perl.say;
+            #.perl.say;
             if .<frames>:exists {
                 my @this-backtrace = format-backtrace(.<frames>);
 

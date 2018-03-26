@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/edumentab/p6-app-moarvm-debug.git
 	branch = master
-	commit = 4303c849b05b4008c90ad2b72c6f5dc2c6a1a4d0
-	parent = efdcdc60b574c5c3177dc55c0933385b838fb00d
+	commit = 302c4535606245625a1d23292a32dba8f8af2945
+	parent = dbc897dd58e54a6485808c5d809f1e7364fdf1c7
 	cmdver = 0.4.0
