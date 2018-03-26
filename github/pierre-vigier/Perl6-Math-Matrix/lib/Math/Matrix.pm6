@@ -1,6 +1,6 @@
 use v6.c;
 
-unit class Math::Matrix:ver<0.1.8>:auth<github:pierre-vigier>;
+unit class Math::Matrix:ver<0.2.0>:auth<github:pierre-vigier>;
 use AttrX::Lazy;
 
 has @!rows is required;
@@ -16,6 +16,7 @@ has Bool $!is-lower-triangular is lazy;
 has Bool $!is-upper-triangular is lazy;
 has Bool $!is-square is lazy;
 has Bool $!is-symmetric is lazy;
+has Bool $!is-antisymmetric is lazy;
 has Bool $!is-self-adjoint is lazy;
 has Bool $!is-unitary is lazy;
 has Bool $!is-orthogonal is lazy;
@@ -191,11 +192,9 @@ multi method submatrix(Math::Matrix:D: @rows where .all ~~ Int, @cols where .all
 # end of accessors - start with type conversion and handy shortcuts
 ################################################################################
 
-method Bool(Math::Matrix:D: --> Bool)    {   ! self.is-zero   }
-
-method Numeric (Math::Matrix:D: --> Int) {   self.elems    }
-
-method Str(Math::Matrix:D: --> Str)      {   @!rows.gist   }
+method Bool(Math::Matrix:D: --> Bool)    { ! self.is-zero }
+method Numeric (Math::Matrix:D: --> Int) {   self.elems   }
+method Str(Math::Matrix:D: --> Str)      {   @!rows.gist  }
 
 multi method perl(Math::Matrix:D: --> Str) {
   self.WHAT.perl ~ ".new(" ~ @!rows.perl ~ ")";
@@ -266,8 +265,8 @@ multi σ_permutations ([$x, *@xs]) {
 # end of type conversion and handy shortcuts - start boolean matrix properties
 ################################################################################
 
-method equal(Math::Matrix:D: Math::Matrix $b --> Bool) { @!rows ~~ $b!rows }
-method ACCEPTS(Math::Matrix $b --> Bool)               { self.equal( $b )  }
+method equal(Math::Matrix:D: Math::Matrix $b --> Bool)           { @!rows ~~ $b!rows }
+multi method ACCEPTS(Math::Matrix:D: Math::Matrix:D $b --> Bool) { self.equal( $b )  }
 
 method !build_is-square(Math::Matrix:D: --> Bool) { $!column-count == $!row-count }
 
@@ -322,6 +321,16 @@ method !build_is-symmetric(Math::Matrix:D: --> Bool) {
     for ^($!row-count - 1) -> $r {
         for $r ^..^ $!row-count -> $c {
             return False unless @!rows[$r][$c] == @!rows[$c][$r];
+        }
+    }
+    True;
+}
+method !build_is-antisymmetric(Math::Matrix:D: --> Bool) {
+    return False unless self.is-square;
+    return True if $!row-count < 2;
+    for ^($!row-count - 1) -> $r {
+        for $r ^..^ $!row-count -> $c {
+            return False unless @!rows[$r][$c] == - @!rows[$c][$r];
         }
     }
     True;
@@ -759,14 +768,20 @@ method reduce-columns (Math::Matrix:D: &coderef){
 # end of list like matrix operations - start structural matrix operations
 ################################################################################
 
-method move-row (Math::Matrix:D: Int $from, Int $to --> Math::Matrix:D) {
+multi method move-row (Math::Matrix:D: Pair $p --> Math::Matrix:D) {
+    self.move-row($p.key, $p.value) 
+}
+multi method move-row (Math::Matrix:D: Int $from, Int $to --> Math::Matrix:D) {
     return self if $from == $to;
     my @rows = (^$!row-count).list;
     @rows.splice($to,0,@rows.splice($from,1));
     self.submatrix(@rows, (^$!column-count).list);
 }
 
-method move-column (Math::Matrix:D: Int $from, Int $to --> Math::Matrix:D) {
+multi method move-column (Math::Matrix:D: Pair $p --> Math::Matrix:D) {
+    self.move-column($p.key, $p.value) 
+}
+multi method move-column (Math::Matrix:D: Int $from, Int $to --> Math::Matrix:D) {
     return self if $from == $to;
     my @cols = (^$!column-count).list;
     @cols.splice($to,0,@cols.splice($from,1));
@@ -788,35 +803,66 @@ method swap-columns (Math::Matrix:D: Int $cola, Int $colb --> Math::Matrix:D) {
 }
 
 
-method append-vertically (Math::Matrix:D: *@b --> Math::Matrix:D) {
+multi method prepend-vertically (Math::Matrix:D: $b --> Math::Matrix:D) {
+    $b.append-vertically(self);
+}
+multi method prepend-vertically (Math::Matrix:D: Array $b --> Math::Matrix:D) {
+    my @m;
+    for $b.list -> $row {
+        fail "Number of columns in matrix and data has to be same." unless $row.elems == $!column-count;
+        fail "Data has to consist of numbers!" unless all($row.list) ~~ Numeric;
+        @m.append( $row );
+    }
+    Math::Matrix.new( @m.append(self!clone_rows.list) );
+}
+
+multi method append-vertically (Math::Matrix:D: Math::Matrix:D $b --> Math::Matrix:D) {
+    fail "Number of columns in both matrices has to be same" unless $!column-count == $b!column-count;
     my @m = self!clone_rows;
-    for @b {
-        when Math::Matrix {
-            fail "Number of columns in both matrices has to be same"
-                unless $!column-count == $_!column-count;
-            @m.append( $_!rows.list );
-        }
-        when Array { }
-        default { fail "Input can only be a matrix or array of arrays of numeric!" }
+    Math::Matrix.new( @m.append( $b!rows.list ) );
+}
+multi method append-vertically (Math::Matrix:D: Array $b --> Math::Matrix:D) {
+    my @m = self!clone_rows;
+    for $b.list -> $row {
+        fail "Number of columns in matrix and data has to be same." unless $row.elems == $!column-count;
+        fail "Data has to consist of numbers!  $row" unless all($row.list) ~~ Numeric;
+        @m.append( $row );
     }
     Math::Matrix.new(@m);
 }
 
-method append-horizontally (Math::Matrix:D: *@b --> Math::Matrix:D){
-    my @m = self!clone_rows;
-    for @b {
-        when Math::Matrix {
-            fail "Number of rows in both matrices has to be same" 
-                unless $!row-count == $_!row-count;
-            my $b = $_; 
-            @m.keys.map:{ @m[$_].append($b!rows[$_].list) };
-        }
-        when Array { }
-        default { fail "Input can only be a matrix or array of arrays of numeric!" }
+multi method prepend-horizontally (Math::Matrix:D: Math::Matrix:D $b --> Math::Matrix:D) {
+    $b.append-horizontally(self);
+}
+multi method prepend-horizontally (Math::Matrix:D: Array $b --> Math::Matrix:D){
+    fail "Number of rows in matrix and data has to be same." unless $b.elems == $!row-count;
+    my $col = $b.elems[0].elems;
+    my @m;
+    for $b.kv -> $i, $row {
+        fail "All rows in data need to have the same length" unless $row.elems == $row;
+        fail "Data has to consist of numbers!  $row" unless all($row.list) ~~ Numeric;
+        @m[$i] = $row.list.append( self!rows[$i].list );
     }
     Math::Matrix.new( @m );
 }
 
+multi method append-horizontally (Math::Matrix:D: Math::Matrix:D $b --> Math::Matrix:D){
+    fail "Number of rows in both matrices has to be same" unless $!row-count == $b!row-count;
+    my @m = self!clone_rows;
+    @m.keys.map:{ @m[$_].append($b!rows[$_].list) };
+    Math::Matrix.new( @m );
+}
+multi method append-horizontally (Math::Matrix:D: Array $b --> Math::Matrix:D){
+    fail "Number of rows in matrix and data has to be same." unless $b.elems == $!row-count;
+    my $col = $b.elems[0].elems;
+    my @m = self!clone_rows;
+    for $b.kv -> $i, $row {
+        fail "All rows in data need to have the same length" unless $row.elems == $row;
+        fail "Data has to consist of numbers!  $row" unless all($row.list) ~~ Numeric;
+        @m[$i].append( $row.list );
+    }
+    Math::Matrix.new( @m );
+}
 
 # method split (){ }
 # method join (){ }

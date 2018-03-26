@@ -10,7 +10,7 @@ Math::Matrix - create, compare, compute and measure 2D matrices
 VERSION
 =======
 
-0.1.8
+0.2.0
 
 SYNOPSIS
 ========
@@ -38,7 +38,7 @@ METHODS
 
   * conversion: Bool, Numeric, Str, perl, list-rows, list-columns, gist, full
 
-  * boolean properties: equal, is-zero, is-identity, is-square, is-diagonal, is-diagonally-dominant, is-upper-triangular, is-lower-triangular, is-invertible, is-symmetric, is-unitary, is-self-adjoint, is-orthogonal, is-positive-definite, is-positive-semidefinite
+  * boolean properties: equal, is-zero, is-identity, is-square, is-diagonal, is-diagonally-dominant, is-upper-triangular, is-lower-triangular, is-invertible, is-symmetric, is- antisymmetric, is-unitary, is-self-adjoint, is-orthogonal, is-positive-definite, is-positive-semidefinite
 
   * numeric properties: size, density, trace, determinant, rank, kernel, norm, condition
 
@@ -282,6 +282,14 @@ Is True if every cell with coordinates x y has same value as the cell on y x. In
     Example:    1 2 3
                 2 5 4
                 3 4 7
+
+### is-antisymmetric
+
+Means the transposed and negated matrix are the same.
+
+    Example:    0  2  3
+               -2  0  4
+               -3 -4  0
 
 ### is-self-adjoint
 
@@ -611,19 +619,75 @@ Structural Matrix Operations
 
 ### move-row
 
+    Math::Matrix.new( [[1,2,3],[4,5,6],[7,8,9]] ).move-row(0,1);  # move row 0 to 1
+    Math::Matrix.new( [[1,2,3],[4,5,6],[7,8,9]] ).move-row(0=>1); # same
+
+    1 2 3           4 5 6
+    4 5 6    ==>    1 2 3
+    7 8 9           7 8 9
+
 ### move-column
+
+    Math::Matrix.new( [[1,2,3],[4,5,6],[7,8,9]] ).move-column(2,1);
+    Math::Matrix.new( [[1,2,3],[4,5,6],[7,8,9]] ).move-column(2=>1); # same
+
+    1 2 3           1 3 2
+    4 5 6    ==>    4 6 5
+    7 8 9           7 9 8
 
 ### swap-rows
 
+    Math::Matrix.new( [[1,2,3],[4,5,6],[7,8,9]] ).swap-rows(2,0);
+
+    1 2 3           7 8 9
+    4 5 6    ==>    4 5 6
+    7 8 9           1 2 3
+
 ### swap-columns
+
+    Math::Matrix.new( [[1,2,3],[4,5,6],[7,8,9]] ).swap-columns(0,2);
+
+    1 2 3           3 2 1
+    4 5 6    ==>    6 5 4
+    7 8 9           9 8 7
 
 ### prepend-vertically
 
+Both variants work equally and also all other prepend/append operations. They can not be combined and work only if proper matrix dimensions do match.
+
+    Math::Matrix.new([[1,2],[3,4]]).prepend-vertically( Math::Matrix.new([[5,6],[7,8]]) );
+    Math::Matrix.new([[1,2],[3,4]]).prepend-vertically(                  [[5,6],[7,8]]  );
+
+    5 6  ~  1 2  =  5 6 1 2
+    7 8     3 4     7 8 3 4
+
 ### append-vertically
+
+    Math::Matrix.new([[1,2],[3,4]]).append-vertically( Math::Matrix.new([[5,6],[7,8]]));
+    Math::Matrix.new([[1,2],[3,4]]).append-vertically(                  [[5,6],[7,8]] );
+
+    1 2  ~  5 6  =  1 2 5 6
+    3 4     7 8     3 4 7 8
 
 ### prepend-horizontally
 
+    Math::Matrix.new([[1,2],[3,4]]).prepend-horizontally( Math::Matrix.new([[5,6],[7,8]]));
+    Math::Matrix.new([[1,2],[3,4]]).prepend-horizontally(                  [[5,6],[7,8]] );
+
+    5 6
+    7 8
+    1 2
+    3 4
+
 ### append-horizontally
+
+    Math::Matrix.new([[1,2],[3,4]]).append-horizontally( Math::Matrix.new([[5,6],[7,8]]));
+    Math::Matrix.new([[1,2],[3,4]]).append-horizontally(                  [[5,6],[7,8]] );
+
+    1 2
+    3 4
+    5 6
+    7 8
 
 Operators
 =========
