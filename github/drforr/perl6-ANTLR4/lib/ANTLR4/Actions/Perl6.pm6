@@ -80,8 +80,11 @@ class Rule is Block { has $.type = 'rule'; }
 class Grammar {
 	also does Named;
 
-	has %.notes;
-	has @.content;
+	has $.type;
+	has %.option;
+	has %.import;
+	has @.token;
+	has @.rule;
 }
 
 class ANTLR4::Actions::Perl6 {
@@ -103,15 +106,8 @@ class ANTLR4::Actions::Perl6 {
 		make $/<token_list_trailing_comma>.ast
 	}
 
-	method prequelConstruct( $/ ) {
-		my @prequels;
-		for $/ {
-			when $_.<tokensSpec> {
-				@prequels.append( $_.<tokensSpec>.ast );
-			}
-		}
-		make @prequels
-	}
+	#method prequelConstruct - gave up temporarily on using tat.
+	# I'll make that work later.
 
 	# XXX The 'if $copy' shouldn't be needed because Terminals with empty
 	# XXX names shouldn't ever be created.
@@ -462,21 +458,43 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 	}
 
 	method TOP( $/ ) {
-		my %notes;
-		my @body;
+		my @token;
+		my %option;
+		my %import;
 		for $/<prequelConstruct> {
-			@body.append( $_.ast )
+			when $_.<optionsSpec> {
+				for $_.<optionsSpec><option> {
+					%option{ $_.<ID>.ast } =
+						~$_.<optionValue>;
+				}
+			}
+			when $_.<delegateGrammars> {
+				for $_.<delegateGrammars><delegateGrammar> {
+					%import{ ~$_.<key> } = 
+						( $_.<value> ?? ~$_.<value> !! Any );
+				}
+			}
+			when $_.<tokensSpec> {
+				@token.append( $_.<tokensSpec>.ast );
+			}
+			when $_.<action> {
+			}
 		}
+		my @rule;
 		for $/<ruleSpec> {
-			@body.append( $_.ast )
+			@rule.append( $_.ast )
 		}
+		my $type;
 		if $/<grammarType>[0] {
-			%notes<type> = ~$/<grammarType>[0];
+			$type = ~$/<grammarType>[0];
 		}
 		my $grammar = Grammar.new(
-			:notes( %notes ),
+			:type( $type ),
 			:name( $/<ID>.ast ),
-			:content( @body )
+			:option( %option ),
+			:import( %import ),
+			:token( @token ),
+			:rule( @rule )
 		);
 		make $grammar
 	}
