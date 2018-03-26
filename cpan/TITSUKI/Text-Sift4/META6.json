@@ -1,7 +1,5 @@
 {
-  "auth" : [
-    "github:titsuki"
-  ],
+  "auth" : "cpan:TITSUKI",
   "authors" : [
     "Itsuki Toyota"
   ],
@@ -18,5 +16,5 @@
   "source-url" : "https://github.com/titsuki/p6-Text-Sift4.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.0.4"
+  "version" : "0.0.6"
 }

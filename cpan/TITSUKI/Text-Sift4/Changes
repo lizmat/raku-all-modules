@@ -1,5 +1,12 @@
 Revision history for Text-Sift4
 
+0.0.6  2018-03-26T11:26:57+09:00
+    - Fix auth field [41dffe]
+
+0.0.5  2018-03-26T11:22:02+09:00
+    - Make computation about 2x faster [8139e] [551f6]
+    - Use cpan id in META6.json [d158c]
+
 0.0.4  2018-03-25T10:38:12+09:00
     - Make computation faster
 

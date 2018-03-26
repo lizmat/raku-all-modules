@@ -1,5 +1,5 @@
 use v6.c;
-unit class Text::Sift4:ver<0.0.4>;
+unit class Text::Sift4:ver<0.0.6>;
 
 sub sift4(Str $lhs, Str $rhs, Int :$max-offset = 5 --> Int:D) is export {
     if not $lhs.defined or $lhs.chars == 0 {
@@ -11,13 +11,13 @@ sub sift4(Str $lhs, Str $rhs, Int :$max-offset = 5 --> Int:D) is export {
         return $lhs.chars;
     }
 
-    my Int $lhs-len = $lhs.chars;
-    my Int $rhs-len = $rhs.chars;
+    my int $lhs-len = $lhs.chars;
+    my int $rhs-len = $rhs.chars;
 
-    my Int $lhs-cursor = 0;
-    my Int $rhs-cursor = 0;
-    my Int $largest-common-subsequence = 0;
-    my Int $local-common-substring = 0;
+    my int $lhs-cursor = 0;
+    my int $rhs-cursor = 0;
+    my int $largest-common-subsequence = 0;
+    my int $local-common-substring = 0;
 
     while ($lhs-cursor < $lhs-len) && ($rhs-cursor < $rhs-len) {
         if $lhs.substr($lhs-cursor,1) eq $rhs.substr($rhs-cursor,1) {
@@ -26,7 +26,7 @@ sub sift4(Str $lhs, Str $rhs, Int :$max-offset = 5 --> Int:D) is export {
             $largest-common-subsequence += $local-common-substring;
             $local-common-substring = 0;
             if $lhs-cursor != $rhs-cursor {
-                $lhs-cursor = $rhs-cursor = max($lhs-cursor, $rhs-cursor);
+                $lhs-cursor = $rhs-cursor = ($lhs-cursor > $rhs-cursor ?? $lhs-cursor !! $rhs-cursor);
             }
 
             my $i = 0;
@@ -48,7 +48,7 @@ sub sift4(Str $lhs, Str $rhs, Int :$max-offset = 5 --> Int:D) is export {
         $rhs-cursor++;
     }
     $largest-common-subsequence += $local-common-substring;
-    max($lhs-len, $rhs-len) - $largest-common-subsequence;
+    ($lhs-len > $rhs-len ?? $lhs-len !! $rhs-len) - $largest-common-subsequence;
 }
 
 =begin pod
