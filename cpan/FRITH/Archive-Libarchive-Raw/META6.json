@@ -1,0 +1,18 @@
+{
+  "perl" : "6.c",
+  "name" : "Archive::Libarchive::Raw",
+  "tags" : [ "archive", "libarchive", "compression", "nativecall" ],
+  "version" : "0.0.5",
+  "description" : "Raw interface to libarchive",
+  "build-depends" : [ "LWP::Simple" ],
+  "depends" : [ "NativeCall" ],
+  "test-depends" : [ "Test" ],
+  "provides" : {
+    "Archive::Libarchive::Raw" : "lib/Archive/Libarchive/Raw.pm6",
+    "Archive::Libarchive::Constants" : "lib/Archive/Libarchive/Constants.pm6"
+  },
+  "resources" : [ "libarchive.dll" ],
+  "authors" : [ "Fernando Santagata" ],
+  "license": "Artistic-2.0",
+  "source-url" : "git://github.com/frithnanth/perl6-Archive-Libarchive-Raw.git"
+}
