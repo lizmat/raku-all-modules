@@ -19,8 +19,8 @@
 
 Patches welcome
 
- * Break down modules (Users, Repos, Issues etc.)
- * Errors Handle
+ * Break down modules (Users, Repos, etc.)
+ * Handle Errors
  * Auto Pagination
  * API Throttle
 
@@ -34,7 +34,7 @@ Useful for GitHub Enterprise. Default to https://api.github.com
 
  * `access-token`
 
-Required for Authorized API Request
+Required for Authorized API Request.
 
  * `auth_login` & `auth_password`
 
@@ -86,7 +86,7 @@ Parsed from the Link header, [Doc](https://developer.github.com/v3/#pagination)
 
 ## Examples
 
-Some of them are, or will be, included in the `examples` directory. 
+Some of them are, or will be, included in the `examples` directory.
 
 ### Public Access without access-token
 
