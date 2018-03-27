@@ -51,6 +51,12 @@ my role Indenting {
 my role Formatting {
 	also does Indenting;
 
+	multi method to-lines( Action $a ) {
+		return (
+			q{#|} ~ $a.name
+		)
+	}
+
 	multi method to-lines( Token $t ) {
 		my $lc-name = lc( $t.name );
 		return (
@@ -66,11 +72,11 @@ my role Formatting {
 		my $name = $t.name ~~ / <-[ a ..z A .. Z ]> / ??
 			q{'} ~ $t.name ~ q{'} !!
 			$t.name;	
-		return $name ~ $t.modifier ~ $t.greed
+		return $name ~ $t.modifier ~ ( $t.greed ?? '?' !! '' )
 	}
 
 	multi method to-lines( Wildcard $w ) {
-		return "." ~ $w.modifier ~ $w.greed
+		return "." ~ $w.modifier ~ ( $w.greed ?? '?' !! '' )
 	}
 
 	multi method to-lines( Grouping $g ) {
@@ -81,21 +87,21 @@ my role Formatting {
 		return (
 			"\(" ~ self.indent-line( @content.shift ),
 			self.indent( @content ),
-			"\)" ~ $g.modifier ~ $g.greed
+			"\)" ~ $g.modifier ~ ( $g.greed ?? '?' !! '' )
 		).flat
 	}
 
 	multi method to-lines( EOF $e ) {
-		return '$' ~ $e.modifier ~ $e.greed
+		return '$' ~ $e.modifier ~ ( $e.greed ?? '?' !! '' )
 	}
 
 	multi method to-lines( Nonterminal $n ) {
-		return q{<} ~ $n.name ~ q{>} ~ $n.modifier ~ $n.greed
+		return q{<} ~ $n.name ~ q{>} ~ $n.modifier ~ ( $n.greed ?? '?' !! '' )
 	}
 
 	multi method to-lines( Range $r ) {
 		my $negated = $r.negated ?? '-' !! '';
-		"<{$negated}[ {$r.from} .. {$r.to} ]>" ~ $r.modifier ~ $r.greed
+		"<{$negated}[ {$r.from} .. {$r.to} ]>" ~ $r.modifier ~ ( $r.greed ?? '?' !! '' )
 	}
 
 	multi method to-lines( CharacterSet $c ) {
@@ -109,7 +115,7 @@ my role Formatting {
 				@content.append( $_ );
 			}
 		}
-		"<{$negated}[ {@content} ]>" ~ $c.modifier ~ $c.greed
+		"<{$negated}[ {@content} ]>" ~ $c.modifier ~ ( $c.greed ?? '?' !! '' )
 	}
 
 	multi method to-lines( Concatenation $c ) {
@@ -157,6 +163,7 @@ my role Formatting {
 		%json<type> = $g.type if $g.type;
 		%json<option> = $g.option if keys $g.option;
 		%json<import> = $g.import if keys $g.import;
+		%json<action> = $g.action if keys $g.action;
 
 		$json-str = q{#|} ~ to-json( %json ) if keys %json;
 		return (
@@ -169,7 +176,7 @@ my role Formatting {
 	}
 }
 
-class ANTLR4::Grammar:ver<0.2.0> {
+class ANTLR4::Grammar:ver<0.2.3> {
 	also does Formatting;
 
 	method to-string( Str $string ) {

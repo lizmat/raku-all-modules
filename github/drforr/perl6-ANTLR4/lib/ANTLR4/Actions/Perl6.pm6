@@ -25,7 +25,11 @@ use v6;
 my role Named { has $.name; }
 my role Modified {
 	has $.modifier = '';
-	has $.greed = '';
+	has $.greed = False;
+}
+
+class Action {
+	also does Named;
 }
 
 class Terminal {
@@ -83,6 +87,7 @@ class Grammar {
 	has $.type;
 	has %.option;
 	has %.import;
+	has %.action;
 	has @.token;
 	has @.rule;
 }
@@ -90,9 +95,8 @@ class Grammar {
 class ANTLR4::Actions::Perl6 {
 	method ID( $/ ) { make ~$/ }
 	method STRING_LITERAL( $/ ) { make ~$/[0] }
-	method LEXER_CHAR_SET( $/ ) { make ~$/[0] }
 	method MODIFIER( $/ ) { make ~$/ }
-	method GREED( $/ ) { make ~$/ }
+	method GREED( $/ ) { make ?( ~$/ eq '?' ) }
 
 	method tokenName( $/ ) {
 		make Token.new( :name( $/<ID>.ast ) )
@@ -226,9 +230,15 @@ class ANTLR4::Actions::Perl6 {
 	}
 
 	method element( $/ ) {
-		if $/<ebnfSuffix> {
+		if $/<ACTION> {
+			# XXX aack, ACTIONs are next to the term they refer to
+			make Action.new(
+				:name( ~$/<ACTION> )
+			)
+		}
+		elsif $/<ebnfSuffix> {
 			my $modifier = $/<ebnfSuffix><MODIFIER>.ast;
-			my $greed = $/<ebnfSuffix><GREED>.ast // '';
+			my $greed = $/<ebnfSuffix><GREED>.ast // False;
 			if $/<atom><terminal><scalar> and
 				!is-ANTLR-terminal( ~$/<atom><terminal><scalar> ) {
 				if $/<atom><terminal><scalar>.ast eq 'EOF' {
@@ -303,7 +313,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 					$/<ebnf><ebnfSuffix><MODIFIER>.ast // ''
 				),
 				:greed(
-					$/<ebnf><ebnfSuffix><GREED>.ast // ''
+					$/<ebnf><ebnfSuffix><GREED>.ast // False
 				),
 				:content(
 					Alternation.new(
@@ -325,7 +335,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 					 $/<element>[0]<ebnfSuffix><MODIFIER>.ast
 				),
 				:greed(
-					$/<element>[0]<ebnfSuffix><GREED>.ast // ''
+					$/<element>[0]<ebnfSuffix><GREED>.ast // False
 				),
 				:from(
 					ANTLR-to-perl(
@@ -347,7 +357,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 					$/<element>[3]<ebnfSuffix><MODIFIER>.ast // ''
 				),
 				:greed(
-					$/<element>[3]<ebnfSuffix><GREED>.ast // ''
+					$/<element>[3]<ebnfSuffix><GREED>.ast // False
 				),
 				:negated( True ),
 				:from(
@@ -407,7 +417,30 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 	}
 
 	method lexerElement( $/ ) {
-		if $/<lexerBlock> {
+		if $/<lexerAtom><terminal> and $/<ebnfSuffix> {
+			make Terminal.new(
+				:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+				:greed( $/<ebnfSuffix><GREED> // False ),
+				:name( $/<lexerAtom><terminal><STRING_LITERAL>.ast )
+			)
+		}
+		elsif $/<lexerAtom><terminal> {
+			if $/<lexerAtom><terminal><scalar>.ast eq 'EOF' {
+				make EOF.new
+			}
+			else {
+				make Terminal.new(
+					:name( $/<lexerAtom><terminal><scalar>.ast )
+				)
+			}
+		}
+		elsif $/<lexerAtom>[0] and $/<ebnfSuffix> {
+			make Wildcard.new(
+				:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+				:greed( $/<ebnfSuffix><GREED> // False ),
+			)
+		}
+		elsif $/<lexerBlock> {
 			make Grouping.new(
 				:content(
 					$/<lexerBlock><lexerAltList>.ast
@@ -415,11 +448,44 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 			)
 		}
 		elsif $/<ebnfSuffix> {
-			make CharacterSet.new(
-				:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
-				:greed( $/<ebnfSuffix><GREED> // '' ),
-				:content( $/<lexerAtom><LEXER_CHAR_SET>>>.Str )
-			)
+			if $/<lexerAtom><LEXER_CHAR_SET> {
+				make CharacterSet.new(
+					:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+					:greed( $/<ebnfSuffix><GREED> // False ),
+					:content( $/<lexerAtom><LEXER_CHAR_SET>>>.Str )
+				)
+			}
+			elsif $/<lexerAtom><notSet><setElement> and $/<ebnfSuffix> {
+				my @content;
+				for $/<lexerAtom><notSet><setElement><LEXER_CHAR_SET>[0] {
+					@content.append( ~$_.<LEXER_CHAR_SET_RANGE> );
+				}
+				make CharacterSet.new(
+					:negated( True ),
+					:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+					:greed( $/<ebnfSuffix><GREED> // False ),
+					:content( @content )
+				)
+			}
+			elsif $/<lexerAtom><notSet> {
+				my @content;
+				for $/<lexerAtom><notSet><blockSet><setElementAltList><setElement> {
+					@content.append( $_.<terminal><STRING_LITERAL>.ast )
+				}
+				make CharacterSet.new(
+					:negated( True ),
+					:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+					:greed( $/<ebnfSuffix><GREED> // False ),
+					:content( @content )
+				)
+			}
+			else {
+				make CharacterSet.new(
+					:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+					:greed( $/<ebnfSuffix><GREED> // False ),
+					:content( $/<lexerAtom><terminal>>>.Str )
+				)
+			}
 		}
 		else {
 			make $/<lexerAtom>.ast
@@ -460,6 +526,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 	method TOP( $/ ) {
 		my @token;
 		my %option;
+		my %action;
 		my %import;
 		for $/<prequelConstruct> {
 			when $_.<optionsSpec> {
@@ -478,6 +545,8 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 				@token.append( $_.<tokensSpec>.ast );
 			}
 			when $_.<action> {
+				%action{ ~$_.<action><action_name> } =
+					~$_.<action><ACTION>;
 			}
 		}
 		my @rule;
@@ -493,6 +562,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 			:name( $/<ID>.ast ),
 			:option( %option ),
 			:import( %import ),
+			:action( %action ),
 			:token( @token ),
 			:rule( @rule )
 		);
