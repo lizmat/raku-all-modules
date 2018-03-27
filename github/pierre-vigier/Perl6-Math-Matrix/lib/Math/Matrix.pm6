@@ -265,9 +265,6 @@ multi σ_permutations ([$x, *@xs]) {
 # end of type conversion and handy shortcuts - start boolean matrix properties
 ################################################################################
 
-method equal(Math::Matrix:D: Math::Matrix $b --> Bool)           { @!rows ~~ $b!rows }
-multi method ACCEPTS(Math::Matrix:D: Math::Matrix:D $b --> Bool) { self.equal( $b )  }
-
 method !build_is-square(Math::Matrix:D: --> Bool) { $!column-count == $!row-count }
 
 method !build_is-zero(Math::Matrix:D: --> Bool)   { self.density() == 0 }
@@ -627,94 +624,13 @@ method decompositionCholesky(Math::Matrix:D: --> Math::Matrix:D) {
 }
 
 ################################################################################
-# end of decompositions - start matrix operations
+# end of decompositions - start list like operations
 ################################################################################
 
-multi method add(Math::Matrix:D: Numeric $r --> Math::Matrix:D ) {
-    self.map( * + $r );
-}
+method equal(Math::Matrix:D: Math::Matrix $b --> Bool)           { @!rows ~~ $b!rows }
+multi method ACCEPTS(Math::Matrix:D: Math::Matrix:D $b --> Bool) { self.equal( $b )  }
 
-multi method add(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-count and $!column-count == $b!column-count } --> Math::Matrix:D ) {
-    my @sum;
-    for ^$!row-count X ^$!column-count -> ($r, $c) {
-        @sum[$r][$c] = @!rows[$r][$c] + $b!rows[$r][$c];
-    }
-    Math::Matrix.new( @sum );
-}
-
-multi method subtract(Math::Matrix:D: Numeric $r --> Math::Matrix:D ) {
-    self.map( * - $r );
-}
-
-multi method subtract(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-count and $!column-count == $b!column-count } --> Math::Matrix:D ) {
-    my @subtract;
-    for ^$!row-count X ^$!column-count -> ($r, $c) {
-        @subtract[$r][$c] = @!rows[$r][$c] - $b!rows[$r][$c];
-    }
-    Math::Matrix.new( @subtract );
-}
-
-method add-row(Math::Matrix:D: Int $row, @row where {.all ~~ Numeric} --> Math::Matrix:D ) {
-    self.check_row_index($row);
-    fail "Matrix has $!column-count columns, but got "~ +@row ~ "element row." unless $!column-count == +@row;
-    my @m = self!clone_rows;
-    @m[$row] = @m[$row] <<+>> @row;
-    Math::Matrix.new( @m );
-}
-
-method add-column(Math::Matrix:D: Int $col, @col where {.all ~~ Numeric} --> Math::Matrix:D ) {
-    self.check_column_index($col);
-    fail "Matrix has $!row-count rows, but got "~ +@col ~ "element column." unless $!row-count == +@col;
-    my @m = self!clone_rows;
-    @col.keys.map:{ @m[$_][$col] += @col[$_] };
-    Math::Matrix.new( @m );
-}
-
-multi method multiply(Math::Matrix:D: Numeric $r --> Math::Matrix:D ) {
-    self.map( * * $r );
-}
-
-multi method multiply(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-count and $!column-count == $b!column-count } --> Math::Matrix:D ) {
-    my @multiply;
-    for ^$!row-count X ^$!column-count -> ($r, $c) {
-        @multiply[$r][$c] = @!rows[$r][$c] * $b!rows[$r][$c];
-    }
-    Math::Matrix.new( @multiply );
-}
-
-method multiply-row(Math::Matrix:D: Int $row, Numeric $factor --> Math::Matrix:D ) {
-    self.map-row($row,{$_ * $factor});
-}
-
-method multiply-column(Math::Matrix:D: Int $column, Numeric $factor --> Math::Matrix:D ) {
-    self.map-column($column,{$_ * $factor});
-}
-
-method dotProduct(Math::Matrix:D: Math::Matrix $b --> Math::Matrix:D ) {
-    fail "Number of columns of the second matrix is different from number of rows of the first operand"
-        unless $!column-count == $b!row-count;
-    my @product;
-    for ^$!row-count X ^$b!column-count -> ($r, $c) {
-        @product[$r][$c] += @!rows[$r][$_] * $b!rows[$_][$c] for ^$b!row-count;
-    }
-    Math::Matrix.new( @product );
-}
-
-method tensorProduct(Math::Matrix:D: Math::Matrix $b  --> Math::Matrix:D) {
-    my @product;
-    for @!rows -> $arow {
-        for $b!rows -> $brow {
-            @product.push([ ($arow.list.map: { $brow.flat >>*>> $_ }).flat ]);
-        }
-    }
-    Math::Matrix.new( @product );
-}
-
-################################################################################
-# end of math matrix operations - start list like matrix operations
-################################################################################
-
-method elems (Math::Matrix:D: --> Int)          {  $!row-count * $!column-count }
+method elems (Math::Matrix:D: --> Int)               {  $!row-count * $!column-count }
 
 multi method elem (Math::Matrix:D: Numeric $e  --> Bool) {
     self.map( {return True if $_ == $e});
@@ -741,7 +657,7 @@ method map-row(Math::Matrix:D: Int $row, &coderef --> Math::Matrix:D ) {
 method map-column(Math::Matrix:D: Int $col, &coderef --> Math::Matrix:D ) {
     self.check_column_index($col);
     my @m = self!clone_rows;
-    (^$!column-count).map:{ @m[$_;$col] = &coderef( @m[$_;$col] ) };
+    (^$!row-count).map:{ @m[$_;$col] = &coderef( @m[$_;$col] ) };
     Math::Matrix.new( @m );
 }
 
@@ -765,13 +681,14 @@ method reduce-columns (Math::Matrix:D: &coderef){
 }
 
 ################################################################################
-# end of list like matrix operations - start structural matrix operations
+# end of list like operations - start structural matrix operations
 ################################################################################
 
 multi method move-row (Math::Matrix:D: Pair $p --> Math::Matrix:D) {
     self.move-row($p.key, $p.value) 
 }
 multi method move-row (Math::Matrix:D: Int $from, Int $to --> Math::Matrix:D) {
+    self.check_row_index([$from, $to]);
     return self if $from == $to;
     my @rows = (^$!row-count).list;
     @rows.splice($to,0,@rows.splice($from,1));
@@ -782,6 +699,7 @@ multi method move-column (Math::Matrix:D: Pair $p --> Math::Matrix:D) {
     self.move-column($p.key, $p.value) 
 }
 multi method move-column (Math::Matrix:D: Int $from, Int $to --> Math::Matrix:D) {
+    self.check_column_index([$from, $to]);
     return self if $from == $to;
     my @cols = (^$!column-count).list;
     @cols.splice($to,0,@cols.splice($from,1));
@@ -789,6 +707,7 @@ multi method move-column (Math::Matrix:D: Int $from, Int $to --> Math::Matrix:D)
 }
 
 method swap-rows (Math::Matrix:D: Int $rowa, Int $rowb --> Math::Matrix:D) {
+    self.check_row_index([$rowa, $rowb]);
     return self if $rowa == $rowb;
     my @rows = (^$!row-count).list;
     (@rows.[$rowa], @rows.[$rowb]) = (@rows.[$rowb], @rows.[$rowa]);
@@ -796,6 +715,7 @@ method swap-rows (Math::Matrix:D: Int $rowa, Int $rowb --> Math::Matrix:D) {
 }
 
 method swap-columns (Math::Matrix:D: Int $cola, Int $colb --> Math::Matrix:D) {
+    self.check_column_index([$cola, $colb]);
     return self if $cola == $colb;
     my @cols = (^$!column-count).list;
     (@cols.[$cola], @cols.[$colb]) = (@cols.[$colb], @cols.[$cola]);
@@ -865,11 +785,94 @@ multi method append-horizontally (Math::Matrix:D: Array $b --> Math::Matrix:D){
 }
 
 # method split (){ }
-# method join (){ }
-
 
 ################################################################################
-# end of structural matrix operations - start operators
+# end of structural matrix operations - start matrix math operations
+################################################################################
+
+multi method add(Math::Matrix:D: Numeric $r --> Math::Matrix:D ) {
+    self.map( * + $r );
+}
+
+multi method add(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-count and $!column-count == $b!column-count } --> Math::Matrix:D ) {
+    my @sum;
+    for ^$!row-count X ^$!column-count -> ($r, $c) {
+        @sum[$r][$c] = @!rows[$r][$c] + $b!rows[$r][$c];
+    }
+    Math::Matrix.new( @sum );
+}
+
+multi method subtract(Math::Matrix:D: Numeric $r --> Math::Matrix:D ) {
+    self.map( * - $r );
+}
+
+multi method subtract(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-count and $!column-count == $b!column-count } --> Math::Matrix:D ) {
+    my @subtract;
+    for ^$!row-count X ^$!column-count -> ($r, $c) {
+        @subtract[$r][$c] = @!rows[$r][$c] - $b!rows[$r][$c];
+    }
+    Math::Matrix.new( @subtract );
+}
+
+method add-row(Math::Matrix:D: Int $row, @row where {.all ~~ Numeric} --> Math::Matrix:D ) {
+    self.check_row_index($row);
+    fail "Matrix has $!column-count columns, but got "~ +@row ~ "element row." unless $!column-count == +@row;
+    my @m = self!clone_rows;
+    @m[$row] = @m[$row] <<+>> @row;
+    Math::Matrix.new( @m );
+}
+
+method add-column(Math::Matrix:D: Int $col, @col where {.all ~~ Numeric} --> Math::Matrix:D ) {
+    self.check_column_index($col);
+    fail "Matrix has $!row-count rows, but got "~ +@col ~ "element column." unless $!row-count == +@col;
+    my @m = self!clone_rows;
+    @col.keys.map:{ @m[$_][$col] += @col[$_] };
+    Math::Matrix.new( @m );
+}
+
+multi method multiply(Math::Matrix:D: Numeric $r --> Math::Matrix:D ) {
+    self.map( * * $r );
+}
+
+multi method multiply(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-count and $!column-count == $b!column-count } --> Math::Matrix:D ) {
+    my @multiply;
+    for ^$!row-count X ^$!column-count -> ($r, $c) {
+        @multiply[$r][$c] = @!rows[$r][$c] * $b!rows[$r][$c];
+    }
+    Math::Matrix.new( @multiply );
+}
+
+method multiply-row(Math::Matrix:D: Int $row, Numeric $factor --> Math::Matrix:D ) {
+    self.check_row_index($row);
+    self.map-row($row,{$_ * $factor});
+}
+
+method multiply-column(Math::Matrix:D: Int $column, Numeric $factor --> Math::Matrix:D ) {
+    self.map-column($column,{$_ * $factor});
+}
+
+method dotProduct(Math::Matrix:D: Math::Matrix $b --> Math::Matrix:D ) {
+    fail "Number of columns of the second matrix is different from number of rows of the first operand"
+        unless $!column-count == $b!row-count;
+    my @product;
+    for ^$!row-count X ^$b!column-count -> ($r, $c) {
+        @product[$r][$c] += @!rows[$r][$_] * $b!rows[$_][$c] for ^$b!row-count;
+    }
+    Math::Matrix.new( @product );
+}
+
+method tensorProduct(Math::Matrix:D: Math::Matrix $b  --> Math::Matrix:D) {
+    my @product;
+    for @!rows -> $arow {
+        for $b!rows -> $brow {
+            @product.push([ ($arow.list.map: { $brow.flat >>*>> $_ }).flat ]);
+        }
+    }
+    Math::Matrix.new( @product );
+}
+
+################################################################################
+# end of matrix math operations - start operators
 ################################################################################
 
 multi sub infix:<+>(::?CLASS $a, Numeric $n --> ::?CLASS:D ) is export { $a.add($n) }
