@@ -1,0 +1,21 @@
+{
+  "authors": "Patrick Spek <p.spek@tyil.work>",
+  "depends": [
+    
+  ],
+  "description": "Add new suffix operators for SI prefixes",
+  "license": "AGPL-3.0",
+  "meta-version": 0,
+  "name": "Ops::SI",
+  "perl": "6.c",
+  "provides": {
+    "Ops::SI": "lib/Ops/SI.pm6"
+  },
+  "resources": [
+    
+  ],
+  "tags": [
+    
+  ],
+  "version": "0.1.0"
+}
