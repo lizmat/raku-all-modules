@@ -10,7 +10,7 @@ class DateTime::Parse is DateTime {
         }
 
         token rfc3339-date {
-            <date=.date5> 'T' <time=.time2>
+            <date=.date5> <[Tt \x0020]> <time=.time2>
         }
 
         token date5 {
@@ -30,11 +30,19 @@ class DateTime::Parse is DateTime {
         }
 
         token time-offset {
-            [ 'Z' | <offset=.time-numoffset>]
+            [ 'Z' | 'z' | <offset=.time-numoffset>]
         }
 
         token time-numoffset {
             <sign=[+-]> <hour=.D2> ':' <minute=.D2>
+        }
+
+        token time-houroffset {
+            <sign=[+-]> <hour>
+        }
+
+        token hour {
+            \d \d?
         }
 
         token rfc1123-date {
@@ -50,7 +58,15 @@ class DateTime::Parse is DateTime {
         }
 
         token asctime-date {
-            <.wkday> <.SP> <date=.date3> <.SP> <time> <.SP> <year=.D4-year>
+            <.wkday> <.SP> <date=.date3> <.SP> <time> <.SP> <year=.D4-year> <asctime-tz>?
+        }
+
+        token asctime-tz {
+            <.SP> <asctime-tzname> <time-houroffset>?
+        }
+
+        token asctime-tzname {
+            \w+
         }
 
         token date1 { # e.g., 02 Jun 1982
@@ -62,7 +78,7 @@ class DateTime::Parse is DateTime {
         }
 
         token date3 { # e.g., Jun  2
-            <month> <.SP> (<day=.D2> | <.SP> <day=.D1>)
+            <month> <.SP> <day>
         }
 
         token date4 { # e.g., 02-Jun-1982 
@@ -71,6 +87,10 @@ class DateTime::Parse is DateTime {
 
         token time {
             <hour=.D2> ':' <minute=.D2> ':' <second=.D2>
+        }
+
+        token day {
+            <.D1> | <.D2>
         }
 
         token wkday {
@@ -94,7 +114,7 @@ class DateTime::Parse is DateTime {
         }
 
         token SP {
-            \s
+            \s+
         }
 
         token D1 {
@@ -128,7 +148,12 @@ class DateTime::Parse is DateTime {
         }
 
         method asctime-date($/) {
-            make DateTime.new(:year($<year>.made), |$<date>.made, |$<time>.made)
+            my $date = $<date>.made;
+            $date<year> = $<year>.made;
+
+            my $tz = ($<asctime-tz>.made<offset-hours> // 0) × 3600;
+
+            make DateTime.new(|$<date>.made, |$<time>.made, :timezone($tz))
         }
 
         method !genericDate($/) {
@@ -155,14 +180,33 @@ class DateTime::Parse is DateTime {
             self!genericDate($/);
         }
 
+        my %timezones =
+            UTC => 0,
+            GMT => 0,
+        ;
+
+        method asctime-tz($/) {
+            my $offset = (%timezones{$<asctime-tzname>.made} // 0) + ($<time-houroffset>.made // 0);
+
+            make { offset-hours => $offset }
+        }
+
+        method asctime-tzname($/) {
+            make ~$/
+        }
+
+        method time-houroffset($/) {
+            make +$/
+        }
+
         method time($/) {
             make { hour => +$<hour>, minute => +$<minute>, second => +$<second> }
         }
 
         method time2($/) {
             my $p = $<part>;
-            my $offset;
-            unless $<offset> eq 'Z' {
+            my $offset = 0;
+            unless $<offset> eq 'Z'|'z' {
                 if ~$<offset><offset><sign> eq '-' {
                     $offset = 3600 * ~$<offset><offset><hour>.Int;
                     $offset += 60 * ~$<offset><offset><minute>.Int;
@@ -187,6 +231,10 @@ class DateTime::Parse is DateTime {
                     Jul => 7, Aug => 8, Sep => 9, Oct => 10, Nov => 11, Dec => 12;
         method month($/) {
             make %month{~$/}
+        }
+
+        method day($/) {
+            make +$/
         }
 
         method D4-year($/) {
@@ -249,3 +297,5 @@ Website: filip.sergot.pl
 Contact: filip (at) sergot.pl
 
 =end pod
+
+# vim: et sw=4 ts=4

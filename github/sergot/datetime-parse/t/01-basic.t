@@ -30,4 +30,14 @@ nok DateTime::Parse::Grammar.parse($rfc850vb)<rfc850-var-date>, "'$rfc850vb' is 
 ok DateTime::Parse::Grammar.parse($rfc3339_1)<rfc3339-date>, "'$rfc3339_1' is recognized as rfc3339-date";
 ok DateTime::Parse::Grammar.parse($rfc3339_2)<rfc3339-date>, "'$rfc3339_2' is recognized as rfc3339-date";
 
+# RFC 3339 additional tests
+subtest {
+    ok DateTime::Parse::Grammar.parse("1994-11-06 08:49:37Z")<rfc3339-date>;
+    ok DateTime::Parse::Grammar.parse("1994-11-06T08:49:37Z")<rfc3339-date>;
+    ok DateTime::Parse::Grammar.parse("1994-11-06t08:49:37Z")<rfc3339-date>;
+    ok DateTime::Parse::Grammar.parse("1994-11-06 08:49:37z")<rfc3339-date>;
+    ok DateTime::Parse::Grammar.parse("1994-11-06T08:49:37z")<rfc3339-date>;
+    ok DateTime::Parse::Grammar.parse("1994-11-06t08:49:37z")<rfc3339-date>;
+}, 'RFC 3339 formatted time is case-insensitive';
+
 done-testing;
