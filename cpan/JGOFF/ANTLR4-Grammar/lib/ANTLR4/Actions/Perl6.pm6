@@ -25,7 +25,11 @@ use v6;
 my role Named { has $.name; }
 my role Modified {
 	has $.modifier = '';
-	has $.greed = '';
+	has $.greed = False;
+}
+
+class Action {
+	also does Named;
 }
 
 class Terminal {
@@ -74,23 +78,25 @@ class Token is Block { }
 
 class Rule is Block { has $.type = 'rule'; }
 
-class Notes { has %.content; }
-
 # This doesn't use the generic Block because it'll eventually be indented,
 # and the grammar level is always the top level of the file.
 #
 class Grammar {
 	also does Named;
 
-	has @.content;
+	has $.type;
+	has %.option;
+	has %.import;
+	has %.action;
+	has @.token;
+	has @.rule;
 }
 
 class ANTLR4::Actions::Perl6 {
 	method ID( $/ ) { make ~$/ }
 	method STRING_LITERAL( $/ ) { make ~$/[0] }
-	method LEXER_CHAR_SET( $/ ) { make ~$/[0] }
 	method MODIFIER( $/ ) { make ~$/ }
-	method GREED( $/ ) { make ~$/ }
+	method GREED( $/ ) { make ?( ~$/ eq '?' ) }
 
 	method tokenName( $/ ) {
 		make Token.new( :name( $/<ID>.ast ) )
@@ -104,15 +110,8 @@ class ANTLR4::Actions::Perl6 {
 		make $/<token_list_trailing_comma>.ast
 	}
 
-	method prequelConstruct( $/ ) {
-		my @tokens;
-		for $/ {
-			when $_.<tokensSpec> {
-				@tokens.append( $_.<tokensSpec>.ast );
-			}
-		}
-		make @tokens
-	}
+	#method prequelConstruct - gave up temporarily on using tat.
+	# I'll make that work later.
 
 	# XXX The 'if $copy' shouldn't be needed because Terminals with empty
 	# XXX names shouldn't ever be created.
@@ -231,9 +230,15 @@ class ANTLR4::Actions::Perl6 {
 	}
 
 	method element( $/ ) {
-		if $/<ebnfSuffix> {
+		if $/<ACTION> {
+			# XXX aack, ACTIONs are next to the term they refer to
+			make Action.new(
+				:name( ~$/<ACTION> )
+			)
+		}
+		elsif $/<ebnfSuffix> {
 			my $modifier = $/<ebnfSuffix><MODIFIER>.ast;
-			my $greed = $/<ebnfSuffix><GREED>.ast // '';
+			my $greed = $/<ebnfSuffix><GREED>.ast // False;
 			if $/<atom><terminal><scalar> and
 				!is-ANTLR-terminal( ~$/<atom><terminal><scalar> ) {
 				if $/<atom><terminal><scalar>.ast eq 'EOF' {
@@ -308,7 +313,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 					$/<ebnf><ebnfSuffix><MODIFIER>.ast // ''
 				),
 				:greed(
-					$/<ebnf><ebnfSuffix><GREED>.ast // ''
+					$/<ebnf><ebnfSuffix><GREED>.ast // False
 				),
 				:content(
 					Alternation.new(
@@ -330,7 +335,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 					 $/<element>[0]<ebnfSuffix><MODIFIER>.ast
 				),
 				:greed(
-					$/<element>[0]<ebnfSuffix><GREED>.ast // ''
+					$/<element>[0]<ebnfSuffix><GREED>.ast // False
 				),
 				:from(
 					ANTLR-to-perl(
@@ -352,7 +357,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 					$/<element>[3]<ebnfSuffix><MODIFIER>.ast // ''
 				),
 				:greed(
-					$/<element>[3]<ebnfSuffix><GREED>.ast // ''
+					$/<element>[3]<ebnfSuffix><GREED>.ast // False
 				),
 				:negated( True ),
 				:from(
@@ -412,7 +417,30 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 	}
 
 	method lexerElement( $/ ) {
-		if $/<lexerBlock> {
+		if $/<lexerAtom><terminal> and $/<ebnfSuffix> {
+			make Terminal.new(
+				:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+				:greed( $/<ebnfSuffix><GREED> // False ),
+				:name( $/<lexerAtom><terminal><STRING_LITERAL>.ast )
+			)
+		}
+		elsif $/<lexerAtom><terminal> {
+			if $/<lexerAtom><terminal><scalar>.ast eq 'EOF' {
+				make EOF.new
+			}
+			else {
+				make Terminal.new(
+					:name( $/<lexerAtom><terminal><scalar>.ast )
+				)
+			}
+		}
+		elsif $/<lexerAtom>[0] and $/<ebnfSuffix> {
+			make Wildcard.new(
+				:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+				:greed( $/<ebnfSuffix><GREED> // False ),
+			)
+		}
+		elsif $/<lexerBlock> {
 			make Grouping.new(
 				:content(
 					$/<lexerBlock><lexerAltList>.ast
@@ -420,11 +448,44 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 			)
 		}
 		elsif $/<ebnfSuffix> {
-			make CharacterSet.new(
-				:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
-				:greed( $/<ebnfSuffix><GREED> // '' ),
-				:content( $/<lexerAtom><LEXER_CHAR_SET>>>.Str )
-			)
+			if $/<lexerAtom><LEXER_CHAR_SET> {
+				make CharacterSet.new(
+					:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+					:greed( $/<ebnfSuffix><GREED> // False ),
+					:content( $/<lexerAtom><LEXER_CHAR_SET>>>.Str )
+				)
+			}
+			elsif $/<lexerAtom><notSet><setElement> and $/<ebnfSuffix> {
+				my @content;
+				for $/<lexerAtom><notSet><setElement><LEXER_CHAR_SET>[0] {
+					@content.append( ~$_.<LEXER_CHAR_SET_RANGE> );
+				}
+				make CharacterSet.new(
+					:negated( True ),
+					:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+					:greed( $/<ebnfSuffix><GREED> // False ),
+					:content( @content )
+				)
+			}
+			elsif $/<lexerAtom><notSet> {
+				my @content;
+				for $/<lexerAtom><notSet><blockSet><setElementAltList><setElement> {
+					@content.append( $_.<terminal><STRING_LITERAL>.ast )
+				}
+				make CharacterSet.new(
+					:negated( True ),
+					:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+					:greed( $/<ebnfSuffix><GREED> // False ),
+					:content( @content )
+				)
+			}
+			else {
+				make CharacterSet.new(
+					:modifier( $/<ebnfSuffix><MODIFIER>.ast ),
+					:greed( $/<ebnfSuffix><GREED> // False ),
+					:content( $/<lexerAtom><terminal>>>.Str )
+				)
+			}
 		}
 		else {
 			make $/<lexerAtom>.ast
@@ -463,16 +524,47 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 	}
 
 	method TOP( $/ ) {
-		my @body;
+		my @token;
+		my %option;
+		my %action;
+		my %import;
 		for $/<prequelConstruct> {
-			@body.append( $_.ast )
+			when $_.<optionsSpec> {
+				for $_.<optionsSpec><option> {
+					%option{ $_.<ID>.ast } =
+						~$_.<optionValue>;
+				}
+			}
+			when $_.<delegateGrammars> {
+				for $_.<delegateGrammars><delegateGrammar> {
+					%import{ ~$_.<key> } = 
+						( $_.<value> ?? ~$_.<value> !! Any );
+				}
+			}
+			when $_.<tokensSpec> {
+				@token.append( $_.<tokensSpec>.ast );
+			}
+			when $_.<action> {
+				%action{ ~$_.<action><action_name> } =
+					~$_.<action><ACTION>;
+			}
 		}
+		my @rule;
 		for $/<ruleSpec> {
-			@body.append( $_.ast )
+			@rule.append( $_.ast )
+		}
+		my $type;
+		if $/<grammarType>[0] {
+			$type = ~$/<grammarType>[0];
 		}
 		my $grammar = Grammar.new(
+			:type( $type ),
 			:name( $/<ID>.ast ),
-			:content( @body )
+			:option( %option ),
+			:import( %import ),
+			:action( %action ),
+			:token( @token ),
+			:rule( @rule )
 		);
 		make $grammar
 	}
