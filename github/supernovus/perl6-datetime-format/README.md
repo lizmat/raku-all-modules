@@ -40,7 +40,7 @@ Parse or Stringify a DateTime in the RFC 2822 format.
   my $rfc = DateTime::Format::RFC2822.new();
   my $dt  = $rfc.parse($ts);
   my $dt2 = $dt.utc();
-  say ~$dt2;                   ## Tue, 30 Apr 2013 20:02:10 Z
+  say ~$dt2;                   ## Tue, 30 Apr 2013 20:02:10 +0000
 
 ```
 

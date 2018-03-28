@@ -96,7 +96,16 @@ multi sub strftime (
                ($o.abs / 60 / 60).floor,
                ($o.abs / 60 % 60).floor
             !! 'Z' 
-        }
+        },
+        'Z' => {
+            my $o = $dt.offset;
+            $o
+            ?? sprintf '%s%02d%02d',
+               $o < 0 ?? '-' !! '+',
+               ($o.abs / 60 / 60).floor,
+               ($o.abs / 60 % 60).floor
+            !! '+0000' 
+        },
     ; ## End of %substitutions
 
     $format .= subst( /'%'(\dN|\w|'%')/, -> $/ { (%substitutions{~$0}
