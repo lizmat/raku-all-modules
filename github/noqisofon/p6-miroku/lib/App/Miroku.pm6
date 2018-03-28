@@ -64,6 +64,43 @@ multi method perform('new', Str $module-name is copy, Str :$prefix, Str :$to = '
     note "Successfully created $main-dir";
 }
 
+multi method perform('start', Str :$type = 'lib') {
+    my $main-dir = $*CWD;
+
+    my $module-name = $main-dir.basename.subst( 'p6-', '' ).subst( '-', '::' );
+
+    chdir( $main-dir );
+    my $module-filepath = to-file( $module-name );
+    my $module-dir      = $module-filepath.IO.dirname.Str;
+
+    my @child-dirs = get-child-dirs( $type, $module-dir );
+    
+    for @child-dirs -> $child-dir {
+        mkdir( $child-dir ) unless $child-dir.IO.e;
+    }
+
+    my %contents = App::Miroku::Template::get-template(
+        :module($module-name),
+        :$!author, :$!email, :$!year,
+        dist => $module-name.subst( '::', '-', :g )
+    );
+
+    my %key-by-path = get-key-by-path( $type, $module-filepath );
+
+    for %key-by-path.kv -> $key, $path {
+        spurt( $path, %contents{$key} ) unless $path.IO.e;
+    }
+
+    self.perform( 'build' );
+
+    unless '.git/'.IO.e {
+        git-init;
+        git-add;
+    }
+
+    note "Successfully started $main-dir";
+}
+
 multi method perform('build') {
     my ( $module, $module-file ) = guess-main-module;
 

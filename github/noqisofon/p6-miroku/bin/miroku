@@ -10,6 +10,10 @@ multi MAIN('new', $module, Str $prefix = 'p6-', Str :$to = '.', Str :$type = 'li
     $app.perform( 'new', $module, :$prefix, :$to, :$type );
 }
 
+multi MAIN('start') {
+    $app.perform( 'start' );
+}
+
 multi MAIN('build') {
     $app.perform( 'build' );
 }

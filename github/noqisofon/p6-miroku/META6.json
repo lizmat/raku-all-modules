@@ -23,7 +23,7 @@
   "test-depends": [
     "File::Temp"
   ],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Yet another minimal authoring tool for Perl6",
   "authors": [
     "Ned Rihine"
