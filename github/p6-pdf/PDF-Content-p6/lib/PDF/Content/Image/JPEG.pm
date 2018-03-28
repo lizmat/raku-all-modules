@@ -22,6 +22,7 @@ class PDF::Content::Image::JPEG
 
     # work-around for Rakudo RT #131122 - sign handling
     sub u8(uint8 $v) { $v }
+    sub u16(uint16 $v) { $v }
 
     method read($fh = $.source) {
         $fh.seek(0, SeekFromBeginning);
@@ -33,10 +34,11 @@ class PDF::Content::Image::JPEG
             my BlockHeader $hdr .= read: $fh;
             last if u8($hdr.ff) != 0xFF;
             last if u8($hdr.mark) == 0xDA | 0xD9;  # SOS/EOI
-            last if $hdr.len < 2;
+            my $len := u16($hdr.len);
+            last if $len < 2;
             last if $fh.eof;
 
-            my $buf = $fh.read: $hdr.len - 2;
+            my $buf = $fh.read: $len - 2;
             with $hdr.mark -> uint8 $mark {
                 if 0xC0 <= $mark <= 0xCF
                 && $mark != 0xC4 | 0xC8 | 0xCC {
@@ -48,8 +50,7 @@ class PDF::Content::Image::JPEG
         }
 
         $fh.seek(0, SeekFromBeginning);
-        $!encoded = $fh.slurp-rest;
-        $fh.close;
+        $!encoded = $fh.slurp(:bin, :close).decode: "latin-1";
         self;
     }
 
