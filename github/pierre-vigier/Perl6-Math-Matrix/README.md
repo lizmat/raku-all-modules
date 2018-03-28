@@ -15,7 +15,7 @@ VERSION
 SYNOPSIS
 ========
 
-Matrices are tables with rows (counting from 0) and columns of numbers: 
+Matrices are tables with rows and columns (counting from 0) of numbers (Numeric): 
 
     transpose, invert, negate, add, subtract, multiply, dot product, size, determinant, 
     rank, kernel, trace, norm, decompositions and so on
@@ -52,7 +52,7 @@ METHODS
 
   * matrix math ops: add, subtract, add-row, add-column, multiply, multiply-row, multiply-column, dotProduct, tensorProduct
 
-  * operators: +, -, *, **, ⋅, dot, ⊗, x, | |, || ||
+  * operators: +, -, *, **, ⋅, dot, ÷, ⊗, x, | |, || ||
 
 Constructors
 ------------
@@ -68,13 +68,18 @@ The default constructor, takes arrays of arrays of numbers. Each second level ar
 
 ### new-zero
 
-This method is a constructor that returns an zero matrix of the size given in parameter. If only one parameter is given, the matrix is quadratic. All the cells are set to 0.
+This method is a constructor that returns an empty matrix of the size given in parameter. If only one parameter is given, the matrix is quadratic. All the cells are set to 0.
 
     say Math::Matrix.new-zero( 3, 4 ) :
 
     0 0 0 0
     0 0 0 0
     0 0 0 0
+
+    say Math::Matrix.new-zero( 2 ) :
+
+    0 0
+    0 0
 
 ### new-identity
 
@@ -174,25 +179,26 @@ Conversion into String context. Returns content of all cells in the data structu
 
 ### perl
 
-Conversion into String like context that can reevaluated into the same object later. ( "Math::Matrix.new([[..,..,...],[...],...])" )
+Conversion into String that can reevaluated into the same object later.
 
-    my $clone = eval $matrix.perl;
+    my $clone = eval $matrix.perl;       # same as: $matrix.clone
 
 ### list-rows
 
 Returns a list of lists, reflecting the row-wise content of the matrix.
 
-    Math::Matrix.new( [[1,2],[3,4]] ).list-rows ~~ ((1 2) (3 4))     # True
+    say Math::Matrix.new( [[1,2],[3,4]] ).list-rows     : ((1 2) (3 4))
+    say Math::Matrix.new( [[1,2],[3,4]] ).list-rows.flat : (1 2 3 4)
 
 ### list-columns
 
 Returns a list of lists, reflecting the row-wise content of the matrix.
 
-    Math::Matrix.new( [[1,2],[3,4]] ).list-columns ~~ ((1 3) (2 4)) # True
+    say Math::Matrix.new( [[1,2],[3,4]] ).list-columns : ((1 3) (2 4))
 
 ### gist
 
-Limited tabular view for the shell output. Just cuts off excessive rows and columns. Implicitly called while:
+Limited tabular view, optimized for shell output. Just cuts off excessive columns that do not fit into standard terminal and also stops after 20 rows. Several dots will hint that something is missing. It is implicitly called when:
 
     say $matrix;      # output when matrix has more than 100 cells
 
@@ -205,6 +211,10 @@ Limited tabular view for the shell output. Just cuts off excessive rows and colu
 Full tabular view (all rows and columns) for the shell or file output.
 
     say $matrix.full;
+
+    1 2 3 4 5 11 12 13 14 15 21 22 23 24 25
+    3 4 5 6 7 13 14 15 16 17 23 24 25 26 27
+    5 6 7 8 9 15 16 17 18 19 25 26 27 28 29
 
 Boolean Properties
 ------------------
@@ -323,10 +333,9 @@ Density is the percentage of cell which are not zero.
 
 ### trace
 
-    The trace of a square matrix is the sum of the cells on the main diagonal.
-    In other words: sum of cells which row and column value is identical.
+The trace of a square matrix is the sum of the cells on the main diagonal. In other words: sum of cells which row and column value is identical.
 
-       my $tr = $matrix.trace( );
+    my $tr = $matrix.trace( );
 
 ### determinant, alias det
 
@@ -378,10 +387,6 @@ Returns a new, transposed Matrix, where rows became colums and vice versa.
                [4 5 6]       2 5
                              3 6
 
-### inverted
-
-Inverse matrix regarding to matrix multiplication. The dot product of a matrix with its inverted results in a identity matrix (neutral element in this group). Matrices that have a square form and a full rank can be inverted. Check this with the method .is-invertible.
-
 ### negated
 
     my $new = $matrix.negated();    # invert sign of all cells
@@ -391,6 +396,10 @@ Inverse matrix regarding to matrix multiplication. The dot product of a matrix w
 
     my $c = $matrix.conjugated();    # change every value to its complex conjugated
     my $c = $matrix.conj();          # works too (official Perl 6 name)
+
+### inverted
+
+Matrices that have a square form and a full rank can be inverted (see .is-invertible). Inverse matrix regarding to matrix multiplication. The dot product of a matrix with its inverted results in a identity matrix (neutral element in this group).
 
 ### reduced-row-echelon-form, alias rref
 
@@ -711,15 +720,16 @@ The Module overloads or uses a range of well and less known ops. +, -, * and ~~ 
     my $p   =  $matrixa * $matrixb;  # cell wise product of two same sized matrices
     my $sp  =  $matrix  * $number;   # multiply number to every cell
 
-    my $tp  =  $a x $b;              # tensor product 
-    my $tp  =  $a ⊗ $b;              # tensor product, unicode alias
-
     my $dp  =  $a dot $b;            # dot product of two fitting matrices (cols a = rows b)
     my $dp  =  $a ⋅ $b;              # dot product, unicode alias
+    my $dp  =  $a ÷ $b;              # alias to $a dot $b.inverted
 
     my $c   =  $a **  3;             # $a to the power of 3, same as $a dot $a dot $a
     my $c   =  $a ** -3;             # alias to ($a dot $a dot $a).inverted
     my $c   =  $a **  0;             # creats an right sized identity matrix
+
+    my $tp  =  $a x $b;              # tensor product 
+    my $tp  =  $a ⊗ $b;              # tensor product, unicode alias
 
      | $matrix |                     # determinant
     || $matrix ||                    # Euclidean (L2) norm
