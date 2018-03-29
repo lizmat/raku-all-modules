@@ -4,12 +4,12 @@
     "Patrick Spek <p.spek@tyil.work>"
   ],
   "depends": [
-    "Hash::Merge"
+    "Hash::Merge:api<1>:version<1.0.0+>"
   ],
   "description": "Extensible library for reading and writing configuration files.",
   "license": "GPL-3.0",
   "name": "Config",
-  "perl": "6",
+  "perl": "6.c",
   "provides": {
     "Config": "lib/Config.pm6",
     "Config::Exception::FileNotFoundException": "lib/Config/Exception/FileNotFoundException.pm6",
@@ -29,5 +29,6 @@
   "test-depends": [
     "Test::META"
   ],
-  "version": "1.3.4"
+  "version": "1.3.5",
+  "api": "1"
 }

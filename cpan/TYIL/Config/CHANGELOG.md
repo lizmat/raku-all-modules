@@ -5,7 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic
 Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [1.3.4] - 2018-03-21
+## [1.3.5] - 2018-03-28
+### Added
+- `api` key to META6.json
+
+### Changed
+- Update dependency to `Hash::Merge` to use `api` and `version` adverbs
+
 ### Removed
 - Lingering say statement in get-parser, breaking tests for Rakudo Star users ([GitHub#4](https://github.com/scriptkitties/p6-Config/issues/4))
 - Useless `use lib "lib"` statements from tests

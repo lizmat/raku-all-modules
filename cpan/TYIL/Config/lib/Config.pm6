@@ -187,7 +187,7 @@ class Config is Associative is export
     #| Read a plain Hash into the configuration.
     multi method read(Hash $hash)
     {
-        $!content.merge($hash);
+        $!content = merge-hash($!content, $hash);
 
         return True;
     }
