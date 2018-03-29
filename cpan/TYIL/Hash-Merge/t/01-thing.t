@@ -4,7 +4,7 @@ use v6;
 use lib 'lib';
 use Test;
 
-use Hash::Merge;
+use Hash::Merge::Augment;
 
 my %a;
 my %b;

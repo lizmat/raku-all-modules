@@ -6,7 +6,7 @@ use Test;
 
 plan 3;
 
-use Hash::Merge;
+use Hash::Merge::Augment;
 
 my Hash $hash = {
     a => "a",
