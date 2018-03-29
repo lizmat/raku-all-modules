@@ -1,0 +1,11 @@
+use NativeCall;
+
+enum Git::Trace <
+    GIT_TRACE_NONE
+    GIT_TRACE_FATAL
+    GIT_TRACE_ERROR
+    GIT_TRACE_WARN
+    GIT_TRACE_INFO
+    GIT_TRACE_DEBUG
+    GIT_TRACE_TRACE
+>;
