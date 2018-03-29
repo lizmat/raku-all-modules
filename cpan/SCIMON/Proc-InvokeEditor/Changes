@@ -1,0 +1,8 @@
+Revision history for Proc-InvokeEditor
+
+0.0.2  2018-03-28T16:58:47+01:00
+    - Can create an editor object, assigns edits and perform and edit.
+
+0.0.1
+    - Initial version
+

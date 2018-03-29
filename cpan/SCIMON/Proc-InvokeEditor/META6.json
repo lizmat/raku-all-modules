@@ -1,0 +1,22 @@
+{
+  "auth" : "Simon Proctor \"simon.proctor@gmail.com\"",
+  "authors" : [
+    "Simon Proctor"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "File::Temp"
+  ],
+  "description" : "Edit strings in an external editor. ",
+  "license" : "Artistic-2.0",
+  "name" : "Proc::InvokeEditor",
+  "perl" : "6.c",
+  "provides" : {
+    "Proc::InvokeEditor" : "lib/Proc/InvokeEditor.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/Scimon/p6-Proc-InvokeEditor.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
