@@ -19,17 +19,17 @@ class WebService::GitHub::Issues does WebService::GitHub::Role {
     method all-issues(Str $repo ) {
 	my @issues = self.show( repo => $repo, state => 'all' ).data.list;
 	my @issue-data;
-	for @issues -> $i {
+	for @issues -> $issue {
 	    die "Limit exceeded, please use auth" if !rate-limit-remaining();
-	    my $this-issue = self.single-issue( repo => $repo, issue => $i<number> ).data;
+	    my $this-issue = self.single-issue( repo => $repo, issue => $issue<number> ).data;
 	    for $this-issue.kv -> $k, $value { # merge issues
-		if ( ! $i{$k} ) {
-		    $i{$k} = $value;
+		if ( ! $issue{$k} ) {
+		    $issue{$k} = $value;
 		}
 	    }
-	    @issue-data[ $i<number> ] = $i;
+	    @issue-data.push( $issue );
 
 	}
-	return @issue-data;
+	return @issue-data.sort( *<number> );
     }
 }

@@ -13,7 +13,8 @@ if ( ( %*ENV<TRAVIS> && rate-limit-remaining() ) || %*ENV<GH_TOKEN>  ) {
     is $first-issue<created_at>, "2015-10-26T19:45:45Z", "First issue OK";
     my @all-issues = $gh.all-issues('JJ/perl6em');
     cmp-ok @all-issues.elems, ">", 0, "Non-null number of issues";
-    is @all-issues[1]<state>, "closed", "State of first issue is closed";
+    is @all-issues[0]<state>, "closed", "State of first issue is closed";
+    cmp-ok +@all-issues.grep( *<state> eq 'closed' ), ">=", 2, "More than 2 issues closed";
 }
 
 done-testing();

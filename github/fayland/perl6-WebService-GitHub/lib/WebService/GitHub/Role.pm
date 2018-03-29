@@ -104,7 +104,7 @@ role WebService::GitHub::Role {
 
         $request = $.prepare_request($request);
         my $res = self._make_request($request);
-        $res = $.handle_response($res);
+	        $res = $.handle_response($res);
 
         my $ghres = WebService::GitHub::Response.new(
           raw => $res,
