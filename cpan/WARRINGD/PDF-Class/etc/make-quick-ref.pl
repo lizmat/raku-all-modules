@@ -1,14 +1,14 @@
 use v6;
-use PDF::DAO::Array;
-use PDF::DAO::Dict;
-use PDF::DAO::Stream;
-use PDF::DAO::Tie::Array;
-use PDF::DAO::Tie::Hash;
+use PDF::COS::Array;
+use PDF::COS::Dict;
+use PDF::COS::Stream;
+use PDF::COS::Tie::Array;
+use PDF::COS::Tie::Hash;
 use PDF::Content::XObject;
 
 my %classes;
 
-my Set $std-methods .= new: flat( <cb-init cb-finish type subtype <anon> delegate-function delegate-shading>, (PDF::DAO::Stream, PDF::DAO::Array).map: *.^methods>>.name);
+my Set $std-methods .= new: flat( <cb-init cb-finish type subtype <anon> delegate-function delegate-shading>, (PDF::COS::Stream, PDF::COS::Array).map: *.^methods>>.name);
 my Set $stream-accessors .= new: <Length Filter DecodeParms F FFilter FDecodeParms DL>;
 
 sub scan-classes($path) {
@@ -39,9 +39,9 @@ scan-classes('lib'.IO);
 for %classes.keys.sort({ when 'PDF::Class' {'A'}; when 'PDF::Catalog' {'B'}; default {$_}}) -> $name {
     my $class = %classes{$name};
     my $type = do given $class {
-        when PDF::DAO::Array|PDF::DAO::Tie::Array  {'array'}
-        when PDF::DAO::Stream|PDF::Content::XObject {'stream'}
-        when PDF::DAO::Dict|PDF::DAO::Tie::Hash   {'dict'}
+        when PDF::COS::Array|PDF::COS::Tie::Array  {'array'}
+        when PDF::COS::Stream|PDF::Content::XObject {'stream'}
+        when PDF::COS::Dict|PDF::COS::Tie::Hash   {'dict'}
         default {
             warn "ignoring class: $name ({$type.perl})";
             next;

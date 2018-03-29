@@ -1,3 +1,8 @@
+Release 0.1.1
+- Renamed role PDF::OutlineItem -> PDF::Outline
+- Add PDF::Destination; removed destination handling from PDF::Action; includes:
+  -- `construct` method for creating new page destinations
+  -- `:Fit` enumeration export for destination fitting modes
 Release 0.1.0
 - Adjust to latest PDF. PDF::DAO classes have been renamed
   to PDF::COS (Carousel Object System)

@@ -21,7 +21,10 @@ my $acroform = $doc.AcroForm;
 does-ok $doc.AcroForm, ::('PDF::AcroForm');
 
 lives-ok {$doc.OpenAction}, '$doc.OpenAction';
-does-ok $doc.OpenAction, ::('PDF::Action::Destination');
+does-ok $doc.OpenAction, (require ::('PDF::Destination'));
+is $doc.OpenAction.type, 'XYZ', 'OpenAction.XYZ';
+ok !$doc.OpenAction.left.defined, 'OpenAction.left';
+is $doc.OpenAction.zoom, 0, 'OpenAction.zoom';
 
 my @fields = $acroform.fields;
 isa-ok @fields, Array, '.Fields';

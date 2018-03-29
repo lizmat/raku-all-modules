@@ -65,9 +65,9 @@ class PDF::Page
         $annots.keys.map({$annots[$_]}).grep({$_ ~~ PDF::Field})
     }
 
-   method fields-hash( Array $fields-arr = self.fields,
-                       :$key where 'T'|'TU'|'TR' = 'T'
-			--> Hash) {
+    method fields-hash( Array $fields-arr = self.fields,
+                        :$key where 'T'|'TU'|'TR' = 'T'
+                            --> Hash) {
 	my %fields;
 
 	for $fields-arr.list -> $field {

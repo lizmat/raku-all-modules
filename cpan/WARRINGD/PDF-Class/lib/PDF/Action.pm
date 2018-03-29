@@ -1,25 +1,6 @@
 use v6;
 use PDF::COS::Tie::Hash;
 
-# See [PDF 1.7 TABLE 8.2 Destination syntax]
-my subset NumNull where { .does(Numeric) || !.defined };  #| UInt value or null
-multi sub is-destination($page, 'XYZ', NumNull $left,
-			 NumNull $top, NumNull $zoom)        { True }
-multi sub is-destination($page, 'Fit')                       { True }
-multi sub is-destination($page, 'FitH',  NumNull $top)       { True }
-multi sub is-destination($page, 'FitV',  NumNull $left)      { True }
-multi sub is-destination($page, 'FitR',  Numeric $left,
-			 Numeric $bottom, Numeric $right,
-			 Numeric $top )                      { True }
-multi sub is-destination($page, 'FitB')                      { True }
-multi sub is-destination($page, 'FitBH', NumNull $top)       { True }
-multi sub is-destination($page, 'FitBV', NumNull $left)      { True }
-multi sub is-destination(|c)                      is default { False }
-
-my subset DestinationArray of Array where is-destination(|$_);
-role PDF::Action {...}
-subset PDF::Action::Destination of PDF::COS where DestinationArray | PDF::Action; #| e.g. for Catalog /OpenAction entry
-
 #| /Type /Action
 
 role PDF::Action
@@ -55,21 +36,14 @@ role PDF::Action
 
     has ActionSubtype $.S is entry(:required);
 
-    proto sub coerce($,$) is export(:coerce) {*}
-
-    multi sub coerce(Hash $dict is rw where { .<S> ~~ ActionSubtype }, PDF::Action) {
-	my $subclass = PDF::COS.loader.find-delegate( 'Action', $dict<S> );
-	PDF::COS.coerce($dict, $subclass);
+    multi method delegate-action(Hash $dict where { .<S> ~~ ActionSubtype }) {
+	PDF::COS.loader.find-delegate( 'Action', $dict<S> );
     }
 
-    multi sub coerce(Hash $dict is rw, PDF::Action) is default {
+    multi method delegate-action(Hash $dict) is default {
 	warn "unknown action subtype: $dict<S>"
 	    if $dict<S>:exists;
-	PDF::COS.coerce($dict, PDF::Action);
-    }
-
-    multi sub coerce(Hash $dict is rw, PDF::Action::Destination) {
-	coerce( $dict, PDF::Action );
+	PDF::Action;
     }
 
     my subset NextActionArray of Array where { [&&] .map( *.isa(PDF::Action) ) }

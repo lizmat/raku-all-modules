@@ -27,7 +27,7 @@ my $ind-obj = PDF::IO::IndObj.new( |%ast, :$reader);
 is $ind-obj.obj-num, 18, '$.obj-num';
 is $ind-obj.gen-num, 0, '$.gen-num';
 my $outlines-obj = $ind-obj.object;
-isa-ok $outlines-obj, ::('PDF')::('Outlines');
+isa-ok $outlines-obj, (require ::('PDF')::('Outlines'));
 is $outlines-obj.Type, 'Outlines', '$.Type accessor';
 is $outlines-obj.Count, 3, '$.Count accessor';
 is-deeply $outlines-obj.First, (:ind-ref[19, 0]), '$obj.First';

@@ -7,7 +7,7 @@
             "ID": {
               "array": [
                 {
-                  "hex-string": "Þ$r§ÇåùM`É§]ð#Ð"
+                  "hex-string": "òmßM\u001f¬\u0006t5z+\u0001?"
                 },
                 {
                   "hex-string": "0BD³C|N{:g\u0016l^C"
@@ -39,7 +39,7 @@
               {
                 "dict": {
                   "Producer": {
-                    "literal": "Perl 6 PDF::Class 0.0.8"
+                    "literal": "Perl 6 PDF::Class 0.1.1"
                   },
                   "CreationDate": {
                     "literal": "D:20151225000000Z00'00'"

@@ -33,7 +33,7 @@ class PDF::Function::Stitching
 
         method calc(@in where .elems == 1) {
             my Numeric $x = self.clip(@in[0], @.domain[0]);
-            my $i = @!bounds.pairs.first({.value.min <= $x <= .value.max}).key;
+            my UInt $i = @!bounds.pairs.first({.value.min <= $x <= .value.max}).key;
             my Numeric $e = $.interpolate($x, @.bounds[$i], @.encode[$i]);
             my @out = @!functions[$i].calc([$e]);
             @out = [(@out Z @.range).map: { self.clip(.[0], .[1]) }]
@@ -62,5 +62,9 @@ class PDF::Function::Stitching
         }
         @bounds[$k-1] = @Bounds[$k-2] .. @domain[0].max;
         Transform.new: :@domain, :@range, :@encode, :@functions, :@bounds;
+    }
+    #| run the calculator function
+    method calc(@in) {
+        $.calculator.calc(@in);
     }
 }

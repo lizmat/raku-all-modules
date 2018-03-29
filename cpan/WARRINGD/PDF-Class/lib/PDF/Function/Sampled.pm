@@ -12,10 +12,10 @@ class PDF::Function::Sampled
 
     has UInt @.Size is entry(:required);  #| (Required) An array of m positive integers specifying the number of samples in each input dimension of the sample table.
 
-    subset Sample of Int where 1|2|4|8|16|24|32;
+    my subset Sample of Int where 1|2|4|8|16|24|32;
     has Sample $.BitsPerSample is entry(:required); #| (Required) The number of bits used to represent each sample. (If the function has multiple output values, each one occupies BitsPerSample bits.) Valid values are 1, 2, 4, 8, 12, 16, 24, and 32.
 
-    subset OrderInt of Int where 1|3;
+    my subset OrderInt of Int where 1|3;
     has OrderInt $.Order is entry;        #| (Optional) The order of interpolation between samples. Valid values are 1 and 3, specifying linear and cubic spline interpolation, respectively.
 
     has Numeric @.Encode is entry;        #| (Optional) An array of 2 × m numbers specifying the linear mapping of input values into the domain of the function’s sample table. Default value: [ 0 (Size0 − 1) 0 (Size1 − 1) … ].
@@ -29,7 +29,7 @@ class PDF::Function::Sampled
         is PDF::Function::Transform {
         has UInt $.bpc is required;
         has UInt @.size is required;
-        has Range @.encode = @!size.map: { 0..$_ };
+        has Range @.encode = @!size.map: {0 .. $_};
         has Range @.decode = self.range;
         has Blob $.samples is required;
         has UInt $!m;
@@ -44,8 +44,8 @@ class PDF::Function::Sampled
         }
 
         method !base-index(@e) {
-            my Int $index = 0;
-            my $factor = $!n;
+            my UInt $index = 0;
+            my UInt $factor = $!n;
             for 0 ..^ $!m -> \x {
                 $index += @e[x].floor * $factor;
                 $factor *= @!size[x];
@@ -53,6 +53,8 @@ class PDF::Function::Sampled
             $index;
         }
 
+        #| Not proper n-linear interpolation. Just takes
+        #| a weighted average of immediate neighours
         method !approximate(@e) {
             my \index = self!base-index(@e);
             my \n-samples = $!samples.elems;
@@ -101,7 +103,7 @@ class PDF::Function::Sampled
         else {
             @range;
         }
-        my $bpc = $.BitsPerSample;
+        my Sample $bpc = $.BitsPerSample;
         my Blob $samples = unpack($.decoded, $bpc);
 
         Transform.new: :@domain, :@range, :@size, :@encode, :@decode, :$samples, :$bpc;

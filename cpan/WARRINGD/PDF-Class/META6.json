@@ -18,6 +18,7 @@
     "PDF::AcroForm" : "lib/PDF/AcroForm.pm",
     "PDF::Action" : "lib/PDF/Action.pm",
     "PDF::Action::GoTo" : "lib/PDF/Action/GoTo.pm",
+    "PDF::Action::URI" : "lib/PDF/Action/URI.pm",
     "PDF::Annot" : "lib/PDF/Annot.pm",
     "PDF::Annot::Circle" : "lib/PDF/Annot/Circle.pm",
     "PDF::Annot::FileAttachment" : "lib/PDF/Annot/FileAttachment.pm",
@@ -41,6 +42,7 @@
     "PDF::ColorSpace::Indexed" : "lib/PDF/ColorSpace/Indexed.pm",
     "PDF::ColorSpace::Lab" : "lib/PDF/ColorSpace/Lab.pm",
     "PDF::ColorSpace::Separation" : "lib/PDF/ColorSpace/Separation.pm",
+    "PDF::Destination" : "lib/PDF/Destination.pm",
     "PDF::Encoding" : "lib/PDF/Encoding.pm",
     "PDF::ExtGState" : "lib/PDF/ExtGState.pm",
     "PDF::Field" : "lib/PDF/Field.pm",
@@ -70,7 +72,7 @@
     "PDF::Metadata::XML" : "lib/PDF/Metadata/XML.pm",
     "PDF::NumberTree" : "lib/PDF/NumberTree.pm",
     "PDF::OBJR" : "lib/PDF/OBJR.pm",
-    "PDF::OutlineItem" : "lib/PDF/OutlineItem.pm",
+    "PDF::Outline" : "lib/PDF/Outline.pm",
     "PDF::Outlines" : "lib/PDF/Outlines.pm",
     "PDF::OutputIntent" : "lib/PDF/OutputIntent.pm",
     "PDF::OutputIntent::GTS_PDFX" : "lib/PDF/OutputIntent/GTS_PDFX.pm",
@@ -104,5 +106,5 @@
     "pdf"
   ],
   "test-depends" : [ ],
-  "version" : "0.1.0"
+  "version" : "0.1.1"
 }

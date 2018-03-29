@@ -1,13 +1,14 @@
 use v6;
 use Test;
 
-plan 39;
+plan 42;
 
 use PDF::Class;
 use PDF::IO::IndObj;
 use PDF::Grammar::PDF;
 use PDF::Grammar::PDF::Actions;
 use PDF::Grammar::Test :is-json-equiv;
+use PDF::Page;
 
 my $actions = PDF::Grammar::PDF::Actions.new;
 
@@ -70,17 +71,22 @@ does-ok $viewer-preferences, ::('PDF::ViewerPreferences'), '$.ViewerPreferences 
 is-json-equiv $viewer-preferences.HideToolbar, True, '$.ViewerPreferences.HideToolbar';
 is-json-equiv $viewer-preferences.Direction, 'R2L', '$.ViewerPreferences.Direction';
 
-dies-ok { $catalog.OpenAction = [{}, 'FitH', 'blah' ] }, '$catalog.OpenAction assignment - invalid';
-lives-ok { $catalog.OpenAction = [{}, 'FitH', 42 ] }, '$catalog.OpenAction assignment - numeric';
-is-json-equiv $catalog.OpenAction, [{}, 'FitH', 42 ], '$catalog.OpenAction assignment - numeric';
+my $page = PDF::Page.new;
+dies-ok { $catalog.OpenAction = [$page, 'FitH', 'blah' ] }, '$catalog.OpenAction assignment - invalid';
+lives-ok { $catalog.OpenAction = [$page, 'FitH', 42 ] }, '$catalog.OpenAction assignment - numeric';
+is-json-equiv $catalog.OpenAction, [$page, 'FitH', 42 ], '$catalog.OpenAction assignment - numeric';
 
 my $null = PDF::COS.coerce( :null(Any) );
-lives-ok { $catalog.OpenAction = [{}, 'FitH', $null ] }, '$catalog.OpenAction assignment - null';
-is-json-equiv $catalog.OpenAction, [{}, 'FitH', Mu ], '$catalog.OpenAction assignment - null';
+lives-ok { $catalog.OpenAction = [$page, 'FitH', $null ] }, '$catalog.OpenAction assignment - null';
+is-json-equiv $catalog.OpenAction, [$page, 'FitH', Mu ], '$catalog.OpenAction assignment - null';
 
-lives-ok { $catalog.OpenAction = { :S( :name<GoTo> ), :D[{}, :name<Fit>] } }, '$catalog.OpenAction assignment - destination dict';
-is-json-equiv $catalog.OpenAction, { :S<GoTo>, :D[{}, 'Fit'] }, '$catalog.OpenAction - destination dict';
+lives-ok { $catalog.OpenAction = { :S( :name<GoTo> ), :D[$page, :name<Fit>] } }, '$catalog.OpenAction assignment - destination dict';
+is-json-equiv $catalog.OpenAction, { :S<GoTo>, :D[$page, 'Fit'] }, '$catalog.OpenAction - destination dict';
 does-ok $catalog.OpenAction, ::('PDF')::('Action::GoTo');
+
+lives-ok { $catalog.URI = { :S( :name<URI> ), :URI("http://example.com") } }, '$catalog.URI assignment - destination dict';
+is-json-equiv $catalog.URI, { :S<URI>, :URI("http://example.com") }, '$catalog.URI - destination dict';
+does-ok $catalog.URI, ::('PDF')::('Action::URI');
 
 lives-ok {$catalog.core-font('Helvetica')}, 'can add resource (core-font) to catalog';
 is-json-equiv $catalog.Resources, {:Font{
