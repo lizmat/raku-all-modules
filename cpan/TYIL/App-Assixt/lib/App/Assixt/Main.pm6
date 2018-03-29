@@ -2,22 +2,6 @@
 
 use v6.c;
 
-use App::Assixt::Commands::Bootstrap::Config;
-use App::Assixt::Commands::Bootstrap::Man;
-use App::Assixt::Commands::Bump;
-use App::Assixt::Commands::Clean;
-use App::Assixt::Commands::Clean;
-use App::Assixt::Commands::Depend;
-use App::Assixt::Commands::Dist;
-use App::Assixt::Commands::Help;
-use App::Assixt::Commands::New;
-use App::Assixt::Commands::Push;
-use App::Assixt::Commands::Test;
-use App::Assixt::Commands::Touch::Bin;
-use App::Assixt::Commands::Touch::Lib;
-use App::Assixt::Commands::Touch::Resource;
-use App::Assixt::Commands::Touch::Test;
-use App::Assixt::Commands::Upload;
 use App::Assixt::Config;
 use App::Assixt::Usage;
 use Config;
@@ -40,11 +24,21 @@ sub MAIN(
 
 	@args = parse-args(@args, :$config);
 
-	assixt(
-		$command,
-		|@args,
-		:$config,
-	);
+	my $lib = "App::Assixt::Commands::$command.tclc()";
+
+	try require ::($lib);
+
+	if (::($lib) ~~ Failure) {
+		note "Command $command wasn't recognized. Try -h for usage help.";
+
+		if ($config<verbose>) {
+			note ::($lib).Str;
+		}
+
+		exit 2;
+	}
+
+	::($lib).run(|@args, :$config);
 
 	True;
 }

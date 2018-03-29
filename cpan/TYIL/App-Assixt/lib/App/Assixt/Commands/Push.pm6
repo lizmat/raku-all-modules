@@ -11,37 +11,37 @@ use Dist::Helper::Meta;
 use Dist::Helper::Path;
 use Dist::Helper;
 
-unit module App::Assixt::Commands::Push;
+class App::Assixt::Commands::Push
+{
+	multi method run(
+		Str:D $path,
+		Config:D :$config,
+	) {
+		chdir $path;
 
-multi sub assixt(
-	"push",
-	Str:D $path,
-	Config:D :$config,
-) is export {
-	chdir $path;
+		App::Assixt::Commands::Bump.run(:$config) unless $config<runtime><no-bump>;
+		my Str $dist = App::Assixt::Commands::Dist.run(:$config);
+		App::Assixt::Commands::Upload.run($dist, :$config);
+	}
 
-	assixt("bump", :$config) unless $config<runtime><no-bump>;
-	my Str $dist = assixt("dist", :$config);
-	assixt("upload", $dist, :$config);
-}
+	multi method run(
+		Config:D :$config,
+	) {
+		self.run(
+			".",
+			:$config,
+		)
+	}
 
-multi sub assixt(
-	"push",
-	Config:D :$config,
-) is export {
-	assixt(
-		"push",
-		".",
-		:$config,
-	)
-}
-
-multi sub assixt(
-	"push",
-	Str @paths,
-	Config:D :$config,
-) is export {
-	for @paths -> $path {
-		assixt("push", $path, :$config)
+	multi method run(
+		Str @paths,
+		Config:D :$config,
+	) {
+		for @paths -> $path {
+			self.run(
+				$path,
+				:$config,
+			)
+		}
 	}
 }

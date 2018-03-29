@@ -3,12 +3,9 @@
 use v6.c;
 
 use Config;
-use App::Assixt::Commands::Dist;
 use App::Assixt::Input;
 use Dist::Helper::Meta;
 use SemVer;
-
-unit module App::Assixt::Commands::Bump;
 
 my Str @bump-types = (
 	"major",
@@ -16,57 +13,58 @@ my Str @bump-types = (
 	"patch",
 );
 
-multi sub assixt(
-	"bump",
-	Str:D $type,
-	Config:D :$config,
-) is export {
-	die "Illegal bump type supplied: $type" unless @bump-types ∋ $type.lc;
+class App::Assixt::Commands::Bump
+{
+	multi method run(
+		Str:D $type,
+		Config:D :$config,
+	) {
+		die "Illegal bump type supplied: $type" unless @bump-types ∋ $type.lc;
 
-	my %meta = get-meta;
+		my %meta = get-meta;
 
-	# Update the version accordingly
-	my SemVer $version .= new(%meta<version>);
+		# Update the version accordingly
+		my SemVer $version .= new(%meta<version>);
 
-	given $type.lc {
-		when "major" { $version.bump-major }
-		when "minor" { $version.bump-minor }
-		when "patch" { $version.bump-patch }
+		given $type.lc {
+			when "major" { $version.bump-major }
+			when "minor" { $version.bump-minor }
+			when "patch" { $version.bump-patch }
+		}
+
+		%meta<version> = ~$version;
+
+		put-meta(:%meta);
+
+		say "{%meta<name>} bumped to to {%meta<version>}";
 	}
 
-	%meta<version> = ~$version;
+	multi method run(
+		Config:D :$config,
+	) {
+		my Int $default-bump = 3;
 
-	put-meta(:%meta);
+		# Output the possible bump types
+		say "Bump parts";
 
-	say "{%meta<name>} bumped to to {%meta<version>}";
-}
+		for @bump-types.kv -> $i,  $type {
+			say "  {$i + 1} - $type";
+		};
 
-multi sub assixt(
-	"bump",
-	Config:D :$config,
-) is export {
-	my Int $default-bump = 3;
+		# Request user input to select the bump type
+		my Int $bump;
 
-	# Output the possible bump types
-	say "Bump parts";
+		loop {
+			my $input = ask("Bump part", ~$default-bump.tc);
 
-	for @bump-types.kv -> $i,  $type {
-		say "  {$i + 1} - $type";
-	};
+			$bump = $input.Int if $input ~~ /^$ | ^\d+$/;
+			$bump = $default-bump if $bump == 0;
 
-	# Request user input to select the bump type
-	my Int $bump;
+			$bump--;
 
-	loop {
-		my $input = ask("Bump part", ~$default-bump.tc);
+			last if $bump < @bump-types.elems;
+		}
 
-		$bump = $input.Int if $input ~~ /^$ | ^\d+$/;
-		$bump = $default-bump if $bump == 0;
-
-		$bump--;
-
-		last if $bump < @bump-types.elems;
+		self.run(@bump-types[$bump], :$config);
 	}
-
-	assixt("bump", @bump-types[$bump], :$config);
 }
