@@ -54,7 +54,21 @@ class Cro::Uri {
             <.IPv4address>
         }
         regex host:sym<IPv6address> {
-            '[' <( [
+            '[' <( <.IPv6address> )> ']'
+        }
+
+        token host:sym<IPvFuture> {
+            '[' <(
+            v <[A..Fa..f0..9]>+ '.'
+            <[A..Za..z0..9!$&'()*+,;=:._~-]>+
+            )> ']'
+        }
+        token host:sym<reg-name> {
+            {} [ <[A..Za..z0..9!$&'()*+,;=._~-]>+ | '%' <[A..Fa..f0..9]>**2 ]*
+        }
+
+        regex IPv6address {
+            [
                 ||                                         [ <.h16> ":" ] ** 6 <.ls32>
                 ||                                    "::" [ <.h16> ":" ] ** 5 <.ls32>
                 || [                        <.h16> ]? "::" [ <.h16> ":" ] ** 4 <.ls32>
@@ -64,16 +78,7 @@ class Cro::Uri {
                 || [ [ <.h16> ":" ] ** 0..4 <.h16> ]? "::"                     <.ls32>
                 || [ [ <.h16> ":" ] ** 0..5 <.h16> ]? "::"                     <.h16>
                 || [ [ <.h16> ":" ] ** 0..6 <.h16> ]? "::"
-            ] )> ']'
-        }
-        token host:sym<IPvFuture> {
-            '[' <(
-            v <[A..Fa..f0..9]>+ '.'
-            <[A..Za..z0..9!$&'()*+,;=:._~-]>+
-            )> ']'
-        }
-        token host:sym<reg-name> {
-            {} [ <[A..Za..z0..9!$&'()*+,;=._~-]>+ | '%' <[A..Fa..f0..9]>**2 ]*
+            ]
         }
 
         token IPv4address {
@@ -135,6 +140,22 @@ class Cro::Uri {
 
         token pchars {
             [<[A..Za..z0..9._~:@!$&'()*+,;=-]>+ | '%' <[A..Fa..f0..9]>**2]+
+        }
+
+        token relative-ref {
+            <relative-part> [ '?' <query>] ? [ '#' <fragment> ]?
+        }
+
+        token relative-part {
+            [ '//' <authority> <path-abempty> ] | <path-absolute> | <path-noscheme> | <path-empty>
+        }
+
+        token path-noscheme {
+            <.segment-nz-nc> [ "/" <segment> ]*
+        }
+
+        token segment-nz-nc {
+            [<[A..Za..z0..9._~@!$&'()*+,;=-]>+ | '%' <[A..Fa..f0..9]>**2]+
         }
 
         method panic($reason) {
@@ -270,6 +291,30 @@ class Cro::Uri {
         $!origin
     }
 
+    grammar URI-Template {
+        token TOP { [<literal> | <expression>]* }
+        token literal { [ <literal-part> | <ucschar> | <iprivate> | <pct-encoded> ]+ }
+        token literal-part { <[\x21 \x23 \x24 \x26 \x28..\x3B \x3D \x3F..\x5B \x5D \x5F \x61..\x7A]> }
+        token ucschar  { <[ \xA0..\xD7FF \xF900..\xFDCF \xFDF0..\xFFEF
+                            \x10000..\x1FFFD \x20000..\x2FFFD \x30000..\x3FFFD
+                            \x40000..\x4FFFD \x50000..\x5FFFD \x60000..\x6FFFD
+                            \x70000..\x7FFFD \x80000..\x8FFFD \x90000..\x9FFFD
+                            \xA0000..\xAFFFD \xB0000..\xBFFFD \xC0000..\xCFFFD
+                            \xD0000..\xDFFFD \xE1000..\xEFFFD ]> }
+        token iprivate { <[ \xE000..\xF8FF \xF0000..\xFFFFD \x100000..\x10FFFD ]> }
+        token pct-encoded { '%' <xdigit> <xdigit> }
+        token expression { '{' <operator>? <var-list> '}' }
+        token operator { <op2> | <op3> | <op-reserve> }
+        token op2 { <[+#]> }
+        token op3 { <[./;?&]> }
+        token op-reserve { <[=,!@|]> }
+        token var-list { <varspec> [',' <varspec>]* }
+        token varspec  { <varname> <modifier-level4>? }
+        token varname  { <varchar> ['.' | <varchar>]* }
+        token varchar  { <alnum> | '_' | <pct-encoded> }
+        token modifier-level4 { <prefix> | '*' }
+        token prefix { ':' <[\x31..\x39]> \d ** 0..3 }
+    }
 }
 
 sub decode-percents(Str $s) is export(:decode-percents) {

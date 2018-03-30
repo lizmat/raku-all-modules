@@ -377,4 +377,25 @@ for qw[- . _ ~ : @ ! $ & ' ( ) * + , ; = / ?] -> $ok {
         *.fragment eq "oh{$ok}yes";
 }
 
+for <//example.org/scheme-relative/URI/with/absolute/path/to/resource.txt.
+    //example.org/scheme-relative/URI/with/absolute/path/to/resource.
+    /relative/URI/with/absolute/path/to/resource.txt.
+    relative/path/to/resource.txt.
+    ../../../resource.txt.
+    ./resource.txt#frag01.
+    resource.txt.
+    #frag01.>.kv -> $i, $rel-uri {
+    if $i != 2 {
+        ok Cro::Uri::GenericParser.parse($rel-uri, :rule<relative-ref>), "Regex $i, '$rel-uri' for relative Uri passed";
+    } else {
+        todo 1;
+        ok Cro::Uri::GenericParser.parse($rel-uri, :rule<relative-ref>), "Regex $i, '$rel-uri' for relative Uri passed";
+    }
+}
+
+for <http://www.example.com/{term:1}/{term}/{test*}/foo{?query,number}
+     http://www.example.com/v1/company/>.kv -> $i, $v {
+    ok Cro::Uri::URI-Template.parse($v), "Regex $i for URI Template passed";
+}
+
 done-testing;
