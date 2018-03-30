@@ -1,6 +1,0 @@
-- Object Creation
-- Find an editor
-- Edit function should create a temp file
-- Edit function should run the editor
-- Edit function get the results from the edit and return it
-- Edit accessible as module method

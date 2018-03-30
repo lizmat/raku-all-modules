@@ -1,5 +1,9 @@
 Revision history for Proc-InvokeEditor
 
+0.0.3  2018-03-29T13:14:33+01:00
+    - Added editors_env and editors_prepend
+    - Fixed spelling error in docs.
+
 0.0.2  2018-03-28T16:58:47+01:00
     - Can create an editor object, assigns edits and perform and edit.
 

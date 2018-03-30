@@ -10,7 +10,7 @@ SYNOPSIS
 
     use Proc::InvokeEditor;
 
-    my $editor = Proc::InvokerEditor( :editors( [ "/usr/bin/emacs" ] ) );
+    my $editor = Proc::InvokeEditor( :editors( [ "/usr/bin/emacs" ] ) );
     my $text = $editor->edit( "Edit text below\n" );
 
 DESCRIPTION
@@ -35,6 +35,24 @@ Getter / Setter for the array of editors accepts a postional arguments or an pos
 
 Can be called as a getter as a class method but will error if you try and set the editors as a class method.
 
+editors_env( @editors )
+-----------------------
+
+Object method only, given an array (or positional arguments) of Str keys will prepend to the editors array the value for that key in ENV (if one is defined).
+
+Returns the current list of editors.
+
+Fails if called as a class method. 
+
+editors_prepend( @editors )
+---------------------------
+
+Object method only, given an array (or positional arguments) of Str values will prepend them to the editor list.
+
+Returns the current list of editors.
+
+Fails if called as a class method.
+
 first_usable()
 --------------
 
@@ -45,10 +63,24 @@ edit( $string )
 
 Class or object method, takes a string or list of strings. Fires up the external editor specifed by first_usable() and waits for it to complete then returns the updated result.
 
+TODO
+====
+
+  * Windows support.
+
+  * Addtional Perl6-isms including Async editting allowing background processes.
+
+NOTE
+====
+
+The original Perl5 module includes methods to turn off auto cleanup of temp files and to reuse the same file. This functionality is not planned for this version of the module, if required please raise a ticket.
+
 AUTHOR
 ======
 
 Simon Proctor <simon.proctor@gmail.com>
+
+Original Perl5 Module Authored by Micheal Stevens
 
 COPYRIGHT AND LICENSE
 =====================

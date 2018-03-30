@@ -16,7 +16,9 @@
   },
   "resources" : [ ],
   "source-url" : "https://github.com/Scimon/p6-Proc-InvokeEditor.git",
-  "tags" : [ ],
+  "tags" : [
+    "cpan5"
+  ],
   "test-depends" : [ ],
-  "version" : "0.0.2"
+  "version" : "0.0.3"
 }
