@@ -267,6 +267,14 @@ Its GitHub page is:
 
 L<https://github.com/fukuchi/libqrencode>
 
+When using the low level calls, keep in mind that old versions of the library may lack some functionality:
+
+=item pre v3.2.1 (2012) have no way to query the API version.
+
+=item pre 2010-01-27 versions lack full ECI support (QRinput_encodeModeECI(), QRinput_appendECIheader(), QRinput_estimateBitsModeECI()).
+
+=item pre 2010-01-16 versions have no QRcode_encodeDataMQR() and QRcode_encodeDataStructured() calls.
+
 =head1 Prerequisites
 
 This module requires the libqrencode3 library to be installed. Please follow the
