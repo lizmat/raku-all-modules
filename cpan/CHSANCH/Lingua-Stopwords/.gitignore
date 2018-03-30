@@ -1,0 +1,8 @@
+lib/.precomp
+.precomp
+
+# Editor files
+*~     # emacs
+.*.sw? # vim
+
+.vstags
