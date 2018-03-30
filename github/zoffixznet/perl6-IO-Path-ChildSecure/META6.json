@@ -2,7 +2,7 @@
     "perl"         : "6.c",
     "name"         : "IO::Path::ChildSecure",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001010",
+    "version"      : "1.001011",
     "description"  : "Secure version of IO::Path.child",
     "tags"         : [ "file", "file system" ],
     "depends"      : [],

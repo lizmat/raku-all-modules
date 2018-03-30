@@ -36,7 +36,7 @@ sub make-temp-dir (Int $chmod? --> IO::Path:D) is export {
     p
 }
 
-sub fails-like (&test, $ex-type, $reason?, *%matcher) is export {
+sub failuring-like (&test, $ex-type, $reason?, *%matcher) is export {
     subtest $reason => sub {
         plan 2;
         CATCH { default {
@@ -62,16 +62,16 @@ sub is-path ($got, $expected, $desc) {
     cmp-ok $got.resolve, '~~', $expected.resolve, $desc
 }
 
-fails-like { $non-resolving-parent.&child-secure('../foo') }, X::IO::Resolve,
+failuring-like { $non-resolving-parent.&child-secure('../foo') }, X::IO::Resolve,
     'non-resolving parent fails (given path is non-child)';
 
-fails-like { $non-resolving-parent.&child-secure('foo') }, X::IO::Resolve,
+failuring-like { $non-resolving-parent.&child-secure('foo') }, X::IO::Resolve,
     'non-resolving parent fails (given path is child)';
 
-fails-like { $parent.&child-secure('foo/bar') }, X::IO::Resolve,
+failuring-like { $parent.&child-secure('foo/bar') }, X::IO::Resolve,
     'resolving parent fails (given path is a child, but not resolving)';
 
-fails-like { $parent.&child-secure('../foo') }, X::IO::NotAChild,
+failuring-like { $parent.&child-secure('../foo') }, X::IO::NotAChild,
     'resolved parent fails (given path is not a child)';
 
 is-path $parent.&child-secure('foo'), $parent.child('foo'),
@@ -87,8 +87,8 @@ is-path $parent.&child-secure('foo/bar'), $parent.child('foo/bar'),
 is-path $parent.&child-secure('foo/../bar'), $parent.child('bar'),
     'resolved parent with resolving, non-existent child, with ../';
 
-fails-like { $parent.&child-secure('foo/../../bar') }, X::IO::NotAChild,
+failuring-like { $parent.&child-secure('foo/../../bar') }, X::IO::NotAChild,
     'resolved parent fails (given path is not a child, via child + ../)';
 
-fails-like { $parent.&child-secure("../\x[308]") }, X::IO::NotAChild,
+failuring-like { $parent.&child-secure("../\x[308]") }, X::IO::NotAChild,
 'resolved parent fails (given path is not a child, via combiners)';
