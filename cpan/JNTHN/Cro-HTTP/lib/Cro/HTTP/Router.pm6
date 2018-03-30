@@ -44,7 +44,7 @@ module Cro::HTTP::Router {
     }
 
     class RouteSet does Cro::Transform {
-        my role Handler {
+        role Handler {
             has @.prefix;
             has @.body-parsers;
             has @.body-serializers;
@@ -196,13 +196,13 @@ module Cro::HTTP::Router {
             }
         }
 
-        has Handler @!handlers;
+        has Handler @.handlers;
+        has Cro::BodyParser @.body-parsers;
+        has Cro::BodySerializer @.body-serializers;
+        has @.includes;
+        has @.before;
+        has @.after;
         has $!path-matcher;
-        has Cro::BodyParser @!body-parsers;
-        has Cro::BodySerializer @!body-serializers;
-        has @!includes;
-        has @!before;
-        has @!after;
 
         method consumes() { Cro::HTTP::Request }
         method produces() { Cro::HTTP::Response }
@@ -272,20 +272,18 @@ module Cro::HTTP::Router {
             @!body-serializers.push($serializer);
         }
 
-        method include(@prefix, RouteSet $includee) {
+        method add-include(@prefix, RouteSet $includee) {
             @!includes.push({ :@prefix, :$includee });
         }
 
-        method before($middleware) {
+        method add-before($middleware) {
             @!before.push($middleware);
         }
-        method after($middleware) {
+        method add-after($middleware) {
             @!after.push($middleware);
         }
 
-        method !handlers() { @!handlers }
-
-        method delegate(@prefix, Cro::Transform $transform) {
+        method add-delegate(@prefix, Cro::Transform $transform) {
             my $wildcard = @prefix[*-1] eq '*';
             my @new-prefix = @prefix;
             @new-prefix.pop if $wildcard;
@@ -300,7 +298,7 @@ module Cro::HTTP::Router {
                 .body-serializers = @!body-serializers;
             }
             for @!includes -> (:@prefix, :$includee) {
-                for $includee!handlers() {
+                for $includee.handlers() {
                     @!handlers.push(.copy-adding(:@prefix, :@!body-parsers, :@!body-serializers, :@!before, :@!after));
                 }
             }
@@ -602,17 +600,17 @@ module Cro::HTTP::Router {
     sub include(*@includees, *%includees --> Nil) is export {
         for @includees {
             when RouteSet  {
-                $*CRO-ROUTE-SET.include([], $_);
+                $*CRO-ROUTE-SET.add-include([], $_);
             }
             when Pair {
                 my ($prefix, $routes) = .kv;
                 if $routes ~~ RouteSet {
                     given $prefix {
                         when Str {
-                            $*CRO-ROUTE-SET.include([$prefix], $routes);
+                            $*CRO-ROUTE-SET.add-include([$prefix], $routes);
                         }
                         when Iterable {
-                            $*CRO-ROUTE-SET.include($prefix, $routes);
+                            $*CRO-ROUTE-SET.add-include($prefix, $routes);
                         }
                         default {
                             die "An 'include' prefix may be a Str or Iterable, but not " ~ .^name;
@@ -629,7 +627,7 @@ module Cro::HTTP::Router {
         }
         for %includees.kv -> $prefix, $routes {
             if $routes ~~ RouteSet {
-                $*CRO-ROUTE-SET.include([$prefix], $routes);
+                $*CRO-ROUTE-SET.add-include([$prefix], $routes);
             }
             else {
                 die "Can only use 'include' with `route` block, not a $routes.^name()";
@@ -654,10 +652,10 @@ module Cro::HTTP::Router {
                 }
                 given $prefix {
                     when Iterable {
-                        $*CRO-ROUTE-SET.delegate($prefix, $transform);
+                        $*CRO-ROUTE-SET.add-delegate($prefix, $transform);
                     }
                     when Str {
-                        $*CRO-ROUTE-SET.delegate([$prefix], $transform);
+                        $*CRO-ROUTE-SET.add-delegate([$prefix], $transform);
                     }
                     default {
                         die "Pairs passed to 'delegate' must have a Str or Iterable key, not " ~ .^name;
@@ -890,15 +888,15 @@ module Cro::HTTP::Router {
         $_ = $middleware;
         if .consumes ~~ Cro::HTTP::Request
         && .produces ~~ Cro::HTTP::Request {
-            $*CRO-ROUTE-SET.before($_)
+            $*CRO-ROUTE-SET.add-before($_)
         } else {
             die "before middleware must consume and produce Cro::HTTP::Request, got ({.consumes.perl}) and ({.produces.perl}) instead";
         }
     }
     multi sub before(&middleware --> Nil) is export {
         my $conditional = BeforeMiddleTransform.new(block => &middleware);
-        $*CRO-ROUTE-SET.before($conditional.request);
-        $*CRO-ROUTE-SET.after($conditional.response);
+        $*CRO-ROUTE-SET.add-before($conditional.request);
+        $*CRO-ROUTE-SET.add-after($conditional.response);
     }
     multi sub before(Cro::HTTP::Middleware::Pair $pair --> Nil) {
         before($pair.request);
@@ -909,14 +907,14 @@ module Cro::HTTP::Router {
         $_ = $middleware;
         if .consumes ~~ Cro::HTTP::Response
         && .produces ~~ Cro::HTTP::Response {
-            $*CRO-ROUTE-SET.after($_)
+            $*CRO-ROUTE-SET.add-after($_)
         } else {
             die "after middleware must consume and produce Cro::HTTP::Response, got ({.consumes.perl}) and ({.produces.perl}) instead";
         }
     }
     multi sub after(&middleware --> Nil) is export {
         my $transformer = AfterMiddleTransform.new(block => &middleware);
-        $*CRO-ROUTE-SET.after($transformer);
+        $*CRO-ROUTE-SET.add-after($transformer);
     }
 
     sub cache-control(:$public, :$private, :$no-cache, :$no-store,
@@ -939,7 +937,7 @@ module Cro::HTTP::Router {
         $resp.append-header('Cache-Control', $cache);
     }
 
-    sub static(Str $base, @path?, :$mime-types) is export {
+    sub static(IO() $base, *@path, :$mime-types, :@indexes) is export {
         my $resp = $*CRO-ROUTER-RESPONSE //
             die X::Cro::HTTP::Router::OnlyInHandler.new(:what<route>);
         my $child = '.';
@@ -948,12 +946,24 @@ module Cro::HTTP::Router {
         }
 
         my %fallback = $mime-types // {};
-        my $ext = $child eq '.' ?? $base.IO.extension !! $child.IO.extension;
+        my $ext = $child eq '.' ?? $base.extension !! $child.IO.extension;
         my $content-type = %mime{$ext} // %fallback{$ext} // 'application/octet-stream';
 
         my sub get_or_404($path) {
-            if $path.IO.e {
-                content $content-type, slurp($path, :bin);
+            if $path.e {
+                if $path.d {
+                    for @indexes {
+                        my $index = $path.add($_);
+                        if $index.e {
+                            content $content-type, slurp($index, :bin);
+                            return;
+                        }
+                    }
+                    $resp.status = 404;
+                    return;
+                } else {
+                    content $content-type, slurp($path, :bin);
+                }
             } else {
                 $resp.status = 404;
             }
@@ -962,7 +972,7 @@ module Cro::HTTP::Router {
         if $child eq '.' {
             get_or_404($base);
         } else {
-            with $base.IO.&child-secure: $child {
+            with $base.&child-secure: $child {
                 get_or_404($_);
             } else {
                 $resp.status = 403;
