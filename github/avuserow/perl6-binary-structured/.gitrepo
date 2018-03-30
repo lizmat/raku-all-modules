@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/avuserow/perl6-binary-structured.git
 	branch = master
-	commit = cb81495c513262351aac087a714c78ef059bc00c
-	parent = aa46849e3bef92e1ab6be6b3ad4cfc7c877b38d7
+	commit = 0932818a18cee1deb1b58dfbbc5595ae605c519d
+	parent = ca44896506bbf78eb9418cc080b74a1342ee41f7
 	cmdver = 0.4.0

@@ -2,9 +2,9 @@ language: perl6
 perl6:
   - latest
 install:
-  - rakudobrew build-panda
-  - panda --notests installdeps .
-  - panda install Test::META
+  - rakudobrew build-zef
+  - zef install Test::META
+  - zef --debug --depsonly install .
 script:
   - (cd t; perl6 -MTest::META -e'meta-ok')
   - prove -vr -e 'perl6 -Ilib' t/

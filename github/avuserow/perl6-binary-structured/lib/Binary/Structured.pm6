@@ -25,8 +25,8 @@ $parser.parse(Buf.new("\x05hello world".ords));
 say $parser.string.decode("ascii"); # "hello"
 
 # Writing
-$parser.string = "some new data".ords;
-say $parser.build; # Buf.new<0d 6f 6d 65 20 6e 65 77 20 64 61 74 61>
+$parser.string = Buf.new("some new data".ords);
+say $parser.build; # Buf:0x<0d 73 6f 6d 65 20 6e 65 77 20 64 61 74 61>
 
 =end code
 
@@ -223,7 +223,23 @@ subset StaticData of Blob;
 # subset AutoData of Any;
 
 # See pull-elements below
-my class ElementCount is Int {}
+# XXX this could probably be done better --kybr
+class ElementCount does Real {
+  has $.n;
+  multi method new(Real $r) {
+    self.bless(:data($r));
+  }
+  multi method new(Int $i) {
+    self.bless(:data($i));
+  }
+  multi sub infix:<+>(ElementCount $a, ElementCount $b) {
+    ElementCount.new(n => $a.n + $b.n);
+  }
+  method Bridge() { $.n.Bridge }
+  method perl() { "ElementCount.new(n => $.n)"; }
+  method isNaN() { $.n.isNaN; }
+}
+
 
 #| Exception raised when data in a C<StaticData> does not match the bytes
 #| consumed.
@@ -273,7 +289,7 @@ class Binary::Structured {
 	#| Helper method for reader methods to indicate a certain number of
 	#| elements/iterations rather than a certain number of bytes.
 	method pull-elements(Int $count) returns ElementCount {
-		return ElementCount.new($count);
+		return ElementCount.new(n => $count);
 	}
 
 	#| Helper method to rewrite a previous attribute that is marked C<is
@@ -447,7 +463,7 @@ class Binary::Structured {
 						}
 
 						# XXX: maybe this should be a warning
-						die "$attr.gist(): read too many bytes: $limit < $!pos - $initial-pos ({+@array} elements)" if $!pos - $initial-pos > $limit;
+						warn "$attr.gist(): read too many bytes: $limit < $!pos - $initial-pos ({+@array} elements)" if $!pos - $initial-pos > $limit;
 					}
 
 					$attr.set_value(self, @array);
