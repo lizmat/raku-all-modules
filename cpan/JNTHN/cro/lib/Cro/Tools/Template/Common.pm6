@@ -1,5 +1,8 @@
 use Cro::Tools::CroFile;
+use Docker::File;
 use META6;
+
+my constant CRO_DOCKER_VERSION = '0.7.4';
 
 role Cro::Tools::Template::Common {
     method new-directories($where) { () }
@@ -16,6 +19,9 @@ role Cro::Tools::Template::Common {
 
     method cro-file-endpoints($id-uc, %options) { ... }
 
+    method docker-ignore-entries() { '.precomp/' }
+
+    method docker-base-image(%options) { 'croservices/cro-core' }
 
     method make-directories($where) {
         my @dirs = self.new-directories($where);
@@ -28,6 +34,9 @@ role Cro::Tools::Template::Common {
         self.write-meta($where.add('META6.json'), $name, %options);
         self.write-readme($where.add('README.md'), $name, %options);
         self.write-cro-file($where.add('.cro.yml'), $id, $name, %options, @links);
+        self.write-git-ignore-file($where.add('.gitignore'));
+        self.write-docker-ignore-file($where.add('.dockerignore'));
+        self.write-docker-file($where.add('Dockerfile'), $id, %options);
     }
 
     method write-entrypoint($file, $id, %options, $links) {
@@ -81,6 +90,13 @@ role Cro::Tools::Template::Common {
             zef install --depsonly .
             {$extra}cro run
             ```
+
+            You can also build and run a docker image while in the app root using:
+
+            ```
+            docker build -t {$name} .
+            docker run --rm -p 10000:10000 {$name}
+            ```
             MARKDOWN
     }
 
@@ -95,7 +111,72 @@ role Cro::Tools::Template::Common {
         Cro::Tools::CroFile.new(:$id, :$name, :$entrypoint, :@endpoints, :@links)
     }
 
+    method write-git-ignore-file($file) {
+        $file.spurt(self.git-ignore-contents);
+    }
+
+    method git-ignore-contents() {
+        q:to/GITIGNORE/;
+            # Caches
+            .precomp/
+            node_modules/
+
+            # Backup files
+            *~
+            GITIGNORE
+    }
+
+    method write-docker-ignore-file($file) {
+        my @ignores = self.docker-ignore-entries();
+        if @ignores {
+            spurt $file, @ignores.map({ "$_\n" }).join;
+        }
+    }
+
+    method docker-file-build-commands() {
+        'zef install --deps-only . && perl6 -c -Ilib service.p6'
+    }
+
+    method write-docker-file($file, $id, %options) {
+        my $env-base = self.env-name($id) ~ '_';
+        spurt $file, ~Docker::File.new(
+            images => [
+                Docker::File::Image.new(
+                    from-short => self.docker-base-image(%options),
+                    from-tag => CRO_DOCKER_VERSION,
+                    entries => [
+                        Docker::File::RunShell.new(
+                            command => 'mkdir /app'
+                        ),
+                        Docker::File::Copy.new(
+                            sources => '.',
+                            destination => '/app'
+                        ),
+                        Docker::File::WorkDir.new(
+                            dir => '/app'
+                        ),
+                        Docker::File::RunShell.new(
+                            command => self.docker-file-build-commands
+                        ),
+                        Docker::File::Env.new(
+                            variables => {
+                                $env-base ~ "HOST" => '0.0.0.0',
+                                $env-base ~ "PORT" => '10000'
+                            }
+                        ),
+                        Docker::File::Expose.new(
+                            ports => 10000
+                        ),
+                        Docker::File::CmdShell.new(
+                            command => 'perl6 -Ilib service.p6'
+                        )
+                    ]
+                )
+            ]
+        );
+    }
+
     method env-name($id) {
-        $id.uc.subst(/<-[A..Za..z_]>/, '_', :g)
+        $id.uc.subst(/<-[A..Za..z0..9_]>/, '_', :g)
     }
 }

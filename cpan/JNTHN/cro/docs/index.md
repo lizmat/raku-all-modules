@@ -18,6 +18,14 @@ as well as covering some more advanced topics:
 * [Module Structure](docs/module-structure)
 * [The cro Development Tool](docs/cro-tool)
 * [The .cro.yml File](docs/cro-yml)
+* [Docker Deployment with Cro](docs/docker-deployment)
+
+## Getting Help
+
+* Post your question on [Stack Overflow](https://stackoverflow.com/) (be sure
+  to tag it `perl6` and `cro`)
+* Visit the `#cro` IRC channel on freenode
+* Get [commercial support and training](/training-support)
 
 ## Reference
 
