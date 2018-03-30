@@ -77,8 +77,7 @@ L<https://raw.githubusercontent.com/rakudo/rakudo/master/VERSION>
 or set up L<a helper command|https://github.com/zoffixznet/r#table-of-contents>.
 
 Some users choose to use L<rakudobrew|https://github.com/tadzik/rakudobrew>,
-which allows installation of multiple versions of rakudo. Be sure to L<read its
-documentation|https://github.com/tadzik/rakudobrew#making-new-scripts-available>.
+which allows installation of multiple versions of rakudo. Be sure to L<read its documentation|https://github.com/tadzik/rakudobrew#making-new-scripts-available>.
 
 In either case you will probably need to also install
 L«C<zef>|https://modules.perl6.org/dist/zef:github» and
@@ -97,9 +96,7 @@ L<https://github.com/perl6/mu/raw/master/docs/Perl6/Cheatsheet/cheatsheet.txt>
 Be mindful of publication dates when reading third-party articles. Anything
 published before December, 2015 likely describes pre-release version of Perl 6.
 
-You can always L<get help from a live human in our help
-chat|https://webchat.freenode.net/?channels=#perl6> or L<search the chat
-logs|https://www.google.com/search?q=site:irclog.perlgeek.de+inurl:perl6>.
+You can always L<get help from a live human in our help chat|https://webchat.freenode.net/?channels=#perl6> or L<search the chat logs|https://www.google.com/search?q=site:irclog.perlgeek.de+inurl:perl6>.
 
 X<|Specification (FAQ)>
 =head2 What is the Perl 6 specification?
@@ -125,8 +122,7 @@ Yes, see L<glossary|/language/glossary>.
 
 =head2 I'm a Perl 5 programmer. Where is a list of differences between Perl 5 and Perl 6?
 
-There are several I<Perl 5 to Perl 6> guides in the L<Language section of the
-documentation|https://docs.perl6.org/language.html>, most notable of which
+There are several I<Perl 5 to Perl 6> guides in the L<Language section of the documentation|https://docs.perl6.org/language.html>, most notable of which
 is the L<Overview|/language/5to6-nutshell>.
 
 X<|Ruby Quickstart (FAQ)>
@@ -187,8 +183,7 @@ X<|Core standard library (FAQ)> X<|Rakudo Star distribution and compiler-only re
 L<Rakudo Star distribution|https://rakudo.perl6.org/downloads/star/> does come
 with L<many useful modules|https://github.com/rakudo/star/tree/master/modules>.
 
-Rakudo compiler-only release includes L<only a couple of the most
-basic modules|https://docs.perl6.org/language/modules-core>.
+Rakudo compiler-only release includes L<only a couple of the most basic modules|https://docs.perl6.org/language/modules-core>.
 
 Many more modules can be found in the L<ecosystem|http://modules.perl6.org/>.
 
