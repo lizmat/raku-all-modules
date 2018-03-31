@@ -1,0 +1,8 @@
+v0.0.1:
+
+- Initial commit
+
+v0.0.2:
+
+- Fix unit tests for versions of LibIDN missing TLD functions
+- Safer string handling for Punycode methods
