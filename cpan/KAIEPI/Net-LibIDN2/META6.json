@@ -2,7 +2,7 @@
   "authors" : [ "Ben Davies" ],
   "build-depends" : [ ],
   "depends" : [ ],
-  "description" : "Perl6 bindings for GNU LibIDN2",
+  "description" : "Perl 6 bindings for GNU LibIDN2",
   "license" : "Artistic-2.0",
   "name" : "Net::LibIDN2",
   "perl" : "6.c",
@@ -10,8 +10,8 @@
     "Net::LibIDN2" : "lib/Net/LibIDN2.pm6"
   },
   "resources" : [ ],
-  "source-url" : "https://github.com/Kaiepi/p6-Net-LibIDN2.git",
+  "source-url" : "git://github.com/Kaiepi/p6-Net-LibIDN2.git",
   "tags" : [ "API", "DNS", "Net" ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.3"
 }

@@ -6,3 +6,6 @@
 *swo
 
 *.lock
+
+*.core
+.precomp/

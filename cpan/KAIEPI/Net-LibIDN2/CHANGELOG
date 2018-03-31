@@ -1,0 +1,11 @@
+0.0.1:
+
+- Initial commit
+
+0.0.2:
+
+- Implemented idn2_to_ascii_8z and idn2_to_unicode_8z8z
+
+0.0.3:
+
+- Fixed tests
