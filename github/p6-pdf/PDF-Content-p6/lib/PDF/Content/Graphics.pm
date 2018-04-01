@@ -111,5 +111,11 @@ role PDF::Content::Graphics {
                           :$BBox, :$XStep, :$YStep, :$Resources);
         PDF::COS.coerce( :stream{ :%dict });
     }
-
+    my subset ImageFile of Str where /:i '.'('png'|'svg'|'pdf') $/;
+    method save-as-image(ImageFile $outfile) {
+        # experimental draft rendering via Cairo
+        (try require PDF::Render::Cairo) !=== Nil
+             or die "save-as-image method is only supported if PDF::Render::Cairo is installed";
+        ::('PDF::Render::Cairo').save-as-image(self, $outfile);
+    }
 }

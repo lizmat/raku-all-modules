@@ -41,7 +41,7 @@ class PDF::Content::Ops {
         :BeginImage<BI> :ImageData<ID> :EndImage<EI>
         :BeginMarkedContent<BMC> :BeginMarkedContentDict<BDC>
         :EndMarkedContent<EMC> :BeginText<BT> :EndText<ET>
-        :BeginIgnore<BX> :EndIgnore<EX> :CloseEOFillStroke<b*>
+        :BeginExtended<BX> :EndExtended<EX> :CloseEOFillStroke<b*>
         :CloseFillStroke<b> :EOFillStroke<B*> :FillStroke<B>
         :CurveTo<c> :ConcatMatrix<cm> :SetFillColorSpace<cs>
         :SetStrokeColorSpace<CS> :SetDashPattern<d> :SetCharWidth<d0>
@@ -291,7 +291,7 @@ class PDF::Content::Ops {
     has Pair @.tags;
 
     # States and transitions in [PDF 1.4 FIGURE 4.1 Graphics objects]
-    my enum GraphicsContext is export(:GraphicsContext) <Path Text Clipping Page Shading External Image>;
+    my enum GraphicsContext is export(:GraphicsContext) <Path Text Clipping Page Shading Image>;
 
     has GraphicsContext $.context = Page;
 
@@ -303,9 +303,6 @@ class PDF::Content::Ops {
 
             'BI'     => ( (Page) => Image ),
             'EI'     => ( (Image) => Page ),
-
-            'BX'     => ( (Page) => External ),
-            'EX'     => ( (External) => Page ),
 
             'W'|'W*' => ( (Path) => Clipping ),
             'm'|'re' => ( (Page) => Path ),
@@ -582,7 +579,7 @@ class PDF::Content::Ops {
 	}
 
 	@!ops.push(opn);
-        unless $op-name ~~ Comment { 
+        unless $op-name ~~ Comment {
             self!track-context($op-name);
             self.track-graphics($op-name, |@args );
 	    if @!callback {
@@ -865,7 +862,7 @@ BDC | BeginMarkedContentDict | tag properties | (PDF 1.2) Begin marked-content s
 BI | BeginImage | — | Begin inline image object
 BMC | BeginMarkedContent | tag | (PDF 1.2) Begin marked-content sequence
 BT | BeginText | — | Begin text object
-BX | BeginIgnore | — | (PDF 1.1) Begin compatibility section
+BX | BeginExtended | — | (PDF 1.1) Begin compatibility section
 c | CurveTo | x1 y1 x2 y2 x3 y3 | Append curved segment to path (two control points)
 cm | ConcatMatrix | a b c d e f | Concatenate matrix to current transformation matrix
 CS | SetStrokeColorSpace | name | (PDF 1.1) Set color space for stroking operations
@@ -878,7 +875,7 @@ DP | MarkPointDict | tag properties | (PDF 1.2) Define marked-content point with
 EI | EndImage | — | End inline image object
 EMC | EndMarkedContent | — | (PDF 1.2) End marked-content sequence
 ET | EndText | — | End text object
-EX | EndIgnore | — | (PDF 1.1) End compatibility section
+EX | EndExtended | — | (PDF 1.1) End compatibility section
 f | Fill | — | Fill path using nonzero winding number rule
 F | FillObsolete | — | Fill path using nonzero winding number rule (obsolete)
 f* | EOFill | — | Fill path using even-odd rule
