@@ -3,7 +3,7 @@ use v6;
 use Algorithm::NaiveBayes::Classifiable;
 use Algorithm::NaiveBayes::Classifier::Multinomial;
 use Algorithm::NaiveBayes::Classifier::Bernoulli;
-unit class Algorithm::NaiveBayes:ver<0.0.1>;
+unit class Algorithm::NaiveBayes:ver<0.0.3>;
 
 has Algorithm::NaiveBayes::Classifiable $!classifier;
 
@@ -11,12 +11,12 @@ enum Solver <Bernoulli Multinomial>;
 
 submethod BUILD(Solver :$solver = Multinomial) {
     given $solver {
-	when Bernoulli {
-	    $!classifier = Algorithm::NaiveBayes::Classifier::Bernoulli.new;
-	}
-	when Multinomial {
-	    $!classifier = Algorithm::NaiveBayes::Classifier::Multinomial.new;
-	}
+        when Bernoulli {
+            $!classifier = Algorithm::NaiveBayes::Classifier::Bernoulli.new;
+        }
+        when Multinomial {
+            $!classifier = Algorithm::NaiveBayes::Classifier::Multinomial.new;
+        }
     }
 }
 

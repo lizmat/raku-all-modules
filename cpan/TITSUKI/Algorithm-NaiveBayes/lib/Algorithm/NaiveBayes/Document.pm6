@@ -1,7 +1,7 @@
 use v6;
 use Algorithm::NaiveBayes::Vocabulary;
 
-unit class Algorithm::NaiveBayes::Document:ver<0.0.1>;
+unit class Algorithm::NaiveBayes::Document:ver<0.0.3>;
 
 has Algorithm::NaiveBayes::Vocabulary $.vocabulary;
 has Str $.label;

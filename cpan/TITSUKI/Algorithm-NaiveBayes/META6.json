@@ -22,5 +22,5 @@
   "source-url" : "git://github.com/titsuki/p6-Algorithm-NaiveBayes.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.3"
 }

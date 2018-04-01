@@ -1,6 +1,6 @@
 use v6;
 
-unit role Algorithm::NaiveBayes::Classifiable:ver<0.0.1>;
+unit role Algorithm::NaiveBayes::Classifiable:ver<0.0.3>;
 
 method train() { ... }
 multi method predict(%hash) { ... }
@@ -13,7 +13,7 @@ method word-given-class(Str, Str) { ... }
 method hash2array-pair(%hash) {
     my @res;
     for %hash.sort({ $^b.value cmp $^a.value }) -> (:$key, :$value) {
-	@res.push(Pair.new($key, $value));
+        @res.push(Pair.new($key, $value));
     }
     return @res;
 }
