@@ -1,6 +1,6 @@
 use v6.c;
-unit class Algorithm::Evolutionary::Simple:ver<0.0.2>;
 
+unit class Algorithm::Evolutionary::Simple:ver<0.0.3.1>;
 
 sub random-chromosome( UInt $length ) is export {
     return Bool.pick() xx $length;
@@ -65,15 +65,16 @@ sub produce-offspring( @pool,
     
 }
 
-sub best-fitness( $population ) is export {
+sub best-fitness(Bag $population ) is export {
     return $population.sort(*.value).reverse.[0].value;
 }
 
-sub generation( :$population,
-		:%fitness-of,
-		:$evaluator,
-		:$population-size = $population.elems--> Bag ) is export {
+sub generation(Bag :$population,
+	       :%fitness-of,
+	       :$evaluator,
+	       :$population-size = $population.elems --> Bag ) is export {
 
+#    say "Elems in generation ", $population.elems;
     my $best = $population.sort(*.value).reverse.[0..1].Bag;
     my @pool = get-pool-roulette-wheel( $population, $population-size-2);
     my @new-population= produce-offspring( @pool, $population-size );
@@ -84,10 +85,9 @@ sub generation( :$population,
     
 }
 
-sub mix( $population1, $population2, $size ) is export {
-    my $new-population = $population1  ∪ $population2;
-    my $best = $new-population.sort(*.value).reverse.[0..($size-1)];
-    return $best;
+sub mix( $population1, $population2, $size --> Bag) is export {
+    my $new-population = $population1 ∪ $population2;
+    return $new-population.sort(*.value).reverse.[0..($size-1)].Bag;
 }
 
 =begin pod

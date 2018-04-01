@@ -13,7 +13,10 @@
     "Algorithm::Evolutionary::Simple" : "lib/Algorithm/Evolutionary/Simple.pm6"
   },
   "resources" : [
-    "examples/*"
+    "examples/max-ones.p6",
+    "examples/concurrent-selecto-recombinative-EA.p6",
+    "examples/concurrent-evolutionary-algorithm.p6",
+    "examples/population-mixer.p6"
   ],
   "source-url" : "https://github.com/JJ/p6-algorithm-evolutionary-simple.git",
   "tags" : [
@@ -26,5 +29,5 @@
     "Test",
     "Test::META"
   ],
-  "version" : "0.0.2"
+  "version" : "0.0.3.1"
 }

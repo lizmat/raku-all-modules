@@ -1,0 +1,152 @@
+2018-03-30  Juan J. merelo  <jmerelo@penny>
+
+	* ../lib/Algorithm/Evolutionary/Simple.pm6: Eliminates debug code
+
+	* population-mixer.p6: Testing for different number of threads, settling on 2 initial populations, which seems to offer the best result. This one for 1 thread.
+	[42050 52628 56756 46436 35084 81524 42050 32246 48758 27860 32246 48758 28118 63206 62690 65528 39470 70430 42566 66818 77912 73268 30956 38180 94424 56498 41276 41018 32246 54950]
+	perl6 -I../lib population-mixer.p6 --initial-populations=2  1096,73s user 3,53s system 101% cpu 18:02,59 total
+	This program has a big problem: it gets mixing and mixing, it's too greedy, and the evolution part simply is not there. Let's try the same with two channels. 
+	Making new multi-thread tests with suggestion made by Jonathan Worthington. Not finding the solution, but I think it's for a different reason.
+
+	Parameters ==
+Evaluations => 42050
+population-size → 256
+generations → 8
+threads → 2
+initial-populations → 2
+length → 64
+=============
+[87458 21152 54434 31988 49274 50564 49016 44372 43856 60626 44372 89006 31730 51854 44372 35858 39986 62174 39470 57014 54434 103970 51854 72494 29666 34568 79202 36890 46178 42050]
+perl6 -I../lib population-mixer.p6 --initial-populations=2 --threads=2  1199,18s user 5,83s system 101% cpu 19:42,18 total
+
+	Parameters ==
+Evaluations => 86426
+population-size → 256
+generations → 8
+threads → 4
+initial-populations → 2
+length → 64
+=============
+[29408 51338 56498 47468 72752 62948 65528 42050 43856 56240 47210 46178 34052 59336 62690 51854 58562 52628 56498 52370 60110 38438 29924 37664 77138 91070 69140 50564 68624 86426]
+perl6 -I../lib population-mixer.p6 --initial-populations=2 --threads=4  1237,02s user 4,20s system 96% cpu 21:23,05 total
+
+	I am going to stop here, since there's no improvement whatsoever. It gets worse. The channel seems to be the problem...
+
+	Because it got worse...
+[68878 59590 44368 76618 55204 100354 57010 59074 42562 80230 52882 42820 78166 67330 77908 55204 52624 50560 52882 52624 41014 44884 54688 48238 42304 49012 65524 44884 61396 61138]
+perl6 -I../lib population-mixer.p6 --initial-populations=4 --threads=4  3720,84s user 18,51s system 170% cpu 36:30,17 total
+
+
+2018-03-28  Juan J. merelo  <jmerelo@penny>
+
+	* population-mixer.p6: Checking with more threads and less mixing
+	$ perl6 -I../lib population-mixer.p6 --generations=32 --threads=4
+	
+
+	Parameters ==
+Evaluations => 84102
+population-size → 256
+generations → 32
+threads → 4
+length → 64
+=============
+[94164 95712 167178 100356 92874 79716 86166 57012 123318 111450 117900 106806 88746 81264 154794 64236 111708 149118 138798 75846 126930 160728 157890 144732 91326 155310 80748 80232 57528 84102]
+
+	This is the (rather bad) result. Change to:
+
+	Parameters ==
+Evaluations => 31988
+population-size → 256
+generations → 8
+threads → 1
+initial-populations → 2
+length → 64
+=============
+[60626 31472 42566 38180 45404 46178 29666 48500 90812 29666 37664 72494 52370 71720 89522 57788 47984 56756 81266 40502 73268 27086 31730 59594 49016 31730 39986 71204 37922 31988]
+
+	Best results so far...
+	
+	$ perl6 -I../lib population-mixer.p6 --initial-populations=4
+
+	With result
+Parameters ==
+Evaluations => 61654
+population-size → 256
+generations → 8
+threads → 1
+initial-populations → 4
+length → 64
+=============
+	[67846 49012 79714 32242 57010 30436 83842 65524 71458 63718 61138 54430 65266 43852 66556 54172 39466 42562 53398 52882 44368 50302 42820 65266 50044 59332 59074 49012 47980 61654]
+
+	Testing with more populations:
+
+	Solution found => 25530
+Parameters ==
+Evaluations => 25530
+population-size → 256
+generations → 8
+threads → 1
+initial-populations → 6
+length → 64
+=============
+[60360 69906 47202 51330 96738 84354 34818 44364 74550 54942 52620 65520 45912 67842 33528 46686 44364 55974 33786 46944 51846 72486 74034 61908 51330 63972 53910 59586 63198 25530]
+
+	Not a lot of improvement with 8 populations..
+
+	Parameters ==
+Evaluations => 91058
+population-size → 256
+generations → 8
+threads → 1
+initial-populations → 8
+length → 64
+=============
+[62678 73772 34814 45650 47198 51842 56744 48746 58034 55970 69128 70160 57518 61388 72482 66548 63452 74804 40232 82028 50810 69644 42296 62162 50036 47972 59582 58034 50036 91058]
+
+	
+2018-03-27  JJMerelo  <jmerelo@bojack>
+
+	* population-mixer.p6: Testing a possibly multithreaded population mixer, with not a lot of success, because the evolutionary algorithm gets stuck eventually. Not a good sign. 
+
+	It takes a good while to find the solution, ~60000 generations, and that lowering the "generation gap" to just 8. We will have to do something about this... Maybe test population sizes until they work..
+	
+2018-03-26  JJMerelo  <jmerelo@bojack>
+
+	* concurrent-evolutionary-algorithm.p6: New algorithm which includes mutation. Testing for number of evaluations. Results
+
+	Result [Found => 5043 Found => 5033 Found => 5584 Found => 5343 Found => 5588 Found => 4631 Found => 5117 Found => 4232 Found => 4371 Found => 5133 Found => 4741 Found => 4745 Found => 5269 Found => 4047 Found => 4292 Found => 4918 Found => 4165 Found => 4488 Found => 4413 Found => 4914 Found => 4177 Found => 4279 Found => 4255 Found => 4373 Found => 4358 Found => 4648 Found => 5740 Found => 4327 Found => 5284 Found => 4073]
+
+	Testing now for bigger chromosomes: perl6 -I../lib ./concurrent-evolutionary-algorithm.p6 --max-evaluations=50000 --population-size=512 --length=128
+
+	Result [Found => 16638 Found => 15558 Found => 17237 Found => 17792 Found => 16242 Found => 13005 Found => 18091 Found => 14995 Found => 15276 Found => 16061 Found => 18152 Found => 16934 Found => 15790 Found => 18165 Found => 15518 Found => 17669 Found => 16282 Found => 16202 Found => 16806 Found => 16486 Found => 15920 Found => 17341 Found => 15394 Found => 16664 Found => 16311 Found => 17195 Found => 17944 Found => 15538 Found => 18023 Found => 17429]
+
+	* concurrent-selecto-recombinative-EA.p6: Adds parameter printing
+	for experiments. Testing now with tournament-size = 3. No good
+	result is coming...
+	Tournament size has to be either 3 or 4. It hangs up with 5. It
+	goes down to 0 with 3. Too slow, individuals are getting pushed
+	back Result 0
+
+
+2018-03-25  JJMerelo  <jmerelo@bojack>
+
+	* concurrent-selecto-recombinative-EA.p6: Start making experiments
+	for finding out the population needed in a selecto-recombinative
+	algorithm.
+	For population size = 256, Result 0.9
+	Result 0.9 --diversify-size=16
+
+	perl6 -Ilib
+	examples/concurrent-selecto-recombinative-EA.p6
+	--population-size=512 ➜ Result 1
+
+	perl6 -Ilib examples/concurrent-selecto-recombinative-EA.p6
+	--diversify-size=4 → 0.933333
+	
+
+
+
+
+	
+
