@@ -1,17 +1,17 @@
 use v6;
 use Algorithm::AhoCorasick::Node;
-unit class Algorithm::AhoCorasick:ver<0.0.9>;
+unit class Algorithm::AhoCorasick:ver<0.0.10>;
 
 has Algorithm::AhoCorasick::Node $!root;
 has @.keywords is required;
 
-method !build-automata() {
+method !build-automata {
     $!root .= new;
     for @!keywords -> $keyword {
         my $current-node = $!root;
         for ^$keyword.chars -> $i {
             my $edge-character = $keyword.substr($i,1);
-            if not $current-node.transitions{$edge-character}:exists {
+            unless $current-node.transitions{$edge-character}:exists {
                 $current-node.transitions{$edge-character} .= new;
             }
             $current-node = $current-node.transitions{$edge-character};
@@ -36,7 +36,7 @@ method !build-automata() {
             }
             else {
                 $next-node.failure = $r.transitions{$edge-character};
-                $next-node.matched-string = $next-node.matched-string (|) $next-node.failure.matched-string;
+                $next-node.matched-string (|)= $next-node.failure.matched-string;
             }
         }
     }
@@ -44,12 +44,7 @@ method !build-automata() {
 }
 
 method match($text) {
-    my $all = self.locate($text);
-    my Set $matched = set();
-    for $all.keys -> $keyword {
-        $matched = $matched (|) $keyword;
-    }
-    return $matched;
+    set(self.locate($text).keys)
 }
 
 method locate($text) {
@@ -75,14 +70,14 @@ method locate($text) {
 
 submethod BUILD (:@keywords) {
     @!keywords := @keywords;
-    self!build-automata();
+    self!build-automata;
 }
 
 =begin pod
 
 =head1 NAME
 
-Algorithm::AhoCorasick - efficient search for multiple strings
+Algorithm::AhoCorasick - A Perl 6 Aho-Corasick dictionary matching algorithm implementation
 
 =head1 SYNOPSIS
 
@@ -94,8 +89,8 @@ Algorithm::AhoCorasick - efficient search for multiple strings
 =head1 DESCRIPTION
 
 Algorithm::AhoCorasick is a implmentation of the Aho-Corasick algorithm (1975).
-It constructs a finite state machine from a list of keywords in the offline process.
-After the above preparation, it locate elements of a finite set of strings within an input text in the online process.
+It constructs the finite state machine from a list of keywords offline.
+By the finite state machine, it can find the keywords within an input text online.
 
 =head2 CONSTRUCTOR
 
@@ -117,7 +112,7 @@ Returns elements of a finite set of strings within an input text.
 
       my $located = $aho-corasick.locate($text);
 
-Returns elements of a finite set of strings with location within an input text.
+Returns elements of a finite set of strings within an input text where each string contains the locations in which it appeared.
 
 =head1 AUTHOR
 

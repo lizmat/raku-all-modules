@@ -3,7 +3,7 @@
 NAME
 ====
 
-Algorithm::AhoCorasick - efficient search for multiple strings
+Algorithm::AhoCorasick - A Perl 6 Aho-Corasick dictionary matching algorithm implementation
 
 SYNOPSIS
 ========
@@ -16,7 +16,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Algorithm::AhoCorasick is a implmentation of the Aho-Corasick algorithm (1975). It constructs a finite state machine from a list of keywords in the offline process. After the above preparation, it locate elements of a finite set of strings within an input text in the online process.
+Algorithm::AhoCorasick is a implmentation of the Aho-Corasick algorithm (1975). It constructs the finite state machine from a list of keywords offline. By the finite state machine, it can find the keywords within an input text online.
 
 CONSTRUCTOR
 -----------
@@ -40,7 +40,7 @@ Returns elements of a finite set of strings within an input text.
 
     my $located = $aho-corasick.locate($text);
 
-Returns elements of a finite set of strings with location within an input text.
+Returns elements of a finite set of strings within an input text where each string contains the locations in which it appeared.
 
 AUTHOR
 ======
