@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 25;
+plan 26;
 
 use PDF::Page;
 use PDF::IO::IndObj;
@@ -38,6 +38,7 @@ is-json-equiv $ind-obj.ast, %ast, 'ast regeneration';
 my $new-page = $pages-obj.add-page();
 is $pages-obj.Count, 3, '$.Count accessor';
 is $pages-obj.Kids[2].Type, 'Page', 'new Kid Type';
+lives-ok {$pages-obj.check}, '$pages-obj.check lives';
 
 my $fdf-input = 't/pdf/fdf-PageTree.in';
 $reader = PDF::Reader.new( );

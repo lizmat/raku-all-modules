@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 12;
+plan 13;
 
 use PDF::Class;
 use PDF::Function::Stitching;
@@ -66,6 +66,7 @@ sub is-result($a, $b, $test = 'calc') {
 }
 
 my $ind-obj = parse-ind-obj($input);
+lives-ok {$ind-obj.object.check}, '$ind-obj.object.check lives';
 my $sub-function-obj = $ind-obj.object<Shading><Function><Functions>[0];
 
 given $sub-function-obj.calculator {

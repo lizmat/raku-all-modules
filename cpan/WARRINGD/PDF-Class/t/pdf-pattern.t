@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 7;
+plan 8;
 
 use PDF::Class;
 use PDF::IO::IndObj;
@@ -70,6 +70,7 @@ $pattern-obj.gfx.ops: [
     ];
 
 $pattern-obj.cb-finish;
+lives-ok {$pattern-obj.check}, '$pattern-obj.check lives';
 
 my $contents = $pattern-obj.decoded;
 my @lines = $contents.lines;

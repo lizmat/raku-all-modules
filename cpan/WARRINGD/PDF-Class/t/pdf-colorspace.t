@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 45;
+plan 46;
 
 use PDF::Class;
 use PDF::IO::IndObj;
@@ -30,6 +30,7 @@ is $color-space-obj.subtype, 'CalRGB', '$.subtype accessor';
 is-json-equiv $color-space-obj[1], { :WhitePoint[ 1.0, 1.0, 1.0 ] }, 'array dereference';
 is-json-equiv $color-space-obj[1]<WhitePoint>, [ 1.0, 1.0, 1.0 ], 'array, hash dereference';
 is-json-equiv $color-space-obj.WhitePoint, $color-space-obj[1]<WhitePoint>, '$WhitePoint accessor';
+lives-ok {$color-space-obj.check}, '$color-space-obj.check lives';
 is-json-equiv $ind-obj.ast, %ast, 'ast regeneration';
 
 require ::('PDF')::('ColorSpace::CalGray');

@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 39;
+plan 40;
 
 use PDF::IO::IndObj;
 use PDF::Class;
@@ -90,6 +90,7 @@ is-json-equiv $page.media-box, [0,0,1190,842], 'media-box page-name setter :land
 
 $page.gfx.ops(['BT', :Tj[ :literal('Hello, world!') ], 'ET']);
 is-deeply [$page.gfx.content-dump], ['BT', '(Hello, world!) Tj', 'ET'], 'finished Contents';
+lives-ok {$page.check}, '$page.check lives';
 
 my $xobject = $page.to-xobject;
 isa-ok $xobject, ::('PDF::XObject::Form');

@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 8;
+plan 9;
 
 use PDF::Class;
 use PDF::IO::IndObj;
@@ -32,4 +32,5 @@ is $outlines-obj.Type, 'Outlines', '$.Type accessor';
 is $outlines-obj.Count, 3, '$.Count accessor';
 is-deeply $outlines-obj.First, (:ind-ref[19, 0]), '$obj.First';
 is-deeply $outlines-obj.Last, (:ind-ref[20, 0]), '$obj.Last';
+lives-ok {$outlines-obj.check}, '$outlines-obj.check lives';
 is-json-equiv $ind-obj.ast, %ast, 'ast regeneration';

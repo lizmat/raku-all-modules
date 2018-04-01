@@ -1,5 +1,6 @@
 use v6;
 use Test;
+plan 6;
 
 use PDF::Class;
 use PDF::Grammar::PDF;
@@ -28,5 +29,6 @@ is $group-obj.Type, 'Group', 'Group Type';
 is $group-obj.S, 'Transparency', 'Subtype';
 is $group-obj.I, True, 'I';
 is $group-obj.CS, 'DeviceRGB', 'CS';
+lives-ok {$group-obj.check}, '$group-obj.check lives';
 
 done-testing;

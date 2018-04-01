@@ -1,3 +1,10 @@
+Release 0.1.2
+added:
+- PDF::Action::URI class
+- PDF::Destination.construct() method
+renamed:
+- PDF::Destination.type() method to .fit()
+
 Release 0.1.1
 - Renamed role PDF::OutlineItem -> PDF::Outline
 - Add PDF::Destination; removed destination handling from PDF::Action; includes:

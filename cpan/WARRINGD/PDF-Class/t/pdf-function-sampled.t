@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 41;
+plan 42;
 
 use PDF::Class;
 use PDF::Function::Sampled;
@@ -56,6 +56,7 @@ is $function-obj.type, 'Function', '$.type accessor';
 is $function-obj.subtype, 'Sampled', '$.subtype accessor';
 is-json-equiv $function-obj.Domain, [0, 1], '$.Domain accessor';
 is-json-equiv $function-obj.Length, 17, '$.Length accessor';
+lives-ok {$function-obj.check}, '$function-obj.check lives';
 
 given  $function-obj.calculator {
     is-result-calc $_, [0], [0, 17/255, 33/255, 48/255], 'basic';
@@ -106,7 +107,7 @@ A1 A2 A3 A4
 FF FF FF A0>
 END-SAMPLE
 
-$function-obj.Size = 3;
+$function-obj.Size = [3,];
 
 given  $function-obj.calculator {
     is-result-calc $_, [0], [0, 17/255, 33/255, 48/255], 'Size 3';

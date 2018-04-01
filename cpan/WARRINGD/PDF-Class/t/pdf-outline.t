@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 8;
+plan 9;
 
 use PDF::Class;
 use PDF::IO::IndObj;
@@ -39,6 +39,7 @@ is $outline-obj.Title, 'Moderator Quick Reference Guide', '$.Title accessor';
 is-deeply $outline-obj.First, (:ind-ref[22, 0]), '$obj.First';
 is-deeply $outline-obj.Parent, (:ind-ref[18, 0]), '$obj.Parent';
 is-deeply $outline-obj.Prev, (:ind-ref[19, 0]), '$obj.Prev';
+lives-ok {$outline-obj.check}, '$outline-obj.check lives';
 
 # Rewritten as a simple ASCII string
 %ast<ind-obj>[2]<dict><Title> = :literal('Moderator Quick Reference Guide');

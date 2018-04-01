@@ -41,6 +41,7 @@ my $open-text-annot = ::('PDF::Annot::Text').new(:dict{
 });
 
 is-deeply $open-text-annot.Open, False, '.Open';
+lives-ok {$open-text-annot.check}, '$open-check-annot.check lives';
 
 my $pdf = PDF::Class.new;
 my $page = $pdf.Pages.add-page;
@@ -73,6 +74,7 @@ isa-ok $link-annot, (require ::('PDF::Annot::Link'));
 is $link-annot.Type, 'Annot', 'Annot with /Type defaulted';
 is-json-equiv $link-annot.Border, [ 16, 16, 1 ], '.Border';
 is-json-equiv $link-annot.Dest, [ :ind-ref[3, 0], 'FitR', -4, 399, 199, 533], '.Dest';
+lives-ok {$link-annot.check}, '$link-annot.check lives';
 
 $input = q:to"--END--";
 7 0 obj
@@ -92,5 +94,6 @@ is-json-equiv $file-annot.Border, [ 0, 0, 0 ], '.Border';
 is-json-equiv $file-annot.FS, (:ind-ref[8, 0]), '.FS';
 is-json-equiv $file-annot.Name, 'PushPin', '.Name';
 is $file-annot.Contents, "text", '.Contents';
+lives-ok {$file-annot.check}, '$file-annot.check lives';
 
 done-testing;

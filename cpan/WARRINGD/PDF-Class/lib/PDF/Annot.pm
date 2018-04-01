@@ -22,7 +22,7 @@ class PDF::Annot
     has PDF::COS::TextString $.Contents is entry;               #| (Optional) Text to be displayed for the annotation or, if this type of annotation does not display text, an alternate description of the annotation’s contents in human-readable form
     has Hash $.P is entry(:alias<page>);                        #| (Optional; PDF 1.3; not used in FDF files) An indirect reference to the page object with which this annotation is associated.
     has PDF::COS::TextString $.NM is entry(:alias<name>);       #| (Optional; PDF 1.4) The annotation name, a text string uniquely identifying it among all the annotations on its page.
-    subset DateOrTextString of Str where PDF::COS::DateString | PDF::COS::TextString;
+    subset DateOrTextString where PDF::COS::DateString | PDF::COS::TextString;
     multi sub coerce(Str $s is rw, DateOrTextString) {
 	my $target-type = $s ~~ /^ 'D:'? $<year>=\d**4/
 	    ?? PDF::COS::DateString

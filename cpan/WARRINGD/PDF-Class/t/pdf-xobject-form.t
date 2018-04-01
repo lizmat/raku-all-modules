@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 9;
+plan 10;
 
 use PDF::Class;
 use PDF::IO::IndObj;
@@ -55,8 +55,8 @@ $xform.gfx.set-font($font);
 $xform.gfx.say('Hello, again!');
 $xform.gfx.EndText;
 $xform.gfx.Restore;
-
 $xform.cb-finish;
+lives-ok {$xform.check}, '$xform.check lives';
 
 my $contents = $xform.decoded;
 is-deeply [$contents.lines], [

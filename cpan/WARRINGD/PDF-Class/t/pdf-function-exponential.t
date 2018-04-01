@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 13;
+plan 14;
 
 use PDF::Class;
 use PDF::Function::Exponential;
@@ -40,6 +40,7 @@ is $function-obj.subtype, 'Exponential', '$.subtype accessor';
 is $function-obj.N, 1, '$.N accessor';
 is-json-equiv $function-obj.Domain, [0, 1], '$.Domain accessor';
 is-json-equiv $function-obj.Range, [0, 100, -128, 127, -128, 127], '$.Range accessor';
+lives-ok {$function-obj.check}, '$function-obj.check lives';
 
 sub is-result($a, $b, $test = 'calc') {
     my $ok = $a.elems == $b.elems

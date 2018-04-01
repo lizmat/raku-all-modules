@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 6;
+plan 7;
 
 use PDF::Class;
 use PDF::IO::IndObj;
@@ -109,3 +109,4 @@ isa-ok $metadata-obj, ::('PDF')::('Metadata::XML');
 is $metadata-obj.Type, 'Metadata', '$.Type accessor';
 is $metadata-obj.Subtype, 'XML', '$.Subtype accessor';
 is $metadata-obj.encoded.substr(0,51), '<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>', '$.encoded accessor (sample)';
+lives-ok {$metadata-obj.check}, '$metadata-obj.check lives';

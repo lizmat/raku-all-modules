@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 63;
+plan 64;
 
 use PDF::Class;
 use PDF::Function::PostScript;
@@ -46,6 +46,7 @@ is $function-obj.type, 'Function', '$.type accessor';
 is $function-obj.subtype, 'PostScript', '$.subtype accessor';
 is-json-equiv $function-obj.Domain, [ -1.0, 1.0, -1.0, 1.0 ], '$.Domain accessor';
 is-json-equiv $function-obj.Length, 56, '$.Length accessor (corrected)';
+lives-ok {$function-obj.check}, '$function-obj.check lives';
 
 my $ast = $function-obj.parse;
 is-json-equiv $ast, {:expr([:int(360), :op<mul>, :op<sin>, :int(2), :op<div>, :op<exch>, :int(360), :op<mul>, :op<sin>, :int(2), :op<div>, :op<add>])}, '$.parse accessor';

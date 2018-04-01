@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 21;
+plan 22;
 
 use PDF::Class;
 use PDF::Class::Type;
@@ -52,6 +52,7 @@ is $snoopy.Height, 254, '$img.Height (jpeg)';
 is $snoopy.ColorSpace, 'DeviceRGB', '$img.ColorSpace (jpeg)';
 is $snoopy.BitsPerComponent, 8, '$img.BitsPerComponent (jpeg)';
 is $snoopy.Length, $snoopy.encoded.chars, '$img Length (jpeg)';
+lives-ok {$snoopy.check}, '$img.check lives';
 
 my $inline = $snoopy.inline-content;
 is +$inline, 3, '.content(:inline) has 3 ops';

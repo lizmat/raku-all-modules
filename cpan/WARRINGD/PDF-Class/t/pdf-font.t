@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 20;
+plan 21;
 
 use PDF::Class;
 use PDF::IO::IndObj;
@@ -37,6 +37,7 @@ is $object.Name, 'F1', '$.Name accessor';
 is $object.BaseFont, 'Helvetica', '$.BaseFont accessor';
 is $object.Encoding, 'MacRomanEncoding', '$.Encoding accessor';
 is-json-equiv $ind-obj.ast, %ast, 'ast regeneration';
+lives-ok {$object.check}, '$object.check lives';
 
 sub to-doc($font-obj) {
     my $dict = $font-obj.to-dict;

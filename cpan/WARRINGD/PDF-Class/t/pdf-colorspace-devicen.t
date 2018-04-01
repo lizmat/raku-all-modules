@@ -12,6 +12,7 @@ is $cs1.type, 'ColorSpace', '.type Accessor';
 is $cs1.Subtype, 'DeviceN', '.Subtype Accessor';
 is $cs1.Names[1], 'Magenta', '.Names[1]';
 is $cs1.AlternateSpace, 'DeviceCMYK', '.AlternateSpace accessor';
+lives-ok {$cs1.check}, '$cs1.check lives';
 
 my $tint-transform = $cs1.TintTransform;
 isa-ok $tint-transform, ::('PDF::Function::Sampled');

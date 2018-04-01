@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 69;
+plan 74;
 
 use PDF::Class;
 use PDF::Class::Type;
@@ -9,6 +9,7 @@ use PDF::Grammar::Test :is-json-equiv;
 use PDF::Grammar::PDF;
 use PDF::Grammar::PDF::Actions;
 use PDF::Font::TrueType;
+use PDF::Font::Type0;
 
 require ::('PDF::Catalog');
 my $dict = { :Outlines(:ind-ref[2, 0]), :Type( :name<Catalog> ), :Pages{ :Type( :name<Pages> ) } };
@@ -27,6 +28,7 @@ my $input = q:to"--END--";
 >> endobj
 --END--
 
+my $reader = class { has $.auto-deref = False }.new;
 my $actions = PDF::Grammar::PDF::Actions.new;
 my $grammar = PDF::Grammar::PDF;
 $grammar.parse($input, :$actions, :rule<ind-obj>)
@@ -35,7 +37,7 @@ my %ast = $/.ast;
 
 # misc types follow
 
-my $ind-obj = PDF::IO::IndObj.new( :$input, |%ast );
+my $ind-obj = PDF::IO::IndObj.new( :$input, |%ast, :$reader );
 my $tt-font-obj = $ind-obj.object;
 is $tt-font-obj.Widths[0], '600', 'Widths';
 isa-ok $tt-font-obj, ::('PDF::Font::TrueType');
@@ -44,10 +46,10 @@ is $tt-font-obj.Subtype, 'TrueType', 'tt font $.Subtype';
 is $tt-font-obj.Encoding, 'WinAnsiEncoding', 'tt font $.Encoding';
 is $tt-font-obj.type, 'Font', 'tt font type accessor';
 is $tt-font-obj.subtype, 'TrueType', 'tt font subtype accessor';
+lives-ok {$tt-font-obj.check}, '$tt-font.check lives';
 
-require ::('PDF::Font::Type0');
 $dict = { :BaseFont(:name<Wingdings-Regular>), :Encoding(:name<Identity-H>), :DescendantFonts[:ind-ref[15, 0]] };
-my $t0-font-obj = ::('PDF::Font::Type0').new( :$dict );
+my $t0-font-obj = PDF::Font::Type0.new( :$dict );
 is $t0-font-obj.Type, 'Font', 't0 font $.Type';
 is $t0-font-obj.Subtype, 'Type0', 't0 font $.Subtype';
 is $t0-font-obj.Encoding, 'Identity-H', 't0 font $.Encoding';
@@ -58,22 +60,24 @@ my $sc-font-obj = SubclassedType1Font.new( :dict{ :BaseFont( :name<Helvetica> ) 
 is $sc-font-obj.Type, 'Font', 'sc font $.Type';
 is $sc-font-obj.Subtype, 'Type1', 'sc font $.Subtype';
 is $sc-font-obj.BaseFont, 'Helvetica', 'sc font $.BaseFont';
+lives-ok {$sc-font-obj.check}, '$sc-font-obj.check lives';
 
-my $enc-ast = :ind-obj[5, 2, :dict{ :Type( :name<Encoding> ), :BaseEncoding( :name<MacRomanEncoding> ) } ];
-my $enc-ind-obj = PDF::IO::IndObj.new( |%($enc-ast) );
+my %enc-ast = :ind-obj[5, 2, :dict{ :Type( :name<Encoding> ), :BaseEncoding( :name<MacRomanEncoding> ) } ];
+my $enc-ind-obj = PDF::IO::IndObj.new( |%enc-ast );
 my $enc-obj = $enc-ind-obj.object;
 isa-ok $enc-obj, ::('PDF::Encoding');
 is $enc-obj.Type, 'Encoding', '$enc.Type';
 is $enc-obj.BaseEncoding, 'MacRomanEncoding', '$enc.BaseEncoding';
+lives-ok {$enc-obj.check}, '$enc-obj.check lives';
 
 my $objr-ast = :ind-obj[6, 0, :dict{ :Type( :name<OBJR> ), :Pg( :ind-ref[6, 1] ), :Obj( :ind-ref[6, 2]) } ];
-my $reader = class { has $.auto-deref = False }.new;
 my $objr-ind-obj = PDF::IO::IndObj.new( |%($objr-ast), :$reader );
 my $objr-obj = $objr-ind-obj.object;
 isa-ok $objr-obj, ::('PDF::OBJR');
 is $objr-obj.Type, 'OBJR', '$objr.Type';
 is-deeply $objr-obj<Pg>, (:ind-ref[6, 1]), '$objr<P>';
 is-deeply $objr-obj<Obj>, (:ind-ref[6, 2]), '$objr<Obj>';
+lives-ok {$objr-obj.check}, '$objr-obj.check lives';
 
 $input = q:to"--END--";
 99 0 obj
@@ -91,12 +95,13 @@ PDF::Grammar::PDF.parse($input, :$actions, :rule<ind-obj>)
     // die "parse failed: $input";
 %ast = $/.ast;
 
-$ind-obj = PDF::IO::IndObj.new( :$input, |%ast );
+$ind-obj = PDF::IO::IndObj.new( :$input, |%ast, :$reader );
 my $oi-font-obj = $ind-obj.object;
 isa-ok $oi-font-obj, ::('PDF::OutputIntent');
 is $oi-font-obj.S, 'GTS_PDFX', 'OutputIntent S';
 is $oi-font-obj.OutputCondition, 'CGATS TR 001 (SWOP)', 'OutputIntent OutputCondition';
 is $oi-font-obj.RegistryName, 'http://www.color.org', 'OutputIntent RegistryName';
+lives-ok {$oi-font-obj.check}, '$io-font-obj.check lives';
 
 use PDF::Page;
 use PDF::XObject::Form;
