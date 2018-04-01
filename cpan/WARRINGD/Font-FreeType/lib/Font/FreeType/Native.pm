@@ -119,7 +119,7 @@ class FT_Bitmap_Size is repr('CStruct') is export {
 }
 
 #| A handle to a character map (usually abbreviated to ‘charmap’). A charmap is used to translate character codes in a given encoding into glyph indexes
-class FT_CharMap is export is repr('CStruct') is export {
+class FT_CharMap is repr('CStruct') is export {
     has FT_Face      $.face;
     has FT_Encoding  $.encoding;
     has FT_UShort    $.platform-id;
@@ -258,7 +258,7 @@ class FT_OutlineGlyph is FT_Glyph is repr('CStruct') is export {
 }
 
 #| A handle to a given ‘glyph slot’. A slot is a container that can hold any of the glyphs contained in its parent face.
-#| 
+#|
 #| In other words, each time you call FT_Load_Glyph or FT_Load_Char, the slot's content is erased by the new glyph data, i.e., the glyph's metrics, its image (bitmap or outline), and other control information.
 class FT_GlyphSlot is repr('CStruct') is export {
     has FT_Library        $.library;

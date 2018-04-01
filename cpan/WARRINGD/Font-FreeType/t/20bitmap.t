@@ -14,6 +14,10 @@ constant Width = 5;
 constant Height = 7;
 
 for  <bdf fnt> -> $fmt {
+    if $fmt eq 'fnt' {
+       skip "issue #1", 12;
+       next;
+    }
     # Load the bitmap font file file.
     my $face = $ft.face("t/fonts/5x7.$fmt");
     my @lines =  $bitmap_file.IO.lines ;
