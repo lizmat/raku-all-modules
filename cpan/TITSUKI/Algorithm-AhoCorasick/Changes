@@ -1,0 +1,59 @@
+Revision history for Algorithm-AhoCorasick
+
+0.0.9  2018-04-01T11:11:14+09:00
+     - Fixes:
+        - Fix typo
+     - Additions:
+     - Efficiency:
+
+0.0.8  2018-03-31T21:30:26+09:00
+     - Fixes:
+        - Fix META6.json [fd94f85]
+     - Additions:
+     - Efficiency:
+
+0.0.7
+     - Fixes:
+        - Change the order of fields in META6.json [1ce1511]
+        - Use more perl6ish syntax [#8]
+        - Use ok instead of is-deeply [#10]
+        - Use SPDX identifier in license field of META6.json [#11]
+        - Use zef instead of panda [#12]
+        - Make sure Set objects are initialized [#13]
+     - Additions:
+        - Add tags field of META6.json [6ae2a4e]
+     - Efficiency:
+
+v0.06
+     - Fixes:
+        - Fix author info
+     - Additions:
+     - Efficiency:
+
+v0.05
+     - Fixes:
+        - Fix author info
+     - Additions:
+     - Efficiency:
+
+v0.04
+     - Fixes:
+        - Improve the documentation
+     - Additions:
+     - Efficiency:
+
+v0.03
+    - Fixes:
+       - Improve the documentation
+    - Additions:
+       - Add locate method
+    - Efficiency:
+
+v0.02
+    - Fixes:
+       - Fix author info
+    - Additions:
+    - Efficiency:
+
+v0.01
+    - Initial version
