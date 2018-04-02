@@ -230,14 +230,45 @@ method string:literal-multi ($/ --> Nil)
 # end string grammar-actions }}}
 # number grammar-actions {{{
 
+method float($/ --> Nil)
+{
+    make(+$/);
+}
+
+multi method float-inf($/ where $<plus-or-minus>.so --> Nil)
+{
+    my Int:D $multiplier = $<plus-or-minus>.made eq '+' ?? 1 !! -1;
+    make(Inf * $multiplier);
+}
+
+multi method float-inf($/ --> Nil)
+{
+    make(Inf);
+}
+
+method float-nan($/ --> Nil)
+{
+    make(NaN);
+}
+
 method integer($/ --> Nil)
 {
     make(Int(+$/));
 }
 
-method float($/ --> Nil)
+method integer-bin($/ --> Nil)
 {
-    make(+$/);
+    make(Int(+$/));
+}
+
+method integer-hex($/ --> Nil)
+{
+    make(Int(+$/));
+}
+
+method integer-oct($/ --> Nil)
+{
+    make(Int(+$/));
 }
 
 method plus-or-minus:sym<+>($/ --> Nil)
@@ -250,14 +281,39 @@ method plus-or-minus:sym<->($/ --> Nil)
     make(~$/);
 }
 
-multi method number($/ where $<integer>.so --> Nil)
+method number:float ($/ --> Nil)
+{
+    make($<float>.made);
+}
+
+method number:float-inf ($/ --> Nil)
+{
+    make($<float-inf>.made);
+}
+
+method number:float-nan ($/ --> Nil)
+{
+    make($<float-nan>.made);
+}
+
+method number:integer ($/ --> Nil)
 {
     make($<integer>.made);
 }
 
-multi method number($/ where $<float>.so --> Nil)
+method number:integer-bin ($/ --> Nil)
 {
-    make($<float>.made);
+    make($<integer-bin>.made);
+}
+
+method number:integer-hex ($/ --> Nil)
+{
+    make($<integer-hex>.made);
+}
+
+method number:integer-oct ($/ --> Nil)
+{
+    make($<integer-oct>.made);
 }
 
 # end number grammar-actions }}}
@@ -408,6 +464,11 @@ method date:date-time-omit-local-offset ($/ --> Nil)
 method date:date-time ($/ --> Nil)
 {
     make(DateTime.new(|$<date-time>.made));
+}
+
+method date:partial-time ($/ --> Nil)
+{
+    make($<partial-time>.made);
 }
 
 # end datetime grammar-actions }}}
@@ -606,12 +667,12 @@ method table:hoh ($/ --> Nil)
         or die($exception-hoh-seen-key);
 
     my X::Config::TOML::HOH::Seen::AOH $exception-hoh-seen-aoh .=
-        new(:$hoh-header-text, :$hoh-text);
+        new(:$hoh-header-text, :$hoh-text, :path(@base-path));
     %!aoh-seen.grep({.keys.first eqv $@base-path}).elems == 0
         or die($exception-hoh-seen-aoh);
 
     my X::Config::TOML::HOH::Seen $exception-hoh-seen .=
-        new(:$hoh-header-text, :$hoh-text);
+        new(:$hoh-header-text, :$hoh-text, :path(@base-path));
     %!hoh-seen.grep({.keys.first eqv $@base-path}).elems == 0
         or die($exception-hoh-seen);
 

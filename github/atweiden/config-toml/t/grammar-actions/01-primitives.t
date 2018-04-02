@@ -56,7 +56,7 @@ subtest({
         $match-str1.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($str1, :rule<string>)] - 1 of 93
+        ♪ [Grammar.parse($str1, :rule<string>)] - 1 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal basic string successfully
         ┃   Success   ┃
@@ -69,7 +69,7 @@ subtest({
         $match-str2.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($str2, :rule<string>)] - 2 of 93
+        ♪ [Grammar.parse($str2, :rule<string>)] - 2 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal basic multiline string
         ┃   Success   ┃    successfully
@@ -82,7 +82,7 @@ subtest({
         $match-str3.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($str3, :rule<string>)] - 3 of 93
+        ♪ [Grammar.parse($str3, :rule<string>)] - 3 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal basic multiline string
         ┃   Success   ┃    successfully
@@ -95,7 +95,7 @@ subtest({
         $match-str1.made ~~ $match-str2.made,
         True,
         q:to/EOF/
-        ♪ [Byte-for-byte string equivalency] - 4 of 93
+        ♪ [Byte-for-byte string equivalency] - 4 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-str1.made ~~ $match-str2.made
         ┃   Success   ┃
@@ -108,7 +108,7 @@ subtest({
         $match-str1.made ~~ $match-str3.made,
         True,
         q:to/EOF/
-        ♪ [Byte-for-byte string equivalency] - 5 of 93
+        ♪ [Byte-for-byte string equivalency] - 5 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-str1.made ~~ $match-str3.made
         ┃   Success   ┃
@@ -121,7 +121,7 @@ subtest({
         $match-str2.made ~~ $match-str3.made,
         True,
         q:to/EOF/
-        ♪ [Byte-for-byte string equivalency] - 6 of 93
+        ♪ [Byte-for-byte string equivalency] - 6 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-str2.made ~~ $match-str3.made
         ┃   Success   ┃
@@ -170,7 +170,7 @@ subtest({
         $match-str4.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($str4, :rule<string>)] - 7 of 93
+        ♪ [Grammar.parse($str4, :rule<string>)] - 7 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal literal string
         ┃   Success   ┃    successfully
@@ -183,7 +183,7 @@ subtest({
         $match-str5.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($str5, :rule<string>)] - 8 of 93
+        ♪ [Grammar.parse($str5, :rule<string>)] - 8 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal literal multiline string
         ┃   Success   ┃    successfully
@@ -196,7 +196,7 @@ subtest({
         $match-str4.made ~~ $match-str5.made,
         True,
         q:to/EOF/
-        ♪ [Byte-for-byte string equivalency] - 9 of 93
+        ♪ [Byte-for-byte string equivalency] - 9 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-str4.made ~~ $match-str5.made
         ┃   Success   ┃
@@ -287,7 +287,7 @@ subtest({
         $match-openssl-pem-toml.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($openssl-pem-toml, :rule<string>)] - 10 of 93
+        ♪ [Grammar.parse($openssl-pem-toml, :rule<string>)] - 10 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal literal multiline string
         ┃   Success   ┃    (openssl.pem) successfully
@@ -300,7 +300,7 @@ subtest({
         $match-ssh-ed25519-toml.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($ssh-ed25519-toml, :rule<string>)] - 11 of 93
+        ♪ [Grammar.parse($ssh-ed25519-toml, :rule<string>)] - 11 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal literal multiline string
         ┃   Success   ┃    (ssh-ed25519) successfully
@@ -313,7 +313,7 @@ subtest({
         $match-ssh-ed25519-pub-toml.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($ssh-ed25519-pub-toml, :rule<string>)] - 12 of 93
+        ♪ [Grammar.parse($ssh-ed25519-pub-toml, :rule<string>)] - 12 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal literal multiline string
         ┃   Success   ┃    (ssh-ed25519.pub) successfully
@@ -326,7 +326,7 @@ subtest({
         $openssl-pem-perl ~~ $match-openssl-pem-toml.made,
         True,
         q:to/EOF/
-        ♪ [Byte-for-byte string equivalency] - 13 of 93
+        ♪ [Byte-for-byte string equivalency] - 13 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $openssl-pem-perl ~~ $match-openssl-pem-toml.made
         ┃   Success   ┃
@@ -339,7 +339,7 @@ subtest({
         $ssh-ed25519-perl ~~ $match-ssh-ed25519-toml.made,
         True,
         q:to/EOF/
-        ♪ [Byte-for-byte string equivalency] - 14 of 93
+        ♪ [Byte-for-byte string equivalency] - 14 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $ssh-ed25519-perl ~~ $match-ssh-ed25519-toml.made
         ┃   Success   ┃
@@ -352,7 +352,7 @@ subtest({
         $ssh-ed25519-pub-perl ~~ $match-ssh-ed25519-pub-toml.made,
         True,
         q:to/EOF/
-        ♪ [Byte-for-byte string equivalency] - 15 of 93
+        ♪ [Byte-for-byte string equivalency] - 15 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $ssh-ed25519-pub-perl ~~
         ┃   Success   ┃        $match-ssh-ed25519-pub-toml.made
@@ -370,83 +370,130 @@ subtest({
 subtest({
     # Integers are whole numbers. Positive numbers may be prefixed with
     # a plus sign. Negative numbers are prefixed with a minus sign.
-    my Str $int1 = Q{+99};
-    my Str $int2 = Q{42};
-    my Str $int3 = Q{0};
-    my Str $int4 = Q{-17};
-    my Str $int5 = Q{1_000};
+    my Str $integer1 = Q{+99};
+    my Str $integer2 = Q{42};
+    my Str $integer3 = Q{0};
+    my Str $integer4 = Q{-17};
+    my Str $integer5 = Q{1_000};
 
     # For large numbers, you may use underscores to enhance
     # readability. Each underscore must be surrounded by at least one digit.
-    my Str $int6 = Q{5_349_221};
-    my Str $int7 = Q{1_2_3_4_5};
+    my Str $integer6 = Q{5_349_221};
+    my Str $integer7 = Q{1_2_3_4_5};
 
     # 64 bit (signed long) range expected (−9,223,372,036,854,775,808
     # to 9,223,372,036,854,775,807).
-    my Str $int8 = Q{-9223372036854775808};
-    my Str $int9 = Q{9223372036854775807};
+    my Str $integer8 = Q{-9223372036854775808};
+    my Str $integer9 = Q{9223372036854775807};
+
+    # Non-negative integer values may also be expressed in hexadecimal,
+    # octal, or binary. In these formats, leading zeros are allowed (after
+    # the prefix). Hex values are case insensitive. Underscores are
+    # allowed between digits (but not between the prefix and the value).
+    my Str $integer-bin = Q{0b11010110};
+    my Str $integer-bin-underscore = Q{0b1_1_01_01_10};
+    my Str $integer-hex = Q{0xdEaDbEEf};
+    my Str $integer-hex-underscore = Q{0xdead_beef};
+    my Str $integer-oct = Q{0o01234567};
+    my Str $integer-oct-underscore = Q{0o0_1_2_3_4_5_6_7};
 
     my Config::TOML::Parser::Actions $actions .= new;
-    my $match-int1 =
+    my $match-integer1 =
         Config::TOML::Parser::Grammar.parse(
-            $int1,
+            $integer1,
             :$actions,
             :rule<number>
         );
-    my $match-int2 =
+    my $match-integer2 =
         Config::TOML::Parser::Grammar.parse(
-            $int2,
+            $integer2,
             :$actions,
             :rule<number>
         );
-    my $match-int3 =
+    my $match-integer3 =
         Config::TOML::Parser::Grammar.parse(
-            $int3,
+            $integer3,
             :$actions,
             :rule<number>
         );
-    my $match-int4 =
+    my $match-integer4 =
         Config::TOML::Parser::Grammar.parse(
-            $int4,
+            $integer4,
             :$actions,
             :rule<number>
         );
-    my $match-int5 =
+    my $match-integer5 =
         Config::TOML::Parser::Grammar.parse(
-            $int5,
+            $integer5,
             :$actions,
             :rule<number>
         );
-    my $match-int6 =
+    my $match-integer6 =
         Config::TOML::Parser::Grammar.parse(
-            $int6,
+            $integer6,
             :$actions,
             :rule<number>
         );
-    my $match-int7 =
+    my $match-integer7 =
         Config::TOML::Parser::Grammar.parse(
-            $int7,
+            $integer7,
             :$actions,
             :rule<number>
         );
-    my $match-int8 =
+    my $match-integer8 =
         Config::TOML::Parser::Grammar.parse(
-            $int8,
+            $integer8,
             :$actions,
             :rule<number>
         );
-    my $match-int9 =
+    my $match-integer9 =
         Config::TOML::Parser::Grammar.parse(
-            $int9,
+            $integer9,
+            :$actions,
+            :rule<number>
+        );
+    my $match-integer-bin =
+        Config::TOML::Parser::Grammar.parse(
+            $integer-bin,
+            :$actions,
+            :rule<number>
+        );
+    my $match-integer-bin-underscore =
+        Config::TOML::Parser::Grammar.parse(
+            $integer-bin-underscore,
+            :$actions,
+            :rule<number>
+        );
+    my $match-integer-hex =
+        Config::TOML::Parser::Grammar.parse(
+            $integer-hex,
+            :$actions,
+            :rule<number>
+        );
+    my $match-integer-hex-underscore =
+        Config::TOML::Parser::Grammar.parse(
+            $integer-hex-underscore,
+            :$actions,
+            :rule<number>
+        );
+    my $match-integer-oct =
+        Config::TOML::Parser::Grammar.parse(
+            $integer-oct,
+            :$actions,
+            :rule<number>
+        );
+    my $match-integer-oct-underscore =
+        Config::TOML::Parser::Grammar.parse(
+            $integer-oct-underscore,
             :$actions,
             :rule<number>
         );
 
     is(
-        $match-int1.WHAT,
+        $match-integer1.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($int1, :rule<number>)] - 16 of 93
+        ♪ [Grammar.parse($integer1, :rule<number>)] - 16 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
         ┃   Success   ┃
@@ -455,10 +502,10 @@ subtest({
         EOF
     );
     is(
-        $match-int2.WHAT,
+        $match-integer2.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($int2, :rule<number>)] - 17 of 93
+        ♪ [Grammar.parse($integer2, :rule<number>)] - 17 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
         ┃   Success   ┃
@@ -467,10 +514,10 @@ subtest({
         EOF
     );
     is(
-        $match-int3.WHAT,
+        $match-integer3.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($int3, :rule<number>)] - 18 of 93
+        ♪ [Grammar.parse($integer3, :rule<number>)] - 18 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
         ┃   Success   ┃
@@ -479,10 +526,10 @@ subtest({
         EOF
     );
     is(
-        $match-int4.WHAT,
+        $match-integer4.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($int4, :rule<number>)] - 19 of 93
+        ♪ [Grammar.parse($integer4, :rule<number>)] - 19 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
         ┃   Success   ┃
@@ -491,10 +538,10 @@ subtest({
         EOF
     );
     is(
-        $match-int5.WHAT,
+        $match-integer5.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($int5, :rule<number>)] - 20 of 93
+        ♪ [Grammar.parse($integer5, :rule<number>)] - 20 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
         ┃   Success   ┃
@@ -503,10 +550,10 @@ subtest({
         EOF
     );
     is(
-        $match-int6.WHAT,
+        $match-integer6.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($int6, :rule<number>)] - 21 of 93
+        ♪ [Grammar.parse($integer6, :rule<number>)] - 21 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
         ┃   Success   ┃
@@ -515,10 +562,10 @@ subtest({
         EOF
     );
     is(
-        $match-int7.WHAT,
+        $match-integer7.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($int7, :rule<number>)] - 22 of 93
+        ♪ [Grammar.parse($integer7, :rule<number>)] - 22 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
         ┃   Success   ┃
@@ -527,10 +574,10 @@ subtest({
         EOF
     );
     is(
-        $match-int8.WHAT,
+        $match-integer8.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($int8, :rule<number>)] - 23 of 93
+        ♪ [Grammar.parse($integer8, :rule<number>)] - 23 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
         ┃   Success   ┃
@@ -539,12 +586,84 @@ subtest({
         EOF
     );
     is(
-        $match-int9.WHAT,
+        $match-integer9.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($int9, :rule<number>)] - 24 of 93
+        ♪ [Grammar.parse($integer9, :rule<number>)] - 24 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-bin.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($integer-bin, :rule<number>)] - 25 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal binary integer successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-bin-underscore.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($integer-bin-underscore, :rule<number>)] - 26 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal binary integer successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-hex.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($integer-hex, :rule<number>)] - 27 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal hexadecimal integer successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-hex-underscore.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($integer-hex-underscore, :rule<number>)] - 28 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal hexadecimal integer successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-oct.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($integer-oct, :rule<number>)] - 29 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal octal integer successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-oct-underscore.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($integer-oct-underscore, :rule<number>)] - 30 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal octal integer successfully
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -552,108 +671,180 @@ subtest({
     );
 
     is(
-        $match-int1.made.WHAT,
+        $match-integer1.made.WHAT,
         Int,
         q:to/EOF/
-        ♪ [Is integer?] - 25 of 93
+        ♪ [Is integer?] - 31 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int1.made.WHAT ~~ Int
+        ┃             ┃  ∙ $match-integer1.made.WHAT ~~ Int
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int2.made.WHAT,
+        $match-integer2.made.WHAT,
         Int,
         q:to/EOF/
-        ♪ [Is integer?] - 26 of 93
+        ♪ [Is integer?] - 32 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int2.made.WHAT ~~ Int
+        ┃             ┃  ∙ $match-integer2.made.WHAT ~~ Int
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int3.made.WHAT,
+        $match-integer3.made.WHAT,
         Int,
         q:to/EOF/
-        ♪ [Is integer?] - 27 of 93
+        ♪ [Is integer?] - 33 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int3.made.WHAT ~~ Int
+        ┃             ┃  ∙ $match-integer3.made.WHAT ~~ Int
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int4.made.WHAT,
+        $match-integer4.made.WHAT,
         Int,
         q:to/EOF/
-        ♪ [Is integer?] - 28 of 93
+        ♪ [Is integer?] - 34 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int4.made.WHAT ~~ Int
+        ┃             ┃  ∙ $match-integer4.made.WHAT ~~ Int
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int5.made.WHAT,
+        $match-integer5.made.WHAT,
         Int,
         q:to/EOF/
-        ♪ [Is integer?] - 29 of 93
+        ♪ [Is integer?] - 35 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int5.made.WHAT ~~ Int
+        ┃             ┃  ∙ $match-integer5.made.WHAT ~~ Int
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int6.made.WHAT,
+        $match-integer6.made.WHAT,
         Int,
         q:to/EOF/
-        ♪ [Is integer?] - 30 of 93
+        ♪ [Is integer?] - 36 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int6.made.WHAT ~~ Int
+        ┃             ┃  ∙ $match-integer6.made.WHAT ~~ Int
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int7.made.WHAT,
+        $match-integer7.made.WHAT,
         Int,
         q:to/EOF/
-        ♪ [Is integer?] - 31 of 93
+        ♪ [Is integer?] - 37 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int7.made.WHAT ~~ Int
+        ┃             ┃  ∙ $match-integer7.made.WHAT ~~ Int
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int8.made.WHAT,
+        $match-integer8.made.WHAT,
         Int,
         q:to/EOF/
-        ♪ [Is integer?] - 32 of 93
+        ♪ [Is integer?] - 38 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int8.made.WHAT ~~ Int
+        ┃             ┃  ∙ $match-integer8.made.WHAT ~~ Int
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int9.made.WHAT,
+        $match-integer9.made.WHAT,
         Int,
         q:to/EOF/
-        ♪ [Is integer?] - 33 of 93
+        ♪ [Is integer?] - 39 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int9.made.WHAT ~~ Int
+        ┃             ┃  ∙ $match-integer9.made.WHAT ~~ Int
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-bin.made.WHAT,
+        Int,
+        q:to/EOF/
+        ♪ [Is integer?] - 40 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-bin.made.WHAT ~~ Int
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-bin-underscore.made.WHAT,
+        Int,
+        q:to/EOF/
+        ♪ [Is integer?] - 41 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-bin-underscore.made.WHAT ~~ Int
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-hex.made.WHAT,
+        Int,
+        q:to/EOF/
+        ♪ [Is integer?] - 42 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-hex.made.WHAT ~~ Int
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-hex-underscore.made.WHAT,
+        Int,
+        q:to/EOF/
+        ♪ [Is integer?] - 43 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-hex-underscore.made.WHAT ~~ Int
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-oct.made.WHAT,
+        Int,
+        q:to/EOF/
+        ♪ [Is integer?] - 44 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-oct.made.WHAT ~~ Int
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-oct-underscore.made.WHAT,
+        Int,
+        q:to/EOF/
+        ♪ [Is integer?] - 45 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-oct-underscore.made.WHAT ~~ Int
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -661,108 +852,180 @@ subtest({
     );
 
     is(
-        $match-int1.made,
+        $match-integer1.made,
         99,
         q:to/EOF/
-        ♪ [Is expected integer value?] - 34 of 93
+        ♪ [Is expected integer value?] - 46 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int1.made == 99
+        ┃             ┃  ∙ $match-integer1.made == 99
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int2.made,
+        $match-integer2.made,
         42,
         q:to/EOF/
-        ♪ [Is expected integer value?] - 35 of 93
+        ♪ [Is expected integer value?] - 47 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int2.made == 42
+        ┃             ┃  ∙ $match-integer2.made == 42
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int3.made,
+        $match-integer3.made,
         0,
         q:to/EOF/
-        ♪ [Is expected integer value?] - 36 of 93
+        ♪ [Is expected integer value?] - 48 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int3.made == 0
+        ┃             ┃  ∙ $match-integer3.made == 0
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int4.made,
+        $match-integer4.made,
         -17,
         q:to/EOF/
-        ♪ [Is expected integer value?] - 37 of 93
+        ♪ [Is expected integer value?] - 49 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int4.made == -17
+        ┃             ┃  ∙ $match-integer4.made == -17
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int5.made,
+        $match-integer5.made,
         1000,
         q:to/EOF/
-        ♪ [Is expected integer value?] - 38 of 93
+        ♪ [Is expected integer value?] - 50 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int5.made == 1000
+        ┃             ┃  ∙ $match-integer5.made == 1000
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int6.made,
+        $match-integer6.made,
         5349221,
         q:to/EOF/
-        ♪ [Is expected integer value?] - 39 of 93
+        ♪ [Is expected integer value?] - 51 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int6.made == 5349221
+        ┃             ┃  ∙ $match-integer6.made == 5349221
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int7.made,
+        $match-integer7.made,
         12345,
         q:to/EOF/
-        ♪ [Is expected integer value?] - 40 of 93
+        ♪ [Is expected integer value?] - 52 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int7.made == 12345
+        ┃             ┃  ∙ $match-integer7.made == 12345
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int8.made,
+        $match-integer8.made,
         -9223372036854775808,
         q:to/EOF/
-        ♪ [Is expected integer value?] - 41 of 93
+        ♪ [Is expected integer value?] - 53 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int8.made == -9223372036854775808
+        ┃             ┃  ∙ $match-integer8.made == -9223372036854775808
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-int9.made,
+        $match-integer9.made,
         9223372036854775807,
         q:to/EOF/
-        ♪ [Is expected integer value?] - 42 of 93
+        ♪ [Is expected integer value?] - 54 of 142
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-int9.made == 9223372036854775807
+        ┃             ┃  ∙ $match-integer9.made == 9223372036854775807
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-bin.made,
+        214,
+        q:to/EOF/
+        ♪ [Is expected integer value?] - 55 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-bin.made == 214
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-bin-underscore.made,
+        214,
+        q:to/EOF/
+        ♪ [Is expected integer value?] - 56 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-bin-underscore.made == 214
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-hex.made,
+        3735928559,
+        q:to/EOF/
+        ♪ [Is expected integer value?] - 57 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-hex.made == 3735928559
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-hex-underscore.made,
+        3735928559,
+        q:to/EOF/
+        ♪ [Is expected integer value?] - 58 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-hex-underscore.made == 3735928559
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-oct.made,
+        342391,
+        q:to/EOF/
+        ♪ [Is expected integer value?] - 59 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-oct.made == 342391
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-integer-oct-underscore.made,
+        342391,
+        q:to/EOF/
+        ♪ [Is expected integer value?] - 60 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-integer-oct-underscore.made == 342391
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -802,6 +1065,23 @@ subtest({
     # one digit.
     my Str $float8 = Q{9_224_617.445_991_228_313};
     my Str $float9 = Q{1e1_000};
+
+    # Special float values can also be expressed. They are always
+    # lowercase.
+
+    # positive infinity
+    my Str $float-inf = Q{inf};
+
+    # positive infinity
+    my Str $float-inf-plus = Q{+inf};
+
+    # negative infinity
+    my Str $float-inf-minus = Q{-inf};
+
+    # not a number
+    my Str $float-nan = Q{nan};
+    my Str $float-nan-plus = Q{+nan};
+    my Str $float-nan-minus = Q{-nan};
 
     my Config::TOML::Parser::Actions $actions .= new;
     my $match-float1 =
@@ -858,12 +1138,48 @@ subtest({
             :$actions,
             :rule<number>
         );
+    my $match-float-inf =
+        Config::TOML::Parser::Grammar.parse(
+            $float-inf,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float-inf-plus =
+        Config::TOML::Parser::Grammar.parse(
+            $float-inf-plus,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float-inf-minus =
+        Config::TOML::Parser::Grammar.parse(
+            $float-inf-minus,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float-nan =
+        Config::TOML::Parser::Grammar.parse(
+            $float-nan,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float-nan-plus =
+        Config::TOML::Parser::Grammar.parse(
+            $float-nan-plus,
+            :$actions,
+            :rule<number>
+        );
+    my $match-float-nan-minus =
+        Config::TOML::Parser::Grammar.parse(
+            $float-nan-minus,
+            :$actions,
+            :rule<number>
+        );
 
     is(
         $match-float1.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($float1, :rule<number>)] - 43 of 93
+        ♪ [Grammar.parse($float1, :rule<number>)] - 61 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -875,7 +1191,7 @@ subtest({
         $match-float2.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($float2, :rule<number>)] - 44 of 93
+        ♪ [Grammar.parse($float2, :rule<number>)] - 62 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -887,7 +1203,7 @@ subtest({
         $match-float3.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($float3, :rule<number>)] - 45 of 93
+        ♪ [Grammar.parse($float3, :rule<number>)] - 63 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -899,7 +1215,7 @@ subtest({
         $match-float4.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($float4, :rule<number>)] - 46 of 93
+        ♪ [Grammar.parse($float4, :rule<number>)] - 64 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -911,7 +1227,7 @@ subtest({
         $match-float5.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($float5, :rule<number>)] - 47 of 93
+        ♪ [Grammar.parse($float5, :rule<number>)] - 65 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -923,7 +1239,7 @@ subtest({
         $match-float6.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($float6, :rule<number>)] - 48 of 93
+        ♪ [Grammar.parse($float6, :rule<number>)] - 66 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -935,7 +1251,7 @@ subtest({
         $match-float7.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($float7, :rule<number>)] - 49 of 93
+        ♪ [Grammar.parse($float7, :rule<number>)] - 67 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -947,7 +1263,7 @@ subtest({
         $match-float8.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($float8, :rule<number>)] - 50 of 93
+        ♪ [Grammar.parse($float8, :rule<number>)] - 68 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -959,7 +1275,79 @@ subtest({
         $match-float9.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($float9, :rule<number>)] - 51 of 93
+        ♪ [Grammar.parse($float9, :rule<number>)] - 69 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal float successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-inf.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($float-inf, :rule<number>)] - 70 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal float successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-inf-plus.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($float-inf-plus, :rule<number>)] - 71 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal float successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-inf-minus.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($float-inf-minus, :rule<number>)] - 72 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal float successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-nan.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($float-nan, :rule<number>)] - 73 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal float successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-nan-plus.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($float-nan-plus, :rule<number>)] - 74 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal float successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-nan-minus.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($float-nan-minus, :rule<number>)] - 75 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -972,7 +1360,7 @@ subtest({
         $match-float1.made.WHAT,
         Rat,
         q:to/EOF/
-        ♪ [Is float?] - 52 of 93
+        ♪ [Is float?] - 76 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float1.made.WHAT ~~ Rat
         ┃   Success   ┃
@@ -980,12 +1368,11 @@ subtest({
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-
     is(
         $match-float2.made.WHAT,
         Rat,
         q:to/EOF/
-        ♪ [Is float?] - 53 of 93
+        ♪ [Is float?] - 77 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float2.made.WHAT ~~ Rat
         ┃   Success   ┃
@@ -997,7 +1384,7 @@ subtest({
         $match-float3.made.WHAT,
         Rat,
         q:to/EOF/
-        ♪ [Is float?] - 54 of 93
+        ♪ [Is float?] - 78 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float3.made.WHAT ~~ Rat
         ┃   Success   ┃
@@ -1009,7 +1396,7 @@ subtest({
         $match-float4.made.WHAT,
         Num,
         q:to/EOF/
-        ♪ [Is float?] - 55 of 93
+        ♪ [Is float?] - 79 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float4.made.WHAT ~~ Num
         ┃   Success   ┃
@@ -1021,7 +1408,7 @@ subtest({
         $match-float5.made.WHAT,
         Num,
         q:to/EOF/
-        ♪ [Is float?] - 56 of 93
+        ♪ [Is float?] - 80 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float5.made.WHAT ~~ Num
         ┃   Success   ┃
@@ -1033,7 +1420,7 @@ subtest({
         $match-float6.made.WHAT,
         Num,
         q:to/EOF/
-        ♪ [Is float?] - 57 of 93
+        ♪ [Is float?] - 81 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float6.made.WHAT ~~ Num
         ┃   Success   ┃
@@ -1045,7 +1432,7 @@ subtest({
         $match-float7.made.WHAT,
         Num,
         q:to/EOF/
-        ♪ [Is float?] - 58 of 93
+        ♪ [Is float?] - 82 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float7.made.WHAT ~~ Num
         ┃   Success   ┃
@@ -1057,7 +1444,7 @@ subtest({
         $match-float8.made.WHAT,
         Rat,
         q:to/EOF/
-        ♪ [Is float?] - 59 of 93
+        ♪ [Is float?] - 83 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float8.made.WHAT ~~ Rat
         ┃   Success   ┃
@@ -1069,9 +1456,81 @@ subtest({
         $match-float9.made.WHAT,
         Num,
         q:to/EOF/
-        ♪ [Is float?] - 60 of 93
+        ♪ [Is float?] - 84 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float9.made.WHAT ~~ Num
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-inf.made.WHAT,
+        Num,
+        q:to/EOF/
+        ♪ [Is float?] - 85 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-inf.made.WHAT ~~ Num
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-inf-plus.made.WHAT,
+        Num,
+        q:to/EOF/
+        ♪ [Is float?] - 86 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-inf-plus.made.WHAT ~~ Num
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-inf-minus.made.WHAT,
+        Num,
+        q:to/EOF/
+        ♪ [Is float?] - 87 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-inf-minus.made.WHAT ~~ Num
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-nan.made.WHAT,
+        Num,
+        q:to/EOF/
+        ♪ [Is float?] - 88 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-nan.made.WHAT ~~ Num
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-nan-plus.made.WHAT,
+        Num,
+        q:to/EOF/
+        ♪ [Is float?] - 89 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-nan-plus.made.WHAT ~~ Num
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-nan-minus.made.WHAT,
+        Num,
+        q:to/EOF/
+        ♪ [Is float?] - 90 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-nan-minus.made.WHAT ~~ Num
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1082,7 +1541,7 @@ subtest({
         $match-float1.made,
         1.0,
         q:to/EOF/
-        ♪ [Is expected float value?] - 61 of 93
+        ♪ [Is expected float value?] - 91 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float1.made == 1.0
         ┃   Success   ┃
@@ -1094,7 +1553,7 @@ subtest({
         $match-float2.made,
         3.1415,
         q:to/EOF/
-        ♪ [Is expected float value?] - 62 of 93
+        ♪ [Is expected float value?] - 92 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float2.made == 3.1415
         ┃   Success   ┃
@@ -1106,7 +1565,7 @@ subtest({
         $match-float3.made,
         -0.01,
         q:to/EOF/
-        ♪ [Is expected float value?] - 63 of 93
+        ♪ [Is expected float value?] - 93 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float3.made == -0.01
         ┃   Success   ┃
@@ -1118,7 +1577,7 @@ subtest({
         $match-float4.made,
         5e22,
         q:to/EOF/
-        ♪ [Is expected float value?] - 64 of 93
+        ♪ [Is expected float value?] - 94 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float4.made == 5e22
         ┃   Success   ┃
@@ -1130,7 +1589,7 @@ subtest({
         $match-float5.made,
         1e6,
         q:to/EOF/
-        ♪ [Is expected float value?] - 65 of 93
+        ♪ [Is expected float value?] - 95 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float5.made == 1e6
         ┃   Success   ┃
@@ -1142,7 +1601,7 @@ subtest({
         $match-float6.made,
         -2e-2,
         q:to/EOF/
-        ♪ [Is expected float value?] - 66 of 93
+        ♪ [Is expected float value?] - 96 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float6.made == -2E-2
         ┃   Success   ┃
@@ -1154,7 +1613,7 @@ subtest({
         $match-float7.made,
         6.626e-34,
         q:to/EOF/
-        ♪ [Is expected float value?] - 67 of 93
+        ♪ [Is expected float value?] - 97 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float7.made == 6.626e-34
         ┃   Success   ┃
@@ -1166,7 +1625,7 @@ subtest({
         $match-float8.made,
         9224617.445991228313,
         q:to/EOF/
-        ♪ [Is expected float value?] - 68 of 93
+        ♪ [Is expected float value?] - 98 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float8.made == 9224617.445991228313
         ┃   Success   ┃
@@ -1178,9 +1637,81 @@ subtest({
         $match-float9.made,
         1e1000,
         q:to/EOF/
-        ♪ [Is expected float value?] - 69 of 93
+        ♪ [Is expected float value?] - 99 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-float9.made == 1e1000
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-inf.made,
+        Inf,
+        q:to/EOF/
+        ♪ [Is expected float value?] - 100 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-inf.made == Inf
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-inf-plus.made,
+        Inf,
+        q:to/EOF/
+        ♪ [Is expected float value?] - 101 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-inf-plus.made == Inf
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-inf-minus.made,
+        -Inf,
+        q:to/EOF/
+        ♪ [Is expected float value?] - 102 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-inf-minus.made == -Inf
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-nan.made,
+        NaN,
+        q:to/EOF/
+        ♪ [Is expected float value?] - 103 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-nan.made == NaN
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-nan-plus.made,
+        NaN,
+        q:to/EOF/
+        ♪ [Is expected float value?] - 104 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-nan-plus.made == NaN
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-float-nan-minus.made,
+        NaN,
+        q:to/EOF/
+        ♪ [Is expected float value?] - 105 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-float-nan-minus.made == NaN
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1215,7 +1746,7 @@ subtest({
         $match-bool1.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($bool1, :rule<boolean>)] - 70 of 93
+        ♪ [Grammar.parse($bool1, :rule<boolean>)] - 106 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal boolean successfully
         ┃   Success   ┃
@@ -1227,7 +1758,7 @@ subtest({
         $match-bool2.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($bool2, :rule<boolean>)] - 71 of 93
+        ♪ [Grammar.parse($bool2, :rule<boolean>)] - 107 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal boolean successfully
         ┃   Success   ┃
@@ -1240,7 +1771,7 @@ subtest({
         $match-bool1.made.WHAT,
         Bool,
         q:to/EOF/
-        ♪ [Is boolean?] - 72 of 93
+        ♪ [Is boolean?] - 108 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-bool1.made.WHAT ~~ Bool
         ┃   Success   ┃
@@ -1252,7 +1783,7 @@ subtest({
         $match-bool2.made.WHAT,
         Bool,
         q:to/EOF/
-        ♪ [Is boolean?] - 73 of 93
+        ♪ [Is boolean?] - 109 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-bool2.made.WHAT ~~ Bool
         ┃   Success   ┃
@@ -1265,7 +1796,7 @@ subtest({
         $match-bool1.made,
         True,
         q:to/EOF/
-        ♪ [Is expected boolean value?] - 74 of 93
+        ♪ [Is expected boolean value?] - 110 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-bool1.made ~~ True
         ┃   Success   ┃
@@ -1277,7 +1808,7 @@ subtest({
         $match-bool2.made,
         False,
         q:to/EOF/
-        ♪ [Is expected boolean value?] - 75 of 93
+        ♪ [Is expected boolean value?] - 111 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-bool2.made ~~ False
         ┃   Success   ┃
@@ -1297,7 +1828,10 @@ subtest({
     my Str $date-time3 = Q{1979-05-27T00:32:00.999999-07:00};
     my Str $date-time4 = Q{1979-05-27T07:32:00};
     my Str $date-time5 = Q{1979-05-27T00:32:00.999999};
+    my Str $date-time6 = Q{1979-05-27 07:32:00Z};
     my Str $full-date1 = Q{1979-05-27};
+    my Str $partial-time1 = Q{07:32:00};
+    my Str $partial-time2 = Q{00:32:00.999999};
 
     # assume UTC when local offset unspecified in TOML dates
     my Config::TOML::Parser::Actions $actions .= new(:date-local-offset(0));
@@ -1331,9 +1865,27 @@ subtest({
             :$actions,
             :rule<date>
         );
+    my $match-date-time6 =
+        Config::TOML::Parser::Grammar.parse(
+            $date-time6,
+            :$actions,
+            :rule<date>
+        );
     my $match-full-date1 =
         Config::TOML::Parser::Grammar.parse(
             $full-date1,
+            :$actions,
+            :rule<date>
+        );
+    my $match-partial-time1 =
+        Config::TOML::Parser::Grammar.parse(
+            $partial-time1,
+            :$actions,
+            :rule<date>
+        );
+    my $match-partial-time2 =
+        Config::TOML::Parser::Grammar.parse(
+            $partial-time2,
             :$actions,
             :rule<date>
         );
@@ -1342,7 +1894,7 @@ subtest({
         $match-date-time1.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($date-time1, :rule<date>)] - 76 of 93
+        ♪ [Grammar.parse($date-time1, :rule<date>)] - 112 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime successfully
         ┃   Success   ┃
@@ -1354,7 +1906,7 @@ subtest({
         $match-date-time2.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($date-time2, :rule<date>)] - 77 of 93
+        ♪ [Grammar.parse($date-time2, :rule<date>)] - 113 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime successfully
         ┃   Success   ┃
@@ -1366,7 +1918,7 @@ subtest({
         $match-date-time3.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($date-time3, :rule<date>)] - 78 of 93
+        ♪ [Grammar.parse($date-time3, :rule<date>)] - 114 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime successfully
         ┃   Success   ┃
@@ -1378,7 +1930,7 @@ subtest({
         $match-date-time4.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($date-time4, :rule<date>)] - 79 of 93
+        ♪ [Grammar.parse($date-time4, :rule<date>)] - 115 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime successfully
         ┃   Success   ┃
@@ -1390,7 +1942,19 @@ subtest({
         $match-date-time5.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($date-time5, :rule<date>)] - 80 of 93
+        ♪ [Grammar.parse($date-time5, :rule<date>)] - 116 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal datetime successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-date-time6.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($date-time6, :rule<date>)] - 117 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime successfully
         ┃   Success   ┃
@@ -1402,9 +1966,33 @@ subtest({
         $match-full-date1.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($full-date1, :rule<date>)] - 81 of 93
+        ♪ [Grammar.parse($full-date1, :rule<date>)] - 118 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal date successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time1.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($partial-time1, :rule<date>)] - 119 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal partial time successfully
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time2.WHAT,
+        Config::TOML::Parser::Grammar,
+        q:to/EOF/
+        ♪ [Grammar.parse($partial-time2, :rule<date>)] - 120 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Parses string literal partial time successfully
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1415,7 +2003,7 @@ subtest({
         $match-date-time1.made.WHAT,
         DateTime,
         q:to/EOF/
-        ♪ [Is datetime?] - 82 of 93
+        ♪ [Is datetime?] - 121 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time1.made.WHAT ~~ DateTime
         ┃   Success   ┃
@@ -1427,7 +2015,7 @@ subtest({
         $match-date-time2.made.WHAT,
         DateTime,
         q:to/EOF/
-        ♪ [Is datetime?] - 83 of 93
+        ♪ [Is datetime?] - 122 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time2.made.WHAT ~~ DateTime
         ┃   Success   ┃
@@ -1439,7 +2027,7 @@ subtest({
         $match-date-time3.made.WHAT,
         DateTime,
         q:to/EOF/
-        ♪ [Is datetime?] - 84 of 93
+        ♪ [Is datetime?] - 123 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time3.made.WHAT ~~ DateTime
         ┃   Success   ┃
@@ -1451,7 +2039,7 @@ subtest({
         $match-date-time4.made.WHAT,
         DateTime,
         q:to/EOF/
-        ♪ [Is datetime?] - 85 of 93
+        ♪ [Is datetime?] - 124 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time4.made.WHAT ~~ DateTime
         ┃   Success   ┃
@@ -1463,9 +2051,21 @@ subtest({
         $match-date-time5.made.WHAT,
         DateTime,
         q:to/EOF/
-        ♪ [Is datetime?] - 86 of 93
+        ♪ [Is datetime?] - 125 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time5.made.WHAT ~~ DateTime
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-date-time6.made.WHAT,
+        DateTime,
+        q:to/EOF/
+        ♪ [Is datetime?] - 126 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-date-time6.made.WHAT ~~ DateTime
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1475,9 +2075,33 @@ subtest({
         $match-full-date1.made.WHAT,
         Date,
         q:to/EOF/
-        ♪ [Is datetime?] - 87 of 93
+        ♪ [Is datetime?] - 127 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-full-date1.made.WHAT ~~ Date
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time1.made.WHAT,
+        Hash,
+        q:to/EOF/
+        ♪ [Is datetime?] - 128 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-partial-time1.made.WHAT ~~ Hash
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time2.made.WHAT,
+        Hash,
+        q:to/EOF/
+        ♪ [Is datetime?] - 129 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-partial-time2.made.WHAT ~~ Hash
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1488,7 +2112,7 @@ subtest({
         $match-date-time1.made,
         '1979-05-27T07:32:00Z',
         q:to/EOF/
-        ♪ [Is expected datetime value?] - 88 of 93
+        ♪ [Is expected datetime value?] - 130 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time1.made
         ┃   Success   ┃        ~~ '1979-05-27T07:32:00Z'
@@ -1500,7 +2124,7 @@ subtest({
         $match-date-time2.made,
         '1979-05-27T00:32:00-07:00',
         q:to/EOF/
-        ♪ [Is expected datetime value?] - 89 of 93
+        ♪ [Is expected datetime value?] - 131 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time2.made
         ┃   Success   ┃        ~~ '1979-05-27T00:32:00-07:00'
@@ -1512,7 +2136,7 @@ subtest({
         $match-date-time3.made,
         '1979-05-27T00:32:00.999999-07:00',
         q:to/EOF/
-        ♪ [Is expected datetime value?] - 90 of 93
+        ♪ [Is expected datetime value?] - 132 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time3.made
         ┃   Success   ┃        ~~ '1979-05-27T00:32:00.999999-07:00'
@@ -1524,7 +2148,7 @@ subtest({
         $match-date-time4.made,
         '1979-05-27T07:32:00Z',
         q:to/EOF/
-        ♪ [Is expected datetime value?] - 91 of 93
+        ♪ [Is expected datetime value?] - 133 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time4.made
         ┃   Success   ┃        ~~ '1979-05-27T07:32:00Z'
@@ -1536,7 +2160,7 @@ subtest({
         $match-date-time5.made,
         '1979-05-27T00:32:00.999999Z',
         q:to/EOF/
-        ♪ [Is expected datetime value?] - 92 of 93
+        ♪ [Is expected datetime value?] - 134 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-date-time5.made
         ┃   Success   ┃        ~~ '1979-05-27T00:32:00.999999Z'
@@ -1545,12 +2169,96 @@ subtest({
         EOF
     );
     is(
+        $match-date-time6.made,
+        '1979-05-27T07:32:00Z',
+        q:to/EOF/
+        ♪ [Is expected datetime value?] - 135 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-date-time6.made
+        ┃   Success   ┃        ~~ '1979-05-27T07:32:00Z'
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
         $match-full-date1.made,
         '1979-05-27',
         q:to/EOF/
-        ♪ [Is expected full date value?] - 93 of 93
+        ♪ [Is expected full date value?] - 136 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-full-date1.made ~~ '1979-05-27'
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time1.made<hour>,
+        7,
+        q:to/EOF/
+        ♪ [Is expected partial time value?] - 137 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-partial-time1.made<hour> ~~ 7
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time1.made<minute>,
+        32,
+        q:to/EOF/
+        ♪ [Is expected partial time value?] - 138 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-partial-time1.made<minute> ~~ 32
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time1.made<second>,
+        0.0,
+        q:to/EOF/
+        ♪ [Is expected partial time value?] - 139 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-partial-time1.made<second> ~~ 0.0
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time2.made<hour>,
+        0,
+        q:to/EOF/
+        ♪ [Is expected partial time value?] - 140 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-partial-time2.made<hour> ~~ 0
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time2.made<minute>,
+        32,
+        q:to/EOF/
+        ♪ [Is expected partial time value?] - 141 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-partial-time2.made<minute> ~~ 32
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        $match-partial-time2.made<second>,
+        0.999999,
+        q:to/EOF/
+        ♪ [Is expected partial time value?] - 142 of 142
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ $match-partial-time2.made<second> ~~ 0.999999
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
