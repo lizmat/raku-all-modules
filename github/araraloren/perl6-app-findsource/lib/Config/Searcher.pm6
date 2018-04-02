@@ -18,31 +18,31 @@ class Config {
 }
 
 sub determind-local-path() is export {
-	given $*KERNEL {
-		when /win32/ {
-			return $*HOME.add('AppData/Local/');
-		}
-		default {
-			return $*HOME.add('.config/');
-		}
-	}
+    given $*KERNEL {
+        when /win32/ {
+            return $*HOME.add('AppData/Local/');
+        }
+        default {
+            return $*HOME.add('.config/');
+        }
+    }
 }
 
 class ConfigSearcher {
     has $.path;
     has $.name is required;
     has @.config;
-	has $!config-path;
+    has $!config-path;
 
     submethod TWEAK(:$path, :$create-if-not-exists) {
         $!path = $path.defined ?? $path.IO !! &determind-local-path();
-		$!config-path = $!path.add($!name);
-		$!config-path.mkdir if $create-if-not-exists && ! $!config-path.e;
+        $!config-path = $!path.add($!name);
+        $!config-path.mkdir if $create-if-not-exists && ! $!config-path.e;
     }
 
-	method e() {
-		return $!config-path ~~ :e;
-	}
+    method e() {
+        return $!config-path ~~ :e;
+    }
 
     multi method search() {
         self!do-search({ $_ ne "." && $_ ne ".." });
