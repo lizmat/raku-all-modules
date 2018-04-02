@@ -3,7 +3,7 @@ use PDF::API6;
 use PDF::Page;
 
 my PDF::API6 $pdf .= new;
-$pdf.preferences: :hide-toolbar, :first-page{ :$page, :fit };
+use PDF::Destination :Fit;
 
 for 1..2 -> $page-no {
     my PDF::Page $page = $pdf.add-page;
@@ -15,12 +15,13 @@ for 1..2 -> $page-no {
         .say: "Page $page-no/2";
         .say;
         .say: "This PDF have preferences:";
-        .say: " :hide-toolbar (toolbar should not appear in reader)";
-        .say: " :page(2)      (document should open on page 2)";
-        .say: " :fit          (contents should scale to fit window)";
+        .say: " :hide-toolbar    (toolbar should not appear in reader)";
+        .say: " :page(2)         (document should open on page 2)";
+        .say: " :fit(FitWindow)  (contents should scale to fit window)";
     }
 }
 
+$pdf.preferences: :hide-toolbar, :start{ :page(2), :fit(FitWindow) };
 $pdf.save-as: "preferences.pdf";
 
 

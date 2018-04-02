@@ -3,11 +3,12 @@ use Test;
 use PDF::Grammar::Test :is-json-equiv;
 plan 10;
 use PDF::API6;
+use PDF::Destination :Fit;
 constant PageLabel = PDF::API6::PageLabel;
 
 my PDF::API6 $pdf .= new;
 my $page = $pdf.add-page;
-$pdf.preferences: :hide-toolbar, :first-page{ :page(1), :fit };
+$pdf.preferences: :hide-toolbar, :open{ :page(1), :fit(FitWindow) };
 my $catalog = $pdf.Root;
 
 is $catalog.PageLayout, 'SinglePage', 'PageLayout';

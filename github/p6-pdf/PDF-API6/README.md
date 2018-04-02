@@ -854,7 +854,8 @@ Example:
 
 ### preferences
 
-    $pdf.preferences: :hide-toolbar, :first-page{ :page(2), :fit };
+    use PDF::Destination :Fit;
+    $pdf.preferences: :hide-toolbar, :start{ :page(2), :fit(FitWindow) };
 
 Controls viewing preferences for the PDF. Options are:
 
@@ -951,14 +952,14 @@ Print duplex by default and flip on the short edge of the sheet.
 
 Print duplex by default and flip on the long edge of the sheet.
 
-#### `:firstpage{ :$page, *%options }`
+#### `:start{ :$page, *%options }`
 
 Specifying the page (either a page number or a page object) to be
-displayed, plus one of the following options:
+displayed by a PDF viewer, plus one of the following options:
 
-#### `:firstpage` Options:
+#### `:start` Options:
 
-##### `:fit`
+##### `:fit(FitWindow)`
 
 Display the page designated by page, with its contents magnified just
 enough to fit the entire page within the window both horizontally and
@@ -966,21 +967,21 @@ vertically. If the required horizontal and vertical magnification
 factors are different, use the smaller of the two, centering the page
 within the window in the other dimension.
 
-##### `:fith($top)`
+##### `:fit(FitHoriz), :$top`
 
 Display the page designated by page, with the vertical coordinate top
 positioned at the top edge of the window and the contents of the page
 magnified just enough to fit the entire width of the page within the
 window.
 
-##### `:fitv($left)`
+##### `:fit(FitVert), :$left`
 
 Display the page designated by page, with the horizontal coordinate
 left positioned at the left edge of the window and the contents of the
 page magnified just enough to fit the entire height of the page within
 the window.
 
-##### `:fitr[ $left, $bottom, $right, $top ]`
+##### `:fit(FitRect), :$left, :$bottom, :$right, :$top`
 
 Display the page designated by page, with its contents magnified just
 enough to fit the rectangle specified by the coordinates left, bottom,
@@ -989,7 +990,7 @@ vertically. If the required horizontal and vertical magnification
 factors are different, use the smaller of the two, centering the
 rectangle within the window in the other dimension.
 
-##### `:fitb`
+##### `:fit(FitBoxHoriz), :$top`
 
 Display the page designated by page, with its contents magnified just
 enough to fit its bounding box entirely within the window both
@@ -997,21 +998,21 @@ horizontally and vertically. If the required horizontal and vertical
 magnification factors are different, use the smaller of the two,
 centering the bounding box within the window in the other dimension.
 
-##### `:fitbh($top)`
+##### `:fit(FitBox)`
 
 Display the page designated by page, with the vertical coordinate top
 positioned at the top edge of the window and the contents of the page
 magnified just enough to fit the entire width of its bounding box
 within the window.
 
-##### `:fitbv($left)`
+##### `:fit(FitBoxVert), :$left`
 
 Display the page designated by page, with the horizontal coordinate
 left positioned at the left edge of the window and the contents of the
 page magnified just enough to fit the entire height of its bounding
 box within the window.
 
-##### `:xyz[ $left, $top, $zoom ]`
+##### `:fit(FitXYZoom), :$left, :$top, :$zoom`
 
 Display the page designated by page, with the coordinates (left, top)
 positioned at the top-left corner of the window and the contents of
@@ -1081,7 +1082,7 @@ TextMatrix | Tm | Text transformation matrix | [1,0,0,1,0,0] | `use PDF::Content
 CharSpacing | Tc | Character spacing adjustment | 0.0 | `.CharSpacing = 1.0`
 WordSpacing | Tw | Word spacing adjustment | 0.0 | `.WordSpacing = 2.5`
 HorizScaling | Th | Horizontal scaling (percent) | 100 | `.HorizScaling = 150`
-TextLeading | Tl | Line height | 0.0 | `.TextLeading = 12;`
+TextLeading | Tl | Text line height | 0.0 | `.TextLeading = 12;`
 Font | [Tf, Tfs] | Text font and size | | `.font = [ .core-font( :family<Helvetica> ), 12 ]`
 TextRender | Tmode | Text rendering mode | 0 | `.TextRender = TextMode::OutlineText`
 TextRise | Trise | Text rise | 0.0 | `.TextRise = 3`

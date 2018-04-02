@@ -9,6 +9,7 @@ class PDF::API6:ver<0.1.0>
     use PDF::Info;
     use PDF::Metadata::XML;
     use PDF::Page;
+    use PDF::Destination :Fit;
 
     sub nums($a, Int $n) {
         with $a {
@@ -33,20 +34,13 @@ class PDF::API6:ver<0.1.0>
         Str  :$direction where 'r2l'|'l2r'|!.defined,
         Str  :$page-mode where 'fullscreen'|'thumbs'|'outlines'|'none' = 'none';
         Str  :$page-layout where 'single-page'|'one-column'|'two-column-left'|'two-column-right' = 'single-page';
-        Str :$after-fullscreen where 'thumbs'|'outlines'|'none'='none',
-        Str :$print-scaling where 'none'|!.defined,
-        Str :$duplex where 'simplex'|'flip-long-edge'|'flip-short-edge'|!.defined,
-        :%first-page (
-            PageRef :$page,
-            Bool    :$fit,
-            Numeric :$fith,
-            Bool    :$fitb,
-            Numeric :$fitbh,
-            Numeric :$fitv,
-            Numeric :$fitbv,
-            List    :$fitr where nums($_, 4),
-            List    :$xyz where nums($_, 3),
-        ) where { .keys == 0 || .<page> }
+        Str  :$after-fullscreen where 'thumbs'|'outlines'|'none'='none',
+        Str  :$print-scaling where 'none'|!.defined,
+        Str  :$duplex where 'simplex'|'flip-long-edge'|'flip-short-edge'|!.defined,
+        :%start (
+            PageRef :$page is copy = 1,
+            :$fit = FitWindow,
+        ),
         ) {
         my PDF::Catalog $catalog = $.catalog;
 
@@ -77,53 +71,16 @@ class PDF::API6:ver<0.1.0>
             $p.Direction = $p.uc with $direction;
             $p.NonFullScreenPageMode = %PageModes{$after-fullscreen};
             $p.PrintScaling = 'None' if $print-scaling ~~ 'none';
-            with $duplex -> $dpx {
+            with $duplex {
                 $p.Duplex = %(
                       :simplex<Simplex>,
                       :flip-long-edge<DuplexFlipLongEdge>,
                       :flip-short-edge<DuplexFlipShortEdge>,
-                    ){$dpx};
+                    ){$_};
             }
         }
-        if $page {
-            my $page-ref = $page ~~ Numeric
-                ?? self.page($page)
-                !! $page;
-            my $open-action = [$page-ref];
-            with $open-action {
-                when $fit   { .push: to-name('Fit') }
-                when $fith  { .push($fith) }
-                when $fitb  { .push: to-name('FitB') }
-                when $fitbh {
-                    .push: to-name('FitBH');
-                    .push: $fitbh;
-                }
-                when $fitv {
-                    .push: to-name('FitV');
-                    .push: $fitv;
-                }
-                when $fitbv {
-                    .push: to-name('FitBV');
-                    .push: $fitbv;
-                }
-                when $fitr {
-                    .push: to-name('FitR');
-                    for $fitr.list -> $v {
-                        .push: $v;
-                    }
-                }
-                when $xyz {
-                    .push: to-name('XYZ');
-                    for $xyz.list -> $v {
-                        .push: $v;
-                    }
-                }
-                default {
-                    .push: to-name('Fit');
-                }
-            }
-            $catalog.OpenAction = $open-action;
-        }
+        $page = self.page($page) if $page ~~ Numeric;
+        $catalog.OpenAction = PDF::Destination.construct($fit, |%start, :$page);
     }
 
     method is-encrypted { ? self.Encrypt }
@@ -148,7 +105,7 @@ class PDF::API6:ver<0.1.0>
             when 'style'  { S  => to-name($l{$_}.Str) }
             when 'start'  { St => $l{$_}.Int }
             when 'prefix' { P  => to-name($l{$_}.Str) }
-            default { warn "ignoring PageLabel field: $_" } 
+            default { warn "ignoring PageLabel field: $_" }
         }
     }
 
