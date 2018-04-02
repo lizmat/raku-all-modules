@@ -1,0 +1,102 @@
+Revision history for Algorithm-MinMaxHeap
+
+0.13.3  2018-04-02T00:44:04+09:00
+    - Fixes:
+        - Fix META6.json
+    - Additions:
+    - Efficiency:
+
+0.13.2
+    - Fixes:
+        - Improve the documentation
+        - Fix insertion tests
+    - Additions:
+    - Efficiency:
+
+0.13.1
+    - Fixes:
+        - Improve the documentation
+        - Fix insertion tests
+    - Additions:
+    - Efficiency:
+
+v0.13
+    - Fixes:
+        - [API Breaking Change] Use role Algorithm::MinMaxHeap instead of class Algorithm::MinMaxHeap
+        - Improve the documentation
+        - Make it more Perl6ish
+    - Additions:
+        - Introduced semantic versioning (v0.12 is the previous version)
+    - Efficiency:
+
+v0.12
+    - Fixes:
+        - Improve META6.json
+    - Make constructors more Perl6ish internally
+    - Additions:
+    - Efficiency:
+
+v0.11
+    - Fixes:
+        - Improve the documentation
+    - Additions:
+    - Efficiency:
+
+v0.10
+    - Fixes:
+        - Fix author info
+    - Additions:
+    - Efficiency:
+
+v0.09
+    - Fixes:
+        - Additions:
+    - Add type Real as insertion candidates
+    - Efficiency:
+
+v0.08
+    - Fixes:
+        - Fix clone method so that it handles Algorithm::MinMaxHeap::Comparable correctly.
+    - Additions:
+    - Efficiency:
+
+v0.07
+    - Fixes:
+        - Improve clone method
+    - Additions:
+    - Efficiency:
+
+v0.06
+    - Fixes:
+        - Fix type check bug
+    - Additions:
+    - Efficiency:
+
+v0.05
+    - Fixes:
+        - Improve the documentation
+    - Additions:
+        - Add clear method
+    - Efficiency:
+
+v0.04
+    - Fixes:
+        - Improve the documentation
+    - Additions:
+    - Efficiency:
+
+v0.03
+    - Fixes:
+        - Improve the documentation
+    - Additions:
+        - Make it enable to insert user-defined class instances
+    - Efficiency:
+
+v0.02
+    - Fixes:
+        - Fix author info
+    - Additions:
+    - Efficiency:
+
+v0.01
+    - Initial commit
