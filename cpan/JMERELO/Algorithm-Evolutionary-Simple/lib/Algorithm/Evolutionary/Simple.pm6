@@ -1,6 +1,6 @@
 use v6.c;
 
-unit class Algorithm::Evolutionary::Simple:ver<0.0.3.1>;
+unit class Algorithm::Evolutionary::Simple:ver<0.0.4>;
 
 sub random-chromosome( UInt $length ) is export {
     return Bool.pick() xx $length;
@@ -17,6 +17,10 @@ sub initialize( UInt :$size,
 
 sub max-ones( @chromosome ) is export {
     return @chromosome.sum;
+}
+
+sub royal-road( @chromosome ) is export {
+    return @chromosome.rotor(4).grep( so (*.all == True|False) ).elems;
 }
 
 sub evaluate( :@population,
@@ -127,6 +131,10 @@ Generates a random chromosome
 =head2 max-ones( @chromosome )
 
 Returns the number of trues or ones in the chromosome
+
+=head2 royal-road( @chromosome )
+
+That's a bumpy road, returns 1 for each block of 4 which has the same true or false value.
 
 =head2 evaluate( :@population,
 		 :%fitness-of,

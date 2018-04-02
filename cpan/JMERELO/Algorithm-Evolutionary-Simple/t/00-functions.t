@@ -15,7 +15,6 @@ my $number-ones = reduce { $^b + $^a }, 0, |@χ;
 
 cmp-ok( max-ones( @χ ), "==", $number-ones, "Max ones correct");
 
-
 my $population-size = 32;
 my @initial-population;
 for 1..$population-size -> $p {

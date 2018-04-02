@@ -37,6 +37,11 @@ max-ones( @chromosome )
 
 Returns the number of trues or ones in the chromosome
 
+royal-road( @chromosome )
+-------------------------
+
+That's a bumpy road, returns 1 for each block of 4 which has the same true or false value.
+
 evaluate( :@population, :%fitness-of, :$evaluator --> Bag ) is export
 ---------------------------------------------------------------------
 
