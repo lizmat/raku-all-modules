@@ -1,29 +1,27 @@
 use v6;
 use lib 'lib';
-use Test;
 use TXN::Parser::Grammar;
+use lib 't/lib';
+use TXNParserTest;
+use Test;
 
 plan(4);
 
 # date grammar tests {{{
 
 subtest({
-    my Str @dates =
+    my Str @date =
         Q{2014-01-01},
         Q{2014-01-01T08:48:00Z},
         Q{2014-01-01T08:48:00},
         Q{2014-01-01T08:48:00-07:00},
         Q{2014-01-01T08:48:00},
-        Q{2014-01-01T08:48:00.99999-07:00};
-        Q{2014-01-01T08:48:00.99999};
-
-    sub is-valid-date(Str:D $date --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($date, :rule<date>).so;
-    }
+        Q{2014-01-01T08:48:00.99999-07:00},
+        Q{2014-01-01T08:48:00.99999},
+        Q{2014-01-01 08:48:00Z};
 
     ok(
-        @dates.grep({is-valid-date($_)}).elems == @dates.elems,
+        @date.grep({ is-valid-date($_) }).elems == @date.elems,
         q:to/EOF/
         ♪ [Grammar.parse($date, :rule<date>)] - 1 of 8
         ┏━━━━━━━━━━━━━┓
@@ -42,6 +40,7 @@ subtest({
     my Str @metainfo =
         Q{#tag1 ! #TAG2 !! #TAG5 #bliss !!!!!},
         Q{#"∅" !! #96 !!!!};
+
     my Str $metainfo-multiline = Q:to/EOF/.trim;
     !!!-- comment
     #tag1 -- comment
@@ -51,15 +50,11 @@ subtest({
     #tag3--comment
     !!!!!
     EOF
+
     push(@metainfo, $metainfo-multiline);
 
-    sub is-valid-metainfo(Str:D $metainfo --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($metainfo, :rule<metainfo>).so;
-    }
-
     ok(
-        @metainfo.grep({is-valid-metainfo($_)}).elems == @metainfo.elems,
+        @metainfo.grep({ is-valid-metainfo($_) }).elems == @metainfo.elems,
         q:to/EOF/
         ♪ [Grammar.parse($metainfo, :rule<metainfo>)] - 2 of 8
         ┏━━━━━━━━━━━━━┓
@@ -75,28 +70,25 @@ subtest({
 # description grammar tests {{{
 
 subtest({
-    my Str @descriptions =
+    my Str @description =
         Q{"Transaction\tDescription"},
         Q{"""Transaction\nDescription"""},
         Q{'Transaction Description\'};
         Q{'''Transaction Description\'''};
+
     my Str $description-multiline = Q:to/EOF/.trim;
     """
     Multiline description line one. \
     Multiline description line two.
     """
     EOF
-    push(@descriptions, $description-multiline);
 
-    sub is-valid-description(Str:D $description --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($description, :rule<description>).so;
-    }
+    push(@description, $description-multiline);
 
     ok(
-        @descriptions
-            .grep({is-valid-description($_)})
-            .elems == @descriptions.elems,
+        @description
+            .grep({ is-valid-description($_) })
+            .elems == @description.elems,
         q:to/EOF/
         ♪ [Grammar.parse($description, :rule<description>)] - 3 of 8
         ┏━━━━━━━━━━━━━┓
@@ -112,7 +104,7 @@ subtest({
 # header grammar tests {{{
 
 subtest({
-    my Str @headers =
+    my Str @header =
         qq{2014-01-01 "I started with 1000 USD" ! #TAG1 #TAG2 -- COMMENT\n},
         qq{2014-01-02 "I paid Exxon Mobile 10 USD"\n},
         qq{2014-01-02\n},
@@ -137,7 +129,7 @@ subtest({
     EOF
 
     is(
-        TXN::Parser::Grammar.parse(@headers[0], :rule<header>).WHAT,
+        TXN::Parser::Grammar.parse(@header[0], :rule<header>).WHAT,
         TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 4 of 8
@@ -150,7 +142,7 @@ subtest({
     );
 
     is(
-        TXN::Parser::Grammar.parse(@headers[1], :rule<header>).WHAT,
+        TXN::Parser::Grammar.parse(@header[1], :rule<header>).WHAT,
         TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 5 of 8
@@ -163,7 +155,7 @@ subtest({
     );
 
     is(
-        TXN::Parser::Grammar.parse(@headers[2], :rule<header>).WHAT,
+        TXN::Parser::Grammar.parse(@header[2], :rule<header>).WHAT,
         TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 6 of 8
@@ -176,7 +168,7 @@ subtest({
     );
 
     is(
-        TXN::Parser::Grammar.parse(@headers[3], :rule<header>).WHAT,
+        TXN::Parser::Grammar.parse(@header[3], :rule<header>).WHAT,
         TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 7 of 8

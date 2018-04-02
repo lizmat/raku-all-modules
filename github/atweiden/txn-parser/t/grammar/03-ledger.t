@@ -1,14 +1,16 @@
 use v6;
 use lib 'lib';
-use Test;
 use TXN::Parser::Grammar;
+use lib 't/lib';
+use TXNParserTest;
+use Test;
 
 plan(3);
 
 # include grammar tests {{{
 
 subtest({
-    my Str @include-lines =
+    my Str @include-line =
         Q:to/EOF/.trim,
         include 'includes/2014'
         EOF
@@ -34,15 +36,10 @@ subtest({
         include <includes\\/\>・ï\/©ㄦﬁ>
         EOF
 
-    sub is-valid-include-line(Str:D $include-line --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($include-line, :rule<include-line>).so;
-    }
-
     ok(
-        @include-lines
-            .grep({is-valid-include-line($_)})
-            .elems == @include-lines.elems,
+        @include-line
+            .grep({ is-valid-include-line($_) })
+            .elems == @include-line.elems,
         q:to/EOF/
         ♪ [Grammar.parse($include-line, :rule<include-line>)] - 1 of 4
         ┏━━━━━━━━━━━━━┓
@@ -58,7 +55,7 @@ subtest({
 # entry grammar tests {{{
 
 subtest({
-    my Str @entries =
+    my Str @entry =
         Q:to/EOF/.trim,
         2015-01-01--comment
           ASSETS."∅"."First Bank Checking"  $440.00 USD
@@ -92,13 +89,8 @@ subtest({
         Expenses:Business:Cats      $1200.00 USD
         EOF
 
-    sub is-valid-entry(Str:D $entry --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($entry, :rule<entry>).so;
-    }
-
     ok(
-        @entries.grep({is-valid-entry($_)}).elems == @entries.elems,
+        @entry.grep({ is-valid-entry($_) }).elems == @entry.elems,
         q:to/EOF/
         ♪ [Grammar.parse($entry, :rule<entry>)] - 2 of 4
         ┏━━━━━━━━━━━━━┓

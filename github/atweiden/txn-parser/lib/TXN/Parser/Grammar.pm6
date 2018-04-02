@@ -48,11 +48,11 @@ token string-basic-text
 
 proto token string-basic-char {*}
 
+# anything but linebreaks, double-quotes, backslashes and control
+# characters (U+0000 to U+001F, U+007F)
 token string-basic-char:common
 {
-    # anything but linebreaks, double-quotes, backslashes and control
-    # characters (U+0000 to U+001F)
-    <+[\N] -[\" \\] -[\x00..\x1F]>
+    <+[\N] -[\" \\] -[\x00..\x1F] -[\x7F]>
 }
 
 token string-basic-char:tab
@@ -60,9 +60,9 @@ token string-basic-char:tab
     \t
 }
 
+# backslash followed by a valid (TOML) escape code, or error
 token string-basic-char:escape-sequence
 {
-    # backslash followed by a valid (TOML) escape code, or error
     \\
     [
         <escape>
@@ -96,9 +96,10 @@ token escape:sym<backslash> { \\ }
 token escape:sym<u> { <sym> <hex> ** 4 }
 token escape:sym<U> { <sym> <hex> ** 8 }
 
+# Hex values are case insensitive.
 token hex
 {
-    <[0..9A..F]>
+    :i <[0..9A..F]>
 }
 
 token string-basic-multiline
@@ -114,10 +115,9 @@ token string-basic-multiline-delimiter
     '"""'
 }
 
+# A newline immediately following the opening delimiter will be trimmed.
 token string-basic-multiline-leading-newline
 {
-    # A newline immediately following the opening delimiter will be
-    # trimmed.
     \n
 }
 
@@ -128,11 +128,11 @@ token string-basic-multiline-text
 
 proto token string-basic-multiline-char {*}
 
+# anything but delimiters ("""), backslashes and control characters
+# (U+0000 to U+001F, U+007F)
 token string-basic-multiline-char:common
 {
-    # anything but delimiters ("""), backslashes and control characters
-    # (U+0000 to U+001F)
-    <-string-basic-multiline-delimiter -[\\] -[\x00..\x1F]>
+    <-string-basic-multiline-delimiter -[\\] -[\x00..\x1F] -[\x7F]>
 }
 
 token string-basic-multiline-char:tab
@@ -145,14 +145,15 @@ token string-basic-multiline-char:newline
     \n+
 }
 
+# backslash followed by either a valid (TOML) escape code or linebreak
+# with optional leading horizontal whitespace, else error
 token string-basic-multiline-char:escape-sequence
 {
-    # backslash followed by either a valid (TOML) escape code or
-    # linebreak, else error
     \\
     [
         [
-            <escape> | $$ <ws-remover>
+            | <escape>
+            | \h* $$ <ws-remover>
         ]
 
         ||
@@ -162,12 +163,12 @@ token string-basic-multiline-char:escape-sequence
     ]
 }
 
+# For writing long strings without introducing extraneous whitespace,
+# end a line with a \. The \ will be trimmed along with all whitespace
+# (including newlines) up to the next non-whitespace character or
+# closing delimiter.
 token ws-remover
 {
-    # For writing long strings without introducing extraneous whitespace,
-    # end a line with a \. The \ will be trimmed along with all whitespace
-    # (including newlines) up to the next non-whitespace character or
-    # closing delimiter.
     \n+\s*
 }
 
@@ -186,11 +187,11 @@ token string-literal-text
 
 proto token string-literal-char {*}
 
+# anything but linebreaks and single quotes
+# Since there is no escaping, there is no way to write a single quote
+# inside a literal string enclosed by single quotes.
 token string-literal-char:common
 {
-    # anything but linebreaks and single quotes
-    # Since there is no escaping, there is no way to write a single
-    # quote inside a literal string enclosed by single quotes.
     <+[\N] -[\']>
 }
 
@@ -212,10 +213,9 @@ token string-literal-multiline-delimiter
     \'\'\'
 }
 
+# A newline immediately following the opening delimiter will be trimmed.
 token string-literal-multiline-leading-newline
 {
-    # A newline immediately following the opening delimiter will be
-    # trimmed.
     \n
 }
 
@@ -226,9 +226,9 @@ token string-literal-multiline-text
 
 proto token string-literal-multiline-char {*}
 
+# anything but delimiters (''') and backslashes
 token string-literal-multiline-char:common
 {
-    # anything but delimiters (''') and backslashes
     <-string-literal-multiline-delimiter -[\\]>
 }
 
@@ -276,13 +276,15 @@ token txnlib-string-text
 
 proto token txnlib-string-char {*}
 
+# anything but newlines, horizontal whitespace, path divisor,
+# right-delimiter or backslash
 token txnlib-string-char:common
 {
-    <+[\N]                          # anything but newlines
-     -[\h]                          # exclude horizontal whitespace
-     -txnlib-string-path-divisor    # exclude path divisor
-     -txnlib-string-delimiter-right # exclude right delimiter
-     -[\\]>                         # exclude backslash
+    <+[\N]
+     -[\h]
+     -txnlib-string-path-divisor
+     -txnlib-string-delimiter-right
+     -[\\]>
 }
 
 proto token txnlib-escape {*}
@@ -291,9 +293,9 @@ token txnlib-escape:sym<delimiter-right> { <txnlib-string-delimiter-right> }
 token txnlib-escape:sym<horizontal-ws> { \h }
 token txnlib-escape:sym<path-divisor> { <txnlib-string-path-divisor> }
 
+# backslash followed by a valid escape code else error
 token txnlib-string-char:escape-sequence
 {
-    # backslash followed by a valid escape code else error
     \\
     [
         <txnlib-escape>
@@ -329,26 +331,19 @@ token integer-unsigned
     <whole-number>
 }
 
+# Leading zeros are not allowed.
 token whole-number
 {
-    0
-
-    |
-
-    # Leading zeros are not allowed.
-    <[1..9]> [ '_'? <.digits> ]?
+    | 0
+    | <[1..9]> [ '_'? <.digits> ]?
 }
 
+# For large numbers, you may use underscores to enhance readability. Each
+# underscore must be surrounded by at least one digit.
 token digits
 {
-    \d+
-
-    |
-
-    # For large numbers, you may use underscores to enhance
-    # readability. Each underscore must be surrounded by at least
-    # one digit.
-    \d+ '_' <.digits>
+    | \d+
+    | \d+ '_' <.digits>
 }
 
 token float
@@ -391,17 +386,21 @@ token date-fullyear
 
 token date-month
 {
-    0 <[1..9]> | 1 <[0..2]>
+    | 0 <[1..9]>
+    | 1 <[0..2]>
 }
 
 token date-mday
 {
-    0 <[1..9]> | <[1..2]> \d | 3 <[0..1]>
+    | 0 <[1..9]>
+    | <[1..2]> \d
+    | 3 <[0..1]>
 }
 
 token time-hour
 {
-    <[0..1]> \d | 2 <[0..3]>
+    | <[0..1]> \d
+    | 2 <[0..3]>
 }
 
 token time-minute
@@ -409,11 +408,12 @@ token time-minute
     <[0..5]> \d
 }
 
+# The grammar element time-second may have the value "60" at the end of
+# months in which a leap second occurs.
 token time-second
 {
-    # The grammar element time-second may have the value "60" at the end
-    # of months in which a leap second occurs.
-    <[0..5]> \d | 60
+    | <[0..5]> \d
+    | 60
 }
 
 token time-secfrac
@@ -428,7 +428,8 @@ token time-numoffset
 
 token time-offset
 {
-    <[Zz]> | <time-numoffset>
+    | <[Zz]>
+    | <time-numoffset>
 }
 
 token partial-time
@@ -448,12 +449,12 @@ token full-time
 
 token date-time
 {
-    <full-date> <[Tt]> <full-time>
+    <full-date> <[Tt\h]> <full-time>
 }
 
 token date-time-omit-local-offset
 {
-    <full-date> <[Tt]> <partial-time>
+    <full-date> <[Tt\h]> <partial-time>
 }
 
 # end datetime grammar }}}
@@ -531,9 +532,9 @@ token posting
 
 # --- --- posting account grammar {{{
 
+# silo and entity are required, path is optional
 token account
 {
-    # silo and entity are required, path is optional
     <silo> <account-delimiter> <entity=.var-name>
     [ <account-delimiter> <account-path=.account-name> ]?
 }
@@ -554,7 +555,9 @@ token silo:expenses
 
 token silo:income
 {
-    :i income | revenue[s]?
+    :i
+    | income
+    | revenue[s]?
     { $silo = INCOME }
 }
 
@@ -586,27 +589,24 @@ token account-name
 token amount
 {
     # -$100.00 USD
-    <plus-or-minus>? <asset-symbol>? <asset-quantity> \h+ <asset-code>
-
-    |
-
+    | <plus-or-minus>? <asset-symbol>? <asset-quantity> \h+ <asset-code>
     # USD -$100.00
-    <asset-code> \h+ <plus-or-minus>? <asset-symbol>? <asset-quantity>
+    | <asset-code> \h+ <plus-or-minus>? <asset-symbol>? <asset-quantity>
 }
 
 proto token asset-code {*}
 token asset-code:bare { <:Letter>+ }
 token asset-code:quoted { <var-name-string> }
 
+# any char excluding digits, plus signs, whitespace or unicode punctuation
+# less periods and slashes (some currencies use these)
+#
+# unicode punctuation is any character from the Unicode General Category
+# "Punctuation": https://www.fileformat.info/info/unicode/category/index.htm
+#
 # e.g. http://www.xe.com/symbols.php
 token asset-symbol
 {
-    # any char excluding digits, plus signs, whitespace or unicode
-    # punctuation less periods and slashes (some currencies use these)
-    #
-    # unicode punctuation is any character from the Unicode General
-    # Category "Punctuation":
-    # https://www.fileformat.info/info/unicode/category/index.htm
     <+[\D] -[+] -[\s] -punct +[./]>+
 }
 
@@ -698,12 +698,9 @@ token xe-symbol-char { '@' }
 token xe-rate
 {
     # $830.024 USD
-    <asset-symbol>? <asset-price> \h+ <asset-code>
-
-    |
-
+    | <asset-symbol>? <asset-price> \h+ <asset-code>
     # USD $830.024
-    <asset-code> \h+ <asset-symbol>? <asset-price>
+    | <asset-code> \h+ <asset-symbol>? <asset-price>
 }
 
 proto token asset-price {*}

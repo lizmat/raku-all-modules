@@ -1,14 +1,16 @@
 use v6;
 use lib 'lib';
-use Test;
 use TXN::Parser::Grammar;
+use lib 't/lib';
+use TXNParserTest;
+use Test;
 
 plan(7);
 
 # posting account grammar tests {{{
 
 subtest({
-    my Str @accounts =
+    my Str @account =
         Q{assets.personal.co-ro-na.coolers},
         Q{AsSeTs:Business:Cats},
         Q{ASSETS:Arnelies:Barbells},
@@ -25,13 +27,8 @@ subtest({
         Q{EqUItY:"Moon Crow"},
         Q{EQUITY.Business};
 
-    sub is-valid-account(Str:D $account --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($account, :rule<account>).so;
-    }
-
     ok(
-        @accounts.grep({is-valid-account($_)}).elems == @accounts.elems,
+        @account.grep({ is-valid-account($_) }).elems == @account.elems,
         q:to/EOF/
         ♪ [Grammar.parse($account, :rule<account>)] - 1 of 9
         ┏━━━━━━━━━━━━━┓
@@ -51,17 +48,9 @@ subtest({
 subtest({
     my Str @plus-or-minus = Q{+}, Q{-};
 
-    sub is-valid-plus-or-minus(Str:D $plus-or-minus --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse(
-            $plus-or-minus,
-            :rule<plus-or-minus>
-        ).so;
-    }
-
     ok(
         @plus-or-minus
-            .grep({is-valid-plus-or-minus($_)})
+            .grep({ is-valid-plus-or-minus($_) })
             .elems == @plus-or-minus.elems,
         q:to/EOF/
         ♪ [Grammar.parse($plus-or-minus, :rule<plus-or-minus>)] - 2 of 9
@@ -153,27 +142,14 @@ subtest({
         silver-ounce                   => Qw{XAG XAG},
         costa-rican-colon              => Qw{CRC ₡};
 
-    my Str @quoted-asset-codes =
+    my Str @quoted-asset-code =
         Q{"Honda S2000 VIN JHLRE4H73AC092103"},
         Q{"The House at 178 Blue Kodiak Trail"},
         Q{"Widget:Bobblehead #88"};
 
-    sub is-valid-asset-code(Str:D $asset-code --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($asset-code, :rule<asset-code>).so;
-    }
-
-    sub is-valid-asset-symbol(Str:D $asset-symbol --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse(
-            $asset-symbol,
-            :rule<asset-symbol>
-        ).so;
-    }
-
     ok(
         %asset-code-symbol
-            .grep({is-valid-asset-code(.values[0][0])})
+            .grep({ is-valid-asset-code(.values.first.first) })
             .elems == %asset-code-symbol.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 3 of 9
@@ -187,7 +163,7 @@ subtest({
 
     ok(
         %asset-code-symbol
-            .grep({is-valid-asset-symbol(.values[0][1])})
+            .grep({ is-valid-asset-symbol(.values.first.tail) })
             .elems == %asset-code-symbol.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-symbol, :rule<asset-symbol>)] - 4 of 9
@@ -200,9 +176,9 @@ subtest({
     );
 
     ok(
-        @quoted-asset-codes
-            .grep({is-valid-asset-code($_)})
-            .elems == @quoted-asset-codes.elems,
+        @quoted-asset-code
+            .grep({ is-valid-asset-code($_) })
+            .elems == @quoted-asset-code.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 5 of 9
         ┏━━━━━━━━━━━━━┓
@@ -218,24 +194,16 @@ subtest({
 # --- asset quantity {{{
 
 subtest({
-    my Str @asset-quantities =
+    my Str @asset-quantity =
         Q{10000},
         Q{10_000},
         Q{10_000.00},
         Q{9_8_7_6_5.4_3_2_1_0};
 
-    sub is-valid-asset-quantity(Str:D $asset-quantity --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse(
-            $asset-quantity,
-            :rule<asset-quantity>
-        ).so;
-    }
-
     ok(
-        @asset-quantities
-            .grep({is-valid-asset-quantity($_)})
-            .elems == @asset-quantities.elems,
+        @asset-quantity
+            .grep({ is-valid-asset-quantity($_) })
+            .elems == @asset-quantity.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-quantity, :rule<asset-quantity>)] - 6 of 9
         ┏━━━━━━━━━━━━━┓
@@ -251,7 +219,7 @@ subtest({
 # --- exchange rate {{{
 
 subtest({
-    my Str @exchange-rates =
+    my Str @exchange-rate =
         Q{@ 10_000 USD},
         Q{@ USD 10_000},
         Q{@ $10_000.99 USD},
@@ -301,15 +269,10 @@ subtest({
         Q{@ د.ع5000.99 IQD},
         Q{@ IQD د.ع5000.99};
 
-    sub is-valid-exchange-rate(Str:D $exchange-rate --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($exchange-rate, :rule<xe>).so;
-    }
-
     ok(
-        @exchange-rates
-            .grep({is-valid-exchange-rate($_)})
-            .elems == @exchange-rates.elems,
+        @exchange-rate
+            .grep({ is-valid-exchange-rate($_) })
+            .elems == @exchange-rate.elems,
         q:to/EOF/
         ♪ [Grammar.parse($exchange-rate, :rule<xe>)] - 7 of 9
         ┏━━━━━━━━━━━━━┓
@@ -325,7 +288,7 @@ subtest({
 # --- amount {{{
 
 subtest({
-    my Str @amounts =
+    my Str @amount =
         Q{100 BTC},
         Q{1_0_0 BTC},
         Q{-100 BTC},
@@ -363,13 +326,8 @@ subtest({
         Q{BTC +฿100.00},
         Q{BTC +฿1_0_0.0_0};
 
-    sub is-valid-amount(Str:D $amount --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($amount, :rule<amount>).so;
-    }
-
     ok(
-        @amounts.grep({is-valid-amount($_)}).elems == @amounts.elems,
+        @amount.grep({ is-valid-amount($_) }).elems == @amount.elems,
         q:to/EOF/
         ♪ [Grammar.parse($amount, :rule<amount>)] - 8 of 9
         ┏━━━━━━━━━━━━━┓
@@ -387,18 +345,13 @@ subtest({
 # posting grammar tests {{{
 
 subtest({
-    my Str @postings =
+    my Str @posting =
         Q{Assets:Personal:Coinbase    -฿100.00 BTC @ $5000.00 USD},
         Q{Assets:Personal:FirstBank +฿1_000_000.00 USD},
         Q{Expenses:Business:Cats:Food      Ł5.99 LTC};
 
-    sub is-valid-posting(Str:D $posting --> Bool:D)
-    {
-        TXN::Parser::Grammar.parse($posting, :rule<posting>).so;
-    }
-
     ok(
-        @postings.grep({is-valid-posting($_)}).elems == @postings.elems,
+        @posting.grep({ is-valid-posting($_) }).elems == @posting.elems,
         q:to/EOF/
         ♪ [Grammar.parse($amount, :rule<amount>)] - 9 of 9
         ┏━━━━━━━━━━━━━┓

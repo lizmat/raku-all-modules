@@ -1,8 +1,8 @@
 use v6;
 use lib 'lib';
-use Test;
 use TXN::Parser;
 use TXN::Parser::Types;
+use Test;
 
 plan(5);
 
@@ -8910,4 +8910,4 @@ subtest({
     # end tests }}}
 });
 
-# vim: set filetype=perl6 foldmethod=marker foldlevel=0:
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0 nowrap:
