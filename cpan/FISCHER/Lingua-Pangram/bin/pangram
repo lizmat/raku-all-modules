@@ -1,0 +1,56 @@
+#!/usr/bin/env perl6
+
+use v6.c;
+
+use Pod::To::Text;
+
+use Lingua::Pangram;
+
+multi MAIN(*@word, Str :l(:$language)) {
+    my $string = @word.join(' ');
+    given $language {
+        when 'de' { exit +!pangram-de($string) }
+        when 'en' { exit +!pangram-en($string) }
+        when 'es' { exit +!pangram-es($string) }
+        when 'fr' { exit +!pangram-fr($string) }
+        when 'ru' { exit +!pangram-ru($string) }
+        when Str  { exit +!pangram-en($string) }
+        default   {
+            say 'Unknown language code!';
+            exit 1;
+        }
+    }
+    exit;
+}
+
+multi MAIN(Bool :h(:$help)) {
+    say pod2text($=pod);
+}
+
+multi MAIN(Bool :V(:$version)) {
+    say "Author:  " ~ Lingua::Pangram.^auth;
+    say "Version: " ~ Lingua::Pangram.^ver;
+}
+
+=begin pod
+
+=head1 NAME
+
+pangram - Check whether words form a pangram
+
+=head1 SYNOPSIS
+
+The exit status is 0 if the given words form a pangram, nonzero otherwise.
+
+Usage:
+    pangram [-l|--language=de|en|es|fr|ru] [<word> ...]
+
+    pangram [-h|--help]
+    pangram [-V|--version]
+
+Examples:
+
+    pangram The quick brown fox jumps over the lazy dog.
+    pangram --language=de 'Fix, Schwyz!', quäkt Jürgen blöd vom Paß.
+
+=end pod

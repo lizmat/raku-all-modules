@@ -1,0 +1,36 @@
+{
+  "api": 1,
+  "auth": "github:sfischer13",
+  "authors": [
+    "Stefan Fischer <sfischer13@ymail.com>"
+  ],
+  "depends": [
+    "Pod::To::Text"
+  ],
+  "description": "Check whether a string is a pangram",
+  "license": "MIT",
+  "name": "Lingua::Pangram",
+  "perl": "6.c",
+  "production": true,
+  "provides": {
+    "Lingua::Pangram": "lib/Lingua/Pangram.pm6"
+  },
+  "resources": [],
+  "source-url": "git://github.com/sfischer13/perl6-Lingua-Pangram.git",
+  "support": {
+    "bugtracker": "https://github.com/sfischer13/perl6-Lingua-Pangram/issues",
+    "email": "sfischer13@ymail.com",
+    "source": "git://github.com/sfischer13/perl6-Lingua-Pangram.git"
+  },
+  "tags": [
+    "alphabet",
+    "letters",
+    "pangram",
+    "perl6"
+  ],
+  "test-depends": [
+    "Test",
+    "Test::META"
+  ],
+  "version": "0.1.1"
+}
