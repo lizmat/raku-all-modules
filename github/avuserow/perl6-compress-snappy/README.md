@@ -23,13 +23,15 @@ compression library with an emphasis on speed over compression.
 
 Main compression function. Returns a Buf of compressed data.
 
-## Compress::Snappy::compress(Str $uncompressed) returns Buf
+## Compress::Snappy::compress(Str $uncompressed, Str $encoding = 'utf-8') returns Buf
 
-Convenience function to make a Str to a utf8-encoded Blob and compress that.
+Convenience function to make a Str to an encoded Blob and compress that.
+Encoding defaults to utf-8 if not specified.
 
-## Compress::Snappy::decompress(Blob $compressed) returns Buf
+## Compress::Snappy::decompress(Blob $compressed, Str $encoding)
 
-Decompress provided data to a Buf.
+Decompress provided data to a Buf.  If an optional $encoding is
+specified, will decode the Buf and return a Str instead.
 
 ## Compress::Snappy::validate(Blob $compressed) returns Bool
 

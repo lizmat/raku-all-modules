@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/avuserow/perl6-compress-snappy.git
 	branch = master
-	commit = 99ab394ecc9e3f02c7e616aaf01926ce12ed8306
-	parent = a07a2011a0f0e4495d51181d4736e551d7af4fa4
+	commit = 97535eac86e76eb4fc1e754312e4d76b4de16c62
+	parent = 8ae8b5087a0afb5d37e4f0c680b8a6d13233ce57
 	cmdver = 0.4.0

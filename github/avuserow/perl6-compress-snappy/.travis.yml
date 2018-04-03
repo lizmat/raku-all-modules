@@ -7,5 +7,6 @@ perl6:
 
 install:
     - sudo apt-get install libsnappy-dev
-    - rakudobrew build-panda
-    - panda installdeps .
+    - rakudobrew build zef
+    - zef install .
+
