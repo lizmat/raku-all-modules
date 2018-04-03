@@ -18,6 +18,7 @@ sub next-part-index () {
 }
 
 sub MAIN (Bool :v(:verbose($v)), Str :$source-path = ".", Str :$exclude, Bool :$no-cache = False,
+	  Str :$title = "Converted POD6 documentation",
           Int :$threads = %*ENV<THREADS>.?Int // 1,
           Str :$precomp-path = (%*ENV<TEMP> // %*ENV<TMP> // '/tmp') ~ '/PodToBigfile-precomp' 
 ) {
@@ -32,7 +33,7 @@ sub MAIN (Bool :v(:verbose($v)), Str :$source-path = ".", Str :$exclude, Bool :$
     setup();
     my @toc;
     set-foreign-toc(@toc);
-    put compose-before-content;
+    put compose-before-content( $title );
     if $threads > 1 {
         put await do start { .&parse-pod-file( next-part-index, .substr($source-path.chars), $precomp, $no-cache ) } for sort find-pod-files($source-path, @exclude);
     }else{

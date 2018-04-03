@@ -1,6 +1,9 @@
 use v6;
+
 use lib 'lib';
+
 use Test;
+
 use Pod::To::BigPage;
 
 plan 1;
