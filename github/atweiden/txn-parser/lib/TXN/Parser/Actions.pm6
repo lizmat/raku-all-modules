@@ -26,7 +26,7 @@ has Str:D $.file = '.';
 # private types {{{
 
 # to aid with building exchange rates (@ and @@, « and ««)
-enum XERateType <PER-UNIT IN-TOTAL>;
+my enum XERateType <PER-UNIT IN-TOTAL>;
 
 # end private types }}}
 
@@ -778,11 +778,12 @@ method posting($/ --> Nil)
     my TXN::Parser::AST::Entry::Posting::Annot:D $annot =
         gen-annot($amount.asset-quantity, $<annot>.made) if $<annot>;
 
-    my PlusMinus:D $plus-or-minus = $amount.plus-or-minus
-        if $amount.plus-or-minus;
-    my DecInc:D $decinc = $plus-or-minus.defined && $plus-or-minus eq '-'
-        ?? DEC
-        !! INC;
+    my PlusMinus:D $plus-or-minus =
+        $amount.plus-or-minus if $amount.plus-or-minus;
+    my DecInc:D $decinc =
+        $plus-or-minus.defined && $plus-or-minus eq '-'
+            ?? DEC
+            !! INC;
 
     make(%(:$account, :$amount, :$annot, :$decinc, :$text, :$xxhash));
 }
@@ -860,12 +861,13 @@ method txnlib($/ --> Nil)
 
 method include:filename ($match --> Nil)
 {
-    my Str:D $filename = $match<filename>.made.IO.is-relative
-        # if relative path given, resolve path relative to current txn
-        # file being parsed and append '.txn' extension
-        ?? join('/', $.file.IO.dirname, $match<filename>.made) ~ '.txn'
-        # if absolute path given, use it directly (don't append extension)
-        !! $match<filename>.made;
+    # if relative path given, resolve path relative to current txn file
+    # being parsed and append '.txn' extension
+    # if absolute path given, use it directly
+    my Str:D $filename =
+        $match<filename>.made.IO.is-relative
+            ?? join('/', $.file.IO.dirname, $match<filename>.made) ~ '.txn'
+            !! $match<filename>.made;
 
     $filename.IO.e && $filename.IO.r && $filename.IO.f
         or die(X::TXN::Parser::Include.new(:$filename));
@@ -994,9 +996,10 @@ multi sub gen-xe(
     my %xe-rate;
 
     %xe-rate<asset-code> = $asset-code;
-    %xe-rate<asset-price> = $rate-type ~~ IN-TOTAL
-        ?? ($asset-price / $amount-asset-quantity)
-        !! $asset-price;
+    %xe-rate<asset-price> =
+        $rate-type ~~ IN-TOTAL
+            ?? ($asset-price / $amount-asset-quantity)
+            !! $asset-price;
     %xe-rate<asset-symbol> = $asset-symbol if $asset-symbol;
 
     my TXN::Parser::AST::Entry::Posting::Annot::XE:D $xe =
@@ -1017,9 +1020,10 @@ multi sub gen-xe(
     my %inherit-rate;
 
     %inherit-rate<asset-code> = $asset-code;
-    %inherit-rate<asset-price> = $rate-type ~~ IN-TOTAL
-        ?? ($asset-price / $amount-asset-quantity)
-        !! $asset-price;
+    %inherit-rate<asset-price> =
+        $rate-type ~~ IN-TOTAL
+            ?? ($asset-price / $amount-asset-quantity)
+            !! $asset-price;
     %inherit-rate<asset-symbol> = $asset-symbol if $asset-symbol;
 
     my TXN::Parser::AST::Entry::Posting::Annot::Inherit:D $inherit =

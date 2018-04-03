@@ -4,7 +4,7 @@ unit module TXN::Parser::Types;
 
 # AssetCode {{{
 
-subset AssetCode of Str is export where { is-asset-code($_) }
+subset AssetCode of Str is export where { is-asset-code($_) };
 
 # --- sub is-asset-code {{{
 
@@ -24,7 +24,7 @@ multi sub is-asset-code(
     True;
 }
 
-multi sub is-asset-code($s --> Bool:D)
+multi sub is-asset-code($ --> Bool:D)
 {
     False;
 }
@@ -75,7 +75,7 @@ enum Silo is export <ASSETS EXPENSES INCOME LIABILITIES EQUITY>;
 # end Silo }}}
 # VarName {{{
 
-subset VarName of Str is export where { is-var-name($_) }
+subset VarName of Str is export where { is-var-name($_) };
 
 # --- sub is-var-name {{{
 
@@ -95,7 +95,7 @@ multi sub is-var-name(
     True;
 }
 
-multi sub is-var-name($s --> Bool:D)
+multi sub is-var-name($ --> Bool:D)
 {
     False;
 }
@@ -107,7 +107,7 @@ multi sub is-var-name($s --> Bool:D)
 
 subset VarNameBare of Str is export where
 {
-    TXN::Parser::Grammar.parse($_, :rule<var-name:bare>)
+    TXN::Parser::Grammar.parse($_, :rule<var-name:bare>);
 }
 
 # end VarNameBare }}}

@@ -8,7 +8,7 @@ class Annot::Inherit::BadSilo is Exception
     method message(--> Str:D)
     {
         my Str:D $message =
-            "Sorry, inherit annotation is only allowed from Assets silo.";
+            'Sorry, inherit annotation is only allowed from Assets silo.';
     }
 }
 
@@ -20,7 +20,7 @@ class Annot::Lot::BadSilo is Exception
     method message(--> Str:D)
     {
         my Str:D $message =
-            "Sorry, lot sales annotation is only allowed from Assets silo.";
+            'Sorry, lot sales annotation is only allowed from Assets silo.';
     }
 }
 

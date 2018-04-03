@@ -160,7 +160,6 @@ subtest({
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-
     ok(
         %asset-code-symbol
             .grep({ is-valid-asset-symbol(.values.first.tail) })
@@ -174,7 +173,6 @@ subtest({
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-
     ok(
         @quoted-asset-code
             .grep({ is-valid-asset-code($_) })

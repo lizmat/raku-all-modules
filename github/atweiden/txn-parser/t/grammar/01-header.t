@@ -128,6 +128,8 @@ subtest({
     !!!-- comment here
     EOF
 
+    push(@header, $header-multiline);
+
     is(
         TXN::Parser::Grammar.parse(@header[0], :rule<header>).WHAT,
         TXN::Parser::Grammar,
@@ -140,7 +142,6 @@ subtest({
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-
     is(
         TXN::Parser::Grammar.parse(@header[1], :rule<header>).WHAT,
         TXN::Parser::Grammar,
@@ -153,7 +154,6 @@ subtest({
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-
     is(
         TXN::Parser::Grammar.parse(@header[2], :rule<header>).WHAT,
         TXN::Parser::Grammar,
@@ -166,7 +166,6 @@ subtest({
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-
     is(
         TXN::Parser::Grammar.parse(@header[3], :rule<header>).WHAT,
         TXN::Parser::Grammar,
@@ -179,9 +178,8 @@ subtest({
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-
     is(
-        TXN::Parser::Grammar.parse($header-multiline, :rule<header>).WHAT,
+        TXN::Parser::Grammar.parse(@header[4], :rule<header>).WHAT,
         TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 8 of 8

@@ -178,7 +178,7 @@ class Entry::Posting
     )
     {
         $!annot = $annot if $annot;
-        $!drcr = determine-debit-or-credit($!account.silo, $!decinc);
+        $!drcr = gen-drcr($!account.silo, $!decinc);
     }
 
     # end submethod BUILD }}}
@@ -186,11 +186,11 @@ class Entry::Posting
 
     method new(
         *%opts (
-            Entry::Posting::Account:D :$account!,
-            Entry::Posting::Amount:D :$amount!,
-            Entry::Posting::ID:D :$id!,
-            DecInc:D :$decinc!,
-            Entry::Posting::Annot :$annot
+            Entry::Posting::Account:D :account($)!,
+            Entry::Posting::Amount:D :amount($)!,
+            Entry::Posting::ID:D :id($)!,
+            DecInc:D :decinc($)!,
+            Entry::Posting::Annot :annot($)
         )
         --> Entry::Posting:D
     )
@@ -216,29 +216,26 @@ class Entry::Posting
 
     # end method hash }}}
 
-    # sub determine-debit-or-credit {{{
+    # sub gen-drcr {{{
 
     # assets and expenses increase on the debit side
-
     # +assets/expenses
-    multi sub determine-debit-or-credit(ASSETS, INC      --> DrCr:D) { DEBIT }
-    multi sub determine-debit-or-credit(EXPENSES, INC    --> DrCr:D) { DEBIT }
+    multi sub gen-drcr(ASSETS,      INC --> DrCr:D) { DEBIT }
+    multi sub gen-drcr(EXPENSES,    INC --> DrCr:D) { DEBIT }
     # -assets/expenses
-    multi sub determine-debit-or-credit(ASSETS, DEC      --> DrCr:D) { CREDIT }
-    multi sub determine-debit-or-credit(EXPENSES, DEC    --> DrCr:D) { CREDIT }
-
+    multi sub gen-drcr(ASSETS,      DEC --> DrCr:D) { CREDIT }
+    multi sub gen-drcr(EXPENSES,    DEC --> DrCr:D) { CREDIT }
     # income, liabilities and equity increase on the credit side
-
     # +income/liabilities/equity
-    multi sub determine-debit-or-credit(INCOME, INC      --> DrCr:D) { CREDIT }
-    multi sub determine-debit-or-credit(LIABILITIES, INC --> DrCr:D) { CREDIT }
-    multi sub determine-debit-or-credit(EQUITY, INC      --> DrCr:D) { CREDIT }
+    multi sub gen-drcr(INCOME,      INC --> DrCr:D) { CREDIT }
+    multi sub gen-drcr(LIABILITIES, INC --> DrCr:D) { CREDIT }
+    multi sub gen-drcr(EQUITY,      INC --> DrCr:D) { CREDIT }
     # -income/liabilities/equity
-    multi sub determine-debit-or-credit(INCOME, DEC      --> DrCr:D) { DEBIT }
-    multi sub determine-debit-or-credit(LIABILITIES, DEC --> DrCr:D) { DEBIT }
-    multi sub determine-debit-or-credit(EQUITY, DEC      --> DrCr:D) { DEBIT }
+    multi sub gen-drcr(INCOME,      DEC --> DrCr:D) { DEBIT }
+    multi sub gen-drcr(LIABILITIES, DEC --> DrCr:D) { DEBIT }
+    multi sub gen-drcr(EQUITY,      DEC --> DrCr:D) { DEBIT }
 
-    # end sub determine-debit-or-credit }}}
+    # end sub gen-drcr }}}
 }
 
 # end TXN::Parser::AST::Entry::Posting }}}
@@ -266,7 +263,7 @@ class Entry
     method new(
         *%opts (
             Entry::ID:D :$id!,
-            Entry::Header:D :$header!,
+            Entry::Header:D :header($)!,
             Entry::Posting:D :@posting!
         )
         --> Entry:D
