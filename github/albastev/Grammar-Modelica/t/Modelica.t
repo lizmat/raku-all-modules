@@ -14,7 +14,7 @@ ok TestWithin.parse('within valid_name;');
 ok TestWithin.parse('within valid_name ;');
 nok TestWithin.parse('withinvalid_name;');
 nok TestWithin.parse('valid_name;');
-nok TestWithin.parse('within;');
+ok TestWithin.parse('within ;');
 nok TestWithin.parse('within valid_name');
 
 grammar TestClassDef is Grammar::Modelica {

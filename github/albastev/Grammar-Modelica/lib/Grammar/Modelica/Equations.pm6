@@ -103,7 +103,7 @@ rule when_statement {
   <|w>'when'<|w> <expression> <|w>'then'<|w>
   [ <statement> ';' ]*
   [
-  <|w>'elsewhen'<|w> <expression> <|w>'then'<|w><|w><|w>
+  <|w>'elsewhen'<|w> <expression> <|w>'then'<|w>
   [ <statement> ';' ]*
   ]*
   <|w>'end'<|w> <|w>'when'<|w>

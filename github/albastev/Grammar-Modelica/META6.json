@@ -1,7 +1,7 @@
 {
     "perl" : "6.c",
     "name" : "Grammar::Modelica",
-    "version" : "0.1.1",
+    "version" : "0.1.2",
     "description" : "A Grammar for the Modelica programming language.",
     "authors" : [ "Steven Albano" ],
     "provides" : {

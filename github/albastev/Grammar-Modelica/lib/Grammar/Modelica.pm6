@@ -1,6 +1,10 @@
 #!perl6
 
 use v6;
+
+#no precompilation; # GH grammar-debugger issue #40
+#use Grammar::Tracer;
+
 use Grammar::Modelica::LexicalConventions;
 use Grammar::Modelica::ClassDefinition;
 use Grammar::Modelica::Extends;
@@ -20,7 +24,7 @@ unit grammar Grammar::Modelica
 
 rule TOP {^ <within>?<class_def>* $}
 
-rule within { <|w>'within'<|w> <name> ';' }
+rule within { <|w>'within'<|w> <name>? ';' }
 
 rule class_def { [<|w>'final'<|w>]? <class_definition> ';' }
 

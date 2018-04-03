@@ -4,7 +4,9 @@ use v6;
 
 unit role Grammar::Modelica::LexicalConventions;
 
-token BASEIDENT {[[<|w><NONDIGIT>[<DIGIT>||<NONDIGIT>]*]<|w>||<Q-IDENT>]<!after <|w><keywords>>}
+token BASEIDENT {[[<|w><NONDIGIT>[<DIGIT>||<NONDIGIT>]*]<|w>||<Q-IDENT>]}
+# See GH rakudo issue #1659.  Not in spec and looks covered by IDENT.
+# token BASEIDENT {...<!after <|w><keywords>>}
 
 token Q-IDENT {<[']>[<Q-CHAR>||<S-ESCAPE>]+<[']>}
 

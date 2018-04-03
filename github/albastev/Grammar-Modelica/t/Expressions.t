@@ -5,7 +5,7 @@ use Test;
 use lib '../lib';
 use Grammar::Modelica;
 
-plan 169;
+plan 168;
 
 grammar TestExpression is Grammar::Modelica {
   rule TOP {^ <expression> $}
@@ -182,7 +182,6 @@ nok TestFactor.parse('primary^primary^primary');
 grammar TestPrimary is Grammar::Modelica {
   rule TOP {^<primary>$}
   rule function_call_args {'function_call_args'}
-  rule component_reference {'component_reference'}
   rule output_expression_list {'output_expression_list'}
   rule expression_list {'expression_list'}
   rule array_arguments {'array_arguments'}
@@ -194,7 +193,6 @@ ok TestPrimary.parse('true');
 ok TestPrimary.parse('valid_name function_call_args');
 ok TestPrimary.parse('der function_call_args');
 ok TestPrimary.parse('initial function_call_args');
-ok TestPrimary.parse('component_reference');
 ok TestPrimary.parse('(output_expression_list)');
 ok TestPrimary.parse('[expression_list]');
 ok TestPrimary.parse('[expression_list;expression_list]');
@@ -305,7 +303,7 @@ ok TestOutputExpressionList.parse('expression,expression');
 ok TestOutputExpressionList.parse('expression,expression,expression,expression');
 ok TestOutputExpressionList.parse(',expression,expression,expression');
 ok TestOutputExpressionList.parse('expression ,expression, expression , expression');
-nok TestOutputExpressionList.parse('expression ,expression, expression ,');
+ok TestOutputExpressionList.parse('expression ,expression, expression, , expression');
 nok TestOutputExpressionList.parse('expression ,expression expression , expression');
 
 grammar TestExpressionList is Grammar::Modelica {

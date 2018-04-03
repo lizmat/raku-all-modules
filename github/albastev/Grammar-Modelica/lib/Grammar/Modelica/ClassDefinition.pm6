@@ -9,7 +9,7 @@ rule class_definition { [<|w>$<encapsulated>='encapsulated'<|w>]? <class_prefixe
 rule class_prefixes { $<partial>=(<|w>'partial'<|w>)? <|w>( 'class' || 'model' || [ 'operator'? <|w>'record' ] ||
   'block' || [ 'expandable'? <|w>'connector'] || 'type' || 'package' || [[ 'pure' | 'impure' ]? [<|w>'operator'?] <|w>'function'] ||
   'operator'
-) <|w> }
+) <!ww> }
 
 token class_specifier {<long_class_specifier>||<short_class_specifier>||<der_class_specifier>}
 

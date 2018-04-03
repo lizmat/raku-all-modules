@@ -58,7 +58,7 @@ rule primary {
   <STRING> ||
   <|w>'false'<|w> ||
   <|w>'true'<|w> ||
-  [ [<name>||'der'||'initial'] <function_call_args> ] ||
+  [ [<component_reference>||'der'||'initial'||'pure'] <function_call_args> ] ||
   <component_reference> ||
   [ '(' <output_expression_list> ')' ] ||
   [ '[' <expression_list> [ ';' <expression_list> ]* ']' ] ||
@@ -78,7 +78,7 @@ rule function_call_args {
   '(' <function_arguments>? ')'
 }
 
-rule function_arguments {
+regex function_arguments {:s
   [ <expression> [ [ ',' <function_arguments_non_first> ] || [ <|w>'for'<|w> <for_indices>] ]? ]
   ||
   [ <|w>'function'<|w> <name> '(' <named_arguments>? ')'  [ ',' <function_arguments_non_first> ]? ]
@@ -86,7 +86,7 @@ rule function_arguments {
   <named_arguments>
 }
 
-rule function_arguments_non_first {
+regex function_arguments_non_first {:s
   [ <function_argument> [ ',' <function_arguments_non_first> ]? ]
   ||
   <named_arguments>
@@ -116,7 +116,7 @@ rule function_argument {
 }
 
 rule output_expression_list {
-  <expression>? [ ',' <expression> ]*
+  <expression>? [ ',' <expression>? ]*
 }
 
 rule expression_list { <expression> [ ',' <expression> ]* }
