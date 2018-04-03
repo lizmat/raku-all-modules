@@ -8,6 +8,7 @@
 #include <utmpx.h>
 #define USEXFUNCS 1
 #define _HAVE_UT_TV 1
+#define _HAVE_UT_HOST 1
 #else
 #include <stdint.h>
 #include <utmp.h>
@@ -134,19 +135,68 @@ struct utmp *getutent(void)
     }
     return &s_utmp;
 }
-
 #endif
 
 struct _p_utmp {
-	int	ut_type;
-	int ut_pid;
-	char *ut_line;
-	char *ut_id;
-	char *ut_user;
-	char *ut_host;
-	int  ut_tv;
+    int     ut_type;
+    int     ut_pid;
+    char    *ut_line;
+    char    *ut_id;
+    char    *ut_user;
+    char    *ut_host;
+    int     ut_tv;
 };
 
+#define UT_TYPE_NOT_DEFINED_HERE 99
+
+/*
+ *  It transpires that constants differ between OS
+ */
+extern int _p_ut_constant(char *constname) {
+    int ret = -1;
+    if ( strlen(constname) >= 3 ) {
+        if ( strncmp(constname,"EMP", 3) == 0 ) {
+            ret = EMPTY;
+        }
+        else if ( strncmp(constname, "BOO", 3) == 0 ) {
+            ret = BOOT_TIME;
+        }
+        else if ( strncmp(constname, "OLD", 3) == 0 ) {
+            ret = OLD_TIME;
+        }
+        else if ( strncmp(constname, "NEW", 3) == 0 ) {
+            ret = NEW_TIME;
+        }
+        else if ( strncmp(constname, "USE", 3) == 0 ) {
+            ret = USER_PROCESS;
+        }
+        else if ( strncmp(constname, "INI", 3) == 0 ) {
+            ret = INIT_PROCESS;
+        }
+        else if ( strncmp(constname, "LOG", 3) == 0 ) {
+            ret = LOGIN_PROCESS;
+        }
+        else if ( strncmp(constname, "DEA", 3) == 0 ) {
+            ret = DEAD_PROCESS;
+        }
+        else if ( strncmp(constname, "RUN", 3) == 0 ) {
+#ifdef RUN_LVL
+            ret = RUN_LVL;
+#else
+            ret = UT_TYPE_NOT_DEFINED_HERE;
+#endif
+
+        }
+        else if ( strncmp(constname, "ACC", 3) == 0 ) {
+#ifdef ACCOUNTING
+            ret = ACCOUNTING;
+#else 
+            ret = UT_TYPE_NOT_DEFINED_HERE;
+#endif
+        }
+    }
+    return ret;
+}
 
 extern struct _p_utmp *_p_getutent(void)
 {
@@ -182,7 +232,7 @@ extern struct _p_utmp *_p_getutent(void)
        fixed_utent.ut_id = ut_id;
 #endif
 #ifdef _NO_UT_TYPE
-       fixed_utent.ut_type = 7;
+       fixed_utent.ut_type = USER_PROCESS;
 #else
        fixed_utent.ut_type = utent->ut_type;
 #endif
@@ -261,4 +311,8 @@ int main() {
    printf("%s\n%s\n%s\n%s\n", f->ut_line, f->ut_user, f->ut_id, f->ut_host);
 	}
 }
+*/
+
+/*
+ * vim: ai si sm expandtab sw=4 ts=4
 */
