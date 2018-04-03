@@ -72,17 +72,17 @@ is @dataqrinput[^$qrcodeqrinput.width] «+&» 1,
   (1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1),
   'qrcode from QRinput';
 my QRinput_Struct $qrstruct = QRinput_splitQRinputToStruct($qrinput);
-is $qrstruct.WHAT, QRinput_Struct, 'QRinput_splitQRinputToStruct';
+ok ($qrstruct.defined && $qrstruct.WHAT ~~ QRinput_Struct), 'QRinput_splitQRinputToStruct';
 subtest {
   my QRinput $qrinput = QRinput_new;
   QRinput_append($qrinput, QR_MODE_NUM, 3, '123');
   my QRinput_Struct $qrstruct = QRinput_Struct_new;
-  is $qrstruct.WHAT, QRinput_Struct, 'QRinput_Struct_new';
+  ok ($qrstruct.defined && $qrstruct.WHAT ~~ QRinput_Struct), 'QRinput_Struct_new';
   $res = QRinput_Struct_appendInput($qrstruct, $qrinput);
   ok $res == 1, 'append one object';
   is QRinput_Struct_insertStructuredAppendHeaders($qrstruct), 0, 'QRinput_Struct_insertStructuredAppendHeaders';
   my QRcode_List $qrlist = QRcode_encodeInputStructured($qrstruct);
-  is $qrlist.WHAT, QRcode_List, 'call QRcode_encodeInputStructured';
+  ok ($qrlist.defined && $qrlist.WHAT ~~ QRcode_List), 'call QRcode_encodeInputStructured';
   is QRcode_List_size($qrlist), 1, 'list size';
   my $entry = $qrlist;
   while $entry {
@@ -104,7 +104,7 @@ subtest {
   my QRinput $qrinput = QRinput_new;
   QRinput_append($qrinput, QR_MODE_NUM, 3, '123');
   my QRcode_List $qrlist = QRcode_encodeStringStructured('123', 1, QR_ECLEVEL_L, QR_MODE_8, 0);
-  is $qrlist.WHAT, QRcode_List, 'call QRcode_encodeStringStructured';
+  ok ($qrlist.defined && $qrlist.WHAT ~~ QRcode_List), 'call QRcode_encodeStringStructured';
   is QRcode_List_size($qrlist), 1, 'list size';
   my $entry = $qrlist;
   while $entry {
@@ -126,7 +126,7 @@ subtest {
   my QRinput $qrinput = QRinput_new;
   QRinput_append($qrinput, QR_MODE_NUM, 3, '123');
   my QRcode_List $qrlist = QRcode_encodeString8bitStructured('123', 1, QR_ECLEVEL_L);
-  is $qrlist.WHAT, QRcode_List, 'call QRcode_encodeString8bitStructured';
+  ok ($qrlist.defined && $qrlist.WHAT ~~ QRcode_List), 'call QRcode_encodeString8bitStructured';
   is QRcode_List_size($qrlist), 1, 'list size';
   my $entry = $qrlist;
   while $entry {
@@ -148,7 +148,7 @@ subtest {
   my QRinput $qrinput = QRinput_new;
   QRinput_append($qrinput, QR_MODE_NUM, 3, '123');
   my QRcode_List $qrlist = QRcode_encodeDataStructured(3, '123', 3, QR_ECLEVEL_L);
-  is $qrlist.WHAT, QRcode_List, 'call QRcode_encodeDataStructured';
+  ok ($qrlist.defined && $qrlist.WHAT ~~ QRcode_List), 'call QRcode_encodeDataStructured';
   is QRcode_List_size($qrlist), 1, 'list size';
   my $entry = $qrlist;
   while $entry {

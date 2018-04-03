@@ -17,7 +17,7 @@ try {
 my Version $version .= new($ver);
 
 my QRinput $qrinput = QRinput_new;
-is $qrinput.WHAT, QRinput, 'QRinput_new';
+ok ($qrinput.defined && $qrinput.WHAT ~~ QRinput), 'QRinput_new';
 my int32 $ret;
 subtest {
   is QRinput_getVersion($qrinput), 0, 'QRinput_getVersion';
@@ -29,12 +29,12 @@ subtest {
 QRinput_free($qrinput);
 ok QRinput_getVersion($qrinput) != 1, 'QRinput_free';
 my QRinput $qrinput2 = QRinput_new2(2, QR_ECLEVEL_L);
-is $qrinput2.WHAT, QRinput, 'QRinput_new2';
+ok ($qrinput2.defined && $qrinput2.WHAT ~~ QRinput), 'QRinput_new2';
 is QRinput_getVersion($qrinput2), 2, 'version check on QRinput_new2';
 is QRinput_setErrorCorrectionLevel($qrinput2, QR_ECLEVEL_M), 0, 'set error correction level';
 if $version ~~ v3.2.1+ {
   my QRinput $qrinputMQR = QRinput_newMQR(3, QR_ECLEVEL_L);
-  is $qrinputMQR.WHAT, QRinput, 'QRinput_newMQR';
+  ok ($qrinputMQR.defined && $qrinputMQR.WHAT ~~ QRinput), 'QRinput_newMQR';
   is QRinput_getVersion($qrinputMQR), 3, 'version check on QRinput_newMQR';
   $ret = QRinput_setErrorCorrectionLevel($qrinputMQR, QR_ECLEVEL_L);
   ok $ret == -1, 'correction level cannot be set on MQR';
