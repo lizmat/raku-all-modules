@@ -53,7 +53,7 @@ left over, which typically indicate a bad input format.
 
 # SEE ALSO
 
-http://flippinggodateformat.com/ - inspiration for this module
+[f\*\*\*inggodateformat.com](http://fuckinggodateformat.com/) - inspiration for this module
 
 [Documentation for Go's time package](http://golang.org/pkg/time/)
 
