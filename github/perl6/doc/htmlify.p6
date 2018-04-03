@@ -62,10 +62,10 @@ monitor UrlLog {
     method log($url) { @!URLS.push($url) }
 }
 my $url-log = UrlLog.new;
-&rewrite-url.wrap(sub (|c){
-    $url-log.log(my \r = callsame);
+sub rewrite-url-logged(\url) {
+    $url-log.log: my \r = rewrite-url url;
     r
-});
+}
 
 use experimental :cached;
 
@@ -133,7 +133,7 @@ sub header-html($current-selection, $pod-path) is cached {
 
 sub p2h($pod, $selection = 'nothing selected', :$pod-path = Nil) {
     pod2html $pod,
-        :url(&rewrite-url),
+        :url(&rewrite-url-logged),
         :$head,
         :header(header-html($selection, $pod-path)),
         :footer(footer-html($pod-path)),
@@ -341,20 +341,21 @@ multi write-type-source($doc) {
     }
 
     if $type {
-        my $graph-contents = slurp 'template/type-graph.html';
-        $graph-contents .= subst('ESCAPEDPODNAME', uri_escape($podname), :g);
-        $graph-contents .= subst('PODNAME', $podname);
-        $graph-contents .= subst('INLINESVG', svg-for-file("html/images/type-graph-$podname.svg"));
-
         $pod.contents.append:
-        pod-heading("Type Graph"),
-        Pod::Raw.new(
-            target => 'html',
-            contents => $graph-contents,
-        );
-
-        my @mro = $type.mro;
-           @mro.shift; # current type is already taken care of
+          pod-heading("Type Graph"),
+          Pod::Raw.new: :target<html>, contents => q:to/CONTENTS_END/;
+              <figure>
+                <figcaption>Type relations for
+                  <code>\qq[$podname]</code></figcaption>
+                \qq[&svg-for-file("html/images/type-graph-$podname.svg")]
+                <p class="fallback">
+                  Stand-alone image:
+                  <a rel="alternate"
+                    href="/images/type-graph-\qq[uri_escape($podname)].svg"
+                    type="image/svg+xml">vector</a>
+                </p>
+              </figure>
+              CONTENTS_END
 
         my @roles-todo = $type.roles;
         my %roles-seen;
@@ -372,7 +373,7 @@ multi write-type-source($doc) {
                 %routines-by-type{$role}.list,
             ;
         }
-        for @mro -> $class {
+        for $type.mro.skip -> $class {
             next unless %routines-by-type{$class};
             $pod.contents.append:
                 pod-heading("Routines supplied by class $class"),
@@ -750,7 +751,7 @@ sub write-search-file() {
                 qq[[\{ category: "{
                     ( @docs > 1 ?? $kind !! @docs.[0].subkinds[0] ).wordcase
                 }", value: "$name",
-                    url: " {rewrite-url(@docs.[0].url).subst(｢\｣, ｢%5c｣, :g).subst('"', '\"', :g).subst(｢?｣, ｢%3F｣, :g) }" \}
+                    url: " {rewrite-url-logged(@docs.[0].url).subst(｢\｣, ｢%5c｣, :g).subst('"', '\"', :g).subst(｢?｣, ｢%3F｣, :g) }" \}
                   ]] # " and ?
             }
     }).flat;
@@ -874,15 +875,18 @@ sub write-main-index(:$kind, :&summary = {Nil}) {
             "s that are documented here as part of the Perl 6 language. " ~
             "Use the above menu to narrow it down topically."
         ),
-        pod-table([[pod-bold('Name'), pod-bold('Declarator'), pod-bold('Source')],
-            $*DR.lookup($kind, :by<kind>)\
-            .categorize(*.name).sort(*.key)>>.value
-            .map({[
-                pod-link(.[0].name, .[0].url),
-                .map({.subkinds // Nil}).flat.unique.join(', '),
-                .&summary
-            ]}).cache.Slip
-       ].flat)
+        pod-table(
+            :headers[<Name  Declarator  Source>],
+            [
+                $*DR.lookup($kind, :by<kind>)\
+                .categorize(*.name).sort(*.key)>>.value
+                .map({[
+                    pod-link(.[0].name, .[0].url),
+                    .map({.subkinds // Nil}).flat.unique.join(', '),
+                    .&summary
+                ]}).cache.Slip
+            ].flat
+        )
     ), $kind);
 }
 
