@@ -1,0 +1,55 @@
+#!/usr/bin/env perl6
+
+use v6.c;
+
+use Pod::To::Text;
+
+use Lingua::Palindrome;
+
+multi MAIN(*@item, Str :m(:$mode)) {
+    given $mode {
+        when 'char' { exit +!char-palindrome(@item.join(' ')) }
+        when 'word' { exit +!word-palindrome(@item.join(' ')) }
+        when 'line' {
+            my @status = map {line-palindrome(.IO)}, @item;
+            exit +!all(@status);
+        }
+        default {
+            say 'Unknown mode!';
+            exit 1;
+        }
+    }
+}
+
+multi MAIN(Bool :h(:$help)) {
+    say pod2text($=pod);
+}
+
+multi MAIN(Bool :V(:$version)) {
+    say "Author:  " ~ Lingua::Palindrome.^auth;
+    say "Version: " ~ Lingua::Palindrome.^ver;
+}
+
+=begin pod
+
+=head1 NAME
+
+palindrome - Check whether words form a palindrome
+
+=head1 SYNOPSIS
+
+The exit status is 0 if the given words form a palindrome, nonzero otherwise.
+
+Usage:
+    palindrome [-m|--mode=<Str>] [<item> ...]
+
+    palindrome [-h|--help]
+    palindrome [-V|--version]
+
+Examples:
+
+    palindrome --mode=char 'Was it a car or a cat I saw?'
+    palindrome --mode=word 'Fall leaves after leaves fall.'
+    palindrome --mode=line foo.txt bar.txt
+
+=end pod
