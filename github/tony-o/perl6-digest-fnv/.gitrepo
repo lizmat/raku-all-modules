@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-digest-fnv.git
 	branch = master
-	commit = 13aae6276205577adb6730ab4c6c44fd2ae186b4
-	parent = 1008010fa135634c47d5e8d78c732f7b1a49acda
+	commit = 6a50c7dddf64ba809ca0d27d9b01bb71f638cfd8
+	parent = fa0dd677a90f66e3fb571dcdc572dbddfbb6845d
 	cmdver = 0.4.0
