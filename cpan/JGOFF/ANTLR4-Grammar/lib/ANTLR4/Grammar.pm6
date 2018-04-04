@@ -51,9 +51,19 @@ my role Indenting {
 my role Formatting {
 	also does Indenting;
 
+	sub greed-to-string( $a ) {
+		$a.greed ?? '?' !! ''
+	}
+
+	sub modifier-to-string( $a ) {
+		( $a.modifier // '' ) ~ greed-to-string( $a )
+	}
+
 	multi method to-lines( Action $a ) {
 		return (
-			q{#|} ~ $a.name
+			q{#|} ~
+				$a.name ~
+				greed-to-string( $a )
 		)
 	}
 
@@ -69,14 +79,19 @@ my role Formatting {
 	}
 
 	multi method to-lines( Terminal $t ) {
-		my $name = $t.name ~~ / <-[ a ..z A .. Z ]> / ??
+		my $name = '';
+		if $t.name {
+			$name = $t.name ~~ / <-[ a ..z A .. Z ]> / ??
 			q{'} ~ $t.name ~ q{'} !!
-			$t.name;	
-		return $name ~ $t.modifier ~ ( $t.greed ?? '?' !! '' )
+			$t.name;
+		}
+		return $name ~
+			modifier-to-string( $t )
 	}
 
 	multi method to-lines( Wildcard $w ) {
-		return "." ~ $w.modifier ~ ( $w.greed ?? '?' !! '' )
+		return "." ~
+			modifier-to-string( $w )
 	}
 
 	multi method to-lines( Grouping $g ) {
@@ -87,35 +102,55 @@ my role Formatting {
 		return (
 			"\(" ~ self.indent-line( @content.shift ),
 			self.indent( @content ),
-			"\)" ~ $g.modifier ~ ( $g.greed ?? '?' !! '' )
+			"\)" ~
+				modifier-to-string( $g )
 		).flat
 	}
 
 	multi method to-lines( EOF $e ) {
-		return '$' ~ $e.modifier ~ ( $e.greed ?? '?' !! '' )
+		return '$' ~
+			modifier-to-string( $e )
 	}
 
 	multi method to-lines( Nonterminal $n ) {
-		return q{<} ~ $n.name ~ q{>} ~ $n.modifier ~ ( $n.greed ?? '?' !! '' )
+		return q{<} ~
+				( $n.negated ?? '!' !! '' ) ~
+				( $n.alias ?? ( $n.alias ~ '=' ) !! '' ) ~
+				$n.name ~
+			q{>} ~
+			modifier-to-string( $n )
 	}
 
-	multi method to-lines( Range $r ) {
-		my $negated = $r.negated ?? '-' !! '';
-		"<{$negated}[ {$r.from} .. {$r.to} ]>" ~ $r.modifier ~ ( $r.greed ?? '?' !! '' )
+	multi method to-lines( CharacterRange $r ) {
+		"{$r.from} .. {$r.to}"
+	}
+
+	multi method to-lines( Character $c ) {
+		if $c.name {
+			if $c.name eq ']' {
+				return '\]'
+			}
+			elsif $c.name ~~ / ^ \\ u (....) $ / {
+				return '\x[' ~ $0 ~ ']'
+			}
+			return $c.name
+		}
+		return ''
 	}
 
 	multi method to-lines( CharacterSet $c ) {
 		my $negated = $c.negated ?? '-' !! '';
 		my @content;
 		for $c.content {
-			if /(.)\-(.)/ {
-				@content.append( qq{$0 .. $1} );
+			if $_ ~~ Character or $_ ~~ CharacterRange {
+				@content.append( self.to-lines( $_ ) )
 			}
 			else {
 				@content.append( $_ );
 			}
 		}
-		"<{$negated}[ {@content} ]>" ~ $c.modifier ~ ( $c.greed ?? '?' !! '' )
+		"<{$negated}[ {@content} ]>" ~
+			modifier-to-string( $c )
 	}
 
 	multi method to-lines( Concatenation $c ) {
@@ -146,7 +181,7 @@ my role Formatting {
 			@content.append( self.to-lines( $_ ) );
 		}
 		return (
-			"{$r.type} {$r.name} \{",
+			"rule {$r.name} \{",
 			self.indent( @content ),
 			"\}"
 		).flat
@@ -176,7 +211,7 @@ my role Formatting {
 	}
 }
 
-class ANTLR4::Grammar:ver<0.2.3> {
+class ANTLR4::Grammar:ver<0.5.0> {
 	also does Formatting;
 
 	method to-string( Str $string ) {
