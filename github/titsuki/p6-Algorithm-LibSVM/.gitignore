@@ -1,9 +1,0 @@
-/blib/
-/src/*.o
-/src/Makefile
-/src/svm.cpp
-/src/svm.h
-/.panda-work
-/resources/*.so
-/resources/*.dylib
-.precomp/
