@@ -1,8 +1,8 @@
-image: rakudo-star:2016.04
+image: rakudo-star:2018.01
 
 before_script:
-  - panda update
-  - panda installdeps .
+  - zef update
+  - zef --depsonly install .
 
 test:
   script:

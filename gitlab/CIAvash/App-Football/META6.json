@@ -1,7 +1,7 @@
 {
     "perl": "6.c",
     "name": "App::Football",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "Command line app for accessing football(soccer) data",
     "authors": ["Siavash Askari Nasr"],
     "tags": ["football", "soccer", "cli", "command line"],
