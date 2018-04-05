@@ -1,10 +1,10 @@
-#README CSV::Parser
+# README CSV::Parser
  
 
-##Synopsis
+## Synopsis
 This module is pretty badass.  It reads CSV files line by line and can handle individual lines so you can handle your own file reads or you can let me do the damn work for you.  It handles binary files with relative ease so you can parse your binary 'Comma Separated Value' files like a pro.
 
-##Options I Can Take
+## Options I Can Take
 
 Pass in the following values if you feel like it:
 ```
@@ -45,12 +45,12 @@ Pass in the following values if you feel like it:
              sufficient 
 ```
 
-##Methods my Bad Ass Provides
+## Methods my Bad Ass Provides
 
-###get\_line ()
+### get\_line ()
 will read a line or chunk from a file and return the parsed line.  if this is the first call to this function and the ```contains_header_row``` is set then this will parse the first 2 lines and use the first row's values as the column values
 
-####Example reading through an entire file
+#### Example reading through an entire file
 ```perl6
 my $fh     = open 'some.csv', :r;
 my $parser = CSV::Parser.new( file_handle => $fh, contains_header_row => True );
@@ -70,7 +70,7 @@ while %data = %($parser.get_line()) {
 $fh.close; #don't forget to close
 ```
 
-###parse ( ```line``` )
+### parse ( ```line``` )
 will parse a Str or Buf in accordance with the options set.  set the damn ```binary``` flag if you are going to pass a Buf
 
 
