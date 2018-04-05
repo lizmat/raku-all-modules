@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 5;
+plan 6;
 
 use Text::Table::Simple;
 
@@ -120,6 +120,29 @@ subtest {
     is @output, lol2table(@columns, @rows), 'Public api matches private api';
     is-deeply @output, @expected, 'Create a table (header + body)'
 }, "_build_table";
+
+# Test formatted table with undefined values
+subtest {
+    my @expected = (
+        'O----O----------O--O',
+        '| id | name     |  |',
+        'O====O==========O==O',
+        '|    | John Doe |  |',
+        '| 2  |          |  |',
+        '--------------------',
+    );
+    temp @columns = 'id', 'name', Str;
+    temp @rows = (
+        [Int,"John Doe",Str],
+        [2,Str,Failure.new],
+    );
+
+
+    my @output = _build_table( :header_rows(@columns), :body_rows(@rows) );
+
+    is @output, lol2table(@columns, @rows), 'Public api matches private api';
+    is-deeply @output, @expected, 'Create a table (header + body)'
+}, "_build_table with undefined values";
 
 
 done-testing;

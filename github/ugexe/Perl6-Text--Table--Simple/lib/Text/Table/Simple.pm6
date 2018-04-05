@@ -124,11 +124,12 @@ sub _build_footer (@widths, **@rows, *%o) is export {
 sub _row2str (@widths, @cells, :$type where {$_ ~~ any(%defaults.keys)}, *%o) {
     my $csep   = %o{$type}<column_separator> // '|';
     my $format = "$csep " ~ join(" $csep ", @widths.map({"%-{$_}s"}) ) ~ " $csep";
-    my $height = @cells.map(*.lines.elems).max;
+    my @sanitized_cells = @cells.map: { $_ // '' };
+    my $height = @sanitized_cells.map(*.lines.elems).max;
 
     my @rows;
     for 0..($height - 1) -> $current-height {
-        my $line = sprintf( $format, @cells.map({ .lines[$current-height] }).map({ $_ // '' }) );
+        my $line = sprintf( $format, @sanitized_cells.map(*.lines[$current-height]).map({ $_ // '' }) );
         push @rows, $line;
     }
     @rows.join("\n");
@@ -138,7 +139,7 @@ sub _row2str (@widths, @cells, :$type where {$_ ~~ any(%defaults.keys)}, *%o) {
 sub _get_column_widths (**@rows, *%o)  is export {
     my @r = @rows.grep(*.so);
     return (0..@r[0].end).map( -> $col {
-        @r[*;$col].map(*.lines.max(*.chars).chars).max;
+        @r[*;$col].map({ .defined ?? .lines.max(*.chars).chars !! 0 }).max;
     } );
 }
 
