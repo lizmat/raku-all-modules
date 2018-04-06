@@ -189,7 +189,7 @@ class XML::XPath::Actions {
             }
         } else {
             $path = XML::XPath::Step.new(
-                axis        => 'child',
+                axis        => 'self',
                 is-absolute => True
             );
         }

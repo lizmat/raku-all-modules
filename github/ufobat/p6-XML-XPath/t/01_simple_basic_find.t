@@ -24,7 +24,7 @@ ENDXML
 
 my $set;
 $set = $x.find("/");
-isa-ok $set, XML::Element, 'found one node';
+isa-ok $set, XML::Document, 'found one node';
 
 $set = $x.find("/AAA");
 does-ok $set, XML::Node, 'found one node';

@@ -11,7 +11,7 @@ ENDXML
 
 my $set;
 my $root = $x.find('/.');
-isa-ok $root, XML::Element, 'found one node';
+isa-ok $root, XML::Document, 'found one node';
 
 my $doc = $x.find('/..');
 nok $doc.defined, 'nothing found';

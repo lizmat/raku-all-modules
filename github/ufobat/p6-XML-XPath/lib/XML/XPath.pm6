@@ -3,7 +3,7 @@ use XML::XPath::Actions;
 use XML::XPath::Grammar;
 use XML::XPath::Utils;
 
-class XML::XPath {
+class XML::XPath:ver<0.9.1> {
     has $.document;
     has %.registered-namespaces is rw;
 

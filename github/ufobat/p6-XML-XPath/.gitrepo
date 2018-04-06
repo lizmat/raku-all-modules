@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ufobat/p6-XML-XPath.git
 	branch = master
-	commit = 1e95494c3acb7341efc48cfe9075ec5e0d6c20a4
-	parent = 7a65f056870ed63a19291a8ea8bf1882ada3fd40
+	commit = 8ad4baf8740847a0285188334c0904dd4ac80cfb
+	parent = 248558dd159c9325b1ef9276969db0057c8882b5
 	cmdver = 0.4.0

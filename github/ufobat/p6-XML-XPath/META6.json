@@ -4,13 +4,13 @@
   ],
   "build-depends" : [ ],
   "depends" : [
-    "XML", "Test::META"
+    "XML",
+    "Test::META"
   ],
   "description" : "XPath perl6 library",
-  "name" : "XML::XPath",
   "license" : "Artistic-2.0",
+  "name" : "XML::XPath",
   "perl" : "6.c",
-  "tags" : ["XML", "XPath", "Parsing", "W3C", "Query Language"],
   "provides" : {
     "XML::XPath" : "lib/XML/XPath.pm6",
     "XML::XPath::Actions" : "lib/XML/XPath/Actions.pm6",
@@ -42,6 +42,13 @@
   },
   "resources" : [ ],
   "source-url" : "git://github.com/ufobat/p6-XML-XPath.git",
+  "tags" : [
+    "XML",
+    "XPath",
+    "Parsing",
+    "W3C",
+    "Query Language"
+  ],
   "test-depends" : [ ],
-  "version" : "0.9.0"
+  "version" : "0.9.1"
 }

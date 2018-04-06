@@ -12,8 +12,7 @@ class XML::XPath::NodeTest {
         given $axis {
             when 'self' {
                 if self!test-node($xml-node) {
-                    # xpath can not return the document.
-                    $result.push: $xml-node ~~ XML::Document ?? $xml-node.root !! $xml-node;
+                    $result.push: $xml-node;
                 }
             }
             when 'child' {
