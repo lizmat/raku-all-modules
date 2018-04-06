@@ -139,7 +139,8 @@ sub _row2str (@widths, @cells, :$type where {$_ ~~ any(%defaults.keys)}, *%o) {
 sub _get_column_widths (**@rows, *%o)  is export {
     my @r = @rows.grep(*.so);
     return (0..@r[0].end).map( -> $col {
-        @r[*;$col].map({ .defined ?? .lines.max(*.chars).chars !! 0 }).max;
+        # work around stuff like Int.max or "".lines.max returning -4 chars ala ''.lines.chars
+        @r[*;$col].map({ .defined && .chars ?? .lines.max(*.chars).chars !! 0 }).max;
     } );
 }
 
