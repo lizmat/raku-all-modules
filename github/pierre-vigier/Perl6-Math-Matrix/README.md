@@ -16,10 +16,10 @@ VERSION
 SYNOPSIS
 ========
 
-Matrices are tables with rows and columns (counting from 0) of numbers (Numeric): 
+Matrices are tables with rows and columns (index counting from 0) of numbers (Numeric type): 
 
-    transpose, invert, negate, add, subtract, multiply, dot product, size, determinant, 
-    rank, kernel, trace, norm, decompositions and so on
+    transpose, invert, negate, add, multiply, dot product, tensor product, determinant, 
+    rank, trace, norm, 15 boolean properties, decompositions, append, submatrix, map, reduce and more
 
 DESCRIPTION
 ===========
@@ -39,7 +39,7 @@ METHODS
 
   * conversion: Bool, Numeric, Str, perl, list-rows, list-columns, gist, full
 
-  * boolean properties: is-zero, is-identity, is-square, is-diagonal, is-diagonally-dominant, is-upper-triangular, is-lower-triangular, is-invertible, is-symmetric, is- antisymmetric, is-unitary, is-self-adjoint, is-orthogonal, is-positive-definite, is-positive-semidefinite
+  * boolean properties: is-zero, is-identity, is-square, is-diagonal, is-diagonally-dominant, is-upper-triangular, is-lower-triangular, is-invertible, is-symmetric, is-antisymmetric, is-unitary, is-self-adjoint, is-orthogonal, is-positive-definite, is-positive-semidefinite
 
   * numeric properties: size, density, trace, determinant, rank, kernel, norm, condition
 
@@ -66,6 +66,10 @@ The default constructor, takes arrays of arrays of numbers. Each second level ar
 
     1 2
     3 4
+
+    Math::Matrix.new( [[1]] );      # one cell 1*1 matrix 
+    Math::Matrix.new( [[1,2,3],] ); # one row 1*3 matrix, mind the trailing comma
+    Math::Matrix.new( [[1],[2]] );  # one column 2*1 matrix
 
 ### new-zero
 
@@ -106,54 +110,76 @@ This method is a constructor that returns an diagonal matrix of the size given b
 
 This method is a constructor that returns a matrix which is a result of the matrix product (method dotProduct, or operator dot) of a column vector (first argument) and a row vector (second argument).
 
-    my $matrixp = Math::Matrix.new-vector-product([1,2,3],[2,3,4]);
-    my $matrix = Math::Matrix.new([2,3,4],[4,6,8],[6,9,12]);       # same matrix
+    say Math::Matrix.new-vector-product([1,2,3],[2,3,4]):
+
+    2  3  4
+    4  6  8
+    6  9 12
 
 Accessors
 ---------
 
 ### cell
 
-Gets value of element in third row and fourth column. (counting always from 0)
+Gets value of element in row (first parameter) and column (second parameter). (counting always from 0)
 
-    my $value = $matrix.cell(2,3);
+    say Math::Matrix.new([[1,2],[3,4]]).cell(0,1):
+
+    2
 
 ### row
 
-Gets values of specified row (first required parameter) as a list. That would be (1, 2) if matrix is [[1,2][3,4]].
+Gets values of specified row (first required parameter) as a list.
 
-    my @values = $matrix.row(0);
+    say Math::Matrix.new([[1,2],[3,4]]).row(0):
+
+    (1, 2)
 
 ### column
 
-Gets values of specified column (first required parameter) as a list. That would be (1, 4) if matrix is [[1,2][3,4]].
+Gets values of specified column (first required parameter) as a list.
 
-    my @values = $matrix.column(0);
+    say Math::Matrix.new([[1,2],[3,4]]).column(0);
+
+    (1, 3)
 
 ### diagonal
 
-Gets values of diagonal elements. That would be (1, 4) if matrix is [[1,2][3,4]].
+Gets values of diagonal elements as a list. 
 
-    my @values = $matrix.diagonal();
+    say Math::Matrix.new([[1,2],[3,4]]).diagonal:
+
+    (1, 4)
 
 ### submatrix
 
-Subset of cells of a given matrix by deleting rows and/or columns. The first and simplest usage is by choosing a cell (by coordinates). Row and column of that cell will be removed.
+Matrix built by a subset of cells of a given matrix.
 
-    my $m = Math::Matrix.new([[1,2,3,4][2,3,4,5],[3,4,5,6]]);     # 1 2 3 4
-                                                                    2 3 4 5
-                                                                    3 4 5 6
-    say $m.submatrix(1,2);     # 1 2 4
-                                 3 4 6
+The first and simplest usage is by choosing a cell (by coordinates like .cell()). Row and column of that cell will be removed. The remaining cells form the submatrix.
 
-If you provide two pairs of coordinates (row column), these will be counted as left upper and right lower corner of and area inside the original matrix, which will the resulting submatrix.
+    say $m:
 
-    say $m.submatrix(1,1,1,3); # 2 3 4
+    1 2 3 4
+    2 3 4 5
+    3 4 5 6
+
+    say $m.submatrix(1,2):
+
+    1 2 4
+    3 4 6
+
+If you provide two pairs of coordinates (row1, column1, row2, column2), these will be counted as left upper and right lower corner of and area inside the original matrix, which will the resulting submatrix.
+
+    say $m.submatrix(1,1,1,3):
+
+    3 4 5
 
 When provided with two lists of values (one for the rows - one for columns) a new matrix will be created with the old rows and columns in that new order.
 
-    $m.submatrix((3,2),(1,2)); # 4 5
-                                 3 4
+    $m.submatrix((3,2),(1,2)):
+
+    4 5
+    3 4
 
 Type Conversion And Output Flavour
 ----------------------------------
@@ -164,13 +190,14 @@ Conversion into Bool context. Returns False if matrix is zero (all cells equal z
 
     $matrix.Bool
     ? $matrix           # alias
-    if $matrix          # Bool context too
+    if $matrix          # matrix in Bool context too
 
 ### Numeric
 
 Conversion into Numeric context. Returns number (amount) of cells (as .elems). Please note, only prefix a prefix + (as in: + $matrix) will call this Method. A infix (as in $matrix + $number) calls .add($number).
 
-    $matrix.Numeric   or      + $matrix
+    $matrix.Numeric
+    + $matrix           # alias op
 
 ### Str
 
