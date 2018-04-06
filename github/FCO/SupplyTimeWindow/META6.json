@@ -14,5 +14,8 @@
     "test-depends": [
         "Testo"
     ],
+    "provides": {
+        "SupplyTimeWindow": "lib/SupplyTimeWindow.pm6"
+    },
     "source-url": "git://github.com/FCO/SupplyTimeWindow.git"
 }

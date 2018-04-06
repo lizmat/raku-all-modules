@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FCO/SupplyTimeWindow.git
 	branch = master
-	commit = 31bcaf537ae17699bd73a69b290e0ac259c07c4a
-	parent = d74935300a1629c631493281163066970944b37a
+	commit = 7d6b48e75268712d88f49719d5dc64c67b265c8e
+	parent = 4e663717b08cfff84a78b8807f5f77f2d63a4700
 	cmdver = 0.4.0
