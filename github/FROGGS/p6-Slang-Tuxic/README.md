@@ -1,7 +1,7 @@
 ## Slang::Tuxic
 
 This slang allows you to put whitespace between the name of a subroutine and the opening parenthesis.
-Be aware that this introduces ambiguous situations, like when you want to pass a Parcel to a sub, or
+Be aware that this introduces ambiguous situations, like when you want to pass a List to a sub, or
 when you need parenthesis around the condition after the keywords `if`, `while` and so on...
 
 ```perl6
