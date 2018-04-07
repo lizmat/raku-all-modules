@@ -1,13 +1,13 @@
-#Perl 6: Web::Scraper;
+# Perl 6: Web::Scraper;
 
 This module works very similar to Perl 5's Web::Scraper.  Right now it has some extra sugar in some areas. Currently works with parsing from XML and HTML (converts it to XHTML).
 
-##Status:
-###Working on:
+## Status:
+### Working on:
 Maintenance mode, enhancemenets, etc.
 
-##Syntax:
-###Data:
+## Syntax:
+### Data:
 ```xml
 <data>
   <t id="1">test1</t>
@@ -35,7 +35,7 @@ Maintenance mode, enhancemenets, etc.
 </data>
 ```
 
-###Scraper:
+### Scraper:
 ```perl6
 my $count   = 0;
 my $scraper = scraper {
@@ -55,7 +55,7 @@ my $scraper = scraper {
 }  
 ```
 
-###Results:
+### Results:
 ```sh
 $scraper.d = {
   tarray => [
@@ -81,9 +81,9 @@ $scraper.d = {
 };
 ```
 
-##Example with a dynamic source file:
-###Data:
-####master.xml:
+## Example with a dynamic source file:
+### Data:
+#### master.xml:
 ```xml
 <xml>
   <files>
@@ -92,21 +92,21 @@ $scraper.d = {
   </files>
 </xml>
 ```
-####one.xml
+#### one.xml
 ```xml
 <xml>
   <id>1</id>
   <word>one</word>
 </xml>
 ```
-####two.xml
+#### two.xml
 ```xml
 <xml>
   <id>2</id>
   <word>two</word>
 </xml>
 ```
-###Syntax:
+### Syntax:
 ```perl6
 my $dynamicscraper = scraper {
   process 'id', 'id' => 'TEXT';
@@ -120,7 +120,7 @@ my $masterscraper = scraper {
 };
 $masterscraper.scrape('master.xml');
 ```
-###Results:
+### Results:
 ```sh
 $masterscraper.d == {
   files => [
