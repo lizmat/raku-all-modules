@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6-community-modules/URI-Encode.git
 	branch = master
-	commit = 40aeb581a44c40dbc873abf3be46d3df7f75ea17
-	parent = 119131573e8d74e15cfeae3ea2e13a87703232a6
+	commit = 2bcd7edda251007d844d80f9db09b08f3caefcb8
+	parent = 8dc5d10cbe3256ecca3855a4ff811c5cc897e807
 	cmdver = 0.4.0

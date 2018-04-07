@@ -6,7 +6,7 @@ A Perl 6 module for encoding / decoding URIs
 
     use URI::Encode;
 
-    # for encoding whole URIs, ignores reserved chars: #$&+,/:;=?@
+    # for encoding whole URIs, ignores reserved chars: :/?#[]@!$&'()*+,;=
     my $encoded_uri = uri_encode('http://www.example.com/?name=john doe&age=54');
 
     # encode every reserved char

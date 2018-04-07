@@ -1,6 +1,7 @@
 module URI::Encode:ver<0.05>
 {
-    my $RFC3986_unreserved = /<[0..9A..Za..z\-.~]>/;
+    my $RFC3986_unreserved = rx/<[0..9A..Za..z\-.~_]>/;
+    my $RFC3986_reserved = rx/<[:/?#\[\]@!$&'()*+,;=]>/;
 
     my %escapes;
     for (0..255) {
@@ -10,18 +11,18 @@ module URI::Encode:ver<0.05>
       %escapes{sprintf("%%%02X", $_)} = chr($_);
     }
 
-    my &enc = sub ($m) {
-        $m.Str.encode.list.map({.fmt('%%%02X')}).join('')
+    my &enc = sub (Str:D $m) {
+        $m.encode.list.map(*.fmt('%%%02X')).join
     }
 
     sub uri_encode (Str:D $text) is export
     {
-      return $text.subst(/<[\x00..\x10ffff]-[a..zA..Z0..9_.~\!\+\-\#\$\&\+,\/\:;\=\?@]>/, &enc, :g);
+      return $text.comb.map({ if $RFC3986_unreserved or $RFC3986_reserved { $_ } else { &enc($_) }}).join;
     }
 
     sub uri_encode_component (Str:D $text) is export
     {
-      return $text.subst(/<[\x00..\x10ffff]-[a..zA..Z0..9_.~\-]>/, &enc, :g);
+      return $text.comb.map({ if $RFC3986_unreserved { $_ } else { &enc($_) }}).join;
     }
 
     my &dec = sub ($m) {
