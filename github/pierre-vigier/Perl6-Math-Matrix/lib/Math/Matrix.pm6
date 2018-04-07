@@ -44,15 +44,15 @@ subset NumArray of Array where { .all ~~ Numeric };
 ################################################################################
 
 method new( @m ) {
-    die "Expect an Array of Array" unless all @m ~~ Array;
-    die "All rows must contains the same number of elements" unless @m[0] == all @m[*];
-    die "All rows must contain only numeric values" unless all( @m[*;*] ) ~~ Numeric;
+    fail "Expect an Array of Array" unless all @m ~~ Array;
+    fail "All rows must contains the same number of elements" unless @m[0] == all @m[*];
+    fail "All rows must contain only numeric values" unless all( @m[*;*] ) ~~ Numeric;
     self.bless( rows => @m );
 }
 
 method clone { self.bless( rows => @!rows ) }
 
-sub AoA_clone (@m)  {  map {[ map {$^cell.clone}, $^row.flat ]}, @m }
+sub AoA_clone (@m)  {[ map {[ map {$^cell.clone}, $^row.flat ]}, @m ]}
 
 submethod BUILD( :@rows!, :$diagonal, :$density, :$trace, :$determinant, :$rank, :$kernel,
                  :$is-zero, :$is-identity, :$is-symmetric, :$is-upper-triangular, :$is-lower-triangular ) {
@@ -101,6 +101,7 @@ method new-identity( PosInt $size ) {
 }
 
 method new-diagonal( *@diag ){
+    fail "Expect at least on number as parameter" if @diag == 0;
     fail "Expect an List of Number" unless @diag ~~ NumList;
     my Int $size = +@diag;
     my @d = zero_array($size, $size);
@@ -197,15 +198,17 @@ multi method submatrix(Math::Matrix:D: @rows, @cols --> Math::Matrix:D ){
 # end of accessors - start with type conversion and handy shortcuts
 ################################################################################
 
-method Bool(Math::Matrix:D: --> Bool)    { ! self.is-zero }
-method Numeric (Math::Matrix:D: --> Int) {   self.elems   }
-method Str(Math::Matrix:D: --> Str)      {   @!rows.gist  }
+method Bool(Math::Matrix:D: --> Bool)     { ! self.is-zero }
+method Numeric (Math::Matrix:D: --> Int)  {   self.elems   }
+method Str(Math::Matrix:D: --> Str)       {   @!rows.Str   }
 
-multi method perl(Math::Matrix:D: --> Str) {
-  self.WHAT.perl ~ ".new(" ~ @!rows.perl ~ ")";
-}
+multi method perl(Math::Matrix:D: --> Str){ self.WHAT.perl ~ ".new(" ~ @!rows.perl ~ ")" }
 
-method list-rows(Math::Matrix:D: --> List) {
+method Array(Math::Matrix:D: --> Array)   { self!clone_rows }
+
+method list(Math::Matrix:D: --> List)     { self.list-rows.flat.list }
+
+method list-rows(Math::Matrix:D: --> List){
     (@!rows.map: {$_.flat}).list;
 }
 
@@ -213,21 +216,30 @@ method list-columns(Math::Matrix:D: --> List) {
     ((0 .. $!column-count - 1).map: {self.column($_)}).list;
 }
 
-method gist(Math::Matrix:D: --> Str) {
+multi method gist(Math::Matrix:U: --> Str) { "({self.^name})" }
+multi method gist(Math::Matrix:D: --> Str) {
     my $max-rows = 20;
     my $max-chars = 80;
-    my $max-nr-char = max( @!rows[*;*] ).Int.chars;  # maximal pre digit char in cell
-    my $cell_with;
+    my $max-nr-char;               # maximal pre digit char in cell
+    my $cell_with;                 #
     my $fmt;
     if all( @!rows[*;*] ) ~~ Int {
+        $max-nr-char = max( @!rows[*;*] ).Int.chars;
         $fmt = " %{$max-nr-char}d ";
         $cell_with = $max-nr-char + 2;
-    } else {
+    } elsif all( @!rows[*;*] ) ~~ Real {
         my $max-decimal = max( @!rows[*;*].map( { ( .split(/\./)[1] // '' ).chars } ) );
         $max-decimal = 5 if $max-decimal > 5; #more than that is not readable
-        $max-nr-char += $max-decimal + 1;
+        $max-nr-char = max( @!rows[*;*] ).Int.chars + $max-decimal + 1;
         $fmt = " \%{$max-nr-char}.{$max-decimal}f ";
         $cell_with = $max-nr-char + 3 + $max-decimal;
+    } else {  # complex
+        # TODO
+        my $max-decimal = max( @!rows[*;*].map( { ( .split(/\./)[1] // '' ).chars } ) );
+        $max-decimal = 5 if $max-decimal > 5; #more than that is not readable
+        $max-nr-char = 7;
+        $cell_with = 9;
+        $fmt = " \%{$max-nr-char}.{$max-decimal}c";
     }
     my $rows = min $!row-count, $max-rows;
     my $cols = min $!column-count, $max-chars div $cell_with;
