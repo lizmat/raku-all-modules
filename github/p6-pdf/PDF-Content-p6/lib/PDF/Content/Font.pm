@@ -6,8 +6,9 @@ role PDF::Content::Font {
 
     has $.font-obj is rw handles <encode decode filter font-name height kern stringwidth cb-finish>;
 
-    method make-font(PDF::COS::Dict $dict, $font-obj) {
-        my $font-dict = $dict.^mixin: PDF::Content::Font;
+    method make-font(PDF::COS::Dict $font-dict, $font-obj) {
+        $font-dict.^mixin: PDF::Content::Font
+            unless $font-dict.does(PDF::Content::Font);
         $font-dict.set-font-obj($font-obj);
         $font-dict;
     }
