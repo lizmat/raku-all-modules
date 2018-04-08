@@ -1,3 +1,5 @@
+Release 0.1.3
+Fix ToUnicode entry in type 0, 1 and 3 fonts.
 Release 0.1.2
 added:
 - PDF::Action::URI class

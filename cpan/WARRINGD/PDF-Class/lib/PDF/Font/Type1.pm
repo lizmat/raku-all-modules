@@ -28,7 +28,6 @@ class PDF::Font::Type1
     my subset NameOrEncoding where PDF::COS::Name | PDF::Encoding;
     has NameOrEncoding $.Encoding is entry;             #| (Optional) A specification of the font’s character encoding if different from its built-in encoding. The value of Encoding is either the name of a predefined encoding (MacRomanEncoding, MacExpertEncoding, or WinAnsiEncoding, as described in Appendix D) or an encoding dictionary that specifies differences from the font’s built-in encoding or from a specified predefined encoding
 
-    use PDF::CMap;
-    has PDF::CMap $.ToUnicode is entry;                 #| (Optional; PDF 1.2) A stream containing a CMap file that maps character codes to Unicode values
+    has PDF::COS::Stream $.ToUnicode is entry;                 #| (Optional; PDF 1.2) A stream containing a CMap file that maps character codes to Unicode values
 
 }

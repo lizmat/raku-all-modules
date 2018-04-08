@@ -33,6 +33,5 @@ class PDF::Font::Type3
     use PDF::Resources;
     has PDF::Resources $.Resources is entry;   #| (Optional but strongly recommended; PDF 1.2) A list of the named resources, such as fonts and images, required by the glyph descriptions in this font
 
-    use PDF::CMap;
-    has PDF::CMap $.ToUnicode is entry;        #| (Optional; PDF 1.2) A stream containing a CMap file that maps character codes to Unicode values
+    has PDF::COS::Stream $.ToUnicode is entry;        #| (Optional; PDF 1.2) A stream containing a CMap file that maps character codes to Unicode values
 }

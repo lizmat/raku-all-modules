@@ -51,6 +51,7 @@
     "PDF::Field::Signature" : "lib/PDF/Field/Signature.pm",
     "PDF::Field::Text" : "lib/PDF/Field/Text.pm",
     "PDF::Font" : "lib/PDF/Font.pm",
+    "PDF::Font::CIDFont" : "lib/PDF/Font/CIDFont.pm",
     "PDF::Font::CIDFontType0" : "lib/PDF/Font/CIDFontType0.pm",
     "PDF::Font::CIDFontType2" : "lib/PDF/Font/CIDFontType2.pm",
     "PDF::Font::MMType1" : "lib/PDF/Font/MMType1.pm",
@@ -106,5 +107,5 @@
     "pdf"
   ],
   "test-depends" : [ ],
-  "version" : "0.1.2"
+  "version" : "0.1.3"
 }
