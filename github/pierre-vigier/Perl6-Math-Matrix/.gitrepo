@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/pierre-vigier/Perl6-Math-Matrix.git
 	branch = master
-	commit = 8a6f2fd830c3535107dd47da81f5f01c5a5d7856
-	parent = 3dcf62563eb4d06d942a47685bf679847c7337e6
+	commit = 1c9d5af838a56b47bb7ca6fa0316b233e7ec4b5f
+	parent = 58f5fbdd2ce3111f288abf8c652a171d6c3acceb
 	cmdver = 0.4.0
