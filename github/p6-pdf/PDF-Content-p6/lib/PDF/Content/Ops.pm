@@ -820,25 +820,18 @@ class PDF::Content::Ops {
 	};
     }
 
-    method can(\name) {
-        my @meths = callsame;
-        if !@meths {
-            with OpCode.enums{name} -> \op {
-                # e.g. $.Restore :== $.op('Q', [])
-                my &meth = method (*@a) { self.op(op, |@a) };
-                self.^add_method(name, &meth );
-                @meths.push: &meth
-            }
-        }
-        @meths;
-    }
     method dispatch:<.?>(\name, |c) is raw {
-        self.can(name) ?? self."{name}"(|c) !! Nil
+        self.can(name) || OpCode.enums{name} ?? self."{name}"(|c) !! Nil
     }
+
     method FALLBACK(\name, |c) {
-        self.can(name)
-            ?? self."{name}"(|c)
-            !! die X::Method::NotFound.new( :method(name), :typename(self.^name) );
+        with OpCode.enums{name} -> \op {
+            # e.g. $.Restore :== $.op('Q', [])
+            self.op(op, |c);
+        }
+        else {
+            die X::Method::NotFound.new( :method(name), :typename(self.^name) );
+        }
     }
 }
 
