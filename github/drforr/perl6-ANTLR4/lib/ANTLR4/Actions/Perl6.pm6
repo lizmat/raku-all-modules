@@ -46,7 +46,7 @@ class Nonterminal {
 	also does Named;
 	also does Modified;
 
-	has $.negated;
+	has $.negated = False;
 	has $.alias;
 }
 
@@ -63,7 +63,7 @@ class CharacterSet {
 	also does Modified;
 
 	has @.content;
-	has $.negated;
+	has $.negated = False;
 }
 
 class Alternation { has @.content; }
@@ -102,6 +102,7 @@ class Grammar {
 
 class ANTLR4::Actions::Perl6 {
 	my %character-class-escape =
+		' ' => True,
 		']' => True,
 		'-' => True
 	;
@@ -115,31 +116,21 @@ class ANTLR4::Actions::Perl6 {
 
 	sub escape-character-class( *@chars ) {
 		map {
-			if $_ {
-				my $copy = $_;
-				$copy ~~ s:g/\\u(....)/\\x[$0]/;
-				if %character-class-escape{$copy} {
-					$copy = %character-class-escape{$copy};
-				}
-				$copy;
+			my $copy = $_;
+			$copy ~~ s:g/\\u(....)/\\x[$0]/;
+			if %character-class-escape{$copy} {
+				$copy = %character-class-escape{$copy};
 			}
-			else {
-				''
-			}
+			$copy;
 		}, @chars
 	}
 
 	sub ANTLR-to-perl6( *@str ) {
 		map {
-			if $_ {
-				my $copy = $_;
-				$copy ~~ s:g/\\u(....)/\\x[$0]/;
-				$copy ~~ s:g/<!after \\>\'/\\\'/;
-				$copy;
-			}
-			else {
-				''
-			}
+			my $copy = $_;
+			$copy ~~ s:g/\\u(....)/\\x[$0]/;
+			$copy ~~ s:g/<!after \\>\'/\\\'/;
+			$copy;
 		}, @str
 	}
 
@@ -190,8 +181,10 @@ class ANTLR4::Actions::Perl6 {
 	# gets called is STRING_LITERAL.
 	#
 	method range( $/ ) {
+		my @content =
+			ANTLR-to-range( $/<from>.ast, $/<to>.ast );
 		make CharacterSet.new(
-			:content( ANTLR-to-range( $/<from>.ast, $/<to>.ast ) )
+			:content( @content )
 		)
 	}
 
@@ -236,7 +229,10 @@ class ANTLR4::Actions::Perl6 {
 			if $_ {
 				if is-ANTLR-range( ~$_ ) {
 					@content.append(
-						ANTLR-to-char-range( ~$_ )
+ANTLR-to-range(
+	~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
+	~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
+)
 					)
 				}
 				elsif ~$_ {
@@ -358,16 +354,16 @@ $/<atom><notSet><blockSet><setElementAltList><setElement>[0]<terminal><STRING_LI
 			$/<atom><notSet><setElement><LEXER_CHAR_SET> {
 			my @content;
 			for $/<atom><notSet><setElement><LEXER_CHAR_SET> {
-				if $_ {
-					if is-ANTLR-range( ~$_ ) {
-# XXX fix later
-						@content.append(
-							ANTLR-to-char-range( ~$_ )
-						)
-					}
-					elsif ~$_ {
-						@content.append( Character.new( :name( $_ ) ) )
-					}
+				if is-ANTLR-range( ~$_ ) {
+					@content.append(
+ANTLR-to-range(
+	~$_[0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
+	~$_[0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
+)
+					)
+				}
+				elsif ~$_ {
+					@content.append( Character.new( :name( $_ ) ) )
 				}
 			}
 			make CharacterSet.new(
@@ -432,6 +428,10 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 		}
 		elsif $/<ebnf> {
 			# XXX The // '' should probably go away...
+			my @content =
+				Alternation.new(
+					:content( $/<ebnf>.ast )
+				);
 			make Grouping.new(
 				:modifier(
 					$/<ebnf><ebnfSuffix><MODIFIER>.ast // ''
@@ -439,11 +439,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 				:greed(
 					$/<ebnf><ebnfSuffix><GREED>.ast // False
 				),
-				:content(
-					Alternation.new(
-						:content( $/<ebnf>.ast )
-					)
-				)
+				:content( @content )
 			)
 		}
 		elsif $/<atom> {
@@ -454,6 +450,11 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 	method parserElement( $/ ) {
 		if $/<element>[0]<atom><range> and
 			$/<element>[0]<ebnfSuffix> {
+			my @content =
+				ANTLR-to-range(
+					$/<element>[0]<atom><range><from>.ast,
+					$/<element>[0]<atom><range><to>.ast
+				);
 			make CharacterSet.new(
 				:modifier(
 					 $/<element>[0]<ebnfSuffix><MODIFIER>.ast
@@ -461,17 +462,17 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 				:greed(
 					$/<element>[0]<ebnfSuffix><GREED>.ast // False
 				),
-				:content(
-					ANTLR-to-range(
-						$/<element>[0]<atom><range><from>.ast,
-						$/<element>[0]<atom><range><to>.ast
-					);
-				)
+				:content( @content )
 			)
 		}
 		elsif $/<element>[0]<atom><notSet> and
 			$/<element>[1]<atom><DOT> and
 			$/<element>[2]<atom><DOT> {
+			my @content =
+				ANTLR-to-range(
+					$/<element>[0]<atom><notSet><setElement><terminal><scalar>.ast,
+					$/<element>[3]<atom><terminal><scalar>.ast
+				);
 			make CharacterSet.new(
 				:modifier(
 					$/<element>[3]<ebnfSuffix><MODIFIER>.ast // ''
@@ -480,12 +481,7 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 					$/<element>[3]<ebnfSuffix><GREED>.ast // False
 				),
 				:negated( True ),
-				:content(
-					ANTLR-to-range(
-						$/<element>[0]<atom><notSet><setElement><terminal><scalar>.ast,
-						$/<element>[3]<atom><terminal><scalar>.ast
-					)
-				)
+				:content( @content )
 			)
 		}
 		elsif $/<element> {
@@ -495,23 +491,6 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 
 	method parserAlt( $/ ) {
 		make $/<parserElement>.ast
-	}
-
-	# XXX Turn these into ANTLR-to-range() calls.
-	sub ANTLR-to-char-range( $str ) {
-		my ( $from, $to ) = $str.split( '-' );
-		return CharacterRange.new(
-			:from(
-				escape-character-class(
-					$from
-				)
-			),
-			:to(
-				escape-character-class(
-					$to
-				)
-			)
-		)
 	}
 
 	sub is-ANTLR-range( $str ) {
@@ -524,9 +503,12 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 	method LEXER_CHAR_SET( $/ ) {
 		my @content;
 		for $/[0] {
-			if is-ANTLR-range( ~$_ ) {
+			if $_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN> {
 				@content.append(
-					ANTLR-to-char-range( ~$_ )
+ANTLR-to-range(
+	~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
+	~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
+)
 				)
 			}
 			else {
@@ -614,15 +596,15 @@ $_.<lexerElement>[0]<lexerAtom><terminal><scalar>.ast
 		elsif $/<ebnfSuffix> and
 			$/<lexerAtom><LEXER_CHAR_SET> and
 $/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN> {
+			my @content =
+				ANTLR-to-range(
+~$/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
+~$/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
+				);
 			make CharacterSet.new(
 				:modifier( $modifier ),
 				:greed( $greed ),
-				:content(
-					ANTLR-to-range(
-~$/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
-~$/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
-					)
-				)
+				:content( @content )
 			)
 		}
 		elsif $/<ebnfSuffix> and
