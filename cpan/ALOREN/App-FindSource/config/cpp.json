@@ -1,0 +1,29 @@
+{
+	"option" : [
+		{
+			"short" : "c",
+			"value" : [ "c" ],
+			"annotation" : "c source file extension list. "
+		},
+		{
+			"short" : "cpp",
+			"value" : [
+				"C",
+				"cpp",
+				"c++",
+				"cxx",
+				"hpp",
+				"cc",
+				"h++",
+				"hh",
+				"hxx" 
+			],
+			"annotation" : "cpp source file extension list. "
+		},
+		{
+			"short" : "h",
+			"value" : [ "h" ],
+			"annotation" : "c/c++ header file extension list. "
+		}
+	]
+}

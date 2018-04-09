@@ -1,0 +1,34 @@
+{
+    "perl"        : "6.c",
+    "name"        : "App::FindSource",
+    "version"     : "0.0.2",
+    "license"     : "GPL",
+    "description" : "Find your source file easily.",
+    "depends"     : [
+        "Getopt::Advance",
+        "JSON::Fast"
+    ],
+    "build-depends": [
+        "LibraryMake"
+    ],
+    "test-depends": [
+        "Test::META"
+    ],
+    "tags": [
+        "find",
+        "c",
+        "cpp",
+        "make"
+    ],
+    "provides"    : {
+        "Config::Searcher"    : "lib/Config/Searcher.pm6",
+        "Config::Loader"     : "lib/Config/Loader.pm6"
+    },
+	"auth" : "github:araraloren",
+    "authors" : "Loren",
+    "source-url"  : "https://github.com/araraloren/perl6-app-findsource.git",
+    "support" : {
+        "bugtracker" : "https://github.com.araraloren/perl6-app-findsource/issues",
+        "source" : "https://github.com/araraloren/perl6-app-findsource.git"
+    }
+}

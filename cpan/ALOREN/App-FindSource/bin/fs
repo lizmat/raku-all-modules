@@ -1,0 +1,198 @@
+#!/usr/bin/env perl6
+
+use nqp;
+use JSON::Fast;
+use Getopt::Advance;
+use Config::Loader;
+use Config::Searcher;
+
+my $category;
+my %configs = &loading-config();
+
+&main();
+
+sub main() {
+    my OptionSet $os .= new;
+
+    $os.push(
+        'l=a',
+        "load specify config, available config are < {%configs.keys.join(' ')} >.",
+    );
+    $os.push(
+        'w=a',
+        'match whole filename.',
+    );
+    $os.push(
+        'a=a',
+        'addition extension list.',
+    );
+    $os.push(
+        'i=b',
+        'enable ignore case mode.'
+    );
+    $os.append(
+        'no|=a' => 'exclude file category.',
+        'only|=s' => 'only search given category.',
+        :radio
+    );
+    $os.push(
+        'd|debug=b',
+        'print debug message.'
+    );
+    $os.insert-pos(
+        "directory",
+        sub find-and-print-source($os, $dira) {
+            my @stack = do given $dira.value { .substr(0, $_ ~~ /\/$/ ?? .chars - 1 !! .chars); };
+            my (@t1, @t2);
+            my %no := ($os<no> // []).SetHash;
+            my ($debug, $only, $ignore-case) = ($os<d>, $os<only>, $os<i>);
+
+            @t1 = do {
+                my @t;
+                with $only {
+                    fail "Not recognized category: {$_}." unless $category{$_};
+                    @t := $_ eq "w" ?? [] !! ($os{$_} // []);
+                } else {
+                    @t = [];
+                    for @($category.keys) {
+                        if not %no{$_} {
+                            @t.append($os{$_} // []);
+                        }
+                    }
+                }
+                @t = @t>>.lc if $ignore-case;
+                @t;
+            };
+            @t2 = do {
+                my @t;
+                @t = ($only && $only ne "w") ?? [] !! ( %no<w> ?? [] !! ($os<w> // []) );
+                @t = @t>>.lc if $ignore-case;
+                @t;
+            };
+            my %ext := @t1.Set;
+            my %whole := @t2.Set;
+
+            note "GET ALL EXT\t=> ", %ext if $debug;
+            note "GET ALL WHOLE\t=> ", %whole if $debug;
+
+            my $supplier = Supplier.new;
+
+            $supplier.Supply.tap: {
+                put Q :qq '"$_"';
+            };
+
+            while @stack {
+                note "CURR FILES => ", @stack if $debug;
+                my @stack-t = (@stack.race.map(
+                                    sub ($_) {
+                                        note "\t|GOT FILE => ", $_ if $debug;
+                                        if nqp::lstat(nqp::unbox_s($_), nqp::const::STAT_ISDIR) == 1 {
+                                            return .&get-sub-files;
+                                        } else {
+                                            my $fp  = &basename($_);
+                                            my $ext = $fp.substr(($fp.rindex(".") // -1) + 1);
+
+                                            note "\t=>GOT EXT = ", $ext if $debug;
+                                            if %ext{$ignore-case ?? $ext.lc !! $ext} || (%whole{$ignore-case ?? $fp.lc !! $fp} ) {
+                                                note "\t\t|SEND FILE ", $_ if $debug;
+                                                $supplier.emit($_);
+                                            }
+                                        }
+                                        return ();
+                                    }
+                                ).flat);
+                @stack = @stack-t;
+            };
+        },
+        :last
+    );
+
+    my $rv = &getopt( [ %configs, |@*ARGS], $os, parser => &config-loader-parser);
+
+    $rv.return-value.{ <w a> } = True;
+    $category = $rv.return-value;
+
+    my $config-io = &determind-local-path().add("findsource");
+
+    $os.insert-cmd(
+        "add",
+        sub (@fargs) {
+            for @fargs>>.value -> $file {
+                given $file.IO {
+                    when .e {
+                        .copy($config-io.add(.basename));
+                    }
+                    default {
+                        die "File {$file} not exists!";
+                    }
+                }
+            }
+        }
+    );
+    $os.insert-cmd(
+        "remove",
+        sub (@fargs) {
+            for @fargs>>.value -> $file {
+                given $file.IO {
+                    when .e {
+                        .unlink;
+                    }
+                    default {
+                        die "Configuration {$file} not exists!";
+                    }
+                }
+            }
+        }
+    );
+    $os.insert-cmd(
+        "list",
+        sub (@fargs) {
+            my @configs := $config-io.dir();
+            put "Not configuration file!" if +@configs == 0;
+            .basename.put for @configs;
+        }
+    );
+
+    &getopt($rv.noa, [ $os, ]);
+}
+
+sub loading-config() is export {
+    my ConfigSearcher $cs .= new(name => 'findsource');
+    my %ret;
+
+    if $cs.e {
+        $cs.search();
+        for $cs.config {
+            %ret{.config-name} = from-json($_.slurp);
+        }
+    }
+
+    return %ret;
+}
+
+sub basename($filepath) {
+    return $filepath.substr(($filepath.rindex('/') // -1) + 1);
+}
+
+sub get-sub-files($path) {
+    my @ret := [];
+    my $dh;
+
+    try { # catch when open directory failed
+        $dh := nqp::opendir($path);
+        CATCH {
+            default {
+                note "Can not open directory: $path";
+                return @ret;
+            }
+        }
+    }
+
+    while (my $f = nqp::nextfiledir($dh)) {
+        @ret.push("$path/$f") if $f ne ".." && $f ne ".";
+    }
+
+    nqp::closedir($dh);
+
+    return @ret;
+}
