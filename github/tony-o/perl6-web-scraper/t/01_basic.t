@@ -51,7 +51,6 @@ my $scraper = scraper {
 $scraper.scrape($data);
 
 plan 20;
-$scraper.d.say;
 
 for 0 .. 3 -> $e {
   ok $scraper.d<tarray>[$e]<name> eq "test{1+$e}", 'tarray hash equality';

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-web-scraper.git
 	branch = master
-	commit = 38ac01a0d7623a5b338654ce2d73350d32403a79
-	parent = 7560947a9a97f7946e2c5ad7826ec9016159a75d
+	commit = ff19075b3db215a88f718c76778dd57dd26961db
+	parent = efa8d65b64833de25333f0db8a933c3f49d78216
 	cmdver = 0.4.0

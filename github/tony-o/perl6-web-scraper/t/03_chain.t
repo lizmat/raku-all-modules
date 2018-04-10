@@ -21,13 +21,9 @@ my $scraper    = scraper {
 
 $scraper.scrape: slurp('data/zero.xml');
 
-$scraper.d.say;
-
 plan 6;
 
-for 0 .. 2 -> $c{
+for 0 .. 2 -> $c {
   ok $scraper.d<item>[$c]<id> eq $c+1, "check item id: $c";
-  $scraper.d<item>[$c]<info>.say;
-  "This is from {$scraper.d<item>[$c]<file>}".say;
   ok $scraper.d<item>[$c]<info> eq "This is from {$scraper.d<item>[$c]<file>.substr(5)}", 'check item description';
 }
