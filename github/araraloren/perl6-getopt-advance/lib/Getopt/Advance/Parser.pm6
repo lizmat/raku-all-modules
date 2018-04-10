@@ -32,9 +32,9 @@ grammar Option::Grammar {
 
 	token option:sym<dl>{ '--/'<optname> }
 
-	token option:sym<lv>{ '-'  <optname> '=' <optvalue> }
+	token option:sym<sv>{ '-'  <optname> '=' <optvalue> }
 
-	token option:sym<sv>{ '--' <optname> '=' <optvalue>	}
+	token option:sym<lv>{ '--' <optname> '=' <optvalue>	}
 
 	token optname {
 		<-[\=]>+

@@ -34,7 +34,11 @@ link:doc/Getopt/Advance.adoc[Getopt-Advance]
 
 === App::snippet
 
-link:https://github.com/araraloren/perl6-app-snippet[an app used Getopt::Advance]
+link:https://github.com/araraloren/perl6-app-snippet[Run your c/c++ code.]
+
+=== App::FindSource
+
+link:https://github.com/araraloren/perl6-app-findsource[Find your source file easily!]
 
 === find-file
 
