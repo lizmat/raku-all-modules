@@ -13,8 +13,8 @@ PDF::COS.loader = class PDF::Class::Loader
     method find-delegate( Str $type!, $subtype?, :$base-class) is default {
 
 	my Str $subclass = $type;
-	$subclass ~= '::' ~ $subtype
-            if $subtype && $type ne 'Mask';
+	$subclass ~= '::' ~ $_
+            with $subtype;
 
 	return self.handler{$subclass}
 	    if self.handler{$subclass}:exists;
@@ -73,7 +73,7 @@ PDF::COS.loader = class PDF::Class::Loader
         $.find-delegate( $type, $subtype, :$base-class );
     }
 
-    #| Reverse lookup for classes when /Subtype is required but /Type is optional
+    #| Reverse lookup for classes when /Subtype is required but optional /Type missing
     multi method load-delegate(Hash :$dict! where {.<Subtype>:exists }, :$base-class) {
 	my $subtype = from-ast $dict<Subtype>;
 
@@ -92,8 +92,8 @@ PDF::COS.loader = class PDF::Class::Loader
 	    default { Nil }
 	};
 
-	if $type {
-	    $.find-delegate($type, $subtype);
+	with $type {
+	    $.find-delegate($_, $subtype);
 	}
 	else {
 	    note "unhandled subtype: PDF::*::{$subtype}";
@@ -101,9 +101,22 @@ PDF::COS.loader = class PDF::Class::Loader
 	}
     }
 
-    #| Reverse lookup for classes when /Subtype is required but /Type is optional
-    multi method load-delegate(Hash :$dict where {from-ast($_) ~~ 'GTS_PDFX' given .<S>},) {
-	    $.find-delegate('OutputIntent', 'GTS_PDFX');
+    #| Reverse lookup for classes when /S (subtype) is required but option /Type is missing
+    multi method load-delegate(Hash :$dict! where {.<S>:exists }, :$base-class) {
+	my $subtype = from-ast $dict<S>;
+
+	my $type = do given $subtype {
+            when 'Alpha'|'Luminosity' { 'Mask' }
+            when 'GTS_PDFX' { 'OutputIntent' }
+            default { Nil }
+	};
+
+	with $type {
+	    $.find-delegate($_, $subtype);
+	}
+        else {
+            $base-class;
+        }
     }
 
     subset ColorSpace-Array of List where {
@@ -114,7 +127,7 @@ PDF::COS.loader = class PDF::Class::Loader
          #| PDF Spec 1.7 Section 4.5.4 CIE-Based Color Spaces
          $elems == 2
          && $t ~~ PDF::COS::Name
-         && $t eq 'CalGray'|'CalRGB'|'Lab'|'ICCBased';
+         && $t eq 'CalGray'|'CalRGB'|'Lab'|'ICCBased'|'Pattern';
         )
         || (
             #| PDF Spec 1.7 Section 4.5.5 Special Color Spaces

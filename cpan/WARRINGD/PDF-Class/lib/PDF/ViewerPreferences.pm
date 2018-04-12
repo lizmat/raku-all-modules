@@ -1,6 +1,5 @@
 use v6;
 
-use PDF::COS::Tie;
 use PDF::COS::Tie::Hash;
 
 #| ViewPreferences role - see PDF::Catalog - /ViewPreferences entry
@@ -8,6 +7,7 @@ use PDF::COS::Tie::Hash;
 role PDF::ViewerPreferences
     does PDF::COS::Tie::Hash {
 
+    use PDF::COS::Tie;
     use PDF::COS::Name;
 
     # see [PDF 1.7 TABLE 8.1 Entries in a viewer preferences dictionary]

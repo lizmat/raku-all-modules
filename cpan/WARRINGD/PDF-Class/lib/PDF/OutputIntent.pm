@@ -1,12 +1,12 @@
 use v6;
 
-use PDF::COS::Dict;
+use PDF::COS::Tie::Hash;
 use PDF::Class::Type;
 
 #| /Type /OutputIntent
 
-class PDF::OutputIntent
-    is PDF::COS::Dict
+role PDF::OutputIntent
+    does PDF::COS::Tie::Hash
     does PDF::Class::Type['Type', 'S'] {
 
     use PDF::COS::Tie;

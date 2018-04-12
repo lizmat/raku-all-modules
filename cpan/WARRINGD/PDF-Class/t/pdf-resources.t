@@ -65,7 +65,7 @@ lives-ok {$sc-font-obj.check}, '$sc-font-obj.check lives';
 my %enc-ast = :ind-obj[5, 2, :dict{ :Type( :name<Encoding> ), :BaseEncoding( :name<MacRomanEncoding> ) } ];
 my $enc-ind-obj = PDF::IO::IndObj.new( |%enc-ast );
 my $enc-obj = $enc-ind-obj.object;
-isa-ok $enc-obj, ::('PDF::Encoding');
+does-ok $enc-obj, ::('PDF::Encoding');
 is $enc-obj.Type, 'Encoding', '$enc.Type';
 is $enc-obj.BaseEncoding, 'MacRomanEncoding', '$enc.BaseEncoding';
 lives-ok {$enc-obj.check}, '$enc-obj.check lives';
@@ -97,7 +97,7 @@ PDF::Grammar::PDF.parse($input, :$actions, :rule<ind-obj>)
 
 $ind-obj = PDF::IO::IndObj.new( :$input, |%ast, :$reader );
 my $oi-font-obj = $ind-obj.object;
-isa-ok $oi-font-obj, ::('PDF::OutputIntent');
+isa-ok $oi-font-obj, ::('PDF::OutputIntent::GTS_PDFX');
 is $oi-font-obj.S, 'GTS_PDFX', 'OutputIntent S';
 is $oi-font-obj.OutputCondition, 'CGATS TR 001 (SWOP)', 'OutputIntent OutputCondition';
 is $oi-font-obj.RegistryName, 'http://www.color.org', 'OutputIntent RegistryName';

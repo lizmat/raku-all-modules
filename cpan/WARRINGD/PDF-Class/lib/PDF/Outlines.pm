@@ -1,13 +1,12 @@
 use v6;
 
-use PDF::COS::Dict;
+use PDF::COS::Tie::Hash;
 use PDF::Class::Type;
 
 #| /Type /Outlines - the Outlines dictionary
 
-class PDF::Outlines
-    is PDF::COS::Dict
-    does PDF::Class::Type {
+role PDF::Outlines
+    does PDF::COS::Tie::Hash {
 
     use PDF::COS::Tie;
     use PDF::COS::Name;

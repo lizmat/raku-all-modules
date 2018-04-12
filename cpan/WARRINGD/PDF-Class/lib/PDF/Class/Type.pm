@@ -22,7 +22,7 @@ role PDF::Class::Type[$type-entry = 'Type', $subtype-entry = 'Subtype'] {
 
 		# /Type already set. check it agrees with the class name
 		die "conflict between class-name $class-name ($type-name) and dictionary /$type-entry /{self{$type-entry}}"
-		    unless $type eq $type-name;
+		    unless $type-name eq $type|'COS';
 
                 if $1 {
                     my Str $subtype-name = ~$1;

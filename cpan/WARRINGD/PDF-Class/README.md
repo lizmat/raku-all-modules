@@ -1,8 +1,8 @@
 # PDF::Class
 
-This module provides a set of classes and accessors for structured access to PDF documents as described int the PDF 1.7 Reference Guide.
+This is primarily a support module for [PDF::API6](https://github.com/p6-pdf/PDF-API6).
 
-It understands the internal structure of PDF documents and gradually types classes and objects as they are dereferenced.
+PDF::Class provides a set of classes and accessors for structured access to PDF documents as described int the PDF 1.7 Reference Guide.
 
 As well as structural and type validation; PDF::Class also understands inheritance (via Parent entries) and the sometimes finicky serialization rules regarding PDF construction into indirect objects. These details are automatically handled to ensure the `save-as` method correctly serializes the PDF.
 
@@ -23,7 +23,7 @@ Can be written in PDF::Class as:
 ```
 Things to note:
 
-- as well as `PDF::Class`and `PDF::Page`. This module contains definitions for many other PDF internal objects, including streams, dictionaries(hashes), arrays and others, as listed below.
+- As well as `PDF::Class`and `PDF::Page`. This module contains definitions for many other PDF internal objects, including streams, dictionaries(hashes), arrays and others, as listed below.
 - There is generally a one-to-one correspondence between raw dictionary entries and accessors, e.g. `$pdf<Root><AA>` versus `$pdf.Root.AA`.
 - There are often accessor aliases, to aide clarity. E.g. `$pdf.Root.AA` can also be written as `$pdf.catalog.additional-actions`.
 - The classes often contain additional accessor and helper methods. For example `$pdf.page(10)` - references page 10, without the need to navigate the catalog and page tree.
@@ -106,6 +106,28 @@ in the out put stream `/UseToes`, rather than a string `(UseToes)`.
     $doc<PageMode>  = :name<UseToes>;
 ```
 
+## Scripts in this Distribution
+
+#### `pdf-append.p6`
+
+appends PDF files
+
+#### `pdf-burst.p6`
+
+bursts a multi-page PDF into single page PDF files
+
+#### `pdf-checker.p6`
+
+validates the internal structure of a PDF.
+
+#### `pdf-info.p6`
+
+prints various PDF properties
+
+#### `pdf-revert.p6`
+
+undoes the last revision of an incrementally saved PDF file.
+
 ## Development Status
 
 The PDF::Class module is under construction and not yet functionally complete.
@@ -118,10 +140,11 @@ PDF::Class | dict | Encrypt, ID, Info, Root(catalog), Size | Pages, ast, crypt, 
 PDF::Catalog | dict | AA(additional-actions), AcroForm, Collection, Dests, Lang, Legal, MarkInfo, Metadata, Names, NeedsRendering, OCProperties, OpenAction, Outlines, OutputIntents, PageLabels, PageLayout, PageMode, Pages, Perms, PieceInfo, Requirements, Resources, SpiderInfo, StructTreeRoot, Threads, Type, URI, Version, ViewerPreferences | core-font, find-resource, images, resource-entry, resource-key, use-font, use-resource | /Type /Catalog - usually the document root in a PDF See [PDF 1.7 Section 3.6.1 Document Catalog]
 PDF::AcroForm | dict | CO(calculation-order), DA(default-appearance), DR(default-resources), Fields, NeedAppearances, Q(quadding), SigFlags, XFA | fields, fields-hash | 
 PDF::Action::GoTo | dict | D(destination) |  | 
-PDF::Annot::Circle | dict | AP(appearance), AS(appearance-state), BE(border-effect), BS(border-style), Border, C(color), Contents, DR(default-resources), F(flags), IC(interior-color), M(mod-time), NM(name), OC(optional-content), P(page), RD, Rect, StructParent, Subtype, Type |  | 
+PDF::Action::URI | dict | Base, IsMap, URI |  | 
+PDF::Annot::Circle | dict | AP(appearance), AS(appearance-state), BE(border-effect), BS(border-style), Border, C(color), Contents, DR(default-resources), F(flags), IC(interior-color), M(mod-time), NM(name), OC(optional-content), P(page), RD(rectangle-differences), Rect, StructParent, Subtype, Type |  | 
 PDF::Annot::FileAttachment | dict | AP(appearance), AS(appearance-state), Border, C(color), Contents, DR(default-resources), F(flags), FS(file-spec), M(mod-time), NM(name), Name(icon-name), OC(optional-content), P(page), Rect, StructParent, Subtype, Type |  | 
 PDF::Annot::Link | dict | A(action), AP(appearance), AS(appearance-state), Border, C(color), Contents, DR(default-resources), Dest, F(flags), H(highlight-mode), M(mod-time), NM(name), OC(optional-content), P(page), PA(uri-action), QuadPoints, Rect, StructParent, Subtype, Type |  | 
-PDF::Annot::Square | dict | AP(appearance), AS(appearance-state), BE(border-effect), BS(border-style), Border, C(color), Contents, DR(default-resources), F(flags), IC(interior-color), M(mod-time), NM(name), OC(optional-content), P(page), RD, Rect, StructParent, Subtype, Type |  | 
+PDF::Annot::Square | dict | AP(appearance), AS(appearance-state), BE(border-effect), BS(border-style), Border, C(color), Contents, DR(default-resources), F(flags), IC(interior-color), M(mod-time), NM(name), OC(optional-content), P(page), RD(rectangle-differences), Rect, StructParent, Subtype, Type |  | 
 PDF::Annot::Text | dict | AP(appearance), AS(appearance-state), Border, C(color), Contents, DR(default-resources), F(flags), M(mod-time), NM(name), Name(icon-name), OC(optional-content), Open, P(page), Rect, State, StateModel, StructParent, Subtype, Type |  | /Type Annot - Annonation subtypes See [PDF 1.7 Section 8.4 Annotations]
 PDF::Annot::Widget | dict | A(action), AA(additional-actions), AP(appearance), AS(appearance-state), BS(border-style), Border, C(color), Contents, DR(default-resources), F(flags), H(highlight-mode), M(mod-time), MK, NM(name), OC(optional-content), P(page), Rect, StructParent, Subtype, Type |  | 
 PDF::Appearance | dict | D(down), N(normal), R(rollover) |  | 
@@ -133,14 +156,16 @@ PDF::ColorSpace::ICCBased | array | Subtype, dict | Alternate, Metadata, N, Rang
 PDF::ColorSpace::Indexed | array | Base, Hival, Lookup, Subtype |  | 
 PDF::ColorSpace::Lab | array | Subtype, dict | BlackPoint, Range, WhitePoint | 
 PDF::ColorSpace::Separation | array | AlternateSpace, Name, Subtype, TintTransform |  | 
-PDF::Encoding | dict | BaseEncoding, Differences, Type |  | /Type /Encoding see [PDF 1.7 Section 5.5.5 Character Encoding]
+PDF::Destination | array | fit, page | delegate-destination | 
+PDF::Encoding | dict | BaseEncoding, Differences, Type |  | 
 PDF::ExtGState | dict | AIS(alpha-source-flag), BG(black-generation-old), BG2(black-generation), BM(blend-mode), CA(stroke-alpha), D(dash-pattern), FL(flatness-tolerance), Font, HT(halftone), LC(line-cap), LJ(line-join), LW(line-width), ML(miter-limit), OP(overprint-paint), OPM(overprint-mode), RI(rendering-intent), SA(stroke-adjustment), SM(smoothness-tolerance), SMask(soft-mask), TK(text-knockout), TR(transfer-function-old), TR2(transfer-function), Type, UCR(under-color-removal-old), UCR2(under-color-removal), ca(fill-alpha), op(overprint-stroke) | transparency | /Type /ExtGState
 PDF::Field::Button | dict | DV(default-value), Opt, V(value) |  | 
 PDF::Field::Choice | dict | DV(default-value), I(indices), Opt, TI(top-index), V(value) |  | 
-PDF::Field::Signature | dict | Lock, SV |  | 
+PDF::Field::Signature | dict | Lock, SV(seed-value) |  | 
 PDF::Field::Text | dict | DV(default-value), MaxLen, V(value) |  | 
+PDF::Font::CIDFont | dict | BaseFont, CIDSystemInfo, DW, DW2, FontDescriptor, W, W2 |  | 
 PDF::Font::CIDFontType0 | dict | BaseFont, CIDSystemInfo, DW, DW2, FontDescriptor, Subtype, Type, W, W2 | CIDToGIDMap, font-obj, make-font, set-font-obj | 
-PDF::Font::CIDFontType2 | dict | Subtype, Type | font-obj, make-font, set-font-obj | 
+PDF::Font::CIDFontType2 | dict | BaseFont, CIDSystemInfo, DW, DW2, FontDescriptor, Subtype, Type, W, W2 | CIDToGIDMap, font-obj, make-font, set-font-obj | 
 PDF::Font::MMType1 | dict | BaseFont, Encoding, FirstChar, FontDescriptor, LastChar, Name, Subtype, ToUnicode, Type, Widths | font-obj, make-font, set-font-obj | 
 PDF::Font::TrueType | dict | BaseFont, Encoding, FirstChar, FontDescriptor, LastChar, Name, Subtype, ToUnicode, Type, Widths | font-obj, make-font, set-font-obj | TrueType fonts - /Type /Font /Subtype TrueType see [PDF 1.7 Section 5.5.2 TrueType Fonts]
 PDF::FontDescriptor | dict | Ascent, AvgWidth, CapHeight, CharSet, Descent, Flags, FontBBox, FontFamily, FontFile, FontFile2, FontFile3, FontName, FontStretch, FontWeight, ItalicAngle, Leading, MaxWidth, MissingWidth, StemH, StemV, Type, XHeight |  | /Type /FontDescriptor - the FontDescriptor dictionary
@@ -150,17 +175,18 @@ PDF::Function::PostScript | stream | Domain, FunctionType, Range | calc, calcula
 PDF::Function::Sampled | stream | BitsPerSample, Decode, Domain, Encode, FunctionType, Order, Range, Size | calc, calculator | /FunctionType 0 - Sampled see [PDF 1.7 Section 3.9.1 Type 0 (Sampled) Functions]
 PDF::Function::Stitching | stream | Bounds, Domain, Encode, FunctionType, Functions, Range | calc, calculator | /FunctionType 3 - Stitching see [PDF 1.7 Section 3.9.3 Type 3 (Stitching) Functions]
 PDF::Group::Transparency | dict | CS(color-space), I(isolated), K(knockout), S, Type |  | 
-PDF::Mask | dict | BC(backdrop-color), G(transparency-group), S(subtype), TR(transfer-function), Type |  | 
+PDF::Mask::Alpha | dict | BC(backdrop-color), G(transparency-group), S, TR(transfer-function), Type |  | 
+PDF::Mask::Luminosity | dict | BC(backdrop-color), G(transparency-group), S, TR(transfer-function), Type |  | 
 PDF::Metadata::XML | stream | Subtype, Type |  | 
 PDF::NumberTree | dict | Kids, Limits, Nums |  | 
 PDF::OBJR | dict | Obj, Pg, Type |  | /Type /OBJR - a node in the page tree
 PDF::Outline | dict | A(action), C(color), Count, Dest, F(flags), First, Last, Next, Parent, Prev, SE(structure-element), Title |  | 
 PDF::Outlines | dict | Count, First, Last, Type |  | /Type /Outlines - the Outlines dictionary
 PDF::OutputIntent::GTS_PDFX | dict | DestOutputProfile, Info, OutputCondition, OutputConditionIdentifier, RegistryName, S, Type |  | 
-PDF::Page | dict | AA(additional-actions), Annots, ArtBox, B(beads), BleedBox, BoxColorInfo, Contents, CropBox, Dur(display-duration), Group, ID, LastModified, MediaBox, Metadata, PZ(preferred-zoom), Parent, PieceInfo, PressSteps, Resources, Rotate, SeparationInfo, StructParents, Tabs, TemplateInstantiated, Thumb, Trans(transition-effect), TrimBox, Type, UserUnit, VP(view-ports) | art-box, bbox, bleed-box, canvas, content-streams, contents, contents-parse, core-font, crop-box, fields, fields-hash, find-resource, finish, gfx, graphics, has-pre-gfx, height, images, media-box, new-gfx, pre-gfx, pre-graphics, render, resource-entry, resource-key, text, tiling-pattern, to-landscape, to-xobject, trim-box, use-font, use-resource, width, xobject-form | /Type /Page - describes a single PDF page
+PDF::Page | dict | AA(additional-actions), Annots, ArtBox, B(beads), BleedBox, BoxColorInfo, Contents, CropBox, Dur(display-duration), Group, ID, LastModified, MediaBox, Metadata, PZ(preferred-zoom), Parent, PieceInfo, PressSteps, Resources, Rotate, SeparationInfo, StructParents, Tabs, TemplateInstantiated, Thumb, Trans(transition-effect), TrimBox, Type, UserUnit, VP(view-ports) | art-box, bbox, bleed-box, canvas, content-streams, contents, contents-parse, core-font, crop-box, fields, fields-hash, find-resource, finish, gfx, graphics, has-pre-gfx, height, images, media-box, new-gfx, pre-gfx, pre-graphics, render, resource-entry, resource-key, save-as-image, text, tiling-pattern, to-landscape, to-xobject, trim-box, use-font, use-resource, width, xobject-form | /Type /Page - describes a single PDF page
 PDF::Pages | dict | Count, CropBox, Kids, MediaBox, Parent, Resources, Type | add-page, add-pages, art-box, bbox, bleed-box, core-font, crop-box, find-resource, height, images, media-box, page-count, resource-entry, resource-key, to-landscape, trim-box, use-font, use-resource, width | /Type /Pages - a node in the page tree
 PDF::Pattern::Shading | dict | ExtGState, Matrix, PatternType, Shading, Type | delegate-pattern | /ShadingType 2 - Axial
-PDF::Pattern::Tiling | stream | BBox, Matrix, PaintType, PatternType, Resources, TilingType, Type, XStep, YStep | canvas, contents, contents-parse, core-font, delegate-pattern, find-resource, finish, gfx, graphics, has-pre-gfx, height, images, new-gfx, pre-gfx, pre-graphics, render, resource-entry, resource-key, text, tiling-pattern, use-font, use-resource, width, xobject-form | /ShadingType 1 - Tiling
+PDF::Pattern::Tiling | stream | BBox, Matrix, PaintType, PatternType, Resources, TilingType, Type, XStep, YStep | canvas, contents, contents-parse, core-font, delegate-pattern, find-resource, finish, gfx, graphics, has-pre-gfx, height, images, new-gfx, pre-gfx, pre-graphics, render, resource-entry, resource-key, save-as-image, text, tiling-pattern, use-font, use-resource, width, xobject-form | /ShadingType 1 - Tiling
 PDF::Resources | dict | ColorSpace, ExtGState, Font, Pattern, ProcSet, Properties, Shading, XObject |  | 
 PDF::Shading::Axial | dict | AntiAlias, BBox, Background, ColorSpace, Coords, Domain, Extend, Function, ShadingType |  | /ShadingType 2 - Axial
 PDF::Shading::Coons | stream | AntiAlias, BBox, Background, BitsPerComponent, BitsPerCoordinate, BitsPerFlag, ColorSpace, Decode, Function, ShadingType |  | /ShadingType 6 - Coons
@@ -169,7 +195,7 @@ PDF::Shading::Functional | dict | AntiAlias, BBox, Background, ColorSpace, Domai
 PDF::Shading::Lattice | stream | AntiAlias, BBox, Background, BitsPerComponent, BitsPerCoordinate, ColorSpace, Decode, Function, ShadingType, VerticesPerRow |  | /ShadingType 5 - Lattice
 PDF::Shading::Radial | dict | AntiAlias, BBox, Background, ColorSpace, Coords, Domain, Extend, Function, ShadingType |  | /ShadingType 3 - Radial
 PDF::Shading::Tensor | stream | AntiAlias, BBox, Background, BitsPerComponent, BitsPerCoordinate, BitsPerFlag, ColorSpace, Decode, Function, ShadingType |  | /ShadingType 7 - Tensor
-PDF::XObject::Form | stream | BBox, FormType, Group, LastModified, Matrix, Metadata, OC(optional-content-group), OPI, PieceInfo, Ref, Resources, StructParent, StructParents, Subtype, Type | canvas, contents, contents-parse, core-font, find-resource, finish, gfx, graphics, has-pre-gfx, height, images, new-gfx, pre-gfx, pre-graphics, render, resource-entry, resource-key, text, tiling-pattern, use-font, use-resource, width, xobject-form | XObject Forms - /Type /XObject /Subtype Form See [PDF Spec 1.7 4.9 Form XObjects]
+PDF::XObject::Form | stream | BBox, FormType, Group, LastModified, Matrix, Metadata, OC(optional-content-group), OPI, PieceInfo, Ref, Resources, StructParent, StructParents, Subtype, Type | canvas, contents, contents-parse, core-font, find-resource, finish, gfx, graphics, has-pre-gfx, height, images, new-gfx, pre-gfx, pre-graphics, render, resource-entry, resource-key, save-as-image, text, tiling-pattern, use-font, use-resource, width, xobject-form | XObject Forms - /Type /XObject /Subtype Form See [PDF Spec 1.7 4.9 Form XObjects]
 PDF::XObject::Image | stream | Alternatives, BitsPerComponent, ColorSpace, Decode, Height, ID, ImageMask, Intent, Interpolate, Mask, Metadata, Name, OC, OPI, SMask, SMaskInData, StructParent, Subtype, Type, Width | data-uri, height, image-obj, image-type, inline-content, inline-to-xobject, load-image, source, to-png, width | XObjects /Type XObject /Subtype /Image See [PDF 1.7 Section 4.8 - Images ]
 PDF::XObject::PS | stream | Level1, Subtype, Type |  | Postscript XObjects /Type XObject /Subtype PS See [PDF 1.7 Section 4.7.1 PostScript XObjects]
 

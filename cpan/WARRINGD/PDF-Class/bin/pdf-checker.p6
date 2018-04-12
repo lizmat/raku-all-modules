@@ -15,13 +15,13 @@ my Str @*exclude;
 my %seen{Any};
 
 #| check a PDF against PDF class definitions
-sub MAIN(Str $infile,               #| input PDF
-         Str  :$password = '',      #| password for the input PDF, if encrypted
-         Bool :$*trace,             #| show progress
-         Bool :$*contents,          #| validate/check contents of pages, etc         
-         Bool :$*strict,            #| perform additional checks
-         UInt :$*max-depth = 100,   #| maximum recursion depth
-	 Str  :$exclude,            #| excluded entries: Entry1,Entry2
+sub MAIN(Str $infile,               #= input PDF
+         Str  :$password = '',      #= password for the input PDF, if encrypted
+         Bool :$*trace,             #= show progress
+         Bool :$*contents,          #= validate/check contents of pages, etc         
+         Bool :$*strict,            #= perform additional checks
+         UInt :$*max-depth = 100,   #= maximum recursion depth
+	 Str  :$exclude,            #= excluded entries: Entry1,Entry2
          ) {
 
     my $doc = PDF::Class.open( $infile, :$password );
@@ -46,30 +46,30 @@ multi sub check(Hash $obj, UInt :$depth is copy = 0, Str :$ent = '') {
     check-contents($obj, :$ref)
 	if $*contents && $obj.does(PDF::Content::Graphics);
 
-    for $obj.keys.sort {
+    for $obj.keys.sort -> $k {
 
         # Avoid following /P back to page then back here via page /Annots
-        next if $_ eq 'P' && $obj.isa(PDF::Annot);
-	next if @*exclude.grep: $_;
+        next if $k eq 'P' && $obj.isa(PDF::Annot);
+	next if @*exclude.grep: $k;
 
 	my $kid;
 
 	do {
-	    $kid = $entries{$_}:exists
-		?? $obj."$_"()   # entry has an accessor. use it
-		!! $obj{$_};     # dereferece hash entry
+	    $kid = $entries{$k}:exists
+		?? $obj."$k"()   # entry has an accessor. use it
+		!! $obj{$k};     # dereferece hash entry
 
 	    CATCH {
 		default {
-		    $*ERR.say: "error in $ref$ent entry: $_"; 
+		    $*ERR.say: "error in $ref /$k entry: $_";
 		}
 	    }
 	}
 
-	check($kid, :ent("/$_"), :$depth) if $kid ~~ Array | Hash;
+	check($kid, :ent("/$k"), :$depth) if $kid ~~ Array | Hash;
 
-	@unknown-entries.push: '/' ~ $_
-	    if $*strict && +$entries && !($entries{$_}:exists);
+	@unknown-entries.push: '/' ~ $k
+	    if $*strict && +$entries && !($entries{$k}:exists);
     }
 
     $*ERR.say: "unknown entries in $ref{$obj.WHAT} struct: @unknown-entries[]"
@@ -98,7 +98,7 @@ multi sub check(Array $obj, UInt :$depth is copy = 0, Str :$ent = '') {
 
 	    CATCH {
 		default {
-		    $*ERR.say: "error in $ref$ent: $_"; 
+		    $*ERR.say: "error in $ref $ent: $_";
 		}
 	    }
 	}
@@ -108,14 +108,13 @@ multi sub check(Array $obj, UInt :$depth is copy = 0, Str :$ent = '') {
 
 multi sub check($obj) is default {}
 
-#| check contents of a Page, XObject Form or Pattern
+#| check contents of a Page, XObject Form, Pattern or CharProcs
 sub check-contents( $obj, Str :$ref!) {
 
     my Array $ast = $obj.contents-parse;
 
     # cross check with the resources directory
-    my $resources = $obj.Resources
-	// die "no /Resources dict found";
+    my $resources = $obj.?Resources // {};
 
     use PDF::Content::Ops;
     my PDF::Content::Ops $ops .= new(:$*strict);

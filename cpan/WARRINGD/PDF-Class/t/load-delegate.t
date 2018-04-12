@@ -20,7 +20,7 @@ isa-ok PDF::Class.loader.load-delegate( :dict{ :FunctionType(3) }),  ::('PDF::Fu
 
 isa-ok PDF::Class.loader.load-delegate( :dict{ :Subtype<Link> }),  ::('PDF::Annot::Link'), 'annot defaulted /Type - implemented';
 isa-ok PDF::Class.loader.load-delegate( :dict{ :Subtype<Caret> }, ),  ::('PDF::Annot'), 'annot defaulted /Type - unimplemented';
-isa-ok PDF::Class.loader.load-delegate( :dict{ :S<GTS_PDFX> }, ),  ::('PDF::OutputIntent'), 'output intent defaulted /Type';
+does-ok PDF::Class.loader.load-delegate( :dict{ :S<GTS_PDFX> }, ),  ::('PDF::OutputIntent'), 'output intent defaulted /Type';
 
 require ::('PDF::Pages');
 my $pages = ::('PDF::Pages').new;

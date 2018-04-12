@@ -1,12 +1,12 @@
 use v6;
 
-use PDF::COS::Dict;
+use PDF::COS::Tie::Hash;
 use PDF::Class::Type;
 
 #| /Type /Encoding
 #| see [PDF 1.7 Section 5.5.5 Character Encoding]
-class PDF::Encoding
-    is PDF::COS::Dict
+role PDF::Encoding
+    does PDF::COS::Tie::Hash
     does PDF::Class::Type {
 
     # see [PDF 1.7 TABLE 5.11 Entries in an encoding dictionary]

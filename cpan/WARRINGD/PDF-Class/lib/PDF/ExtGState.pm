@@ -42,7 +42,8 @@ role PDF::ExtGState
     has Bool $.SA is entry(:alias<stroke-adjustment>);           #| (Optional) A flag specifying whether to apply automatic stroke adjustment
     has $.BM is entry(:alias<blend-mode>);                       #| (Optional; PDF 1.4) The current blend mode to be used in the transparent imaging model
     use PDF::Mask;
-    has PDF::Mask $.SMask is entry(:alias<soft-mask>);           #| (Optional; PDF 1.4) The current soft mask, specifying the mask shape or mask opacity values to be used in the transparent imaging mode
+    my subset MaskOrName where PDF::Mask|PDF::COS::Name;
+    has MaskOrName $.SMask is entry(:alias<soft-mask>);           #| (Optional; PDF 1.4) The current soft mask, specifying the mask shape or mask opacity values to be used in the transparent imaging mode
     my subset Alpha of Numeric where 0.0 .. 1.0;
     has Alpha $.CA is entry(:alias<stroke-alpha>);               #| (Optional; PDF 1.4) The current stroking alpha constant, specifying the constant shape or constant opacity value to be used for stroking operations in the transparent imaging model
     has Alpha $.ca is entry(:alias<fill-alpha>);                 #| (Optional; PDF 1.4) Same as CA, but for nonstroking operations

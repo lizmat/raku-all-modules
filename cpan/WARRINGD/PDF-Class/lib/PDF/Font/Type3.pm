@@ -6,6 +6,7 @@ class PDF::Font::Type3
     is PDF::Font
     does PDF::Content::Resourced {
 
+    use PDF::COS;
     use PDF::COS::Tie;
     use PDF::COS::Dict;
     use PDF::COS::Name;
@@ -15,11 +16,19 @@ class PDF::Font::Type3
     has PDF::COS::Name $.Name is entry;                 #| (Required in PDF 1.0; optional otherwise) See Table 5.8 on page 413
     has Numeric @.FontBBox is entry(:required, :len(4));         #| (Required) A rectangle (see Section 3.8.4, “Rectangles”) expressed in the glyph coordinate system, specifying the font bounding box.
     has Numeric @.FontMatrix is entry(:required, :len(6));       #| (Required) An array of six numbers specifying the font matrix, mapping glyph space to text space
-    has PDF::COS::Stream %.CharProcs is entry(:required);        #| (Required) A dictionary in which each key is a character name and the value associated with that key is a content stream that constructs and paints the glyph for that character.
+    use PDF::COS::Tie::Hash;
+    use PDF::Content::Graphics;
+    my role CharProc
+        does PDF::Content::Graphics
+        does PDF::COS::Tie::Hash {}
+    has CharProc %.CharProcs is entry(:required);        #| (Required) A dictionary in which each key is a character name and the value associated with that key is a content stream that constructs and paints the glyph for that character.
 
     use PDF::Encoding;
-    my subset NameOrEncoding where PDF::COS::Name | PDF::Encodiing;
-    has NameOrEncoding $.Encoding is entry(:required); #| (Required) An encoding dictionary whose Differences array specifies the complete character encoding for this font
+    my subset NameOrEncoding where PDF::COS::Name | PDF::Encoding;
+    multi sub coerce(Hash $dict, NameOrEncoding) {
+        PDF::COS.coerce($dict, PDF::Encoding);
+    }
+    has NameOrEncoding $.Encoding is entry(:required, :&coerce); #| (Required) An encoding dictionary whose Differences array specifies the complete character encoding for this font
 
     has UInt $.FirstChar is entry(:required);          #| (Required) The first character code defined in the font’s Widths array
 

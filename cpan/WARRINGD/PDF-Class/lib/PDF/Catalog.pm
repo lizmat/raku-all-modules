@@ -44,8 +44,8 @@ class PDF::Catalog
     subset PageMode of PDF::COS::Name where 'UseNone'|'UseOutlines'|'UseThumbs'|'FullScreen'|'UseOC'|'UseAttachments';
     has PageMode $.PageMode is entry;                         #| (Optional) A name object specifying how the document should be displayed when opened
 
-    my subset Outlines of PDF::Class::Type where { .type eq 'Outlines' }; # autoloaded PDF::Outlines
-    has Outlines $.Outlines is entry(:indirect); #| (Optional; must be an indirect reference) The outline dictionary that is the root of the document’s outline hierarchy
+    use PDF::Outlines;
+    has PDF::Outlines $.Outlines is entry(:indirect); #| (Optional; must be an indirect reference) The outline dictionary that is the root of the document’s outline hierarchy
 
     has PDF::COS::Dict @.Threads is entry(:indirect);         #| (Optional; PDF 1.1; must be an indirect reference) An array of thread dictionaries representing the document’s article threads
 

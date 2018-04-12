@@ -17,7 +17,7 @@ role PDF::Outline
     has PDF::Outline $.Next is entry(:indirect);       #| (Required for all but the last item at each level; must be an indirect reference)The next item at this outline level.
     has PDF::Outline $.First is entry(:indirect);      #| (Required if the item has any descendants; must be an indirect reference) The first of this item’s immediate children in the outline hierarchy.
     has PDF::Outline $.Last is entry(:indirect);       #| (Required if the item has any descendants; must be an indirect reference) The last of this item’s immediate children in the outline hierarchy.
-    has UInt $.Count is entry;                         #| (Required if the item has any descendants) If the item is open, the total number of its open descendants at all lower levels of the outline hierarchy. If the item is closed, a negative integer whose absolute value specifies how many descendants would appear if the item were reopened.
+    has Int $.Count is entry;                          #| (Required if the item has any descendants) If the item is open, the total number of its open descendants at all lower levels of the outline hierarchy. If the item is closed, a negative integer whose absolute value specifies how many descendants would appear if the item were reopened.
     has $.Dest is entry;                               #| (Optional; not permitted if an A entry is present) The destination to be displayed when this item is activated
     use PDF::Action;
     has PDF::Action $.A is entry(:alias<action>);      #| (Optional; PDF 1.1; not permitted if a Dest entry is present) The action to be performed when this item is activate

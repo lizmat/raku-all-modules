@@ -1,8 +1,10 @@
 use v6;
 
+use PDF::COS::Dict;
 use PDF::COS::Tie::Hash;
 
-role PDF::Mask
+class PDF::Mask
+    is PDF::COS::Dict
     does PDF::COS::Tie::Hash {
 
     use PDF::COS::Tie;

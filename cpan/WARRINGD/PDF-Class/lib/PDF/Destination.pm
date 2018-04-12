@@ -1,5 +1,4 @@
 use v6;
-use PDF::COS;
 use PDF::COS::Tie;
 use PDF::COS::Tie::Array;
 
@@ -17,17 +16,17 @@ role PDF::Destination does PDF::COS::Tie::Array {
     has PDF::Page $.page is index(0);
     has PDF::COS::Name $.fit is index(1);
     # See [PDF 1.7 TABLE 8.2 Destination syntax]
-    multi sub is-destination($page, 'XYZ', NumNull $left,
-                             NumNull $top, NumNull $zoom)     { True }
+    multi sub is-destination($page, 'XYZ', NumNull $left?,
+                             NumNull $top?, NumNull $zoom?)   { True }
     multi sub is-destination($page, 'Fit')                    { True }
-    multi sub is-destination($page, 'FitH', NumNull $top)     { True }
-    multi sub is-destination($page, 'FitV', NumNull $left)    { True }
+    multi sub is-destination($page, 'FitH', NumNull $top?)    { True }
+    multi sub is-destination($page, 'FitV', NumNull $left?)   { True }
     multi sub is-destination($page, 'FitR', Numeric $left,
                              Numeric $bottom, Numeric $right,
                              Numeric $top )                   { True }
     multi sub is-destination($page, 'FitB')                   { True }
-    multi sub is-destination($page, 'FitBH', NumNull $top)    { True }
-    multi sub is-destination($page, 'FitBV', NumNull $left)   { True }
+    multi sub is-destination($page, 'FitBH', NumNull $top?)   { True }
+    multi sub is-destination($page, 'FitBV', NumNull $left?)  { True }
     multi sub is-destination(|c) is default                   { False }
 
     my subset DestinationArray of List is export(:DestinationArray) where is-destination(|$_);

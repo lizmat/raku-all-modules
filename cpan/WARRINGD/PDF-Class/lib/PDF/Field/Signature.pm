@@ -59,5 +59,5 @@ role PDF::Field::Signature
 
     }
 
-    has SeedValueDict $.SV is entry(:indirect, :alias<sedd-value>);           #| (Optional; must be an indirect reference; PDF 1.5) A seed value dictionary (see Table 8.83) containing information that constrains the properties of a signature that is applied to this field.
+    has SeedValueDict $.SV is entry(:indirect, :alias<seed-value>);           #| (Optional; must be an indirect reference; PDF 1.5) A seed value dictionary (see Table 8.83) containing information that constrains the properties of a signature that is applied to this field.
 }

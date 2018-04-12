@@ -1,12 +1,27 @@
+Release 0.1.5
+Improvements from field testing of pdf-checker.p6:
+- PDF::Outline, PDF::Outlines:
+  -- fix coercements. Convert from classes to roles as /Type is optional.
+  -- Allow negative /Count values, as per spec
+- PDF::Destination: allow trailing optional array elements to be omitted
+- PDF::ColorSpace::Pattern: added as a new colorspace type
+- PDF::Font:
+  -- fix coercement of type1 & 3 Encoding entry
+  -- coerce type3 CharProcs as a PDF::Content::Graphics content stream
+Release 0.1.4
+- Altered composition of some classes to avoid 'version skew' compilation
+  errors (Issue #11)
+- Fixed PDF::ExtGState.SMask accessor; new subclasses PDF::Mask::Alpha,
+  PDF::Mask::Luminosity
+- Improvements to pdf-checker.p6
 Release 0.1.3
-Fix ToUnicode entry in type 0, 1 and 3 fonts.
+- Fix ToUnicode entry in type 0, 1 and 3 fonts.
 Release 0.1.2
 added:
 - PDF::Action::URI class
 - PDF::Destination.construct() method
 renamed:
 - PDF::Destination.type() method to .fit()
-
 Release 0.1.1
 - Renamed role PDF::OutlineItem -> PDF::Outline
 - Add PDF::Destination; removed destination handling from PDF::Action; includes:
@@ -18,7 +33,7 @@ Release 0.1.0
 Release 0.0.8
 - Revamped PDF::Function::Sampled::Calculator
 Release 0.0.7
-Add PDF function calculator and evaluate methods, classes:
+Add PDF::Function calculator and evaluate methods, classes:
 - PDF::Function::PostScript
 - PDF::Function::Sampled
 - PDF::Function::Exponential
