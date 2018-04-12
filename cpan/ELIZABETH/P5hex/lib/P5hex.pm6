@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5hex:ver<0.0.2>;
+unit module P5hex:ver<0.0.3>;
 
 proto sub hex(|) is export {*}
 multi sub hex() { hex CALLERS::<$_> }
