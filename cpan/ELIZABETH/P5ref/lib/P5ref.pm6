@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5ref:ver<0.0.2>;
+unit module P5ref:ver<0.0.3>;
 
 proto sub ref(|) is export {*}
 multi sub ref() { ref CALLERS::<$_> }

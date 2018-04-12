@@ -1,0 +1,10 @@
+Revision history for P5ref
+
+0.0.3  2018-04-11T15:44:38+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.2  2018-01-29T20:48:02+01:00
+    - Remove superfluous "is export"
+
+0.0.1  2018-01-24T15:18:01+01:00
+    - Initial implementation.
