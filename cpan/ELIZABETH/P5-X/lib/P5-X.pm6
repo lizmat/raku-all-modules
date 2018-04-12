@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5-X:ver<0.0.1>;
+unit module P5-X:ver<0.0.2>;
 
 my role Subject-X { has $.subject }
 
