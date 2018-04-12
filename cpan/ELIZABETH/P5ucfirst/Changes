@@ -1,0 +1,10 @@
+Revision history for P5ucfirst
+
+0.0.3  2018-04-11T22:34:02+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.2  2018-01-24T15:21:02+01:00
+    - Must use CALLERS:: instead of CALLER:: to reliably access $_ of caller.
+
+0.0.1  2018-01-23T16:22:01+01:00
+    - Initial implementation.
