@@ -1,5 +1,5 @@
 use v6.c;
-unit class P5lc:ver<0.0.1>;
+unit class P5lc:ver<0.0.2>;
 
 proto sub lc(|) is export {*}
 multi sub lc(         --> Str:D) { (CALLERS::<$_>).lc }
