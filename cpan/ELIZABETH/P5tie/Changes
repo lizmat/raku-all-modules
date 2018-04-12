@@ -1,0 +1,31 @@
+Revision history for P5tie
+
+0.0.8  2018-04-11T21:42:29+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.7  2018-01-21T14:36:07+01:00
+    - .push and .unshift should return number of elements.
+
+0.0.6  2018-01-17T13:47:06+01:00
+    - Fixed various issues with tied hashes, spotted when working on Tie::Hash
+
+0.0.5  2018-01-16T21:53:05+01:00
+    - Fixed .perl for tied arrays, added .gist method
+    - Added .Str, .perl, .gist, .join for tied hashes
+
+0.0.4  2018-01-16T19:55:04+01:00
+    - Apparently we also need a Numeric method, to handle +@a and +%h.
+    - .STORE is supposed to return self
+    - Added some stringification methods: .Str, .perl and .join.
+
+0.0.3  2018-01-15T23:48:03+01:00
+    - No longer accept strings for class names.  For some reason the
+      ::() lookup cannot find imported precompiled classes inside a
+      precomped module.
+    - Removed some more now redundant code.
+
+0.0.2  2018-01-15T20:15:02+01:00
+    - Add support for DESTROY (tied arrays and hashes only)
+
+0.0.1  2018-01-15T17:12:01+01:00
+    - Initial implementation.
