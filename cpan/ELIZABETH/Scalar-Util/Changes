@@ -1,0 +1,12 @@
+Revision history for Scalar::Util
+
+0.0.3  2018-04-11T22:42:51+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.2  2018-01-11T22:05:02+01:00
+    - Make sure that unknown exports aren't silently ignored.
+    - Make sure we don't export anything when no functions are specified.
+    - Add tests to make sure exporting works like we think they should.
+
+0.0.1  2018-01-11T15:20:01+01:00
+    - Initial implementation.

@@ -1,6 +1,6 @@
 use v6.c;
 
-class Scalar::Util:ver<0.0.2> {
+class Scalar::Util:ver<0.0.3> {
 
     our sub blessed(\a) is export(:SUPPORTED) {
         use nqp;
