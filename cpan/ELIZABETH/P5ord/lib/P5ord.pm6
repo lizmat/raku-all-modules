@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5ord:ver<0.0.2>;
+unit module P5ord:ver<0.0.3>;
 
 proto sub ord(|) is export {*}
 multi sub ord(--> Int:D) { CALLERS::<$_>.ord }
