@@ -1,5 +1,5 @@
 use v6.c;
-unit class Sys::Hostname:ver<0.0.3>;
+unit class Sys::Hostname:ver<0.0.4>;
 
 sub hostname() is export { gethostname.subst(/ \s | \0 /,'',:g) }
 

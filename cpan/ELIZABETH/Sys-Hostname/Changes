@@ -1,0 +1,13 @@
+Revision history for Sys::Hostname
+
+0.0.4  2018-04-11T23:01:36+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.3  2018-02-27T10:37:03+01:00
+    - Rakudo haz a gethostname() sub.
+
+0.0.2  2018-01-23T10:12:02+01:00
+    - Fix incorrect META6.json tag.
+
+0.0.1  2018-01-22T00:18:01+01:00
+    - Initial implementation.
