@@ -668,12 +668,12 @@ method table:hoh ($/ --> Nil)
 
     my X::Config::TOML::HOH::Seen::AOH $exception-hoh-seen-aoh .=
         new(:$hoh-header-text, :$hoh-text, :path(@base-path));
-    %!aoh-seen.grep({.keys.first eqv $@base-path}).elems == 0
+    %!aoh-seen.grep({ .keys.first eqv $@base-path }).elems == 0
         or die($exception-hoh-seen-aoh);
 
     my X::Config::TOML::HOH::Seen $exception-hoh-seen .=
         new(:$hoh-header-text, :$hoh-text, :path(@base-path));
-    %!hoh-seen.grep({.keys.first eqv $@base-path}).elems == 0
+    %!hoh-seen.grep({ .keys.first eqv $@base-path }).elems == 0
         or die($exception-hoh-seen);
 
     CATCH
@@ -742,7 +742,7 @@ method table:aoh ($/ --> Nil)
 
     my X::Config::TOML::AOH::OverwritesHOH $exception-aoh-overwrites-hoh .=
         new(:$aoh-header-text, :$aoh-text, :@path);
-    %!hoh-seen.grep({.keys.first eqv $@path}).elems == 0
+    %!hoh-seen.grep({ .keys.first eqv $@path }).elems == 0
         or die($exception-aoh-overwrites-hoh);
 
     self.mktable-aoh(@path, $aoh-text, :@keypairs);
@@ -751,7 +751,7 @@ method table:aoh ($/ --> Nil)
 multi method mktable-aoh(@path, $aoh-text, :@keypairs! where *.so --> Nil)
 {
     # initialize empty array if array does not yet exist
-    %!aoh-seen.grep({.keys.first eqv $@path}).elems > 0
+    %!aoh-seen.grep({ .keys.first eqv $@path }).elems > 0
         or self!mktable-aoh-init(@path, $aoh-text);
 
     # verify keypair lines do not contain duplicate keys
@@ -770,7 +770,7 @@ multi method mktable-aoh(@path, $aoh-text, :@keypairs! where *.so --> Nil)
 multi method mktable-aoh(@path, $aoh-text, :@keypairs --> Nil)
 {
     # initialize empty array if array does not yet exist
-    %!aoh-seen.grep({.keys.first eqv $@path}).elems > 0
+    %!aoh-seen.grep({ .keys.first eqv $@path }).elems > 0
         or self!mktable-aoh-init(@path, $aoh-text);
 
     # create hash table without keypairs
@@ -848,13 +848,13 @@ multi sub pwd($container, :@steps where *.elems == 0 --> Array:D)
 
 multi sub seen(Bool:D %h, :@path! where *.elems > 1 --> Bool:D)
 {
-    %h.grep({.keys.first eqv $@path}).elems > 0
+    %h.grep({ .keys.first eqv $@path }).elems > 0
         || seen(%h, :path(@path[0..^*-1].Array));
 }
 
 multi sub seen(Bool:D %h, :@path! where *.elems > 0 --> Bool:D)
 {
-    %h.grep({.keys.first eqv $@path}).elems > 0;
+    %h.grep({ .keys.first eqv $@path }).elems > 0;
 }
 
 multi sub seen(Bool:D %h, :@path! where *.elems == 0 --> Bool:D)
