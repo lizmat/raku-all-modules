@@ -1,0 +1,10 @@
+Revision history for Tie::StdHash
+
+0.0.3  2018-04-11T23:14:43+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.2  2018-01-21T22:29:02+01:00
+    - Fix a copy-pasto: the DELETE method should not have to return a Bool:D.
+
+0.0.1  2018-01-17T15:28:01+01:00
+    - Initial implementation.
