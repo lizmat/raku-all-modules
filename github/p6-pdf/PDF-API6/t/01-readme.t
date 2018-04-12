@@ -17,6 +17,8 @@ for @<code> {
 	    $snippet = $snippet.subst('DateTime.now;', 'DateTime.new( :year(2015), :month(12), :day(25) );' );
 	    # disable say
 	    sub say(|c) { }
+	    sub dd(|c) { }
+	    sub note(|c) { }
 
 	    lives-ok {EVAL $snippet}, 'code sample'
 		or warn "eval error: $snippet";
