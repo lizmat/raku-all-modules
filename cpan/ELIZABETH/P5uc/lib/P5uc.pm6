@@ -1,5 +1,5 @@
 use v6.c;
-unit class P5uc:ver<0.0.1>;
+unit class P5uc:ver<0.0.2>;
 
 proto sub uc(|) is export {*}
 multi sub uc(         --> Str:D) { (CALLERS::<$_>).uc }
