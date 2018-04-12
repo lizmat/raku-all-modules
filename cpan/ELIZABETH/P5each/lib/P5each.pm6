@@ -1,5 +1,5 @@
 use v6.c;
-unit class P5each:ver<0.0.1>;
+unit class P5each:ver<0.0.2>;
 
 proto sub each(|) is export {*}
 multi sub each(%hash is raw) {
