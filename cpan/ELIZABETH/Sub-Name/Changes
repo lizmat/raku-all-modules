@@ -1,0 +1,21 @@
+Revision history for Sub::Name
+
+0.0.5  2018-04-11T22:52:08+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.4  2018-04-11T22:42:51+02:00
+    - Added UTILS and CPAN5 META tags
+
+0.0.3  2018-04-11T22:42:51+02:00
+    - Added support for
+        foo => {}
+      (as a named parameter) rather than
+        "foo" => {}
+      (a Pair) and associated tests.
+    - Added this ChangeLog
+
+0.0.2  2018-01-11T22:05:02+01:00
+    - Only added vim directives
+
+0.0.1  2018-01-11T15:20:01+01:00
+    - Initial implementation.

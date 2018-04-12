@@ -1,6 +1,6 @@
 use v6.c;
 
-unit class Sub::Name:ver<0.0.4>;
+unit class Sub::Name:ver<0.0.5>;
 
 # only export the proto
 proto sub subname(|) is export {*}
