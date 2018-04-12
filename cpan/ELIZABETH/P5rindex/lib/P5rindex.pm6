@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5rindex:ver<0.0.1>;
+unit module P5rindex:ver<0.0.2>;
 
 sub rindex(Str() $string, Str() $needle, Int() $position = $string.chars - 1) is export {
     $position < 0
