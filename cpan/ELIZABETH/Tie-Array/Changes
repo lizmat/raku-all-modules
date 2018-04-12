@@ -1,0 +1,13 @@
+Revision history for Tie::Array
+
+# Version 0.0.2
+
+0.0.3  2018-04-11T23:04:22+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.2  2018-01-21T20:14:01+01:00
+    - Oops.  Had mixed up the semantics of Tie::Array and Tie::StdArray.
+      This version changes to the proper Perl 5 Tie::Array semantics.
+
+0.0.1  2018-01-16T21:56:01+01:00
+    - Initial implementation.

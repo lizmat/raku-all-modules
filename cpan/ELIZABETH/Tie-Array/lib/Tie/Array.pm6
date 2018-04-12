@@ -1,6 +1,6 @@
 use v6.c;
 
-class Tie::Array:ver<0.0.2> {
+class Tie::Array:ver<0.0.3> {
     method EXTEND($) { }
     method DESTROY() { }
     method CLEAR() { self.STORESIZE(0) }
