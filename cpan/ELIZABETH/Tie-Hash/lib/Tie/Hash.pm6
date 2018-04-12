@@ -1,6 +1,6 @@
 use v6.c;
 
-class Tie::Hash:ver<0.0.2> {
+class Tie::Hash:ver<0.0.3> {
 
     method EXISTS($) { die self.^name ~ " doesn't define an EXISTS method" }
 

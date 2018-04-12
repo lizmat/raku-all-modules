@@ -1,0 +1,11 @@
+Revision history for Tie::Hash
+
+0.0.3  2018-04-11T23:07:44+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.2  2018-01-21T22:35:02+01:00
+    - Oops.  Had mixed up the semantics of Tie::Hash and Tie::StdHash.
+      This version changes to the proper Perl 5 Tie::Hash semantics.
+
+0.0.1  2018-01-17T14:07:01+01:00
+    - Initial implementation.
