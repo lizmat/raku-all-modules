@@ -11,7 +11,7 @@ grammar Empty;
 empty : ( ) ;
 END
 grammar Empty {
-	rule empty {
+	token empty {
 		||	(
 			)
 	}
@@ -23,7 +23,7 @@ grammar Empty;
 fragment empty : ( ) ;
 END
 grammar Empty {
-	rule empty {
+	token empty {
 		||	(
 			)
 	}
@@ -39,7 +39,7 @@ subtest 'modifiers', {
 	empty : ( )? ;
 	END
 	grammar Empty {
-		rule empty {
+		token empty {
 			||	(
 				)?
 		}
@@ -51,7 +51,7 @@ subtest 'modifiers', {
 	empty : ( )* ;
 	END
 	grammar Empty {
-		rule empty {
+		token empty {
 			||	(
 				)*
 		}
@@ -63,7 +63,7 @@ subtest 'modifiers', {
 	empty : ( )+ ;
 	END
 	grammar Empty {
-		rule empty {
+		token empty {
 			||	(
 				)+
 		}
@@ -79,8 +79,8 @@ subtest 'grouped thing', {
 	stuff : ( 'foo' ) ;
 	END
 	grammar Empty {
-		rule stuff {
-			||	(	||	foo
+		token stuff {
+			||	(	||	'foo'
 				)
 		}
 	}
@@ -91,7 +91,7 @@ subtest 'grouped thing', {
 	stuff : ( 'a'..'z' ) ;
 	END
 	grammar Empty {
-		rule stuff {
+		token stuff {
 			||	(	||	<[ a .. z ]>
 				)
 		}
@@ -104,7 +104,7 @@ subtest 'grouped thing', {
 		stuff : ( 'a'..'z'? ) ;
 		END
 		grammar Empty {
-			rule stuff {
+			token stuff {
 				||	(	||	<[ a .. z ]>?
 					)
 			}
@@ -116,7 +116,7 @@ subtest 'grouped thing', {
 		stuff : ( 'a'..'z'* ) ;
 		END
 		grammar Empty {
-			rule stuff {
+			token stuff {
 				||	(	||	<[ a .. z ]>*
 					)
 			}
@@ -129,7 +129,7 @@ subtest 'grouped thing', {
 		stuff : ( 'a'..'z'+ ) ;
 		END
 		grammar Empty {
-			rule stuff {
+			token stuff {
 				||	(	||	<[ a .. z ]>+
 					)
 			}
@@ -144,7 +144,7 @@ subtest 'grouped thing', {
 	stuff : ( [c] ) ;
 	END
 	grammar Empty {
-		rule stuff {
+		token stuff {
 			||	(	||	<[ c ]>
 				)
 		}
@@ -156,7 +156,7 @@ subtest 'grouped thing', {
 	stuff : ( ~'c' ) ;
 	END
 	grammar Empty {
-		rule stuff {
+		token stuff {
 			||	(	||	<-[ c ]>
 				)
 		}
@@ -168,7 +168,7 @@ subtest 'grouped thing', {
 	stuff : ( ~( 'c' ) ) ;
 	END
 	grammar Empty {
-		rule stuff {
+		token stuff {
 			||	(	||	<-[ c ]>
 				)
 		}
@@ -180,7 +180,7 @@ subtest 'grouped thing', {
 	stuff : ( . ) ;
 	END
 	grammar Empty {
-		rule stuff {
+		token stuff {
 			||	(	||	.
 				)
 		}
@@ -193,7 +193,7 @@ subtest 'grouped thing', {
 	stuff : ( Str ) ;
 	END
 	grammar Empty {
-		rule stuff {
+		token stuff {
 			||	(	||	<Str>
 				)
 		}
@@ -208,9 +208,9 @@ grammar Empty;
 stuff : ( Str 'testing' ) ;
 END
 grammar Empty {
-	rule stuff {
+	token stuff {
 		||	(	||	<Str>
-					testing
+					'testing'
 			)
 	}
 }
@@ -221,9 +221,9 @@ grammar Empty;
 stuff : ( Str | 'testing' ) ;
 END
 grammar Empty {
-	rule stuff {
+	token stuff {
 		||	(	||	<Str>
-				||	testing
+				||	'testing'
 			)
 	}
 }
@@ -234,9 +234,9 @@ grammar Empty;
 stuff : ( ( Str | 'testing' ) ) ;
 END
 grammar Empty {
-	rule stuff {
+	token stuff {
 		||	(	||	(	||	<Str>
-						||	testing
+						||	'testing'
 					)
 			)
 	}
@@ -248,11 +248,11 @@ grammar Empty;
 stuff : ( ( Str | 'testing' ) 'foo' ) ;
 END
 grammar Empty {
-	rule stuff {
+	token stuff {
 		||	(	||	(	||	<Str>
-						||	testing
+						||	'testing'
 					)
-					foo
+					'foo'
 			)
 	}
 }
@@ -263,7 +263,7 @@ grammar Empty;
 stuff : ('0' | '1'..'9' '0'..'9'*) SUFFIX? ;
 END
 grammar Empty {
-	rule stuff {
+	token stuff {
 		||	(	||	'0'
 				||	<[ 1 .. 9 ]>
 					<[ 0 .. 9 ]>*

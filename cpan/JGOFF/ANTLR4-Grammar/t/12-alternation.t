@@ -9,9 +9,9 @@ grammar Lexer;
 plain : 'terminal' | 'other' ;
 END
 grammar Lexer {
-	rule plain {
-		||	terminal
-		||	other
+	token plain {
+		||	'terminal'
+		||	'other'
 	}
 }
 END
@@ -21,8 +21,8 @@ grammar Lexer;
 plain : 'terminal' | 'a'..'z' ;
 END
 grammar Lexer {
-	rule plain {
-		||	terminal
+	token plain {
+		||	'terminal'
 		||	<[ a .. z ]>
 	}
 }
@@ -33,8 +33,8 @@ grammar Lexer;
 plain : 'terminal' | [by] ;
 END
 grammar Lexer {
-	rule plain {
-		||	terminal
+	token plain {
+		||	'terminal'
 		||	<[ b y ]>
 	}
 }
@@ -45,8 +45,8 @@ grammar Lexer;
 plain : 'terminal' | ~('W') ;
 END
 grammar Lexer {
-	rule plain {
-		||	terminal
+	token plain {
+		||	'terminal'
 		||	<-[ W ]>
 	}
 }
@@ -57,8 +57,8 @@ grammar Lexer;
 plain : 'terminal' | . ;
 END
 grammar Lexer {
-	rule plain {
-		||	terminal
+	token plain {
+		||	'terminal'
 		||	.
 	}
 }
@@ -69,8 +69,8 @@ grammar Lexer;
 plain : 'terminal' | Str ;
 END
 grammar Lexer {
-	rule plain {
-		||	terminal
+	token plain {
+		||	'terminal'
 		||	<Str>
 	}
 }
