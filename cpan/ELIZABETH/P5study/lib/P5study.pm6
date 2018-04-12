@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5study:ver<0.0.1>;
+unit module P5study:ver<0.0.2>;
 
 proto sub study(|) is export {*}
 multi sub study()   { }
@@ -22,7 +22,7 @@ possible.
 
 =head1 PORTING CAVEATS
 
-Currently, C<study> is a no-op in Perl 6.
+Currently, C<study> is a no-op in Perl 6.  As it is in more recent Perl 5's.
 
 =head1 AUTHOR
 

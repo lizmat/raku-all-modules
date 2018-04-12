@@ -18,7 +18,7 @@ This module tries to mimic the behaviour of the `study` of Perl 5 as closely as 
 PORTING CAVEATS
 ===============
 
-Currently, `study` is a no-op in Perl 6.
+Currently, `study` is a no-op in Perl 6. As it is in more recent Perl 5's.
 
 AUTHOR
 ======
