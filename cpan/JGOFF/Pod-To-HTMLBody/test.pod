@@ -1,0 +1,20 @@
+=begin pod
+sample paragraph
+=begin table
+
+                        Secret
+        Superhero       Identity          Superpower
+        =============   ===============   ===================
+        The Shoveller   Eddie Stevens     King Arthur's
+                                          singing shovel
+
+        Blue Raja       Geoffrey Smith    Master of cutlery
+
+        Mr Furious      Roy Orson         Ticking time bomb
+                                          of fury
+
+        The Bowler      Carol Pinnsler    Haunted bowling ball
+
+=end table
+
+=end pod
