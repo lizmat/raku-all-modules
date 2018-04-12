@@ -1,0 +1,15 @@
+Revision history for P5sleep
+
+0.0.4  2018-04-11T16:34:31+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.3  2018-01-31T00:24:03+01:00
+    - Resolve the original sleep() at compile time.
+
+0.0.2  2018-01-30T10:50:02+01:00
+    - Make sure we respect the Int-ness of sleep() on Perl 5.  Only the
+      sleep() exported by Time::Hires knows about fractional sleep times.
+      Zoffix++ for pointing that out.
+
+0.0.1  2018-01-30T10:01:01+01:00
+    - Initial implementation.

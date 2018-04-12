@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5sleep:ver<0.0.3>;
+unit module P5sleep:ver<0.0.4>;
 
 proto sub sleep(|) is export {*}
 multi sub sleep() { &CORE::sleep() }
