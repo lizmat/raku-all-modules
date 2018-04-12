@@ -1,0 +1,10 @@
+Revision history for P5oct
+
+0.0.3  2018-04-11T15:24:32+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.2  2018-01-25T10:33:02+01:00
+    - Remove superfluous "is export"
+
+0.0.1  2018-01-24T16:35:01+01:00
+    - Initial implementation.

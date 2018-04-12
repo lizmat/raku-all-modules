@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5oct:ver<0.0.2>;
+unit module P5oct:ver<0.0.3>;
 
 proto sub oct(|) is export {*}
 multi sub oct() { oct CALLERS::<$_> }
