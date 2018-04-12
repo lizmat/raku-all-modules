@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5chomp:ver<0.0.1>;
+unit module P5chomp:ver<0.0.2>;
 
 proto sub chomp(|) is export {*}
 multi sub chomp() { chomp CALLERS::<$_>     }
