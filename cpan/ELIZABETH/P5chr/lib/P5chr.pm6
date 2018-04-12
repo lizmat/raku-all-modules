@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5chr:ver<0.0.2>;
+unit module P5chr:ver<0.0.3>;
 
 proto sub chr(|) is export {*}
 multi sub chr(--> Str:D) { chr CALLERS::<$_> }
