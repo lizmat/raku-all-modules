@@ -22,9 +22,9 @@ subname
 
     my $name = subname( $callable );
 
-Returns the name of the given Callable, if it has one. Normal named subs will give a fully-qualified name consisting of the package and the localname separated by `::`. Anonymous Callables will give `__ANON__` as the localname. If a name has been set using [/set_subname](/set_subname), this name will be returned instead.
+Returns the name of the given Callable, if it has one. Normal named subs will give a fully-qualified name consisting of the package and the localname separated by `::`. Anonymous Callables will give `__ANON__` as the localname. If a name has been set using `set_subname`, this name will be returned instead.
 
-*Users of Sub::Name beware*: This function is **not** the same as `Sub::Name::subname`; it returns the existing name of the sub rather than changing it. To set or change a name, see instead [/set_subname](/set_subname).
+*Users of Sub::Name beware*: This function is **not** the same as `Sub::Name::subname`; it returns the existing name of the sub rather than changing it. To set or change a name, see instead `set_subname`.
 
 set_subname
 -----------
