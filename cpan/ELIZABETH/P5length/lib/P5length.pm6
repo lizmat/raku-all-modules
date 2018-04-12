@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5length:ver<0.0.2>;
+unit module P5length:ver<0.0.3>;
 
 proto sub length(|) is export {*}
 multi sub length(--> Int:D) { length(CALLERS::<$_>) }
