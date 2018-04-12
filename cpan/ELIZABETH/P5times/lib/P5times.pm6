@@ -1,14 +1,14 @@
 use v6.c;
-unit module P5times:ver<0.0.1>;
+unit module P5times:ver<0.0.2>;
 
 sub times() is export {
     use nqp;
-    my \rusage = nqp::getrusage();
+    nqp::getrusage(my int @rusage);
     (
-      nqp::atpos_i(rusage, nqp::const::RUSAGE_UTIME_SEC) * 1000000
-        + nqp::atpos_i(rusage, nqp::const::RUSAGE_UTIME_MSEC),
-      nqp::atpos_i(rusage, nqp::const::RUSAGE_STIME_SEC) * 1000000
-        + nqp::atpos_i(rusage, nqp::const::RUSAGE_STIME_MSEC),
+      nqp::atpos_i(@rusage, nqp::const::RUSAGE_UTIME_SEC) * 1000000
+        + nqp::atpos_i(@rusage, nqp::const::RUSAGE_UTIME_MSEC),
+      nqp::atpos_i(@rusage, nqp::const::RUSAGE_STIME_SEC) * 1000000
+        + nqp::atpos_i(@rusage, nqp::const::RUSAGE_STIME_MSEC),
       0,
       0
     )
