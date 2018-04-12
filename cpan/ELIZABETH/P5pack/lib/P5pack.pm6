@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5pack:ver<0.0.1>;
+unit module P5pack:ver<0.0.2>;
 
 my %dispatch;
 {
@@ -84,6 +84,7 @@ my sub parse-pack-template($template) {
         @template
     }
 
+    # make sure we don't have a race condition getting the template
     $parse-lock.protect: {
         %parsed-templates.AT-KEY($template)
           // %parsed-templates.BIND-KEY($template,parse($template))
