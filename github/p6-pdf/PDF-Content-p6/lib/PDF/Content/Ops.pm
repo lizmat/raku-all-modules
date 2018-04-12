@@ -1,6 +1,5 @@
 use v6;
 
-use PDF::COS::Util :from-ast;
 my role GraphicsAtt {
     has Str $.accessor-name is rw;
     method compose(Mu \package) {
@@ -29,6 +28,7 @@ class PDF::Content::Ops {
 
     use PDF::Writer;
     use PDF::Content::Matrix :inverse, :multiply, :is-identity;
+    use PDF::COS::Util :from-ast;
 
     has Routine @.callback is rw;
     has Pair @!ops;
@@ -404,8 +404,9 @@ class PDF::Content::Ops {
         },
 
         # name dict              BDC | DP
-        'BDC'|'DP' => sub (Str, Str $name!, Hash $dict!) {
-            [ :$name, :$dict ]
+        'BDC'|'DP' => sub (Str, Str $name!, $p! where Hash|Str) {
+            my Pair $prop = $p ~~ Hash ?? :dict($p) !! :name($p);
+            [ :$name, $prop ]
         },
 
         # dashArray dashPhase    d
@@ -727,8 +728,8 @@ class PDF::Content::Ops {
     multi method track-graphics('BMC', Str $name!) {
 	@!tags.push: 'BMC' => [$name];
     }
-    multi method track-graphics('BDC', Str $name, Hash $dict) {
-	@!tags.push: 'BDC' => [$name, $dict];
+    multi method track-graphics('BDC', Str $name, $p where Hash|Str) {
+	@!tags.push: 'BDC' => [$name, $p];
     }
     multi method track-graphics('EMC') {
 	die "closing EMC without opening BMC or BDC in PDF content\n"

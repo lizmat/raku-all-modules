@@ -1,5 +1,7 @@
 Release 0.2.1
 - Tweaking handling of BX .. EX compatibility blocks
+- Fix BDC op (BeginMarkedContentDict) to allow dict or name
+  as second argument
 
 Release 0.2.0
 - Adjust to PDF ver 0.2.8. PDF::DAO classes have been
