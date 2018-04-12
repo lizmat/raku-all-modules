@@ -1,5 +1,5 @@
 use v6.c;
-unit class P5caller:ver<0.0.1>;
+unit class P5caller:ver<0.0.2>;
 
 proto sub caller(|) is export {*}
 multi sub caller(            --> List:D) { backtrace(1)     }
