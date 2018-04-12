@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5index:ver<0.0.1>;
+unit module P5index:ver<0.0.2>;
 
 sub index(Str() $string, Str() $needle, Int() $position = 0) is export {
     $string.index($needle,0 max $position) // -1
