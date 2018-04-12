@@ -1,6 +1,6 @@
 use v6.c;
 
-class Tie::StdArray:ver<0.0.1> {
+class Tie::StdArray:ver<0.0.2> {
 
     # Note that we *must* have an embedded Array rather than just subclassing
     # from Array, because .STORE on Array has different semantics than the
@@ -62,7 +62,7 @@ L<P5tie>, L<Tie::StdArray>
 
 Elizabeth Mattijsen <liz@wenzperl.nl>
 
-Source can be located at: https://github.com/lizmat/Tie-Array . Comments and
+Source can be located at: https://github.com/lizmat/Tie-StdArray . Comments and
 Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE

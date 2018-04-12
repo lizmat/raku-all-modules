@@ -25,7 +25,7 @@ AUTHOR
 
 Elizabeth Mattijsen <liz@wenzperl.nl>
 
-Source can be located at: https://github.com/lizmat/Tie-Array . Comments and Pull Requests are welcome.
+Source can be located at: https://github.com/lizmat/Tie-StdArray . Comments and Pull Requests are welcome.
 
 COPYRIGHT AND LICENSE
 =====================
