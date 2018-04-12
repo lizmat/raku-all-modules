@@ -62,24 +62,24 @@ class Character {
 class CharacterSet {
 	also does Modified;
 
-	has @.content;
+	has @.child;
 	has $.negated = False;
 }
 
-class Alternation { has @.content; }
+class Alternation { has @.child; }
 
-class Concatenation { has @.content; }
+class Concatenation { has @.child; }
 
 class Block {
 	also does Named;
 
-	has @.content;
+	has @.child;
 }
 
 class Grouping {
 	also does Modified;
 
-	has @.content;
+	has @.child;
 }
 
 class Token is Block { }
@@ -107,6 +107,19 @@ class ANTLR4::Actions::Perl6 {
 		'-' => True
 	;
 
+	sub ANTLR-to-perl6( $c is copy ) {
+		$c ~~ s:g/\\u(<[ 0 .. 9 a .. f A .. F ]> ** {4..6})/\\x[$0]/;
+		$c ~~ s:g/<!after \\>\'/\\\'/;
+		$c = '\\]' if $c eq ']';
+		$c;
+	}
+
+	sub ANTLR-to-character( $c is copy ) {
+		Character.new(
+			:name( ANTLR-to-perl6( $c ) )
+		)
+	}
+
 	sub ANTLR-to-range( $from, $to ) {
 		CharacterRange.new(
 			:from( escape-character-class( $from ) ),
@@ -114,24 +127,13 @@ class ANTLR4::Actions::Perl6 {
 		)
 	}
 
-	sub escape-character-class( *@chars ) {
-		map {
-			my $copy = $_;
-			$copy ~~ s:g/\\u(....)/\\x[$0]/;
-			if %character-class-escape{$copy} {
-				$copy = %character-class-escape{$copy};
-			}
-			$copy;
-		}, @chars
-	}
-
-	sub ANTLR-to-perl6( *@str ) {
-		map {
-			my $copy = $_;
-			$copy ~~ s:g/\\u(....)/\\x[$0]/;
-			$copy ~~ s:g/<!after \\>\'/\\\'/;
-			$copy;
-		}, @str
+	sub escape-character-class( $c is copy ) {
+		$c ~~ s:g/\\u(<[ 0 .. 9 a .. f A .. F ]> ** {4..6})/\\x[$0]/;
+		$c ~~ s:g/<!after \\>\'/\\\'/;
+		$c = '\\]' if $c eq ']';
+		$c = %character-class-escape{$c}
+			if %character-class-escape{$c};
+		$c;
 	}
 
 	method ID( $/ ) { make ~$/ }
@@ -161,13 +163,11 @@ class ANTLR4::Actions::Perl6 {
 	# so it's not notated separately.
 	#
 	method terminal( $/ ) {
-		if $/<ID> {
-			if $/<scalar>.ast eq 'EOF' {
-				make EOF.new
-			}
-			else {
-				make Nonterminal.new( :name( $/<scalar>.ast ) )
-			}
+		if $/<ID> and $/<scalar>.ast eq 'EOF' {
+			make EOF.new
+		}
+		elsif $/<ID> {
+			make Nonterminal.new( :name( $/<scalar>.ast ) )
 		}
 		else {
 			make Terminal.new(
@@ -181,40 +181,39 @@ class ANTLR4::Actions::Perl6 {
 	# gets called is STRING_LITERAL.
 	#
 	method range( $/ ) {
-		my @content =
-			ANTLR-to-range( $/<from>.ast, $/<to>.ast );
+		my @child = ANTLR-to-range(
+			$/<from>.ast, $/<to>.ast
+		);
 		make CharacterSet.new(
-			:content( @content )
+			:child( @child )
 		)
 	}
 
 	method setElementAltList( $/ ) {
-		my @content;
+		my @child;
 		for $/<setElement> {
 			if $_.<LEXER_CHAR_SET> {
 				for $_.<LEXER_CHAR_SET> {
 					for $_ {
-						@content.append(
-							Character.new(
-								:name( ~$_ )
+						@child.append(
+							ANTLR-to-character(
+								~$_ 
 							)
 						)
 					}
 				}
 			}
-			else {
-				@content.append(
-					Character.new(
-						:name(
-							$_.<terminal><scalar>.ast
-						)
+			elsif $_.<terminal> {
+				@child.append(
+					ANTLR-to-character(
+						$_.<terminal><scalar>.ast
 					)
 				)
 			}
 		}
 		make CharacterSet.new(
 			:negated( True ),
-			:content( @content )
+			:child( @child )
 		)
 	}
 
@@ -223,44 +222,44 @@ class ANTLR4::Actions::Perl6 {
 	}
 
 	method setElement( $/ ) {
-		my @content;
+		my @child;
 		for $/<LEXER_CHAR_SET>[0] {
 			# XXX fix later
-			if $_ {
-				if is-ANTLR-range( ~$_ ) {
-					@content.append(
+			next unless $_;
+			if $_.<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN> {
+				@child.append(
 ANTLR-to-range(
-	~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
-	~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
+~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
+~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
 )
-					)
-				}
-				elsif ~$_ {
-					@content.append( Character.new( :name( $_ ) ) )
-				}
+				)
+			}
+			else {
+				@child.append(
+					ANTLR-to-character( $_ )
+				)
 			}
 		}
 		make CharacterSet.new(
 			:negated( True ),
-			:content( @content )
+			:child( @child )
 		)
 	}
 
 	method notSet( $/ ) {
-		if $/<setElement><LEXER_CHAR_SET> {
+		if $/<complement> and
+			$/<setElement><terminal><scalar> and
+			!is-ANTLR-terminal( $/<setElement><terminal><scalar> ) {
+			make Nonterminal.new(
+				:negated( True ),
+				:name( ~$/<setElement><terminal><scalar> )
+			)
+		}
+		elsif $/<setElement> {
 			make $/<setElement>.ast
 		}
 		elsif $/<blockSet> {
 			make $/<blockSet>.ast
-		}
-		else {
-			my @content = Character.new(
-				:name( $/<setElement><terminal><scalar>.ast )
-			);
-			make CharacterSet.new(
-				:negated( True ),
-				:content( @content )
-			)
 		}
 	}
 
@@ -297,25 +296,13 @@ ANTLR-to-range(
 
 	method element( $/ ) {
 		my $modifier = $/<ebnfSuffix><MODIFIER>.ast;
-		my $greed = $/<ebnfSuffix><GREED>.ast // False;
+		my $greed = $/<ebnfSuffix><GREED>.ast;
 		if $/<labeledElement> {
 			make Nonterminal.new(
 				:modifier( $modifier ),
 				:greed( $greed ),
 				:name( $/<labeledElement><atom><terminal><scalar>.ast ),
 				:alias( $/<labeledElement><ID>.ast )
-			)
-		}
-		elsif $/<ACTION> {
-			make $/<ACTION>.ast
-		}
-		elsif $/<ebnfSuffix> and
-			$/<atom><terminal><scalar> and
-			!is-ANTLR-terminal( ~$/<atom><terminal><scalar> ) and
-			$/<atom><terminal><scalar>.ast eq 'EOF' {
-			make EOF.new(
-				:modifier( $modifier ),
-				:greed( $greed ),
 			)
 		}
 		elsif $/<ebnfSuffix> and
@@ -327,54 +314,7 @@ ANTLR-to-range(
 				:name( $/<atom><terminal><scalar>.ast )
 			)
 		}
-		elsif $/<ebnfSuffix> and
-			$/<atom><DOT> {
-			make Wildcard.new(
-				:modifier( $modifier ),
-				:greed( $greed )
-			)
-		}
-		elsif $/<ebnfSuffix> and
-			$/<atom><notSet><blockSet> {
-			my @content =
-				Character.new(
-					:name(
-				# XXX can improve
-$/<atom><notSet><blockSet><setElementAltList><setElement>[0]<terminal><STRING_LITERAL>.ast
-					)
-				);
-			make CharacterSet.new(
-				:negated( True ),
-				:modifier( $modifier ),
-				:greed( $greed ),
-				:content( @content )
-			)
-		}
-		elsif $/<ebnfSuffix> and
-			$/<atom><notSet><setElement><LEXER_CHAR_SET> {
-			my @content;
-			for $/<atom><notSet><setElement><LEXER_CHAR_SET> {
-				if is-ANTLR-range( ~$_ ) {
-					@content.append(
-ANTLR-to-range(
-	~$_[0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
-	~$_[0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
-)
-					)
-				}
-				elsif ~$_ {
-					@content.append( Character.new( :name( $_ ) ) )
-				}
-			}
-			make CharacterSet.new(
-				:negated( True ),
-				:modifier( $modifier ),
-				:greed( $greed ),
-				:content( @content )
-			)
-		}
-		elsif $/<ebnfSuffix> and
-			$/<atom><notSet><setElement><terminal><scalar> and
+		elsif $/<atom><notSet><setElement><terminal><scalar> and
 			!is-ANTLR-terminal( $/<atom><notSet><setElement><terminal><scalar> ) {
 			make Nonterminal.new(
 				:negated( True ),
@@ -387,32 +327,74 @@ $/<atom><notSet><setElement><terminal><scalar>.ast
 			)
 		}
 		elsif $/<ebnfSuffix> and
-			$/<atom><notSet><setElement><terminal> {
-			my @content =
-				Character.new(
-					:name(
+			$/<atom><notSet><blockSet> {
+			my @child = ANTLR-to-character(
 				# XXX can improve
-$/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
-					)
-				);
+$/<atom><notSet><blockSet><setElementAltList><setElement>[0]<terminal><STRING_LITERAL>.ast
+			);
 			make CharacterSet.new(
 				:negated( True ),
 				:modifier( $modifier ),
 				:greed( $greed ),
-				:content( @content )
+				:child( @child )
 			)
 		}
 		elsif $/<ebnfSuffix> and
-			$/<atom><range>.ast {
-			my @content = ANTLR-to-range(
+			$/<atom><notSet><setElement><LEXER_CHAR_SET> {
+			my @child;
+			for $/<atom><notSet><setElement><LEXER_CHAR_SET> {
+				if $_[0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN> {
+					@child.append(
+ANTLR-to-range(
+	~$_[0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
+	~$_[0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
+)
+					)
+				}
+				elsif ~$_ {
+					@child.append(
+						ANTLR-to-character( $_ )
+					)
+				}
+			}
+			make CharacterSet.new(
+				:negated( True ),
+				:modifier( $modifier ),
+				:greed( $greed ),
+				:child( @child )
+			)
+		}
+		elsif $/<atom><notSet><setElement><terminal> {
+			my @child = ANTLR-to-character(
+				# XXX can improve
+$/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
+			);
+			make CharacterSet.new(
+				:negated( True ),
+				:modifier( $modifier ),
+				:greed( $greed ),
+				:child( @child )
+			)
+		}
+		elsif $/<atom><range>.ast {
+			my @child = ANTLR-to-range(
 				~$/<atom><range><from>[0],
 				~$/<atom><range><to>[0]
 			);
 			make CharacterSet.new(
 				:modifier( $modifier ),
 				:greed( $greed ),
-				:content( @content )
+				:child( @child )
 			)
+		}
+		elsif $/<atom><DOT> {
+			make Wildcard.new(
+				:modifier( $modifier ),
+				:greed( $greed )
+			)
+		}
+		elsif $/<ACTION> {
+			make $/<ACTION>.ast
 		}
 		elsif $/<ebnfSuffix> and
 			$/<atom>.ast {
@@ -427,19 +409,14 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 			)
 		}
 		elsif $/<ebnf> {
-			# XXX The // '' should probably go away...
-			my @content =
-				Alternation.new(
-					:content( $/<ebnf>.ast )
-				);
+			my @_child = $/<ebnf>.ast;
+			my @child = Alternation.new(
+				:child( @_child )
+			);
 			make Grouping.new(
-				:modifier(
-					$/<ebnf><ebnfSuffix><MODIFIER>.ast // ''
-				),
-				:greed(
-					$/<ebnf><ebnfSuffix><GREED>.ast // False
-				),
-				:content( @content )
+				:modifier( $/<ebnf><ebnfSuffix><MODIFIER>.ast ),
+				:greed( $/<ebnf><ebnfSuffix><GREED>.ast ),
+				:child( @child )
 			)
 		}
 		elsif $/<atom> {
@@ -450,42 +427,39 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 	method parserElement( $/ ) {
 		if $/<element>[0]<atom><range> and
 			$/<element>[0]<ebnfSuffix> {
-			my @content =
-				ANTLR-to-range(
-					$/<element>[0]<atom><range><from>.ast,
-					$/<element>[0]<atom><range><to>.ast
-				);
+			my @child = ANTLR-to-range(
+				$/<element>[0]<atom><range><from>.ast,
+				$/<element>[0]<atom><range><to>.ast
+			);
 			make CharacterSet.new(
 				:modifier(
 					 $/<element>[0]<ebnfSuffix><MODIFIER>.ast
 				),
-				:greed(
-					$/<element>[0]<ebnfSuffix><GREED>.ast // False
-				),
-				:content( @content )
+				:greed( $/<element>[0]<ebnfSuffix><GREED>.ast ),
+				:child( @child )
 			)
 		}
 		elsif $/<element>[0]<atom><notSet> and
 			$/<element>[1]<atom><DOT> and
 			$/<element>[2]<atom><DOT> {
-			my @content =
-				ANTLR-to-range(
-					$/<element>[0]<atom><notSet><setElement><terminal><scalar>.ast,
-					$/<element>[3]<atom><terminal><scalar>.ast
-				);
+			my @child = ANTLR-to-range(
+				$/<element>[0]<atom><notSet><setElement><terminal><scalar>.ast,
+				$/<element>[3]<atom><terminal><scalar>.ast
+			);
 			make CharacterSet.new(
 				:modifier(
-					$/<element>[3]<ebnfSuffix><MODIFIER>.ast // ''
+					$/<element>[3]<ebnfSuffix><MODIFIER>.ast
 				),
-				:greed(
-					$/<element>[3]<ebnfSuffix><GREED>.ast // False
-				),
+				:greed( $/<element>[3]<ebnfSuffix><GREED>.ast ),
 				:negated( True ),
-				:content( @content )
+				:child( @child )
 			)
 		}
 		elsif $/<element> {
-			make Concatenation.new( :content( $/<element>>>.ast ) )
+			my @child = $/<element>>>.ast;
+			make Concatenation.new(
+				:child( @child )
+			)
 		}
 	}
 
@@ -493,36 +467,27 @@ $/<atom><notSet><setElement><terminal><STRING_LITERAL>.ast
 		make $/<parserElement>.ast
 	}
 
-	sub is-ANTLR-range( $str ) {
-		if $str {
-			return $str ~~ / . \- /
-		}
-		return False
-	}
-
 	method LEXER_CHAR_SET( $/ ) {
-		my @content;
+		my @child;
 		for $/[0] {
 			if $_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN> {
-				@content.append(
-ANTLR-to-range(
-	~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
-	~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
-)
+				@child.append(
+					ANTLR-to-range(
+~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
+~$_<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
+					)
 				)
 			}
-			else {
-				@content.append(
-					Character.new(
-						:name(
-$_.<LEXER_CHAR_SET_RANGE>.ast
-						)
+			elsif $_.<LEXER_CHAR_SET_RANGE>.ast {
+				@child.append(
+					ANTLR-to-character(
+						$_.<LEXER_CHAR_SET_RANGE>.ast
 					)
 				)
 			}
 		}
 		make CharacterSet.new(
-			:content( @content )
+			:child( @child )
 		)
 	}
 
@@ -535,10 +500,10 @@ $_.<LEXER_CHAR_SET_RANGE>.ast
 
 	method lexerBlock( $/ ) {
 		if $/<complement> {
-			my @content;
+			my @child;
 			for $/<lexerAltList><lexerAlt> {
 				if $_.<lexerElement>[0]<lexerAtom><range> {
-					@content.append(
+					@child.append(
 						ANTLR-to-range(
 ~$_.<lexerElement>[0]<lexerAtom><range><from>[0],
 ~$_.<lexerElement>[0]<lexerAtom><range><to>[0]
@@ -547,40 +512,39 @@ $_.<LEXER_CHAR_SET_RANGE>.ast
 				}
 				elsif $_.<lexerElement>[0]<lexerAtom><LEXER_CHAR_SET> {
 					for $_.<lexerElement>[0]<lexerAtom><LEXER_CHAR_SET>[0] {
-						@content.append(
-							Character.new(
-								:name(
+						@child.append(
+							ANTLR-to-character(
 ~$_.<LEXER_CHAR_SET_RANGE>
-								)
 							)
 						)
 					}
 				}
 				else {
-					@content.append(
-						Character.new(
-							:name(
+					@child.append(
+						ANTLR-to-character(
 $_.<lexerElement>[0]<lexerAtom><terminal><scalar>.ast
-							)
 						)
-					);
+					)
 				}
 			}
 			make CharacterSet.new(
 				:negated( True ),
-				:content( @content )
+				:child( @child )
 			)
 		}
 		else {
-			make Grouping.new( :content( $/<lexerAltList>.ast ) )
+			my @child = $/<lexerAltList>.ast;
+			make Grouping.new(
+				:child( @child )
+			)
 		}
 	}
 
 	method lexerElement( $/ ) {
 		my $modifier = $/<ebnfSuffix><MODIFIER>.ast;
-		my $greed = $/<ebnfSuffix><GREED> // False;
+		my $greed = $/<ebnfSuffix><GREED>;
 
-		if $/<ebnfSuffix> and $/<lexerAtom><terminal><scalar> and
+		if $/<lexerAtom><terminal><scalar> and
 			is-ANTLR-terminal( $/<lexerAtom><terminal><scalar> ) and
 ( !$/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN> ) {
 			make Terminal.new(
@@ -593,18 +557,75 @@ $_.<lexerElement>[0]<lexerAtom><terminal><scalar>.ast
 				)
 			)
 		}
-		elsif $/<ebnfSuffix> and
-			$/<lexerAtom><LEXER_CHAR_SET> and
+		elsif $/<lexerAtom><LEXER_CHAR_SET> and
 $/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN> {
-			my @content =
-				ANTLR-to-range(
+			my @child = ANTLR-to-range(
 ~$/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT_NO_HYPHEN>,
 ~$/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT>
-				);
+			);
 			make CharacterSet.new(
 				:modifier( $modifier ),
 				:greed( $greed ),
-				:content( @content )
+				:child( @child )
+			)
+		}
+		elsif $/<lexerAtom><LEXER_CHAR_SET> {
+			my @child;
+			for $/<lexerAtom><LEXER_CHAR_SET> {
+				@child.append(
+					ANTLR-to-character( ~$_ )
+				)
+			}
+			make CharacterSet.new(
+				:modifier( $modifier ),
+				:greed( $greed ),
+				:child( @child )
+			)
+		}
+# XXX add regression
+		elsif $/<lexerAtom><notSet><setElement><terminal> {
+			my @child = ANTLR-to-character(
+$/<lexerAtom><notSet><setElement><terminal><STRING_LITERAL>.ast
+			);
+			make CharacterSet.new(
+				:negated( True ),
+				:modifier( $modifier ),
+				:greed( $greed ),
+				:child( @child )
+			)
+		}
+# XXX Add test for this
+		elsif $/<ebnfSuffix> and $/<lexerAtom><notSet><setElement> {
+			my @child;
+			for $/<lexerAtom><notSet><setElement><LEXER_CHAR_SET>[0] {
+				@child.append(
+					ANTLR-to-character(
+						$_.<LEXER_CHAR_SET_RANGE>.ast
+					)
+				)
+			}
+			make CharacterSet.new(
+				:negated( True ),
+				:modifier( $modifier ),
+				:greed( $greed ),
+				:child( @child )
+			)
+		}
+# XXX Add test for this
+		elsif $/<ebnfSuffix> and $/<lexerAtom><notSet> {
+			my @child;
+			for $/<lexerAtom><notSet><blockSet><setElementAltList><setElement> {
+				@child.append(
+					ANTLR-to-character(
+$_.<terminal><STRING_LITERAL>.ast
+					)
+				)
+			}
+			make CharacterSet.new(
+				:negated( True ),
+				:modifier( $modifier ),
+				:greed( $greed ),
+				:child( @child )
 			)
 		}
 		elsif $/<ebnfSuffix> and
@@ -620,103 +641,36 @@ $/<lexerAtom><LEXER_CHAR_SET>[0][0]<LEXER_CHAR_SET_RANGE><LEXER_CHAR_SET_ELEMENT
 				)
 			)
 		}
-		elsif $/<ebnfSuffix> and $/<lexerAtom><terminal><STRING_LITERAL> {
-			make Terminal.new(
-				:modifier( $modifier ),
-				:greed( $greed ),
-				:name(
-					ANTLR-to-perl6(
-						$/<lexerAtom><terminal><STRING_LITERAL>.ast
-					)
-				)
-			)
+		elsif $/<lexerBlock> {
+			make $/<lexerBlock>.ast
 		}
-		elsif $/<ebnfSuffix> and $/<lexerAtom>[0] {
+		elsif $/<lexerAtom>[0] {
 			make Wildcard.new(
 				:modifier( $modifier ),
 				:greed( $greed )
 			)
 		}
-		elsif $/<ebnfSuffix> and $/<lexerAtom><LEXER_CHAR_SET> {
-			my @content =
-				Character.new(
-					:name(
-						escape-character-class(
-							$/<lexerAtom><LEXER_CHAR_SET>>>.Str
-						)
-					)
-				);
-			make CharacterSet.new(
-				:modifier( $modifier ),
-				:greed( $greed ),
-				:content( @content )
-			)
-		}
-# XXX Add test for this
-		elsif $/<ebnfSuffix> and $/<lexerAtom><notSet><setElement><terminal> {
-			my @content =
-				escape-character-class(
-					ANTLR-to-perl6( 
-$/<lexerAtom><notSet><setElement><terminal><STRING_LITERAL>.ast
-					)
-				);
-			make CharacterSet.new(
-				:negated( True ),
-				:modifier( $modifier ),
-				:greed( $greed ),
-				:content( @content )
-			)
-		}
-# XXX Add test for this
-		elsif $/<ebnfSuffix> and $/<lexerAtom><notSet><setElement> {
-			my @content;
-			for $/<lexerAtom><notSet><setElement><LEXER_CHAR_SET>[0] {
-				@content.append(
-					ANTLR-to-perl6(
-						$_.<LEXER_CHAR_SET_RANGE>.ast
-					)
-				)
-			}
-			make CharacterSet.new(
-				:negated( True ),
-				:modifier( $modifier ),
-				:greed( $greed ),
-				:content( @content )
-			)
-		}
-# XXX Add test for this
-		elsif $/<ebnfSuffix> and $/<lexerAtom><notSet> {
-			my @content;
-			for $/<lexerAtom><notSet><blockSet><setElementAltList><setElement> {
-				@content.append(
-					ANTLR-to-perl6(
-						$_.<terminal><STRING_LITERAL>.ast
-					)
-				)
-			}
-			make CharacterSet.new(
-				:negated( True ),
-				:modifier( $modifier ),
-				:greed( $greed ),
-				:content( @content )
-			)
-		}
-		elsif $/<lexerBlock> {
-			make $/<lexerBlock>.ast
-		}
-		elsif $/<lexerAtom>[0] {
-			make Wildcard.new
-		}
+		# XXX Making a tradeoff here.
+		# XXX One way to fix this is to create a new term for
+		# XXX <ACTION> <GREED>?
+		# XXX which lets us create a separate method that does
+		# XXX <GreedyAction> or something.
+		# XXX
+		# XXX But that would mean I'd end up doing that for
+		# XXX other combinations, exponents explode, oh the humanity.
+		# XXX
+		# XXX Can't add <GREED>? to the <ACTION> token because it's
+		# XXX recursive.
+		# XXX
 		elsif $/<ACTION> {
-			if $/<GREED> {
-				make Action.new(
-					:name( ~$/<ACTION> ),
-					:greed( True )
-				)
-			}
-			else {
-				make $/<ACTION>.ast
-			}
+			# XXX I'd love to make this simply collect
+			# XXX $/<ACTION>.ast, but the <GREED> match is
+			# XXX at the same damn level.
+			# XXX
+			make Action.new(
+				:name( ~$/<ACTION> ),
+				:greed( ?$/<GREED> )
+			)
 		}
 		else {
 			make $/<lexerAtom>.ast
@@ -724,28 +678,39 @@ $/<lexerAtom><notSet><setElement><terminal><STRING_LITERAL>.ast
 	}
 
 	method lexerAlt( $/ ) {
-		make Concatenation.new( :content( $/<lexerElement>>>.ast ) )
+		my @child = $/<lexerElement>>>.ast;
+		make Concatenation.new(
+			:child( @child )
+		)
 	}
 
 	method parserAltList( $/ ) {
-		make Alternation.new( :content( $/<parserAlt>>>.ast ) )
+		my @child = $/<parserAlt>>>.ast;
+		make Alternation.new(
+			:child( @child )
+		)
 	}
 
 	method lexerAltList( $/ ) {
-		make Alternation.new( :content( $/<lexerAlt>>>.ast ) )
+		my @child = $/<lexerAlt>>>.ast;
+		make Alternation.new(
+			:child( @child )
+		)
 	}
 
 	method parserRuleSpec( $/ ) {
+		my @child = $/<parserAltList>.ast;
 		make Rule.new(
 			:name( $/<ID>.ast ),
-			:content( $/<parserAltList>.ast )
+			:child( @child )
 		)
 	}
 
 	method lexerRuleSpec( $/ ) {
+		my @child = $/<lexerAltList>.ast;
 		make Rule.new(
 			:name( $/<ID>.ast ),
-			:content( $/<lexerAltList>.ast )
+			:child( @child )
 		)
 	}
 
