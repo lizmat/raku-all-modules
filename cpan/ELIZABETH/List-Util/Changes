@@ -1,0 +1,15 @@
+Revision history for List::Util
+
+0.0.4  2018-04-11T14:24:05+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.3 2018-01-11T22:24:03+01:00
+    - Make sure that unknown exports aren't silently ignored.
+    - Make sure we don't export anything when no functions are specified.
+    - Add tests to make sure exporting works like we think it should.
+
+0.0.2 2018-01-10T23:37:02+01:00
+    - Minor meta-information tweaks
+
+0.0.1 2018-01-10T15:01:01+01:00
+    - Initial implementation.

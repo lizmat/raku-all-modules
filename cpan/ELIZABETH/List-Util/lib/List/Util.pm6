@@ -6,7 +6,7 @@ class P5Pair is List {
     method value() is raw { self[1] }
 }
 
-class List::Util:ver<0.0.3> {
+class List::Util:ver<0.0.4> {
 
     our sub reduce(&block, *@args) is export(:SUPPORTED) {
         if @args > 1 {
