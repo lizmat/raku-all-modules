@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5chop:ver<0.0.1>;
+unit module P5chop:ver<0.0.2>;
 
 proto sub chop(|) is export {*}
 multi sub chop() { chop CALLERS::<$_>     }
