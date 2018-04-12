@@ -1,0 +1,7 @@
+Revision history for P5quotemeta
+
+0.0.2  2018-04-11T15:42:22+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.1  2018-01-25T16:46:01+01:00
+    - Initial implementation, based on Zoffix Znet's String::Quotemeta

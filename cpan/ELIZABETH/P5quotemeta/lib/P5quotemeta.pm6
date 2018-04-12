@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5quotemeta:ver<0.0.1>;
+unit module P5quotemeta:ver<0.0.2>;
 
 proto sub quotemeta(|) is export {*}
 multi sub quotemeta(--> Str:D) { quotemeta CALLERS::<$_> }
