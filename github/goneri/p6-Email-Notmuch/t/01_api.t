@@ -5,7 +5,7 @@ use File::Temp;
 
 use Test;
 
-plan 22;
+plan 21;
 
 my %mails =
     'first_mail' => "From: bob\@example.com\n
@@ -31,7 +31,6 @@ jjim";
 my $test_dir = tempdir();
 ok mkdir($test_dir);
 my $database = Database.create($test_dir);
-dies-ok {Database.open($test_dir, 'w')}, 'second open() raises exception';
 
 my $database_ro = Database.open($test_dir);
 

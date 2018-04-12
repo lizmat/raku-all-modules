@@ -355,12 +355,12 @@ class Query is repr('CPointer') {
         returns bool
         is native('notmuch')
         {*};
-    sub notmuch_query_search_messages(Query)
-        returns Messages
+    sub notmuch_query_search_messages(Query, CArray[long] $threads)
+        returns int32
         is native('notmuch')
        {*};
-    sub notmuch_query_search_threads(Query)
-        returns Threads
+    sub notmuch_query_search_threads(Query, CArray[long] $threads)
+        returns int32
         is native('notmuch')
        {*};
 
@@ -374,12 +374,16 @@ class Query is repr('CPointer') {
     }
 
     method search_messages() {
-        my $messages = notmuch_query_search_messages(self);
-        return $messages;
+        my $buf = CArray[long].new;
+        $buf[0] = 0;
+        my $messages = notmuch_query_search_messages(self, $buf);
+        nqp::box_i(nqp::unbox_i(nqp::decont($buf[0])), Messages)
     }
     method search_threads() {
-        my $threads = notmuch_query_search_threads(self);
-        return $threads;
+        my $buf = CArray[long].new;
+        $buf[0] = 0;
+        notmuch_query_search_threads(self, $buf);
+        nqp::box_i(nqp::unbox_i(nqp::decont($buf[0])), Threads)
     }
 
 }

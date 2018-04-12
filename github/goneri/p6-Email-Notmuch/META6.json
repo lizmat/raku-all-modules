@@ -2,7 +2,7 @@
   "perl"        : "6.c",
   "name"        : "Email::Notmuch",
   "license"     : "GPL-3.0",
-  "version"     : "0.5",
+  "version"     : "0.6",
   "description" : "lib NotmuchMail binding",
   "provides"    : {
     "Email::Notmuch": "lib/Email/Notmuch.pm6"
