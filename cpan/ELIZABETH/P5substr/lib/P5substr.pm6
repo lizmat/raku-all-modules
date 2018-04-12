@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5substr:ver<0.0.1>;
+unit module P5substr:ver<0.0.2>;
 
 proto sub substr(|) is export {*}
 multi sub substr(Str:D \s, Int:D $o, Int:D $l is copy, Str() $r --> Str:D) {
