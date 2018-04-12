@@ -1,5 +1,5 @@
 use v6.c;
-unit class P5fc:ver<0.0.1>;
+unit class P5fc:ver<0.0.2>;
 
 proto sub fc(|) is export {*}
 multi sub fc(         --> Str:D) { (CALLERS::<$_>).fc }
