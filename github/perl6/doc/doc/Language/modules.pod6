@@ -32,7 +32,7 @@ N<As L<synopsis S11|https://design.perl6.org/S11.html#Units> says: Confusing? Ye
 directory for executable programs and scripts.
 
 Source files generally use the C<.pm6> extension, and scripts or
-executables use the C<.p6>. Test files use the C<.t> extension.
+executables use the C<.p6>. Test files use the C<.t> extension. Files which contain documentation use the C<.pod6> extension.
 
 =head2 Loading and Basic Importing
 
@@ -428,7 +428,7 @@ This is the same ecosystem Perl5 is using. Modules are uploaded as I<.zip>
 or I<.tar.gz> files on L<PAUSE|https://pause.perl.org/>.
 
 =item B<p6c>
-Up until recently the only ecosystem, but soon to be deprecated. It is based
+Up until recently the only ecosystem. It is based
 on Github repositories which are directly accessed. It has only limited
 capability for versioning.
 
