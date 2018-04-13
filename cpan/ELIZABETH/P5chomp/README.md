@@ -3,23 +3,29 @@
 NAME
 ====
 
-P5chomp - Implement Perl 5's chomp() built-in
+P5chomp - Implement Perl 5's chomp() / chop() built-ins
 
 SYNOPSIS
 ========
 
-    use P5chomp; # exports chomp()
+    use P5chomp; # exports chomp() and chop()
 
     chomp $a;
     chomp @a;
     chomp %h;
     chomp($a,$b);
-    chomp();      # bare chomp may be compilation error to prevent P5isms in Perl 6
+    chomp();   # bare chomp may be compilation error to prevent P5isms in Perl 6
+
+    chop $a;
+    chop @a;
+    chop %h;
+    chop($a,$b);
+    chop();      # bare chop may be compilation error to prevent P5isms in Perl 6
 
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `chomp` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `chomp` and `chop` built-ins of Perl 5 as closely as possible.
 
 AUTHOR
 ======
