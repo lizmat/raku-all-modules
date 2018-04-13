@@ -1,5 +1,8 @@
 Revision history for P5chr
 
+0.0.4  2018-04-12T12:59:07+02:00
+    - Merge ord() code in here to reduce number of CPAN5 distributions.
+
 0.0.3  2018-04-11T14:56:09+02:00
     - Follow App:Mi6's default Changes format
 

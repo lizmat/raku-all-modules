@@ -3,23 +3,29 @@
 NAME
 ====
 
-P5chr - Implement Perl 5's chr() built-in
+P5chr - Implement Perl 5's chr() / ord() built-ins
 
 SYNOPSIS
 ========
 
-    use P5chr; # exports chr()
+    use P5chr; # exports chr() and ord()
 
     my $a = 65;
     say chr $a;
 
     $_ = 65;
-    say chr();      # bare chr may be compilation error to prevent P5isms in Perl 6
+    say chr();   # bare chr may be compilation error to prevent P5isms in Perl 6
+
+    my $a = "A";
+    say ord $a;
+
+    $_ = "A";
+    say ord();   # bare ord may be compilation error to prevent P5isms in Perl 6
 
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `chr` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `chr` and `ord` built-ins of Perl 5 as closely as possible.
 
 AUTHOR
 ======
