@@ -1,5 +1,8 @@
 Revision history for P5index
 
+0.0.3  2018-04-12T10:51:03+02:00
+    - Merge rindex() code in here to reduce number of CPAN5 distributions.
+
 0.0.2  2018-04-11T15:14:41+02:00
     - Follow App:Mi6's default Changes format
 

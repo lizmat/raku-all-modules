@@ -2,15 +2,11 @@ use v6.c;
 use Test;
 use P5index;
 
-plan 7;
+plan 4;
 
-ok defined(::('&index')),         'is &index imported?';
-ok !defined(P5index::{'&index'}), 'is &index externally NOT accessible?';
-
-is index("foobar","bar"),    3, 'did we find bar';
-is index("foobar","bar",-1), 3, 'did we find bar before beginning';
-is index("foofoo","bar"),   -1, 'did we *not* find bar';
-is index("foofoo","foo",1),  3, 'did we find the second foo';
-is index("foofoo","foo",9), -1, 'did we *not* find foo after end';
+ok defined(::('&index')),          'is &index imported?';
+ok !defined(P5index::{'&index'}),  'is &index externally NOT accessible?';
+ok defined(::('&rindex')),         'is &rindex imported?';
+ok !defined(P5index::{'&rindex'}), 'is &rindex externally NOT accessible?';
 
 # vim: ft=perl6 expandtab sw=4

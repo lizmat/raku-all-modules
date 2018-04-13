@@ -3,21 +3,25 @@
 NAME
 ====
 
-P5index - Implement Perl 5's index() built-in
+P5index - Implement Perl 5's index() / rindex() built-ins
 
 SYNOPSIS
 ========
 
-    use P5index; # exports index()
+    use P5index; # exports index() / rindex()
 
     say index("foobar", "bar");    # 3
     say index("foofoo", "foo", 1); # 3
     say index("foofoo", "bar");    # -1
 
+    say rindex("foobar", "bar");    # 3
+    say rindex("foofoo", "foo", 4); # 3
+    say rindex("foofoo", "bar");    # -1
+
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `index` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `index` / `rindex` built-ins of Perl 5 as closely as possible.
 
 AUTHOR
 ======
