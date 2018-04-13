@@ -31,7 +31,7 @@ toasting:
         wget htop zip sqlite3 time \
 
         # libs needed by modules
-        uuid-dev \ #LibUUID
+        uuid-dev #LibUUID
 
     \curl -L https://install.perlbrew.pl | bash
     git clone https://github.com/tadzik/rakudobrew ~/.rakudobrew
