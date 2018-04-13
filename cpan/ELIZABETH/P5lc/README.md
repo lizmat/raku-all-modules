@@ -3,7 +3,7 @@
 NAME
 ====
 
-P5lc - Implement Perl 5's lc() built-in
+P5lc - Implement Perl 5's lc() / uc() built-ins
 
 SYNOPSIS
 ========
@@ -11,15 +11,19 @@ SYNOPSIS
     use P5lc;
 
     say lc "FOOBAR"; # foobar
-
     with "ZIPPO" {
         say lc();  # zippo, may need to use parens to avoid compilation error
+    }
+
+    say uc "foobar"; # FOOBAR
+    with "zippo" {
+        say uc();  # ZIPPO, may need to use parens to avoid compilation error
     }
 
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `lc` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `lc` / `uc` built-ins of Perl 5 as closely as possible.
 
 AUTHOR
 ======

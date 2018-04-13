@@ -1,30 +1,38 @@
 use v6.c;
-unit class P5lc:ver<0.0.2>;
+unit class P5lc:ver<0.0.3>;
 
 proto sub lc(|) is export {*}
 multi sub lc(         --> Str:D) { (CALLERS::<$_>).lc }
 multi sub lc(Str() $s --> Str:D) { $s.lc              }
 
+proto sub uc(|) is export {*}
+multi sub uc(         --> Str:D) { (CALLERS::<$_>).uc }
+multi sub uc(Str() $s --> Str:D) { $s.uc              }
+
 =begin pod
 
 =head1 NAME
 
-P5lc - Implement Perl 5's lc() built-in
+P5lc - Implement Perl 5's lc() / uc() built-ins
 
 =head1 SYNOPSIS
 
   use P5lc;
 
   say lc "FOOBAR"; # foobar
-
   with "ZIPPO" {
       say lc();  # zippo, may need to use parens to avoid compilation error
   }
 
+  say uc "foobar"; # FOOBAR
+  with "zippo" {
+      say uc();  # ZIPPO, may need to use parens to avoid compilation error
+  }
+
 =head1 DESCRIPTION
 
-This module tries to mimic the behaviour of the C<lc> of Perl 5 as closely as
-possible.
+This module tries to mimic the behaviour of the C<lc> / C<uc> built-ins of
+Perl 5 as closely as possible.
 
 =head1 AUTHOR
 
