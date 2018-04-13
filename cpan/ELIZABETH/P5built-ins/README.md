@@ -8,9 +8,9 @@ P5built-ins - Implement Perl 5's built-in functions
 SYNOPSIS
 ========
 
-    use P5functions;   # import all P5 built-in functions supported
+    use P5built-ins;   # import all P5 built-in functions supported
 
-    use P5functions <tie untie>;  # only import specific ones
+    use P5built-ins <tie untie>;  # only import specific ones
 
     tie my @a, Foo;
 

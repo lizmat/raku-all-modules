@@ -1,0 +1,24 @@
+Revision history for P5built-ins
+
+0.0.7  2018-04-12T13:42:12+02:00
+    - Follow App:Mi6's default Changes format
+    - Update references to submodules to account for merges
+    - Fix some documentation copy-pastos
+
+0.0.6  2018-01-31T12:43:06+01:00
+    - Add support for reverse()
+
+0.0.5  2018-01-30T10:30:05+01:00
+    - Add support for sleep()
+
+0.0.4  2018-01-29T20:46:04+01:00
+    - Add support for study()
+
+0.0.3  2018-01-29T20:43:03+01:00
+    - Add support for -r, -w, -x, -e, -f, -d, -z, -s, -l
+
+0.0.2  2018-01-27T00:55:02+01:00
+    - Add support for fc(), lc() and uc()
+
+0.0.1  2018-01-26T23:53:01+01:00
+    - Initial implementation.

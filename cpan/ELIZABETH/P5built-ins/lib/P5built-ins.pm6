@@ -1,10 +1,9 @@
 use v6.c;
 
 my %export;
-module P5built-ins:ver<0.0.6> {
+module P5built-ins:ver<0.0.7> {
     use P5caller;
     use P5chomp;
-    use P5chop;
     use P5chr;
     use P5each;
     use P5fc;
@@ -13,20 +12,15 @@ module P5built-ins:ver<0.0.6> {
     use P5lc;
     use P5lcfirst;
     use P5length;
-    use P5oct;
-    use P5ord;
     use P5pack;
     use P5quotemeta;
     use P5ref;
     use P5reverse;
-    use P5rindex;
     use P5sleep;
     use P5study;
     use P5substr;
     use P5tie;
     use P5times;
-    use P5uc;
-    use P5ucfirst;
     use P5-X;
 
     # there must be a better way to do this, but this will work for now
@@ -51,16 +45,16 @@ P5built-ins - Implement Perl 5's built-in functions
 
 =head1 SYNOPSIS
 
-  use P5functions;   # import all P5 built-in functions supported
+  use P5built-ins;   # import all P5 built-in functions supported
 
-  use P5functions <tie untie>;  # only import specific ones
+  use P5built-ins <tie untie>;  # only import specific ones
 
   tie my @a, Foo;
 
 =head1 DESCRIPTION
 
-This module provides an easy way to import a growing number of built-in functions
-of Perl 5 in Perl 6.  Currently supported at:
+This module provides an easy way to import a growing number of built-in
+functions of Perl 5 in Perl 6.  Currently supported at:
 
   caller chomp chop chr each hex index lcfirst length oct ord pack quotemeta
   ref rindex sleep study substr tie tied times ucfirst unpack untie
@@ -103,3 +97,5 @@ Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
 =end pod
+
+# vim: ft=perl6 expandtab sw=4
