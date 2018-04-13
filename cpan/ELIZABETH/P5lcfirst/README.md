@@ -3,7 +3,7 @@
 NAME
 ====
 
-P5lcfirst - Implement Perl 5's lcfirst() built-in
+P5lcfirst - Implement Perl 5's lcfirst() / ucfirst() built-ins
 
 SYNOPSIS
 ========
@@ -11,15 +11,19 @@ SYNOPSIS
     use P5lcfirst;
 
     say lcfirst "FOOBAR"; # fOOBAR
-
     with "ZIPPO" {
         say lcfirst;  # zIPPO
+    }
+
+    say ucfirst "foobar"; # Foobar
+    with "zippo" {
+        say ucfirst;  # Zippo
     }
 
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `lcfirst` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `lcfirst` and `ucfirst` built-ins of Perl 5 as closely as possible.
 
 AUTHOR
 ======

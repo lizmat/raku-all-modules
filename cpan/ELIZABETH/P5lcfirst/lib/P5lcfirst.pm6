@@ -1,5 +1,5 @@
 use v6.c;
-unit class P5lcfirst:ver<0.0.3>;
+unit class P5lcfirst:ver<0.0.4>;
 
 proto sub lcfirst(|) is export {*}
 multi sub lcfirst(--> Str:D) {
@@ -11,26 +11,40 @@ multi sub lcfirst(Str() $string --> Str:D) {
       !! $string
 }
 
+proto sub ucfirst(|) is export {*}
+multi sub ucfirst(--> Str:D) {
+    ucfirst(CALLERS::<$_>)
+}
+multi sub ucfirst(Str() $string --> Str:D) {
+    $string
+      ?? $string.substr(0,1).uc ~ $string.substr(1)
+      !! $string
+}
+
 =begin pod
 
 =head1 NAME
 
-P5lcfirst - Implement Perl 5's lcfirst() built-in
+P5lcfirst - Implement Perl 5's lcfirst() / ucfirst() built-ins
 
 =head1 SYNOPSIS
 
   use P5lcfirst;
 
   say lcfirst "FOOBAR"; # fOOBAR
-
   with "ZIPPO" {
       say lcfirst;  # zIPPO
   }
 
+  say ucfirst "foobar"; # Foobar
+  with "zippo" {
+      say ucfirst;  # Zippo
+  }
+
 =head1 DESCRIPTION
 
-This module tries to mimic the behaviour of the C<lcfirst> of Perl 5 as closely as
-possible.
+This module tries to mimic the behaviour of the C<lcfirst> and C<ucfirst>
+built-ins of Perl 5 as closely as possible.
 
 =head1 AUTHOR
 
@@ -48,3 +62,5 @@ Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
 =end pod
+
+# vim: ft=perl6 expandtab sw=4
