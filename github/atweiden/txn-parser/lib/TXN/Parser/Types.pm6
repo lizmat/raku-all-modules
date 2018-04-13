@@ -113,7 +113,7 @@ subset VarNameBare of Str is export where
 # end VarNameBare }}}
 # XXHash {{{
 
-subset XXHash of Int is export;
+constant XXHash is export = Int;
 
 # end XXHash }}}
 
