@@ -2,15 +2,11 @@ use v6.c;
 use Test;
 use P5hex;
 
-plan 6;
+plan 4;
 
 ok defined(::('&hex')),       'is &hex imported?';
 ok !defined(P5hex::{'&hex'}), 'is &hex externally NOT accessible?';
-
-
-for <abc 0xabc> {
-    is hex($_), 2748, "did $_ explicitely get handled ok";
-    is hex,     2748, "did $_ implicitely get handled ok";
-}
+ok defined(::('&oct')),       'is &oct imported?';
+ok !defined(P5hex::{'&oct'}), 'is &oct externally NOT accessible?';
 
 # vim: ft=perl6 expandtab sw=4

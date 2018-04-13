@@ -1,5 +1,8 @@
 Revision history for P5hex
 
+0.0.4  2018-04-12T13:09:37+02:00
+    - Merge oct() code in here to reduce number of CPAN5 distributions.
+
 0.0.3  2018-04-11T15:12:48+02:00
     - Follow App:Mi6's default Changes format
 

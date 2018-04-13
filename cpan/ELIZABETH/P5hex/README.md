@@ -3,17 +3,22 @@
 NAME
 ====
 
-P5hex - Implement Perl 5's hex() built-in
+P5hex - Implement Perl 5's hex() / ord() built-ins
 
 SYNOPSIS
 ========
 
-    use P5hex; # exports hex()
+    use P5hex; # exports hex() and ord()
+
+    print hex '0xAf'; # prints '175'
+    print hex 'aF';   # same
+
+    $val = oct($val) if $val =~ /^0/;
 
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `hex` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `hex` and `oct` built-ins of Perl 5 as closely as possible.
 
 AUTHOR
 ======
