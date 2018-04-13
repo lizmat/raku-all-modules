@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-koos.git
+	branch = master
+	commit = 465b48f4377f9e90c5618ecb588e4c4b60d0707c
+	parent = 64d87d87f88382f38a4ec3624637d74446074c1b
+	cmdver = 0.4.0

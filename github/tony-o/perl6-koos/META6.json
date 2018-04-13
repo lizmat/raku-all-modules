@@ -1,0 +1,16 @@
+{
+  "name"        : "Koos",
+  "version"     : "0.0.1",
+  "perl"        : "6",
+  "description" : "An ORM.",
+  "auth"        : "github:tony-o",
+  "authors"     : [ "Tony O'Dell" ],
+  "depends"     : ["DBIish"],
+  "provides"    : {
+    "Koos": "lib/Koos.pm6",
+    "Koos::Searchable": "lib/Koos/Searchable.pm6",
+    "Koos::Model": "lib/Koos/Model.pm6",
+    "Koos::Row": "lib/Koos/Row.pm6"
+  },
+  "source-url"  : "git://github.com/tony-o/perl6-koos.git"
+} 
