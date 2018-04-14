@@ -76,6 +76,7 @@ class PDF::Content::Ops {
     my constant TextOps = set <T* Td TD Tj TJ Tm ' ">;
     my constant ColorOps = set <CS cs SC SCN sc scn G g RG rg K k>;
     my constant MarkedContentOps = set <MP DP BMC BDC EMC>;
+    my constant CompatOps = set <BX EX>;
 
     # Extended Graphics States (Resource /ExtGState entries)
     # See [PDF 1.7 TABLE 4.8 Entries in a graphics state parameter dictionary]
@@ -311,10 +312,10 @@ class PDF::Content::Ops {
         );
 
         my constant %InSitu = %(
-           (Path) => PathOps,
-           (Text) => TextOps ∪ TextStateOps ∪ GeneralGraphicOps ∪ ColorOps ∪ MarkedContentOps,
-           (Page) => TextStateOps ∪ SpecialGraphicOps ∪ GeneralGraphicOps ∪ ColorOps ∪ MarkedContentOps,
-           (Image) => set <ID>,
+           (Path) => PathOps ∪ CompatOps,
+           (Text) => TextOps ∪ TextStateOps ∪ GeneralGraphicOps ∪ ColorOps ∪ MarkedContentOps ∪ CompatOps,
+           (Page) => TextStateOps ∪ SpecialGraphicOps ∪ GeneralGraphicOps ∪ ColorOps ∪ MarkedContentOps ∪ CompatOps ∪ <sh>.Set,
+           (Image) => <ID>.Set,
         );
 
         my Bool $ok-here = False;
