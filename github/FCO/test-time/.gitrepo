@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/FCO/test-time.git
+	branch = master
+	commit = 54edf2245b7afb93c49ecd84e1283ce1141d7fc4
+	parent = 860b796c7f15154a42b3224df0272b5cbb68994f
+	cmdver = 0.4.0
