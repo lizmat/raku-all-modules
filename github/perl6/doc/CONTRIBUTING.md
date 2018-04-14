@@ -50,8 +50,8 @@ available when writing code examples in the documentation.
 
 ## Documenting types
 
-The POD documentation of types is located in the `doc/Type` directory and
-subdirectories of this repository. For example the POD of `X::Bind::Slice`
+The Pod 6 documentation of types is located in the `doc/Type` directory and
+subdirectories of this repository. For example the Pod 6 file of `X::Bind::Slice`
 lives in `doc/Type/X/Bind/Slice.pod6`.
 
 To start contributing fork and checkout the repository, find the document
@@ -126,10 +126,10 @@ See [Writing and Testing Examples](writing-docs/EXAMPLES.md)
 
 ## Testing method completeness
 
-To get a list of methods that are found via introspection but not found in any
-pod6 under `doc/Type/`, use `util/list-missing-methods.p6`. It takes a
+To get a list of methods that are found via introspection but not
+found in any Pod 6 file under `doc/Type/`, use `util/list-missing-methods.p6`. It takes a
 directory or filepath as argument and limits the listing to the given file or
-any pod6-files found. All methods listed in `util/ignored-methods.txt` are
+any Pod 6-files found. All methods listed in `util/ignored-methods.txt` are
 ignored.
 
 ## Debug mode
@@ -152,7 +152,7 @@ checked depending on your browser settings.
 
 ### Heading numbering
 
-Please check if the headings you add are of sound structure. You can use debug mode
+Please check if the headings you add are well structured. You can use [debug mode](#debug-mode)
 to display heading numbers.
 
 ## Reporting bugs
@@ -162,17 +162,11 @@ use
 [labels when tagging tickets](https://github.com/perl6/doc/labels),
 among which these are probably the most common:
 
-* [`site`](https://github.com/perl6/doc/labels/site)   - presentation issue with the website (e.g. invalid HTML)
-* [`docs`](https://github.com/perl6/doc/labels/docs)   - missing or incorrect documentation (use [`NOTSPECCED`](https://github.com/perl6/doc/labels/NOTSPECCED) instead, if this is for a feature present in a compiler, but not in the Perl 6 test suite)
-    * [`new`](https://github.com/perl6/doc/labels/new) - this is a new doc item that requires fresh text
-    *  [`update`](https://github.com/perl6/doc/labels/update) - this is an existing doc item that requires some analysis or editing
-* [`build`](https://github.com/perl6/doc/labels/build)  - scripts or libraries that generate the site
-* [`search`](https://github.com/perl6/doc/labels/search) - the search component, either for items that are on the site but not searchable, or for search functionality)
-
-Contributors may also specify one of the following tags.
-
-* [`LHF`](https://github.com/perl6/doc/labels/LHF)    - as in *low hanging fruit*, for a beginner to work on
-* [`big`](https://github.com/perl6/doc/labels/big)    - a big issue, requires research or consensus
+* [`docs`](https://github.com/perl6/doc/labels/docs)   - missing or
+  incorrect documentation; use [`NOTSPECCED`](https://github.com/perl6/doc/labels/NOTSPECCED) instead, if this is for a feature present in a compiler, but not in the Perl 6 test suite.
+* [`search`](https://github.com/perl6/doc/labels/search) - the search
+  component, either for items that are on the site but not searchable,
+  or for the search functionality itself.
 
 If you would like to contribute documentation or other bug fixes, please use
 [GitHub's pull requests](https://github.com/perl6/doc/pulls).
@@ -186,7 +180,7 @@ computer.  To do this you will need:
 
   - Perl 6 (e.g., the Rakudo Perl 6 implementation)
   - zef (the installer for third party Perl 6 modules)
-  - `Pod::To::HTML` (Perl 6 module for converting Pod objects to HTML)
+  - `Pod::To::HTML` (Perl 6 module for converting Pod 6 objects to HTML)
   - [graphviz](http://www.graphviz.org/) (`sudo apt-get install graphviz` on Debian/Ubuntu)
   - [Mojolicious](https://metacpan.org/pod/Mojolicious)
     (optional; a Perl 5 web framework; it allows you to run a web
@@ -205,18 +199,18 @@ computer.  To do this you will need:
 
 You need Perl 6 installed. You can install the Rakudo Perl 6 compiler by
 downloading the latest Rakudo Star release from
-[rakudo.org/downloads/star/](http://rakudo.org/downloads/star/)
+[rakudo.org/downloads/star/](http://rakudo.org/downloads/star/).
 
 #### Zef
 
 [Zef](https://modules.perl6.org/repo/zef) is a Perl 6 module installer. If you
-installed Rakudo Star package, it should already be installed. Feel free to
+installed Rakudo Star package, it should already be there. Feel free to
 use any other module installer for the modules needed (see below).
 
 #### Pod::To::HTML
 
 The program that builds the HTML version of the documentation
-(`htmlify.p6`) uses `Pod::To::HTML` to convert Pod structures into HTML.
+(`htmlify.p6`) uses `Pod::To::HTML` to convert Pod 6 structures into HTML.
 You'll also need `Pod::To::BigPage`. Install these modules like so:
 
     $ zef install Pod::To::HTML Pod::To::BigPage
@@ -264,6 +258,10 @@ After the build has completed, you can start the web application which will
 render the HTML documentation
 
     $ perl app.pl daemon   # note!  Perl 5 *not* Perl 6 here
+
+or
+
+    $ make run
 
 Now point your web browser to http://localhost:3000 to view the
 documentation.
