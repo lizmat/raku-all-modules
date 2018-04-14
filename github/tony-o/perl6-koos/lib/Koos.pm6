@@ -17,21 +17,20 @@ multi method connect(Any:D: :$db, :%options) {
 }
 
 multi method connect(Str:D :$driver, :%options) {
-  '20'.say;
-  try {
+  #try {
     $!db        = DBIish.connect($driver, |%options<db>) or die $!;
     $!driver    = $driver;
     $!connected = True;
     $!prefix    = %options<prefix> // '';
     self.load-models;
-    CATCH { default {
-      if $_.^can('native-message') {
-        warn ~$_.native-message.trim;
-      } else {
-        warn $_;
-      }
-    } }
-  }
+  #  CATCH { default {
+  #    if $_.^can('native-message') {
+  #      warn ~$_.native-message.trim;
+  #    } else {
+  #      warn $_;
+  #    }
+  #  } }
+  #}
 }
 
 method load-models() {

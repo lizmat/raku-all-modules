@@ -79,6 +79,7 @@ method first(%filter?, :$next = False) {
   $sth.execute(|%query<params>);
   $!first-next := $sth;
   my $row   = $sth.row(:hash);
+  return Nil unless $row.keys.elems;
   my $new-model;
   try {
     CATCH { default {
