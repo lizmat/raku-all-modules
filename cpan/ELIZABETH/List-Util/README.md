@@ -213,11 +213,6 @@ sum0
 
 Similar to [/sum](/sum), except this returns 0 when given an empty list, rather than `Nil`.
 
-cut
-===
-
-
-
 KEY/VALUE PAIR LIST FUNCTIONS
 =============================
 
@@ -240,11 +235,6 @@ Instead, write this using a lexical variable:
        my @items = pairgrep { $a eq $key } @kvlist;
        ...
     }
-
-cut
-===
-
-
 
 pairs
 -----

@@ -6,7 +6,7 @@ class P5Pair is List {
     method value() is raw { self[1] }
 }
 
-class List::Util:ver<0.0.4> {
+class List::Util:ver<0.0.5> {
 
     our sub reduce(&block, *@args) is export(:SUPPORTED) {
         if @args > 1 {
@@ -430,8 +430,6 @@ compatibility, if C<@list> is empty then C<Nil> is returned.
 Similar to L</sum>, except this returns 0 when given an empty list, rather
 than C<Nil>.
 
-=cut
-
 =head1 KEY/VALUE PAIR LIST FUNCTIONS
 
 The following set of functions, all inspired by L<List::Pairwise>, consume an
@@ -465,8 +463,6 @@ Instead, write this using a lexical variable:
     my @items = pairgrep { $a eq $key } @kvlist;
     ...
  }
-
-=cut
 
 =head2 pairs
 
