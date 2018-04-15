@@ -1,13 +1,12 @@
 use v6;
 
-use PDF::COS::Dict;
+use PDF::COS::Tie::Hash;
 use PDF::Class::Type;
 
 #| /Type /ExtGState
 
 role PDF::ExtGState
-    is PDF::COS::Dict
-    does PDF::Class::Type {
+    is PDF::COS::Tie::Hash {
 
     use PDF::COS::Tie;
     use PDF::COS::Name;

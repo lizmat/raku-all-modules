@@ -9,7 +9,6 @@ role PDF::AcroForm
     # see [PDF 1.7 TABLE 8.67 Entries in the interactive form dictionary]
     use PDF::COS::Tie;
     use PDF::Field :coerce;
-    use PDF::COS;
 
     has PDF::Field @.Fields is entry(:required, :&coerce);    #| (Required) An array of references to the document’s root fields (those with no ancestors in the field hierarchy).
     #| returns an inorder array of all descendant fields

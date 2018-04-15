@@ -74,6 +74,7 @@
     "PDF::Mask::Alpha" : "lib/PDF/Mask/Alpha.pm",
     "PDF::Mask::Luminosity" : "lib/PDF/Mask/Luminosity.pm",
     "PDF::Metadata::XML" : "lib/PDF/Metadata/XML.pm",
+    "PDF::NameTree" : "lib/PDF/NameTree.pm",
     "PDF::NumberTree" : "lib/PDF/NumberTree.pm",
     "PDF::OBJR" : "lib/PDF/OBJR.pm",
     "PDF::Outline" : "lib/PDF/Outline.pm",
@@ -94,6 +95,7 @@
     "PDF::Shading::Lattice" : "lib/PDF/Shading/Lattice.pm",
     "PDF::Shading::Radial" : "lib/PDF/Shading/Radial.pm",
     "PDF::Shading::Tensor" : "lib/PDF/Shading/Tensor.pm",
+    "PDF::StructTreeRoot" : "lib/PDF/StructTreeRoot.pm",
     "PDF::ViewerPreferences" : "lib/PDF/ViewerPreferences.pm",
     "PDF::XObject" : "lib/PDF/XObject.pm",
     "PDF::XObject::Form" : "lib/PDF/XObject/Form.pm",
@@ -110,5 +112,5 @@
     "pdf"
   ],
   "test-depends" : [ ],
-  "version" : "0.1.5"
+  "version" : "0.1.6"
 }

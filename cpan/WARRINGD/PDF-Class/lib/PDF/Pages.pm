@@ -13,7 +13,6 @@ class PDF::Pages
     does PDF::Content::PageNode
     does PDF::Content::PageTree {
 
-    use PDF::COS;
     use PDF::COS::Tie;
     use PDF::COS::Name;
     my subset Name-Pages of PDF::COS::Name where 'Pages';

@@ -21,10 +21,11 @@ sub MAIN(Str $infile,               #= input PDF
          Bool :$*contents,          #= validate/check contents of pages, etc         
          Bool :$*strict,            #= perform additional checks
          UInt :$*max-depth = 100,   #= maximum recursion depth
-	 Str  :$exclude,            #= excluded entries: Entry1,Entry2
+	 Str  :$exclude,            #= excluded entries: Entry1,Entry2,
+         Bool :$repair = False      #= repair PDF before checking
          ) {
 
-    my $doc = PDF::Class.open( $infile, :$password );
+    my $doc = PDF::Class.open( $infile, :$password, :$repair );
     @*exclude = $exclude.split(/:s ',' /)
     	      if $exclude;
     check( $doc, :ent<xref> );
@@ -38,7 +39,7 @@ multi sub check(Hash $obj, UInt :$depth is copy = 0, Str :$ent = '') {
         !! $*writer.write($obj.content).subst(/\s+/, ' ', :g);
     $*ERR.say: (" " x ($depth*2)) ~ "$ent\:\t" ~ $ref
 	if $*trace;
-    die "maximum depth of $*max-depth exceeded"
+    die "maximum depth of $*max-depth exceeded $ent: $ref"
 	if ++$depth > $*max-depth;
     my Hash $entries = $obj.entries;
     my Str @unknown-entries;
@@ -84,7 +85,7 @@ multi sub check(Array $obj, UInt :$depth is copy = 0, Str :$ent = '') {
         !! $*writer.write($obj.content).subst(/\s+/, ' ', :g);
     $*ERR.say: (" " x ($depth*2)) ~ "$ent\:\t" ~ $ref
 	if $*trace;
-    die "maximum depth of $*max-depth exceeded"
+    die "maximum depth of $*max-depth exceeded $ent: $ref"
 	if ++$depth > $*max-depth;
     my Array $index = $obj.index;
     for $obj.keys.sort {

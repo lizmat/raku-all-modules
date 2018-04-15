@@ -5,7 +5,6 @@ use PDF::COS::Tie::Hash;
 role PDF::Pattern
     does PDF::COS::Tie::Hash {
 
-    use PDF::COS;
     use PDF::COS::Tie;
     use PDF::COS::Name;
     #| /Type entry is optional, but should be /Pattern when present

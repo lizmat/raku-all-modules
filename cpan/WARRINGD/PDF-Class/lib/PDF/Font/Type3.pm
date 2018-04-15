@@ -6,7 +6,6 @@ class PDF::Font::Type3
     is PDF::Font
     does PDF::Content::Resourced {
 
-    use PDF::COS;
     use PDF::COS::Tie;
     use PDF::COS::Dict;
     use PDF::COS::Name;

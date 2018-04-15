@@ -5,8 +5,8 @@ use PDF::Field;
 role PDF::Field::Signature
     does PDF::Field {
 
-    use PDF::COS;
     use PDF::COS::Tie;
+    use PDF::COS::Name;
 
     my role LockDict
 	does PDF::COS::Tie::Hash {

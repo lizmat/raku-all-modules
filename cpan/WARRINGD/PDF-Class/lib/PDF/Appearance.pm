@@ -22,7 +22,7 @@ role PDF::Appearance
 	has PDF::COS::Stream $.Yes is entry;
     }
     #| /Type entry is optional, but should be /Pattern when present
-    my subset AppearanceEntry of PDF::COS where PDF::COS::Stream | AppearanceStatus;
+    my subset AppearanceEntry where PDF::COS::Stream | AppearanceStatus;
     multi sub coerce(Hash $dict is rw, AppearanceEntry) {
 	PDF::COS.coerce($dict,  AppearanceStatus)
     }

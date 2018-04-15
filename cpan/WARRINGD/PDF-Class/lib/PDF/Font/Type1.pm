@@ -4,7 +4,6 @@ use PDF::Font;
 class PDF::Font::Type1
     is PDF::Font {
 
-    use PDF::COS;
     use PDF::COS::Tie;
     use PDF::COS::Dict;
     use PDF::COS::Name;

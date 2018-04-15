@@ -69,11 +69,10 @@ PDF::COS.loader = class PDF::Class::Loader
         my $type = from-ast($dict<Type>);
         my $subtype = from-ast($dict<Subtype> // $dict<S>)
 	    unless $type eq 'Border';
-
         $.find-delegate( $type, $subtype, :$base-class );
     }
 
-    #| Reverse lookup for classes when /Subtype is required but optional /Type missing
+    #| Reverse lookup for classes when /Subtype is required but optional /Type is absent
     multi method load-delegate(Hash :$dict! where {.<Subtype>:exists }, :$base-class) {
 	my $subtype = from-ast $dict<Subtype>;
 
@@ -96,12 +95,13 @@ PDF::COS.loader = class PDF::Class::Loader
 	    $.find-delegate($_, $subtype);
 	}
 	else {
-	    note "unhandled subtype: PDF::*::{$subtype}";
+	    note "unhandled subtype: PDF::*::{$subtype}"
+                unless $subtype eq 'DeviceN'|'NChannel'; # handled by DeviceN color coercements
 	    $base-class;
 	}
     }
 
-    #| Reverse lookup for classes when /S (subtype) is required but option /Type is missing
+    #| Reverse lookup for classes when /S (subtype) is required, but optional /Type is absent
     multi method load-delegate(Hash :$dict! where {.<S>:exists }, :$base-class) {
 	my $subtype = from-ast $dict<S>;
 
