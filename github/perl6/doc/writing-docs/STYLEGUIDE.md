@@ -84,14 +84,42 @@ stick to easily understandable names:
 If you want to add some fancy characters, please stick to
 [well-known characters from our Unicode set](https://docs.perl6.org/language/unicode_ascii).
 
+### Prefer non-ASCII syntax in examples
+
+    my @infinite-sequence = 1,3...∞ # GOOD
+    my @infinite-sequence = 1,3...Inf # OK, but rather not
+    <a b c > ⊖ <c d e> # Good
+    <a b c > (^) <c d e> # OK, but don't do that
+
+All operators have a ASCII equivalent, but they are more
+verbose and do not correspond exactly to the mathematical operator or constant
+they often represent. Please use that syntax whenever possible.
+
 ### Prefer the %() form of declaring hashes
 
     my %hash := { this => "is", a => "hash" }; # Correct, but BAD
     my %hash := %( this => "is", a => "hash" ); # GOOD
 
-Using the second form is more idiomatic and avoids confusion with blocks. In fact, you don't need to use `:=` in the second sentence, precisely for this reason.
+Using the second form is more idiomatic and avoids confusion with
+blocks. In fact, you don't need to use `:=` in the second sentence,
+precisely for this reason.
+
+### Try to express intent, rather than simply reflex syntax
+
+    my @l = lazy 0..5; # Correct, but BAD
+    my @too-long-list = lazy 0..100000000  # GOOD
+    my @powers-of-eleven = lazy 1, 11, 121 ... 10**100 # EVEN BETTER
+
+In the first case, the syntax is totally correct. But a list with 5
+elements need not be made lazy. The second is better, because it does
+show the intent: work with long lists that need not be filling up
+memory until they are needed. However, the last one is better because
+it includes a real use case: in the progression, Perl 6 does not need
+to actually compute its terms until they are really needed.
 
 ## Perl 5 and Perl 6
+
+Style guidelines related to Perl *.
 
 ### Don't reference Perl 5 unless in a 5-to-6 document or related document
 
