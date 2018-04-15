@@ -38,6 +38,10 @@ install this with *zef* :
 
     zef install Crypt::Libcrypt
 
+*Notes for OSX* this can be used with libgcrypt on OSX (if you use brew, you can `brew install libgcrypt`)
+
+
+
 ## Support
 
 Suggestions/patches are welcomed via github at:

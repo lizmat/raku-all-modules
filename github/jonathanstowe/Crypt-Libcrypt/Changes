@@ -1,3 +1,6 @@
+v0.0.8		Sat 14 Apr 09:19:54 BST 2018
+	* Make work with libgcrypt on Mac OSX
+	* Use unversioned library on FreeBSD
 v0.0.7		Tue Jan 24 21:21:59 2017 +0000 
 	* Make zef compatible
 v0.0.6		Sat Mar 12 14:00:07 2016 +0000 

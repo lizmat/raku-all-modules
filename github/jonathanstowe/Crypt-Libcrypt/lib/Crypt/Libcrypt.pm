@@ -1,6 +1,6 @@
 use v6.c;
 
-module Crypt::Libcrypt:ver<0.0.6>:auth<github:jonathanstowe> {
+module Crypt::Libcrypt:ver<0.0.8>:auth<github:jonathanstowe> {
 
 =begin pod
 
@@ -100,7 +100,12 @@ SHA-512
 =end pod
 
     use NativeCall;
-
-    sub crypt(Str , Str  --> Str) is native('crypt', v1) is export { * }
+    # Mac OSX uses libgcrypt to supply crypt()
+    # FreeBSD always provides a non-versioned symlink AFAIK
+    constant LIB = [ 
+        $*DISTRO.name eq 'macosx' ?? 'libgcrypt.dylib' !! 'crypt', 
+        $*DISTRO.name eq 'freebsd' ?? Version !! v1
+    ];
+    sub crypt(Str , Str  --> Str) is native(LIB) is export { * }
 }
 # vim: expandtab shiftwidth=4 ft=perl6
