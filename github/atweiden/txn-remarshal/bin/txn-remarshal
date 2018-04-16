@@ -6,6 +6,7 @@
 use v6;
 use File::Presence;
 use TXN::Parser;
+use TXN::Parser::ParseTree;
 use TXN::Remarshal;
 
 
@@ -25,7 +26,7 @@ multi sub MAIN(
 )
 {
     my @e = remarshal($*IN.lines.join("\n"), :if<json>, :of<hash>);
-    my TXN::Parser::AST::Entry:D @entry = remarshal(@e, :if<hash>, :of<entry>);
+    my Entry:D @entry = remarshal(@e, :if<hash>, :of<entry>);
     my Str:D $txn = remarshal(@entry, :if<entry>, :of<txn>);
     output($txn, $output);
 }
@@ -43,7 +44,7 @@ multi sub MAIN(
     exists-readable-file($file)
         or die;
     my @e = remarshal(slurp($file), :if<json>, :of<hash>);
-    my TXN::Parser::AST::Entry:D @entry = remarshal(@e, :if<hash>, :of<entry>);
+    my Entry:D @entry = remarshal(@e, :if<hash>, :of<entry>);
     my Str:D $txn = remarshal(@entry, :if<entry>, :of<txn>);
     output($txn, $output);
 }
@@ -57,7 +58,7 @@ multi sub MAIN(
     --> Nil
 )
 {
-    my TXN::Parser::AST::Entry:D @entry = from-txn($*IN.lines.join("\n"));
+    my Entry:D @entry = from-txn($*IN.lines.join("\n"));
     my @e = remarshal(@entry, :if<entry>, :of<hash>);
     my Str:D $json = remarshal(@e, :if<hash>, :of<json>);
     output($json, $output);
@@ -75,7 +76,7 @@ multi sub MAIN(
     my Str:D $file = resolve-path($input);
     exists-readable-file($file)
         or die;
-    my TXN::Parser::AST::Entry:D @entry = from-txn(:$file);
+    my Entry:D @entry = from-txn(:$file);
     my @e = remarshal(@entry, :if<entry>, :of<hash>);
     my Str:D $json = remarshal(@e, :if<hash>, :of<json>);
     output($json, $output);

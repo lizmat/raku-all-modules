@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "TXN::Remarshal",
-    "version"     : "*",
+    "version"     : "0.1.0",
     "author"      : "atweiden",
     "description" : "Double-entry accounting ledger file format converter",
     "depends"     : ["File::Presence", "TXN::Parser"],

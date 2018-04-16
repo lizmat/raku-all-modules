@@ -22,6 +22,7 @@ txn-remarshal -i=sample.txn -if=txn -of=json -o=sample.json
 **perl6**
 
 ```perl6
+use TXN::Parser::ParseTree;
 use TXN::Remarshal;
 
 my Str $txn = Q:to/EOF/;
@@ -31,16 +32,16 @@ my Str $txn = Q:to/EOF/;
 EOF
 
 # convenience wrappers
-my TXN::Parser::AST::Entry @entry = from-txn($txn);
+my Entry @entry = from-txn($txn);
 my Str $s = to-txn(@entry);
 
 # txn ↔ entry
-my TXN::Parser::AST::Entry @entry = remarshal($txn, :if<txn>, :of<entry>);
+my Entry @entry = remarshal($txn, :if<txn>, :of<entry>);
 my Str $ledger = remarshal(@entry, :if<entry>, :of<txn>);
 
 # entry ↔ hash
 my Hash @a = remarshal(@entry, :if<entry>, :of<hash>);
-my TXN::Parser::AST::Entry @e = remarshal(@a, :if<hash>, :of<entry>);
+my Entry @e = remarshal(@a, :if<hash>, :of<entry>);
 
 # hash ↔ json
 my Str $json = remarshal(@a, :if<hash>, :of<json>);
