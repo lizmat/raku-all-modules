@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/atweiden/config-toml.git
 	branch = master
-	commit = e9c235f04a249c47edfbf263207944c17c1d2e42
-	parent = 9fce5680643ff63f1bab4fa06d0b44d6eb9684d6
+	commit = c9c7486c955527eafb2163c3849bb580fb06e707
+	parent = f8015cf2cb88d62d33bb868df5ee1ca1f64c5b64
 	cmdver = 0.4.0

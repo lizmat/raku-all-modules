@@ -125,7 +125,7 @@ method !print-prefix(@prefix, Bool :$extra-brackets)
 
 sub is-bare-key($key --> Bool:D)
 {
-    Config::TOML::Parser::Grammar.parse($key, :rule<keypair-key:bare>).so;
+    Config::TOML::Parser::Grammar.parse($key, :rule<keypair-key-single:bare>).so;
 }
 
 multi sub is-valid-key(Str:D $key --> Bool:D)
@@ -133,7 +133,7 @@ multi sub is-valid-key(Str:D $key --> Bool:D)
     is-bare-key($key)
         || Config::TOML::Parser::Grammar.parse(
                $key.perl,
-               :rule<keypair-key>
+               :rule<keypair-key-single>
            ).so;
 }
 

@@ -5,7 +5,6 @@ unit module X::Config::TOML;
 
 class DuplicateKeys is Exception
 {
-    has Str:D @.keys-seen is required;
     has Str:D $.subject is required;
     has Str:D $.text is required;
 
@@ -17,35 +16,6 @@ class DuplicateKeys is Exception
         {$.subject.tc}:
         $.text
         {'-' x 72}
-        Keys seen:
-        {
-            @.keys-seen.sort.hyper.map({
-                .subst(
-                    /(.*)/,
-                    -> $/ {
-                        state Int:D $i = 1;
-                        my Str:D $replacement = "$i.「$0」 \n";
-                        $i++;
-                        $replacement;
-                    }
-                )
-            });
-        }
-        {'-' x 72}
-        Keys seen (unique):
-        {
-            @.keys-seen.unique.sort.hyper.map({
-                .subst(
-                    /(.*)/,
-                    -> $/ {
-                        state Int:D $i = 1;
-                        my Str:D $replacement = "$i.「$0」 \n";
-                        $i++;
-                        $replacement;
-                    }
-                )
-            });
-        }
         EOF
     }
 }

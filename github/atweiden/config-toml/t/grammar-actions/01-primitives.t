@@ -1881,13 +1881,13 @@ subtest({
         Config::TOML::Parser::Grammar.parse(
             $partial-time1,
             :$actions,
-            :rule<date>
+            :rule<time>
         );
     my $match-partial-time2 =
         Config::TOML::Parser::Grammar.parse(
             $partial-time2,
             :$actions,
-            :rule<date>
+            :rule<time>
         );
 
     is(
@@ -1978,7 +1978,7 @@ subtest({
         $match-partial-time1.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($partial-time1, :rule<date>)] - 119 of 142
+        ♪ [Grammar.parse($partial-time1, :rule<time>)] - 119 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal partial time successfully
         ┃   Success   ┃
@@ -1990,7 +1990,7 @@ subtest({
         $match-partial-time2.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($partial-time2, :rule<date>)] - 120 of 142
+        ♪ [Grammar.parse($partial-time2, :rule<time>)] - 120 of 142
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal partial time successfully
         ┃   Success   ┃
@@ -2268,4 +2268,4 @@ subtest({
 
 # end datetime grammar-actions tests }}}
 
-# vim: set filetype=perl6 foldmethod=marker foldlevel=0:
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0 nowrap:

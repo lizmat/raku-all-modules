@@ -15,7 +15,7 @@ subtest({
         $match-toml.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($toml, :$actions)] - 1 of 49
+        ♪ [Grammar.parse($toml, :$actions)] - 1 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses TOML document successfully
         ┃   Success   ┃
@@ -27,7 +27,7 @@ subtest({
         $match-toml.made<Entry>[0]<Header><date>,
         Date.new('2014-01-01'),
         q:to/EOF/
-        ♪ [Is expected value?] - 2 of 49
+        ♪ [Is expected value?] - 2 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Header><date>
         ┃   Success   ┃        ~~ Date.new('2014-01-01')
@@ -39,7 +39,7 @@ subtest({
         $match-toml.made<Entry>[0]<Header><description>,
         'I started the year with $1000 in Bankwest cheque account',
         q:to/EOF/
-        ♪ [Is expected value?] - 3 of 49
+        ♪ [Is expected value?] - 3 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Header><description>
         ┃   Success   ┃        ~~ '...'
@@ -51,7 +51,7 @@ subtest({
         $match-toml.made<Entry>[0]<Header><importance>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 4 of 49
+        ♪ [Is expected value?] - 4 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Header><importance>
         ┃   Success   ┃        == 0
@@ -63,7 +63,7 @@ subtest({
         $match-toml.made<Entry>[0]<Header><tags>,
         [ 'TAG1', 'TAG2' ],
         q:to/EOF/
-        ♪ [Is expected value?] - 5 of 49
+        ♪ [Is expected value?] - 5 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Header><tags>
         ┃   Success   ┃        ~~ [ 'TAG1', 'TAG2' ]
@@ -75,7 +75,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[0]<Account><silo>,
         'ASSETS',
         q:to/EOF/
-        ♪ [Is expected value?] - 6 of 49
+        ♪ [Is expected value?] - 6 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[0]<Account><silo>
         ┃   Success   ┃        ~~ 'ASSETS'
@@ -87,7 +87,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[0]<Account><entity>,
         'Personal',
         q:to/EOF/
-        ♪ [Is expected value?] - 7 of 49
+        ♪ [Is expected value?] - 7 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[0]<Account><entity>
         ┃   Success   ┃        ~~ 'Personal'
@@ -99,7 +99,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[0]<Account><subaccount>,
         [ 'Bankwest', 'Cheque' ],
         q:to/EOF/
-        ♪ [Is expected value?] - 8 of 49
+        ♪ [Is expected value?] - 8 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[0]<Account><subaccount>
         ┃   Success   ┃        ~~ [ 'Bankwest', 'Cheque' ]
@@ -111,7 +111,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[0]<Amount><asset-code>,
         'USD',
         q:to/EOF/
-        ♪ [Is expected value?] - 9 of 49
+        ♪ [Is expected value?] - 9 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[0]<Amount><asset-code>
         ┃   Success   ┃        ~~ 'USD'
@@ -123,7 +123,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[0]<Amount><asset-quantity>,
         1000.00,
         q:to/EOF/
-        ♪ [Is expected value?] - 10 of 49
+        ♪ [Is expected value?] - 10 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[0]<Amount><asset-quantity>
         ┃   Success   ┃        == 1000.00
@@ -135,7 +135,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[0]<Amount><asset-symbol>,
         '$',
         q:to/EOF/
-        ♪ [Is expected value?] - 11 of 49
+        ♪ [Is expected value?] - 11 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[0]<Amount><asset-symbol>
         ┃   Success   ┃        ~~ '$'
@@ -147,7 +147,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[0]<Amount><plus-or-minus>,
         '',
         q:to/EOF/
-        ♪ [Is expected value?] - 12 of 49
+        ♪ [Is expected value?] - 12 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[0]<Amount><plus-or-minus>
         ┃   Success   ┃        ~~ ''
@@ -159,7 +159,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[1]<Account><silo>,
         'EQUITY',
         q:to/EOF/
-        ♪ [Is expected value?] - 13 of 49
+        ♪ [Is expected value?] - 13 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[1]<Account><silo>
         ┃   Success   ┃        ~~ 'EQUITY'
@@ -171,7 +171,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[1]<Account><entity>,
         'Personal',
         q:to/EOF/
-        ♪ [Is expected value?] - 14 of 49
+        ♪ [Is expected value?] - 14 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[1]<Account><entity>
         ┃   Success   ┃        ~~ 'Personal'
@@ -183,7 +183,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[1]<Account><subaccount>,
         [],
         q:to/EOF/
-        ♪ [Is expected value?] - 15 of 49
+        ♪ [Is expected value?] - 15 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[1]<Account><subaccount>
         ┃   Success   ┃        ~~ []
@@ -195,7 +195,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[1]<Amount><asset-code>,
         'USD',
         q:to/EOF/
-        ♪ [Is expected value?] - 16 of 49
+        ♪ [Is expected value?] - 16 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[1]<Amount><asset-code>
         ┃   Success   ┃        ~~ 'USD'
@@ -207,7 +207,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[1]<Amount><asset-quantity>,
         1000.00,
         q:to/EOF/
-        ♪ [Is expected value?] - 17 of 49
+        ♪ [Is expected value?] - 17 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[1]<Amount><asset-quantity>
         ┃   Success   ┃        == 1000.00
@@ -219,7 +219,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[1]<Amount><asset-symbol>,
         '$',
         q:to/EOF/
-        ♪ [Is expected value?] - 18 of 49
+        ♪ [Is expected value?] - 18 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[1]<Amount><asset-symbol>
         ┃   Success   ┃        ~~ '$'
@@ -231,7 +231,7 @@ subtest({
         $match-toml.made<Entry>[0]<Posting>[1]<Amount><plus-or-minus>,
         '',
         q:to/EOF/
-        ♪ [Is expected value?] - 19 of 49
+        ♪ [Is expected value?] - 19 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<Entry>[0]<Posting>[1]<Amount><plus-or-minus>
         ┃   Success   ┃        ~~ ''
@@ -250,7 +250,7 @@ subtest({
         $match-toml.WHAT,
         Config::TOML::Parser::Grammar,
         q:to/EOF/
-        ♪ [Grammar.parse($toml, :$actions)] - 20 of 49
+        ♪ [Grammar.parse($toml, :$actions)] - 20 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses TOML document successfully
         ┃   Success   ┃
@@ -262,7 +262,7 @@ subtest({
         $match-toml.made<TXN>[0]<drift>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 21 of 49
+        ♪ [Is expected value?] - 21 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<drift> == 0
         ┃   Success   ┃
@@ -274,7 +274,7 @@ subtest({
         $match-toml.made<TXN>[0]<entity>,
         'VarName',
         q:to/EOF/
-        ♪ [Is expected value?] - 22 of 49
+        ♪ [Is expected value?] - 22 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<entity> ~~ 'VarName'
         ┃   Success   ┃
@@ -286,7 +286,7 @@ subtest({
         $match-toml.made<TXN>[0]<EntryID><number>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 22 of 49
+        ♪ [Is expected value?] - 23 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<EntryID><number> == 0
         ┃   Success   ┃
@@ -298,7 +298,7 @@ subtest({
         $match-toml.made<TXN>[0]<EntryID><xxhash>,
         5555555,
         q:to/EOF/
-        ♪ [Is expected value?] - 23 of 49
+        ♪ [Is expected value?] - 24 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<EntryID><xxhash>
         ┃   Success   ┃        == 5555555
@@ -310,7 +310,7 @@ subtest({
         $match-toml.made<TXN>[0]<EntryID><text>,
         'capture entry',
         q:to/EOF/
-        ♪ [Is expected value?] - 24 of 49
+        ♪ [Is expected value?] - 25 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<EntryID><text>
         ┃   Success   ┃        ~~ 'capture entry'
@@ -322,7 +322,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModHoldings><AssetCode><entity>,
         'VarName',
         q:to/EOF/
-        ♪ [Is expected value?] - 25 of 49
+        ♪ [Is expected value?] - 26 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModHoldings><AssetCode><entity>
         ┃   Success   ┃        ~~ 'VarName'
@@ -334,7 +334,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModHoldings><AssetCode><asset-code>,
         'AssetCode',
         q:to/EOF/
-        ♪ [Is expected value?] - 26 of 49
+        ♪ [Is expected value?] - 27 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModHoldings><AssetCode><asset-code>
         ┃   Success   ┃        ~~ 'AssetCode'
@@ -346,7 +346,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModHoldings><AssetCode><asset-flow>,
         'AssetFlow',
         q:to/EOF/
-        ♪ [Is expected value?] - 27 of 49
+        ♪ [Is expected value?] - 28 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModHoldings><AssetCode><asset-flow>
         ┃   Success   ┃        ~~ 'AssetFlow'
@@ -358,7 +358,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModHoldings><AssetCode><costing>,
         'Costing',
         q:to/EOF/
-        ♪ [Is expected value?] - 28 of 49
+        ♪ [Is expected value?] - 29 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModHoldings><AssetCode><costing>
         ┃   Success   ┃        ~~ 'Costing'
@@ -370,7 +370,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModHoldings><AssetCode><date>,
         'DateTime',
         q:to/EOF/
-        ♪ [Is expected value?] - 29 of 49
+        ♪ [Is expected value?] - 30 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModHoldings><AssetCode><date>
         ┃   Success   ┃        ~~ 'DateTime'
@@ -382,7 +382,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModHoldings><AssetCode><price>,
         5.55,
         q:to/EOF/
-        ♪ [Is expected value?] - 30 of 49
+        ♪ [Is expected value?] - 31 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModHoldings><AssetCode><price>
         ┃   Success   ┃        == 5.55
@@ -394,7 +394,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModHoldings><AssetCode><acquisition-price-asset-code>,
         'AssetCode',
         q:to/EOF/
-        ♪ [Is expected value?] - 31 of 49
+        ♪ [Is expected value?] - 32 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModHoldings><AssetCode><acquisition-price-asset-code>
         ┃   Success   ┃        ~~ 'AssetCode'
@@ -406,7 +406,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModHoldings><AssetCode><quantity>,
         5.5555555,
         q:to/EOF/
-        ♪ [Is expected value?] - 32 of 49
+        ♪ [Is expected value?] - 33 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModHoldings><AssetCode><quantity>
         ┃   Success   ┃        == 5.5555555
@@ -418,7 +418,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<silo>,
         'SILO',
         q:to/EOF/
-        ♪ [Is expected value?] - 33 of 49
+        ♪ [Is expected value?] - 34 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<silo>
         ┃   Success   ┃        ~~ 'SILO'
@@ -430,7 +430,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<entity>,
         'VarName',
         q:to/EOF/
-        ♪ [Is expected value?] - 34 of 49
+        ♪ [Is expected value?] - 35 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<entity>
         ┃   Success   ┃        ~~ 'VarName'
@@ -442,7 +442,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<subwallet>[0],
         'VarName',
         q:to/EOF/
-        ♪ [Is expected value?] - 35 of 49
+        ♪ [Is expected value?] - 36 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<subwallet>[0]
         ┃   Success   ┃        ~~ 'VarName'
@@ -454,7 +454,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<asset-code>,
         'AssetCode',
         q:to/EOF/
-        ♪ [Is expected value?] - 36 of 49
+        ♪ [Is expected value?] - 37 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<asset-code>
         ┃   Success   ┃        ~~ 'AssetCode'
@@ -466,7 +466,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<decinc>,
         'DecInc',
         q:to/EOF/
-        ♪ [Is expected value?] - 37 of 49
+        ♪ [Is expected value?] - 38 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<decinc>
         ┃   Success   ┃        ~~ 'DecInc'
@@ -478,7 +478,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<quantity>,
         5.5555555,
         q:to/EOF/
-        ♪ [Is expected value?] - 38 of 49
+        ♪ [Is expected value?] - 39 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<quantity>
         ┃   Success   ┃        == 5.5555555
@@ -490,7 +490,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<xe-asset-code>,
         '',
         q:to/EOF/
-        ♪ [Is expected value?] - 39 of 49
+        ♪ [Is expected value?] - 40 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<xe-asset-code>
         ┃   Success   ┃        ~~ ''
@@ -502,7 +502,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<xe-asset-quantity>,
         '',
         q:to/EOF/
-        ♪ [Is expected value?] - 40 of 49
+        ♪ [Is expected value?] - 41 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<xe-asset-quantity>
         ┃   Success   ┃        ~~ ''
@@ -514,7 +514,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<EntryID><number>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 41 of 49
+        ♪ [Is expected value?] - 42 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<EntryID><number>
         ┃   Success   ┃        == 0
@@ -526,7 +526,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<EntryID><xxhash>,
         5555555,
         q:to/EOF/
-        ♪ [Is expected value?] - 42 of 49
+        ♪ [Is expected value?] - 43 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<EntryID><xxhash>
         ┃   Success   ┃        == 5555555
@@ -538,7 +538,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<EntryID><text>,
         'capture entry',
         q:to/EOF/
-        ♪ [Is expected value?] - 43 of 49
+        ♪ [Is expected value?] - 44 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<EntryID><text>
         ┃   Success   ┃        ~~ 'capture entry'
@@ -550,7 +550,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><number>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 44 of 49
+        ♪ [Is expected value?] - 45 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><number>
         ┃   Success   ┃        == 0
@@ -562,7 +562,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><xxhash>,
         55555557,
         q:to/EOF/
-        ♪ [Is expected value?] - 45 of 49
+        ♪ [Is expected value?] - 46 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><xxhash>
         ┃   Success   ┃        == 55555557
@@ -574,7 +574,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><text>,
         'capture posting',
         q:to/EOF/
-        ♪ [Is expected value?] - 46 of 49
+        ♪ [Is expected value?] - 47 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><text>
         ┃   Success   ┃        ~~ 'capture posting'
@@ -586,7 +586,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><EntryID><number>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 47 of 49
+        ♪ [Is expected value?] - 48 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><EntryID><number>
         ┃   Success   ┃        == 0
@@ -598,7 +598,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><EntryID><xxhash>,
         5555555,
         q:to/EOF/
-        ♪ [Is expected value?] - 48 of 49
+        ♪ [Is expected value?] - 49 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><EntryID><xxhash>
         ┃   Success   ┃        == 5555555
@@ -610,7 +610,7 @@ subtest({
         $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><EntryID><text>,
         'capture entry',
         q:to/EOF/
-        ♪ [Is expected value?] - 49 of 49
+        ♪ [Is expected value?] - 50 of 50
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-toml.made<TXN>[0]<ModWallet>[0]<PostingID><EntryID><text>
         ┃   Success   ┃        ~~ 'capture entry'
@@ -620,4 +620,4 @@ subtest({
     );
 });
 
-# vim: set filetype=perl6 foldmethod=marker foldlevel=0:
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0 nowrap:
