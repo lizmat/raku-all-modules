@@ -75,7 +75,7 @@ prove6 - Run tests through a TAP harness.
 
 =head1 USAGE
 
- prove [options] [files or directories]
+ prove6 [options] [files or directories]
 
 =head1 OPTIONS
 
@@ -83,8 +83,7 @@ Boolean options:
 
  -v,                    Print all test lines.
  -l,                    Add 'lib' to the path for your tests (-Ilib).
- -b,                    Add 'blib/lib' and 'blib/arch' to the path for
-                        your tests
+ -b,                    Add 'blib/lib' to the path for your tests
       --shuffle         Run the tests in random order.
       --ignore-exit     Ignore exit status from test scripts.
       --reverse         Run the tests in reverse order.
@@ -108,7 +107,7 @@ Options that take arguments:
 
 =head2 Default Test Directory
 
-If no files or directories are supplied, C<prove> looks for all files
+If no files or directories are supplied, C<prove6> looks for all files
 matching the pattern C<t/*.t>.
 
 =head2 Colored Test Output
@@ -116,36 +115,40 @@ matching the pattern C<t/*.t>.
 Colored test output is the default, but if output is not to a terminal, color
 is disabled.
 
-Color support requires L<Terminal::ANSIColor> on Unix-like platforms. If the
+Color support requires C<Terminal::ANSIColor> on Unix-like platforms. If the
 necessary module is not installed colored output will not be available.
+
+PS: Currently not available.
 
 =head2 Exit Code
 
-If the tests fail C<prove> will exit with non-zero status.
+If the tests fail C<prove6> will exit with non-zero status.
 
-=head2 C<--exec>
+=head2 C<-e>
 
-Normally you can just pass a list of Perl tests and the harness will know how
-to execute them.  However, if your tests are not written in Perl or if you
-want all tests invoked exactly the same way, use the C<-e>, or C<--exec>
-switch:
+Normally you can just pass a list of Perl 6 tests and the harness will know how
+to execute them.  However, if your tests are not written in Perl 6 or if you
+want all tests invoked exactly the same way, use the C<-e> switch:
 
- prove --exec '/usr/bin/ruby -w' t/
- prove --exec '/usr/bin/perl -Tw -mstrict -Ilib' t/
- prove --exec '/path/to/my/customer/exec'
+ prove6 -e='/usr/bin/ruby -w' t/
+ prove6 -e='/usr/bin/perl -Tw -mstrict -Ilib' t/
+ prove6 -e='/path/to/my/customer/exec'
 
-=head2 C<--err={stderr,merge,ignore}>
+=head2 C<--err>
 
-=over 4
+=begin item
+C<--err=stderr>
 
-=item stderr
+Direct the test's $*ERR to the harness' $*ERR.
 
+This is the default behavior.
+=end item
 
-
-=item merge
+=begin item
+C<--err=merge>
 
 If you need to make sure your diagnostics are displayed in the correct
-order relative to test results you can use the C<--merge> option to
+order relative to test results you can use the C<--err=merge> option to
 merge the test scripts' $*ERR into their $*OUT.
 
 This guarantees that $*OUT (where the test results appear) and $*ERR
@@ -157,27 +160,29 @@ that appears on $*ERR looks like a test result the test harness will
 get confused. Use this option only if you understand the consequences
 and can live with the risk.
 
+PS: Currently not supported.
+=end item
+
+=begin item
+C<--err=ignore>
+
+Ignore the test script' $*ERR
+=end item
+
 =head2 C<--trap>
 
 The C<--trap> option will attempt to trap SIGINT (Ctrl-C) during a test
 run and display the test summary even if the run is interrupted
 
-=head2 @*INC
+=head2 $*REPO
 
-prove introduces a separation between "options passed to the perl which
+C<prove6> introduces a separation between "options passed to the perl which
 runs prove" and "options passed to the perl which runs tests"; this
 distinction is by design. Thus the perl which is running a test starts
-with the default C<@INC>. Additional library directories can be added
+with the default C<$*REPO>. Additional library directories can be added
 via the C<PERL6LIB> environment variable, via -Ifoo in C<PERL6OPT> or
-via the C<-Ilib> option to F<prove6>.
-
-=head1 FORMATTERS
-
-You can load a custom L<TAP::Parser::Formatter>:
-
-  prove --formatter MyFormatter
+via the C<-Ilib> option to C<prove6>.
 
 =end pod
 
 # vim:ts=4:sw=4:et:sta
-
