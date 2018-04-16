@@ -2,12 +2,13 @@ use v6;
 use Config::TOML;
 use File::Presence;
 use TXN::Parser;
+use TXN::Parser::ParseTree;
 use TXN::Parser::Types;
 use TXN::Remarshal;
 unit module TXN;
 
 constant $PROGRAM = 'mktxn';
-constant $VERSION = v0.0.7;
+constant $VERSION = v0.1.0;
 
 # TXN::Package::Prepare {{{
 
@@ -127,13 +128,13 @@ my class TXN::Package
     # e.g. "mktxn v0.0.2 2016-05-10T10:22:44.054586-07:00"
     has Str:D $!compiler is required;
 
-    # accounting ledger AST
-    has TXN::Parser::AST::Entry @!entry is required;
+    # accounting ledger entries
+    has Entry @!entry is required;
 
-    # number of entries in @!entry
+    # number of accounting ledger entries in @!entry
     has UInt:D $!count is required;
 
-    # entities seen in @!entry
+    # entities seen in accounting ledger entries
     has VarName:D @!entities-seen is required;
 
     # package info
@@ -148,7 +149,7 @@ my class TXN::Package
 
     submethod BUILD(
         Str:D :$!compiler! where *.so,
-        TXN::Parser::AST::Entry :@!entry!,
+        Entry :@!entry!,
         UInt:D :$!count!,
         Str:D :@!entities-seen! where *.so,
         VarNameBare:D :$!pkgname!,
@@ -207,7 +208,7 @@ my class TXN::Package
         %h<date-local-offset> = $prepare.date-local-offset
             if $prepare.date-local-offset.defined;
         %h<txn-dir> = $prepare.txn-dir if $prepare.txn-dir;
-        my TXN::Parser::AST::Entry @entry = do given $content-or-file
+        my Entry @entry = do given $content-or-file
         {
             when 'CONTENT' { from-txn($cf, |%h) }
             when 'FILE' { from-txn(:file($cf), |%h) }
@@ -253,7 +254,7 @@ my class TXN::Package
 
     # --- sub get-entities-seen {{{
 
-    sub get-entities-seen(TXN::Parser::AST::Entry:D @entry --> Array:D)
+    sub get-entities-seen(Entry:D @entry --> Array:D)
     {
         my VarName:D @entities-seen =
             @entry
@@ -349,7 +350,7 @@ multi sub mktxn(
 # sub package {{{
 
 # serialize to JSON files on disk
-sub package(% (TXN::Parser::AST::Entry :@entry!, :%txn-info!))
+sub package(% (Entry :@entry!, :%txn-info!))
 {
     say("Creating txn pkg \"%txn-info<pkgname>\"…");
 
@@ -362,7 +363,7 @@ sub package(% (TXN::Parser::AST::Entry :@entry!, :%txn-info!))
     # serialize .TXNINFO to JSON
     spurt($txn-info-file, Rakudo::Internals::JSON.to-json(%txn-info) ~ "\n");
 
-    # serialize ledger AST to JSON
+    # serialize accounting ledger to JSON
     spurt(
         $txn-json-file,
         Rakudo::Internals::JSON.to-json(

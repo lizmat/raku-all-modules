@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "TXN",
-    "version"     : "0.0.7",
+    "version"     : "0.1.0",
     "author"      : "atweiden",
     "description" : "Double-entry accounting ledger packager",
     "depends"     : [

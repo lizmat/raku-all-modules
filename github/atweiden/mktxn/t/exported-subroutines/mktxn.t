@@ -2,6 +2,7 @@ use v6;
 use lib 'lib';
 use TXN;
 use TXN::Parser;
+use TXN::Parser::ParseTree;
 use TXN::Parser::Types;
 use TXN::Remarshal;
 use Test;
@@ -16,10 +17,9 @@ subtest({
       Assets:Personal:Bankwest:Cheque    -$5.00 USD
     EOF
 
-    my TXN::Parser::AST::Entry @entry = from-txn($txn);
-    my TXN::Parser::AST::Entry @entry-from-txn-parser =
-        TXN::Parser.parse($txn).made;
-    my TXN::Parser::AST::Entry @entry-from-mktxn =
+    my Entry @entry = from-txn($txn);
+    my Entry @entry-from-txn-parser = TXN::Parser.parse($txn).made;
+    my Entry @entry-from-mktxn =
         mktxn($txn, :pkgname<catfood>, :pkgver<1.0.0>, :pkgrel(1))<entry>.Array;
 
     is-deeply(@entry-from-txn-parser, @entry, 'Is expected value');
