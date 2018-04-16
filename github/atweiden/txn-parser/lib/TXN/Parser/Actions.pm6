@@ -1,7 +1,7 @@
 use v6;
 use Digest::xxHash;
-use TXN::Parser::AST;
 use TXN::Parser::Grammar;
+use TXN::Parser::ParseTree;
 use TXN::Parser::Types;
 use X::TXN::Parser;
 unit class TXN::Parser::Actions;
@@ -96,7 +96,7 @@ method string-basic-char:escape-sequence ($/ --> Nil)
 
 method string-basic-text($/ --> Nil)
 {
-    make(@<string-basic-char>.map({ .made }).join);
+    make(@<string-basic-char>.hyper.map({ .made }).join);
 }
 
 multi method string-basic($/ where $<string-basic-text>.so --> Nil)
@@ -142,7 +142,7 @@ multi method string-basic-multiline-char:escape-sequence (
 
 method string-basic-multiline-text($/ --> Nil)
 {
-    make(@<string-basic-multiline-char>.map({ .made }).join);
+    make(@<string-basic-multiline-char>.hyper.map({ .made }).join);
 }
 
 multi method string-basic-multiline(
@@ -173,7 +173,7 @@ method string-literal-char:backslash ($/ --> Nil)
 
 method string-literal-text($/ --> Nil)
 {
-    make(@<string-literal-char>.map({ .made }).join);
+    make(@<string-literal-char>.hyper.map({ .made }).join);
 }
 
 multi method string-literal($/ where $<string-literal-text>.so --> Nil)
@@ -198,7 +198,7 @@ method string-literal-multiline-char:backslash ($/ --> Nil)
 
 method string-literal-multiline-text($/ --> Nil)
 {
-    make(@<string-literal-multiline-char>.map({ .made }).join);
+    make(@<string-literal-multiline-char>.hyper.map({ .made }).join);
 }
 
 multi method string-literal-multiline(
@@ -277,7 +277,7 @@ method txnlib-string-char:path-divisor ($/ --> Nil)
 
 method txnlib-string-text($/ --> Nil)
 {
-    make(@<txnlib-string-char>.map({ .made }).join);
+    make(@<txnlib-string-char>.hyper.map({ .made }).join);
 }
 
 method txnlib-string($/ --> Nil)
@@ -498,17 +498,21 @@ method tag($/ --> Nil)
 
 method meta:important ($/ --> Nil)
 {
-    make(%(:important($<important>.made)));
+    my $important = $<important>.made;
+    my %made = :$important;
+    make(%made);
 }
 
 method meta:tag ($/ --> Nil)
 {
-    make(%(:tag($<tag>.made)));
+    my $tag = $<tag>.made;
+    my %made = :$tag;
+    make(%made);
 }
 
 method metainfo($/ --> Nil)
 {
-    my @made = @<meta>.map({ .made });
+    my @made = @<meta>.hyper.map({ .made });
     make(@made);
 }
 
@@ -526,7 +530,7 @@ method header($/ --> Nil)
     my UInt:D $important = 0;
     my VarName:D @tag;
 
-    @<metainfo>.map({ .made }).map(-> @metainfo {
+    @<metainfo>.hyper.map({ .made }).map(-> @metainfo {
         $important +=
             [+] @metainfo
                     .grep({ .keys eq 'important' })
@@ -546,7 +550,7 @@ method header($/ --> Nil)
     %header<description> = $description if $description;
     %header<important> = $important if $important;
 
-    make(TXN::Parser::AST::Entry::Header.new(|%header, :@tag));
+    make(Entry::Header.new(|%header, :@tag));
 }
 
 # end header grammar-actions }}}
@@ -556,7 +560,7 @@ method header($/ --> Nil)
 
 method account-name($/ --> Nil)
 {
-    my @made = @<var-name>.map({ .made });
+    my @made = @<var-name>.hyper.map({ .made });
     make(@made);
 }
 
@@ -596,7 +600,7 @@ method account($/ --> Nil)
     %account<silo> = $silo;
     %account<entity> = $entity;
 
-    make(TXN::Parser::AST::Entry::Posting::Account.new(|%account, :@path));
+    make(Entry::Posting::Account.new(|%account, :@path));
 }
 
 # --- end posting account grammar-actions }}}
@@ -651,7 +655,7 @@ method amount($/ --> Nil)
     %amount<asset-symbol> = $asset-symbol if $asset-symbol;
     %amount<plus-or-minus> = $plus-or-minus if $plus-or-minus;
 
-    make(TXN::Parser::AST::Entry::Posting::Amount.new(|%amount));
+    make(Entry::Posting::Amount.new(|%amount));
 }
 
 # --- end posting amount grammar-actions }}}
@@ -732,7 +736,7 @@ method lot:acquisition ($/ --> Nil)
     %lot<name> = $name;
     %lot<decinc> = $decinc;
 
-    make(TXN::Parser::AST::Entry::Posting::Annot::Lot.new(|%lot));
+    make(Entry::Posting::Annot::Lot.new(|%lot));
 }
 
 method lot:disposition ($/ --> Nil)
@@ -745,7 +749,7 @@ method lot:disposition ($/ --> Nil)
     %lot<name> = $name;
     %lot<decinc> = $decinc;
 
-    make(TXN::Parser::AST::Entry::Posting::Annot::Lot.new(|%lot));
+    make(Entry::Posting::Annot::Lot.new(|%lot));
 }
 
 # --- --- end lot grammar-actions }}}
@@ -756,8 +760,7 @@ method annot($/ --> Nil)
 
     my %xe = $<xe>.made if $<xe>;
     my %inherit = $<inherit>.made if $<inherit>;
-    my TXN::Parser::AST::Entry::Posting::Annot::Lot:D $lot =
-        $<lot>.made if $<lot>;
+    my Entry::Posting::Annot::Lot:D $lot = $<lot>.made if $<lot>;
 
     %annot<xe> = %xe if %xe;
     %annot<inherit> = %inherit if %inherit;
@@ -773,19 +776,18 @@ method posting($/ --> Nil)
     my Str:D $text = ~$/;
     my XXHash:D $xxhash = xxHash32($text);
 
-    my TXN::Parser::AST::Entry::Posting::Account:D $account = $<account>.made;
-    my TXN::Parser::AST::Entry::Posting::Amount:D $amount = $<amount>.made;
-    my TXN::Parser::AST::Entry::Posting::Annot:D $annot =
+    my Entry::Posting::Account:D $account = $<account>.made;
+    my Entry::Posting::Amount:D $amount = $<amount>.made;
+    my Entry::Posting::Annot:D $annot =
         gen-annot($amount.asset-quantity, $<annot>.made) if $<annot>;
 
     my PlusMinus:D $plus-or-minus =
         $amount.plus-or-minus if $amount.plus-or-minus;
     my DecInc:D $decinc =
-        $plus-or-minus.defined && $plus-or-minus eq '-'
-            ?? DEC
-            !! INC;
+        $plus-or-minus.defined && $plus-or-minus eq '-' ?? DEC !! INC;
 
-    make(%(:$account, :$amount, :$annot, :$decinc, :$text, :$xxhash));
+    my %make = :$account, :$amount, :$annot, :$decinc, :$text, :$xxhash;
+    make(%make);
 }
 
 method posting-line($/ --> Nil)
@@ -809,41 +811,36 @@ method entry($/ --> Nil)
 
     # Entry::ID
     my XXHash:D $xxhash = xxHash32($text);
-    my TXN::Parser::AST::Entry::ID:D $entry-id =
-        TXN::Parser::AST::Entry::ID.new(
-            :number(@.entry-number.deepmap(*.clone)),
+    my Entry::ID:D $entry-id =
+        Entry::ID.new(
+            :number(@.entry-number.hyper.deepmap(*.clone)),
             :$xxhash,
             :$text
         );
 
     # insert Posting::ID derived from Entry::ID
     my UInt:D $posting-number = 0;
-    my TXN::Parser::AST::Entry::Posting:D @posting = @postings.map({
-        my TXN::Parser::AST::Entry::Posting::ID:D $posting-id =
-            TXN::Parser::AST::Entry::Posting::ID.new(
-                :$entry-id,
-                :number($posting-number++),
-                :xxhash($_<xxhash>),
-                :text($_<text>)
+    my Entry::Posting:D @posting =
+        @postings.hyper.map({
+            my Entry::Posting::ID:D $posting-id =
+                Entry::Posting::ID.new(
+                    :$entry-id,
+                    :number($posting-number++),
+                    :xxhash($_<xxhash>),
+                    :text($_<text>)
+                );
+            Entry::Posting.new(
+                :account($_<account>),
+                :amount($_<amount>),
+                :annot($_<annot>),
+                :decinc($_<decinc>),
+                :id($posting-id)
             );
-        TXN::Parser::AST::Entry::Posting.new(
-            :account($_<account>),
-            :amount($_<amount>),
-            :annot($_<annot>),
-            :decinc($_<decinc>),
-            :id($posting-id)
-        );
-    });
+        });
 
     @!entry-number[*-1]++;
 
-    make(
-        TXN::Parser::AST::Entry.new(
-            :id($entry-id),
-            :header($<header>.made),
-            :@posting
-        )
-    );
+    make(Entry.new(:id($entry-id), :header($<header>.made), :@posting));
 }
 
 # end entry grammar-actions }}}
@@ -872,17 +869,17 @@ method include:filename ($match --> Nil)
     $filename.IO.e && $filename.IO.r && $filename.IO.f
         or die(X::TXN::Parser::Include.new(:$filename));
 
-    my UInt:D @entry-number = |@.entry-number.deepmap(*.clone), 0;
-    my TXN::Parser::Actions:D $actions = TXN::Parser::Actions.new(
-        :@entry-number,
-        :$.date-local-offset,
-        :file($filename),
-        :$.txn-dir
-    );
-    my TXN::Parser::AST::Entry:D @entry =
+    my UInt:D @entry-number = |@.entry-number.hyper.deepmap(*.clone), 0;
+    my TXN::Parser::Actions:D $actions =
+        TXN::Parser::Actions.new(
+            :@entry-number,
+            :$.date-local-offset,
+            :file($filename),
+            :$.txn-dir
+        );
+    my Entry:D @entry =
         TXN::Parser::Grammar.parsefile($filename, :$actions).made;
     @!entry-number[*-1]++;
-
     $match.make(@entry);
 }
 
@@ -892,21 +889,20 @@ method include:txnlib ($match --> Nil)
         or die(X::TXN::Parser::TXNLibAbsolute(:lib($match<txnlib>.made)));
 
     my Str:D $filename = join('/', $.txn-dir, $match<txnlib>.made) ~ '.txn';
-
     $filename.IO.e && $filename.IO.r && $filename.IO.f
         or die(X::TXN::Parser::Include.new(:$filename));
 
-    my UInt:D @entry-number = |@.entry-number.deepmap(*.clone), 0;
-    my TXN::Parser::Actions:D $actions = TXN::Parser::Actions.new(
-        :@entry-number,
-        :$.date-local-offset,
-        :file($filename),
-        :$.txn-dir
-    );
-    my TXN::Parser::AST::Entry:D @entry =
+    my UInt:D @entry-number = |@.entry-number.hyper.deepmap(*.clone), 0;
+    my TXN::Parser::Actions:D $actions =
+        TXN::Parser::Actions.new(
+            :@entry-number,
+            :$.date-local-offset,
+            :file($filename),
+            :$.txn-dir
+        );
+    my Entry:D @entry =
         TXN::Parser::Grammar.parsefile($filename, :$actions).made;
     @!entry-number[*-1]++;
-
     $match.make(@entry);
 }
 
@@ -940,10 +936,10 @@ method segment:comment ($/ --> Nil)
 
 method ledger($/ --> Nil)
 {
-    my TXN::Parser::AST::Entry:D @entry =
+    my Entry:D @entry =
         @<segment>
             .map({ .made })
-            .map({ .grep(TXN::Parser::AST::Entry:D) })
+            .map({ .grep(Entry:D) })
             .flat;
     make(@entry);
 }
@@ -962,24 +958,23 @@ sub gen-annot(
     % (
         :%xe,
         :%inherit,
-        TXN::Parser::AST::Entry::Posting::Annot::Lot :$lot
+        Entry::Posting::Annot::Lot :$lot
     )
-    --> TXN::Parser::AST::Entry::Posting::Annot:D
+    --> Entry::Posting::Annot:D
 )
 {
     my %annot;
 
-    my TXN::Parser::AST::Entry::Posting::Annot::XE:D $xe =
+    my Entry::Posting::Annot::XE:D $xe =
         gen-xe($asset-quantity, :%xe) if %xe;
-    my TXN::Parser::AST::Entry::Posting::Annot::Inherit:D $inherit =
+    my Entry::Posting::Annot::Inherit:D $inherit =
         gen-xe($asset-quantity, :%inherit) if %inherit;
 
     %annot<xe> = $xe if $xe;
     %annot<inherit> = $inherit if $inherit;
     %annot<lot> = $lot if $lot;
 
-    my TXN::Parser::AST::Entry::Posting::Annot:D $annot =
-        TXN::Parser::AST::Entry::Posting::Annot.new(|%annot);
+    my Entry::Posting::Annot:D $annot = Entry::Posting::Annot.new(|%annot);
 }
 
 multi sub gen-xe(
@@ -990,7 +985,7 @@ multi sub gen-xe(
         XERateType:D :$rate-type!,
         Str :$asset-symbol
     )
-    --> TXN::Parser::AST::Entry::Posting::Annot::XE:D
+    --> Entry::Posting::Annot::XE:D
 )
 {
     my %xe-rate;
@@ -1002,8 +997,8 @@ multi sub gen-xe(
             !! $asset-price;
     %xe-rate<asset-symbol> = $asset-symbol if $asset-symbol;
 
-    my TXN::Parser::AST::Entry::Posting::Annot::XE:D $xe =
-        TXN::Parser::AST::Entry::Posting::Annot::XE.new(|%xe-rate);
+    my Entry::Posting::Annot::XE:D $xe =
+        Entry::Posting::Annot::XE.new(|%xe-rate);
 }
 
 multi sub gen-xe(
@@ -1014,7 +1009,7 @@ multi sub gen-xe(
         XERateType:D :$rate-type!,
         Str :$asset-symbol
     )
-    --> TXN::Parser::AST::Entry::Posting::Annot::Inherit:D
+    --> Entry::Posting::Annot::Inherit:D
 )
 {
     my %inherit-rate;
@@ -1026,8 +1021,8 @@ multi sub gen-xe(
             !! $asset-price;
     %inherit-rate<asset-symbol> = $asset-symbol if $asset-symbol;
 
-    my TXN::Parser::AST::Entry::Posting::Annot::Inherit:D $inherit =
-        TXN::Parser::AST::Entry::Posting::Annot::Inherit.new(|%inherit-rate);
+    my Entry::Posting::Annot::Inherit:D $inherit =
+        Entry::Posting::Annot::Inherit.new(|%inherit-rate);
 }
 
 # end helper functions }}}

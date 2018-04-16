@@ -7,6 +7,7 @@ Double-entry accounting ledger parser
 
 ```perl6
 use TXN::Parser;
+use TXN::Parser::ParseTree;
 
 # parse ledger from string
 my $txn = Q:to/EOF/;
@@ -14,11 +15,11 @@ my $txn = Q:to/EOF/;
   Assets:Personal:Bankwest:Cheque    $1000 USD
   Equity:Personal                    $1000 USD
 EOF
-my TXN::Parser::AST::Entry @entry = TXN::Parser.parse($txn).made;
+my Entry @entry = TXN::Parser.parse($txn).made;
 
 # parse ledger from file
 my $file = 'sample.txn';
-my TXN::Parser::AST::Entry @entry = TXN::Parser.parsefile($file).made;
+my Entry @entry = TXN::Parser.parsefile($file).made;
 ```
 
 
