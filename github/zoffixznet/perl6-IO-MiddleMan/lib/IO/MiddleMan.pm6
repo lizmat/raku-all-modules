@@ -4,7 +4,7 @@ subset ValidMode     of Str where any <hijack  capture  mute  normal>;
 subset OutputMethods of Str where any <print  say  put>;
 
 has            @.data;
-has IO::Handle $.handle;
+has IO::Handle $.handle handles <flush>;
 has ValidMode  $.mode is required is rw;
 
 method new (*@, *%) {

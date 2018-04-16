@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-IO-MiddleMan.git
 	branch = master
-	commit = f99db43e3e533399af7829c08960b90094ce7dee
-	parent = 84aa9d5830892633b113b42c68487e819bfc57ef
+	commit = ec882a8ef0d74df1297838c877a279bf06557a44
+	parent = 9e1407989480ccf69cdb800f07b807e2cb450091
 	cmdver = 0.4.0

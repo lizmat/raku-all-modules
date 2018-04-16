@@ -56,4 +56,5 @@ sub perform-write (IO::Handle $fh) {
     $fh.put:   |<foo bar baz>, 42;
     $fh.print: |<foo bar baz>, 42;
     $fh.print-nl;
+    $fh.flush;
 }

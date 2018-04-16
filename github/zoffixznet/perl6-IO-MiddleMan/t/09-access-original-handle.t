@@ -14,6 +14,7 @@ $mm.handle.say:   |<foo bar baz>, TestGist.new, 42;
 $mm.handle.put:   |<foo bar baz>, 42;
 $mm.handle.print: |<foo bar baz>, 42;
 $mm.handle.print-nl;
+$mm.handle.flush;
 
 my $out = "foobarbazgist works!42\n" # .say
             ~ "foobarbaz42\n"        # .put

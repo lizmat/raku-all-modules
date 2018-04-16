@@ -14,6 +14,7 @@ $fh.say:   |<foo bar baz>, TestGist.new, 42;
 $fh.put:   |<foo bar baz>, 42;
 $fh.print: |<foo bar baz>, 42;
 $fh.print-nl;
+$fh.flush;
 
 my $out = "foobarbazgist works!42\n" # .say
             ~ "foobarbaz42\n"        # .put
