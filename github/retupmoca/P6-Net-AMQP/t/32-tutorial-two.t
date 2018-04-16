@@ -33,7 +33,7 @@ my $p = start {
     my Str $ret = "FAIL";
     react {
         whenever $n.open-channel(1) -> $channel {
-            $channel.qos(0,1);
+            $channel.qos(1);
             whenever $channel.declare-queue($queue-name, :durable) -> $q {
                 $q.consume(:ack);
                 $start-promise.keep([$n, $connection]);

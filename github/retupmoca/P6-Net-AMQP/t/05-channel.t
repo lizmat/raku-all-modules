@@ -39,7 +39,7 @@ if False {
    is $p.status, Kept, 'channel.flow(1) success';
 }
 
-await $p = $channel.qos(0, 10);
+await $p = $channel.qos(10);
 is $p.status, Kept, 'basic.qos success (prefetch limit: 10)';
 
 await $p = $channel.recover(1);

@@ -152,7 +152,7 @@ multi method declare-queue($name, :$passive, :$durable, :$exclusive, :$auto-dele
                                 channel => $.id).declare;
 }
 
-method queue($name) {
+method queue( Str $name --> Promise ) {
     my $p = Promise.new;
     $p.keep(Net::AMQP::Queue.new(:$name,
                                 conn => $!conn,
@@ -164,7 +164,14 @@ method queue($name) {
     return $p;
 }
 
-method qos($prefetch-size, $prefetch-count, $global = 0){
+proto method qos(|c) { * }
+
+multi method qos( Int $, Int $prefetch-count, Bool :$global = False --> Promise ) {
+    DEPRECATED("qos() with one argument", what => "qos() with ignored prefetch size argument");
+    self.qos($prefetch-count, :$global);
+}
+
+multi method qos( Int $prefetch-count, Bool :$global = False --> Promise ){
     my $p = Promise.new;
     my $v = $p.vow;
 
@@ -175,7 +182,7 @@ method qos($prefetch-size, $prefetch-count, $global = 0){
     });
 
     my $qos = Net::AMQP::Payload::Method.new("basic.qos",
-                                             $prefetch-size,
+                                             0,
                                              $prefetch-count,
                                              $global);
     $!channel-lock.protect: {

@@ -162,7 +162,7 @@ method connect(){
             $!vow.break("quit");
         },
         done => {
-            $!vow.break("done");
+            $!vow.keep("done");
         });
         $!conn.write(buf8.new(65, 77, 81, 80, 0, 0, 9, 1));
     });

@@ -12,7 +12,7 @@ my $initial-promise = $n.connect;
 my $timeout = Promise.in(5);
 try await Promise.anyof($initial-promise, $timeout);
 unless $initial-promise.status == Kept {
-    skip "Unable to connect. Please run RabbitMQ on localhost with default credentials.", 3;
+    skip-rest "Unable to connect. Please run RabbitMQ on localhost with default credentials.";
     exit;
 }
 
