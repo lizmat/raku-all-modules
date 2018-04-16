@@ -1,0 +1,4 @@
+2018-04-15  Juan J. merelo  <jmerelo@penny>
+
+	* META6.json: Bumps up version, since it passes tests with new rakudo.org and there's no need to --force to install it.
+

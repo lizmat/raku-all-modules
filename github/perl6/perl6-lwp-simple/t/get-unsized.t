@@ -1,22 +1,27 @@
 use v6;
 use Test;
-
 use LWP::Simple;
 
 plan 1;
 
-if %*ENV<NO_NETWORK_TESTING> {
-    diag "NO_NETWORK_TESTING was set";
-    skip-rest("NO_NETWORK_TESTING was set");
-    exit;
+my $sync = Channel.new;
+start {
+    my $server := IO::Socket::INET.new: :listen,
+        :localhost<localhost>, :0localport;
+    $sync.send: $server.localport;
+    my $client := $server.accept;
+    Nil while $client.get.chars;
+    $client.print: q:to/END/.trans: ["\n" => "\r\n"];
+    HTTP/1.1 200 OK
+    Content-Type: text/html; charset=UTF-8
+
+    Hello meows
+    Test passed
+    END
+    $client.close;
+    $server.close;
 }
 
-# this page is, for now, delivered by a server that does not provide
-# a content length or do chunking
-my $html = LWP::Simple.get('http://rakudo.org');
-
-ok(
-    $html.match('Perl 6') &&
-        $html.match('</html>') && $html.chars > 12_000,
-    'make sure we pulled whole document without, we believe, sizing from server'
-);
+my $url := "http://localhost:{$sync.receive}";
+is LWP::Simple.get($url), "Hello meows\r\nTest passed\r\n",
+    "we pulled whole document without sizing from misbehaved server [$url]";
