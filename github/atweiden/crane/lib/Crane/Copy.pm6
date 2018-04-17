@@ -49,7 +49,7 @@ method copy(
     }
 
     # a location cannot be copied into one of its children
-    !path-is-child-of-from(@from, @path)
+    path-is-child-of-from(@from, @path).not
         or die(X::Crane::CopyParentToChild.new);
 
     copy(container, :@from, :@path, :$in-place);
