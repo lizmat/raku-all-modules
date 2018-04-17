@@ -1,3 +1,5 @@
+Release 0.1.7
+- Adjust t/helloworld.t and t/pdf-xobject-form.t for PDF::Content 0.2.2
 Release 0.1.6
 - Added PDF::StructTreeRoot, PDF::NameTree
 - Altered composition of PDF::Mask

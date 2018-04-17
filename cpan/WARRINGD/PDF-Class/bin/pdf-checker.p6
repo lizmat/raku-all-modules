@@ -18,7 +18,7 @@ my %seen{Any};
 sub MAIN(Str $infile,               #= input PDF
          Str  :$password = '',      #= password for the input PDF, if encrypted
          Bool :$*trace,             #= show progress
-         Bool :$*contents,          #= validate/check contents of pages, etc         
+         Bool :$*contents,          #= validate/check contents of pages, etc
          Bool :$*strict,            #= perform additional checks
          UInt :$*max-depth = 100,   #= maximum recursion depth
 	 Str  :$exclude,            #= excluded entries: Entry1,Entry2,
@@ -47,12 +47,14 @@ multi sub check(Hash $obj, UInt :$depth is copy = 0, Str :$ent = '') {
     check-contents($obj, :$ref)
 	if $*contents && $obj.does(PDF::Content::Graphics);
 
+     my %missing = $entries.pairs.grep(*.value.tied.is-required);
+
     for $obj.keys.sort -> $k {
 
+        %missing{$k}:delete;
         # Avoid following /P back to page then back here via page /Annots
         next if $k eq 'P' && $obj.isa(PDF::Annot);
 	next if @*exclude.grep: $k;
-
 	my $kid;
 
 	do {
@@ -73,8 +75,11 @@ multi sub check(Hash $obj, UInt :$depth is copy = 0, Str :$ent = '') {
 	    if $*strict && +$entries && !($entries{$k}:exists);
     }
 
+    $*ERR.say: "error in $ref {$obj.WHAT.^name}, missing required field(s): {%missing.keys.sort.join(', ')}"
+        if %missing;
+
     $*ERR.say: "unknown entries in $ref{$obj.WHAT} struct: @unknown-entries[]"
-	if @unknown-entries && $obj.WHAT.gist ~~ /'PDF::' .*? '::Type'/; 
+        if @unknown-entries && $obj.WHAT.gist ~~ /'PDF::' .*? '::Type'/;
 }
 
 #| Recursively check an array object
@@ -167,16 +172,16 @@ pdf-checker.p6 - Check PDF DOM structure and values
 
  Options:
    --password   password for an encrypted PDF
-   --max-depth  max DOM navigation depth (default 100)
-   --trace      trace DOM navigation
-   --contents   check the contents of pages, forms and patterns
+   --max-depth  max navigation depth (default 100)
+   --trace      trace PDF navigation
+   --contents   check the contents of pages, forms, patterns and type3 fonts
    --strict     enble some additonal warnings:
                 -- unknown entries in dictionarys
                 -- additional graphics checks (when --contents is enabled)
 
 =head1 DESCRIPTION
 
-Checks a PDF against the DOM. Traverses all objects in the PDF that are accessable from the root, reporting any errors or warnings that were encountered. 
+Checks a PDF class structure. Traverses all objects in the PDF that are accessable from the root, reporting any errors or warnings that were encountered. 
 
 =head1 SEE ALSO
 

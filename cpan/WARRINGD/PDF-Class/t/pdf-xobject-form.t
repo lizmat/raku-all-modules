@@ -60,7 +60,9 @@ lives-ok {$xform.check}, '$xform.check lives';
 
 my $contents = $xform.decoded;
 is-deeply [$contents.lines], [
+    'q',
     '0 0 m', '0 200 l', '200 200 l', '200 0 l', 'f',
+    'Q',
     'q',
     '  BT',
     '    50 50 Td',

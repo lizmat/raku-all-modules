@@ -127,7 +127,7 @@ ok +$contents-ast > 24, '.contents elems';
 is-deeply $contents-ast[0], (:q[]), '.contents first elem';
 is-deeply $contents-ast[*-1], (:ET[]), '.contents last elem';
 
-my $gfx = $page.gfx;
+my $gfx = $page.gfx(:render);
 is-json-equiv $gfx.ops[*-4 .. *], $(:Tj[{:literal("Hello, world!")}], :TL[:real(26.4)], "T*" => [], :ET[]), '$page.gfx.ops (tail)';
 
 lives-ok { PDF::Class.new.save-as: "t/pdf/no-pages.pdf", :!info }, 'create empty PDF';
