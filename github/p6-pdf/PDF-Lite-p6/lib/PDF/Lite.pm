@@ -21,12 +21,11 @@ class PDF::Lite:ver<0.0.3>
     use PDF::Content::Resourced;
     use PDF::Content::ResourceDict;
     use PDF::Content::XObject;
-    use PDF::Content::Font;
 
     my role ResourceDict
 	does PDF::COS::Tie::Hash
 	does PDF::Content::ResourceDict {
-            has PDF::Content::Font %.Font  is entry;
+            has PDF::COS::Dict %.Font  is entry;
 	    has PDF::COS::Stream %.XObject is entry;
             has PDF::COS::Dict $.ExtGState is entry;
     }

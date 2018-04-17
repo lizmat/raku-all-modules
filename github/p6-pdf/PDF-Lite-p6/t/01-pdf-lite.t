@@ -44,7 +44,7 @@ lives-ok { $pdf.save-as("t/01-pdf-lite.pdf") }, 'save-as';
 throws-like { $pdf.unknown-method }, X::Method::NotFound, '$pdf unknown method';
 
 lives-ok { $pdf = PDF::Lite.open("t/01-pdf-lite.pdf") }, 'open';
-is-json-equiv $pdf.page(1).gfx.content-dump.head(7).list, (
+is-json-equiv $pdf.page(1).gfx(:render).content-dump.head(7).list, (
     "q",
     "BT",
     "1 0 0 1 200 200 Tm",
