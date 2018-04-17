@@ -571,7 +571,7 @@ multi sub from-hash(
     my %amount;
 
     my AssetCode:D $asset-codeʹ = $asset-code;
-    my Quantity:D $asset-quantityʹ = FatRat($asset-quantity);
+    my Quantity:D $asset-quantityʹ = Rat($asset-quantity);
     my AssetSymbol:D $asset-symbolʹ = $asset-symbol if $asset-symbol;
     my PlusMinus:D $plus-or-minusʹ = $plus-or-minus if $plus-or-minus;
 
@@ -626,7 +626,7 @@ multi sub from-hash(
     my %inherit;
 
     my AssetCode:D $asset-codeʹ = $asset-code;
-    my Price:D $asset-priceʹ = FatRat($asset-price);
+    my Price:D $asset-priceʹ = Rat($asset-price);
     my AssetSymbol:D $asset-symbolʹ = $asset-symbol if $asset-symbol;
 
     %inherit<asset-code> = $asset-codeʹ;
@@ -673,7 +673,7 @@ multi sub from-hash(
     my %xe;
 
     my AssetCode:D $asset-codeʹ = $asset-code;
-    my Price:D $asset-priceʹ = FatRat($asset-price);
+    my Price:D $asset-priceʹ = Rat($asset-price);
     my AssetSymbol:D $asset-symbolʹ = $asset-symbol if $asset-symbol;
 
     %xe<asset-code> = $asset-codeʹ;
