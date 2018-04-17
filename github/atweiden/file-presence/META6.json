@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "File::Presence",
-    "version"     : "0.0.3",
+    "version"     : "0.1.0",
     "author"      : "atweiden",
     "description" : "Check permissions of potentially nonexistent files",
     "license"     : "Unlicense",

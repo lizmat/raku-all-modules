@@ -1,9 +1,9 @@
 use v6;
 unit class File::Presence;
 
-constant $VERSION = v0.0.3;
+constant $VERSION = v0.1.0;
 
-subset PresenceHash of Hash where { .keys.sort ~~ <d e f r w x> }
+my subset PresenceHash of Hash where { .keys.sort ~~ <d e f r w x> }
 
 multi method show(Str:D $file where *.so && *.IO.e.so --> PresenceHash:D)
 {
