@@ -666,7 +666,7 @@ method segment:keypair-line ($/ --> Nil)
     my X::Config::TOML::KeypairLine::DuplicateKeys $exception .=
         new(:$keypair-line-text, :@path);
 
-    seen(%!key, :@path).not
+    seen(%!key, :@path, :recursive).not
         or die($exception);
     Crane.exists(%!toml, :@path).not
         or die($exception);
@@ -688,24 +688,24 @@ method hoh-header($/ --> Nil)
 
 method table:hoh ($/ --> Nil)
 {
-    my @base-path = pwd(%!toml, $<hoh-header>.made);
+    my @path = pwd(%!toml, $<hoh-header>.made);
     my Str:D $hoh-text = ~$/;
     my Str:D $hoh-header-text = ~$<hoh-header>;
     my Hash:D @keypair = @<keypair-line>.hyper.map({ .made });
 
     my X::Config::TOML::HOH::Seen::Key $exception-hoh-seen-key .=
-        new(:$hoh-text, :path(@base-path));
-    seen(%!key, :path(@base-path)).not
+        new(:$hoh-text, :@path);
+    seen(%!key, :@path, :recursive).not
         or die($exception-hoh-seen-key);
 
     my X::Config::TOML::HOH::Seen::AOH $exception-hoh-seen-aoh .=
-        new(:$hoh-header-text, :$hoh-text, :path(@base-path));
-    %!aoh.grep({ .keys.first eqv $@base-path }).not
+        new(:$hoh-header-text, :$hoh-text, :@path);
+    seen(%!aoh, :@path).not
         or die($exception-hoh-seen-aoh);
 
     my X::Config::TOML::HOH::Seen $exception-hoh-seen .=
-        new(:$hoh-header-text, :$hoh-text, :path(@base-path));
-    %!hoh.grep({ .keys.first eqv $@base-path }).not
+        new(:$hoh-header-text, :$hoh-text, :@path);
+    seen(%!hoh, :@path).not
         or die($exception-hoh-seen);
 
     CATCH
@@ -718,7 +718,7 @@ method table:hoh ($/ --> Nil)
                 or die($exception-hoh-seen-key);
         }
     }
-    self.mktable-hoh(@base-path, $hoh-text, :@keypair);
+    self.mktable-hoh(@path, $hoh-text, :@keypair);
 }
 
 multi method mktable-hoh(
@@ -779,12 +779,12 @@ method table:aoh ($/ --> Nil)
 
     my X::Config::TOML::AOH::OverwritesKey $exception-aoh-overwrites-key .=
         new(:$aoh-header-text, :$aoh-text, :@path);
-    seen(%!key, :@path).not
+    seen(%!key, :@path, :recursive).not
         or die($exception-aoh-overwrites-key);
 
     my X::Config::TOML::AOH::OverwritesHOH $exception-aoh-overwrites-hoh .=
         new(:$aoh-header-text, :$aoh-text, :@path);
-    %!hoh.grep({ .keys.first eqv $@path }).not
+    seen(%!hoh, :@path).not
         or die($exception-aoh-overwrites-hoh);
 
     self.mktable-aoh(@path, $aoh-text, :@keypair);
@@ -793,7 +793,7 @@ method table:aoh ($/ --> Nil)
 multi method mktable-aoh(@path, $aoh-text, Hash:D :@keypair! where *.so --> Nil)
 {
     # initialize empty array if array does not yet exist
-    %!aoh.grep({ .keys.first eqv $@path }).so
+    seen(%!aoh, :@path).so
         or self!mktable-aoh-init(@path, $aoh-text);
 
     # verify keypair lines do not contain duplicate keys
@@ -817,7 +817,7 @@ multi method mktable-aoh(@path, $aoh-text, Hash:D :@keypair! where *.so --> Nil)
 multi method mktable-aoh(@path, $aoh-text, :keypair(@) --> Nil)
 {
     # initialize empty array if array does not yet exist
-    %!aoh.grep({ .keys.first eqv $@path }).so
+    seen(%!aoh, :@path).so
         or self!mktable-aoh-init(@path, $aoh-text);
 
     # create hash table without keypairs
@@ -935,19 +935,44 @@ multi sub pwd($, @ --> Array:D)
 # --- end sub pwd }}}
 # --- sub seen {{{
 
-multi sub seen(Bool:D %h, :@path! where *.elems > 1 --> Bool:D)
+multi sub seen(
+    Bool:D %h,
+    :@path! where *.elems > 1,
+    Bool:D :recursive($)! where *.so
+    --> Bool:D
+)
 {
     my Bool:D $seen =
         %h.grep({ .keys.first eqv $@path }).so
-            || seen(%h, :path(@path[0..^*-1].Array));
+            || seen(%h, :path(@path[0..^*-1].Array), :recursive);
 }
 
-multi sub seen(Bool:D %h, :@path! where *.elems > 0 --> Bool:D)
+multi sub seen(
+    Bool:D %h,
+    :@path! where *.elems > 1,
+    Bool :recursive($)
+    --> Bool:D
+)
 {
     my Bool:D $seen = %h.grep({ .keys.first eqv $@path }).so;
 }
 
-multi sub seen(Bool:D %h, :@path! where *.elems == 0 --> Bool:D)
+multi sub seen(
+    Bool:D %h,
+    :@path! where *.elems > 0,
+    Bool :recursive($)
+    --> Bool:D
+)
+{
+    my Bool:D $seen = %h.grep({ .keys.first eqv $@path }).so;
+}
+
+multi sub seen(
+    Bool:D %h,
+    :@path! where *.elems == 0,
+    Bool :recursive($)
+    --> Bool:D
+)
 {
     my Bool:D $seen = False;
 }
