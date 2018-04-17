@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Port of Perl 5's List::MoreUtils 0.428",
+  "license" : "Artistic-2.0",
+  "name" : "List::MoreUtils",
+  "perl" : "6.c",
+  "provides" : {
+    "List::MoreUtils" : "lib/List/MoreUtils.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/List-MoreUtils.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
