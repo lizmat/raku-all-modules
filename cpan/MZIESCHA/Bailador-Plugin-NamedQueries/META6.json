@@ -1,0 +1,25 @@
+{
+  "auth" : "cpan:MZIESCHA",
+  "authors" : [
+    "Mario Zieschang"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Bailador",
+    "DBIx::NamedQueries"
+  ],
+  "description" : "a predefined sql framework for Perl6",
+  "license" : "Artistic-2.0",
+  "name" : "Bailador::Plugin::NamedQueries",
+  "perl" : "6.c",
+  "provides" : {
+    "Bailador::Plugin::NamedQueries" : "lib/Bailador/Plugin/NamedQueries.pm"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/mziescha/perl6-Bailador-Plugin-NamedQueries.git",
+  "tags" : [ ],
+  "test-depends" : [
+    "Test::META"
+  ],
+  "version" : "0.001000"
+}
