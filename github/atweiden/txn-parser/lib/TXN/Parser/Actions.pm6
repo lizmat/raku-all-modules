@@ -312,13 +312,13 @@ method string:literal-multi ($/ --> Nil)
 
 method integer-unsigned($/ --> Nil)
 {
-    # ensure integers are coerced to type FatRat
-    make(FatRat(+$/));
+    # ensure integers are coerced to type Rat
+    make(Rat(+$/));
 }
 
 method float-unsigned($/ --> Nil)
 {
-    make(FatRat(+$/));
+    make(Rat(+$/));
 }
 
 method plus-or-minus:sym<+>($/ --> Nil)

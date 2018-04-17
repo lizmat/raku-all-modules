@@ -13,7 +13,7 @@ multi sub is-asset-code(
     --> Bool:D
 )
 {
-    True;
+    my Bool:D $is-asset-code = True;
 }
 
 multi sub is-asset-code(
@@ -21,12 +21,12 @@ multi sub is-asset-code(
     --> Bool:D
 )
 {
-    True;
+    my Bool:D $is-asset-code = True;
 }
 
 multi sub is-asset-code($ --> Bool:D)
 {
-    False;
+    my Bool:D $is-asset-code = False;
 }
 
 # --- end sub is-asset-code }}}
@@ -60,12 +60,12 @@ subset PlusMinus of Str is export where
 # end PlusMinus }}}
 # Price {{{
 
-subset Price of FatRat is export where * >= 0;
+subset Price of Rat is export where * >= 0;
 
 # end Price }}}
 # Quantity {{{
 
-subset Quantity of FatRat is export where * > 0;
+subset Quantity of Rat is export where * > 0;
 
 # end Quantity }}}
 # Silo {{{
@@ -84,7 +84,7 @@ multi sub is-var-name(
     --> Bool:D
 )
 {
-    True;
+    my Bool:D $is-var-name = True;
 }
 
 multi sub is-var-name(
@@ -92,12 +92,12 @@ multi sub is-var-name(
     --> Bool:D
 )
 {
-    True;
+    my Bool:D $is-var-name = True;
 }
 
 multi sub is-var-name($ --> Bool:D)
 {
-    False;
+    my Bool:D $is-var-name = False;
 }
 
 # --- end sub is-var-name }}}

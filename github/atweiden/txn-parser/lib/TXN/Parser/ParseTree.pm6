@@ -8,15 +8,8 @@ class Entry::ID
 {
     has UInt:D @.number is required;
     has XXHash:D $.xxhash is required;
-
     # causal text from accounting ledger
     has Str:D $.text is required;
-
-    method canonical(::?CLASS:D: --> Str:D)
-    {
-        my Str:D $canonical =
-            sprintf(Q{[%s]:%s}, @.number.join(' '), $.xxhash);
-    }
 
     method hash(::?CLASS:D: --> Hash:D)
     {
@@ -24,6 +17,11 @@ class Entry::ID
         my $text = $.text;
         my $xxhash = $.xxhash;
         my %hash = :@number, :$text, :$xxhash;
+    }
+
+    method Str(::?CLASS:D: --> Str:D)
+    {
+        my Str:D $s = sprintf(Q{[%s]:%s}, @.number.join(' '), $.xxhash);
     }
 }
 
@@ -118,7 +116,6 @@ class Entry::Posting::Annot::Inherit is Entry::Posting::Annot::XE {*}
 class Entry::Posting::Annot::Lot
 {
     has VarName:D $.name is required;
-
     # is this lot being drawn down or filled up?
     has DecInc:D $.decinc is required;
 
@@ -155,20 +152,11 @@ class Entry::Posting::ID
 {
     # parent
     has Entry::ID:D $.entry-id is required;
-
     # scalar, because C<include>'d postings are forbidden
     has UInt:D $.number is required;
-
     has XXHash:D $.xxhash is required;
-
     # causal text from accounting ledger
     has Str:D $.text is required;
-
-    method canonical(::?CLASS:D: --> Str:D)
-    {
-        my Str:D $canonical =
-            sprintf(Q{%s|%s:%s}, $.entry-id.canonical, $.number, $.xxhash);
-    }
 
     method hash(::?CLASS:D: --> Hash:D)
     {
@@ -177,6 +165,11 @@ class Entry::Posting::ID
         my $text = $.text;
         my $xxhash = $.xxhash;
         my %hash = :%entry-id, :$number, :$text, :$xxhash;
+    }
+
+    method Str(::?CLASS:D: --> Str:D)
+    {
+        my Str:D $s = sprintf(Q{%s|%s:%s}, $.entry-id.Str, $.number, $.xxhash);
     }
 }
 
@@ -190,10 +183,7 @@ class Entry::Posting
     has Entry::Posting::Amount:D $.amount is required;
     has DecInc:D $.decinc is required;
     has DrCr:D $.drcr is required;
-
     has Entry::Posting::Annot $.annot;
-
-    # --- submethod BUILD {{{
 
     submethod BUILD(
         Entry::Posting::Account:D :$!account!,
@@ -207,9 +197,6 @@ class Entry::Posting
         $!annot = $annot if $annot;
         $!drcr = gen-drcr($!account.silo, $!decinc);
     }
-
-    # --- end submethod BUILD }}}
-    # --- method new {{{
 
     method new(
         *%opts (
@@ -225,10 +212,6 @@ class Entry::Posting
         self.bless(|%opts);
     }
 
-    # --- end method new }}}
-
-    # --- method hash {{{
-
     method hash(::?CLASS:D: --> Hash:D)
     {
         my %id = $.id.hash;
@@ -239,10 +222,6 @@ class Entry::Posting
         my %annot = $.annot ?? $.annot.hash !! Nil;
         my %hash = :%id, :%account, :%amount, :$decinc, :$drcr, :%annot;
     }
-
-    # --- end method hash }}}
-
-    # --- sub gen-drcr {{{
 
     # assets and expenses increase on the debit side
     # +assets/expenses
@@ -260,8 +239,6 @@ class Entry::Posting
     multi sub gen-drcr(INCOME,      DEC --> DrCr:D) { DEBIT }
     multi sub gen-drcr(LIABILITIES, DEC --> DrCr:D) { DEBIT }
     multi sub gen-drcr(EQUITY,      DEC --> DrCr:D) { DEBIT }
-
-    # --- end sub gen-drcr }}}
 }
 
 # end Entry::Posting }}}
@@ -273,8 +250,6 @@ class Entry
     has Entry::Header:D $.header is required;
     has Entry::Posting:D @.posting is required;
 
-    # --- submethod BUILD {{{
-
     submethod BUILD(
         Entry::ID:D :$!id!,
         Entry::Header:D :$!header!,
@@ -282,9 +257,6 @@ class Entry
         --> Nil
     )
     {*}
-
-    # --- end submethod BUILD }}}
-    # --- method new {{{
 
     method new(
         *%opts (
@@ -306,10 +278,6 @@ class Entry
         self.bless(|%opts);
     }
 
-    # --- end method new }}}
-
-    # --- method hash {{{
-
     method hash(::?CLASS:D: --> Hash:D)
     {
         my %header = $.header.hash;
@@ -317,8 +285,6 @@ class Entry
         my @posting = @.posting.hyper.map({ .hash });
         my %hash = :%header, :%id, :@posting;
     }
-
-    # --- end method hash }}}
 }
 
 # end Entry }}}
