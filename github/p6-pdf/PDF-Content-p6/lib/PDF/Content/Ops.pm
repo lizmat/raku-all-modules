@@ -366,10 +366,6 @@ class PDF::Content::Ops {
 
         'EI' => sub ($op) { $op => [] },
 
-        'BX'|'EX' => sub ($op, |c) {
-            die "todo ignored content BX [lines] EX: $op";
-        },
-
         'BT'|'ET'|'EMC'|'BX'|'EX'|'b*'|'b'|'B*'|'B'|'f*'|'F'|'f'
             |'h'|'n'|'q'|'Q'|'s'|'S'|'T*'|'W*'|'W' => sub ($op) {
             [];
@@ -756,20 +752,23 @@ class PDF::Content::Ops {
         }
     }
     multi method track-graphics('Td', Numeric $tx!, Numeric $ty) {
-        @!TextMatrix = multiply([1, 0, 0, 1, $tx, $ty], @!TextMatrix); 
+        @!TextMatrix = multiply([1, 0, 0, 1, $tx, $ty], @!TextMatrix);
     }
     multi method track-graphics('TD', Numeric $tx!, Numeric $ty) {
         $!TextLeading = - $ty;
         $.track-graphics(TextMove, $tx, $ty);
     }
-    multi method track-graphics('T*') {
+    method !new-line {
         @!TextMatrix[5] -= $!TextLeading;
+    }
+    multi method track-graphics('T*') {
+        self!new-line();
     }
     multi method track-graphics("'", $) {
-        @!TextMatrix[5] -= $!TextLeading;
+        self!new-line();
     }
     multi method track-graphics('"', $!WordSpacing, $!CharSpacing, $) {
-        @!TextMatrix[5] -= $!TextLeading;
+        self!new-line();
     }
     multi method track-graphics($op, *@args) is default {
         .(self,|@args) with %PostOp{$op};

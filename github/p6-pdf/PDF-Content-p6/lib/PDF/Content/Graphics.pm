@@ -12,6 +12,7 @@ role PDF::Content::Graphics {
     method pre-gfx { $!pre-gfx //= PDF::Content.new( :parent(self) ) }
     method pre-graphics(&code) { self.pre-gfx.graphics( &code ) }
     has PDF::Content $!gfx;     #| appended graphics
+    has Bool $!rendered = False;
 
     method !encapsulate(@ops) {
         my int $nesting = 0;
@@ -39,9 +40,9 @@ role PDF::Content::Graphics {
         @ops;
     }
 
-    method gfx(Bool :$render = True, |c) {
+    method gfx(Bool :$render = False, |c) {
 	$!gfx //= do {
-            my $gfx = self.new-gfx(|c);;
+            my $gfx = self.new-gfx(|c);
             self.render($gfx, |c) if $render;
             $gfx;
         }
@@ -72,6 +73,7 @@ role PDF::Content::Graphics {
         @ops = self!encapsulate(@ops)
             if $encap;
         $gfx.ops: @ops;
+        $!rendered = True;
         $gfx;
     }
 
@@ -79,8 +81,17 @@ role PDF::Content::Graphics {
         if $!gfx.defined || $!pre-gfx.defined {
             # rebuild graphics, if they've been accessed
             my $decoded = do with $!pre-gfx { .Str } else { '' };
-            $decoded ~= "\n" if $decoded;
-            $decoded ~= $.gfx.Str;
+            if !$!rendered && $.contents {
+                $decoded ~= "\n" if $decoded;
+                $decoded ~= ~ OpCode::Save ~ "\n"
+                    ~ $.contents
+                    ~ "\n" ~ OpCode::Restore;
+            }
+            with $!gfx {
+                $decoded ~= "\n" if $decoded;
+                $decoded ~= .Str;
+            }
+            $!gfx = $!pre-gfx = Nil;
             self.decoded = $decoded;
         }
     }
