@@ -59,7 +59,7 @@ multi sub copy(
     Positional \container,
     :@from!,
     :@path!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -73,7 +73,7 @@ multi sub copy(
     \container,
     :@from!,
     :@path!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -92,7 +92,7 @@ multi sub copy(
 )
 {
     my $value = Crane::Get.get(container, :path(@from), :v);
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::Add.add($root, :@path, :$value, :in-place);
     |$root;
 }
@@ -106,7 +106,7 @@ multi sub copy(
 )
 {
     my $value = Crane::Get.get(container, :path(@from), :v);
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::Add.add($root, :@path, :$value, :in-place);
     $root;
 }

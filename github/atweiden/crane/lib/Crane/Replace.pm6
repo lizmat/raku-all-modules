@@ -204,7 +204,7 @@ multi sub replace-in-associative(
     :@path!,
     :$step!,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -218,7 +218,7 @@ multi sub replace-in-associative(
     :@path!,
     :$step!,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -236,7 +236,7 @@ multi sub replace-in-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::At.at($root, @path){$step} = $value.clone;
     $root;
 }
@@ -250,7 +250,7 @@ multi sub replace-in-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::At.at($root, @path){$step} = $value;
     $root;
 }
@@ -259,7 +259,7 @@ multi sub replace-in-associative(
     \container,
     :$step!,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -272,7 +272,7 @@ multi sub replace-in-associative(
     \container,
     :$step!,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -289,7 +289,7 @@ multi sub replace-in-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root{$step} = $value.clone;
     $root;
 }
@@ -302,7 +302,7 @@ multi sub replace-in-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root{$step} = $value;
     $root;
 }
@@ -310,7 +310,7 @@ multi sub replace-in-associative(
 multi sub replace-in-associative(
     \container,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -325,7 +325,7 @@ multi sub replace-in-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = $value;
     $root;
 }
@@ -338,7 +338,7 @@ multi sub replace-in-positional(
     :@path!,
     :$step!,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -353,7 +353,7 @@ multi sub replace-in-positional(
     :@path!,
     :$step!,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -371,7 +371,7 @@ multi sub replace-in-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     my @value = $value;
     Crane::At.at($root, @path).splice($step, 1, $@value);
     |$root;
@@ -386,7 +386,7 @@ multi sub replace-in-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::At.at($root, @path).splice($step, 1, $value);
     |$root;
 }
@@ -395,7 +395,7 @@ multi sub replace-in-positional(
     \container,
     :$step!,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -409,7 +409,7 @@ multi sub replace-in-positional(
     \container,
     :$step!,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -426,7 +426,7 @@ multi sub replace-in-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     my @value = $value;
     $root.splice($step, 1, $@value);
     |$root;
@@ -440,7 +440,7 @@ multi sub replace-in-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root.splice($step, 1, $value);
     |$root;
 }
@@ -448,7 +448,7 @@ multi sub replace-in-positional(
 multi sub replace-in-positional(
     \container,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -459,7 +459,7 @@ multi sub replace-in-positional(
 multi sub replace-in-positional(
     \container,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -474,7 +474,7 @@ multi sub replace-in-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = $value;
     |$root;
 }
@@ -485,7 +485,7 @@ multi sub replace-in-positional(
 multi sub replace-in-any(
     \container,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -500,7 +500,7 @@ multi sub replace-in-any(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = $value;
     $root;
 }

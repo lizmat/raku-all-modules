@@ -231,7 +231,7 @@ subtest({
     is-deeply(%h, {:example<hello>}, 'Original container is unchanged');
 
     my %i = :a({:b({:c(True)})});
-    my %j = %i.deepmap(*.clone);
+    my %j = %i.deepmap({ .clone });
     %j<a><b>:delete;
     my %k = Crane.remove(%i, :path(qw<a b>));
     is-deeply(%j, %k, 'Is expected value');

@@ -185,7 +185,7 @@ multi sub remove-from-associative(
     \container,
     :@path!,
     :$step!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any
 )
 {
@@ -202,7 +202,7 @@ multi sub remove-from-associative(
     --> Any
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::At.at($root, @path){$step}:delete;
     $root;
 }
@@ -210,7 +210,7 @@ multi sub remove-from-associative(
 multi sub remove-from-associative(
     \container,
     :$step!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any
 )
 {
@@ -226,14 +226,14 @@ multi sub remove-from-associative(
     --> Any
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root{$step}:delete;
     $root;
 }
 
 multi sub remove-from-associative(
     \container,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any
 )
 {
@@ -247,7 +247,7 @@ multi sub remove-from-associative(
     --> Any
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = Empty;
     $root;
 }
@@ -259,7 +259,7 @@ multi sub remove-from-positional(
     \container,
     :@path!,
     :$step!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any
 )
 {
@@ -276,7 +276,7 @@ multi sub remove-from-positional(
     --> Any
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::At.at($root, @path).splice($step, 1);
     |$root;
 }
@@ -284,7 +284,7 @@ multi sub remove-from-positional(
 multi sub remove-from-positional(
     \container,
     :$step!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any
 )
 {
@@ -300,14 +300,14 @@ multi sub remove-from-positional(
     --> Any
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root.splice($step, 1);
     |$root;
 }
 
 multi sub remove-from-positional(
     \container,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any
 )
 {
@@ -321,7 +321,7 @@ multi sub remove-from-positional(
     --> Any
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = Empty;
     |$root;
 }
@@ -331,7 +331,7 @@ multi sub remove-from-positional(
 
 multi sub remove-from-any(
     \container,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any
 )
 {
@@ -345,7 +345,7 @@ multi sub remove-from-any(
     --> Any
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = Nil;
     $root;
 }

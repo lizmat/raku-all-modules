@@ -21,7 +21,7 @@ multi sub exists(
     $container,
     :@path!,
     Bool :k($),
-    Bool:D :v($)! where *.so
+    Bool:D :v($)! where .so
     --> Bool:D
 )
 {
@@ -31,7 +31,7 @@ multi sub exists(
 multi sub exists(
     $container,
     :@path!,
-    Bool:D :k($)! where *.so,
+    Bool:D :k($)! where .so,
     Bool :v($)
     --> Bool:D
 )

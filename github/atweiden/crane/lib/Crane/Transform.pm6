@@ -31,7 +31,7 @@ multi sub transform(
     \container,
     :@path!,
     :&with!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -48,7 +48,7 @@ multi sub transform(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     transform('do', $root, :@path, :&with);
     $root;
 }

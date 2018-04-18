@@ -66,7 +66,7 @@ multi sub move(
     Positional \container,
     :@from!,
     :@path!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -81,7 +81,7 @@ multi sub move(
     \container,
     :@from!,
     :@path!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -101,7 +101,7 @@ multi sub move(
 )
 {
     my $value = Crane::Get.get(container, :path(@from), :v);
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::Remove.remove($root, :path(@from), :in-place);
     Crane::Add.add($root, :@path, :$value, :in-place);
     |$root;
@@ -116,7 +116,7 @@ multi sub move(
 )
 {
     my $value = Crane::Get.get(container, :path(@from), :v);
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::Remove.remove($root, :path(@from), :in-place);
     Crane::Add.add($root, :@path, :$value, :in-place);
     $root;

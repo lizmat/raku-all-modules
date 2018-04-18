@@ -23,7 +23,7 @@ method patch(
 multi sub patch(
     \container,
     @patch,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -38,7 +38,7 @@ multi sub patch(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     patch('do', $root, @patch);
 }
 

@@ -60,7 +60,7 @@ subtest({
 
     # deep container
     my %data = %TestCrane::data;
-    my %data-b = %data.deepmap(*.clone);
+    my %data-b = %data.deepmap({ .clone });
     push(%data-b<legumes>, %legume);
     is-deeply(
         Crane.set(%data, :path('legumes', *-0), :value(%legume)),

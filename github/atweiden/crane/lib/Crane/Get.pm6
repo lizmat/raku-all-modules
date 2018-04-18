@@ -24,9 +24,9 @@ method get(
 multi sub get(
     $container,
     :@path!,
-    Bool:D :k($)! where *.so,
-    Bool :v($) where *.not,
-    Bool :p($) where *.not
+    Bool:D :k($)! where .so,
+    Bool :v($) where .not,
+    Bool :p($) where .not
     --> Any:D
 )
 {
@@ -36,9 +36,9 @@ multi sub get(
 multi sub get(
     $container,
     :@path!,
-    Bool :k($) where *.not,
-    Bool:D :v($)! where *.so,
-    Bool :p($) where *.not
+    Bool :k($) where .not,
+    Bool:D :v($)! where .so,
+    Bool :p($) where .not
     --> Any:D
 )
 {
@@ -48,9 +48,9 @@ multi sub get(
 multi sub get(
     $container,
     :@path!,
-    Bool :k($) where *.not,
-    Bool :v($) where *.not,
-    Bool:D :p($)! where *.so
+    Bool :k($) where .not,
+    Bool :v($) where .not,
+    Bool:D :p($)! where .so
     --> Any:D
 )
 {

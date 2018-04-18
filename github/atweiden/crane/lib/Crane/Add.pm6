@@ -207,7 +207,7 @@ multi sub add-to-associative(
     :@path!,
     :$step!,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -221,7 +221,7 @@ multi sub add-to-associative(
     :@path!,
     :$step!,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -239,7 +239,7 @@ multi sub add-to-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::At.at($root, @path){$step} = $value.clone;
     $root;
 }
@@ -253,7 +253,7 @@ multi sub add-to-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::At.at($root, @path){$step} = $value;
     $root;
 }
@@ -262,7 +262,7 @@ multi sub add-to-associative(
     \container,
     :$step!,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -275,7 +275,7 @@ multi sub add-to-associative(
     \container,
     :$step!,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -292,7 +292,7 @@ multi sub add-to-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root{$step} = $value.clone;
     $root;
 }
@@ -305,7 +305,7 @@ multi sub add-to-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root{$step} = $value;
     $root;
 }
@@ -313,7 +313,7 @@ multi sub add-to-associative(
 multi sub add-to-associative(
     \container,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -328,7 +328,7 @@ multi sub add-to-associative(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = $value;
     $root;
 }
@@ -349,7 +349,7 @@ multi sub add-to-positional(
     :@path!,
     :$step!,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -364,7 +364,7 @@ multi sub add-to-positional(
     :@path!,
     :$step!,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -382,7 +382,7 @@ multi sub add-to-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     my @value = $value;
     Crane::At.at($root, @path).splice($step, 0, $@value);
     |$root;
@@ -397,7 +397,7 @@ multi sub add-to-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     Crane::At.at($root, @path).splice($step, 0, $value);
     |$root;
 }
@@ -406,7 +406,7 @@ multi sub add-to-positional(
     \container,
     :$step!,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -420,7 +420,7 @@ multi sub add-to-positional(
     \container,
     :$step!,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -437,7 +437,7 @@ multi sub add-to-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     my @value = $value;
     $root.splice($step, 0, $@value);
     |$root;
@@ -451,7 +451,7 @@ multi sub add-to-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root.splice($step, 0, $value);
     |$root;
 }
@@ -459,7 +459,7 @@ multi sub add-to-positional(
 multi sub add-to-positional(
     \container,
     :$value! where { $_ ~~ Positional },
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -470,7 +470,7 @@ multi sub add-to-positional(
 multi sub add-to-positional(
     \container,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -485,7 +485,7 @@ multi sub add-to-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = $value.clone;
     |$root;
 }
@@ -497,7 +497,7 @@ multi sub add-to-positional(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = $value;
     |$root;
 }
@@ -508,7 +508,7 @@ multi sub add-to-positional(
 multi sub add-to-any(
     \container,
     :$value!,
-    Bool:D :in-place($)! where *.so
+    Bool:D :in-place($)! where .so
     --> Any:D
 )
 {
@@ -523,7 +523,7 @@ multi sub add-to-any(
     --> Any:D
 )
 {
-    my $root = container.deepmap(*.clone);
+    my $root = container.deepmap({ .clone });
     $root = $value;
     $root;
 }
