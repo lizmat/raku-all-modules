@@ -1,7 +1,7 @@
 
 use v6;
 
-unit module Cardinal:ver<2.1.0>:auth<github:thundergnat>;
+unit module Cardinal:ver<2.2.0>:auth<github:thundergnat>;
 
 # Arrays probably should be constants but constant arrays and pre-comp
 # don't get along very well right now.
@@ -141,7 +141,7 @@ multi sub cardinal (Int $int) is export {
 multi sub cardinal (Num $num) is export {
     if $num < 0 { return "negative {cardinal(-$num)}" }
     die if $num ~~ Inf or $num ~~ NaN;
-    my ($mantissa, $exponent) = $num.fmt('%.16e').split('e')».Numeric;
+    my ($mantissa, $exponent) = $num.fmt("%.14e").split('e')».Numeric;
     my ($whole, $fraction) = $mantissa.split('.');
     $whole.=Numeric;
     $fraction //= '';
