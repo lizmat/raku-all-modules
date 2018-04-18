@@ -33,7 +33,7 @@ multi sub MAIN(
 
 # input is from JSON file
 multi sub MAIN(
-    Str:D :i(:$input) where *.so,
+    Str:D :i(:$input) where .so,
     Str:D :if(:input-format($)) where /:i json/,
     Str:D :of(:output-format($)) where /:i txn/,
     Str :o(:$output)
@@ -66,7 +66,7 @@ multi sub MAIN(
 
 # input is from TXN file
 multi sub MAIN(
-    Str:D :i(:$input) where *.so,
+    Str:D :i(:$input) where .so,
     Str:D :if(:input-format($)) where /:i txn/,
     Str:D :of(:output-format($)) where /:i json/,
     Str :o(:$output)
@@ -103,9 +103,9 @@ multi sub output(Str:D $remarshal, '-' --> Nil)
 }
 
 # output is to file
-multi sub output(Str:D $remarshal, Str:D $output where *.so --> Nil)
+multi sub output(Str:D $remarshal, Str:D $output where .so --> Nil)
 {
-    spurt($output, $remarshal, :createonly);
+    spurt($output, $remarshal);
 }
 
 # output is to stdout (default)
@@ -114,9 +114,9 @@ multi sub output(Str:D $remarshal, Str $?)
     say($remarshal.trim);
 }
 
-sub resolve-path(Str:D $path where *.so --> Str:D)
+sub resolve-path(Str:D $path where .so --> Str:D)
 {
-    ~$path.subst(/^'~/'/, $*HOME ~ '/').IO.resolve;
+    my Str:D $resolve-path = ~$path.subst(/^'~/'/, $*HOME ~ '/').IO.resolve;
 }
 
 
@@ -133,30 +133,19 @@ sub USAGE()
       txn-remarshal [-h] [-i=<file>] [-o=<file>] -if=<format> -of=<format>
 
     Options:
-      -h, --help
-        print this help message
-      -i, --input=<file>
-        the input source
-      -o, --output=<file>
-        the output destination
-      -if, --input-format=<format>
-        the input file format
-      -of, --output-format=<format>
-        the output file format
+      -h, --help                     print this help message
+      -i, --input=<file>             the input source
+      -o, --output=<file>            the output destination
+      -if, --input-format=<format>   the input file format
+      -of, --output-format=<format>  the output file format
 
     Files:
-      /path/to/file
-        absolute path to input/output file
-      path/to/file
-        relative path to input/output file
-      -
-        stdin/stdout
+      /path/to/file                  absolute path
+      path/to/file                   relative path
+      -                              STDIN/STDOUT
 
     Formats:
-      json
-        JSON
-      txn
-        TXN
+      json,txn
     EOF
     say($HELP);
 }

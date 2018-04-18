@@ -195,7 +195,7 @@ multi sub from-txn(
 }
 
 multi sub from-txn(
-    Str:D :$file! where *.so,
+    Str:D :$file! where .so,
     *%opts (
         Str :txn-dir($),
         Int :date-local-offset($)
