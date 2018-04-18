@@ -19,7 +19,7 @@ method parse(
 }
 
 method parsefile(
-    Str:D $file where *.so,
+    Str:D $file where .so,
     *%opts (
         Int :date-local-offset($),
         Str :txn-dir($)

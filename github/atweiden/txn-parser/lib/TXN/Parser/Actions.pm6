@@ -9,7 +9,7 @@ unit class TXN::Parser::Actions;
 # public attributes {{{
 
 # base path for <include> directives
-has Str:D $.txn-dir = "$*HOME/.config/mktxn/txn";
+has Str:D $.txn-dir = '/usr/include/txn';
 
 # DateTime offset for when the local offset is omitted in dates. if
 # not passed as a parameter during instantiation, use UTC (0)
@@ -813,7 +813,7 @@ method entry($/ --> Nil)
     my XXHash:D $xxhash = xxHash32($text);
     my Entry::ID:D $entry-id =
         Entry::ID.new(
-            :number(@.entry-number.hyper.deepmap(*.clone)),
+            :number(@.entry-number.hyper.deepmap({ .clone })),
             :$xxhash,
             :$text
         );
@@ -869,7 +869,7 @@ method include:filename ($match --> Nil)
     $filename.IO.e && $filename.IO.r && $filename.IO.f
         or die(X::TXN::Parser::Include.new(:$filename));
 
-    my UInt:D @entry-number = |@.entry-number.hyper.deepmap(*.clone), 0;
+    my UInt:D @entry-number = |@.entry-number.hyper.deepmap({ .clone }), 0;
     my TXN::Parser::Actions:D $actions =
         TXN::Parser::Actions.new(
             :@entry-number,
@@ -892,7 +892,7 @@ method include:txnlib ($match --> Nil)
     $filename.IO.e && $filename.IO.r && $filename.IO.f
         or die(X::TXN::Parser::Include.new(:$filename));
 
-    my UInt:D @entry-number = |@.entry-number.hyper.deepmap(*.clone), 0;
+    my UInt:D @entry-number = |@.entry-number.hyper.deepmap({ .clone }), 0;
     my TXN::Parser::Actions:D $actions =
         TXN::Parser::Actions.new(
             :@entry-number,
