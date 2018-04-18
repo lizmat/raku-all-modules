@@ -28,15 +28,15 @@ my class TXN::Package::Prepare
     # --- submethod BUILD {{{
 
     submethod BUILD(
-        Str:D :$pkgname! where *.so,
-        Str:D :$pkgver! where *.so,
+        Str:D :$!pkgname! where .so,
+        Str:D :$pkgver! where .so,
         Int :$pkgrel,
         Str :$pkgdesc,
         Int :$date-local-offset,
         Str :$txn-dir
+        --> Nil
     )
     {
-        $!pkgname = $pkgname;
         $!pkgver = Version.new($pkgver);
         $!pkgrel = $pkgrel.UInt if $pkgrel;
         $!pkgdesc = $pkgdesc if $pkgdesc;
@@ -49,13 +49,14 @@ my class TXN::Package::Prepare
 
     # merge build settings from TOML template if one is provided
     multi method new(
-        Str:D :$template! where *.so,
+        Str:D :$template! where .so,
         Str :$pkgname,
         Str :$pkgver,
         Int :$pkgrel,
         Str :$pkgdesc,
         Int :$date-local-offset,
         Str :$txn-dir
+        --> TXN::Package::Prepare:D
     )
     {
         my %prepare;
@@ -129,7 +130,7 @@ my class TXN::Package
     has Str:D $!compiler is required;
 
     # accounting ledger entries
-    has Entry @!entry is required;
+    has Entry:D @!entry is required;
 
     # number of accounting ledger entries in @!entry
     has UInt:D $!count is required;
@@ -148,10 +149,10 @@ my class TXN::Package
     # --- submethod BUILD {{{
 
     submethod BUILD(
-        Str:D :$!compiler! where *.so,
-        Entry :@!entry!,
+        Str:D :$!compiler! where .so,
+        Entry:D :@!entry!,
         UInt:D :$!count!,
-        Str:D :@!entities-seen! where *.so,
+        Str:D :@!entities-seen! where .so,
         VarNameBare:D :$!pkgname!,
         Version:D :$!pkgver!,
         UInt:D :$!pkgrel!,
@@ -275,8 +276,8 @@ my class TXN::Package
 # sub mktxn {{{
 
 multi sub mktxn(
-    Str:D :$file! where *.so,
-    Bool:D :$release! where *.so,
+    Str:D :$file! where .so,
+    Bool:D :$release! where .so,
     *%opts (
         Str :pkgname($),
         Str :pkgver($),
@@ -295,7 +296,7 @@ multi sub mktxn(
 
 multi sub mktxn(
     Str:D $content,
-    Bool:D :$release! where *.so,
+    Bool:D :$release! where .so,
     *%opts (
         Str :pkgname($),
         Str :pkgver($),
@@ -313,7 +314,7 @@ multi sub mktxn(
 }
 
 multi sub mktxn(
-    Str:D :$file! where *.so,
+    Str:D :$file! where .so,
     *%opts (
         Str :pkgname($),
         Str :pkgver($),
@@ -350,7 +351,7 @@ multi sub mktxn(
 # sub package {{{
 
 # serialize to JSON files on disk
-sub package(% (Entry :@entry!, :%txn-info!))
+sub package(% (Entry:D :@entry!, :%txn-info!))
 {
     say("Creating txn pkg \"%txn-info<pkgname>\"…");
 
@@ -394,7 +395,7 @@ sub package(% (Entry :@entry!, :%txn-info!))
 # sub resolve-txn-file-path {{{
 
 multi sub resolve-txn-file-path(
-    Str:D $file where *.IO.extension eq 'txn'
+    Str:D $file where .IO.extension eq 'txn'
     --> Str:D
 )
 {
@@ -403,7 +404,7 @@ multi sub resolve-txn-file-path(
     $file;
 }
 
-multi sub resolve-txn-file-path(Str:D $file where *.so --> Str:D)
+multi sub resolve-txn-file-path(Str:D $file where .so --> Str:D)
 {
     exists-readable-file("$file.txn")
         or die;
