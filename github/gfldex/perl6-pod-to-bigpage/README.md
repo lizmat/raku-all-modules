@@ -12,27 +12,27 @@ Let it find the `*.pod6` for you and have two threads at a time.
 
 # Options
 
-* -v --verbose
+* `-v --verbose`
 
   verbose output
 
-* --source-path
+* `--source-path`
 
   Where to look for files ending in .pod6.
 
-* --exclude
+* `--exclude`
 
   Comma separated list of strings files or paths shall not end with.
 
-* --no-cache
+* `--no-cache`
 
   Don't use precompilation to cache pod6 files.
 
-* --threads
+* `--threads`
 
   Number of threads to use. Defaults to environment variable THREADS or 1.
 
-* --precomp-path
+* `--precomp-path`
 
   Where to put precompiled pod6 files. Defaults to environment variable TEMP or TMP or /tmp.
 
