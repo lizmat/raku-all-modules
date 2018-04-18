@@ -15,7 +15,7 @@ multi sub from-toml(
 }
 
 multi sub from-toml(
-    Str:D :$file! where *.so,
+    Str:D :$file! where .so,
     *%opts (Int :date-local-offset($))
     --> Hash
 ) is export

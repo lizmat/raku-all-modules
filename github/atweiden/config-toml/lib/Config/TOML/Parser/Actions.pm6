@@ -724,7 +724,7 @@ method table:hoh ($/ --> Nil)
 multi method mktable-hoh(
     @base-path,
     $hoh-text,
-    Hash:D :@keypair! where *.so
+    Hash:D :@keypair! where .so
     --> Nil
 )
 {
@@ -790,7 +790,7 @@ method table:aoh ($/ --> Nil)
     self.mktable-aoh(@path, $aoh-text, :@keypair);
 }
 
-multi method mktable-aoh(@path, $aoh-text, Hash:D :@keypair! where *.so --> Nil)
+multi method mktable-aoh(@path, $aoh-text, Hash:D :@keypair! where .so --> Nil)
 {
     # initialize empty array if array does not yet exist
     seen(%!aoh, :@path).so
@@ -903,7 +903,7 @@ multi sub pwd(Associative:D $, @ --> Array:D)
     my @step-taken;
 }
 
-multi sub pwd(Positional:D $container, @step where *.elems > 0 --> Array:D)
+multi sub pwd(Positional:D $container, @step where .elems > 0 --> Array:D)
 {
     my @step-taken;
     my $root := $container;
@@ -937,44 +937,23 @@ multi sub pwd($, @ --> Array:D)
 
 multi sub seen(
     Bool:D %h,
-    :@path! where *.elems > 1,
-    Bool:D :recursive($)! where *.so
+    :@path! where .elems > 1,
+    Bool:D :recursive($)! where .so
     --> Bool:D
 )
 {
     my Bool:D $seen =
-        %h.grep({ .keys.first eqv $@path }).so
-            || seen(%h, :path(@path[0..^*-1].Array), :recursive);
+        seen(%h, :@path) || seen(%h, :path[@path[0..^*-1]], :recursive);
 }
 
 multi sub seen(
     Bool:D %h,
-    :@path! where *.elems > 1,
+    :@path!,
     Bool :recursive($)
     --> Bool:D
 )
 {
     my Bool:D $seen = %h.grep({ .keys.first eqv $@path }).so;
-}
-
-multi sub seen(
-    Bool:D %h,
-    :@path! where *.elems > 0,
-    Bool :recursive($)
-    --> Bool:D
-)
-{
-    my Bool:D $seen = %h.grep({ .keys.first eqv $@path }).so;
-}
-
-multi sub seen(
-    Bool:D %h,
-    :@path! where *.elems == 0,
-    Bool :recursive($)
-    --> Bool:D
-)
-{
-    my Bool:D $seen = False;
 }
 
 # --- end sub seen }}}
