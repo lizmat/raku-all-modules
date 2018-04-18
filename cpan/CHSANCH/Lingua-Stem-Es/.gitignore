@@ -1,0 +1,7 @@
+# Perl 6 precompiled files
+.precomp
+
+# Editor files
+*~     # emacs
+.*.sw? # vim
+.vstags #vscode

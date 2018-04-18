@@ -1,0 +1,23 @@
+{
+  "authors": "Christian Sánchez",
+  "auth": "cpan:CHSANCH",
+  "depends": [],
+  "description": "Porter's stemming algorithm for Spanish",
+  "license": "Artistic-2.0",
+  "meta-version": 0,
+  "name": "Lingua::Stem::Es",
+  "perl": "6.c",
+  "provides": {
+    "Lingua::Stem::Es": "lib/Lingua/Stem/Es.pm6"
+  },
+  "resources": [],
+  "tags": [
+    "nlp",
+    "text"
+  ],
+  "version": "0.0.1",
+  "test-depends": [
+		"Test::META"
+  ],
+  "source-url": "git://github.com/chsanch/perl6-Lingua-Stem-Es.git"
+}
