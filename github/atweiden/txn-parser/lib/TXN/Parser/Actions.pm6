@@ -9,7 +9,7 @@ unit class TXN::Parser::Actions;
 # public attributes {{{
 
 # base path for <include> directives
-has Str:D $.txn-dir = '/usr/include/txn';
+has Str:D $.include-lib = '/usr/include/txn';
 
 # DateTime offset for when the local offset is omitted in dates. if
 # not passed as a parameter during instantiation, use UTC (0)
@@ -875,7 +875,7 @@ method include:filename ($match --> Nil)
             :@entry-number,
             :$.date-local-offset,
             :file($filename),
-            :$.txn-dir
+            :$.include-lib
         );
     my Entry:D @entry =
         TXN::Parser::Grammar.parsefile($filename, :$actions).made;
@@ -888,7 +888,7 @@ method include:txnlib ($match --> Nil)
     $match<txnlib>.made.IO.is-relative
         or die(X::TXN::Parser::TXNLibAbsolute(:lib($match<txnlib>.made)));
 
-    my Str:D $filename = join('/', $.txn-dir, $match<txnlib>.made) ~ '.txn';
+    my Str:D $filename = join('/', $.include-lib, $match<txnlib>.made) ~ '.txn';
     $filename.IO.e && $filename.IO.r && $filename.IO.f
         or die(X::TXN::Parser::Include.new(:$filename));
 
@@ -898,7 +898,7 @@ method include:txnlib ($match --> Nil)
             :@entry-number,
             :$.date-local-offset,
             :file($filename),
-            :$.txn-dir
+            :$.include-lib
         );
     my Entry:D @entry =
         TXN::Parser::Grammar.parsefile($filename, :$actions).made;

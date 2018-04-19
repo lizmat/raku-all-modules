@@ -21,7 +21,8 @@ class Entry::ID
 
     method Str(::?CLASS:D: --> Str:D)
     {
-        my Str:D $s = sprintf(Q{[%s]:%s}, @.number.join(' '), $.xxhash);
+        my Str:D $xxhash = sprintf(Q{0x%s}, $.xxhash.base(16));
+        my Str:D $s = sprintf(Q{[%s]:%s}, @.number.join(' '), $xxhash);
     }
 }
 
@@ -169,7 +170,8 @@ class Entry::Posting::ID
 
     method Str(::?CLASS:D: --> Str:D)
     {
-        my Str:D $s = sprintf(Q{%s|%s:%s}, $.entry-id.Str, $.number, $.xxhash);
+        my Str:D $xxhash = sprintf(Q{0x%s}, $.xxhash.base(16));
+        my Str:D $s = sprintf(Q{%s|%s:%s}, $.entry-id.Str, $.number, $xxhash);
     }
 }
 

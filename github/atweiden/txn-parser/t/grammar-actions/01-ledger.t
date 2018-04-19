@@ -4757,11 +4757,11 @@ subtest({
     # end tests }}}
 });
 
-# check that we repeat results of above test when including from txn-dir
+# compare results of above test against including from include-lib
 subtest({
     my Str $txn = "include <with-includes>\n";
     my Entry @entry =
-        TXN::Parser.parse($txn, :txn-dir<t/data/with-includes>).made;
+        TXN::Parser.parse($txn, :include-lib<t/data/with-includes>).made;
 
     # tests {{{
     ok(@entry[0].header.date eqv Date.new(2011,1,1));

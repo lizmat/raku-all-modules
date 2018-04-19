@@ -8,7 +8,7 @@ method parse(
     Str:D $content,
     *%opts (
         Int :date-local-offset($),
-        Str :txn-dir($)
+        Str :include-lib($)
     )
     --> Match:D
 )
@@ -22,7 +22,7 @@ method parsefile(
     Str:D $file where .so,
     *%opts (
         Int :date-local-offset($),
-        Str :txn-dir($)
+        Str :include-lib($)
     )
     --> Match:D
 )
