@@ -185,7 +185,7 @@ multi sub remarshal(
 multi sub from-txn(
     Str:D $content,
     *%opts (
-        Str :txn-dir($),
+        Str :include-lib($),
         Int :date-local-offset($)
     )
     --> Array:D
@@ -197,7 +197,7 @@ multi sub from-txn(
 multi sub from-txn(
     Str:D :$file! where .so,
     *%opts (
-        Str :txn-dir($),
+        Str :include-lib($),
         Int :date-local-offset($)
     )
     --> Array:D
