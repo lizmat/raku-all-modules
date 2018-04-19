@@ -1,6 +1,6 @@
 use v6.c;
 
-class List::MoreUtils:ver<0.0.2>:auth<cpan:ELIZABETH> {
+class List::MoreUtils:ver<0.0.3>:auth<cpan:ELIZABETH> {
     our sub any(&code, @values --> Bool:D) is export(:all) {
         return True if code($_) for @values;
         False
@@ -620,8 +620,8 @@ without are boolean.
 Returns True if all items in LIST meet the criterion given through
 BLOCK. Passes each element in LIST to the BLOCK in turn:
 
-  say "All values are non-negative"
-    if all { $_ >= 0 }, ($x, $y, $z);
+    say "All values are non-negative"
+      if all { $_ >= 0 }, ($x, $y, $z);
 
 For an empty LIST, C<all> returns True (i.e. no values failed the condition)
 and C<all_u> returns C<Nil>.
@@ -632,6 +632,14 @@ B<Note>: because Perl treats C<Nil> as false, you must check the return value
 of C<all_u> with C<defined> or you will get the opposite result of what you
 expect.
 
+=head4 Idiomatic Perl 6 ways
+
+    say "All values are non-negative"
+      if $x & $y & $z >= 0;
+
+    say "All values are non-negative"
+      if all(@list) >= 0;
+
 =head3 any BLOCK, LIST
 
 =head3 any_u BLOCK, LIST
@@ -639,12 +647,20 @@ expect.
 Returns True if any item in LIST meets the criterion given through
 BLOCK. Passes each element in LIST to the BLOCK in turn:
 
-  say "At least one non-negative value"
-    if any { $_ >= 0 }, ($x, $y, $z);
+    say "At least one non-negative value"
+      if any { $_ >= 0 }, ($x, $y, $z);
 
 For an empty LIST, C<any> returns False and C<any_u> returns C<Nil>.
 
 Thus, C<< any_u(@list) >> is equivalent to C<< @list ?? any(@list) !! undef >>.
+
+=head4 Idiomatic Perl 6 ways
+
+    say "At least one non-negative value"
+      if $x | $y | $z >= 0;
+
+    say "At least one non-negative value"
+      if any(@list) >= 0;
 
 =head3 none BLOCK, LIST
 
@@ -654,8 +670,8 @@ Logically the negation of C<any>. Returns True if no item in LIST meets
 the criterion given through BLOCK. Passes each element in LIST to the BLOCK
 in turn:
 
-  say "No non-negative values"
-    if none { $_ >= 0 }, ($x, $y, $z);
+    say "No non-negative values"
+      if none { $_ >= 0 }, ($x, $y, $z);
 
 For an empty LIST, C<none> returns True (i.e. no values failed the condition)
 and C<none_u> returns C<Nil>.
@@ -666,6 +682,14 @@ B<Note>: because Perl treats C<Nil> as false, you must check the return value
 of C<none_u> with C<defined> or you will get the opposite result of what you
 expect.
 
+=head4 Idiomatic Perl 6 ways
+
+    say "No non-negative values"
+      if none($x,$y,$z) >= 0;
+
+    say "No non-negative values"
+      if none(@list) >= 0;
+
 =head3 notall BLOCK, LIST
 
 =head3 notall_u BLOCK, LIST
@@ -674,12 +698,20 @@ Logically the negation of C<all>. Returns True if not all items in LIST meet
 the criterion given through BLOCK. Passes each element in LIST to the BLOCK
 in turn:
 
-  say "Not all values are non-negative"
-    if notall { $_ >= 0 }, ($x, $y, $z);
+    say "Not all values are non-negative"
+      if notall { $_ >= 0 }, ($x, $y, $z);
 
 For an empty LIST, C<notall> returns False and C<notall_u> returns C<Nil>.
 
 Thus, C<< notall_u(@list) >> is equivalent to C<< @list ?? notall(@list) !! Nil >>.
+
+=head4 Idiomatic Perl 6 ways
+
+    say "Not all values are non-negative"
+      if not all($x,$y,$z) >= 0;
+
+    say "Not all values are non-negative"
+      if not all(@list) >= 0;
 
 =head3 one BLOCK, LIST
 
@@ -698,6 +730,14 @@ For an empty LIST, C<one> returns False and C<one_u> returns C<Nil>.
 The expression C<one BLOCK, LIST> is almost equivalent to
 C<1 == True BLOCK, LIST>, except for short-cutting.  Evaluation of BLOCK will
 immediately stop at the second true value seen.
+
+=head4 Idiomatic Perl 6 ways
+
+    say "Precisely one value defined"
+      if $x.defined ^ $y.defined ^ $z.defined;
+
+    say "Precisely one value defined"
+      if one(@list>>.defined);
 
 =head2 Transformation
 
@@ -726,9 +766,11 @@ With the C<:scalar> named parameter:
     @list = 1 2 3 4
     $last = 8
 
-Think of it as syntactic sugar for
+=head4 Idiomatic Perl 6 ways
 
-    my @mult = map -> $_ is copy { $_ *= 2 }, @list;
+    my @mult = @list.map: -> $_ is copy { $_ *= 2 };
+
+    my $last = @list.map( -> $_ is copy { $_ *= 2 }).tail;
 
 =head3 insert_after BLOCK, VALUE, LIST
 
@@ -766,6 +808,12 @@ parameters to BLOCK.
     my @b = <1 2 3>;
     my @x = pairwise -> $a, $b { $a, $b }, @a, @b;    # returns a, 1, b, 2, c, 3
 
+=head4 Idiomatic Perl 6 ways
+
+    my @x = zip(@a,@b).map: -> ($a,$b) { $a + $b };
+
+    my @x = zip(@a,@b).flat;
+
 =head3 mesh ARRAY1, ARRAY2 [ , ARRAY3 ... ]
 
 =head3 zip ARRAY1, ARRAY2 [ , ARRAY3 ... ]
@@ -786,6 +834,12 @@ Examples:
 
 C<zip> is an alias for C<mesh>.
 
+=head4 Idiomatic Perl 6 ways
+
+    my @x = zip(@a,@b).flat;
+
+    my @x = zip(@a,@b,@c).flat;
+
 =head3 zip6 ARRAY1, ARRAY2 [ , ARRAY3 ... ]
 
 =head3 zip_unflatten ARRAY1, ARRAY2 [ , ARRAY3 ... ]
@@ -803,6 +857,12 @@ then the second, then the third, etc, until all arrays are exhausted.
     my @d = zip6 @a, @b, @c; # [x, 1, zip], [Str, 2, zap], [Str, Int, zot]
 
 C<zip_unflatten> is an alias for C<zip6>.
+
+=head4 Idiomatic Perl 6 ways
+
+    my @x = zip(@a,@b);
+
+    my @x = zip(@a,@b,@c);
 
 =head3 listcmp ARRAY0 ARRAY1 [ ARRAY2 ... ]
 
@@ -822,6 +882,12 @@ so on.  Undefined entries in any given array are skipped.
     my @fib = 1, 1, 2;
     my $cmp = listcmp @seq, @prim, @fib;
     # { 1 => [0, 2], 2 => [0, 1, 2], 3 => [0, 1], 5 => [1] }
+
+=head4 Idiomatic Perl 6 ways
+
+    my @x = zip(@a,@b);
+
+    my @x = zip(@a,@b,@c);
 
 =head3 arrayify LIST [,LIST [,LIST...]]
 
@@ -855,6 +921,11 @@ has been specified.
 
 C<distinct> is an alias for C<uniq>.
 
+=head4 Idiomatic Perl 6 ways
+
+    my @x = (1, 1, 2, 2, 3, 5, 3, 4).unique;
+    my $x = (1, 1, 2, 2, 3, 5, 3, 4).unique.elems;
+
 =head3 singleton LIST
 
 Returns a new list by stripping values in LIST occurring only once by
@@ -876,6 +947,11 @@ as in LIST.  Returns the number of elements occurring more than once in LIST.
     my @y = duplicates (1,1,2,4,7,2,3,4,6,9);          # returns (1,2,4)
     my $n = duplicates (1,1,2,4,7,2,3,4,6,9), :scalar; # returns 3
 
+=head4 Idiomatic Perl 6 ways
+
+    my @y = (1,1,2,4,7,2,3,4,6,9).repeated;
+    my $n = (1,1,2,4,7,2,3,4,6,9).repeated.elems;
+
 =head3 frequency LIST
 
 Returns a hash of distinct values and the corresponding frequency.
@@ -884,6 +960,10 @@ Returns a hash of distinct values and the corresponding frequency.
     #  'Deutschlandfunk (DLF)' => 9, 'WDR 3' => 10,
     #  'WDR 4' => 11, 'WDR 5' => 14, 'WDR Eins Live' => 14,
     #  'Deutschlandradio Kultur' => 8,...)
+
+=head4 Idiomatic Perl 6 ways
+
+    my %f := %radio_nrw.values.Bag;
 
 =head3 occurrences LIST
 
@@ -919,6 +999,10 @@ Same as C<after> but also includes the element for which BLOCK is true.
 
     my @x = after_incl { $_ %% 5 }, (1..9);   # returns (5, 6, 7, 8, 9)
 
+=head4 Idiomatic Perl 6 ways
+
+    my @x = (1..9).toggle: * %% 5, :off;
+
 =head3 before BLOCK, LIST
 
 Returns a list of values of LIST up to (and not including) the point where
@@ -926,6 +1010,10 @@ BLOCK returns a true value. Passes the value as a parameter to BLOCK for
 each element in LIST in turn.
 
     my @x = before { $_ %% 5 }, (1..9);   # returns (1, 2, 3, 4)
+
+=head4 Idiomatic Perl 6 ways
+
+    my @x = (1..9).toggle: * %% 5;
 
 =head3 before_incl BLOCK LIST
 
@@ -969,6 +1057,11 @@ L<List::Util/shuffle>, but stops after COUNT.
     my @r  = samples 10, (1..10); # same as (1..10).pick(*)
     my @r2 = samples 5, (1..10);  # same as (1..10).pick(5)
 
+=head4 Idiomatic Perl 6 ways
+
+    my @r  = (1..10).pick(*);
+    my @r2 = (1..10).pick(5);
+
 =head2 Iteration
 
 =head3 each_array ARRAY1, ARRAY2 ...
@@ -987,6 +1080,10 @@ The iterator returns the empty list when it reached the end of all arrays.
 
 If the iterator is passed an argument of 'C<index>', then it returns
 the index of the last fetched set of values, as a scalar.
+
+=head4 Idiomatic Perl 6 ways
+
+    while zip(@a,@b,@c) -> ($a,$b,$c) { .... }
 
 =head3 each_arrayref LIST
 
@@ -1008,9 +1105,15 @@ Example:
 
 This prints
 
-  a b c
-  d e f
-  g
+    a b c
+    d e f
+    g
+
+=head4 Idiomatic Perl 6 ways
+
+    for @x.rotor(3,:partial) -> @vals {
+        print "@vals[]\n";
+    }
 
 =head2 Searching
 
@@ -1028,6 +1131,12 @@ element has been found.
     say firstval { .starts-with('g') }, @list;  # Nil, because never
 
 C<first_value> is an alias for C<firstval>.
+
+=head4 Idiomatic Perl 6 ways
+
+    say @list.first: *.starts-with('c');
+    say @list.first: *.starts-with('b');
+    say @list.first: *.starts-with('g');
 
 =head3 onlyval BLOCK, LIST
 
@@ -1058,6 +1167,12 @@ found.
     say lastval { .starts-with('g') }, @list;  # Nil, because never
 
 C<last_value> is an alias for C<lastval>.
+
+=head4 Idiomatic Perl 6 ways
+
+    say @list.first: *.starts-with('c'), :end;
+    say @list.first: *.starts-with('b'), :end;
+    say @list.first: *.starts-with('g'), :end;
 
 =head3 firstres BLOCK, LIST
 
@@ -1113,6 +1228,10 @@ of values:
 
     my @x = indexes { $_ %% 2 } (1..10);   # returns (1, 3, 5, 7, 9)
 
+=head4 Idiomatic Perl 6 ways
+
+    my @x = (1..10).grep: * %% 2, :k;
+
 =head3 firstidx BLOCK, LIST
 
 =head3 first_index BLOCK, LIST
@@ -1132,6 +1251,13 @@ Returns C<-1> if no such item could be found.
     print firstidx { $_ == 5 }, @list;    # -1, because not found
 
 C<first_index> is an alias for C<firstidx>.
+
+=head4 Idiomatic Perl 6 ways
+
+    printf "item with index %i in list is 4", @list.first: * == 4, :k;
+
+    print @list.first: * == 3, :k;
+    print @list.first( * == 5, :k) // -1;  # not found == Nil
 
 =head3 onlyidx BLOCK, LIST
 
@@ -1173,6 +1299,13 @@ Returns C<-1> if no such item could be found.
 
 C<last_index> is an alias for C<lastidx>.
 
+=head4 Idiomatic Perl 6 ways
+
+    printf "item with index %i in list is 4", @list.first: * == 4, :k, :end;
+
+    print @list.first: * == 3, :k, :end;
+    print @list.first( * == 5, :k, :end) // -1;  # not found == Nil
+
 =head2 Sorting
 
 =head3 sort_by BLOCK, LIST
@@ -1181,7 +1314,7 @@ Returns the list of values sorted according to the string values returned by
 the BLOCK. A typical use of this may be to sort objects according to the
 string value of some accessor, such as:
 
-    my @sorted = sort_by { .name }, @people;  # same as @people.sort( *.name )
+    my @sorted = sort_by { .name }, @people;
 
 The key function is being passed each value in turn, The values are then
 sorted according to string comparisons on the values returned.
@@ -1199,15 +1332,27 @@ This sorts strings by generating sort keys which zero-pad the embedded numbers
 to some level (9 digits in this case), helping to ensure the lexical sort puts
 them in the correct order.
 
+=head4 Idiomatic Perl 6 ways
+
+    my @sorted = @people.sort: *.name;
+
 =head3 nsort_by BLOCK, LIST
 
 Similar to C<sort_by> but compares its key values numerically.
+
+=head4 Idiomatic Perl 6 ways
+
+    my @sorted = <10 1 20 42>.sort: +*;
 
 =head3 qsort BLOCK, ARRAY
 
 This sorts the given array B<in place> using the given compare code.  The
 Perl 6 version uses the basic sort functionality as provided by the C<sort>
 built-in function.
+
+=head4 Idiomatic Perl 6 ways
+
+    @people .= sort;
 
 =head2 Searching in sorted Lists
 
@@ -1321,12 +1466,20 @@ Passes each item in LIST to BLOCK in turn:
 
     printf "%i item(s) are defined", true { defined($_) }, @list;
 
+=head4 Idiomatic Perl 6 ways
+
+    print "@list.grep(*.defined).elems() item(s) are defined";
+
 =head3 false BLOCK, LIST
 
 Counts the number of elements in LIST for which the criterion in BLOCK is false.
 Passes each item in LIST to BLOCK in turn:
 
     printf "%i item(s) are not defined", false { defined($_) }, @list;
+
+=head4 Idiomatic Perl 6 ways
+
+    print "@list.grep(!*.defined).elems() item(s) are not defined";
 
 =head3 reduce_0 BLOCK, LIST
 
@@ -1390,6 +1543,11 @@ empty list if LIST was empty.
 
     my ($min,$max) = minmax (43,66,77,23,780); # (23,780)
 
+=head4 Idiomatic Perl 6 ways
+
+    my $range = <43,66,77,23,780>.minmax( +* );
+    my $range = (43,66,77,23,780).minmax;   # auto-numerically compares
+
 =head3 minmaxstr LIST
 
 Computes the minimum and maximum of LIST using string compare and returns a
@@ -1397,6 +1555,11 @@ two element list with the first element being the minimum and the second the
 maximum. Returns the empty list if LIST was empty.
 
     my ($min,$max) = minmaxstr <foo bar baz zippo>; # <bar zippo>
+
+=head4 Idiomatic Perl 6 ways
+
+    my $range = (43,66,77,23,780).minmax( ~* );
+    my $range = <foo bar baz zippo>.minmax;  # auto-string compares
 
 =head1 SEE ALSO
 

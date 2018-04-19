@@ -109,6 +109,14 @@ Thus, `all_u(@list) ` is equivalent to `@list ?? all(@list) !! Nil `.
 
 **Note**: because Perl treats `Nil` as false, you must check the return value of `all_u` with `defined` or you will get the opposite result of what you expect.
 
+#### Idiomatic Perl 6 ways
+
+    say "All values are non-negative"
+      if $x & $y & $z >= 0;
+
+    say "All values are non-negative"
+      if all(@list) >= 0;
+
 ### any BLOCK, LIST
 
 ### any_u BLOCK, LIST
@@ -121,6 +129,14 @@ Returns True if any item in LIST meets the criterion given through BLOCK. Passes
 For an empty LIST, `any` returns False and `any_u` returns `Nil`.
 
 Thus, `any_u(@list) ` is equivalent to `@list ?? any(@list) !! undef `.
+
+#### Idiomatic Perl 6 ways
+
+    say "At least one non-negative value"
+      if $x | $y | $z >= 0;
+
+    say "At least one non-negative value"
+      if any(@list) >= 0;
 
 ### none BLOCK, LIST
 
@@ -137,6 +153,14 @@ Thus, `none_u(@list) ` is equivalent to `@list ?? none(@list) !! Nil `.
 
 **Note**: because Perl treats `Nil` as false, you must check the return value of `none_u` with `defined` or you will get the opposite result of what you expect.
 
+#### Idiomatic Perl 6 ways
+
+    say "No non-negative values"
+      if none($x,$y,$z) >= 0;
+
+    say "No non-negative values"
+      if none(@list) >= 0;
+
 ### notall BLOCK, LIST
 
 ### notall_u BLOCK, LIST
@@ -149,6 +173,14 @@ Logically the negation of `all`. Returns True if not all items in LIST meet the 
 For an empty LIST, `notall` returns False and `notall_u` returns `Nil`.
 
 Thus, `notall_u(@list) ` is equivalent to `@list ?? notall(@list) !! Nil `.
+
+#### Idiomatic Perl 6 ways
+
+    say "Not all values are non-negative"
+      if not all($x,$y,$z) >= 0;
+
+    say "Not all values are non-negative"
+      if not all(@list) >= 0;
 
 ### one BLOCK, LIST
 
@@ -164,6 +196,14 @@ Returns False otherwise.
 For an empty LIST, `one` returns False and `one_u` returns `Nil`.
 
 The expression `one BLOCK, LIST` is almost equivalent to `1 == True BLOCK, LIST`, except for short-cutting. Evaluation of BLOCK will immediately stop at the second true value seen.
+
+#### Idiomatic Perl 6 ways
+
+    say "Precisely one value defined"
+      if $x.defined ^ $y.defined ^ $z.defined;
+
+    say "Precisely one value defined"
+      if one(@list>>.defined);
 
 Transformation
 --------------
@@ -190,9 +230,11 @@ With the `:scalar` named parameter:
     @list = 1 2 3 4
     $last = 8
 
-Think of it as syntactic sugar for
+#### Idiomatic Perl 6 ways
 
-    my @mult = map -> $_ is copy { $_ *= 2 }, @list;
+    my @mult = @list.map: -> $_ is copy { $_ *= 2 };
+
+    my $last = @list.map( -> $_ is copy { $_ *= 2 }).tail;
 
 ### insert_after BLOCK, VALUE, LIST
 
@@ -227,6 +269,12 @@ Evaluates BLOCK for each pair of elements in ARRAY1 and ARRAY2 and returns a new
     my @b = <1 2 3>;
     my @x = pairwise -> $a, $b { $a, $b }, @a, @b;    # returns a, 1, b, 2, c, 3
 
+#### Idiomatic Perl 6 ways
+
+    my @x = zip(@a,@b).map: -> ($a,$b) { $a + $b };
+
+    my @x = zip(@a,@b).flat;
+
 ### mesh ARRAY1, ARRAY2 [ , ARRAY3 ... ]
 
 ### zip ARRAY1, ARRAY2 [ , ARRAY3 ... ]
@@ -246,6 +294,12 @@ Examples:
 
 `zip` is an alias for `mesh`.
 
+#### Idiomatic Perl 6 ways
+
+    my @x = zip(@a,@b).flat;
+
+    my @x = zip(@a,@b,@c).flat;
+
 ### zip6 ARRAY1, ARRAY2 [ , ARRAY3 ... ]
 
 ### zip_unflatten ARRAY1, ARRAY2 [ , ARRAY3 ... ]
@@ -263,6 +317,12 @@ Returns a list of arrays consisting of the first elements of each array, then th
 
 `zip_unflatten` is an alias for `zip6`.
 
+#### Idiomatic Perl 6 ways
+
+    my @x = zip(@a,@b);
+
+    my @x = zip(@a,@b,@c);
+
 ### listcmp ARRAY0 ARRAY1 [ ARRAY2 ... ]
 
 Returns an associative list of elements and every *id* of the list it was found in. Allows easy implementation of @a & @b, @a | @b, @a ^ @b and so on. Undefined entries in any given array are skipped.
@@ -279,6 +339,12 @@ Returns an associative list of elements and every *id* of the list it was found 
     my @fib = 1, 1, 2;
     my $cmp = listcmp @seq, @prim, @fib;
     # { 1 => [0, 2], 2 => [0, 1, 2], 3 => [0, 1], 5 => [1] }
+
+#### Idiomatic Perl 6 ways
+
+    my @x = zip(@a,@b);
+
+    my @x = zip(@a,@b,@c);
 
 ### arrayify LIST [,LIST [,LIST...]]
 
@@ -307,6 +373,11 @@ Returns a new list by stripping duplicate values in LIST by comparing the values
 
 `distinct` is an alias for `uniq`.
 
+#### Idiomatic Perl 6 ways
+
+    my @x = (1, 1, 2, 2, 3, 5, 3, 4).unique;
+    my $x = (1, 1, 2, 2, 3, 5, 3, 4).unique.elems;
+
 ### singleton LIST
 
 Returns a new list by stripping values in LIST occurring only once by comparing the values as hash keys, except that type objects are considered separate from ''. The order of elements in the returned list is the same as in LIST. Returns the number of elements occurring only once in LIST if the `:scalar` named parameter has been specified.
@@ -321,6 +392,11 @@ Returns a new list by stripping values in LIST occuring more than once by compar
     my @y = duplicates (1,1,2,4,7,2,3,4,6,9);          # returns (1,2,4)
     my $n = duplicates (1,1,2,4,7,2,3,4,6,9), :scalar; # returns 3
 
+#### Idiomatic Perl 6 ways
+
+    my @y = (1,1,2,4,7,2,3,4,6,9).repeated;
+    my $n = (1,1,2,4,7,2,3,4,6,9).repeated.elems;
+
 ### frequency LIST
 
 Returns a hash of distinct values and the corresponding frequency.
@@ -329,6 +405,10 @@ Returns a hash of distinct values and the corresponding frequency.
     #  'Deutschlandfunk (DLF)' => 9, 'WDR 3' => 10,
     #  'WDR 4' => 11, 'WDR 5' => 14, 'WDR Eins Live' => 14,
     #  'Deutschlandradio Kultur' => 8,...)
+
+#### Idiomatic Perl 6 ways
+
+    my %f := %radio_nrw.values.Bag;
 
 ### occurrences LIST
 
@@ -361,11 +441,19 @@ Same as `after` but also includes the element for which BLOCK is true.
 
     my @x = after_incl { $_ %% 5 }, (1..9);   # returns (5, 6, 7, 8, 9)
 
+#### Idiomatic Perl 6 ways
+
+    my @x = (1..9).toggle: * %% 5, :off;
+
 ### before BLOCK, LIST
 
 Returns a list of values of LIST up to (and not including) the point where BLOCK returns a true value. Passes the value as a parameter to BLOCK for each element in LIST in turn.
 
     my @x = before { $_ %% 5 }, (1..9);   # returns (1, 2, 3, 4)
+
+#### Idiomatic Perl 6 ways
+
+    my @x = (1..9).toggle: * %% 5;
 
 ### before_incl BLOCK LIST
 
@@ -405,6 +493,11 @@ Returns a new list containing COUNT random samples from LIST. Is similar to [Lis
     my @r  = samples 10, (1..10); # same as (1..10).pick(*)
     my @r2 = samples 5, (1..10);  # same as (1..10).pick(5)
 
+#### Idiomatic Perl 6 ways
+
+    my @r  = (1..10).pick(*);
+    my @r2 = (1..10).pick(5);
+
 Iteration
 ---------
 
@@ -420,6 +513,10 @@ This is useful for looping over more than one array at once:
 The iterator returns the empty list when it reached the end of all arrays.
 
 If the iterator is passed an argument of '`index`', then it returns the index of the last fetched set of values, as a scalar.
+
+#### Idiomatic Perl 6 ways
+
+    while zip(@a,@b,@c) -> ($a,$b,$c) { .... }
 
 ### each_arrayref LIST
 
@@ -443,6 +540,12 @@ This prints
     d e f
     g
 
+#### Idiomatic Perl 6 ways
+
+    for @x.rotor(3,:partial) -> @vals {
+        print "@vals[]\n";
+    }
+
 Searching
 ---------
 
@@ -458,6 +561,12 @@ Returns the first element in LIST for which BLOCK evaluates to true. Each elemen
     say firstval { .starts-with('g') }, @list;  # Nil, because never
 
 `first_value` is an alias for `firstval`.
+
+#### Idiomatic Perl 6 ways
+
+    say @list.first: *.starts-with('c');
+    say @list.first: *.starts-with('b');
+    say @list.first: *.starts-with('g');
 
 ### onlyval BLOCK, LIST
 
@@ -484,6 +593,12 @@ Returns the last value in LIST for which BLOCK evaluates to true. Each element i
     say lastval { .starts-with('g') }, @list;  # Nil, because never
 
 `last_value` is an alias for `lastval`.
+
+#### Idiomatic Perl 6 ways
+
+    say @list.first: *.starts-with('c'), :end;
+    say @list.first: *.starts-with('b'), :end;
+    say @list.first: *.starts-with('g'), :end;
 
 ### firstres BLOCK, LIST
 
@@ -530,6 +645,10 @@ Evaluates BLOCK for each element in LIST (passed to BLOCK as the parameter) and 
 
     my @x = indexes { $_ %% 2 } (1..10);   # returns (1, 3, 5, 7, 9)
 
+#### Idiomatic Perl 6 ways
+
+    my @x = (1..10).grep: * %% 2, :k;
+
 ### firstidx BLOCK, LIST
 
 ### first_index BLOCK, LIST
@@ -548,6 +667,13 @@ Returns `-1` if no such item could be found.
     print firstidx { $_ == 5 }, @list;    # -1, because not found
 
 `first_index` is an alias for `firstidx`.
+
+#### Idiomatic Perl 6 ways
+
+    printf "item with index %i in list is 4", @list.first: * == 4, :k;
+
+    print @list.first: * == 3, :k;
+    print @list.first( * == 5, :k) // -1;  # not found == Nil
 
 ### onlyidx BLOCK, LIST
 
@@ -587,6 +713,13 @@ Returns `-1` if no such item could be found.
 
 `last_index` is an alias for `lastidx`.
 
+#### Idiomatic Perl 6 ways
+
+    printf "item with index %i in list is 4", @list.first: * == 4, :k, :end;
+
+    print @list.first: * == 3, :k, :end;
+    print @list.first( * == 5, :k, :end) // -1;  # not found == Nil
+
 Sorting
 -------
 
@@ -594,7 +727,7 @@ Sorting
 
 Returns the list of values sorted according to the string values returned by the BLOCK. A typical use of this may be to sort objects according to the string value of some accessor, such as:
 
-    my @sorted = sort_by { .name }, @people;  # same as @people.sort( *.name )
+    my @sorted = sort_by { .name }, @people;
 
 The key function is being passed each value in turn, The values are then sorted according to string comparisons on the values returned. This is equivalent to:
 
@@ -606,13 +739,25 @@ except that it guarantees the `name` accessor will be executed only once per val
 
 This sorts strings by generating sort keys which zero-pad the embedded numbers to some level (9 digits in this case), helping to ensure the lexical sort puts them in the correct order.
 
+#### Idiomatic Perl 6 ways
+
+    my @sorted = @people.sort: *.name;
+
 ### nsort_by BLOCK, LIST
 
 Similar to `sort_by` but compares its key values numerically.
 
+#### Idiomatic Perl 6 ways
+
+    my @sorted = <10 1 20 42>.sort: +*;
+
 ### qsort BLOCK, ARRAY
 
 This sorts the given array **in place** using the given compare code. The Perl 6 version uses the basic sort functionality as provided by the `sort` built-in function.
+
+#### Idiomatic Perl 6 ways
+
+    @people .= sort;
 
 Searching in sorted Lists
 -------------------------
@@ -710,11 +855,19 @@ Counts the number of elements in LIST for which the criterion in BLOCK is true. 
 
     printf "%i item(s) are defined", true { defined($_) }, @list;
 
+#### Idiomatic Perl 6 ways
+
+    print "@list.grep(*.defined).elems() item(s) are defined";
+
 ### false BLOCK, LIST
 
 Counts the number of elements in LIST for which the criterion in BLOCK is false. Passes each item in LIST to BLOCK in turn:
 
     printf "%i item(s) are not defined", false { defined($_) }, @list;
+
+#### Idiomatic Perl 6 ways
+
+    print "@list.grep(!*.defined).elems() item(s) are not defined";
 
 ### reduce_0 BLOCK, LIST
 
@@ -758,11 +911,21 @@ Calculates the minimum and maximum of LIST and returns a two element list with t
 
     my ($min,$max) = minmax (43,66,77,23,780); # (23,780)
 
+#### Idiomatic Perl 6 ways
+
+    my $range = <43,66,77,23,780>.minmax( +* );
+    my $range = (43,66,77,23,780).minmax;   # auto-numerically compares
+
 ### minmaxstr LIST
 
 Computes the minimum and maximum of LIST using string compare and returns a two element list with the first element being the minimum and the second the maximum. Returns the empty list if LIST was empty.
 
     my ($min,$max) = minmaxstr <foo bar baz zippo>; # <bar zippo>
+
+#### Idiomatic Perl 6 ways
+
+    my $range = (43,66,77,23,780).minmax( ~* );
+    my $range = <foo bar baz zippo>.minmax;  # auto-string compares
 
 SEE ALSO
 ========
