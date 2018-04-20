@@ -10,407 +10,399 @@ unit module TXN;
 constant $PROGRAM = 'mktxn';
 constant $VERSION = v0.1.0;
 
-# TXN::Package::Prepare {{{
+# TXNBUILD {{{
 
-my class TXN::Package::Prepare
+# parse TXNBUILD with Config::TOML and store results
+my class TXNBUILD
 {
-    # --- class attributes {{{
-
     has VarNameBare:D $.pkgname is required;
     has Version:D $.pkgver is required;
     has UInt:D $.pkgrel = 1;
-    has Str $.pkgdesc;
+    has Str:D $.pkgdesc = '';
+    has Str:D $.source is required;
     has Int $.date-local-offset;
-    has Str $.txn-dir;
-
-    # --- end class attributes }}}
-
-    # --- submethod BUILD {{{
+    has Str $.include-lib;
 
     submethod BUILD(
-        Str:D :$!pkgname! where .so,
-        Str:D :$pkgver! where .so,
-        Int :$pkgrel,
-        Str :$pkgdesc,
-        Int :$date-local-offset,
-        Str :$txn-dir
+        Str:D :$file! where .so
         --> Nil
     )
     {
-        $!pkgver = Version.new($pkgver);
-        $!pkgrel = $pkgrel.UInt if $pkgrel;
-        $!pkgdesc = $pkgdesc if $pkgdesc;
-        $!date-local-offset = $date-local-offset if $date-local-offset;
-        $!txn-dir = $txn-dir if $txn-dir;
+        my %toml = from-toml(:$file);
+        $!date-local-offset =
+            %toml<date-local-offset>.Int if %toml<date-local-offset>;
+        $!include-lib =
+            gen-include-lib($file, %toml<include-lib>) if %toml<include-lib>;
+        $!pkgdesc = %toml<pkgdesc> if %toml<pkgdesc>;
+        $!pkgname = %toml<pkgname>;
+        $!pkgrel = %toml<pkgrel>.UInt if %toml<pkgrel>;
+        $!pkgver = Version.new(%toml<pkgver>);
+        $!source = %toml<source>;
     }
 
-    # --- end submethod BUILD }}}
-    # --- method new {{{
-
-    # merge build settings from TOML template if one is provided
-    multi method new(
-        Str:D :$template! where .so,
-        Str :$pkgname,
-        Str :$pkgver,
-        Int :$pkgrel,
-        Str :$pkgdesc,
-        Int :$date-local-offset,
-        Str :$txn-dir
-        --> TXN::Package::Prepare:D
+    method new(
+        Str:D :$file! where .so
+        --> TXNBUILD:D
     )
     {
-        my %prepare;
-        my %template = do {
-            my %h;
-            %h<date-local-offset> = $date-local-offset if $date-local-offset;
-            from-toml(:file($template), |%h);
-        }
-
-        %prepare<pkgname> = %template<pkgname> if %template<pkgname>;
-        %prepare<pkgver> = %template<pkgver> if %template<pkgver>;
-        %prepare<pkgrel> = %template<pkgrel>.UInt if %template<pkgrel>;
-        %prepare<pkgdesc> = %template<pkgdesc> if %template<pkgdesc>;
-
-        if %template<txn-dir>
-        {
-            %prepare<txn-dir> = %template<txn-dir>.IO.is-relative
-                # resolve C<txn-dir> path relative to template file
-                ?? join('/', $template.IO.dirname, %template<txn-dir>)
-                # absolute path for C<txn-dir> given, use it directly
-                !! %template<txn-dir>;
-        }
-
-        if %template<date-local-offset>
-        {
-            %prepare<date-local-offset> = Int(%template<date-local-offset>);
-        }
-
-        # overwrite template options if conflicts arise
-        %prepare<pkgname> = $pkgname if $pkgname;
-        %prepare<pkgver> = $pkgver if $pkgver;
-        %prepare<pkgrel> = $pkgrel.UInt if $pkgrel;
-        %prepare<pkgdesc> = $pkgdesc if $pkgdesc;
-        %prepare<date-local-offset> = $date-local-offset if $date-local-offset;
-        %prepare<txn-dir> = $txn-dir if $txn-dir;
-
-        self.bless(|%prepare);
+        self.bless(:$file);
     }
-
-    multi method new(
-        Str :$pkgname,
-        Str :$pkgver,
-        Int :$pkgrel,
-        Str :$pkgdesc,
-        Int :$date-local-offset,
-        Str :$txn-dir,
-        Str :$template
-    )
-    {
-        my %prepare;
-        %prepare<pkgname> = $pkgname if $pkgname;
-        %prepare<pkgver> = $pkgver if $pkgver;
-        %prepare<pkgrel> = $pkgrel.UInt if $pkgrel;
-        %prepare<pkgdesc> = $pkgdesc if $pkgdesc;
-        %prepare<date-local-offset> = $date-local-offset if $date-local-offset;
-        %prepare<txn-dir> = $txn-dir if $txn-dir;
-        self.bless(|%prepare);
-    }
-
-    # --- end method new }}}
 }
 
-# end TXN::Package::Prepare }}}
+# end TXNBUILD }}}
 # TXN::Package {{{
 
+# create package from accounting ledger with TXNBUILD
 my class TXN::Package
 {
-    # --- attributes {{{
-
-    # e.g. "mktxn v0.0.2 2016-05-10T10:22:44.054586-07:00"
     has Str:D $!compiler is required;
-
-    # accounting ledger entries
     has Entry:D @!entry is required;
-
-    # number of accounting ledger entries in @!entry
     has UInt:D $!count is required;
-
-    # entities seen in accounting ledger entries
     has VarName:D @!entities-seen is required;
-
-    # package info
     has VarNameBare:D $!pkgname is required;
     has Version:D $!pkgver is required;
     has UInt:D $!pkgrel is required;
-    has Str $!pkgdesc;
+    has Str:D $!pkgdesc is required;
 
-    # --- end attributes }}}
-
-    # --- submethod BUILD {{{
-
-    submethod BUILD(
-        Str:D :$!compiler! where .so,
-        Entry:D :@!entry!,
-        UInt:D :$!count!,
-        Str:D :@!entities-seen! where .so,
-        VarNameBare:D :$!pkgname!,
-        Version:D :$!pkgver!,
-        UInt:D :$!pkgrel!,
-        Str :$pkgdesc
+    multi submethod BUILD(
+        Str:D :$file! where .so,
+        Bool :$verbose
+        --> Nil
     )
     {
-        $!pkgdesc = $pkgdesc if $pkgdesc;
-    }
-
-    # --- end submethod BUILD }}}
-    # --- method new {{{
-
-    method new(
-        # whether C<$cf> is content of a file, or is a file path
-        #
-        # if file path, we pass as arg C<:file> to C<from-txn> to get
-        # proper include directive handling
-        Str:D $content-or-file where /CONTENT|FILE/,
-
-        # the content of a file, or file path
-        Str:D $cf,
-
-        # whether to print console progress messages
-        Bool:D :$verbose = False,
-
-        *%opts (
-            Str :pkgname($),
-            Str :pkgver($),
-            Int :pkgrel($),
-            Str :pkgdesc($),
-            Int :date-local-offset($),
-            Str :txn-dir($),
-            Str :template($)
-        )
-    )
-    {
-        my %bless;
-
-        my TXN::Package::Prepare:D $prepare = TXN::Package::Prepare.new(|%opts);
-
-        my VarNameBare:D $pkgname = $prepare.pkgname;
-        my Version:D $pkgver = $prepare.pkgver;
-        my UInt:D $pkgrel = $prepare.pkgrel;
-        my Str:D $pkgdesc = $prepare.pkgdesc if $prepare.pkgdesc;
-
         my DateTime:D $dt = now.DateTime;
-
-        say("Making txn pkg: $pkgname $pkgver-$pkgrel ($dt)") if $verbose;
-
-        my Str:D $compiler = "$PROGRAM v$VERSION $dt";
-
-        # parse the accounting ledger
-        my %h;
-        %h<date-local-offset> = $prepare.date-local-offset
-            if $prepare.date-local-offset.defined;
-        %h<txn-dir> = $prepare.txn-dir if $prepare.txn-dir;
-        my Entry @entry = do given $content-or-file
-        {
-            when 'CONTENT' { from-txn($cf, |%h) }
-            when 'FILE' { from-txn(:file($cf), |%h) }
-        }
-
-        # compute basic stats about the accounting ledger
-        my UInt:D $count = @entry.elems;
-        my VarName:D @entities-seen = get-entities-seen(@entry);
-
-        %bless<compiler> = $compiler;
-        %bless<entry> = @entry;
-        %bless<count> = $count;
-        %bless<entities-seen> = @entities-seen;
-        %bless<pkgname> = $pkgname;
-        %bless<pkgver> = $pkgver;
-        %bless<pkgrel> = $pkgrel;
-        %bless<pkgdesc> = $pkgdesc if $pkgdesc;
-
-        self.bless(|%bless);
+        $!compiler = "$PROGRAM v$VERSION $dt";
+        my TXNBUILD $txnbuild .= new(:$file);
+        $!pkgdesc = $txnbuild.pkgdesc if $txnbuild.pkgdesc;
+        $!pkgname = $txnbuild.pkgname;
+        $!pkgrel = $txnbuild.pkgrel;
+        $!pkgver = $txnbuild.pkgver;
+        my %opt;
+        %opt<date-local-offset> =
+            $txnbuild.date-local-offset if $txnbuild.date-local-offset.defined;
+        %opt<include-lib> = $txnbuild.include-lib if $txnbuild.include-lib;
+        my Str:D $message =
+            sprintf(
+                Q{Making txn pkg: %s %s-%s (%s)},
+                $!pkgname,
+                $!pkgver,
+                $!pkgrel,
+                $dt
+            );
+        say($message) if $verbose;
+        @!entry = from-txn(:file($txnbuild.source), |%opt);
+        $!count = @!entry.elems;
+        @!entities-seen = gen-entities-seen(@!entry);
     }
 
-    # --- end method new }}}
+    multi submethod BUILD(
+        Str:D :$!pkgname!,
+        Version:D :$!pkgver!,
+        Str:D :$source!,
+        UInt :$pkgrel,
+        Str :$pkgdesc,
+        Int :$date-local-offset,
+        Str :$include-lib
+        --> Nil
+    )
+    {
+        my DateTime:D $dt = now.DateTime;
+        $!compiler = "$PROGRAM v$VERSION $dt";
+        $!pkgdesc = $pkgdesc ?? $pkgdesc !! '';
+        $!pkgrel = $pkgrel ?? $pkgrel !! 1;
+        my %opt;
+        %opt<date-local-offset> =
+            $date-local-offset if $date-local-offset.defined;
+        %opt<include-lib> = $include-lib if $include-lib;
+        @!entry = from-txn(:file($source), |%opt);
+        $!count = @!entry.elems;
+        @!entities-seen = gen-entities-seen(@!entry);
+    }
 
-    # --- method hash {{{
+    multi method new(
+        *%opt (
+            Str:D :$file! where .so,
+            Bool :$verbose
+        )
+        --> TXN::Package:D
+    )
+    {
+        self.bless(|%opt);
+    }
+
+    multi method new(
+        *%opt (
+            Str:D :$pkgname!,
+            Version:D :$pkgver!,
+            Str:D :$source!,
+            UInt :$pkgrel,
+            Str :$pkgdesc,
+            Int :$date-local-offset,
+            Str :$include-lib
+        )
+        --> TXN::Package:D
+    )
+    {
+        self.bless(|%opt);
+    }
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        %(
-            :@!entry,
-            :txn-info(%(
-                :$!compiler,
-                :$!count,
-                :@!entities-seen,
-                :$!pkgdesc,
-                :$!pkgname,
-                :$!pkgrel,
-                :$!pkgver
-            ))
-        );
+        my %txn-info =
+            :$!compiler,
+            :$!count,
+            :@!entities-seen,
+            :$!pkgdesc,
+            :$!pkgname,
+            :$!pkgrel,
+            :$!pkgver;
+        my %hash = :@!entry, :%txn-info;
     }
-
-    # --- end method hash }}}
-
-    # --- sub get-entities-seen {{{
-
-    sub get-entities-seen(Entry:D @entry --> Array:D)
-    {
-        my VarName:D @entities-seen =
-            @entry
-            .map({
-                .posting
-                .map({ .account.entity })
-            })
-            .flat
-            .unique
-            .sort;
-    }
-
-    # --- end sub get-entities-seen }}}
 }
 
 # end TXN::Package }}}
 
+# sub gen-entities-seen {{{
+
+sub gen-entities-seen(Entry:D @entry --> Array:D)
+{
+    my VarName:D @entities-seen =
+        @entry
+        .map({
+            .posting
+            .map({ .account.entity })
+        })
+        .flat
+        .unique
+        .sort;
+}
+
+# end sub gen-entities-seen }}}
+# sub gen-include-lib {{{
+
+# resolve C<include-lib> path relative to TXNBUILD file
+multi sub gen-include-lib(
+    Str:D $txnbuild,
+    Str:D $include-lib where .IO.is-relative
+    --> Str:D
+)
+{
+    my Str:D $gen-include-lib = join('/', $txnbuild.IO.dirname, $include-lib);
+}
+
+# absolute path for C<include-lib> given, use it directly
+multi sub gen-include-lib(
+    Str:D $txnbuild,
+    Str:D $include-lib
+    --> Str:D
+)
+{
+    my Str:D $gen-include-lib = $include-lib;
+}
+
+# end sub gen-include-lib }}}
 # sub mktxn {{{
 
 multi sub mktxn(
     Str:D :$file! where .so,
-    Bool:D :$release! where .so,
-    *%opts (
-        Str :pkgname($),
-        Str :pkgver($),
-        Int :pkgrel($),
-        Str :pkgdesc($),
-        Str :txn-dir($),
-        Int :date-local-offset($),
-        Str :template($)
-    )
+    Bool:D :$release! where .so
+    --> Nil
 ) is export
 {
-    my Str:D $f = resolve-txn-file-path($file);
-    my %txn-package = TXN::Package.new('FILE', $f, :verbose, |%opts).hash;
-    package(%txn-package);
-}
-
-multi sub mktxn(
-    Str:D $content,
-    Bool:D :$release! where .so,
-    *%opts (
-        Str :pkgname($),
-        Str :pkgver($),
-        Int :pkgrel($),
-        Str :pkgdesc($),
-        Str :txn-dir($),
-        Int :date-local-offset($),
-        Str :template($)
-    )
-) is export
-{
-    my %txn-package =
-        TXN::Package.new('CONTENT', $content, :verbose, |%opts).hash;
-    package(%txn-package);
+    my %pkg = TXN::Package.new(:$file, :verbose).hash;
+    makepkg(%pkg, :verbose);
 }
 
 multi sub mktxn(
     Str:D :$file! where .so,
-    *%opts (
-        Str :pkgname($),
-        Str :pkgver($),
-        Int :pkgrel($),
-        Str :pkgdesc($),
-        Str :txn-dir($),
-        Int :date-local-offset($),
-        Str :template($)
-    )
+    Bool :release($)
     --> Hash:D
 ) is export
 {
-    TXN::Package.new('FILE', $file, |%opts).hash;
+    my %pkg = TXN::Package.new(:$file).hash;
 }
 
 multi sub mktxn(
-    Str:D $content,
-    *%opts (
-        Str :pkgname($),
-        Str :pkgver($),
-        Int :pkgrel($),
-        Str :pkgdesc($),
-        Str :txn-dir($),
-        Int :date-local-offset($),
-        Str :template($)
+    Bool:D :$release! where .so,
+    *%opt (
+        Str:D :$pkgname!,
+        Version:D :$pkgver!,
+        Str:D :$source!,
+        UInt :$pkgrel,
+        Str :$pkgdesc,
+        Int :$date-local-offset,
+        Str :$include-lib
+    )
+    --> Nil
+)
+{
+    my %pkg = TXN::Package.new(|%opt).hash;
+    makepkg(%pkg);
+}
+
+multi sub mktxn(
+    *%opt (
+        Str:D :$pkgname!,
+        Version:D :$pkgver!,
+        Str:D :$source!,
+        UInt :$pkgrel,
+        Str :$pkgdesc,
+        Int :$date-local-offset,
+        Str :$include-lib
     )
     --> Hash:D
-) is export
+)
 {
-    TXN::Package.new('CONTENT', $content, |%opts).hash;
+    my %pkg = TXN::Package.new(|%opt).hash;
 }
 
 # end sub mktxn }}}
-# sub package {{{
+# sub makepkg {{{
 
-# serialize to JSON files on disk
-sub package(% (Entry:D :@entry!, :%txn-info!))
+# serialize to JSON files on disk and compress
+multi sub makepkg(
+    %pkg (
+        Entry:D :@entry!,
+        :%txn-info!
+    ),
+    Bool :$verbose
+    --> Nil
+)
 {
-    say("Creating txn pkg \"%txn-info<pkgname>\"…");
-
-    # make build directory
-    my Str:D $build-dir = "$*CWD/build";
-    my Str:D $txn-info-file = "$build-dir/.TXNINFO";
-    my Str:D $txn-json-file = "$build-dir/txn.json";
+    makepkg('message', 'creating', %txn-info) if $verbose;
+    my Str:D $build-dir = sprintf(Q{%s/build}, $*CWD);
+    my Str:D $txn-info-file = sprintf(Q{%s/.TXNINFO}, $build-dir);
+    my Str:D $txn-json-file = sprintf(Q{%s/txn.json}, $build-dir);
     mkdir($build-dir);
+    makepkg('serialize', %pkg, $txn-info-file, $txn-json-file);
+    makepkg('compress', %txn-info, $build-dir, $txn-info-file, $txn-json-file);
+    makepkg('message', 'finished', %txn-info) if $verbose;
+    makepkg('message', 'cleaning') if $verbose;
+    makepkg('clean', $build-dir);
+}
 
+multi sub makepkg(
+    'message',
+    'creating',
+    % (
+        Str:D :$pkgname!,
+        *%
+    )
+    --> Nil
+)
+{
+    my Str:D $message-creating = sprintf(Q{Creating txn pkg "%s"…}, $pkgname);
+    say($message-creating);
+}
+
+multi sub makepkg(
+    'serialize',
+    % (
+        Entry:D :@entry!,
+        :%txn-info
+    ),
+    Str:D $txn-info-file,
+    Str:D $txn-json-file
+    --> Nil
+)
+{
     # serialize .TXNINFO to JSON
-    spurt($txn-info-file, Rakudo::Internals::JSON.to-json(%txn-info) ~ "\n");
+    my Str:D $txn-info = Rakudo::Internals::JSON.to-json(%txn-info);
+    spurt($txn-info-file, $txn-info ~ "\n");
 
     # serialize accounting ledger to JSON
-    spurt(
-        $txn-json-file,
-        Rakudo::Internals::JSON.to-json(
-            remarshal(@entry, :if<entry>, :of<hash>)
-        ) ~ "\n"
-    );
+    my @remarshal = remarshal(@entry, :if<entry>, :of<hash>);
+    my Str:D $txn-json = Rakudo::Internals::JSON.to-json(@remarshal);
+    spurt($txn-json-file, $txn-json ~ "\n");
+}
 
-    # compress
-    my Str:D $tarball =
-        "%txn-info<pkgname>-%txn-info<pkgver>-%txn-info<pkgrel>\.txn.tar.xz";
-    shell("tar \\
-             -C $build-dir \\
-             --xz \\
-             -cvf $tarball \\
-             {$txn-info-file.IO.basename} {$txn-json-file.IO.basename}");
+multi sub makepkg(
+    'compress',
+    %txn-info,
+    Str:D $build-dir,
+    Str:D $txn-info-file,
+    Str:D $txn-json-file
+)
+{
+    my Str:D $tar-cmdline =
+        build-tar-cmdline(
+            %txn-info,
+            $build-dir,
+            $txn-info-file,
+            $txn-json-file
+        );
+    shell($tar-cmdline);
+}
 
-    my Str:D $dt = %txn-info<compiler>.split(' ')[*-1];
-    say("Finished making: %txn-info<pkgname> ",
-        "%txn-info<pkgver>-%txn-info<pkgrel> ($dt)");
+multi sub makepkg(
+    'message',
+    'finished',
+    % (
+        Str:D :$compiler!,
+        Str:D :$pkgname!,
+        Version:D :$pkgver!,
+        UInt:D :$pkgrel!,
+        *%
+    )
+    --> Nil
+)
+{
+    my Str:D $dt = $compiler.split(' ').tail;
+    my Str:D $message-finish =
+        sprintf(
+            Q{Finished making: %s %s-%s (%s)},
+            $pkgname,
+            $pkgver,
+            $pkgrel,
+            $dt
+        );
+    say($message-finish);
+}
 
-    # clean up build directory
+multi sub makepkg(
+    'message',
+    'cleaning'
+    --> Nil
+)
+{
     say('Cleaning up…');
+}
+
+multi sub makepkg(
+    'clean',
+    Str:D $build-dir
+    --> Nil
+)
+{
     dir($build-dir).race.map({ .unlink });
     rmdir($build-dir);
 }
 
-# end sub package }}}
-# sub resolve-txn-file-path {{{
-
-multi sub resolve-txn-file-path(
-    Str:D $file where .IO.extension eq 'txn'
+sub build-tar-cmdline(
+    % (
+        Str:D :$pkgname!,
+        Version:D :$pkgver!,
+        UInt:D :$pkgrel!,
+        *%
+    ),
+    Str:D $build-dir,
+    Str:D $txn-info-file,
+    Str:D $txn-json-file
     --> Str:D
 )
 {
-    exists-readable-file($file)
-        or die;
-    $file;
+    my Str:D $tarball =
+        sprintf(Q{%s-%s-%s.txn.pkg.tar.xz}, $pkgname, $pkgver, $pkgrel);
+    my Str:D $tar-cmdline =
+        sprintf(
+            Q{tar -C %s --xz -cvf %s %s %s},
+            $build-dir,
+            $tarball,
+            $txn-info-file.IO.basename,
+            $txn-json-file.IO.basename
+        );
 }
 
-multi sub resolve-txn-file-path(Str:D $file where .so --> Str:D)
-{
-    exists-readable-file("$file.txn")
-        or die;
-    "$file.txn";
-}
-
-# end sub resolve-txn-file-path }}}
+# end sub makepkg }}}
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

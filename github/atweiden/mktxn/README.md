@@ -1,4 +1,4 @@
-# TXN
+# mktxn
 
 Double-entry accounting ledger packager
 
@@ -8,24 +8,25 @@ Double-entry accounting ledger packager
 **cmdline**
 
 ```sh
-mktxn \
-  --pkgname="txnjrnl" \
-  --pkgver="1.0.0" \
-  --pkgrel=1 \
-  --pkgdesc="My transactions" \
-  sample.txn
+cat >> TXNBUILD <<'EOF'
+pkgname = 'sample'
+pkgver = '1.0.0'
+pkgrel = 1
+source = 'sample.txn'
+EOF
+mktxn
 ```
 
 **perl6**
 
 ```perl6
 use TXN;
-
-my Str $file = 'sample.txn';
 my Str $pkgname = 'sample';
-my Str $pkgver = '1.0.0';
+my Version $pkgver .= new('1.0.0');
 my UInt $pkgrel = 1;
-my %pkg = mktxn(:$file, :$pkgname, :$pkgver, :$pkgrel, :$pkgdesc);
+my Str $pkgdesc = 'Sample transactions';
+my Str $source = 'sample.txn';
+my %pkg = mktxn(:$pkgname, :$pkgver, :$pkgrel, :$pkgdesc, :$source);
 ```
 
 
@@ -144,7 +145,8 @@ txn.json contains the output of serializing the accounting ledger to JSON.
 ```
 
 `.TXNINFO` and `txn.json` are compressed and saved as filename
-`$pkgname-$pkgver-$pkgrel.txn.tar.xz` in the current working directory.
+`$pkgname-$pkgver-$pkgrel.txn.pkg.tar.xz` in the current working
+directory.
 
 
 ## Installation
@@ -174,3 +176,5 @@ $ PERL6LIB=lib prove -r -e perl6
 
 This is free and unencumbered public domain software. For more
 information, see http://unlicense.org/ or the accompanying UNLICENSE file.
+
+<!-- vim: set filetype=markdown foldmethod=marker foldlevel=0 nowrap: -->

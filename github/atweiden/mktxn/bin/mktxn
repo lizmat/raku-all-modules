@@ -13,33 +13,21 @@ use TXN;
 # main
 # -----------------------------------------------------------------------------
 
-# release
-multi sub MAIN(
-    Str:D $file where .so,
-    Str :N(:$pkgname),
-    Str :V(:$pkgver),
-    Int :R(:$pkgrel),
-    Str :D(:$pkgdesc),
-    Str :I(:$txn-dir),
-    Int :L(:$date-local-offset),
-    Str :T(:$template)
-)
+multi sub MAIN(Str:D :$txnbuild! where .so --> Nil)
 {
-    my %opts;
-    %opts<pkgname> = $pkgname if $pkgname;
-    %opts<pkgver> = $pkgver if $pkgver;
-    %opts<pkgrel> = $pkgrel if $pkgrel;
-    %opts<pkgdesc> = $pkgdesc if $pkgdesc;
-    %opts<txn-dir> = resolve-path($txn-dir) if $txn-dir;
-    %opts<date-local-offset> = Int($date-local-offset) if $date-local-offset;
-    %opts<template> = resolve-path($template) if $template;
+    my Str:D $file = resolve-path($txnbuild);
+    mktxn(:$file, :release);
+}
 
-    mktxn(:file(resolve-path($file)), :release, |%opts);
+multi sub MAIN(Str :txnbuild($) --> Nil)
+{
+    my Str:D $file = 'TXNBUILD';
+    mktxn(:$file, :release);
 }
 
 sub resolve-path(Str:D $path where .so --> Str:D)
 {
-    ~$path.subst(/^'~/'/, $*HOME ~ '/').IO.resolve;
+    my Str:D $resolve-path = ~$path.subst(/^'~/'/, "$*HOME/").IO.resolve;
 }
 
 
@@ -49,36 +37,15 @@ sub resolve-path(Str:D $path where .so --> Str:D)
 # usage
 # -----------------------------------------------------------------------------
 
-sub USAGE()
+sub USAGE(--> Nil)
 {
     constant $HELP = q:to/EOF/.trim;
     Usage:
-      mktxn [--pkgname=<name>]
-            [--pkgver=<version>]
-            [--pkgrel=<release>]
-            [--pkgdesc=<description>]
-            [--txn-dir=<dir>]
-            [--date-local-offset=<offset>]
-            [--template=<template>]
-            <file>                            Package TXN from file
+      mktxn [--txnbuild=<path>]
 
     Options:
-      -h, --help
-        print this help message
-      -N, --pkgname=<name>
-        the name of TXN package
-      -V, --pkgver=<version>
-        the version number of TXN package
-      -R, --pkgrel=<release>
-        the release number of TXN package
-      -D, --pkgdesc=<description>
-        the description of TXN package
-      -I, --txn-dir=<dir>
-        the include directory
-      -L, --date-local-offset=<offset>
-        the local offset for dates without one
-      -T, --template=<template>
-        the location of the config template for TXN package
+      -h, --help         print this help message
+      --txnbuild=<path>  path to TXNBUILD
     EOF
     say($HELP);
 }

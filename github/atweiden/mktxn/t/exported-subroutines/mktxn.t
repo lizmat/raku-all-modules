@@ -9,19 +9,17 @@ use Test;
 
 plan(1);
 
-# verify mktxn(...) eqv TXN::Parser.made
-subtest({
-    my Str $txn = q:to/EOF/;
-    2016-01-01 "I bought cat food for $5"
-      Expenses:Personal:Pets:Food         $5.00 USD
-      Assets:Personal:Bankwest:Cheque    -$5.00 USD
-    EOF
-
-    my Entry @entry = from-txn($txn);
-    my Entry @entry-from-txn-parser = TXN::Parser.parse($txn).made;
-    my Entry @entry-from-mktxn =
-        mktxn($txn, :pkgname<catfood>, :pkgver<1.0.0>, :pkgrel(1))<entry>.Array;
-
+subtest('verify mktxn(...) eqv TXN::Parser.made', {
+    my Str:D $file = 't/data/fy2013/fy2013.txn';
+    my Entry:D @entry = from-txn(:$file);
+    my Entry:D @entry-from-txn-parser = TXN::Parser.parsefile($file).made;
+    my Entry:D @entry-from-mktxn = do {
+        my Str:D $pkgname = 'fy2013';
+        my Version $pkgver .= new('1.0.0');
+        my UInt:D $pkgrel = 1;
+        my Str:D $source = $file;
+        mktxn(:$pkgname, :$pkgver, :$pkgrel, :$source)<entry>.flat
+    };
     is-deeply(@entry-from-txn-parser, @entry, 'Is expected value');
     is-deeply(@entry-from-txn-parser, @entry-from-mktxn, 'Is expected value');
 });
