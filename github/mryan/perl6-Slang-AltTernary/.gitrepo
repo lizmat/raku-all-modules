@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/mryan/perl6-Slang-AltTernary.git
+	branch = master
+	commit = b20b47682b5838b0e6b7e01fecad4002ec7f96da
+	parent = 6210ae54357a0821ea13b2a0c8cc868ba39b2841
+	cmdver = 0.4.0
