@@ -24,6 +24,88 @@ my role ExtGraphicsAtt {
     }
 }
 
+class X::PDF::Content is Exception {
+}
+
+class X::PDF::Content::OP::Unexpected
+    is X::PDF::Content {
+    has Str $.op is required;
+    has Str $.type is required;
+    has Str $.mnemonic is required;
+    has Str $.where is required;
+    method message { "$!type operation '$.op' ($!mnemonic) used $!where" }
+}
+
+class X::PDF::Content::OP::BadNesting
+    is X::PDF::Content {
+    has Str $.op is required;
+    has Str $.mnemonic is required;
+    has Str $.opener;
+    method message {
+        "bad nesting; '$!op' ($!mnemonic) operator not matched by preceeding $!opener"
+    }
+ }
+
+class X::PDF::Content::OP::Error
+    is X::PDF::Content {
+    has Str $.op is required;
+    has Str $.mnemonic is required;
+    has Exception $.error is required;
+    method message { "error processing '$.op' ($!mnemonic) operator: {$!error.message}" }
+}
+
+class X::PDF::Content::OP::Unknown
+    is X::PDF::Content {
+    has Str $.op is required;
+    method message { "unknown content operator: '$.op'" }
+}
+
+class X::PDF::Content::OP::BadArrayArg
+    is X::PDF::Content {
+    has Str $.op is required;
+    has $.arg is required;
+    has Str $.mnemonic is required;
+    method message { "invalid entry in '$.op' ($!mnemonic) array: {$!arg.perl}" }
+}
+
+class X::PDF::Content::OP::BadArg
+    is X::PDF::Content {
+    has Str $.op is required;
+    has $.arg is required;
+    has Str $.mnemonic is required;
+    method message { "bad '$.op' ($!mnemonic) argument: {$!arg.perl}" }
+}
+
+class X::PDF::Content::OP::TooFewArgs
+    is X::PDF::Content {
+    has Str $.op is required;
+    has Str $.mnemonic is required;
+    method message { "too few arguments to '$.op' ($!mnemonic)" }
+}
+
+class X::PDF::Content::OP::ArgCount
+    is X::PDF::Content {
+    has Str $.message is required;
+}
+
+class X::PDF::Content::Unclosed
+    is X::PDF::Content {
+    has Str $.message is required;
+}
+
+class X::PDF::Content::ParseError
+    is X::PDF::Content {
+    has Str $.content is required;
+    method message {"unable to parse content stream: $!content";}
+}
+
+class X::PDF::Content::UnknownResource
+    is X::PDF::Content {
+    has Str $.type is required;
+    has Str $.key is required;
+    method message { "unknown $!type resource: /$!key" }
+}
+
 class PDF::Content::Ops {
 
     use PDF::Writer;
@@ -63,7 +145,7 @@ class PDF::Content::Ops {
         :MoveShowText<'>
     »;
 
-    my constant %OpCode = OpCode.enums.invert.Hash;
+    my constant %OpName = OpCode.enums.invert.Hash;
 
     # See [PDF 1.7 TABLE 4.1 Operator categories]
     my constant GeneralGraphicOps = set <w J j M d ri i gs>;
@@ -199,7 +281,7 @@ class PDF::Content::Ops {
                 $!Font = [font-face, $size];
             }
             else {
-                die "unknown font key: /$key"
+                die X::PDF::Content::UnknownResource.new: :type<Font>, :$key;
             }
         }
         else {
@@ -229,9 +311,7 @@ class PDF::Content::Ops {
                                                @!DashPattern = [ [$a.map: *.value], $p]; 
                                            }) is rw = [[], 0];
     my subset ColorSpace of Str where 'DeviceRGB'|'DeviceGray'|'DeviceCMYK'|'DeviceN'|'Pattern'|'Separation'|'ICCBased'|'Indexed'|'Lab'|'CalGray'|'CalRGB';
-    method !colorspace-resource($cs) {
-        self.resources('ColorSpace'){$cs};
-    }
+
     has Str $.StrokeColorSpace is graphics(method ($!StrokeColorSpace) {}) is rw = 'DeviceGray';
     has @!StrokeColor is graphics = [0.0];
     method StrokeColor is rw {
@@ -244,18 +324,16 @@ class PDF::Content::Ops {
                         my $cs = ~ $0;
                         self."SetStroke$cs"(|.value);
                     }
-                    elsif $key ~~ ColorSpace || self!colorspace-resource(.key) {
+                    else {
                         self.SetStrokeColorSpace($key);
                         self.SetStrokeColorN(|.value);
                     }
-                    else {
-                       die "unknown colorspace: {$key}";
-                   }
-               }
-            });
+                }
+            }
+        );
     }
 
-    has Str $.FillColorSpace is graphics(method ($!FillColorSpace) {}) is rw = 'DeviceGray';
+    has Str $.FillColorSpace is graphics(method ($!FillColorSpace) { }) is rw = 'DeviceGray';
     has @!FillColor is graphics = [0.0];
     method FillColor is rw {
         Proxy.new(
@@ -267,15 +345,13 @@ class PDF::Content::Ops {
                         my $cs = ~ $0;
                         self."SetFill$cs"(|.value);
                     }
-                    elsif $key ~~ ColorSpace || self!colorspace-resource($key) {
+                    else {
                         self.SetFillColorSpace($key);
                         self.SetFillColorN(|.value);
                     }
-                    else {
-                       die "unknown colorspace: {$key}";
-                   }
-               }
-            });
+                }
+            }
+        );
     }
 
     my subset RenderingIntention of Str where 'AbsoluteColorimetric'|'RelativeColormetric'|'Saturation'|'Perceptual';
@@ -330,26 +406,31 @@ class PDF::Content::Ops {
         }
 
         if !$ok-here && $.strict {
+            # Found an op we didn't expect. Raise a warning.
+            my $type;
+            my $where;
             if $!context == Text && $op ∈ SpecialGraphicOps {
-                warn "special graphics operation '$op' (%OpCode{$op}) used in a BT ... ET text block"
+                $type = 'special graphics';
+                $where = 'in a BT ... ET text block';
             }
             elsif $op ∈ TextOps {
-                warn "text operation '$op' (%OpCode{$op}) outside of a BT ... ET text block\n";
+                $type = 'text operation';
+                $where = 'outside of a BT ... ET text block';
             }
             else {
-                my $more-info = ' (first operation)';
+                $type = 'unexpected';
+                $where = '(first operation)';
 
                 loop (my int $n = +@!ops-2; $n >= 0; $n--) {
                     with @!ops[$n].key {
                         unless $_ ~~ 'comment' {
-                            $more-info = ", in $!context context, following '$_' (%OpCode{$_})";
+                            $where = "in $!context context, following '$_' (%OpName{$_})";
                             last;
                         }
                     }
                 }
-
-                warn "unexpected '$op' (%OpCode{$op}) operation" ~ $more-info;
             }
+            warn X::PDF::Content::OP::Unexpected.new: :$type, :$op, :mnemonic(%OpName{$op}), :$where;
         }
     }
 
@@ -390,7 +471,7 @@ class PDF::Content::Ops {
                 when Str     { :literal($_) }
                 when Numeric { :int(.Int) }
                 when Pair    { $_ }
-                default {die "invalid entry in $op array: {.perl}"}
+                default {die X::PDF::Content::OP::BadArrayArg.new: :$op, :mnemonic(%OpName{$op}), :arg($_);}
             });
             [ :@array ];
         },
@@ -411,7 +492,7 @@ class PDF::Content::Ops {
             my @array = $args.map({
                 when Numeric { :real($_) }
                 when Pair    { $_ }
-                default {die "invalid entry in $op array: {.perl}"}
+                default {die X::PDF::Content::OP::BadArg.new: :$op, :mnemonic(%OpName{$op}), :arg($_) }
             });
             [ :@array, :$real ];
         },
@@ -473,14 +554,14 @@ class PDF::Content::Ops {
         # c1, ..., cn             sc | SC
         'sc'|'SC' => sub (Str $op, *@args is copy) {
 
-            die "too few arguments to: $op"
+            die X::PDF::Content::OP::TooFewArgs.new: :$op, :mnemonic(%OpName{$op})
                 unless @args;
 
             @args = @args.map({
                 when Pair    {$_}
                 when Numeric { :real($_) }
                 default {
-                    die "$op: bad argument: {.perl}"
+                    die X::PDF::Content::OP::BadArg.new: :$op, :mnemonic(%OpName{$op}), :arg($_);
                 }
             });
 
@@ -491,7 +572,7 @@ class PDF::Content::Ops {
         'scn'|'SCN' => sub (Str $op, *@_args) {
 
             my @args = @_args.list;
-            die "too few arguments to: $op"
+            die X::PDF::Content::OP::TooFewArgs.new: :$op, :mnemonic(%OpName{$op})
                 unless @args;
 
             # scn & SCN have an optional trailing name
@@ -502,7 +583,7 @@ class PDF::Content::Ops {
                 when Pair    {$_}
                 when Numeric { :real($_) }
                 default {
-                    die "$op: bad argument: {.perl}"
+                    die X::PDF::Content::OP::BadArrayArg.new: :$op, :mnemonic(%OpName{$op}), :arg($_);
                 }
             });
 
@@ -536,15 +617,15 @@ class PDF::Content::Ops {
     multi sub op(Str $op, |c) is default {
         with %Ops{$op} {
             CATCH {
+                when X::PDF::Content {.rethrow }
                 default {
-                   note "error processing '$op' (%OpCode{$op}) operator";
-                   die $_;
+                    die X::PDF::Content::OP::Error.new: :$op, :mnemonic(%OpName{$op}), :error($_);
                 }
             }
             $op => .($op,|c);
         }
         else {
-            die "unknown content operator: '$op'";
+            die X::PDF::Content::OP::Unknown.new :$op;
         }
     }
 
@@ -557,37 +638,35 @@ class PDF::Content::Ops {
     multi method op(*@args is copy) {
         $!content-cache = Nil;
         my \opn = op(|@args);
-	my Str $op-name;
+	my Str $op;
 
         if opn ~~ Pair {
-	    $op-name = opn.key.Str;
+	    $op = opn.key.Str;
 	    @args = opn.value.map: *.value;
 	}
 	else {
-	    $op-name = opn.Str;
+	    $op = opn.Str;
 	}
 
-	if $!strict {
-	    if !@!gsave {
-	        # not illegal just bad practice. makes it harder to later edit/reuse this content stream
-	        # and may upset downstream utilities
-		warn "graphics operation '$op-name' (%OpCode{$op-name}) outside of a 'q' ... 'Q' (Save .. Restore) graphics block\n"
-		    if self.is-graphics-op: $op-name;
-	    }
+        if $!strict && !@!gsave && self.is-graphics-op($op) {
+            # not illegal just bad practice to perform graphics outside of a
+            # block. makes it harder to later edit/reuse this content stream
+            # and may upset downstream utilities
+            warn X::PDF::Content::OP::Unexpected.new: :$op, :mnemonic(%OpName{$op}), :type('graphics operator'), :where("outside of a 'q' ... 'Q' (Save .. Restore) graphics block");
 	}
 
 	@!ops.push(opn);
-        unless $op-name ~~ Comment {
-            self!track-context($op-name);
-            self.track-graphics($op-name, |@args );
+        unless $op ~~ Comment {
+            self!track-context($op);
+            self.track-graphics($op, |@args );
 	    if @!callback {
                  # cook a little more
                  my @params = @args.map: { .isa(List) ?? [ .map: *.value ] !! $_ };
                 my $*gfx = self;
-                .($op-name, |@params )
+                .($op, |@params )
                     for @!callback;
             }
-            opn.value.push: (:comment(%OpCode{$op-name}))
+            opn.value.push: (:comment(%OpName{$op}))
                 if $!comment-ops;
         }
 	opn;
@@ -614,7 +693,7 @@ class PDF::Content::Ops {
 	use PDF::Grammar::Content::Actions;
 	state $actions //= PDF::Grammar::Content::Actions.new: :strict;
 	my \p = PDF::Grammar::Content::Fast.parse($content, :$actions)
-	    // die "unable to parse content stream: $content";
+	    // die X::PDF::Content::ParseError.new :$content;
 	p.ast
     }
 
@@ -632,7 +711,7 @@ class PDF::Content::Ops {
         @!gsave.push: %gstate;
     }
     multi method track-graphics('Q') {
-        die "bad nesting; Restore(Q) operator not matched by preceeding Save(q) operator in PDF content\n"
+        die X::PDF::Content::OP::BadNesting.new: :op<Q>, :mnemonic(%OpName<Q>), :opener("'q' (%OpName<q>)")
             unless @!gsave;
         my %gstate = @!gsave.pop;
         $!CharSpacing  = %gstate<CharSpacing>;
@@ -702,7 +781,7 @@ class PDF::Content::Ops {
         if arity {
             my $got = +@scn;
             $got-- if @scn && @scn.tail ~~ Str;
-            die "Incorrect number of arguments in $op command, expected {arity} $cs colors, got: $got"
+            die X::PDF::Content::OP::ArgCount.new: :message("Incorrect number of arguments in $op command, expected {arity} $cs colors, got: $got")
                 unless $got == arity;
         }
     }
@@ -729,7 +808,7 @@ class PDF::Content::Ops {
 	@!tags.push: 'BDC' => [$name, $p];
     }
     multi method track-graphics('EMC') {
-	die "closing EMC without opening BMC or BDC in PDF content\n"
+	die X::PDF::Content::OP::BadNesting.new: :op<EMC>, :mnemonic(%OpName<EMC>), :opener("'BMC' or 'BDC' (BeginMarkedContent)")
 	    unless @!tags;
 	@!tags.pop;
     }
@@ -747,7 +826,7 @@ class PDF::Content::Ops {
                 with .<RI>   { $!RenderingIntent = $_ }
             }
             else {
-                die "unknown extended graphics state: /$key"
+                die X::PDF::Content::UnknownResource.new: :type<ExtGState>, :$key;
             }
         }
     }
@@ -775,12 +854,12 @@ class PDF::Content::Ops {
     }
 
     method finish {
-	die "Unclosed @!tags[] at end of content stream\n"
+	die X::PDF::Content::Unclosed.new: :message("Unclosed @!tags[] at end of content stream")
 	    if @!tags;
-	die "q (Save) unmatched by closing Q (Restore) at end of content stream\n"
+	die X::PDF::Content::Unclosed.new: :message("q (Save) unmatched by closing Q (Restore) at end of content stream")
 	    if @!gsave;
-        warn "unexpected end of content stream in $!context context"
-            unless $!context == Page;
+        warn X::PDF::Content::Unclosed.new: :message("unexpected end of content stream in $!context context")
+            if $!strict && $!context != Page;
 
         with $!parent {
             try .cb-finish for .resources('Font').values;
@@ -824,7 +903,9 @@ class PDF::Content::Ops {
     method dispatch:<.?>(\name, |c) is raw {
         self.can(name) || OpCode.enums{name} ?? self."{name}"(|c) !! Nil
     }
-
+    method ShowSpaceText(Array $args) {
+        self.op(OpCode::ShowSpaceText, $args);
+    }
     method FALLBACK(\name, |c) {
         with OpCode.enums{name} -> \op {
             # e.g. $.Restore :== $.op('Q', [])

@@ -12,7 +12,7 @@ class X::PDF::Image::WrongHeader is Exception {
 class X::PDF::Image::UnknownType is Exception {
     has $.path is required;
     method message {
-        die "unable to open image: $!path";
+        "unable to open as an image: $!path";
     }
 }
 
