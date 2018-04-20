@@ -13,10 +13,11 @@ class Entry::ID
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my @number = @.number;
-        my $text = $.text;
-        my $xxhash = $.xxhash;
-        my %hash = :@number, :$text, :$xxhash;
+        my %hash;
+        %hash<number> = @.number;
+        %hash<text> = $.text;
+        %hash<xxhash> = $.xxhash;
+        %hash;
     }
 
     method Str(::?CLASS:D: --> Str:D)
@@ -38,11 +39,12 @@ class Entry::Header
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my $date = ~$.date;
-        my $description = $.description ?? $.description !! Nil;
-        my $important = $.important;
-        my @tag = @.tag ?? @.tag !! Nil;
-        my %hash = :$date, :$description, :$important, :@tag;
+        my %hash;
+        %hash<date> = ~$.date;
+        %hash<description> = $.description if $.description;
+        %hash<important> = $.important;
+        %hash<tag> = @.tag if @.tag;
+        %hash;
     }
 }
 
@@ -57,10 +59,11 @@ class Entry::Posting::Account
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my $entity = $.entity;
-        my @path = @.path ?? @.path !! Nil;
-        my $silo = $.silo.gist;
-        my %hash = :$entity, :@path, :$silo;
+        my %hash;
+        %hash<entity> = $.entity;
+        %hash<path> = @.path if @.path;
+        %hash<silo> = $.silo.gist;
+        %hash;
     }
 }
 
@@ -76,15 +79,12 @@ class Entry::Posting::Amount
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my $asset-code = $.asset-code;
-        my $asset-quantity = $.asset-quantity;
-        my $asset-symbol = $.asset-symbol ?? $.asset-symbol !! Nil;
-        my $plus-or-minus = $.plus-or-minus ?? $.plus-or-minus !! Nil;
-        my %hash =
-            :$asset-code,
-            :$asset-quantity,
-            :$asset-symbol,
-            :$plus-or-minus;
+        my %hash;
+        %hash<asset-code> = $.asset-code;
+        %hash<asset-quantity> = $.asset-quantity;
+        %hash<asset-symbol> = $.asset-symbol if $.asset-symbol;
+        %hash<plus-or-minus> = $.plus-or-minus if $.plus-or-minus;
+        %hash;
     }
 }
 
@@ -99,10 +99,11 @@ class Entry::Posting::Annot::XE
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my $asset-code = $.asset-code;
-        my $asset-price = $.asset-price;
-        my $asset-symbol = $.asset-symbol ?? $.asset-symbol !! Nil;
-        my %hash = :$asset-code, :$asset-price, :$asset-symbol;
+        my %hash;
+        %hash<asset-code> = $.asset-code;
+        %hash<asset-price> = $.asset-price;
+        %hash<asset-symbol> = $.asset-symbol if $.asset-symbol;
+        %hash;
     }
 }
 
@@ -122,9 +123,10 @@ class Entry::Posting::Annot::Lot
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my $decinc = $.decinc.gist;
-        my $name = $.name;
-        my %hash = :$decinc, :$name;
+        my %hash;
+        %hash<decinc> = $.decinc.gist;
+        %hash<name> = $.name;
+        %hash;
     }
 }
 
@@ -139,10 +141,11 @@ class Entry::Posting::Annot
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my %inherit = $.inherit ?? $.inherit.hash !! Nil;
-        my %lot = $.lot ?? $.lot.hash !! Nil;
-        my %xe = $.xe ?? $.xe.hash !! Nil;
-        my %hash = :%inherit, :%lot, :%xe;
+        my %hash;
+        %hash<inherit> = $.inherit.hash if $.inherit;
+        %hash<lot> = $.lot.hash if $.lot;
+        %hash<xe> = $.xe.hash if $.xe;
+        %hash;
     }
 }
 
@@ -161,11 +164,12 @@ class Entry::Posting::ID
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my %entry-id = $.entry-id.hash;
-        my $number = $.number;
-        my $text = $.text;
-        my $xxhash = $.xxhash;
-        my %hash = :%entry-id, :$number, :$text, :$xxhash;
+        my %hash;
+        %hash<entry-id> = $.entry-id.hash;
+        %hash<number> = $.number;
+        %hash<text> = $.text;
+        %hash<xxhash> = $.xxhash;
+        %hash;
     }
 
     method Str(::?CLASS:D: --> Str:D)
@@ -216,13 +220,14 @@ class Entry::Posting
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my %id = $.id.hash;
-        my %account = $.account.hash;
-        my %amount = $.amount.hash;
-        my $decinc = $.decinc.gist;
-        my $drcr = $.drcr.gist;
-        my %annot = $.annot ?? $.annot.hash !! Nil;
-        my %hash = :%id, :%account, :%amount, :$decinc, :$drcr, :%annot;
+        my %hash;
+        %hash<id> = $.id.hash;
+        %hash<account> = $.account.hash;
+        %hash<amount> = $.amount.hash;
+        %hash<decinc> = $.decinc.gist;
+        %hash<drcr> = $.drcr.gist;
+        %hash<annot> = $.annot.hash if $.annot;
+        %hash;
     }
 
     # assets and expenses increase on the debit side
@@ -282,10 +287,11 @@ class Entry
 
     method hash(::?CLASS:D: --> Hash:D)
     {
-        my %header = $.header.hash;
-        my %id = $.id.hash;
-        my @posting = @.posting.hyper.map({ .hash });
-        my %hash = :%header, :%id, :@posting;
+        my %hash;
+        %hash<header> = $.header.hash;
+        %hash<id> = $.id.hash;
+        %hash<posting> = @.posting.hyper.map({ .hash });
+        %hash;
     }
 }
 
