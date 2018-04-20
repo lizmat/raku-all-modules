@@ -270,9 +270,8 @@ multi sub to-txn(Entry::Posting:D $posting --> Str:D)
 
     # check if $amount includes C<:plus-or-minus('-')>
     # if so, we don't need to negate the posting amount
-    my Bool:D $has-minus = $amount.plus-or-minus
-        ?? $amount.plus-or-minus eq '-'
-        !! False;
+    my Bool:D $has-minus =
+        $amount.plus-or-minus ?? $amount.plus-or-minus eq '-' !! False;
 
     my Str:D $s = to-txn($account) ~ ' ' x 4;
     if $needs-minus
