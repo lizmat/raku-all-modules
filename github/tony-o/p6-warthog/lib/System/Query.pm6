@@ -1,4 +1,4 @@
-unit module System::Parse;
+unit module System::Query;
 
 sub follower(@path, $idx, $PTR) {
   die "Attempting to find \$*{@path[0].uc}.{@path[1..*].join('.')}"

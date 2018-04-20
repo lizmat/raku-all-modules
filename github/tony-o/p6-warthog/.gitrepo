@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/p6-warthog.git
 	branch = master
-	commit = dbe51effa7d4a62fe059b89fac71932ac798c4c3
-	parent = ad07a54286f39666b597d516a43b1c78376bb3e3
+	commit = 84be0605a41a29d67a1a1685bad0dd170bfa1694
+	parent = 9c7c33178be57da974c6b4fa4dde67ce7c9a9c02
 	cmdver = 0.4.0
