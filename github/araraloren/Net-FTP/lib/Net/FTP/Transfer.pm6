@@ -12,7 +12,7 @@ has $.ascii;
 #	%args
 #	host port passive ascii family encoding
 method new (*%args) {
-	%args<listen> = !%args<passive>;
+	%args<listen> = True if !%args<passive>;
     %args<input-line-separator> = "\r\n";
 	self.bless(|%args);
 }
