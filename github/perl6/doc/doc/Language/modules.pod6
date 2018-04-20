@@ -21,7 +21,7 @@ files in a namespace.
 
 =head2 Looking for and installing modules.
 
-L<C<zef>|https://github.com/ugexe/zef> is the application using for installing modules in Perl 6. Modules are listed in L<the Perl 6 ecosystem|https://modules.perl.org> and can be searched there or from the command line using C<zef search>
+L<C<zef>|https://github.com/ugexe/zef> is the application using for installing modules in Perl 6. Modules are listed in L<the Perl 6 ecosystem|https://modules.perl6.org> and can be searched there or from the command line using C<zef search>
 
 =for code :lang<shell>
     zef search WWW
@@ -668,9 +668,6 @@ L<Upload a file to CPAN|https://pause.perl.org/pause/authenquery?ACTION=add_uri>
     =end item
 
 =head2 Upload your Module to p6c
-
-I<The p6c ecosystem is soon to be deprecated, so you should consider
-using the CPAN ecosystem instead.>
 
 If you want to use the I<p6c> ecosystem you need to use git for your module's
 version control. The instructions herein assume that you have a
