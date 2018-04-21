@@ -147,7 +147,7 @@ sub main() {
     $os.insert-cmd(
         "list",
         sub (@fargs) {
-            my @configs := $config-io.dir();
+            my @configs = $config-io.dir();
             put "Not configuration file!" if +@configs == 0;
             .basename.put for @configs;
         }
