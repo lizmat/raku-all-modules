@@ -28,7 +28,8 @@ role Ecosystem {
     method IO { ... }
     method meta-uris { ... }
 
-    method index-file { $.IO.parent.child("{self.IO.basename}.json") }
+    method index-file  { $.IO.parent.child("{self.IO.basename}.json") }
+    method index-file1 { $.IO.parent.child("{self.IO.basename}1.json") }
 
     method package-list(@meta-uris = $.meta-uris) {
         state @packages =
@@ -38,23 +39,47 @@ role Ecosystem {
             @meta-uris;
     }
 
-    method update-local-package-list(@metas is copy = $.package-list) {
-        my $handle = (self.index-file.absolute ~ ".tmp." ~ now.Int).IO.open(:w);
-        LEAVE { try $handle.close; try $handle.unlink; }
+    method downgrade-meta-format($meta) {
+        return unless $meta<meta-version>:exists and 0 < $meta<meta-version>;
 
-        $handle.print("[\n");
-        while @metas.shift -> $meta {
-            $handle.print(~to-json($meta));
-            $handle.print("\n,\n") if @metas.elems;
+        $meta<meta-version> = 0;
+        if $meta<depends> ~~ Hash {
+            my $depends = $meta<depends>;
+            $meta<depends>:delete;
+            $meta<depends> = $depends<runtime><requires> if $depends<runtime>:exists;
+            $meta<build-depends> = $depends<build><requires> if $depends<build>:exists;
+            $meta<test-depends> = $depends<test><requires> if $depends<test>:exists;
         }
-        $handle.print("\n]");
-        $handle.close;
+        for <depends build-depends test-depends> {
+            $meta{$_} = $meta{$_}.map({
+                $_ ~~ Hash ?? $_<name> !! $_
+            }).grep({$_ !~~ /':from'/}) if $meta{$_}:exists;
+        }
+    }
 
-        self.index-file.unlink;
+    method update-local-package-list(@metas is copy = $.package-list) {
+        my $handle  = (self.index-file.absolute ~ ".tmp." ~ now.Int).IO.open(:w);
+        my $handle1 = (self.index-file.absolute ~ "1.tmp." ~ now.Int).IO.open(:w);
+        LEAVE { try $handle.close; try $handle.unlink; try $handle1.close; try $handle1.unlink; }
+
+        .print("[\n") for $handle, $handle1;
+        while @metas.shift -> $meta {
+            $handle1.print(~to-json($meta));
+            self.downgrade-meta-format($meta);
+            $handle.print(~to-json($meta));
+            if @metas.elems {
+                .print("\n,\n") for $handle, $handle1;
+            }
+        }
+        for $handle, $handle1 {
+            .print("\n]");
+            .close;
+        }
+
+        .unlink for $.index-file, $.index-file1;
         sleep 1;
         $handle.path.rename(self.index-file);
-
-        return self.index-file.slurp;
+        $handle1.path.rename(self.index-file1);
     }
 
     method update-remote-package-list($remote-uri) {
