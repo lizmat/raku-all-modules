@@ -46,6 +46,7 @@ method data {
         for @lines {
             if /^\* \s+ \d+ \s+ FETCH .+ BODY\[\] \s+ \{(\d+)\}/ {
                 $bytes = $0.Int;
+                next;
             }
             if $bytes {
                 if $seenbytes >= $bytes {

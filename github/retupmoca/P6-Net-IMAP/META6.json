@@ -1,7 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Net::IMAP",
-    "version" : "1.0.0",
+    "version" : "1.0.1",
     "author" : "github:retupmoca",
     "description" : "Simple IMAP Client",
     "depends" : [ "Email::MIME", "IO::Socket::SSL" ],
