@@ -186,6 +186,10 @@ multi method send($message, :$keep-going) {
     @to.push(|@bcc);
     $parsed.header-set('BCC'); # clear the BCC headers
 
+    $from ~~ /\<(.*)\>/;
+    $from = $0 || $from ;
+    @to .= map({ $_ ~~ /\<(.*)\>/; $0 || $_ });
+
     return self.send($from, @to, $parsed, :keep-going($keep-going));
 }
 
