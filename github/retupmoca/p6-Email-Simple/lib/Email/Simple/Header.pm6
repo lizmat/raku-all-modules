@@ -6,7 +6,11 @@ has @!headers;
 multi method new (Array $headers, Str :$crlf = "\x0d\x0a") {
     if $headers[0] ~~ Array {
         self.bless(crlf => $crlf, headers => $headers);
-    } else {
+    }
+    elsif $headers[0] ~~ Pair {
+        self.bless(crlf => $crlf, headers => $headers.map(*.kv));
+    }
+    else {
         my @folded-headers;
         loop (my $x=0;$x < +$headers;$x+=2) {
             @folded-headers.push([$headers[$x], $headers[$x+1]]);

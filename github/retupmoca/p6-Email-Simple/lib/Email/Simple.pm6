@@ -50,7 +50,7 @@ multi method new (Array $header, Str $body, :$header-class = Email::Simple::Head
 method create (Array :$header, Str :$body, :$header-class = Email::Simple::Header) {
     my $header-object = $header-class.new($header, crlf => "\r\n");
     if !($header-object.header('Date')) {
-        $header-object.header-set('Date', DateTime::Format::RFC2822.to-string(DateTime.new(now)));
+        $header-object.header-set('Date', DateTime::Format::RFC2822.to-string(DateTime.now));
     }
     self.bless(body => $body, header => $header-object, crlf => "\r\n");
 }

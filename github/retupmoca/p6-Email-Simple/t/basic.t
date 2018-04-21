@@ -9,7 +9,7 @@ my $mail-text = slurp './t/test-mails/josey-nofold';
 
 my $mail = Email::Simple.new($mail-text);
 
-plan 14;
+plan 15;
 
 my $old-from;
 is $old-from = $mail.header('From'), 'Andrew Josey <ajosey@rdg.opengroup.org>', "We can get a header";
@@ -46,3 +46,9 @@ $mail = Email::Simple.new($nasty);
 is $mail.crlf, "{$nr}", "got correct line terminator";
 is $mail.body, "foo{$nr}", "got correct body";
 is ~$mail, $nasty, "Round trip nasty";
+
+$mail = Email::Simple.create(header => [:To<mail@example.com>,
+                                        :From<me@example.com>,
+                                        :Subject<test>],
+                             body => 'This is a test.');
+is $mail.header("To"), "mail\@example.com", 'test pair headers in create';
