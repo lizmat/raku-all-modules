@@ -55,6 +55,7 @@ method copy(
     copy(container, :@from, :@path, :$in-place);
 }
 
+proto sub copy(|) {*}
 multi sub copy(
     Positional \container,
     :@from!,

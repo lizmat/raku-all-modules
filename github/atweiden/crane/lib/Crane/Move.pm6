@@ -62,6 +62,7 @@ method move(
     move(container, :@from, :@path, :$in-place);
 }
 
+proto sub move(|) {*}
 multi sub move(
     Positional \container,
     :@from!,
