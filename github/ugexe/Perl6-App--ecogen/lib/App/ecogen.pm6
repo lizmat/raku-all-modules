@@ -51,9 +51,14 @@ role Ecosystem {
             $meta<test-depends> = $depends<test><requires> if $depends<test>:exists;
         }
         for <depends build-depends test-depends> {
-            $meta{$_} = $meta{$_}.map({
+            $meta{$_} = $meta{$_}.grep(*.defined).map({
                 $_ ~~ Hash ?? $_<name> !! $_
-            }).grep({$_ !~~ /':from'/}) if $meta{$_}:exists;
+            }).grep({$_ !~~ /':from'/}).Array if $meta{$_}:exists;
+        }
+
+        if $meta<builder>:exists {
+            $meta<build-depends> //= [];
+            $meta<build-depends>.push: "Distribution::Builder::$meta<builder>";
         }
     }
 
@@ -93,8 +98,14 @@ role Ecosystem {
 
         if so run $GIT_CMD, 'add', self.index-file.basename, :cwd(self.IO.parent) {
             try { so run $GIT_CMD, 'commit', '-m', "'ecosystem update: {time}'", :cwd(self.IO.parent) }
-            try { so run $GIT_CMD, 'push', 'origin', 'master', :cwd(self.IO.parent) }
+	    #try { so run $GIT_CMD, 'push', 'origin', 'master', :cwd(self.IO.parent) }
         }
+        if so run $GIT_CMD, 'add', self.index-file1.basename, :cwd(self.IO.parent) {
+            try { so run $GIT_CMD, 'commit', '-m', "'ecosystem update: {time}'", :cwd(self.IO.parent) }
+	    #try { so run $GIT_CMD, 'push', 'origin', 'master', :cwd(self.IO.parent) }
+        }
+
+        try { so run $GIT_CMD, 'push', 'origin', 'master', :cwd(self.IO.parent) }
     }
 
     method slurp-http($uri) {

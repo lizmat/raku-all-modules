@@ -5,6 +5,8 @@ multi MAIN(
     'update',
     :$local-uri  = $*HOME.child('.ecogen').absolute,
     :$remote-uri = "git@github.com:ugexe/Perl6-ecosystems.git",
+    Bool :$local  = True,
+    Bool :$remote = True,
     *@ecosystems ($, *@)
 ) {
     my $local-dir = $local-uri.IO;
@@ -16,7 +18,7 @@ multi MAIN(
 
         my $ecosystem = ::($ecosystem-module).new( :prefix($local-dir.child($econame)) );
 
-        $ecosystem.update-local-package-list();
-        $ecosystem.update-remote-package-list($remote-uri);
+        $ecosystem.update-local-package-list()             if $local;
+        $ecosystem.update-remote-package-list($remote-uri) if $remote;
     }
 }
