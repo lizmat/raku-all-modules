@@ -1,6 +1,7 @@
 use Zef;
 use Zef::Distribution;
 use Zef::Distribution::Local;
+use Zef::Identity;
 use Zef::Repository;
 use Zef::Utils::FileSystem;
 
@@ -320,7 +321,7 @@ class Zef::Client {
                 message => "Building: {$candi.dist.?identity // $candi.as}",
             });
 
-            my $result = $!builder.build($candi.dist.path, :includes($candi.dist.metainfo<includes> // []), :$!logger);
+            my $result = $!builder.build($candi.dist, :includes($candi.dist.metainfo<includes> // []), :$!logger);
 
             $candi does role :: { has $.build-results is rw = $result; };
 
@@ -505,6 +506,13 @@ class Zef::Client {
         die "Something went terribly wrong determining the build order" unless +@sorted-candidates;
 
 
+        for @sorted-candidates.grep: *.dist.builder -> $candi {
+            my $builder = "Distribution::Builder::$candi.dist.builder()";
+            try require ::($builder);
+            self.install(:@to, |self.fetch(|self.find-candidates(str2identity($builder)))) if $!;
+        }
+
+
         # Setup(?) Phase:
         # Attach appropriate metadata so we can do --dry runs using -I/some/dep/path
         # and can install after we know they pass any required tests
@@ -577,13 +585,7 @@ class Zef::Client {
                             # but that doesn't play nicely with relative paths. We want to keep the original meta
                             # paths for newer rakudos so we must avoid using :absolute for the source paths by
                             # using the newer CURI.install if available
-                            my $install = $PRE-DIST-INTERFACE
-                                ?? do {
-                                    # CURI.install is bugged; $dist.provides/files will both get modified and fuck up
-                                    # any subsequent .install as the fuck up involves changing the data structures
-                                    my $dist = $candi.dist.clone(provides => $candi.dist.provides, files => $candi.dist.files);
-                                    $cur.install($dist.compat, $dist.sources(:absolute), $dist.scripts(:absolute), $dist.resources(:absolute), :force($!force-install))
-                                } !! $cur.install($candi.dist.compat, :force($!force-install));
+                            my $install = $cur.install($candi.dist.compat, :force($!force-install));
 
                             self.logger.emit({
                                 level   => VERBOSE,
