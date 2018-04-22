@@ -4,7 +4,6 @@ use JSON::Fast;
 use Test;
 use lib 'lib';
 use System::Query;
-use Data::Dump;
 
 my $json-str = 't/data/one.json'.IO.slurp;
 my %one = from-json $json-str;

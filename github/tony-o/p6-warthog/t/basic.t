@@ -10,5 +10,5 @@ my $json = from-json( 't/data/basic.json'.IO.slurp );
 if $*DISTRO.name eq qw<macosx win32>.any {
   is-deeply(system-collapse($json), from-json( "t/data/basic-{$*DISTRO.name}.json".IO.slurp ));
 } else {
-  dies-ok system-collapse($json);
+  dies-ok -> { system-collapse($json); }
 }
