@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic
 Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2018-04-21
+### Added
+- `api` flag added to META6.json
+
+### Changed
+- `author` field now defaults to being an array.
+- `assixt test` now calls `run` in sink context, to avoid output of a Failure
+  when `prove` found failing tests. [GitHub#7](https://github.com/scriptkitties/perl6-app-assixt/issues/7)
+
 ## [0.2.4] - 2018-03-29
 ### Changed
 - Update `Config` dependency to greatly improve performance

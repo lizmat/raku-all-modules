@@ -39,12 +39,14 @@ class App::Assixt::Commands::New
 			name => $config<runtime><name>,
 			description => $config<runtime><description>,
 			license => $config<runtime><license>,
-			authors => ("$config<runtime><author> <$config<runtime><email>>"),
-			tags => (),
+			authors => [
+				"$config<runtime><author> <$config<runtime><email>>"
+			],
+			tags => [],
 			version => "0.0.0",
 			provides => %(),
-			depends => (),
-			resources => (),
+			depends => [],
+			resources => [],
 		);
 
 		# Create the module skeleton

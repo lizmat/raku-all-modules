@@ -9,6 +9,6 @@ class App::Assixt::Commands::Test
 	method run(
 		Config:D :$config,
 	) {
-		run « prove -e "perl6 -Ilib" »
+		run(« prove -e "perl6 -Ilib" »).so
 	}
 }
