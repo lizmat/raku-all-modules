@@ -1,5 +1,5 @@
 use v6;
-unit class Distribution::Builder::MakeFromJSON;
+unit class Distribution::Builder::MakeFromJSON:ver<0.3>;
 
 use System::Query;
 
@@ -33,7 +33,14 @@ method build() {
     mkdir "$workdir/resources" unless "$workdir/resources".IO.e;
     mkdir "$workdir/resources/libraries" unless "$workdir/resources/libraries".IO.e;
     temp $*CWD = $src-dir;
-    run 'make'; # check for gmake here
+    # check for gmake here
+    my $make = 'make';
+    if $meta<make-target> {
+        run $make, $meta<make-target>;
+    }
+    else {
+        run $make;
+    }
 }
 
 sub configure($meta, $src-dir, $dest-dir) {
@@ -57,7 +64,7 @@ sub process-makefile-template($meta, $src-dir, $dest-dir) {
             $value = $*VM.platform-library-name($value<platform-library-name>.IO);
         }
         if $value<run>:exists {
-            $value = chomp run(|$value<run>, :out).out.slurp;
+            $value = chomp run(|$value<run>, :out).out.lines.join('');
         }
         if $value<env>:exists {
             $value = %*ENV{$value<env>};
@@ -135,7 +142,7 @@ sub backend-values() {
 
 =head1 NAME
 
-Distribution::Builder::MakeFromJSON - blah blah blah
+Distribution::Builder::MakeFromJSON - Makefile based distribution builder
 
 =head1 SYNOPSIS
 
@@ -143,7 +150,9 @@ Distribution::Builder::MakeFromJSON - blah blah blah
 
 =head1 DESCRIPTION
 
-Distribution::Builder::MakeFromJSON is ...
+Distribution::Builder::MakeFromJSON uses information from your META6.json and
+the running system to fill variabls in a Makefile.in template and build your
+distribution.
 
 =head1 AUTHOR
 

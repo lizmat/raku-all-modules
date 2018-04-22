@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/niner/Distribution-Builder-MakeFromJSON.svg?branch=master)](https://travis-ci.org/niner/Distribution-Builder-MakeFromJSON)
+
 NAME
 ====
 
@@ -11,9 +13,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Distribution::Builder::MakeFromJSON uses information from your META6.json and
-the running system to fill variabls in a Makefile.in template and build your
-distribution.
+Distribution::Builder::MakeFromJSON uses information from your META6.json and the running system to fill variabls in a Makefile.in template and build your distribution.
 
 AUTHOR
 ======
