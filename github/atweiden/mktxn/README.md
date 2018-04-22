@@ -45,17 +45,17 @@ accounting ledger metadata useful in simple queries.
 
 ```json
 {
-   "count" : 112,
-   "pkgrel" : 1,
-   "entities-seen" : [
-      "FooCorp",
-      "Personal",
-      "WigwamLLC"
-   ],
-   "pkgver" : "1.0.0",
-   "pkgname" : "with-includes",
-   "pkgdesc" : "txn with include directives",
-   "compiler" : "mktxn v0.0.2 2016-05-10T10:22:44.054586-07:00"
+  "pkgname" : "with-includes",
+  "pkgver" : "0.0.1",
+  "pkgrel" : 1,
+  "pkgdesc" : "Sample transactions with include directives",
+  "compiler" : "mktxn v0.1.0 2018-04-21T14:14:33.931470Z",
+  "entities-seen" : [
+    "FooCorp",
+    "Personal",
+    "WigwamLLC"
+  ],
+  "count" : 112
 }
 ```
 
@@ -74,14 +74,13 @@ txn.json contains the output of serializing the accounting ledger to JSON.
       ]
     },
     "header" : {
-      "tag" : [ ],
       "important" : 0,
       "description" : "I started the year with $1000 in Bankwest cheque account",
       "date" : "2014-01-01"
     },
     "posting" : [
       {
-        "annot" : null,
+        "drcr" : "DEBIT",
         "id" : {
           "xxhash" : 4134277096,
           "text" : "Assets:Personal:Bankwest:Cheque      $1000.00 USD",
@@ -94,13 +93,11 @@ txn.json contains the output of serializing the accounting ledger to JSON.
           },
           "number" : 0
         },
-        "drcr" : "DEBIT",
         "decinc" : "INC",
         "amount" : {
           "asset-code" : "USD",
-          "asset-symbol" : "$",
-          "plus-or-minus" : null,
-          "asset-quantity" : 1000
+          "asset-quantity" : 1000,
+          "asset-symbol" : "$"
         },
         "account" : {
           "entity" : "Personal",
@@ -112,7 +109,7 @@ txn.json contains the output of serializing the accounting ledger to JSON.
         }
       },
       {
-        "annot" : null,
+        "drcr" : "CREDIT",
         "id" : {
           "xxhash" : 344831063,
           "text" : "Equity:Personal                      $1000.00 USD",
@@ -125,17 +122,14 @@ txn.json contains the output of serializing the accounting ledger to JSON.
           },
           "number" : 1
         },
-        "drcr" : "CREDIT",
         "decinc" : "INC",
         "amount" : {
           "asset-code" : "USD",
-          "asset-symbol" : "$",
-          "plus-or-minus" : null,
-          "asset-quantity" : 1000
+          "asset-quantity" : 1000,
+          "asset-symbol" : "$"
         },
         "account" : {
           "entity" : "Personal",
-          "path" : [ ],
           "silo" : "EQUITY"
         }
       }

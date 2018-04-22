@@ -77,10 +77,10 @@ my class TXN::Package
         $!pkgname = $txnbuild.pkgname;
         $!pkgrel = $txnbuild.pkgrel;
         $!pkgver = $txnbuild.pkgver;
-        my %opt;
-        %opt<date-local-offset> =
+        my %opts;
+        %opts<date-local-offset> =
             $txnbuild.date-local-offset if $txnbuild.date-local-offset.defined;
-        %opt<include-lib> = $txnbuild.include-lib if $txnbuild.include-lib;
+        %opts<include-lib> = $txnbuild.include-lib if $txnbuild.include-lib;
         my Str:D $message =
             sprintf(
                 Q{Making txn pkg: %s %s-%s (%s)},
@@ -90,7 +90,7 @@ my class TXN::Package
                 $dt
             );
         say($message) if $verbose;
-        @!entry = from-txn(:file($txnbuild.source), |%opt);
+        @!entry = from-txn(:file($txnbuild.source), |%opts);
         $!count = @!entry.elems;
         @!entities-seen = gen-entities-seen(@!entry);
     }
@@ -110,28 +110,28 @@ my class TXN::Package
         $!compiler = "$PROGRAM v$VERSION $dt";
         $!pkgdesc = $pkgdesc ?? $pkgdesc !! '';
         $!pkgrel = $pkgrel ?? $pkgrel !! 1;
-        my %opt;
-        %opt<date-local-offset> =
+        my %opts;
+        %opts<date-local-offset> =
             $date-local-offset if $date-local-offset.defined;
-        %opt<include-lib> = $include-lib if $include-lib;
-        @!entry = from-txn(:file($source), |%opt);
+        %opts<include-lib> = $include-lib if $include-lib;
+        @!entry = from-txn(:file($source), |%opts);
         $!count = @!entry.elems;
         @!entities-seen = gen-entities-seen(@!entry);
     }
 
     multi method new(
-        *%opt (
+        *%opts (
             Str:D :$file! where .so,
             Bool :$verbose
         )
         --> TXN::Package:D
     )
     {
-        self.bless(|%opt);
+        self.bless(|%opts);
     }
 
     multi method new(
-        *%opt (
+        *%opts (
             Str:D :$pkgname!,
             Version:D :$pkgver!,
             Str:D :$source!,
@@ -143,7 +143,7 @@ my class TXN::Package
         --> TXN::Package:D
     )
     {
-        self.bless(|%opt);
+        self.bless(|%opts);
     }
 
     method hash(::?CLASS:D: --> Hash:D)
@@ -224,7 +224,7 @@ multi sub mktxn(
 
 multi sub mktxn(
     Bool:D :$release! where .so,
-    *%opt (
+    *%opts (
         Str:D :$pkgname!,
         Version:D :$pkgver!,
         Str:D :$source!,
@@ -236,12 +236,12 @@ multi sub mktxn(
     --> Nil
 )
 {
-    my %pkg = TXN::Package.new(|%opt).hash;
+    my %pkg = TXN::Package.new(|%opts).hash;
     makepkg(%pkg);
 }
 
 multi sub mktxn(
-    *%opt (
+    *%opts (
         Str:D :$pkgname!,
         Version:D :$pkgver!,
         Str:D :$source!,
@@ -253,7 +253,7 @@ multi sub mktxn(
     --> Hash:D
 )
 {
-    my %pkg = TXN::Package.new(|%opt).hash;
+    my %pkg = TXN::Package.new(|%opts).hash;
 }
 
 # end sub mktxn }}}
