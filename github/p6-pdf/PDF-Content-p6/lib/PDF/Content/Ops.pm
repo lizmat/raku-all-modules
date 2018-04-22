@@ -42,7 +42,7 @@ class X::PDF::Content::OP::BadNesting
     has Str $.mnemonic is required;
     has Str $.opener;
     method message {
-        "bad nesting; '$!op' ($!mnemonic) operator not matched by preceeding $!opener"
+        "Bad nesting; '$!op' ($!mnemonic) operator not matched by preceeding $!opener"
     }
  }
 
@@ -51,13 +51,13 @@ class X::PDF::Content::OP::Error
     has Str $.op is required;
     has Str $.mnemonic is required;
     has Exception $.error is required;
-    method message { "error processing '$.op' ($!mnemonic) operator: {$!error.message}" }
+    method message { "Error processing '$.op' ($!mnemonic) operator: {$!error.message}" }
 }
 
 class X::PDF::Content::OP::Unknown
     is X::PDF::Content {
     has Str $.op is required;
-    method message { "unknown content operator: '$.op'" }
+    method message { "Unknown content operator: '$.op'" }
 }
 
 class X::PDF::Content::OP::BadArrayArg
@@ -65,7 +65,7 @@ class X::PDF::Content::OP::BadArrayArg
     has Str $.op is required;
     has $.arg is required;
     has Str $.mnemonic is required;
-    method message { "invalid entry in '$.op' ($!mnemonic) array: {$!arg.perl}" }
+    method message { "Invalid entry in '$.op' ($!mnemonic) array: {$!arg.perl}" }
 }
 
 class X::PDF::Content::OP::BadArg
@@ -73,14 +73,14 @@ class X::PDF::Content::OP::BadArg
     has Str $.op is required;
     has $.arg is required;
     has Str $.mnemonic is required;
-    method message { "bad '$.op' ($!mnemonic) argument: {$!arg.perl}" }
+    method message { "Bad '$.op' ($!mnemonic) argument: {$!arg.perl}" }
 }
 
 class X::PDF::Content::OP::TooFewArgs
     is X::PDF::Content {
     has Str $.op is required;
     has Str $.mnemonic is required;
-    method message { "too few arguments to '$.op' ($!mnemonic)" }
+    method message { "Too few arguments to '$.op' ($!mnemonic)" }
 }
 
 class X::PDF::Content::OP::ArgCount
@@ -96,14 +96,14 @@ class X::PDF::Content::Unclosed
 class X::PDF::Content::ParseError
     is X::PDF::Content {
     has Str $.content is required;
-    method message {"unable to parse content stream: $!content";}
+    method message {"Unable to parse content stream: $!content";}
 }
 
 class X::PDF::Content::UnknownResource
     is X::PDF::Content {
     has Str $.type is required;
     has Str $.key is required;
-    method message { "unknown $!type resource: /$!key" }
+    method message { "Unknown $!type resource: /$!key" }
 }
 
 class PDF::Content::Ops {
@@ -856,7 +856,7 @@ class PDF::Content::Ops {
     method finish {
 	die X::PDF::Content::Unclosed.new: :message("Unclosed @!tags[] at end of content stream")
 	    if @!tags;
-	die X::PDF::Content::Unclosed.new: :message("q (Save) unmatched by closing Q (Restore) at end of content stream")
+	die X::PDF::Content::Unclosed.new: :message("'q' (Save) unmatched by closing 'Q' (Restore) at end of content stream")
 	    if @!gsave;
         warn X::PDF::Content::Unclosed.new: :message("unexpected end of content stream in $!context context")
             if $!strict && $!context != Page;

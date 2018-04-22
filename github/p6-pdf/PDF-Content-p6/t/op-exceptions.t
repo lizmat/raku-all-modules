@@ -39,10 +39,10 @@ throws-like {$g.Blah}, X::Method::NotFound, :message("No such method 'Blah' for 
 
 $g.Save;
 lives-ok {$g.Restore}, 'valid Restore';
-throws-like {$g.Restore}, X::PDF::Content::OP::BadNesting, :message("bad nesting; 'Q' (Restore) operator not matched by preceeding 'q' (Save)");
+throws-like {$g.Restore}, X::PDF::Content::OP::BadNesting, :message("Bad nesting; 'Q' (Restore) operator not matched by preceeding 'q' (Save)");
 
 lives-ok {$g.SetFont('F1', 10)}, 'valid SetFont';
-throws-like {$g.SetFont('F2', 10)}, X::PDF::Content::UnknownResource, :message("unknown Font resource: /F2");
+throws-like {$g.SetFont('F2', 10)}, X::PDF::Content::UnknownResource, :message("Unknown Font resource: /F2");
 
 $g.Save;
 
@@ -53,17 +53,17 @@ throws-like {$g.SetStrokeColor(.2, .3)}, X::PDF::Content::OP::ArgCount, :message
 lives-ok {$g.SetStrokeColorSpace('C1')};
 
 lives-ok {$g.SetGraphicsState('G1')}, 'valid SetGraphicsState';
-throws-like {$g.SetGraphicsState('G2'); }, X::PDF::Content::UnknownResource, :message("unknown ExtGState resource: /G2");
+throws-like {$g.SetGraphicsState('G2'); }, X::PDF::Content::UnknownResource, :message("Unknown ExtGState resource: /G2");
 $g.Restore;
 
 $g.BeginMarkedContent('foo');
 lives-ok {$g.EndMarkedContent}, 'valid EndMarkedContent';
-throws-like {$g.EndMarkedContent}, X::PDF::Content::OP::BadNesting, :message("bad nesting; 'EMC' (EndMarkedContent) operator not matched by preceeding 'BMC' or 'BDC' (BeginMarkedContent)");
+throws-like {$g.EndMarkedContent}, X::PDF::Content::OP::BadNesting, :message("Bad nesting; 'EMC' (EndMarkedContent) operator not matched by preceeding 'BMC' or 'BDC' (BeginMarkedContent)");
 
 $g.BeginText;
 lives-ok {$g.ShowText('hi')};
 lives-ok {$g.ShowSpaceText([['Hi', -10, 'There']])};
-throws-like {$g.ShowSpaceText([['Hi', {}, 'There']])}, X::PDF::Content::OP::BadArrayArg, :message("invalid entry in 'TJ' (ShowSpaceText) array: \$\{\}");
+throws-like {$g.ShowSpaceText([['Hi', {}, 'There']])}, X::PDF::Content::OP::BadArrayArg, :message("Invalid entry in 'TJ' (ShowSpaceText) array: \$\{\}");
 lives-ok {$g.EndText};
 
 warns-like {$g.ShowText('there')}, X::PDF::Content::OP::Unexpected;
@@ -71,7 +71,7 @@ warns-like {$g.ShowText('there')}, X::PDF::Content::OP::Unexpected;
 warns-like {$g.SetLineWidth(2)}, X::PDF::Content::OP::Unexpected;
 
 $g.Save;
-throws-like {$g.finish}, X::PDF::Content::Unclosed, :message("q (Save) unmatched by closing Q (Restore) at end of content stream");
+throws-like {$g.finish}, X::PDF::Content::Unclosed, :message("'q' (Save) unmatched by closing 'Q' (Restore) at end of content stream");
 $g.Restore;
 
 lives-ok {$g.finish};

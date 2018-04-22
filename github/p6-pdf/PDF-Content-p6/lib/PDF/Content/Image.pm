@@ -5,14 +5,22 @@ class X::PDF::Image::WrongHeader is Exception {
     has Str $.header is required;
     has $.path is required;
     method message {
-        "{$!path} image doesn't have a {$!type} header: {$.header.perl}"
+        "$!path image doesn't have a $!type header: {$.header.perl}"
     }
 }
 
 class X::PDF::Image::UnknownType is Exception {
     has $.path is required;
     method message {
-        "unable to open as an image: $!path";
+        "Unable to open as an image: $!path";
+    }
+}
+
+class X::PDF::Image::UnknownMimeType is Exception {
+    has $.path is required;
+    has $.mime-type is required;
+    method message {
+        "Expected mime-type 'image/*' or 'application/pdf', got '$!mime-type': $!path"
     }
 }
 
@@ -51,14 +59,14 @@ class PDF::Content::Image {
 
     multi method open(Str $data-uri where /^('data:' [<t=.ident> '/' <s=.ident>]? $<b64>=";base64"? $<start>=",") /) {
         my $path = ~ $0;
-        my Str \mime-type = ( $0<t> // '(missing)').lc;
-        my Str \mime-subtype = ( $0<s> // '').lc;
+        my Str $mime-type = ( $0<t> // '(missing)').lc;
+        my Str $mime-subtype = ( $0<s> // '').lc;
         my Bool \base64 = ? $0<b64>;
         my Numeric \start = $0<start>.to;
 
-        die "expected mime-type 'image/*' or 'application/pdf', got '{mime-type}': $path"
-            unless mime-type eq 'image' || mime-subtype eq 'pdf';
-        my $image-type = self!image-type(mime-subtype, :$path);
+        die X::PDF::Image::UnknownMimeType.new: :$mime-type, :$path
+            unless $mime-type eq 'image' || $mime-subtype eq 'pdf';
+        my $image-type = self!image-type($mime-subtype, :$path);
         my $data = substr($data-uri, start);
 	if base64 {
 	    use Base64::Native;

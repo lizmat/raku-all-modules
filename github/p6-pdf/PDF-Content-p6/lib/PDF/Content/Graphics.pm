@@ -14,7 +14,10 @@ role PDF::Content::Graphics {
     has PDF::Content $!gfx;     #| appended graphics
     has Bool $!rendered = False;
 
-    method !encapsulate(@ops) {
+    #| add any missing 'q' (Save) and 'Q' (Restore) operators
+    #| if missing at the end of input, or if needed to make the
+    #| content safely editable
+    method !tidy(@ops) {
         my int $nesting = 0;
         my $needed = False;
 
@@ -41,11 +44,9 @@ role PDF::Content::Graphics {
     }
 
     method gfx(Bool :$render = False, |c) {
-	$!gfx //= do {
-            my $gfx = self.new-gfx(|c);
-            self.render($gfx, |c) if $render;
-            $gfx;
-        }
+	$!gfx //= self.new-gfx(|c);
+        self.render(|c) if $render && !$!rendered;
+        $!gfx;
     }
     method graphics(&code) { self.gfx.graphics( &code ) }
     method text(&code) { self.gfx.text( &code ) }
@@ -68,13 +69,15 @@ role PDF::Content::Graphics {
         PDF::Content.new( :parent(self), |c );
     }
 
-    method render($gfx, Bool :$encap = True) {
+    method render($g? is copy, Bool :$tidy = True, |c) is default {
+        warn '$render($gfx,...) is deprecated' with $g;
+        $g //= $.gfx(|c);
         my Pair @ops = self.contents-parse;
-        @ops = self!encapsulate(@ops)
-            if $encap;
-        $gfx.ops: @ops;
+        @ops = self!tidy(@ops)
+            if $tidy;
+        $g.ops: @ops;
         $!rendered = True;
-        $gfx;
+        $g;
     }
 
     method finish {
@@ -82,6 +85,7 @@ role PDF::Content::Graphics {
             # rebuild graphics, if they've been accessed
             my $decoded = do with $!pre-gfx { .Str } else { '' };
             if !$!rendered && $.contents {
+                # skipping rendering. copy raw content
                 $decoded ~= "\n" if $decoded;
                 $decoded ~= ~ OpCode::Save ~ "\n"
                     ~ $.contents

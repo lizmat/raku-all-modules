@@ -2,7 +2,9 @@ use v6;
 use Test;
 use PDF::Content::Image;
 
-throws-like { PDF::Content::Image.open( "t/images.t" ) }, X::PDF::Image::UnknownType, :message('unable to open as an image: t/images.t');
+throws-like { PDF::Content::Image.open( "t/images.t" ) }, X::PDF::Image::UnknownType, :message('Unable to open as an image: t/images.t');
+
+throws-like { PDF::Content::Image.open( "data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D" ) }, X::PDF::Image::UnknownMimeType, :message("Expected mime-type 'image/*' or 'application/pdf', got 'text': data:text/plain;base64,");
 
 require ::('PDF::Content::Image::PNG');
 throws-like { ::('PDF::Content::Image::PNG').read( "t/images/lightbulb.gif".IO.open ) }, X::PDF::Image::WrongHeader, :message("t/images/lightbulb.gif image doesn't have a PNG header: \"GIF89a\\x\[13\]\\0\""), 'PNG header-check';
