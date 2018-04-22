@@ -7,7 +7,7 @@ use CPAN::Uploader::Tiny;
 use File::Find;
 use Shell::Command;
 
-unit class App::Mi6:ver<0.1.6>:auth<cpan:SKAJI>;
+unit class App::Mi6:ver<0.1.7>:auth<cpan:SKAJI>;
 
 has $!author = run(<git config --global user.name>,  :out).out.slurp(:close).chomp;
 has $!email  = run(<git config --global user.email>, :out).out.slurp(:close).chomp;
@@ -226,8 +226,8 @@ method prune-files {
     my @prune = (
         * eq ".travis.yml",
         * eq ".gitignore",
-        * eq "approvar.yml",
-        * eq ".approvar.yml",
+        * eq "appveyor.yml",
+        * eq ".appveyor.yml",
         * eq "circle.yml",
         * ~~ rx/\.precomp/,
     );
@@ -420,6 +420,8 @@ Write them to META6.json directly :)
 =head2 Where is the spec of META6.json?
 
 http://design.perl6.org/S22.html
+
+See also L<The Meta spec, Distribution, and CompUnit::Repository explained-ish|https://perl6advent.wordpress.com/2016/12/16/day-16-the-meta-spec-distribution-and-compunitrepository-explained-ish/> by ugexe.
 
 =head1 TODO
 
