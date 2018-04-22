@@ -1,0 +1,9 @@
+Revision history for Distribution-Builder-MakeFromJSON
+
+0.3  2018-04-21T23:58:26+02:00
+    - Avoid newlines in make variables
+    - Fix installation without explicit make target
+0.2  2018-04-21T16:19:16+02:00
+    - Support make-target
+v0.1 2017-05-13
+    - Initial version
