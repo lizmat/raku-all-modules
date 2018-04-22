@@ -133,19 +133,18 @@ sub USAGE(--> Nil)
       txn-remarshal [-h] [-i=<file>] [-o=<file>] -if=<format> -of=<format>
 
     Options:
-      -h, --help                     print this help message
-      -i, --input=<file>             the input source
-      -o, --output=<file>            the output destination
-      -if, --input-format=<format>   the input file format
-      -of, --output-format=<format>  the output file format
-
-    Files:
-      /path/to/file                  absolute path
-      path/to/file                   relative path
-      -                              STDIN/STDOUT
+      -i, --input=<file>
+        the input source
+      -o, --output=<file>
+        the output destination
+      -if, --input-format=<format>
+        the input file format
+      -of, --output-format=<format>
+        the output file format
 
     Formats:
-      json,txn
+      json
+      txn
     EOF
     say($HELP);
 }
