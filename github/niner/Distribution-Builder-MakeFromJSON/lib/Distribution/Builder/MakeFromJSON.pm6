@@ -1,5 +1,5 @@
 use v6;
-unit class Distribution::Builder::MakeFromJSON:ver<0.3>;
+unit class Distribution::Builder::MakeFromJSON:ver<0.4>;
 
 use System::Query;
 
@@ -25,7 +25,7 @@ method build() {
     my $dest-dir = '.';
     my $workdir = '.';
     my $meta = $.collapsed-meta;
-    my $src-dir = ($meta<src-dir> || '.').IO;
+    my $src-dir = ($*CWD.child($meta<src-dir>) || $*CWD).IO;
 
     configure($meta, $src-dir, $dest-dir) if $meta<configure-bin>:exists;
     process-makefile-template($meta, $src-dir, $dest-dir) if $src-dir.child('Makefile.in').e;
