@@ -1,0 +1,16 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Games::TauStation::DateTime",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001006",
+    "description"  : "Convert Coordinated Central Time to Old Earth Time",
+    "depends"      : [ ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "Games::TauStation::DateTime": "lib/Games/TauStation/DateTime.pm6",
+        "GCT" : "lib/Games/TauStation/DateTime.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   :
+        "https://github.com/zoffixznet/perl6-Games-TauStation-DateTime.git"
+}

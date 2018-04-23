@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-Games-TauStation-DateTime.git
+	branch = master
+	commit = 012632608db7a745419f24dd391deb83c13a2a6c
+	parent = 6896f901456e97b10371d10934894afa2677253e
+	cmdver = 0.4.0
