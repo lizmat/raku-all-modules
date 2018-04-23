@@ -20,5 +20,7 @@ is denominate(60*60*24*7 + 60*60*24*4, :1precision), '2 weeks',
     'round up [highest unit]';
 is denominate(60*60*24*7 + 60*60*24*3, :1precision), '1 week',
         'round down [highest unit]';
+is denominate(-(60*60*24*7 + 60*60*24*3), :1precision), '-1 week',
+        'round down [highest unit (negative)]';
 
 done-testing;

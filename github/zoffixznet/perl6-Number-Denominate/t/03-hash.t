@@ -42,4 +42,7 @@ is-deeply denominate( 3, :hash, :set<time> ), { second => 3 },
 is-deeply denominate( 3601, :hash, :set<time> ), { hour => 1, second => 1 },
     'testing "missing" units, when their number is 0 [test 5]';
 
+is-deeply denominate( -3601, :hash, :set<time> ), { hour => -1, second => -1 },
+    'testing "missing" units, when their number is 0 [test 6]';
+
 done-testing;

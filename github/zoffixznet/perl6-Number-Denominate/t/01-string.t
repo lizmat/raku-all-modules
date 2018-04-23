@@ -35,6 +35,9 @@ is denominate( 62 ), '1 minute and 2 seconds',
 is denominate( 3601 ), '1 hour and 1 second',
     'testing "missing" units, when their number is 0 [test 5]';
 
+is denominate( -3601 ), '-1 hour and -1 second',
+    'testing "missing" units, when their number is 0 [test 6]';
+
 is denominate( 21212121, :set<weight> ),
     '21 tonnes, 212 kilograms, and 121 grams', 'weight units';
 

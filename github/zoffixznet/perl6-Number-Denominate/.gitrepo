@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Number-Denominate.git
 	branch = master
-	commit = d378fc66e9c3017b2922fee31a08408267de0a57
-	parent = 455f921088677519d555cedfb50432a9459a0322
+	commit = 3688079d4c64a919a5e17eeb5ce0a506a9d7d983
+	parent = 5ddd40f511b26fec359cf67b0f5506eef8901fd1
 	cmdver = 0.4.0

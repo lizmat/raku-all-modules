@@ -92,6 +92,12 @@ sub denominate (
         $array  and return @units;
     }
 
+    my $neg := False;
+    if $num < 0 {
+        $num .= abs;
+        $neg := True;
+    }
+
     my $mult *= $_<denomination> for @units;
     for @units {
         my $n = $num.Int div $mult.Int;
@@ -141,10 +147,15 @@ sub denominate (
         }
     }
 
-    return @units if $array;
+    if $array {
+        return $neg ?? [@units.map: {.<value> = -.<value>; $_}] !! @units;
+    }
     @units .= grep({ $_<value> });
-    $hash and return %( @units.map({ $_<singular> => $_<value> }) );
+    $hash and return %(
+        @units.map({ $_<singular> => ($neg ?? -1 !! 1)*$_<value> })
+    );
     $string and return conjunction @units.map({
-        $_<value> == 1 ?? "$_<value> $_<singular>" !! "$_<value> $_<plural>"
+        my $value = ($neg ?? -1 !! 1)*$_<value>;
+        $value.abs == 1 ?? "$value $_<singular>" !! "$value $_<plural>"
     });
 }
