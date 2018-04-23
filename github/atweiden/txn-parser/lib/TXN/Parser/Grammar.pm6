@@ -240,6 +240,7 @@ token string-literal-multiline-char:backslash
 # --- end string literal grammar }}}
 # --- var-name string grammar {{{
 
+# quoted variable names can be either basic strings or literal strings
 proto token var-name-string {*}
 token var-name-string:basic { '"' <string-basic-text> '"' }
 token var-name-string:literal { \' <string-literal-text> \' }
@@ -460,10 +461,16 @@ token date-time-omit-local-offset
 # end datetime grammar }}}
 # variable name grammar {{{
 
-# quoted variable names can be either basic strings or literal strings
 proto token var-name {*}
-token var-name:bare { <+alnum +[-]>+ }
+token var-name:bare { <var-name-bare> }
 token var-name:quoted { <var-name-string> }
+
+# bare varnames are not allowed to start with a hyphen
+token var-name-bare
+{
+    <alnum>
+    <+alnum +[-]>*
+}
 
 # end variable grammar }}}
 # entry grammar {{{

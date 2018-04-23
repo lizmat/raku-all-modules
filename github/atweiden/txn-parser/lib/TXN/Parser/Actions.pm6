@@ -471,9 +471,14 @@ method date:date-time ($/ --> Nil)
 # end datetime grammar-actions }}}
 # variable name grammar-actions {{{
 
-method var-name:bare ($/ --> Nil)
+method var-name-bare($/ --> Nil)
 {
     make(~$/);
+}
+
+method var-name:bare ($/ --> Nil)
+{
+    make($<var-name-bare>.made);
 }
 
 method var-name:quoted ($/ --> Nil)
