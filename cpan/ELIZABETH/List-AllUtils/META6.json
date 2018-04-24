@@ -1,0 +1,27 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "List::Util",
+    "List::MoreUtils",
+    "List::UtilsBy"
+  ],
+  "description" : "Port of Perl 5's List::AllUtils 0.14",
+  "license" : "Artistic-2.0",
+  "name" : "List::AllUtils",
+  "perl" : "6.c",
+  "provides" : {
+    "List::AllUtils" : "lib/List/AllUtils.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/List-AllUtils.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
