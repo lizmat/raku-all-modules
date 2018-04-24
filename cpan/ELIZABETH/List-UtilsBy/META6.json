@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Port of Perl 5's List::UtilsBy 0.11",
+  "license" : "Artistic-2.0",
+  "name" : "List::UtilsBy",
+  "perl" : "6.c",
+  "provides" : {
+    "List::UtilsBy" : "lib/List/UtilsBy.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/List-UtilsBy.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
