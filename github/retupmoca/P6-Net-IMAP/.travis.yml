@@ -1,10 +1,23 @@
+language: generic
+
+env:
+  global:
+    - PATH=/opt/rakudo-pkg/bin:$PATH
+  matrix:
+    - VERSION=2018.03-01
+
 branches:
   except:
     - gh-pages
-language: perl6
-sudo: false
-perl6:
-  - latest
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y asciidoc
+  - cd $(mktemp -d)
+  - wget "https://github.com/nxadm/rakudo-pkg/releases/download/${TAG:-v${VERSION}}/rakudo-pkg-Ubuntu14.04_${VERSION}_amd64.deb" && sudo dpkg -i *.deb
+  - cd -
+
 install:
-  - rakudobrew build-panda
-  - panda installdeps .
+  - zef install --deps-only .
+
+script: AUTHOR_TESTING=1 prove -v -e "perl6 -Ilib" t/
