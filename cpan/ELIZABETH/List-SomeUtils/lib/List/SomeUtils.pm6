@@ -1,6 +1,6 @@
 use v6.c;
 
-class List::SomeUtils:ver<0.0.2>:auth<cpan:ELIZABETH> {
+class List::SomeUtils:ver<0.0.3>:auth<cpan:ELIZABETH> {
     use List::MoreUtils;
 
     BEGIN {
@@ -53,6 +53,9 @@ version.
 =head1 AUTHOR
 
 Elizabeth Mattijsen <liz@wenzperl.nl>
+
+Source can be located at: https://github.com/lizmat/List-SomeUtils . Comments
+and Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 

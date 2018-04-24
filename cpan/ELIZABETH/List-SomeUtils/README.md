@@ -28,6 +28,8 @@ AUTHOR
 
 Elizabeth Mattijsen <liz@wenzperl.nl>
 
+Source can be located at: https://github.com/lizmat/List-SomeUtils . Comments and Pull Requests are welcome.
+
 COPYRIGHT AND LICENSE
 =====================
 
