@@ -5,7 +5,7 @@ use TXN::Parser;
 use TXN::Parser::ParseTree;
 use TXN::Parser::Types;
 use TXN::Remarshal;
-unit module TXN;
+unit class TXN;
 
 constant $PROGRAM = 'mktxn';
 constant $VERSION = v0.1.0;
@@ -162,6 +162,29 @@ my class TXN::Package
 
 # end TXN::Package }}}
 
+# method gen-txn-pkg-file {{{
+
+method gen-txn-pkg-file(
+    Str:D $pkgname,
+    Version:D $pkgver,
+    UInt:D $pkgrel
+    --> Str:D
+)
+{
+    my Str:D $txn-pkg-file-ext = TXN.gen-txn-pkg-file-ext;
+    my Str:D $txn-pkg-file =
+        sprintf(Q{%s-%s-%s%s}, $pkgname, $pkgver, $pkgrel, $txn-pkg-file-ext);
+}
+
+# end method gen-txn-pkg-file }}}
+# method gen-txn-pkg-file-ext {{{
+
+method gen-txn-pkg-file-ext(--> Str:D)
+{
+    my Str:D $txn-pkg-file-ext = '.txn.pkg.tar.xz';
+}
+
+# end method gen-txn-pkg-file-ext }}}
 # sub gen-entities-seen {{{
 
 sub gen-entities-seen(Entry:D @entry --> Array:D)
@@ -234,7 +257,7 @@ multi sub mktxn(
         Str :$include-lib
     )
     --> Nil
-)
+) is export
 {
     my %pkg = TXN::Package.new(|%opts).hash;
     makepkg(%pkg);
@@ -251,7 +274,7 @@ multi sub mktxn(
         Str :$include-lib
     )
     --> Hash:D
-)
+) is export
 {
     my %pkg = TXN::Package.new(|%opts).hash;
 }
@@ -391,13 +414,12 @@ sub build-tar-cmdline(
     --> Str:D
 )
 {
-    my Str:D $tarball =
-        sprintf(Q{%s-%s-%s.txn.pkg.tar.xz}, $pkgname, $pkgver, $pkgrel);
+    my Str:D $txn-pkg-file = TXN.gen-txn-pkg-file($pkgname, $pkgver, $pkgrel);
     my Str:D $tar-cmdline =
         sprintf(
             Q{tar -C %s --xz -cvf %s %s %s},
             $build-dir,
-            $tarball,
+            $txn-pkg-file,
             $txn-info-file.IO.basename,
             $txn-json-file.IO.basename
         );
