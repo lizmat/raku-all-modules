@@ -1,5 +1,5 @@
 use v6;
-unit class CPAN::Uploader::Tiny:ver<0.0.4>:auth<cpan:SKAJI>;
+unit class CPAN::Uploader::Tiny:ver<0.0.5>:auth<cpan:SKAJI>;
 
 use CPAN::Uploader::Tiny::MultiPart;
 use HTTP::Tinyish;
@@ -10,7 +10,7 @@ has $.password;
 has $.agent;
 
 submethod BUILD(:$!url, :$!user, :$!password, :$!agent) {
-    $!url ||= %*ENV<CPAN_UPLOADER_UPLOAD_URI> || 'https://pause.perl.org/pause/authenquery';
+    $!url ||= %*ENV<CPAN_UPLOADER_UPLOAD_URI> || 'https://pause.perl.org/pause/authenquery?ACTION=add_uri';
     $!agent ||= do {
         my $name = self.^name;
         my $ver  = self.^ver.Str;

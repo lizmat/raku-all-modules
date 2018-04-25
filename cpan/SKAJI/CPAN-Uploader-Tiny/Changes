@@ -1,5 +1,8 @@
 Revision history for CPAN-Uploader-Tiny
 
+0.0.5  2018-04-24T16:35:38+09:00
+  - Use proper pause url https://pause.perl.org/pause/authenquery?ACTION=add_uri (thanks charsbar!)
+
 0.0.4  2018-03-25T12:46:31+09:00
   - Make read-config method public
 
