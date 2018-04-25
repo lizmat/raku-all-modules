@@ -756,8 +756,7 @@ my sub callback($op, *@args) {
    }
 }
 
-my $gfx = $page.new-gfx: :&callback;
-$page.render($gfx);
+my $gfx = $page.render( :&callback);
 ```
 
 ## AcroForm Fields

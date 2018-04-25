@@ -1,5 +1,5 @@
 use v6;
-use PDF::Class:ver;
+use PDF::Class;
 
 class PDF::API6:ver<0.1.0>
     is PDF::Class {
