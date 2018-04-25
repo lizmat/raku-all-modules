@@ -41,7 +41,7 @@ is-json-equiv $page.gfx.content-dump.head(7).list, (
 
 lives-ok { $pdf.save-as("t/01-pdf-lite.pdf") }, 'save-as';
 
-throws-like { $pdf.unknown-method }, X::Method::NotFound, '$pdf unknown method';
+throws-like { $pdf.unknown-method }, X::Method::NotFound, message => "No such method 'unknown-method' for invocant of type 'PDF::Lite'", '$pdf unknown method';
 
 lives-ok { $pdf = PDF::Lite.open("t/01-pdf-lite.pdf") }, 'open';
 is-json-equiv $pdf.page(1).gfx(:render).content-dump.head(7).list, (

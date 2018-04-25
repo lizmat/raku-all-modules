@@ -377,7 +377,7 @@ say $pdf.page(1).gfx.ops;
 
 For a full list of operators, please see the PDF::Content README file.
 
-## Graphics State
+## Graphics and Rendering
 
 A number of variables are maintained that describe the graphics state. In many cases these may be set directly:
 
@@ -413,7 +413,7 @@ my &callback = sub ($op, *@args) {
        }
    }
 }
-$pdf.page(1).gfx(:&callback).ops;
+my $gfx = $pdf.page(1).render(:&callback);
 # text matrix set to: 1 0 0 1 10 10
 ```
 
