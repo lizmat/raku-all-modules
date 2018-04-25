@@ -1,6 +1,6 @@
 use v6;
 
-unit class Algorithm::LibSVM::Node:ver<0.0.2> is export is repr('CStruct');
+unit class Algorithm::LibSVM::Node:ver<0.0.3> is export is repr('CStruct');
 
 has int32 $.index;
 has num64 $.value;
@@ -30,13 +30,13 @@ Algorithm::LibSVM::Node is a Perl 6 Algorithm::LibSVM::Node class
 
 Defined as:
 
-        method index returns Int:D
+        method index(--> Int:D)
 
 =head3 value
 
 Defined as:
 
-        method value returns Num:D
+        method value(--> Num:D)
 
 =head1 AUTHOR
 

@@ -5,18 +5,17 @@ use Algorithm::LibSVM::Parameter;
 use Algorithm::LibSVM::Model;
 use Algorithm::LibSVM::Grammar;
 use Algorithm::LibSVM::Actions;
-use NativeHelpers::Array;
 
-unit class Algorithm::LibSVM:ver<0.0.2>;
+unit class Algorithm::LibSVM:ver<0.0.3>;
 
 has Int $.nr-feature;
 
 my constant $library = %?RESOURCES<libraries/svm>.Str;
 
 my sub svm_cross_validation(Algorithm::LibSVM::Problem, Algorithm::LibSVM::Parameter, int32, CArray[num64]) is native($library) { * }
-my sub svm_train(Algorithm::LibSVM::Problem, Algorithm::LibSVM::Parameter) returns Algorithm::LibSVM::Model is native($library) { * }
-my sub svm_check_parameter(Algorithm::LibSVM::Problem, Algorithm::LibSVM::Parameter) returns Str is native($library) { * }
-my sub print_string_stdout(Str) returns Pointer[void] is native($library) { * }
+my sub svm_train(Algorithm::LibSVM::Problem, Algorithm::LibSVM::Parameter --> Algorithm::LibSVM::Model) is native($library) { * }
+my sub svm_check_parameter(Algorithm::LibSVM::Problem, Algorithm::LibSVM::Parameter --> Str) is native($library) { * }
+my sub print_string_stdout(Str --> Pointer[void]) is native($library) { * }
 my sub svm_set_print_string_function(&print_func (Str --> Pointer[void])) is native($library) { * }
 my sub svm_set_srand(int32) is native($library) { * }
 
@@ -28,31 +27,31 @@ submethod BUILD(Bool :$verbose? = False, Int :$seed = 1) {
     svm_set_srand($seed);
 }
 
-method cross-validation(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param, Int $nr-fold) returns Array {
+method cross-validation(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param, Int $nr-fold --> List) {
     my $target = CArray[num64].new;
     $target[$problem.l] = 0e0; # memory allocation
     svm_cross_validation($problem, $param, $nr-fold, $target);
-    copy-to-array($target, $problem.l);
+    $target.list
 }
 
-method check-parameter(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param) returns Bool {
+method check-parameter(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param --> Bool) {
     my $msg = svm_check_parameter($problem, $param);
     die "$msg" if $msg.defined;
     True
 }
 
-method train(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param) returns Algorithm::LibSVM::Model {
+method train(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param --> Algorithm::LibSVM::Model) {
     if $param.gamma == 0 && $!nr-feature > 0 {
         $param.gamma((1.0 / $!nr-feature).Num);
     }
     svm_train($problem, $param) if self.check-parameter($problem, $param);
 }
 
-multi method load-problem(\lines) returns Algorithm::LibSVM::Problem {
+multi method load-problem(\lines --> Algorithm::LibSVM::Problem) {
     self!_load-problem(lines)
 }
 
-multi method load-problem(Str $filename) returns Algorithm::LibSVM::Problem {
+multi method load-problem(Str $filename --> Algorithm::LibSVM::Problem) {
     self!_load-problem($filename.IO.lines)
 }
 
@@ -77,13 +76,13 @@ method !_load-problem(\lines) {
     return Algorithm::LibSVM::Problem.new(l => $y-idx, y => $prob-y, x => $prob-x);
 }
 
-my sub svm_load_model(Str) returns Algorithm::LibSVM::Model is native($library) { * }
+my sub svm_load_model(Str --> Algorithm::LibSVM::Model) is native($library) { * }
 
-method load-model(Str $filename) returns Algorithm::LibSVM::Model {
+method load-model(Str $filename --> Algorithm::LibSVM::Model) {
     svm_load_model($filename)
 }
 
-method evaluate(@true-values, @predicted-values) returns Hash {
+method evaluate(@true-values, @predicted-values --> Hash) {
     if @true-values.elems != @predicted-values.elems {
         die 'ERROR: @true-values.elem != @predicted-values.elem';
     }
@@ -113,7 +112,7 @@ method evaluate(@true-values, @predicted-values) returns Hash {
     { acc => $accuracy, mse =>  $mean-squared-error, scc =>  $squared-correlation-coefficient }
 }
 
-sub parse-libsvmformat(Str $text) returns Array is export {
+sub parse-libsvmformat(Str $text --> List) is export {
     Algorithm::LibSVM::Grammar.parse($text, actions => Algorithm::LibSVM::Actions).made
 }
 
@@ -192,7 +191,7 @@ Algorithm::LibSVM is a Perl 6 bindings for libsvm.
 
 Defined as:
 
-       method cross-validation(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param, Int $nr-fold) returns Array
+       method cross-validation(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param, Int $nr-fold --> List)
 
 Conducts C<$nr-fold>-fold cross validation and returns predicted values.
 
@@ -200,7 +199,7 @@ Conducts C<$nr-fold>-fold cross validation and returns predicted values.
 
 Defined as:
 
-        method train(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param) returns Algorithm::LibSVM::Model
+        method train(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param --> Algorithm::LibSVM::Model)
 
 Trains a SVM model.
 
@@ -212,8 +211,8 @@ Trains a SVM model.
 
 Defined as:
 
-        multi method load-problem(\lines) returns Algorithm::LibSVM::Problem
-        multi method load-problem(Str $filename) returns Algorithm::LibSVM::Problem
+        multi method load-problem(\lines --> Algorithm::LibSVM::Problem)
+        multi method load-problem(Str $filename --> Algorithm::LibSVM::Problem)
 
 Loads libsvm-format data.
 
@@ -221,7 +220,7 @@ Loads libsvm-format data.
 
 Defined as:
 
-        method load-model(Str $filename) returns Algorithm::LibSVM::Model
+        method load-model(Str $filename --> Algorithm::LibSVM::Model)
 
 Loads libsvm model.
 
@@ -229,7 +228,7 @@ Loads libsvm model.
 
 Defined as:
 
-        method evaluate(@true-values, @predicted-values) returns Hash
+        method evaluate(@true-values, @predicted-values --> Hash)
 
 Evaluates the performance of the three metrics (i.e. accuracy, mean squared error and squared correlation coefficient)
 
@@ -241,7 +240,7 @@ Evaluates the performance of the three metrics (i.e. accuracy, mean squared erro
 
 Defined as:
 
-        method nr-feature returns Int:D
+        method nr-feature(--> Int:D)
 
 Returns the maximum index of all the features.
 
@@ -251,7 +250,7 @@ Returns the maximum index of all the features.
 
 Defined as:
 
-        sub parse-libsvmformat(Str $text) returns Array is export
+        sub parse-libsvmformat(Str $text --> List) is export
 
 Is a helper routine for handling libsvm-format text.
 

@@ -1,8 +1,7 @@
 use v6;
 use NativeCall;
-use NativeHelpers::Array;
 
-unit class Algorithm::LibSVM::Parameter:ver<0.0.2> is export is repr('CStruct');
+unit class Algorithm::LibSVM::Parameter:ver<0.0.3> is export is repr('CStruct');
 
 my constant $library = %?RESOURCES<libraries/svm>.Str;
 
@@ -133,11 +132,11 @@ multi method nr-weight {
 # TODO: setter for weight-label, weight
 
 method weight-label {
-    copy-to-array($!weight_label, $!nr_weight);
+   $!weight_label.list
 }
 
 method weight {
-    copy-to-array($!weight, $!nr_weight);
+    $!nr_weight.list
 }
 
 multi method nu(Num:D $nu) {
@@ -160,7 +159,7 @@ multi method shrinking(Bool:D $shrinking) {
     $!shrinking = $shrinking ?? 1 !! 0;
 }
 
-multi method shrinking returns Bool {
+multi method shrinking(--> Bool) {
     Bool($!shrinking)
 }
 
@@ -168,7 +167,7 @@ multi method probability(Bool:D $probability) {
     $!probability = $probability ?? 1 !! 0;
 }
 
-multi method probability returns Bool {
+multi method probability(--> Bool) {
     Bool($!probability)
 }
 
@@ -313,7 +312,7 @@ Are getter/setter methods for the parameter p.
 
 Defined as:
 
-       multi method shrinking returns Bool
+       multi method shrinking(--> Bool)
        multi method shrinking(Bool:D $shrinking)
 
 Are getter/setter methods for the parameter shrinking.
@@ -322,7 +321,7 @@ Are getter/setter methods for the parameter shrinking.
 
 Defined as:
 
-        multi method probability returns Bool
+        multi method probability(--> Bool)
         multi method probability(Bool:D $probability)
 
 Are getter/setter methods for the parameter probability.

@@ -1,25 +1,24 @@
 use v6;
-use NativeHelpers::Array;
 use NativeCall;
 use Algorithm::LibSVM::Node;
 use Algorithm::LibSVM::Parameter;
 
-unit class Algorithm::LibSVM::Model:ver<0.0.2> is export is repr('CPointer'); 
+unit class Algorithm::LibSVM::Model:ver<0.0.3> is export is repr('CPointer'); 
 
 my constant $library = %?RESOURCES<libraries/svm>.Str;
 
-my sub svm_get_svm_type(Algorithm::LibSVM::Model) returns int32 is native($library) { * }
-my sub svm_get_nr_class(Algorithm::LibSVM::Model) returns int32 is native($library) { * }
+my sub svm_get_svm_type(Algorithm::LibSVM::Model --> int32) is native($library) { * }
+my sub svm_get_nr_class(Algorithm::LibSVM::Model --> int32) is native($library) { * }
 my sub svm_get_labels(Algorithm::LibSVM::Model, CArray[int32]) is native($library) { * }
 my sub svm_get_sv_indices(Algorithm::LibSVM::Model, CArray[int32]) is native($library) { * }
-my sub svm_get_nr_sv(Algorithm::LibSVM::Model) returns int32 is native($library) { * }
-my sub svm_get_svr_probability(Algorithm::LibSVM::Model) returns num64 is native($library) { * }
-my sub svm_predict_values(Algorithm::LibSVM::Model, Algorithm::LibSVM::Node, CArray[num64]) returns num64 is native($library) { * }
-my sub svm_predict(Algorithm::LibSVM::Model, Algorithm::LibSVM::Node) returns num64 is native($library) { * }
-my sub svm_predict_probability(Algorithm::LibSVM::Model, Algorithm::LibSVM::Node, CArray[num64]) returns num64 is native($library) { * }
+my sub svm_get_nr_sv(Algorithm::LibSVM::Model --> int32) is native($library) { * }
+my sub svm_get_svr_probability(Algorithm::LibSVM::Model --> num64) is native($library) { * }
+my sub svm_predict_values(Algorithm::LibSVM::Model, Algorithm::LibSVM::Node, CArray[num64] --> num64) is native($library) { * }
+my sub svm_predict(Algorithm::LibSVM::Model, Algorithm::LibSVM::Node --> num64) is native($library) { * }
+my sub svm_predict_probability(Algorithm::LibSVM::Model, Algorithm::LibSVM::Node, CArray[num64] --> num64) is native($library) { * }
 my sub svm_free_model_content(Algorithm::LibSVM::Model) is native($library) { * }
 my sub svm_free_and_destroy_model(Algorithm::LibSVM::Model) is native($library) { * }
-my sub svm_check_probability_model(Algorithm::LibSVM::Model) returns int32 is native($library) { * }
+my sub svm_check_probability_model(Algorithm::LibSVM::Model --> int32) is native($library) { * }
 
 sub svm_save_model(Str, Algorithm::LibSVM::Model) is native($library) is export { * }
 
@@ -27,37 +26,37 @@ method save(Str $filename) {
     svm_save_model($filename, self)
 }
 
-method svm-type returns SVMType {
+method svm-type(--> SVMType) {
     SVMType(svm_get_svm_type(self))
 }
 
-method nr-class returns Int:D {
+method nr-class(--> Int:D) {
     svm_get_nr_class(self)
 }
 
-method labels returns Array {
+method labels(--> List) {
     my $labels = CArray[int32].new;
     $labels[self.nr-class - 1] = 0; # allocate memory
     svm_get_labels(self, $labels);
-    copy-to-array($labels, self.nr-class);
+    $labels.list
 }
 
-method sv-indices returns Array {
+method sv-indices(--> List) {
     my $indices = CArray[int32].new;
     $indices[self.nr-sv - 1] = 0; # allocate memory
     svm_get_sv_indices(self, $indices);
-    copy-to-array($indices, self.nr-sv);
+    $indices.list
 }
 
-method nr-sv returns Int:D {
+method nr-sv(--> Int:D) {
     svm_get_nr_sv(self)
 }
 
-method svr-probability returns Num:D {
+method svr-probability(--> Num:D) {
     svm_get_svr_probability(self)
 }
 
-method !make-node-linked-list(:@features) returns Algorithm::LibSVM::Node {
+method !make-node-linked-list(:@features --> Algorithm::LibSVM::Node) {
     my Algorithm::LibSVM::Node $next .= new(index => -1, value => 0e0);
     for @features.sort({ $^b.key <=> $^a.key }) {
         $next = Algorithm::LibSVM::Node.new(index => .key, value => .value, next => $next);
@@ -65,23 +64,21 @@ method !make-node-linked-list(:@features) returns Algorithm::LibSVM::Node {
     $next;
 }
 
-method predict(:@features where Positional[Pair]|Array[Pair], Bool :$probability, Bool :$decision-values) returns Hash {
+method predict(:@features where Positional[Pair], Bool :$probability, Bool :$decision-values --> Hash) {
     my %result;
     if $probability and self.check-probability-model {
         my $prob-estimates = CArray[num64].new;
         $prob-estimates[self.nr-class] = 0e0;
         my $label = svm_predict_probability(self, self!make-node-linked-list(:@features), $prob-estimates);
-        my @prob-estimates = copy-to-array($prob-estimates, self.nr-class);
         %result<label> = $label;
-        %result<prob-estimates> = @prob-estimates
+        %result<prob-estimates> = $prob-estimates.list;
     }
     if $decision-values {
         my $dec-values = CArray[num64].new;
         $dec-values[self.nr-class * (self.nr-class - 1) div 2] = 0e0;
         my $label = svm_predict_values(self, self!make-node-linked-list(:@features), $dec-values);
-        my @dec-values = copy-to-array($dec-values, self.nr-class * (self.nr-class - 1) div 2);
         %result<label> = $label;
-        %result<decision-values> = @dec-values;
+        %result<decision-values> = $dec-values.list;
     }
 
     if not $probability and not $decision-values {
@@ -90,7 +87,7 @@ method predict(:@features where Positional[Pair]|Array[Pair], Bool :$probability
     %result;
 }
 
-method check-probability-model returns Bool {
+method check-probability-model(--> Bool) {
     my $ok = Bool(svm_check_probability_model(self));
     if not $ok {
         die "ERROR: Given model cannot compute probability.";
@@ -130,7 +127,7 @@ Saves the model to the file C<$filename>.
 
 Defined as:
 
-        method svm-type returns SVMType
+        method svm-type(--> SVMType)
 
 Returns the C<SVMType> object.
 
@@ -138,7 +135,7 @@ Returns the C<SVMType> object.
 
 Defined as:
 
-        method nr-class returns Int:D
+        method nr-class(--> Int:D)
 
 Returns the number of the classes.
 
@@ -146,7 +143,7 @@ Returns the number of the classes.
 
 Defined as:
 
-        method labels returns Array
+        method labels(--> List)
 
 Returns the labels.
 
@@ -154,7 +151,7 @@ Returns the labels.
 
 Defined as:
 
-        method sv-indices returns Array
+        method sv-indices(--> List)
 
 Returns the indices of the support vectors.
 
@@ -162,7 +159,7 @@ Returns the indices of the support vectors.
 
 Defined as:
 
-        method nr-sv returns Int:D
+        method nr-sv(--> Int:D)
 
 Returns the number of the support vectors.
 
@@ -170,7 +167,7 @@ Returns the number of the support vectors.
 
 Defined as:
 
-        method svr-probability returns Num:D
+        method svr-probability(--> Num:D)
 
 Returns the probability predicted by support vector regression.
 
@@ -178,7 +175,7 @@ Returns the probability predicted by support vector regression.
 
 Defined as:
 
-        method predict(Pair :@features, Bool :$probability, Bool :$decision-values) returns Hash
+        method predict(Pair :@features, Bool :$probability, Bool :$decision-values --> Hash)
 
 Conducts the prediction and returns its results.
 

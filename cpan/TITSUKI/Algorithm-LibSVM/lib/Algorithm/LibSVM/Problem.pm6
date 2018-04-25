@@ -1,9 +1,8 @@
 use v6;
 use NativeCall;
 use Algorithm::LibSVM::Node;
-use NativeHelpers::Array;
 
-unit class Algorithm::LibSVM::Problem:ver<0.0.2> is export is repr('CStruct');
+unit class Algorithm::LibSVM::Problem:ver<0.0.3> is export is repr('CStruct');
 
 has int32 $.l;
 has CArray[num64] $!y;
@@ -15,12 +14,12 @@ method BUILD(int32 :$l, CArray[num64] :$y, CArray[Algorithm::LibSVM::Node] :$x) 
     $!x := $x;
 }
 
-method y returns Array {
-    copy-to-array($!y, $!l);
+method y(--> List) {
+    $!y.list
 }
 
-method x returns Array {
-    copy-to-array($!x, $!l);
+method x(--> List) {
+    $!x.list
 }
 
 =begin pod
@@ -43,7 +42,7 @@ Algorithm::LibSVM::Problem is a Perl 6 Algorithm::LibSVM::Problem class
 
 Defined as:
 
-        method l returns Int:D
+        method l return(--> Int:D)
 
 Returns the number of the training data.
 
@@ -51,7 +50,7 @@ Returns the number of the training data.
 
 Defined as:
 
-        method y returns Array
+        method y(--> List)
 
 Returns the array containing the target values (C<Int> values in classification, C<Num> values in regression) of the training data.
 
@@ -59,7 +58,7 @@ Returns the array containing the target values (C<Int> values in classification,
 
 Defined as:
 
-        method x returns Array
+        method x(--> List)
 
 Returns the array of pointers, each of which points to a sparse representation (i.e. array of C<Algorithm::LibSVM::Node>) of one training vector.
 

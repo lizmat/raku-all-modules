@@ -79,7 +79,7 @@ METHODS
 
 Defined as:
 
-    method cross-validation(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param, Int $nr-fold) returns Array
+    method cross-validation(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param, Int $nr-fold --> List)
 
 Conducts `$nr-fold`-fold cross validation and returns predicted values.
 
@@ -87,7 +87,7 @@ Conducts `$nr-fold`-fold cross validation and returns predicted values.
 
 Defined as:
 
-    method train(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param) returns Algorithm::LibSVM::Model
+    method train(Algorithm::LibSVM::Problem $problem, Algorithm::LibSVM::Parameter $param --> Algorithm::LibSVM::Model)
 
 Trains a SVM model.
 
@@ -99,8 +99,8 @@ Trains a SVM model.
 
 Defined as:
 
-    multi method load-problem(\lines) returns Algorithm::LibSVM::Problem
-    multi method load-problem(Str $filename) returns Algorithm::LibSVM::Problem
+    multi method load-problem(\lines --> Algorithm::LibSVM::Problem)
+    multi method load-problem(Str $filename --> Algorithm::LibSVM::Problem)
 
 Loads libsvm-format data.
 
@@ -108,7 +108,7 @@ Loads libsvm-format data.
 
 Defined as:
 
-    method load-model(Str $filename) returns Algorithm::LibSVM::Model
+    method load-model(Str $filename --> Algorithm::LibSVM::Model)
 
 Loads libsvm model.
 
@@ -116,7 +116,7 @@ Loads libsvm model.
 
 Defined as:
 
-    method evaluate(@true-values, @predicted-values) returns Hash
+    method evaluate(@true-values, @predicted-values --> Hash)
 
 Evaluates the performance of the three metrics (i.e. accuracy, mean squared error and squared correlation coefficient)
 
@@ -128,7 +128,7 @@ Evaluates the performance of the three metrics (i.e. accuracy, mean squared erro
 
 Defined as:
 
-    method nr-feature returns Int:D
+    method nr-feature(--> Int:D)
 
 Returns the maximum index of all the features.
 
@@ -139,7 +139,7 @@ ROUTINES
 
 Defined as:
 
-    sub parse-libsvmformat(Str $text) returns Array is export
+    sub parse-libsvmformat(Str $text --> List) is export
 
 Is a helper routine for handling libsvm-format text.
 
