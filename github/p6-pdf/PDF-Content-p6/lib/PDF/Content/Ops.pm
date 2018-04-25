@@ -159,6 +159,7 @@ class PDF::Content::Ops {
     my constant ColorOps = set <CS cs SC SCN sc scn G g RG rg K k>;
     my constant MarkedContentOps = set <MP DP BMC BDC EMC>;
     my constant CompatOps = set <BX EX>;
+    my constant FontOps = set <d0 d1>;
 
     # Extended Graphics States (Resource /ExtGState entries)
     # See [PDF 1.7 TABLE 4.8 Entries in a graphics state parameter dictionary]
@@ -367,6 +368,12 @@ class PDF::Content::Ops {
     has @.gsave;
     has Pair @.tags;
 
+    # *** Type 3 Font Metrics ***
+
+    has Numeric $.char-width;
+    has Numeric $.char-height;
+    has Numeric @.char-bbox[4];
+
     # States and transitions in [PDF 1.4 FIGURE 4.1 Graphics objects]
     my enum GraphicsContext is export(:GraphicsContext) <Path Text Clipping Page Shading Image>;
 
@@ -390,7 +397,7 @@ class PDF::Content::Ops {
         my constant %InSitu = %(
            (Path) => PathOps ∪ CompatOps,
            (Text) => TextOps ∪ TextStateOps ∪ GeneralGraphicOps ∪ ColorOps ∪ MarkedContentOps ∪ CompatOps,
-           (Page) => TextStateOps ∪ SpecialGraphicOps ∪ GeneralGraphicOps ∪ ColorOps ∪ MarkedContentOps ∪ CompatOps ∪ <sh>.Set,
+           (Page) => TextStateOps ∪ SpecialGraphicOps ∪ GeneralGraphicOps ∪ ColorOps ∪ MarkedContentOps ∪ CompatOps ∪ FontOps ∪ <sh>.Set,
            (Image) => <ID>.Set,
         );
 
@@ -851,6 +858,10 @@ class PDF::Content::Ops {
     }
     multi method track-graphics($op, *@args) is default {
         .(self,|@args) with %PostOp{$op};
+    }
+    multi method track-graphics('d0', $!char-width, $!char-height) {
+    }
+    multi method track-graphics('d1', $!char-width, $!char-height, *@!char-bbox) {
     }
 
     method finish {

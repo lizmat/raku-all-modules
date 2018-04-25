@@ -1,6 +1,9 @@
 Release 0.2.2
 - Changed $.gfx method to not render by default
 - Added some structured exceptions to PDF::Content::Ops
+- Add $gfx.char-width, .char-height and .char-bbox attributes.
+- Track operators d0 (SetCharWidth) and d1 (SetCharWidthBBox)
+
 Release 0.2.1
 - Tweak handling of BX .. EX compatibility blocks
 - Fix BDC op (BeginMarkedContentDict) to allow dict or name as second argument

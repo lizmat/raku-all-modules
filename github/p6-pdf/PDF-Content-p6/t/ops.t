@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 98;
+plan 103;
 
 use lib '.';
 use PDF::Grammar::Test :is-json-equiv;
@@ -261,6 +261,15 @@ $g.ConcatMatrix(1,0,0,1,150,-50);
 $g.ConcatMatrix(2,0,0,2,0,0);
 is-deeply [ $g.CTM.list ], [2, 0, 0, 2, 150, 742], "chained matrix transforms";
 $g.Restore;
+
+$g.SetCharWidth(12,15);
+is $g.char-width, 12, "SetCharWidth";
+is $g.char-height, 15, "SetCharWidth";
+
+$g.SetCharWidthBBox(20,25, 1, 2, 25, 30);
+is $g.char-width, 20, "SetCharWidthBBox";
+is $g.char-height, 25, "SetCharWidthBBox";
+is-deeply $g.char-bbox.List, (1, 2, 25, 30), "SetCharWidthBBox";
 
 lives-ok { $g.?Junk }, 'unknown method/operator: .? invocation';
 dies-ok { $g.Junk }, 'unknown method/operator: . invocation';
