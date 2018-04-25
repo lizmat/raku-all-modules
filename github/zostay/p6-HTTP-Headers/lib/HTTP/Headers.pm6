@@ -214,7 +214,7 @@ class HTTP::Header::Custom does HTTP::Header {
 }
 
 #! A group of headers
-class HTTP::Headers {
+class HTTP::Headers:ver<0.1>:auth<github:zostay> {
     has HTTP::Header %!headers; #= Internal header storage... no touchy
     has Bool $.quiet = False; #= Silence all warnings
 
