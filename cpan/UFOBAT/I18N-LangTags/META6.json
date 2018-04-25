@@ -1,0 +1,24 @@
+{
+  "authors" : [
+    "Martin Barth"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "ported from Perl5",
+  "license" : "Artistic-2.0",
+  "name" : "I18N::LangTags",
+  "perl" : "6.c",
+  "provides" : {
+    "I18N::LangTags" : "lib/I18N/LangTags.pm6",
+    "I18N::LangTags::Actions" : "lib/I18N/LangTags/Actions.pm6",
+    "I18N::LangTags::Grammar" : "lib/I18N/LangTags/Grammar.pm6",
+    "I18N::LangTags::List" : "lib/I18N/LangTags/List.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/ufobat/p6-I18N-LangTags.git",
+  "tags" : [
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.1.0"
+}
