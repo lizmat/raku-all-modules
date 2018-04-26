@@ -1,4 +1,4 @@
-unit class Hash::MultiValue:ver<0.4>:auth<github:zostay> is Associative;
+unit class Hash::MultiValue:ver<0.5>:auth<github:zostay> is Associative;
 
 use v6;
 
