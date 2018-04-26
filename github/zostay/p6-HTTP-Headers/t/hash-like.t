@@ -8,8 +8,8 @@ use HTTP::Headers;
 my $h = HTTP::Headers.new;
 
 # Test the Hash-accessors
-is($h{Content-Type}.name, Content-Type);
-is($h<Content-Type>.name, Content-Type);
+is($h{HTTP::Header::Content-Type}.name, HTTP::Header::Content-Type);
+is($h<Content-Type>.name, HTTP::Header::Content-Type);
 
 $h<Zoo> = 'bar';
 is($h<Zoo>.name, 'Zoo');

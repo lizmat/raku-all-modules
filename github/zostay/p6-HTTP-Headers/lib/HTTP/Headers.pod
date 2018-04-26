@@ -4,7 +4,7 @@
 
 =begin SYNOPSIS
 
-    use HTTP::Headers;
+    use HTTP::Headers :standard-names;
     my $headers = HTTP::Headers.new;
     $headers.Content-Type = 'text/html';
     $headers.Content-Type.charset = "UTF-8";
@@ -49,8 +49,9 @@ The various C<%headers> and C<@headers> methods can be used to initialize the ob
     multi method header(HTTP::Header::Standard::Name $name) is rw returns HTTP::Header
     multi method header(Str $name) is rw returns HTTP::Header
 
-This method is writable and allows the use of either the values in the C<HTTP::Header::Standard::Name> enumeration or string values. In general, you should not use strings when you can use the enumeration in your code. By using the enumeration, you can find typos and other errors more quickly.
+This method is writable and allows the use of either the values in the C<HTTP::Header::Standard::Name> enumeration or string values. In general, you should not use strings when you can use the enumeration in your code. By using the enumeration, you can discover typos at compile time.
 
+    use HTTP::Headers :standard-names;
     $headers.header(Content-MIME-Type); # I forgot it's just Content-Type
     # Undeclared name:
     #     Content-MIME-Type used at line 1

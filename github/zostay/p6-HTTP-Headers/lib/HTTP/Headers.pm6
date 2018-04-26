@@ -1,26 +1,29 @@
 use v6;
 
-#| Enumeration of standard headers
-enum HTTP::Header::Standard::Name is export
-    # General, Request, Response, Entity Headers
-    <
-        Cache-Control Connection Date Pragma Trailer Transfer-Encoding
-        Upgrade Via Warning
+package HTTP::Header {
 
-        Accept Accept-Charset Accept-Encoding Accept-Language
-        Authorization Cookie Expect From Host If-Match If-Modified-Since
-        If-None-Match If-Range If-Unmodified-Since Max-Forwards
-        Proxy-Authorization Range Referer TE User-Agent
+    #| Enumeration of standard headers
+    our enum Standard::Name is export(:standard-names)
+        # General, Request, Response, Entity Headers
+        <
+            Cache-Control Connection Date Pragma Trailer Transfer-Encoding
+            Upgrade Via Warning
 
-        Accept-Ranges Age ETag Location Proxy-Authenticate Retry-After
-        Server Set-Cookie Vary WWW-Authenticate
+            Accept Accept-Charset Accept-Encoding Accept-Language
+            Authorization Cookie Expect From Host If-Match If-Modified-Since
+            If-None-Match If-Range If-Unmodified-Since Max-Forwards
+            Proxy-Authorization Range Referer TE User-Agent
 
-        Allow Content-Encoding Content-Language Content-Length
-        Content-Location Content-MD5 Content-Range Content-Type
-        Expires Last-Modified
-    >;
+            Accept-Ranges Age ETag Location Proxy-Authenticate Retry-After
+            Server Set-Cookie Vary WWW-Authenticate
 
-class HTTP::Headers { ... }
+            Allow Content-Encoding Content-Language Content-Length
+            Content-Location Content-MD5 Content-Range Content-Type
+            Expires Last-Modified
+        >;
+}
+
+class HTTP::Headers:ver<0.1>:auth<github:zostay> { ... }
 
 #| Role for defining all header objects
 role HTTP::Header {
@@ -214,7 +217,7 @@ class HTTP::Header::Custom does HTTP::Header {
 }
 
 #! A group of headers
-class HTTP::Headers:ver<0.1>:auth<github:zostay> {
+class HTTP::Headers {
     has HTTP::Header %!headers; #= Internal header storage... no touchy
     has Bool $.quiet = False; #= Silence all warnings
 
@@ -284,7 +287,7 @@ class HTTP::Headers:ver<0.1>:auth<github:zostay> {
             $std-name = $name.trans('_' => ' ', '-' => ' ').wordcase.trans(' ' => '-');
         }
 
-        if my $std = ::($std-name) {
+        if ::("HTTP::Header::$std-name") -> $std {
             my $h = HTTP::Header::Standard.new(:name($std), :@values);
             if $std ~~ HTTP::Header::Standard::Name::Content-Type {
                 $h but HTTP::Header::Standard::Content-Type;
@@ -293,6 +296,7 @@ class HTTP::Headers:ver<0.1>:auth<github:zostay> {
                 $h
             }
         }
+
         else {
             HTTP::Header::Custom.new(:name($std-name), :@values);
         }
@@ -336,7 +340,7 @@ class HTTP::Headers:ver<0.1>:auth<github:zostay> {
     #| Read or write a custom header
     multi method header(Str $name, :$quiet = False) is rw returns HTTP::Header {
         warn qq{Calling .header($name) is preferred to .header("$name") for standard HTTP headers.}
-            if !$!quiet && !$quiet && ::($name).defined;
+            if !$!quiet && !$quiet && ::("HTTP::Header::$name").defined;
 
         self.header-proxy($name);
     }

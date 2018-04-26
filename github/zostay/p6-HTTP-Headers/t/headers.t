@@ -3,7 +3,7 @@
 use v6;
 
 use Test;
-use HTTP::Headers;
+use HTTP::Headers :standard-names;
 
 my (HTTP::Headers $h, HTTP::Headers $h2);
 
@@ -39,7 +39,7 @@ $h.header("Foo") = [ 1, 1 ];
 is(~$h.header("Foo"), "1, 1");
 is-deeply($h.header("Foo").list, (1, 1).list.item);
 $h.header('foo') = 11;
-$h.header('Foo').push: 12; 
+$h.header('Foo').push: 12;
 $h.header('bar') = 22;
 is($h.header("Foo").value, "11, 12");
 is($h.header("Bar").value, '22');
@@ -47,7 +47,7 @@ $h.header('Bar') = ();
 is($h.header("Bar"), '');
 $h.header('Bar') = 22;
 is($h.header("bar"), '22');
- 
+
 $h.header('Bar').push: 22;
 is($h.header("Bar"), "22, 22");
 $h.header('Bar').push: 23 .. 25;
@@ -67,7 +67,7 @@ $h.header('Baz').init(2, 3);
 is($h.as-string, "Bar: 2\nBaz: 2\nBaz: 3\nFoo: 1\n");
 
 is($h.as-string, $h.clone.as-string);
- 
+
 is($h.clone.remove-header("Foo"), '1');
 is($h.clone.remove-header("Bar"), '2');
 is($h.clone.remove-header("Baz"), '2, 3');
@@ -122,12 +122,12 @@ is-deeply([ $h.for-PSGI ], [
     'Content-Foo' => 'bar',
     'Zoo' => 'foo',
 ]);
- 
+
 $h2 = $h.clone;
 is($h.as-string, $h2.as-string);
 isnt($h.WHICH, $h2.WHICH);
 isnt($h.internal-headers.WHICH, $h2.internal-headers.WHICH);
- 
+
 $h.remove-content-headers;
 is($h.as-string, q:to/EOT/);
 Date: today
@@ -155,7 +155,7 @@ EOT
 
 $h2.remove-content-headers;
 is($h.as-string, $h2.as-string);
- 
+
 $h.clear;
 is($h.as-string, "");
 $h2 = Nil;
