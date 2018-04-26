@@ -1,5 +1,8 @@
 Revision history for P5lcfirst
 
+0.0.5  2018-04-25T19:07:35+02:00
+    - P5lcfirst must be a module, not a class
+
 0.0.4  2018-04-12T10:40:29+02:00
     - Merge ucfirst() code in here to reduce number of CPAN5 distributions.
 

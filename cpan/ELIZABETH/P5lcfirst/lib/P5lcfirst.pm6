@@ -1,5 +1,5 @@
 use v6.c;
-unit class P5lcfirst:ver<0.0.4>;
+unit module P5lcfirst:ver<0.0.5>;
 
 proto sub lcfirst(|) is export {*}
 multi sub lcfirst(--> Str:D) {
