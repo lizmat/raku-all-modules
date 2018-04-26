@@ -1,6 +1,6 @@
 use v6.c;
 
-class Tie::Array:ver<0.0.3> {
+class Tie::Array:ver<0.0.4>:auth<cpan:ELIZABETH> {
     method EXTEND($) { }
     method DESTROY() { }
     method CLEAR() { self.STORESIZE(0) }
