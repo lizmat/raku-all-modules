@@ -1,6 +1,6 @@
 use v6.c;
 
-class Tie::Hash:ver<0.0.3> {
+class Tie::Hash:ver<0.0.4>:auth<cpan:ELIZABETH> {
 
     method EXISTS($) { die self.^name ~ " doesn't define an EXISTS method" }
 

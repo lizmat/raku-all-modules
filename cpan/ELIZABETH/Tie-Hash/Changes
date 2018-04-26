@@ -1,5 +1,8 @@
 Revision history for Tie::Hash
 
+0.0.4  2018-04-25T20:39:20+02:00
+    - add authority to the version information
+
 0.0.3  2018-04-11T23:07:44+02:00
     - Follow App:Mi6's default Changes format
 
