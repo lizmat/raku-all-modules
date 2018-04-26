@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/p6-Crust-Handler-SCGI.git
 	branch = master
-	commit = 71508ba6413ead6bd8c330086a321071b1e95543
-	parent = d8a72f4ef7a16afd6cc93d7413fe7f9564be08b6
+	commit = c11f0b537d1cd98966fcdfd77336549d5a5aa9e1
+	parent = 173c2d4f4ab8e17cbf410615b0a4c9c0e460a925
 	cmdver = 0.4.0
