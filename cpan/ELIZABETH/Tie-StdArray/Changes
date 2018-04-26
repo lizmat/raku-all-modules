@@ -1,5 +1,8 @@
 Revision history for Tie::StdArray
 
+0.0.3  2018-04-25T20:40:31+02:00
+    - add authority to the version information
+
 0.0.2  2018-04-11T23:09:55+02:00
     - Follow App:Mi6's default Changes format
 
