@@ -6,7 +6,7 @@ DBIx::NamedQueries - a predefined sql framework for Perl6
 SYNOPSIS
 ========
 
-Build a class for yout predefined SQL-Statements
+Build a class for your predefined SQL-Statements
 
     use Bailador;
     use Bailador::Plugin::NamedQueries;

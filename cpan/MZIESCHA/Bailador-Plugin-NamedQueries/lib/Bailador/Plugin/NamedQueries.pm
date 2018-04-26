@@ -4,7 +4,7 @@ use Bailador::Plugins;
 
 use DBIx::NamedQueries;
 
-class Bailador::Plugin::NamedQueries:ver<0.001000>:auth<cpan:MZIESCHA> is Bailador::Plugin {
+class Bailador::Plugin::NamedQueries:ver<0.1001>:auth<cpan:MZIESCHA> is Bailador::Plugin {
 
     has DBIx::NamedQueries $!named_queries;
     
@@ -70,7 +70,7 @@ DBIx::NamedQueries - a predefined sql framework for Perl6
 
 =head1 SYNOPSIS
 
-Build a class for yout predefined SQL-Statements
+Build a class for your predefined SQL-Statements
 
     use Bailador;
     use Bailador::Plugin::NamedQueries;
