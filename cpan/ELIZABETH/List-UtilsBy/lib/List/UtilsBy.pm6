@@ -1,6 +1,6 @@
 use v6.c;
 
-class List::UtilsBy:ver<0.0.1>:auth<cpan:ELIZABETH> {
+module List::UtilsBy:ver<0.0.2>:auth<cpan:ELIZABETH> {
     our sub max_by(&code, *@values, :$scalar) is export(:all) {
         my $max = -Inf;
         my @max-value is default(Nil);
