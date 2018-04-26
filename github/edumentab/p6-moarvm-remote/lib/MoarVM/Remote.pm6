@@ -50,6 +50,8 @@ our enum MessageType is export <
     MT_ObjectPositionalsResponse
     MT_ObjectAssociativesRequest
     MT_ObjectAssociativesResponse
+    MT_HandleEquivalenceRequest
+    MT_HandleEquivalenceResponse
 >;
 
 class X::MoarVM::Remote::ProtocolError is Exception {
@@ -133,7 +135,10 @@ class MoarVM::Remote {
         if $buffer.elems >= "MOARVM-REMOTE-DEBUG\0".chars + 4 {
             if $buffer.subbuf(0, "MOARVM-REMOTE-DEBUG\0".chars).list eqv  "MOARVM-REMOTE-DEBUG\0".encode("ascii").list {
                 $buffer.splice(0, "MOARVM-REMOTE-DEBUG\0".chars);
-                if (my $major = recv16be($buffer)) != 1 || (my $minor = recv16be($buffer)) != 0 {
+                # Currently no need for a specific minor version to be met.
+                my $major = recv16be($buffer);
+                my $minor = recv16be($buffer);
+                if $major != 1 {
                     die X::MoarVM::Remote::Version.new(:versions($major, $minor));
                 }
                 return Version.new("$major.$minor");
@@ -360,14 +365,14 @@ class MoarVM::Remote {
     }
 
     method breakpoint(Str $file, Int $line, Bool :$suspend = True, Bool :$stacktrace = True) {
-        self!send-request(MT_SetBreakpointRequest, :$file, :$line, :$suspend, :$stacktrace).then({
+        self!send-request(MT_SetBreakpointRequest, :$file, line => +$line, :$suspend, :$stacktrace).then({
             if .result<type> == MT_SetBreakpointConfirmation {
                 %!breakpoint-to-event{$file => .result<line>}.push(.result<id>);
-                note "setting up an event supplier for event $_.result()<id>";
+                note "setting up an event supplier for event $_.result()<id>" if $!debug;
                 %!event-suppliers{.result<id>} = my $sup = Supplier::Preserving.new;
-                note "set it up";
+                note "set it up" if $!debug;
                 my %ret = flat @(.result.hash), "notifications" => $sup.Supply;
-                note "created return value";
+                note "created return value" if $!debug;
                 %ret;
             }
         })
@@ -419,5 +424,16 @@ class MoarVM::Remote {
         self!send-request(MT_StepOut, :$thread).then({
             .result<id> if .result<type> == MT_OperationSuccessful
         })
+    }
+
+    method equivalences(+@handles) {
+        my @handles-cleaned = @handles.map(+*);
+        if $.remote-version before v1.1 {
+            Promise.broken("Remote does not yet implement equivalences command");
+        } else {
+            self!send-request(MT_HandleEquivalenceRequest, :handles(@handles-cleaned)).then({
+                .result<classes>.List if .result<type> == MT_HandleEquivalenceResponse
+            });
+        }
     }
 }
