@@ -1,5 +1,5 @@
 use v6.c;
-unit class P5fc:ver<0.0.2>;
+unit module P5fc:ver<0.0.4>:auth<cpan:ELIZABETH>;
 
 proto sub fc(|) is export {*}
 multi sub fc(         --> Str:D) { (CALLERS::<$_>).fc }
@@ -31,7 +31,7 @@ possible.
 Elizabeth Mattijsen <liz@wenzperl.nl>
 
 Source can be located at: https://github.com/lizmat/P5fc . Comments and
-Pull Requests are wefcome.
+Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
