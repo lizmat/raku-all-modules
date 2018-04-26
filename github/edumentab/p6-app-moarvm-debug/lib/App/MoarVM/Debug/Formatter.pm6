@@ -45,13 +45,25 @@ our sub format-attributes($lex-or-attr) is export {
             given $lex-or-attr;
 }
 
-our sub format-lexicals-for-frame($lexicals, :@handles-seen) is export {
+sub classes-to-renaming(@classes) is export {
+    my %to-replace{Int} = do for @classes {
+        given $_.sort.List {
+            |($_.tail(*-1) X=> $_.head)
+        }
+    }
+}
+
+our sub format-lexicals-for-frame($lexicals, :@handles-seen, :%handle-renaming) is export {
     gather for $lexicals.kv -> $n, $/ {
         my @attributes = format-attributes($/);
 
-        @handles-seen.push($<handle>.Int) if $<handle> && defined @handles-seen;
+        my $orig-handle = $<handle>.Int if $<handle>;
+        my $handle = %handle-renaming{$orig-handle} if %handle-renaming && $orig-handle;
+        $handle //= $orig-handle;
 
-        take bold($<handle> // ""), $<type> || $<kind>, $n, @attributes.join(", ");
+        @handles-seen.push($handle) if $handle && $handle == $orig-handle && defined @handles-seen;
+
+        take bold($handle // ""), $<type> || $<kind>, $n, @attributes.join(", ");
     }.sort({+colorstrip(.[0])}).cache
 }
 

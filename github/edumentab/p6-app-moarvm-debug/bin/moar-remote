@@ -112,21 +112,50 @@ sub MAIN(Int $port) {
             # convenience: grab all lexicals on the stack
             my @allframes = (await $remote.dump($thread));
             my $framecount = +@allframes;
+            my @frame-handles;
+            my @all-lexicals;
 
             @last-command-handles = Empty;
 
-            my @chunks = gather for (^$framecount).reverse {
+            for (^$framecount).reverse {
                 my $handle = await $remote.context-handle($thread, $_);
                 my $lexicals = (await $remote.lexicals($handle));
 
                 @last-command-handles.push($handle) if $handle;
 
-                my $framedetails = "$_<name> ($_<file>:$_<line>)" given @allframes[$_];
-
-                take "Frame $_ - $framedetails - handle: &bold($handle)" =>
-                        format-lexicals-for-frame($lexicals, handles-seen => @last-command-handles);
+                @frame-handles[$_] = $handle;
+                @all-lexicals[$_] = $lexicals;
             };
+
+            # Check if any handles want to be replaced by an earlier handle,
+            # if they refer to the same thing.
+
+            my @all-handles = |@frame-handles;
+            @all-handles.append($_.>>.<handle>.values.grep(*.so)) for @all-lexicals;
+
+            my (@classes, %to-replace, @to-forget);
+            try {
+                @classes = await $remote.equivalences(@all-handles);
+                %to-replace = classes-to-renaming(@classes);
+                @to-forget = %to-replace.keys;
+            }
+
+            my $forget-promise = $remote.release-handles(@to-forget) if @to-forget;
+
+            my @chunks = gather for (^$framecount).reverse {
+                my $handle = @frame-handles[$_];
+                my $lexicals = @all-lexicals[$_];
+
+                my $framedetails = "$_<name> ($_<file>:$_<line>)" given @allframes[$_];
+                take "Frame $_ - $framedetails - handle: &bold($handle)" =>
+                        format-lexicals-for-frame($lexicals,
+                            handles-seen => @last-command-handles,
+                            handle-renaming => %to-replace);
+            }
             print-table(@chunks);
+
+            await $_ with $forget-promise;
+
             say "";
             say "call 'release all' to free these &bold(@last-command-handles.elems()) handles";
         }

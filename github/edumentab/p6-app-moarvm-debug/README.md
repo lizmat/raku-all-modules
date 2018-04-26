@@ -8,7 +8,6 @@ Start the moar-remote script and pass the port you used for --debug-port and it 
 
 Type "help" in the debugger's CLI to see what commands are available to you.
 
-
 ### Beta Use Instructions
 
 1. Install the module (you may need to disable tests):
@@ -35,3 +34,9 @@ Type "help" in the debugger's CLI to see what commands are available to you.
     - The `metadata` command is only needed if you don't know which of these commands is useful
       for any given type.
 12. Type `help` to see all of the available commands.
+
+## Known Issues
+
+The only stepping mode currently available is Step Into.
+
+Backtraces will show incorrect line numbers.
