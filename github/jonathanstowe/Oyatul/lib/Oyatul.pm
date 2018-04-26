@@ -84,8 +84,8 @@ and abstracted as well as preferring JSON over the original XML for the
 storage of the layout description. The features are designed to allow
 L<Sofa|https://github.com/jonathanstowe/Sofa> to load a CouchDB design
 document from an arbitrary (possibly user defined) file hierarchy unlike
-C<couchapp> which requires a fixed directory structure. However
-hopefully it will be useful in other applications.
+C<couchapp> which requires a fixed directory structure. However hopefully
+it will be useful in other applications.
 
 =head2 class Oyatul::Layout
 
@@ -116,11 +116,13 @@ default skip any files or directories who's name begins with '.'
     method from-json (Oyatul::Layout:U: Str :$path!, |c is raw --> Oyatul::Layout)
     method from-json (Oyatul::Layout:U: Str $json, Str :$root = '.', Bool :$real --> Oyatul::Layout)
 
-This returns a new L<Oyatul::Layout> based on the JSON that can be passed as a string, or (with C<path>)
-as the path to a file containing JSON.  If C<root> is supplied this will be the path where the
-layout is anchored (this defaults to the current directory.)  If the C<:real> adverb is supplied 
-any templates found in the layout will have File or Directory instances created for the files or
-directories that are in the position of the template.
+This returns a new L<Oyatul::Layout> based on the JSON that can be passed
+as a string, or (with C<path>) as the path to a file containing JSON.
+If C<root> is supplied this will be the path where the layout is anchored
+(this defaults to the current directory.)  If the C<:real> adverb is
+supplied any templates found in the layout will have File or Directory
+instances created for the files or directories that are in the position
+of the template.
 
 The format of the JSON is described below.
 
@@ -128,30 +130,33 @@ The format of the JSON is described below.
 
     method from-hash (Oyatul::Layout: %h, :$root)
 
-This returns a new L<Oyatul::Layout> based on a Hash containing data of the same format as the JSON.
+This returns a new L<Oyatul::Layout> based on a Hash containing data of
+the same format as the JSON.
 
 =head3 method to-json
 
     method to-json (Oyatul::Layout:)
 
-This returns a JSON string that describes the layout, it can be round-tripped through C<from-json>,
-but is primarily intended to get a layout discovered by C<generate> which may be edited to suit
-the application.
+This returns a JSON string that describes the layout, it can be
+round-tripped through C<from-json>, but is primarily intended to get
+a layout discovered by C<generate> which may be edited to suit the
+application.
 
 =head3 method path-parts
 
     method path-parts (Oyatul::Layout:)
 
-This returns a list containing the value of C<root>, it will be used to create the paths of
-the child nodes.
+This returns a list containing the value of C<root>, it will be used to
+create the paths of the child nodes.
 
 =head3 method create
 
     method create (Oyatul::Layout: Str :$root --> Bool)
 
-This causes all the 'real' (i.e. non-template) nodes in the layout to be created starting
-at the top-level by calling the C<create> methods in turn. It returns a Bool to indicate
-whether all the creations were successfull.
+This causes all the 'real' (i.e. non-template) nodes in the layout to
+be created starting at the top-level by calling the C<create> methods
+in turn. It returns a Bool to indicate whether all the creations were
+successfull.
 
 =head3 method IO
 
@@ -278,18 +283,20 @@ a Layout object then it will be *all* the nodesi.
 
     method template-for-purpose (Oyatul::Parent: Str $purpose --> Oyatul::Template)
 
-This returns the L<Oyatul::Template> that has the specified purpose if one exists.
+This returns the L<Oyatul::Template> that has the specified purpose if
+one exists.
 
-If more than one template exists for the same purpose then only the first found
-will be returned, this implies that having more than one should be avoided.
+If more than one template exists for the same purpose then only the
+first found will be returned, this implies that having more than one
+should be avoided.
 
 =head3 method nodes-for-purpose
 
     method nodes-for-purpose (Oyatul::Parent: Str $purpose, Bool :$real)
 
-This returns a list of all the L<Oyatul::Node> objects that have the specified
-purpose. If the C<real> adverb is supplied only the non-template nodes are
-returned.
+This returns a list of all the L<Oyatul::Node> objects that have the
+specified purpose. If the C<real> adverb is supplied only the non-template
+nodes are returned.
 
 =head3 method gather-children
 
@@ -514,7 +521,7 @@ layout.
 
 use JSON::Fast;
 
-module Oyatul:ver<0.0.4>:auth<github:jonathanstowe> {
+module Oyatul:ver<0.0.5>:auth<github:jonathanstowe> {
 
     my Regex $exclude = /^<-[.]>/;
 
