@@ -1,6 +1,6 @@
 {
     "name" : "Template::Anti",
-    "version" : "0.4.2",
+    "version" : "0.4.3",
     "license" : "Artistic-2.0",
     "description" : "The anti-template templating tool.",
     "authors" : [ "Sterling Hanenkamp <hanenkamp@cpan.org>" ],

@@ -1,3 +1,7 @@
+v0.4.3
+
+    * Releasing to CPAN.
+
 v0.4.2
 
     * Bugfix: .duplicate() operates on the tag node rather than the root node of

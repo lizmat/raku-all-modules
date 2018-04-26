@@ -1,4 +1,4 @@
-unit module Template::Anti:ver<0.4.2>:auth<Sterling Hanenkamp (hanenkamp@cpan.org)>;
+unit module Template::Anti:ver<0.4.3>:auth<Sterling Hanenkamp (hanenkamp@cpan.org)>;
 
 use v6;
 
