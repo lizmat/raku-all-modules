@@ -1,4 +1,4 @@
-unit class IO::Glob:auth<github:zostay>:ver<0.1> does Iterable;
+unit class IO::Glob:auth<github:zostay>:ver<0.4> does Iterable;
 
 use v6;
 
@@ -73,16 +73,19 @@ class Globber {
             @roots = rx/$base$match/;
         }
         elsif $term ~~ Expansion {
-           my @alts = $term.alternatives;
-           @roots = @alts.map({ rx/$base$^alt/ });
-       }
-       else {
-           die "unknown match term: $term";
-       }
+            my @alts = $term.alternatives;
+            @roots = @alts.map({ rx/$base$^alt/ });
+        }
+        else {
+            die "unknown match term: $term";
+        }
 
-       if @terms { @roots.map({ self!compile-terms-ind($^base, @terms).Slip }) }
-       else { @roots.Slip }
+        if @terms { @roots.map({ self!compile-terms-ind($^base, @terms).Slip }) }
+        else { @roots.Slip }
     }
+
+    method is-ordered() returns Bool { any(@!terms) ~~ Expansion }
+
     method !compile-terms() {
         return if @!matchers;
         @!matchers = self!compile-terms-ind(rx/<?>/, @.terms).map(-> $rx {rx/^$rx$/});
@@ -92,6 +95,28 @@ class Globber {
     multi method ACCEPTS(Str:D $candidate) returns Bool:D {
         self!compile-terms;
         $candidate ~~ any(@!matchers);
+    }
+
+    method accepts-with-sort(*@candidates) {
+        self!compile-terms;
+
+        my @remaining = @candidates;
+        my @m = gather for @!matchers.kv -> $i, $matcher {
+
+            my @unused;
+            for @candidates -> $candidate {
+                if $candidate.basename ~~ $matcher {
+                    take ($i, $candidate);
+                }
+                else {
+                    push @unused, $candidate;
+                }
+            }
+
+            @remaining = @unused;
+        }
+
+        @m.sort({ $^a[0] <=> $^b[0] }).map({ .[1] });
     }
 }
 
@@ -334,15 +359,18 @@ pattern contains a L<IO::Spec#dir-sep> using a depth-first search. This method
 is called implicitly when you use the object as an iterator. For example, these
 two lines are identical:
 
-    for glob('*.*') -> $all-dos-files { ... }
-    for glob('*.*').dir -> $all-dos-files { ... }
+    for glob('*.*') -> $every-dos-file { ... }
+    for glob('*.*').dir -> $every-dos-file { ... }
 
-B<Caveat.> This ought to respect the order of alternates in expansions like C<{bc,ab}>,
-but that is not supported yet at this time.
+This is the preferred method for listing files as it will be sure to respect ordering of files by alternates. For example,
+
+    for glob("{bc,ab}*") -> $file { say $file }
+
+This will print all files starting with "bc" before any files starting with ab.
 
 =end pod
 
-method dir(Cool $path = '.') returns Seq:D {
+method dir(Str() $path = '.') returns Seq:D {
     self!compile-globs;
 
     my $current = $path.IO;
@@ -357,10 +385,16 @@ method dir(Cool $path = '.') returns Seq:D {
 
         if @globbers {
             my ($globber, @remaining) = @globbers;
-            @open-list.prepend: $path.dir(test => $globber)
-                .map({
-                    \(:$^path, :globbers(@remaining))
-                });
+
+            my @paths = do if $globber.is-ordered {
+                $globber.accepts-with-sort($path.dir);
+            }
+            else {
+                $path.dir(test => $globber);
+            }
+
+            @open-list.prepend: @paths
+                .map({ \(:$^path, :globbers(@remaining)) })
         }
         else {
             take $path;
@@ -406,6 +440,8 @@ multi method ACCEPTS(IO::Path:D $path) returns Bool:D {
     [&&] (@parts Z @!globbers).flatmap: -> ($p, $g) { $p ~~ $g };
 }
 
+proto glob(|) is export { * }
+
 multi sub glob(
     Str:D $pattern,
     Bool :$sql,
@@ -413,7 +449,7 @@ multi sub glob(
     Bool :$simple,
     :grammar($g),
     :$spec = $*SPEC
-) returns IO::Glob:D is export {
+) returns IO::Glob:D {
     my $grammar = do with $g { $g } elsif $sql { SQL.new } elsif $simple { Simple.new } else { BSD.new };
     IO::Glob.new(:$pattern, :$grammar, :$spec);
 }
@@ -425,7 +461,7 @@ multi sub glob(
     Bool :$simple,
     :grammar($g),
     :$spec = $*SPEC
-) returns IO::Glob:D is export {
+) returns IO::Glob:D {
     my $grammar = do with $g { $g } elsif $sql { SQL.new } elsif $simple { Simple.new } else { BSD.new };
     IO::Glob.new(:pattern($grammar.whatever-match), :$grammar, :$spec);
 }

@@ -31,11 +31,17 @@ use IO::Glob;
 }
 
 {
-    todo 'expansion order should be respected', 3;
     my @files = glob('t/fixtures/{foo,bar}.md').dir;
     is @files.elems, 2;
     is @files[0], 't/fixtures/foo.md'.IO;
     is @files[1], 't/fixtures/bar.md'.IO;
+}
+
+{
+    my @files = glob('t/fixtures/{bar,foo}.md').dir;
+    is @files.elems, 2;
+    is @files[0], 't/fixtures/bar.md'.IO;
+    is @files[1], 't/fixtures/foo.md'.IO;
 }
 
 done-testing;

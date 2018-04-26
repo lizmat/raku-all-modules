@@ -133,10 +133,14 @@ method dir
 
 Returns a list of files matching the glob. This will descend directories if the pattern contains a [IO::Spec#dir-sep](IO::Spec#dir-sep) using a depth-first search. This method is called implicitly when you use the object as an iterator. For example, these two lines are identical:
 
-    for glob('*.*') -> $all-dos-files { ... }
-    for glob('*.*').dir -> $all-dos-files { ... }
+    for glob('*.*') -> $every-dos-file { ... }
+    for glob('*.*').dir -> $every-dos-file { ... }
 
-**Caveat.** This ought to respect the order of alternates in expansions like `{bc,ab}`, but that is not supported yet at this time.
+This is the preferred method for listing files as it will be sure to respect ordering of files by alternates. For example,
+
+    for glob("{bc,ab}*") -> $file { say $file }
+
+This will print all files starting with "bc" before any files starting with ab.
 
 method ACCEPTS
 --------------
@@ -156,3 +160,4 @@ The reason is that the second and third are matched in parts as follows:
 
     "helloy" ~~ glob("hello{x,y") && "world" ~~ glob("}world")
     "hello{x,y" ~~ glob("hello{x,y") && "}world" ~~ glob("}world")
+

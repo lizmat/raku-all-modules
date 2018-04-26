@@ -1,3 +1,11 @@
+v0.4    April 25, 2018
+
+    * When an alternate sequence is given, the ordering of the alternates should
+      now be respected, but only if you use the dir method or iterate over the
+      glob object directly (because the other methods depend on ACCEPTS and
+      ACCEPTS provides no means of adding order, just truthiness of a match).
+    * Releasing to CPAN.
+
 v0.3    December 11, 2016
 
     * Fix #4: The API of IO::Path changed, breaking tests. Better
