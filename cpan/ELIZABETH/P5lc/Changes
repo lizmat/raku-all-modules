@@ -1,5 +1,8 @@
 Revision history for P5lc
 
+0.0.4  2018-04-25T19:06:11+02:00
+    - P5lc must be a module, not a class
+
 0.0.3  2018-04-12T10:33:29+02:00
     - Merge uc() code in here to reduce number of CPAN5 distributions.
 
