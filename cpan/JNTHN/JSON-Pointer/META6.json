@@ -1,0 +1,20 @@
+{
+    "authors" : [
+        "Alexander Kiryuhin <alexander.kiryuhin@gmail.com>"
+    ],
+    "build-depends" : [ ],
+    "depends" : [ ],
+    "description" : "JSON Pointer implementation in Perl 6.",
+    "license" : "Artistic-2.0",
+    "name" : "JSON::Pointer",
+    "perl" : "6.c",
+    "provides" : {
+        "JSON::Pointer" : "lib/JSON/Pointer.pm6",
+        "JSON::Pointer::Relative" : "lib/JSON/Pointer/Relative.pm6"
+    },
+    "resources" : [ ],
+    "source-url" : "https://github.com/croservices/json-pointer.git",
+    "tags" : [ "json" ],
+    "test-depends" : [ ],
+    "version" : "1.0"
+}
