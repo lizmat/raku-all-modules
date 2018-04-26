@@ -1,5 +1,6 @@
 use v6.c;
-unit class Sys::Hostname:ver<0.0.4>;
+
+unit module Sys::Hostname:ver<0.0.6>:auth<cpan:ELIZABETH>;
 
 sub hostname() is export { gethostname.subst(/ \s | \0 /,'',:g) }
 
