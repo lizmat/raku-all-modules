@@ -6,7 +6,7 @@ class P5Pair is List {
     method value() is raw { self[1] }
 }
 
-class List::Util:ver<0.0.5> {
+module List::Util:ver<0.0.6>:auth<cpan:ELIZABETH> {
 
     our sub reduce(&block, *@args) is export(:SUPPORTED) {
         if @args > 1 {
@@ -195,28 +195,29 @@ List::Util - Port of Perl 5's List::Util 1.49
 =head1 DESCRIPTION
 
 C<List::Util> contains a selection of subroutines that people have expressed
-would be nice to have in the perl 5 core, but the usage would not really be high
-enough to warrant the use of a keyword, and the size so small such that being
-individual extensions would be wasteful.
+would be nice to have in the perl 5 core, but the usage would not really be
+high enough to warrant the use of a keyword, and the size so small such that
+being individual extensions would be wasteful.
 
 By default C<List::Util> does not export any subroutines.
 
 =head1 Porting Caveats
 
 Perl 6 does not have the concept of C<scalar> and C<list> context.  Usually,
-the effect of a scalar context can be achieved by prefixing C<+> to the result,
-which would effectively return the number of elements in the result, which usually
-is the same as the scalar context of Perl 5 of these functions.
+the effect of a scalar context can be achieved by prefixing C<+> to the
+result, which would effectively return the number of elements in the result,
+which usually is the same as the scalar context of Perl 5 of these functions.
 
 Perl 6 does not have a magic C<$a> and C<$b>.  But they can be made to exist
-by specifying the correct signature to blocks, specifically "-> $a, $b".  These
-have been used in all examples that needed them.  Just using the signature
-auto-generating C<$^a> and C<$^b> would be more Perl 6 like.  But since we want
-to keep the documentation as close to the original as possible, it was decided
-to specifically specify the "-> $a, $b" signatures.
+by specifying the correct signature to blocks, specifically "-> $a, $b".
+These have been used in all examples that needed them.  Just using the
+signature auto-generating C<$^a> and C<$^b> would be more Perl 6 like.  But
+since we want to keep the documentation as close to the original as possible,
+it was decided to specifically specify the "-> $a, $b" signatures.
 
-Perl 6 also doesn't have a single C<undef> value, but instead has C<Type Objects>,
-which could be considered undef values, but with a type annotation.
+Perl 6 also doesn't have a single C<undef> value, but instead has
+C<Type Objects>, which could be considered undef values, but with a type
+annotation.
 
 Perl 6 has real C<Pair> objects, which in the Perl 5 version are mimiced by
 blessed arrays that have a C<.key> and C<.value> methods.  In the Perl 6
@@ -231,11 +232,11 @@ The following functions are actually built-ins in Perl 6.
   reduce any all none first max min sum uniq 
 
 They mostly provide the same or similar semantics, but there may be subtle
-differences, so it was decided to not just use the built-ins.  If these functions
-are imported from this library in a scope, they will used instead of the Perl 6
-builtins.  The easiest way to use both the functions of this library
-and the Perl 6 builtins in the same scope, is to use the method syntax for the
-Perl 6 versions.
+differences, so it was decided to not just use the built-ins.  If these
+functions are imported from this library in a scope, they will used instead
+of the Perl 6 builtins.  The easiest way to use both the functions of this
+library and the Perl 6 builtins in the same scope, is to use the method syntax
+for the Perl 6 versions.
 
     {  # Note: imports in Perl 6 are always lexically scoped
         use List::Util <max>;
