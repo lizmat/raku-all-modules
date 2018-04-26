@@ -1,6 +1,6 @@
 use v6.c;
 
-class List::SomeUtils:ver<0.0.3>:auth<cpan:ELIZABETH> {
+module List::SomeUtils:ver<0.0.4>:auth<cpan:ELIZABETH> {
     use List::MoreUtils;
 
     BEGIN {

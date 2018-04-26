@@ -1,5 +1,8 @@
 Revision history for List-SomeUtils
 
+0.0.4  2018-04-25T19:15:23+02:00
+    - List::SomeUtils must be a module, not a class
+
 0.0.3  2018-04-23T17:51:31+02:00
     - forgot to mention where the source lives
 
