@@ -1,6 +1,6 @@
 use v6.c;
 
-class Sub::Util:ver<0.0.2> {
+module Sub::Util:ver<0.0.3>:auth<cpan:ELIZABETH> {
 
     our sub subname(&code) is export(:SUPPORTED) {
         if &code.name -> $name {
