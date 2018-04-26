@@ -1,5 +1,9 @@
 Revision history for Scalar::Util
 
+0.0.4  2018-04-25T19:30:26+02:00
+    - Scalar::Util must be a module, not a class
+    - also add authority to the version information
+
 0.0.3  2018-04-11T22:42:51+02:00
     - Follow App:Mi6's default Changes format
 

@@ -1,6 +1,6 @@
 use v6.c;
 
-class Scalar::Util:ver<0.0.3> {
+module Scalar::Util:ver<0.0.4>:auth<cpan:ELIZABETH> {
 
     our sub blessed(\a) is export(:SUPPORTED) {
         use nqp;
