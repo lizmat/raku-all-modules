@@ -1,6 +1,6 @@
 use v6.c;
 
-unit class Sub::Name:ver<0.0.5>;
+unit module Sub::Name:ver<0.0.6>:auth<cpan:ELIZABETH>;
 
 # only export the proto
 proto sub subname(|) is export {*}
