@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>People</title>
+    </head>
+    <body>
+        <h1 title="motto">People</h1>
+
+        <ul class="people">
+            <li><a href="#">Some Guy</a></li>
+            <li><a href="#">Another Guy</a></li>
+            <li><a href="#">Yet Another Guy</a></li>
+        </ul><script type="application/anti+perl6" data-dom="$at">
+$at('title, h1')».content(.<title>);
+$at('h1')».attr(title => .<motto>);
+$at('ul.people li:not(:first-child)')».remove;
+$at('ul.people', :one).at('li')\
+    .duplicate(.<sith-lords>, -> $item, $_ {
+        $item('a', :one).content(.<name>).attr(:href(.<url>));
+    });
+</script>
+    </body>
+</html>
