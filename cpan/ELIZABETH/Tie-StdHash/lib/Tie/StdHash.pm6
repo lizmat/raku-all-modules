@@ -1,6 +1,6 @@
 use v6.c;
 
-class Tie::StdHash:ver<0.0.3> {
+class Tie::StdHash:ver<0.0.4>:auth<cpan:ELIZABETH> {
 
     # Note that we *must* have an embedded Hash rather than just subclassing
     # from Hash, because .STORE on Hash has different semantics than the
