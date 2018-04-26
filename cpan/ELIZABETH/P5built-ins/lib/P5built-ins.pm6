@@ -1,8 +1,9 @@
 use v6.c;
 
 my %export;
-module P5built-ins:ver<0.0.7> {
+module P5built-ins:ver<0.0.8>:auth<cpan:ELIZABETH> {
     use P5caller;
+    use P5chdir;
     use P5chomp;
     use P5chr;
     use P5each;
@@ -56,8 +57,9 @@ P5built-ins - Implement Perl 5's built-in functions
 This module provides an easy way to import a growing number of built-in
 functions of Perl 5 in Perl 6.  Currently supported at:
 
-  caller chomp chop chr each hex index lcfirst length oct ord pack quotemeta
-  ref rindex sleep study substr tie tied times ucfirst unpack untie
+  caller chdir chomp chop chr each hex index lcfirst length oct ord pack
+  quotemeta ref rindex sleep study substr tie tied times ucfirst unpack
+  untie
   
 The following file test operators are also available:
 

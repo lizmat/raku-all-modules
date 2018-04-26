@@ -1,4 +1,5 @@
 {
+  "auth" : "cpan:ELIZABETH",
   "authors" : [
     "Elizabeth Mattijsen"
   ],
@@ -45,5 +46,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.7"
+  "version" : "0.0.8"
 }
