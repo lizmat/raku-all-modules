@@ -1,5 +1,5 @@
 use v6.c;
-unit class P5reverse:ver<0.0.2>;
+unit module P5reverse:ver<0.0.3>;
 
 proto sub reverse(|) is export {*}
 multi sub reverse() { reverse CALLERS::<$_> }
