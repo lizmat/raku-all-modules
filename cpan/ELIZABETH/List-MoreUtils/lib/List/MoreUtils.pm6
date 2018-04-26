@@ -1,6 +1,6 @@
 use v6.c;
 
-class List::MoreUtils:ver<0.0.3>:auth<cpan:ELIZABETH> {
+module List::MoreUtils:ver<0.0.4>:auth<cpan:ELIZABETH> {
     our sub any(&code, @values --> Bool:D) is export(:all) {
         return True if code($_) for @values;
         False
@@ -734,7 +734,7 @@ immediately stop at the second true value seen.
 =head4 Idiomatic Perl 6 ways
 
     say "Precisely one value defined"
-      if $x.defined ^ $y.defined ^ $z.defined;
+      if ($x ^ $y ^ $z).defined;
 
     say "Precisely one value defined"
       if one(@list>>.defined);

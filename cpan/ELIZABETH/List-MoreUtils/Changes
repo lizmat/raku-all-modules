@@ -1,5 +1,8 @@
 Revision history for List::MoreUtils
 
+0.0.4  2018-04-25T19:13:37+02:00
+    - List::MoreUtils must be a module, not a class
+
 0.0.3  2018-04-18T15:33:57+02:00
     - added "Idiomatic Perl 6 Ways" sections to pod
 

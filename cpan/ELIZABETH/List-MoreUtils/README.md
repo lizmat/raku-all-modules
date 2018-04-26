@@ -200,7 +200,7 @@ The expression `one BLOCK, LIST` is almost equivalent to `1 == True BLOCK, LIST`
 #### Idiomatic Perl 6 ways
 
     say "Precisely one value defined"
-      if $x.defined ^ $y.defined ^ $z.defined;
+      if ($x ^ $y ^ $z).defined;
 
     say "Precisely one value defined"
       if one(@list>>.defined);
