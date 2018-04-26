@@ -1,0 +1,26 @@
+{
+    "depends": [
+        "Cro::HTTP",
+        "JSON::Fast",
+        "OpenAPI::Model",
+        "OpenAPI::Schema::Validate",
+        "YAMLish"
+    ],
+    "description": "Easily implement an existing OpenAPI definition, server side, using Cro.",
+    "resources": [],
+    "version": "1.0.0",
+    "tags": [ "openapi", "oas", "swagger", "api", "server", "generation" ],
+    "license": "Artistic-2.0",
+    "source-url": "https://github.com/croservices/cro-openapi-routes-from-definition.git",
+    "provides": {
+        "Cro::OpenAPI::RoutesFromDefinition::SecurityChecker": "lib/Cro/OpenAPI/RoutesFromDefinition/SecurityChecker.pm6",
+        "Cro::OpenAPI::RoutesFromDefinition": "lib/Cro/OpenAPI/RoutesFromDefinition.pm6",
+        "Cro::OpenAPI::RoutesFromDefinition::Checkers": "lib/Cro/OpenAPI/RoutesFromDefinition/Checkers.pm6",
+        "Cro::OpenAPI::RoutesFromDefinition::AdaptHandler": "lib/Cro/OpenAPI/RoutesFromDefinition/AdaptHandler.pm6"
+    },
+    "name": "Cro::OpenAPI::RoutesFromDefinition",
+    "perl": "6.c",
+    "build-depends": [],
+    "test-depends": [],
+    "authors": ["Jonathan Worthington <jonathan@edument.se>"]
+}
