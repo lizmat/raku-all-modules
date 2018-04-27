@@ -27,7 +27,12 @@ You can use, for instance,
     perl6 -Ilib bin/pod2onepage -v --source-path=. --html >  tmp/pod2onepage.html
     
 to generate a single page in HTML from the [`README.pod6`](README.pod6)
-included here. 
+included here.
+
+In general, this module has been designed to work with the [Perl 6
+documentation](https://docs.perl6.org). But it can also be used as an
+actual library. See [examples in the `t/` directory](t/) and, of
+course, [`pod2onepage`](bin/pod2onepage).
     
 ## Options
 

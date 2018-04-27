@@ -448,13 +448,14 @@ multi sub handle (Pod::FormattingCode $node where .type eq 'X', $context = None,
     my $index-display = $node.contents>>.&handle($context).Str;
     my @name = $node.meta».&escape-markup;
     my $anchor = register-index-entry(@name, $node.contents, :$pod-name);
-    Q:c (<span class="indexed{$additional-class}"><a id="{$anchor}" name="{@name}">{$index-display}</a></span>);
+    Q:c (<span class="indexed{$additional-class}" id="{$anchor}" name="{@name}">{$index-display}</span>);
 }
 
 multi sub handle (Pod::FormattingCode $node where .type eq 'X', $context where * == Heading, :$pod-name?, :$part-number?, :$toc-counter?) is export {
     my $index-display = $node.contents>>.&handle($context).Str;
     my $anchor = register-index-entry($node.meta, $node.contents, :$pod-name);
-    q:c (<a name="{$anchor}"></a>{$index-display})
+    #    q:c (<a name="{$anchor}"></a>{$index-display})
+    $index-display;
 }
 
 multi sub handle (Pod::Heading $node, :$pod-name?, :$part-number?, :$toc-counter, :%part-config) is export {
@@ -466,12 +467,21 @@ multi sub handle (Pod::Heading $node, :$pod-name?, :$part-number?, :$toc-counter
     my $id = $pod-name.subst('.pod6', '') ~ '#' ~ $raw-text.subst(' ', '_', :g).subst('"','&quot;', :g);
     $id = rewrite-link($id, :$part-number).substr(1);
     if $node.config<numbered> || %part-config{'head' ~ $node.level}<numbered>.?Int {
+        my $output ='';
         my $anchor = register-toc-entry($l, $text, $toc-counter);
-        return Q:c (<a name="t{$anchor}"{$class}></a><h{$l} id="{$id}">{$anchor} {$text}</h{$l}>) ~ NL
+        if %part-config<anchored> {
+            $output = Q:c ( <a name="t{$anchor}"{$class}></a> );
+        }
+        return Q:c ({$output} <h{$l} id="{$id}">{$text}</h{$l}>) ~ NL
     } else {
+        my $output='';
         my $anchor = register-toc-entry($l, $text, $toc-counter, :hide);
-        return Q:c (<a name="t{$anchor}"{$class}></a><h{$l} id="{$id}">{$text}</h{$l}>) ~ NL
+        if %part-config<anchored> {
+            $output = Q:c ( <a name="t{$anchor}"{$class}></a> );
+        }
+        return Q:c ({$output} <h{$l} id="{$id}">{$text}</h{$l}>) ~ NL
     }
+
 }
 
 multi sub handle (Pod::Item $node, :$pod-name?, :$part-number?, :$toc-counter?, :%part-config?) is export {
