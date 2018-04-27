@@ -6,11 +6,11 @@
 
 X<|Regular Expressions>
 
-Regular expressions, I<regexes> for short, are a sequence of characters that
+Regular expressions, regexes for short, are a sequence of characters that
 describe a pattern of text. Pattern matching is the process of matching
 those patterns to actual text.
 
-=head1 X<Lexical conventions|quote,/ /;quote,rx;quote,m>
+=head1 X<Lexical Conventions|quote,/ /;quote,rx;quote,m>
 
 Perl 6 has special syntax for writing regexes:
 
@@ -23,8 +23,8 @@ For the first two examples, delimiters other than the slash can be used:
     m{abc};
     rx{abc};
 
-Note that neither the colon C<:> nor round parentheses can be delimiters;
-the colon is forbidden because it clashes with adverbs, such as C<rx:i/abc/>
+Note that neither the colon nor round parentheses can be delimiters; the colon
+is forbidden because it clashes with adverbs, such as C<rx:i/abc/>
 (case insensitive regexes), and round parentheses indicate a function call
 instead.
 
@@ -39,7 +39,7 @@ Comments work within a regular expression:
 
 The simplest case for a regex is a match against a string literal:
 
-    if 'properly' ~~ m/ perl / {
+    if 'properly' ~~ / perl / {
         say "'properly' contains 'perl'";
     }
 
@@ -51,25 +51,23 @@ to match a colon), or be within quotes:
     / "a:b"       /;     # matches 'a:b' including the colon
     / '#' /;             # matches a hash character
 
-Strings are searched left to right, so it's enough if only
-part of the string matches the regex:
+Strings are searched left to right, so it is enough if only part of the string
+matches the regex:
 
-    if 'abcdef' ~~ / de / {
-        say ~$/;            # OUTPUT: «de␤»
-        say $/.prematch;    # OUTPUT: «abc␤»
-        say $/.postmatch;   # OUTPUT: «f␤»
-        say $/.from;        # OUTPUT: «3␤»
-        say $/.to;          # OUTPUT: «5␤»
+    if 'Life, the Universe and Everything' ~~ / and / {
+        say ~$/;           # OUTPUT: «and␤»
+        say $/.prematch;   # OUTPUT: «Life, the Universe␤»
+        say $/.postmatch;  # OUTPUT: « Everything␤»
+        say $/.from;        # OUTPUT: «19␤»
+        say $/.to;          # OUTPUT: «22␤»
     };
 
 Match results are stored in the C<$/> variable and are also returned from
-the match. The result is of L<type Match|/type/Match> if the match was
-successful; otherwise it's L<Nil|/type/Nil>.
+the match. The result is of type L<Match|/type/Match> if the match was
+successful; otherwise it is L<Nil|/type/Nil>.
 
 
-=head1 Wildcards and character classes
-
-=head2 X<The dot matches any character: C<.>|regex,.>
+=head1 X<Wildcards|regex, .>
 
 An unescaped dot C<.> in a regex matches any single character.
 
@@ -100,10 +98,75 @@ C<\n>. So the text below match:
     say $text ~~ / .* /;
     # OUTPUT «｢Although I am a␤multi-line text,␤now can be matched␤with /.*/␤｣»
 
-=head2 Backslashed, predefined character classes
+=head1 Character Classes
+
+=head2 Backslashed Character Classes
 
 There are predefined character classes of the form C<\w>. Its negation is
 written with an upper-case letter, C<\W>.
+
+=item X<C<\n> and C<\N>|regex,\n;regex,\N>
+
+C<\n> matches a single, logical newline character.C<\N> matches a single
+character that's not a logical newline.
+
+What is considered as a single newline character is defined via the compile
+time variable L«C<$?NL>|/language/variables#index-entry-$?NL», and the
+L<newline pragma|/language/pragmas>.
+
+Therefore C<\n> is supposed to be able to either match a Unix-like
+newline C<"\n"> or a Microsoft Windows style one C<"\r\n">.
+
+=item X<C<\t> and C<\T>|regex,\t;regex,\T>
+
+C<\t> matches a single tab/tabulation character, C<U+0009>. C<\T> matches a
+single character that is not a tab.
+
+Note that exotic tabs like the C<U+000B VERTICAL TABULATION> character are not
+included here.
+
+=item X<C<\h> and C<\H>|regex,\h;regex,\H>
+
+C<\h> matches a single horizontal whitespace character. C<\H> matches a
+single character that is not a horizontal whitespace character.
+
+Examples for horizontal whitespace characters are
+
+    =begin code :lang<text>
+    U+0020 SPACE
+    U+00A0 NO-BREAK SPACE
+    U+0009 CHARACTER TABULATION
+    U+2001 EM QUAD
+    =end code
+
+Vertical whitespace like newline characters are explicitly excluded; those
+can be matched with C<\v>, and C<\s> matches any kind of whitespace.
+
+=item X<C<\v> and C<\V>|regex,\v;regex,\V>
+
+C<\v> matches a single vertical whitespace character. C<\V> matches a single
+character that is not vertical whitespace.
+
+Examples for vertical whitespace characters:
+
+    =begin code :lang<text>
+    U+000A LINE FEED
+    U+000B VERTICAL TABULATION
+    U+000C FORM FEED
+    U+000D CARRIAGE RETURN
+    U+0085 NEXT LINE
+    U+2028 LINE SEPARATOR
+    U+2029 PARAGRAPH SEPARATOR
+    =end code
+
+Use C<\s> to match any kind of whitespace, not just vertical whitespace.
+
+=item X<C<\s> and C<\S>|regex,\s;regex,\S>
+
+C<\s> matches a single whitespace character. C<\S> matches a single
+character that is not whitespace.
+
+    say $/.prematch if 'Match the first word.' ~~ / \s+ /; # OUTPUT: «Match␤»
 
 =item X<C<\d> and C<\D>|regex,\d;regex,\D>
 
@@ -125,71 +188,10 @@ Examples for digits are:
     U+17E5 ៥ KHMER DIGIT FIVE
     =end code
 
-=item X<C<\h> and C<\H>|regex,\h;regex,\H>
-
-C<\h> matches a single horizontal whitespace character. C<\H> matches a
-single character that is not a horizontal whitespace character.
-
-Examples for horizontal whitespace characters are
-
-    =begin code :lang<text>
-    U+0020 SPACE
-    U+00A0 NO-BREAK SPACE
-    U+0009 CHARACTER TABULATION
-    U+2001 EM QUAD
-    =end code
-
-Vertical whitespace like newline characters are explicitly excluded; those
-can be matched with C<\v>, and C<\s> matches any kind of whitespace.
-
-=item X<C<\n> and C<\N>|regex,\n;regex,\N>
-
-C<\n> matches a single, logical newline character.
-What is considered as a I<single newline character> is defined via the compile time
-variable L<$?NL|/language/variables##index-entry-%24%3FNL>, and the L<newline pragma|/language/pragmas>.
-Therefore C<\n> is supposed to be able to either match a Unix-like newline "\n"
-or a Microsoft Windows style one "\r\n".
-
-C<\N> matches a single character that's not a logical newline.
-
-=item X<C<\s> and C<\S>|regex,\s;regex,\S>
-
-C<\s> matches a single whitespace character. C<\S> matches a single
-character that is not whitespace.
-
-    if 'contains a word starting with "w"' ~~ / w \S+ / {
-        say ~$/;        # OUTPUT: «word␤»
-    }
-
-=item X<C<\t> and C<\T>|regex,\t;regex,\T>
-
-C<\t> matches a single tab/tabulation character, C<U+0009>. (Note that
-exotic tabs like the C<U+000B VERTICAL TABULATION> character are not
-included here). C<\T> matches a single character that is not a tab.
-
-=item X<C<\v> and C<\V>|regex,\v;regex,\V>
-
-C<\v> matches a single vertical whitespace character. C<\V> matches a single
-character that is not vertical whitespace.
-
-Examples for vertical whitespace characters:
-
-    =begin code :lang<text>
-    U+000A LINE FEED
-    U+000B VERTICAL TABULATION
-    U+000C FORM FEED
-    U+000D CARRIAGE RETURN
-    U+0085 NEXT LINE
-    U+2028 LINE SEPARATOR
-    U+2029 PARAGRAPH SEPARATOR
-    =end code
-
-Use C<\s> to match any kind of whitespace, not just vertical whitespace.
-
 =item X<C<\w> and C<\W>|regex,\w;regex,\W>
 
-C<\w> matches a single word character; i.e., a letter (Unicode category L), a
-digit or an underscore. C<\W> matches a single character that isn't a word
+C<\w> matches a single word character, i.e. a letter (Unicode category L), a
+digit or an underscore. C<\W> matches a single character that is not a word
 character.
 
 Examples of word characters:
@@ -202,27 +204,34 @@ Examples of word characters:
     0409 Љ CYRILLIC CAPITAL LETTER LJE
     =end code
 
-Predefined subrules:
+=head2 Predefined Character Classes
 
-    =begin code :lang<text>
-    <alpha>   <:L>     Alphabetic characters
-    <digit>   \d       Decimal digits
-    <xdigit>           Hexadecimal digit [0-9A-Fa-f]
-    <alnum>   \w       'alpha' plus 'digit'
-    <punct>            Punctuation and Symbols (only Punct beyond ASCII)
-    <graph>            'alnum' plus 'punct'
-    <space>   \s       Whitespace
-    <cntrl>            Control characters
-    <print>            'graph' plus 'space', but no 'cntrl'
-    <blank>   \h       Horizontal whitespace
-    <lower>   <:Ll>    Lowercase characters
-    <upper>   <:Lu>    Uppercase characters
-    <?same>            Matches between two identical characters
-    <?wb>              Word Boundary (zero-width assertion, ? suppress capture)
-    <?ww>              Within Word (zero-width assertion, ? suppress capture)
-    =end code
+=begin table
 
-=head2 X«Unicode properties|regex,<:property>»
+    Class    | Shorthand | Description
+    =========+===========+=============
+    <alpha>  | <:L>      | Alphabetic characters
+    <digit>  | \d        | Decimal digits
+    <xdigit> |           | Hexadecimal digit [0-9A-Fa-f]
+    <alnum>  | \w        | <alpha> plus <digit>
+    <punct>  |           | Punctuation and Symbols (only Punct beyond ASCII)
+    <graph>  |           | <alnum> plus <punct>
+    <space>  | \s        | Whitespace
+    <cntrl>  |           | Control characters
+    <print>  |           | <graph> plus <space>, but no <cntrl>
+    <blank>  | \h        | Horizontal whitespace
+    <lower>  | <:Ll>     | Lowercase characters
+    <upper>  | <:Lu>     | Uppercase characters
+    <same>   |           | Matches between two identical characters
+    <wb>     |           | Word Boundary
+    <ww>     |           | Within Word
+
+=end table
+
+Note that the last three character classes are so called zero-width assertions,
+which do not really match a character.
+
+=head2 X«Unicode Properties|regex,<:property>»
 
 The character classes mentioned so far are mostly for convenience; another
 approach is to use Unicode character properties. These come in the form
@@ -254,16 +263,16 @@ Unicode General Categories:
     Mc      |    Spacing_Mark
     Me      |    Enclosing_Mark
     N       |    Number
-    Nd      |    Decimal_Number (also Digit)
+    Nd      |    Decimal_Number or digit
     Nl      |    Letter_Number
     No      |    Other_Number
-    P       |    Punctuation (also punct)
+    P       |    Punctuation or punct
     Pc      |    Connector_Punctuation
     Pd      |    Dash_Punctuation
     Ps      |    Open_Punctuation
     Pe      |    Close_Punctuation
-    Pi      |    Initial_Punctuation (may behave like Ps or Pe depending on usage)
-    Pf      |    Final_Punctuation (may behave like Ps or Pe depending on usage)
+    Pi      |    Initial_Punctuation
+    Pf      |    Final_Punctuation
     Po      |    Other_Punctuation
     S       |    Symbol
     Sm      |    Math_Symbol
@@ -275,7 +284,7 @@ Unicode General Categories:
     Zl      |    Line_Separator
     Zp      |    Paragraph_Separator
     C       |    Other
-    Cc      |    Control (also cntrl)
+    Cc      |    Control or cntrl
     Cf      |    Format
     Cs      |    Surrogate
     Co      |    Private_Use
@@ -286,7 +295,7 @@ Unicode General Categories:
 For example, C«<:Lu>» matches a single, upper-case letter.
 
 Its negation is this: C«<:!property>». So, C«<:!Lu>» matches a single
-character that isn't an upper-case letter.
+character that is not an upper-case letter.
 
 Categories can be used together, with an infix operator:
 
@@ -297,8 +306,8 @@ Categories can be used together, with an infix operator:
     \+        |  set union
     \|        |  set union
     &         |  set intersection
-    -         |  set difference (first minus second)
-    ^         |  symmetric set intersection / XOR
+    -         |  set difference
+    ^         |  set symmetric difference
 
 =end table
 
@@ -308,24 +317,23 @@ C«<:Ll+:N>» or C«<:Ll+:Number>» or C«<+ :Lowercase_Letter + :Number>».
 It's also possible to group categories and sets of categories with
 parentheses; for example:
 
-    'perl6' ~~ m{\w+(<:Ll+:N>)}  # OUTPUT: «0 => ｢6｣␤»
+    say $0 if 'perl6' ~~ /\w+(<:Ll+:N>)/ # OUTPUT: «｢6｣␤»
 
-=head2 X«Enumerated character classes and ranges|regex,<[ ]>;regex,<-[ ]>»
+=head2 X«Enumerated Character Classes and Ranges|regex,<[ ]>;regex,<-[ ]>»
 
 Sometimes the pre-existing wildcards and character classes are not enough.
 Fortunately, defining your own is fairly simple. Within C«<[ ]>», you
 can put any number of single characters and ranges of characters (expressed
 with two dots between the end points), with or without whitespace.
 
-    "abacabadabacaba" ~~ / <[ a .. c 1 2 3 ]> /;
+    "abacabadabacaba" ~~ / <[ a .. c 1 2 3 ]>* /;
     # Unicode hex codepoint range
-    "ÀÁÂÃÄÅÆ" ~~ / <[ \x[00C0] .. \x[00C6] ]> /;
+    "ÀÁÂÃÄÅÆ" ~~ / <[ \x[00C0] .. \x[00C6] ]>* /;
     # Unicode named codepoint range
-    "αβγ" ~~ /<[\c[GREEK SMALL LETTER ALPHA]..\c[GREEK SMALL LETTER GAMMA]]>/;
+    "αβγ" ~~ /<[\c[GREEK SMALL LETTER ALPHA]..\c[GREEK SMALL LETTER GAMMA]]>*/;
 
-Within the C«< >» you can use C<+> and C<-> to add or
-remove multiple range definitions and
-even mix in some of the unicode categories above. You can also
+Within the C«< >» you can use C<+> and C<-> to add or remove multiple range
+definitions and even mix in some of the unicode categories above. You can also
 write the backslashed forms for character classes between the C<[ ]>.
 
     / <[\d] - [13579]> /;
@@ -344,7 +352,7 @@ character classes:
 
 This first matches a quote, then any characters that aren't quotes, and then
 a quote again. The meaning of C<*> and C<+> in the examples above are
-explained in L<section Quantifier|#Quantifiers>.
+explained in the next section, Quantifier.
 
 Just as you can use the C<-> for both set difference and negation of a
 single value, you can also explicitly put a C<+> in front:
@@ -622,35 +630,26 @@ segments can be evaluated in parallel, or in any order the compiler chooses.
 
 =head1 Anchors
 
-The regex engine tries to find a match inside a string by searching from
-left to right.
+Regexes search an entire string for matches. Sometimes this is not what
+you want. Anchors match only at certain positions in the string, thereby
+anchoring the regex match to that position.
 
-    say so 'properly use perl' ~~ / perl/;   # OUTPUT: «True␤»
-    #          ^^^^
+=head2 X<Start of String and End of String|regex,^;regex,$>
 
-But sometimes this is not what you want. Instead, you may only want to
-match a whole string, or a whole line, or exactly one or several whole words.
-I<Anchors> or I<assertions> can help with this.
-
-Assertions need to match successfully in order for the whole regex to match but
-they do not use up characters while matching.
-
-=head2 X«C<^>, Start of String and C<$>, End of String|regex,^;regex,$»
-
-The C<^> assertion only matches at the start of the string:
+The C<^> anchor only matches at the start of the string:
 
     say so 'properly' ~~ /  perl/;    # OUTPUT: «True␤»
     say so 'properly' ~~ /^ perl/;    # OUTPUT: «False␤»
     say so 'perly'    ~~ /^ perl/;    # OUTPUT: «True␤»
     say so 'perl'     ~~ /^ perl/;    # OUTPUT: «True␤»
 
-The C<$> assertion only matches at the end of the string:
+The C<$> anchor only matches at the end of the string:
 
     say so 'use perl' ~~ /  perl  /;   # OUTPUT: «True␤»
     say so 'use perl' ~~ /  perl $/;   # OUTPUT: «True␤»
     say so 'perly'    ~~ /  perl $/;   # OUTPUT: «False␤»
 
-You can combine both assertions:
+You can combine both anchors:
 
     say so 'use perl' ~~ /^ perl $/;   # OUTPUT: «False␤»
     say so 'perl'     ~~ /^ perl $/;   # OUTPUT: «True␤»
@@ -678,23 +677,22 @@ The following is a multi-line string:
     # 'and' is at the start of a line -- not the string
     say so $str ~~ /^and    /;   # OUTPUT: «False␤»
 
-=head2 X«C<^^>, Start of Line and C<$$>, End of Line|regex,^^;regex,$$»
+=head2 X<Start of Line and End of Line|regex,^^;regex,$$>
 
-The C<^^> assertion matches at the start of a logical line. That is, either
+The C<^^> anchor matches at the start of a logical line. That is, either
 at the start of the string, or after a newline character. However, it does not
 match at the end of the string, even if it ends with a newline character.
 
-C<$$> matches only at the end of a logical line, that is, before a newline
+The C<$$> anchor matches at the end of a logical line. That is, before a newline
 character, or at the end of the string when the last character is not a
 newline character.
 
-(To understand the following example, it's important to know that the
+To understand the following example, it's important to know that the
 C<q:to/EOS/...EOS> L<heredoc|/language/quoting#Heredocs:_:to> syntax removes
 leading indention to the same level as the C<EOS> marker, so that the first,
 second and last lines have no leading space and the third and fourth lines have
-two leading spaces each).
+two leading spaces each.
 
-    =begin code
     my $str = q:to/EOS/;
         There was a young man of Japan
         Whose limericks never would scan.
@@ -723,35 +721,33 @@ two leading spaces each).
 
     # matched at the last line
     say so $str ~~ / '."' $$/;        # OUTPUT: «True␤»
-    =end code
 
+=head2 X«Word Boundary|regex, <|w>;regex, <!|w>»
 
-=head2 X«C«<|w>» and C«<!|w>», word boundary|regex, <|w>;regex, <!|w>»
+To match any word boundary, use C«<|w>» or C«<?wb>». This is similar to
+X«C<\b>|regex deprecated,\b» of other languages.
 
-To match any word boundary, use C«<|w>». This is similar to other
-languages' X«C<\b>|regex deprecated,\b».
+To match not a word boundary, use C«<!|w>» or C«<!wb>». This is similar to
+X«C<\B>|regex deprecated,\B» of other languages.
 
-To match not a word boundary, use <!|w>. This is similar to other
-languages' X<C<\B>|regex deprecated, \B >.
+These are both zero width regex elements.
 
-These are both zero width assertions.
+    say "two-words" ~~ / two<|w>\-<|w>words /;    # OUTPUT: «｢two-words｣␤»
+    say "twowords" ~~ / two<!|w><!|w>words /;     # OUTPUT: «｢twowords｣»
 
-    say "two-words" ~~ / "two"<|w>"-"<|w>"words" /;    # OUTPUT: «｢two-words｣␤»
-    say "two-words" ~~ / "two"<!|w>"-"<!|w>"words" /;  # OUTPUT: «Nil␤»
-
-=head2 C«<<» and C«>>», left and right word boundary
 
 X<<<|regex, <<; regex, >>; regex, «; regex, »>>>
+=head2 Left and Right Word Boundary
 
-C«<<» matches a left word boundary. It matches positions where there
-is a non-word character (i.e., C<\W> character) at the left (or the start of the string) and a word
+C«<<» matches a left word boundary. It matches positions where there is a
+non-word character at the left, or the start of the string, and a word
 character to the right.
 
 C«>>» matches a right word boundary. It matches positions where there
-is a word character at the left and a non-word character at the right (or
-the end of the string).
+is a word character at the left and a non-word character at the right, or
+the end of the string.
 
-These are both zero width assertions.
+These are both zero width regex elements.
 
     my $str = 'The quick brown fox';
     say so ' ' ~~ /\W/;               # OUTPUT: «True␤»
@@ -776,8 +772,43 @@ To see the difference between C«<|w>» and C<«>, C<»>:
     say "stuff here!!!".subst(:g, /<</, '|');   # OUTPUT: «|stuff |here!!!␤»
     say "stuff here!!!".subst(:g, /<|w>/, '|'); # OUTPUT: «|stuff| |here|!!!␤»
 
+=head2 Summary of Anchors
 
-=head2 X<Lookahead assertions C«<?before pattern>»|regex,before>
+Anchors are zero-width regex elements. Hence they do not use up a character of
+the input string, that is, they do not advance the current position at which
+the regex engine tries to match. A good mental model is that they match between
+two characters of an input string, or before the first, or after the last
+character of an input string.
+
+=begin table
+
+    Anchor  | Description         | Examples
+    ========+=====================+=================
+    ^       | Start of string     | "⏏two\nlines"
+    ^^      | Start of line       | "⏏two\n⏏lines"
+    $       | End of string       | "two\nlines⏏"
+    $$      | End of line         | "two⏏\nlines⏏"
+    << or « | Left word boundary  | "⏏two ⏏words"
+    >> or » | Right word boundary | "two⏏ words⏏"
+    <?wb>   | Any word boundary   | "⏏two⏏ ⏏words⏏~!"
+    <!wb>   | Not a word boundary | "t⏏w⏏o w⏏o⏏r⏏d⏏s~⏏!"
+    <?ww>   | Within word         | "t⏏w⏏o w⏏o⏏r⏏d⏏s~!"
+    <!ww>   | Not within word     | "⏏two⏏ ⏏words⏏~⏏!⏏"
+
+=end table
+
+=head1 Zero-Width Assertions
+
+Zero-Width Assertions can help you implement your own anchor.
+
+A zero-width assertion turns another regex into an anchor, making
+them consume no characters of the input string. There are two variants:
+look-ahead and look-behind assertions.
+
+Technically, anchors are also zero-width assertions, and they can look
+both ahead and behind.
+
+=head2 X<Lookahead Assertions|regex,before>
 
 To check that a pattern appears before another pattern, use a
 lookahead assertion via the C<before> assertion. This has the form:
@@ -787,11 +818,11 @@ lookahead assertion via the C<before> assertion. This has the form:
 Thus, to search for the string C<foo> which is immediately followed by the
 string C<bar>, use the following regexp:
 
-    rx{ foo <?before bar> }
+    / foo <?before bar> /
 
 For example:
 
-    say "foobar" ~~ rx{ foo <?before bar> };  # OUTPUT: «foo␤»
+    say "foobar" ~~ / foo <?before bar> /;  # OUTPUT: «foo␤»
 
 However, if you want to search for a pattern which is B<not> immediately
 followed by some pattern, then you need to use a negative lookahead
@@ -799,26 +830,22 @@ assertion, this has the form:
 
     <!before pattern>
 
-Hence, all occurrences of C<foo> which I<is not> before C<bar> would
-match with
+In the following example, all occurrences of C<foo> which is not before
+C<bar> would match with
 
-    say "foobar" ~~ rx{ foo <!before bar> }   # OUTPUT: «Nil␤»
-
+    say "foobaz" ~~ / foo <!before bar> /;  # OUTPUT: «foo␤»
 
 Lookahead assertions can be used also with other patterns, like
 characters ranges, interpolated variables, subscripts and so on. In such
-cases it does suffice to use a C<?> (or a C<!> for the negate form).
+cases it does suffice to use a C<?>, or a C<!> for the negate form.
 For instance, the following lines all produce the very same result:
 
-=begin code
-say 'abcdefg' ~~ rx{ abc <?before def> };        # OUTPUT: ｢abc｣
-say 'abcdefg' ~~ rx{ abc <?[ d..f ]> };          # OUTPUT: ｢abc｣
-my @ending_letters = <d e f>;
-say 'abcdefg' ~~ rx{ abc <?@ending_letters> };   # OUTPUT: ｢abc｣
-=end code
+    say 'abcdefg' ~~ rx{ abc <?before def> };        # OUTPUT: ｢abc｣
+    say 'abcdefg' ~~ rx{ abc <?[ d..f ]> };          # OUTPUT: ｢abc｣
+    my @ending_letters = <d e f>;
+    say 'abcdefg' ~~ rx{ abc <?@ending_letters> };   # OUTPUT: ｢abc｣
 
-
-=head2 X<Lookbehind assertions C«<?after pattern>»|regex,after>
+=head2 X<Lookbehind assertions|regex,after>
 
 To check that a pattern appears after another pattern, use a
 lookbehind assertion via the C<after> assertion. This has the form:
@@ -828,11 +855,11 @@ lookbehind assertion via the C<after> assertion. This has the form:
 Therefore, to search for the string C<bar> immediately preceded by the
 string C<foo>, use the following regexp:
 
-    rx{ <?after foo> bar }
+    / <?after foo> bar /
 
 For example:
 
-    say "foobar" ~~ rx{ <?after foo> bar };   # OUTPUT: «bar␤»
+    say "foobar" ~~ / <?after foo> bar /;   # OUTPUT: «bar␤»
 
 However, if you want to search for a pattern which is B<not> immediately
 preceded by some pattern, then you need to use a negative lookbehind
@@ -840,10 +867,10 @@ assertion, this has the form:
 
     <!after pattern>
 
-Hence all occurrences of C<bar> which I<do not> have C<foo> before them
+Hence all occurrences of C<bar> which do not have C<foo> before them
 would be matched by
 
-    say "foobar" ~~ rx{ <!after foo> bar }    # OUTPUT: «Nil␤»
+    say "fotbar" ~~ / <!after foo> bar /    # OUTPUT: «bar␤»
 
 =head1 Grouping and Capturing
 
