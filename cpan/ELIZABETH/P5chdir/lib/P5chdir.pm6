@@ -1,6 +1,6 @@
 use v6.c;
 
-unit module P5chdir:ver<0.0.1>:auth<cpan:ELIZABETH>;
+unit module P5chdir:ver<0.0.2>:auth<cpan:ELIZABETH>;
 
 proto sub chdir(|) is export {*}
 multi sub chdir(--> Bool:D) {
@@ -36,6 +36,15 @@ P5chdir - Implement Perl 5's chdir() built-in
   say "switched" if chdir; # switched to HOME or LOGDIR
 
   say "switched" if chdir("lib");
+
+=head2 PORTING CAVEATS
+
+In Perl 6, C<chdir> only changes the C<$*CWD> dynamic variable.  It does
+B<not> actually change the default directory from the OS's point of view.
+This is done this way, because there is no concept of a "default directory
+per OS thread".  And since Perl 6 does not fork, but only does threading,
+it was felt that the "current directory" concept should be in the C<$*CWD>
+dynamic variable, which can be lexically scoped, and thus can be thread-safe.
 
 =head1 DESCRIPTION
 

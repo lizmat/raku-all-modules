@@ -14,6 +14,11 @@ SYNOPSIS
 
     say "switched" if chdir("lib");
 
+PORTING CAVEATS
+---------------
+
+In Perl 6, `chdir` only changes the `$*CWD` dynamic variable. It does **not** actually change the default directory from the OS's point of view. This is done this way, because there is no concept of a "default directory per OS thread". And since Perl 6 does not fork, but only does threading, it was felt that the "current directory" concept should be in the `$*CWD` dynamic variable, which can be lexically scoped, and thus can be thread-safe.
+
 DESCRIPTION
 ===========
 
