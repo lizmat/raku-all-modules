@@ -137,6 +137,11 @@ multi sub is-valid-key(Str:D $key --> Bool:D)
            ).so;
 }
 
+multi sub is-valid-key(Date:D $key --> Bool:D)
+{
+    True;
+}
+
 multi sub is-valid-key($key --> Bool:D)
 {
     False;
