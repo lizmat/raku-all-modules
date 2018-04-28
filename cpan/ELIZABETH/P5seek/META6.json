@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's seek() built-in",
+  "license" : "Artistic-2.0",
+  "name" : "P5seek",
+  "perl" : "6.c",
+  "provides" : {
+    "P5seek" : "lib/P5seek.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5seek.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
