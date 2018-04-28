@@ -306,14 +306,14 @@ class CSS::Declarations:ver<0.3.7> {
         }
     }
 
-    my subset ColorAST of Pair where {.key eq 'rgb'|'rgba'|'hsl'|'hsla'}
+    my subset ColorAST of Pair where {.key ~~ 'rgb'|'rgba'|'hsl'|'hsla'}
 
     multi method from-ast(ColorAST $v) {
         my @channels = $v.value.map: {self.from-ast: $_};
         my Color $color;
         my $type = $v.key;
         @channels.tail *= 256
-            if $type eq 'rgba'|'hsla';
+            if $type ~~ 'rgba'|'hsla';
         if $type eq 'hsla' {
             my Numeric \a = @channels.pop;
             my %rgba = hsl2rgb(@channels);

@@ -7,7 +7,7 @@ use v6;
 module CSS::Declarations::Units {
     my enum Scale is export(:Scale) « :pt(1.0) :pc(12.0) :px(.75) :mm(2.8346) :cm(28.346) :in(72.0) »;
     role Type[$type] { method type{$type} }
-    subset Length of Type is export where .type eq 'pt'|'pc'|'px'|'mm'|'cm'|'in';
+    subset Length of Type is export where .type ~~ 'pt'|'pc'|'px'|'mm'|'cm'|'in';
     sub postfix:<pt>(Numeric $v) is rw is export(:pt) { $v but Type['pt']  };
     sub postfix:<pc>(Numeric $v) is rw is export(:pc) { $v but Type['pc']  };
     sub postfix:<px>(Numeric $v) is rw is export(:px) { $v but Type['px']  };
