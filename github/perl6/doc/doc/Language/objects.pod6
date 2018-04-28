@@ -4,19 +4,23 @@
 
 =SUBTITLE Object Orientation in Perl 6
 
-Perl 6 provides strong support for object oriented programming. Although
-Perl 6 allows programmers to program in multiple paradigms, object oriented
-programming is at the heart of the language.
+Perl 6 provides strong support for L<Object Oriented Programming (OOP)|https://en.wikipedia.org/wiki/Object-oriented_programming>.
+Although Perl 6 allows programmers to program in multiple paradigms,
+Object Oriented Programming is at the heart of the language.
 
 Perl 6 comes with a wealth of predefined types, which can be classified in
 two categories: normal and I<native> types.
+Everything that you can store in a variable is either a I<native value> or an
+I<object>. That includes literals, types (type objects), code and containers.
 
-Native types are used for low-level types (like C<uint64>). They do not have
-the same capabilities as objects, though if you call methods on them, they
-are I<boxed> into normal objects.
 
-Everything that you can store in a variable is either a native value or an
-object. That includes literals, types (type objects), code and containers.
+Native types are used for low-level types (like C<uint64>).
+Even if I<native> types do not have the same capabilities as objects,
+if you call methods on them, they are automatically I<boxed> into normal objects.
+
+Everything that is not a I<native> value is an <object>.
+Objects do allow for both L<inheritance|https://en.wikipedia.org/wiki/Object-oriented_programming#Inheritance_and_behavioral_subtyping> and L<encapsulation|https://en.wikipedia.org/wiki/Object-oriented_programming#Encapsulation>.
+
 
 =head1 Using Objects
 
@@ -140,7 +144,8 @@ another class.
 X<|Attribute> X<|Property> X<|Member> X<|Slot>
 
 Attributes are variables that exist per instance of a class. They are where
-the state of an object is stored. In Perl 6, all attributes are private.
+the state of an object is stored. In Perl 6, all attributes are I<private>,
+that means they can be accessed directly only by the class instance itself.
 They are typically declared using the C<has> declarator and the C<!> twigil.
 
     class Journey {
