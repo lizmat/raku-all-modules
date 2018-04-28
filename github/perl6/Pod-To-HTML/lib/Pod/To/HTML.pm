@@ -36,7 +36,7 @@ multi method render(Str $pod-string, Str :$header = '', Str :$footer = '', Str :
 # way to walk a Pod tree and invoke callbacks on each node, that would reduce the multispaghetti at
 # the bottom to something much more readable.
 
-my &url;
+my &url = {$_};
 my $title;
 my $subtitle;
 my @meta;
