@@ -13,7 +13,7 @@ class PDF::Content::Text::Style is rw {
     has Numeric $.HorizScaling;
     has Numeric $.TextRise;
 
-    my subset Baseline of Str is export(:BaseLine) where { !.defined || $_ eq 'alphabetic'|'top'|'bottom'|'middle'|'ideographic'|'hanging' };
+    my subset Baseline of Str is export(:BaseLine) where { !.defined || $_ ~~ 'alphabetic'|'top'|'bottom'|'middle'|'ideographic'|'hanging' };
 
     multi submethod TWEAK(:$gfx, Baseline :$baseline) is default {
         $!CharSpacing  //= do with $gfx {.CharSpacing}  else {0.0};

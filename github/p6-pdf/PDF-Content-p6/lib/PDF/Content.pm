@@ -84,7 +84,7 @@ class PDF::Content:ver<0.2.2>
     my subset Valign of Str where 'top'  | 'center' | 'bottom';
 
     #| place an image, or form object
-    method do(PDF::COS::Stream $obj! where .<Subtype> eq 'Image'|'Form',
+    method do(PDF::COS::Stream $obj! where .<Subtype> ~~ 'Image'|'Form',
               Numeric $x = 0,
               Numeric $y = 0,
               Numeric :$width is copy,

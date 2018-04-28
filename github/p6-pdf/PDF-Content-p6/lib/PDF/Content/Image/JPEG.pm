@@ -33,7 +33,7 @@ class PDF::Content::Image::JPEG
         loop {
             my BlockHeader $hdr .= read: $fh;
             last if u8($hdr.ff) != 0xFF;
-            last if u8($hdr.mark) == 0xDA | 0xD9;  # SOS/EOI
+            last if u8($hdr.mark) ~~ 0xDA|0xD9;  # SOS/EOI
             my $len := u16($hdr.len);
             last if $len < 2;
             last if $fh.eof;
@@ -41,8 +41,8 @@ class PDF::Content::Image::JPEG
             my $buf = $fh.read: $len - 2;
             with $hdr.mark -> uint8 $mark {
                 if 0xC0 <= $mark <= 0xCF
-                && $mark != 0xC4 | 0xC8 | 0xCC {
-                    $!is-dct = ?( $mark == 0xC0 | 0xC2);
+                && $mark !~~ 0xC4|0xC8|0xCC {
+                    $!is-dct = ?( $mark ~~ 0xC0|0xC2);
                     $!atts .= unpack($buf);
                     last;
                 }

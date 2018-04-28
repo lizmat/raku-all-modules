@@ -178,7 +178,7 @@ class PDF::Content::Text::Block {
 
     method render(
 	PDF::Content::Ops $gfx,
-	Bool :$nl,   # add trailing line 
+	Bool :$nl,   # add trailing line
 	Bool :$top,  # position from top
 	Bool :$left, # position from left
 	Bool :$preserve = True, # restore text state

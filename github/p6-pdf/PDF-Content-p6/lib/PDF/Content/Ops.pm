@@ -891,9 +891,9 @@ class PDF::Content::Ops {
         @!ops.map({
 	    my \op = ~ .key;
 
-	    $nesting-- if $nesting && op eq Closers;
+	    $nesting-- if $nesting && op ~~ Closers;
 	    $writer.indent = '  ' x $nesting;
-	    $nesting++ if op eq Openers;
+	    $nesting++ if op ~~ Openers;
 
 	    my \pad = op eq 'EI'
                 ?? ''
