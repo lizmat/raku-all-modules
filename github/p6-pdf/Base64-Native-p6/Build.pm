@@ -24,6 +24,7 @@ class Build {
         my $destdir = 'resources/lib';
         mkdir $destdir;
         make($workdir, "$destdir", :libname<base64>);
+        True;
     }
 }
 
