@@ -12,6 +12,7 @@
     "P5chr",
     "P5each",
     "P5fc",
+    "P5fileno",
     "P5hex",
     "P5index",
     "P5lc",
@@ -20,10 +21,13 @@
     "P5oct",
     "P5ord",
     "P5pack",
+    "P5push",
     "P5quotemeta",
+    "P5readlink",
     "P5ref",
     "P5reverse",
     "P5rindex",
+    "P5seek",
     "P5sleep",
     "P5study",
     "P5substr",
@@ -47,5 +51,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.9"
+  "version" : "0.0.10"
 }

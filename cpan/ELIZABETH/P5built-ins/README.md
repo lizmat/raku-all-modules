@@ -19,9 +19,9 @@ DESCRIPTION
 
 This module provides an easy way to import a growing number of built-in functions of Perl 5 in Perl 6. Currently supported at:
 
-    caller chdir chomp chop chr each hex index lcfirst length oct ord pack
-    quotemeta ref rindex sleep study substr tie tied times ucfirst unpack
-    untie
+    caller chdir chomp chop chr each fc fileno hex index lc lcfirst length
+    oct ord pack pop push quotemeta readlink ref rindex seek sleep study
+    substr tie tied times uc ucfirst unpack untie
 
 The following file test operators are also available:
 
@@ -35,9 +35,12 @@ Please look at the porting caveats of the underlying modules that actually provi
     module      | built-in functions
     ------------+-------------------
     P5caller    | caller
+    P5chdir     | chdir
     P5each      | each
+    P5fileno    | fileno
     P5length    | length
     P5pack      | pack unpack
+    P5readlink  | readlink
     P5ref       | ref
     P5reverse   | reverse
     P5study     | study
