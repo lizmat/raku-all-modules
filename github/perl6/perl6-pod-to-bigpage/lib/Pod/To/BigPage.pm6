@@ -212,7 +212,7 @@ sub compose-index (:$register = %register) is export {
     verbose "found duplicate index entry {.key} at {.value.map: {'#i' ~ .Str}}" for @dupes;
     '<div id="index"><ul class="index">' ~ NL ~
     $register.sort(*.key.lc).map({
-        '<li>' ~ .key.Str.&escape-markup
+        '<li>' ~ .key.Str
         ~ '&emsp;' ~ .value.map({ '<a href="#i' ~ .Str ~ '">' ~ .Str ~ '</a>' }) ~ '</li>'
     }) ~
     '</ul></div>'
