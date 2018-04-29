@@ -1,20 +1,29 @@
 use v6.c;
 
-unit module P5push:ver<0.0.1>:auth<cpan:ELIZABETH>;
+unit module P5push:ver<0.0.3>:auth<cpan:ELIZABETH>;
 
 proto sub push(|) is export {*}
 multi sub push(@array,*@values --> Int:D) {
-    @array.push(@values).elems
+    @array.append(@values).elems
 }
 
 proto sub pop(|) is export {*}
 multi sub pop() {
-    callframe(2).my<!UNIT_MARKER>:exists  # heuristic for top level calling
-      ?? pop(@*ARGS)                        # top level, use @ARGV equivalent
-      !! pop(CALLERS::<@_>)                 # pop from the caller's @_
+    mainline()                # heuristic for top level calling
+      ?? pop(@*ARGS)            # top level, use @ARGV equivalent
+      !! pop(CALLERS::<@_>)     # pop from the caller's @_
 }
 multi sub pop(@array) {
     @array.elems ?? @array.pop !! Nil
+}
+
+sub mainline(--> Bool:D) {  # heuristic for top level calling
+    # Before Rakudo commit 0d216befba336b1cd7a0b42, thunky things such as an onlystar
+    # proto would be "seen" by callframe().  Subsequent calls to the proto would be
+    # skipped if the call could be performed through the multi-dispatch cache, causing
+    # the info to be returned of one level deeper.
+    callframe(2).my<!UNIT_MARKER>:exists        # post commit 0d216befba336b1cd7a0b42
+      || (callframe(3).my<!UNIT_MARKER>:exists) || !callframe(3).my
 }
 
 =begin pod
