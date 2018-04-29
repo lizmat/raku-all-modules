@@ -17,7 +17,10 @@ my %headers =
     "User-Agent" => "Perl 6",
 ;
 
-my $html = LWP::Simple.get('http://httpbin.org/get', %headers);
+my $file = 'url.json'.IO.e ?? 'url.json' !! 't/url.json';
+my $url = (from-json $file.IO.slurp)<url>;
+
+my $html = LWP::Simple.get($url ~ '/get', %headers);
 my %json = from-json $html;
 
 is %json<headers><User-Agent>, "Perl 6", "User agent header is sent by GET";
