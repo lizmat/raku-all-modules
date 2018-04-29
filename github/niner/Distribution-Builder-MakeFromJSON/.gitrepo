@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/niner/Distribution-Builder-MakeFromJSON.git
 	branch = master
-	commit = fabbf9af98f96471490a89f30780b7a89123340f
-	parent = ed4937684a18971660beb3ef2ff136650f013d34
+	commit = 75c621d51f43698141c8b805d423ea77cb4f130f
+	parent = 5b3f039e93ffaaa2bb873e3d8d5433ae25c13478
 	cmdver = 0.4.0
