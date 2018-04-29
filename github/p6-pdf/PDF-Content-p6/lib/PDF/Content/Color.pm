@@ -15,7 +15,6 @@ module PDF::Content::Color {
         :Yellow[1, 1, 0]    :Cyan[0, 1, 1]
         :Magenta[1, 0, 1]   :Registration[1, 1, 1, 1]
        »;
-    constant %CMYK = ColorName.enums.Hash;
 
     our sub rgb(\r, \g, \b) is export(:rgb) {
         :DeviceRGB[r, g, b]
@@ -36,11 +35,10 @@ module PDF::Content::Color {
         when .elems == 1 {gray(.[0])}
     }
     multi sub color(Str $_) {
-        when %CMYK{.lc}:exists  { cmyk: |%CMYK{.lc} }
         when /^'#'<xdigit>**3$/ { rgb( |@<xdigit>.map({:16(.Str ~ .Str) / 255 })) }
         when /^'#'<xdigit>**6$/ { rgb( |@<xdigit>.map({:16($^a.Str ~ $^b.Str) / 255 })) }
         when /^'%'<xdigit>**4$/ { cmyk( |@<xdigit>.map({:16(.Str ~ .Str) / 255 })) }
         when /^'%'<xdigit>**8$/ { cmyk( |@<xdigit>.map({:16($^a.Str ~ $^b.Str) / 255 })) }
-        default { warn "unrecognized color: $_"; :gray(1) }
+        default { warn "unrecognized color: $_"; gray(1) }
     }
 }
