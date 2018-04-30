@@ -2,7 +2,7 @@ use v6.c;
 use Test;
 use P5pack;
 
-my @exported = <pack unpack>.map: '&' ~ *;;
+my @exported = <pack unpack>.map: '&' ~ *;
 
 plan @exported * 2;
 
