@@ -15,7 +15,7 @@ P<http://http.perl6.org/robots.txt>
 =end pod
 
 my $ok-result = q:to/EOH/;
-<a name="t0.1"></a><h1 id="_routine_test.pod6-This_is_the_head_./t/hello-camelia.txt_http://http.perl6.org/robots.txt">This is the head <pre>Hello Camelia!
+ <h1 id="_routine_test.pod6-This_is_the_head_./t/hello-camelia.txt_http://http.perl6.org/robots.txt">This is the head <pre>Hello Camelia!
 </pre> <pre>User-Agent: *
 Disallow: /page-stats
 </pre></h1>
