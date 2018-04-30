@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose::Util:ver<1.0.7>;
+unit class Term::Choose::Util:ver<1.1.0>;
 
 use NCurses;
 use Term::Choose              :choose, :choose-multi, :pause;
@@ -19,19 +19,24 @@ has Int_0_or_1 $.index          = 0;
 has Int_0_or_1 $.mouse          = 0;
 has Int_0_or_1 $.order          = 1;
 has Int_0_or_1 $.show-hidden    = 1;
+has Int_0_or_1 $.small-on-top   = 0;
+has Int_0_or_1 $.remove-chosen  = 0;
+has Int_0_or_1 $.fmt-chosen     = 0;
 has Int_0_to_2 $.enchanted      = 1;
 has Int_0_to_2 $.justify        = 0;
 has Int_0_to_2 $.layout         = 1;
-has UInt       $.current-number;
-has Str        $.current-dir    = '';
-has Str        $.current-file   = '';
+has List       $.mark           = [];
 has Str        $.dir            = $*HOME.Str;
-has Str        $.name           = '';
+has Str        $.name;
 has Str        $.prefix;
-has Str        $.prompt;
+has Str        $.info           = '';
+has Str        $.prompt         = '';
 has Str        $.thsd-sep       = ',';
-has List       $.current-dirs   = [];
-has List       $.current-list   = [];
+has Str        $.back           = 'BACK';
+has Str        $.confirm        = 'CONFIRM';
+has Str        $.add-dir        = ' ++ ';
+has Str        $.up             = ' .. ';
+has Str        $.choose-file    = ' >F ';
 
 has Term::Choose $!tc;
 
@@ -43,7 +48,7 @@ method !_init_term {
         setlocale( LC_ALL, "" );
         $!win = initscr();
     }
-    $!tc = Term::Choose.new( :win( $!win ), :mouse( %!o<mouse> ) );
+    $!tc = Term::Choose.new( :win( $!win ) );
 }
 
 method !_end_term {
@@ -52,8 +57,7 @@ method !_end_term {
 }
 
 
-sub _array_gist ( @array ) { @array.map( { '"' ~ .Str ~ '"' } ).join( ', ' ) ~ ']' }
-sub _string_gist ( $str ) { '"' ~ $str.Str ~ '"' }
+sub _string_gist ( $_ ) { S:g/' '/\ / }
 
 
 sub choose-dirs ( *%opt ) is export( :DEFAULT, :choose-dirs ) { Term::Choose::Util.new().choose-dirs( |%opt ) }
@@ -62,32 +66,32 @@ method choose-dirs (
         Int_0_or_1 :$mouse          = $!mouse,
         Int_0_or_1 :$order          = $!order,
         Int_0_or_1 :$show-hidden    = $!show-hidden,
-        Int_0_to_2 :$enchanted      = $!enchanted,
+        Int_0_or_1 :$enchanted      = $!enchanted,
         Int_0_to_2 :$justify        = $!justify,
         Int_0_to_2 :$layout         = $!layout,
         Str        :$dir            = $!dir,
-        Str        :$prompt         = $!prompt,
-        List       :$current-dirs   = $!current-dirs,
+        Str        :$info           = $!info,
+        Str        :$name           = $!name,
+        Str        :$prompt         = ' ',
+        Str        :$back           = $!back,
+        Str        :$confirm        = $!confirm,
+        Str        :$add-dir        = $!add-dir,
+        Str        :$up             = $!up,
     ) {
     CATCH {
         endwin();
     }
-    %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout, :$dir, :$prompt, :$current-dirs;
     my @chosen_dirs;
-    my IO::Path $tmp_dir = %!o<dir>.IO;
+    my IO::Path $tmp_dir = $dir.IO;
     my IO::Path $previous = $tmp_dir;
-    my $back    = ' < ';
-    my $confirm = ' = ';
-    my $add_dir = ' . ';
-    my $up      = ' .. ';
-    my @pre = ( Any, $confirm, $add_dir, $up );
-    my Int $default = %!o<enchanted> ?? @pre.end !! 0;
+    my @pre = ( Any, $confirm, $add-dir, $up );
+    my Int $default = $enchanted ?? @pre.end !! 0;
     self!_init_term();
 
     loop {
         my IO::Path @dirs;
         try {
-            if %!o<show-hidden> {
+            if $show-hidden {
                 @dirs = $tmp_dir.dir.grep: { .d };
             }
             else {
@@ -104,38 +108,31 @@ method choose-dirs (
                 next;
             }
         }
-        my Str $prompt;
-        my Str $key_curr = 'Current [';
-        my Str $key_new  =     'New [';
-        my Int $len_key = $key_new.chars;;
-        if %!o<current-dirs>.elems {
-            $len_key = max $len_key, $key_curr.chars;
-            $prompt ~= sprintf "%*s%s\n", $len_key, $key_curr, _array_gist( %!o<current-dirs> );
-        }
-        $prompt ~= sprintf "%*s%s\n", $len_key, $key_new, _array_gist( @chosen_dirs );
-        my Str $key_cwd = '=> ';
-        $prompt  = line-fold( $prompt,              getmaxx( $!win ), '', ' ' x $len_key       ).join: "\n";
-        $prompt ~= "\n";
-        $prompt ~= line-fold( $key_cwd ~ $previous, getmaxx( $!win ), '', ' ' x $key_cwd.chars ).join: "\n";
-        $prompt ~= "\n";
-        $prompt ~= "\n" ~ %!o<prompt> if %!o<prompt>.defined;
+        my @tmp;
+        @tmp.push: $info if $info.chars;
+        @tmp.push: ( $name // 'New: ' ) ~ @chosen_dirs.map: { _string_gist( $_ ) };
+        @tmp.push: " ++[$previous]";
+        @tmp.push: $prompt if $prompt.chars;
         # Choose
-        my $choice = $!tc.choose( [ |@pre, |@dirs.sort ], :$prompt, :$default, :undef( $back ),:justify( %!o<justify> ),
-                                                  :layout( %!o<layout> ), :order( %!o<order> ) );
+        my $choice = $!tc.choose(
+            [ |@pre, |@dirs.sort ],
+            :prompt( @tmp.join: "\n" ), :$default, :undef( $back ), :$justify,
+            :$layout, :$order, :lf( 0, ($name//'').chars ), :$mouse
+        );
         if ! $choice.defined {
-            if ! @chosen_dirs.elems {
-                self!_end_term();
-                return Empty;
+            if @chosen_dirs.elems {
+                @chosen_dirs.pop;
+                next;
             }
-            @chosen_dirs = Empty;
-            next;
+            self!_end_term();
+            return Empty;
         }
-        $default = %!o<enchanted> ?? @pre.end !! 0;
+        $default = $enchanted ?? @pre.end !! 0;
         if $choice eq $confirm {
             self!_end_term();
             return @chosen_dirs;
         }
-        elsif $choice eq $add_dir {
+        elsif $choice eq $add-dir {
             @chosen_dirs.push: $previous;
             $tmp_dir = $tmp_dir.dirname.IO;
             $default = 0 if $previous eq $tmp_dir;
@@ -155,17 +152,20 @@ method choose-a-dir (
         Int_0_or_1 :$mouse          = $!mouse,
         Int_0_or_1 :$order          = $!order,
         Int_0_or_1 :$show-hidden    = $!show-hidden,
-        Int_0_to_2 :$enchanted      = $!enchanted,
+        Int_0_or_1 :$enchanted      = $!enchanted,
         Int_0_to_2 :$justify        = $!justify,
         Int_0_to_2 :$layout         = $!layout,
         Str        :$dir            = $!dir,
+        Str        :$info           = $!info,
         Str        :$prompt         = $!prompt,
-        Str        :$current-dir    = $!current-dir
+        Str        :$back           = $!back,
+        Str        :$confirm        = $!confirm,
+        Str        :$up             = $!up,
     --> IO::Path ) {
     CATCH {
         endwin();
     }
-    %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout, :$dir, :$prompt, :$current-dir;
+    %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout, :$dir, :$info, :$prompt, :$back, :$confirm, :$up;
     self!_choose_a_path( 0 );
 }
 
@@ -175,40 +175,30 @@ method choose-a-file (
         Int_0_or_1 :$mouse          = $!mouse,
         Int_0_or_1 :$order          = $!order,
         Int_0_or_1 :$show-hidden    = $!show-hidden,
-        Int_0_to_2 :$enchanted      = $!enchanted,
+        Int_0_or_1 :$enchanted      = $!enchanted,
         Int_0_to_2 :$justify        = $!justify,
         Int_0_to_2 :$layout         = $!layout,
         Str        :$dir            = $!dir,
+        Str        :$info           = $!info,
         Str        :$prompt         = $!prompt,
-        Str        :$current-file   = $!current-file
+        Str        :$back           = $!back,
+        Str        :$confirm        = $!confirm,
+        Str        :$up             = $!up,
+        Str        :$choose-file    = $!choose-file,
     --> IO::Path ) {
     CATCH {
         endwin();
     }
-    %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout, :$dir, :$prompt, :$current-file;
+    %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout, :$dir, :$info, :$prompt, :$back, :$confirm, :$up, :$choose-file;
     self!_choose_a_path( 1 );
 }
 
 
 method !_choose_a_path ( Int $is_a_file --> IO::Path ) {
-    my $back        = ' < ';
-    my $confirm     = ' = ';
-    my $up          = ' .. ';
-    my $select_file = ' >F ';
-    my $wildcard    = ' ? ';
-    my $curr;
-    my @pre = Any;
-    if $is_a_file {
-        $curr = %!o<current-file> // Str;
-        @pre.push: $select_file;
-    }
-    else {
-        $curr = %!o<current-dir> // Str;
-        @pre.push: $confirm;
-    }
-    @pre.push: $up;
+    my $wildcard = ' ? ';
+    my @pre = ( Any, $is_a_file ?? %!o<choose-file> !! %!o<confirm>, %!o<up> );
     my Int $default = %!o<enchanted>  ?? 2 !! 0;
-    my IO::Path $dir      = %!o<dir>.IO;
+    my IO::Path $dir = %!o<dir>.IO;
     my IO::Path $previous = $dir;
     self!_init_term();
 
@@ -232,48 +222,45 @@ method !_choose_a_path ( Int $is_a_file --> IO::Path ) {
                 next;
             }
         }
-        my Str $prompt;
-        if $is_a_file || ! $curr {
-            if $curr {
-                $prompt ~= sprintf "Current file: %s\n", _string_gist( $curr );
-                $prompt ~= sprintf "    New file: %s\n", _string_gist( $previous.add( $wildcard ) );
-            }
-            else {
-                $prompt ~= sprintf "New file: %s\n", _string_gist( $previous.add( $wildcard ) );
-            }
+        my @tmp;
+        if %!o<info>.chars {
+            @tmp.push: %!o<info>;
+        }
+        if $is_a_file {              # New file
+            @tmp.push: ( %!o<name> // 'New: ' ) ~ _string_gist( $previous.add: $wildcard );
         }
         else {
-            if $curr {
-                $prompt  = sprintf "Current dir: %s\n", _string_gist( $curr );
-                $prompt ~= sprintf "    New dir: %s\n", _string_gist( $dir );
-            }
-            else {
-                $prompt ~= sprintf "New dir %s\n", _string_gist( $dir );
-            }
+            @tmp.push: ( %!o<name> // 'New: ' ) ~ _string_gist( $previous );
         }
-        $prompt ~= "\n" ~ %!o<prompt> if %!o<prompt>.defined;
+        if %!o<prompt>.chars {
+            @tmp.push: %!o<prompt>;
+        }
+        my $choices = [ |@pre, |@dirs.sort ];
         # Choose
-        my $choice = $!tc.choose( [ |@pre, |@dirs.sort ], :$prompt, :$default, :undef( $back ), 
-                                    :justify( %!o<justify> ), :layout( %!o<layout> ), :order( %!o<order> ) );
-        if ! $choice.defined {
+        my $idx = $!tc.choose(
+            $choices,
+            :$default, :undef( %!o<back> ), :prompt( @tmp.join: "\n" ), :1index, :justify( %!o<justify> ),
+            :layout( %!o<layout> ), :order( %!o<order> ), :mouse( %!o<mouse> )
+        );
+        if ! $idx.defined || ! $choices[$idx].defined {
             self!_end_term();
             return;
         }
-        elsif $choice eq $confirm {
+        if $choices[$idx] eq %!o<confirm> {
             self!_end_term();
             return $previous;
         }
-        elsif $choice eq $select_file {
-            my IO::Path $file = self!_a_file( $dir, $curr, $back, $confirm, $wildcard ) // IO::Path;
-            next if ! $file.defined; ###
+        elsif %!o<choose-file>.defined && $choices[$idx] eq %!o<choose-file> {
+            my IO::Path $file = self!_a_file( $dir, $wildcard ) // IO::Path;
+            next if ! $file.defined;
             self!_end_term();
             return $file;
         }
-        if $choice eq $up {
+        if $choices[$idx] eq %!o<up> {
             $dir = $dir.dirname.IO;
         }
         else {
-            $dir = $choice;
+            $dir = $choices[$idx];
         }
         if ( $previous eq $dir ) {
             $default = 0;
@@ -285,7 +272,7 @@ method !_choose_a_path ( Int $is_a_file --> IO::Path ) {
     }
 }
 
-method !_a_file ( IO::Path $dir, $curr, $back, $confirm, $wildcard --> IO::Path ) {
+method !_a_file ( IO::Path $dir, $wildcard --> IO::Path ) {
     my Str $previous;
 
     loop {
@@ -305,27 +292,25 @@ method !_a_file ( IO::Path $dir, $curr, $back, $confirm, $wildcard --> IO::Path 
         }
         if ! @files.elems {
             my $prompt =  "Dir: $dir\nNo files in this directory.";
-            pause( [ $back ], prompt => $prompt );
+            pause( [ %!o<back> ], prompt => $prompt );
             return;
         }
-        my @pre = ( Any, $confirm );
-        my Str $prompt;
-        if $curr {
-            $prompt ~= sprintf "Current file: %s\n", _string_gist( $dir.add( $curr ) );
-            $prompt ~= sprintf "    New file: %s\n", _string_gist( $dir.add( $previous // $wildcard ) );
-        }
-        else {
-            $prompt ~= sprintf "New file: %s\n", _string_gist( $dir.add( $previous // $wildcard ) );
-        }
-        $prompt ~= "\n" ~ %!o<prompt> if %!o<prompt>.defined;
+        my @pre = ( Any, %!o<confirm> );
+        my @tmp;
+        @tmp.push: %!o<info> if %!o<info>.chars;
+        @tmp.push: ( %!o<name> // 'New: ' ) ~ _string_gist( $dir.add( $previous // $wildcard ) ); # New file
+        @tmp.push: %!o<prompt> if %!o<prompt>.chars;
         # Choose
-        my $choice = $!tc.choose( [ |@pre, |@files.sort ], :$prompt, :undef( $back ), :justify( %!o<justify> ),
-                                                           :layout( %!o<layout> ), :order( %!o<order> ) );
+        my $choice = $!tc.choose(
+            [ |@pre, |@files.sort ],
+            :prompt( @tmp.join: "\n" ), :undef( %!o<back> ), :justify( %!o<justify> ),
+            :layout( %!o<layout> ), :order( %!o<order> ), :mouse( %!o<mouse> )
+        );
         if ! $choice.defined {
             return;
         }
-        elsif $choice eq $confirm {
-            return if ! $previous.chars;
+        elsif $choice eq %!o<confirm> {
+            return if ! $previous.defined;
             return $dir.IO.add: $previous;
         }
         else {
@@ -335,27 +320,29 @@ method !_a_file ( IO::Path $dir, $curr, $back, $confirm, $wildcard --> IO::Path 
 }
 
 
-sub choose-a-number ( Int $digits, *%opt ) is export( :DEFAULT, :choose-a-number ) {
+sub choose-a-number ( Int $digits = 7, *%opt ) is export( :DEFAULT, :choose-a-number ) {
     Term::Choose::Util.new().choose-a-number( $digits, |%opt );
 }
 
-method choose-a-number ( Int $digits,
+method choose-a-number ( Int $digits = 7,
         Int_0_or_1 :$mouse          = $!mouse,
+        Int_0_or_1 :$small-on-top   = $!small-on-top,
+        Str        :$info           = $!info,
         Str        :$prompt         = $!prompt,
-        UInt       :$current-number = $!current-number,
         Str        :$name           = $!name,
-        Str        :$thsd-sep       = $!thsd-sep
+        Str        :$thsd-sep       = $!thsd-sep,
+        Str        :$back           = $!back,
+        Str        :$confirm        = $!confirm,
     ) {
     CATCH {
         endwin();
     }
-    %!o = :$mouse, :$prompt, :$current-number, :$name, :$thsd-sep;
-    my Str $sep = %!o<thsd-sep>;
+    my Str $sep = $thsd-sep;
     my Int $longest = $digits + ( $sep eq '' ?? 0 !! ( $digits - 1 ) div 3 );
     my Str $tab     = '  -  ';
-    my Str $confirm = 'CONFIRM';
-    my Str $back    = 'BACK';
     my Str @ranges;
+    my $tmp_confirm;
+    my $tmp_back;
     self!_init_term();
 
     if $longest * 2 + $tab.chars <= getmaxx( $!win ) {
@@ -365,8 +352,8 @@ method choose-a-number ( Int $digits,
             my Str $end   = insert-sep( '9' ~ '0' x $zeros, $sep );
             @ranges.unshift( sprintf " %*s%s%*s", $longest, $begin, $tab, $longest, $end );
         }
-        $confirm = sprintf "%-*s", $longest * 2 + $tab.chars, $confirm;
-        $back    = sprintf "%-*s", $longest * 2 + $tab.chars, $back;
+        $tmp_confirm = sprintf "%-*s", $longest * 2 + $tab.chars, $confirm;
+        $tmp_back    = sprintf "%-*s", $longest * 2 + $tab.chars, $back;
     }
     else {
         @ranges = ( sprintf "%*s", $longest, '0' ); #
@@ -375,37 +362,29 @@ method choose-a-number ( Int $digits,
             @ranges.unshift( sprintf "%*s", $longest, $begin );
         }
     }
-
+    my @pre = ( Any, $tmp_confirm );
     my Int %numbers;
     my Str $result;
-    my Str $undef = '--';
-    my $tmp_name = %!o<name> ?? ' ' ~ %!o<name> !! '';
-    my $fmt_cur = "Current{$tmp_name}: %{$longest}s\n";
-    my $fmt_new = "    New{$tmp_name}: %{$longest}s\n";
+    my $tmp_name = $name ?? $name !! '> '; #
 
     NUMBER: loop {
-        my Str $new_number = $result // $undef;
-        my Str $prompt;
-        if %!o<current-number>.defined {
-            if print-columns( sprintf $fmt_cur, 1 ) <= getmaxx( $!win ) {
-                $prompt  = sprintf $fmt_cur, insert-sep( %!o<current-number>, $sep );
-                $prompt ~= sprintf $fmt_new, $new_number;
-            }
-            else {
-                $prompt  = sprintf "%{$longest}s\n", insert-sep( %!o<current-number>, $sep );
-                $prompt ~= sprintf "%{$longest}s\n", $new_number;
-            }
+        my Str $new_number = $result // '';
+        my @tmp;
+        if $info.chars {
+            @tmp.push: $info;
         }
-        else {
-            $prompt = sprintf $fmt_new, $new_number;
-            if print-columns( $prompt ) > getmaxx( $!win ) {
-                $prompt = $new_number;
-            }
+        my $row = sprintf(  "{$tmp_name}%*s", $longest, $new_number );
+        if ( print-columns( $row ) > getmaxx( $!win ) ) {
+            $row = $new_number;
         }
-        $prompt ~= "\n" ~ %!o<prompt> if %!o<prompt>.defined;
-        my @pre = ( Any, $confirm );
+        @tmp.push: $row;
+        if $prompt.chars {
+            @tmp.push: $prompt;
+        }
         # Choose
-        my $range = $!tc.choose( [ |@pre, |@ranges ], :$prompt, :layout( 2 ), :justify( 1 ), :undef( $back ) );
+        my $range = $!tc.choose(
+             [ |@pre, |( $small-on-top ?? @ranges.reverse !! @ranges ) ],
+            :prompt( @tmp.join: "\n" ), :2layout, :1justify, :undef( $tmp_back ), :$mouse );
         if ! $range.defined {
             if $result.defined {
                 $result = Str;
@@ -417,7 +396,7 @@ method choose-a-number ( Int $digits,
                 return;
             }
         }
-        elsif $range eq $confirm {
+        elsif $range eq $tmp_confirm {
             self!_end_term();
             if ! $result.defined {
                 return;
@@ -437,8 +416,10 @@ method choose-a-number ( Int $digits,
         my Str $reset = 'reset';
         my Str $back_short = '<<';
         # Choose
-        my $num = $!tc.choose( [ Any, |@choices, $reset ], :$prompt, :layout( 1 ), :justify( 2 ),
-                                                           :order( 0 ), :undef( $back_short ) );
+        my $num = $!tc.choose( 
+            [ Any, |@choices, $reset ],
+            :prompt( @tmp.join: "\n" ), :1layout, :2justify, :0order, :undef( $back_short ), :$mouse
+        );
         if ! $num.defined {
             next;
         }
@@ -461,69 +442,98 @@ sub choose-a-subset ( @list, *%opt ) is export( :DEFAULT, :choose-a-subset ) {
     Term::Choose::Util.new().choose-a-subset( @list, |%opt );
 }
 
+
 method choose-a-subset ( @list,
         Int_0_or_1 :$index          = $!index,
         Int_0_or_1 :$mouse          = $!mouse,
         Int_0_or_1 :$order          = $!order,
+        Int_0_or_1 :$remove-chosen  = $!remove-chosen,
+        Int_0_or_1 :$fmt-chosen     = $!fmt-chosen,
         Int_0_to_2 :$justify        = $!justify,
         Int_0_to_2 :$layout         = 2,
+        List       :$mark           = $!mark,
         Str        :$prefix         = $!prefix,
+        Str        :$info           = $!info,
         Str        :$prompt         = 'Choose:',
-        List       :$current-list   = $!current-list
+        Str        :$name           = $!name,
+        Str        :$back           = $!back,
+        Str        :$confirm        = $!confirm,
+
     ) {
     CATCH {
         endwin();
     }
-    %!o = :$mouse, :$order, :$index, :$justify, :$layout, :$prefix, :$prompt, :$current-list;
-    my Str $tmp_prefix  = %!o<prefix> // ( %!o<layout> == 2 ?? '- ' !! '' );
-    my Str $confirm = 'CONFIRM';
-    my Str $back    = 'BACK';
-    if %!o<layout> == 2 && $tmp_prefix.chars {
-        $confirm = ( ' ' x $tmp_prefix.chars ) ~ $confirm;
-        $back    = ( ' ' x $tmp_prefix.chars ) ~ $back;
+    my Str $tmp_prefix  = $prefix // ( $layout == 2 ?? '- ' !! '' );
+    my Str $tmp_name = $name // '> ';
+    my Str $tmp_confirm = $confirm;
+    my Str $tmp_back    = $back;
+    if $layout == 2 && $tmp_prefix.chars {
+        $tmp_confirm = ( ' ' x $tmp_prefix.chars ) ~ $tmp_confirm;
+        $tmp_back    = ( ' ' x $tmp_prefix.chars ) ~ $tmp_back;
     }
-    my Str $key_cur = 'Current [';
-    my Str $key_new = '    New [';
-    my Int $len_key = max $key_cur.chars, $key_new.chars;
-    my @new_idx;
-    my @new_val;
-    my @pre = ( Any, $confirm );
+    my List $new_idx = [];
+    my List $new_val = [ @list ];
+    my @pre = ( Any, $tmp_confirm );
+    my List $initially_marked = [ |$mark.map: { $_ + @pre.elems } ];
+    my @bu;
     self!_init_term();
 
     loop {
-        my Str $prompt = '';
-        if %!o<current-list> {
-            $prompt ~= $key_cur ~ _array_gist( %!o<current-list> ) ~ "\n";
-            $prompt ~= $key_new ~ _array_gist( @new_val          ) ~ "\n";
+        my @tmp;
+        if $info.chars {
+             @tmp.push: $info;
+        }
+        if $fmt-chosen == 0 {
+            @tmp.push: $tmp_name ~ @list[|$new_idx].map({ _string_gist( $_.gist ) }).join: ', ';
         }
         else {
-            $prompt ~= $key_new ~ _array_gist( @new_val ) ~ "\n";
+            @tmp.push: $tmp_name if $name.defined;
+            @tmp.push: @list[|$new_idx].map({ ( ' ' x $tmp_prefix.chars ) ~ _string_gist( $_.gist ) }). join: "\n" if @list[|$new_idx].elems;
         }
-        $prompt ~= "\n" ~ %!o<prompt> if %!o<prompt>.defined;
-        my Str @list_prefixed = @list.map( { $tmp_prefix ~ $_ } );
+        if $prompt.chars {
+            @tmp.push: $prompt;
+        }
+        my $choices = [ |@pre, |$new_val.map: { $tmp_prefix ~ $_.gist } ];
         # Choose
-        my Int @idx = $!tc.choose-multi( [ |@pre, |@list_prefixed ], :$prompt, :no-spacebar( |^@pre ), :undef( $back ),
-                  :lf( 0, $len_key ), :justify( %!o<justify> ), :1index, :layout( %!o<layout> ), :order( %!o<order> ) );
-        if ! @idx[0] { #
-            if @new_idx.elems {
-                @new_idx = Empty;
-                @new_val = Empty;
+        my Int @idx = $!tc.choose-multi(
+            $choices,
+            :prompt( @tmp.join: "\n" ), :no-spacebar( |^@pre ), :undef( $tmp_back ), :lf( 0, $tmp_name.chars ),
+            :$justify, :1index, :$layout, :$order, :mark( $initially_marked )
+        );
+        if $initially_marked.defined {
+            $initially_marked = List;
+        }
+        if ! @idx[0].defined || @idx[0] == 0 {
+            if @bu {
+                ( $new_val, $new_idx ) = @bu.pop;
                 next;
             }
-            else {
-                self!_end_term();
-                return Empty;
-            }
-        }
-        if @idx[0] == 1 {
-            @idx.shift;
-            @new_val.append: @list[@idx >>->> @pre.elems];
-            @new_idx.append: @idx >>->> @pre.elems;
             self!_end_term();
-            return %!o<index> ?? @new_idx !! @new_val;
+            return;
         }
-        @new_val.append: @list[@idx >>->> @pre.elems]; #
-        @new_idx.append: @idx >>->> @pre.elems; #
+        @bu.push( [ [ |$new_val ], [ |$new_idx ] ] );
+        my $ok;
+        if @idx[0] == @pre.first( $tmp_confirm, :k ) {
+            $ok = True;
+            @idx.shift;
+        }
+        my @tmp_idx;
+        for @idx.reverse {
+            my $i = $_ - @pre;
+            if $remove-chosen {
+                $new_val.splice( $i, 1 );
+                for $new_idx.sort -> $u {
+                    last if $u > $i;
+                    ++$i;
+                }
+            }
+            @tmp_idx.push: $i;
+        }
+        $new_idx.append: @tmp_idx.reverse;
+        if $ok {
+            self!_end_term();
+            return $index ?? $new_idx !! [ @list[|$new_idx] ];
+        }
     }
 }
 
@@ -533,15 +543,15 @@ sub settings-menu ( @menu, %setup, *%opt ) is export( :DEFAULT, :settings-menu )
 }
 
 method settings-menu ( @menu, %setup,
-        Int_0_or_1 :$mouse  = $!mouse,
-        Str        :$prompt = 'Choose:'
+        Int_0_or_1 :$mouse   = $!mouse,
+        Str        :$info    = $!info,
+        Str        :$prompt  = 'Choose:',
+        Str        :$back    = $!back,
+        Str        :$confirm = $!confirm,
     ) {
     CATCH {
         endwin();
     }
-    %!o = :$mouse, :$prompt;
-    my Str $confirm = '  CONFIRM';
-    my Str $back    = '  BACK';
     my Int $name_w = 0;
     my %new_setup;
     for @menu -> ( Str $key, Str $name, $ ) {
@@ -553,19 +563,25 @@ method settings-menu ( @menu, %setup,
     self!_init_term();
 
     loop {
+        my @tmp;
+        @tmp.push: $info   if $info.chars;
+        @tmp.push: $prompt if $prompt.chars;
         my Str @print_keys;
         for @menu -> ( Str $key, Str $name, @values ) {
             @print_keys.push: sprintf "%-*s [%s]", $name_w, $name, @values[%new_setup{$key}];
         }
         my @pre = ( Any, $confirm );
-        my @choices = |@pre, |@print_keys;
+        my $choices = [ |@pre, |@print_keys ];
         # Choose
-        my Int $idx = $!tc.choose( @choices, :prompt( %!o<prompt> ), :1index, :2layout, :0justify, :undef( $back ) );
+        my Int $idx = $!tc.choose(
+            $choices,
+            :prompt( @tmp.join: "\n" ), :1index, :2layout, :0justify, :undef( $back ), :$mouse
+        );
         if ! $idx.defined {
             self!_end_term();
             return False; ###
         }
-        my $choice = @choices[$idx];
+        my $choice = $choices[$idx];
         if ! $choice.defined {
             self!_end_term();
             return False; ###
@@ -666,7 +682,11 @@ Options valid for all routines are
 
 Set to C<0> the mouse mode is disabled, set to C<1> the mouse mode is enabled.
 
-Values: [0],1.
+Values: [0], 1.
+
+=item1 info
+
+A string placed on top of of the output.
 
 =item1 prompt
 
@@ -680,8 +700,8 @@ If set shows an additionally prompt line before the choices.
 
 =end code
 
-With C<choose-a-dir> the user can browse through the directory tree (as far as the granted rights permit it) and
-choose a directory which is returned.
+With C<choose-a-dir> the user can browse through the directory tree (as far as the granted rights permit it) and choose
+a directory which is returned.
 
 To move around in the directory tree:
 
@@ -695,18 +715,14 @@ The "back"-menu-entry ("C< E<lt> >") causes C<choose-a-dir> to return nothing.
 
 It can be set the following options:
 
-=item1 current-dir
-
-If set, C<choose-a-dir> shows I<current-dir> as the current directory.
-
 =item1 dir
 
 Set the starting point directory. Defaults to the home directory (C<$*HOME>).
 
 =item1 enchanted
 
-If set to 1, the default cursor position is on the "up" menu entry. If the directory name remains the same after an
-user input, the default cursor position changes to "back".
+If set to 1, the default cursor position is on the "up" menu entry. If the directory name remains the same after an user
+input, the default cursor position changes to "back".
 
 If set to 0, the default cursor position is on the "back" menu entry.
 
@@ -749,7 +765,7 @@ Values: 0,[1].
 Browse the directory tree like with C<choose-a-dir>. Select "C<E<gt>F>" to get the files of the current directory. To
 return the chosen file select "C< = >".
 
-See L<#choose-a-dir> for the different options. Instead I<current-dir> C<choose-a-file> has I<current-file>.
+See L<#choose-a-dir> for the different options.
 
 =head2 choose-dirs
 
@@ -764,33 +780,27 @@ C<choose-dirs> is similar to C<choose-a-dir> but it is possible to return multip
 "C< . >" adds the current directory to the list of chosen directories and "C< = >" returns the chosen list of
 directories.
 
-The "back"-menu-entry ( "C< E<lt> >" ) resets the list of chosen directories if any. If the list of chosen directories
-is empty, "C< E<lt> >" causes C<choose-dirs> to return nothing.
+The "back"-menu-entry ( "C< E<lt> >" ) removes the last added directory. If the list of chosen directories is empty,
+"C< E<lt> >" causes C<choose-dirs> to return nothing.
 
-C<choose-dirs> uses the same option as C<choose-a-dir>. Instead I<current-dir> C<choose_dirs> has I<current-dirs>. 
-I<current-dirs> expects as its value a list (directories shown as the current directories).
+C<choose-dirs> uses the same option as C<choose-a-dir>. The option I<prompt> can be used to put empty lines between the
+header rows and the menu: an empty string ('') means no newline, a space (' ') one newline, a newline ("\n") two
+newlines.
 
 =head2 choose-a-number
 
 =begin code
 
-    my $current-number = 139;
-    for ( 1 .. 3 ) {
-        $current-number = choose-a-number( 5, :$current-number, :name<Testnumber> );
-    }
+    my $number = choose-a-number( 5, :name<Testnumber> );
 
 =end code
 
 This function lets you choose/compose a number (unsigned integer) which is returned.
 
 The fist argument - "digits" - is an integer and determines the range of the available numbers. For example setting the
-first argument to 6 would offer a range from 0 to 999999.
+first argument to 6 would offer a range from 0 to 999999. If not set it defaults to C<7>.
 
 The available options:
-
-=item1 current-number
-
-The current value (integer). If set, two prompt lines are displayed - one for the current number and one for the new number.
 
 =item1 name
 
@@ -808,19 +818,13 @@ Default: comma (,).
 
 =begin code
 
-    $subset = choose-a-subset( @available_items, :current-list( @current_subset ) )
+    $subset = choose-a-subset( @available_items, :layout( 1 ) )
 
 =end code
 
 C<choose-a-subset> lets you choose a subset from a list.
 
 The first argument is the list of choices. The following arguments are the options:
-
-=item1 current-list
-
-This option expects as its value the current subset of the available list. If set, two prompt lines are displayed - one
-for the current subset and one for the new subset. Even if the option I<index> is true the passed current subset is made
-of values and not of indexes.
 
 The subset is returned as an array.
 
