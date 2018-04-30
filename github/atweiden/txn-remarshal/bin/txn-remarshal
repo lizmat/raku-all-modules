@@ -82,12 +82,26 @@ multi sub MAIN(
     output($json, $output);
 }
 
-# input is from stdin
+# input is from JSON stdin
 multi sub MAIN(
     Str :i(:input($)),
     Str :o(:$output),
-    Str :if(:$input-format),
-    Str :of(:$output-format)
+    Str:D :if(:$input-format) where /:i json/,
+    Str:D :of(:$output-format) where /:i txn/
+    --> Nil
+)
+{
+    my Str:D $remarshal =
+        remarshal($*IN.lines.join("\n"), :$input-format, :$output-format);
+    output($remarshal, $output);
+}
+
+# input is from TXN stdin
+multi sub MAIN(
+    Str :i(:input($)),
+    Str :o(:$output),
+    Str:D :if(:$input-format) where /:i txn/,
+    Str:D :of(:$output-format) where /:i json/
     --> Nil
 )
 {
