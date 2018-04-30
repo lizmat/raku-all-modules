@@ -1,0 +1,28 @@
+{
+  "support" : {
+    "source" : null
+  },
+  "version" : "0.0.1",
+  "license" : "Artistic-2.0",
+  "production" : false,
+  "description" : "",
+  "provides" : {
+    "JSON::Stream::Type" : "lib/JSON/Stream/Type.pm6",
+    "JSON::Stream::Parse" : "lib/JSON/Stream/Parse.pm6",
+    "JSON::Stream" : "lib/JSON/Stream.pm6",
+    "JSON::Stream::State" : "lib/JSON/Stream/State.pm6"
+  },
+  "depends" : [
+    "JSON::Fast"
+  ],
+  "authors" : [
+    "Fernando Correa de Oliveira"
+  ],
+  "source-url" : "git://github.com/FCO/json-stream.git",
+  "name" : "JSON::Stream",
+  "meta-version" : "0",
+  "test-depends" : [
+    "Test::META"
+  ],
+  "perl" : "6.*"
+}

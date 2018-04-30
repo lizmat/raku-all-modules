@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/FCO/json-stream.git
+	branch = master
+	commit = 67b102a31237a6b841380ed243d19eb601980190
+	parent = 48f49794ce9a1c9d0a2ed5336ab5ba846463979e
+	cmdver = 0.4.0
