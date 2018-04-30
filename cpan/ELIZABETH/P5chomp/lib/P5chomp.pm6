@@ -1,5 +1,6 @@
 use v6.c;
-unit module P5chomp:ver<0.0.3>;
+
+unit module P5chomp:ver<0.0.4>:auth<cpan:ELIZABETH>;
 
 proto sub chomp(|) is export {*}
 multi sub chomp() { chomp CALLERS::<$_>     }
@@ -23,7 +24,7 @@ multi sub chop(%h) { chop(%h.values) }
 multi sub chop(@a) {
     if @a {
         my $char = @a[*-1].substr(*-1);
-        $_ .= substr(0,*-1) for @a;
+        $_ .= chop for @a;
         $char
     }
     else {
@@ -32,7 +33,7 @@ multi sub chop(@a) {
 }
 multi sub chop(\s) {
     my $char = s.substr(*-1);
-    s .= substr(0,*-1);
+    s .= chop;
     $char
 }
 

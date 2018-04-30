@@ -1,5 +1,9 @@
 Revision history for P5chomp
 
+0.0.4  2018-04-29T15:32:53+02:00
+    - add authority to the version information
+    - use Str.chop internally when chopping
+
 0.0.3  2018-04-12T13:17:11+02:00
     - Merge chop() code in here to reduce number of CPAN5 distributions.
 
