@@ -1,8 +1,12 @@
 Revision history for Term::Choose
 
 
+1.2.0   2018-04-29
+        - New option "info"
+        - Environment variable TC_RESET_AUTO_UP
+
 1.1.3   2018-02-19
-        - Skip marked which are out of range.
+        - Skip marked which are out of range
 
 1.1.2   2018-01-15
         - Only one cache file for each thread

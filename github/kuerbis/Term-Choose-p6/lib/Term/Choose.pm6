@@ -1,6 +1,6 @@
 use v6;
 
-unit class Term::Choose:ver<1.1.3>;
+unit class Term::Choose:ver<1.2.0>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -9,21 +9,22 @@ use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
 constant R  = 0;
 constant C  = 1;
 
-constant CONTROL_SPACE = 0x00;
-constant CONTROL_A     = 0x01;
-constant CONTROL_B     = 0x02;
-constant CONTROL_D     = 0x04;
-constant CONTROL_E     = 0x05;
-constant CONTROL_F     = 0x06;
-constant CONTROL_H     = 0x08;
-constant KEY_TAB       = 0x09;
-constant KEY_RETURN    = 0x0a;
-constant KEY_SPACE     = 0x20;
-constant KEY_h         = 0x68;
-constant KEY_j         = 0x6a;
-constant KEY_k         = 0x6b;
-constant KEY_l         = 0x6c;
-constant KEY_q         = 0x71;
+constant CONTROL_SPACE   = 0x00;
+constant CONTROL_A       = 0x01;
+constant CONTROL_B       = 0x02;
+constant CONTROL_D       = 0x04;
+constant CONTROL_E       = 0x05;
+constant CONTROL_F       = 0x06;
+constant CONTROL_H       = 0x08;
+constant KEY_TAB         = 0x09;
+constant LINE_FEED       = 0x0a;
+constant CARRIAGE_RETURN = 0x0d;
+constant KEY_SPACE       = 0x20;
+constant KEY_h           = 0x68;
+constant KEY_j           = 0x6a;
+constant KEY_k           = 0x6b;
+constant KEY_l           = 0x6c;
+constant KEY_q           = 0x71;
 
 
 has WINDOW $.win;
@@ -50,6 +51,7 @@ has UInt             $.pad         = 2;
 has List             $.lf;
 has List             $.mark;
 has List             $.no-spacebar;
+has Str              $.info        = '';
 has Str              $.prompt;
 has Str              $.empty       = '<empty>';
 has Str              $.undef       = '<undef>';
@@ -212,9 +214,10 @@ method !_choose ( Int $multiselect, @!orig_list,
         List             :$lf          = $!lf,
         List             :$mark        = $!mark,
         List             :$no-spacebar = $!no-spacebar,
+        Str              :$info        = $!info,
         Str              :$prompt      = $!prompt,
         Str              :$empty       = $!empty,
-        Str              :$undef       = $!undef
+        Str              :$undef       = $!undef,
     ) {
     if ! @!orig_list.elems {
         return;
@@ -223,7 +226,7 @@ method !_choose ( Int $multiselect, @!orig_list,
         endwin();
     }
     %!o = :$beep, :$index, :$mouse, :$order, :$page, :$justify, :$layout, :$keep, :$ll, :$max-height,
-          :$max-width, :$default, :$pad, :$lf, :$mark, :$no-spacebar, :$prompt, :$empty, :$undef;
+          :$max-width, :$default, :$pad, :$lf, :$mark, :$no-spacebar, :$info, :$prompt, :$empty, :$undef;
     if ! %!o<prompt>.defined {
         %!o<prompt> = $multiselect.defined ?? 'Your choice' !! 'Continue with ENTER';
     }
@@ -247,6 +250,11 @@ method !_choose ( Int $multiselect, @!orig_list,
             next GET_KEY;
         }
         next GET_KEY if $key == ERR;
+        if %*ENV<TC_RESET_AUTO_UP>:exists {
+            if $key == none( LINE_FEED, CARRIAGE_RETURN) && $key < 361 {
+                %*ENV<TC_RESET_AUTO_UP> = 1;
+            }
+        }
 
         # $!rc2idx holds the new list (AoA) formatted in "_list_index2rowcol" appropriate to the chosen layout.
         # $!rc2idx does not hold the values directly but the respective list indexes from the original list.
@@ -458,7 +466,7 @@ method !_choose ( Int $multiselect, @!orig_list,
                 self!_end_term();
                 return;
             }
-            when KEY_RETURN | KEY_ENTER { #
+            when LINE_FEED | CARRIAGE_RETURN { #
                 self!_end_term();
                 if ! $multiselect.defined {
                     return;
@@ -494,18 +502,9 @@ method !_choose ( Int $multiselect, @!orig_list,
             }
             when CONTROL_SPACE {
                 if $multiselect {
-                    if $!p[R] == 0 {
-                        for ^$!rc2idx -> $row {
-                            for ^$!rc2idx[$row] -> $col {
-                                $!marked[$row][$col] = ! $!marked[$row][$col];
-                            }
-                        }
-                    }
-                    else {
-                        for $!row_top .. $!row_bottom -> $row {
-                            for ^$!rc2idx[$row] -> $col {
-                                $!marked[$row][$col] = ! $!marked[$row][$col];
-                            }
+                    for ^$!rc2idx -> $row {
+                        for ^$!rc2idx[$row] -> $col {
+                            $!marked[$row][$col] = ! $!marked[$row][$col];
                         }
                     }
                     if %!o<no-spacebar> {
@@ -524,7 +523,7 @@ method !_choose ( Int $multiselect, @!orig_list,
                         if $event.bstate == EMM_BUTTON1_CLICKED | EMM_BUTTON1_PRESSED {
                             my $ret = self!_mouse_xy2pos( $event.x, $event.y );
                             if $ret {
-                                ungetch( KEY_RETURN );
+                                ungetch( LINE_FEED ); #
                             }
                         }
                         elsif $event.bstate == EMM_BUTTON3_RELEASED | EMM_BUTTON3_PRESSED | EMM_BUTTON3_CLICKED {
@@ -551,7 +550,7 @@ method !_choose ( Int $multiselect, @!orig_list,
                         if $event.bstate == BUTTON1_CLICKED | BUTTON1_PRESSED {
                             my $ret = self!_mouse_xy2pos( $event.x, $event.y );
                             if $ret {
-                                ungetch( KEY_RETURN );
+                                ungetch( LINE_FEED ); #
                             }
                         }
                         elsif $event.bstate == BUTTON3_RELEASED | BUTTON3_PRESSED | BUTTON3_CLICKED {
@@ -628,13 +627,16 @@ method !_beep {
 
 
 method !_prepare_prompt {
-    if %!o<prompt> eq '' {
+    my @tmp;
+    @tmp.push: %!o<info>   if %!o<info>.chars;   # documentation  %*ENV<TC_RESET_AUTO_UP>;
+    @tmp.push: %!o<prompt> if %!o<prompt>.chars;
+    if ! @tmp.elems {
         @!prompt_lines = ();
         return;
     }
     my Int $init   = %!o<lf>[0] // 0;
     my Int $subseq = %!o<lf>[1] // 0;
-    @!prompt_lines = line-fold( %!o<prompt>, $!avail_w, ' ' x $init, ' ' x $subseq );
+    @!prompt_lines = line-fold( @tmp.join( "\n" ), $!avail_w, ' ' x $init, ' ' x $subseq );
     my Int $keep = %!o<keep> + $!print_pp_row;
     $keep = $!term_h if $keep > $!term_h;
     if @!prompt_lines.elems + $keep > $!avail_h {
@@ -694,10 +696,8 @@ method !_wr_first_screen ( Int $multiselect ) {
         self!_pos_to_default();
     }
     clear();
-    if %!o<prompt> ne '' {
-        for ^@!prompt_lines -> $row {
-            mvaddstr( $row, 0, @!prompt_lines[$row] );
-        }
+    for ^@!prompt_lines -> $row { # if
+        mvaddstr( $row, 0, @!prompt_lines[$row] );
     }
     self!_wr_screen();
     nc_refresh();
@@ -1023,9 +1023,7 @@ The user can choose many items.
 To choose more than one item mark an item with the C<SpaceBar>. C<choose-multi> then returns the list of the marked
 items including the highlighted item.
 
-C<Ctrl-SpaceBar> (or C<Ctrl-@>) inverts the choices: marked items are unmarked and unmarked items are marked. If the
-cursor is on the first row, C<Ctrl-SpaceBar> inverts the choices for the whole list else C<Ctrl-SpaceBar> inverts the
-choices for the current page.
+C<Ctrl-SpaceBar> (or C<Ctrl-@>) inverts the choices: marked items are unmarked and unmarked items are marked.
 
 C<choose-multi> returns nothing if the C<q> key or C<Ctrl-D> is pressed.
 
@@ -1078,6 +1076,10 @@ Allowed values: 0 or greater
 Sets the string displayed on the screen instead an empty string.
 
 default: "E<lt>emptyE<gt>"
+
+=head2 info
+
+Expects as its value a string. The string is printed above the prompt string.
 
 =head2 index
 

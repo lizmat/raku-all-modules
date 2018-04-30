@@ -87,7 +87,7 @@ The user can choose many items.
 
 To choose more than one item mark an item with the `SpaceBar`. `choose-multi` then returns the list of the marked items including the highlighted item.
 
-`Ctrl-SpaceBar` (or `Ctrl-@`) inverts the choices: marked items are unmarked and unmarked items are marked. If the cursor is on the first row, `Ctrl-SpaceBar` inverts the choices for the whole list else `Ctrl-SpaceBar` inverts the choices for the current page.
+`Ctrl-SpaceBar` (or `Ctrl-@`) inverts the choices: marked items are unmarked and unmarked items are marked.
 
 `choose-multi` returns nothing if the `q` key or `Ctrl-D` is pressed.
 
@@ -140,6 +140,11 @@ empty
 Sets the string displayed on the screen instead an empty string.
 
 default: "ltemptygt"
+
+info
+----
+
+Expects as its value a string. The string is printed above the prompt string.
 
 index
 -----
