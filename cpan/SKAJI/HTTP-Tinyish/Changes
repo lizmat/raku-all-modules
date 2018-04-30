@@ -1,4 +1,10 @@
 Revision history for HTTP-Tinyish
 
+0.1.2  2018-04-29T20:30:46+09:00
+    - Add CPAN5 tag (lizmat #10)
+
+0.1.1  2018-04-29T13:51:22+09:00
+    - Fix Build.pm to exit 0 on success (ugexe #8)
+
 0.1.0  2018-01-09T03:14:53+09:00
     - Initial upload to CPAN
