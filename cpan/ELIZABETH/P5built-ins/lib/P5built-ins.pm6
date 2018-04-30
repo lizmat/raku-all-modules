@@ -1,7 +1,7 @@
 use v6.c;
 
 my %export;
-module P5built-ins:ver<0.0.10>:auth<cpan:ELIZABETH> {
+module P5built-ins:ver<0.0.12>:auth<cpan:ELIZABETH> {
     use P5caller;
     use P5chdir;
     use P5chomp;
@@ -14,6 +14,8 @@ module P5built-ins:ver<0.0.10>:auth<cpan:ELIZABETH> {
     use P5lc;
     use P5lcfirst;
     use P5length;
+    use P5localtime;
+    use P5opendir;
     use P5pack;
     use P5push;
     use P5quotemeta;
@@ -21,6 +23,7 @@ module P5built-ins:ver<0.0.10>:auth<cpan:ELIZABETH> {
     use P5ref;
     use P5reverse;
     use P5seek;
+    use P5shift;
     use P5sleep;
     use P5study;
     use P5substr;
@@ -61,9 +64,10 @@ P5built-ins - Implement Perl 5's built-in functions
 This module provides an easy way to import a growing number of built-in
 functions of Perl 5 in Perl 6.  Currently supported at:
 
-  caller chdir chomp chop chr each fc fileno hex index lc lcfirst length
-  oct ord pack pop push quotemeta readlink ref rindex seek sleep study
-  substr tie tied times uc ucfirst unpack untie
+  caller chdir chomp chop chr closedir each fc fileno gmtime hex index lc
+  lcfirst length localtime oct opendir ord pack pop push quotemeta readdir
+  readlink ref rewinddir rindex seek seekdir shift sleep study substr
+  telldir tie tied times uc ucfirst unpack unshift untie
   
 The following file test operators are also available:
 
@@ -81,6 +85,8 @@ provide the functionality:
   P5each      | each
   P5fileno    | fileno
   P5length    | length
+  P5localtime | localtime gmtime
+  P5opendir   | opendir readdir telldir seekdir rewinddir closedir
   P5pack      | pack unpack
   P5readlink  | readlink
   P5ref       | ref

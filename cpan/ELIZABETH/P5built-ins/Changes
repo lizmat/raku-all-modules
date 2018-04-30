@@ -1,5 +1,12 @@
 Revision history for P5built-ins
 
+0.0.12  2018-04-29T23:33:04+02:00
+    - add support for localtime(), gmtime()
+
+0.0.11  2018-04-29T12:12:24+02:00
+    - add support for shift(), unshift()
+    - add support for opendir, readdir, telldir, seekdir, rewinddir, closedir
+
 0.0.10  2018-04-28T11:12:27+02:00
     - add support for fileno(), pop(), push(), readlink(), seek()
 

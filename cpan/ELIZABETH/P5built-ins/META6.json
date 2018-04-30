@@ -8,7 +8,6 @@
     "P5caller",
     "P5chdir",
     "P5chomp",
-    "P5chop",
     "P5chr",
     "P5each",
     "P5fc",
@@ -18,23 +17,21 @@
     "P5lc",
     "P5lcfirst",
     "P5length",
-    "P5oct",
-    "P5ord",
+    "P5localtime",
+    "P5opendir",
     "P5pack",
     "P5push",
     "P5quotemeta",
     "P5readlink",
     "P5ref",
     "P5reverse",
-    "P5rindex",
     "P5seek",
+    "P5shift",
     "P5sleep",
     "P5study",
     "P5substr",
     "P5tie",
     "P5times",
-    "P5uc",
-    "P5ucfirst",
     "P5-X"
   ],
   "description" : "Implement Perl 5's built-in functions",
@@ -51,5 +48,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.10"
+  "version" : "0.0.12"
 }
