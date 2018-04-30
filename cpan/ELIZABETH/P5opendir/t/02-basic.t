@@ -2,13 +2,14 @@ use v6.c;
 use Test;
 use P5opendir;
 
-plan 14;
+plan 15;
 
 my $dir = $?FILE.IO.parent.IO.absolute;
 ok opendir(my $handle, $dir), 'did we return ok for opening?';
 ok $handle, 'did we get an instantiated object?';
 is $handle.^name, 'DIRHANDLE', 'did we get a DIRHANDLE';
 is telldir($handle), 0, 'did the telldir work';
+is ~$handle, $dir, 'does it stringify correctly';
 
 my @files;
 @files.push(readdir($handle, :scalar)) for ^4;

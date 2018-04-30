@@ -1,4 +1,8 @@
 Revision history for P5opendir
 
+0.0.2  2018-04-29T12:28:10+02:00
+    - make sure DIRHANDLE stringifies to its path, so it can be used with
+      the chdir() of P5chdir.  Also add 'path' attribute to support this.
+
 0.0.1  2018-04-29T00:37:31+02:00
     - Initial version

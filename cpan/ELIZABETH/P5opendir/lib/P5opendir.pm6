@@ -1,6 +1,7 @@
 use v6.c;
 
 my class DIRHANDLE {
+    has str $.path;
     has str @.items;
     has int $.index;
 
@@ -10,8 +11,8 @@ my class DIRHANDLE {
     # Since the nqp:: ops don't have any support for 'telldir', 'seekdir' or
     # 'rewinddir' functionality, we're going to slurp the whole directory
     # immediately and fake that functionality (as a first approximation).
-    method SET-SELF(\path) {
-        my $handle := nqp::opendir(path); # throws if it didn't work
+    method SET-SELF($!path) {
+        my $handle := nqp::opendir($!path); # throws if it didn't work
         nqp::while(
           nqp::chars(my str $next = nqp::nextfiledir($handle)),
           nqp::push_s(@!items,$next)
@@ -42,9 +43,11 @@ my class DIRHANDLE {
         $!index = (index max 0) min nqp::elems(@!items)
     }
     method elems() { nqp::elems(@!items) }
+
+    method Str(--> Str:D) { $!path }
 }
 
-module P5opendir:ver<0.0.1>:auth<cpan:ELIZABETH> {
+module P5opendir:ver<0.0.2>:auth<cpan:ELIZABETH> {
 
     sub opendir(\handle, Str() $path) is export {
         my $success = True;
