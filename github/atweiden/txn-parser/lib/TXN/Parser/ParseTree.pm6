@@ -290,7 +290,7 @@ class Entry
         my %hash;
         %hash<header> = $.header.hash;
         %hash<id> = $.id.hash;
-        %hash<posting> = @.posting.hyper.map({ .hash });
+        %hash<posting> = @.posting.hyper.map({ .hash }).Array;
         %hash;
     }
 }
