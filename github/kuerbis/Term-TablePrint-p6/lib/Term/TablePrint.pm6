@@ -1,5 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<1.0.10>;
+unit class Term::TablePrint:ver<1.1.0>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -116,7 +116,7 @@ method print-table (
     }
     my Int @chosen;
     if %!o<choose-columns> {
-        @chosen = self!_choose_columns( @orig_table[0] ) if %!o<choose-columns>;
+        @chosen = self!_choose_columns( @orig_table[0] );
         if @chosen.elems && ! @chosen[0].defined {
             self!_end_term();
             return;
@@ -129,9 +129,9 @@ method print-table (
         $!table = [ ( 0 .. $idx_last ).map: { [ @orig_table[$_][@chosen] ] } ];
     }
     elsif %!o<max-rows> && $table_row_count >= %!o<max-rows> {
-        $!info_row = sprintf( 'Reached the row LIMIT %d', insert-sep( %!o<max-rows>, $!thsd_sep ) );
+        $!info_row = sprintf( 'Reached the row LIMIT %s', insert-sep( %!o<max-rows>, $!thsd_sep ) );
         if $table_row_count > %!o<max-rows> {
-            $!info_row ~= sprintf( '  (total %d)', insert-sep( $table_row_count, $!thsd_sep ) );
+            $!info_row ~= sprintf( '  (total %s)', insert-sep( $table_row_count, $!thsd_sep ) );
         }
         $!table = @orig_table[0 .. %!o<max-rows>];
         #$!total = %!o<max-rows> + 1;
@@ -194,52 +194,61 @@ method !_win_size_dependet_code {
             $!tc.pause( ( Any, |$!table[0] ), :prompt( 'EMPTY!' ), :0layout, :undef( '<<' ) );
             return;
         }
+        %*ENV<TC_RESET_AUTO_UP> = 0;
         # Choose
-        my Int $row = $!tc.choose( @list, :prompt( @header.join: "\n" ), :ll( $table_w ),
-                                          :default( $old_row ), :1index, :2layout );
+        my Int $row = $!tc.choose(
+            @list,
+            :prompt( @header.join: "\n" ), :ll( $table_w ), :default( $old_row ), :1index, :2layout
+        );
         return if ! $row.defined;
         next   if $row == -1; # ll + changed window size: choose returns -1
         if ! %!o<table-expand> {
             return if $row == 0;
             next;
         }
-        if $old_row == $row {
-            if $row == 0 {
-                if ! %!o<keep-header> {
-                    return;
+        else {
+            if $old_row == $row {
+                if $row == 0 {
+                    if ! %!o<keep-header> {
+                        return;
+                    }
+                    elsif %!o<table-expand> == 1 {
+                        return if $row_is_expanded;
+                        return if $auto_jumped_to_row_0 == 1;
+                    }
+                    elsif %!o<table-expand> == 2 {
+                        return if $row_is_expanded;
+                    }
+                    $auto_jumped_to_row_0 = 0;
                 }
-                elsif %!o<table-expand> == 1 {
-                    return if $row_is_expanded;
-                    return if $auto_jumped_to_row_0 == 1;
+                elsif %*ENV<TC_RESET_AUTO_UP> == 1 {
+                    $auto_jumped_to_row_0 = 0;
                 }
-                elsif %!o<table-expand> == 2 {
-                    return if $row_is_expanded;
+                else {
+                    $old_row = 0;
+                    $auto_jumped_to_row_0 = 1;
+                    $row_is_expanded = 0;
+                    next;
                 }
-                $auto_jumped_to_row_0 = 0;
             }
-            else {
-                $old_row = 0;
-                $auto_jumped_to_row_0 = 1;
-                $row_is_expanded = 0;
+            $old_row = $row;
+            $row_is_expanded = 1;
+            if $!info_row && $row == @list.end {
+                $!tc.pause( ( 'Close', ), :prompt( $!info_row ), :mouse( %!o<mouse> ) );
                 next;
             }
-        }
-        $old_row = $row;
-        $row_is_expanded = 1;
-        if $!info_row && $row == @list.end {
-            $!tc.pause( ( 'Close', ), :prompt( $!info_row ), :mouse( %!o<mouse> ) );
-            next;
-        }
-        if %!o<keep-header> {
-            $row++;
-        }
-        else {
-            if %!o<grid> {
-                next   if $row == 1;
-                $row-- if $row > 1;
+            if %!o<keep-header> {
+                $row++;
             }
+            else {
+                if %!o<grid> {
+                    next   if $row == 1;
+                    $row-- if $row > 1;
+                }
+            }
+            self!_print_single_table_row( $row );
         }
-        self!_print_single_table_row( $row );
+        %*ENV<TC_RESET_AUTO_UP>:delete;
     }
 }
 
