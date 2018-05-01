@@ -34,7 +34,7 @@ methods that return a string path in that module return an L<IO::Path> here.
 
 =end pod
 
-class XDG::BaseDirectory:ver<0.0.5>:auth<github:jonathanstowe> {
+class XDG::BaseDirectory:ver<0.0.7>:auth<github:jonathanstowe> {
 
 =begin pod
 
@@ -45,14 +45,14 @@ over-ridden by the environment variable C<XDG_DATA_HOME>.
 
 =end pod
 
-    has IO::Path $.data-home; 
-    
+    has IO::Path $.data-home;
+
     method data-home() returns IO::Path {
-        $!data-home //= %*ENV<XDG_DATA_HOME>.defined ?? %*ENV<XDG_DATA_HOME>.IO !! $*HOME.child($*SPEC.catfile('.local', 'share'));
+        $!data-home //= %*ENV<XDG_DATA_HOME>.defined ?? %*ENV<XDG_DATA_HOME>.IO !! $*HOME.add($*SPEC.catfile('.local', 'share'));
 
     }
 
-=begin pod 
+=begin pod
 
 =head2 data-dirs
 
@@ -84,7 +84,7 @@ be over-ridden by the enviroment variable C<XDG_CONFIG_HOME>.
     has IO::Path $.config-home;
 
     method config-home() returns IO::Path {
-        $!config-home //= %*ENV<XDG_CONFIG_HOME>.defined ?? %*ENV<XDG_CONFIG_HOME>.IO !! $*HOME.child('.config');
+        $!config-home //= %*ENV<XDG_CONFIG_HOME>.defined ?? %*ENV<XDG_CONFIG_HOME>.IO !! $*HOME.add('.config');
     }
 
 =begin pod
@@ -119,7 +119,7 @@ over-ridden by the environment variable C<XDG_CACHE_HOME>.
     has IO::Path $.cache-home;
 
     method cache-home() returns IO::Path {
-        $!cache-home //= (%*ENV<XDG_CACHE_HOME> || $*HOME.child('.cache')).IO;
+        $!cache-home //= (%*ENV<XDG_CACHE_HOME> || $*HOME.add('.cache')).IO;
     }
 
 =begin pod
@@ -142,7 +142,7 @@ the case the behaviour will be emulated in a less secure fashion and a warning w
             }
             else {
                 warn "XDG_RUNTIME_DIR not set -falling back to insecure method";
-                my $dir = $*SPEC.tmpdir.child($*USER.Int);
+                my $dir = $*SPEC.tmpdir.add($*USER.Int);
                 $dir.mkdir;
                 $dir.chmod(0o700);
                 $dir;
@@ -186,7 +186,7 @@ for loading.
     method !home-path(IO::Path $home-path, *@resource where @resource.elems > 0 ) {
         my Str $resource = self!resource-path(@resource);
 
-        my IO::Path $path = $home-path.child($resource);
+        my IO::Path $path = $home-path.add($resource);
 
         if ! $path.d {
             $path.mkdir(0o700);
@@ -222,14 +222,14 @@ Returns the first result from load-config-paths, or None if there is nothing to 
 
 =begin pod
 
-=head3 load-data-paths(Str *@resource) 
+=head3 load-data-paths(Str *@resource)
 
 Returns an iterator which gives each directory named 'resource' in the
 shared data search path. Information provided by earlier directories should
 take precedence over later ones.
 
 
-=end pod 
+=end pod
 
     method load-data-paths(*@resource where @resource.elems > 0 ) {
         self!load-resource-paths(@.data-dirs, @resource);
@@ -241,7 +241,7 @@ take precedence over later ones.
         my Str $resource = self!resource-path(@resource);
         gather {
             for @dirs -> $config-dir {
-                my $path = $config-dir.child($resource);
+                my $path = $config-dir.add($resource);
 
                 if $path.d {
                     take $path;
