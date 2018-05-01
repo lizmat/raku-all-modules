@@ -31,7 +31,7 @@
     "Audio::Hydrogen::Song": "lib/Audio/Hydrogen/Song.pm",
     "Audio::Hydrogen::Instrument": "lib/Audio/Hydrogen/Instrument.pm"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
   ],

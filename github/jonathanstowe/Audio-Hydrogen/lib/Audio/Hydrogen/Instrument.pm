@@ -61,7 +61,7 @@ the interface.
 =head2 attribute pan-left
 
 This is a Rat in the range 0 .. 1.0 to indicate the panning to the
-left side. 
+left side.
 
 =head2 attribute pan-right
 
@@ -148,7 +148,7 @@ Rat in the range of 0 .. 1.0,
 =head3 attribute max
 
 This is the maximum velocity that this layer should be used for, it is a
-Rat in the range of 0 .. 1.0 
+Rat in the range of 0 .. 1.0
 
 =head3 attribute gain
 
@@ -202,11 +202,11 @@ class Audio::Hydrogen::Instrument does XML::Class[xml-element => 'instrument'] {
 
     method make-absolute(IO::Path $path) {
         if $!filename && !$!filename.IO.is-absolute {
-            $!filename = $path.child($!filename).Str;
+            $!filename = $path.add($!filename).Str;
         }
         for @!layer ->  $layer {
             if !$layer.filename.IO.is-absolute {
-                my $new-path = $path.child($layer.filename).Str;
+                my $new-path = $path.add($layer.filename).Str;
                 $layer.filename = $new-path;
             }
         }
