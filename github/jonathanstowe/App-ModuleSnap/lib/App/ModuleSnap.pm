@@ -26,7 +26,7 @@ ones that may come along as it simply writes a minimal META file into an otherwi
 bare directory.  The META file contains the installed modules as it's dependencies
 just a like a normal module might.
 
-The primary interface for this is the provided script C<p6-module-snapshot> and 
+The primary interface for this is the provided script C<p6-module-snapshot> and
 this module, whilst it may be useful in another context, simply encapsulates the
 bulk of the implementation in order to take advantage of precompilation.
 
@@ -56,7 +56,7 @@ list of the 'auth' strings that should be skipped can be provided.
     method get-meta(Str :$name!, Version :$perl-version = $*PERL.version, Version :$version = v0.0.1, :@exclude-auth = <perl private:snapshot>) returns META6
 
 This returns the fully populated META data that will be serialised to create the
-META6.json file.  C<name> is required (and will form the name of the 
+META6.json file.  C<name> is required (and will form the name of the
 created distribution,) all of the other arguments have defaults that are
 sensible for the application.
 
@@ -82,8 +82,8 @@ class App::ModuleSnap {
         my @dists;
         for $*REPO.repo-chain -> $r {
             if $r.can('prefix') {
-                if $r.prefix.child('dist').e {
-                    for $r.prefix.child('dist').dir -> $d {
+                if $r.prefix.add('dist').e {
+                    for $r.prefix.add('dist').dir -> $d {
                         my $dist-data = from-json($d.slurp);
                         my $dist =  Distribution.new(|$dist-data);
                         if !$dist.auth.defined || $dist.auth ne any(@exclude-auth.list) {
@@ -95,5 +95,5 @@ class App::ModuleSnap {
         }
         @dists;
     }
-} 
+}
 # vim: expandtab shiftwidth=4 ft=perl6

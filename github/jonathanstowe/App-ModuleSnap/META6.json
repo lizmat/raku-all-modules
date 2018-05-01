@@ -8,7 +8,6 @@
   },
   "perl": "6.c",
   "resources": [
-    
   ],
   "build-depends": [
     
@@ -30,7 +29,7 @@
   "provides": {
     "App::ModuleSnap": "lib/App/ModuleSnap.pm"
   },
-  "version": "0.0.9",
+  "version": "0.0.10",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
   ],
