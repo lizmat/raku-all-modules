@@ -5,14 +5,11 @@ use v6;
 unit role Grammar::Modelica::Expressions;
 
 rule expression {
-  [
-  <|w>'if'<|w> <expression> <|w>'then'<|w> <expression> [
-  <|w>'elseif'<|w> <expression> <|w>'then'<|w> <expression>
-  ]*
-  <|w>'else'<|w> <expression>
-  ]
-  ||
-  <simple_expression>
+  ||  'if' <expression> 'then' <expression> [
+        'elseif' <expression> 'then' <expression>
+      ]*
+      'else' <expression>
+  ||  <simple_expression>
 }
 
 rule simple_expression {
@@ -24,15 +21,15 @@ rule simple_expression {
 }
 
 rule logical_expression {
-  <logical_term> [ <|w>'or'<|w> <logical_term> ]*
+  <logical_term> [ 'or' <logical_term> ]*
 }
 
 rule logical_term {
-  <logical_factor> [ <|w>'and'<|w> <logical_factor> ]*
+  <logical_factor> [ 'and' <logical_factor> ]*
 }
 
 rule logical_factor {
-  [<|w>'not'<|w>]? <relation>
+  'not'? <relation>
 }
 
 rule relation {
@@ -49,21 +46,21 @@ rule term {
 
 rule factor {
   <primary> [
-  [ '^' || '.^' ] <primary>
+    [ '^' || '.^' ] <primary>
   ]?
 }
 
 rule primary {
-  <UNSIGNED_NUMBER> ||
-  <STRING> ||
-  <|w>'false'<|w> ||
-  <|w>'true'<|w> ||
-  [ [<component_reference>||'der'||'initial'||'pure'] <function_call_args> ] ||
-  <component_reference> ||
-  [ '(' <output_expression_list> ')' ] ||
-  [ '[' <expression_list> [ ';' <expression_list> ]* ']' ] ||
-  [ '{' <array_arguments> '}' ] ||
-  <|w>'end'<|w>
+  ||  <UNSIGNED_NUMBER>
+  ||  <STRING>
+  ||  'false'
+  ||  'true'
+  ||  [<component_reference>||'der'||'initial'||'pure'] <function_call_args>
+  ||  <component_reference>
+  ||  '(' <output_expression_list> ')'
+  ||  '[' <expression_list> [ ';' <expression_list> ]* ']'
+  ||  '{' <array_arguments> '}'
+  ||  'end'
 }
 
 token type_specifier {"."?<name>}
@@ -78,28 +75,26 @@ rule function_call_args {
   '(' <function_arguments>? ')'
 }
 
-regex function_arguments {:s
-  [ <expression> [ [ ',' <function_arguments_non_first> ] || [ <|w>'for'<|w> <for_indices>] ]? ]
-  ||
-  [ <|w>'function'<|w> <name> '(' <named_arguments>? ')'  [ ',' <function_arguments_non_first> ]? ]
-  ||
-  <named_arguments>
+rule function_arguments {
+  ||  <|w>'function'<|w> <name> '(' <named_arguments>? ')'  [ ',' <function_arguments_non_first> ]?
+  ||  <named_arguments>
+  ||  <expression> [ [ ',' <function_arguments_non_first> ] || [ <|w>'for'<|w> <for_indices>] ]?
 }
 
-regex function_arguments_non_first {:s
+rule function_arguments_non_first {
+  <named_arguments> ||
   [ <function_argument> [ ',' <function_arguments_non_first> ]? ]
-  ||
-  <named_arguments>
 }
 
 rule array_arguments {
-  <expression>
-  [ ',' <array_arguments_non_first> || [ <|w>'for'<|w> <for_indices> ] ]?
+  <expression>  [
+    ||',' <array_arguments_non_first>
+    || 'for' <for_indices>
+  ]?
 }
 
 rule array_arguments_non_first {
-  <expression>
-  [ ',' <array_arguments_non_first> ]?
+  <expression>  [ ',' <array_arguments_non_first> ]?
 }
 
 rule named_arguments {
@@ -129,7 +124,7 @@ rule string_comment { <ws>? [ <STRING> [ '+' <STRING> ]* ]? }
 
 rule comment { <string_comment> <annotation>? }
 
-rule annotation { <|w>'annotation'<|w> <class_modification> }
+rule annotation { 'annotation' <class_modification> }
 
 token add_operator {'+'|'-'|'.+'|'.-'}
 

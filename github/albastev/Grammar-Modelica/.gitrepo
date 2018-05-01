@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/albastev/Grammar-Modelica.git
 	branch = master
-	commit = 1618ca2736fe61b970e02a01887a57d8f783ee31
-	parent = f74d6ba4d3c62977ade7c1ee22c7c3860f57fd77
+	commit = 793979835e62ff907203824249fc73e9441b2c44
+	parent = a553a09b779cb33a2fb276a0ccdaea30cc6c087b
 	cmdver = 0.4.0

@@ -9,8 +9,11 @@ rule component_clause {
 }
 
 rule type_prefix {
-  [<|w>[ 'flow' || 'stream' ]<|w>]?
-  [<|w>[ 'discrete' || 'parameter' || 'constant' ]<|w>]? [<|w>[ 'input' || 'output' ]<|w>]?
+  [ 'flow' || 'stream' ]?  [
+    ||  'discrete'
+    || 'parameter'
+    || 'constant'
+  ]? [ 'input' || 'output' ]?
 }
 
 rule component_list {

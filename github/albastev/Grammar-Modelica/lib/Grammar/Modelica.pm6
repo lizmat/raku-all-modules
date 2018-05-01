@@ -24,8 +24,8 @@ unit grammar Grammar::Modelica
 
 rule TOP {^ <within>?<class_def>* $}
 
-rule within { <|w>'within'<|w> <name>? ';' }
+rule within { 'within' <name>? ';' }
 
-rule class_def { [<|w>'final'<|w>]? <class_definition> ';' }
+rule class_def { 'final'? <class_definition> ';' }
 
 rule bgs { 'cou!!asdfafsd!!'  }

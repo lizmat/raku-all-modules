@@ -1,7 +1,7 @@
 # Grammar::Modelica
 
 # 0.1.2
-* Incorporate ronaldxs' work reducing the fails to 2 on the Modelica Standard Library
+* Incorporate ronaldxs' work to successfully parse the entire Modelica Standard Library
 
 # 0.1.1
 * Support for version 3.4 of Modelica

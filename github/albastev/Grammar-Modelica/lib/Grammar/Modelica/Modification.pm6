@@ -5,9 +5,9 @@ use v6;
 unit role Grammar::Modelica::Modification;
 
 rule modification {
-  [<class_modification> ['=' <expression>]?] ||
-  [':=' <expression>] ||
-  ['=' <expression>]
+  ||  <class_modification> ['=' <expression>]?
+  ||  ':=' <expression>
+  ||  '=' <expression>
 }
 
 rule class_modification {
@@ -21,7 +21,7 @@ rule argument_list {
 token argument {<element_modification_or_replaceable>||<element_redeclaration>}
 
 rule element_modification_or_replaceable {
-  [<|w>'each'<|w>]? [<|w>'final'<|w>]? [<element_modification> || <element_replaceable>]
+  'each'? 'final'? [<element_modification> || <element_replaceable>]
 }
 
 rule element_modification {
@@ -29,12 +29,12 @@ rule element_modification {
 }
 
 rule element_redeclaration {
-  <|w>'redeclare'<|w> [<|w>'each'<|w>]? [<|w>'final'<|w>]?
+  'redeclare' 'each'? 'final'?
   [ [ <short_class_definition> || <component_clause1>] || <element_replaceable> ]
 }
 
 rule element_replaceable {
-  <|w>'replaceable'<|w> [<short_class_definition> || <component_clause1>]
+  'replaceable' [<short_class_definition> || <component_clause1>]
   <constraining_clause>?
 }
 

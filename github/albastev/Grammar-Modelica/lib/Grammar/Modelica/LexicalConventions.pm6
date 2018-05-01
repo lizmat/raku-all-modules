@@ -32,7 +32,7 @@ token UNSIGNED_NUMBER {<UNSIGNED_INTEGER>+['.'<UNSIGNED_INTEGER>?]?[<[eE]><[+-]>
 
 token c-comment {['//'.*?$$]||['/*'.*?'*/']}
 
-token ws { [\s|<c-comment>]* }
+token ws { <!ww>[\s|<c-comment>]* }
 
 token keywords {
   <|w>[ 'within'

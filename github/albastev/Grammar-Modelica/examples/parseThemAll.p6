@@ -7,7 +7,7 @@ use Grammar::Modelica;
 # use Grammar::Tracer;
 
 
-plan 305;
+plan 313;
 
 sub light($file) {
   my $fh = open $file, :r;

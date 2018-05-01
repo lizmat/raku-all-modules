@@ -5,88 +5,87 @@ use v6;
 unit role Grammar::Modelica::Equations;
 
 rule equation_section {
-  [<|w>'initial'<|w>]? <|w>'equation'<|w> [ <equation> ';' ]*
+  'initial'? 'equation' [ <equation> ';' ]*
 }
 
 rule algorithm_section {
-  [<|w>'initial'<|w>]? <|w>'algorithm'<|w> [ <statement> ';' ]*
+  'initial'? 'algorithm' [ <statement> ';' ]*
 }
 
 rule equation {
   [
-  [<simple_expression> '=' <expression>] ||
-  <if_equation> ||
-  <for_equation> ||
-  <connect_clause> ||
-  <when_equation> ||
-  [<component_reference> <function_call_args>]
-  ]
-  <comment>
+    ||  <simple_expression> '=' <expression>
+    ||  <if_equation>
+    ||  <for_equation>
+    ||  <connect_clause>
+    ||  <when_equation>
+    ||  <component_reference> <function_call_args>
+  ]  <comment>
 }
 
 rule statement {
   [
-  [ <component_reference> [ [':=' <expression>] || <function_call_args> ]] ||
-  [ '(' <output_expression_list> ')' ':=' <component_reference> <function_call_args> ] ||
-  <|w>'break'<|w> ||
-  <|w>'return'<|w> ||
-  <if_statement> ||
-  <for_statement> ||
-  <while_statement> ||
-  <when_statement>
+    ||  '(' <output_expression_list> ')' ':=' <component_reference> <function_call_args>
+    ||  'break'
+    ||  'return'
+    ||  <if_statement>
+    ||  <for_statement>
+    ||  <while_statement>
+    ||  <when_statement>
+    ||  <component_reference> [ ':=' <expression> || <function_call_args> ]
   ]
   <comment>
 }
 
 rule if_equation {
-  <|w>'if'<|w> <expression> <|w>'then'<|w>
+  'if' <expression> 'then'
   [ <equation> ';' ]*
   [
-    <|w>'elseif'<|w> <expression> <|w>'then'<|w>
+    'elseif' <expression> 'then'
     [ <equation> ';' ]*
   ]*
   [
-    <|w>'else'<|w>
+    'else'
     [ <equation> ';' ]*
   ]?
 
-  <|w>'end'<|w> <|w>'if'<|w>
+  'end' 'if'
 }
 
 rule if_statement {
-  <|w>'if'<|w> <expression> <|w>'then'<|w>
+  'if' <expression> 'then'
   [ <statement> ';' ]*
   [
-    <|w>'elseif'<|w> <expression> <|w>'then'<|w>
+    'elseif' <expression> 'then'
     [ <statement> ';' ]*
   ]*
   [
-    <|w>'else'<|w>
+    'else'
     [ <statement> ';' ]*
   ]?
-  <|w>'end'<|w> <|w>'if'<|w>
+  'end' 'if'
 }
 
 rule for_equation {
-  <|w>'for'<|w> <for_indices> <|w>'loop'<|w>
+  'for' <for_indices> 'loop'
   [ <equation> ';' ]*
-  <|w>'end'<|w> <|w>'for'<|w>
+  'end' 'for'
 }
 
 rule for_statement {
-  <|w>'for'<|w> <for_indices> <|w>'loop'<|w>
+  'for' <for_indices> 'loop'
   [ <statement> ';' ]*
-  <|w>'end'<|w> <|w>'for'<|w>
+  'end' 'for'
 }
 
 rule for_indices { <for_index> [ ',' <for_index> ]* }
 
-rule for_index { <IDENT> ['in'<|w> <expression>]? }
+rule for_index { <IDENT> ['in' <expression>]? }
 
 rule while_statement {
-  <|w>'while'<|w> <expression> <|w>'loop'<|w>
+  'while' <expression> 'loop'
   [ <statement> ';' ]*
-  <|w>'end'<|w> <|w>'while'<|w>
+  'end' 'while'
 }
 
 rule when_equation {
@@ -96,19 +95,19 @@ rule when_equation {
   <|w>'elsewhen'<|w> <expression> <|w>'then'<|w>
   [ <equation> ';' ]*
   ]*
-  <|w>'end'<|w> <|w>'when'<|w>
+  'end' 'when'
 }
 
 rule when_statement {
-  <|w>'when'<|w> <expression> <|w>'then'<|w>
+  'when' <expression> 'then'
   [ <statement> ';' ]*
   [
-  <|w>'elsewhen'<|w> <expression> <|w>'then'<|w>
+  'elsewhen' <expression> 'then'
   [ <statement> ';' ]*
   ]*
-  <|w>'end'<|w> <|w>'when'<|w>
+  'end' 'when'
 }
 
 rule connect_clause {
-  <|w>'connect'<|w> '(' <component_reference> ',' <component_reference> ')'
+  'connect' '(' <component_reference> ',' <component_reference> ')'
 }
