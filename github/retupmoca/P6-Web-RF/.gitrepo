@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Web-RF.git
 	branch = master
-	commit = b8f9cae810ad2feea5e87acd702ce1a9896113ad
-	parent = 6dee581149d574c1fccc98c3a2a014faff81767d
+	commit = d5474b597fbf631c9be5def9ad43a83ecfbd95e0
+	parent = 22e3a9c267169b27069ecbcde46672dfc65defe5
 	cmdver = 0.4.0

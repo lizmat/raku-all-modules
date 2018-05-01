@@ -23,16 +23,16 @@ class Web::RF::Request is Crust::Request {
     }
 }
 
-subset Post of Web::RF::Request is export where { $_.method eq 'POST' };
-subset Get of Web::RF::Request is export where { $_.method eq 'GET' };
-subset Authed of Web::RF::Request is export where { so $_.user-id }; 
-subset Anon of Web::RF::Request is export where { !($_.user-id) }; 
+subset Web::RF::Request::Post of Web::RF::Request is export where { $_.method eq 'POST' };
+subset Web::RF::Request::Get of Web::RF::Request is export where { $_.method eq 'GET' };
+subset Web::RF::Request::Authed of Web::RF::Request is export where { so $_.user-id };
+subset Web::RF::Request::Anon of Web::RF::Request is export where { !($_.user-id) };
 
-class X::BadRequest is Exception is export { }
-class X::NotFound is Exception is export { }
-class X::PermissionDenied is Exception is export { }
+class X::BadRequest is Exception { }
+class X::NotFound is Exception { }
+class X::PermissionDenied is Exception { }
 
-class Web::RF::Controller is export {
+class Web::RF::Controller {
     has Web::RF::Router $.router is rw;
     multi method url-for(Web::RF::Controller $controller, *%params) {
         return $.router.url-for($controller, |%params);
@@ -45,11 +45,11 @@ class Web::RF::Controller is export {
         die X::BadRequest.new;
     }
 }
-class Web::RF::Controller::Authed is Web::RF::Controller is export {
+class Web::RF::Controller::Authed is Web::RF::Controller {
     # we do nothing here; the handler code in Web::RF will do the dirty work
 }
 
-class Web::RF::Redirect is Web::RF::Controller is export {
+class Web::RF::Redirect is Web::RF::Controller {
     has Int $.code where { !$_.defined || $_ ~~ any(0, 301, 302, 303, 307, 308) };
     has Str $.url where { $_.chars > 0 };
 
@@ -162,7 +162,7 @@ class Web::RF::Router::Route is Path::Router::Route {
         }
     }
 }
-class Web::RF::Router is export {
+class Web::RF::Router {
     has Path::Router    $.router;
     has Web::RF::Router $.parent is rw;
 
@@ -211,7 +211,7 @@ class Web::RF::Router is export {
     method error(:$request, :$exception) { }
 }
 
-class Web::RF is export {
+class Web::RF {
     has Web::RF::Router $.root;
     has $.request-class = Web::RF::Request;
 
@@ -230,7 +230,7 @@ class Web::RF is export {
             unless $resp {
                 my $page = $.root.match($uri);
                 if $page {
-                    if $page.target ~~ Web::RF::Controller::Authed && $request ~~ Anon {
+                    if $page.target ~~ Web::RF::Controller::Authed && $request ~~ Web::RF::Request::Anon {
                         die X::PermissionDenied.new;
                     }
 
