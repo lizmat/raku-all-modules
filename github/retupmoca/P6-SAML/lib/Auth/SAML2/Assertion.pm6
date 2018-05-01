@@ -1,5 +1,6 @@
 use XML;
 use XML::Signature;
+use UUID;
 
 unit class Auth::SAML2::Assertion;
 
