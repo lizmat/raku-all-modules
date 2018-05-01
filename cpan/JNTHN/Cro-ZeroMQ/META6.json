@@ -1,7 +1,7 @@
 {
     "perl"          : "6.*",
     "name"          : "Cro::ZeroMQ",
-    "version"       : "0.7.4",
+    "version"       : "0.7.5",
     "description"   : "Support for building ZeroMQ services with Cro.",
     "tags"          : [ "ZeroMQ" ],
     "authors"       : [ "Jonathan Worthington <jnthn@jnthn.net>" ],
