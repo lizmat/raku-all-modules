@@ -1,3 +1,5 @@
+v0.0.5      Mon 30 Apr 13:59:50 BST 2018
+    * Hash ordering may result in different XML
 v0.0.4		Wed Mar 8 21:45:47 2017 +0000 
 	* Fix a test
 v0.0.3		Mon Sep 26 17:58:02 2016 +0100 

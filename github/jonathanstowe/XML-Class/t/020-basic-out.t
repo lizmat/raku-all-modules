@@ -137,7 +137,7 @@ lives-ok { $xml = $f.to-xml(:document);  }, "to-xml(:document) -class has Associ
 is $xml.root.nodes.elems, 1, "and have there 1 elements in the root";
 is $xml.root[0].name, 'things', "and it has the top-level name";
 is $xml.root[0].nodes.elems, 4, "and there are child elements";
-is $xml.Str, '<?xml version="1.0"?><Hup><things><b>B</b><c>C</c><d>D</d><a>A</a></things></Hup>', 'looks good';
+like $xml.Str, /'<?xml version="1.0"?><Hup><things>' [ '<b>B</b>' || '<c>C</c>' || '<d>D</d>' || '<a>A</a>' ] ** 4 '</things></Hup>'/, 'looks good';
 diag $xml if $DEBUG;
 
 class Hut does XML::Class {
@@ -149,7 +149,7 @@ lives-ok { $xml = $f.to-xml(:document);  }, "to-xml(:document) -class has Associ
 is $xml.root.nodes.elems, 1, "and have there 1 elements in the root";
 is $xml.root[0].name, 'things', "and it has the top-level name";
 is $xml.root[0].nodes.elems, 4, "and there are child elements";
-is $xml.Str, '<?xml version="1.0"?><Hut><things><b>B</b><c>C</c><d>D</d><a>A</a></things></Hut>', 'looks good';
+like $xml.Str, /'<?xml version="1.0"?><Hut><things>' [ '<b>B</b>' || '<c>C</c>' || '<d>D</d>' || '<a>A</a>' ] ** 4 '</things></Hut>'/, 'looks good';
 diag $xml if $DEBUG;
 
 class Hun does XML::Class {
@@ -161,7 +161,7 @@ lives-ok { $xml = $f.to-xml(:document);  }, "to-xml(:document) -class has Associ
 is $xml.root.nodes.elems, 1, "and have there 1 elements in the root";
 is $xml.root[0].name, 'stuff', "and it has the top-level name";
 is $xml.root[0].nodes.elems, 4, "and there are child elements";
-is $xml.Str, '<?xml version="1.0"?><Hun><stuff><b>B</b><c>C</c><d>D</d><a>A</a></stuff></Hun>', 'looks good';
+like $xml.Str, /'<?xml version="1.0"?><Hun><stuff>' [ '<b>B</b>' || '<c>C</c>' || '<d>D</d>' || '<a>A</a>' ] ** 4 '</stuff></Hun>'/, 'looks good';
 diag $xml if $DEBUG;
 
 class Zut does XML::Class {
