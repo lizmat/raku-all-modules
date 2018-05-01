@@ -1,0 +1,12 @@
+Revision history for Unix-errno
+
+0.0.2  2018-04-30T16:42:31+02:00
+    - make sure that string and value match in .gist
+    - removed debug code when trying to set errno
+    - changed to exporting a "errno" and "set_errno" subs
+      Turns out you cannot currently export a variable that has a Proxy
+      container rather than a Scalar container.  So any changes after the
+      first FETCH of the C-library variable would not be seen.
+
+0.0.1  2018-04-30T11:40:35+02:00
+    - Initial version

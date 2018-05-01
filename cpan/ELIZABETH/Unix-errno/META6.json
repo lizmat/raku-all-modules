@@ -1,0 +1,22 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Provide transparent access to errno",
+  "license" : "Artistic-2.0",
+  "name" : "Unix::errno",
+  "perl" : "6.c",
+  "provides" : {
+    "Unix::errno" : "lib/Unix/errno.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Unix-errno.git",
+  "tags" : [
+    "UNIX"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
