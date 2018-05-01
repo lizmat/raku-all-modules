@@ -1,11 +1,9 @@
-use Panda::Common;
-use Panda::Builder;
 use Shell::Command;
 use LibraryMake;
 
-class Build is Panda::Builder {
+class Build {
     method build($workdir) {
-	mkpath $workdir~'/resources';
+        mkpath $workdir~'/resources';
         make("$workdir/src", "$workdir/resources");
     }
 }

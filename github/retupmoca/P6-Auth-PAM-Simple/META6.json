@@ -1,7 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Auth::PAM::Simple",
-    "version" : "1.0.0",
+    "version" : "1.0.1",
     "author" : "github:retupmoca",
     "description" : "Simple PAM authentication",
     "depends" : ["LibraryMake"],
