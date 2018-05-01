@@ -22,51 +22,50 @@ modify-send-to( 'screen', :level(MongoDB::MdbLoglevels::Error));
 # start servers
 sub MAIN (
   $server, Str :$conf-loc is copy = '.',
-  Bool :$add is copy = True, Bool :$del = False, Bool :$mod is copy = False
+  Bool :$add = False, Bool :$del = False,
+  Bool :$modpw = False, Bool :$modrole = False, Bool :$list = False,
+  Int :$unlen = MongoDB::C-PW-MIN-UN-LEN,
+  Int :$pwlen = MongoDB::C-PW-MIN-PW-LEN,
+  Int :$pwsec = MongoDB::C-PW-LOWERCASE,
 ) {
 
-  # turn adding off if del is set True but when add is False,
-  # it is set to True when del is also False.
-  $add = True unless $del;
-  $add = False if $del;
-  $mod = False if ($add or $del)
-
-  my MongoDB::Server::Control $server-control .= new(
-    :config-name<server-configuration.toml>, :locations[$conf-loc]
-  );
-
+  # check if an admin account is needed to do the administration
   note "\nAdmin name and password is needed when authentication is turned on";
   note "Admin must also have global access. Type return if not needed";
   my Str $admin-name = prompt "Admin account name: ";
-  my Str $admin-passwd = prompt "Admin password: ";
+  my Str $admin-passwd = prompt "Admin password: " if $admin-name;
   my Str $auth-input = '';
   $auth-input = "$admin-name:$admin-passwd\@"
     if ?$admin-name and ?$admin-passwd;
 
+  # get the controller to get servers port number. then connect to the server
+  my MongoDB::Server::Control $server-control .= new(
+    :config-name<server-configuration.toml>, :locations[$conf-loc]
+  );
   my Int $port-number = $server-control.get-port-number($server);
+  my Str $hostname = $server-control.get-hostname($server);
+#TODO url encoding
   my MongoDB::Client $client .=
-     new(:uri("mongodb://{$auth-input}localhost:$port-number"));
+     new(:uri("mongodb://$auth-input$hostname:$port-number"));
 
-  if $add {
-    add-accounts($client);
-  }
+  ismaster($client);
 
-  elsif $del {
-    del-accounts($client);
-  }
+  del-accounts($client) if $del;
+  modpw-accounts($client) if $modpw;
+  modrole-accounts($client) if $modrole;
+  add-accounts( $client, $unlen, $pwlen, $pwsec) if $add;
+
+  list-accounts($client) if $list;
 }
 
 #-------------------------------------------------------------------------------
-sub add-accounts ( MongoDB::Client $client ) {
+sub add-accounts (
+  MongoDB::Client $client, Int $unlen, Int $pwlen, Int $pwsec ) {
 
   my BSON::Document $doc;
-  my MongoDB::Database $database = $client.database('admin');
-  my MongoDB::HL::Users $users .= new(:$database);
 
-  my Hash $users-in-db = {};
+#`{{
   $doc = $database.run-command: (usersInfo => 1,);
-note "R: ", $doc.perl;
-note "U: ", $client.uri-obj.perl;
   if $doc<ok> == 0e0 {
     my Str $server = $client.uri-obj.host ~ ':' ~ $client.uri-obj.port;
     given $doc<code> {
@@ -90,15 +89,14 @@ note "U: ", $client.uri-obj.perl;
   for $doc<users> -> $u {
     note "Account:\n  ", $u.perl;
   }
+}}
 
   # loop inserting accounts
   loop {
-
     my Str $uname;
     my Str $passw;
     while !$uname or !$passw {
       note "Provide both username and password (repeats if any is empty)";
-      note "Do not use '@' or ':' characters";
       $uname = prompt("What is the username: ");
       $passw = prompt("What is the password: ");
       $uname = '' if $uname ~~ m/ <[@:]> /;
@@ -160,7 +158,8 @@ note "U: ", $client.uri-obj.perl;
             next;
           }
 
-          $roles.push: ( role => $dbrole, db => 'admin');
+          $roles.push: $dbrole;
+          #$roles.push: ( role => $dbrole, db => 'admin');
         }
 
         when 'C' {
@@ -170,7 +169,8 @@ note "U: ", $client.uri-obj.perl;
             next;
           }
 
-          $roles.push: ( role => $dbrole, db => 'admin');
+          $roles.push: $dbrole;
+          #$roles.push: ( role => $dbrole, db => 'admin');
         }
 
         when 'D' {
@@ -180,7 +180,8 @@ note "U: ", $client.uri-obj.perl;
             next;
           }
 
-          $roles.push: ( role => $dbrole, db => 'admin');
+          $roles.push: $dbrole;
+          #$roles.push: ( role => $dbrole, db => 'admin');
         }
 
         when 'S' {
@@ -190,7 +191,8 @@ note "U: ", $client.uri-obj.perl;
             next;
           }
 
-          $roles.push: ( role => $dbrole, db => 'admin');
+          $roles.push: $dbrole;
+          #$roles.push: ( role => $dbrole, db => 'admin');
         }
 
         when 'U' {
@@ -206,6 +208,7 @@ note "U: ", $client.uri-obj.perl;
             next;
           }
 
+          #$roles.push: $dbname;
           $roles.push: ( role => $dbrole, db => $dbname);
         }
 
@@ -215,28 +218,72 @@ note "U: ", $client.uri-obj.perl;
         }
       }
 
-      my Str $yn = prompt "Any more roles for user $uname? [Y(es), n(o)]";
+      my Str $yn = prompt "Any more roles for user $uname? [Y(es), n(o)]: ";
       last if $yn ~~ m:i/^ n | no $/;
     }
 
+    my MongoDB::Database $database = $client.database('admin');
+    my MongoDB::HL::Users $users .= new(:$database);
+note "len, sec: $unlen, $pwlen, $pwsec";
+    $users.set-pw-security(
+      :min-un-length($unlen), :min-pw-length($pwlen), :pw-attribs($pwsec)
+    );
     $doc = $users.create-user( $uname, $passw, :$roles);
     if $doc<ok> eq 1e0 {
-      note "Creation of user $uname ok";
+      note "Creation of user '$uname' ok";
     }
 
     else {
-      note "Creation of user $uname failed;\n",
+      note "Creation of user '$uname' failed;\n",
            "  Code: $doc<code>\n  Message: $doc<errmsg>";
     }
 
-    my Str $yn = prompt "Are there more accounts to create? [ y(es), N(o)]";
+    my Str $yn = prompt "Are there more accounts to create? [y(es), N(o)]: ";
     last unless $yn ~~ m:i/^ (y | yes ) $/;
 
     print "\n";
   }
+}
 
+#-------------------------------------------------------------------------------
+sub modpw-accounts ( MongoDB::Client $client ) {
 
-  $doc = $database.run-command: (usersInfo => 1,);
+}
+
+#-------------------------------------------------------------------------------
+sub modrole-accounts ( MongoDB::Client $client ) {
+
+}
+
+#-------------------------------------------------------------------------------
+sub del-accounts ( MongoDB::Client $client ) {
+
+  loop {
+    my Str $uname = prompt "User account to remove: ";
+    my MongoDB::Database $database = $client.database('admin');
+    my BSON::Document $doc = $database.run-command: (dropUser => $uname,);
+    note "A: ", $doc.perl;
+    if $doc<ok> == 1e0 {
+      note "Account '$uname' is deleted";
+    }
+
+    else {
+      note "Error deleting account '$uname'\n",
+           "  Code: $doc<code>\n  Message: $doc<errmsg>";
+    }
+
+    my Str $yn = prompt "Are there more accounts to remove? [y(es), N(o)]: ";
+    last unless $yn ~~ m:i/^ (y | yes ) $/;
+
+    print "\n";
+  }
+}
+
+#-------------------------------------------------------------------------------
+sub list-accounts ( MongoDB::Client $client ) {
+
+  my MongoDB::Database $database = $client.database('admin');
+  my BSON::Document $doc = $database.run-command: (usersInfo => 1,);
 =begin comment
 note "R: ", $doc.perl;
 R: BSON::Document.new((
@@ -261,13 +308,44 @@ R: BSON::Document.new((
 ))
 =end comment
 
-  note "There are {$doc<users>.elems} users defined";
-  for $doc<users> -> $u {
-#    note "Account:\n  ", $u.perl;
+  print "\n";
+  given $doc<users>.elems {
+    when 0 {
+      note "There are no users defined";
+      return;
+    }
+
+    when 1 {
+      note "There is 1 user defined";
+    }
+
+    default {
+      note "There are {$doc<users>.elems} users defined";
+    }
+  }
+
+  for @($doc<users>) -> $u {
+    note qq:s:to/EOINFO/;
+      Account:
+        username:     $u<user>
+        database:     $u<db>
+        Roles:
+    EOINFO
+
+    for @($u<roles>) -> $r {
+      note qq:s:to/EOINFO/;
+            role:       $r<role>
+            database:   $r<db>
+      EOINFO
+    }
   }
 }
 
 #-------------------------------------------------------------------------------
-sub del-accounts ( MongoDB::Client $client ) {
+sub ismaster ( MongoDB::Client $client ) {
 
+  my MongoDB::Database $database = $client.database('admin');
+  my BSON::Document $doc = $database.run-command: (ismaster => 1,);
+  note "\nServer status: ", $doc.perl;
+  print "\n";
 }
