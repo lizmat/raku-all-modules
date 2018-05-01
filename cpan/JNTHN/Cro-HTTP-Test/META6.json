@@ -1,0 +1,16 @@
+{
+    "perl"          : "6.*",
+    "name"          : "Cro::HTTP::Test",
+    "version"       : "0.7.5",
+    "description"   : "Write tests for HTTP services (whether or not they are built with Cro).",
+    "tags"          : [ "HTTP", "Test", "Testing", "Web" ],
+    "authors"       : [ "Jonathan Worthington <jnthn@jnthn.net>" ],
+    "license"       : "Artistic-2.0",
+    "depends"       : [ "Cro::HTTP" ],
+    "provides"      : {
+        "Cro::HTTP::Test": "lib/Cro/HTTP/Test.pm6",
+        "Cro::HTTP::Test::ChannelServer": "lib/Cro/HTTP/Test/ChannelServer.pm6"
+    },
+    "resources": [],
+    "source-url"    : "https://github.com/croservices/cro-http-test.git"
+}
