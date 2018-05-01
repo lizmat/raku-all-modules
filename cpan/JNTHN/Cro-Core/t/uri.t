@@ -1,8 +1,11 @@
 use Cro::Uri;
 use Test;
 
-sub parses($desc, $uri, *@checks) {
-    with try Cro::Uri.parse($uri) -> $parsed {
+sub parses($desc, $uri, *@checks, :$relative, :$ref) {
+    my $method = $relative ?? 'parse-relative' !!
+                 $ref      ?? 'parse-ref' !!
+                              'parse';
+    with try Cro::Uri."$method"($uri) -> $parsed {
         pass $desc;
         for @checks.kv -> $i, $check {
             ok $check($parsed), "Check {$i + 1}";
@@ -377,20 +380,141 @@ for qw[- . _ ~ : @ ! $ & ' ( ) * + , ; = / ?] -> $ok {
         *.fragment eq "oh{$ok}yes";
 }
 
-for <//example.org/scheme-relative/URI/with/absolute/path/to/resource.txt.
-    //example.org/scheme-relative/URI/with/absolute/path/to/resource.
-    /relative/URI/with/absolute/path/to/resource.txt.
-    relative/path/to/resource.txt.
-    ../../../resource.txt.
-    ./resource.txt#frag01.
-    resource.txt.
-    #frag01.>.kv -> $i, $rel-uri {
-    if $i != 2 {
-        ok Cro::Uri::GenericParser.parse($rel-uri, :rule<relative-ref>), "Regex $i, '$rel-uri' for relative Uri passed";
-    } else {
-        todo 1;
-        ok Cro::Uri::GenericParser.parse($rel-uri, :rule<relative-ref>), "Regex $i, '$rel-uri' for relative Uri passed";
-    }
+parses :relative, 'Relative with authority (1)',
+    '//example.org/scheme-relative/URI/with/absolute/path/to/resource.txt.',
+    !*.scheme.defined,
+    *.authority eq 'example.org',
+    *.path eq '/scheme-relative/URI/with/absolute/path/to/resource.txt.',
+    !*.query.defined,
+    !*.fragment.defined;
+
+parses :relative, 'Relative with authority (2)',
+    '//example.org/scheme-relative/URI/with/absolute/path/to/resource',
+    !*.scheme.defined,
+    *.authority eq 'example.org',
+    *.path eq '/scheme-relative/URI/with/absolute/path/to/resource',
+    !*.query.defined,
+    !*.fragment.defined;
+
+parses :relative, 'Relative with absolute path',
+    '/relative/URI/with/absolute/path/to/resource.txt',
+    !*.scheme.defined,
+    !*.authority.defined,
+    *.path eq '/relative/URI/with/absolute/path/to/resource.txt',
+    !*.query.defined,
+    !*.fragment.defined;
+
+parses :relative, 'Relative with relative path (1)',
+    'relative/path/to/resource.txt',
+    !*.scheme.defined,
+    !*.authority.defined,
+    *.path eq 'relative/path/to/resource.txt',
+    !*.query.defined,
+    !*.fragment.defined;
+
+parses :relative, 'Relative with relative path (2)',
+    '../../../resource.txt',
+    !*.scheme.defined,
+    !*.authority.defined,
+    *.path eq '../../../resource.txt',
+    !*.query.defined,
+    !*.fragment.defined;
+
+parses :relative, 'Relative with relative path (3)',
+    'resource.txt',
+    !*.scheme.defined,
+    !*.authority.defined,
+    *.path eq 'resource.txt',
+    !*.query.defined,
+    !*.fragment.defined;
+
+parses :relative, 'Relative with relative path and fragment',
+    './resource.txt#frag01',
+    !*.scheme.defined,
+    !*.authority.defined,
+    *.path eq './resource.txt',
+    !*.query.defined,
+    *.fragment eq 'frag01';
+
+parses :relative, 'Relative with fragment only',
+    '#frag01',
+    !*.scheme.defined,
+    !*.authority.defined,
+    *.path eq '',
+    !*.query.defined,
+    *.fragment eq 'frag01';
+
+parses :ref, 'An absolute URI when asked to parse a reference',
+    'foo://example.com:8042/over/there',
+    *.scheme eq 'foo',
+    *.authority eq 'example.com:8042',
+    *.path eq '/over/there',
+    !*.query.defined,
+    !*.fragment.defined;
+
+parses :ref, 'A relative URI when asked to parse a reference',
+    'relative/path/to/resource.txt',
+    !*.scheme.defined,
+    !*.authority.defined,
+    *.path eq 'relative/path/to/resource.txt',
+    !*.query.defined,
+    !*.fragment.defined;
+
+given Cro::Uri.parse('http://a/b/c/d;p?q') -> $base {
+    is $base.add("g:h"), "g:h";
+    is $base.add("g"), "http://a/b/c/g";
+    is $base.add("./g"), "http://a/b/c/g";
+    is $base.add("g/"), "http://a/b/c/g/";
+    is $base.add("/g"), "http://a/g";
+    is $base.add("//g"), "http://g";
+    is $base.add("?y") , "http://a/b/c/d;p?y";
+    is $base.add("g?y"), "http://a/b/c/g?y";
+    is $base.add("#s"), "http://a/b/c/d;p?q#s";
+    is $base.add("g#s"), "http://a/b/c/g#s";
+    is $base.add("g?y#s"), "http://a/b/c/g?y#s";
+    is $base.add(";x"), "http://a/b/c/;x";
+    is $base.add("g;x"), "http://a/b/c/g;x";
+    is $base.add("g;x?y#s"), "http://a/b/c/g;x?y#s";
+    is $base.add(""), "http://a/b/c/d;p?q";
+    is $base.add("."), "http://a/b/c/";
+    is $base.add("./"), "http://a/b/c/";
+    is $base.add(".."), "http://a/b/";
+    is $base.add("../"), "http://a/b/";
+    is $base.add("../g"), "http://a/b/g";
+    is $base.add("../.."), "http://a/";
+    is $base.add("../../"), "http://a/";
+    is $base.add("../../g"), "http://a/g";
+    is $base.add("../../../g"), "http://a/g";
+    is $base.add("../../../../g"), "http://a/g";
+    is $base.add("/./g"),  "http://a/g";
+    is $base.add("/../g"),  "http://a/g";
+    is $base.add("g."), "http://a/b/c/g.";
+    is $base.add(".g"), "http://a/b/c/.g";
+    is $base.add("g..") , "http://a/b/c/g..";
+    is $base.add("..g"), "http://a/b/c/..g";
+    is $base.add("./../g"), "http://a/b/g";
+    is $base.add("./g/."), "http://a/b/c/g/";
+    is $base.add("g/./h"), "http://a/b/c/g/h";
+    is $base.add("g/../h"), "http://a/b/c/h";
+    is $base.add("g;x=1/./y"), "http://a/b/c/g;x=1/y";
+    is $base.add("g;x=1/../y"), "http://a/b/c/y";
+    is $base.add("g?y/./x"), "http://a/b/c/g?y/./x";
+    is $base.add("g?y/../x"), "http://a/b/c/g?y/../x";
+    is $base.add("g#s/./x"), "http://a/b/c/g#s/./x";
+    is $base.add("g#s/../x"), "http://a/b/c/g#s/../x";
+    is $base.add("http:g"), "http:g";
+    is $base.add("/"), "http://a/";
+}
+
+given Cro::Uri.parse('foo://bob:s3cr3t@fbi.gov:4242/a').add('b') {
+    is .scheme, 'foo', 'Correct scheme after relative resolution';
+    is .authority, 'bob:s3cr3t@fbi.gov:4242', 'Correct authority after relative resolution';
+    is .host, 'fbi.gov', 'Correct host after relative resolution';
+    is .host-class, Cro::Uri::Host::RegName, 'Correct host class after relative resolution';
+    is .port, 4242, 'Correct port after relative resolution';
+    is .userinfo, 'bob:s3cr3t', 'Correct user info after relative resolution';
+    is .user, 'bob', 'Correct user after relative resolution';
+    is .password, 's3cr3t', 'Correct password after relative resolution';
 }
 
 for <http://www.example.com/{term:1}/{term}/{test*}/foo{?query,number}

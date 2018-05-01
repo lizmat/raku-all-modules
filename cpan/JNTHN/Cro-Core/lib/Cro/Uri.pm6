@@ -9,7 +9,6 @@ class X::Cro::Uri::ParseError is Exception {
 class Cro::Uri {
     enum Host <RegName IPv4 IPv6 IPvFuture>;
 
-    has Str $.origin;
     has Str $.scheme;
     has Str $.authority;
     has Str $.userinfo;
@@ -22,6 +21,10 @@ class Cro::Uri {
 
     grammar GenericParser {
         token TOP {
+            <URI>
+        }
+
+        token URI {
             [ <scheme> || <.panic('Malformed scheme')> ]
             [ ":" || <.panic('Missing : after scheme')> ]
             <hier-part>
@@ -111,7 +114,7 @@ class Cro::Uri {
         }
 
         token path-absolute {
-            <!>
+            '/' [ <segment-nz> [ "/" <segment> ]* ]?
         }
 
         token path-rootless {
@@ -142,12 +145,21 @@ class Cro::Uri {
             [<[A..Za..z0..9._~:@!$&'()*+,;=-]>+ | '%' <[A..Fa..f0..9]>**2]+
         }
 
+        token ref {
+            || <?before <.scheme> ':'> <URI>
+            || <relative-ref>
+        }
+
         token relative-ref {
             <relative-part> [ '?' <query>] ? [ '#' <fragment> ]?
+            [ $ || <.panic('unexpected text at end')> ]
         }
 
         token relative-part {
-            [ '//' <authority> <path-abempty> ] | <path-absolute> | <path-noscheme> | <path-empty>
+            | [ '//' <authority> <path-abempty> ]
+            | <path-absolute>
+            | <path-noscheme>
+            | <path-empty>
         }
 
         token path-noscheme {
@@ -165,10 +177,13 @@ class Cro::Uri {
 
     class GenericActions {
         method TOP($/) {
+            make $<URI>.ast;
+        }
+
+        method URI($/) {
             my %parts = scheme => ~$<scheme>, |$<hier-part>.ast;
             %parts<query> = $<query>.ast if $<query>;
             %parts<fragment> = $<fragment>.ast if $<fragment>;
-            %parts<origin> = ~$/;
             make Cro::Uri.bless(|%parts);
         }
 
@@ -237,6 +252,10 @@ class Cro::Uri {
             make ~$/;
         }
 
+        method path-absolute($/) {
+            make ~$/;
+        }
+
         method path-rootless($/) {
             make ~$/;
         }
@@ -252,11 +271,66 @@ class Cro::Uri {
         method fragment($/) {
             make ~$/;
         }
+
+        method ref($/) {
+            make ($<URI> || $<relative-ref>).ast;
+        }
+
+        method relative-ref($/) {
+            my %parts = $<relative-part>.ast;
+            %parts<query> = $<query>.ast if $<query>;
+            %parts<fragment> = $<fragment>.ast if $<fragment>;
+            make Cro::Uri.bless(|%parts);
+        }
+
+        method relative-part($/) {
+            make $<authority>
+                ?? %( $<authority>.ast, path => $<path-abempty>.ast )
+                !! %( path => ($<path-absolute> || $<path-noscheme> || $<path-empty>).ast );
+        }
+
+        method path-noscheme($/) {
+            make ~$/;
+        }
+    }
+
+    submethod TWEAK(:$authority, :$host) {
+        if $authority && !$host.defined {
+            # We were constructed with an unparsed authority.
+            with GenericParser.parse($authority, :rule<authority>, :actions(GenericActions)) {
+                given .ast {
+                    $!host = $_ with .<host>;
+                    $!host-class = $_ with .<host-class>;
+                    $!port = $_ with .<port>;
+                    $!userinfo = $_ with .<userinfo>;
+                }
+            }
+        }
     }
 
     method parse(Str() $uri-string, :$grammar = Cro::Uri::GenericParser,
                  :$actions = Cro::Uri::GenericActions --> Cro::Uri) {
         with $grammar.parse($uri-string, :$actions) {
+            .ast
+        }
+        else {
+            die X::Cro::Uri::ParseError.new(:$uri-string)
+        }
+    }
+
+    method parse-ref(Str() $uri-string, :$grammar = Cro::Uri::GenericParser,
+                     :$actions = Cro::Uri::GenericActions --> Cro::Uri) {
+        with $grammar.parse($uri-string, :$actions, :rule<ref>) {
+            .ast
+        }
+        else {
+            die X::Cro::Uri::ParseError.new(:$uri-string)
+        }
+    }
+
+    method parse-relative(Str() $uri-string, :$grammar = Cro::Uri::GenericParser,
+                          :$actions = Cro::Uri::GenericActions --> Cro::Uri) {
+        with $grammar.parse($uri-string, :$actions, :rule<relative-ref>) {
             .ast
         }
         else {
@@ -287,8 +361,123 @@ class Cro::Uri {
         $no-leader.split('/').map(&decode-percents).list
     }
 
+    multi method add(Cro::Uri:D: Str:D $r --> Cro::Uri) {
+        self.add(self.parse-ref($r))
+    }
+
+    multi method add(Cro::Uri:D: Cro::Uri $r --> Cro::Uri) {
+        my Str ($scheme, $authority, $path, $query);
+        with $r.scheme {
+            $scheme = $_;
+            $authority = $r.authority;
+            $path = remove-dot-segments($r.path);
+            $query = $r.query;
+        }
+        else {
+            with $r.authority {
+                $authority = $_;
+                $path = remove-dot-segments($r.path);
+                $query = $r.query;
+            }
+            else {
+                if $r.path eq '' {
+                    $path = $!path;
+                    with $r.query {
+                        $query = $_;
+                    }
+                    else {
+                        $query = $!query;
+                    }
+                }
+                else {
+                    if $r.path.starts-with('/') {
+                        $path = remove-dot-segments($r.path);
+                    }
+                    else {
+                        $path = remove-dot-segments(self!merge-path($r.path));
+                    }
+                    $query = $r.query;
+                }
+                $authority = $!authority;
+            }
+            $scheme = $!scheme;
+        }
+        self.new(:$scheme, :$authority, :$path, :$query, :fragment($r.fragment))
+    }
+
+    sub remove-dot-segments($path) {
+        my $input = $path;
+        my $output = '';
+        while $input {
+            if $input.starts-with('../') {
+                $input .= substr(3);
+            }
+            elsif $input.starts-with('./') {
+                $input .= substr(2);
+            }
+            elsif $input.starts-with('/./') {
+                $input = $input.substr(2);
+            }
+            elsif $input eq '/.' {
+                $input = '/';
+            }
+            elsif $input.starts-with('/../') {
+                $input = $input.substr(3);
+                with $output.rindex('/') {
+                    $output = $output.substr(0, $_);
+                }
+            }
+            elsif $input eq '/..' {
+                $input = '/';
+                with $output.rindex('/') {
+                    $output = $output.substr(0, $_);
+                }
+            }
+            elsif $input eq '.' | '..' {
+                $input = '';
+            }
+            else {
+                with $input.index('/', 1) {
+                    $output ~= $input.substr(0, $_);
+                    $input = $input.substr($_);
+                }
+                else {
+                    $output ~= $input;
+                    $input = '';
+                }
+            }
+        }
+        $output
+    }
+
+    method !merge-path($r-path) {
+        if $!authority.defined && $!path eq '' {
+            "/$r-path"
+        }
+        orwith $!path.rindex('/') {
+            $!path.substr(0, $_ + 1) ~ $r-path
+        }
+        else {
+            $r-path
+        }
+    }
+
     multi method Str(Cro::Uri:D: --> Str) {
-        $!origin
+        my $result = '';
+        with $!scheme {
+            $result ~= "$_:";
+        }
+        with $!authority {
+            $result ~= "//$_";
+        }
+        $result ~= $!path;
+        with $!query {
+            $result ~= "?$_";
+        }
+        with $!fragment {
+            $result ~= "#$_";
+        }
+        return $result;
     }
 
     grammar URI-Template {
