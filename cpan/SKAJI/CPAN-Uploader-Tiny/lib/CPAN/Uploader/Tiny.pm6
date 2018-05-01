@@ -1,5 +1,5 @@
 use v6;
-unit class CPAN::Uploader::Tiny:ver<0.0.5>:auth<cpan:SKAJI>;
+unit class CPAN::Uploader::Tiny:ver<0.0.6>:auth<cpan:SKAJI>;
 
 use CPAN::Uploader::Tiny::MultiPart;
 use HTTP::Tinyish;

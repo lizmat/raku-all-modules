@@ -17,7 +17,9 @@
   },
   "resources" : [ ],
   "source-url" : "git://github.com/skaji/perl6-CPAN-Uploader-Tiny.git",
-  "tags" : [ ],
+  "tags" : [
+    "CPAN5"
+  ],
   "test-depends" : [ ],
-  "version" : "0.0.5"
+  "version" : "0.0.6"
 }

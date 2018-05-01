@@ -1,5 +1,8 @@
 Revision history for CPAN-Uploader-Tiny
 
+0.0.6  2018-04-30T20:20:18+09:00
+  - Add CPAN5 tag to META6.json (lizmat #5)
+
 0.0.5  2018-04-24T16:35:38+09:00
   - Use proper pause url https://pause.perl.org/pause/authenquery?ACTION=add_uri (thanks charsbar!)
 
