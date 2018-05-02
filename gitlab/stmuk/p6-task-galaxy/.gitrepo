@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://gitlab.com/stmuk/p6-task-galaxy.git
+	branch = master
+	commit = 600adfac93f0da62025097853f8f021604a35e8f
+	parent = 72c7b83d061209b58db086f8f657e18a5cfcb2f1
+	cmdver = 0.4.0
