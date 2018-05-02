@@ -1,99 +1,183 @@
-use JSON::Stream::State;
 use JSON::Stream::Type;
+use JSON::Fast;
+unit class Parser;
+
+has         @.subscribed;
+has Type    @.types = init;
+has Str     @.path = '$';
+has Str     %.cache is default("");
+
+method json-path($num = 0) { @!path.head(* - $num).join: "." }
 
 #my $*DEBUG = True;
 sub debug(|c) { note |c if $*DEBUG }
 constant @stop-words = '{', '}', '[', ']', '"', ':', ',';
 
-proto parse(State:D $state, Str $chunk --> State:D) is pure is export { * }
-
-multi parse($_ where .type ~~ [string, key].none, $chunk where * ~~ @stop-words.none) {
-    debug "parse generic";
-    .cond-emit-concat: $chunk;
-    .clone: :cache(.remove-from-cache: $chunk)
+method add-to-cache($chunk, $from = 0) {
+    for $from .. (@!path - 1) -> $i {
+        my @p = |@!path.head(* - $i);
+        %!cache{self.json-path: $i} ~= $chunk if @!subscribed.grep: { @p ~~ $_ }
+    }
 }
 
-# STRING
-# string start
-multi parse($_ where .type ~~ [string, object, key].none, '"') {
-    debug "parse string start";
-    .clone: :types(.add-type: string), :cache(.add-to-cache: '"')
+method emit-pair($num = 0) {
+    my @p = |@!path.head(* - $num);
+    debug %!cache{self.json-path: $num};
+    emit self.json-path($num) => from-json %!cache{self.json-path: $num}:delete if @!subscribed.grep: { @p ~~ $_ }
 }
 
-# string body
-multi parse($_ where .type ~~ string, $chunk) {
-    debug "parse string body";
-    .clone: :cache(.add-to-cache: $chunk)
+#init object array string key value
+multi method parse(Str $chunk) {
+    #say self;
+    debug "chunk: $chunk; type: @!types.tail()";
+    given @!types.tail {
+        #init object array string key value
+        when init {
+            given $chunk {
+                when not @stop-words.grep: $chunk {
+                    debug "parse generic";
+                    self.add-to-cache: $chunk;
+                    self.emit-pair;
+                }
+                when '"' {
+                    debug "parse string start";
+                    @!types.push: string;
+                    self.add-to-cache: '"';
+                }
+                when '{' {
+                    debug "parse object start";
+                    self.add-to-cache: '{';
+                    @!types.push: object;
+                }
+                when '[' {
+                    debug "parse array start";
+                    self.add-to-cache: '[';
+                    @!types.push: array;
+                    @!path.push: "0";
+                }
+            }
+        }
+        when object {
+            given $chunk {
+                when '"' {
+                    debug "parse object key start";
+                    self.add-to-cache: '"';
+                    @!types.push: key;
+                }
+                when ':' {
+                    debug "parse object key sep";
+                    self.add-to-cache: ':', 1;
+                    @!types.push: value;
+                }
+                when '}' {
+                    debug "parse object end";
+                    @!path.pop;
+                    self.add-to-cache: '}';
+                    self.emit-pair;
+                    @!types.pop;
+                }
+            }
+        }
+        when array {
+            given $chunk {
+                when '{' {
+                    debug "parse object start";
+                    self.add-to-cache: '{';
+                    @!types.push: object;
+                }
+                when '"' {
+                    debug "parse string start";
+                    @!types.push: string;
+                    self.add-to-cache: '"';
+                }
+                when not @stop-words.grep: $chunk {
+                    debug "parse generic";
+                    self.add-to-cache: $chunk;
+                    self.emit-pair;
+                }
+                when ',' {
+                    debug "parse array sep";
+                    self.add-to-cache: ',';
+                    %!cache{@.json-path}:delete;
+                    @!path.tail++;
+                }
+                when ']' {
+                    debug "parse array end";
+                    self.add-to-cache: ']', 1;
+                    self.emit-pair: 1;
+                    @!types.pop;
+                    @!path.pop;
+                }
+                when '[' {
+                    debug "parse array start";
+                    self.add-to-cache: '[';
+                    @!types.push: array;
+                    @!path.push: "0";
+                }
+            }
+        }
+        when string {
+            given $chunk {
+                when '"' {
+                    debug "parse string end";
+                    self.add-to-cache: '"';
+                    self.emit-pair;
+                    @!types.pop;
+                }
+                default {
+                    debug "parse string body";
+                    self.add-to-cache: $chunk;
+                }
+            }
+        }
+        when key {
+            given $chunk {
+                when not @stop-words.grep: $chunk {
+                    debug "parse object key body";
+                    self.add-to-cache: $chunk;
+                    @!path.push: $chunk;
+                }
+                when '"' {
+                    debug "parse object key end";
+                    self.add-to-cache: '"', 1;
+                    @!types.pop;
+                }
+            }
+        }
+        when value {
+            given $chunk {
+                when '{' {
+                    debug "parse object start";
+                    self.add-to-cache: '{';
+                    @!types.push: object;
+                }
+                when '"' {
+                    debug "parse string start";
+                    @!types.push: string;
+                    self.add-to-cache: '"';
+                }
+                when not @stop-words.grep: $chunk {
+                    debug "parse generic";
+                    self.add-to-cache: $chunk;
+                    self.emit-pair;
+                }
+                when ',' {
+                    debug "parse object sep";
+                    self.add-to-cache: ',';
+                    @!types.pop;
+                    @!path.pop;
+                }
+                when '}' {
+                    @!types.pop;
+                    self.parse: '}';
+                }
+                when '[' {
+                    debug "parse array start";
+                    self.add-to-cache: '[';
+                    @!types.push: array;
+                    @!path.push: "0";
+                }
+            }
+        }
+    }
 }
-
-# string end
-multi parse($_ where .type ~~ string, '"') {
-    debug "parse string end";
-    .cond-emit-concat: '"';
-    .clone: :types(.pop-type), :cache(.remove-from-cache: '"')
-}
-
-# OBJECT
-# object start
-multi parse($_, '{') {
-    debug "parse object start";
-    .clone: :types(.add-type: object), :cache(.add-to-cache: '{')
-}
-
-# object key start
-multi parse($_ where .type ~~ object, '"') {
-    debug "parse object key start";
-    .clone: :types(.add-type: key), :cache(.add-to-cache: '"')
-}
-
-# object key body
-multi parse($_ where .type ~~ key, $key where * ~~ @stop-words.none) {
-    debug "parse object key body";
-    .clone: :cache(.add-to-cache: $key), :path[.add-path: $key]
-}
-
-# object key end
-multi parse($_ where .type ~~ key, '"') {
-    debug "parse object key end";
-    .clone: :type(.pop-type), :cache(.add-to-cache: '"', :path(.pop-path))
-}
-
-# object key sep
-multi parse($_ where .type ~~ key, ':') {
-    debug "parse object key sep";
-    .clone: :types(.change-type: value), :cache(.add-to-cache: ':', :path(.pop-path))
-}
-
-# object sep
-multi parse($_ where .type ~~ value, ',') {
-    debug "parse object sep";
-    .clone: :types(.pop-type), :cache(.add-to-cache: ','), :path(.pop-path)
-}
-
-# object end
-multi parse($_ where .type ~~ value | object, '}') {
-    debug "parse object end";
-    .cond-emit-concat: '}', :path(.pop-path);
-    .clone: :types(.pop-type: .type ~~ object ?? 1 !! 2), :cache(.remove-from-cache: '}', :path(.pop-path)), :path(.pop-path)
-}
-
-# ARRAY
-# array start
-multi parse($_, '[') {
-    debug "parse array start";
-    .clone: :types(.add-type: array), :cache(.add-to-cache: '['), :path(.add-path: "0")
-}
-
-# array sep
-multi parse($_ where .type ~~ array, ',') {
-    debug "parse array sep";
-    .clone: :cache(.remove-from-cache: ','), :path(.increment-path)
-}
-
-# array end
-multi parse($_ where .type ~~ array, ']') {
-    debug "parse array end";
-    .cond-emit-concat: ']', :path(.pop-path);
-    .clone: :types(.pop-type), :cache(.remove-from-cache: ']'), :path(.pop-path)
-}
-

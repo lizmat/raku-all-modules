@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FCO/json-stream.git
 	branch = master
-	commit = 67b102a31237a6b841380ed243d19eb601980190
-	parent = 48f49794ce9a1c9d0a2ed5336ab5ba846463979e
+	commit = a940967d6f90bea42b8cd8ed034bc82759372f6a
+	parent = ceb5ea23c0cdba4dbaa18fe1331ae78d8dd38eaa
 	cmdver = 0.4.0

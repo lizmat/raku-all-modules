@@ -178,10 +178,10 @@ react {
         is $value, 3.14
     }
 
-    whenever json-stream Supply.from-list(<" \" bla \" \"ble\" \"\"\"bli\"\"\" b\"l\"o blu ">), [['$',],] -> (:$key, :$value) {
+    whenever json-stream Supply.from-list(<" \" bla \" { [ \" ble \" ] } \" bli ">), [['$',],] -> (:$key, :$value) {
         say "$key => $value.perl()";
         is $key,    '$';
-        is $value, "\"bla\"\"ble\"\"\"\"bli\"\"\"b\"l\"oblu";
+        is $value, "\"bla\"\{[\"ble\"]}\"bli";
     }
 }
 
