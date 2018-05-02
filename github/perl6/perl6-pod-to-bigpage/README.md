@@ -19,7 +19,7 @@ And test it
 
 Let us find the `*.pod6` files for you and run using two threads at a time.
 
-    pod2onepage -v --threads=2 --source-path=../../perl6-doc/doc \
+    pod2onepage -v --source-path=../../perl6-doc/doc \
         --exclude=404.pod6,/.git,/precompiled > tmp/html.xhtml
 
 You can use, for instance,
@@ -52,9 +52,6 @@ course, [`pod2onepage`](bin/pod2onepage).
 
   Don't use precompilation to cache `pod6` files.
 
-* `--threads`
-
-  Number of threads to use. Defaults to environment variable `THREADS` or 1.
 
 * `--precomp-path`
 

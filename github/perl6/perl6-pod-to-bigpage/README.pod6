@@ -10,12 +10,12 @@ Module and script for converting documentation written in Pod 6 to a single fil
 
 From the command line:
 
-     pod2onepage -v --threads=2 --source-path=../../perl6-doc/doc \
+     pod2onepage -v --source-path=../../perl6-doc/doc \
                  --exclude=404.pod6,/.git,/precompiled > tmp/html.xhtml
 
 or, if you want to produce HTML
 
-    pod2onepage -v --threads=2 --source-path=. --html\
+    pod2onepage -v --source-path=. --html\
                  --exclude=404.pod6,/.git,/precompiled > tmp/pod2onepage.html
 
 It can be used also as a library.
@@ -36,4 +36,33 @@ compose-before-content($=pod,''); # Produces HTML
 
 =end SYNOPSIS
 
+=head2 X<Options|Options>
+
+=item C<-v --verbose>
+
+  verbose output
+
+=item C<--source-path>
+
+  Where to look for files ending in `.pod6`.
+
+=item C<--exclude>
+
+  Comma separated list of strings the processed files or paths shall not end with.
+
+=item C<--no-cache>
+
+  Don't use precompilation to cache `pod6` files.
+
+
+=item C<--precomp-path>
+
+  Sets the path where precompiled `pod6` files are created. Defaults to environment
+  variable `TEMP`, `TMP` or `/tmp`.
+
+=item C<--html>
+
+  Generate HTML instead of the default XHTML.
+  
+  
 =end pod

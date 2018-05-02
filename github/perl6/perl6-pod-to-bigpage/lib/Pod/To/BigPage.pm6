@@ -12,7 +12,7 @@ Module and script for converting documentation written in Pod 6 to a single fil
 
 From the command line:
 
-     pod2onepage -v --threads=2 --source-path=../../perl6-doc/doc \
+     pod2onepage -v --source-path=../../perl6-doc/doc \
                  --exclude=404.pod6,/.git,/precompiled > tmp/html.xhtml
 
 It can be used also as a library.
@@ -68,7 +68,7 @@ class TOC-Counter is export {
     }
 }
 
-#| Sets up global header and HTML bolierplate
+#| Sets up global header and HTML boilerplate
 sub setup () is export {
     $html-header = q:to/EOH/;
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
@@ -161,6 +161,19 @@ sub setup () is export {
     $html-before-content = '';
     $html-after-content = '';
 }
+
+#| Recursively finds all files for creating the big page
+ sub find-pod-files ($dir, @exclude, @extensions = ["pod6"] ) is export {    
+     state $none-exclude = @exclude.none;
+     my $all-extensions = @extensions.join("|");
+     my $ending-rx = rx:i/ <$all-extensions> $ /;
+     my sub recurse ($dir) { 
+         gather for dir($dir) {
+             take .Str if .Str.ends-with($none-exclude) && .extension ~~ $ending-rx;
+             take slip sort recurse $_ if .d && .Str.ends-with($none-exclude);
+         }
+     }($dir)
+ }
 
 #| Uses a different table of contents
 sub set-foreign-toc (\toc) is export {
@@ -310,7 +323,7 @@ multi sub handle (Pod::Block::Named $node where $node.name eq 'TITLE', :$pod-nam
     my $additional-class = ($node.config && $node.config<class> ?? ' ' ~ $node.config<class> !! '').subst('"', '&quot;');
     my $text = $node.contents[0].contents[0].Str;
     my $anchor = register-toc-entry(0, $text, $toc-counter);
-    Q:c (<a name="t{$anchor}"><h1 class="title{$additional-class}">{$anchor} {$text}</h1></a>)
+    Q:c (<a name="t{$anchor}"></a><h1 class="title{$additional-class}">{$anchor} {$text}</h1>)
 }
 
 multi sub handle (Pod::Block::Named $node where $node.name eq 'SUBTITLE', :$pod-name?, :$part-number?, :$toc-counter?, :%part-config) is export {
@@ -448,14 +461,14 @@ multi sub handle (Pod::FormattingCode $node where .type eq 'X', $context = None,
     my $index-display = $node.contents>>.&handle($context).Str;
     my @name = $node.meta».&escape-markup;
     my $anchor = register-index-entry(@name, $node.contents, :$pod-name);
-    Q:c (<span class="indexed{$additional-class}" id="{$anchor}" name="{@name}">{$index-display}</span>);
+    Q:c (<a id="i{$anchor}" name="{@name}"></a><span class="indexed{$additional-class}">{$index-display}</span>);
 }
 
 multi sub handle (Pod::FormattingCode $node where .type eq 'X', $context where * == Heading, :$pod-name?, :$part-number?, :$toc-counter?) is export {
     my $index-display = $node.contents>>.&handle($context).Str;
     my $anchor = register-index-entry($node.meta, $node.contents, :$pod-name);
-    #    q:c (<a name="{$anchor}"></a>{$index-display})
-    $index-display;
+    q:c (<a name="{$anchor}"></a>{$index-display});
+
 }
 
 multi sub handle (Pod::Heading $node, :$pod-name?, :$part-number?, :$toc-counter, :%part-config) is export {
