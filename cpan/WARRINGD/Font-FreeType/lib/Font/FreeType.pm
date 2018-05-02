@@ -1,4 +1,4 @@
-class Font::FreeType:ver<0.0.8> {
+class Font::FreeType:ver<0.0.9> {
 
     use v6;
     use NativeCall;

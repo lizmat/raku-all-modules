@@ -27,7 +27,7 @@ DESCRIPTION
 
 This class contains the actual bindings to the FreeType library.
 
-Other high level classes in this have a `struct()` accessor, which can be used, if needed, to gain access to native objects from this library:
+Other high level classes, by convention, have a `struct()` accessor, which can be used, if needed, to gain access to native objects from this class:
 
 <table class="pod-table">
 <thead><tr>
@@ -412,7 +412,7 @@ method FT_Bitmap_Embolden(
 ) returns uint32
 ```
 
-Embolden a bitmap. The new bitmap will be about ‘xStrength’ pixels wider and ‘yStrength’ pixels higher. The left and bottom borders are kept unchanged.
+Embolden a bitmap. The new bitmap will be about ‘x-strength’ pixels wider and ‘y-strength’ pixels higher. The left and bottom borders are kept unchanged.
 
 ### method FT_Bitmap_Done
 

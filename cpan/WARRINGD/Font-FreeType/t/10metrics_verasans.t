@@ -73,13 +73,8 @@ subtest {
         is $default-cm.encoding, FT_ENCODING_UNICODE;
     }, "default charmap";
 
-    subtest {
-        plan 3;
-        my $charmaps = $vera.charmaps;
-        ok $charmaps.defined;
-        isa-ok $charmaps, Array;
-        is +$charmaps, 2;
-    }, "available charmaps"
+    my @charmaps = $vera.charmaps;
+    is +@charmaps, 2, "available charmaps"
 
 }, "charmaps";
 

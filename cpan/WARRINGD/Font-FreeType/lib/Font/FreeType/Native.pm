@@ -28,8 +28,8 @@ Font::FreeType::Native - bindings to the freetype library
 
 This class contains the actual bindings to the FreeType library.
 
-Other high level classes in this have a `struct()` accessor, which can be
-used, if needed, to gain access to native objects from this library:
+Other high level classes, by convention, have a `struct()` accessor, which can be
+used, if needed, to gain access to native objects from this class:
 
 =table
   Class | struct() binding | Description
@@ -505,7 +505,7 @@ class FT_Library is export {
         )
         returns FT_Error is native($ftlib) {*};
 
-    #| Embolden a bitmap. The new bitmap will be about ‘xStrength’ pixels wider and ‘yStrength’ pixels higher. The left and bottom borders are kept unchanged.
+    #| Embolden a bitmap. The new bitmap will be about ‘x-strength’ pixels wider and ‘y-strength’ pixels higher. The left and bottom borders are kept unchanged.
     method FT_Bitmap_Embolden(
         FT_Bitmap $bitmap,
         FT_Pos $x-strength,
@@ -564,5 +564,5 @@ sub FT_Init_FreeType(Pointer[FT_Library] $library is rw)
         is export
         is native($ftlib) {*};
 
-our sub memcpy(Pointer, Pointer, size_t) returns Pointer is native($ftlib) {*};
+our sub memcpy(Pointer, Pointer, size_t) returns Pointer is native {*};
 

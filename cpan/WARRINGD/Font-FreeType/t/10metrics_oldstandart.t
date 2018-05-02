@@ -61,13 +61,8 @@ subtest {
         is $default-cm.encoding, FT_ENCODING_UNICODE;
     }, "default charmap";
 
-    subtest {
-        plan 3;
-        my $charmaps = $font.charmaps;
-        ok $charmaps.defined;
-        isa-ok $charmaps, Array;
-        is +$charmaps, 6;
-    }, "available charmaps"
+    my @charmaps = $font.charmaps;
+    is +@charmaps, 6, "available charmaps"
 
 }, "charmaps";
 

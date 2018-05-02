@@ -48,11 +48,9 @@ class Font::FreeType::Face {
     method charmaps {
         my int $n-sizes = self.num-charmaps;
         my $ptr = $!struct.charmaps;
-        my Font::FreeType::CharMap @charmaps;
         (0 ..^ $n-sizes).map: {
-            @charmaps.push: Font::FreeType::CharMap.new: :struct($ptr[$_]);
+            Font::FreeType::CharMap.new: :struct($ptr[$_]);
         }
-        @charmaps;
     }
 
     my class Vector {
