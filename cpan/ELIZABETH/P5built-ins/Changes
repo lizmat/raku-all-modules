@@ -1,5 +1,9 @@
 Revision history for P5built-ins
 
+0.0.13  2018-05-01T16:02:49+02:00
+    - add support for endgrent, endpwent,
+      getgrent, getgrnam, getgrgid, getlogin, getpwent, getpwnam, getpwuid
+
 0.0.12  2018-04-29T23:33:04+02:00
     - add support for localtime(), gmtime()
 

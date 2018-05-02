@@ -12,6 +12,8 @@
     "P5each",
     "P5fc",
     "P5fileno",
+    "P5getgrnam",
+    "P5getpwnam",
     "P5hex",
     "P5index",
     "P5lc",
@@ -48,5 +50,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.12"
+  "version" : "0.0.13"
 }
