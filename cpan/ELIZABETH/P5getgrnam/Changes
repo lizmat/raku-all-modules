@@ -1,0 +1,7 @@
+Revision history for P5getgrnam
+
+0.0.2  2018-05-01T15:38:09+02:00
+    - Fix the way the gr_mem field is exposed
+
+0.0.1  2018-05-01T13:35:15+02:00
+    - Initial version
