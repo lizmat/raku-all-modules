@@ -1,0 +1,15 @@
+{
+    "_links": {
+        "_self": {
+            "href": "teams?name=bayern"
+        }
+    },
+    "searchQuery": "bayern",
+    "count": 1,
+    "teams": [{
+        "id": 5,
+        "name": "FC Bayern München",
+        "currentSoccerseason": 351,
+        "currentLeague": "BL1"
+    }]
+}

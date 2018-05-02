@@ -1,0 +1,33 @@
+{
+    "_links": [{
+        "self": "soccerseasons/351/fixtures"
+    }, {
+        "soccerseason": "soccerseasons/351"
+    }],
+    "count": 306,
+    "fixtures": [{
+        "_links": {
+            "self": {
+                "href": "fixtures/136111"
+            },
+            "soccerseason": {
+                "href": "soccerseasons/351"
+            },
+            "homeTeam": {
+                "href": "teams/5"
+            },
+            "awayTeam": {
+                "href": "teams/11"
+            }
+        },
+        "date": "2014-08-22T18:30:00Z",
+        "status": "FINISHED",
+        "matchday": 1,
+        "homeTeamName": "FC Bayern München",
+        "awayTeamName": "VfL Wolfsburg",
+        "result": {
+            "goalsHomeTeam": 2,
+            "goalsAwayTeam": 1
+        }
+    }]
+}

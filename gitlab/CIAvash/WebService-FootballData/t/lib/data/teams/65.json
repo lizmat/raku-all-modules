@@ -1,0 +1,18 @@
+{
+    "_links": {
+        "self": {
+            "href": "teams/65"
+        },
+        "fixtures": {
+            "href": "teams/65/fixtures"
+        },
+        "players": {
+            "href": "teams/65/players"
+        }
+    },
+    "name": "Manchester City FC",
+    "code": "MCFC",
+    "shortName": "ManCity",
+    "squadMarketValue": "418,250,000 €",
+    "crestUrl": "http://upload.wikimedia.org/wikipedia/de/f/fd/ManCity.svg"
+}
