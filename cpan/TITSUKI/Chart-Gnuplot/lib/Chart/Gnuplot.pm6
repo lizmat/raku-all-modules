@@ -1,5 +1,5 @@
 use v6;
-unit class Chart::Gnuplot:ver<0.0.3>;
+unit class Chart::Gnuplot:ver<0.0.4>;
 
 use Chart::Gnuplot::Arrow;
 use Chart::Gnuplot::Border;
@@ -329,6 +329,11 @@ method zlabel(Str :$label, :$offset, :$font-name, :$font-size, :$textcolor, Bool
 method x2label(Str :$label, :$offset, :$font-name, :$font-size, :$textcolor, Bool :$enhanced, Cool :$rotate, :&writer? = -> $msg { self.command: $msg }) {
 
     $!label.x2label(:$label, :$offset, :$font-name, :$font-size, :$textcolor, :$enhanced, :$rotate, :&writer);
+}
+
+method y2label(Str :$label, :$offset, :$font-name, :$font-size, :$textcolor, Bool :$enhanced, Cool :$rotate, :&writer? = -> $msg { self.command: $msg }) {
+
+    $!label.y2label(:$label, :$offset, :$font-name, :$font-size, :$textcolor, :$enhanced, :$rotate, :&writer);
 }
 
 method cblabel(Str :$label, :$offset, :$font-name, :$font-size, :$textcolor, Bool :$enhanced, Cool :$rotate, :&writer? = -> $msg { self.command: $msg }) {
