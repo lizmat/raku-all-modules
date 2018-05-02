@@ -5,6 +5,8 @@ use v6.c;
 use Test;
 plan 5;
 
+my $*SCHEDULER = ThreadPoolScheduler.new(max_threads => 1);
+
 use Manifesto;
 
 my $manifesto = Manifesto.new;
@@ -24,13 +26,13 @@ my $empty = False;
 
 my $p-wait = Promise.new;
 
-$manifesto.empty.tap({
+$manifesto.empty.act({
     $p-wait.keep: "empty";
     $empty = True;
 });
 
 my $exception = False;
-$manifesto.exception.tap({
+$manifesto.exception.act({
     $exception = True;
 });
 
