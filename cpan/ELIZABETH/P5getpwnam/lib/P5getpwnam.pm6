@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5getpwnam:ver<0.0.1>:auth<cpan:ELIZABETH>;
+unit module P5getpwnam:ver<0.0.2>:auth<cpan:ELIZABETH>;
 
 use NativeCall;
 
@@ -16,7 +16,10 @@ my class PwStruct is repr<CStruct> {
     has long   $.pw_expire;
     has int32  $.pw_fields;
 
-    method result(:$scalar, :$uid) {
+    multi method result(PwStruct:U: :$scalar) {         # call failed
+        $scalar ?? Nil !! ()
+    }
+    multi method result(PwStruct:D: :$scalar, :$uid) {  # call successful
         $scalar
           ?? $uid
             ?? $.pw_uid
@@ -41,12 +44,7 @@ my sub getpwuid(Int() $uid, :$scalar) is export {
 
 my sub getpwent(:$scalar) is export {
     sub _getpwent(--> PwStruct) is native is symbol<getpwent> {*}
-    with _getpwent() {
-        .result(:$scalar)
-    }
-    else {
-        $scalar ?? Nil !! ()
-    }
+    _getpwent.result(:$scalar)
 }
 
 my sub endpwent() is native is export {*}

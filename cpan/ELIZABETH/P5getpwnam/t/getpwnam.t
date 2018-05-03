@@ -2,7 +2,7 @@ use v6.c;
 use Test;
 use P5getpwnam;
 
-plan 11;
+plan 15;
 
 my int $userid = +$*USER;
 ok $userid > 0, 'did we get a user ID';
@@ -43,5 +43,11 @@ endpwent;
 --$seen while getpwent;
 is $seen, 0, 'did we get the same number of entries the 2nd time';
 endpwent;
+
+is-deeply getpwnam("thisnameshouldnotexist"), (), 'non-existing name';
+is getpwnam("thisnameshouldnotexist", :scalar), Nil, 'non-existing name scalar';
+
+is-deeply getpwuid(9999), (), 'non-existing uid';
+is getpwuid(9999, :scalar), Nil, 'non-existing name uid';
 
 # vim: ft=perl6 expandtab sw=4
