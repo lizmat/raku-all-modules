@@ -19,15 +19,21 @@ DESCRIPTION
 
 This module provides an easy way to import a growing number of built-in functions of Perl 5 in Perl 6. Currently supported at:
 
-    caller chdir chomp chop chr closedir each endgrent endpwent fc fileno
-    getgrent getgrnam getgrgid getlogin getpwent getpwnam getpwuid gmtime hex
-    index lc lcfirst length localtime oct opendir ord pack pop push quotemeta
-    readdir readlink ref rewinddir rindex seek seekdir shift sleep study substr
-    telldir tie tied times uc ucfirst unpack unshift untie
+    caller chdir chomp chop chr closedir each endgrent endnetent endpwent
+    endservent fc fileno getgrent getgrgid getgrnam getlogin getnetbyaddr
+    getnetbyname getnetent getpwent getpwnam getpwuid getservbyname
+    getservbyport getservent gmtime hex index lc lcfirst length localtime
+    oct opendir ord pack pop push quotemeta readdir readlink ref reverse 
+    rewinddir rindex seek seekdir setnetent setservent shift sleep study
+    substr telldir tie tied times uc ucfirst unpack unshift untie
 
 The following file test operators are also available:
 
     -r -w -x -e -f -d -s -z -l
+
+And the following terms:
+
+    SEEK_CUR SEEK_END SEEK_SET
 
 PORTING CAVEATS
 ===============

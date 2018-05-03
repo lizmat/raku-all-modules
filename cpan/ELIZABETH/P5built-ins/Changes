@@ -1,5 +1,13 @@
 Revision history for P5built-ins
 
+0.0.14  2018-05-03T00:03:08+02:00
+    - add support for endnetent, getnetbyaddr, getnetbyname, getnetent
+      setnetent
+    - add support for endservent, getservbyname, getservbyport, getservent
+      setservent
+    - add some missing exports to the documentation / tests:
+      now at 72 functions
+
 0.0.13  2018-05-01T16:02:49+02:00
     - add support for endgrent, endpwent,
       getgrent, getgrnam, getgrgid, getlogin, getpwent, getpwnam, getpwuid

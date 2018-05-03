@@ -13,7 +13,9 @@
     "P5fc",
     "P5fileno",
     "P5getgrnam",
+    "P5getnetbyname",
     "P5getpwnam",
+    "P5getservbyname",
     "P5hex",
     "P5index",
     "P5lc",
@@ -50,5 +52,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.13"
+  "version" : "0.0.14"
 }
