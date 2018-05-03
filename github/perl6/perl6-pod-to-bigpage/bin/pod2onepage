@@ -2,10 +2,11 @@
 use v6;
 
 use Pod::To::BigPage;
-use MONKEY-SEE-NO-EVAL;
+use MONKEY-SEE-NO-EVAL; # To be able to extract pods.
 
 my &verbose = sub (|c) {};
 
+#| Returns the index of the next part to process
 sub next-part-index () {
     state $lock = Lock.new;
     state $global-part-index = -1;
@@ -37,7 +38,6 @@ sub MAIN (Bool :v(:verbose($v)), Str :$source-path = ".", Str :$exclude,
     my @toc;
     set-foreign-toc(@toc);
     put compose-before-content( $title, $html??''!!'x' );
-    say "Chars ", $source-path.chars;
     if $threads > 1 {
         put await do start { .&parse-pod-file( next-part-index, just-the-name($_,$source-path), $precomp, $no-cache, $anchored ) } for sort find-pod-files($source-path, @exclude);
     }else{
@@ -47,6 +47,8 @@ sub MAIN (Bool :v(:verbose($v)), Str :$source-path = ".", Str :$exclude,
 }
 
 my $precomp-lock = Lock.new;
+
+#! Parses every pod file, using the precomp cache if available and enabled.
 sub parse-pod-file ($f, $part-number, $pod-name is copy, $precomp, $disable-cache, $anchored) {
     my $io = $f.IO;
 
@@ -88,6 +90,7 @@ sub parse-pod-file ($f, $part-number, $pod-name is copy, $precomp, $disable-cach
     return Q:c[<!-- {$pod-name} --><div class="pod-body"><a id="{$pod-name.subst('/', '_', :g)}"></a>{$html}</div>];
 }
 
+#! Returns the name of the file, taking into account the document source path
 sub just-the-name( $filename, $source-path ) {
     return $source-path eq "." ?? $filename !! $filename.substr($source-path.chars);
 }
