@@ -8,33 +8,59 @@ has $!query_params = Nil;
 
 # instance methods
 
+method FALLBACK(Str $name where /^accepts\-(\w+)$/) returns Bool {
+    my $type    = ($name ~~ /^accepts\-(\w+)$/)[0];
+    my @accepts = self.accepts;
+
+    return @accepts.first(-> $item { $item ~~ /$type/ }) ?? True !! False;
+}
+
 method body-parameters() returns Hash {
     if (!$!body_params.defined) {
         $!body_params = parse-params(callsame.all-pairs);
     }
 
-    return EVAL($!body_params.gist);
+    return $!body_params.perl.EVAL;
 }
 
 method body-params() { return self.body-parameters; }
 
 method query-parameters() returns Hash {
     if (!$!query_params.defined) {
-        $!query_params = parse-params(callsame.all-pairs);
+        my @pairs = callsame.all-pairs;
+        $!query_params = parse-params(@pairs);
     }
 
-    return EVAL($!query_params.gist);
+    return $!query_params.perl.EVAL;
 }
 
 method query-params() { return self.query-parameters; }
 
+method is-xhr() returns Bool {
+    my $header = self.header('x-requested-with');
+
+    return False if (!$header || $header.lc ne 'xmlhttprequest');
+    return True;
+}
+
+method accepts() returns Array {
+    my $accepts = self.headers.header('accept') || '';
+    my @matches = ($accepts ~~ m:g/(\w+\/\w+)\,?/);
+
+    return [] if !@matches;
+
+    @matches = @matches.map(-> $item { $item[0] });
+    return @matches;
+}
 
 # helper functions
 
 sub parse-params(@items) returns Hash {
     my %params = ();
     for @items -> $item {
-        my $key   = $item.key;
+        my $key = $item.key;
+        next if !$key.defined || !$key.chars;
+
         my $value = $item.value;
         if (%params{$key}:exists) {
             my $cur_value = %params{$key};

@@ -35,11 +35,6 @@ multi method use(Callable:D $middleware) returns ::?CLASS {
     return self;
 }
 
-multi method use(Callable:U $middleware, *%options) returns ::?CLASS {
-    @!middlewares.push($middleware.new(|%options));
-    return self;
-}
-
 method group(Str $pattern is copy) returns ::?CLASS {
     if ($pattern.substr(0, 1) ne "/") {
         $pattern = "/" ~ $pattern;

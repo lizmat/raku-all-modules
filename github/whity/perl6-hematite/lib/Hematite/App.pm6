@@ -20,6 +20,9 @@ has Log $.log;
 has Hematite::Handler $!handler;
 has Lock $!lock;
 
+subset Helper where .signature ~~ :($ctx, |args);
+has Helper %!helpers = ();
+
 method new(*%args) {
     return self.bless(|%args);
 }
@@ -32,15 +35,14 @@ submethod BUILD(*%args) {
     # get the 'main' log that could be defined anywhere
     $!log = Log.get;
 
-    # default handler
+    # error/exception default handler
     self.error-handler('unexpected', sub ($ctx, *%args) {
         my Exception $ex = %args{'exception'};
         my Int $status   = 500;
 
-        $ctx.response.set-code($status);
-        $ctx.response.field(Content-Type => 'text/plain');
-        $ctx.response.content =
-            sprintf("%s\n%s", get_http_status_msg($status), $ex.gist);
+        my $body = sprintf("%s\n%s", get_http_status_msg($status), $ex.gist);
+
+        $ctx.render($body, inline => True, status => $status, format => 'text');
 
         # log exception
         $ctx.log.error($ex.gist);
@@ -52,22 +54,22 @@ submethod BUILD(*%args) {
     self.error-handler('halt', sub ($ctx, *%args) {
         my Int $status = %args{"status"};
         my %headers    = %(%args{"headers"});
-        my Str $body   = %args{"body"} || get_http_status_msg($status);
+        my $body       = %args{"body"} || get_http_status_msg($status);
 
         my Hematite::Response $res = $ctx.response;
 
-        # set status code
-        $res.set-code($status);
+        my Bool $inline = $body.isa(Str) ?? True !! False;
+
+        # render
+        $ctx.render($body, inline => $inline, status => $status);
 
         # set headers
         $res.field(|%headers);
 
-        # set content
-        $res.content = $body;
+        return;
     });
 
     # default render handlers
-
     self.render-handler('template', Hematite::Templates.new(|(%args{'templates'} || {})));
     self.render-handler('json', sub ($data, *%args) { return to-json($data); });
 
@@ -114,6 +116,15 @@ multi method error-handler(Int $status, Callable $fn) {
 
 method get-route(Str $name) returns Hematite::Route {
     return %!routes_by_name{$name};
+}
+
+multi method helper(Str $name, Helper $fn) {
+    %!helpers{$name} = $fn;
+    return self;
+}
+
+multi method helper(Str $name) {
+    return %!helpers{$name};
 }
 
 method _handler() returns Callable {

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/whity/perl6-hematite.git
 	branch = master
-	commit = d66cce48b4450e39467e148d7eda4eae50472593
-	parent = 531a82f47556426642038693b981c6a46902f76f
+	commit = dcdc7238a50780fabaf6ce690e365c7a6e971183
+	parent = 3982d36ce25b2e45167929ecb01e6c18513d4487
 	cmdver = 0.4.0

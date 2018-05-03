@@ -63,13 +63,8 @@ submethod BUILD(*%args) {
 }
 
 method FALLBACK(Str $name, |args) {
-    self.log.debug("helper { $name }");
-    my $helper = self.stash{"__helper_{ $name }__"};
-    if (!$helper) {
-        return;
-    }
-
-    return $helper(self, |@(args));
+    my $helper = self.app.helper($name);
+    return self.$helper(|@(args));
 }
 
 method !get-captures(Str $type) {
@@ -124,19 +119,19 @@ multi method halt(*%args) {
     self.detach; # throw Hematite::Exception::DetachException
 }
 
+multi method halt($body) {
+    self.halt(body => $body);
+}
+
 multi method halt(Int $status) {
     self.halt(status => $status);
 }
 
-multi method halt(Str $body) {
-    self.halt(body => $body);
-}
-
-multi method halt(Int $status, Str $body) {
+multi method halt(Int $status, $body) {
     self.halt(status => $status, body => $body);
 }
 
-multi method halt(Int $status, %headers is copy, Str $body) {
+multi method halt(Int $status, %headers is copy, $body) {
     self.halt(status => $status, headers => $(%headers), body => $body);
 }
 
@@ -267,12 +262,16 @@ method render-to-string($data, *%options) returns Str {
 method render($data, *%options) returns ::?CLASS {
     my $result = self!render-to-string($data, %options);
 
-    my Str $type         = %options{'type'};
-    my Str $format       = lc(%options{'format'} // 'html');
+    my Str $type         = %options<type>;
+    my Str $format       = lc(%options<format> // 'html');
     my Str $content_type = $type eq 'template' ?? $format !! $type;
     $content_type = $MimeTypes.type($content_type);
 
+    # guess status
+    my Int $status = %options<status> || 200;
+
     # set content-type
+    self.response.set-code($status);
     self.response.field(Content-Type => $content_type);
     self.response.content = $result;
 
@@ -293,14 +292,13 @@ method redirect-and-detach(Str $url) {
     self.detach;
 }
 
-method handle-error(Str $type, *%args) returns ::?CLASS {
+method handle-error(Exception $ex) returns ::?CLASS {
     try {
+        my Str $type         = $ex.^name;
         my Callable $handler = self.app.error-handler($type);
-        if (!$handler) {
-            X::Hematite::ErrorHandlerNotFoundException.new( name => $type, ).throw;
-        }
+        $handler ||= self.app.error-handler('unexpected');
 
-        $handler(self, |%args);
+        $handler(self, exception => $ex,);
 
         CATCH {
             my Exception $ex = $_;
