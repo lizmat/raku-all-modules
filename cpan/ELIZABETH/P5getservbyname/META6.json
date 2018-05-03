@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's getservbyname() and associated built-ins",
+  "license" : "Artistic-2.0",
+  "name" : "P5getservbyname",
+  "perl" : "6.c",
+  "provides" : {
+    "P5getservbyname" : "lib/P5getservbyname.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5getservbyname.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
