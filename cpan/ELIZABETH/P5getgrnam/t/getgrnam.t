@@ -2,7 +2,7 @@ use v6.c;
 use Test;
 use P5getgrnam;
 
-plan 12;
+plan 16;
 
 my int $groupid = +$*GROUP;
 ok $groupid > 0, 'did we get a group ID';
@@ -36,5 +36,11 @@ endgrent;
 --$seen while getgrent;
 is $seen, 0, 'did we get the same number of entries the 2nd time';
 endgrent;
+
+is-deeply getgrnam("thisnameshouldnotexist"), (), 'non-existing name';
+is getgrnam("thisnameshouldnotexist", :scalar), Nil, 'non-existing name scalar';
+
+is-deeply getgrgid(9999), (), 'non-existing gid';
+is getgrgid(9999, :scalar), Nil, 'non-existing name gid';
 
 # vim: ft=perl6 expandtab sw=4

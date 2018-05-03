@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5getgrnam:ver<0.0.2>:auth<cpan:ELIZABETH>;
+unit module P5getgrnam:ver<0.0.3>:auth<cpan:ELIZABETH>;
 
 use NativeCall;
 
@@ -7,9 +7,12 @@ my class GrStruct is repr<CStruct> {
     has Str         $.gr_name;
     has Str         $.gr_passwd;
     has uint32      $.gr_gid;
-    has CArray[Str] $.gr_mem is rw;
+    has CArray[Str] $.gr_mem;
 
-    method result(:$scalar, :$gid) {
+    multi method result(GrStruct:U: :$scalar) {
+        $scalar ?? Nil !! ()
+    }
+    multi method result(GrStruct:D: :$scalar, :$gid) {
         if $scalar {
             $gid ?? $.gr_gid !! $.gr_name
         }
@@ -43,12 +46,7 @@ my sub getgrgid(Int() $gid, :$scalar) is export {
 
 my sub getgrent(:$scalar) is export {
     sub _getgrent(--> GrStruct) is native is symbol<getgrent> {*}
-    with _getgrent() {
-        .result(:$scalar)
-    }
-    else {
-        $scalar ?? Nil !! ()
-    }
+    _getgrent.result(:$scalar)
 }
 
 my sub endgrent() is native is export {*}

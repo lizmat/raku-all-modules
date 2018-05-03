@@ -1,5 +1,8 @@
 Revision history for P5getgrnam
 
+0.0.3  2018-05-02T12:26:39+02:00
+    - make sure getgrnam and getgrgid also handle failure gracefully
+
 0.0.2  2018-05-01T15:38:09+02:00
     - Fix the way the gr_mem field is exposed
 
