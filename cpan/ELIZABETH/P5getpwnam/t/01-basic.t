@@ -3,7 +3,7 @@ use Test;
 use P5getpwnam;
 
 my @supported = <
-  endpwent getlogin getpwuid getpwent getpwnam
+  endpwent getlogin getpwuid getpwent getpwnam setpwent
 >.map: '&' ~ *;
 
 plan @supported * 2;

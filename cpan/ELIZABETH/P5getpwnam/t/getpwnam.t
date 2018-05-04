@@ -2,10 +2,10 @@ use v6.c;
 use Test;
 use P5getpwnam;
 
-plan 15;
+plan 17;
 
 my int $userid = +$*USER;
-ok $userid > 0, 'did we get a user ID';
+ok $userid > 0, "we got user ID $userid";
 
 my $username = getlogin;
 if $username {
@@ -38,11 +38,11 @@ while getpwent() -> @result {
     ++$seen;
 }
 ok $seen_me, 'did we see ourselves';
-endpwent;
+is setpwent, 1, 'did we return the undocumented 1';
 
 --$seen while getpwent;
 is $seen, 0, 'did we get the same number of entries the 2nd time';
-endpwent;
+is endpwent, 1, 'did we return the undocumented 1';
 
 is-deeply getpwnam("thisnameshouldnotexist"), (), 'non-existing name';
 is getpwnam("thisnameshouldnotexist", :scalar), Nil, 'non-existing name scalar';

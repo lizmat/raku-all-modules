@@ -19,7 +19,7 @@ DESCRIPTION
 
 This module tries to mimic the behaviour of the `getpwnam` and associated functions of Perl 5 as closely as possible. It exports:
 
-    endpwent getlogin getpwent getpwnam getpwuid
+    endpwent getlogin getpwent getpwnam getpwuid setpwent
 
 AUTHOR
 ======
