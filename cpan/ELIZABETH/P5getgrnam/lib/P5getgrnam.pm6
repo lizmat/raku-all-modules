@@ -1,5 +1,5 @@
 use v6.c;
-unit module P5getgrnam:ver<0.0.3>:auth<cpan:ELIZABETH>;
+unit module P5getgrnam:ver<0.0.4>:auth<cpan:ELIZABETH>;
 
 use NativeCall;
 
@@ -49,7 +49,17 @@ my sub getgrent(:$scalar) is export {
     _getgrent.result(:$scalar)
 }
 
-my sub endgrent() is native is export {*}
+my sub setgrent(:$scalar) is export {
+    sub _setgrent() is native is symbol<setgrent> {*}
+    _setgrent;
+    1;  # this is apparently what Perl 5 does, although not documented
+}
+
+my sub endgrent(:$scalar) is export {
+    sub _endgrent() is native is symbol<endgrent> {*}
+    _endgrent;
+    1;  # this is apparently what Perl 5 does, although not documented
+}
 
 =begin pod
 
@@ -68,7 +78,7 @@ P5getgrnam - Implement Perl 5's getgrnam() and associated built-ins
 This module tries to mimic the behaviour of the C<getgrnam> and associated
 functions of Perl 5 as closely as possible.  It exports:
 
-    endgrent getgrent getgrgid getgrnam
+    endgrent getgrent getgrgid getgrnam setgrent
 
 =head1 AUTHOR
 

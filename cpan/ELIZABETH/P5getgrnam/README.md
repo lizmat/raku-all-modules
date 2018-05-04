@@ -17,7 +17,7 @@ DESCRIPTION
 
 This module tries to mimic the behaviour of the `getgrnam` and associated functions of Perl 5 as closely as possible. It exports:
 
-    endgrent getgrent getgrgid getgrnam
+    endgrent getgrent getgrgid getgrnam setgrent
 
 AUTHOR
 ======

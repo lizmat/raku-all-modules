@@ -3,7 +3,7 @@ use Test;
 use P5getgrnam;
 
 my @supported = <
-  endgrent getgrgid getgrent getgrnam
+  endgrent getgrgid getgrent getgrnam setgrent
 >.map: '&' ~ *;
 
 plan @supported * 2;

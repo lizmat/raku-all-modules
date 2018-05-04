@@ -2,7 +2,7 @@ use v6.c;
 use Test;
 use P5getgrnam;
 
-plan 16;
+plan 18;
 
 my int $groupid = +$*GROUP;
 ok $groupid > 0, 'did we get a group ID';
@@ -31,11 +31,11 @@ while getgrent() -> @result {
     ++$seen;
 }
 ok $seen_me, 'did we see ourselves';
-endgrent;
+is setgrent, 1, 'did we return the undocumented 1';
 
 --$seen while getgrent;
 is $seen, 0, 'did we get the same number of entries the 2nd time';
-endgrent;
+is endgrent, 1, 'did we return the undocumented 1';
 
 is-deeply getgrnam("thisnameshouldnotexist"), (), 'non-existing name';
 is getgrnam("thisnameshouldnotexist", :scalar), Nil, 'non-existing name scalar';

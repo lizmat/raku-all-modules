@@ -1,5 +1,9 @@
 Revision history for P5getgrnam
 
+0.0.4  2018-05-03T15:46:32+02:00
+    - add support for setgrent, which somehow got forgotten
+    - add tests for undocumented return value of endgrent / setgrent
+
 0.0.3  2018-05-02T12:26:39+02:00
     - make sure getgrnam and getgrgid also handle failure gracefully
 
