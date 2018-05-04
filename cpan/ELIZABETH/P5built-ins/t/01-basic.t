@@ -3,13 +3,15 @@ use Test;
 use P5built-ins;
 
 my @supported = <
-  caller chdir chomp chop chr closedir each endgrent endnetent endpwent
-  endservent fc fileno getgrent getgrgid getgrnam getlogin getnetbyaddr
-  getnetbyname getnetent getpwent getpwnam getpwuid getservbyname
-  getservbyport getservent gmtime hex index lc lcfirst length localtime
-  oct opendir ord pack pop push quotemeta readdir readlink ref reverse 
-  rewinddir rindex seek seekdir setnetent setservent shift sleep study
-  substr telldir tie tied times uc ucfirst unpack unshift untie
+  caller chdir chomp chop chr closedir each endgrent endnetent endprotoent
+  endpwent endservent fc fileno getgrent getgrgid getgrnam getlogin
+  getnetbyaddr getnetbyname getnetent getprotobyname getprotobynumber
+  getprotoent getpwent getpwnam getpwuid getservbyname getservbyport
+  getservent gmtime hex index lc lcfirst length localtime oct opendir
+  ord pack pop push quotemeta readdir readlink ref reverse rewinddir
+  rindex seek seekdir setgrent setnetent setprotoent setpwent setservent
+  shift sleep study substr telldir tie tied times uc ucfirst unpack
+  unshift untie
 
   prefix:<-r> prefix:<-w> prefix:<-x> prefix:<-e> prefix:<-d> prefix:<-f>
   prefix:<-s> prefix:<-z> prefix:<-l>
