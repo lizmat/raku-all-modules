@@ -12,7 +12,8 @@ use Hematite::Handler;
 unit class Hematite::App is Hematite::Router does Callable;
 
 has Callable %!render_handlers       = ();
-has Callable %!error_handlers        = ();
+has Callable %!exception_handlers    = ();
+has Callable %!halt_handlers{Int}    = ();
 has Hematite::Route %!routes_by_name = ();
 has %.config                         = ();
 has Log $.log;
@@ -28,21 +29,24 @@ method new(*%args) {
 }
 
 submethod BUILD(*%args) {
-    %!config = %args;
-
-    $!lock = Lock.new;
+    %!config         = %args;
+    $!lock           = Lock.new;
 
     # get the 'main' log that could be defined anywhere
     $!log = Log.get;
 
     # error/exception default handler
-    self.error-handler('unexpected', sub ($ctx, *%args) {
+    self.error-handler(sub ($ctx, *%args) {
         my Exception $ex = %args{'exception'};
-        my Int $status   = 500;
+        my $body         = sprintf("%s\n%s", get_http_status_msg(500), $ex.gist);
 
-        my $body = sprintf("%s\n%s", get_http_status_msg($status), $ex.gist);
-
-        $ctx.render($body, inline => True, status => $status, format => 'text');
+        $ctx.halt(
+            status  => 500,
+            body    => $body,
+            headers => {
+                'Content-Type' => 'text/plain',
+            },
+        );
 
         # log exception
         $ctx.log.error($ex.gist);
@@ -51,17 +55,26 @@ submethod BUILD(*%args) {
     });
 
     # halt default handler
-    self.error-handler('halt', sub ($ctx, *%args) {
-        my Int $status = %args{"status"};
-        my %headers    = %(%args{"headers"});
-        my $body       = %args{"body"} || get_http_status_msg($status);
+    self.error-handler(X::Hematite::HaltException, sub ($ctx, *%args) {
+        my Int $status = %args<status>;
+        my %headers    = %(%args<headers>);
+        my $body       = %args<body> || get_http_status_msg($status);
 
         my Hematite::Response $res = $ctx.response;
 
         my Bool $inline = $body.isa(Str) ?? True !! False;
 
+        my %render_options = (
+            inline => $inline,
+            status => $status,
+        );
+
+        if (!(%args<body>:exists)) {
+            %render_options<format> = 'text';
+        }
+
         # render
-        $ctx.render($body, inline => $inline, status => $status);
+        $ctx.render($body, |%render_options,);
 
         # set headers
         $res.field(|%headers);
@@ -89,29 +102,30 @@ multi method render-handler(Str $name, Callable $fn) {
     return self;
 }
 
-multi method error-handler(Str $name) returns Callable {
-    return %!error_handlers{$name};
+multi method error-handler(Exception:U $type) returns Callable {
+    return %!exception_handlers{$type.^name};
 }
 
-multi method error-handler(Str $name, Callable $fn) returns ::?CLASS {
-    %!error_handlers{$name} = $fn;
+multi method error-handler(Exception:U $type, Callable $fn) returns ::?CLASS {
+    %!exception_handlers{$type.^name} = $fn;
     return self;
 }
 
 multi method error-handler() {
-    return self.error-handler('unexpected');
-}
-
-multi method error-handler(Int $status) {
-    return self.error-handler(~($status));
+    return self.error-handler(Exception);
 }
 
 multi method error-handler(Callable $fn) {
-    return self.error-handler('unexpected', $fn);
+    return self.error-handler(Exception, $fn);
 }
 
-multi method error-handler(Int $status, Callable $fn) {
-    return self.error-handler(~($status), $fn);
+multi method error-handler(Int $status) returns Callable {
+    return %!halt_handlers{$status};
+}
+
+multi method error-handler(Int $status, Callable $fn) returns ::?CLASS {
+    %!halt_handlers{$status} = $fn;
+    return self;
 }
 
 method get-route(Str $name) returns Hematite::Route {

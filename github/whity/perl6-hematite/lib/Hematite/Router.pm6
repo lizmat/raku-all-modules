@@ -133,6 +133,10 @@ method !middleware-runner(Callable $mdw, Callable $next?) returns Block {
             CATCH {
                 my $ex = $_;
 
+                when X::Hematite::HaltException {
+                    $ctx.handle-error($ex);
+                }
+
                 when X::Hematite::DetachException {
                     # don't do nothing, stop current middleware process
                 }

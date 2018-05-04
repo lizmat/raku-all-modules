@@ -106,17 +106,7 @@ multi method named-captures(%captures) {
 }
 
 multi method halt(*%args) {
-    my Int $status = %args{'status'} ||= 500;
-
-    # check for status error handler
-    my Callable $handler = self.app.error-handler($status);
-    if (!$handler) {
-        $handler = self.app.error-handler('halt');
-    }
-
-    $handler(self, |%args);
-
-    self.detach; # throw Hematite::Exception::DetachException
+    X::Hematite::HaltException.new(status => 500, |%args).throw;
 }
 
 multi method halt($body) {
@@ -129,10 +119,6 @@ multi method halt(Int $status) {
 
 multi method halt(Int $status, $body) {
     self.halt(status => $status, body => $body);
-}
-
-multi method halt(Int $status, %headers is copy, $body) {
-    self.halt(status => $status, headers => $(%headers), body => $body);
 }
 
 method not-found() { self.halt(404); }
@@ -292,16 +278,35 @@ method redirect-and-detach(Str $url) {
     self.detach;
 }
 
-method handle-error(Exception $ex) returns ::?CLASS {
+multi method handle-error(X::Hematite::HaltException $ex) returns ::?CLASS {
+    my Callable $handler = self.app.error-handler($ex.status);
+    $handler ||= self.app.error-handler(X::Hematite::HaltException);
+
+    $handler(self, |$ex.attributes);
+
+    return self;
+}
+
+multi method handle-error(Exception $ex) returns ::?CLASS {
     try {
-        my Str $type         = $ex.^name;
-        my Callable $handler = self.app.error-handler($type);
-        $handler ||= self.app.error-handler('unexpected');
+        my Exception:U $type = $ex.WHAT;
+        my @types = $type.^parents;
+        @types.unshift($type);
+
+        my Callable $handler = Nil;
+        for @types -> $tp {
+            $handler = self.app.error-handler($tp);
+            last if $handler;
+        }
 
         $handler(self, exception => $ex,);
 
         CATCH {
             my Exception $ex = $_;
+
+            when X::Hematite::HaltException {
+                self.handle-error($ex);
+            }
 
             when X::Hematite::DetachException {
                 # don't do nothing, stop handle error process
