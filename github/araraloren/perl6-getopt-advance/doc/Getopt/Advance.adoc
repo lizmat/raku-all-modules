@@ -244,6 +244,29 @@ Once an `OptionSet` matching success, it will return `Getopt::Advance::ReturnVal
 This class contain matched `OptionSet`、all `NOA(Non-Option Argument)`, and `main`'s id and
 return value.
 
+== wrap-command
+
+Using `&wrap-command` wrap your command, provide new command line option or even new feature.
+It using `&getopt` parse the command line, then call `&tweak`(provide by user) modify the
+left command line argument(member `noa` of return value), 
+then pass all the command line argument to your command.Here is an example:
+
+.wrapfind
+[source, p6]
+-------------------------------
+use Getopt::Advance;
+
+constant CMD = "find";
+
+wrap-command(
+    OptionSet.new.push("e|extension=s"),  # add -e | --extension option to find command line
+    CMD, 
+    tweak => sub ($os, $ret) {
+        $ret.noa.append("-iname", "*." ~ $os<e>) if $os<e>;
+    }
+);
+-------------------------------
+
 = REFERENCE
 
 == `&getopt`
@@ -286,7 +309,7 @@ If an `OptionSet` match failed, consider follow serveral situation:
 
 * X::GA::ParseFailed
 +
-The `&parser` will call `&ga-try-next` throw an X::GA::ParseFailed exception
+The `&parser`(except `&ga-pre-parser`) will call `&ga-try-next` throw an X::GA::ParseFailed exception
 when `OptionSet` match failed. When `&getopt` caught this exception, it will
 try next `OptionSet` supplied. If no more `OptionSet`, it will print helper
 (when help generator `&helper` defined) of all `OptionSet`,  print error message,
@@ -358,6 +381,28 @@ When `$bsd-style` is True, `&parser` will accept bsd style option.
 * :$x-style
 +
 When `$x-style` is True, x-style option have priority over unix-style.
+
+== `&wrap-command`
+
+* sub wrap-command(OptionSet $os, $cmd, @args is copy = @*ARGS, :&tweak, *%args) is export
+
+** $cmd
++
+The command you want wraped.
+
+** @args
++
+The command line arguments, default is `@*ARGS`.
+
+** :&tweak
++
+Callback provide by user, signature should be `(OptionSet $os, Getopt::Advance::ReturnValue $ret)`.
+
+** *%args
++
+Left parameters will pass to `&getopt`.
+
+NOTE: &wrap-command using `run` run your command.
 
 == `OptionSet`
 
@@ -570,8 +615,9 @@ Return an deep copy of current `OptionSet`.
 == `Argument`
 
 This is the command line argument, include the index and value.
-The `&parser` use non-option argument create `Argument`, and pass it to `cmd`,
-`pos` or `main`.
+The `&ga-parser` use non-option argument create `Argument`, and pass it to `cmd`,
+`pos` or `main`,
+and `&ga-pre-parser` pass all the left command line arguments to the `main`.
 
 === Method
 
@@ -859,11 +905,11 @@ Return an deep copy of current group.
 
 == `Parser`
 
-The `&ga-parser` will first check the options,
+The `&ga-parser` and `&ga-pre-parser` will first check the options,
 it will set the value provide by user when all option matched.
 Then check the options inside group.
-And next check cmd and pos, call its callback when matched.
-In the end, it will call all mains and return all the return value.
+And next check `cmd` and `pos`, call its callback when matched.
+In the end, it will call all `main`s and return all the return value.
 
 * sub ga-parser( @args, $optset,
     :$strict,
@@ -876,9 +922,29 @@ In the end, it will call all mains and return all the return value.
     :$x-style where :so,
     :$bsd-style,
     :$autohv ) of Getopt::Advance::ReturnValue
+
+* sub ga-pre-parser(
+    @args,
+    $optset,
+    :$strict,
+    :$x-style where :!so,
+    :$bsd-style,
+    :$autohv
+) of Getopt::Advance::ReturnValue
+
+* sub ga-pre-parser(
+    @args,
+    $optset,
+    :$strict,
+    :$x-style where :so,
+    :$bsd-style,
+    :$autohv
+) of Getopt::Advance::ReturnValue
 +
-Return the return value of each main except autohv
+`ga-parser` will return the return value of each main except autohv
 passed and user set `help` or `version` option.
+
+NOTE: `ga-pre-parser` only process `main` feature.
 
 
 == `Types`

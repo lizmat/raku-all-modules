@@ -554,3 +554,21 @@ class OptionSet {
         );
     }
 }
+
+#| &wrap-command using `run` execute the $cmd
+#| call &tweak after &getopt called
+sub wrap-command(OptionSet $os, $cmd, @args is copy = @*ARGS, :&tweak, *%args) is export {
+
+    %args<parser> = &ga-pre-parser;
+
+    my $ret = &getopt(@args, $os, |%args);
+
+    &tweak($os, $ret) if &tweak.defined;
+
+    try {
+        return run($cmd, | $ret.noa);
+        CATCH {
+            default { note "$cmd {$ret.noa} failed!";  }
+        }
+    }
+}
