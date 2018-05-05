@@ -1,5 +1,8 @@
 Revision history for P5built-ins
 
+0.0.17  2018-05-04T15:30:23+02:00
+    - add support for __FILE__, __LINE__, __PACKAGE__, __SUB__
+
 0.0.16  2018-05-03T22:31:55+02:00
     - forgot to add the dependency on getprotobyname, Travis++
 

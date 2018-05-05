@@ -35,7 +35,7 @@ The following file test operators are also available:
 
 And the following terms:
 
-    SEEK_CUR SEEK_END SEEK_SET
+    __FILE__ __LINE__ __PACKAGE__ __SUB__ SEEK_CUR SEEK_END SEEK_SET
 
 PORTING CAVEATS
 ===============

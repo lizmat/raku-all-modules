@@ -5,6 +5,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [
+    "P5__FILE__",
     "P5caller",
     "P5chdir",
     "P5chomp",
@@ -53,5 +54,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.16"
+  "version" : "0.0.17"
 }

@@ -19,6 +19,13 @@ my @supported = <
   term:<SEEK_CUR> term:<SEEK_END> term:<SEEK_SET>
 >.map: '&' ~ *;
 
+@supported.push(    # somehow these need to be added literally
+  '&term:<__FILE__>',
+  '&term:<__LINE__>',
+  '&term:<__PACKAGE__>',
+  '&term:<__LINE__>'
+);
+
 plan +@supported;
 
 for @supported {

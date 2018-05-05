@@ -1,7 +1,8 @@
 use v6.c;
 
 my %export;
-module P5built-ins:ver<0.0.16>:auth<cpan:ELIZABETH> {
+module P5built-ins:ver<0.0.17>:auth<cpan:ELIZABETH> {
+    use P5__FILE__;
     use P5caller;
     use P5chdir;
     use P5chomp;
@@ -85,7 +86,7 @@ The following file test operators are also available:
 
 And the following terms:
 
-  SEEK_CUR SEEK_END SEEK_SET
+  __FILE__ __LINE__ __PACKAGE__ __SUB__ SEEK_CUR SEEK_END SEEK_SET
 
 =head1 PORTING CAVEATS
 
