@@ -55,7 +55,7 @@ METHODS
 
   * matrix math ops: add, subtract, add-row, add-column, multiply, multiply-row, multiply-column, dotProduct, tensorProduct
 
-  * operators: +, -, *, **, ⋅, dot, ÷, ⊗, x, | |, || ||
+  * operators: MM, +, -, *, **, ⋅, dot, ÷, ⊗, x, | |, || ||
 
 Constructors
 ------------
@@ -76,6 +76,9 @@ The default constructor, takes arrays of arrays of numbers os only required para
     Math::Matrix.new( [[1,2,3],] );  # one row 1*3 matrix, mind the trailing comma
     Math::Matrix.new( [$[1,2,3]] );  # does the same, if you don't like trailing comma
     Math::Matrix.new( [[1],[2]] );   # one column 2*1 matrix
+
+    use Math::Matrix :MM;
+    MM[[1,2],[3,4]]                  # shortcut
 
 ### new-zero
 
@@ -163,14 +166,14 @@ The first and simplest usage is by choosing a cell (by coordinates like .cell())
     2 3 4 5
     3 4 5 6
 
-    say $m.submatrix(1,2):
+    say $m.submatrix(1,2) :
 
     1 2 4
     3 4 6
 
 If you provide two pairs of coordinates (row1, column1, row2, column2), these will be counted as left upper and right lower corner of and area inside the original matrix, which will the resulting submatrix.
 
-    say $m.submatrix(1,1,1,3):
+    say $m.submatrix(1,1,1,3) :
 
     3 4 5
 
@@ -207,27 +210,23 @@ Conversion into Numeric context. Returns number (amount) of cells (as .elems). P
 
 All values separated by one whitespace, rows by horizontal line. It is called implicitly by put and print.
 
-    say Math::Matrix.new([[1,2],[3,4]]).Str :
-
-    1 2 | 3 4
+    say Math::Matrix.new([[1,2],[3,4]]).Str : 1 2 | 3 4
 
 ### Array
 
 All cells as an array of arrays (basically what was put into new(...)).
 
-    say Math::Matrix.new([[1,2],[3,4]]).Array :
-
-    [[1 2] [3 4]]
+    say Math::Matrix.new([[1,2],[3,4]]).Array : [[1 2] [3 4]]
 
 ### list
 
-Same as $matrix.list-rows.flat.list: (1 2 3 4)
+Same as $matrix.list-rows.flat.list : (1 2 3 4)
 
 ### list-rows
 
 Returns a list of lists, reflecting the row-wise content of the matrix.
 
-    say Math::Matrix.new( [[1,2],[3,4]] ).list-rows     : ((1 2) (3 4))
+    say Math::Matrix.new( [[1,2],[3,4]] ).list-rows      : ((1 2) (3 4))
     say Math::Matrix.new( [[1,2],[3,4]] ).list-rows.flat : (1 2 3 4)
 
 ### list-columns
@@ -779,6 +778,8 @@ Operators
 
 The Module overloads or uses a range of well and less known ops. +, -, * and ~~ are commutative.
 
+The only exception is MM, a shortcut to create a matrix. That has to be importet explicitly with the tag :MM or :ALL.
+
     my $a   = +$matrix               # Num context, amount (count) of cells
     my $b   = ?$matrix               # Bool context, True if any cell has a none zero value
     my $str = ~$matrix               # String context, matrix content as data structure
@@ -808,6 +809,8 @@ The Module overloads or uses a range of well and less known ops. +, -, * and ~~ 
 
      | $matrix |                     # determinant
     || $matrix ||                    # Euclidean (L2) norm
+
+    MM [[1]]                         # a new matrix
 
 Author
 ======
