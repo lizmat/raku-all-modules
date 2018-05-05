@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's __FILE__ and associated functionality",
+  "license" : "Artistic-2.0",
+  "name" : "P5__FILE__",
+  "perl" : "6.c",
+  "provides" : {
+    "P5__FILE__" : "lib/P5__FILE__.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5__FILE__.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
