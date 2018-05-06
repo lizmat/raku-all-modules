@@ -351,7 +351,7 @@ multi write-type-source($doc) {
                 <p class="fallback">
                   Stand-alone image:
                   <a rel="alternate"
-                    href="/images/type-graph-\qq[uri_escape($podname)].svg"
+                    href="/images/type-graph-\qq[&uri_escape($podname)].svg"
                     type="image/svg+xml">vector</a>
                 </p>
               </figure>
@@ -368,7 +368,7 @@ multi write-type-source($doc) {
                 pod-block(
                     "$podname does role ",
                     pod-link($role.name, "/type/{href_escape ~$role}"),
-                    ", which provides the following methods:",
+                    ", which provides the following routines:",
                 ),
                 %routines-by-type{$role}.list,
             ;
@@ -383,20 +383,20 @@ multi write-type-source($doc) {
                 pod-block(
                     "$podname inherits from class ",
                     pod-link($class.name, "/type/{href_escape ~$class}"),
-                    ", which provides the following methods:",
+                    ", which provides the following routines:",
                 ),
                 %routines-by-type{$class}.list,
             ;
             for $class.roles -> $role {
                 next unless %routines-by-type{$role};
                 $pod.contents.append:
-                    pod-heading("Methods supplied by role $role"),
+                    pod-heading("Routines supplied by role $role"),
                     pod-block(
                         "$podname inherits from class ",
                         pod-link($class.name, "/type/{href_escape ~$class}"),
                         ", which does role ",
                         pod-link($role.name, "/type/{href_escape ~$role}"),
-                        ", which provides the following methods:",
+                        ", which provides the following routines:",
                     ),
                     %routines-by-type{$role}.list,
                 ;
@@ -593,7 +593,7 @@ sub find-definitions(:$pod, :$origin, :$min-level = -1, :$url) {
                             :$summary,
                     ;
                 }
-                when 'variable'|'sigil'|'twigil'|'declarator'|'quote' {
+                when 'variable'|'twigil'|'declarator'|'quote' {
                     # TODO: More types of syntactic features
                     %attr = :kind<syntax>,
                             :categories($subkinds),

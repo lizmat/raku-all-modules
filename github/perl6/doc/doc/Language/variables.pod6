@@ -11,7 +11,7 @@ L<containers|/language/containers>. Variable declarations or assignment of
 values may create a container on the fly.
 
 =head1 Sigils
-X<|$ (sigil)>X<|@ (sigil)>X<!% (sigil)>X<|& (sigil)>
+X<|sigil,$>X<|sigil,@>X<|sigil,%>X<|sigil,&>
 
 There are four sigils. The scalar-sigil C<$>, the positional-sigil C<@>, the
 associative-sigil C<%> and the callable-sigil C<&>.
@@ -1078,6 +1078,8 @@ The most common compile time variables are the following:
     ::?CLASS       Which class am I in?
     %?LANG         What is the current set of interwoven languages?
     %?RESOURCES    The files associated with the "Distribution" of the current compilation unit.
+
+C<$?FILE> and C<$?LINE> are also available from L<CallFrame|/type/CallFrame> as the L<C<file>|/type/CallFrame#method_file> and L<C<line>|/type/CallFrame#method_line> methods, respectively.
 
 =head3 Other compile-time variables:
 
