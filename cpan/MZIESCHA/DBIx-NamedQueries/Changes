@@ -1,4 +1,7 @@
 Revision history for DBIx-NamedQueries
 
+0.0.2  2018-05-05T08:50:20Z
+    - add simple type check if query is a type from DBIx::NamedQueries::Query
+
 0.0.1  2018-04-13T18:18:37Z
     - Initial version

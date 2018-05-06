@@ -3,7 +3,7 @@ use v6.c;
 use DBIish;
 use DBIx::NamedQueries::Handles;
 
-class DBIx::NamedQueries::Handle::DBIish:ver<0.0.1> does DBIx::NamedQueries::Handle {
+class DBIx::NamedQueries::Handle::DBIish:ver<0.0.2> does DBIx::NamedQueries::Handle {
 
     multi method connect( Str:D $driver, Str:D $database ) {
         return DBIish.connect( $driver, :database( $database ) );

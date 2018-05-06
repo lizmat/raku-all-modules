@@ -1,41 +1,51 @@
 use v6.c;
 
+use Test;
 use DBIx::NamedQueries::Handles;
 
-role DBIx::NamedQueries::Read {
+role DBIx::NamedQueries::Query { }
+
+role DBIx::NamedQueries::Read is DBIx::NamedQueries::Query {
     method find(   %params ) { ... }
     method list(   %params ) { ... }
     method select( %params ) { ... }
 }
 
-role DBIx::NamedQueries::Write{
+role DBIx::NamedQueries::Write is DBIx::NamedQueries::Query {
     method alter(  %params ) { ... }
     method create( %params ) { ... }
     method insert( %params ) { ... }
     method update( %params ) { ... }
 }
 
-class DBIx::NamedQueries:ver<0.0.1>:auth<cpan:MZIESCHA> { 
+class DBIx::NamedQueries:ver<0.0.2>:auth<cpan:MZIESCHA> { 
 
     has Str   $.divider = '/';
     has Str   $.namespace;
     has Hash  $.handle;
     has DBIx::NamedQueries::Handles $!handles = DBIx::NamedQueries::Handles.new();
 
-    method !object_from_string(Str:D $s_package){
+    method object_from_string(Str:D $s_package){
         require ::($s_package);
         return ::($s_package).new;
+    }
+
+    method !query_from_object( DBIx::NamedQueries::Query:D $obj_query, Str:D $s_sub, Hash:D $hr_params){
+        return $obj_query."$s_sub"($hr_params);
     }
 
     method !query_from_string(Str:D $context, Hash:D $hr_params){
         my @splitted_context = split $!divider, $context;
         my $s_sub = pop @splitted_context;
-        my $obj_query = self!object_from_string(
-            $.namespace ~ '::' ~ join '::', map { $_.tc }, @splitted_context
+        return self!query_from_object(
+            self.object_from_string(
+                $.namespace ~ '::' ~ join '::', map { $_.tc }, @splitted_context
+            ),
+            $s_sub,
+            $hr_params
         );
-        return $obj_query."$s_sub"($hr_params);
     }
-    
+
     method !param_filler( Hash:D $given_params, Array:D $fields) {
         return [] if !$given_params.elems;
         return map { %($given_params){$_<name>} }, @($fields) ;

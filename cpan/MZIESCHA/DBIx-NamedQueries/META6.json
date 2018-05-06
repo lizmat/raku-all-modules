@@ -23,10 +23,13 @@
     "bugtracker" : "https://github.com/mziescha/perl6-DBIx-NamedQueries/issues",
     "source" : "git://github.com/mziescha/perl6-DBIx-NamedQueries.git"
   },
-  "tags" : [ ],
+  "tags" : [
+    "DBI",
+    "Database"
+  ],
   "test-depends" : [
     "Test::META",
     "Path::Iterator"
   ],
-  "version" : "0.0.1"
+  "version" : "0.0.2"
 }

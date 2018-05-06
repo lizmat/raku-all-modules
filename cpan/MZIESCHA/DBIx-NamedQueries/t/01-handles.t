@@ -27,7 +27,7 @@ subtest 'DBIish handle tests', {
 
 
 subtest 'Tests of handles class', {
-    plan 4;
+    plan 6;
     
     my $handles = DBIx::NamedQueries::Handles.new;
 
@@ -40,6 +40,18 @@ subtest 'Tests of handles class', {
     isa-ok(
         $handles.read_write(), 'DBDish::SQLite::Connection',
         'Instance isa DBDish::SQLite::Connection'
+    );
+
+    isa-ok(
+        $handles.handle('DBIish', True).read_only, 
+        True,
+        'Handle is read only'
+    );
+
+    isa-ok(
+        $handles.handle('DBIish', True).read_only, 
+        False,
+        'Handle is not read only'
     );
 
     $handles.add_read_only('DBIish', 'SQLite', 'test.sqlite3' );

@@ -6,26 +6,35 @@ use v6.c;
 
 
 role DBIx::NamedQueries::Handle {
-    has Str $!driver;
-    has Str $!database;
+    
+    has Str  $!driver;
+    has Str  $!database;
+    has Bool $.read_only;
 
     multi method connect( Str:D $driver, Str:D $database ) {...}
 }
 
-class DBIx::NamedQueries::Handles:ver<0.0.1> {
+class DBIx::NamedQueries::Handles:ver<0.0.2> {
     has Array $!read_only = [];
     has Array $!read_write = [];
-
-    method add_read_only(Str:D $type, Str:D $driver, Str:D $database) {
+    
+    sub _require_package {
+        my ($type) = @_;
         my $package = 'DBIx::NamedQueries::Handle::' ~ $type;
         require ::($package);
-        $!read_only.push( ::($package).new().connect( $driver, $database ));
+        return $package;
+    }
+    
+    method handle(Str:D $type, Bool:D $read_only) {
+        return ::(_require_package($type)).new( read_only => $read_only );
     }
 
+    method add_read_only(Str:D $type, Str:D $driver, Str:D $database) {
+        $!read_only.push( self.handle($type, True ).connect( $driver, $database ));
+    }
+    
     method add_read_write(Str:D $type, Str:D $driver, Str:D $database) {
-        my $package = 'DBIx::NamedQueries::Handle::' ~ $type;
-        require ::($package);
-        $!read_write.push( ::($package).new().connect( $driver, $database ));
+        $!read_write.push( self.handle( $type, False ).connect( $driver, $database ));
     }
 
     method maybe_read_only()  {
