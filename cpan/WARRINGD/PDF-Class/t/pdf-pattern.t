@@ -9,9 +9,6 @@ use PDF::Grammar::Test :is-json-equiv;
 use PDF::Grammar::PDF;
 use PDF::Grammar::PDF::Actions;
 
-# ensure consistant document ID generation
-srand(123456);
-
 my $actions = PDF::Grammar::PDF::Actions.new;
 
 # example taken from PDF 1.7 Specification
@@ -116,5 +113,8 @@ $page.gfx.ops: [
     :b[],               # Close, fill, and stroke path
     :Q[],               # Graphics restore
     ];
+
+# ensure consistant document ID generation
+srand(123456);
 
 $pdf.save-as('t/pdf-pattern.pdf', :!info);

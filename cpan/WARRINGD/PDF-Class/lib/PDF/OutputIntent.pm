@@ -11,8 +11,7 @@ role PDF::OutputIntent
 
     use PDF::COS::Tie;
     use PDF::COS::Name;
-    my subset Name-OutputIntent of PDF::COS::Name where 'OutputIntent';
-    has Name-OutputIntent $.Type is entry;
+    has PDF::COS::Name $.Type is entry where 'OutputIntent';
     has PDF::COS::Name $.S is entry(:required); #| (Required) The output intent subtype; must be GTS_PDFX for a PDF/X output intent.
     # see also PDF::OutputIntent::GTS_PDFX
 

@@ -10,8 +10,7 @@ role PDF::Outlines
 
     use PDF::COS::Tie;
     use PDF::COS::Name;
-    my subset Name-Outlines of PDF::COS::Name where 'Outlines';
-    has Name-Outlines $.Type is entry;            #| (Optional) The type of PDF object that this dictionary describes; if present, shall be Outlines for an outline dictionary.
+    has PDF::COS::Name $.Type is entry where 'Outlines';  #| (Optional) The type of PDF object that this dictionary describes; if present, shall be Outlines for an outline dictionary.
     use PDF::Outline;
 
     # see TABLE 8.3 Entries in the outline dictionary

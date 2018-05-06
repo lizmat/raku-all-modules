@@ -70,6 +70,7 @@
     "PDF::Group" : "lib/PDF/Group.pm",
     "PDF::Group::Transparency" : "lib/PDF/Group/Transparency.pm",
     "PDF::Info" : "lib/PDF/Info.pm",
+    "PDF::MCR" : "lib/PDF/MCR.pm",
     "PDF::Mask" : "lib/PDF/Mask.pm",
     "PDF::Mask::Alpha" : "lib/PDF/Mask/Alpha.pm",
     "PDF::Mask::Luminosity" : "lib/PDF/Mask/Luminosity.pm",
@@ -77,6 +78,8 @@
     "PDF::NameTree" : "lib/PDF/NameTree.pm",
     "PDF::NumberTree" : "lib/PDF/NumberTree.pm",
     "PDF::OBJR" : "lib/PDF/OBJR.pm",
+    "PDF::OCG" : "lib/PDF/OCG.pm",
+    "PDF::OCMD" : "lib/PDF/OCMD.pm",
     "PDF::Outline" : "lib/PDF/Outline.pm",
     "PDF::Outlines" : "lib/PDF/Outlines.pm",
     "PDF::OutputIntent" : "lib/PDF/OutputIntent.pm",
@@ -100,11 +103,7 @@
     "PDF::XObject" : "lib/PDF/XObject.pm",
     "PDF::XObject::Form" : "lib/PDF/XObject/Form.pm",
     "PDF::XObject::Image" : "lib/PDF/XObject/Image.pm",
-    "PDF::XObject::PS" : "lib/PDF/XObject/PS.pm",
-    "t::Doc::Catalog" : "lib/t/Doc/Catalog.pm",
-    "t::Doc::Page" : "lib/t/Doc/Page.pm",
-    "t::Doc::Pages" : "lib/t/Doc/Pages.pm",
-    "t::Doc::ViewerPreferences" : "lib/t/Doc/ViewerPreferences.pm"
+    "PDF::XObject::PS" : "lib/PDF/XObject/PS.pm"
   },
   "resources" : [ ],
   "source-url" : "git://github.com/p6-pdf/PDF-Class-p6.git",
@@ -112,5 +111,5 @@
     "pdf"
   ],
   "test-depends" : [ ],
-  "version" : "0.1.7"
+  "version" : "0.1.8"
 }

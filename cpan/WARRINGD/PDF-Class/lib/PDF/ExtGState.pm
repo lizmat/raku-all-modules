@@ -12,8 +12,7 @@ role PDF::ExtGState
     use PDF::COS::Name;
 
     # see [PDF .1.7 TABLE 4.8 Entries in a graphics state parameter dictionary]
-    my subset Name-ExtGState of PDF::COS::Name where 'ExtGState';
-    has Name-ExtGState $.Type is entry;
+    has PDF::COS::Name $.Type is entry where 'ExtGState';
     has Numeric $.LW is entry(:alias<line-width>);               #| (Optional; PDF 1.3) The line width
     has UInt $.LC is entry(:alias<line-cap>);                    #| (Optional; PDF 1.3) The line cap style
     has UInt $.LJ is entry(:alias<line-join>);                   #| (Optional; PDF 1.3) The line join style
@@ -35,7 +34,7 @@ role PDF::ExtGState
     has $.TR is entry(:alias<transfer-function-old>);            #| (Optional) The transfer function, which maps the interval [ 0.0 1.0 ] to the interval [ 0.0 1.0 ]
     has $.TR2 is entry(:alias<transfer-function>);               #| (Optional; PDF 1.3) Same as TR except that the value may also be the name Default, denoting the transfer function that was in effect at the start of the page.
 
-    has Hash $.HT is entry(:alias<halftone>);                    #| (Optional) The halftone dictionary or stream (see Section 6.4, “Halftones”) or the name
+    has $.HT is entry(:alias<halftone>) where Hash|'Default';    #| (Optional) The halftone dictionary or stream (see Section 6.4, “Halftones”) or the name 'Default'
     has Numeric $.FL is entry(:alias<flatness-tolerance>);       #| (Optional; PDF 1.3) The flatness tolerance
     has Numeric $.SM is entry(:alias<smoothness-tolerance>);             #| (Optional; PDF 1.3) The smoothness tolerance
     has Bool $.SA is entry(:alias<stroke-adjustment>);           #| (Optional) A flag specifying whether to apply automatic stroke adjustment

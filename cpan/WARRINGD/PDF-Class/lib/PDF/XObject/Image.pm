@@ -82,7 +82,7 @@ class PDF::XObject::Image
                         ?? PNG-CS::RGB !! PNG-CS::Gray;
                     my \colors =  $hdr.color-type == RGB
                         ?? 3 !! 1;
-                    if $bit-depth == 8|16  {
+                    if $bit-depth ~~ 8|16  {
                         # SMask contains alpha channel - merge it
                         with self.SMask {
                             my Blob $alpha-channel = .decoded;

@@ -12,5 +12,5 @@ class t::Doc::Catalog
     has Hash $.Pages is entry(:required, :indirect); #| (Required; must be an indirect reference) The page tree node
     has Hash $.Resources is entry;
     use t::Doc::ViewerPreferences;
-    has t::Doc::ViewerPreferences $.ViewerPreferences is entry; 
+    has t::Doc::ViewerPreferences $.ViewerPreferences is entry;
 }

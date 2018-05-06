@@ -9,8 +9,7 @@ role PDF::Mask
     use PDF::COS::Name;
     use PDF::COS::Stream;
     #| /Type entry is optional, but should be /Mask when present
-    my subset Name-Mask of PDF::COS::Name where 'Mask';
-    has Name-Mask $.Type is entry;
+    has PDF::COS::Name $.Type is entry where 'Mask';
     method type {'Mask'}
 
     my subset MaskSubtype of PDF::COS::Name where 'Alpha'|'Luminosity';

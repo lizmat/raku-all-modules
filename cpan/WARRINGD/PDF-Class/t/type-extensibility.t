@@ -25,6 +25,7 @@ class MyLoader is PDF::Class::Loader {
 
 PDF::COS.loader = MyLoader;
 
+use lib '.';
 use t::Doc::Catalog;
 
 my $Catalog = t::Doc::Catalog.new( :dict{ :Type( :name<Catalog> ),

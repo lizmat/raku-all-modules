@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 43;
+plan 45;
 
 use PDF::Class;
 use PDF::IO::IndObj;
@@ -23,7 +23,12 @@ my $input = q:to"--END-OBJ--";
   /PageLayout /OneColumn
   /Pages 212 0 R
   /PieceInfo << /MarkedPDF << /LastModified (D:20081012130709) >> >>
-  /StructTreeRoot 25 0 R
+  /StructTreeRoot <<
+    /Type /StructTreeRoot
+    /K 12 0 R
+    /ParentTree 13 0 R
+    /ParentTreeNextKey 4
+  >>
   /AcroForm << /Fields [] >>
   /ViewerPreferences << /HideToolbar true /Direction /R2L >>
   /PageLabels << /Nums [
@@ -32,6 +37,28 @@ my $input = q:to"--END-OBJ--";
     7 << /S /D /P (A-) /St 8 >>
     ]
   >>
+    /OCProperties <<
+    /D <<
+      /AS [ <<
+          /Category [ /View ]
+          /Event /View
+          /OCGs [ 40 0 R ]
+        >> <<
+          /Category [ /Print ]
+          /Event /Print
+          /OCGs [ 40 0 R ]
+        >> <<
+          /Category [ /Export ]
+          /Event /Export
+          /OCGs [ 40 0 R ]
+        >> ]
+      /ON [ 40 0 R ]
+      /Order [  ]
+      /RBGroups [  ]
+    >>
+    /OCGs [ 40 0 R ]
+  >>
+
 >> endobj
 --END-OBJ--
 
@@ -59,12 +86,19 @@ is-json-equiv $catalog.PageLabels.Nums, [0, { :S<r> }, 4, { :S<D> }, 7, { :S<D>,
 is-json-equiv $catalog.PageLayout, 'OneColumn', '$catalog.PageLayout';
 is-json-equiv $catalog.Pages, (:ind-ref[212, 0]), '$catalog.Pages';
 is-json-equiv $catalog.PieceInfo, { :MarkedPDF{ :LastModified<D:20081012130709> } }, '$catalog.PieceInfo';
-is-json-equiv $catalog.StructTreeRoot, (:ind-ref[25, 0]), '$catalog.StructTreeRoot';
 is-json-equiv $ind-obj.ast, %ast, 'ast regeneration';
 
 my $acroform = $catalog.AcroForm;
 does-ok $acroform, ::('PDF::AcroForm'), '$.AcroForm role';
 is-json-equiv $acroform.Fields, [], '$.AcroForm.Fields';
+
+my $struct-tree-root = $catalog.StructTreeRoot;
+isa-ok $struct-tree-root, ::('PDF::StructTreeRoot'), '$.StructTreeRootClass';
+is $struct-tree-root.ParentTreeNextKey, 4, 'structTreeRoot.ParentTreeNextKey';
+lives-ok {$struct-tree-root.check}, 'StructTreeRoot.check'; 
+
+my $oc_properties = $catalog.OCProperties;
+
 
 my $viewer-preferences = $catalog.ViewerPreferences;
 does-ok $viewer-preferences, ::('PDF::ViewerPreferences'), '$.ViewerPreferences role';

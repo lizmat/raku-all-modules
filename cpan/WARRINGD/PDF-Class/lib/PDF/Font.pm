@@ -14,8 +14,7 @@ class PDF::Font
     use PDF::COS::Tie;
     use PDF::COS::Name;
 
-    my subset Name-Font of PDF::COS::Name where 'Font';
-    has Name-Font $.Type is entry(:required);
+    has PDF::COS::Name $.Type is entry(:required) where 'Font';
     has PDF::COS::Name $.Subtype is entry(:required);
 
 }

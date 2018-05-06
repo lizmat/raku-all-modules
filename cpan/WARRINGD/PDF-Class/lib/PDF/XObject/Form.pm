@@ -16,8 +16,7 @@ class PDF::XObject::Form
     use PDF::COS::Tie;
     use PDF::COS::DateString;
     #|See [PDF Spec 1.7 Section 4.9.1 TABLE 4.45 Additional entries specific to a type 1 form dictionary]
-    subset FormTypeInt of Int where 1;
-    has FormTypeInt $.FormType is entry;    #| (Optional) A code identifying the type of form XObject that this dictionary describes. The only valid value is 1.
+    has Int $.FormType is entry where 1;    #| (Optional) A code identifying the type of form XObject that this dictionary describes. The only valid value is 1.
     has Numeric @.BBox is entry(:required,:len(4)); #| (Required) An array of four numbers in the form coordinate system (see above), giving the coordinates of the left, bottom, right, and top edges, respectively, of the form XObject’s bounding box.
     has Numeric @.Matrix is entry(:len(6));          #| (Optional) An array of six numbers specifying the form matrix, which maps form space into user space
     use PDF::Resources;

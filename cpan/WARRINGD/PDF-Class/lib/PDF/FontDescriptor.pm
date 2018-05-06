@@ -14,8 +14,7 @@ class PDF::FontDescriptor
     use PDF::COS::Stream;
 
     # see [PDF 1.7 TABLE 5.19 Entries common to all font descriptors]
-    my subset Name-FontDescriptor of PDF::COS::Name where 'FontDescriptor';
-    has Name-FontDescriptor $.Type is entry(:required);
+    has PDF::COS::Name $.Type is entry(:required) where 'FontDescriptor';
     has PDF::COS::Name $.FontName is entry(:required); #| (Required) The PostScript name of the font.
     has Str $.FontFamily is entry;                     #| (Optional; PDF 1.5; strongly recommended for Type 3 fonts in Tagged PDF documents) A byte string specifying the preferred font family name
     subset FontStretchName of PDF::COS::Name where 'ExtraCondensed'|'Condensed'|'SemiCondensed'|'Normal'|'SemiExpanded'|'Expanded'|'ExtraExpanded'|'UltraExpanded';

@@ -22,8 +22,7 @@ my sub callback($op, *@args) {
    }
 }
 
-my $gfx = $page.new-gfx: :callback[ &callback ];
-$page.render($gfx);
+my $gfx = $page.render: :&callback;
 
 ok +%seen > 10, 'Operator spread';
 ok +%seen<Q> > 3, '"Q" (save) operator spread';

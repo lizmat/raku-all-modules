@@ -2,6 +2,7 @@
 use v6;
 
 use PDF::Class;
+use PDF::Content;
 use PDF::Content::Graphics;
 use PDF::Annot;
 use PDF::Writer;
@@ -13,22 +14,37 @@ my Bool $*strict = False;
 my PDF::Writer $*writer .= new;
 my Str @*exclude;
 my %seen{Any};
+my Int $warnings = 0;
+my Int $errors = 0;
+
+sub error($msg) {
+    $*ERR.say: $msg;
+    $errors++;
+}
 
 #| check a PDF against PDF class definitions
 sub MAIN(Str $infile,               #= input PDF
          Str  :$password = '',      #= password for the input PDF, if encrypted
          Bool :$*trace,             #= show progress
-         Bool :$*contents,          #= validate/check contents of pages, etc
+         Bool :$*render,            #= validate/check contents of pages, etc
          Bool :$*strict,            #= perform additional checks
-         UInt :$*max-depth = 100,   #= maximum recursion depth
+         UInt :$*max-depth = 200,   #= maximum recursion depth
 	 Str  :$exclude,            #= excluded entries: Entry1,Entry2,
          Bool :$repair = False      #= repair PDF before checking
          ) {
 
+    CONTROL {
+        when CX::Warn {
+            note "warning: $_";
+            $warnings++;
+            .resume
+        }
+    }
     my $doc = PDF::Class.open( $infile, :$password, :$repair );
     @*exclude = $exclude.split(/:s ',' /)
     	      if $exclude;
     check( $doc, :ent<xref> );
+    say "checking of $infile completed with $warnings warnings and $errors errors";
 }
 
 |# Recursively check a dictionary (array) object
@@ -45,7 +61,7 @@ multi sub check(Hash $obj, UInt :$depth is copy = 0, Str :$ent = '') {
     my Str @unknown-entries;
 
     check-contents($obj, :$ref)
-	if $*contents && $obj.does(PDF::Content::Graphics);
+	if $*render && $obj.does(PDF::Content::Graphics);
 
      my %missing = $entries.pairs.grep(*.value.tied.is-required);
 
@@ -64,7 +80,7 @@ multi sub check(Hash $obj, UInt :$depth is copy = 0, Str :$ent = '') {
 
 	    CATCH {
 		default {
-		    $*ERR.say: "error in $ref /$k entry: $_";
+		    error("error in $ref /$k entry: $_");
 		}
 	    }
 	}
@@ -75,10 +91,10 @@ multi sub check(Hash $obj, UInt :$depth is copy = 0, Str :$ent = '') {
 	    if $*strict && +$entries && !($entries{$k}:exists);
     }
 
-    $*ERR.say: "error in $ref {$obj.WHAT.^name}, missing required field(s): {%missing.keys.sort.join(', ')}"
+    error("error in $ref {$obj.WHAT.^name}, missing required field(s): {%missing.keys.sort.join(', ')}")
         if %missing;
 
-    $*ERR.say: "unknown entries in $ref{$obj.WHAT} struct: @unknown-entries[]"
+    error("unknown entries in $ref{$obj.WHAT} struct: @unknown-entries[]")
         if @unknown-entries && $obj.WHAT.gist ~~ /'PDF::' .*? '::Type'/;
 }
 
@@ -104,7 +120,7 @@ multi sub check(Array $obj, UInt :$depth is copy = 0, Str :$ent = '') {
 
 	    CATCH {
 		default {
-		    $*ERR.say: "error in $ref $ent: $_";
+		    error("error in $ref $ent: $_");
 		}
 	    }
 	}
@@ -117,45 +133,40 @@ multi sub check($obj) is default {}
 #| check contents of a Page, XObject Form, Pattern or CharProcs
 sub check-contents( $obj, Str :$ref!) {
 
-    my Array $ast = $obj.contents-parse;
-
     # cross check with the resources directory
     my $resources = $obj.?Resources // {};
 
-    use PDF::Content::Ops;
-    my PDF::Content::Ops $ops .= new(:$*strict);
-
-    for $ast.list -> $op {
-	$ops.op($op);
-	my $entry;
-	my UInt $name-idx = 0;
-
-	my Str $type = do given $op.key {
-	    when 'BDC' | 'DP' { $name-idx = 1; 'Properties'}
-	    when 'Do'         { 'XObject' }
-	    when 'Tf'         { 'Font' }
-	    when 'gs'         { 'ExtGState' }
-	    when ($_ ~~ 'scn'|'SCN')
-            && $op.value.tail.key ~~ 'name' {
+    my &callback = sub ($op, *@args) {
+        my UInt $name-idx = 0;
+        my Str $type = do given $op {
+            when 'BDC' | 'DP' { $name-idx = 1; 'Properties'}
+            when 'Do'         { 'XObject' }
+            when 'Tf'         { 'Font' }
+            when 'gs'         { 'ExtGState' }
+            when ($_ ~~ 'scn'|'SCN')
+            && @args.tail ~~ Str {
                 $name-idx = $op.value.elems - 1;
                 'Pattern'
             }
-	    when 'sh'         { 'Shading' }
-	    default {''}
+            when 'sh'         { 'Shading' }
+            default {Nil}
         };
 
-	if $type && $op.value[$name-idx].key eq 'name' {
-	    my Str $name = $op.value[$name-idx].value;
-	    warn "no resources /$type /$name entry for '{$op.key}' operator"
-	        unless $resources{$type}:exists && ($resources{$type}{$name}:exists);
-	}
+        with $type {
+            if @args[$name-idx] ~~ Str {
+                my Str $name = @args[$name-idx];
+                warn "No resources /$_ /$name entry for '$op' operator"
+                    unless $resources{$_}:exists && ($resources{$_}{$name}:exists);
+            }
+        }
     }
 
-    $ops.finish;
+    my $gfx = $obj.render: :$*strict, :&callback;
+    $gfx.finish;
 
     CATCH {
 	default {
-	    $*ERR.say: "unable to process {$ref}contents: $_"; 
+	    error("unable to render {$ref}contents: $_"); 
 	}
     }
 }

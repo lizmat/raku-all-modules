@@ -10,8 +10,7 @@ role PDF::Action
     use PDF::COS::Tie;
     use PDF::COS::Name;
 
-    my subset Name-Action of PDF::COS::Name where 'Action';
-    has Name-Action $.Type is entry;
+    has PDF::COS::Name $.Type is entry where 'Action';
 
     my subset ActionSubtype of PDF::COS::Name where
 	'GoTo'         #| Go to a destination in the current document.

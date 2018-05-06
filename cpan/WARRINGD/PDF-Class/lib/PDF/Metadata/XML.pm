@@ -10,9 +10,6 @@ class PDF::Metadata::XML
     use PDF::COS::Tie;
     use PDF::COS::Name;
     # See [PDF 1.7 TABLE 10.3 Additional entries in a metadata stream dictionary]
-    my subset Name-Metadata of PDF::COS::Name where 'Metadata';
-    my subset Name-XML of PDF::COS::Name where 'XML';
-
-    has Name-Metadata $.Type is entry(:required);
-    has Name-XML $.Subtype is entry(:required);
+    has PDF::COS::Name $.Type is entry(:required) where 'Metadata';
+    has PDF::COS::Name $.Subtype is entry(:required) where 'XML';
 }

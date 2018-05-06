@@ -11,8 +11,7 @@ role PDF::Border
     use PDF::COS::Tie;
     use PDF::COS::Name;
 
-    my subset BorderType of PDF::COS::Name where 'Border';
-    has BorderType $.Type is entry;     #| (Optional) The type of PDF object that this dictionary describes; if present, must be Border for a border style dictionary.
+    has PDF::COS::Name $.Type is entry where 'Border';     #| (Optional) The type of PDF object that this dictionary describes; if present, must be Border for a border style dictionary.
 
     has Numeric $.W is entry(:alias<width>);           #| (Optional) The border width in points. If this value is 0, no border is drawn. Default value: 1.
 

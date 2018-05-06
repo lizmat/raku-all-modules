@@ -14,14 +14,12 @@ class PDF::Catalog
     # see [PDF 1.7 TABLE 3.25 Entries in the catalog dictionary]
     use PDF::COS::Tie;
     use PDF::COS::Tie::Hash;
-    use PDF::COS::Dict;
     use PDF::COS::Name;
     use PDF::COS::Null;
     use PDF::COS::Stream;
     use PDF::COS::TextString;
 
-    my subset Name-Catalog of PDF::COS::Name where 'Catalog';
-    has Name-Catalog $.Type is entry(:required);
+    has PDF::COS::Name $.Type is entry(:required) where 'Catalog';
 
     has PDF::COS::Name $.Version is entry;               #| (Optional; PDF 1.4) The version of the PDF specification to which the document conforms (for example, 1.4)
 
@@ -71,7 +69,8 @@ class PDF::Catalog
     my subset Metadata of PDF::COS::Stream where { .type eq 'Metadata' && .subtype eq 'XML' }; # autoloaded PDF::Metadata::XML
     has Metadata $.Metadata is entry(:indirect);         #| (Optional; PDF 1.4; must be an indirect reference) A metadata stream containing metadata for the document
 
-    has PDF::COS::Dict $.StructTreeRoot is entry;        #| (Optional; PDF 1.3) The document’s structure tree root dictionary
+    my subset StructTreeRoot of PDF::Class::Type where { .type eq 'StructTreeRoot' }; # autoloaded PDF::StructTreeRoot
+    has StructTreeRoot $.StructTreeRoot is entry;        #| (Optional; PDF 1.3) The document’s structure tree root dictionary
 
     role MarkInfoDict
 	does PDF::COS::Tie::Hash {
@@ -93,7 +92,32 @@ class PDF::Catalog
 
     has PDF::COS::Dict $.PieceInfo is entry;             #| (Optional; PDF 1.4) A page-piece dictionary associated with the document
 
-    has PDF::COS::Dict $.OCProperties is entry;          #| (Optional; PDF 1.5; required if a document contains optional content) The document’s optional content properties dictionary
+    role OCConfig
+	does PDF::COS::Tie::Hash {
+        #| Table Table 101 – Entries in an Optional Content Configuration Dictionary
+        has PDF::COS::TextString $.Name is entry; #| (Optional) A name for the configuration, suitable for presentation in a user interface.
+        has PDF::COS::TextString $.Creator is entry; #| (Optional) Name of the application or feature that created thisconfiguration dictionary.
+        my subset BaseState of PDF::COS::Name where 'ON'|'OFF'|'Unchanged';
+        has BaseState $.BaseState is entry; #| (Optional) Used to initialize the states of all the optional content groups in a document when this configuration is applied. The value of this entry shall be one of the following names:
+        has @.ON is entry;  #| (Optional) An array of optional content groups whose state shall be set to ON when this configuration is applied. If the BaseState entry is ON, this entry is redundant.
+        has @.OFF is entry; #| (Optional) An array of optional content groups whose state shall be set to OFF when this configuration is applied. If the BaseState entry is OFF, this entry is redundant.
+        has $.Intent is entry; #| name or array (Optional) A single intent name or an array containing any combination of names.
+        has @.AS is entry; #| (Optional) An array of usage application dictionaries.
+        has @.Order is entry; #| array (Optional) An array specifying the order for presentation of optional content groups in a conforming reader’s user interface.
+        my subset ListMode of PDF::COS::Name where 'AllPages'|'VisiblePages';
+        has PDF::COS::Name $.ListMode is entry; #| (Optional) A name specifying which optional content groups in the Order array shall be displayed to the user.
+        has @.RBGroups is entry; #| (Optional) An array consisting of one or more arrays, each of which represents a collection of optional content groups whose states shall be intended to follow a radio button paradigm. That is, the state of at most one optional content group in each array shall be ON at a time. If one group is turned ON, all others shall be turned OFF.
+       has @.Locked is entry; #| (Optional; PDF 1.6) An array of optional content groups that shall be locked when this configuration is applied.
+}
+
+    role OCProperties
+	does PDF::COS::Tie::Hash {
+        #| Table 100 – Entries in the Optional Content Properties Dictionary
+        has @.OCGs is entry(:indirect, :required, :alias<optional-content-groups>); #| (Required) An array of indirect references to all the optional content groups in the document (see 8.11.2, "Optional Content Groups"), in any order. Every optional content group shall be included in this array
+        has PDF::COS::Dict $.D is entry(:required, :alias<viewing-config>); #| (Required) The default viewing optional content configuration dictionary (see 8.11.4.3, "Optional Content Configuration Dictionaries").
+        has OCConfig @.Configs is entry;    #| (Optional) An array of alternate optional content configuration dictionaries (see 8.11.4.3, "Optional Content Configuration Dictionaries").
+    }
+    has OCProperties $.OCProperties is entry;          #| (Optional; PDF 1.5; required if a document contains optional content) The document’s optional content properties dictionary
 
     has PDF::COS::Dict $.Perms is entry;                 #| (Optional; PDF 1.5) A permissions dictionary that specifies user access permissions for the document.
 

@@ -11,8 +11,8 @@ class PDF::XObject
     does PDF::Class::Type {
 
 	use PDF::COS::Tie;
-	my subset Name-XObject of PDF::COS::Name where 'XObject';
-	has Name-XObject $.Type is entry;
-	has PDF::COS::Name  $.Subtype is entry;
+        use PDF::COS::Name;
+	has PDF::COS::Name $.Type is entry where 'XObject';
+	has PDF::COS::Name $.Subtype is entry;
 
 }

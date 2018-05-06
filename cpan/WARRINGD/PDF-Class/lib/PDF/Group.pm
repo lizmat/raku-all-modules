@@ -11,6 +11,5 @@ class PDF::Group
     # see [PDF 1.7 TABLE 10.12 Entries in an object reference dictionary]
     use PDF::COS::Tie;
     use PDF::COS::Name;
-    my subset Name-Group of PDF::COS::Name where 'Group';
-    has Name-Group $.Type is entry(:required);
+    has PDF::COS::Name $.Type is entry(:required) where 'Group';
 }

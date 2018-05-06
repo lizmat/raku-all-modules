@@ -56,15 +56,13 @@ is $t0-font-obj.Encoding, 'Identity-H', 't0 font $.Encoding';
 
 use PDF::Font::Type1;
 class SubclassedType1Font is PDF::Font::Type1 {};
-my $sc-font-obj = SubclassedType1Font.new( :dict{ :BaseFont( :name<Helvetica> ) } );
+my $sc-font-obj = SubclassedType1Font.new( :dict{ :BaseFont( :name<Helvetica> ) }, );
 is $sc-font-obj.Type, 'Font', 'sc font $.Type';
 is $sc-font-obj.Subtype, 'Type1', 'sc font $.Subtype';
 is $sc-font-obj.BaseFont, 'Helvetica', 'sc font $.BaseFont';
 lives-ok {$sc-font-obj.check}, '$sc-font-obj.check lives';
-
-my %enc-ast = :ind-obj[5, 2, :dict{ :Type( :name<Encoding> ), :BaseEncoding( :name<MacRomanEncoding> ) } ];
-my $enc-ind-obj = PDF::IO::IndObj.new( |%enc-ast );
-my $enc-obj = $enc-ind-obj.object;
+$sc-font-obj.Encoding = { :Type( :name<Encoding> ), :BaseEncoding( :name<MacRomanEncoding> ) };
+my $enc-obj = $sc-font-obj.Encoding;
 does-ok $enc-obj, ::('PDF::Encoding');
 is $enc-obj.Type, 'Encoding', '$enc.Type';
 is $enc-obj.BaseEncoding, 'MacRomanEncoding', '$enc.BaseEncoding';

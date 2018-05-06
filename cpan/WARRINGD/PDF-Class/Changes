@@ -1,3 +1,11 @@
+Release 0.1.8
+- Add classess:
+  -- PDF::OCG (Optional Content Groups)
+  -- PDF::OCMD (Optional Content Membership Dictionary)
+  -- PDF::MCR (Marked Content Reference)
+- Remove some trivial single-use subsets. Replace with 'where' clauses on
+  entry attributes.
+- Move t:Doc::* test classes from lib/ to t/
 Release 0.1.7
 - Adjust t/helloworld.t and t/pdf-xobject-form.t for PDF::Content 0.2.2
 Release 0.1.6
@@ -13,7 +21,7 @@ Improvements from field testing of pdf-checker.p6:
 - PDF::ColorSpace::Pattern: added as a new colorspace type
 - PDF::Font:
   -- fix coercement of type1 & 3 Encoding entry
-  -- coerce type3 CharProcs as a PDF::Content::Graphics content stream
+  -- coerce type3 fonts CharProcs as a PDF::Content::Graphics content stream
 Release 0.1.4
 - Altered composition of some classes to avoid 'version skew' compilation
   errors (Issue #11)
