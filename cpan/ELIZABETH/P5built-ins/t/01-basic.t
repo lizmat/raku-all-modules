@@ -8,10 +8,10 @@ my @supported = <
   getnetbyaddr getnetbyname getnetent getprotobyname getprotobynumber
   getprotoent getpwent getpwnam getpwuid getservbyname getservbyport
   getservent gmtime hex index lc lcfirst length localtime oct opendir
-  ord pack pop push quotemeta readdir readlink ref reverse rewinddir
-  rindex seek seekdir setgrent setnetent setprotoent setpwent setservent
-  shift sleep study substr telldir tie tied times uc ucfirst unpack
-  unshift untie
+  ord pack pop print printf push quotemeta readdir readlink ref reverse
+  rewinddir rindex say seek seekdir setgrent setnetent setprotoent
+  setpwent setservent shift sleep study substr telldir tie tied times
+  uc ucfirst unpack unshift untie
 
   prefix:<-r> prefix:<-w> prefix:<-x> prefix:<-e> prefix:<-d> prefix:<-f>
   prefix:<-s> prefix:<-z> prefix:<-l>
@@ -23,7 +23,10 @@ my @supported = <
   '&term:<__FILE__>',
   '&term:<__LINE__>',
   '&term:<__PACKAGE__>',
-  '&term:<__LINE__>'
+  '&term:<__LINE__>',
+  '&term:<STDERR>',
+  '&term:<STDIN>',
+  '&term:<STDOUT>',
 );
 
 plan +@supported;

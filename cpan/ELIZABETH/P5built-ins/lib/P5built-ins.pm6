@@ -1,7 +1,7 @@
 use v6.c;
 
 my %export;
-module P5built-ins:ver<0.0.17>:auth<cpan:ELIZABETH> {
+module P5built-ins:ver<0.0.18>:auth<cpan:ELIZABETH> {
     use P5__FILE__;
     use P5caller;
     use P5chdir;
@@ -23,6 +23,7 @@ module P5built-ins:ver<0.0.17>:auth<cpan:ELIZABETH> {
     use P5localtime;
     use P5opendir;
     use P5pack;
+    use P5print;
     use P5push;
     use P5quotemeta;
     use P5readlink;
@@ -75,10 +76,10 @@ functions of Perl 5 in Perl 6.  Currently supported at:
   getnetbyaddr getnetbyname getnetent getprotobyname getprotobynumber
   getprotoent getpwent getpwnam getpwuid getservbyname getservbyport
   getservent gmtime hex index lc lcfirst length localtime oct opendir
-  ord pack pop push quotemeta readdir readlink ref reverse rewinddir
-  rindex seek seekdir setgrent setnetent setprotoent setpwent setservent
-  shift sleep study substr telldir tie tied times uc ucfirst unpack
-  unshift untie
+  ord pack pop print printf push quotemeta readdir readlink ref reverse
+  rewinddir rindex say seek seekdir setgrent setnetent setprotoent
+  setpwent setservent shift sleep study substr telldir tie tied times
+  uc ucfirst unpack unshift untie
   
 The following file test operators are also available:
 
@@ -87,6 +88,7 @@ The following file test operators are also available:
 And the following terms:
 
   __FILE__ __LINE__ __PACKAGE__ __SUB__ SEEK_CUR SEEK_END SEEK_SET
+  STDERR STDIN STDOUT
 
 =head1 PORTING CAVEATS
 
@@ -103,6 +105,7 @@ provide the functionality:
   P5localtime | localtime gmtime
   P5opendir   | opendir readdir telldir seekdir rewinddir closedir
   P5pack      | pack unpack
+  P5print     | print printf say
   P5readlink  | readlink
   P5ref       | ref
   P5reverse   | reverse

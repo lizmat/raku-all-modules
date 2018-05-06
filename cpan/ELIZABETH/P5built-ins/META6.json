@@ -26,6 +26,7 @@
     "P5localtime",
     "P5opendir",
     "P5pack",
+    "P5print",
     "P5push",
     "P5quotemeta",
     "P5readlink",
@@ -54,5 +55,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.17"
+  "version" : "0.0.18"
 }

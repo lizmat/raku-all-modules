@@ -24,10 +24,10 @@ This module provides an easy way to import a growing number of built-in function
     getnetbyaddr getnetbyname getnetent getprotobyname getprotobynumber
     getprotoent getpwent getpwnam getpwuid getservbyname getservbyport
     getservent gmtime hex index lc lcfirst length localtime oct opendir
-    ord pack pop push quotemeta readdir readlink ref reverse rewinddir
-    rindex seek seekdir setgrent setnetent setprotoent setpwent setservent
-    shift sleep study substr telldir tie tied times uc ucfirst unpack
-    unshift untie
+    ord pack pop print printf push quotemeta readdir readlink ref reverse
+    rewinddir rindex say seek seekdir setgrent setnetent setprotoent
+    setpwent setservent shift sleep study substr telldir tie tied times
+    uc ucfirst unpack unshift untie
 
 The following file test operators are also available:
 
@@ -36,6 +36,7 @@ The following file test operators are also available:
 And the following terms:
 
     __FILE__ __LINE__ __PACKAGE__ __SUB__ SEEK_CUR SEEK_END SEEK_SET
+    STDERR STDIN STDOUT
 
 PORTING CAVEATS
 ===============
@@ -52,6 +53,7 @@ Please look at the porting caveats of the underlying modules that actually provi
     P5localtime | localtime gmtime
     P5opendir   | opendir readdir telldir seekdir rewinddir closedir
     P5pack      | pack unpack
+    P5print     | print printf say
     P5readlink  | readlink
     P5ref       | ref
     P5reverse   | reverse
