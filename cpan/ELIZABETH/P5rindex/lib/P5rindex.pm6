@@ -1,17 +1,15 @@
 use v6.c;
-unit module P5rindex:ver<0.0.2>;
 
-sub rindex(Str() $string, Str() $needle, Int() $position = $string.chars - 1) is export {
-    $position < 0
-      ?? -1
-      !! $string.rindex($needle,$string.chars - 1 min $position) // -1
+module P5rindex:ver<0.0.3>:auth<cpan:ELIZABETH> {
+    use P5index;
+    BEGIN trait_mod:<is>(&rindex,:export);
 }
 
 =begin pod
 
 =head1 NAME
 
-P5rindex - Implement Perl 5's rindex() built-in
+P5rindex - Implement Perl 5's rindex() built-in [DEPRECATED]
 
 =head1 SYNOPSIS
 
@@ -24,7 +22,8 @@ P5rindex - Implement Perl 5's rindex() built-in
 =head1 DESCRIPTION
 
 This module tries to mimic the behaviour of the C<rindex> of Perl 5 as closely as
-possible.
+possible.  It has been deprecated in favour of the C<P5index> module, which exports
+both C<rindex> and C<index>.  Please use that module instead of this one.
 
 =head1 AUTHOR
 

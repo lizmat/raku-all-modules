@@ -1,5 +1,9 @@
 Revision history for P5rindex
 
+0.0.3  2018-05-06T18:16:49+02:00
+    - add authority
+    - deprecate this module in favour of P5index
+
 0.0.2  2018-04-11T15:54:50+02:00
     - Follow App:Mi6's default Changes format
 
