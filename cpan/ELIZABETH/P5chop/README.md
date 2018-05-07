@@ -3,7 +3,7 @@
 NAME
 ====
 
-P5chop - Implement Perl 5's chop() built-in
+P5chop - Implement Perl 5's chop() built-in [DEPRECATED]
 
 SYNOPSIS
 ========
@@ -19,7 +19,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `chop` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `chop` of Perl 5 as closely as possible. It has been deprecated in favour of the `P5chomp` module, which exports both `chop` and `chomp`. Please use that module instead of this one.
 
 AUTHOR
 ======

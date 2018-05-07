@@ -1,31 +1,15 @@
 use v6.c;
-unit module P5chop:ver<0.0.2>;
 
-proto sub chop(|) is export {*}
-multi sub chop() { chop CALLERS::<$_>     }
-multi sub chop(*@a is raw) { chop(@a) }
-multi sub chop(%h) { chop(%h.values) }
-multi sub chop(@a) {
-    if @a {
-        my $char = @a[*-1].substr(*-1);
-        $_ .= substr(0,*-1) for @a;
-        $char
-    }
-    else {
-        Nil
-    }
-}
-multi sub chop(\s) {
-    my $char = s.substr(*-1);
-    s .= substr(0,*-1);
-    $char
+module P5chop:ver<0.0.4>:auth<cpan:ELIZABETH> {
+    use P5chomp;
+    BEGIN trait_mod:<is>(&chop,:export);
 }
 
 =begin pod
 
 =head1 NAME
 
-P5chop - Implement Perl 5's chop() built-in
+P5chop - Implement Perl 5's chop() built-in [DEPRECATED]
 
 =head1 SYNOPSIS
 
@@ -40,7 +24,8 @@ P5chop - Implement Perl 5's chop() built-in
 =head1 DESCRIPTION
 
 This module tries to mimic the behaviour of the C<chop> of Perl 5 as closely as
-possible.
+possible.  It has been deprecated in favour of the C<P5chomp> module, which
+exports both C<chop> and C<chomp>.  Please use that module instead of this one.
 
 =head1 AUTHOR
 

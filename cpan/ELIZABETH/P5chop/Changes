@@ -1,5 +1,12 @@
 Revision history for P5chop
 
+0.0.4  2018-05-06T17:58:36+02:00
+    - make the export of chop() a bit smarter
+
+0.0.3  2018-05-06T08:52:26+02:00
+    - add authority
+    - deprecate this module in favour of P5chomp
+
 0.0.2  2018-04-11T14:52:41+02:00
     - Follow App:Mi6's default Changes format
 
