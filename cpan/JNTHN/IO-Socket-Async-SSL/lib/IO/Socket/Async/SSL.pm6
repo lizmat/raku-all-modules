@@ -2,6 +2,7 @@ use OpenSSL;
 use OpenSSL::Bio;
 use OpenSSL::Ctx;
 use OpenSSL::EVP;
+use OpenSSL::X509;
 use OpenSSL::SSL;
 use OpenSSL::Stack;
 use OpenSSL::Err;
@@ -18,6 +19,10 @@ sub SSL_CTX_load_verify_locations(OpenSSL::Ctx::SSL_CTX, Str, Str) returns int32
 sub SSL_get_verify_result(OpenSSL::SSL::SSL) returns int32 is native(&gen-lib) {*}
 sub SSL_CTX_set_cipher_list(OpenSSL::Ctx::SSL_CTX, Str) returns int32
     is native(&gen-lib) {*}
+
+sub d2i_PKCS12(Pointer, CArray[CArray[uint8]], long) returns Pointer is native(&gen-lib) {*}
+sub PKCS12_parse(Pointer, Str, CArray[Pointer], CArray[Pointer], CArray[Pointer])
+    returns int32 is native(&gen-lib) {*}
 
 my constant SSL_TLSEXT_ERR_OK = 0;
 my constant SSL_TLSEXT_ERR_ALERT_FATAL = 2;
@@ -256,8 +261,28 @@ class IO::Socket::Async::SSL {
                    OpenSSL::ProtocolVersion :$version = -1,
                    :$ca-file, :$ca-path, :$insecure, :$alpn,
                    Str :$ciphers) {
+        self!client-setup:
+            { IO::Socket::Async.connect($host, $port, :$scheduler) },
+            :$enc, :$version, :$ca-file, :$ca-path, :$insecure,
+            :$alpn, :$ciphers, :$host;
+     }
+
+    method upgrade-client(IO::Socket::Async::SSL:U: IO::Socket::Async:D $conn,
+                          :$enc = 'utf8', OpenSSL::ProtocolVersion :$version = -1,
+                          :$ca-file, :$ca-path, :$insecure, :$alpn,
+                          Str :$ciphers, Str :$host) {
+        self!client-setup:
+            { Promise.kept($conn) },
+            :$enc, :$version, :$ca-file, :$ca-path, :$insecure,
+            :$alpn, :$ciphers, :$host;
+     }
+
+     method !client-setup(&connection-source,
+                          :$enc = 'utf8', OpenSSL::ProtocolVersion :$version,
+                          :$ca-file, :$ca-path, :$insecure, :$alpn, :$ciphers,
+                          Str :$host) {
         start {
-            my $sock = await IO::Socket::Async.connect($host, $port, :$scheduler);
+            my $sock = await connection-source();
             my $connected-promise = Promise.new;
             $lib-lock.protect: {
                 my $ctx = self!build-client-ctx($version);
@@ -280,7 +305,9 @@ class IO::Socket::Async::SSL {
                 my $read-bio = BIO_new(BIO_s_mem());
                 my $write-bio = BIO_new(BIO_s_mem());
                 check($ssl, OpenSSL::SSL::SSL_set_bio($ssl, $read-bio, $write-bio));
-                OpenSSL::SSL::SSL_ctrl($ssl, SSL_CTRL_SET_TLSEXT_HOSTNAME, 0, $host);
+                with $host {
+                    OpenSSL::SSL::SSL_ctrl($ssl, SSL_CTRL_SET_TLSEXT_HOSTNAME, 0, $host);
+                }
                 OpenSSL::SSL::SSL_set_connect_state($ssl);
                 check($ssl, SSL_do_handshake($ssl));
                 CATCH {
@@ -317,6 +344,30 @@ class IO::Socket::Async::SSL {
                   :$certificate-file, :$private-key-file, :$alpn,
                   Str :$ciphers, :$prefer-server-ciphers, :$no-compression,
                   :$no-session-resumption-on-renegotiation) {
+        self!server-setup:
+            IO::Socket::Async.listen($host, $port, :$scheduler),
+            :$enc, :$version, :$certificate-file, :$private-key-file,
+            :$alpn, :$ciphers, :$prefer-server-ciphers, :$no-compression,
+            :$no-session-resumption-on-renegotiation;
+    }
+
+    method upgrade-server(IO::Socket::Async::SSL:U: IO::Socket::Async:D $socket,
+                  :$enc = 'utf8', OpenSSL::ProtocolVersion :$version = -1,
+                  :$certificate-file, :$private-key-file, :$alpn,
+                  Str :$ciphers, :$prefer-server-ciphers, :$no-compression,
+                  :$no-session-resumption-on-renegotiation) {
+        self!server-setup:
+            $socket,
+            :$enc, :$version, :$certificate-file, :$private-key-file,
+            :$alpn, :$ciphers, :$prefer-server-ciphers, :$no-compression,
+            :$no-session-resumption-on-renegotiation;
+    }
+
+    method !server-setup($connection-source,
+                  :$enc, OpenSSL::ProtocolVersion :$version,
+                  :$certificate-file, :$private-key-file, :$alpn,
+                  Str :$ciphers, :$prefer-server-ciphers, :$no-compression,
+                  :$no-session-resumption-on-renegotiation) {
         sub alpn-selector($ssl, $out, $outlen, $in, $inlen, $arg) {
             my $buf = Buf.new;
             for (0...$inlen-1) {
@@ -346,15 +397,57 @@ class IO::Socket::Async::SSL {
             my $ctx;
             $lib-lock.protect: {
                 $ctx = self!build-server-ctx($version);
+                my ($have-cert, $have-pkey);
                 with $certificate-file {
-                    if 1 != OpenSSL::Ctx::SSL_CTX_use_certificate_chain_file($ctx,
+                    if 1 == OpenSSL::Ctx::SSL_CTX_use_certificate_chain_file($ctx,
                         $certificate-file.Str)
                     {
-                        OpenSSL::Ctx::SSL_CTX_use_certificate_file($ctx,
-                            $certificate-file.Str, 2);
+                        $have-cert = 'PEM';
+                    } elsif 1 == OpenSSL::Ctx::SSL_CTX_use_certificate_file($ctx,
+                            $certificate-file.Str, 2)
+                    {
+                        $have-cert = 'DER';
+                    } else {
+                        # Failed to import either PEM chain or ASN1 certificate file
+                        # Proceeding with PKCS12
+                        my $p12buf = slurp $certificate-file, :bin;
+                        my Pointer $pkcs12 = d2i_PKCS12(Pointer,
+                            CArray[CArray[uint8]].new([CArray[uint8].new($p12buf)]),
+                            $p12buf.elems);
+                        die "Failed to import $certificate-file as PEM/ASN1/PKCS12"
+                            unless so $pkcs12;
+                        my $pkey = CArray[Pointer].new([Pointer.new]);
+                        my $cert = CArray[Pointer].new([Pointer.new]);
+                        my $chain = CArray[Pointer].new([Pointer.new]);
+                        # TODO: Passphrase handling
+                        die "Failed to parse $certificate-file as PKCS12"
+                            unless 1 == PKCS12_parse($pkcs12, '', $pkey, $cert, $chain);
+                        if so $pkey[0] {
+                            $have-pkey = 'PKCS12';
+                            OpenSSL::Ctx::SSL_CTX_use_PrivateKey($ctx, $pkey[0]);
+                            OpenSSL::EVP::EVP_PKEY_free($pkey[0]);
+                        }
+                        if so $cert[0] {
+                            $have-cert = 'PKCS12';
+                            OpenSSL::Ctx::SSL_CTX_use_certificate($ctx, $cert[0]);
+                            OpenSSL::X509::X509_free($cert[0]);
+                        }
+                        if so $chain[0] {
+                            for (0..OpenSSL::Stack::sk_num(nativecast(OpenSSL::Stack, $chain[0]))) {
+                                my $x509 = OpenSSL::Stack::sk_value(nativecast(OpenSSL::Stack, $chain[0]), $_);
+                                # #define SSL_CTX_add_extra_chain_cert(ctx,x509) \
+                                #       SSL_CTX_ctrl(ctx,SSL_CTRL_EXTRA_CHAIN_CERT,0,(char *)x509)
+                                if so $x509 {
+                                    OpenSSL::Ctx::SSL_CTX_ctrl($ctx, 14, 0, $x509);
+                                }
+                            }
+                            OpenSSL::Stack::sk_free(nativecast(OpenSSL::Stack, $chain[0]));
+                        }
                     }
+                    die "No server certificate in $certificate-file" without $have-cert;
                 }
                 with $private-key-file {
+                    die "Private key already added as $have-pkey" with $have-pkey;
                     OpenSSL::Ctx::SSL_CTX_use_PrivateKey_file($ctx,
                         $private-key-file.Str, 1);
                 }
@@ -407,7 +500,16 @@ class IO::Socket::Async::SSL {
                 }
             }
 
-            whenever IO::Socket::Async.listen($host, $port, :$scheduler) -> $sock {
+            if $connection-source ~~ Supply {
+                whenever $connection-source -> $sock {
+                    handle-connection($sock);
+                }
+            }
+            else {
+                handle-connection($connection-source);
+            }
+
+            sub handle-connection($sock) {
                 my $accepted-promise = Promise.new;
                 $lib-lock.protect: {
                     my $ssl = OpenSSL::SSL::SSL_new($ctx);
