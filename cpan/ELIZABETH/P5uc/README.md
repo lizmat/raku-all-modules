@@ -3,7 +3,7 @@
 NAME
 ====
 
-P5uc - Implement Perl 5's uc() built-in
+P5uc - Implement Perl 5's uc() built-in [DEPRECATED]
 
 SYNOPSIS
 ========
@@ -19,7 +19,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `uc` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `uc` of Perl 5 as closely as possible. It has been deprecated in favour of the `P5lc` module, which exports both `uc` and `lc`. Please use that module instead of this one.
 
 AUTHOR
 ======

@@ -1,15 +1,15 @@
 use v6.c;
-unit class P5uc:ver<0.0.2>;
 
-proto sub uc(|) is export {*}
-multi sub uc(         --> Str:D) { (CALLERS::<$_>).uc }
-multi sub uc(Str() $s --> Str:D) { $s.uc              }
+module P5uc:ver<0.0.3>:auth<cpan:ELIZABETH> {
+    use P5lc;
+    BEGIN trait_mod:<is>(&uc,:export);
+}
 
 =begin pod
 
 =head1 NAME
 
-P5uc - Implement Perl 5's uc() built-in
+P5uc - Implement Perl 5's uc() built-in [DEPRECATED]
 
 =head1 SYNOPSIS
 
@@ -24,7 +24,8 @@ P5uc - Implement Perl 5's uc() built-in
 =head1 DESCRIPTION
 
 This module tries to mimic the behaviour of the C<uc> of Perl 5 as closely as
-possible.
+possible.  It has been deprecated in favour of the C<P5lc> module, which exports
+both C<uc> and C<lc>.  Please use that module instead of this one.
 
 =head1 AUTHOR
 
