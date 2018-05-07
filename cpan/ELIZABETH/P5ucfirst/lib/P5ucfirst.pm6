@@ -1,21 +1,15 @@
 use v6.c;
-unit class P5ucfirst:ver<0.0.3>;
 
-proto sub ucfirst(|) is export {*}
-multi sub ucfirst(--> Str:D) {
-    ucfirst(CALLERS::<$_>)
-}
-multi sub ucfirst(Str() $string --> Str:D) {
-    $string
-      ?? $string.substr(0,1).uc ~ $string.substr(1)
-      !! $string
+module P5ucfirst:ver<0.0.4>:auth<cpan:ELIZABETH> {
+    use P5lcfirst;
+    BEGIN trait_mod:<is>(&ucfirst,:export);
 }
 
 =begin pod
 
 =head1 NAME
 
-P5ucfirst - Implement Perl 5's ucfirst() built-in
+P5ucfirst - Implement Perl 5's ucfirst() built-in [DEPRECATED]
 
 =head1 SYNOPSIS
 
@@ -30,7 +24,8 @@ P5ucfirst - Implement Perl 5's ucfirst() built-in
 =head1 DESCRIPTION
 
 This module tries to mimic the behaviour of the C<ucfirst> of Perl 5 as closely as
-possible.
+possible.  It has been deprecated in favour of the C<P5lcfirst> module, which exports
+both C<ucfirst> and C<lcfirst>.  Please use that module instead of this one.
 
 =head1 AUTHOR
 

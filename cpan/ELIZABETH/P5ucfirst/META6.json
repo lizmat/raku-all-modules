@@ -1,10 +1,13 @@
 {
+  "auth" : "cpan:ELIZABETH",
   "authors" : [
     "Elizabeth Mattijsen"
   ],
   "build-depends" : [ ],
-  "depends" : [ ],
-  "description" : "Implement Perl 5's ucfirst() built-in",
+  "depends" : [
+    "P5lcfirst"
+  ],
+  "description" : "Implement Perl 5's ucfirst() built-in [DEPRECATED]",
   "license" : "Artistic-2.0",
   "name" : "P5ucfirst",
   "perl" : "6.c",
@@ -18,5 +21,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.3"
+  "version" : "0.0.4"
 }

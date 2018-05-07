@@ -3,7 +3,7 @@
 NAME
 ====
 
-P5ucfirst - Implement Perl 5's ucfirst() built-in
+P5ucfirst - Implement Perl 5's ucfirst() built-in [DEPRECATED]
 
 SYNOPSIS
 ========
@@ -19,7 +19,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `ucfirst` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `ucfirst` of Perl 5 as closely as possible. It has been deprecated in favour of the `P5lcfirst` module, which exports both `ucfirst` and `lcfirst`. Please use that module instead of this one.
 
 AUTHOR
 ======
