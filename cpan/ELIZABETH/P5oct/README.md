@@ -3,7 +3,7 @@
 NAME
 ====
 
-P5oct - Implement Perl 5's oct() built-in
+P5oct - Implement Perl 5's oct() built-in [DEPRECATED]
 
 SYNOPSIS
 ========
@@ -13,7 +13,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `oct` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `oct` of Perl 5 as closely as possible. It has been deprecated in favour of the `P5hex` module, which exports both `oct` and `hex`. Please use that module instead of this one.
 
 AUTHOR
 ======

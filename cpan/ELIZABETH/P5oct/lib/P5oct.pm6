@@ -1,33 +1,14 @@
 use v6.c;
-unit module P5oct:ver<0.0.3>;
-
-proto sub oct(|) is export {*}
-multi sub oct() { oct CALLERS::<$_> }
-multi sub oct(Str() $s is copy) {
-    $s .= trim-leading;
-    if $s ~~ / \D / {                            # something non-numeric there
-        with $s ~~ / ^0 <[xob]> \d+ $/ {           # standard 0x string
-            +$_
-        }
-        else {                                     # not a standard 0x string
-            with $s ~~ /^ \d+ / {                    # numeric with trailing
-                .Str.parse-base(8)
-            }
-            else {                                   # garbage
-                +$_                                   # throw numification error
-            }
-        }
-    }
-    else {                                       # just digits
-        $s.parse-base(8)
-    }
+module P5oct:ver<0.0.4>:auth<cpan:ELIZABETH> {
+    use P5hex;
+    BEGIN trait_mod:<is>(&oct,:export);
 }
 
 =begin pod
 
 =head1 NAME
 
-P5oct - Implement Perl 5's oct() built-in
+P5oct - Implement Perl 5's oct() built-in [DEPRECATED]
 
 =head1 SYNOPSIS
 
@@ -36,7 +17,8 @@ P5oct - Implement Perl 5's oct() built-in
 =head1 DESCRIPTION
 
 This module tries to mimic the behaviour of the C<oct> of Perl 5 as closely as
-possible.
+possible.  It has been deprecated in favour of the C<P5hex> module, which
+exports both C<oct> and C<hex>.  Please use that module instead of this one.
 
 =head1 AUTHOR
 
