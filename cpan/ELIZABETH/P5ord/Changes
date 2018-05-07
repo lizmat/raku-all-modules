@@ -1,5 +1,12 @@
 Revision history for P5ord
 
+0.0.5  2018-05-06T18:13:15+02:00
+    - argh, lose the superfluous unit module
+
+0.0.4  2018-05-06T18:11:07+02:00
+    - add authority
+    - deprecate this module in favour of P5chr
+
 0.0.3  2018-04-11T15:27:22+02:00
     - Follow App:Mi6's default Changes format
 

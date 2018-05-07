@@ -3,7 +3,7 @@
 NAME
 ====
 
-P5ord - Implement Perl 5's ord() built-in
+P5ord - Implement Perl 5's ord() built-in [DEPRECATED]
 
 SYNOPSIS
 ========
@@ -19,7 +19,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `ord` of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `ord` of Perl 5 as closely as possible. It has been deprecated in favour of the `P5chr` module, which exports both `ord` and `chr`. Please use that module instead of this one.
 
 AUTHOR
 ======

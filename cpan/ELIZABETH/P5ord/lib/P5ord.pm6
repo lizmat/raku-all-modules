@@ -1,15 +1,15 @@
 use v6.c;
-unit module P5ord:ver<0.0.3>;
 
-proto sub ord(|) is export {*}
-multi sub ord(--> Int:D) { CALLERS::<$_>.ord }
-multi sub ord(Str() $s --> Int:D) { $s.ord }
+module P5ord:ver<0.0.5>:auth<cpan:ELIZABETH> {
+    use P5chr;
+    BEGIN trait_mod:<is>(&ord,:export);
+}
 
 =begin pod
 
 =head1 NAME
 
-P5ord - Implement Perl 5's ord() built-in
+P5ord - Implement Perl 5's ord() built-in [DEPRECATED]
 
 =head1 SYNOPSIS
 
@@ -24,7 +24,8 @@ P5ord - Implement Perl 5's ord() built-in
 =head1 DESCRIPTION
 
 This module tries to mimic the behaviour of the C<ord> of Perl 5 as closely as
-possible.
+possible.  It has been deprecated in favour of the C<P5chr> module, which exports
+both C<ord> and C<chr>.  Please use that module instead of this one.
 
 =head1 AUTHOR
 
