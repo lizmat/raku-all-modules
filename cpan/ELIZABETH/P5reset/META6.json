@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Implement Perl 5's reset() built-in",
+  "license" : "Artistic-2.0",
+  "name" : "P5reset",
+  "perl" : "6.c",
+  "provides" : {
+    "P5reset" : "lib/P5reset.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5reset.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
