@@ -7,7 +7,7 @@ use CPAN::Uploader::Tiny;
 use File::Find;
 use Shell::Command;
 
-unit class App::Mi6:ver<0.1.7>:auth<cpan:SKAJI>;
+unit class App::Mi6:ver<0.1.8>:auth<cpan:SKAJI>;
 
 has $!author = run(<git config --global user.name>,  :out).out.slurp(:close).chomp;
 has $!email  = run(<git config --global user.email>, :out).out.slurp(:close).chomp;
@@ -255,8 +255,8 @@ method make-dist-tarball($main-module) {
     my $name = $main-module.subst("::", "-", :g);
     my $meta = App::Mi6::JSON.decode("META6.json".IO.slurp);
     my $version = $meta<version>;
-    die "To make dist tarball, you must specify version (not '*') in META6.json first"
-        if $version eq '*';
+    die "To make dist tarball, you must specify a concrete version (no '*' or '+') in META6.json first"
+        if $version.contains('*') or $version.ends-with('+');
     $name ~= "-$version";
     rm_rf $name if $name.IO.d;
     unlink "$name.tar.gz" if "$name.tar.gz".IO.e;
