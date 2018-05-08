@@ -15,6 +15,7 @@
     "P5fileno",
     "P5getgrnam",
     "P5getnetbyname",
+    "P5getpriority",
     "P5getprotobyname",
     "P5getpwnam",
     "P5getservbyname",
@@ -29,8 +30,10 @@
     "P5print",
     "P5push",
     "P5quotemeta",
+    "P5rand",
     "P5readlink",
     "P5ref",
+    "P5reset",
     "P5reverse",
     "P5seek",
     "P5shift",
@@ -55,5 +58,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.18"
+  "version" : "0.0.19"
 }

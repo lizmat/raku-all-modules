@@ -1,7 +1,7 @@
 use v6.c;
 
 my %export;
-module P5built-ins:ver<0.0.18>:auth<cpan:ELIZABETH> {
+module P5built-ins:ver<0.0.19>:auth<cpan:ELIZABETH> {
     use P5__FILE__;
     use P5caller;
     use P5chdir;
@@ -14,6 +14,7 @@ module P5built-ins:ver<0.0.18>:auth<cpan:ELIZABETH> {
     use P5getnetbyname;
     use P5getprotobyname;
     use P5getpwnam;
+    use P5getpriority;
     use P5getservbyname;
     use P5hex;
     use P5index;
@@ -26,8 +27,10 @@ module P5built-ins:ver<0.0.18>:auth<cpan:ELIZABETH> {
     use P5print;
     use P5push;
     use P5quotemeta;
+    use P5rand;
     use P5readlink;
     use P5ref;
+    use P5reset;
     use P5reverse;
     use P5seek;
     use P5shift;
@@ -72,14 +75,13 @@ This module provides an easy way to import a growing number of built-in
 functions of Perl 5 in Perl 6.  Currently supported at:
 
   caller chdir chomp chop chr closedir each endgrent endnetent endprotoent
-  endpwent endservent fc fileno getgrent getgrgid getgrnam getlogin
-  getnetbyaddr getnetbyname getnetent getprotobyname getprotobynumber
-  getprotoent getpwent getpwnam getpwuid getservbyname getservbyport
-  getservent gmtime hex index lc lcfirst length localtime oct opendir
-  ord pack pop print printf push quotemeta readdir readlink ref reverse
-  rewinddir rindex say seek seekdir setgrent setnetent setprotoent
-  setpwent setservent shift sleep study substr telldir tie tied times
-  uc ucfirst unpack unshift untie
+  endpwent endservent fc fileno getgrent getgrgid getgrnam getlogin getnetbyaddr
+  getnetbyname getnetent getpgrp getppid getpriority getprotobyname getprotobynumber
+  getprotoent getpwent getpwnam getpwuid getservbyname getservbyport getservent
+  gmtime hex index lc lcfirst length localtime oct opendir ord pack pop print printf
+  push quotemeta rand readdir readlink ref reset reverse rewinddir rindex say seek
+  seekdir setgrent setnetent setpriority setprotoent setpwent setservent shift sleep 
+  srand study substr telldir tie tied times uc ucfirst unpack unshift untie
   
 The following file test operators are also available:
 
@@ -95,24 +97,27 @@ And the following terms:
 Please look at the porting caveats of the underlying modules that actually
 provide the functionality:
 
-  module      | built-in functions
-  ------------+-------------------
-  P5caller    | caller
-  P5chdir     | chdir
-  P5each      | each
-  P5fileno    | fileno
-  P5length    | length
-  P5localtime | localtime gmtime
-  P5opendir   | opendir readdir telldir seekdir rewinddir closedir
-  P5pack      | pack unpack
-  P5print     | print printf say
-  P5readlink  | readlink
-  P5ref       | ref
-  P5reverse   | reverse
-  P5study     | study
-  P5tie       | tie, tied, untie
-  P5times     | times
-  P5-X        | -r -w -x -e -f -d -s -z -l
+  module        | built-in functions
+  --------------+-------------------
+  P5caller      | caller
+  P5chdir       | chdir
+  P5each        | each
+  P5fileno      | fileno
+  P5getpriority | getpriority setpriority getppid getpgrp
+  P5length      | length
+  P5localtime   | localtime gmtime
+  P5opendir     | opendir readdir telldir seekdir rewinddir closedir
+  P5pack        | pack unpack
+  P5print       | print printf say
+  P5rand        | rand srand
+  P5readlink    | readlink
+  P5ref         | ref
+  P5reset       | reset
+  P5reverse     | reverse
+  P5study       | study
+  P5tie         | tie, tied, untie
+  P5times       | times
+  P5-X          | -r -w -x -e -f -d -s -z -l
 
 =head1 AUTHOR
 
