@@ -1,21 +1,16 @@
 use v6.c;
 
-unit module P5rand:ver<0.0.1>:auth<cpan:ELIZABETH>;
+unit module P5rand:ver<0.0.2>:auth<cpan:ELIZABETH>;
 
 proto sub rand(|) is export {*}
 multi sub rand(            --> Num:D) { 1.rand    }
 multi sub rand(Cool:D $num --> Num:D) { $num.rand }
 
-my $srand is default(Nil);
-proto sub srand(|) is export {*}
-multi sub srand() { $srand }
-multi sub srand(Int() $rand) { $srand = &CORE::srand($rand) }
-
 =begin pod
 
 =head1 NAME
 
-P5rand - Implement Perl 5's rand() / srand() built-ins
+P5rand - Implement Perl 5's rand() built-ins
 
 =head1 SYNOPSIS
 
@@ -25,18 +20,18 @@ P5rand - Implement Perl 5's rand() / srand() built-ins
 
   say rand 42; # a number between 0 and 42
 
-  srand(666);
-
 =head1 DESCRIPTION
 
-This module tries to mimic the behaviour of the C<rand> and C<srand> built-ins
-of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the C<rand> built-in of Perl 5
+as closely as possible.
 
 =head1 PORTING CAVEATS
 
-It is currently impossible to get the default C<srand()> value, but this may
-change in a future version of Perl 6.  Until that time, C<srand()> will return
-C<Nil> if C<srand> was never called with a value before.
+The version of C<srand()> that is provided by Perl 6 does not allow it to be
+called without a parameter.  Rather than providing a possibly predictable
+default seed value (like it does in Perl 5), it was decided to not offer thisi
+capability in Perl 6.  This seems like a good idea, so this module does not
+provide a replacement C<srand> function.
 
 Currently, some Perl 6 grammar checks are a bit too overzealous with regards to
 calling C<rand> with a parameter:

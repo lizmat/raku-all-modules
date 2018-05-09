@@ -5,7 +5,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [ ],
-  "description" : "Implement Perl 5's rand() / srand() built-ins",
+  "description" : "Implement Perl 5's rand() built-ins",
   "license" : "Artistic-2.0",
   "name" : "P5rand",
   "perl" : "6.c",
@@ -19,5 +19,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.2"
 }

@@ -3,7 +3,7 @@
 NAME
 ====
 
-P5rand - Implement Perl 5's rand() / srand() built-ins
+P5rand - Implement Perl 5's rand() built-ins
 
 SYNOPSIS
 ========
@@ -14,17 +14,15 @@ SYNOPSIS
 
     say rand 42; # a number between 0 and 42
 
-    srand(666);
-
 DESCRIPTION
 ===========
 
-This module tries to mimic the behaviour of the `rand` and `srand` built-ins of Perl 5 as closely as possible.
+This module tries to mimic the behaviour of the `rand` built-in of Perl 5 as closely as possible.
 
 PORTING CAVEATS
 ===============
 
-It is currently impossible to get the default `srand()` value, but this may change in a future version of Perl 6. Until that time, `srand()` will return `Nil` if `srand` was never called with a value before.
+The version of `srand()` that is provided by Perl 6 does not allow it to be called without a parameter. Rather than providing a possibly predictable default seed value (like it does in Perl 5), it was decided to not offer thisi capability in Perl 6. This seems like a good idea, so this module does not provide a replacement `srand` function.
 
 Currently, some Perl 6 grammar checks are a bit too overzealous with regards to calling `rand` with a parameter:
 
