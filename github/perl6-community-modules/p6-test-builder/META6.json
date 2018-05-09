@@ -6,7 +6,7 @@
   "source-type": "git",
   "author": "Kevin Polulak",
   "depends": [
-    
+
   ],
   "license": "Artistic-2.0",
   "provides": {
@@ -15,6 +15,6 @@
     "Test::Builder::Output": "lib/Test/Builder/Output.pm",
     "Test::Builder": "lib/Test/Builder.pm"
   },
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Flexible framework for building TAP test libraries"
 }

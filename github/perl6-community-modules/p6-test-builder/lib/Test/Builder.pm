@@ -215,7 +215,7 @@ class Test::Builder:auth<soh_cah_toa>:ver<0.0.1> {
 
     #= Verifies that the first two arguments are equal
     method is(Mu $got, Mu $expected, Str $description= '') {
-        my Bool $test = ?$got eq ?$expected;
+        my Bool $test = ?($got eq $expected);
 
         # Display verbose report unless test passed
         if $test {
@@ -237,7 +237,7 @@ class Test::Builder:auth<soh_cah_toa>:ver<0.0.1> {
 
     #= Verifies that the first two arguments are not equal
     method isnt(Mu $got, Mu $expected, Str $description= '') {
-        my Bool $test = ?$got ne ?$expected;
+        my Bool $test = ?($got ne $expected);
 
         # Display verbose report unless test passed
         if $test {
