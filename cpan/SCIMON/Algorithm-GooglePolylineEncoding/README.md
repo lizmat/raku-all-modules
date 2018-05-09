@@ -32,7 +32,7 @@ Encodes a polyline list (supplied in any of the listed formats) and returns a St
 
 ### decode-polyline( Str ) --> [ { :lat(Real), :lon(Real) }, ... ]
 
-Takes a string encoded using the algorithm and returns an Array of Hashes with lat / lon keys. 
+Takes a string encoded using the algorithm and returns an Array of Hashes with lat / lon keys.
 
 For further details on the encoding algorithm please see the follow link:
 
