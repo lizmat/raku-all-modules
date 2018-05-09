@@ -40,15 +40,16 @@ method base-url(Bool :$media? = False --> Str) {
 }
 
 multi method post(Str $path, Str $json, :$media = False) {
-    my $req = HTTP::Request.new(POST => $.base-url(:$media) ~ $path ~ "?access_token=$!access-token",
+    my $url = $.base-url(:$media) ~ $path ~ "?access_token=$!access-token";
+    my $req = HTTP::Request.new(POST => $url,
                                 Content-Type => 'application/json');
     $req.add-content($json);
-
     return self!handle-error($!ua.request($req));
 }
 
 multi method post(Str $path, :$media = False, *%params) {
-    self.post($path, :$media, to-json(%params))
+    my $json = to-json(%params);
+    $.post($path, $json, :$media)
 }
 
 method post-bin(Str $path, Buf $buf, :$content-type) {
