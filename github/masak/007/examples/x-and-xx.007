@@ -1,0 +1,37 @@
+macro infix:<xx>(left, right) is equal(infix:<*>) {
+    sub flatten(array) {
+        my result = [];
+        for array -> elem {
+            if elem ~~ Array {
+                result = result.concat(elem);
+            } else {
+                result.push(elem);
+            }
+        }
+        return result;
+    }
+
+    return quasi {
+        flatten((^{{{right}}}).map(sub(_) {
+            return {{{left}}};
+        }))
+    }
+}
+
+sub infix:<x>(left, right) is equal(infix:<*>) {
+    return (left xx right).join("");
+}
+
+# Test string x number.
+say("testing" x 2);
+
+# Test number xx number.
+my i = 0;
+say((i = i + 1) xx 3);
+
+# Test list xx number.
+say([1, 2, 3] xx 2);
+
+# Test (list or number) xx number.
+my j = 0;
+say((j = [1, [1, 2, 3]][j && 1]) xx 2);
