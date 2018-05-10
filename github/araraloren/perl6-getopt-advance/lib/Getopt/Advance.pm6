@@ -557,18 +557,22 @@ class OptionSet {
 
 #| &wrap-command using `run` execute the $cmd
 #| call &tweak after &getopt called
-sub wrap-command(OptionSet $os, $cmd, @args is copy = @*ARGS, :&tweak, *%args) is export {
-
-    %args<parser> = &ga-pre-parser;
-
-    my $ret = &getopt(@args, $os, |%args);
+sub wrap-command(OptionSet $os, $cmd, @args is copy = @*ARGS, :&tweak, :$async, *%args) is export {
+    my %gargs = parser =>&ga-pre-parser;
+    
+    # remove the args of getopt
+    for < helper stdout stderr strict autohv version bsd-style x-style > {
+        if %args{$_}:exists {
+            %gargs{$_} = %args{$_};
+            %args{$_}:delete;
+        }
+    }
+    my $ret = &getopt(@args, $os, |%gargs);
 
     &tweak($os, $ret) if &tweak.defined;
 
-    try {
-        return run($cmd, | $ret.noa);
-        CATCH {
-            default { note "$cmd {$ret.noa} failed!";  }
-        }
+    if $async {
+       return Proc::Async.new($cmd, |$ret.noa, |%args);
     }
+    return run($cmd, |$ret.noa, |%args);
 }
