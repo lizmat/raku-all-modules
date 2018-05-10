@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6-community-modules/p6-test-builder.git
 	branch = master
-	commit = 9e7975d089252a2403fafa35b0055c1d319b0fa0
-	parent = 9c2d084d30968d111521fc5ae20dbac9c6af8f13
+	commit = d17d89ff04aba3befabb959f34d0bdfd40299240
+	parent = 411e781a4fb9f90693870203295a676d4cef004a
 	cmdver = 0.4.0
