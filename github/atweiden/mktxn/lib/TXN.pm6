@@ -56,7 +56,7 @@ my class TXNBUILD
 my class TXN::Package
 {
     has Str:D $!compiler is required;
-    has Entry:D @!entry is required;
+    has Ledger:D $!ledger is required;
     has UInt:D $!count is required;
     has VarName:D @!entities-seen is required;
     has VarNameBare:D $!pkgname is required;
@@ -90,9 +90,9 @@ my class TXN::Package
                 $dt
             );
         say($message) if $verbose;
-        @!entry = from-txn(:file($txnbuild.source), |%opts);
-        $!count = @!entry.elems;
-        @!entities-seen = gen-entities-seen(@!entry);
+        $!ledger = from-txn(:file($txnbuild.source), |%opts);
+        $!count = $!ledger.entry.elems;
+        @!entities-seen = gen-entities-seen($!ledger.entry);
     }
 
     multi submethod BUILD(
@@ -114,9 +114,9 @@ my class TXN::Package
         %opts<date-local-offset> =
             $date-local-offset if $date-local-offset.defined;
         %opts<include-lib> = $include-lib if $include-lib;
-        @!entry = from-txn(:file($source), |%opts);
-        $!count = @!entry.elems;
-        @!entities-seen = gen-entities-seen(@!entry);
+        $!ledger = from-txn(:file($source), |%opts);
+        $!count = $!ledger.entry.elems;
+        @!entities-seen = gen-entities-seen($!ledger.entry);
     }
 
     multi method new(
@@ -156,7 +156,7 @@ my class TXN::Package
             :$!pkgname,
             :$!pkgrel,
             :$!pkgver;
-        my %hash = :@!entry, :%txn-info;
+        my %hash = :$!ledger, :%txn-info;
     }
 }
 
@@ -285,7 +285,7 @@ multi sub mktxn(
 # serialize to JSON files on disk and compress
 multi sub makepkg(
     %pkg (
-        Entry:D :@entry!,
+        Ledger:D :ledger($)!,
         :%txn-info!
     ),
     Bool :$verbose
@@ -321,7 +321,7 @@ multi sub makepkg(
 multi sub makepkg(
     'serialize',
     % (
-        Entry:D :@entry!,
+        Ledger:D :$ledger!,
         :%txn-info
     ),
     Str:D $txn-info-file,
@@ -334,8 +334,7 @@ multi sub makepkg(
     spurt($txn-info-file, $txn-info ~ "\n");
 
     # serialize accounting ledger to JSON
-    my @remarshal = remarshal(@entry, :if<entry>, :of<hash>);
-    my Str:D $txn-json = Rakudo::Internals::JSON.to-json(@remarshal);
+    my Str:D $txn-json = remarshal($ledger, :if<ledger>, :of<json>);
     spurt($txn-json-file, $txn-json ~ "\n");
 }
 
