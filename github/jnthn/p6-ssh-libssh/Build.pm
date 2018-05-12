@@ -6,7 +6,7 @@ class Build {
     method build($workdir) {
         # We only have a .dll file bundled on Windows; non-Windows is assumed
         # to have a libssh already.
-        return unless $*DISTRO.is-win;
+        return True unless $*DISTRO.is-win;
 
         my constant @files = "ssh.dll", "libeay32.dll", "msvcr110.dll";
         my constant @hashes =
@@ -37,5 +37,7 @@ class Build {
                 die "Bad download of $file (got: $got-hash; expected: $hash)";
             }
         }
+
+        return True;
     }
 }
