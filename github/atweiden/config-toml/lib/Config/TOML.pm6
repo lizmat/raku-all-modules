@@ -17,7 +17,7 @@ multi sub from-toml(
 multi sub from-toml(
     Str:D :$file! where .so,
     *%opts (Int :date-local-offset($))
-    --> Hash
+    --> Hash:D
 ) is export
 {
     Config::TOML::Parser.parsefile($file, |%opts).made
