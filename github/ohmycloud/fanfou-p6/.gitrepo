@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ohmycloud/fanfou-p6.git
+	branch = master
+	commit = 2cdc96186a85af63d5b23f7d86affce9c6127d42
+	parent = f10fb1712550d36867651cc042c6c6e7905827cb
+	cmdver = 0.4.0
