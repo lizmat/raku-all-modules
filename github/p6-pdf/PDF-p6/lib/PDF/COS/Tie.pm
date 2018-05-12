@@ -51,6 +51,7 @@ role PDF::COS::Tie {
 	has Bool $.is-required = False;
 	has Bool $.is-indirect = False;
 	has Bool $.is-inherited = False;
+        has Bool $.decont = False;
 	has Str $.accessor-name;
         has Str $.alias;
 	has Code $.coerce = sub ($lval is rw, Mu $type) { PDF::COS.coerce($lval, $type) };
@@ -80,6 +81,7 @@ role PDF::COS::Tie {
                         $att = Attribute.new( :name('@!' ~ $.accessor-name), :type(of-type), :package<?> );
                         $att does TiedIndex;
                         $att.tied = $.clone;
+                        $att.tied.decont = False;
                         $att.tied.type = of-type;
                         $lval.of-att = $att;
 
@@ -98,16 +100,19 @@ role PDF::COS::Tie {
                                 die "{.WHAT.^name}.$.accessor-name: {.gist} not of type: {of-type.^name}"
                                 unless $_ ~~ of-type;
                             }
-                            .reader //= reader if reader && .can('reader');
+                            .reader //= reader;
                         }
                     }
                 }
                 else {
-                    ($.coerce)($lval, $!type);
-                    if $check {
-                        with $lval {
-                            die "{.WHAT.^name}.$.accessor-name: {.gist} not of type: {$!type.^name}"
-                                unless $_ ~~ $!type;
+                    my \of-type = $!decont ?? $!type.of !! $!type;
+                    unless $lval ~~ of-type {
+                        ($.coerce)($lval, of-type);
+                        if $check {
+                            with $lval {
+                                die "{.WHAT.^name}.$.accessor-name: {.gist} not of type: {$!type.^name}"
+                                    unless $_ ~~ of-type;
+                            }
                         }
                     }
                     $lval.reader //= $_ with reader;
@@ -132,7 +137,7 @@ role PDF::COS::Tie {
 
         my constant %Args = %(
             :inherit<is-inherited>, :required<is-required>, :indirect<is-indirect>,
-            :coerce<coerce>, :len<length>, :alias<alias>
+            :coerce<coerce>, :len<length>, :alias<alias>, :array-or-item<decont>
         );
         my $tied = $att.tied;
 
