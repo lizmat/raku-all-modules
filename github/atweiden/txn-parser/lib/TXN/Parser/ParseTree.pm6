@@ -210,7 +210,9 @@ class Entry::Posting
             Entry::Posting::Amount:D :amount($)!,
             Entry::Posting::ID:D :id($)!,
             DecInc:D :decinc($)!,
-            Entry::Posting::Annot :annot($)
+            Entry::Posting::Annot :annot($),
+            # ignore potential drcr key for C<TXN::Remarshal>
+            *%
         )
         --> Entry::Posting:D
     )
@@ -296,5 +298,20 @@ class Entry
 }
 
 # end Entry }}}
+# Ledger {{{
+
+class Ledger
+{
+    has Entry:D @.entry is required;
+
+    method hash(::?CLASS:D: --> Hash:D)
+    {
+        my %hash;
+        %hash<entry> = @.entry.hyper.map({ .hash }).Array;
+        %hash;
+    }
+}
+
+# end Ledger }}}
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

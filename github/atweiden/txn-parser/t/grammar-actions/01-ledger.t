@@ -25,318 +25,314 @@ subtest({
         EOF
     );
 
-    =begin pod
-    2018-03-05
-    this test passes but rakudo fails it
     is(
         $match-ledger.made.WHAT,
-        Array[Entry:D],
+        Ledger,
         q:to/EOF/
         ♪ [Is array?] - 2 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made.WHAT ~~ Array[Entry:D]
+        ┃             ┃  ∙ $match-ledger.made.WHAT ~~ Ledger
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
-    =end pod
 
     is(
-        $match-ledger.made[0].header.date,
+        $match-ledger.made.entry[0].header.date,
         '2014-01-01',
         q:to/EOF/
         ♪ [Is expected value?] - 3 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].header.date ~~ '2014-01-01'
+        ┃             ┃  ∙ $match-ledger.made.entry[0].header.date ~~ '2014-01-01'
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].header.description,
+        $match-ledger.made.entry[0].header.description,
         'I started the year with $1000 in Bankwest cheque account',
         q:to/EOF/
         ♪ [Is expected value?] - 4 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].header.description
+        ┃             ┃  ∙ $match-ledger.made.entry[0].header.description
         ┃   Success   ┃        ~~ '...'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].header.important,
+        $match-ledger.made.entry[0].header.important,
         0,
         q:to/EOF/
         ♪ [Is expected value?] - 5 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].header.important
+        ┃             ┃  ∙ $match-ledger.made.entry[0].header.important
         ┃   Success   ┃        == 0
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].header.tag[0],
+        $match-ledger.made.entry[0].header.tag[0],
         'TAG1',
         q:to/EOF/
         ♪ [Is expected value?] - 6 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].header.tag[0]
+        ┃             ┃  ∙ $match-ledger.made.entry[0].header.tag[0]
         ┃   Success   ┃        ~~ 'TAG1'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].header.tag[1],
+        $match-ledger.made.entry[0].header.tag[1],
         'TAG2',
         q:to/EOF/
         ♪ [Is expected value?] - 7 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].header.tag[1]
+        ┃             ┃  ∙ $match-ledger.made.entry[0].header.tag[1]
         ┃   Success   ┃        ~~ 'TAG2'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].id.number,
+        $match-ledger.made.entry[0].id.number,
         0,
         q:to/EOF/
         ♪ [Is expected value?] - 8 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].id.number == 0
+        ┃             ┃  ∙ $match-ledger.made.entry[0].id.number == 0
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].id.text,
+        $match-ledger.made.entry[0].id.text,
         "2014-01-01 \"I started the year with \$1000 in Bankwest cheque account\" #TAG1 #TAG2 -- EODESC COMMENT\n  -- this is a comment line\n  Assets:Personal:Bankwest:Cheque    \$1000.00 USD\n  -- this is a second comment line\n  Equity:Personal                    \$1000.00 USD -- EOL COMMENT",
         q:to/EOF/
         ♪ [Is expected value?] - 9 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].id.text ~~ "..."
+        ┃             ┃  ∙ $match-ledger.made.entry[0].id.text ~~ "..."
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].id.xxhash,
+        $match-ledger.made.entry[0].id.xxhash,
         1219414156,
         q:to/EOF/
         ♪ [Is expected value?] - 10 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].id.xxhash == 1219414156
+        ┃             ┃  ∙ $match-ledger.made.entry[0].id.xxhash == 1219414156
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].account.entity,
+        $match-ledger.made.entry[0].posting[0].account.entity,
         'Personal',
         q:to/EOF/
         ♪ [Is expected value?] - 11 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].account.entity
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].account.entity
         ┃   Success   ┃        ~~ 'Personal'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].account.silo,
+        $match-ledger.made.entry[0].posting[0].account.silo,
         TXN::Parser::Types::Silo::ASSETS,
         q:to/EOF/
         ♪ [Is expected value?] - 12 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].account.silo
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].account.silo
         ┃   Success   ┃        ~~ TXN::Parser::Types::Silo::ASSETS
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].account.path[0],
+        $match-ledger.made.entry[0].posting[0].account.path[0],
         'Bankwest',
         q:to/EOF/
         ♪ [Is expected value?] - 13 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].account.path[0]
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].account.path[0]
         ┃   Success   ┃        ~~ 'Bankwest'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].account.path[1],
+        $match-ledger.made.entry[0].posting[0].account.path[1],
         'Cheque',
         q:to/EOF/
         ♪ [Is expected value?] - 14 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].account.path[1]
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].account.path[1]
         ┃   Success   ┃        ~~ 'Cheque'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].amount.asset-code,
+        $match-ledger.made.entry[0].posting[0].amount.asset-code,
         'USD',
         q:to/EOF/
         ♪ [Is expected value?] - 15 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].amount.asset-code
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].amount.asset-code
         ┃   Success   ┃        ~~ 'USD'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].amount.asset-quantity,
+        $match-ledger.made.entry[0].posting[0].amount.asset-quantity,
         1000.0,
         q:to/EOF/
         ♪ [Is expected value?] - 16 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].amount.asset-quantity
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].amount.asset-quantity
         ┃   Success   ┃        == 1000.0
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].amount.asset-symbol,
+        $match-ledger.made.entry[0].posting[0].amount.asset-symbol,
         '$',
         q:to/EOF/
         ♪ [Is expected value?] - 17 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].amount.asset-symbol
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].amount.asset-symbol
         ┃   Success   ┃        ~~ '$'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].annot,
+        $match-ledger.made.entry[0].posting[0].annot,
         Entry::Posting::Annot,
         q:to/EOF/
         ♪ [Is expected value?] - 18 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].annot
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].annot
         ┃   Success   ┃        ~~ Entry::Posting::Annot
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].amount.plus-or-minus,
+        $match-ledger.made.entry[0].posting[0].amount.plus-or-minus,
         TXN::Parser::Types::PlusMinus,
         q:to/EOF/
         ♪ [Is expected value?] - 19 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].amount.plus-or-minus
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].amount.plus-or-minus
         ┃   Success   ┃        ~~ TXN::Parser::Types::PlusMinus
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].decinc,
+        $match-ledger.made.entry[0].posting[0].decinc,
         TXN::Parser::Types::DecInc::INC,
         q:to/EOF/
         ♪ [Is expected value?] - 20 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].decinc
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].decinc
         ┃   Success   ┃        ~~ TXN::Parser::Types::DecInc::INC
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].drcr,
+        $match-ledger.made.entry[0].posting[0].drcr,
         TXN::Parser::Types::DrCr::DEBIT,
         q:to/EOF/
         ♪ [Is expected value?] - 21 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].drcr
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].drcr
         ┃   Success   ┃        ~~ TXN::Parser::Types::DrCR::DEBIT
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].id.number,
+        $match-ledger.made.entry[0].posting[0].id.number,
         0,
         q:to/EOF/
         ♪ [Is expected value?] - 22 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].id.number == 0
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].id.number == 0
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].id.text,
+        $match-ledger.made.entry[0].posting[0].id.text,
         'Assets:Personal:Bankwest:Cheque    $1000.00 USD',
         q:to/EOF/
         ♪ [Is expected value?] - 23 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].id.text ~~ '...'
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].id.text ~~ '...'
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].id.xxhash,
+        $match-ledger.made.entry[0].posting[0].id.xxhash,
         352942826,
         q:to/EOF/
         ♪ [Is expected value?] - 24 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].id.xxhash
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].id.xxhash
         ┃   Success   ┃        == 352942826
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].id.entry-id.number,
+        $match-ledger.made.entry[0].posting[0].id.entry-id.number,
         0,
         q:to/EOF/
         ♪ [Is expected value?] - 25 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].id.entry-id.number
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].id.entry-id.number
         ┃   Success   ┃        == 0
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].id.entry-id.text,
+        $match-ledger.made.entry[0].posting[0].id.entry-id.text,
         "2014-01-01 \"I started the year with \$1000 in Bankwest cheque account\" #TAG1 #TAG2 -- EODESC COMMENT\n  -- this is a comment line\n  Assets:Personal:Bankwest:Cheque    \$1000.00 USD\n  -- this is a second comment line\n  Equity:Personal                    \$1000.00 USD -- EOL COMMENT",
         q:to/EOF/
         ♪ [Is expected value?] - 26 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].id.entry-id.text
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].id.entry-id.text
         ┃   Success   ┃        ~~ "..."
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match-ledger.made[0].posting[0].id.entry-id.xxhash,
+        $match-ledger.made.entry[0].posting[0].id.entry-id.xxhash,
         1219414156,
         q:to/EOF/
         ♪ [Is expected value?] - 27 of 8334
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-ledger.made[0].posting[0].id.entry-id.xxhash
+        ┃             ┃  ∙ $match-ledger.made.entry[0].posting[0].id.entry-id.xxhash
         ┃   Success   ┃        == 1219414156
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -357,7 +353,7 @@ subtest({
     Income:Personal:Gifts          ฿5 BTC @ $466 USD
     EOF
 
-    my @entry = TXN::Parser.parse($txn).made;
+    my @entry = TXN::Parser.parse($txn).made.entry;
 
     is(
         @entry[0].posting[0].amount.asset-code,
@@ -481,7 +477,7 @@ subtest({
       Assets:Personal:Coinbase          -฿0.1 BTC @ $700 USD ← [instapurchase]
     EOF
 
-    my Entry @entry = TXN::Parser.parse($txn).made;
+    my Entry @entry = TXN::Parser.parse($txn).made.entry;
 
     is(
         @entry[0].posting[0].amount.asset-code,
@@ -607,7 +603,7 @@ subtest({
 
 subtest({
     my Str $file = 't/data/with-includes/with-includes.txn';
-    my Entry @entry = TXN::Parser.parsefile($file).made;
+    my Entry @entry = TXN::Parser.parsefile($file).made.entry;
 
     # tests {{{
     ok(@entry[0].header.date eqv Date.new(2011,1,1));
@@ -4761,7 +4757,7 @@ subtest({
 subtest({
     my Str $txn = "include <with-includes>\n";
     my Entry @entry =
-        TXN::Parser.parse($txn, :include-lib<t/data/with-includes>).made;
+        TXN::Parser.parse($txn, :include-lib<t/data/with-includes>).made.entry;
 
     # tests {{{
     ok(@entry[0].header.date eqv Date.new(2011,1,1));

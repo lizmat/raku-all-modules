@@ -883,7 +883,7 @@ method include:filename ($match --> Nil)
             :$.include-lib
         );
     my Entry:D @entry =
-        TXN::Parser::Grammar.parsefile($filename, :$actions).made;
+        TXN::Parser::Grammar.parsefile($filename, :$actions).made.entry;
     @!entry-number[*-1]++;
     $match.make(@entry);
 }
@@ -906,7 +906,7 @@ method include:txnlib ($match --> Nil)
             :$.include-lib
         );
     my Entry:D @entry =
-        TXN::Parser::Grammar.parsefile($filename, :$actions).made;
+        TXN::Parser::Grammar.parsefile($filename, :$actions).made.entry;
     @!entry-number[*-1]++;
     $match.make(@entry);
 }
@@ -946,7 +946,7 @@ method ledger($/ --> Nil)
             .map({ .made })
             .map({ .grep(Entry:D) })
             .flat;
-    make(@entry);
+    make(Ledger.new(:@entry));
 }
 
 method TOP($/ --> Nil)
