@@ -1,7 +1,0 @@
-Revision history for P5getpriority
-
-0.0.2  2018-05-06T21:09:39+02:00
-    - Add setpgrp, which makes sense here
-
-0.0.1  2018-05-06T20:24:34+02:00
-    - Initial version
