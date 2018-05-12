@@ -25,9 +25,9 @@ multi sub MAIN(
     --> Nil
 )
 {
-    my @e = remarshal($*IN.lines.join("\n"), :if<json>, :of<hash>);
-    my Entry:D @entry = remarshal(@e, :if<hash>, :of<entry>);
-    my Str:D $txn = remarshal(@entry, :if<entry>, :of<txn>);
+    my %ledger = remarshal($*IN.lines.join("\n"), :if<json>, :of<hash>);
+    my Ledger:D $entry = remarshal(%ledger, :if<hash>, :of<ledger>);
+    my Str:D $txn = remarshal($entry, :if<ledger>, :of<txn>);
     output($txn, $output);
 }
 
@@ -43,9 +43,9 @@ multi sub MAIN(
     my Str:D $file = resolve-path($input);
     exists-readable-file($file)
         or die;
-    my @e = remarshal(slurp($file), :if<json>, :of<hash>);
-    my Entry:D @entry = remarshal(@e, :if<hash>, :of<entry>);
-    my Str:D $txn = remarshal(@entry, :if<entry>, :of<txn>);
+    my %ledger = remarshal(slurp($file), :if<json>, :of<hash>);
+    my Ledger:D $ledger = remarshal(%ledger, :if<hash>, :of<entry>);
+    my Str:D $txn = remarshal($ledger, :if<ledger>, :of<txn>);
     output($txn, $output);
 }
 
@@ -58,9 +58,9 @@ multi sub MAIN(
     --> Nil
 )
 {
-    my Entry:D @entry = from-txn($*IN.lines.join("\n"));
-    my @e = remarshal(@entry, :if<entry>, :of<hash>);
-    my Str:D $json = remarshal(@e, :if<hash>, :of<json>);
+    my Ledger:D $ledger = from-txn($*IN.lines.join("\n"));
+    my %ledger = remarshal($ledger, :if<ledger>, :of<hash>);
+    my Str:D $json = remarshal(%ledger, :if<hash>, :of<json>);
     output($json, $output);
 }
 
@@ -76,9 +76,9 @@ multi sub MAIN(
     my Str:D $file = resolve-path($input);
     exists-readable-file($file)
         or die;
-    my Entry:D @entry = from-txn(:$file);
-    my @e = remarshal(@entry, :if<entry>, :of<hash>);
-    my Str:D $json = remarshal(@e, :if<hash>, :of<json>);
+    my Ledger:D $ledger = from-txn(:$file);
+    my %ledger = remarshal($ledger, :if<ledger>, :of<hash>);
+    my Str:D $json = remarshal(%ledger, :if<hash>, :of<json>);
     output($json, $output);
 }
 

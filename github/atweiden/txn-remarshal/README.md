@@ -32,20 +32,20 @@ my Str $txn = Q:to/EOF/;
 EOF
 
 # convenience wrappers
-my Entry @entry = from-txn($txn);
-my Str $s = to-txn(@entry);
+my Ledger $ledger = from-txn($txn);
+my Str $txn = to-txn($ledger);
 
-# txn ↔ entry
-my Entry @entry = remarshal($txn, :if<txn>, :of<entry>);
-my Str $ledger = remarshal(@entry, :if<entry>, :of<txn>);
+# txn ↔ ledger
+my Ledger $ledger = remarshal($txn, :if<txn>, :of<ledger>);
+my Str $txn = remarshal($ledger, :if<ledger>, :of<txn>);
 
-# entry ↔ hash
-my Hash @a = remarshal(@entry, :if<entry>, :of<hash>);
-my Entry @e = remarshal(@a, :if<hash>, :of<entry>);
+# ledger ↔ hash
+my %ledger = remarshal($ledger, :if<ledger>, :of<hash>);
+my Ledger $ledger = remarshal(%ledger, :if<hash>, :of<ledger>);
 
 # hash ↔ json
-my Str $json = remarshal(@a, :if<hash>, :of<json>);
-my Hash @b = remarshal($json, :if<json>, :of<hash>);
+my Str $json = remarshal(%ledger, :if<hash>, :of<json>);
+my %ledger = remarshal($json, :if<json>, :of<hash>);
 ```
 
 

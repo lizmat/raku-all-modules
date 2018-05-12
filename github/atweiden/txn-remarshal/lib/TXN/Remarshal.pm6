@@ -8,18 +8,18 @@ unit module TXN::Remarshal;
 
 # --- format {{{
 
-subset Format of Str where /ENTRY|HASH|JSON|TXN/;
-multi sub gen-format('entry' --> Format:D) { 'ENTRY' }
-multi sub gen-format('hash'  --> Format:D) { 'HASH' }
-multi sub gen-format('json'  --> Format:D) { 'JSON' }
-multi sub gen-format('txn'   --> Format:D) { 'TXN' }
+subset Format of Str where /HASH|JSON|LEDGER|TXN/;
+multi sub gen-format('hash'   --> Format:D) { 'HASH' }
+multi sub gen-format('json'   --> Format:D) { 'JSON' }
+multi sub gen-format('ledger' --> Format:D) { 'LEDGER' }
+multi sub gen-format('txn'    --> Format:D) { 'TXN' }
 
 # --- end format }}}
 
 multi sub remarshal(
     $input,
-    Str:D :if(:$input-format) where /entry|hash|json|txn/,
-    Str:D :of(:$output-format) where /entry|hash|json|txn/
+    Str:D :if(:$input-format) where /hash|json|ledger|txn/,
+    Str:D :of(:$output-format) where /hash|json|ledger|txn/
 ) is export
 {
     my Format:D $if = gen-format($input-format);
@@ -30,105 +30,80 @@ multi sub remarshal(
 # ------------------------------------------------------------------------------
 # --- no conversion required {{{
 
-multi sub remarshal($input, 'ENTRY', 'ENTRY') { $input }
 multi sub remarshal($input, 'HASH', 'HASH') { $input }
 multi sub remarshal($input, 'JSON', 'JSON') { $input }
+multi sub remarshal($input, 'LEDGER', 'LEDGER') { $input }
 multi sub remarshal($input, 'TXN', 'TXN') { $input }
 
 # --- end no conversion required }}}
 # ------------------------------------------------------------------------------
-# --- txn ↔ entry {{{
+# --- txn ↔ ledger {{{
 
-multi sub remarshal(Str:D $txn, 'TXN', 'ENTRY' --> Array:D)
+multi sub remarshal(
+    Str:D $txn,
+    'TXN',
+    'LEDGER'
+    --> Ledger:D
+)
 {
-    my Entry:D @entry = from-txn($txn);
+    my Ledger:D $ledger = from-txn($txn);
 }
 
 multi sub remarshal(
-    Entry:D @entry,
-    'ENTRY',
+    Ledger:D $ledger,
+    'LEDGER',
     'TXN'
     --> Str:D
 )
 {
-    my Str:D $txn = to-txn(@entry);
+    my Str:D $txn = to-txn($ledger);
 }
 
-multi sub remarshal(
-    Entry:D $entry,
-    'ENTRY',
-    'TXN'
-    --> Str:D
-)
-{
-    my Str:D $txn = to-txn($entry);
-}
-
-# --- end txn ↔ entry }}}
-# --- entry ↔ hash {{{
+# --- end txn ↔ ledger }}}
+# --- ledger ↔ hash {{{
 
 multi sub remarshal(
-    Entry:D @entry,
-    'ENTRY',
-    'HASH'
-    --> Array:D
-)
-{
-    my @e = to-hash(@entry);
-}
-
-multi sub remarshal(
-    Entry:D $entry,
-    'ENTRY',
+    Ledger:D $ledger,
+    'LEDGER',
     'HASH'
     --> Hash:D
 )
 {
-    my %e = to-hash($entry);
+    my %ledger = to-hash($ledger);
 }
 
-multi sub remarshal(@e, 'HASH', 'ENTRY' --> Array:D)
+multi sub remarshal(%ledger, 'HASH', 'LEDGER' --> Ledger:D)
 {
-    my Entry:D @entry = from-hash(:entry(@e));
+    my Ledger:D $ledger = from-hash(:%ledger);
 }
 
-multi sub remarshal(%e, 'HASH', 'ENTRY' --> Entry:D)
-{
-    my Entry:D $entry = from-hash(:entry(%e));
-}
-
-# --- end entry ↔ hash }}}
+# --- end ledger ↔ hash }}}
 # --- hash ↔ json {{{
 
-multi sub remarshal(@e, 'HASH', 'JSON' --> Str:D)
+multi sub remarshal(%ledger, 'HASH', 'JSON' --> Str:D)
 {
-    my Str:D $json = to-json(@e);
+    my Str:D $json = to-json(%ledger);
 }
 
-multi sub remarshal(%e, 'HASH', 'JSON' --> Str:D)
+multi sub remarshal(Str:D $json, 'JSON', 'HASH' --> Hash:D)
 {
-    my Str:D $json = to-json(%e);
-}
-
-multi sub remarshal(Str:D $json, 'JSON', 'HASH' --> Array:D)
-{
-    my @e = from-json($json);
+    my %ledger = from-json($json);
 }
 
 # --- end hash ↔ json }}}
 # ------------------------------------------------------------------------------
 # --- txn ↔ hash {{{
 
-multi sub remarshal(Str:D $txn, 'TXN', 'HASH' --> Array:D)
+multi sub remarshal(Str:D $txn, 'TXN', 'HASH' --> Hash:D)
 {
-    my Entry:D @entry = remarshal($txn, 'TXN', 'ENTRY');
-    my @e = remarshal(@entry, 'ENTRY', 'HASH');
+    my Ledger:D $ledger = remarshal($txn, 'TXN', 'LEDGER');
+    my %ledger = remarshal($ledger, 'LEDGER', 'HASH');
 }
 
-multi sub remarshal(@e, 'HASH', 'TXN' --> Str:D)
+multi sub remarshal(%ledger, 'HASH', 'TXN' --> Str:D)
 {
-    my Entry:D @entry = remarshal(@e, 'HASH', 'ENTRY');
-    my Str:D $txn = remarshal(@entry, 'ENTRY', 'TXN');
+    my Ledger:D $ledger = remarshal(%ledger, 'HASH', 'LEDGER');
+    my Str:D $txn = remarshal(%ledger, 'LEDGER', 'TXN');
 }
 
 # --- end txn ↔ hash }}}
@@ -136,62 +111,51 @@ multi sub remarshal(@e, 'HASH', 'TXN' --> Str:D)
 
 multi sub remarshal(Str:D $txn, 'TXN', 'JSON' --> Str:D)
 {
-    my Entry:D @entry = remarshal($txn, 'TXN', 'ENTRY');
-    my @e = remarshal(@entry, 'ENTRY', 'HASH');
-    my Str:D $json = remarshal(@e, 'HASH', 'JSON');
+    my Ledger:D $ledger = remarshal($txn, 'TXN', 'LEDGER');
+    my %ledger = remarshal($ledger, 'LEDGER', 'HASH');
+    my Str:D $json = remarshal(%ledger, 'HASH', 'JSON');
 }
 
 multi sub remarshal(Str:D $json, 'JSON', 'TXN' --> Str:D)
 {
-    my @e = remarshal($json, 'JSON', 'HASH');
-    my Entry:D @entry = remarshal(@e, 'HASH', 'ENTRY');
-    my Str:D $txn = remarshal(@entry, 'ENTRY', 'TXN');
+    my %ledger = remarshal($json, 'JSON', 'HASH');
+    my Ledger:D $ledger = remarshal(%ledger, 'HASH', 'LEDGER');
+    my Str:D $txn = remarshal($ledger, 'LEDGER', 'TXN');
 }
 
 # --- end txn ↔ json }}}
 # ------------------------------------------------------------------------------
-# --- entry ↔ json {{{
+# --- ledger ↔ json {{{
 
 multi sub remarshal(
-    Entry:D @entry,
-    'ENTRY',
+    Ledger:D $ledger,
+    'LEDGER',
     'JSON'
     --> Str:D
 )
 {
-    my @e = remarshal(@entry, 'ENTRY', 'HASH');
-    my Str:D $json = remarshal(@e, 'HASH', 'JSON');
+    my %ledger = remarshal($ledger, 'LEDGER', 'HASH');
+    my Str:D $json = remarshal(%ledger, 'HASH', 'JSON');
 }
 
-multi sub remarshal(
-    Entry:D $entry,
-    'ENTRY',
-    'JSON'
-    --> Str:D
-)
-{
-    my %e = remarshal($entry, 'ENTRY', 'HASH');
-    my Str:D $json = remarshal(%e, 'HASH', 'JSON');
-}
-
-# --- end entry ↔ json }}}
+# --- end ledger ↔ json }}}
 # ------------------------------------------------------------------------------
 
 # end remarshal }}}
 
-# txn ↔ entry
+# txn ↔ ledger
 # sub from-txn {{{
 
 multi sub from-txn(
-    Str:D $content,
+    Str:D $txn,
     *%opts (
         Str :include-lib($),
         Int :date-local-offset($)
     )
-    --> Array:D
+    --> Ledger:D
 ) is export
 {
-    my Entry:D @entry = TXN::Parser.parse($content, |%opts).made;
+    my Ledger:D $ledger = TXN::Parser.parse($txn, |%opts).made;
 }
 
 multi sub from-txn(
@@ -200,20 +164,29 @@ multi sub from-txn(
         Str :include-lib($),
         Int :date-local-offset($)
     )
-    --> Array:D
+    --> Ledger:D
 ) is export
 {
-    my Entry:D @entry = TXN::Parser.parsefile($file, |%opts).made;
+    my Ledger:D $ledger = TXN::Parser.parsefile($file, |%opts).made;
 }
 
 # end sub from-txn }}}
 # sub to-txn {{{
 
+# --- Ledger {{{
+
+multi sub to-txn(Ledger:D $ledger --> Str:D) is export
+{
+    my Entry:D @entry = $ledger.entry;
+    my Str:D $s = to-txn(@entry);
+}
+
+# --- end Ledger }}}
 # --- Entry {{{
 
 multi sub to-txn(Entry:D @entry --> Str:D) is export
 {
-    @entry.map({ to-txn($_) }).join("\n" x 2);
+    my Str:D $s = @entry.map({ to-txn($_) }).join("\n" x 2);
 }
 
 multi sub to-txn(Entry:D $entry --> Str:D) is export
@@ -408,9 +381,18 @@ multi sub to-txn(
 
 # end sub to-txn }}}
 
-# entry ↔ hash
+# ledger ↔ hash
 # sub from-hash {{{
 
+# --- Ledger {{{
+
+multi sub from-hash(:ledger(%)! (:@entry!) --> Ledger:D)
+{
+    my Entry:D @e = from-hash(:@entry);
+    Ledger.new(:entry(@e));
+}
+
+# --- end Ledger }}}
 # --- Entry {{{
 
 multi sub from-hash(:@entry! --> Array:D)
@@ -508,7 +490,8 @@ multi sub from-hash(
         :%amount!,
         :$decinc!,
         :id(%posting-id)!,
-        :%annot
+        :%annot,
+        *%
     )
     --> Entry::Posting:D
 )
@@ -716,41 +699,31 @@ multi sub from-hash(
 # end sub from-hash }}}
 # sub to-hash {{{
 
-# --- Entry {{{
+# --- Ledger {{{
 
-multi sub to-hash(Entry:D @entry --> Array:D)
+multi sub to-hash(Ledger:D $ledger --> Hash:D)
 {
-    my @a = @entry.map({ to-hash($_) });
+    $ledger.hash;
 }
 
-multi sub to-hash(Entry:D $entry --> Hash:D)
-{
-    $entry.hash;
-}
-
-# --- end Entry }}}
+# --- end Ledger }}}
 
 # end sub to-hash }}}
 
 # hash ↔ json
 # sub from-json {{{
 
-sub from-json(Str:D $json --> Array:D)
+sub from-json(Str:D $json --> Hash:D)
 {
-    Rakudo::Internals::JSON.from-json($json).Array;
+    my %ledger = Rakudo::Internals::JSON.from-json($json);
 }
 
 # end sub from-json }}}
 # sub to-json {{{
 
-multi sub to-json(@entry --> Str:D)
+multi sub to-json(%ledger --> Str:D)
 {
-    Rakudo::Internals::JSON.to-json(@entry);
-}
-
-multi sub to-json(%entry --> Str:D)
-{
-    Rakudo::Internals::JSON.to-json(%entry);
+    Rakudo::Internals::JSON.to-json(%ledger);
 }
 
 # end sub to-json }}}
