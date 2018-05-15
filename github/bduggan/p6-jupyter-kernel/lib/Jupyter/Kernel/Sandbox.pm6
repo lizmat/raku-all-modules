@@ -54,14 +54,34 @@ class Jupyter::Kernel::Sandbox is export {
 
     method eval(Str $code, Bool :$no-persist, Int :$store) {
         my $stdout;
+        my $stderr;
         my $*CTXSAVE = $!repl;
         my $*MAIN_CTX;
         my $*JUPYTER = CALLERS::<$*JUPYTER> // Jupyter::Kernel::Handler.new;
-        my $*OUT = class { method print(*@args) {
-                              $stdout ~= @args.join;
-                              return True but role { method __hide { True } }
-                           }
-                           method flush { } }
+        my $*ERR = class {
+            method print(*@args) {
+                $stderr ~= @args.join;
+                return True but role { method __hide { True } }
+            }
+            method say(*@args) {
+                self.print(@args.map: * ~ "\n");
+            }
+            method flush { }
+        }
+        my $*OUT = class {
+            method print(*@args) {
+                $stdout ~= @args.join;
+                return True but role { method __hide { True } }
+            }
+            method say(*@args) {
+                self.print(@args.map: * ~ "\n");
+            }
+            method flush { }
+        }
+        # without setting $PROCESS:: variants, output from Test.pm6
+        # is not visible in the notebook.
+        $PROCESS::OUT = $*OUT;
+        $PROCESS::ERR = $*ERR;
         my $exception;
         my $eval-code = $code;
         if $store {
@@ -123,6 +143,7 @@ class Jupyter::Kernel::Sandbox is export {
             :output($gist),
             :output-raw($output),
             :$stdout,
+            :$stderr,
             :$exception,
             :$incomplete;
 
