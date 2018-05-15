@@ -1,3 +1,7 @@
+vX.X    NOT YET RELEASED
+
+    * Corrected documentation errors in the POD
+
 v0.4    April 25, 2018
 
     * When an alternate sequence is given, the ordering of the alternates should
