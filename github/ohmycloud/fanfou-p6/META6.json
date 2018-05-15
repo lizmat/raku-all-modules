@@ -7,7 +7,7 @@
   "name" : "FanFou",
   "perl" : "6.c",
   "provides" : {
-    "FanFou" : "lib/FanFou.pm6"
+    "FanFou" : "lib/fanfou.pm6"
   },
   "resources" : [ ],
   "source-url" : "https://github.com/ohmycloud/fanfou-p6.git",
