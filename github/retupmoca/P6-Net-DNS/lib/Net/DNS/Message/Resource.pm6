@@ -73,7 +73,8 @@ multi method new($data is copy, %name-offsets, $start-offset){
             $self does Net::DNS::Message::Resource::SOA;
         }
     }
-
+    $self.rdata-parsed; # run final parsing to make sure compression tables get populated
+    $self;
 }
 
 multi method new () {
