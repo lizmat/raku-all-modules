@@ -27,14 +27,14 @@ class App::ecogen::test does Ecosystem {
     }
 }
 
-sub normalize-json($json) {
-    Rakudo::Internals::JSON.to-json: Rakudo::Internals::JSON.from-json: $json
+sub from-json($json) {
+    Rakudo::Internals::JSON.from-json: $json
 }
 
 App::ecogen::test.new(:prefix($prefix.child('test'))).update-local-package-list;
 
-is normalize-json(slurp($prefix.child('test1.json'))), normalize-json("[\n$meta\n]");
-is normalize-json(slurp($prefix.child('test.json'))), normalize-json(q/[{ "meta-version": 0, "name": "test", "depends": [ "bar", "baz" ] }]/);
+is-deeply from-json(slurp($prefix.child('test1.json'))), from-json("[\n$meta\n]");
+is-deeply from-json(slurp($prefix.child('test.json'))), from-json(q/[{ "meta-version": 0, "name": "test", "depends": [ "bar", "baz" ] }]/);
 
 $meta = q/{
     "meta-version": 1,
@@ -55,8 +55,8 @@ $meta = q/{
 
 App::ecogen::test.new(:prefix($prefix.child('test'))).update-local-package-list;
 
-is normalize-json(slurp($prefix.child('test1.json'))), normalize-json("[\n$meta\n]");
-is normalize-json(slurp($prefix.child('test.json'))), normalize-json(q/[{ "meta-version": 0, "name": "test", "build-depends": [ "bar", "baz" ] }]/);
+is-deeply from-json(slurp($prefix.child('test1.json'))), from-json("[\n$meta\n]");
+is-deeply from-json(slurp($prefix.child('test.json'))), from-json(q/[{ "meta-version": 0, "name": "test", "build-depends": [ "bar", "baz" ] }]/);
 
 $meta = q/{
     "meta-version": 1,
@@ -67,8 +67,8 @@ $meta = q/{
 
 App::ecogen::test.new(:prefix($prefix.child('test'))).update-local-package-list;
 
-is normalize-json(slurp($prefix.child('test1.json'))), normalize-json("[\n$meta\n]");
-is normalize-json(slurp($prefix.child('test.json'))), normalize-json(q/[{ "meta-version": 0, "name": "test", "build-depends": [ "Distribution::Builder::MakeFromJSON" ], "builder": "MakeFromJSON", "build": {} }]/);
+is-deeply from-json(slurp($prefix.child('test1.json'))), from-json("[\n$meta\n]");
+is-deeply from-json(slurp($prefix.child('test.json'))), from-json(q/[{ "meta-version": 0, "name": "test", "build-depends": [ "Distribution::Builder::MakeFromJSON" ], "builder": "MakeFromJSON", "build": {} }]/);
 
 $meta = q/{
     "meta-version": 1,
@@ -84,8 +84,8 @@ $meta = q/{
 
 App::ecogen::test.new(:prefix($prefix.child('test'))).update-local-package-list;
 
-is normalize-json(slurp($prefix.child('test1.json'))), normalize-json("[\n$meta\n]");
-is normalize-json(slurp($prefix.child('test.json'))), normalize-json(q/[{ "meta-version": 0, "name": "test", "build-depends": [ "Foo::Bar", "Distribution::Builder::MakeFromJSON" ], "builder": "MakeFromJSON", "build": {} }]/);
+is-deeply from-json(slurp($prefix.child('test1.json'))), from-json("[\n$meta\n]");
+is-deeply from-json(slurp($prefix.child('test.json'))), from-json(q/[{ "meta-version": 0, "name": "test", "build-depends": [ "Foo::Bar", "Distribution::Builder::MakeFromJSON" ], "builder": "MakeFromJSON", "build": {} }]/);
 
 END {
     if $prefix {
