@@ -157,7 +157,7 @@ https://github.com/FanfouAPI/FanFouAPIDoc/wiki/Oauth
 
 =head1 NAME
 
-FanFou - Perl 6 oauth client for 饭否.
+FanFou - Perl 6 oauth client for fanfou.com.
 
 =head1 SYNOPSIS
 
@@ -165,7 +165,7 @@ FanFou - Perl 6 oauth client for 饭否.
 
   my %oauth_consumer = key => 'your_consumer_key', secret => 'your_secret_key';
 
-  # get client
+  # get fanfou client
   my $client = FanFou::XAuth.new(oauth_consumer => %oauth_consumer, username => 'your_username', password => 'your_password');
 
   # get response

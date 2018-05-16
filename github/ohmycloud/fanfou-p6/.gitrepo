@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/ohmycloud/fanfou-p6.git
 	branch = master
-	commit = 03f9aa9d624f20e793479e96d7c2cafcf133f5dc
-	parent = f8d1cb5c060239e0218cae4d57387efddb754e7f
+	commit = e894d8b7dd37c517810d5079284e5fda058a9b5b
+	parent = 238685b356e7accb71940e7be9d91cd70177f3cf
 	cmdver = 0.4.0
