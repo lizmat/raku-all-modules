@@ -14,7 +14,7 @@ is $license.copyright-note(), 'Copyright [2000-2016] Bahtiar `kalkin-` Gadimov',
 is $license.copyright, 'Copyright', "Copyright is just 'copyright'";
 is $license.works-name(), 'This program', "Default programm name should 'This program'";
 is $license.note(), 'Please see the file called LICENSE.';
-is $license.files.keys(), ['NOTICE', 'LICENSE'], 'The Apache license and NOTICE file';
+is $license.files().keys.sort, ['LICENSE', 'NOTICE'], 'The Apache license and NOTICE file';
 
 ok $license = License::Software::get('apache').new("FooBar", "Bahtiar `kalkin-` Gadimov" =>  2000..2016);
 is $license.holders.elems, 1, 'Should have 1 holder';
