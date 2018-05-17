@@ -677,6 +677,9 @@ class Zef::Client {
                 ($candi.dist.test-depends-specs  if ?$!test-depends).Slip,
                 ($candi.dist.build-depends-specs if ?$!build-depends).Slip;
         }
+
+        # if .name is not defined then its invalid but probably a deeply nested
+        # depends hash so just ignore it since it might be valid in the near future.
         $deps.unique(:as(*.identity));
     }
 
