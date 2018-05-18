@@ -1,10 +1,7 @@
-P6-Net-DNS
-==========
+Net::DNS
+========
 
 A simple DNS resolver.
-
-If you need a request type that isn't yet supported, open a github issue and it
-will be added (hopefully) quickly.
 
 Note: If you are behind a firewall that blocks Google DNS, you will need to set
 DNS_TEST_HOST in your environment to pass the tests.
@@ -12,7 +9,14 @@ DNS_TEST_HOST in your environment to pass the tests.
 ## Example Usage ##
 
     my $resolver = Net::DNS.new('8.8.8.8'); # google dns server
-    my @addresses = $resolver.lookup('A', 'google.com'); # ("1.2.3.4", "5.6.7.8", ...)
+
+    my @mx-ips = $resolver.lookup-mx('gmail.com');
+
+    my @all = $resolver.lookup-ips('google.com');
+    my @ipv4 = $resolver.lookup-ips('google.com', :inet);
+    my @ipv6 = $resolver.lookup-ips('google.com', :inet6);
+
+    my @dns-answers = $resolver.lookup('A', 'google.com'); # ("1.2.3.4", "5.6.7.8", ...)
 
 ## Methods ##
 
@@ -22,6 +26,19 @@ DNS_TEST_HOST in your environment to pass the tests.
 
     The `$socket` parameter lets you inject your own socket class to use for the
     query (so you can do a proxy negotiation or somesuch first).
+
+ -  `lookup-ips(Str $name, :$inet, :$inet6)`
+
+    Looks up the specified $name, looking for A and AAAA records (only searches
+    for A when :inet is specified, and only searches for AAAA when :inet6 is
+    specified). Will chase down CNAME records to get you the actual IP
+    addresses. Will return a list of A and AAAA responses.
+
+ -  `lookup-mx(Str $name, :$inet, :$inet6)`
+
+    Does a lookup for MX records, and then internally calls `lookup-ips` to
+    find the actual addresses for the mailservers. Returns a list of A and AAAA
+    records, in MX priority order.
 
  -  `lookup(Str $type, Str $name)`
 

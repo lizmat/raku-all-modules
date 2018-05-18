@@ -1,7 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Net::DNS",
-    "version" : "1.0.2",
+    "version" : "1.1.0",
     "author" : "github:retupmoca",
     "description" : "Simple DNS Resolver",
     "depends" : [],

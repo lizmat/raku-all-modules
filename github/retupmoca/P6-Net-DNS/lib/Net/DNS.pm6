@@ -78,3 +78,54 @@ method lookup($type is copy, $host is copy){
         }
     }
 }
+
+method lookup-ips($host, :$inet, :$inet6, :@loopcheck is copy) {
+    my @result;
+
+    die "CNAME loop detected" if @loopcheck.grep(* eq $host);
+    die "Too many CNAME redirects" if @loopcheck > 10;
+    @loopcheck.push: $host;
+
+    if $inet6 || !$inet {
+        my @raw = self.lookup('AAAA', $host);
+        for @raw.grep(Net::DNS::AAAA) -> $res {
+            unless @result.grep({ $_.owner-name eqv $res.owner-name
+                               && $_.octets eqv $res.octets }) {
+                @result.append: $res;
+            }
+        }
+        for @raw.grep(Net::DNS::CNAME) -> $res {
+            unless @result.grep({ $_.owner-name eqv $res.name}) {
+                @result.append: self.lookup-ips($res.name.join('.'), :$inet, :$inet6, :@loopcheck);
+            }
+        }
+    }
+
+    if $inet || !$inet6 {
+        my @raw = self.lookup('A', $host);
+        for @raw.grep(Net::DNS::A) -> $res {
+            unless @result.grep({ $_.owner-name eqv $res.owner-name
+                               && $_.octets eqv $res.octets }) {
+                @result.append: $res;
+            }
+        }
+        for @raw.grep(Net::DNS::CNAME) -> $res {
+            unless @result.grep({ $_.owner-name eqv $res.name}) {
+                @result.append: self.lookup-ips($res.name.join('.'), :$inet, :$inet6, :@loopcheck);
+            }
+        }
+    }
+
+    @result;
+}
+
+method lookup-mx($host, :$inet, :$inet6) {
+    my @result;
+
+    my @raw = self.lookup('MX', $host);
+    for @raw.grep(Net::DNS::MX).sort(*.priority) -> $res {
+        @result.append: self.lookup-ips($res.name.join('.'), :$inet, :$inet6);
+    }
+
+    @result;
+}
