@@ -165,6 +165,24 @@ L<operator|#Operator>, subroutine, method or callable block.
 The arity of a C<Callable> is one of the main selectors in
 L<multi-dispatch|#Multi-Dispatch>.
 
+=head1 ASCII operator
+X<|ASCII operator>
+X<|Texas operator>
+=begin comment
+“Texas” was used in the past but is now discouraged.
+Remove the link when “Texas” goes completely out of use.
+=end comment
+
+The ASCII variant of a non-ASCII Unicode L<operator|#Operator> or
+L<symbol|#Symbol>.
+For instance, C<(elem)> corresponds to the C<∈> ("Is this an element of
+that set?") operator that comes from set theory.  ASCII operators are a
+workaround to the problem that people don't know how to type Unicode yet.
+Culturally, while we encourage people to use the Unicode symbols in a
+vague sort of way, we do not disparage the use of the
+L<ASCII variants|/language/unicode_ascii>.
+Well, maybe just a little...
+
 =head1 Autothreading
 X<|Autothreading>
 
@@ -313,14 +331,16 @@ it's commonly used, it's easy to learn what it does. L<atomic-inc-fetch>,
 on the other hand is rarer, and the more descriptive name helps recall
 its purpose better.
 
-=head1 iffy
 X<|iffy>
+=head1 iffy
 
-Often used as a boolean value. See L<operator|#Operator>.
+Often used as a boolean value. See L<operator|#Operator>. Made via the L<C<use> keyword|/language/5to6-nutshell#index-entry-import>.
 
+=head1 import
 
-=head1 Instance
+Include functions from a module in the current namespace.
 X<|instance>
+=head1 Instance
 
 An I<instance> of a class is also called an I<object> in some other
 programming languages. It has storage for attributes and is often the return
@@ -600,6 +620,8 @@ also L<https://en.wikipedia.org/wiki/Larry_Wall>.
 =head1 Lexing
 X<|Lexing>
 
+Performing L<lexical analysis|https://en.wikipedia.org/wiki/Lexical_analysis>. A step which usually precedes parsing.
+
 =head1 Literal
 X<|Literal>
 
@@ -795,10 +817,6 @@ X<|POD>
 B<P>lain B<O>l' B<D>ocumentation, a documentation format understood by Perl
 6. See L<S26|https://design.perl6.org/S26.html> for details.
 
-=head1 property
-
-In this context, it either refers to an L<object property|https://docs.perl6.org/language/objects#index-entry-Property>, which is the value of an instance variable, or an L<Unicode property|https://docs.perl6.org/language/regexes#Unicode_Properties> which are codepoint features that allow programs to identify what kind of entity they represent, that is, if they are a letter, or a number, or something completely different like a control character.
-
 =head1 Pull Request
 X<|Pull Request>
 
@@ -807,6 +825,11 @@ to be easily applied using the Github user interface. It means you
 request someone to do a git pull from your L<repository|#Repository> to hers. In
 GitHub, it can be done automatically through the web  interface. PR is
 its usual acronym.
+
+=head1 property
+
+In this context, it either refers to an L<object property|https://docs.perl6.org/language/objects#index-entry-Property>, which is the value of an instance variable, or an L<Unicode property|https://docs.perl6.org/language/regexes#Unicode_Properties> which are codepoint features that allow programs to identify what kind of entity they represent, that is, if they are a letter, or a number, or something completely different like a control character.
+
 
 =head1 pugs
 X<|pugs>
@@ -1007,6 +1030,8 @@ such a variable.
 =head1 Sigilless Variable
 X<|Sigilless Variable>
 
+L<Sigilless variables|/language/variables#index-entry-\_(sigilless_variables)> are actually aliases to the value it is assigned to them, since they are not containers. Once you assign a sigilless variable (using the escape C<\>), its value cannot be changed.
+
 =head1 Spesh
 X<|Spesh>
 
@@ -1062,23 +1087,6 @@ X<|test suite>
 
 The Perl 6 test suite is L<#roast>
 
-=head1 ASCII operator
-X<|ASCII operator>
-X<|Texas operator>
-=begin comment
-“Texas” was used in the past but is now discouraged.
-Remove the link when “Texas” goes completely out of use.
-=end comment
-
-The ASCII variant of a non-ASCII Unicode L<operator|#Operator> or
-L<symbol|#Symbol>.
-For instance, C<(elem)> corresponds to the C<∈> ("Is this an element of
-that set?") operator that comes from set theory.  ASCII operators are a
-workaround to the problem that people don't know how to type Unicode yet.
-Culturally, while we encourage people to use the Unicode symbols in a
-vague sort of way, we do not disparage the use of the
-L<ASCII variants|/language/unicode_ascii>.
-Well, maybe just a little...
 
 =head1 TheDamian
 
@@ -1089,6 +1097,10 @@ L<Exegeses|#Exegesis>.
 
 L<#IRC> screen name for L<#Larry Wall>, creator of Perl. The name comes from
 the pronunciation of L<#TIMTOWTDI> as a word.
+
+=head1 token
+
+In this context, a L<C<token>|/syntax/token> is a regex that does not backtrack. In general, L<tokens|https://en.wikipedia.org/wiki/Lexical_analysis> are extracted from the source program while L<#Lexing>.
 
 =head1 Thunk
 X<|Thunk>
@@ -1156,6 +1168,18 @@ A variable is a name for a L<container|/language/containers>.
 
 =head1 Variable Interpolation
 X<|Variable Interpolation>
+
+The value of variables is interpolated into strings by simply inserting that variable into the string:
+
+    my $polation="polation";
+    say "inter$polation";# OUTPUT: «interpolation␤»
+
+This might need curly brackets in case it precedes some alphanumeric characters
+
+    my $inter="inter";
+    say "{$inter}polation"; # OUTPUT: «interpolation␤»
+
+Interpolation occurs in L<string context|/language/contexts#String>, so a valid stringification method must exist for the class. More general interpolation can be achieved using the L<double q|/language/quoting#Interpolation:_qq> quoting constructs.
 
 =head1 Virtual Machine
 X<|Virtual Machine>
