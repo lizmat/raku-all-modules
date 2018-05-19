@@ -15,9 +15,23 @@ my $sub = -> $a { return $a² };
 $sub; # OUTPUT: «WARNINGS:␤Useless use of $sub in sink context (line 1)␤»
 =end code
 
+X<|sinking>
 You can force that sink context on L<Iterator>s, by using the L<C<sink-all>|/routine/sink-all> method. L<Proc>s can also be L<sunk via the C<sink> method|https://docs.perl6.org/type/Proc#method_sink>, forcing them to raise an exception and not returning anything.
 
 In general, blocks will warn if evaluated in sink context; however, L<gather/take blocks|/language/control#Flow%29_gather_take> are explicitly evaluated in sink context, with values returned explicitly using C<take>.
+
+In sink context, an object will call its `sink` method if present:
+
+=begin code
+sub foo {
+    return [<a b c>] does role {
+        method sink { say "sink called" }
+    }
+}
+foo
+# OUTPUT: sink called
+=end code
+
 
 =head1 Number X<|number context>
 
