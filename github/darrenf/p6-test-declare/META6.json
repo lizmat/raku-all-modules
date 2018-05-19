@@ -22,7 +22,7 @@
   },
   "resources" : [ ],
   "source-url" : "https://github.com/darrenf/p6-test-declare.git",
-  "tags" : [ ],
+  "tags" : ["Testing"],
   "test-depends" : [ ],
   "version" : "0.0.1"
 }

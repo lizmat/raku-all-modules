@@ -67,7 +67,10 @@ a wide variety of common testing scenarios purely in a declarative way.
 
 =head1 USAGE
 
-Direct usage of this module is via the exported subroutine C<declare>.
+Direct usage of this module is via the exported subroutine C<declare>. The tests
+within the distribution at L<https://github.com/darrenf/p6-test-declare/tree/master/t>
+can also be considered to be a suite of examples which exercise all the options
+available.
 
 =head2 declare(${ … }, ${ … })
 
