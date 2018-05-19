@@ -43,9 +43,9 @@ submethod BUILD(*%args) {
         $ctx.halt(
             status  => 500,
             body    => $body,
-            headers => {
+            headers => %(
                 'Content-Type' => 'text/plain',
-            },
+            ),
         );
 
         # log exception
@@ -83,7 +83,7 @@ submethod BUILD(*%args) {
     });
 
     # default render handlers
-    self.render-handler('template', Hematite::Templates.new(|(%args{'templates'} || {})));
+    self.render-handler('template', Hematite::Templates.new(|(%args{'templates'} || %())));
     self.render-handler('json', sub ($data, *%args) { return to-json($data); });
 
     return self;
@@ -182,9 +182,6 @@ method _prepare-routes() returns Array {
         my @group_routes = $router._prepare-routes($pattern, []);
         @routes.append(@group_routes);
     }
-
-    # sort routes
-    @routes .= sort({ $^a.pattern cmp $^b.pattern });
 
     return @routes;
 }

@@ -92,9 +92,9 @@ method CALL-ME(Hematite::Context $ctx) {
     }
 
     if (@captures.elems > 0) {
-        $ctx.log.debug('captures found: ');
-        $ctx.log.debug(' - named: ' ~ ~(%named_captures));
-        $ctx.log.debug(' - list: ' ~ ~(@captures));
+        $ctx.log.debug("captures found: ");
+        $ctx.log.debug(" - named: " ~ ~(%named_captures));
+        $ctx.log.debug(" - list: " ~ ~(@captures));
     }
 
     # set captures on context
