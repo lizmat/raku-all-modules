@@ -11,7 +11,7 @@ sub from-json($text) is export {
         !! do {
             my $a = ::("JSONPrettyActions").new();
             my $o = ::("JSONPrettyGrammar").parse($text, :actions($a));
-            JSONException.new(:$text).throw unless $o;
+            ::("JSONException").new(:$text).throw unless $o;
             $o.ast;
         }
 }
