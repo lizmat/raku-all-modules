@@ -31,9 +31,8 @@ handles the loading of some common image formats
 It currently supports: PNG, GIF and JPEG.
 
 ```
-use PDF::Content::Image;
 use PDF::Content::XObject;
-my PDF::Content::XObject $image = PDF::Content::Image.open: "t/images/lightbulb.gif";
+my PDF::Content::XObject $image .= open: "t/images/lightbulb.gif";
 say "image has size {$image.width} X {$image.height}";
 say $image.data-uri;
 # data:image/gif;base64,R0lGODlhEwATAMQA...

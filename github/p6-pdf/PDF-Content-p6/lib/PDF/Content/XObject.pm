@@ -1,6 +1,23 @@
 use v6;
 
-role PDF::Content::XObject['Form'] {
+role PDF::Content::XObject {
+    use PDF::Content::Image;
+    use PDF::COS::Stream;
+
+    method open(|c) {
+        my PDF::Content::Image $image-obj .= load(|c);
+        $image-obj.read;
+        my PDF::COS::Stream $xobject = $image-obj.to-dict;
+        $xobject does PDF::Content::XObject[$xobject<Subtype>]
+            unless $xobject ~~ PDF::Content::XObject;
+        $xobject.image-obj = $image-obj;
+        $xobject;
+    }
+
+}
+
+role PDF::Content::XObject['Form']
+    does PDF::Content::XObject {
     has Numeric $.width;
     has Numeric $.height;
     method width  { with $!width  { $_ } else { self!size()[0] } }
@@ -13,7 +30,8 @@ role PDF::Content::XObject['Form'] {
     }
 }
 
-role PDF::Content::XObject['Image'] {
+role PDF::Content::XObject['Image']
+    does PDF::Content::XObject {
     has Numeric $.width;
     has Numeric $.height;
     method width  { $!width //= self<Width> }

@@ -42,8 +42,8 @@ ok $hb-afm-again === $hb-afm, 'font caching';
 
 my $ext-chars = "ΨΩαΩ";
 my $enc = $hbi-afm.encode($ext-chars, :str);
-is $enc, "\x[1]\x[2]\x[3]\x[2]", "extended  chars encoding";
-is $hbi-afm.decode($enc, :str), $ext-chars,  "extended  chars decoding";
+is $enc, "\x[1]\x[2]\x[3]\x[2]", "extended chars encoding";
+is $hbi-afm.decode($enc, :str), $ext-chars,  "extended chars decoding";
 
 $hbi-afm.cb-finish;
 my $hbi-afm-dict = $hbi-afm.to-dict;

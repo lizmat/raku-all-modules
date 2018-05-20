@@ -19,8 +19,5 @@ class PDF::Content::Image::PDF
         $!page.to-xobject;
     }
 
-    method open(PDF::Content::Image::IOish $fh) {
-        self.load-image: :$fh, :image-type<PDF>, :class(self);
-    }
 }
 

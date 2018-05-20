@@ -27,7 +27,6 @@ class X::PDF::Image::UnknownMimeType is Exception {
 class PDF::Content::Image {
     use PDF::COS;
     use PDF::COS::Stream;
-    use PDF::Content::XObject;
     use PDF::IO;
 
     has Str $.data-uri;
@@ -46,18 +45,7 @@ class PDF::Content::Image {
         }
     }
 
-    method load-image(IOish :$fh!, ImageType :$image-type!,
-                :$class = (require ::('PDF::Content::Image')::($image-type))) {
-        my $image-obj = $class.new: :$image-type, :source($fh);
-        $image-obj.read;
-        my PDF::COS::Stream $image-xobject = $image-obj.to-dict;
-        $image-xobject does PDF::Content::XObject[$image-xobject<Subtype>]
-            unless $image-xobject ~~ PDF::Content::XObject;
-        $image-xobject.image-obj = $image-obj;
-        $image-xobject;
-    }
-
-    multi method open(Str $data-uri where /^('data:' [<t=.ident> '/' <s=.ident>]? $<b64>=";base64"? $<start>=",") /) {
+    multi method load(Str $data-uri where /^('data:' [<t=.ident> '/' <s=.ident>]? $<b64>=";base64"? $<start>=",") /) {
         my $path = ~ $0;
         my Str $mime-type = ( $0<t> // '(missing)').lc;
         my Str $mime-subtype = ( $0<s> // '').lc;
@@ -73,22 +61,26 @@ class PDF::Content::Image {
 	    $data = base64-decode($data).decode("latin-1");
 	}
 
-        my $fh = PDF::IO.coerce($data, :$path);
-        self.load-image(:$fh, :$image-type, :$data-uri);
+        my $source = PDF::IO.coerce($data, :$path);
+        self!image-handler(:$image-type).new: :$source, :$data-uri, :$image-type;
     }
 
-    multi method open(Str $path! ) {
-        self.open( $path.IO );
+    multi method load(Str $path! ) {
+        self.load( $path.IO );
     }
 
-    multi method open(IO::Path $io-path) {
-        self.open( $io-path.open( :r, :enc<latin-1>) );
+    multi method load(IO::Path $io-path) {
+        self.load( $io-path.open( :r, :enc<latin-1>) );
     }
 
-    multi method open(IO::Handle $fh!) {
-        my $path = $fh.path;
+    method !image-handler(Str :$image-type!) {
+        require ::('PDF::Content::Image')::($image-type);
+    }
+
+    multi method load(IO::Handle $source!) {
+        my $path = $source.path;
         my Str $image-type = self!image-type($path.extension, :$path);
-        self.load-image(:$fh, :$image-type);
+        self!image-handler(:$image-type).new: :$source, :$image-type;
     }
 
     method data-uri is rw {
@@ -110,4 +102,7 @@ class PDF::Content::Image {
            )
     }
 
+    method open(|c) {
+        (require ::('PDF::Content::XObject')).open(|c);
+    }
 }
