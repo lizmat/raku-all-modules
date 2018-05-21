@@ -41,7 +41,7 @@ my %charset-str =
     (   vchar =>    (chr(0x21) .. chr(0x7E)).join   ),
 ;
 
-plan 44;
+plan 46;
 
 # should be able to loop with interpolation but ...
 # grammar g { token t { <[2]> } }; say so "2" ~~ /<g::t>/; my $rname = "t"; say so "2" ~~ /<g::($rname)>/
@@ -69,6 +69,7 @@ is $latin-chars.comb(/<US-ASCII::blank>/).join, %charset-str< blank >,
     'blank correct US-ASCII char subset';
 is $latin-chars.comb(/<US-ASCII::space>/).join, %charset-str< space >,
     'space correct US-ASCII char subset';
+ok "\c[CR]\c[LF]" ~~ /<US-ASCII::space>/, 'US-ASCII space matches CRLF';
 is $latin-chars.comb(/<US-ASCII::print>/).join, %charset-str< print >,
     'print correct US-ASCII char subset';
 is $latin-chars.comb(/<US-ASCII::cntrl>/).join, %charset-str< cntrl >,
@@ -118,12 +119,6 @@ grammar ascii-by-count does US-ASCII-UC {
     $ }
     token vchar-c   { ^ <-VCHAR>*
         [ <VCHAR> <-VCHAR>* ]   **  { %charset-str< vchar >.chars }
-    $ }
-
-    token abnf-named { <+HTAB +DQUOTE> }
-
-    token abnf-named-c { ^ <- abnf-named>*
-        [ <abnf-named> <- abnf-named>* ] ** 2
     $ }
 }
 
@@ -224,13 +219,8 @@ subtest {
     ok %charset-str< vchar > ~~ /<ascii-by-count::vchar-c>/,
         'CNTRL subset has right elements';
 }, 'CNTRL char class';
-
-subtest {
-    ok $latin-chars ~~ /<ascii-by-count::abnf-named-c>/,
-        'ABNF named characters match has right size';
-    ok "\t\"" ~~ /<ascii-by-count::abnf-named-c>/,
-        'ABNF named characters has right elements';
-}, 'some ABNF named characters';
+ok "\c[CR]\c[LF]" ~~ /<ascii-by-count::SPACE>/,
+    'US-ASCII SPACE from role matches CRLF';
 
 {
     use US-ASCII :UC;
@@ -257,6 +247,7 @@ subtest {
         'blank correct US-ASCII char subset';
     is $latin-chars.comb(/<SPACE>/).join, %charset-str< space >,
         'space correct US-ASCII char subset';
+    ok "\c[CR]\c[LF]" ~~ /<SPACE>/, 'US-ASCII SPACE matches CRLF';
     is $latin-chars.comb(/<PRINT>/).join, %charset-str< print >,
         'print correct US-ASCII char subset';
     is $latin-chars.comb(/<CNTRL>/).join, %charset-str< cntrl >,

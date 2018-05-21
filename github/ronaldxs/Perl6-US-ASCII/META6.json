@@ -3,13 +3,14 @@
     "perl" : "6.c",
     "name" : "US-ASCII",
     "license" : "Artistic-2.0",
-    "version" : "0.1.6",
-    "description" : "US-ASCII restricted character classes and related.",
+    "version" : "0.6.2",
+    "description" : "US-ASCII restricted character classes from Perl6 and Core ABNF.",
     "authors" : [ "Ron Schmidt" ],
     "provides" : {
         "US-ASCII"      :   "lib/US-ASCII.pm6",
         "US-ASCII-UC"   :   "lib/US-ASCII.pm6",
-        "US-ASCII::ABNF::Common" : "lib/US-ASCII/ABNF/Common.pm6"
+        "US-ASCII::ABNF::Core" : "lib/US-ASCII/ABNF/Core.pm6",
+        "US-ASCII::ABNF::Core::Common" : "lib/US-ASCII/ABNF/Core/Common.pm6"
     },
     "depends" : [ ],
     "resources" : [ ],

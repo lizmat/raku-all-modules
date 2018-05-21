@@ -1,0 +1,10 @@
+all: README.md README-ABNF-Core.md
+
+# upgrade to use variable
+POD6_TO_MD=perl6 -Ilib --doc=Markdown
+
+README.md: lib/US-ASCII.pm6
+	$(POD6_TO_MD) lib/US-ASCII.pm6 >$@
+
+README-ABNF-Core.md: lib/US-ASCII/ABNF/Core.pm6
+	$(POD6_TO_MD) lib/US-ASCII/ABNF/Core.pm6 >$@
