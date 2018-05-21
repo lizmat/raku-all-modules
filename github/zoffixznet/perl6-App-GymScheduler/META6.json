@@ -1,0 +1,15 @@
+{
+    "perl"         : "6.c",
+    "name"         : "App::GymScheduler",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001003",
+    "description"  : "Randomized schedule maker for your workouts",
+    "tags"         : [ "planning" ],
+    "depends"      : [ "Config::JSON" ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "App::GymScheduler": "lib/App/GymScheduler.pm6"
+    },
+    "authors"      : ["Zoffix Znet"],
+    "support"      : { "source" : "https://github.com/zoffixznet/perl6-App-GymScheduler.git" }
+}

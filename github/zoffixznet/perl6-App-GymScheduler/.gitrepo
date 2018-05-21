@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-App-GymScheduler.git
+	branch = master
+	commit = fc2e71eea6369963ccc5ceb5853b7edab542e3de
+	parent = 61aeaa1ad2a0de9122201d938cef6c3ba377fa96
+	cmdver = 0.4.0
