@@ -1,3 +1,5 @@
+## At this point, it is recommended that you use [HTTP::UserAgent](https://github.com/sergot/http-useragent) instead.
+
 Perl6 LWP::Simple
 =================
 
