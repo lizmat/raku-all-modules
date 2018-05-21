@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-Config-JSON.git
 	branch = master
-	commit = cd3d27681199348a35b5cb725efbb84367b780df
-	parent = 8473904388048b8b3bacd74ee1f2593d23f89561
+	commit = a207ac59729e2e88b7db32865dd039c2d16935d4
+	parent = f8709d5ce536eb3c12e0fa3209599dc52405cf62
 	cmdver = 0.4.0

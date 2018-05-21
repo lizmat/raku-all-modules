@@ -32,10 +32,10 @@ Config::JSON - flat, JSON-backed read-write configuration
 
     say jconf('foo')//'no such option'; # "no such option"
 
-    saw jconf-write('foo', 'bar');
+    say jconf-write('foo', 'bar');
     say jconf 'foo'; # "bar"
 
-    saw jconf-write('foo', {bar => [<a b c>]});
+    say jconf-write('foo', {bar => [<a b c>]});
     say jconf('foo').perl; # ${:bar($["a", "b", "c"])}
 ```
 
