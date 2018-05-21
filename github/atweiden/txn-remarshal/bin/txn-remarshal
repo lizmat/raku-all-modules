@@ -26,8 +26,8 @@ multi sub MAIN(
 )
 {
     my %ledger = remarshal($*IN.lines.join("\n"), :if<json>, :of<hash>);
-    my Ledger:D $entry = remarshal(%ledger, :if<hash>, :of<ledger>);
-    my Str:D $txn = remarshal($entry, :if<ledger>, :of<txn>);
+    my Ledger:D $ledger = remarshal(%ledger, :if<hash>, :of<ledger>);
+    my Str:D $txn = remarshal($ledger, :if<ledger>, :of<txn>);
     output($txn, $output);
 }
 
@@ -44,7 +44,7 @@ multi sub MAIN(
     exists-readable-file($file)
         or die;
     my %ledger = remarshal(slurp($file), :if<json>, :of<hash>);
-    my Ledger:D $ledger = remarshal(%ledger, :if<hash>, :of<entry>);
+    my Ledger:D $ledger = remarshal(%ledger, :if<hash>, :of<ledger>);
     my Str:D $txn = remarshal($ledger, :if<ledger>, :of<txn>);
     output($txn, $output);
 }
@@ -91,9 +91,9 @@ multi sub MAIN(
     --> Nil
 )
 {
-    my Str:D $remarshal =
+    my Str:D $txn =
         remarshal($*IN.lines.join("\n"), :$input-format, :$output-format);
-    output($remarshal, $output);
+    output($txn, $output);
 }
 
 # input is from TXN stdin
@@ -105,9 +105,9 @@ multi sub MAIN(
     --> Nil
 )
 {
-    my Str:D $remarshal =
+    my Str:D $json =
         remarshal($*IN.lines.join("\n"), :$input-format, :$output-format);
-    output($remarshal, $output);
+    output($json, $output);
 }
 
 # output is to stdout
@@ -130,7 +130,7 @@ multi sub output(Str:D $remarshal, Str $? --> Nil)
 
 sub resolve-path(Str:D $path where .so --> Str:D)
 {
-    my Str:D $resolve-path = ~$path.subst(/^'~/'/, $*HOME ~ '/').IO.resolve;
+    my Str:D $resolve-path = ~$path.subst(/^'~/'/, "$*HOME/").IO.resolve;
 }
 
 
