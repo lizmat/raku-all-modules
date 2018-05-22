@@ -10,7 +10,10 @@ Test::Declare - Declare common test scenarios as data.
 =head2 CAVEAT
 
 The author is a novice at Perl 6. Please be nice if you've stumbled across this and
-have opinions.
+have opinions. Furthermore I somehow failed to notice the pre-existence of a Perl 5
+C<Test::Declare>, to which this code is B<no relation>. Apologies for any confusion;
+I renamed late in the day, being fed up with the length of my first choice of
+C<Test::Declarative>.
 
 =head1 SYNOPSIS
 
