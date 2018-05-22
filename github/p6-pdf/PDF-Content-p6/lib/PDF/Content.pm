@@ -6,7 +6,6 @@ class PDF::Content:ver<0.2.3>
 
     use PDF::COS;
     use PDF::COS::Stream;
-    use PDF::Content::Image;
     use PDF::Content::Text::Block;
     use PDF::Content::XObject;
 
@@ -49,7 +48,7 @@ class PDF::Content:ver<0.2.3>
     }
 
     method load-image(Str $spec ) {
-        PDF::Content::Image.open( $spec );
+        PDF::Content::XObject.open( $spec );
     }
 
     #| extract any inline images from the content stream. returns an array of XObject Images

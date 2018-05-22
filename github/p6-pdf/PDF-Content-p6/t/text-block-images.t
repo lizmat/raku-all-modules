@@ -5,7 +5,7 @@ use lib '.';
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content::Text::Block;
 use PDF::Content::Font::CoreFont;
-use PDF::Content::Image;
+use PDF::Content::XObject;
 use t::PDFTiny;
 
 # experimental feature to flow text and images
@@ -20,7 +20,7 @@ my @chunks = PDF::Content::Text::Block.comb: 'I must go down to the seas';
 @chunks.append: ' ', 'aga','in';
 my $font = PDF::Content::Font::CoreFont.load-font( :family<helvetica>, :weight<bold> );
 my $font-size = 16;
-my $image = PDF::Content::Image.open: "t/images/lightbulb.gif";
+my $image = PDF::Content::XObject.open: "t/images/lightbulb.gif";
 
 my $image-padded = $page.xobject-form(:BBox[0, 0, $image.width + 1, $image.height + 4]);
 $image-padded.gfx;

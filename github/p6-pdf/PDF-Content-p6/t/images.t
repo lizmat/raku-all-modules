@@ -3,9 +3,7 @@ use Test;
 plan 180;
 use PDF::Grammar::Test :is-json-equiv;
 use lib '.';
-use PDF::Content::Image;
-use PDF::Content::Image::GIF;
-use PDF::Content::Image::PNG;
+use PDF::Content::XObject;
 use t::PDFTiny;
 # ensure consistant document ID generation
 srand(123456);
@@ -13,7 +11,7 @@ srand(123456);
 my Pair @images;
 
 my $jpeg;
-lives-ok {$jpeg = PDF::Content::Image.open: "t/images/jpeg.jpg";}, "open jpeg - lives";
+lives-ok {$jpeg = PDF::Content::XObject.open: "t/images/jpeg.jpg";}, "open jpeg - lives";
 @images.push: 'JPEG - Content' => $jpeg;
 isa-ok $jpeg, ::('PDF::COS::Stream'), 'jpeg object';
 is $jpeg<Type>, 'XObject', 'jpeg type';
@@ -28,7 +26,7 @@ is $jpeg.width, 24, 'jpeg width';
 is $jpeg.height, 24, 'jpeg height';
 
 my $gif;
-lives-ok {$gif = PDF::Content::Image.open: "t/images/lightbulb.gif";}, "open gif - lives";
+lives-ok {$gif = PDF::Content::XObject.open: "t/images/lightbulb.gif";}, "open gif - lives";
 @images.push: 'GIF - Content' => $gif;
 isa-ok $gif, ::('PDF::COS::Stream'), 'gif object';
 is $gif<Type>, 'XObject', 'gif type';
@@ -51,8 +49,8 @@ if lives-ok({$image1 = t::PDFTiny.open("t/images/tiny.pdf").page(1).to-xobject;}
 
 my $image2;
 my $image-data = "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7";
-$image2 = PDF::Content::Image.open: $image-data;
-if lives-ok({$image2 = PDF::Content::Image.open: $image-data;}, "open GIF data url - lives") {
+$image2 = PDF::Content::XObject.open: $image-data;
+if lives-ok({$image2 = PDF::Content::XObject.open: $image-data;}, "open GIF data url - lives") {
     @images.push: 'Data URI (GIF)' => $image2;
 }
 is $image2.data-uri, $image-data, 'data-uri from source string';
@@ -60,15 +58,15 @@ is $image2.data-uri, $image-data, 'data-uri from source string';
 # example from https://en.wikipedia.org/wiki/Data_URI_scheme
 $image-data = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC";
 my $image3;
-if lives-ok({$image3 = PDF::Content::Image.open: $image-data;}, "open PNG data url - lives") {
+if lives-ok({$image3 = PDF::Content::XObject.open: $image-data;}, "open PNG data url - lives") {
     @images.push: 'Data URI (PNG)' => $image3;
 }
 is $image3.data-uri, $image-data, 'data-uri from source string';
 
 my $png-data-uri = '?';
 lives-ok {
-    $png-data-uri = PDF::Content::Image.open("t/images/basn0g01.png").data-uri;
-    PDF::Content::Image.open($png-data-uri);
+    $png-data-uri = PDF::Content::XObject.open("t/images/basn0g01.png").data-uri;
+    PDF::Content::XObject.open($png-data-uri);
 }, 'round-trip open of PNG uri'
     or note "round-trip uri: {$png-data-uri.substr(0,32)}...";
 
@@ -156,7 +154,7 @@ for (
     my $test = .value;
 
     my $png;
-    lives-ok { $png = PDF::Content::Image.open: $test<file>; }, "open $desc - lives";
+    lives-ok { $png = PDF::Content::XObject.open: $test<file>; }, "open $desc - lives";
     isa-ok $png, ::('PDF::COS::Stream'), "$desc object";
     @images.push: $desc => $png;
     

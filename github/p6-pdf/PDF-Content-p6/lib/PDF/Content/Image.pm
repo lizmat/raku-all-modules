@@ -103,6 +103,7 @@ class PDF::Content::Image {
     }
 
     method open(|c) {
+        state $ = warn "PDF::Content::Image.open is deprecated; please use PDF::Content::XObject.open";
         (require ::('PDF::Content::XObject')).open(|c);
     }
 }
