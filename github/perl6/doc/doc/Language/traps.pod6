@@ -59,12 +59,12 @@ You can purposefully assign C<Nil> as a default value:
 
 =begin code
 my %h is default(Nil) = a => Nil;
-dd %h; # OUTPUT: «Hash %h = {:a(Nil)}␤»
+say %h; # OUTPUT: «Hash %h = {:a(Nil)}␤»
 =end code
 
 Or bind a value to C<Nil> if that is the result you want:
 
-=begin code
+=begin code :preamble<my @a = 1,2,3,4;>
 @a[3] := Nil;
 say @a; # OUTPUT: «[4 8 (Any) Nil]␤»
 =end code
@@ -873,6 +873,23 @@ say 'foo' ~~ /<foo>/;
 
 Be wary of the difference; if you intend to use a quoted list, ensure that
 whitespace follows the initial C«<».
+
+=head2 Non-capturing, non-global matching in list context
+
+Unlike Perl 5, non-capturing and non-global matching in list context doesn't produce any values:
+
+    if  'x' ~~ /./ { say 'yes' }  # OUTPUT: «yes␤»
+    for 'x' ~~ /./ { say 'yes' }  # NO OUTPUT
+
+This is because its 'list' slot (inherited from Capture class) doesn't get populated with the original Match object:
+
+    say ('x' ~~ /./).list  # OUTPUT: «()␤»
+
+To achieve the desired result, use global matching, capturing parentheses or a list with a trailing comma:
+
+    for 'x' ~~ m:g/./ { say 'yes' }  # OUTPUT: «yes␤»
+    for 'x' ~~ /(.)/  { say 'yes' }  # OUTPUT: «yes␤»
+    for ('x' ~~ /./,) { say 'yes' }  # OUTPUT: «yes␤»
 
 =head1 Common Precedence Mistakes
 
