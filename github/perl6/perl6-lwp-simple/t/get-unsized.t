@@ -2,6 +2,7 @@ use v6;
 use Test;
 use LWP::Simple;
 
+plan :skip-all<Temporarily disabled on MacOS, see Issue 26> if $*DISTRO.name eq 'macosx';
 plan 1;
 
 my $sync = Channel.new;
