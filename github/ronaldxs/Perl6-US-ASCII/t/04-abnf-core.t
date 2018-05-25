@@ -1,3 +1,4 @@
+use v6.c;
 use Test;
 use US-ASCII::ABNF::Core :ALL;
 

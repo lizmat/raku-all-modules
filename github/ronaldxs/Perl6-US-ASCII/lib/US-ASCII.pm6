@@ -3,7 +3,7 @@ use US-ASCII::ABNF::Core::P6Common;
 use US-ASCII::ABNF::Core::Only;
 use US-ASCII::ABNF::Core::More;
 
-grammar US-ASCII:ver<0.6.2>:auth<R Schmidt (ronaldxs@software-path.com)>
+grammar US-ASCII:ver<0.6.3>:auth<R Schmidt (ronaldxs@software-path.com)>
     does US-ASCII::ABNF::Core::Common
     does US-ASCII::ABNF::Core::P6Common
 {
@@ -66,7 +66,7 @@ grammar US-ASCII:ver<0.6.2>:auth<R Schmidt (ronaldxs@software-path.com)>
 # easier to read than US-ASCII::ALPHA.  With the role below you can
 # compose upper case names of the same regexes/tokens without overwriting
 # builtin character classes.
-role US-ASCII-UC:ver<0.6.2>:auth<R Schmidt (ronaldxs@software-path.com)>
+role US-ASCII-UC:ver<0.6.3>:auth<R Schmidt (ronaldxs@software-path.com)>
     does US-ASCII::ABNF::Core::Common
 {
     token ALPHA     { <.US-ASCII::alpha> }
@@ -91,7 +91,7 @@ role US-ASCII-UC:ver<0.6.2>:auth<R Schmidt (ronaldxs@software-path.com)>
     method charset { US-ASCII::charset }
 }
 
-role US-ASCII-ABNF:ver<0.6.2>:auth<R Schmidt (ronaldxs@software-path.com)>
+role US-ASCII-ABNF:ver<0.6.3>:auth<R Schmidt (ronaldxs@software-path.com)>
     does US-ASCII-UC
     does US-ASCII::ABNF::Core::Only
     does US-ASCII::ABNF::Core::More
