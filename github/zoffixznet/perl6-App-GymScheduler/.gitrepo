@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-App-GymScheduler.git
 	branch = master
-	commit = fc2e71eea6369963ccc5ceb5853b7edab542e3de
-	parent = 61aeaa1ad2a0de9122201d938cef6c3ba377fa96
+	commit = c97d57c7f2254cf7d14cb252dbaffafb91fb2e17
+	parent = 32e576f5434a1fff5ffd9ca21480f10efd9c0e36
 	cmdver = 0.4.0
