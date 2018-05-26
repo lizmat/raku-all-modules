@@ -1,5 +1,5 @@
 {
-  "auth" : "darrenf \"81590+darrenf@users.noreply.github.com\"",
+  "auth" : "github:darrenf",
   "authors" : [
     "Darren Foreman"
   ],
@@ -22,7 +22,9 @@
   },
   "resources" : [ ],
   "source-url" : "https://github.com/darrenf/p6-test-declare.git",
-  "tags" : ["Testing"],
+  "tags" : [
+    "Testing"
+  ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.2"
 }

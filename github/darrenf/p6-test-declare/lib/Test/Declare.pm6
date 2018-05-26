@@ -1,5 +1,5 @@
 use v6.c;
-unit class Test::Declare:ver<0.0.1>:auth<darrenf "81590+darrenf@users.noreply.github.com">;
+unit class Test::Declare:ver<0.0.2>:auth<github:darrenf>;
 
 =begin pod
 
@@ -10,10 +10,10 @@ Test::Declare - Declare common test scenarios as data.
 =head2 CAVEAT
 
 The author is a novice at Perl 6. Please be nice if you've stumbled across this and
-have opinions. Furthermore I somehow failed to notice the pre-existence of a Perl 5
-C<Test::Declare>, to which this code is B<no relation>. Apologies for any confusion;
-I renamed late in the day, being fed up with the length of my first choice of
-C<Test::Declarative>.
+have opinions to express. Furthermore I somehow failed to notice the pre-existence
+of a Perl 5 C<Test::Declare>, to which this code is B<no relation>. Apologies for
+any confusion; I renamed late in the day, being fed up with the length of my first
+choice of C<Test::Declarative>.
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,7 @@ a wide variety of common testing scenarios purely in a declarative way.
 =head1 USAGE
 
 Direct usage of this module is via the exported subroutine C<declare>. The tests
-within the distribution at L<https://github.com/darrenf/p6-test-declare/tree/master/t>
+within the distribution in L<t/|https://github.com/darrenf/p6-test-declare/tree/master/t>
 can also be considered to be a suite of examples which exercise all the options
 available.
 
@@ -97,11 +97,11 @@ String name of the method to call.
 
 =item2 construct
 
-If required, a L<Capture> of the arguments to the class's C<new> method.
+If required, a L<Capture|https://docs.perl6.org/type/Capture.html> of the arguments to the class's C<new> method.
 
 =item1 args
 
-If required, a L<Capture> of the arguments to the instance's method.
+If required, a L<Capture|https://docs.perl6.org/type/Capture.html> of the arguments to the instance's method.
 
 =item1 expected
 
@@ -123,19 +123,38 @@ Strings against which the method's output/error streams are compared, using C<eq
 
 Elsewhere in this distribution:
 
-=item L<Test::Declare::Comparisons> - for fuzzy matching including some naive/rudimentary
-attempts at copying the L<Test::Deep> interface where Perl 6 does not have it builtin.
+=begin item
 
-=item L<Test::Declare::Suite> - for a role which bundles tests together against a common
-class/method, to reduce repetition.
+C<Test::Declare::Comparisons> - for fuzzy matching including some naive/rudimentary
+attempts at copying the L<Test::Deep|https://metacpan.org/pod/Test::Deep> interface
+where Perl 6 does not have it builtin.
+
+=end item
+
+=begin item
+
+L<Test::Declare::Suite|https://github.com/darrenf/p6-test-declare/tree/master/lib/Test/Declare/Suite.pm6>
+- for a role which bundles tests together against a common class/method, to reduce repetition.
+
+=end item
 
 Used by the code here:
 
-=item L<Test>
+=item L<Test|https://github.com/rakudo/rakudo/blob/master/lib/Test.pm6>
 
-=item L<IO::Capture::Simple>
+=item L<IO::Capture::Simple|https://github.com/sergot/IO-Capture-Simple>
 
-=item Perl 6
+Conceptually or philosophically similar projects:
+
+=item Perl 5's C<Test::Declare|https://metacpan.org/pod/Test::Declare> (oops, didn't see the name clash when I started)
+
+=item Perl 5's C<Test::Spec|https://metacpan.org/pod/Test::Spec>
+
+=item L<TestML|http://testml.org/>
+
+And of course:
+
+=item L<Perl 6|https://perl6.org/>
 
 =head1 AUTHOR
 

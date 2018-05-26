@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/darrenf/p6-test-declare.git
 	branch = master
-	commit = 5ae8df187aa40a930c77a9b14e561a8cd0f11f13
-	parent = b804f8b4c96b1ac627b6777f768d4e3c68c94d18
+	commit = 18b6bd209c218c10f251c68fdf90fc0b876ec120
+	parent = ccf56440a2d138dcc93e4354287855655645e6cf
 	cmdver = 0.4.0

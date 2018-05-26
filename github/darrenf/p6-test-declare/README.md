@@ -8,7 +8,7 @@ Test::Declare - Declare common test scenarios as data.
 CAVEAT
 ------
 
-The author is a novice at Perl 6. Please be nice if you've stumbled across this and have opinions.
+The author is a novice at Perl 6. Please be nice if you've stumbled across this and have opinions to express. Furthermore I somehow failed to notice the pre-existence of a Perl 5 `Test::Declare`, to which this code is **no relation**. Apologies for any confusion; I renamed late in the day, being fed up with the length of my first choice of `Test::Declarative`.
 
 SYNOPSIS
 ========
@@ -65,7 +65,7 @@ Test::Declare is an opinionated framework for writing tests without writing (muc
 USAGE
 =====
 
-Direct usage of this module is via the exported subroutine `declare`.
+Direct usage of this module is via the exported subroutine `declare`. The tests within the distribution in [t/](https://github.com/darrenf/p6-test-declare/tree/master/t) can also be considered to be a suite of examples which exercise all the options available.
 
 declare(${ … }, ${ … })
 -----------------------
@@ -90,11 +90,11 @@ String name of the method to call.
 
     * construct
 
-If required, a [Capture](Capture) of the arguments to the class's `new` method.
+If required, a [Capture](https://docs.perl6.org/type/Capture.html) of the arguments to the class's `new` method.
 
   * args
 
-If required, a [Capture](Capture) of the arguments to the instance's method.
+If required, a [Capture](https://docs.perl6.org/type/Capture.html) of the arguments to the instance's method.
 
   * expected
 
@@ -117,17 +117,27 @@ SEE ALSO
 
 Elsewhere in this distribution:
 
-  * [Test::Declare::Comparisons](Test::Declare::Comparisons) - for fuzzy matching including some naive/rudimentary attempts at copying the [Test::Deep](Test::Deep) interface where Perl 6 does not have it builtin.
+  * `Test::Declare::Comparisons` - for fuzzy matching including some naive/rudimentary attempts at copying the [Test::Deep](https://metacpan.org/pod/Test::Deep) interface where Perl 6 does not have it builtin.
 
-  * [Test::Declare::Suite](Test::Declare::Suite) - for a role which bundles tests together against a common class/method, to reduce repetition.
+  * [Test::Declare::Suite](https://github.com/darrenf/p6-test-declare/tree/master/lib/Test/Declare/Suite.pm6) - for a role which bundles tests together against a common class/method, to reduce repetition.
 
 Used by the code here:
 
-  * [Test](Test)
+  * [Test](https://github.com/rakudo/rakudo/blob/master/lib/Test.pm6)
 
-  * [IO::Capture::Simple](IO::Capture::Simple)
+  * [IO::Capture::Simple](https://github.com/sergot/IO-Capture-Simple)
 
-  * Perl 6
+Conceptually or philosophically similar projects:
+
+  * Perl 5's `Test::Declare|https://metacpan.org/pod/Test::Declare` (oops, didn't see the name clash when I started)
+
+  * Perl 5's `Test::Spec|https://metacpan.org/pod/Test::Spec`
+
+  * [TestML](http://testml.org/)
+
+And of course:
+
+  * [Perl 6](https://perl6.org/)
 
 AUTHOR
 ======
