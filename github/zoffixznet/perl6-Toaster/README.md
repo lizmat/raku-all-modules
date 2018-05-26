@@ -99,8 +99,8 @@ and recommended. To use it, install Perl, unless you already have it:
 \curl -L https://install.perlbrew.pl | bash
 echo 'source ~/perl5/perlbrew/etc/bashrc' >> ~/.bashrc
 source ~/.bashrc
-perlbrew install perl-5.26.0 --notest -Duseshrplib -Dusemultiplicity
-perlbrew switch perl-5.26.0
+perlbrew install perl-5.26.2 --notest -Duseshrplib -Dusemultiplicity
+perlbrew switch perl-5.26.2
 perlbrew install-cpanm
 ```
 
