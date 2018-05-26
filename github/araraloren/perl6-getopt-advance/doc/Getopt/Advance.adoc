@@ -615,9 +615,8 @@ Return an deep copy of current `OptionSet`.
 == `Argument`
 
 This is the command line argument, include the index and value.
-The `&ga-parser` use non-option argument create `Argument`, and pass it to `cmd`,
-`pos` or `main`,
-and `&ga-pre-parser` pass all the left command line arguments to the `main`.
+The `&ga-parser` and `&ga-pre-parser` use non-option argument create `Argument`, and pass it to `cmd`,
+`pos` or `main`.
 
 === Method
 
@@ -944,7 +943,9 @@ In the end, it will call all `main`s and return all the return value.
 `ga-parser` will return the return value of each main except autohv
 passed and user set `help` or `version` option.
 
-NOTE: `ga-pre-parser` only process `main` feature.
+NOTE: `ga-pre-parser` will not cause any error if an `Option` not exists,
+or `NonOption` not matched. And it will set `noa` of return value to all the aguments of command line , 
+not an Array of `Argument`.
 
 
 == `Types`

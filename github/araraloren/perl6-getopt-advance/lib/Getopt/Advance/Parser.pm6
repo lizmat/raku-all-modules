@@ -435,14 +435,14 @@ multi sub ga-pre-parser(
                     }
                 }
             } else {
-                @noa.push($args);
+                @noa.push(Argument.new(index => $noa-index++, value => $args));
             }
         } else {
             my @ret = $bsd-style ?? &process-bsd-style($optset, $args) !! [];
             if +@ret > 0 {
                 @oav.append(@ret);
             } else {
-                @noa.push($args);
+                @noa.push(Argument.new(index => $noa-index++, value => $args));
             }
         }
     }
@@ -450,12 +450,15 @@ multi sub ga-pre-parser(
     .set-value for @oav;
     # check option group and value optional
     $optset.check();
+    # call callback of non-option
+    # will not change the @noa
+    &process-pos-quite($optset, @noa);
     # call main
     my %ret;
     %ret = &process-main($optset, @noa) if !$autohv || !&will-not-process-main($optset);
     return Getopt::Advance::ReturnValue.new(
         optionset => $optset,
-        noa => @noa,
+        noa => @noa>>.value,
         return-value => %ret,
     );
 }
@@ -517,7 +520,7 @@ multi sub ga-pre-parser(
                     }
                 }
             } else {
-               @noa.push($args);
+               @noa.push(Argument.new(index => $noa-index++, value => $args));
            }
         } else {
             my @ret = $bsd-style ?? &process-bsd-style($optset, $args) !! [];
@@ -532,12 +535,15 @@ multi sub ga-pre-parser(
     .set-value for @oav;
     # check option group and value optional
     $optset.check();
+    # call callback of non-option
+    # will not change the @noa
+    &process-pos-quite($optset, @noa);
     # call main
     my %ret;
     %ret = &process-main($optset, @noa) if !$autohv || !&will-not-process-main($optset);
     return Getopt::Advance::ReturnValue.new(
         optionset => $optset,
-        noa => @noa,
+        noa => @noa>>.value,
         return-value => %ret,
     );
 }
@@ -661,3 +667,93 @@ sub process-pos($optset, @noa is copy) {
         }
     }
 }
+
+sub process-pos-quite($optset, @noa is copy) {
+    my %cmd = $optset.get-cmd();
+    my %pos = $optset.get-pos();
+    my %need-sort-pos;
+    my ($cmd-matched, $front-matched) = (False, False);
+
+    # check cmd
+    if %cmd.elems > 0 {
+        if +@noa == 0 {
+            return;
+        } else {
+            my @cmdargs = @noa[1..*-1];
+            for %cmd.values() -> $cmd {
+                # check command
+                if $cmd.match-name(@noa[0].value) {
+                    if $cmd.($optset, @cmdargs) {
+                        # exclude the cmd name
+                        $cmd-matched = True;
+                        last;
+                    }
+                }
+            }
+        }
+    }
+
+    # pos index base on 0
+    # classify the pos base on index
+    for %pos.values -> $pos {
+        %need-sort-pos{
+            -> $index {
+                $index ~~ WhateverCode ?? $index.(+@noa) !! $index;
+            }($pos.index)
+        }.push: $pos;
+    }
+
+    my @fix-noa := @noa;
+
+    # check front pos
+    # maybe add by insert-pos :front or
+    # insert-pos with index 0 or
+    # insert-pos with * - 1
+    if (not $cmd-matched) && +@noa > 0 && (%need-sort-pos{0}:exists) {
+        for @(%need-sort-pos{0}) -> $front {
+            try {
+                if $front.($optset, @fix-noa[0]) {
+                    $front-matched = True;
+                    last;
+                }
+                CATCH {
+                    when X::GA::PosCallFailed {}
+                    default {
+                        .throw();
+                    }
+                }
+            }
+        }
+    }
+
+    if (%cmd.elems > 0 && not $cmd-matched)
+        && ((not %need-sort-pos{0}:exists)
+            || ((%need-sort-pos{0}:exists)
+                && %need-sort-pos{0}.elems > 0
+                && not $front-matched)) {
+        # no cmd or pos matched, and pos is optional
+        return;
+    }
+
+    # check other pos
+    # remove 0 pos
+    %need-sort-pos{0}:delete;
+    for %need-sort-pos.keys.sort -> $index {
+        if +@fix-noa > $index && $index >= 0 {
+            for @(%need-sort-pos{$index}) -> $pos {
+                try {
+                    if $pos.($optset, @fix-noa[$index]) {
+                        last;
+                    }
+                    CATCH {
+                        when X::GA::PosCallFailed {}
+                        default {
+                            .throw();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

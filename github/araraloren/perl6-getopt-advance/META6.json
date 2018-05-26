@@ -1,7 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "Getopt::Advance",
-    "version"     : "0.3.0",
+    "version"     : "0.3.1",
     "license"     : "MIT",
     "description" : "Advanced command line parse module for perl6",
     "depends"     : [

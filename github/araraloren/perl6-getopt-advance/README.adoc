@@ -40,6 +40,14 @@ link:https://github.com/araraloren/perl6-app-snippet[Run your c/c++ code.]
 
 link:https://github.com/araraloren/perl6-app-findsource[Find your source file easily!]
 
+=== xcp
+
+A link:sample/xcp.p6[script] display the copy progress.
+
+=== pdnf
+
+link:sample/pdnf.p6[pdnf] added some sort command to dnf(package manager of some linux distribution).
+
 === find-file
 
 link:sample/find-file.p6[find-file]

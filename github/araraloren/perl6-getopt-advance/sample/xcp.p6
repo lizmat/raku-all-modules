@@ -26,10 +26,9 @@ react {
     whenever $proc.stdout.lines {
         if /^ "'" (.*) "'" \s+ '->' \s+ "'" (.*) "'"  $/ {
             my ($src, $dst) = (~$0, ~$1);
-            my ($ss, $ds, $bds) = (0, 1, 0);
+            my ($ss, $ds, $bds) = (getFileSize($src), 1, 0);
 
             while $ss != $ds {
-                $ss = getFileSize($src);
                 $ds = getFileSize($dst);
                 if $bds != $ds {
                     my $p = floor(($ds / $ss) * 100);
