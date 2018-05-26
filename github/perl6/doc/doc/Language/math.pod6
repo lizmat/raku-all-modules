@@ -86,6 +86,22 @@ Some modules in the ecosystem can work with additional data types mathematically
 =item L<Math::Matrix|https://github.com/pierre-vigier/Perl6-Math-Matrix> operates on the L<matrix field|https://en.wikipedia.org/wiki/Matrix_field>.
 =item L<Math::Quaternion|https://github.com/Util/Perl6-Math-Quaternion> operates on the L<quaternion field|https://en.wikipedia.org/wiki/Quaternion>, which are a generalization of complex numbers.
 
+Numbers are duck-typed automatically to the type they actually represent:
+
+    .^name.say for (4, ⅗, 1e-9, 3+.1i); # OUTPUT: «Int␤Rat␤Num␤Complex␤»
+
+Which makes also arithmetic operations the most adequate for the particular type
+
+    say .33-.22-.11 == 0; # OUTPUT: «True␤»
+
+In this case, all numbers are interpreted as C<Rat>s, which makes the operation exact. In general, most languages would interpret them as floating point numbers,
+
+    say .33.Num -.22.Num - .11.Num; # OUTPUT: «1.3877787807814457e-17␤»
+
+For cases such as this, Perl 6 also includes an C<approximately equal> operator, L<≅|/language/operators#infix_=~=>
+
+    say .33.Num -.22.Num - .11.Num ≅ 0; # OUTPUT: «True␤»
+
 
 =head1 Sequences
 
@@ -119,6 +135,17 @@ We can, in fact, compute the approximation to the L<golden ratio|https://en.wiki
     # -0.618033…»
 
 The L<Math::Sequences|https://github.com/ajs/perl6-Math-Sequences> module includes many mathematical sequences, already defined for you. It defines many L<sequences from the encyclopedia|https://oeis.org/>, some of them with their original name, such as ℤ or ℝ.
+
+Some set operators also operate on sequences, and they can be used to find out if an object is part of it:
+
+    say 876 ∈ (7,14 … * > 1000) ; # OUTPUT: «False␤»
+
+In this particular case, we can find out if C<876> is a multiple of 7 straight away, but the same principle holds for other sequences using complicated generators. And we can use set inclusion operators too:
+
+    say (55,89).Set ⊂ (1,1, * + * … * > 200); # OUTPUT: «True␤»
+
+although it does not take into account if it is effectively a subsequence, just the presence of the two elements here; Sets have no order, and even if you don't explicitly cast the subsequence into a Set or explicitly cast it into a C<Seq> it will be coerced into such for the application of the inclusion operator.
+
 
 =head1 Mathematical constants
 
