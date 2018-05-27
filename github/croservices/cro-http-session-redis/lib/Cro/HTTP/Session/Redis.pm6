@@ -19,7 +19,9 @@ role Cro::HTTP::Session::Redis[::TSession] does Cro::HTTP::Session::Persistent[:
                         });
     }
 
-    method clear(--> Nil) {}
+    method clear(--> Nil) {
+        # We don't need to clear because Redis maintains expiration by itself
+    }
 
     method serialize(TSession $s --> Blob) { ... }
     method deserialize(Blob $b --> TSession) { ... }

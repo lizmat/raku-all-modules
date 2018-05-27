@@ -3,7 +3,6 @@
     "description" : "Redis-based session support for the Cro library for building distributed systems in Perl 6.",
     "perl" : "6.*",
     "version" : "0.7.3",
-
     "license" : "Artistic-2.0",
     "test-depends" : [
         "Test::META"

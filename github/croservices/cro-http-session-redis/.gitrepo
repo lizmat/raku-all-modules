@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/croservices/cro-http-session-redis.git
 	branch = master
-	commit = 1ae795c98377d5519c56eb7a3b5bedd28a0354d1
-	parent = d3f5faee7c293f34a520206e4b6b009e1fb9cb65
+	commit = adfe87c8a7a00e548ff0d46d027441c39de0bd85
+	parent = 9b2eb237db3b6d5ac03212b613f7652a439d42f6
 	cmdver = 0.4.0
