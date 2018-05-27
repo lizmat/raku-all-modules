@@ -23,12 +23,12 @@ getopt(
 );
 
 sub sum1($optset, @args) {
-    given @args.shift {
+    given @args[0] {
         when /plus/ {
-            is (sum @args>>.value>>.Int), 55, "plus ok";
+            is (sum @args[1..*]>>.value>>.Int), 55, "plus ok";
         }
         when /multi/ {
-            is ([*] @args>>.value>>.Int), 3628800, "multi ok";
+            is ([*] @args[1..*]>>.value>>.Int), 3628800, "multi ok";
         }
     }
 }
