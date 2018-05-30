@@ -1,5 +1,6 @@
 Release 0.2.3
 - open() method moved from PDF::Content::Image to PDF::Content::XObject
+- fix spelling of rendering intent 'RelativeColorimetric'
 
 Release 0.2.2
 - Changed $.gfx method to not render by default

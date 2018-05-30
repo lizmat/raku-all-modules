@@ -355,8 +355,8 @@ class PDF::Content::Ops {
         );
     }
 
-    my subset RenderingIntention of Str where 'AbsoluteColorimetric'|'RelativeColormetric'|'Saturation'|'Perceptual';
-    has RenderingIntention $.RenderingIntent is graphics(method ($!RenderingIntent)  {}) is rw = 'RelativeColormetric';
+    my subset RenderingIntention of Str where 'AbsoluteColorimetric'|'RelativeColorimetric'|'Saturation'|'Perceptual';
+    has RenderingIntention $.RenderingIntent is graphics(method ($!RenderingIntent)  {}) is rw = 'RelativeColorimetric';
 
     my subset FlatnessTolerance of Int where 0 .. 100;
     has FlatnessTolerance $.Flatness is graphics(method ($!Flatness)  {}) is rw = 0;
@@ -374,7 +374,7 @@ class PDF::Content::Ops {
     has Numeric $.char-height;
     has Numeric @.char-bbox[4];
 
-    # States and transitions in [PDF 1.4 FIGURE 4.1 Graphics objects]
+    # States and transitions in [PDF 32000 Figure 9 – Graphics Objects]
     my enum GraphicsContext is export(:GraphicsContext) <Path Text Clipping Page Shading Image>;
 
     has GraphicsContext $.context = Page;
@@ -402,14 +402,12 @@ class PDF::Content::Ops {
         );
 
         my Bool $ok-here = False;
+        $ok-here = $op ∈ $_
+            with %InSitu{$!context};
+
         with %Transition{$op} {
-            $ok-here = ?(.key == $!context);
+            $ok-here ||= ?(.key == $!context);
             $!context = .value;
-        }
-        else {
-            with %InSitu{$!context} {
-                $ok-here = $op ∈ $_;
-            }
         }
 
         if !$ok-here && $.strict {

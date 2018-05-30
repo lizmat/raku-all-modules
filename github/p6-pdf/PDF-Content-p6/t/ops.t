@@ -148,7 +148,7 @@ is $g.StrokeColorSpace, 'DeviceGray', '$g.StrokeColorSpace - restored';
 lives-ok {$g.Str}, 'content with matching BT ... ET  q ... Q - lives';
 
 $g.Save;
-is $g.RenderingIntent, 'RelativeColormetric', 'RenderingIntent, initial';
+is $g.RenderingIntent, 'RelativeColorimetric', 'RenderingIntent, initial';
 lives-ok  { $g.RenderingIntent = 'Perceptual' };
 is $g.ops.tail, 'ri' => :name<Perceptual>, 'rendering intent - updated';
 is $g.Flatness, 0, 'Flatness, initial';
@@ -157,7 +157,7 @@ is $g.ops.tail, 'i' => :real(50), 'rendering intent - updated';
 is $g.Flatness, 50, 'Flatness, updated';
 $g.Restore;
 
-is $g.RenderingIntent, 'RelativeColormetric', 'RenderingIntent, restored';
+is $g.RenderingIntent, 'RelativeColorimetric', 'RenderingIntent, restored';
 is $g.Flatness, 0, 'Flatness, restored';
 
 $g = PDF::Content.new;
