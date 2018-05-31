@@ -6,8 +6,9 @@
 
     role Iterable { }
 
-C<Iterable> serves as an API for objects that can be iterated with the
-C<for> construct and related iteration constructs, like hyper operators.
+C<Iterable> serves as an API for objects that can be iterated with the C<for>
+construct and related iteration constructs, like assigment to a C<Positional>
+variable.
 
 C<Iterable> objects nested in other C<Iterable> objects (but not within scalar
 containers) flatten in certain contexts, for example when passed to a slurpy
