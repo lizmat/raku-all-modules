@@ -104,7 +104,6 @@ multi sub path-is-child-of-from(
 }
 
 # @path is at deeper level than @from
-# verify @from[$_] !eqv @path[$_] for 0..@from.end
 multi sub path-is-child-of-from(
     'do',
     @from,
@@ -114,7 +113,7 @@ multi sub path-is-child-of-from(
 {
     my Bool:D $path-is-child-of-from =
         (0..@from.end)
-            .map({ @from[$_] eqv @path[$_] })
+            .map(-> Int $from { @from[$from] eqv @path[$from] })
             .grep({ .so })
             .elems == @from.elems;
 }

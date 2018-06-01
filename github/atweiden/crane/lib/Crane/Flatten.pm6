@@ -11,7 +11,7 @@ method flatten(
 )
 {
     my Any:D %tree{List:D} =
-        Crane::List.list($container, :@path).map({ $_<path> => $_<value> });
+        Crane::List.list($container, :@path).map({ .<path> => .<value> });
 }
 
 # end method flatten }}}
