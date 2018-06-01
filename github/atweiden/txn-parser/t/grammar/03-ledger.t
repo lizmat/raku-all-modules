@@ -38,7 +38,7 @@ subtest({
 
     ok(
         @include-line
-            .grep({ is-valid-include-line($_) })
+            .grep({ .&is-valid-include-line })
             .elems == @include-line.elems,
         q:to/EOF/
         ♪ [Grammar.parse($include-line, :rule<include-line>)] - 1 of 4
@@ -90,7 +90,7 @@ subtest({
         EOF
 
     ok(
-        @entry.grep({ is-valid-entry($_) }).elems == @entry.elems,
+        @entry.grep({ .&is-valid-entry }).elems == @entry.elems,
         q:to/EOF/
         ♪ [Grammar.parse($entry, :rule<entry>)] - 2 of 4
         ┏━━━━━━━━━━━━━┓

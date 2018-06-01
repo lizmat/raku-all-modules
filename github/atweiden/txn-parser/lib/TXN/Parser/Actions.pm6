@@ -831,14 +831,14 @@ method entry($/ --> Nil)
                 Entry::Posting::ID.new(
                     :$entry-id,
                     :number($posting-number++),
-                    :xxhash($_<xxhash>),
-                    :text($_<text>)
+                    :xxhash(.<xxhash>),
+                    :text(.<text>)
                 );
             Entry::Posting.new(
-                :account($_<account>),
-                :amount($_<amount>),
-                :annot($_<annot>),
-                :decinc($_<decinc>),
+                :account(.<account>),
+                :amount(.<amount>),
+                :annot(.<annot>),
+                :decinc(.<decinc>),
                 :id($posting-id)
             );
         });

@@ -28,7 +28,7 @@ subtest({
         Q{EQUITY.Business};
 
     ok(
-        @account.grep({ is-valid-account($_) }).elems == @account.elems,
+        @account.grep({ .&is-valid-account }).elems == @account.elems,
         q:to/EOF/
         ♪ [Grammar.parse($account, :rule<account>)] - 1 of 9
         ┏━━━━━━━━━━━━━┓
@@ -50,7 +50,7 @@ subtest({
 
     ok(
         @plus-or-minus
-            .grep({ is-valid-plus-or-minus($_) })
+            .grep({ .&is-valid-plus-or-minus })
             .elems == @plus-or-minus.elems,
         q:to/EOF/
         ♪ [Grammar.parse($plus-or-minus, :rule<plus-or-minus>)] - 2 of 9
@@ -175,7 +175,7 @@ subtest({
     );
     ok(
         @quoted-asset-code
-            .grep({ is-valid-asset-code($_) })
+            .grep({ .&is-valid-asset-code })
             .elems == @quoted-asset-code.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 5 of 9
@@ -200,7 +200,7 @@ subtest({
 
     ok(
         @asset-quantity
-            .grep({ is-valid-asset-quantity($_) })
+            .grep({ .&is-valid-asset-quantity })
             .elems == @asset-quantity.elems,
         q:to/EOF/
         ♪ [Grammar.parse($asset-quantity, :rule<asset-quantity>)] - 6 of 9
@@ -269,7 +269,7 @@ subtest({
 
     ok(
         @exchange-rate
-            .grep({ is-valid-exchange-rate($_) })
+            .grep({ .&is-valid-exchange-rate })
             .elems == @exchange-rate.elems,
         q:to/EOF/
         ♪ [Grammar.parse($exchange-rate, :rule<xe>)] - 7 of 9
@@ -325,7 +325,7 @@ subtest({
         Q{BTC +฿1_0_0.0_0};
 
     ok(
-        @amount.grep({ is-valid-amount($_) }).elems == @amount.elems,
+        @amount.grep({ .&is-valid-amount }).elems == @amount.elems,
         q:to/EOF/
         ♪ [Grammar.parse($amount, :rule<amount>)] - 8 of 9
         ┏━━━━━━━━━━━━━┓
@@ -349,7 +349,7 @@ subtest({
         Q{Expenses:Business:Cats:Food      Ł5.99 LTC};
 
     ok(
-        @posting.grep({ is-valid-posting($_) }).elems == @posting.elems,
+        @posting.grep({ .&is-valid-posting }).elems == @posting.elems,
         q:to/EOF/
         ♪ [Grammar.parse($amount, :rule<amount>)] - 9 of 9
         ┏━━━━━━━━━━━━━┓

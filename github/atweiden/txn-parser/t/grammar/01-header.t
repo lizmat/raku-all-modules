@@ -21,7 +21,7 @@ subtest({
         Q{2014-01-01 08:48:00Z};
 
     ok(
-        @date.grep({ is-valid-date($_) }).elems == @date.elems,
+        @date.grep({ .&is-valid-date }).elems == @date.elems,
         q:to/EOF/
         ♪ [Grammar.parse($date, :rule<date>)] - 1 of 8
         ┏━━━━━━━━━━━━━┓
@@ -54,7 +54,7 @@ subtest({
     push(@metainfo, $metainfo-multiline);
 
     ok(
-        @metainfo.grep({ is-valid-metainfo($_) }).elems == @metainfo.elems,
+        @metainfo.grep({ .&is-valid-metainfo }).elems == @metainfo.elems,
         q:to/EOF/
         ♪ [Grammar.parse($metainfo, :rule<metainfo>)] - 2 of 8
         ┏━━━━━━━━━━━━━┓
@@ -87,7 +87,7 @@ subtest({
 
     ok(
         @description
-            .grep({ is-valid-description($_) })
+            .grep({ .&is-valid-description })
             .elems == @description.elems,
         q:to/EOF/
         ♪ [Grammar.parse($description, :rule<description>)] - 3 of 8
