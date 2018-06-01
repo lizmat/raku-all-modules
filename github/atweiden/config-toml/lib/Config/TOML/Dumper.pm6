@@ -269,7 +269,7 @@ multi sub to-toml(List:D $l --> Str:D)
         or die(X::Config::TOML::Dumper::BadArray.new(:array($l)));
 
     my Str:D @elements;
-    $l.map({ push(@elements, to-toml($_)) });
+    $l.map({ push(@elements, .&to-toml) });
     '[ ' ~ @elements.join(', ') ~ ' ]';
 }
 
