@@ -107,7 +107,7 @@ sub build-xxhash32(Int @data, uint $seed = 0 --> uint)
 {
     my @input := CArray[int8].new;
     my Int $len = 0;
-    @data.map({ @input[$len++] = $_ });
+    @data.map(-> Int $data { @input[$len++] = $data });
     XXH32(@input, $len, $seed);
 }
 
@@ -145,7 +145,7 @@ sub build-xxhash64(Int @data, ulonglong $seed = 0 --> ulonglong)
 {
     my @input := CArray[int8].new;
     my Int $len = 0;
-    @data.map({ @input[$len++] = $_ });
+    @data.map(-> Int $data { @input[$len++] = $data });
     XXH64(@input, $len, $seed);
 }
 
