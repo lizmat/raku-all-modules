@@ -186,7 +186,7 @@ multi sub to-txn(Ledger:D $ledger --> Str:D) is export
 
 multi sub to-txn(Entry:D @entry --> Str:D) is export
 {
-    my Str:D $s = @entry.map({ to-txn($_) }).join("\n" x 2);
+    my Str:D $s = @entry.map({ .&to-txn }).join("\n" x 2);
 }
 
 multi sub to-txn(Entry:D $entry --> Str:D) is export
@@ -208,7 +208,7 @@ multi sub to-txn(Entry::Header:D $header --> Str:D)
     my VarName:D @tag = $header.tag if $header.tag;
 
     my Str:D $s = ~$date;
-    $s ~= "\n" ~ @tag.map({ '#' ~ $_ }).join(' ') if @tag;
+    $s ~= "\n" ~ @tag.map(-> VarName:D $tag { '#' ~ $tag }).join(' ') if @tag;
     $s ~= ' ' ~ '!' x $important if $important > 0;
 
     if $description
@@ -229,7 +229,7 @@ multi sub to-txn(Entry::Header:D $header --> Str:D)
 
 multi sub to-txn(Entry::Posting:D @posting --> Str:D)
 {
-    @posting.map({ to-txn($_) }).join("\n");
+    @posting.map({ .&to-txn }).join("\n");
 }
 
 multi sub to-txn(Entry::Posting:D $posting --> Str:D)
@@ -397,7 +397,7 @@ multi sub from-hash(:ledger(%)! (:@entry!) --> Ledger:D)
 
 multi sub from-hash(:@entry! --> Array:D)
 {
-    my Entry:D @e = @entry.map({ from-hash(:entry($_)) });
+    my Entry:D @e = @entry.map(-> %entry { from-hash(:%entry) });
 }
 
 multi sub from-hash(
@@ -481,7 +481,7 @@ multi sub from-hash(
 
 multi sub from-hash(:@posting! --> Array:D)
 {
-    my Entry::Posting:D @p = @posting.map({ from-hash(:posting($_)) });
+    my Entry::Posting:D @p = @posting.map(-> %posting { from-hash(:%posting) });
 }
 
 multi sub from-hash(
