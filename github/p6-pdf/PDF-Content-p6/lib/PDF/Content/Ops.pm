@@ -358,7 +358,7 @@ class PDF::Content::Ops {
     my subset RenderingIntention of Str where 'AbsoluteColorimetric'|'RelativeColorimetric'|'Saturation'|'Perceptual';
     has RenderingIntention $.RenderingIntent is graphics(method ($!RenderingIntent)  {}) is rw = 'RelativeColorimetric';
 
-    my subset FlatnessTolerance of Int where 0 .. 100;
+    my subset FlatnessTolerance of Numeric where 0 .. 100;
     has FlatnessTolerance $.Flatness is graphics(method ($!Flatness)  {}) is rw = 0;
 
     # *** Extended Graphics STATE ***
