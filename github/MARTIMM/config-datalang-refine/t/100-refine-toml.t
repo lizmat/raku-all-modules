@@ -243,7 +243,7 @@ subtest {
   nok '--workdir=/tmp' ~~ any(@$o), 'app --workdir /tmp not in list';
   nok '-p' ~~ any(@$o), 'app -p not in list';
   nok '-q' ~~ any(@$o), 'app -q not in list';
-  ok '-pq' ~~ any(@$o), 'app -pq in list';
+  ok '-pq'|'-qp' ~~ any(@$o), 'app -pq in list';
   ok '--notest' ~~ any(@$o), 'app -notest in list';
 
   $o = $c.refine-str( <app>, :filter, :str-mode(C-UNIX-OPTS-T2));
@@ -251,7 +251,7 @@ subtest {
   nok '--workdir=/tmp' ~~ any(@$o), 'app --workdir /tmp not in list';
   nok '-p' ~~ any(@$o), 'app -p not in list';
   nok '-q' ~~ any(@$o), 'app -q not in list';
-  ok '-pq' ~~ any(@$o), 'app -pq in list';
+  ok '-pq'|'-qp' ~~ any(@$o), 'app -pq in list';
 
   $o = $c.refine-str( <app p2>, :filter, :str-mode(C-UNIX-OPTS-T3));
 #say dump $o;

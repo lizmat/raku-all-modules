@@ -3,6 +3,13 @@
 See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: ***Major version zero (0.y.z) is for initial development. Anything may change at any time. The public API should not be considered stable.***
 
+* 0.7.3
+  * Bug fixed in test routines by Aleks Daniel Jakimenko-Aleksejev. Newest version of Perl6 is randomizing Hash keys to prevent DoS attacks. See also article at https://cry.nu/perl6/secure-hashing-for-moarvm/.
+* 0.7.2
+  * Load and use config module problems on travis
+  * Bugfix stepping in a table(Hash) when it isn't
+* 0.7.1
+  * I definitely did something... :-\
 * 0.7.0
   * Added :die-on-empty to new(). Default is True because that was the default behaviour
 * 0.6.2
