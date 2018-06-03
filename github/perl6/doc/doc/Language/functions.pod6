@@ -5,8 +5,8 @@
 =SUBTITLE Functions and Functional Programming in Perl 6
 
 Routines are the smallest means of code reuse in Perl 6. They come in several
-forms, most notably L<methods|/type/Method>, which belong in classes and roles and are
-associated with an object; and functions (also called I<subroutines> or
+forms, most notably L<methods|/type/Method>, which belong in classes and roles
+and are associated with an object; and functions (also called I<subroutines> or
 L<sub|/type/Sub>s, for short), which can be called independently of objects.
 
 Subroutines default to lexical (C<my>) scoping, and calls to them are
@@ -1017,14 +1017,26 @@ sub print-bar(Bar() $bar) {
 print-bar Foo.new;
 =end code
 
-In the above code, once a C<Foo> instance is passed as argument to C<print-bar>, the C<Foo.Bar>
-method is called and the result is placed into C<$bar>.
+In the above code, once a C<Foo> instance is passed as argument to C<print-bar>,
+the C<Foo.Bar> method is called and the result is placed into C<$bar>.
 
 Coercion types are supposed to work wherever types work, but Rakudo currently
-(2017.05) only implements them in signatures, for both parameters and return types.
+(2018.05) only implements them in signatures, for both parameters and return
+types.
 
-=comment is the above referencing rakudo 2017.05 still valid?
-=comment is it worth placing an example about return types?
+=comment Non-parameter coercion types will theoretically be working in 6.2. Updated the reference above to latest version.
+
+Coercion also works with return types:
+
+=begin code
+sub are-equal (Int $x, Int $y --> Bool(Int) ) { $x - $y };
+
+for (2,4) X (1,2) -> ($a,$b) {
+    say "Are $a and $b equal? ", are-equal($a, $b);
+} #  OUTPUT: «Are 2 and 1 equal? True␤Are 2 and 2 equal? False␤Are 4 and 1 equal? True␤Are 4 and 2 equal? True␤»
+
+In this case, we are coercing an C<Int> to a C<Bool>, which is then printed (put
+into a string context) in the C<for> loop that calls the function.
 
 =head1 sub MAIN
 
@@ -1056,7 +1068,15 @@ to L<exit|https://docs.perl6.org/routine/exit> has to be performed.
         exit 1;
     }
 
-With C<touch.dat> present, this will work this way
+This C<MAIN> is defining two kind of aliases, as explained in
+L<Signatures|/type/Signature#Positional_vs._Named>: C<:file($data)> aliases the
+content passed to the command-line parameter C<--file=> to the variable
+C<$data>; C<:v(:$verbose)> not only aliases C<v> to C<verbose>, but also creates
+a new command line parameter C<verbose> thanks to the specification of the C<:>.
+In fact, since this is an alias, both C<verbose> and C<v> can use single or
+double dashes (C<-> or C<-->).
+
+With C<file.dat> present, this will work this way
 =begin code :lang<shell>
 $ perl6 Main.p6
 24
@@ -1073,10 +1093,6 @@ file.dat
 Verbosity on
 =end code
 
-The C<:v(:$verbose)> is an alias, as explained in
-L<Signatures|/type/Signature#Positional_vs._Named>. In fact, since
-this is an alias, both C<verbose> and C<v> can use single or double
-dashes (C<-> or C<-->).
 
 =head2 C<%*SUB-MAIN-OPTS>
 
