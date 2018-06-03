@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/araraloren/perl6-app-findsource.git
 	branch = master
-	commit = f46825df568ebbb33d183a4721cd5e3b2d7e14b9
-	parent = 9c1ce362f420342690a8fee66d914d2455ca89d8
+	commit = 728ddcf3cf2f0a9e2b1457cf8abbdfbef12426bb
+	parent = 4d404d864646635a26b32e7fa1bd4ac80f65264c
 	cmdver = 0.4.0

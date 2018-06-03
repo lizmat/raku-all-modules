@@ -1,7 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "App::FindSource",
-    "version"     : "0.0.3",
+    "version"     : "0.0.5",
     "license"     : "GPL",
     "description" : "Find your source file easily.",
     "depends"     : [
@@ -18,11 +18,12 @@
         "find",
         "c",
         "cpp",
-        "make"
+        "make",
+        "config",
+        "searcher"
     ],
     "provides"    : {
-        "Config::Searcher"    : "lib/Config/Searcher.pm6",
-        "Config::Loader"     : "lib/Config/Loader.pm6"
+        "Config::Searcher"    : "lib/Config/Searcher.pm6"
     },
 	"auth" : "github:araraloren",
     "authors" : "Loren",

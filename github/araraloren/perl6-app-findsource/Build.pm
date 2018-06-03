@@ -10,7 +10,9 @@ class Build {
 
 		$dest.mkdir unless $dest.e;
 		for $config-dir.IO.dir() {
+			note "copy {.basename} to {$dest.path}";
 			.copy($dest.add(.basename));
 		}
+		True; # seems like we need return True to `zef`
 	}
 }

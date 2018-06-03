@@ -3,10 +3,10 @@
 use nqp;
 use JSON::Fast;
 use Getopt::Advance;
-use Config::Loader;
 use Config::Searcher;
+use Getopt::Advance::Parser;
 
-my $category;
+my %category := SetHash.new;
 my %configs = &loading-config();
 
 &main();
@@ -17,7 +17,37 @@ sub main() {
     $os.push(
         'l=a',
         "load specify config, available config are < {%configs.keys.join(' ')} >.",
+        callback => sub ($, $arg) {
+            if %configs{$arg}:exists {
+                for @(%configs{$arg}<option>) -> $option {
+                    my $short = $option<short>;
+
+                    %category{$short} = True;
+                    if $os.has($short) {
+                        my $o = $os.get($short);
+                        my @ins := $option<value>;
+                        my @old := $o.default-value // [];
+
+                        @old.append(@ins);
+                        @old = @old.sort.unique;
+                        $o.set-default-value(@old);
+                        $o.reset-value;
+                    } else {
+                        $os.push( "{$short}| = a", $option<annotation>, value => @($option<value>));
+                    }
+                }
+            } else {
+                note "Not recognize config name: $arg";
+            }
+        }
     );
+
+    my $rv = &getopt($os, parser => &ga-pre-parser);
+
+    %category<w> = %category<a> = True;
+
+    my $config-io = &determind-local-path().add("findsource");
+
     $os.push(
         'w=a',
         'match whole filename.',
@@ -39,6 +69,44 @@ sub main() {
         'd|debug=b',
         'print debug message.'
     );
+    $os.insert-cmd(
+        "add",
+        sub (@fargs) {
+            for @fargs>>.value -> $file {
+                given $file.IO {
+                    when .e {
+                        .copy($config-io.add(.basename));
+                    }
+                    default {
+                        die "File {$file} not exists!";
+                    }
+                }
+            }
+        }
+    );
+    $os.insert-cmd(
+        "remove",
+        sub (@fargs) {
+            for @fargs>>.value -> $file {
+                given $file.IO {
+                    when .e {
+                        .unlink;
+                    }
+                    default {
+                        die "Configuration {$file} not exists!";
+                    }
+                }
+            }
+        }
+    );
+    $os.insert-cmd(
+        "list",
+        sub (@fargs) {
+            my @configs = $config-io.dir();
+            put "Not configuration file!" if +@configs == 0;
+            .basename.put for @configs;
+        }
+    );
     $os.insert-pos(
         "directory",
         sub find-and-print-source($os, $dira) {
@@ -50,11 +118,11 @@ sub main() {
             @t1 = do {
                 my @t;
                 with $only {
-                    fail "Not recognized category: {$_}." unless $category{$_};
+                    fail "Not recognized category: {$_}." unless %category{$_};
                     @t := $_ eq "w" ?? [] !! ($os{$_} // []);
                 } else {
                     @t = [];
-                    for @($category.keys) {
+                    for %category.keys {
                         if not %no{$_} {
                             @t.append($os{$_} // []);
                         }
@@ -107,53 +175,7 @@ sub main() {
         :last
     );
 
-    my $rv = &getopt( [ %configs, |@*ARGS], $os, parser => &config-loader-parser);
-
-    $rv.return-value.{ <w a> } = True;
-    $category = $rv.return-value;
-
-    my $config-io = &determind-local-path().add("findsource");
-
-    $os.insert-cmd(
-        "add",
-        sub (@fargs) {
-            for @fargs>>.value -> $file {
-                given $file.IO {
-                    when .e {
-                        .copy($config-io.add(.basename));
-                    }
-                    default {
-                        die "File {$file} not exists!";
-                    }
-                }
-            }
-        }
-    );
-    $os.insert-cmd(
-        "remove",
-        sub (@fargs) {
-            for @fargs>>.value -> $file {
-                given $file.IO {
-                    when .e {
-                        .unlink;
-                    }
-                    default {
-                        die "Configuration {$file} not exists!";
-                    }
-                }
-            }
-        }
-    );
-    $os.insert-cmd(
-        "list",
-        sub (@fargs) {
-            my @configs = $config-io.dir();
-            put "Not configuration file!" if +@configs == 0;
-            .basename.put for @configs;
-        }
-    );
-
-    &getopt($rv.noa, [ $os, ]);
+    &getopt($rv.noa, $os);
 }
 
 sub loading-config() is export {
