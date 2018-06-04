@@ -162,24 +162,30 @@ $n < 1; # Perl 6
 
 =end item
 
-However, note that you can use L<unspace|https://design.perl6.org/S02.html#Unspaces>
-to add whitespace in Perl 6 code in places where it is otherwise not
-allowed:
+=begin item
+I<However, whitespace is allowed before the period of a method call!>
 
 =for code :lang<perl5>
 # Perl 5
-my @books = $xml->parse_file($file)          # some comment
-                ->findnodes("/library/book");
+my @books = $xml
+  ->parse_file($file)          # some comment
+  ->findnodes("/library/book");
 
 =for code :preamble<no strict;>
 # Perl 6
-my @books = $xml.parse-file($file)\          # some comment
-                .findnodes("/library/book");
+my @books = $xml
+  .parse-file($file)           # some comment
+  .findnodes("/library/book");
+
+=end item
+
+However, note that you can use L<unspace|https://design.perl6.org/S02.html#Unspaces>
+to add whitespace in Perl 6 code in places where it is otherwise not
+allowed.
 
 See also L<S03#Minimal whitespace DWIMmery|https://design.perl6.org/S03.html#Minimal_whitespace_DWIMmery> and
 L<S04#Statement parsing|https://design.perl6.org/S04.html#Statement_parsing>
 in the Perl 6 design docs.
-
 
 =head2 Sigils
 
@@ -668,9 +674,8 @@ Mnemonic: C<x> is short and C<xx> is long, so C<xx> is the one used for lists.
 In Perl 5, C<..> was one of two completely different operators, depending
 on context.
 
-In list context, C<..> is the familiar range operator. Range has many new
-wrinkles in Perl 6, but ranges from Perl 5 code should B<not> require
-translation.
+In list context, C<..> is the familiar range operator. Ranges from Perl 5
+code should B<not> require translation.
 
 In scalar context, C<..> and C<...> were the little-known Flipflop
 operators. They have been replaced by C<ff> and C<fff>.
@@ -678,7 +683,8 @@ operators. They have been replaced by C<ff> and C<fff>.
 =head2 String interpolation
 
 In Perl 5, C<"${foo}s"> deliminates a variable name from regular text next to it.
-In Perl 6, simply extend the curly braces to include the sigil too: C<"{$foo}s">
+In Perl 6, simply extend the curly braces to include the sigil too: C<"{$foo}s">.
+This is in fact a very simple case of interpolating an expression.
 
 =head1 Compound Statements
 
@@ -828,14 +834,13 @@ for my $car (@cars)  {...} # Perl 5; read-write
 for @cars  -> $car   {...} # Perl 6; read-only
 for @cars <-> $car   {...} # Perl 6; read-write
 
-If the default topic C<$_> is being used, but needs to be read-write,
-then just use C«<->» and explicitly specify C«$_».
+If the default topic C<$_> is being used, it is also read-write.
 
 =for code :lang<perl5>
 for (@cars)      {...} # Perl 5; $_ is read-write
 =for code :preamble<no strict;>
-for @cars        {...} # Perl 6; $_ is read-only
-for @cars <-> $_ {...} # Perl 6; $_ is read-write
+for @cars        {...} # Perl 6; $_ is read-write
+for @cars <-> $_ {...} # Perl 6; $_ is also read-write
 
 It is possible to consume more than one element of the list in each iteration simply specifying
 more than one variable after the arrow operator:
@@ -874,7 +879,7 @@ Unchanged:
 =head3 C<continue>
 
 There is no longer a C<continue> block.
-Instead, use a C<NEXT> block within the body of the loop.
+Instead, use a C<NEXT> block (phaser) within the body of the loop.
 
 =for code :lang<perl5>
 # Perl 5
@@ -897,6 +902,17 @@ Instead, use a C<NEXT> block within the body of the loop.
             $str ~= ':'
         }
     }
+
+Please note that phasers don't really need a block.  This can be very handy
+when you don't want another scope:
+
+=for code
+# Perl 6
+    my $str = '';
+    for 1..5 {
+        next if $_ % 2 == 1;
+        $str ~= $_;
+        NEXT $str ~= ':';
 
 
 =head1 Functions
@@ -1084,7 +1100,10 @@ but putting things in a quietly {} block will silence.
 =head3 C<autodie>
 
 The functions which were altered by C<autodie> to throw exceptions on
-error, now throw exceptions by default unless you test the return value explicitly.
+error, now generally return C<Failure>s by default.  You can test a C<Failure>
+for definedness / truthiness without any problem.  If you use the C<Failure>
+in any other way, then the C<Exception> that was encapsulated by the C<Failure>
+will be thrown.
 
 =for code :lang<perl5>
 # Perl 5
@@ -1094,8 +1113,20 @@ open my $o_fh, '>', $output_path; # Throws exception on error
 
 =for code :preamble<no strict;>
 # Perl 6
-my $i_fh = open $input_path,  :r; # Throws exception on error
-my $o_fh = open $output_path, :w; # Throws exception on error
+my $i_fh = open $input_path,  :r; # Returns Failure on error
+my $o_fh = open $output_path, :w; # Returns Failure on error
+
+Because you can check for truthiness without any problem, you can use the
+result of an C<open> in an C<if> statement:
+
+=for code :preamble<no strict;>
+# Perl 6
+if open($input_path,:r) -> $handle {
+    .say for $handle.lines;
+}
+else {
+    # gracefully handle the fact that the open() failed
+}
 
 =head3 C<base>
 =head3 C<parent>
@@ -1137,7 +1168,8 @@ constant DEBUG = 0;      # Perl 6
 =for code :lang<perl5>
 use constant pi => 4 * atan2(1, 1); # Perl 5
 =for code
- pi, e, i; # built-in constants in Perl 6
+ tau, pi, e, i; # built-in constants in Perl 6
+ τ, π, 𝑒        # and their unicode equivalents
 
 =head3 C<encoding>
 
