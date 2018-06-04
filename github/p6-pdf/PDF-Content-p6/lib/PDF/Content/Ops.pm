@@ -402,6 +402,7 @@ class PDF::Content::Ops {
         );
 
         my Bool $ok-here = False;
+        my $prev-context = $!context;
         $ok-here = $op ∈ $_
             with %InSitu{$!context};
 
@@ -429,7 +430,7 @@ class PDF::Content::Ops {
                 loop (my int $n = +@!ops-2; $n >= 0; $n--) {
                     with @!ops[$n].key {
                         unless $_ ~~ 'comment' {
-                            $where = "in $!context context, following '$_' (%OpName{$_})";
+                            $where = "in $prev-context context, following '$_' (%OpName{$_})";
                             last;
                         }
                     }
