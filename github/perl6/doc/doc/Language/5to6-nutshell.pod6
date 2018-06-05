@@ -28,7 +28,6 @@ become the more dominant language.  If you want to take "now" in that
 future sense, that's okay too.  But we're not at all interested in the
 either/or thinking that leads to fights.
 
-
 =head1 CPAN
 
 See L<https://modules.perl6.org/> .
@@ -40,6 +39,19 @@ have been addressed yet.
 The L<Inline::Perl5|https://github.com/niner/Inline-Perl5/> project makes
 it possible to C<use> Perl 5 modules directly from Perl 6 code by using
 an embedded instance of the C<perl> interpreter to run Perl 5 code.
+
+This is as simple as:
+
+=for code :skip-test<Inline module not always present when testing>
+# the :from<Perl5> makes Perl 6 load Inline::Perl5 first (if installed)
+# and then load the Scalar::Util module from Perl 5
+use Scalar::Util:from<Perl5> <looks_like_number>;
+say looks_like_number "foo";   # 0
+say looks_like_number "42";    # 1
+
+A number of Perl 5 modules have been ported to Perl 6, trying to maintain
+the API of these modules as much as possible, as part of the CPAN Butterfly
+Plan.  These can be found at L<https://modules.perl6.org/t/CPAN5>.
 
 =head1 Syntax
 
@@ -73,7 +85,8 @@ $object->$methodname(@args);  # Perl 5
 $object."$methodname"(@args); # Perl 6
 
 If you leave out the quotes, then Perl 6 expects C<$methodname> to contain
-a C<Method> object, rather than the simple string name of the method.
+a C<Method> object, rather than the simple string name of the method.  Yes,
+B<everything> in Perl 6 can be considered an object.
 
 =head2 Whitespace
 
@@ -163,7 +176,7 @@ $n < 1; # Perl 6
 =end item
 
 =begin item
-I<However, whitespace is allowed before the period of a method call!>
+I<However, whitespace B<is allowed> before the period of a method call!>
 
 =for code :lang<perl5>
 # Perl 5
@@ -233,7 +246,7 @@ callback => &say            # Perl 6 - & gives "noun" form of any sub
 Since Perl 6 does not allow adding/removing symbols in a lexical scope once
 it has finished compiling, there is no equivalent to Perl 5's
 C<undef &foo;>, and the closest equivalent to Perl 5's C<defined &foo>
-would be C<defined &::("foo")> (which uses the "dynamic symbol lookup"
+would be C<defined ::('&foo')> (which uses the "dynamic symbol lookup"
 syntax). However, you can declare a mutable named subroutine with
 C<my &foo;> and then change its meaning at runtime by assigning to C<&foo>.
 
@@ -510,11 +523,14 @@ order to append or prefix more items) one should use the C<|> operator
 (see also L<Slip|/type/Slip>). For instance:
 
 =for code
-my @numbers = (100, 200, 300);
-my @more_numbers = (500, 600, 700);
-my @all_numbers = [|@numbers, 400, |@more_numbers];
+my @numbers = 100, 200, 300;
+my @more_numbers = 500, 600, 700;
+my @all_numbers = |@numbers, 400, |@more_numbers;
 
 That way one can concatenate arrays.
+
+Note that one does not need to have any parentheses on the right hand side:
+the List Separator takes care of creating the list, B<not> the parentheses!
 
 =head2 C«<=> cmp» Three-way comparisons
 
@@ -612,7 +628,7 @@ sub get_the_loot( $loot, *%options ) { # The * means to slurp everything
 get_the_loot( 'diamonds', quiet_level => 'very', quantity => 9 ); # Note: no curly braces in this API
 
 # Perl 6, API changed to specify valid options
-# The colon before the sigils means to expect a Pair,
+# The colon before the sigils means to expect a named variable,
 # with the key having the same name as the variable.
 sub get_the_loot( $loot, :$quiet_level?, :$quantity = 1 ) {
     # This version will check for unexpected arguments!
@@ -627,10 +643,10 @@ The conditional operator C<? :> has been replaced
 by C<?? !!>:
 
 =for code :lang<perl5>
-my $result = ( $score > 60 ) ?  'Pass' :  'Fail'; # Perl 5
+my $result = $score > 60 ?  'Pass' :  'Fail'; # Perl 5
 
 =for code :preamble<my $score>
-my $result = ( $score > 60 ) ?? 'Pass' !! 'Fail'; # Perl 6
+my $result = $score > 60 ?? 'Pass' !! 'Fail'; # Perl 6
 
 =head2 C<.> (Dot) String Concatenation
 
@@ -723,22 +739,22 @@ given EXPR {
 In its simplest form, the construct is as follows:
 
 =for code :preamble<no strict;>
-given $value {
-    when "a match" {
+given $value {                   # assigns $_
+    when "a match" {             # if $_ ~~ "a match"
         # do-something();
     }
-    when "another match" {
+    when "another match" {       # elsif $_ ~~ "another match"
         # do-something-else();
     }
-    default {
+    default {                    # else
         # do-default-thing();
     }
 }
 
 This is simple in the sense that a scalar value is matched in the C<when>
-statements.  More generally, the matches are actually smartmatches on the
-input value such that lookups using more complex entities such as regexps
-can be used instead of scalar values.
+statements against C<$_>, which was set by the C<given>.  More generally,
+the matches are actually smartmatches on C<$_> such that lookups using more
+complex entities such as regexps can be used instead of scalar values.
 
 See also the warnings on the smartmatch op above.
 
@@ -771,6 +787,8 @@ loop using the C<.lines> method.
 while (<IN_FH>)  { } # Perl 5
 =for code :preamble<no strict;>
 for $IN_FH.lines { } # Perl 6
+
+Also note that in Perl 6, lines are C<chomp>ed by default.
 
 =head3 C<do> C<while>/C<until>
 
@@ -913,6 +931,7 @@ when you don't want another scope:
         next if $_ % 2 == 1;
         $str ~= $_;
         NEXT $str ~= ':';
+    }
 
 
 =head1 Functions
@@ -1020,6 +1039,10 @@ next if $line =~    m/[aeiou]/   ; # Perl 5
 =for code :preamble<no strict;>
 next if $line ~~ m:P5/[aeiou]/   ; # Perl 6, using P5 modifier
 next if $line ~~ m/  <[aeiou]> / ; # Perl 6, native new syntax
+
+Please note that the Perl 5 regular expression syntax dates from many years
+ago and may lack features that have been added since the beginning of the
+Perl 6 project.
 
 =head2 Special matchers generally fall under the <> syntax
 
@@ -1139,9 +1162,12 @@ C<is> keyword, in the class declaration.
 package Cat;
 use base qw(Animal);
 
-=for code :preamble<class Animal {};>
+=for code :preamble<class Animal {}>
 # Perl 6
-class Cat is Animal {};
+class Cat is Animal {}
+
+Note that the C<Animal> class must be B<known> at compilation time prior to
+be able to inherit from it.
 
 =head3 C<bigint> C<bignum> C<bigrat>
 
@@ -1177,17 +1203,31 @@ TODO Allows you to write your script in non-ascii or non-utf8
 
 =head3 C<integer>
 
-Perl pragma to use integer arithmetic instead of floating point
+Perl pragma to use integer arithmetic instead of floating point.  There is
+no such equivalent in Perl 6.  If you use native integers in your calculations,
+then this will be the closest thing.
+
+=for code
+my int $foo = 42;
+my int $bar = 666;
+say $foo * $bar;    # uses native integer multiplication
 
 =head3 C<lib>
 
-Manipulate @INC at compile time
+Manipulate where modules are looked up at compile time.  The underlying logic
+is B<very> different from Perl 5, but in most cases, C<use lib> in Perl 6
+works the same as in Perl 5.
 
 =head3 C<mro>
 
 No longer relevant.
 
 In Perl 6, method calls now always use the C3 method resolution order.
+If you need to find out parent classes of a given class, you can invoke the
+C<mro> meta-method thusly:
+
+=for code :preamble<class Animal {}>
+say Animal.^mro;    # .^ indicates calling a meta-method on the object
 
 =head3 C<utf8>
 
@@ -1282,12 +1322,12 @@ something like this:
 
 =for code :lang<perl5>
 open my $fh, "<", "file" or die "$!";
-my @lines = <$fh>;
+my @lines = <$fh>;                # lines are NOT chomped
 close $fh;
 
 In Perl 6, this has been simplified to
 
-    my @lines = "file".IO.lines;
+    my @lines = "file".IO.lines;  # auto-chomped
 
 Do I<not> be tempted to try slurping in a file and splitting the resulting
 string on newlines as this will give an array with a trailing empty element,
@@ -1303,6 +1343,11 @@ e.g.:
     # read the file
     my @lines = "test-file".IO.slurp.split(/\n/);
     say @lines.elems;    #-> 4
+
+If for some reason you do want to slurp the file first, then you can call
+the C<lines> method on the result of C<slurp> instead:
+
+    my @lines = "test-file".IO.slurp.lines;  # also auto-chomps
 
 =head2 Trapping the standard output of executables.
 
@@ -1512,6 +1557,30 @@ via the C<is export> role, Perl 6 automatically creates the C<EXPORT> sub in
 the correct manner for you, so one should consider very carefully whether or
 not writing one's own C<EXPORT> routine is worthwhile.
 
+=head2 Importing groups of specific functions from a module
+
+If you would like to export groups of functions from a module, you just
+need to assign names to the groups, and the rest will work automagically.
+When you specify C<is export> in a sub declaration, you are in fact adding
+this subroutine to the C<:DEFAULT> export group.  But you can add a subroutine
+to another group, or to multiple groups:
+
+=for code :skip-test
+unit module Bar;
+sub foo() is export { }                   # added by default to :DEFAULT
+sub bar() is export(:FNORBL) { }          # added to the FNORBL export group
+sub baz() is export(:DEFAULT:FNORBL) { }  # added to both
+
+So now you can use the C<Bar> module like this:
+
+=for code :skip-test
+use Bar;                     # imports foo / baz
+use Bar :FNORBL;             # imports bar / baz
+use Bar :ALL;                # imports foo / bar / baz
+
+Note that C<:ALL> is an auto-generated group that encompasses B<all>
+subroutines that have an C<is export> trait.
+
 =head1 Core modules
 
 =head3 C<Data::Dumper>
@@ -1572,6 +1641,20 @@ Pair, with a key of the var name, and a value of the var value.
     say [ :$foo, :$bar, :@baz ].perl;
 # Output
     ["foo" => 42, "bar" => 44, "baz" => [16, 32, 64, "Hike!"]]
+=end code
+
+There is also a debugging aid for developers called C<dd> (Tiny Data Dumper,
+so Tiny it lost the "t").  This will print the C<.perl> representation plus
+some extra information that could be introspected, of the given variables on
+STDERR:
+
+=begin code :preamble<no strict;> :ok-test<dd>
+# Perl 6
+    dd $foo, $bar, @baz;
+# Output
+#    Int $foo = 42
+#    Int $bar = 44
+#    Array @baz = [16, 32, 64, "Hike!"]
 =end code
 
 =head3 C<Getopt::Long>
