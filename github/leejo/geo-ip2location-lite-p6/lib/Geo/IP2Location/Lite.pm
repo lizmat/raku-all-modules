@@ -1,10 +1,10 @@
-unit module Geo::IP2Location::Lite:auth<github:leejo>:ver<0.9.0>;
+unit module Geo::IP2Location::Lite:auth<github:leejo>:ver<0.10.0>;
 
 use NativeCall;
 
 class Geo::IP2Location::Lite {
 
-	subset IPv4 of Str where / (\d ** 1..3) ** 4 % '.' /;
+	subset IPv4 of Str where /^ (<[0 .. 9]> ** 1..3) ** 4 % '.' $/;
 	has %!file is required;
 
 	my $UNKNOWN            = "UNKNOWN IP ADDRESS";
@@ -184,13 +184,13 @@ class Geo::IP2Location::Lite {
 		$handle.seek($position-1, SeekFromBeginning);
 		my $data = $handle.read(4);
 
-		my sub is-little-endian returns Bool {
+		state $is-little-endian = do {
 		    my $i = CArray[uint32].new: 0x01234567;
 		    my $j = nativecast(CArray[uint8], $i);
 		    $j[0] == 0x67;
-		}
+		};
 
-		is-little-endian()
+		$is-little-endian
 			?? nativecast((num32), Blob.new($data))
 			!! nativecast((num32), Blob.new($data.reverse));
 	}

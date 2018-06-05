@@ -3,7 +3,7 @@
 use Test;
 use Geo::IP2Location::Lite;
 
-plan 3;
+plan 5;
 
 my $good_file = 'samples/IP-COUNTRY-SAMPLE.BIN';
 my $obj = Geo::IP2Location::Lite.new(
@@ -12,6 +12,9 @@ my $obj = Geo::IP2Location::Lite.new(
 
 is( $obj.get_country_short( '1.0.3.4' ),'-',"lookup with missing IP" );
 is( $obj.get_country_short( '255.255.255.254' ),'UNKNOWN IP ADDRESS',"with not covered IP" );
+
+throws-like({ $obj.get_country_short( 'weird1.1.1.1stuff' ) },Exception );
+throws-like({ $obj.get_country_short( '۳.۳.۳.۳' ) },Exception );
 
 is(
 	$obj.get_latitude( '1.0.3.4' ),

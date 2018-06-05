@@ -63,7 +63,7 @@ When constructing the object the file parameter is mandatory.
 
 # VERSION
 
-0.08
+0.10
 
 # AUTHOR
 
