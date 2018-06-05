@@ -1,3 +1,7 @@
+# brian's standard Appveyor config for Perl 6 modules
+# https://github.com/briandfoy/brians_perl6_modules_appveyor_config
+# This file is licensed under the Artistic License 2.0
+
 # An experimental AppVeyor config to install Strawberry Perl and
 # Rakudo Star. Once installed, AppVeyor caches those for use next time.
 #

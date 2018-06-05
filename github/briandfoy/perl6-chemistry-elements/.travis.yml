@@ -1,16 +1,25 @@
+# brian's standard Travis CI config for Perl 6 modules
+# https://github.com/briandfoy/brians_perl6_modules_travis_config
+# This file is licensed under the Artistic License 2.0
+
 env:
   global:
     - TMPDIR=/tmp
-    - RAKUDO_PKG_URL=https://github.com/nxadm/rakudo-pkg/releases/download/v2018.02.1/rakudo-pkg-Ubuntu14.04_2018.02.1-01_amd64.deb
+    - export PATH="/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH"
+
+# https://nxadm.github.io/rakudo-pkg/#using-rakudo-pkg-on-travis
+addons:
+  apt:
+    sources:
+      - sourceline: 'deb https://dl.bintray.com/nxadm/rakudo-pkg-debs $(lsb_release -cs) main'
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?search=0x379CE192D401AB61&op=get'
+    packages:
+      - rakudo-pkg
 
 # https://docs.travis-ci.com/user/installing-dependencies/#Installing-Packages-without-an-APT-Repository
 before_install:
+  - perl6 -v
   - cd ${TMPDIR}
-  # https://github.com/nxadm/rakudo-pkg
-  - wget -O rakudo-pkg.deb ${RAKUDO_PKG_URL}
-  - ls -l
-  - sudo dpkg -i rakudo-pkg.deb
-  - export PATH=$PATH:~/.perl6/bin:/opt/rakudo-pkg/bin
   # https://github.com/ugexe/zef
   - git clone https://github.com/ugexe/zef.git && cd zef && perl6 -Ilib bin/zef install .
 
