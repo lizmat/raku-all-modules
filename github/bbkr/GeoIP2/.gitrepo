@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bbkr/GeoIP2.git
 	branch = master
-	commit = 40c1b984344b2925bfa768cab247c230d5d4f0c2
-	parent = 20d354d7d8653dd67b7062506c7d962e60e39d2f
+	commit = fde145992a06b38453722de39929472ec4ab58e3
+	parent = 25708c2bcb77a60d97f25ac94de9b15fe41197a6
 	cmdver = 0.4.0
