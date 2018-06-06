@@ -4,7 +4,7 @@
 
 =SUBTITLE A low-level explanation of Perl 6 containers
 
-This section explains the levels of indirection involved in dealing with variables and container elements. The difference types of containers used in Perl 6 are explained and the actions applicable to them like assigning, binding and flattening. More advanced topics like self-referencial data, type contraints and custom containers are discussed at the end.
+This section explains the levels of indirection involved in dealing with variables and container elements. The difference types of containers used in Perl 6 are explained and the actions applicable to them like assigning, binding and flattening. More advanced topics like self-referencial data, type constraints and custom containers are discussed at the end.
 
 =head1 What is a variable?
 
@@ -102,12 +102,12 @@ container. The sigil C<&> is required when declaring the container and has to be
 omitted when executing the C<Callable>. The default type constraint is
 L<Callable|/type/Callable>.
 
-   my &callable = -> $ν { say "$ν is", $ν ~~ Int??" whole"!!" not whole" }
-   callable( ⅓ );
-   callable( 3 );
+    my &callable = -> $ν { say "$ν is", $ν ~~ Int??" whole"!!" not whole" }
+    callable( ⅓ );
+    callable( 3 );
 
 The sigil has to be provided when referring to the value stored in the
-container. This in turn allows C<Routine>s to be uses as
+container. This in turn allows C<Routine>s to be used as
 L<arguments|/type/Signature#Constraining_signatures_of_Callables> to calls.
 
     sub f() {}
