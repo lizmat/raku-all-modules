@@ -23,6 +23,13 @@ has Int         $.search-tree-size;
 # *.mmdb file decriptor
 has IO::Handle $!handle;
 
+# native casting is used to convert Buf to numeric formats
+# so if local architecture does not match big endian file format
+# then byte order must be reversed based on this flag
+has $!is-big-endian = nativecast(
+    CArray[ uint8 ], CArray[ uint32 ].new( 1 )
+)[ 0 ] != 0x01;
+
 class X::PathInvalid is Exception is export { };
 class X::MetaDataNotFound is Exception is export { };
 class X::NodeIndexOutOfRange is Exception is export { };
@@ -338,10 +345,9 @@ method !read-unsigned-integer ( Int:D :$size! ) returns Int {
 }
 
 method !read-signed-integer ( Int:D :$size! ) returns Int {
-    my $out = 0;
     
     # empty size means 0 value
-    return $out unless $size;
+    return 0 unless $size;
     
     # negative numbrs are given in two's complement format
     # but only when all 4 bytes are given leftmost bit decides about sign -
@@ -349,39 +355,19 @@ method !read-signed-integer ( Int:D :$size! ) returns Int {
     return self!read-unsigned-integer( :$size ) if $size < 4;
     
     my $bytes = $!handle.read( $size );
+    $bytes = $bytes.reverse( ) unless $!is-big-endian;
     
-    my $sign;
-    if $bytes[0] +& 0b10000000 == 128 {
-        $sign = -1;
-    }
-    else {
-        $sign = 1;
-    }
-
-    for $bytes.list -> $byte {
-        $out +<= 8;
-        $out +|= $sign == 1 ?? $byte !! $byte +^ 0b11111111;
-    }
-
-    return $out if $sign == 1;
-    return -( $out + 1 );
+    return nativecast( ( int32 ), $bytes );
 }
 
 method !read-floating-number ( Int:D :$size! ) {
     
     my $bytes = $!handle.read( $size );
-    
-    # native casting is used to convert Buf to IEEE format
-    # so if local architecture does not match big endian file format
-    # then byte order must be reversed
-    state $is-little-endian = nativecast(
-        CArray[ uint8 ], CArray[ uint32 ].new( 1 )
-    )[ 0 ] == 0x01;
-    $bytes .= reverse( ) if $is-little-endian;
+    $bytes = $bytes.reverse( ) unless $!is-big-endian;
     
     given $size {
-        when 4 { return nativecast( Pointer[ num32 ], $bytes ).deref( ) }
-        when 8 { return nativecast( Pointer[ num64 ], $bytes ).deref( ) }
+        when 4 { return nativecast( ( num32 ), $bytes ) }
+        when 8 { return nativecast( ( num64 ), $bytes ) }
         default {
             X::NYI.new( feature => 'IEEE754 of size ' ~ $size ).throw( )
         }
