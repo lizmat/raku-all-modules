@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-pdf/PDF-p6.git
 	branch = master
-	commit = efb0d0b061f7f7368951ef04d4438438e3283e55
-	parent = fc13a3b20ab6a8b1de3e9266cba92ff55e3a3236
+	commit = a5359f8377302855fa762ab49e1a6406782120af
+	parent = 7b8a18dbc9bbeaa6bc1681250b40f2c09bea81dd
 	cmdver = 0.4.0
