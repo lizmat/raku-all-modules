@@ -31,41 +31,38 @@ role PDF::Content::Page
 	    :Quarto[0,0,610,780]
 	»;
 
-    #| contents may either be a stream on an array of streams
-    method content-streams returns Array {
-        given self<Contents> {
-            when !.defined { [] }
-            when Array     { $_ }
-            when Hash      { [$_] }
-            default { die "unexpected page content: {.perl}" }
-        }
-    }
-
     method contents returns Str {
-	my $streams = $.content-streams;
-	$streams.keys.map({ $streams[$_].decoded }).join: '';
+        with self<Contents> {
+            my Array $streams = do {
+                when List { $_ }
+                when Hash { [$_] }
+                default   { die "unexpected page content: {.perl}" }
+            }
+            $streams.keys.map({ $streams[$_].decoded }).join: '';
+        }
+        else {
+            ''
+        };
     }
 
     #| produce an XObject form for this page
-    method to-xobject($from = self, :$coerce, Array :$BBox = $from.trim-box.clone) {
+    method to-xobject($from = self, Array :$BBox = $from.trim-box.clone) {
         my $Resources = $from.Resources.clone,
 	# copy unflushed graphics
         my $xobject = self.xobject-form( :$BBox, :$Resources);
-        PDF::COS.coerce($xobject, $coerce)
-            if $coerce ~~ PDF::COS::Tie;
         $xobject.pre-gfx.ops($from.pre-gfx.ops);
         $xobject.gfx.ops($from.gfx.ops);
 
 	# copy content streams
-	my Array $content-streams = $from.content-streams;
-        if +$content-streams {
-            $xobject.edit-stream: :append( [~] $content-streams.map: *.decoded );
+	my $contents = $from.contents;
+        if $contents {
+            $xobject.edit-stream: :append($contents);
             # inherit compression from the first stream segment
-            for $content-streams[0] {
-                $xobject<Filter> = .<Filter>.clone
-                    if .<Filter>:exists;
-                $xobject<DecodeParms> = .<DecodeParms>.clone
-                    if .<DecodeParms>:exists;
+            for $from<Contents>[0] {
+                $xobject<Filter> = .clone
+                    with .<Filter>;
+                $xobject<DecodeParms> = .clone
+                    with .<DecodeParms>;
             }
         }
 

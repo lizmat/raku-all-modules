@@ -127,7 +127,7 @@ role PDF::Content::PageTree
     method AT-POS(UInt $pos) is rw {
 	# vivify next page
 	self.add-page
-	   if $pos == self<Count>; 
+	   if $pos == self<Count>;
         self.page($pos + 1)
     }
 
