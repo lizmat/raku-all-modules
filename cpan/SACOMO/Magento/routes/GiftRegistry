@@ -1,2 +1,0 @@
-POST   /V1/giftregistry/mine/estimate-shipping-methods
-POST   /V1/guest-giftregistry/:cartId/estimate-shipping-methods

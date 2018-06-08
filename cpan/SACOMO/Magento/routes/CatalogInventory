@@ -1,4 +1,0 @@
-GET    /V1/stockItems/:productSku
-PUT    /V1/products/:productSku/stockItems/:itemId
-GET    /V1/stockItems/lowStock/
-GET    /V1/stockStatuses/:productSku

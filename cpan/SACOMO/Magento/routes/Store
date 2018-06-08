@@ -1,4 +1,0 @@
-GET    /V1/store/storeViews
-GET    /V1/store/storeGroups
-GET    /V1/store/websites
-GET    /V1/store/storeConfigs

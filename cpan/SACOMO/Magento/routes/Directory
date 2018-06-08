@@ -1,3 +1,0 @@
-GET    /V1/directory/currency
-GET    /V1/directory/countries
-GET    /V1/directory/countries/:countryId

@@ -1,8 +1,0 @@
-GET    /V1/products/:sku/downloadable-links
-GET    /V1/products/:sku/downloadable-links/samples
-POST   /V1/products/:sku/downloadable-links
-PUT    /V1/products/:sku/downloadable-links/:id
-DELETE /V1/products/downloadable-links/:id
-POST   /V1/products/:sku/downloadable-links/samples
-PUT    /V1/products/:sku/downloadable-links/samples/:id
-DELETE /V1/products/downloadable-links/samples/:id
