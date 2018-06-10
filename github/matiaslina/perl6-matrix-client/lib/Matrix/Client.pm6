@@ -60,12 +60,12 @@ method register($username, $password, Bool :$bind-email? = False) {
 # User Data
 
 method profile(Str :$user-id?) {
-    my $id = $user-id // $!user-id;
+    my $id = $user-id // $.whoami;
     from-json($.get("/profile/" ~ $id).content);
 }
 
 method display-name(Str :$user-id?) {
-    my $id = $user-id // $!user-id;
+    my $id = $user-id // $.whoami;
     my $res = $.get("/profile/" ~ $id ~ "/displayname");
 
     my $data = from-json($res.content);
@@ -74,12 +74,12 @@ method display-name(Str :$user-id?) {
 }
 
 method change-display-name(Str:D $display-name!) {
-    so $.put("/profile/" ~ $!user-id ~ "/displayname",
+    so $.put("/profile/" ~ $.whoami ~ "/displayname",
           displayname => $display-name)
 }
 
 method avatar-url(Str :$user-id?) {
-    my $id = $user-id // $!user-id;
+    my $id = $user-id // $.whoami;
     my $res = $.get("/profile/" ~ $id ~ "/avatar_url");
     my $data = from-json($res.content);
 
@@ -92,7 +92,7 @@ multi method change-avatar(IO::Path $avatar) {
 }
 
 multi method change-avatar(Str:D $mxc-url!) {
-    $.put("/profile/" ~ $!user-id ~ "/avatar_url",
+    $.put("/profile/" ~ $.whoami ~ "/avatar_url",
           avatar_url => $mxc-url);
 }
 
@@ -106,11 +106,21 @@ method whoami {
     $!user-id
 }
 
+method presence(Matrix::Client:D: $user-id? --> Matrix::Response::Presence) {
+    my $id = $user-id // $.whoami;
+    my $data = from-json($.get("/presence/$id/status").content);
+    Matrix::Response::Presence.new(|$data)
+}
+
+method set-presence(Matrix::Client:D: Str $presence, Str :$status-message = "") {
+    $.put("/presence/$.whoami/status",
+          :$presence, :status_msg($status-message));
+}
+
 # Syncronization
 
-multi method sync(:$since = "") {
-    my $res = $.get("/sync", timeout => 30000, since => $since);
-    Matrix::Response::Sync.new($res.content)
+multi method sync(Hash :$sync-filter is copy, :$since = "") {
+    $.sync(sync-filter => to-json($sync-filter), since => $since)
 }
 
 multi method sync(Str :$sync-filter, Str :$since = "") {
@@ -123,8 +133,9 @@ multi method sync(Str :$sync-filter, Str :$since = "") {
     Matrix::Response::Sync.new($res.content)
 }
 
-multi method sync(Hash :$sync-filter is copy, :$since = "") {
-    $.sync(sync-filter => to-json($sync-filter), since => $since)
+multi method sync(:$since = "") {
+    my $res = $.get("/sync", timeout => 30000, since => $since);
+    Matrix::Response::Sync.new($res.content)
 }
 
 # Rooms
@@ -160,7 +171,7 @@ method leave-room($room-id) {
     $.post("/rooms/$room-id/leave");
 }
 
-method joined-rooms() {
+method joined-rooms(--> Seq) {
     my $res = $.get('/joined_rooms');
     my $data = from-json($res.content);
     return $data<joined_rooms>.Seq.map(-> $room-id {
@@ -210,7 +221,6 @@ method run(Int :$sleep = 10, :$sync-filter? --> Supply) {
         loop {
             my $sync = $.sync(:$since, :$sync-filter);
             $since = $sync.next-batch;
-            say $since;
 
             for $sync.invited-rooms -> $info {
                 $s.emit($info);
