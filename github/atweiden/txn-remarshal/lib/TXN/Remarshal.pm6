@@ -278,7 +278,7 @@ multi sub to-txn(
 # --- Entry::Posting::Amount {{{
 
 multi sub to-txn(
-    Entry::Posting::Amount:D $amount
+    Entry::Posting::Amount[ASSET] $amount
     --> Str:D
 )
 {
@@ -293,6 +293,25 @@ multi sub to-txn(
     $s ~= $plus-or-minus if $plus-or-minus;
     $s ~= $asset-symbol if $asset-symbol;
     $s ~= $asset-quantity;
+    $s ~= ' ' ~ $asset-code;
+    $s;
+}
+
+multi sub to-txn(
+    Entry::Posting::Amount[COMMODITY] $amount
+    --> Str:D
+)
+{
+    my UnitOfMeasure:D $unit-of-measure = $amount.unit-of-measure;
+    my AssetCode:D $asset-code = $amount.asset-code;
+    my Quantity:D $asset-quantity = $amount.asset-quantity;
+    my PlusMinus:D $plus-or-minus =
+        $amount.plus-or-minus if $amount.plus-or-minus;
+
+    my Str:D $s = '';
+    $s ~= $plus-or-minus if $plus-or-minus;
+    $s ~= $asset-quantity;
+    $s ~= ' ' ~ $unit-of-measure ~ ' of';
     $s ~= ' ' ~ $asset-code;
     $s;
 }
