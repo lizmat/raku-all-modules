@@ -593,7 +593,23 @@ token account-name
 # --- --- end posting account grammar }}}
 # --- --- posting amount grammar {{{
 
-token amount
+proto token amount {*}
+
+token amount:commodity
+{
+    # -42 oz·Au
+    | [
+        <plus-or-minus>? <asset-quantity> \h+
+            <unit-of-measure> \h* <of> \h* <asset-code>
+    ]
+    # -42 oz of Au
+    | [
+        <plus-or-minus>? <asset-quantity> \h+
+            <unit-of-measure> \h+ of \h+ <asset-code>
+    ]
+}
+
+token amount:asset
 {
     # -$100.00 USD
     | <plus-or-minus>? <asset-symbol>? <asset-quantity> \h+ <asset-code>
@@ -629,6 +645,111 @@ token asset-quantity:integer
 {
     <integer-unsigned>
     { +$/ !== 0 or die(X::TXN::Parser::AssetQuantityIsZero.new(:text(~$/))) }
+}
+
+token unit-of-measure
+{
+    # --- --- --- digital units of measure {{{
+
+    # see: https://physics.nist.gov/cuu/Units/binary.html
+
+    #                      | bits      | bytes
+                           | b  | bit  | B
+    # kibibytes | kibibits | kilobits  | kilobytes
+    | KiB       | Kib      | kb | kbit | kB
+    # mebibytes | mebibits | megabits  | megabytes
+    | MiB       | Mib      | Mb | Mbit | MB
+    # gibibytes | gibibits | gigabits  | gigabytes
+    | GiB       | Gib      | Gb | Gbit | GB
+    # tebibytes | tebibits | terabits  | terabytes
+    | TiB       | Tib      | Tb | Tbit | TB
+    # pebibytes | pebibits | petabits  | petabytes
+    | PiB       | Pib      | Pb | Pbit | PB
+    # exbibytes | exbibits | exabits   | exabytes
+    | EiB       | Eib      | Eb | Ebit | EB
+    # zebibytes | zebibits | zettabits | zettabytes
+    | ZiB       | Zib      | Zb | Zbit | ZB
+    # yobibytes | yobibits | yottabits | yottabytes
+    | YiB       | Yib      | Yb | Ybit | YB
+
+    # --- --- --- end digital units of measure }}}
+    # --- --- --- physical units of measure {{{
+
+    # meters | nanometers | millimeters | centimeters | decimeters | kilometers
+    | 'm'    | 'nm'       | 'mm'        | 'cm'        | 'dc'       | 'km'
+    # square "
+    | 'm²'   | 'nm²'      | 'mm²'       | 'cm²'       | 'dc²'      | 'km²'
+    # cubic "
+    | 'm³'   | 'nm³'      | 'mm³'       | 'cm³'       | 'dc³'      | 'km³'
+    # inches | feet  | yards | miles | nautical miles
+    | 'in'   | 'ft'  | 'yd'  | 'mi'  | 'sm'
+    # square "
+    | 'in²'  | 'ft²' | 'yd²' | 'mi²' | 'sm²'
+    # cubic "
+    | 'in³'  | 'ft³' | 'yd³' | 'mi³' | 'sm³'
+    # acres  | ares  | hectares
+    | 'acre' | 'are' | 'ha' | 'hectare'
+    # liters | nanoliters | milliliters | centiliters | deciliters | kiloliters
+    | 'l'    | 'nl'       | 'ml'        | 'cl'        | 'dl'       | 'kl'
+    | 'L'    | 'nL'       | 'mL'        | 'cL'        | 'dL'       | 'kL'
+    # teaspoons
+    | 'tsp' | 'tspn'
+    # tablespoons
+    | 'tbsp' | 'tbspn'
+    # cups
+    | 'c' | 'cup'
+    # pints
+    | 'pt' | 'pint'
+    # quarts
+    | 'qt'
+    # gallons
+    | 'gal'
+    # US gallons
+    | 'usgal' | 'USgal'
+    # imperial gallons
+    | 'impgal'
+    # fluid ounces
+    | 'floz' | 'ozfl'
+    # grams | nanograms | milligrams | centigrams | decigrams | kilograms
+    | 'g'   | 'ng'      | 'mg'       | 'cg'       | 'dg'      | 'kg'
+    # grains
+    | 'gr'
+    # pennyweights
+    | 'dwt'
+    # ounces
+    | 'oz'
+    # troy ounces
+    | 'toz' | 'ozt'
+    # carats
+    | 'ct'
+    # pounds
+    | 'lb' | 'lbs'
+    # tons  | tonnes (metric tons)
+    | 'ton' | 't'
+    # cubic "
+    | 'ton³' | 't³'
+    # twenty-foot equivalent unit
+    | 'teu' | 'TEU'
+    # cords
+    | 'cord'
+    # brass
+    | 'brass'
+
+    # --- --- --- end physical units of measure }}}
+}
+
+token of
+{
+    # bullet operator (u+2219)
+    | '∙'
+    # dot operator (u+22c5)
+    | '⋅'
+    # greek ano teleia (u+0387)
+    | '·'
+    # hyphenation point (u+2027)
+    | '‧'
+    # middle dot (u+00b7)
+    | '·'
 }
 
 # --- --- end posting amount grammar }}}

@@ -32,6 +32,11 @@ multi sub is-asset-code($ --> Bool:D)
 # --- end sub is-asset-code }}}
 
 # end AssetCode }}}
+# AssetCommodity {{{
+
+enum AssetCommodity is export <ASSET COMMODITY>;
+
+# end AssetCommodity }}}
 # AssetSymbol {{{
 
 subset AssetSymbol of Str is export where
@@ -73,6 +78,14 @@ subset Quantity of Rat is export where * > 0;
 enum Silo is export <ASSETS EXPENSES INCOME LIABILITIES EQUITY>;
 
 # end Silo }}}
+# UnitOfMeasure {{{
+
+subset UnitOfMeasure of Str is export where
+{
+    TXN::Parser::Grammar.parse($_, :rule<unit-of-measure>);
+}
+
+# end UnitOfMeasure }}}
 # VarName {{{
 
 subset VarName of Str is export where { .&is-var-name };

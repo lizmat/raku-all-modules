@@ -5,7 +5,7 @@ use lib 't/lib';
 use TXNParserTest;
 use Test;
 
-plan(7);
+plan(8);
 
 # posting account grammar tests {{{
 
@@ -30,7 +30,7 @@ subtest({
     ok(
         @account.grep({ .&is-valid-account }).elems == @account.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($account, :rule<account>)] - 1 of 9
+        ♪ [Grammar.parse($account, :rule<account>)] - 1 of 10
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Account names validate successfully, as
         ┃   Success   ┃    expected.
@@ -53,7 +53,7 @@ subtest({
             .grep({ .&is-valid-plus-or-minus })
             .elems == @plus-or-minus.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($plus-or-minus, :rule<plus-or-minus>)] - 2 of 9
+        ♪ [Grammar.parse($plus-or-minus, :rule<plus-or-minus>)] - 2 of 10
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Plus / Minus signs validate successfully, as
         ┃   Success   ┃    expected.
@@ -152,7 +152,7 @@ subtest({
             .grep({ is-valid-asset-code(.values.first.first) })
             .elems == %asset-code-symbol.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 3 of 9
+        ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 3 of 10
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Asset codes validate successfully, as
         ┃   Success   ┃    expected.
@@ -165,7 +165,7 @@ subtest({
             .grep({ is-valid-asset-symbol(.values.first.tail) })
             .elems == %asset-code-symbol.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($asset-symbol, :rule<asset-symbol>)] - 4 of 9
+        ♪ [Grammar.parse($asset-symbol, :rule<asset-symbol>)] - 4 of 10
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Asset symbols validate successfully, as
         ┃   Success   ┃    expected.
@@ -178,7 +178,7 @@ subtest({
             .grep({ .&is-valid-asset-code })
             .elems == @quoted-asset-code.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 5 of 9
+        ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 5 of 10
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Quoted asset codes validate successfully, as
         ┃   Success   ┃    expected.
@@ -203,7 +203,7 @@ subtest({
             .grep({ .&is-valid-asset-quantity })
             .elems == @asset-quantity.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($asset-quantity, :rule<asset-quantity>)] - 6 of 9
+        ♪ [Grammar.parse($asset-quantity, :rule<asset-quantity>)] - 6 of 10
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Asset quantities validate successfully, as
         ┃   Success   ┃    expected.
@@ -214,6 +214,30 @@ subtest({
 });
 
 # --- end asset quantity }}}
+# --- unit of measure {{{
+
+subtest({
+    my Str @unit-of-measure =
+        Q{cup},
+        Q{c},
+        Q{floz};
+
+    ok(
+        @unit-of-measure
+            .grep({ .&is-valid-unit-of-measure })
+            .elems == @unit-of-measure.elems,
+        q:to/EOF/
+        ♪ [Grammar.parse($unit-of-measure, :rule<unit-of-measure>)] - 7 of 10
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ Units of measure validate successfully, as expected.
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+});
+
+# --- end unit of measure }}}
 # --- exchange rate {{{
 
 subtest({
@@ -272,7 +296,7 @@ subtest({
             .grep({ .&is-valid-exchange-rate })
             .elems == @exchange-rate.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($exchange-rate, :rule<xe>)] - 7 of 9
+        ♪ [Grammar.parse($exchange-rate, :rule<xe>)] - 8 of 10
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Exchange rates validate successfully, as
         ┃   Success   ┃    expected.
@@ -322,12 +346,17 @@ subtest({
         Q{BTC -฿100.00},
         Q{BTC -฿1_0_0.0_0},
         Q{BTC +฿100.00},
-        Q{BTC +฿1_0_0.0_0};
+        Q{BTC +฿1_0_0.0_0},
+        Q{1 floz·sprite},
+        Q{1.5 floz·sprite},
+        Q{15_000.0 floz·sprite},
+        Q{1 floz · sprite},
+        Q{1 floz of sprite};
 
     ok(
         @amount.grep({ .&is-valid-amount }).elems == @amount.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($amount, :rule<amount>)] - 8 of 9
+        ♪ [Grammar.parse($amount, :rule<amount>)] - 9 of 10
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Amounts validate successfully, as expected.
         ┃   Success   ┃
@@ -346,12 +375,15 @@ subtest({
     my Str @posting =
         Q{Assets:Personal:Coinbase    -฿100.00 BTC @ $5000.00 USD},
         Q{Assets:Personal:FirstBank +฿1_000_000.00 USD},
-        Q{Expenses:Business:Cats:Food      Ł5.99 LTC};
+        Q{Expenses:Business:Cats:Food      Ł5.99 LTC},
+        Q{Liabilities:Xray      1 floz·sprite},
+        Q{Equity:Yankee 1.06 floz of sprite @ 0.05 USD},
+        Q{Assets:Zero -42 oz·Au};
 
     ok(
         @posting.grep({ .&is-valid-posting }).elems == @posting.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($amount, :rule<amount>)] - 9 of 9
+        ♪ [Grammar.parse($amount, :rule<amount>)] - 10 of 10
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Amounts validate successfully, as expected.
         ┃   Success   ┃

@@ -80,4 +80,10 @@ sub is-valid-posting(Str:D $posting --> Bool:D) is export
         TXN::Parser::Grammar.parse($posting, :rule<posting>).so;
 }
 
+sub is-valid-unit-of-measure(Str:D $unit-of-measure --> Bool:D) is export
+{
+    my Bool:D $is-valid-unit-of-measure =
+        TXN::Parser::Grammar.parse($unit-of-measure, :rule<unit-of-measure>).so;
+}
+
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

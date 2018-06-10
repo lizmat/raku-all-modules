@@ -70,7 +70,7 @@ class Entry::Posting::Account
 # end Entry::Posting::Account }}}
 # Entry::Posting::Amount {{{
 
-class Entry::Posting::Amount
+role Entry::Posting::Amount[ASSET]
 {
     has AssetCode:D $.asset-code is required;
     has Quantity:D $.asset-quantity is required;
@@ -83,6 +83,24 @@ class Entry::Posting::Amount
         %hash<asset-code> = $.asset-code;
         %hash<asset-quantity> = $.asset-quantity;
         %hash<asset-symbol> = $.asset-symbol if $.asset-symbol;
+        %hash<plus-or-minus> = $.plus-or-minus if $.plus-or-minus;
+        %hash;
+    }
+}
+
+role Entry::Posting::Amount[COMMODITY]
+{
+    has UnitOfMeasure:D $.unit-of-measure is required;
+    has AssetCode:D $.asset-code is required;
+    has Quantity:D $.asset-quantity is required;
+    has PlusMinus $.plus-or-minus;
+
+    method hash(::?CLASS:D: --> Hash:D)
+    {
+        my %hash;
+        %hash<unit-of-measure> = $.unit-of-measure;
+        %hash<asset-code> = $.asset-code;
+        %hash<asset-quantity> = $.asset-quantity;
         %hash<plus-or-minus> = $.plus-or-minus if $.plus-or-minus;
         %hash;
     }

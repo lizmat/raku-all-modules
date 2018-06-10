@@ -636,17 +636,18 @@ method asset-quantity:float ($/ --> Nil)
     make($<float-unsigned>.made);
 }
 
-method asset-price:integer ($/ --> Nil)
+method unit-of-measure-words($/ --> Nil)
 {
-    make($<integer-unsigned>.made);
+    make(~$/);
 }
 
-method asset-price:float ($/ --> Nil)
+method unit-of-measure($/ --> Nil)
 {
-    make($<float-unsigned>.made);
+    my UnitOfMeasure:D $unit-of-measure = $<unit-of-measure-words>.made;
+    make($unit-of-measure);
 }
 
-method amount($/ --> Nil)
+method amount:asset ($/ --> Nil)
 {
     my %amount;
 
@@ -660,7 +661,24 @@ method amount($/ --> Nil)
     %amount<asset-symbol> = $asset-symbol if $asset-symbol;
     %amount<plus-or-minus> = $plus-or-minus if $plus-or-minus;
 
-    make(Entry::Posting::Amount.new(|%amount));
+    make(Entry::Posting::Amount[ASSET].new(|%amount));
+}
+
+method amount:commodity ($/ --> Nil)
+{
+    my %amount;
+
+    my UnitOfMeasure:D $unit-of-measure = $<unit-of-measure>.made;
+    my AssetCode:D $asset-code = $<asset-code>.made;
+    my Quantity:D $asset-quantity = $<asset-quantity>.made;
+    my PlusMinus:D $plus-or-minus = $<plus-or-minus>.made if $<plus-or-minus>;
+
+    %amount<unit-of-measure> = $unit-of-measure;
+    %amount<asset-code> = $asset-code;
+    %amount<asset-quantity> = $asset-quantity;
+    %amount<plus-or-minus> = $plus-or-minus if $plus-or-minus;
+
+    make(Entry::Posting::Amount[COMMODITY].new(|%amount));
 }
 
 # --- end posting amount grammar-actions }}}
@@ -676,6 +694,16 @@ method xe-symbol:per-unit ($/ --> Nil)
 method xe-symbol:in-total ($/ --> Nil)
 {
     make(IN-TOTAL);
+}
+
+method asset-price:integer ($/ --> Nil)
+{
+    make($<integer-unsigned>.made);
+}
+
+method asset-price:float ($/ --> Nil)
+{
+    make($<float-unsigned>.made);
 }
 
 method xe-rate($/ --> Nil)
