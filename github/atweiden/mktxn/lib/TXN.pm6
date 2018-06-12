@@ -119,6 +119,9 @@ my class TXN::Package
         @!entities-seen = gen-entities-seen($!ledger.entry);
     }
 
+    proto method new(|)
+    {*}
+
     multi method new(
         *%opts (
             Str:D :$file! where .so,
