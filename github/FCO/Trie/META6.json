@@ -1,0 +1,21 @@
+{
+  "authors" : [
+    "Fernando Correa de Oliveira"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+      "OrderedHash"
+  ],
+  "description" : "A Trie implementation",
+  "license" : "Artistic-2.0",
+  "name" : "Trie",
+  "perl" : "6.c",
+  "provides" : {
+    "Trie" : "lib/Trie.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/FCO/Trie",
+  "tags" : [ "trie", "data structures" ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
