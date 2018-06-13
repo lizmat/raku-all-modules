@@ -35,10 +35,7 @@ say so 'BEEF' ~~ /^<ALPHA>*$/;  # True
 DESCRIPTION
 ===========
 
-Provides ABNF Core tokens, as specified in RFC 5234, for composition
-into grammar by inheritance or import for direct use in regexes and
-parsing. The tokens may also be composed using role
-`US-ASCII::ABNF::Core-r`.
+Provides ABNF Core tokens, as specified in RFC 5234, for composition into grammar by inheritance or from role or import for direct use in regexes and parsing.
 
 Tokens
 ======
@@ -78,32 +75,14 @@ Tokens
 LIMITATIONS
 ===========
 
-Perl 6 strings treat `"\c[CR]\c[LF]"` as a single grapheme and that
-sequence will not match either `<CR>` or `<LF>` but will match
-`<CRLF>`.
+Perl 6 strings treat `"\c[CR]\c[LF]"` as a single grapheme and that sequence will not match either `<CR>` or `<LF>` but will match `<CRLF>`.
 
-The Unicode `\c[KELVIN SIGN]` at code point `\x[212A]` is normalized
-by Perl 6 string processing to the letter 'K' and `say so "\x[212A]"
-~~ /K/ ` prints `True`. Regex tests that match the letter K, including
-US-ASCII::ABNF::Core tokens, may thus appear to match the Kelvin sign.
+The Unicode `\c[KELVIN SIGN]` at code point `\x[212A]` is normalized by Perl 6 string processing to the letter 'K' and `say so "\x[212A]" ~~ /K/ ` prints `True`. Regex tests that match the letter K, including US-ASCII::ABNF::Core tokens, may thus appear to match the Kelvin sign.
 
 Export of tokens
 ================
 
-Export of tokens and other `Regex` types is not formally documented.
-Regex(es) are derived from `Method` which is in turn derived from
-`Routine`. `Sub` is also derived from `Routine` and well documented
-and established as exportable including lexical `my sub`. There is a
-roast example of exporting an operator method in
-S06-operator-overloading/infix.t and also mention of method export in
-a Dec 12, 2009 advent blog post. Further documentation and test of
-export on `Method` and `Regex` types is of interest to these modules
-and project.
+Export of tokens and other `Regex` types is not formally documented. Regex(es) are derived from `Method` which is in turn derived from `Routine`. `Sub` is also derived from `Routine` and well documented and established as exportable including lexical `my sub`. There is a roast example of exporting an operator method in S06-operator-overloading/infix.t and also mention of method export in a Dec 12, 2009 advent blog post. Further documentation and test of export on `Method` and `Regex` types is of interest to these modules and project.
 
-This implementation uses `my`/lexical scope to export tokens the same
-way a module would export a `my sub`. I looked into `our` scope and no
-scope specifier for the declarations and came across [roast issue
-#426](https://github.com/perl6/roast/issues/426), which I felt made
-the choice ambiguous and export of `my token` currently the best of
-the three.
+This implementation uses `my`/lexical scope to export tokens the same way a module would export a `my sub`. I looked into `our` scope and no scope specifier for the declarations and came across [roast issue #426](https://github.com/perl6/roast/issues/426), which I felt made the choice ambiguous and export of `my token` currently the best of the three.
 

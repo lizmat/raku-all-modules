@@ -1,0 +1,6 @@
+Revision history for US-ASCII
+
+0.6.4 2018-06-12
+    - include underscore '_' in alpha and alnum
+    - add US-ASCIIx module which does not have underscore in alpha and alnum
+    - add ident token and related tests

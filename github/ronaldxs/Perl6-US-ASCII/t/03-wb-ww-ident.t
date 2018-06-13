@@ -13,7 +13,7 @@ use v6.c;
 use Test;
 use US-ASCII :UC;
 
-plan 27; 
+plan 32;
 
 constant $abc-def-ghi = "abc\ndef\n-==\nghi";
 constant $def-ab-cedilla = "def\nabç\n-==\nghi";
@@ -84,4 +84,9 @@ ok $abc-def-ghi ~~ /a<!WB>/, '\w\w nonword boundary';
 #### \-<!wb>            abc\ndef\n-==\nghi  y   \W\W nonword boundary
 ok $abc-def-ghi ~~ /\-<!WB>/, '\W\W nonword boundary';
 
-
+# tests from roast/S05-mass/stdrules.t
+ok("abc1_2" ~~ m/^ <IDENT> $/, '<IDENT>');
+is($/<IDENT>, 'abc1_2', 'Captured <IDENT>');
+ok("abc1_2" ~~ m/^ <&IDENT> $/, '<&IDENT>');
+ok(!defined($/<IDENT>), 'Uncaptured <.IDENT>');
+ok(!( "7abc1_2" ~~ m/^ <IDENT> $/ ), 'not <IDENT>');

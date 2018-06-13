@@ -103,7 +103,7 @@ role US-ASCII::ABNF::Core-r:ver<0.1.2>:auth<R Schmidt (ronaldxs@software-path.co
     does US-ASCII::ABNF::Core::Only
     does US-ASCII::ABNF::Core::More
 {
-    token ALPHA     { <.US-ASCII::ABNF::Core::P6Common-g::alpha>   }
+    token ALPHA     { <[A..Za..z]>   }
     token DIGIT     { <.US-ASCII::ABNF::Core::P6Common-g::digit>   }
     token HEXDIG    { <.US-ASCII::ABNF::Core::P6Common-g::hexdig>  }
     token VCHAR     { <.US-ASCII::ABNF::Core::P6Common-g::vchar>   }

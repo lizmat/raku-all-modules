@@ -1,4 +1,4 @@
-# alpha and digit are used by both ABNF and p6
+# digit is used by both ABNF and p6
 # blank and cntrl are p6 classes with different names in ABNF (CTL and WSP)
 # hexdig and vchar are from ABNF but are nice to have in p6 for ASCII
 
@@ -6,7 +6,6 @@
 
 role US-ASCII::ABNF::Core::P6Common:ver<0.1.2>:auth<R Schmidt (ronaldxs@software-path.com)> {
 
-token alpha     { <[A..Za..z]> }
 token digit     { <[0..9]> }
 token blank     { <[\t\ ]> }
 token cntrl     { <[\x[0]..\x[1f]]+[\x[7f]]> }
