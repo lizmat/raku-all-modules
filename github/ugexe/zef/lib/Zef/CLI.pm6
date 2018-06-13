@@ -19,7 +19,7 @@ package Zef::CLI {
 
     proto MAIN(|) is export {
         # Supress backtrace
-        CATCH { default { try { ::("Rakudo::Internals").?LL-EXCEPTION } ?? .rethrow !! .payload.&note; &*EXIT(1) } }
+        CATCH { default { try { ::("Rakudo::Internals").?LL-EXCEPTION } ?? .rethrow !! .message.&note; &*EXIT(1) } }
         {*}
     }
 
@@ -31,10 +31,10 @@ package Zef::CLI {
         *@identities ($, *@)
     ) {
         my $client = get-client(:config($CONFIG), :$force-fetch, :$fetch-timeout);
-        my @candidates = |$client.find-candidates(|@identities>>.&str2identity);
+        my @candidates = $client.find-candidates(@identities.map(*.&str2identity));
         abort "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
-        my @fetched    = |$client.fetch(|@candidates);
-        my @fail       = |@candidates.grep: {.as !~~ any(@fetched>>.as)}
+        my @fetched    = $client.fetch(@candidates);
+        my @fail       = @candidates.grep: {.as !~~ any(@fetched>>.as)}
 
         say "!!!> Fetch failed: {.as}{?($verbosity >= VERBOSE)??' at '~.dist.path!!''}" for @fail;
 
@@ -49,9 +49,9 @@ package Zef::CLI {
         *@paths ($, *@)
     ) {
         my $client     = get-client(:config($CONFIG), :$force-test, :$test-timeout);
-        my @candidates = |$client.link-candidates( @paths.map(*.&path2candidate) );
+        my @candidates = $client.link-candidates( @paths.map(*.&path2candidate) );
         abort "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
-        my @tested = |$client.test(|@candidates);
+        my @tested = $client.test(@candidates);
         my (:@test-pass, :@test-fail) := @tested.classify: {.test-results.grep(*.so) ?? <test-pass> !! <test-fail> }
 
         say "!!!> Testing failed: {.as}{?($verbosity >= VERBOSE)??' at '~.dist.path!!''}" for @test-fail;
@@ -67,10 +67,10 @@ package Zef::CLI {
         *@paths ($, *@)
     ) {
         my $client = get-client(:config($CONFIG), :$force-build, :$build-timeout);
-        my @candidates = |$client.link-candidates( @paths.map(*.&path2candidate) );
+        my @candidates = $client.link-candidates( @paths.map(*.&path2candidate) );
         abort "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
 
-        my @built = |$client.build(|@candidates);
+        my @built = $client.build(@candidates);
         my (:@pass, :@fail) := @built.classify: {.?build-results.grep(*.so).elems ?? <pass> !! <fail> }
 
         say "!!!> Build failure: {.as}{?($verbosity >= VERBOSE)??' at '~.dist.path!!''}" for @fail;
@@ -81,12 +81,12 @@ package Zef::CLI {
     #| Install
     multi MAIN(
         'install',
-        Bool :$depends       = True,
-        Bool :$test-depends  = True,
-        Bool :$build-depends = True,
-        Bool :$test          = True,
         Bool :$fetch         = True,
         Bool :$build         = True,
+        Bool :$test          = True,
+        Bool :$depends       = True,
+        Bool :$test-depends  = $test,
+        Bool :$build-depends = $build,
         Bool :$force,
         Bool :$force-resolve = $force,
         Bool :$force-fetch   = $force,
@@ -104,7 +104,7 @@ package Zef::CLI {
         Bool :$upgrade,
         Bool :$deps-only,
         Bool :$serial,
-        :$exclude is copy,
+        :$exclude,
         :to(:$install-to) = $CONFIG<DefaultCUR>,
         *@wants ($, *@)
     ) {
@@ -117,9 +117,8 @@ package Zef::CLI {
                 !! abort("Don't understand identity: {$wanted}");
         }
 
-        my @excluded =  $exclude.map(*.&identity2spec);
-        my $client   = get-client(
-            :config($CONFIG), :exclude(|@excluded),
+        my $client = get-client(
+            :config($CONFIG), :exclude($exclude.map({ Zef::Distribution::DependencySpecification.new($_) })),
             :$depends,        :$test-depends,    :$build-depends,
             :$force-resolve,  :$force-fetch,     :$force-extract,
             :$force-build,    :$force-test,      :$force-install,
@@ -139,7 +138,7 @@ package Zef::CLI {
 
 
         # URIS
-        my @uri-candidates-to-check = $client.fetch( |@uris.map({ Candidate.new(:as($_), :uri($_)) }) ) if +@uris;
+        my @uri-candidates-to-check = $client.fetch( @uris.map({ Candidate.new(:as($_), :uri($_)) }) ) if +@uris;
         abort "No candidates found matching uri: {@uri-candidates-to-check.join(', ')}" if +@uris && +@uri-candidates-to-check == 0;
         my (:@wanted-uris, :@skip-uris) := @uri-candidates-to-check\
             .classify: {$client.is-installed($_.dist.identity, :at($install-to.map(*.&str2cur))) ?? <skip-uris> !! <wanted-uris>}
@@ -157,15 +156,15 @@ package Zef::CLI {
             if ($verbosity >= VERBOSE) && +@skip-identities;
         my @requested-identities = (?$force-install ?? @identities !! @wanted-identities)\
             .grep: { $_ ~~ none(@uri-candidates.map(*.dist.identity)) }
-        my @requested  = |$client.find-candidates(:$upgrade, |@requested-identities) if +@requested-identities;
+        my @requested  = $client.find-candidates(:$upgrade, @requested-identities) if +@requested-identities;
         abort "No candidates found matching identity: {@requested-identities.join(', ')}"\
             if +@requested-identities && +@requested == 0;
 
 
-        my @prereqs    = |$client.find-prereq-candidates(|@path-candidates, |@uri-candidates, |@requested)\
+        my @prereqs    = $client.find-prereq-candidates(|@path-candidates, |@uri-candidates, |@requested)\
             if +@path-candidates || +@uri-candidates || +@requested;
         my @candidates = grep *.defined, ?$deps-only
-            ??|@prereqs !! (|@path-candidates, |@uri-candidates, |@requested, |@prereqs);
+            ?? @prereqs !! (|@path-candidates, |@uri-candidates, |@requested, |@prereqs);
 
         unless +@candidates {
             note("All candidates are currently installed");
@@ -174,11 +173,11 @@ package Zef::CLI {
         }
 
         my (:@local, :@remote) := @candidates.classify: {.dist ~~ Zef::Distribution::Local ?? <local> !! <remote>}
-        my @fetched = grep *.so, |@local, ($client.fetch(|@remote).Slip if +@remote);
+        my @fetched = grep *.so, |@local, ($client.fetch(@remote).Slip if +@remote);
 
         my CompUnit::Repository @to = $install-to.map(*.&str2cur);
-        my @installed  = |$client.install( :@to, :$test, :$build, :$upgrade, :$update, :$dry, :$serial, |@fetched );
-        my @fail       = |@candidates.grep: {.as !~~ any(@installed>>.as)}
+        my @installed  = $client.install( :@to, :$test, :$build, :$upgrade, :$update, :$dry, :$serial, @fetched );
+        my @fail       = @candidates.grep: {.as !~~ any(@installed>>.as)}
 
         say "!!!> Install failures: {@fail.map(*.dist.identity).join(', ')}" if +@fail;
         exit +@installed && +@installed == +@candidates && +@fail == 0 ?? 0 !! 1;
@@ -193,7 +192,7 @@ package Zef::CLI {
         my $client = get-client(:config($CONFIG));
         my CompUnit::Repository @from = $uninstall-from.map(*.&str2cur);
 
-        my @uninstalled = $client.uninstall( :@from, |@identities>>.&str2identity );
+        my @uninstalled = $client.uninstall( :@from, @identities.map(*.&str2identity) );
         my @fail        = @identities.grep(* !~~ any(@uninstalled.map(*.as)));
         if +@uninstalled == 0 && +@fail {
             note("!!!> Found no matching candidates to uninstall");
@@ -212,13 +211,13 @@ package Zef::CLI {
     #| Get a list of possible distribution candidates for the given terms
     multi MAIN('search', Int :$wrap = False, *@terms ($, *@)) {
         my $client = get-client(:config($CONFIG));
-        my @results = $client.search(|@terms);
+        my @results = $client.search(@terms);
 
         say "===> Found " ~ +@results ~ " results";
 
         my @rows = eager gather for @results -> $candi {
             FIRST { take [<ID From Package Description>] }
-            take [ "{state $id += 1}", $candi.from, $candi.dist.identity, ($candi.dist.hash<description> // '') ];
+            take [ $++, $candi.from, $candi.dist.identity, ($candi.dist.hash<description> // '') ];
         }
         print-table(@rows, :$wrap);
 
@@ -230,8 +229,8 @@ package Zef::CLI {
         my $client = get-client(:config($CONFIG));
 
         my $found := ?$installed
-            ?? $client.list-installed(|@at.map(*.&str2cur))
-            !! $client.list-available(|@at);
+            ?? $client.list-installed(@at.map(*.&str2cur))
+            !! $client.list-available(@at);
 
         my $range := defined($max) ?? 0..+$max !! *;
         my %locations = $found[$range].classify: -> $candi { $candi.from }
@@ -249,9 +248,12 @@ package Zef::CLI {
     #| Upgrade installed distributions (BETA)
     multi MAIN(
         'upgrade',
+        Bool :$fetch         = True,
+        Bool :$build         = True,
+        Bool :$test          = True,
         Bool :$depends       = True,
-        Bool :$test-depends  = True,
-        Bool :$build-depends = True,
+        Bool :$test-depends  = $test,
+        Bool :$build-depends = $build,
         Bool :$force,
         Bool :$force-resolve = $force,
         Bool :$force-fetch   = $force,
@@ -265,16 +267,18 @@ package Zef::CLI {
         Int  :$build-timeout   = $timeout,
         Int  :$test-timeout    = $timeout,
         Bool :$dry,
-        :$exclude is copy,
+        Bool :$update,
+        Bool :$serial,
+        :$exclude,
         :to(:$install-to) = $CONFIG<DefaultCUR>,
         *@identities
     ) {
         # XXX: This is a very inefficient prototype. Not sure how to handle an 'upgrade' when
         # multiple versions are already installed, so for now an 'upgrade' always means we
         # leave the previous version installed.
-        my @excluded =  $exclude.map(*.&identity2spec);
-        my $client   = get-client(
-            :config($CONFIG), :exclude(|@excluded),
+
+        my $client = get-client(
+            :config($CONFIG), :exclude($exclude.map({ Zef::Distribution::DependencySpecification.new($_) })),
             :$depends,        :$test-depends,  :$build-depends,
             :$force-resolve,  :$force-fetch,   :$force-extract,
             :$force-build,    :$force-test,    :$force-install,
@@ -285,12 +289,12 @@ package Zef::CLI {
         my @missing = @identities.grep: { not $client.is-installed($_) };
         abort "Can't upgrade identities that aren't installed: {@missing.join(', ')}" if +@missing;
 
-        my @installed = $client.list-installed(|$install-to.map(*.&str2cur))\
+        my @installed = $client.list-installed($install-to.map(*.&str2cur))\
             .sort(*.dist.ver).reverse\
             .unique(:as({"{.dist.name}:auth<{.dist.auth-matcher}>"}));
         my @requested = +@identities
-            ?? |$client.find-candidates(|@identities.map(*.&str2identity))
-            !! |$client.find-candidates(|@installed.map(*.dist.clone(ver => "*")).map(*.identity).unique);
+            ?? $client.find-candidates(@identities.map(*.&str2identity))
+            !! $client.find-candidates(@installed.map(*.dist.clone(ver => "*")).map(*.identity).unique);
 
         my (:@upgradable, :@current, :@unknown) := @requested.classify: -> $candi {
             my $latest-installed = @installed.grep({ .dist.name eq $candi.dist.name })\
@@ -301,13 +305,37 @@ package Zef::CLI {
         abort("All requested distributions are already at their latest versions", 0) unless +@upgradable;
         say "The following distributions will be upgraded: {@upgradable.map(*.dist.identity).join(', ')}";
 
+        my &installer = &MAIN.assuming(
+            'install',
+            :$depends,
+            :$test-depends,
+            :$build-depends,
+            :$test,
+            :$fetch,
+            :$build,
+            :$update,
+            :$exclude,
+            :$install-to,
+            :$force-resolve,
+            :$force-fetch,
+            :$force-build,
+            :$force-test,
+            :$force-install,
+            :$fetch-timeout,
+            :$extract-timeout,
+            :$build-timeout,
+            :$test-timeout,
+            :$dry,
+            :$serial,
+        );
+
         # Sort these ahead of time so they can be installed individually by passing
         # the .uri instead of the identities (which would require another search)
         my @sorted-candidates = $client.sort-candidates(@upgradable);
         say "===> Updating: " ~ @sorted-candidates.map(*.dist.identity).join(', ');
         my (:@upgraded, :@failed) := @sorted-candidates.map(*.uri).classify: -> $uri {
             my &*EXIT = sub ($code) { return $code == 0 ?? True !! False };
-            try { &MAIN('install', $uri, :$dry) } ?? <upgraded> !! <failed>;
+            try { &installer('install', $uri) } ?? <upgraded> !! <failed>;
         }
         abort "!!!> Failed upgrading *all* modules" unless +@upgraded;
 
@@ -339,16 +367,16 @@ package Zef::CLI {
             if +@paths.grep(!*.IO.e);
         my @path-candidates = @paths.map(*.&path2candidate);
 
-        my @uri-candidates-to-check = $client.fetch( |@uris.map({ Candidate.new(:as($_), :uri($_)) }) ) if +@uris;
+        my @uri-candidates-to-check = $client.fetch( @uris.map({ Candidate.new(:as($_), :uri($_)) }) ) if +@uris;
         abort "No candidates found matching uri: {@uri-candidates-to-check.join(', ')}" if +@uris && +@uri-candidates-to-check == 0;
         my @uri-candidates = @uri-candidates-to-check.grep: { $_ ~~ none(@path-candidates.map(*.dist.identity)) }
 
         my @requested-identities = @identities.grep: { $_ ~~ none(@uri-candidates.map(*.dist.identity)) }
-        my @requested = |$client.find-candidates(@requested-identities) if +@requested-identities;
+        my @requested = $client.find-candidates(@requested-identities) if +@requested-identities;
         abort "No candidates found matching identity: {@requested-identities.join(', ')}"\
             if +@requested-identities && +@requested == 0;
 
-        my @prereqs = |$client.find-prereq-candidates(:!skip-installed, |@path-candidates, |@uri-candidates, |@requested)\
+        my @prereqs = $client.find-prereq-candidates(:!skip-installed, |@path-candidates, |@uri-candidates, |@requested)\
             if +@path-candidates || +@uri-candidates || +@requested;
 
         .say for @prereqs.map(*.dist.identity);
@@ -538,7 +566,7 @@ package Zef::CLI {
     #| Download a single module and change into its directory
     multi MAIN('look', $identity) {
         my $client     = get-client(:config($CONFIG));
-        my @candidates = |$client.find-candidates( str2identity($identity) );
+        my @candidates = $client.find-candidates( str2identity($identity) );
         abort "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
         my (:@remote, :@local) := @candidates.classify: {.dist !~~ Zef::Distribution::Local ?? <remote> !! <local>}
         my $fetched = @local[0] || $client.fetch(@remote[0])[0] || abort "Failed to fetch candidate: $identity";
@@ -550,12 +578,12 @@ package Zef::CLI {
     #| Smoke test
     multi MAIN(
         'smoke',
-        Bool :$depends       = True,
-        Bool :$test-depends  = True,
-        Bool :$build-depends = True,
-        Bool :$test          = True,
         Bool :$fetch         = True,
         Bool :$build         = True,
+        Bool :$test          = True,
+        Bool :$depends       = True,
+        Bool :$test-depends  = $test,
+        Bool :$build-depends = $build,
         Bool :$force,
         Bool :$force-resolve = $force,
         Bool :$force-fetch   = $force,
@@ -570,13 +598,13 @@ package Zef::CLI {
         Int  :$test-timeout    = $timeout,
         Bool :$update,
         Bool :$upgrade,
-        Bool :$deps-only,
-        :$exclude is copy,
+        Bool :$dry,
+        Bool :$serial,
+        :$exclude,
         :to(:$install-to) = $CONFIG<DefaultCUR>,
     ) {
-        my @excluded = $exclude.map(*.&identity2spec);
-        my $client   = get-client(
-            :config($CONFIG), :exclude(|@excluded),
+        my $client = get-client(
+            :config($CONFIG), :exclude($exclude.map({ Zef::Distribution::DependencySpecification.new($_) })),
             :$depends,        :$test-depends,  :$build-depends,
             :$force-resolve,  :$force-fetch,   :$force-extract,
             :$force-build,    :$force-test,    :$force-install,
@@ -587,7 +615,7 @@ package Zef::CLI {
         my CompUnit::Repository @to = $install-to.map(*.&str2cur);
         say "===> Smoke testing with {+@identities} distributions...";
 
-        my &smoker = &MAIN.assuming(
+        my &installer = &MAIN.assuming(
             'install',
             :$depends,
             :$test-depends,
@@ -597,7 +625,6 @@ package Zef::CLI {
             :$build,
             :$update,
             :$upgrade,
-            :$deps-only,
             :$exclude,
             :$install-to,
             :$force-resolve,
@@ -609,11 +636,13 @@ package Zef::CLI {
             :$extract-timeout,
             :$build-timeout,
             :$test-timeout,
+            :$dry,
+            :$serial,
         );
 
         for @identities -> $identity {
             my &*EXIT = sub ($code) { return $code == 0 ?? True !! False };
-            my $result = try smoker($identity);
+            my $result = try installer($identity);
             say "===> Smoke result for {$identity}: {?$result??'OK'!!'NOT OK'}";
         }
 
@@ -623,8 +652,8 @@ package Zef::CLI {
     #| Update package indexes
     multi MAIN('update', *@names) {
         my $client  = get-client(:config($CONFIG));
-        my %results = $client.recommendation-manager.update(|@names);
-        my $rows    = |%results.map: {[.key, .value]};
+        my %results = $client.recommendation-manager.update(@names);
+        my $rows    = %results.map: {[.key, .value]};
         abort "An unknown plugin name used" if +@names && (+@names > +$rows);
 
         print-table( [["Content Storage", "Distribution Count"], |$rows], wrap => True );
@@ -659,7 +688,7 @@ package Zef::CLI {
             .map(*.prefix.absolute);
 
         my @delete = |@curli-dirs, |@config-dirs;
-        $confirm === False ?? @delete.map(*.&dir-delete) !! confirm-delete( |@delete );
+        $confirm === False ?? @delete.map(*.&dir-delete) !! confirm-delete( @delete );
 
         exit 0;
     }
@@ -856,14 +885,10 @@ package Zef::CLI {
 
     sub path2candidate($path) {
         Candidate.new(
-                as   => $path,
-                uri  => $path.IO.absolute,
-                dist => Zef::Distribution::Local.new($path),
+            as   => $path,
+            uri  => $path.IO.absolute,
+            dist => Zef::Distribution::Local.new($path),
         )
-    }
-
-    sub identity2spec($identity) {
-        Zef::Distribution::DependencySpecification.new($identity);
     }
 
     # prints a table with rows and columns. expects a header row.
