@@ -7,7 +7,7 @@
 =for code
 class IO::Path is Cool does IO { }
 
-The workhorse of IO operations.
+C<IO::Path> is the workhorse of IO operations.
 
 Conceptually, an C<IO::Path> object consists of a volume, a directory, and a
 basename. It supports both purely textual operations, and operations that access
@@ -1006,13 +1006,29 @@ Defined as:
     method unlink(IO::Path:D: --> True)
     sub    unlink(*@filenames --> List:D)
 
-Delete all specified ordinary files, links, or symbolic links. See L<rmdir>
-to delete directories.
+Delete all specified ordinary files, links, or symbolic links for which there
+are privileges to do so. See L<rmdir> to delete directories.
 
-The subroutine form returns the names of the files that were successfully
-deleted. The method form returns C<True> on success, or
-L<fails|/routine/fail> with L<X::IO::Unlink> if the operation could not be
-completed.
+The subroutine form returns the names of all the files in the list, excluding
+those for which the filesystem raised some error; since trying to delete a file
+that does not exist does not raise any error at that level, this list will
+include the names of the files in the list that do not exist.
+
+The method form returns C<True> on success, or L<fails|/routine/fail>
+with L<X::IO::Unlink> if the operation could not be completed. If the file to be
+deleted does not exist, the routine treats it as success.
+
+=begin code
+'foo.txt'.IO.open(:w).close;
+'bar'.IO.mkdir;
+say unlink <foo.txt  bar  not-there.txt>; # OUTPUT: «[foo.txt not-there.txt]␤»
+# `bar` is not in output because it failed to delete (it's a directory)
+# `not-there.txt` is present. It never existed, so that's deemed a success.
+
+# Method form `fail`s:
+say .exception.message without 'bar'.IO.unlink;
+# OUTPUT: «Failed to remove the file […] illegal operation on a directory␤»
+=end code
 
 =head2 method IO
 
@@ -1028,8 +1044,8 @@ Defined as:
 
     method SPEC(IO::Path:D: --> IO::Spec)
 
-Returns the L<IO::Spec|/type/IO::Spec> object that was (implicitly) specified at object
-creation time.
+Returns the L<IO::Spec|/type/IO::Spec> object that was (implicitly) specified at
+object creation time.
 
     my $io = IO::Path.new("/bin/bash");
     say $io.SPEC;                            # OUTPUT: «(Unix)␤»
@@ -1074,12 +1090,12 @@ say "path/to/file".IO.changed.DateTime;  # 2015-02-16T12:18:50Z
 =head2 method mode
 
 Return an L<IntStr> object representing the POSIX permissions of a file.  The
-Str part of the result is the octal representation of the file permission, like
-the form accepted by the chmod(1) utility.
+C<Str> part of the result is the octal representation of the file permission,
+like the form accepted by the C<chmod(1)> utility.
 
 =for code
-say ~"path/to/file".IO.mode;        # e.g. '0644'
-say +"path/to/file".IO.mode;        # e.g. 420, where sprintf('%04o', 420) eq '0644'
+say ~"path/to/file".IO.mode;  # e.g. '0644'
+say +"path/to/file".IO.mode;  # e.g. 420, where sprintf('%04o', 420) eq '0644'
 
 The result of this can be used in the other methods that take a mode as an
 argument.
