@@ -44,17 +44,21 @@ class DateTime::Parse is DateTime {
         token hour {
             \d \d?
         }
+        
+        token gmtUtc {
+          'GMT' | 'UTC'
+        }
 
         token rfc1123-date {
-            <.wkday> ',' <.SP> <date=.date1> <.SP> <time> <.SP> 'GMT'
+            <.wkday> ',' <.SP> <date=.date1> <.SP> <time> <.SP> <gmtUtc>
         }
 
         token rfc850-date {
-            <.weekday> ',' <.SP> <date=.date2> <.SP> <time> <.SP> 'GMT'
+            <.weekday> ',' <.SP> <date=.date2> <.SP> <time> <.SP> <gmtUtc>
         }
 
         token rfc850-var-date {
-            <.wkday> ','? <.SP> <date=.date4> <.SP> <time> <.SP> 'GMT'
+            <.wkday> ','? <.SP> <date=.date4> <.SP> <time> <.SP> <gmtUtc>
         }
 
         token asctime-date {
