@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Net-SOCKS.git
 	branch = master
-	commit = 665d4e172f7be1b81a712e1378e993b02ed88dfe
-	parent = 69fb073d15a5cc87aff78be236e4692f7fefecf1
+	commit = 45d3232f558fa4e1552b757aa5088e21a3acdb68
+	parent = c84de48101bf33b8b41254b1c268419568467f05
 	cmdver = 0.4.0

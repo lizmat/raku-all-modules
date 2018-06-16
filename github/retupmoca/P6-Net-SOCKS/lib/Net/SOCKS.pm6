@@ -1,5 +1,7 @@
 unit class Net::SOCKS;
 
+use experimental :pack;
+
 method connect(:$host!, :$port!, :$proxy-server, :$proxy-port = 1080, :$socket = IO::Socket::INET) {
     my $request = Buf.new(0x05, # version 5
                           0x01, # one auth method
