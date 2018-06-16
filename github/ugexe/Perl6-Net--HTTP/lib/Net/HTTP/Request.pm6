@@ -6,7 +6,7 @@ my $CRLF = Buf.new(13, 10);
 my sub pathify        { $^a.starts-with('/') ?? $^a.substr(1) !! $^a }
 my sub header2str(%_) { %_.grep(*.value.defined).map({ hc(~$_.key) ~ ': ' ~ $_.value }).join("\r\n") }
 my sub body2str($_)   { $_ ~~ Blob:D ?? $_.unpack("A*") !! $_  }
-my sub body2bin($_)   { $_ ~~ Blob:D ?? $_ !! $_ ~~ Str:D ?? $_.chars ?? $_.encode !! '' !! '' }
+my sub body2bin($_)   { $_ ~~ Blob:D ?? $_ !! $_ ~~ Str:D ?? $_.chars ?? $_.encode !! ''.encode !! ''.encode }
 
 class Net::HTTP::Request does Request {
     has URL $.url;
@@ -29,14 +29,16 @@ class Net::HTTP::Request does Request {
 
     # An over-the-wire representation of the Request
     method raw {
-        return buf8.new( grep * ~~ Int,
-            self.start-line.encode.Slip,
-            $CRLF.Slip,
-            self!header-bin.Slip,
-            $CRLF.Slip, $CRLF.Slip,
-            self!body-bin.Slip,
-            self!trailer-bin.Slip,
-            )
+        my $buf = buf8.new andthen {
+            .push: self.start-line.encode;
+            .push: $CRLF;
+            .push: self!header-bin;
+            .push: $CRLF;
+            .push: $CRLF;
+            .push: self!body-bin;
+            .push: self!trailer-bin;
+        }
+       return $buf;
     }
 
     # The `path` part of the start line. Defaults to a relative path.
