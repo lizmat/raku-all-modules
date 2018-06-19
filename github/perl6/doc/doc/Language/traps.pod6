@@ -1050,15 +1050,18 @@ foo(1, |%arg);  # okay too
 =end code
 
 That last one may be confusing, but since it uses the C<|> prefix on a
-L<Hash|/type/Hash>, it means "treat this hash as holding named arguments."
+L<Hash|/type/Hash>, which is a special compiler construct indicating you
+want to use I<the contents> of the variable as arguments, which for hashes
+means to treat them as named arguments.
 
 If you really do want to pass them as pairs you should use a L<List|/type/List>
 or L<Capture|/type/Capture> instead:
 
 =for code :skip-test
-my $list = ('b' => 2); # this is a List containing a single Pair
-foo(|$list, :$b); # okay: we passed the pair 'b' => 2 to the first argument
-foo(1, |$list);   # FAIL: Too many positionals passed; expected 1 argument but got 2
+my $list = ('b' => 2),; # this is a List containing a single Pair
+foo(|$list, :$b);       # okay: we passed the pair 'b' => 2 to the first argument
+foo(1, |$list);         # FAIL: Too many positionals passed; expected 1 argument but got 2
+foo(1, |$list.Capture); # OK: .Capture call converts all Pair objects to named args in a Capture
 
 =for code :skip-test
 my $cap = \('b' => 2); # a Capture with a single positional value
