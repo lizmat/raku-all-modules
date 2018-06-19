@@ -1,13 +1,13 @@
 use v6;
-use Panda::Common;
-use Panda::Builder;
 use LibraryMake;
 use Shell::Command;
 
-class Build is Panda::Builder {
+my $libname = 'tweetnacl';
+
+class Build {
     method build($dir) {
         my %vars = get-vars($dir);
-        %vars<tweetnacl> = $*VM.platform-library-name('tweetnacl'.IO);
+        %vars{$libname} = $*VM.platform-library-name($libname.IO);
         mkdir "$dir/resources" unless "$dir/resources".IO.e;
         mkdir "$dir/resources/libraries" unless "$dir/resources/libraries".IO.e;
         process-makefile($dir, %vars);
@@ -17,5 +17,3 @@ class Build is Panda::Builder {
         chdir($goback);
     }
 }
-
-# vim: ft=perl6

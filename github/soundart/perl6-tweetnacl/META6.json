@@ -5,7 +5,7 @@
     "resources" : [
         "libraries/tweetnacl"
     ],
-    "build-depends" : [ ],
+    "build-depends" : [ "Shell::Command" ],
     "provides" : {
         "Crypt::TweetNacl::PublicKey" : "lib/Crypt/TweetNacl/PublicKey.pm6",
         "Crypt::TweetNacl::SecretKey" : "lib/Crypt/TweetNacl/SecretKey.pm6",

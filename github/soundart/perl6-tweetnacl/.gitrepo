@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/soundart/perl6-tweetnacl.git
 	branch = master
-	commit = 34bb494b5d886571d05ffc1385d988364fc6651b
-	parent = 16a2fd8ae166c7edd0934f2a5ba17db785e002c1
+	commit = 8bcf5477a6f445a0abb3f2ee3f77fb65c5561a12
+	parent = e6fbbb57feb58938adff01eb774c0a8e523c7859
 	cmdver = 0.4.0

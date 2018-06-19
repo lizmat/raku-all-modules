@@ -2,7 +2,7 @@ use v6;
 
 unit module Crypt::TweetNacl::Constants;
 
-constant TWEETNACL is export = %?RESOURCES<libraries/tweetnacl>.Str;
+constant TWEETNACL is export = %?RESOURCES<libraries/tweetnacl>;
 
 constant CRYPTO_BOX_SECRETKEYBYTES  is export = 32;
 constant CRYPTO_BOX_BOXZEROBYTES  is export = 16;
