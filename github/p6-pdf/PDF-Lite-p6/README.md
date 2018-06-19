@@ -153,7 +153,6 @@ This module has build-in support for the PDF core fonts: Courier, Times, Helveti
 
 The companion module PDF::Font::Loader can be used to access a wider range of fonts:
 
-```
     use PDF::Lite;
     use PDF::Font::Loader :load-font;
     my PDF::Lite $pdf .= new;
@@ -170,7 +169,6 @@ The companion module PDF::Font::Loader can be used to access a wider range of fo
     }
 
     $pdf.save-as: "examples/fonts.pdf";
-```
 
 ![example.pdf](examples/.previews/fonts-001.png)
 
@@ -306,9 +304,9 @@ Resources of type `Pattern` and `XObject/Image` may have further associated reso
 
 Whole pages or individual resources may be copied from one PDF to another.
 
-## Operators
+## Graphics Operations
 
-PDF::Content inherits from PDF::Content::Op, which implements the full range of PDF content operations for handling text, images and graphics coordinates:
+A full range of general graphics is available for drawing and displaying text.
 
 ```
 use PDF::Lite;
@@ -367,6 +365,8 @@ draw-curve3($pdf.add-page.gfx);
 
 ```
 
+Please see [Appendix I - Graphics](https://github.com/p6-pdf/PDF-API6#appendix-i-graphics) for a description of available operators and graphics.
+
 Graphics can also be read from an existing PDF file:
 
 ```
@@ -375,8 +375,6 @@ my $pdf = PDF::Lite.open: "examples/hello-world.pdf";
 say $pdf.page(1).gfx.ops;
 ```
 
-For a full list of operators, please see the PDF::Content README file.
-
 ## Graphics and Rendering
 
 A number of variables are maintained that describe the graphics state. In many cases these may be set directly:
@@ -384,16 +382,17 @@ A number of variables are maintained that describe the graphics state. In many c
 ```
 my $page = (require PDF::Lite).new.add-page;
 $page.graphics: {
-
-    .Save;  # save current graphics state
-    .CharSpacing = 1.0;     # show text with wide spacing
-    # Set the font to twelve point helvetica
-    my $face = .core-font( :family<Helvetica>, :weight<bold>, :style<italic> );
-    .font = [ $face, 12 ];
-    .TextLeading = 12; # new-line advances 12 points
-    .say("Sample Text", :position[10, 20]);
-    # 'say' has updated the text position to the next line
-    .Restore; # restore previous graphics state
+    .text: {  # start a text block
+        .CharSpacing = 1.0;     # show text with wide spacing
+        # Set the font to twelve point helvetica
+        my $face = .core-font( :family<Helvetica>, :weight<bold>, :style<italic> );
+        .font = [ $face, 10 ];
+        .TextLeading = 12; # new-line advances 12 points
+        .text-position = 10, 20;
+        .say("Sample Text", :position[10, 20]);
+        # '$gfx.say' has updated the text position to the next line
+        say .text-position;
+    } # restore previous text state
     say .CharSpacing; # restored to 0
 }
 ```
@@ -404,7 +403,7 @@ the `$*gfx` dynamic variable.
 ```
 use PDF::Lite;
 use PDF::Content::Ops :OpCode;
-my $pdf = PDF::Lite.open: "examples/hello-world.pdf";
+my PDF::Lite $pdf .= open: "examples/hello-world.pdf";
 
 my &callback = sub ($op, *@args) {
    given $op {

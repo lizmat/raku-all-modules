@@ -1,5 +1,5 @@
 use Test;
-plan 12;
+plan 11;
 
 my $read-me = "README.md".IO.slurp;
 
@@ -20,11 +20,7 @@ for @<code> {
 	    # disable say
 	    sub say(|c) { }
 
-            ++$n;
-            todo 'needs PDF::Font::Loader to be installed' if $n == 5;
-            todo 'code sample not working from EVAL' if $n == 7;
-	    lives-ok {EVAL $snippet}, 'code sample'
-		or warn "eval error: $snippet";
+	    lives-ok {EVAL $snippet}, 'code sample';
 	}
     }
 }
