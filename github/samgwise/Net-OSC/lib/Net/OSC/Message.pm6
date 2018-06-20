@@ -41,18 +41,6 @@ my %type-map64 =
   Str.^name,    's',
   Blob.^name,   'b',
 ;
-#Initial pack mappings sourced from the Protocol::OSC perl5 module
-# expanded with info from http://opensoundcontrol.org/spec-1_0
-my %pack-map =
-  i => 'i',           #int32
-  f => 'f',           #float32
-  s => 's',           #OSC-string
-  S => 's',           #OSC-string alternative
-  #b => 'N/C* x!4',    #OSC-blob
-  #h => 'h',           #64 bit big-endian twos compliment integer
-  #t => 'N2',          #OSC-timetag
-  d => 'd',           #64 bit ("double") IEEE 754 floating point number
-;
 
 has OSCPath $.path        = '/';
 has Str     @!type-list;
@@ -138,7 +126,7 @@ method !pack-args() returns Buf
   Buf.new( (gather for @!args Z @!type-list -> ($arg, $type) {
     #say "Packing '$arg' of OSC type '$type' with pattern '%pack-map{$type}'";
 
-    given %pack-map{$type} {
+    given $type {
       when 'f' {
         take pack-float($arg);
       }
@@ -152,7 +140,7 @@ method !pack-args() returns Buf
         take self.pack-string($arg);
       }
       default {
-        take pack(%pack-map{$type}, $arg);
+        die "No type map defined for '$_' unable to add { $arg.gist } to OSC message.";
       }
     }
 

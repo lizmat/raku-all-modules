@@ -2,26 +2,30 @@
   "authors" : [
     "Sam Gillespie"
   ],
-  "tags" : ["music", "Open Sound Control", "Communication" ],
   "build-depends" : [ ],
   "depends" : [
     "Numeric::Pack"
   ],
   "description" : "Open Sound Control for Perl6",
-  "name" : "Net::OSC",
   "license" : "Artistic-2.0",
+  "name" : "Net::OSC",
   "perl" : "6.c",
   "provides" : {
     "Net::OSC" : "lib/Net/OSC.pm6",
     "Net::OSC::Bundle" : "lib/Net/OSC/Bundle.pm6",
     "Net::OSC::Message" : "lib/Net/OSC/Message.pm6",
-    "Net::OSC::Types" : "lib/Net/OSC/Types.pm6",
     "Net::OSC::Server" : "lib/Net/OSC/Server.pm6",
     "Net::OSC::Server::UDP" : "lib/Net/OSC/Server/UDP.pm6",
-    "Net::OSC::Transport::TCP" : "lib/Net/OSC/Transport/TCP.pm6"
+    "Net::OSC::Transport::TCP" : "lib/Net/OSC/Transport/TCP.pm6",
+    "Net::OSC::Types" : "lib/Net/OSC/Types.pm6"
   },
   "resources" : [ ],
   "source-url" : "git://github.com/samgwise/Net-OSC.git",
+  "tags" : [
+    "music",
+    "Open Sound Control",
+    "Communication"
+  ],
   "test-depends" : [ ],
-  "version" : "0.2.1"
+  "version" : "0.2.2"
 }

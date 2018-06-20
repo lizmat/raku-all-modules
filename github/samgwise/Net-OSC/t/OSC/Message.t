@@ -17,7 +17,7 @@ lives-ok {
   );
 }, "Instantiate message";
 
-diag "OSC type map:\n" ~ $message.type-map.map({ $_.join(' => ') ~ "\n"});
+# diag "OSC type map:\n" ~ $message.type-map.map({ $_.join(' => ') ~ "\n"});
 
 is $message.args, <Hey 123 45.67>, "get args";
 
@@ -30,7 +30,7 @@ is $message.args, <Hey 123 45.67 xyz -987 -65.43>, "get args post addition";
 is $message.type-string, 'sidsid', "build type-string post addition";
 
 
-diag "package tests:";
+# diag "package tests:";
 
 my Buf $packed-message;
 lives-ok  { $packed-message = $message.package; },                          "package message";

@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.org/samgwise/Net-OSC.svg?branch=master)](https://travis-ci.org/samgwise/Net-OSC)
- 
-Net::OSC
+ Net::OSC
 ========
 
 Open Sound Control for Perl6
@@ -86,22 +85,10 @@ TODO
 CHANGES
 =======
 
-<table>
-  <tr>
-    <td>Added Server role and UDP server</td>
-    <td>Sugar for sending, receiving and routing messages</td>
-    <td>2016-12-08</td>
-  </tr>
-  <tr>
-    <td>Updated to use Numeric::Pack</td>
-    <td>Faster and better tested Buf packing</td>
-    <td>2016-08-30</td>
-  </tr>
-  <tr>
-    <td>TCP packing contributed</td>
-    <td>OSC messaged can be sent over TCP connections</td>
-    <td>2017-07-23</td>
-  </tr>
+<table class="pod-table">
+<tbody>
+<tr> <td>Added Server role and UDP server</td> <td>Sugar for sending, receiving and routing messages</td> <td>2016-12-08</td> </tr> <tr> <td>Updated to use Numeric::Pack</td> <td>Faster and better tested Buf packing</td> <td>2016-08-30</td> </tr> <tr> <td>TCP packing contributed</td> <td>OSC messaged can be sent over TCP connections</td> <td>2017-07-23</td> </tr> <tr> <td>Removed vestiges of the pack feature</td> <td>Net::OSC wil not be effected by the experimental status of pack in Rakudo</td> <td>2018-06-19</td> </tr>
+</tbody>
 </table>
 
 AUTHOR
@@ -127,29 +114,57 @@ Reference
 Net::OSC subroutines
 --------------------
 
-### sub action
+### multi sub action
 
-```
-sub action(
-    Regex $path, 
+```perl6
+multi sub action(
+    Regex $path,
     Callable $call-back
 ) returns Net::OSC::Types::EXPORT::DEFAULT::ActionTuple
 ```
 
 Creates an action tuple for use in a server's actions list. The first argument is the path, which is checked when an OSC message is received. If the path of the message matches then the call back is executed. The call back is passed the Net::OSC::Message object and the match object from the regular expression comparison.
 
-### sub action
+### multi sub action
 
-```
-sub action(
-    Str $path where { ... }, 
+```perl6
+multi sub action(
+    Str $path where { ... },
     Callable $call-back
 ) returns Net::OSC::Types::EXPORT::DEFAULT::ActionTuple
 ```
 
 Creates an action tuple for use in a server's actions list. The string must be a valid OSC path (currently we only check for a beginning '/' character). In the future this subroutine may translate OSC path meta characters to Perl6 regular expressions.
- 
-NAME
+
+ NAME
+====
+
+Net::OSC::Bundle - Implements OSC message bundling and unbundling
+
+METHODS
+=======
+
+    method new(:@messages, :$time-stamp)
+
+### method package
+
+```perl6
+method package() returns Blob
+```
+
+Packages up a bundle into a Blob, ready for transport over a binary protocol. The pacakge contains the time-stamp and all messages of the Bundle object.
+
+### method unpackage
+
+```perl6
+method unpackage(
+    Blob:D $bundle
+) returns Net::OSC::Bundle
+```
+
+Unapackages a Blob into a bundle object. The blob must begin with #bundle0x00 as defined by the OSC spec.
+
+ NAME
 ====
 
 Net::OSC::Message - Implements OSC message packing and unpacking
@@ -163,7 +178,7 @@ Set :is64bit to false to force messages to be packed to 32bit types this option 
 
 ### method type-string
 
-```
+```perl6
 method type-string() returns Str
 ```
 
@@ -171,7 +186,7 @@ Returns the current type string of this messages content. See OSC types for poss
 
 ### method pick-osc-type
 
-```
+```perl6
 method pick-osc-type(
     $arg
 ) returns Str
@@ -181,7 +196,7 @@ Returns the character representing the OSC type $arg would be packed as by this 
 
 ### method args
 
-```
+```perl6
 method args(
     *@new-args
 ) returns Seq
@@ -191,7 +206,7 @@ Adds any arguments as args to the object and returns the current message argumen
 
 ### method set-args
 
-```
+```perl6
 method set-args(
     *@new-args
 ) returns Mu
@@ -201,7 +216,7 @@ Clears the message args lists and sets it to the arguments provided. The OSC typ
 
 ### method type-map
 
-```
+```perl6
 method type-map() returns Seq
 ```
 
@@ -209,7 +224,7 @@ Returns the current OSC type map of the message. This will change depending on t
 
 ### method package
 
-```
+```perl6
 method package() returns Blob
 ```
 
@@ -217,43 +232,15 @@ Returns a Buf of the packed OSC message. See unpackage to turn a Buf into a Mess
 
 ### method unpackage
 
-```
+```perl6
 method unpackage(
     Buf $packed-osc
 ) returns Net::OSC::Message
 ```
 
 Returns a Net::OSC::Message from a Buf where the content of the Buf is an OSC message. Will die on unhandled OSC type and behaviour is currently undefined on non OSC message Bufs.
- 
-NAME
-====
 
-Net::OSC::Bundle - Implements OSC message bundling and unbundling
-
-METHODS
-=======
-
-    method new(:@messages, :$time-stamp)
-
-### method package
-
-```
-method package() returns Blob
-```
-
-Packages up a bundle into a Blob, ready for transport over a binary protocol. The pacakge contains the time-stamp and all messages of the Bundle object.
-
-### method unpackage
-
-```
-method unpackage(
-    Blob:D $bundle
-) returns Net::OSC::Bundle
-```
-
-Unapackages a Blob into a bundle object. The blob must begin with #bundle0x00 as defined by the OSC spec.
- 
-NAME
+ NAME
 ====
 
 Net::OSC::Server - A role to facilitate a convenient platform for OSC communication.
@@ -267,7 +254,7 @@ Set :is64bit to false to force messages to be packed to 32bit types this option 
 
 ### method actions
 
-```
+```perl6
 method actions() returns Seq
 ```
 
@@ -275,9 +262,9 @@ Lists the actions managed by this server. Actions are expressed as a list holdin
 
 ### method add-action
 
-```
+```perl6
 method add-action(
-    Regex $path, 
+    Regex $path,
     Callable $action
 ) returns Mu
 ```
@@ -286,7 +273,7 @@ Add an action for managing messages to the server. See the actions method descri
 
 ### method add-actions
 
-```
+```perl6
 method add-actions(
     *@actions
 ) returns Mu
@@ -296,9 +283,9 @@ Add multiple actions for managing messages to the server. See the actions method
 
 ### method send
 
-```
+```perl6
 method send(
-    Str $path where { ... }, 
+    Str $path where { ... },
     *%params
 ) returns Mu
 ```
@@ -307,7 +294,7 @@ Send and OSC message. The to add arguments to the message pass :args(...), after
 
 ### method close
 
-```
+```perl6
 method close() returns Mu
 ```
 
@@ -315,15 +302,15 @@ Call the server's on-close method. This will call the server implementations on-
 
 ### method transmit-message
 
-```
+```perl6
 method transmit-message(
     Net::OSC::Message:D $message
 ) returns Mu
 ```
 
 Transmit an OSC message. This method must be implemented by consuming classes. implementations may add additional signatures. Use this method to send a specific OSC message object instead of send (which creates one for you).
- 
-NAME
+
+ NAME
 ====
 
 Net::OSC::Server::UDP - A convenient platform for OSC communication over UDP.
@@ -345,38 +332,38 @@ Set :is64bit to false to force messages to be packed to 32bit types this option 
 
 ### method send
 
-```
+```perl6
 method send(
-    Str $path where { ... }, 
+    Str $path where { ... },
     *%params
 ) returns Mu
 ```
 
 Send a UDP message to a specific host and port. This method extends the Net::OSC::Server version and adds the :address and :port Named arguments to support UDP message sending. If :address or :port are not provided the Server's relevant send-to-* attribute will be used instead.
 
-### method transmit-message
+### multi method transmit-message
 
-```
-method transmit-message(
+```perl6
+multi method transmit-message(
     Net::OSC::Message:D $message
 ) returns Mu
 ```
 
 Transmit an OSC message. This implementation will send the provided message to the server's send-to-* attributes.
 
-### method transmit-message
+### multi method transmit-message
 
-```
-method transmit-message(
-    Net::OSC::Message:D $message, 
-    Str $address, 
+```perl6
+multi method transmit-message(
+    Net::OSC::Message:D $message,
+    Str $address,
     Int $port
 ) returns Mu
 ```
 
 Transmit an OSC message to a specified host and port. This implementation sends the provided message to the specified address and port.
- 
-Net::OSC::Transport::TCP
+
+ Net::OSC::Transport::TCP
 ========================
 
 TCP transport routines for Net::OSC.
@@ -388,9 +375,9 @@ subroutines
 
 ### sub send-lp
 
-```
+```perl6
 sub send-lp(
-    IO::Socket::INET $socket, 
+    IO::Socket::INET $socket,
     Net::OSC::Message $message
 ) returns Mu
 ```
@@ -399,7 +386,7 @@ Sends an OSC message with Length-prefixed framing. This is known to be used in S
 
 ### sub recv-lp
 
-```
+```perl6
 sub recv-lp(
     IO::Socket::INET $socket
 ) returns Net::OSC::Message
@@ -409,9 +396,9 @@ A subroutine for receiving Length-prefixed messages. This routine blocks until i
 
 ### sub send-slip
 
-```
+```perl6
 sub send-slip(
-    IO::Socket::INET $socket, 
+    IO::Socket::INET $socket,
     Net::OSC::Message $message
 ) returns Mu
 ```
@@ -420,10 +407,13 @@ Sends an OSC message with SLIP framing. This is known to be used in PureData.
 
 ### sub recv-slip
 
-```
+```perl6
 sub recv-slip(
     IO::Socket::INET $socket
 ) returns Net::OSC::Message
 ```
 
 A subroutine for receiving SLIP messages. This routine blocks until it has recieved a complete message.
+
+ 
+

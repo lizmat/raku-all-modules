@@ -1,6 +1,6 @@
 use v6;
 
-unit module Net::OSC;
+unit module Net::OSC:ver<0.2.2>;
 use Net::OSC::Server::UDP;
 use Net::OSC::Types;
 
@@ -89,6 +89,7 @@ See reference section below for usage details.
       Added Server role and UDP server  | Sugar for sending, receiving and routing messages | 2016-12-08
       Updated to use Numeric::Pack      | Faster and better tested Buf packing | 2016-08-30
       TCP packing contributed      | OSC messaged can be sent over TCP connections | 2017-07-23
+      Removed vestiges of the pack feature | Net::OSC wil not be effected by the experimental status of pack in Rakudo | 2018-06-19
 =end table
 
 =head1 AUTHOR
