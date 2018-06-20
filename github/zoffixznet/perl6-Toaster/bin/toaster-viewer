@@ -9,7 +9,7 @@ my $DB = Toaster::DB.new;
 TG.new
 .get({
       my $data = $DB.all;
-      $^stash<commits> = $data»<rakudo_long>.unique.sort.List;
+      $^stash<commits> = $data»<rakudo_long>.unique.sort({Version.new: $_}).List;
       $stash<results>{.<module>}{ .<rakudo_long> } = .<status> for |$data;
 
       my $burnt    = 0;

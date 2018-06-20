@@ -2,7 +2,7 @@
     "perl"         : "6.c",
     "name"         : "Toaster",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001001",
+    "version"      : "1.001002",
     "description"  : "Toaster of Perl 6 Ecosystem Modules",
     "tags"         : [ "ecosystem", "testing" ],
     "depends"      : [
