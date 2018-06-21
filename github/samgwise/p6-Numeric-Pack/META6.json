@@ -2,27 +2,24 @@
   "authors" : [
     "Sam Gillespie"
   ],
-  "tags": ["Binary", "Buf", "Native"],
-  "build-depends" : [
-    "LibraryMake"
-  ],
+  "build-depends" : [ ],
   "depends" : [
-    "LibraryMake",
     "NativeCall"
   ],
   "description" : "Convert perl6 Numerics to Bufs and back again!",
-  "name" : "Numeric::Pack",
   "license" : "Artistic-2.0",
+  "name" : "Numeric::Pack",
   "perl" : "6.c",
   "provides" : {
     "Numeric::Pack" : "lib/Numeric/Pack.pm6"
   },
-  "resources" : [
-    "lib/libnumpack.so",
-    "lib/libnumpack.dll",
-    "lib/libnumpack.dylib"
-  ],
+  "resources" : [ ],
   "source-url" : "git://github.com/samgwise/p6-Numeric-Pack.git",
+  "tags" : [
+    "Binary",
+    "Buf",
+    "Native"
+  ],
   "test-depends" : [ ],
-  "version" : "0.2.0"
+  "version" : "0.3.0"
 }

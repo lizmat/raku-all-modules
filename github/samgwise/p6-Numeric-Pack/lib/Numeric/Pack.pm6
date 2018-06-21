@@ -1,5 +1,5 @@
 use v6;
-unit module Numeric::Pack;
+unit module Numeric::Pack:ver<0.3.0>;
 
 =begin pod
 
@@ -34,24 +34,22 @@ Numeric::Pack - Convert perl6 Numerics to Bufs and back again!
 
 Numeric::Pack is a Perl6 module for packing values of the Numeric role into Buf objects
 (With the exception of Complex numbers).
-Currently there are no core language mechanisms for packing the majority of Numeric types into Bufs.
-Both the experimental pack language feature and the PackUnpack module do not yet implement packing to and from floating-point representations,
-A feature used by many modules in the Perl5 pack and unpack routines.
-Numeric::Pack fills this gap in functionality via a packaged native C library and a corresponding NativeCall interface.
-By relying on C to pack and unpack floating-point types we avoid the need to implement error prone bit manipulations in pure perl.
+Currently there are no core language mechanisms for packing the majority of Numeric types into C compatible Bufs.
+The experimental pack language feature module does not yet implement packing to and from floating-point representations,
+A feature used by many modules in the Perl5 pack and unpack routines, (Since righting this the 5Pack module was released).
+Numeric::Pack fills this gap in functionality through utilising the facilities offered by the core NativeCall module and is now pure perl.
 Fixed size integer types are included for completeness and are used internally to assist in assessing a system's byte ordering.
 
-Byte ordering (endianness) is managed at the Perl6 level to make it easier to extend later if necessary.
-Byte ordering is controlled with the Endianness enum.
+Byte ordering is controlled with the ByteOrder enum.
 
-Numeric::Pack exports the enum Endianness by default (Endianness is exported as :MANDATORY).
+Numeric::Pack exports the enum ByteOrder by default (ByteOrder is exported as :MANDATORY).
 
 =begin table
-        Endianness       | Description
+        ByteOrder           | Description
         ===============================================================
-        native-endian    | The native byte ordering of the current system
-        little-endian    | Common byte ordering of contemporary CPUs
-        big-endian       | Also known as network byte order
+        native-endian       | The native byte ordering of the current system
+        little-endian       | Common byte ordering of contemporary CPUs
+        big-endian          | Also known as network byte order
 =end table
 
 By default Numeric::Pack's pack and unpack functions return and accept big-endian Bufs.
@@ -62,19 +60,11 @@ Use Numeric::Pack :ALL to export all exportable functionality.
 
 Use :floats or :ints flags to export subsets of the module's functionality.
 =begin table
-        :floats           | :ints
+        Export tag       | Functions
         ===============================
-        pack-float        | pack-int32
-        unpack-float      | unpack-int32
-                          | pack-uint32
-                          | unpack-uint32
-        pack-double       | pack-int64
-        unpack-double     | unpack-int64
-                          | pack-uint64 ★
-                          | unpack-uint64 ★
+        :floats     | pack-float, unpack-float, pack-double, unpack-double
+        :ints       | pack-uint32, pack-int32, unpack-int32, unpack-uint32, pack-int64, unpack-int64, pack-uint64, unpack-uint64
 =end table
-
-★ This behaviour is faulty for values over 7 bytes ☹
 
 =head1 TODO
 
@@ -85,8 +75,9 @@ Use :floats or :ints flags to export subsets of the module's functionality.
 =head1 CHANGES
 
 =begin table
-      Added pack-uint32, pack-uint32 and unpack-uint32  | Added support for unsigned types   | 2017-04-20
-      Changed named argument :endianness to :byte-order | Signatures now read more naturally | 2016-08-30
+      Removed bundled native library, now pure perl6    | Improved portability and reliability  | 2018-06-20
+      Added pack-uint32, pack-uint32 and unpack-uint32  | Added support for unsigned types      | 2017-04-20
+      Changed named argument :endianness to :byte-order | Signatures now read more naturally    | 2016-08-30
 =end table
 
 =head1 AUTHOR
@@ -103,209 +94,263 @@ This library is free software; you can redistribute it and/or modify it under th
 =end pod
 
 use NativeCall;
-use LibraryMake;
 
-# Find our compiled library.
-sub libnumpack {
-    my $so = get-vars('')<SO>;
-    return ~(%?RESOURCES{"lib/libnumpack$so"});
-}
 
 # While heard there are other endian behaviours about, little and big are the most common.
-enum Endianness is export(:MANDATORY) ( native-endian => 0, little-endian => 1, big-endian => 2 );
+enum ByteOrder is export(:MANDATORY) ( native-endian => 0, little-endian => 1, big-endian => 2 );
 
-#
-# Native calls and wrappers:
-#
+# The core interface for all Word unions
+role ByteUnion {
+    method as-buf(ByteOrder :$byte-order = native-byte-order() --> Buf) { … }
+
+    method set-buf(Buf $buf, ByteOrder :$byte-order = native-byte-order()) { … }
+
+    method as-int( --> Int) { … }
+
+    method as-uint( --> UInt) { … }
+
+    method as-float( --> Rat) { … }
+
+    method set-int(Int $i) { … }
+
+    method set-uint(UInt $i) { … }
+
+    method set-float(Rat $r) { … }
+}
 
 ### 4 byte types:
 
-# void pack_rat_to_float(int32_t n, int32_t d, char *bytes)
-sub pack_rat_to_float(int32, int32, CArray[uint8]) is native(&libnumpack) { * }
+class Word32 is repr('CUnion') does ByteUnion {
+    has int32 $!int;
+    has uint32 $!uint;
+    has num32 $!float;
 
-sub pack-float(Rat(Cool) $rat, Endianness :$byte-order = big-endian) returns Buf is export(:floats)
+    method as-buf(ByteOrder :$byte-order = native-byte-order() --> Buf) {
+        my CArray[uint8] $bytes = nativecast(CArray[uint8], self);
+        byte-array-to-buf($bytes, 4, :$byte-order)
+    }
+
+    method set-buf(Buf $buf, ByteOrder :$byte-order = native-byte-order() --> Word32) {
+        my CArray[uint8] $bytes := nativecast(CArray[uint8], self);
+        for order-bytes($buf, :$byte-order)[0..3].kv -> $i, $byte {
+            $bytes[$i] = $byte
+        }
+    }
+
+    method as-int( --> Int) { $!int }
+
+    method as-float( --> Rat) { $!float.isNaN ?? Rat !! $!float.Rat }
+
+    method as-uint( --> UInt) {
+        # Handle native uint unpacking rakudo bug
+        self.as-buf(:byte-order(little-endian))[]
+            .kv
+            .map( -> $k, $v { $v +< ($k * 8) })
+            .sum
+    }
+
+    method set-int(Int $i) { $!int = $i }
+
+    method set-float(Rat $r) { $!float = $r.Num }
+
+    method set-uint(UInt $i) { $!uint = $i }
+}
+
+sub pack-float(Rat(Cool) $rat, ByteOrder :$byte-order = native-byte-order() --> Buf) is export(:floats)
 #= Pack a Rat into a single-precision floating-point Buf (e.g. float).
 #= Exported via tag :floats.
-#= Be aware that Rats and floats are not directly analogous  storage schemes and
+#= Be aware that Rats and floats are not directly analogous and
 #=  as such you should expect some variation in the values packed via this method and the original   value.
 {
-  my $bytes = CArray[uint8].new;
-  $bytes[3] = 0; #make room for 4 bytes
-  pack_rat_to_float $rat.numerator, $rat.denominator, $bytes;
-  byte-array-to-buf($bytes, 4, :$byte-order);
+  my Word32 $word .= new;
+  $word.set-float($rat);
+  $word.as-buf(:$byte-order);
 }
 
-# float unpack_bits_to_float(char *bytes)
-sub unpack_bits_to_float(CArray[uint8]) returns num32 is native(&libnumpack) { * }
-
-sub unpack-float(Buf $float-buf, Endianness :$byte-order = big-endian) returns Numeric is export(:floats)
+sub unpack-float(Buf $float-buf, ByteOrder :$byte-order = native-byte-order() --> Rat) is export(:floats)
 #= Unpack a Buf containing a single-precision floating-point number (float) into a Numeric.
+#= Returns a Rat object on a NaN buffer.
 #= Exported via tag :floats.
 {
-  die "Unable to unpack buffer: expected 4 bytes but recieved { $float-buf.elems }" unless $float-buf.elems == 4;
-  unpack_bits_to_float(buf-to-byte-array $float-buf, :$byte-order);
+  my Word32 $word .= new;
+  $word.set-buf($float-buf, :$byte-order);
+  $word.as-float;
 }
 
-# void pack_int32(int32_t i, char *bytes)
-sub pack_int32(int32, CArray[uint8]) is native(&libnumpack) { * }
-
-sub pack-int32(Int(Cool) $int, Endianness :$byte-order = big-endian) returns Buf is export(:ints)
-#= Pack an Int to an 4 byte integer buffer
+sub pack-int32(Int(Cool) $int, ByteOrder :$byte-order = native-byte-order() --> Buf) is export(:ints)
+#= Pack an Int to a 4 byte integer buffer
 #= Exported via tag :ints.
 #= Be aware that the behaviour of Int values outside the range of a signed 32bit integer
 #= [−2,147,483,648 to 2,147,483,647]
 #= is undefined.
 {
-  my $bytes = CArray[uint8].new;
-  $bytes[3] = 0; #make room for 4 bytes
-  pack_int32 $int, $bytes;
-  byte-array-to-buf($bytes, 4, :$byte-order);
+  my Word32 $word .= new;
+  $word.set-int($int);
+  $word.as-buf(:$byte-order);
 }
 
-# int32_t unpack_int32(char *bytes)
-sub unpack_int32(CArray[uint8]) returns int32 is native(&libnumpack) { * }
-
-sub unpack-int32(Buf $int-buf, Endianness :$byte-order = big-endian) returns Int is export(:ints)
+sub unpack-int32(Buf $int-buf, ByteOrder :$byte-order = native-byte-order() --> Int) is export(:ints)
 #= Unpack a signed 4 byte integer buffer.
 #= Exported via tag :ints.
 {
-  die "Unable to unpack buffer: expected 4 bytes but recieved { $int-buf.elems }" unless $int-buf.elems == 4;
-  unpack_int32 buf-to-byte-array $int-buf, :$byte-order;
+  my Word32 $word .= new;
+  $word.set-buf($int-buf, :$byte-order);
+  $word.as-int;
 }
 
-# void pack_uint32(int32_t i, char *bytes)
-sub pack_uint32(uint32, CArray[uint8]) is native(&libnumpack) { * }
-
-sub pack-uint32(Int(Cool) $int, Endianness :$byte-order = big-endian) returns Buf is export(:ints)
-#= Pack an Int to an 4 byte unsigned integer buffer
+sub pack-uint32(UInt(Cool) $int, ByteOrder :$byte-order = native-byte-order() --> Buf) is export(:ints)
+#= Pack an Int to a 4 byte unsigned integer buffer
 #= Exported via tag :ints.
 #= Be aware that the behaviour of Int values outside the range of a signed 32bit integer
 #= [0 to 4,294,967,295]
 #= is undefined.
 {
-  my $bytes = CArray[uint8].new;
-  $bytes[3] = 0; #make room for 4 bytes
-  pack_uint32 $int, $bytes;
-  byte-array-to-buf($bytes, 4, :$byte-order);
+  my Word32 $word .= new;
+  $word.set-uint($int);
+  $word.as-buf(:$byte-order);
 }
 
-# int32_t unpack_int32(char *bytes)
-sub unpack_uint32(CArray[uint8]) returns uint32 is native(&libnumpack) { * }
-
-sub unpack-uint32(Buf $int-buf, Endianness :$byte-order = big-endian) returns Int is export(:ints)
+sub unpack-uint32(Buf $int-buf, ByteOrder :$byte-order = native-byte-order() --> Int) is export(:ints)
 #= Unpack an unsigned 4 byte integer buffer.
 #= Exported via tag :ints.
 {
-  die "Unable to unpack buffer: expected 4 bytes but recieved { $int-buf.elems }" unless $int-buf.elems == 4;
-  unpack_uint32 buf-to-byte-array($int-buf, :$byte-order);
+  my Word32 $word .= new;
+  $word.set-buf($int-buf, :$byte-order);
+  $word.as-uint;
 }
 
+#
 ### 8 byte types:
+#
 
-# void pack_rat_to_double(int64_t n, int64_t d, char *bytes)
-sub pack_rat_to_double(int64, int64, CArray[uint8]) returns int64 is native(&libnumpack) { * }
+class Word64 is repr('CUnion') does ByteUnion {
+    has int64 $!int;
+    has uint64 $!uint;
+    has num64 $!float;
 
-sub pack-double(Rat(Cool) $rat, Endianness :$byte-order = big-endian) returns Buf is export(:floats)
+    method as-buf(ByteOrder :$byte-order = native-byte-order() --> Buf) {
+        my CArray[uint8] $bytes = nativecast(CArray[uint8], self);
+        byte-array-to-buf($bytes, 8, :$byte-order)
+    }
+
+    method set-buf(Buf $buf, ByteOrder :$byte-order = native-byte-order() --> Word32) {
+        my CArray[uint8] $bytes := nativecast(CArray[uint8], self);
+        for order-bytes($buf, :$byte-order)[0..7].kv -> $i, $byte {
+            $bytes[$i] = $byte
+        }
+    }
+
+    method as-int( --> Int) { $!int }
+
+    method as-float( --> Rat) { $!float.isNaN ?? Rat !! $!float.Rat }
+
+    method as-uint( --> UInt) {
+        # Handle native uint unpacking rakudo bug
+        self.as-buf(:byte-order(little-endian))[]
+            .kv
+            .map( -> $k, $v { $v +< ($k * 8) })
+            .sum
+    }
+
+    method set-int(Int $i) { $!int = $i }
+
+    method set-float(Rat $r) { $!float = $r.Num }
+
+    method set-uint(UInt $i) {
+        # Handle rakudo bug
+        # If greater than 7 bytes, pack as a buffer instead
+        if $i > 0x00FF_FFFF_FFFF_FFFF {
+            my UInt $diff = 0xFFFF_FFFF_FFFF_FFFF - $i;
+            if native-byte-order() eqv little-endian {
+                self.set-buf: Buf.new(0xFF - $diff, |(0xFF xx 7))
+            }
+            else {
+                self.set-buf: Buf.new(|(0xFF xx 7), 0xFF - $diff)
+            }
+        }
+        else {
+            $!uint = $i
+        }
+    }
+}
+
+sub pack-double(Rat(Cool) $rat, ByteOrder :$byte-order = native-byte-order() --> Buf) is export(:floats)
 #= Pack a Rat into a double-precision floating-point Buf (e.g. double).
 #= Exported via tag :floats.
-#= Be aware that Rats and doubles are not directly analogous  storage schemes and
+#= Be aware that Rats and doubles are not directly analogous and
 #=  as such you should expect some variation in the values packed via this method and the original   value.
 {
-  my $bytes = CArray[uint8].new;
-  $bytes[7] = 0; #make room for 8 bytes
-  pack_rat_to_double $rat.numerator, $rat.denominator, $bytes;
-  byte-array-to-buf($bytes, 8, :$byte-order);
+  my Word64 $word .= new;
+  $word.set-float($rat);
+  $word.as-buf(:$byte-order);
 }
 
-# double unpack_bits_to_double(char *bytes)
-sub unpack_bits_to_double(CArray[uint8]) returns num64 is native(&libnumpack) { * }
-
-sub unpack-double(Buf $double-buf, Endianness :$byte-order = big-endian) returns Numeric is export((:floats))
-#= Unpack a Buf containing a single-precision floating-point number (float) into a Numeric.
+sub unpack-double(Buf $double-buf, ByteOrder :$byte-order = native-byte-order() --> Rat) is export((:floats))
+#= Unpack a Buf containing a double-precision floating-point number (double) into a Numeric.
+#= Returns a Rat on NaN buffer.
 #= Exported via tag :floats.
 {
-  die "Unable to unpack buffer: expected 8 bytes but recieved { $double-buf.elems }" unless $double-buf.elems == 8;
-  unpack_bits_to_double(buf-to-byte-array $double-buf, :$byte-order);
+  my Word64 $word .= new;
+  $word.set-buf($double-buf, :$byte-order);
+  $word.as-float;
 }
 
-# void pack_int64(int64_t i, char *bytes)
-sub pack_int64(int64, CArray[uint8]) is native(&libnumpack) { * }
-
-sub pack-int64(Int(Cool) $int, Endianness :$byte-order = big-endian) returns Buf is export(:ints)
+sub pack-int64(Int(Cool) $int, ByteOrder :$byte-order = native-byte-order() --> Buf) is export(:ints)
 #= Pack an Int to an 8 byte integer buffer
 #= Exported via tag :ints.
 #= Be aware that the behaviour of Int values outside the range of a signed 64bit integer
 #= [−9,223,372,036,854,775,808 to 9,223,372,036,854,775,807]
 #= is undefined.
 {
-  my $bytes = CArray[uint8].new;
-  $bytes[7] = 0; #make room for 8 bytes
-  pack_int64 $int, $bytes;
-  byte-array-to-buf($bytes, 8, :$byte-order);
+  my Word64 $word .= new;
+  $word.set-int($int);
+  $word.as-buf(:$byte-order);
 }
 
-# int64_t unpack_int64(char *bytes)
-sub unpack_int64(CArray[uint8]) returns int64 is native(&libnumpack) { * }
-
-sub unpack-int64(Buf $int-buf, Endianness :$byte-order = big-endian) returns Int is export(:ints)
+sub unpack-int64(Buf $int-buf, ByteOrder :$byte-order = native-byte-order() --> Int) is export(:ints)
 #= Unpack a signed 8 byte integer buffer.
 #= Exported via tag :ints.
 {
-  die "Unable to unpack buffer: expected 8 bytes but recieved { $int-buf.elems }" unless $int-buf.elems == 8;
-  unpack_int64 buf-to-byte-array($int-buf, :$byte-order);
+  my Word64 $word .= new;
+  $word.set-buf($int-buf, :$byte-order);
+  $word.as-int;
 }
 
-# void pack_uint64(uint64_t i, char *bytes)
-sub pack_uint64(uint64, CArray[uint8]) is native(&libnumpack) { * }
-
-sub pack-uint64(Int(Cool) $int, Endianness :$byte-order = big-endian) returns Buf is export(:ints)
+sub pack-uint64(UInt(Cool) $int, ByteOrder :$byte-order = native-byte-order() --> Buf) is export(:ints)
 #= Pack an Int to an 8 byte unsigned integer buffer
 #= Exported via tag :ints.
 #= Be aware that the behaviour of Int values outside the range of a signed 64bit integer
 #= [0 to 18,446,744,073,709,551,615]
 #= is undefined.
-#= BE WARNED for reasons unknown values above 7 bytes are represented as a BigInt and cannot be unboxed!
-#= Maybe this will be fixed but for now this function is faulty and untested due to this behaviour.
 {
-  my $bytes = CArray[uint8].new;
-  $bytes[7] = 0; #make room for 8 bytes
-  pack_uint64 $int, $bytes;
-  byte-array-to-buf($bytes, 8, :$byte-order);
+  my Word64 $word .= new;
+  $word.set-uint($int);
+  $word.as-buf(:$byte-order);
 }
 
-# uint64_t unpack_uint64(char *bytes)
-sub unpack_uint64(CArray[uint8]) returns uint64 is native(&libnumpack) { * }
-
-sub unpack-uint64(Buf $int-buf, Endianness :$byte-order = big-endian) returns Int is export(:ints)
+sub unpack-uint64(Buf $int-buf, ByteOrder :$byte-order = native-byte-order() --> Int) is export(:ints)
 #= Unpack an unsigned 8 byte integer buffer.
 #= Exported via tag :ints.
-#= BE WARNED for reasons unknown values above 7 bytes are lost!
-#= Maybe this will be fixed but for now this function is faulty and untested due to this behaviour.
 {
-  die "Unable to unpack buffer: expected 8 bytes but recieved { $int-buf.elems }" unless $int-buf.elems == 8;
-  unpack_uint64 buf-to-byte-array($int-buf, :$byte-order);
+  my Word64 $word .= new;
+  $word.set-buf($int-buf, :$byte-order);
+  $word.as-uint;
 }
 
-# uint64_t max_uint64()
-sub max_uint64() returns uint64 is native(&libnumpack) { * }
-
-sub max-uint64() returns Int is export(:ints) {
-  max_uint64
-}
 
 #
 # Utils:
 #
-# Keep these here as they depend on the Endianness enum
+# Keep these here as they depend on the ByteOrder enum
 #  which must also be exported up to any code using this module
 
 # use state until is chached trait is no longer experimental
-sub native-byte-order() returns Endianness {
-  state Endianness $native-bo = assess-native-byte-order;
+sub native-byte-order( --> ByteOrder) {
+  state ByteOrder $native-bo = assess-native-byte-order;
   $native-bo;
 }
 
-sub assess-native-byte-order() returns Endianness {
+sub assess-native-byte-order( --> ByteOrder) {
   #= Get a native to break the int into bytes and observe which endian order they use
   given pack-int32(0b00000001, :byte-order(native-endian))[0] {
     when 0b00000000 {
@@ -320,7 +365,18 @@ sub assess-native-byte-order() returns Endianness {
   }
 }
 
-sub byte-array-to-buf(CArray[uint8] $bytes, Int $size, Endianness :$byte-order = native-endian) returns Buf {
+# reverse the order of the Buf's bytes if byte-ordering does not match
+sub order-bytes(Buf $buf, ByteOrder :$byte-order --> Seq) {
+    if native-endian or $byte-order eqv native-byte-order() {
+        $buf[].Seq
+    }
+    else {
+        $buf[].Seq.reverse
+    }
+}
+
+# Take an Array of bytes and return a buf according to the byte order directive provided
+sub byte-array-to-buf(CArray[uint8] $bytes, Int $size, ByteOrder :$byte-order = native-endian --> Buf) {
   given $byte-order {
     when little-endian {
       return Buf.new($bytes[0..($size - 1)]) if native-byte-order() eqv little-endian;
@@ -339,7 +395,8 @@ sub byte-array-to-buf(CArray[uint8] $bytes, Int $size, Endianness :$byte-order =
   }
 }
 
-sub buf-to-byte-array(Buf $buf, Endianness :$byte-order = native-endian) returns CArray[uint8] {
+# Not currently used but nice to have the compliment to the above function around
+sub buf-to-byte-array(Buf $buf, ByteOrder :$byte-order = native-endian --> CArray[uint8]) {
   my $bytes = CArray[uint8].new;
   my $end = $buf.elems - 1;
 
