@@ -128,13 +128,13 @@ method !pack-args() returns Buf
 
     given $type {
       when 'f' {
-        take pack-float($arg);
+        take pack-float($arg, :byte-order(big-endian));
       }
       when 'd' {
-        take pack-double($arg);
+        take pack-double($arg, :byte-order(big-endian));
       }
       when 'i' {
-        take pack-int32($arg);
+        take pack-int32($arg, :byte-order(big-endian));
       }
       when 's' {
         take self.pack-string($arg);
@@ -191,20 +191,20 @@ method unpackage(Buf $packed-osc) returns Net::OSC::Message
       when $type eq 'f' {
         $buffer-width = 4;
         my $buf = $packed-osc.subbuf($read-pointer, $buffer-width);
-        @args.push: unpack-float $buf;
+        @args.push: unpack-float $buf, :byte-order(big-endian);
         $read-pointer += $buffer-width;
       }
       when $type eq 'd' {
         $buffer-width = 8;
         my $buf = $packed-osc.subbuf($read-pointer, $buffer-width);
-        @args.push: unpack-double $buf;
+        @args.push: unpack-double $buf, :byte-order(big-endian);
         $read-pointer += $buffer-width;
       }
       when $type eq 'i' {
         $buffer-width = 4;
         my $buf = $packed-osc.subbuf($read-pointer, $buffer-width);
 
-        @args.push: unpack-int32 $buf ;
+        @args.push: unpack-int32 $buf, :byte-order(big-endian);
         $read-pointer += $buffer-width;
       }
       when $type eq 's' {

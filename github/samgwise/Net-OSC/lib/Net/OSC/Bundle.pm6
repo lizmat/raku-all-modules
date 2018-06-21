@@ -31,7 +31,7 @@ class Net::OSC::Bundle {
       |$start-bundle[], 0x00,
       |self.time-stamper($!time-stamp)[],
       |$packed-messaged.map( {
-        |pack-int32(.bytes)[], |$_[]
+        |pack-int32(.bytes, :byte-order(big-endian))[], |$_[]
       } )
     )
   }
@@ -46,7 +46,7 @@ class Net::OSC::Bundle {
     my $pointer = 16;
     while my $size-chunk = $bundle.subbuf($pointer, 4) {
       $pointer += 4;
-      if $size-chunk.elems == 4 and my $message-size = unpack-int32($size-chunk) {
+      if $size-chunk.elems == 4 and my $message-size = unpack-int32($size-chunk, :byte-order(big-endian)) {
         @messages.push: Net::OSC::Message.unpackage( $bundle.subbuf($pointer, $message-size) );
         $pointer += $message-size;
       }
@@ -65,13 +65,13 @@ class Net::OSC::Bundle {
   method time-stamper(Instant $time --> Buf) {
     given ($time.floor, $time - $time.floor) -> ($int, $fraction) {
       # Offset by the 70 odd years e.g. (70*365 + 17)*86400
-      pack-uint32($int + 2208988800) ~ pack-uint32($fraction)
+      pack-uint32($int + 2208988800, :byte-order(big-endian)) ~ pack-uint32($fraction, :byte-order(big-endian))
     }
   }
 
   method time-stamp-to-instant(Buf:D $time-stamp --> Instant) {
     # Offset by the 70 odd years e.g. (70*365 + 17)*86400
-    Instant.from-posix(unpack-uint32($time-stamp.subbuf: 0, 4) - 2208988800) + ('0.' ~ unpack-uint32($time-stamp.subbuf: 4, 4))
+    Instant.from-posix(unpack-uint32($time-stamp.subbuf(0, 4), :byte-order(big-endian)) - 2208988800) + ('0.' ~ unpack-uint32($time-stamp.subbuf(4, 4), :byte-order(big-endian)))
   }
 
 }

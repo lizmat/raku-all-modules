@@ -87,7 +87,7 @@ CHANGES
 
 <table class="pod-table">
 <tbody>
-<tr> <td>Added Server role and UDP server</td> <td>Sugar for sending, receiving and routing messages</td> <td>2016-12-08</td> </tr> <tr> <td>Updated to use Numeric::Pack</td> <td>Faster and better tested Buf packing</td> <td>2016-08-30</td> </tr> <tr> <td>TCP packing contributed</td> <td>OSC messaged can be sent over TCP connections</td> <td>2017-07-23</td> </tr> <tr> <td>Removed vestiges of the pack feature</td> <td>Net::OSC wil not be effected by the experimental status of pack in Rakudo</td> <td>2018-06-19</td> </tr>
+<tr> <td>Compatibility updates for Numeric::Pack:ver&lt;0.3.0&gt;</td> <td>Better protabilty as we&#39;re now pure perl all the way down</td> <td>2018-06-20</td> </tr> <tr> <td>Removed vestiges of the pack feature</td> <td>Net::OSC wil not be effected by the experimental status of pack in Rakudo</td> <td>2018-06-19</td> </tr> <tr> <td>TCP packing contributed</td> <td>OSC messaged can be sent over TCP connections</td> <td>2017-07-23</td> </tr> <tr> <td>Added Server role and UDP server</td> <td>Sugar for sending, receiving and routing messages</td> <td>2016-12-08</td> </tr> <tr> <td>Updated to use Numeric::Pack</td> <td>Faster and better tested Buf packing</td> <td>2016-08-30</td> </tr>
 </tbody>
 </table>
 
