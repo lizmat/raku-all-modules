@@ -1,7 +1,6 @@
 use _007::Val;
 use _007::Q;
 use _007::Builtins;
-use _007::OpScope;
 
 constant NO_OUTER = Val::Object.new;
 constant RETURN_TO = Q::Identifier.new(
@@ -14,12 +13,18 @@ class _007::Runtime {
     has @!frames;
     has $.builtin-opscope;
     has $.builtin-frame;
+    has $!say-builtin;
+    has $!prompt-builtin;
 
     submethod BUILD(:$!input, :$!output) {
-        self.enter(NO_OUTER, Val::Object.new, Q::StatementList.new);
-        $!builtin-frame = @!frames[*-1];
-        $!builtin-opscope = _007::OpScope.new;
-        self.load-builtins;
+        $!builtin-frame = Val::Object.new(:properties(
+            :outer-frame(NO_OUTER),
+            :pad(builtins-pad()))
+        );
+        @!frames.push($!builtin-frame);
+        $!say-builtin = builtins-pad().properties<say>;
+        $!prompt-builtin = builtins-pad().properties<prompt>;
+        $!builtin-opscope = opscope();
     }
 
     method run(Q::CompUnit $compunit) {
@@ -138,21 +143,20 @@ class _007::Runtime {
         self.declare-var(RETURN_TO, $.current-frame);
     }
 
-    method load-builtins {
-        my $opscope = $!builtin-opscope;
-        for builtins(:$.input, :$.output, :$opscope) -> Pair (:key($name), :$value) {
-            my $identifier = Q::Identifier.new(
-                :name(Val::Str.new(:value($name))),
-                :frame(NONE));
-            self.declare-var($identifier, $value);
-        }
-    }
-
     method call(Val::Func $c, @arguments) {
         my $paramcount = $c.parameterlist.parameters.elements.elems;
         my $argcount = @arguments.elems;
         die X::ParameterMismatch.new(:type<Sub>, :$paramcount, :$argcount)
             unless $paramcount == $argcount;
+        if $c === $!say-builtin {
+            $.output.print(@arguments[0].Str ~ "\n");
+            return NONE;
+        }
+        if $c === $!prompt-builtin {
+            $.output.print(@arguments[0].Str);
+            $.output.flush();
+            return Val::Str.new(:value($.input.get()));
+        }
         if $c.hook -> &hook {
             return &hook(|@arguments) || NONE;
         }

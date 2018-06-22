@@ -367,11 +367,11 @@ use _007::Test;
     outputs 'say(new Q::Identifier { name: "foo" } == new Q::Identifier { name: "foo" })', "True\n",
         "two Qtrees with equal content are equal";
     outputs 'my a = []; for [1, 2] { func fn() {}; a = [fn, a] }; say(a[1][0] == a[0])',
-        "True\n", "the same func from two different frames compares favorably to itself";
-    outputs 'func foo() {}; my x = foo; { func foo() {}; say(x == foo) }', "True\n",
-        "funcs with the same name and bodies are equal (I)";
+        "False\n", "the same func from two different frames are different";
+    outputs 'func foo() {}; my x = foo; { func foo() {}; say(x == foo) }', "False\n",
+        "distinct funcs are unequal, even with the same name and bodies (I)";
     outputs 'func foo() { say("OH HAI") }; my x = foo; { func foo() { say("OH HAI") }; say(x == foo) }',
-        "True\n", "funcs with the same name and bodies are equal (II)";
+        "False\n", "distinct funcs are unequal, even with the same name and bodies (II)";
 
     outputs 'func foo() {}; func bar() {}; say(foo == bar)', "False\n",
         "distinct funcs are unequal";
@@ -466,11 +466,10 @@ use _007::Test;
           (stexpr (postfix:() (identifier "say") (argumentlist (infix:~ (int 38) (str "4"))))))
         .
 
-    is-error
+    is-result
         $ast,
-        X::TypeCheck,
-        "Type check failed in ~; expected Val::Str but got Val::Int (Val::Int.new(value => 38))",
-        "concatenating non-strs is an error";
+        "384\n",
+        "concatenating non-strs is OK (since #281)";
 }
 
 {
