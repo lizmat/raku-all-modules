@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-fastcgi.git
 	branch = master
-	commit = d3abc942cba8dead2e3540236a13e36df28f4f29
-	parent = eefdd516d658925154f41993376697bf00a3dce8
+	commit = 8ff38e79080bf06a3406947be8fac3b654c9644c
+	parent = 80b80251bb8b4aa6fd8186539d718c2d9a20075f
 	cmdver = 0.4.0

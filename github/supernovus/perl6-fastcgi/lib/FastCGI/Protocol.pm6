@@ -2,6 +2,7 @@ use v6;
 
 unit module FastCGI::Protocol;
 
+use experimental :pack;
 use FastCGI::Constants;
 use FastCGI::Protocol::Constants :ALL;
 #use FastCGI::Logger;
