@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/coke/p6-uni.git
 	branch = master
-	commit = 5d04b4a93d11c5d69cbf93c1020233215db78fe4
-	parent = 497da089f8722612db08e408f5044e25b962ac29
+	commit = 7b7c4d957101bf81e151f52438a843457f88cad1
+	parent = d3bef0a89871b8213c791b96edda3bf827bcd95f
 	cmdver = 0.4.0
