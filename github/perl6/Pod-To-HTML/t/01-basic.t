@@ -1,14 +1,13 @@
-use Test;
+use Test; # -*- mode: perl6 -*-
 use Pod::To::HTML;
-plan 2;
-my $r;
+plan 3;
 
 # XXX Need a module to walk HTML trees
 
 =begin foo
 =end foo
 
-$r = node2html $=pod[0];
+my $r = node2html $=pod[0];
 ok $r ~~ ms/'<section>' '<h1>' foo '</h1>' '</section>' /;
 
 =begin foo
@@ -17,3 +16,13 @@ some text
 
 $r = node2html $=pod[1];
 ok $r ~~ ms/'<section>' '<h1>' foo '</h1>' '<p>' some text '</p>' '</section>'/;
+
+=head1 Talking about Perl 6
+
+$r = node2html $=pod[2];
+nok $r ~~ m:s/Perl 6/, "no-break space is not converted to other space";
+
+sub twrap($text is copy, :$wrap=75 ) {
+    $text ~~ s:g/(. ** {$wrap} <[\s]>*)\s+/$0\n/;
+    $text
+}

@@ -50,10 +50,9 @@ my  $DEBUG := %*ENV<P6DOC_DEBUG>;
 sub Debug(Callable $c) { $c() if $DEBUG; }
 
 sub escape_html(Str $str) returns Str {
-    return $str unless $str ~~ /<[&<>"']>/;
-
-    $str.trans( [ q{&},     q{<},    q{>},    q{"},      q{'}     ] =>
-                [ q{&amp;}, q{&lt;}, q{&gt;}, q{&quot;}, q{&#39;} ] );
+  return $str unless ( $str ~~ /<[ & < > " ' {   ]>/ ) or ( $str ~~ / ' ' / );
+  $str.trans( [ q{&},     q{<},    q{>},    q{"},      q{'},     q{ }     ] =>
+                [ q{&amp;}, q{&lt;}, q{&gt;}, q{&quot;}, q{&#39;}, q{&nbsp;}]);
 }
 
 sub unescape_html(Str $str) returns Str {
@@ -149,7 +148,6 @@ sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$foote
     #| Keep count of how many footnotes we've output.
     my Int $*done-notes = 0;
     &OUTER::url = &url;
-
     @body.push: node2html($pod.map: { visit $_, :assemble(&assemble-list-items) });
 
     my $title_html = $title // $default-title // '';
@@ -387,7 +385,7 @@ multi sub node2html(Pod::Block::Para $node) {
 
 multi sub node2html(Pod::Block::Table $node) {
     Debug { note colored("Table node2html called for ", "bold") ~ $node.gist };
-    my @r = '<table class="pod-table">';
+    my @r = $node.config<class>??'<table class="pod-table '~$node.config<class>~'">'!!'<table class="pod-table">';
 
     if $node.config<caption> -> $c {
         @r.push("<caption>{node2inline($c)}</caption>");
@@ -471,12 +469,12 @@ multi sub node2html(Str $node) {
 
 #| inline level or below
 multi sub node2inline($node) returns Str {
-    Debug { note colored("missing a node2inline multi for ", "bold") ~ $node.gist };
-    return node2text($node);
+  Debug { note colored("missing a node2inline multi for ", "bold") ~ $node.gist };
+  return node2text($node);
 }
 
 multi sub node2inline(Pod::Block::Para $node) returns Str {
-    return node2inline($node.contents);
+  return node2inline($node.contents);
 }
 
 multi sub node2inline(Pod::FormattingCode $node) returns Str {
@@ -564,11 +562,11 @@ multi sub node2inline(Pod::FormattingCode $node) returns Str {
     }
 }
 
-multi sub node2inline(Positional $node) returns Str {
+  multi sub node2inline(Positional $node) returns Str {
     return $node.map({ node2inline($_) }).join;
 }
 
-multi sub node2inline(Str $node) returns Str {
+  multi sub node2inline(Str $node) returns Str {
     return escape_html($node);
 }
 
