@@ -1,20 +1,19 @@
 {
-  "name": "App::Uni",
-  "source-url": "git://github.com/coke/p6-uni.git",
-  "perl": "6.c",
-  "resources": [
-    
-  ],
-  "depends": [
-    
-  ],
-  "license": "Artistic-2.0",
-  "provides": {
-    "App::Uni": "lib/App/Uni.pm"
-  },
-  "version": "1.0.0",
-  "authors": [
+  "authors" : [
     "Will 'Coke' Coleda"
   ],
-  "description": "command-line utility to find or display Unicode characters"
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "command-line utility to find or display Unicode characters",
+  "license" : "Artistic-2.0",
+  "name" : "App::Uni",
+  "perl" : "6",
+  "provides" : {
+    "App::Uni" : "lib/App/Uni.pm"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/coke/p6-uni.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "1.0.1"
 }

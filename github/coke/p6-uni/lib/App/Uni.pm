@@ -1,6 +1,4 @@
-use v6;
-
-unit package App::Uni;
+unit class App::Uni:ver<1.0.1>;
 
 # Given a single character, output hex, char itself, name, and props
 multi sub uni-gist(Str $char) is export {
@@ -35,7 +33,7 @@ sub uni-search(@criteria, :$w) is export {
     }
 
     my $sieve = 0..0x10FFFF;
-    for @strings -> $criteria { $sieve .= grep({uniname($_).fc.contains($criteria)}) };
-    for @regexes -> $criteria { $sieve .= grep({uniname($_).fc ~~ $criteria}) };
+    hyper for @strings -> $criteria { $sieve .= grep({uniname($_).fc.contains($criteria)}) };
+    hyper for @regexes -> $criteria { $sieve .= grep({uniname($_).fc ~~ $criteria}) };
     $sieve.sort.unique.map({say uni-gist $_});
 }
