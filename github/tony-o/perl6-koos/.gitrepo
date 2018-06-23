@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-koos.git
 	branch = master
-	commit = 28deec5103cec65f69f4ed2ba2b396efe1212e7b
-	parent = 26084e1ae01261177f2d5bf949727b97f31ce8a5
+	commit = 5eb888d978b5102beca1f4ba9fba4fc55f46eabb
+	parent = 8e689063cedbddb80173fe0e272a773f19e926a1
 	cmdver = 0.4.0

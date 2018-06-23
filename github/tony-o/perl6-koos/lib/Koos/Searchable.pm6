@@ -114,7 +114,6 @@ method update(%values, %filter?) {
   die 'Please connect to a database first'
     unless self.^can('db');
   my %query = $.sql(:update, :update-values(%values));
-  say %query<sql>;
   my $sth   = self.db.prepare(%query<sql>);
   $sth.execute(|%query<params>);
 }
@@ -165,6 +164,7 @@ method sql($page-start?, $page-size?, :$field-override = Nil, :$update = False, 
     $sql   ~= self!gen-table;
     $sql   ~= self!gen-joins;
     $sql   ~= self!gen-filters if $!filter;
+    $sql   ~= self!gen-order;
   }
 
   { sql => $sql, params => @*params };
@@ -253,6 +253,20 @@ method !gen-join-str(Hash $attr where { $_<table>.defined && $_<on>.defined }) {
   $join   ~= ' on ';
   $join   ~= self!gen-pairs($attr<on>, :key-table($attr<as>//$attr<table>), :val-table<self>);
   $join;
+}
+
+method !gen-order {
+  my @pairs;
+  if $!options<order-by>.defined {
+    for @($!options<order-by>) -> $order {
+      @pairs.push(
+        $order ~~ Pair
+          ?? $order.key ~ ' ' ~ $order.value.uc
+          !! "$order ASC"
+      );
+    }
+  }
+  @pairs.elems == 0 ?? '' !! ' ORDER BY ' ~ join(', ', @pairs);
 }
 
 method !gen-joins {

@@ -152,7 +152,11 @@ Creates a new filterable model and returns that.  Every subsequent call to `.sea
 Example:
 
 ```
-my $customer = $dbo.model('Customer').search({ name => { like => '%bozo%' }, });
+my $customer = $dbo.model('Customer').search({
+  name => { like => '%bozo%' }, 
+}, {
+  order-by => [ created_date => 'DESC', 'customer_name' ], 
+});
 # later on ...
 my $geo-filtered-customers = $customer.search({ country => 'usa' });
 # $geo-filtered-customers effective filter is:
