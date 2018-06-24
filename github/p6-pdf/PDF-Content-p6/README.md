@@ -43,7 +43,7 @@ provides simple support for core fonts
 
 ```
 use PDF::Content::Font::CoreFont;
-my $font = PDF::Content::Font::CoreFont.load-font( :family<Times-Roman>, :weight<bold> );
+my PDF::Content::Font::CoreFont $font .= load-font( :family<Times-Roman>, :weight<bold> );
 say $font.encode("¶Hi");
 say $font.stringwidth("RVX"); # 2166
 say $font.stringwidth("RVX", :kern); # 2111
@@ -56,10 +56,10 @@ a utility class for creating and outputting simple text lines and paragraphs:
 use PDF::Content;
 use PDF::Content::Font::CoreFont;
 use PDF::Content::Text::Block;
-my $font = PDF::Content::Font::CoreFont.load-font( :family<helvetica>, :weight<bold> );
+my PDF::Content::Font::CoreFont $font .= load-font( :family<helvetica>, :weight<bold> );
 my $font-size = 16;
 my $text = "Hello.  Ting, ting-ting. Attention! … ATTENTION! ";
-my $text-block = PDF::Content::Text::Block.new( :$text, :$font, :$font-size );
+my PDF::Content::Text::Block $text-block .= new( :$text, :$font, :$font-size );
 my PDF::Content $gfx .= new;
 $gfx.BeginText;
 $text-block.render($gfx);

@@ -12,7 +12,7 @@ use t::GfxParent;
 my $dummy-font = %() does role { method cb-finish {} }
 
 my $parent = { :Font{ :F1($dummy-font) }, } does t::GfxParent;
-my $g = PDF::Content.new: :$parent;
+my PDF::Content $g .= new: :$parent;
 
 $g.op(Save);
 
@@ -160,7 +160,7 @@ $g.Restore;
 is $g.RenderingIntent, 'RelativeColorimetric', 'RenderingIntent, restored';
 is $g.Flatness, 0, 'Flatness, restored';
 
-$g = PDF::Content.new;
+$g .= new;
 
 $g.ops("175 720 m 175 700 l 300 800 400 720 v h S");
 is-json-equiv $g.ops, [:m[:int(175), :int(720)],
@@ -216,7 +216,7 @@ is-json-equiv [ $g.ops[*-4..*] ], [
     :ET[],
 ], 'Text block parse';
 
-$g = PDF::Content.new :comment-ops;
+$g .= new :comment-ops;
 
 $g.ops("175 720 m 175 700 l 300 800 400 720 v h S");
 $g.add-comment("That's all!");
@@ -238,7 +238,7 @@ is-deeply $g.content-dump, $(
     "% That's all!",
 ), 'content with comments';
 
-my $g1 = PDF::Content.new;
+my PDF::Content $g1 .= new;
 lives-ok {$g1.ops: $g.ops;}, "comments import - lives";
 is-json-equiv $g1.ops.head, (:m[ :int(175), :int(720), ]), 'comments import - head';
 is-json-equiv $g1.ops.tail, (:S[ ]), 'comments import - tail';

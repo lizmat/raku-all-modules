@@ -4,7 +4,7 @@ use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content::Ops :OpCode;
 plan 6;
 
-my $gfx = PDF::Content::Ops.new;
+my PDF::Content::Ops $gfx .= new;
 
 $gfx.Save;
 lives-ok {$gfx.op(BeginText)}, 'basic op';

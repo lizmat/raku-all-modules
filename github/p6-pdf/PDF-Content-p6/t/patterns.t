@@ -6,7 +6,7 @@ use t::PDFTiny;
 # ensure consistant document ID generation
 srand(123456);
 
-my $pdf = t::PDFTiny.new;
+my t::PDFTiny $pdf .= new;
 my $page = $pdf.add-page;
 
 lives-ok {

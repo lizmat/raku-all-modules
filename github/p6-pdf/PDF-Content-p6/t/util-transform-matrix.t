@@ -5,7 +5,7 @@ use PDF::Content::Matrix :transform, :dot, :inverse, :inverse-dot, :is-identity,
 my @identity = transform();
 is-deeply @identity, [1, 0, 0, 1, 0, 0], 'null transform';
 
-my @translated =transform(:translate[10, 20]);
+my @translated = transform(:translate[10, 20]);
 is-deeply @translated, [1, 0, 0, 1, 10, 20], 'translate transform';
 
 is-deeply transform(:translate(30)), [1, 0, 0, 1, 30, 30], 'translate transform';

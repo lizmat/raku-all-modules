@@ -9,27 +9,26 @@ role PDF::Content::ResourceDict {
     has Str %!resource-key; # {Any}
     has Int %!counter;
 
-    method resource-key($object is copy, |c --> Str:D) {
-        $object = $.resource($object, |c)
-           unless %!resource-key{$object.WHICH};
+    method resource-key($object, |c --> Str:D) {
+        $.resource($object, |c)
+            unless %!resource-key{$object.WHICH};
        %!resource-key{$object.WHICH};
     }
 
     method !resource-type( PDF::COS $_ ) is default {
         when Hash {
-            when .<Type>:exists {
-                given .<Type> {
-                    when 'ExtGState'|'Font'|'XObject'|'Pattern' { $_ }
-                }
+            when .<Type> ~~ 'ExtGState'|'Font'|'XObject'|'Pattern' {
+                .<Type>
             }
-            when .<PatternType>:exists { 'Pattern' }
-            when .<ShadingType>:exists { 'Shading' }
-            when .<Subtype>:exists && .<Subtype> ~~ 'Form'|'Image'|'PS' {
+            when .<Subtype> ~~ 'Form'|'Image'|'PS' {
                 # XObject with /Type defaulted
                 'XObject'
             }
+            when .<PatternType> { 'Pattern' }
+            when .<ShadingType> { 'Shading' }
+            default { 'Other' }
         }
-        when Array && .[0] ~~ PDF::COS::Name {
+        when List && .[0] ~~ PDF::COS::Name {
             # e.g. [ /CalRGB << /WhitePoint [ 1.0 1.0 1.0 ] >> ]
             'ColorSpace'
         }

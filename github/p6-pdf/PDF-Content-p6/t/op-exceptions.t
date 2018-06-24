@@ -33,7 +33,7 @@ my $parent = {
     :Font{ :F1($dummy-font) },
     :ExtGState{ :G1{ :ca(0.5) } },
 } does t::GfxParent;
-my $g = PDF::Content.new: :$parent;
+my PDF::Content $g .= new: :$parent;
 
 throws-like {$g.Blah}, X::Method::NotFound, :message("No such method 'Blah' for invocant of type 'PDF::Content'");
 

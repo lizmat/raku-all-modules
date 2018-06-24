@@ -13,14 +13,14 @@ use t::PDFTiny;
 # ensure consistant document ID generation
 srand(123456);
 
-my $pdf = t::PDFTiny.new;
+my t::PDFTiny $pdf .= new;
 my $page = $pdf.add-page;
 
 my @chunks = PDF::Content::Text::Block.comb: 'I must go down to the seas';
 @chunks.append: ' ', 'aga','in';
 my $font = PDF::Content::Font::CoreFont.load-font( :family<helvetica>, :weight<bold> );
 my $font-size = 16;
-my $image = PDF::Content::XObject.open: "t/images/lightbulb.gif";
+my PDF::Content::XObject $image .= open: "t/images/lightbulb.gif";
 
 my $image-padded = $page.xobject-form(:BBox[0, 0, $image.width + 1, $image.height + 4]);
 $image-padded.gfx;

@@ -10,8 +10,8 @@ srand(123456);
 
 my Pair @images;
 
-my $jpeg;
-lives-ok {$jpeg = PDF::Content::XObject.open: "t/images/jpeg.jpg";}, "open jpeg - lives";
+my PDF::Content::XObject $jpeg;
+lives-ok {$jpeg .= open: "t/images/jpeg.jpg";}, "open jpeg - lives";
 @images.push: 'JPEG - Content' => $jpeg;
 isa-ok $jpeg, ::('PDF::COS::Stream'), 'jpeg object';
 is $jpeg<Type>, 'XObject', 'jpeg type';
@@ -25,8 +25,8 @@ is $jpeg.encoded.codes, $jpeg<Length>, 'jpeg encoded length';
 is $jpeg.width, 24, 'jpeg width';
 is $jpeg.height, 24, 'jpeg height';
 
-my $gif;
-lives-ok {$gif = PDF::Content::XObject.open: "t/images/lightbulb.gif";}, "open gif - lives";
+my PDF::Content::XObject $gif;
+lives-ok {$gif .= open: "t/images/lightbulb.gif";}, "open gif - lives";
 @images.push: 'GIF - Content' => $gif;
 isa-ok $gif, ::('PDF::COS::Stream'), 'gif object';
 is $gif<Type>, 'XObject', 'gif type';
@@ -40,24 +40,24 @@ is $gif.encoded.codes, $gif<Length>, 'gif encoded length';
 
 is $gif.data-uri, 'data:image/gif;base64,R0lGODlhEwATAMQAAP/////78P/f/9Tf/8zM/8DcwKbK8P+Y////qv/fqtTfqtS/qtSfqqq/qqCgpKqfqoCAgH+fqv//Vf/fVdS/VdSfVaqfVYCAAKp/VapfVap/AH9fVVVfVSpfVVU/VQAAACH5BAkIAAcALAAAAAATABMAAAWsoFYcJLmcY0lqx5Kl7UJR1aNiy1gMR7EkAYSQwoDtSr5AcCJJICgYgar0QySaQuGJN10gmMKgUFGBYViWqxOhVJJt58LogWW3A4vagWuqICR2AAB4GA1TJBgTVm0AChsPMCoFGBRZARYbDpFTBRB+CBiPBVJTLH1CmSkXCyU4owcPHBAQHA9cCxgwBCkODgYOHoZImyQOEQa0wodTDrMdHjbLh7McmtLLcsQkIQA7', 'data-uri from file';
 
-my $image1;
+my PDF::Content::XObject $image1;
 if lives-ok({$image1 = t::PDFTiny.open("t/images/tiny.pdf").page(1).to-xobject;}, "open PDF as image - lives") {
     is $image1.width, 48, 'PDF image width';
     is $image1.height, 60, 'PDF image height';
     @images.push: 'PDF - Form' => $image1;
 }
 
-my $image2;
+my PDF::Content::XObject $image2;
 my $image-data = "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7";
-$image2 = PDF::Content::XObject.open: $image-data;
-if lives-ok({$image2 = PDF::Content::XObject.open: $image-data;}, "open GIF data url - lives") {
+$image2 .= open: $image-data;
+if lives-ok({$image2 .= open: $image-data;}, "open GIF data url - lives") {
     @images.push: 'Data URI (GIF)' => $image2;
 }
 is $image2.data-uri, $image-data, 'data-uri from source string';
 
 # example from https://en.wikipedia.org/wiki/Data_URI_scheme
 $image-data = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC";
-my $image3;
+my PDF::Content::XObject $image3;
 if lives-ok({$image3 = PDF::Content::XObject.open: $image-data;}, "open PNG data url - lives") {
     @images.push: 'Data URI (PNG)' => $image3;
 }
@@ -153,8 +153,8 @@ for (
     my $desc = .key;
     my $test = .value;
 
-    my $png;
-    lives-ok { $png = PDF::Content::XObject.open: $test<file>; }, "open $desc - lives";
+    my PDF::Content::XObject $png;
+    lives-ok { $png .= open: $test<file>; }, "open $desc - lives";
     isa-ok $png, ::('PDF::COS::Stream'), "$desc object";
     @images.push: $desc => $png;
     
@@ -175,7 +175,7 @@ for (
 }
 
 sub save-images(@images) {
-    my $doc = t::PDFTiny.new;
+    my t::PDFTiny $doc .= new;
     my $page = $doc.add-page;
     $page.MediaBox = [0,0,612,792];
     my $x = 45;
