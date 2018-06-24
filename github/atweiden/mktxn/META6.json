@@ -6,6 +6,7 @@
     "description" : "Double-entry accounting ledger packager",
     "depends"     : [
         "Config::TOML",
+        "File::Path::Resolve",
         "File::Presence",
         "TXN::Parser",
         "TXN::Remarshal"

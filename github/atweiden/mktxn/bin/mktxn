@@ -4,6 +4,7 @@
 
 
 use v6;
+use File::Path::Resolve;
 use TXN;
 
 
@@ -15,7 +16,7 @@ use TXN;
 
 multi sub MAIN(Str:D :$txnbuild! where .so --> Nil)
 {
-    my Str:D $file = resolve-path($txnbuild);
+    my Str:D $file = ~File::Path::Resolve.absolute($txnbuild);
     mktxn(:$file, :release);
 }
 
@@ -23,11 +24,6 @@ multi sub MAIN(Str :txnbuild($) --> Nil)
 {
     my Str:D $file = 'TXNBUILD';
     mktxn(:$file, :release);
-}
-
-sub resolve-path(Str:D $path where .so --> Str:D)
-{
-    my Str:D $resolve-path = ~$path.subst(/^'~/'/, "$*HOME/").IO.resolve;
 }
 
 
