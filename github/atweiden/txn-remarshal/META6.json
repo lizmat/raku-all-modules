@@ -4,7 +4,7 @@
     "version"     : "0.1.0",
     "author"      : "atweiden",
     "description" : "Double-entry accounting ledger file format converter",
-    "depends"     : ["File::Presence", "TXN::Parser"],
+    "depends"     : ["File::Path::Resolve", "File::Presence", "TXN::Parser"],
     "license"     : "Unlicense",
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/txn-remarshal.git",

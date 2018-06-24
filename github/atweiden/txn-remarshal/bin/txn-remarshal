@@ -4,6 +4,7 @@
 
 
 use v6;
+use File::Path::Resolve;
 use File::Presence;
 use TXN::Parser;
 use TXN::Parser::ParseTree;
@@ -40,8 +41,8 @@ multi sub MAIN(
     --> Nil
 )
 {
-    my Str:D $file = resolve-path($input);
-    exists-readable-file($file)
+    my Str:D $file = ~File::Path::Resolve.absolute($input);
+    File::Presence.exists-readable-file($file)
         or die;
     my %ledger = remarshal(slurp($file), :if<json>, :of<hash>);
     my Ledger:D $ledger = remarshal(%ledger, :if<hash>, :of<ledger>);
@@ -73,8 +74,8 @@ multi sub MAIN(
     --> Nil
 )
 {
-    my Str:D $file = resolve-path($input);
-    exists-readable-file($file)
+    my Str:D $file = ~File::Path::Resolve.absolute($input);
+    File::Presence.exists-readable-file($file)
         or die;
     my Ledger:D $ledger = from-txn(:$file);
     my %ledger = remarshal($ledger, :if<ledger>, :of<hash>);
@@ -126,11 +127,6 @@ multi sub output(Str:D $remarshal, Str:D $output where .so --> Nil)
 multi sub output(Str:D $remarshal, Str $? --> Nil)
 {
     say($remarshal.trim);
-}
-
-sub resolve-path(Str:D $path where .so --> Str:D)
-{
-    my Str:D $resolve-path = ~$path.subst(/^'~/'/, "$*HOME/").IO.resolve;
 }
 
 

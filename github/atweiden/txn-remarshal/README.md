@@ -54,6 +54,7 @@ my %ledger = remarshal($json, :if<json>, :of<hash>);
 ### Dependencies
 
 - Rakudo Perl6
+- [File::Path::Resolve](https://github.com/atweiden/file-path-resolve)
 - [File::Presence](https://github.com/atweiden/file-presence)
 - [TXN::Parser](https://github.com/atweiden/txn-parser)
 
