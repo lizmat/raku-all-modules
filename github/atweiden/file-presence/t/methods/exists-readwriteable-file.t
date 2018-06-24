@@ -7,8 +7,8 @@ plan(1);
 
 subtest({
     my Str:D $file = 't/methods/show.t';
-    ok(exists-readwriteable-file($file));
-    nok(exists-readwriteable-file('bzzt'));
+    ok(File::Presence.exists-readwriteable-file($file));
+    nok(File::Presence.exists-readwriteable-file('bzzt'));
 });
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

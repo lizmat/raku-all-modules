@@ -11,11 +11,11 @@ use File::Presence;
 my $config-dir = '~/.config';
 my $config-file = 'bzzt';
 
-say exists-readable-dir($config-dir)
+say File::Presence.exists-readable-dir($config-dir)
     ?? 'readable dir exists'
     !! 'readable dir dne';
 
-say exists-readable-file($config-file)
+say File::Presence.exists-readable-file($config-file)
     ?? 'readable file exists'
     !! 'readable file dne';
 

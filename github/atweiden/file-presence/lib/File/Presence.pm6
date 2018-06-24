@@ -1,7 +1,7 @@
 use v6;
 unit class File::Presence;
 
-constant $VERSION = v0.1.0;
+constant $VERSION = v0.2.0;
 
 my subset PresenceHash of Hash where { .keys.sort ~~ <d e f r w x> }
 
@@ -27,28 +27,28 @@ multi method show(Str:D $file where .so --> PresenceHash:D)
     my PresenceHash:D $p = %(:$d, :$e, :$f, :$r, :$w, :$x);
 }
 
-sub exists-readable-dir(Str:D $dir where .so --> Bool:D) is export
+method exists-readable-dir(Str:D $dir where .so --> Bool:D)
 {
     my PresenceHash:D $p = File::Presence.show($dir);
-    my Bool:D $exists-readable-dir = $p<e> && $p<r> && $p<d>;
+    my Bool:D $exists-readable-dir = [&&] $p<e>, $p<r>, $p<d>;
 }
 
-sub exists-readwriteable-dir(Str:D $dir where .so --> Bool:D) is export
+method exists-readwriteable-dir(Str:D $dir where .so --> Bool:D)
 {
     my PresenceHash:D $p = File::Presence.show($dir);
-    my Bool:D $exists-readwriteable-dir = $p<e> && $p<r> && $p<w> && $p<d>;
+    my Bool:D $exists-readwriteable-dir = [&&] $p<e>, $p<r>, $p<w>, $p<d>;
 }
 
-sub exists-readable-file(Str:D $file --> Bool:D) is export
+method exists-readable-file(Str:D $file --> Bool:D)
 {
     my PresenceHash:D $p = File::Presence.show($file);
-    my Bool:D $exists-readable-file = $p<e> && $p<r> && $p<f>;
+    my Bool:D $exists-readable-file = [&&] $p<e>, $p<r>, $p<f>;
 }
 
-sub exists-readwriteable-file(Str:D $file --> Bool:D) is export
+method exists-readwriteable-file(Str:D $file --> Bool:D)
 {
     my PresenceHash:D $p = File::Presence.show($file);
-    my Bool:D $exists-readwriteable-file = $p<e> && $p<r> && $p<w> && $p<f>;
+    my Bool:D $exists-readwriteable-file = [&&] $p<e>, $p<r>, $p<w>, $p<f>;
 }
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

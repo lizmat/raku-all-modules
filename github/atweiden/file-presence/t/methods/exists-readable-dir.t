@@ -7,8 +7,8 @@ plan(1);
 
 subtest({
     my Str:D $dir = 't/methods';
-    ok(exists-readable-dir($dir));
-    nok(exists-readable-dir('bzzt'));
+    ok(File::Presence.exists-readable-dir($dir));
+    nok(File::Presence.exists-readable-dir('bzzt'));
 });
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:
