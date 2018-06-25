@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6/p6-sake.git
 	branch = master
-	commit = 95ab244a6d318d72ed2637acb1bef765a79c2bec
-	parent = d4c224b30f76edaf85f1b9b33a3442cbd2b85863
+	commit = 4972a2540818684dae3472212bc63a263aa164c0
+	parent = cca7f6f39f3e9a9659c334c6e054276ea2338158
 	cmdver = 0.4.0
