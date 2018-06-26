@@ -15,7 +15,7 @@ role PDF::Content::ResourceDict {
        %!resource-key{$object.WHICH};
     }
 
-    method !resource-type( PDF::COS $_ ) is default {
+    method !resource-type( PDF::COS $_ ) {
         when Hash {
             when .<Type> ~~ 'ExtGState'|'Font'|'XObject'|'Pattern' {
                 .<Type>
@@ -24,8 +24,8 @@ role PDF::Content::ResourceDict {
                 # XObject with /Type defaulted
                 'XObject'
             }
-            when .<PatternType> { 'Pattern' }
-            when .<ShadingType> { 'Shading' }
+            when .<PatternType>:exists { 'Pattern' }
+            when .<ShadingType>:exists { 'Shading' }
             default { 'Other' }
         }
         when List && .[0] ~~ PDF::COS::Name {

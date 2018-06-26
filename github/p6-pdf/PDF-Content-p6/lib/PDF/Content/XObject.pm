@@ -4,11 +4,14 @@ role PDF::Content::XObject {
     use PDF::Content::Image;
     use PDF::COS::Stream;
 
-    method open(|c) {
-        my PDF::Content::Image $image-obj .= load(|c);
+    my subset XObjectType of Str where 'Form'|'Image'|'PS';
+
+    method open(\source = self, |c) {
+        my PDF::Content::Image $image-obj .= load(source, |c);
         $image-obj.read;
         my PDF::COS::Stream $xobject = $image-obj.to-dict;
-        $xobject does PDF::Content::XObject[$xobject<Subtype>]
+        my XObjectType $sub-type = $xobject<Subtype>;
+        $xobject does PDF::Content::XObject[$sub-type]
             unless $xobject ~~ PDF::Content::XObject;
         $xobject.image-obj = $image-obj;
         $xobject;
