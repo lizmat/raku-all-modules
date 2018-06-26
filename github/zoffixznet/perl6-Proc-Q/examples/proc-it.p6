@@ -7,7 +7,7 @@ use Proc::Q;
 
 my @stuff = 'a'..'z';
 my $proc-chan = proc-q
-             @stuff.map({«perl6 -e "print '$_' ~ \$*IN.slurp; sleep {$++/5}"»}),
+             @stuff.map({«perl6 -e "print '$_' ~ \$*IN.slurp; sleep $($++/5)"»}),
   tags    => @stuff.map('Letter ' ~ *),
   in      => @stuff.map(*.uc),
   timeout => 3;
