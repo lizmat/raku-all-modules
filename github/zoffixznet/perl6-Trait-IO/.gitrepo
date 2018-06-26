@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Trait-IO.git
 	branch = master
-	commit = c2400fa79d08fb47a27b9492eb86441c50f45ac3
-	parent = eca5e8d5cd97bd4f569fae28e171fbb5a4f092f5
+	commit = bdc92d724bc74e9d97afb252465a5e1ca193fe88
+	parent = 9e960aff116eb3debdb813655f1554a55faf4cac
 	cmdver = 0.4.0

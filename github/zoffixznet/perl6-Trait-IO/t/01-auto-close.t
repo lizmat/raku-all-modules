@@ -6,7 +6,7 @@ plan 19;
 
 class Foo {
     method close {
-        pass "called method close ({++$})";
+        pass "called method close ($(++$))";
     }
 }
 
