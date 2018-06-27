@@ -300,13 +300,11 @@ class PDF::Reader {
 
         given $type {
             when External {
-                my Int $obj-len = $end - $offset - 1;
-                die "Duplicate cross-reference entry for $obj-num $gen-num R at byte offset $offset"
-                    if $obj-len == -1;
-                die "Attempt to fetch object $obj-num $gen-num R at byte offset $offset, past end of PDF ($end bytes)"
-                    if $obj-len < 0;
-                die "Overlapping or truncated cross-reference entry for $obj-num $gen-num R at byte offset $offset"
-                    if $obj-len < 10;
+                my UInt $obj-len = do given $end - $offset {
+                    when 0 { die "Duplicate cross-reference destination (byte offset $offset) for $obj-num $gen-num R"}
+                    when * < 0 { die "Attempt to fetch object $obj-num $gen-num R at byte offset $offset, past end of PDF ($end bytes)" }
+                    default { $_ - 1 }
+                }
 
                 my $input = $.input.byte-str( $offset, $obj-len );
                 PDF::Grammar::PDF.subparse( $input, :$.actions, :rule<ind-obj-nibble> )
@@ -324,7 +322,7 @@ class PDF::Reader {
                     if $!crypt && ! $is-enc-dict;
             }
             when Embedded {
-                my subset ObjStm of Hash where { $_ eq 'ObjStm' with .<Type> }
+                my subset ObjStm of Hash where { .<Type> ~~ 'ObjStm' }
                 my ObjStm \container-obj = $.ind-obj( $ref-obj-num, 0 ).object;
                 my \embedded-objects = container-obj.decoded;
 
@@ -534,7 +532,7 @@ class PDF::Reader {
 
 	my %ast = $parse.ast;
 	my PDF::IO::IndObj $ind-obj .= new( |%ast, :input($xref), :reader(self) );
-        my subset XRef of Hash where { $_ eq 'XRef' with .<Type> }
+        my subset XRef of Hash where { .<Type> ~~ 'XRef' }
 	$dict = my XRef $ = $ind-obj.object;
 	$dict.decode-index.list;
     }
