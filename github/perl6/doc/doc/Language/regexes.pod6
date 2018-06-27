@@ -63,7 +63,7 @@ matches the regex:
 
     if 'Life, the Universe and Everything' ~~ / and / {
         say ~$/;           # OUTPUT: «and␤»
-        say $/.prematch;   # OUTPUT: «Life, the Universe␤»
+        say $/.prematch;   # OUTPUT: «Life, the Universe ␤»
         say $/.postmatch;  # OUTPUT: « Everything␤»
         say $/.from;        # OUTPUT: «19␤»
         say $/.to;          # OUTPUT: «22␤»
@@ -353,9 +353,10 @@ You can include Unicode properties in the list as well:
     /<:Zs + [\x9] - [\xA0]>/
     # Any character with "Zs" property, or a tab, but not a newline
 
-You can use C<\> to escape characters that would have some meaning in the regular expression:
+You can use C<\> to escape characters that would have some meaning in the
+regular expression:
 
-    say "[- hey -]" ~~ /<-[ \- \] [ \s ]>+/; # OUTPUT: «｢hey｣␤»
+    say "[ hey ]" ~~ /<-[ \] \[ \s ]>+/; # OUTPUT: «｢hey｣␤»
 
 To negate a character class, put a C<-> after the opening angle:
 
