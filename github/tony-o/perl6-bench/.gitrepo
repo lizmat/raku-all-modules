@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-bench.git
 	branch = master
-	commit = 3e25438cdbc9981f8ec9b4ce812be85f8e1891c5
-	parent = 83437acf9396397357634888fec43d77dd495237
+	commit = a47aa61c9f12b2f3d5abe7d501d03eba2e216333
+	parent = 289fa716119b462c4a2077b47cf682f88bfe1617
 	cmdver = 0.4.0
