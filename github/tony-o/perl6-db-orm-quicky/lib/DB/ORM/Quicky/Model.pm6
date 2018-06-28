@@ -312,7 +312,7 @@ class DB::ORM::Quicky::Model {
     $sth.execute($!table);
     my %columns;
     while (my $row = $sth.fetchrow_hashref) {
-      %columns{$row<n>} = { type => $row<t>, length => $row<l> ~~ /^ \d+ $/ ?? $row<l>.Int !! -1 };
+      %columns{$row<n>} = { type => $row<t>, length => ($row<l>//'') ~~ /^ \d+ $/ ?? $row<l>.Int !! -1 };
     }
 
     for %columns.keys -> $k {

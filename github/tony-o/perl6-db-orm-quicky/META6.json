@@ -1,10 +1,11 @@
 {
   "perl" : "6.*",
   "name" : "DB::ORM::Quicky",
-  "version" : "0.1.1",
+  "version" : "0.1.3",
   "description" : "Easy Prototyping ORM for Perl 6",
   "auth" : "github:tony-o",
   "depends" : ["DBIish"],
+  "license" : "Artistic-2.0",
   "provides" : {
     "DB::ORM::Quicky" : "lib/DB/ORM/Quicky.pm6",
     "DB::ORM::Quicky::Model"  : "lib/DB/ORM/Quicky/Model.pm6",
