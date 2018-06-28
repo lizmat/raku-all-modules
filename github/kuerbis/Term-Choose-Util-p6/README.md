@@ -130,7 +130,7 @@ choose-a-number
 
 This function lets you choose/compose a number (unsigned integer) which is returned.
 
-The fist argument - "digits" - is an integer and determines the range of the available numbers. For example setting the first argument to 6 would offer a range from 0 to 999999. If not set it defaults to `7`.
+The fist argument - "digits" - is an integer and determines the range of the available numbers. For example setting the first argument to 6 would offer a range from 0 to 999999. If not set, it defaults to `7`.
 
 The available options:
 

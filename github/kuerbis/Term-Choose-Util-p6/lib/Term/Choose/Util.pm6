@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose::Util:ver<1.1.0>;
+unit class Term::Choose::Util:ver<1.1.1>;
 
 use NCurses;
 use Term::Choose              :choose, :choose-multi, :pause;
@@ -497,8 +497,8 @@ method choose-a-subset ( @list,
         # Choose
         my Int @idx = $!tc.choose-multi(
             $choices,
-            :prompt( @tmp.join: "\n" ), :no-spacebar( |^@pre ), :undef( $tmp_back ), :lf( 0, $tmp_name.chars ),
-            :$justify, :1index, :$layout, :$order, :mark( $initially_marked )
+            :prompt( @tmp.join: "\n" ), :meta-items( |^@pre ), :undef( $tmp_back ), :lf( 0, $tmp_name.chars ),
+            :$justify, :1index, :$layout, :$order, :mark( $initially_marked ), :2include-highlighted
         );
         if $initially_marked.defined {
             $initially_marked = List;
@@ -798,7 +798,7 @@ newlines.
 This function lets you choose/compose a number (unsigned integer) which is returned.
 
 The fist argument - "digits" - is an integer and determines the range of the available numbers. For example setting the
-first argument to 6 would offer a range from 0 to 999999. If not set it defaults to C<7>.
+first argument to 6 would offer a range from 0 to 999999. If not set, it defaults to C<7>.
 
 The available options:
 
