@@ -74,8 +74,8 @@ class CSS::Specification::Terms::Actions {
 
         if $<any-declaration> {
             my $ast = $<any-declaration>.ast;
-            if $ast.defined {
-                my ($key, $value) = $ast.kv;
+            with $ast {
+                my ($key, $value) = .kv;
                 if $.lax {
                     make {($key ~ ':unknown') => $value}
                 }
@@ -86,7 +86,7 @@ class CSS::Specification::Terms::Actions {
             }
             return;
         }
-        
+
         my %ast = %( $.decl( $<decl> ) );
         return Any
             unless +%ast;
@@ -99,7 +99,6 @@ class CSS::Specification::Terms::Actions {
         if (my $prio = $<prio> && $<prio>.ast) {
             %ast<prio> = $prio;
         }
-        
 
         make $.token( %ast, :type(CSSValue::Property) );
     }

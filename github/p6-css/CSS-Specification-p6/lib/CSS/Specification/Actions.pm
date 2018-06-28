@@ -181,7 +181,7 @@ class CSS::Specification::Actions {
     }
 
     method value:sym<literal>($/)  { make [~] "'", ~$0, "'" }
-            
+
     method value:sym<num>($/)      { make ~$/ }
 
     method value:sym<keyw>($/)     { make ~$/ }

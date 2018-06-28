@@ -9,7 +9,7 @@ use CSS::Specification::Actions;
 
 lives-ok {require CSS::Grammar:ver(v0.3.0..*) }, "CSS::Grammar version";
 
-my $actions = CSS::Specification::Actions.new;
+my CSS::Specification::Actions $actions .= new;
 
 for (
     'spec' => {input => 'thin?',
