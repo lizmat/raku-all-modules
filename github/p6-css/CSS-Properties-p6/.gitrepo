@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-css/CSS-Properties-p6.git
 	branch = master
-	commit = 9fd649a602219ca805350a86f1d658564c0dc053
-	parent = b78d27ba3c6a8c004ba23af7f812c080e831157c
+	commit = 6c832ddbf98d773b53624325f0567c8851006951
+	parent = 74eb3be662fb0caf10dbb3bdf40be4db7e4ef391
 	cmdver = 0.4.0

@@ -17,39 +17,39 @@ class CSS::Properties:ver<0.3.8> {
 
     # contextual variables
     has Any %!values;         # property values
+    has Any %!default;
     has Array %!box;
     has Hash %!struct;
     has Bool %!important;
     my subset Handling of Str where 'initial'|'inherit';
     has Handling %!handling;
-    has %!default;
     has CSS::Module $.module = CSS::Module::CSS3.module; #| associated CSS module
     has @.warnings;
     has Bool $.warn = True;
+
+    #| normalised point value
+    class NumPt is Num does CSS::Properties::Units::Type["pt"] {};
 
     our sub measure($_,
                     Numeric :$em = 12,
                     Numeric :$ex = $em * 3/4,
                     Numeric :$vw,
                     Numeric :$vh) is export(:measure) {
+        state %roles;
         when Numeric {
-            (if $_ {
-                    my $units = .?type // 'pt';
-                    my $scale = do given $units {
-                        when 'em' { $em }
-                        when 'ex' { $ex }
-                        when 'vw' { $vw // die 'Viewport width is unknown' }
-                        when 'vh' { $vh // die 'Viewport height is unknown' }
-                        when 'vmin' { min($vw // die 'Viewport dimensions are unknown', $vh) }
-                        when 'vmax' { max($vw // die 'Viewport dimensions are unknown', $vh) }
-                        when 'percent' { 0 }
-                        default { Scale.enums{$units} }
-                    } // die "unknown units: $units";
-                    (.Num * $scale).Num;
-                }
-             else {
-                 0
-             }) does CSS::Properties::Units::Type["pt"];
+            my Str $units = .?type // 'pt';
+            my Numeric $scale = do given $units {
+                when 'em' { $em }
+                when 'ex' { $ex }
+                when 'vw' { $vw // die 'Viewport width is unknown' }
+                when 'vh' { $vh // die 'Viewport height is unknown' }
+                when 'vmin' { min($vw // die 'Viewport dimensions are unknown', $vh) }
+                when 'vmax' { max($vw // die 'Viewport dimensions are unknown', $vh) }
+                when 'percent' { 0 }
+                default { Scale.enums{$units} }
+            } // die "unknown units: $units";
+            my $num = $_ // 0;
+            NumPt.new($num * $scale);
         }
         default { Nil }
     }
@@ -229,7 +229,7 @@ class CSS::Properties:ver<0.3.8> {
                         self.delete($prop);
                     }
 	        }
-                note "unknown child properties of $prop: {%vals.keys}"
+                note "unknown child properties of $prop: {%vals.keys.sort}"
                     if %vals
             }
             );
@@ -252,7 +252,7 @@ class CSS::Properties:ver<0.3.8> {
                     self.?color;
                 }
                 elsif $prop eq 'text-align' {
-                    self.can('direction') && self.direction eq 'rtl' ?? 'right' !! 'left';
+                    %!values<direction> && self.direction eq 'rtl' ?? 'right' !! 'left';
                 }
                 else {
                     %!values{$prop} = self!default($prop)
@@ -315,6 +315,7 @@ class CSS::Properties:ver<0.3.8> {
         @channels.tail *= 256
             if $type ~~ 'rgba'|'hsla';
         if $type eq 'hsla' {
+            # convert hsla color to rgba
             my Numeric \a = @channels.pop;
             my %rgba = hsl2rgb(@channels);
             %rgba<a> = a;
@@ -463,7 +464,7 @@ class CSS::Properties:ver<0.3.8> {
 
     #| set a list of properties as hash pairs
     method set-properties(*%props) {
-        for %props.pairs -> \p {
+        for %props.pairs.sort -> \p {
             if %module-metadata{$!module}{p.key} {
                 self."{p.key}"() = $_ with p.value;
             }
@@ -497,13 +498,13 @@ class CSS::Properties:ver<0.3.8> {
     # Need a font-size to disambiguate, e.g.:
     #     font: bold medium Helvetica;
     #     font: medium Helvetica;
-    multi method optimizable('font', :@children!
-                              where <font-size font-family> ⊈ .Set ) {
+    multi method optimizable('font', Set :$kids!
+                              where <font-size font-family>.Set ⊈ $kids ) {
         False;
     }
 
-    multi method optimizable(Str $, :@children) is default {
-        @children >= 2;
+    multi method optimizable(Str $, Set :$kids!) is default {
+        +$kids >= 2;
     }
 
     method optimize( @ast ) {
@@ -511,8 +512,8 @@ class CSS::Properties:ver<0.3.8> {
         for @ast {
             next unless .key eq 'property';
             my %v = .value;
-            my $prop = %v<ident>:delete;
-            %prop-ast{$_} = %v with $prop;
+            %prop-ast{$_} = %v
+                with %v<ident>:delete;
         }
 
         self!optimize-ast(%prop-ast);
@@ -528,7 +529,7 @@ class CSS::Properties:ver<0.3.8> {
         my \metadata = self!metadata;
         my %edges;
 
-        for %prop-ast.keys -> \prop {
+        for %prop-ast.keys.sort -> \prop {
             # delete properties that match the default value
             my \info = self.info(prop);
 
@@ -546,7 +547,7 @@ class CSS::Properties:ver<0.3.8> {
 
         # consolidate box properties with common values
         # margin-right: 1pt; ... margin-bottom: 1pt -> margin: 1pt
-        for %edges.keys -> $prop {
+        for %edges.keys.sort -> $prop {
             # bottom up aggregation of edges. e.g. border-top-width, border-right-width ... => border-width
             my \info = self.info($prop);
             next unless info.box;
@@ -583,9 +584,9 @@ class CSS::Properties:ver<0.3.8> {
                 %prop-ast{$_}:exists
             }
 
-            next unless $.optimizable(prop, :@children);
+            next unless $.optimizable(prop, :kids(@children.Set));
 
-            # building the compound property from a group of related children
+            # agregrate related children to a compound property, where possible.
             # -- if child properties are 'initial', or 'inherit', they all
             #    need to be present and the same
             # -- otherwise they need to all need to have or lack
@@ -600,15 +601,15 @@ class CSS::Properties:ver<0.3.8> {
                 }
             }
 
-            %groups<multi>:delete; # eg. border-color: red green blue yellow;
+            # don't agregrate properties with a complex expression
+            # eg. border-color: red green blue yellow;
+            %groups<multi>:delete;
 
             #| find largest consolidation group
             my $type;
-            for %groups.pairs.sort {
-                my $n = + .value;
+            with %groups.pairs.sort(*.key).sort({+.value}).tail {
                 $type = .key
-                    if $n > 1
-                    && (! $type || $n > +%groups{$type});
+                    if + .value > 1;
             }
 
             with $type {
@@ -616,7 +617,7 @@ class CSS::Properties:ver<0.3.8> {
                 given %groups{$type}.list -> @children {
                     when Handling {
                         %prop-ast{$_}:delete for @children;
-                        %prop-ast{prop} = { expr => [ :keyw($_) ] };
+                        %prop-ast{prop} = { :expr[ :keyw($_) ] };
                     }
                     when 'important'|'normal' {
                         my %ast = expr => [ @children.map: {
@@ -687,23 +688,15 @@ class CSS::Properties:ver<0.3.8> {
                  Bool :$terse = True,
                  Bool :$color-names = True,
                  |c) {
-        my \writer = CSS::Writer.new( :$terse, :$color-names, |c);
+        my CSS::Writer \writer .= new( :$terse, :$color-names, |c);
         writer.write: self.ast(:$optimize);
     }
 
     method Str { self.write }
 
-    #| return a list of properties
-    proto method properties(|) {*}
-
     #| return all module properties
-    multi method properties(Bool :$all! where .so) {
-        keys %module-metadata{$!module};
-    }
-
-    #| return only populated properties
-    multi method properties is default {
-        keys %!values;
+    method properties(:$all) {
+        ($all ?? %module-metadata{$!module} !! %!values).keys.sort;
     }
 
     #| delete property values from the list of populated properties
@@ -716,36 +709,31 @@ class CSS::Properties:ver<0.3.8> {
                 if .<children> {
                     $.delete($_) for .<children>.list
                 }
-                %!values{$prop}:delete;
             }
+            %!values{$prop}:delete;
         }
         self;
     }
 
-    method can(Str \name) {
-        my @meth = callsame;
-        unless @meth {
-            with self!metadata{name} {
-                @meth.push: (
-                    .<children>
-                        ?? method () is rw { self!struct-value(name, .<children>) }
-                        !! ( .<box>
-                             ?? method () is rw { self!box-value(name, .<edges>) }
-                             !! method () is rw { self!item-value(name) }
-                           )
-                      );
-
-	        self.^add_method(name,  @meth[0]);
-            }
-        }
-        @meth;
-    }
     method dispatch:<.?>(\name, |c) is raw {
-        self.can(name) ?? self."{name}"(|c) !! Nil
-    }
-    method FALLBACK(Str \name, |c) {
         self.can(name)
             ?? self."{name}"(|c)
-            !! die die X::Method::NotFound.new( :method(name), :typename(self.^name) );
+            !! do with self!metadata{name} { self!value($_, name, |c) } else { Nil }
+    }
+    method !value($_, \name, |c) {
+        .<children>
+            ?? self!struct-value(name, .<children>)
+            !! ( .<box>
+                     ?? self!box-value(name, .<edges>)
+                     !! self!item-value(name)
+                    )
+    }
+    method FALLBACK(Str \name, |c) {
+        with self!metadata{name} {
+            self!value($_, name, |c)
+        }
+        else {
+            die X::Method::NotFound.new( :method(name), :typename(self.^name) )
+        }
     }
 }

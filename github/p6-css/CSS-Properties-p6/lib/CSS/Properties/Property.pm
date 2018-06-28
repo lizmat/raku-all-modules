@@ -26,14 +26,14 @@ class CSS::Properties::Property {
     }
 
     multi method build(Str :$name!, CSS::Module :$module = (require CSS::Module::CSS3).module) is default {
-        my %metadata = $module.property-metadata;
+        my Hash \metadata = $module.property-metadata;
         die "unknown property: $name"
-            unless %metadata{$name}:exists;
+            unless metadata{$name}:exists;
 
         die "malformed metadata for property $name"
-            unless %metadata{$name}<synopsis>:exists;
+            unless metadata{$name}<synopsis>:exists;
 
-        self.build( :$name, |%metadata{$name} );
+        self.build( :$name, |metadata{$name} );
     }
 
     submethod BUILD(|c) {

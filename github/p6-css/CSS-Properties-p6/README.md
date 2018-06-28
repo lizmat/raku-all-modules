@@ -13,15 +13,17 @@ use CSS::Properties::Units :pt;
 use CSS::Properties;
 
 my $style = "color:red !important; padding: 1pt";
-my $css = CSS::Properties.new( :$style );
+my CSS::Properties $css .= new( :$style );
 say $css.important("color"); # True
 $css.border-color = 'red';
 
 $css.margin = [5pt, 2pt, 5pt, 2pt];
 $css.margin = 5pt;  # set margin on all 4 sides
 
-# output the style
-say $css.Str; # border-color:red; color:red!important; margin:5pt; padding:1pt;
+# set text alignment
+$css.text-align = 'right';
+
+say ~$css; # border-color:red; color:red!important; margin:5pt; padding:1pt; text-align:right;
 ```
 
 ## CSS Property Accessors 
@@ -35,7 +37,7 @@ say $css.Str; # border-color:red; color:red!important; margin:5pt; padding:1pt;
 ```
 use CSS::Properties;
 
-my $css = CSS::Properties.new: :style("color: orange; text-align: CENTER; margin: 2pt; font: 12pt Helvetica");
+my CSS::Properties $css .= new: :style("color: orange; text-align: CENTER; margin: 2pt; font: 12pt Helvetica");
 
 say $css.color.hex;       # (FF A5 00)
 say $css.color.type;      # 'rgb'
@@ -92,11 +94,11 @@ use CSS::Module::CSS21;
 my $style = 'color: red; azimuth: left';
 
 my $module = CSS::Module::CSS1.module;
-my $css1 = CSS::Properties.new( :$style, :$module);
+my CSS::Properties $css1 .= new( :$style, :$module);
 ## warnings: dropping unknown property: azimuth
 
 $module = CSS::Module::CSS21.module;
-my $css21 = CSS::Properties.new( :$style, :$module);
+my CSS::Properties $css21 .= new( :$style, :$module);
 ## (no warnings)
 ```
 
@@ -117,7 +119,7 @@ use CSS::Module::CSS3;
 
 my $style = "font-family: myFirstFont; src: url(sansation_light.woff)";
 my $module = CSS::Module::CSS3.module.sub-module<@font-face>;
-my $font-face-css = CSS::Properties.new( :$style, :$module);
+my CSS::Properties $font-face-css .= new( :$style, :$module);
 ```
 
 ## Default values
@@ -164,7 +166,7 @@ use CSS::Properties;
 
 my $parent-style = "margin-top:5pt; margin-left: 15pt; color:rgb(0,0,255) !important";
 my $style = "margin-top:25pt; margin-right: initial; margin-left: inherit; color:purple";
-my $css = CSS::Properties.new: :$style, :inherit($parent-style);
+my CSS::Properties $css .= new: :$style, :inherit($parent-style);
 
 say $css.color;                     # #FF0000 (red)
 say $css.handling("margin-left");   # inherit
@@ -183,7 +185,7 @@ The `.write` or `.Str` methods can be used to produce CSS. Properties are optimi
 
 ```
 use CSS::Properties;
-my $css = CSS::Properties.new( :style("border-style: groove; border-width: 2pt 2pt; color: rgb(255,0,0);") );
+my CSS::Properties $css .= new( :style("border-style: groove; border-width: 2pt 2pt; color: rgb(255,0,0);") );
 say $css.write;  # "border: 2pt; color: red;"
 ```
 
@@ -210,10 +212,10 @@ use CSS::Properties;
 use CSS::Module::CSS3;
 use CSS::Writer;
 
-my $css = CSS::Properties.new;
+my CSS::Properties $css .= new;
 my $module = CSS::Module::CSS3.module;
 my $actions = $module.actions.new;
-my $writer = CSS::Writer.new: :color-names, :terse;
+my CSS::Writer $writer .= new: :color-names, :terse;
 my $declarations = "border-bottom-color:red; border-bottom-style:solid; border-bottom-width:1px; border-left-color:red; border-left-style:solid; border-left-width:1px; border-right-color:red; border-right-style:solid; border-right-width:1px; border-top-color:red; border-top-style:solid; border-top-width:1px;";
 my $p = $module.grammar.parse($declarations, :$actions, :rule<declaration-list>);
 my %ast = $css.optimize($p.ast);
@@ -226,7 +228,7 @@ The `info` method gives property specific meta-data, on all simple of compound p
 
 ```
 use CSS::Properties;
-my $css = CSS::Properties.new;
+my CSS::Properties $css .= new;
 my $margin-info = $css.info("margin");
 say $margin-info.synopsis; # <margin-width>{1,4}
 say $margin-info.edges;    # [margin-top margin-right margin-bottom margin-left]
@@ -242,7 +244,7 @@ are returned. E.g. `font-family` is, if it has a value; but `font` isn't.
 use CSS::Properties;
 
 my $style = "margin-top: 10%; margin-right: 5mm; margin-bottom: auto";
-my $css = CSS::Properties.new: :$style;
+my CSS::Properties $css .= new: :$style;
 
 for $css.properties -> $prop {
     my $val = $css."$prop"();
@@ -319,7 +321,7 @@ my $right  = 50pt;
 my $bottom = 10pt;
 my $left   = 10pt;
 
-my $box = CSS::Properties::Box.new( :$top, :$left, :$bottom, :$right, :$css );
+my CSS::Properties::Box $box .= new( :$top, :$left, :$bottom, :$right, :$css );
 say $box.padding;           # dimensions of padding box;
 say $box.margin;            # dimensions of margin box;
 say $box.border-right;      # vertical position of right border
@@ -338,7 +340,7 @@ say $box.font-length('larger'); # 12
 
 #### new
 
-    my CSS::Properties::Box.new( :$top, :$left, :$bottom, :$right, :$css );
+    my CSS::Properties::Box $box .= new( :$top, :$left, :$bottom, :$right, :$css );
 
 The box `new` constructor accepts:
 
