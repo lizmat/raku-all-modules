@@ -107,17 +107,6 @@ prompt
 
 String displayed above the table.
 
-add-header DEPRECATED
----------------------
-
-This option is deprecated and will be removed.
-
-Enabling *add-header* alters the passed list.
-
-If *add-header* is set to 1, `print-table` adds a header row - the columns are numbered starting with 1.
-
-Default: 0
-
 choose-columns
 --------------
 

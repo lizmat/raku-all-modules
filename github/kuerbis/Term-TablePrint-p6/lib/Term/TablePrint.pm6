@@ -1,5 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<1.1.0>;
+unit class Term::TablePrint:ver<1.2.0>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -21,11 +21,10 @@ has UInt       $.max-rows       = 50_000;
 has UInt       $.min-col-width  = 30;
 has UInt       $.progress-bar   = 5_000;
 has UInt       $.tab-width      = 2;
-has Int_0_or_1 $.add-header; # DEPRECATED
+has Int_0_or_1 $.choose-columns = 0;
 has Int_0_or_1 $.grid           = 0;
 has Int_0_or_1 $.keep-header    = 1;
 has Int_0_or_1 $.mouse          = 0;
-has Int_0_to_2 $.choose-columns = 0; # Int_0_or_1
 has Int_0_to_2 $.table-expand   = 1;
 has Str        $.prompt         = '';
 has Str        $.undef          = '';
@@ -73,43 +72,25 @@ method print-table (
         UInt       :$min-col-width  = $!min-col-width,
         UInt       :$progress-bar   = $!progress-bar,
         UInt       :$tab-width      = $!tab-width,
-        Int_0_or_1 :$add-header     = $!add-header, # DEPRECATED
         Int_0_or_1 :$grid           = $!grid,
         Int_0_or_1 :$keep-header    = $!keep-header,
         Int_0_or_1 :$mouse          = $!mouse,
-        Int_0_to_2 :$choose-columns = $!choose-columns, # Int_0_or_1
+        Int_0_to_2 :$choose-columns = $!choose-columns,
         Int_0_to_2 :$table-expand   = $!table-expand,
         Str        :$prompt         = $!prompt,
         Str        :$undef          = $!undef,
     ) {
-    %!o = :$max-rows, :$min-col-width, :$progress-bar, :$tab-width, :$add-header, :$grid,
+    %!o = :$max-rows, :$min-col-width, :$progress-bar, :$tab-width, :$grid,
           :$keep-header, :$mouse, :$choose-columns, :$table-expand, :$prompt, :$undef;
     CATCH {
         endwin();
     } 
     self!_init_term();
-
-    # ### remove and choose-columns datatype to Int_0_or_1
-    if $choose-columns == 2 {
-        $!tc.pause( ( 'Close with ENTER', ), :prompt( 'Option "choose-columns": 2 is no longer a valid value!' ) );
-    }
-    # ###
-
     if ! @orig_table.elems {
         $!tc.pause( ( 'Close with ENTER', ), :prompt( '"print-table": Empty table!' ) );
         self!_end_term;
         return;
     }
-
-    # ### remove and pod
-    if %!o<add-header>.defined {
-        $!tc.pause( ( 'Close with ENTER', ), :prompt( 'The \'print-table\' option "add-header" is deprecated and will be removed.' ) );
-        if %!o<add-header> {
-            @orig_table.unshift: [ ( 1 .. @orig_table[0].elems ).map: { $_ ~ 'col' } ];
-        }
-    }
-    # ###
-
     $!tab_w = %!o<tab-width>;
     if %!o<grid> && %!o<tab-width> %% 2 {
         $!tab_w++;
@@ -481,7 +462,7 @@ method !_choose_columns ( @avail_cols ) {
         my Str @choices = |@pre, |@cols;
         # Choose
         my Int @idx = $!tc.choose-multi( @choices, :prompt( $prompt ), :1index, :lf( 0, $init_prompt.chars ),
-                                                   :no-spacebar( |^@pre ), :undef( '<<' ) );
+                                                   :meta-items( |^@pre ), :undef( '<<' ), :2include-highlighted );
         if ! @idx[0].defined || @idx[0] == 0 {
             if @col_idxs.elems {
                 @col_idxs = [];
@@ -659,16 +640,6 @@ Defaults may change in future releases.
 =head2 prompt
 
 String displayed above the table.
-
-=head2 add-header DEPRECATED
-
-This option is deprecated and will be removed.
-
-Enabling I<add-header> alters the passed list.
-
-If I<add-header> is set to 1, C<print-table> adds a header row - the columns are numbered starting with 1.
-
-Default: 0
 
 =head2 choose-columns
 
