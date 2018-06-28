@@ -1,5 +1,6 @@
 use META6;
-use JSON::Pretty;
+use JSON::Fast;
+use Ddt::JSON;
 use File::Find;
 use License::Software;
 use Ddt::Template;
@@ -61,7 +62,7 @@ multi method new(IO::Path $meta-file) {
     self.bless: META6 => $meta,
                 meta-file => $meta-file,
                 main-dir => $meta-file.parent,
-                main-comp-unit => $meta.name.subst('-', '::', :g)
+                main-comp-unit => $meta.name
 }
 multi method new(Str $meta-file) { self.new($meta-file.IO) }
 
@@ -114,7 +115,7 @@ method generate-META6 {
     $meta.provides = self.find-provides;
     $meta.source-url = find-source-url() unless $meta.source-url.defined;
     $meta.version = "*" unless $meta.source-url.defined;
-    $meta.license = self!license.spdx unless !$meta.license.defined;
+    $meta.license = self.license.spdx unless !$meta.license.defined;
 
     $.meta-file.IO.spurt: meta-to-json($meta);
 }
@@ -164,8 +165,8 @@ method find-pod-for( $module-file )
 
 
 method !make-content {
-    my $license = self!license;
-    my $module = $.META6.name.subst: '-', '::', :g;
+    my $license = self.license;
+    my $module = $.META6.name;
     my IO::Path $module-file = $.lib-dir;
 
     for $.main-comp-unit.split(<::>) { $module-file = $module-file.child: $_ };
@@ -195,7 +196,7 @@ method !init-vcs-repo {
 }
 
 
-method !license of License::Software::Abstract {
+method license of License::Software::Abstract {
     License::Software::get($.META6.license).new: author() ~ " " ~ email();
 }
 
@@ -252,7 +253,6 @@ method !to-file(Str $module) {
 }
 
 method !name-to-file(Str $module is copy) {
-    $module.subst('-', '::', :g);
     self!to-file: $module;
 }
 
@@ -269,7 +269,9 @@ sub guess-user-and-repo() {
         return;
     }
 }
+
+# A hack for getting identical json on each run
 sub meta-to-json(META6 $meta --> Str:D) {
     my %h = from-json($meta.to-json: :skip-null).pairs.grep: *.value !~~ Empty;
-    to-json(%h);
+    to-sorted-json(%h);
 }

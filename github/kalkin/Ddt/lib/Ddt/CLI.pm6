@@ -10,14 +10,16 @@ multi MAIN("new",
             :$license-name = 'GPLv3' #= License name
         ) is export
 {
-    my $distri-name = $module.subst: '::', '-', :g;
-    my $main-dir = $distri-name.IO;
-    die "Already exists $main-dir" if $main-dir.IO ~~ :d;
+    my $main-dir = $module.subst: '::', '-', :g;
+    if $main-dir.IO ~~ :d {
+        note "Already exists $main-dir";
+        exit 1;
+    }
 
-    mkdir($main-dir);
+    mkdir $main-dir;
     my $license-holder = author() ~ " " ~ email();
     my $spdx = License::Software::get($license-name).new($license-holder).spdx;
-    my $meta = META6.new:   name => $distri-name,
+    my $meta = META6.new:   name => $module,
                             authors => [author()],
                             license => $spdx,
                             version => Version.new('0.0.1'),
@@ -86,7 +88,10 @@ multi MAIN("release") is export
     my ($user, $repo) = guess-user-and-repo($ddt.META6<source-url>);
     my Str:D $meta-file = $ddt.meta-file.basename;
     my Str:D $module = $ddt.name;
-    die "Cannot find user and repository settting" unless $repo;
+    unless $repo {
+        note "Cannot find user and repository settting";
+        exit 1;
+    }
     say  qq:to/EOF/;
     Are you ready to release your module? Congrats!
     For this, follow these steps:
@@ -103,26 +108,47 @@ multi MAIN("release") is export
 }
 
 sub cand-name($candi) of Str:D {
-    my Str:D $name = $candi.dist.source-url.IO.basename;
-    if $name.IO.extension eq 'git' {
-        $name = $name.comb[0..*-5].join;
+    if $candi.dist.source-url {
+        my Str:D $name = $candi.dist.source-url.IO.basename;
+        if $name.IO.extension eq 'git' {
+            $name = $name.comb[0..*-5].join;
+        }
+        return $name;
     }
-    return $name;
+    return $candi.dist.name.subst('::', '-', :g);
 }
 
 #| Checkout a Distribution and start hacking on it
 multi MAIN("hack", Str:D $identity, Str $dir?) is export {
-
     if !$dir.defined && TOPDIR().defined {
-        die "You are already in a repository please specify exact dir to clone to"
+        note "You are already in a repository please specify exact dir to clone to";
+        exit 1;
     }
 
     my @candidates = search-unit($identity);
-    die "No candidates found" unless @candidates.elems;
-    my Str:D $target = ($dir || cand-name @candidates.first);
-    die "Directory $target already exists" if $target.IO.e;
+    unless @candidates {
+        note "No candidates found";
+        exit 1;
+    }
 
-    my Str:D $uri = @candidates.first.dist.source-url;
+    my Str:D $target = ($dir || cand-name @candidates.first);
+    if $target.IO.e {
+        note "Directory $target already exists";
+        exit 1;
+    }
+
+    my Str $uri;
+    unless @candidates.first.dist.source-url {
+        note "The project has no source url";
+        exit 1;
+    }
+
+    $uri = @candidates.first.dist.source-url;
+
+    if $uri ~~ /^.*\.(tar\.gz|tar\.bz2|tar)$/ {
+        note "Only found an archive url " ~ $uri;
+        exit 1;
+    }
 
     my (:@remote, :@local) := @candidates.classify: {.dist !~~ Zef::Distribution::Local ?? <remote> !! <local>}
     unless @local.first {
@@ -131,7 +157,7 @@ multi MAIN("hack", Str:D $identity, Str $dir?) is export {
 
     my $candi = @local.first;
     my IO::Path:D $local-mirror = local-mirror $uri;
-    say qqx{git clone $uri --reference $local-mirror.Str() $target};
+    say qqx{git clone $uri --reference-if-able $local-mirror.Str() $target};
     say "Checked out $uri to $target";
     say "You can now do `cd $target`";
 }
