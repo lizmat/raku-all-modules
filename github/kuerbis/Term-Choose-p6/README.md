@@ -114,15 +114,13 @@ OPTIONS
 
 Options which expect a number as their value expect integers.
 
-beep
-----
+### beep
 
 0 - off (default)
 
 1 - on
 
-default
--------
+### default
 
 With the option *default* it can be selected an element, which will be highlighted as the default instead of the first element.
 
@@ -134,20 +132,17 @@ Allowed values: 0 or greater
 
 (default: undefined)
 
-empty
------
+### empty
 
 Sets the string displayed on the screen instead an empty string.
 
 default: "ltemptygt"
 
-info
-----
+### info
 
 Expects as its value a string. The string is printed above the prompt string.
 
-index
------
+### index
 
 0 - off (default)
 
@@ -155,8 +150,7 @@ index
 
 This option has no meaning for `pause`.
 
-justify
--------
+### justify
 
 0 - elements ordered in columns are left-justified (default)
 
@@ -164,8 +158,7 @@ justify
 
 2 - elements ordered in columns are centered
 
-keep
-----
+### keep
 
 *keep* prevents that all the terminal rows are used by the prompt lines.
 
@@ -177,8 +170,7 @@ Allowed values: 1 or greater
 
 (default: 5)
 
-layout
-------
+### layout
 
 From broad to narrow: 0 > 1 > 2
 
@@ -215,8 +207,7 @@ From broad to narrow: 0 > 1 > 2
         |                   |   |                   |   |                   |   | ..                |
         '-------------------'   '-------------------'   '-------------------'   '-------------------'
 
-lf
---
+### lf
 
 If *prompt* lines are folded, the option *lf* allows one to insert spaces at beginning of the folded lines.
 
@@ -230,17 +221,7 @@ Allowed values for the two elements are: 0 or greater.
 
 (default: undefined)
 
-mark
-----
-
-This is a `choose-multi`-only option.
-
-*mark* expects as its value an list of indexes (integers). `choose-multi` preselects the list-elements correlating to these indexes.
-
-(default: undefined)
-
-max-height
-----------
+### max-height
 
 If defined sets the maximal number of rows used for printing list items.
 
@@ -254,8 +235,7 @@ Allowed values: 1 or greater
 
 (default: undefined)
 
-max-width
----------
+### max-width
 
 If defined, sets the maximal output width to *max-width* if the terminal width is greater than *max-width*.
 
@@ -267,24 +247,13 @@ Allowed values: 2 or greater
 
 (default: undefined)
 
-mouse
------
+### mouse
 
 0 - no mouse (default)
 
 1 - mouse enabled
 
-no-spacebar
------------
-
-This is a `choose-multi`-only option.
-
-*no-spacebar* expects as its value an list. The elements of the list are indexes of choices which should not be markable with the `SpaceBar` or with the right mouse key. If an element is preselected with the option *mark* and also marked as not selectable with the option *no-spacebar*, the user can not remove the preselection of this element.
-
-(default: undefined)
-
-order
------
+### order
 
 If the output has more than one row and more than one column:
 
@@ -292,33 +261,60 @@ If the output has more than one row and more than one column:
 
 1 - elements are ordered vertically (default)
 
-pad
----
+### pad
 
 Sets the number of whitespaces between columns. (default: 2)
 
 Allowed values: 0 or greater
 
-page
-----
+### page
 
 0 - off
 
 1 - print the page number on the bottom of the screen if there is more then one page. (default)
 
-prompt
-------
+### prompt
 
 If *prompt* is undefined, a default prompt-string will be shown.
 
 If the *prompt* value is an empty string (""), no prompt-line will be shown.
 
-undef
------
+### undef
 
 Sets the string displayed on the screen instead an undefined element.
 
 default: "ltundefgt"
+
+options choose-multi
+--------------------
+
+### include-highlighted
+
+0 - `choose-multi` returns the items marked with the `SpaceBar`. (default)
+
+1 - `choose-multi` returns the items marked with the `SpaceBar` plus the highlighted item.
+
+2 - `choose-multi` returns the items marked with the `SpaceBar`. If no items are marked with the `SpaceBar`, the highlighted item is returned.
+
+### mark
+
+*mark* expects as its value a list of indexes (integers). `choose-multi` preselects the list-elements correlating to these indexes.
+
+(default: undefined)
+
+### meta-items
+
+*meta_items* expects as its value a list of indexes (integers). List-elements correlating to these indexes can not be marked with the `SpaceBar` or with the right mouse key but if one of these elements is the highlighted item it is added to the chosen items when `Return` is pressed.
+
+Elements greater than the last index of the list are ignored.
+
+(default: undefined)
+
+### no-spacebar
+
+*no-spacebar* expects as its value an list. The elements of the list are indexes of choices which should not be markable with the `SpaceBar` or with the right mouse key. If an element is preselected with the option *mark* and also marked as not selectable with the option *no-spacebar*, the user can not remove the preselection of this element.
+
+(default: undefined)
 
 ENVIRONMET VARIABLES
 ====================

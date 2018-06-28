@@ -1,6 +1,11 @@
 Revision history for Term::Choose
 
 
+1.3.0   2018-06-27
+        - `multi-choose`: now by default the highlighted item is not added to the chosen items
+        - New option "include-highlighted"
+        - New option "meta-items"
+
 1.2.0   2018-04-29
         - New option "info"
         - Environment variable TC_RESET_AUTO_UP

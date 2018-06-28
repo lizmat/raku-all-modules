@@ -1,6 +1,6 @@
 use v6;
 
-unit class Term::Choose:ver<1.2.0>;
+unit class Term::Choose:ver<1.3.0>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -35,26 +35,28 @@ subset Int_2_or_greater of Int where * > 1;
 subset Int_0_to_2       of Int where * == 0|1|2;
 subset Int_0_or_1       of Int where * == 0|1;
 
-has Int_0_or_1       $.beep        = 0;
-has Int_0_or_1       $.index       = 0;
-has Int_0_or_1       $.mouse       = 0;
-has Int_0_or_1       $.order       = 1;
-has Int_0_or_1       $.page        = 1;
-has Int_0_to_2       $.justify     = 0;
-has Int_0_to_2       $.layout      = 1;
-has Positive_Int     $.keep        = 5;
+has Int_0_or_1       $.beep                 = 0;
+has Int_0_or_1       $.index                = 0;
+has Int_0_or_1       $.mouse                = 0;
+has Int_0_or_1       $.order                = 1;
+has Int_0_or_1       $.page                 = 1;
+has Int_0_to_2       $.include-highlighted  = 0;
+has Int_0_to_2       $.justify              = 0;
+has Int_0_to_2       $.layout               = 1;
+has Positive_Int     $.keep                 = 5;
 has Positive_Int     $.ll;
 has Positive_Int     $.max-height;
 has Int_2_or_greater $.max-width;
-has UInt             $.default     = 0;
-has UInt             $.pad         = 2;
+has UInt             $.default              = 0;
+has UInt             $.pad                  = 2;
 has List             $.lf;
 has List             $.mark;
+has List             $.meta-items;
 has List             $.no-spacebar;
-has Str              $.info        = '';
+has Str              $.info                 = '';
 has Str              $.prompt;
-has Str              $.empty       = '<empty>';
-has Str              $.undef       = '<undef>';
+has Str              $.empty                = '<empty>';
+has Str              $.undef                = '<undef>';
 
 has @!orig_list;
 has @!list;
@@ -198,26 +200,29 @@ method !_end_term {
 
 
 method !_choose ( Int $multiselect, @!orig_list,
-        Int_0_or_1       :$beep        = $!beep,
-        Int_0_or_1       :$index       = $!index,
-        Int_0_or_1       :$mouse       = $!mouse,
-        Int_0_or_1       :$order       = $!order,
-        Int_0_or_1       :$page        = $!page,
-        Int_0_to_2       :$justify     = $!justify,
-        Int_0_to_2       :$layout      = $!layout,
-        Positive_Int     :$keep        = $!keep,
-        Positive_Int     :$ll          = $!ll,
-        Positive_Int     :$max-height  = $!max-height,
-        Int_2_or_greater :$max-width   = $!max-width,
-        UInt             :$default     = $!default,
-        UInt             :$pad         = $!pad,
-        List             :$lf          = $!lf,
-        List             :$mark        = $!mark,
-        List             :$no-spacebar = $!no-spacebar,
-        Str              :$info        = $!info,
-        Str              :$prompt      = $!prompt,
-        Str              :$empty       = $!empty,
-        Str              :$undef       = $!undef,
+        Int_0_or_1       :$beep                 = $!beep,
+
+        Int_0_or_1       :$index                = $!index,
+        Int_0_or_1       :$mouse                = $!mouse,
+        Int_0_or_1       :$order                = $!order,
+        Int_0_or_1       :$page                 = $!page,
+        Int_0_to_2       :$include-highlighted  = $!include-highlighted,
+        Int_0_to_2       :$justify              = $!justify,
+        Int_0_to_2       :$layout               = $!layout,
+        Positive_Int     :$keep                 = $!keep,
+        Positive_Int     :$ll                   = $!ll,
+        Positive_Int     :$max-height           = $!max-height,
+        Int_2_or_greater :$max-width            = $!max-width,
+        UInt             :$default              = $!default,
+        UInt             :$pad                  = $!pad,
+        List             :$lf                   = $!lf,
+        List             :$mark                 = $!mark,
+        List             :$meta-items           = $!meta-items,
+        List             :$no-spacebar          = $!no-spacebar,
+        Str              :$info                 = $!info,
+        Str              :$prompt               = $!prompt,
+        Str              :$empty                = $!empty,
+        Str              :$undef                = $!undef,
     ) {
     if ! @!orig_list.elems {
         return;
@@ -225,8 +230,8 @@ method !_choose ( Int $multiselect, @!orig_list,
     CATCH {
         endwin();
     }
-    %!o = :$beep, :$index, :$mouse, :$order, :$page, :$justify, :$layout, :$keep, :$ll, :$max-height,
-          :$max-width, :$default, :$pad, :$lf, :$mark, :$no-spacebar, :$info, :$prompt, :$empty, :$undef;
+    %!o = :$beep, :$include-highlighted, :$index, :$mouse, :$order, :$page, :$justify, :$layout, :$keep, :$ll, :$max-height,
+          :$max-width, :$default, :$pad, :$lf, :$mark, :$meta-items, :$no-spacebar, :$info, :$prompt, :$empty, :$undef;
     if ! %!o<prompt>.defined {
         %!o<prompt> = $multiselect.defined ?? 'Your choice' !! 'Continue with ENTER';
     }
@@ -466,7 +471,7 @@ method !_choose ( Int $multiselect, @!orig_list,
                 self!_end_term();
                 return;
             }
-            when LINE_FEED | CARRIAGE_RETURN { #
+            when LINE_FEED | CARRIAGE_RETURN { # KEY_ENTER
                 self!_end_term();
                 if ! $multiselect.defined {
                     return;
@@ -476,18 +481,35 @@ method !_choose ( Int $multiselect, @!orig_list,
                     return %!o<index> || %!o<ll> ?? $i !! @!orig_list[$i];
                 }
                 else {
-                    $!marked[ $!p[R] ][ $!p[C] ] = True;
-                    return %!o<index> || %!o<ll> ?? self!_marked_rc2idx().List !! @!orig_list[self!_marked_rc2idx()]; #
+                    if %!o<include-highlighted> == 1 {
+                        $!marked[ $!p[R] ][ $!p[C] ] = True;
+                    }
+                    elsif %!o<include-highlighted> == 2 && ! self!_marked_rc2idx().elems {
+                        $!marked[ $!p[R] ][ $!p[C] ] = True;
+                    }
+                    elsif %!o<meta-items>.defined {
+                        for %!o<meta-items>.list -> $meta_item {
+                            if $meta_item == $!rc2idx[ $!p[R] ][ $!p[C] ] {
+                                $!marked[ $!p[R] ][ $!p[C] ] = True;
+                                last;
+                            }
+                        }
+                    }
+                    my $indexes = self!_marked_rc2idx();
+                    return %!o<index> || %!o<ll> ?? $indexes.list !! @!orig_list[$indexes.list];
                 }
             }
             when KEY_SPACE {
                 if $multiselect {
                     my Int $locked = 0;
-                    if %!o<no-spacebar> {
-                        for %!o<no-spacebar>.list -> $no-spacebar {
-                            if $!rc2idx[ $!p[R] ][ $!p[C] ] == $no-spacebar {
-                                ++$locked;
-                                last;
+                    OUTER_FOR:
+                    for 'meta-items', 'no-spacebar' -> $key {
+                        if %!o{$key} {
+                            for |%!o{$key} -> $index {
+                                if $!rc2idx[ $!p[R] ][ $!p[C] ] == $index {
+                                    ++$locked;
+                                    last OUTER_FOR;
+                                }
                             }
                         }
                     }
@@ -1052,13 +1074,13 @@ are attached.
 
 Options which expect a number as their value expect integers.
 
-=head2 beep
+=head3 beep
 
 0 - off (default)
 
 1 - on
 
-=head2 default
+=head3 default
 
 With the option I<default> it can be selected an element, which will be highlighted as the default instead of the first
 element.
@@ -1071,17 +1093,17 @@ Allowed values: 0 or greater
 
 (default: undefined)
 
-=head2 empty
+=head3 empty
 
 Sets the string displayed on the screen instead an empty string.
 
 default: "E<lt>emptyE<gt>"
 
-=head2 info
+=head3 info
 
 Expects as its value a string. The string is printed above the prompt string.
 
-=head2 index
+=head3 index
 
 0 - off (default)
 
@@ -1089,7 +1111,7 @@ Expects as its value a string. The string is printed above the prompt string.
 
 This option has no meaning for C<pause>.
 
-=head2 justify
+=head3 justify
 
 0 - elements ordered in columns are left-justified (default)
 
@@ -1097,7 +1119,7 @@ This option has no meaning for C<pause>.
 
 2 - elements ordered in columns are centered
 
-=head2 keep
+=head3 keep
 
 I<keep> prevents that all the terminal rows are used by the prompt lines.
 
@@ -1109,7 +1131,7 @@ Allowed values: 1 or greater
 
 (default: 5)
 
-=head2 layout
+=head3 layout
 
 From broad to narrow: 0 > 1 > 2
 
@@ -1158,7 +1180,7 @@ From broad to narrow: 0 > 1 > 2
 
 =end code
 
-=head2 lf
+=head3 lf
 
 If I<prompt> lines are folded, the option I<lf> allows one to insert spaces at beginning of the folded lines.
 
@@ -1173,16 +1195,7 @@ Allowed values for the two elements are: 0 or greater.
 
 (default: undefined)
 
-=head2 mark
-
-This is a C<choose-multi>-only option.
-
-I<mark> expects as its value an list of indexes (integers). C<choose-multi> preselects the
-list-elements correlating to these indexes.
-
-(default: undefined)
-
-=head2 max-height
+=head3 max-height
 
 If defined sets the maximal number of rows used for printing list items.
 
@@ -1196,7 +1209,7 @@ Allowed values: 1 or greater
 
 (default: undefined)
 
-=head2 max-width
+=head3 max-width
 
 If defined, sets the maximal output width to I<max-width> if the terminal width is greater than I<max-width>.
 
@@ -1208,23 +1221,13 @@ Allowed values: 2 or greater
 
 (default: undefined)
 
-=head2 mouse
+=head3 mouse
 
 0 - no mouse (default)
 
 1 - mouse enabled
 
-=head2 no-spacebar
-
-This is a C<choose-multi>-only option.
-
-I<no-spacebar> expects as its value an list. The elements of the list are indexes of choices which should not be
-markable with the C<SpaceBar> or with the right mouse key. If an element is preselected with the option I<mark> and also
-marked as not selectable with the option I<no-spacebar>, the user can not remove the preselection of this element.
-
-(default: undefined)
-
-=head2 order
+=head3 order
 
 If the output has more than one row and more than one column:
 
@@ -1232,29 +1235,65 @@ If the output has more than one row and more than one column:
 
 1 - elements are ordered vertically (default)
 
-=head2 pad
+=head3 pad
 
 Sets the number of whitespaces between columns. (default: 2)
 
 Allowed values: 0 or greater
 
-=head2 page
+=head3 page
 
 0 - off
 
 1 - print the page number on the bottom of the screen if there is more then one page. (default)
 
-=head2 prompt
+=head3 prompt
 
 If I<prompt> is undefined, a default prompt-string will be shown.
 
 If the I<prompt> value is an empty string (""), no prompt-line will be shown.
 
-=head2 undef
+=head3 undef
 
 Sets the string displayed on the screen instead an undefined element.
 
 default: "E<lt>undefE<gt>"
+
+=head2 options choose-multi
+
+=head3 include-highlighted
+
+0 - C<choose-multi> returns the items marked with the C<SpaceBar>. (default)
+
+1 - C<choose-multi> returns the items marked with the C<SpaceBar> plus the highlighted item.
+
+2 - C<choose-multi> returns the items marked with the C<SpaceBar>. If no items are marked with the C<SpaceBar>, the
+highlighted item is returned.
+
+=head3 mark
+
+I<mark> expects as its value a list of indexes (integers). C<choose-multi> preselects the list-elements correlating to
+these indexes.
+
+(default: undefined)
+
+=head3 meta-items
+
+I<meta_items> expects as its value a list of indexes (integers). List-elements correlating to these indexes can not be
+marked with the C<SpaceBar> or with the right mouse key but if one of these elements is the highlighted item it is added
+to the chosen items when C<Return> is pressed.
+
+Elements greater than the last index of the list are ignored.
+
+(default: undefined)
+
+=head3 no-spacebar
+
+I<no-spacebar> expects as its value an list. The elements of the list are indexes of choices which should not be
+markable with the C<SpaceBar> or with the right mouse key. If an element is preselected with the option I<mark> and also
+marked as not selectable with the option I<no-spacebar>, the user can not remove the preselection of this element.
+
+(default: undefined)
 
 =head1 ENVIRONMET VARIABLES
 
