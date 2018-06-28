@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Terminal-ANSIColor.git
 	branch = master
-	commit = 928eec4a77a2561620de08bd83e6a1bd1bbbe15b
-	parent = 77ad7a2cb5d0e7163b626b6379e5f759e03476ca
+	commit = eeb2dadd2cc2b7df34588be7869768213fd9fff4
+	parent = 576a43363aa185eee864b1dccf6dd97b27b1496a
 	cmdver = 0.4.0
