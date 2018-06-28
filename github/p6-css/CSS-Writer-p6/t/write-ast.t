@@ -8,9 +8,9 @@ use JSON::Fast;
 
 use CSS::Writer;
 
-my $css-writer = CSS::Writer.new;
-my $css-writer_2 = CSS::Writer.new( :color-names );
-my $css-writer_3 = CSS::Writer.new( :color-values );
+my CSS::Writer $css-writer .= new;
+my CSS::Writer $css-writer_2 .= new( :color-names );
+my CSS::Writer $css-writer_3 .= new( :color-values );
 
 for 't/write-ast.json'.IO.lines {
 

@@ -11,8 +11,8 @@ use CSS::Grammar::Actions;
 use CSS::Grammar::Test;
 use CSS::Writer;
 
-my $actions = CSS::Grammar::Actions.new();
-my $css-writer = CSS::Writer.new;
+my CSS::Grammar::Actions $actions .= new();
+my CSS::Writer $css-writer .= new;
 
 for 't/write-css.json'.IO.lines {
 

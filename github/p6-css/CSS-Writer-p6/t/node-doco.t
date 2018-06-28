@@ -2,11 +2,11 @@ use CSS::Writer;
 
 use Test;
 
-##my $docs = CSS::Writer.^methods.map({.candidates}).map({.WHY}).grep({.defined}).map({.Str});
+## my @docs = CSS::Writer.^methods.map({.candidates}).map({.WHY}).grep({.defined}).map({.Str});
 
 my @docs = 'lib/CSS/Writer.pm'.IO.slurp.lines.grep({ m/ '#|' \s* (.*)? $/}).map({ ~$0 });
 
-my $writer = CSS::Writer.new( :terse, :!color-masks );
+my CSS::Writer $writer .= new( :terse, :!color-masks );
 
 for @docs -> $doc {
 

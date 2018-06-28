@@ -25,17 +25,21 @@ class CSS::Writer {
     }
 
     sub build-color-values(%colors) {
-        my %v;
-        for %colors.pairs {
-            my (Str $name, Hash $val) = .kv;
-            my List $rgb = $val<rgb>;
-            %v{$name} = $rgb;
-            with $name.index("gray") {
-                $name.substr-rw($_, 4) = 'grey';
-                %v{$name} = $rgb;
+        %(
+            %colors.pairs.map: {
+                my (Str $name, Hash $val) = .kv;
+                my List $rgb = $val<rgb>;
+
+                with $name.index("gray") {
+                    my $name-uk = $name;
+                    $name-uk.substr-rw($_, 4) = 'grey';
+                    $name|$name-uk => $rgb;
+                }
+                else {
+                    $name => $rgb;
+                }
             }
-        }
-        %v;
+        );
     }
 
     my subset BoolOrHash where { !.defined || $_ ~~ Bool|Hash }
@@ -435,9 +439,7 @@ class CSS::Writer {
     method color-channel($node) {
         my $num = $.coerce-color(|%$node)
             // return;
-        $num = 0   if $num < 0 ;
-        $num = 255 if $num > 255;
-        $num;
+        max(0, min(255, $num));
     }
 
     method !write-rgb-mask( @mask ) {

@@ -5,8 +5,8 @@ use Test;
 
 plan 6;
 
-my $writer = CSS::Writer.new( :ast( :string('Hello World!' ) ) );
-my $writer2 = CSS::Writer.new;
+my CSS::Writer $writer .= new( :ast( :string('Hello World!' ) ) );
+my CSS::Writer $writer2 .= new;
 lives-ok { ~$writer }, 'writer stringification';
 is ~$writer, q<'Hello World!'>,'writer stringification';
 is $writer.write( :keyw<Hi> ), 'hi', 'write keyw';
