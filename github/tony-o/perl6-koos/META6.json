@@ -6,6 +6,7 @@
   "auth"        : "github:tony-o",
   "authors"     : [ "Tony O'Dell" ],
   "depends"     : ["DBIish"],
+  "license"     : "Artistic-2.0",
   "provides"    : {
     "Koos": "lib/Koos.pm6",
     "Koos::Searchable": "lib/Koos/Searchable.pm6",
