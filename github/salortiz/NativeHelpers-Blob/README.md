@@ -16,6 +16,18 @@ At some point, these problems will be addressed in core, but in the meantime...
 
     use NativeHelpers::Blob;
 
+### Run benchmarks
+
+Use
+
+    zef install Bench
+    
+to install that module, and then you can run the benchmarks in the
+root directory:
+   
+    perl6 -Ilib bench.pl6
+    perl6 -Ilib bench-slurpy.pl6
+    
 ## Exported functions
 
 ### multi sub pointer-to(Blob:D, :$typed -> Pointer)

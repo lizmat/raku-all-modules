@@ -2,7 +2,6 @@
 
 #ifdef _WIN32
 #define DLLEXPORT __declspec(dllexport)
-typedef long long int64_t;
 #define PF "0x%p"
 #else
 #define DLLEXPORT extern
@@ -11,9 +10,9 @@ typedef long long int64_t;
 #endif
 
 typedef struct point3d_t {
-    int64_t x;
-    int64_t y;
-    int64_t z;
+    long long x;
+    long long y;
+    long long z;
 } Point3D;
 
 DLLEXPORT char *myaddr(Point3D *points) {
