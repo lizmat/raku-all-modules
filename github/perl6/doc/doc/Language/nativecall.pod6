@@ -497,8 +497,6 @@ say "foo is {$foo.a_string} and {$foo.an_int32}";
 
 =head1 Typed Pointers
 
-=comment TODO
-
 You can type your C<Pointer> by passing the type as a parameter. It works with
 the native type but also with C<CArray> and C<CStruct> defined types. NativeCall
 will not implicitly allocate the memory for it even when calling C<new> on them.
@@ -556,6 +554,10 @@ for 1 ..^ $n {
 }
 =end code
 
+Void pointers can also be used by declaring them C<Pointer[void]>. Please
+consult L<the native types documentation|/language/nativetypes#The_void_type>
+for more information on the subject.
+
 =head1 Strings
 
 =head2 Explicit memory management
@@ -612,16 +614,30 @@ leaks.
 
 =head2 Buffers and blobs
 
-=comment TODO
+L<Blob>s and L<Buf>s are the Perl 6 way of storing binary data. We can use them
+for interchange of data with native functions and data structures, although not
+directly. We will have to use L<C<nativecast>|/routine/nativecast>.
 
-TBD
+=for code :preamble<use NativeCall;>
+my $blob = Blob.new(0x22, 0x33);
+my $src = nativecast(Pointer, $blob);
+
+This C<$src> can then be used as an argument for any native function that takes
+a Pointer. The opposite, putting values pointed to by a C<Pointer> into a C<Buf>
+or using it to inialize a C<Blob> is not directly supported. You might want to
+use L<C<NativeHelpers::Blob>|https://github.com/salortiz/NativeHelpers-Blob> to
+do this kind of operations.
+
+=for code :skip-test<incomplete code>
+my $esponja = blob-from-pointer( $inter, :2elems, :type(Blob[int8]));
+say $esponja;
 
 =head1 Function arguments
 
-NativeCall also supports native functions that take functions as arguments.  One example
-of this is using function pointers as callbacks in an event-driven system.  When
-binding these functions via NativeCall, one need only provide the equivalent signature
-as a constraint on the code parameter:
+NativeCall also supports native functions that take functions as arguments.  One
+example of this is using function pointers as callbacks in an event-driven
+system.  When binding these functions via NativeCall, one need only provide the
+equivalent signature as a constraint on the code parameter:
 
     use NativeCall;
     # void SetCallback(int (*callback)(const char *))
