@@ -688,8 +688,8 @@ class CSS::Properties:ver<0.3.8> {
                  Bool :$terse = True,
                  Bool :$color-names = True,
                  |c) {
-        my CSS::Writer \writer .= new( :$terse, :$color-names, |c);
-        writer.write: self.ast(:$optimize);
+        my CSS::Writer $writer .= new( :$terse, :$color-names, |c);
+        $writer.write: self.ast(:$optimize);
     }
 
     method Str { self.write }
