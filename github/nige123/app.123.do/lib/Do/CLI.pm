@@ -53,7 +53,11 @@ sub USAGE is export {
 
 }
 
-my $do = Do.new(file => $*HOME.add('123.do').path);
+my $do-file-location = ($*CWD.add('123.do').path.IO:exists)
+                     ?? $*CWD.add('123.do').path
+                     !! $*HOME.add('123.do').path;
+
+my $do = Do.new(file => $do-file-location);
 
 # show a section of the timeline
 multi sub MAIN ($arg1 where /<Do::Timeline::Grammar::entry>/) {

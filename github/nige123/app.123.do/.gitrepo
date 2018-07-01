@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/nige123/app.123.do.git
 	branch = master
-	commit = f9d57cb60caaa0ec4a62d0d9bdefa8b07025acce
-	parent = e5246b2fe17fb0b625f88b4f43e5d1d6ae771643
+	commit = 7956f91b599578d08765752d64d82e983404ab9e
+	parent = 51200894095f49a1a8b072ca6e4adf41dc496f27
 	cmdver = 0.4.0
