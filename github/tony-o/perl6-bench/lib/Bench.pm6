@@ -188,7 +188,7 @@ class Bench {
     my $results = $.timethese($n, $alts);
     my @vals    = map { [$_, |@(%$results{$_})] }, %$results.keys;
     for @vals -> $val {
-      my $elapsed = $val[1].wallclock;
+      my $elapsed = !$use-telemetry || $.no-telemetry ?? $val[1] !! $val[1].wallclock;
       my $rate = $val[2] / ($elapsed + 0.00000000000000000001);
       $val[3] = $rate;
     }
