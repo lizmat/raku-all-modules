@@ -5,7 +5,6 @@ unit class Algorithm::LBFGS;
 use NativeCall;
 use Algorithm::LBFGS::Parameter;
 use Algorithm::LBFGS::Status;
-use NativeHelpers::Array;
 
 my constant $library = %?RESOURCES<libraries/lbfgs>.Str;
 my constant ptrsize is export = nativesizeof(Pointer);
@@ -77,14 +76,14 @@ my sub lbfgs(int32,
 method minimize(Num :@x0!,
    	            :&evaluate!,
    	            :&progress,
-  	            Algorithm::LBFGS::Parameter :$parameter!) returns Array {
+                Algorithm::LBFGS::Parameter :$parameter! --> List) {
     my $instance = Pointer[void].new;
-    $!x0 = lbfgs_malloc(@x0.elems);
+    $!x0 = CArray[lbfgsfloatval_t].allocate: @x0.elems;
     $!x0[$_] = @x0[$_] for ^@x0.elems;
     my $fx = Pointer[lbfgsfloatval_t].new;
     my $ret = lbfgs(@x0.elems, $!x0, $fx, &evaluate, &progress // sub ($instance, $x, $g, $fx, $xnorm, $gnorm, $step, $n, $k, $ls --> Int) { 0 }, $instance, $parameter);
     if STATUS($ret) == LBFGS_SUCCESS|LBFGS_CONVERGENCE {
-        return copy-to-array($!x0, @x0.elems);
+        return $!x0.list;
     } else {
         die "ERROR: " ~ STATUS($ret);
     }

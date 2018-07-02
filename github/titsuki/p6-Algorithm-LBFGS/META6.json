@@ -9,8 +9,8 @@
     "NativeHelpers::Array"
   ],
   "description" : "A Perl6 bindings for libLBFGS",
-  "name" : "Algorithm::LBFGS",
   "license" : "MIT",
+  "name" : "Algorithm::LBFGS",
   "perl" : "6.c",
   "provides" : {
     "Algorithm::LBFGS" : "lib/Algorithm/LBFGS.pm6",
@@ -21,6 +21,7 @@
     "libraries/liblbfgs"
   ],
   "source-url" : "git://github.com/titsuki/p6-Algorithm-LBFGS.git",
+  "tags" : [ ],
   "test-depends" : [ ],
   "version" : "0.0.2"
 }

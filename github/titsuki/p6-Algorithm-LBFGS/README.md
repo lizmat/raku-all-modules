@@ -185,3 +185,4 @@ SEE ALSO
 ========
 
   * libLBFGS [http://www.chokkan.org/software/liblbfgs/index.html](http://www.chokkan.org/software/liblbfgs/index.html)
+

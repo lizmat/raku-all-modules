@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-LBFGS.git
 	branch = master
-	commit = 8f3431cdd45acb6aec501e9a0e272ffbee5c2b33
-	parent = d402fea0111497a57e82c42a6906198a8ef1569a
+	commit = 40a49755d5e2709211f0f87dc3eb4d17c800db77
+	parent = b6313271e2ac8b8e4d631b4afc51d8c82ce13332
 	cmdver = 0.4.0

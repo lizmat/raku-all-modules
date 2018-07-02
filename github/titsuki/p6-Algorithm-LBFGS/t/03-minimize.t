@@ -17,7 +17,8 @@ use Algorithm::LBFGS::Parameter;
     my Algorithm::LBFGS::Parameter $parameter .= new;
     my Num @x0 = [0e0, 0e0];
     my @x = $lbfgs.minimize(:@x0, :&evaluate, :$parameter);
-    is @x, [2e0, 5e0], "Given the default parameter and fx = (x1 - 2)^2 + (x2 - 5)^2, then it should return [2e0,5e0]";
+    is-approx @x[0], 2e0, "Given the default parameter and fx = (x1 - 2)^2 + (x2 - 5)^2, then it should return [2e0,5e0] (x[0])";
+    is-approx @x[1], 5e0, "Given the default parameter and fx = (x1 - 2)^2 + (x2 - 5)^2, then it should return [2e0,5e0] (x[1])";
 }
 
 done-testing;
