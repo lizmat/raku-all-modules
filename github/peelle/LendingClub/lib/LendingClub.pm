@@ -47,7 +47,6 @@ class LendingClub {
 	method pending {
 		return self!request('GET', 'funds/pending');
 	}
-
 	
 	method notes {
 		return self!request('GET', 'notes');

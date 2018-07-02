@@ -1,7 +1,7 @@
 ﻿LendingClub
 ==========
 
-[Lending Club API](https://www.lendingclub.com/developers/lc-api.action). I wrote this to further my [plan to retire young](https://github.com/peelle/Finance-CompoundInterest) on a beach somewhere.
+[Lending Club API](https://www.lendingclub.com/developers/lc-api.action).  
 
 SYNOPSIS
 ===========
@@ -52,7 +52,7 @@ INSTALLATION
 ============
      > panda install LendingClub
 
-DEPENDANCIES
+DEPENDENCIES
 ============
 * [JSON::Tiny](https://github.com/moritz/json)
 * [Net::HTTP](https://github.com/ugexe/Perl6-Net--HTTP)
@@ -80,7 +80,7 @@ METHODS
 BUGS
 ====
 
-* I haven't tested it as throughly as I wanted. Specifically I don't have multiple account types(investing, and retirement) so  I don't know if it works right for people with both.
+* I haven't tested it as thoroughly as I wanted. Specifically I don't have multiple account types(investing, and retirement) so  I don't know if it works right for people with both.
 * Setting listing to true attempts to get ALL notes on the Lending Club platform. Using a true value for the listing method crashes on my system. I haven't looked into why.
 
 
