@@ -72,3 +72,4 @@ Copyright 2016 titsuki
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
 This algorithm is from Bentley, Jon L., and Robert Sedgewick. "Fast algorithms for sorting and searching strings." SODA. Vol. 97. 1997.
+
