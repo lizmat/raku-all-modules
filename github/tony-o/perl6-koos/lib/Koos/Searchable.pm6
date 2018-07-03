@@ -166,7 +166,6 @@ method sql($page-start?, $page-size?, :$field-override = Nil, :$update = False, 
     $sql   ~= self!gen-filters if $!filter;
     $sql   ~= self!gen-order;
   }
-
   { sql => $sql, params => @*params };
 }
 
@@ -232,8 +231,10 @@ method !gen-pairs($kv, $type = 'AND', $force-placeholder = False, :$key-table?, 
       @pairs.push: '( '~self!gen-pairs($x.key eq ('-or'|'-and') ?? $x.value !! $x, $x.key eq ('-or'|'-and') ?? $x.key.uc.substr(1) !! $type, $force-placeholder, :$key-table, :$val-table)~' )';
     }
   } elsif $kv ~~ Array {
+    my $arg;
     for @($kv) -> $x {
-      @pairs.push: '( '~self!gen-pairs($x, $type, $force-placeholder, :$key-table, :$val-table)~' )';
+      $arg = $x.WHAT ~~ List ?? $x.pairs[0].value !! $x;
+      @pairs.push: '( '~self!gen-pairs($arg, $type, $force-placeholder, :$key-table, :$val-table)~' )';
     }
   }
   @pairs.join(" $type ");
