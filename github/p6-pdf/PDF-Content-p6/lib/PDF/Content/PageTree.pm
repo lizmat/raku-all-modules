@@ -58,7 +58,7 @@ role PDF::Content::PageTree
     }
 
     #| traverse page tree
-    multi method page(Int $page-num where { $page-num > 0 && $page-num <= self<Count> }) {
+    multi method page(Int $page-num where { 0 < $page-num <= self<Count> }) {
         my Int $page-count = 0;
 
         for self.Kids.keys {
@@ -69,7 +69,7 @@ role PDF::Content::PageTree
                 my Int $sub-page-num = $page-num - $page-count;
 
                 return $kid.page( $sub-page-num )
-                    if $sub-page-num > 0 && $sub-page-num <= $sub-pages;
+                    if 0 < $sub-page-num <= $sub-pages;
 
                 $page-count += $sub-pages
             }
@@ -88,7 +88,7 @@ role PDF::Content::PageTree
     }
 
     #| delete page from page tree
-    multi method delete-page(Int $page-num where { $page-num > 0 && $page-num <= self<Count>},
+    multi method delete-page(Int $page-num where { 0 < $page-num <= self<Count>},
 	--> PDF::Content::PageNode) {
         my $page-count = 0;
 
@@ -99,7 +99,7 @@ role PDF::Content::PageTree
                 my $sub-pages = $kid<Count>;
                 my $sub-page-num = $page-num - $page-count;
 
-                if $sub-page-num > 0 && $sub-page-num <= $sub-pages {
+                if 0 < $sub-page-num <= $sub-pages {
                     # found in descendant
                     self<Count>--;
                     return $kid.delete-page( $sub-page-num );
@@ -132,15 +132,9 @@ role PDF::Content::PageTree
     }
 
     method cb-finish {
-        my Int $count = 0;
         my Array $kids = self.Kids;
-        for $kids.keys {
-            my $kid = $kids[$_];
-            $kid<Parent> = self.link;
-            $kid.cb-finish;
-            $count += $kid.can('Count') ?? $kid.Count !! 1;
-        }
-        self<Count> = $count;
+        $kids[$_].cb-finish
+            for $kids.keys;
     }
 
 }
