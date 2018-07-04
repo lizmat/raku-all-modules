@@ -1,7 +1,9 @@
 ﻿Finance::CompoundInterest
 ==========
 
-Subroutines for calculating compound interest.
+Subroutines for calculating compound interest. 
+
+2018 Update: While I still find the below documentation more fun to read that strictly facts documentation, I wanted to disclose I did make money, but no where near my my predictions. 
 
 SYNOPSIS
 ===========
