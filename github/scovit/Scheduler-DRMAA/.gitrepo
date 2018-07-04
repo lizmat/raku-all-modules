@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/scovit/Scheduler-DRMAA.git
 	branch = master
-	commit = 1e4635c5e02fdad0ba0db639601dd6bd1ae5a8ce
-	parent = 5cfc3a55382dfe575d0ac0b1f8d7f77947366a0c
+	commit = 1afe7f2c94731ad6d2f2978bfff7295bb5c938ab
+	parent = db4a32b1e6aa584729afbece281caf836ad8216c
 	cmdver = 0.4.0
