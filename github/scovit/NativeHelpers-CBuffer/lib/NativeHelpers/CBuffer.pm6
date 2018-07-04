@@ -1,5 +1,5 @@
 use v6.c;
-unit module NativeHelpers::CBuffer:ver<0.0.2>:auth<Vittore F Scolari (vittore.scolari@gmail.com)>;
+unit module NativeHelpers::CBuffer:ver<0.0.3>:auth<Vittore F Scolari (vittore.scolari@gmail.com)>;
 
 use nqp;
 use NativeCall;
@@ -14,30 +14,34 @@ class CBuffer is repr('CPointer') is export {
    sub memcpy_B(Blob:D $dest, CBuffer $src, size_t $size --> Pointer) is native is symbol('memcpy') { }
    sub free(Pointer $what) is native { }
 
-   method size(--> Int) {
+   method elems(--> Int:D) {
        my Pointer[size_t] $size_loc = nqp::box_i(nqp::unbox_i(nqp::decont(self)) - nativesizeof(size_t), Pointer[size_t]);
        $size_loc.deref;
    }
-   
+
    method type() {
        my Pointer[size_t] $type_loc = nqp::box_i(nqp::unbox_i(nqp::decont(self)) - 2 * nativesizeof(size_t), Pointer[size_t]);
        $types[$type_loc.deref];
    }
 
-   multi method new(Int $size, :$init, :$type where { $type ∈ $types } = uint8) {
-       my Pointer $type_loc = calloc($size * nativesizeof($type) + 2 * nativesizeof(size_t), 1) or
+   method bytes(--> Int:D) {
+       self.elems * nativesizeof(self.type);
+   }
+
+   multi method new(Int $size, :$with, :$of-type where { $of-type ∈ $types } = uint8) {
+       my Pointer $type_loc = calloc($size * nativesizeof($of-type) + 2 * nativesizeof(size_t), 1) or
            die "Failed to allocate (out of memory)";
 
        my Pointer $size_loc = Pointer.new(+$type_loc + nativesizeof(size_t));
        my Pointer $data_loc = Pointer.new(+$size_loc + nativesizeof(size_t));
 
-       if (defined($init)) {
-           given $init {
+       if (defined($with)) {
+           given $with {
                when Str {
-                   strncpy($data_loc, $_, $size * nativesizeof($type));
+                   strncpy($data_loc, $_, $size * nativesizeof($of-type));
                }
                when Blob {
-                   memcpy_A($data_loc, $_, .bytes min ($size * nativesizeof($type)) );
+                   memcpy_A($data_loc, $_, .bytes min ($size * nativesizeof($of-type)) );
                }
                default {
                    die 'Expected Blob or Str initialization for CBuffer';
@@ -45,16 +49,16 @@ class CBuffer is repr('CPointer') is export {
            }
        }
 
-       memcpy_A($type_loc, Blob[size_t].new(code($type)), nativesizeof(size_t));
-       memcpy_A($size_loc, Blob[size_t].new($size),       nativesizeof(size_t));
+       memcpy_A($type_loc, Blob[size_t].new(code($of-type)), nativesizeof(size_t));
+       memcpy_A($size_loc, Blob[size_t].new($size),     nativesizeof(size_t));
        nativecast(CBuffer, $data_loc);
    }
 
-   multi method new(Blob $init) {
-       self.new($init.bytes, :init($init));
+   multi method new(Blob:D $init) {
+       self.new($init.elems, :with($init), :of-type($init.of));
    }
 
-   multi method new(Str $init) {
+   multi method new(Str:D $init) {
        self.new(($init ~ "\x0").encode('ascii'));
    }
 
@@ -62,20 +66,20 @@ class CBuffer is repr('CPointer') is export {
        die "No default constructor for 'CBuffer', please specify the size to be allocated";
    }
 
-   method Blob(--> Blob) {
+   method Blob(--> Blob:D) {
        my $t = self.type;
-       my Blob[$t] $b = Blob[$t].new(0 xx self.size);
-       memcpy_B($b, self, self.size * nativesizeof(self.type));
+       my Blob[$t] $b = Blob[$t].new(0 xx self.elems);
+       memcpy_B($b, self, self.bytes);
        $b;
    }
 
    method Pointer(--> Pointer) { nativecast(Pointer[self.type], self) }
 
-   method Str(--> Str) {
+   method Str(--> Str:D) {
        do with self.Blob { .substr(0, .index("\0")) given .decode("ascii") };
    }
 
-   method gist(--> Str) { self.Str; }
+   method gist(--> Str:D) { self.Str; }
 
    method free() {
        if (defined self) {

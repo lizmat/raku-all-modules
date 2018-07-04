@@ -42,11 +42,11 @@ METHODS
 ## multi new (Int)
 
 ```perl6
-    multi method new(Int $size, :$init, :$type where { $type ∈ $types } = uint8)
+    multi method new(Int $size, :$with, :$of-type where { $of-type ∈ $types } = uint8)
 ```
 
-Allocates a buffer of size `$size` elements, of type `$type` and with content a copy of `$init`.
-Where `$init` can be either a Str or a Blob, and `$type` can be any of:
+Allocates a buffer of size `$size` elements, of type `$of-type` and with content a copy of `$with`.
+Where `$with` can be either a Str or a Blob, and `$of-type` can be any of:
 
 ```perl6
     my $types = (uint8, int8, uint16, int16, uint32, int32, uint64, int64, size_t, long, ulong, longlong, ulonglong);
@@ -68,13 +68,21 @@ Allocates a buffer and store the content of the `$init` parameter.
 
 Allocates a buffer and store the content of the `$init` parameter as a NULL-terminated ASCII string.
 
-## size
+## elems
 
 ```perl6
-    method size(--> size_t)
+    method elems(--> Int:D)
 ```
 
-Return the stored size
+Return the number of elements stored
+
+## bytes
+
+```perl6
+    method bytes(--> Int:D)
+```
+
+Return the number of bytes stored
 
 ## type
 
@@ -82,12 +90,12 @@ Return the stored size
     method type()
 ```
 
-Return the stored type
+Return the type of the elements stored
 
 ## Blob
 
 ```perl6
-    method Blob(--> Blob)
+    method Blob(--> Blob:D)
 ```
 
 Return a copy of the content as a Blob
@@ -103,7 +111,7 @@ Return the pointer to the allocated buffer of type Pointer[self.type]
 ## Str
 
 ```perl6
-    method Str(--> Str)
+    method Str(--> Str:D)
 ```
 
 Return a Str with the content decoded as null-terminated ASCII
