@@ -1,5 +1,10 @@
-vX.X    NOT YET RELEASED
+v0.5    July 4, 2018
 
+    * Fix #12: Searches for items like some/*/*/foo.json failed on the first
+      non-directory encountered. This probably also failed on several other
+      similar deep searches.
+    * Dir handling did not do a good job of avoiding ".." and "." in matches
+      where should have.
     * Corrected documentation errors in the POD
 
 v0.4    April 25, 2018

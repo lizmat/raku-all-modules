@@ -1,4 +1,4 @@
-unit class IO::Glob:auth<github:zostay>:ver<0.4> does Iterable;
+unit class IO::Glob:auth<github:zostay>:ver<0.5> does Iterable;
 
 use v6;
 
@@ -379,12 +379,15 @@ method dir(Str() $path = '.') returns Seq:D {
     my @globbers = @!globbers;
 
     # Depth-first-search... commence!
-    my @open-list = \(:path($current), :@globbers);
+    my @open-list = \(:path($current), :@globbers, :origin);
     gather while @open-list {
-        my (:$path, :@globbers) := @open-list.shift;
+        my (:$path, :@globbers, :$origin) := @open-list.shift;
 
         if @globbers {
             my ($globber, @remaining) = @globbers;
+
+            next unless $path ~~ :d;
+            next unless $origin || $path.basename ne '..' | '.';
 
             my @paths = do if $globber.is-ordered {
                 $globber.accepts-with-sort($path.dir);
