@@ -9,24 +9,25 @@ role PDF::Content::PageTree
     use PDF::COS;
 
     #| add new last page
-    method add-page( $page? is copy ) {
-        my $sub-pages = self.Kids.tail
+    method add-page( PDF::Content::PageNode $page? is copy ) {
+        my $right-node = self.Kids.tail
             if self.Kids;
 
 	with $page {
 	    unless .<Resources>:exists {
 		# import resources, if inherited and outside our hierarchy
-		my $resources = .Resources;
-		.<Resources> = $resources.clone
-		    if $resources && $resources !=== .Resources;
+		with .Resources -> $resources {
+                    .<Resources> = $resources.clone
+		        unless $resources === self.Resources;
+                }
 	    }
 	}
 	else {
 	    $_ = PDF::COS.coerce: :dict{ :Type( :name<Page> ) };
 	}
 
-        if $sub-pages && $sub-pages.can('add-page') {
-            $page = $sub-pages.add-page( $page )
+        if $right-node && $right-node.can('add-page') {
+            $page = $right-node.add-page( $page );
         }
         else {
             self.Kids.push: $page;
@@ -58,7 +59,7 @@ role PDF::Content::PageTree
     }
 
     #| traverse page tree
-    multi method page(Int $page-num where { 0 < $page-num <= self<Count> }) {
+    multi method page(Int $page-num where { 0 < $_ <= self<Count> }) {
         my Int $page-count = 0;
 
         for self.Kids.keys {
@@ -88,7 +89,7 @@ role PDF::Content::PageTree
     }
 
     #| delete page from page tree
-    multi method delete-page(Int $page-num where { 0 < $page-num <= self<Count>},
+    multi method delete-page(Int $page-num where { 0 < $_ <= self<Count>},
 	--> PDF::Content::PageNode) {
         my $page-count = 0;
 

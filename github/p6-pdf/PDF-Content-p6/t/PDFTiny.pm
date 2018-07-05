@@ -5,6 +5,8 @@ class t::PDFTiny is PDF {
     use PDF::COS::Tie;
     use PDF::COS::Loader;
     use PDF::COS::Util :from-ast;
+    use PDF::COS::Dict;
+    use PDF::COS::Stream;
     use PDF::Content::Page;
     use PDF::Content::PageNode;
     use PDF::Content::PageTree;
@@ -25,19 +27,20 @@ class t::PDFTiny is PDF {
         is PDF::COS::Stream
         does PDF::Content::XObject['Image'] {
     }
-    my role PageNode
-	does PDF::COS::Tie::Hash
+    my class PageNode
+	is PDF::COS::Dict
 	does PDF::Content::PageNode {
 
- 	has ResourceDict $.Resources is entry(:inherit);
+       has ResourceDict $.Resources is entry(:inherit);
+       has $.Parent is entry;
     }
-    my role Page does PageNode does PDF::Content::Page {
+    my class Page is PageNode does PDF::Content::Page {
 	has Numeric @.MediaBox is entry(:inherit,:len(4));
 	has Numeric @.CropBox  is entry(:len(4));
 	has Numeric @.TrimBox  is entry(:len(4));
     }
-    my role Pages does PageNode does PDF::Content::PageTree {
-	has Page @.Kids        is entry(:required, :indirect);
+    my class Pages is PageNode does PDF::Content::PageTree {
+	has PageNode @.Kids    is entry(:required, :indirect);
         has UInt $.Count       is entry(:required);
     }
     my role Catalog
@@ -58,8 +61,8 @@ class t::PDFTiny is PDF {
         multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Image' given  .<Subtype>}) {
             XObject-Image
         }
-        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Pattern' given  .<Type>}) {
-            XObject-Form
+        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Pattern'|'Page'|'Pages' given  .<Type>}) {
+            %{:Pattern(XObject-Form), :Page(Page), :Pages(Pages)}{from-ast($dict<Type>)}
         }
     }
     PDF::COS.loader = Loader;
