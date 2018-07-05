@@ -10,6 +10,7 @@ class PDF::Lite:ver<0.0.3>
     use PDF::COS::Tie;
     use PDF::COS::Tie::Hash;
     use PDF::COS::Loader;
+    use PDF::COS::Dict;
     use PDF::COS::Stream;
     use PDF::COS::Util :from-ast;
 
@@ -43,21 +44,8 @@ class PDF::Lite:ver<0.0.3>
         does PDF::Content::XObject['Image'] {
     }
 
-    my class Loader is PDF::COS::Loader {
-        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Form' given  .<Subtype>}) {
-            XObject-Form
-        }
-        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Image' given  .<Subtype>}) {
-            XObject-Image
-        }
-        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Pattern' given  .<Type>}) {
-            XObject-Form
-        }
-    }
-    PDF::COS.loader = Loader;
-
-    my role Page
-	does PDF::COS::Tie::Hash
+    my class Page
+	is PDF::COS::Dict
 	does PDF::Content::Page
 	does PDF::Content::PageNode {
 
@@ -72,12 +60,11 @@ class PDF::Lite:ver<0.0.3>
         my subset NinetyDegreeAngle of Int where { $_ %% 90}
         has NinetyDegreeAngle $.Rotate is entry(:inherit);
 
-	my subset StreamOrArray where PDF::COS::Stream | Array;
-	has StreamOrArray $.Contents is entry;
+	has PDF::COS::Stream @.Contents is entry(:array-or-item);
     }
 
-    my role Pages
-	does PDF::COS::Tie::Hash
+    my class Pages
+	is PDF::COS::Dict
 	does PDF::Content::PageNode
 	does PDF::Content::PageTree {
 
@@ -86,7 +73,7 @@ class PDF::Lite:ver<0.0.3>
 	has Numeric @.MediaBox is entry(:inherit,:len(4));
 	has Numeric @.CropBox  is entry(:inherit,:len(4));
 
-	has Page @.Kids        is entry(:required, :indirect);
+	has PDF::Content::PageNode @.Kids        is entry(:required, :indirect);
         has UInt $.Count       is entry(:required);
     }
 
@@ -105,6 +92,19 @@ class PDF::Lite:ver<0.0.3>
     method cb-init {
 	self<Root> //= { :Type( :name<Catalog> ), :Pages{ :Type( :name<Pages> ), :Kids[], :Count(0), } };
     }
+
+    my class Loader is PDF::COS::Loader {
+        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Form' given .<Subtype>}) {
+            XObject-Form
+        }
+        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Image' given .<Subtype>}) {
+            XObject-Image
+        }
+        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Pattern'|'Page'|'Pages' given .<Type>}) {
+            %{:Pattern(XObject-Form), :Page(Page), :Pages(Pages)}{from-ast($dict<Type>)};
+        }
+    }
+    PDF::COS.loader = Loader;
 
     BEGIN for <page add-page add-pages delete-page insert-page page-count media-box crop-box bleed-box trim-box art-box core-font use-font> -> $meth {
         $?CLASS.^add_method($meth,  method (|a) { self.Root.Pages."$meth"(|a) });
