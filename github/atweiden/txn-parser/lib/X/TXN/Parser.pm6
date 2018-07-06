@@ -1,10 +1,11 @@
 use v6;
-unit module X::TXN::Parser;
 
 # X::TXN::Parser::Annot::Inherit::BadSilo {{{
 
-class Annot::Inherit::BadSilo is Exception
+class X::TXN::Parser::Annot::Inherit::BadSilo
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -15,8 +16,10 @@ class Annot::Inherit::BadSilo is Exception
 # end X::TXN::Parser::Annot::Inherit::BadSilo }}}
 # X::TXN::Parser::Annot::Lot::BadSilo {{{
 
-class Annot::Lot::BadSilo is Exception
+class X::TXN::Parser::Annot::Lot::BadSilo
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -27,8 +30,10 @@ class Annot::Lot::BadSilo is Exception
 # end X::TXN::Parser::Annot::Lot::BadSilo }}}
 # X::TXN::Parser::AssetQuantityIsZero {{{
 
-class AssetQuantityIsZero is Exception
+class X::TXN::Parser::AssetQuantityIsZero
 {
+    also is Exception;
+
     has Str:D $.text is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -42,8 +47,10 @@ class AssetQuantityIsZero is Exception
 # end X::TXN::Parser::AssetQuantityIsZero }}}
 # X::TXN::Parser::Entry::MultipleEntities {{{
 
-class Entry::MultipleEntities is Exception
+class X::TXN::Parser::Entry::MultipleEntities
 {
+    also is Exception;
+
     has Str:D $.entry-text is required;
     has UInt:D $.number-entities is required;
 
@@ -63,8 +70,10 @@ class Entry::MultipleEntities is Exception
 # end X::TXN::Parser::Entry::MultipleEntities }}}
 # X::TXN::Parser::Include {{{
 
-class Include is Exception
+class X::TXN::Parser::Include
 {
+    also is Exception;
+
     has Str:D $.filename is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -82,8 +91,10 @@ class Include is Exception
 # end X::TXN::Parser::Include }}}
 # X::TXN::Parser::ParseFailed {{{
 
-class ParseFailed is Exception
+class X::TXN::Parser::ParseFailed
 {
+    also is Exception;
+
     has Str:D $.content is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -99,8 +110,10 @@ class ParseFailed is Exception
 # end X::TXN::Parser::ParseFailed }}}
 # X::TXN::Parser::ParsefileFailed {{{
 
-class ParsefileFailed is Exception
+class X::TXN::Parser::ParsefileFailed
 {
+    also is Exception;
+
     has Str:D $.file is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -112,8 +125,10 @@ class ParsefileFailed is Exception
 # end X::TXN::Parser::ParsefileFailed }}}
 # X::TXN::Parser::String::EscapeSequence {{{
 
-class String::EscapeSequence is Exception
+class X::TXN::Parser::String::EscapeSequence
 {
+    also is Exception;
+
     has Str:D $.esc is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -125,8 +140,10 @@ class String::EscapeSequence is Exception
 # end X::TXN::Parser::String::EscapeSequence }}}
 # X::TXN::Parser::TXNLibAbsolute {{{
 
-class TXNLibAbsolute is Exception
+class X::TXN::Parser::TXNLibAbsolute
 {
+    also is Exception;
+
     has Str:D $.lib is required;
 
     method message(::?CLASS:D: --> Str:D)
