@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-web-scraper.git
+	branch = master
+	commit = ff19075b3db215a88f718c76778dd57dd26961db
+	parent = 6993baf59a102e16532c7a5b2f1877797636bcc8
+	cmdver = 0.4.0

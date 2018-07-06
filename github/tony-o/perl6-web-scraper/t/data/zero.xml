@@ -1,0 +1,14 @@
+<xml>
+  <item>
+    <id>1</id>
+    <file>data/one.xml</file>
+  </item>
+  <item>
+    <id>2</id>
+    <file>data/two.xml</file>
+  </item>
+  <item>
+    <id>3</id>
+    <file>data/three.xml</file>
+  </item>
+</xml>
