@@ -44,6 +44,8 @@ class PDF::Lite:ver<0.0.3>
         does PDF::Content::XObject['Image'] {
     }
 
+    my class Tiling-Pattern is XObject-Form {};
+
     my class Page
 	is PDF::COS::Dict
 	does PDF::Content::Page
@@ -94,14 +96,14 @@ class PDF::Lite:ver<0.0.3>
     }
 
     my class Loader is PDF::COS::Loader {
-        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Form' given .<Subtype>}) {
-            XObject-Form
+        multi method load-delegate(Hash :$dict! where { from-ast($_) ~~ 'Form'|'Image' with .<Subtype> }) {
+            %( :Form(XObject-Form), :Image(XObject-Image) ){ from-ast($dict<Subtype>) };
         }
-        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Image' given .<Subtype>}) {
-            XObject-Image
+        multi method load-delegate(Hash :$dict! where { from-ast($_) ~~ 'Page'|'Pages' with .<Type> }) {
+            %( :Page(Page), :Pages(Pages) ){ from-ast($dict<Type>) };
         }
-        multi method load-delegate(Hash :$dict! where {from-ast($_) ~~ 'Pattern'|'Page'|'Pages' given .<Type>}) {
-            %{:Pattern(XObject-Form), :Page(Page), :Pages(Pages)}{from-ast($dict<Type>)};
+        multi method load-delegate(Hash :$dict! where { from-ast($_) == 1 with .<PatternType> }) {
+            Tiling-Pattern
         }
     }
     PDF::COS.loader = Loader;
