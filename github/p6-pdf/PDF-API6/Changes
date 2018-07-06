@@ -1,0 +1,10 @@
+0.1.0
+   - adjust to rename of PDF::DAO to PDF::COS in latest PDF::CLASS
+0.0.4
+   - add color-separation() and color-devicen() methods
+0.0.3
+   - add fields() and fields-hash() methods
+0.0.2
+   - rebase from PDF::Content to PDF::Class
+0.0.1
+   - initial release
