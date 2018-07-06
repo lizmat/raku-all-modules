@@ -53,7 +53,7 @@ sub USAGE is export {
 
 }
 
-my $do-file-location = ($*CWD.add('123.do').path.IO:exists)
+my $do-file-location = ($*CWD.add('123.do').path.IO.e)
                      ?? $*CWD.add('123.do').path
                      !! $*HOME.add('123.do').path;
 
