@@ -1,0 +1,22 @@
+services:
+    - postgresql
+    - mysql
+
+language: perl6
+env:
+    - PERL=/usr/bin/perl
+
+perl6:
+    - 2017.08
+    - latest
+    - nom
+sudo: false
+install:
+    - rakudobrew build-zef && zef -v install .
+before_install:
+    # mysql
+    - mysql -e "CREATE DATABASE dbdishtest;" -uroot
+    - mysql -e "CREATE USER 'testuser'@'localhost' IDENTIFIED BY 'testpass';" -uroot
+    - mysql -e "GRANT ALL PRIVILEGES ON dbdishtest.* TO 'testuser'@'localhost';" -uroot
+    # Pg
+    - psql -c 'CREATE DATABASE dbdishtest;' -U postgres
