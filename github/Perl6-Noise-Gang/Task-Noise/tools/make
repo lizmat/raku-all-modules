@@ -1,0 +1,23 @@
+use HTTP::UserAgent;
+use JSON::Class;
+use META6;
+
+my $ua = HTTP::UserAgent.new;
+
+constant Projects = (Array[META6] but JSON::Class);
+
+my $json = $ua.get('http://ecosystem-api.p6c.org/projects.json').content;
+
+my $projects = Projects.from-json($json);
+
+my $meta = META6.new(name => 'Task::Noise', source-url => 'git@github.com:Perl6-Noise-Gang/Task-Noise.git', authors => ["Perl6 Noise Gang"], perl-version => $*PERL.version, version => v0.0.1, tags => <audio noise sound>, auth => 'github:perl6-noise-gang');
+
+for $projects.list -> $dist {
+	if $dist.name ~~ /^Audio/ || any($dist.tags.list) ~~ any(<audio noise music rhythm>) {
+		$meta.depends.append: $dist.name;
+	}
+}
+
+say $meta.to-json;
+
+
