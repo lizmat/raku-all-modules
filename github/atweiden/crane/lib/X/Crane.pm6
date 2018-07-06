@@ -1,10 +1,11 @@
 use v6;
-unit module X::Crane;
 
 # X::Crane::PathOutOfRange {{{
 
-class PathOutOfRange is Exception
+class X::Crane::PathOutOfRange
 {
+    also is Exception;
+
     has Str:D $.operation is required;
     has X::OutOfRange:D $.out-of-range is required;
 
@@ -24,6 +25,7 @@ class PathOutOfRange is Exception
             ^ <range-str> $
         }
     }
+
     my class RangeStrActions
     {
         method integer($/ --> Nil)
@@ -42,7 +44,7 @@ class PathOutOfRange is Exception
         }
     }
 
-    method message(--> Str:D)
+    method message(::?CLASS:D: --> Str:D)
     {
         my Int:D $got = $.out-of-range.got;
         my RangeStrActions $actions .= new;
@@ -61,8 +63,10 @@ class PathOutOfRange is Exception
 # end X::Crane::PathOutOfRange }}}
 # X::Crane::AddPathNotFound {{{
 
-class AddPathNotFound is Exception
+class X::Crane::AddPathNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -73,15 +77,21 @@ class AddPathNotFound is Exception
 # end X::Crane::AddPathNotFound }}}
 # X::Crane::AddPathOutOfRange {{{
 
-class AddPathOutOfRange is PathOutOfRange {*}
+class X::Crane::AddPathOutOfRange
+{
+    also is X::Crane::PathOutOfRange;
+}
 
 # end X::Crane::AddPathOutOfRange }}}
 # X::Crane::Add::RO {{{
 
-class Add::RO is Exception
+class X::Crane::Add::RO
 {
+    also is Exception;
+
     has Str:D $.typename is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             "✗ Crane error: add requested modifying an immutable $.typename";
@@ -91,8 +101,10 @@ class Add::RO is Exception
 # end X::Crane::Add::RO }}}
 # X::Crane::AssociativeKeyDNE {{{
 
-class AssociativeKeyDNE is Exception
+class X::Crane::AssociativeKeyDNE
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message = '✗ Crane error: associative key does not exist';
@@ -102,8 +114,10 @@ class AssociativeKeyDNE is Exception
 # end X::Crane::AssociativeKeyDNE }}}
 # X::Crane::CopyFromNotFound {{{
 
-class CopyFromNotFound is Exception
+class X::Crane::CopyFromNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -114,8 +128,10 @@ class CopyFromNotFound is Exception
 # end X::Crane::CopyFromNotFound }}}
 # X::Crane::CopyParentToChild {{{
 
-class CopyParentToChild is Exception
+class X::Crane::CopyParentToChild
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -127,8 +143,10 @@ class CopyParentToChild is Exception
 # end X::Crane::CopyParentToChild }}}
 # X::Crane::CopyPathNotFound {{{
 
-class CopyPathNotFound is Exception
+class X::Crane::CopyPathNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -139,10 +157,13 @@ class CopyPathNotFound is Exception
 # end X::Crane::CopyPathNotFound }}}
 # X::Crane::CopyPathOutOfRange {{{
 
-class CopyPathOutOfRange is Exception
+class X::Crane::CopyPathOutOfRange
 {
+    also is Exception;
+
     has Str:D $.add-path-out-of-range is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             $.add-path-out-of-range.subst(/'add operation'/, 'copy operation');
@@ -152,10 +173,13 @@ class CopyPathOutOfRange is Exception
 # end X::Crane::CopyPathOutOfRange }}}
 # X::Crane::CopyPath::RO {{{
 
-class CopyPath::RO is Exception
+class X::Crane::CopyPath::RO
 {
+    also is Exception;
+
     has Str:D $.typename is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             "✗ Crane error: requested copy path is immutable $.typename";
@@ -165,8 +189,10 @@ class CopyPath::RO is Exception
 # end X::Crane::CopyPath::RO }}}
 # X::Crane::GetPathNotFound {{{
 
-class GetPathNotFound is Exception
+class X::Crane::GetPathNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -177,8 +203,10 @@ class GetPathNotFound is Exception
 # end X::Crane::GetPathNotFound }}}
 # X::Crane::GetRootContainerKey {{{
 
-class GetRootContainerKey is Exception
+class X::Crane::GetRootContainerKey
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -189,8 +217,10 @@ class GetRootContainerKey is Exception
 # end X::Crane::GetRootContainerKey }}}
 # X::Crane::ExistsRootContainerKey {{{
 
-class ExistsRootContainerKey is Exception
+class X::Crane::ExistsRootContainerKey
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -201,8 +231,10 @@ class ExistsRootContainerKey is Exception
 # end X::Crane::ExistsRootContainerKey }}}
 # X::Crane::MoveFromNotFound {{{
 
-class MoveFromNotFound is Exception
+class X::Crane::MoveFromNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -213,10 +245,13 @@ class MoveFromNotFound is Exception
 # end X::Crane::MoveFromNotFound }}}
 # X::Crane::MoveFrom::RO {{{
 
-class MoveFrom::RO is Exception
+class X::Crane::MoveFrom::RO
 {
+    also is Exception;
+
     has Str:D $.typename is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             "✗ Crane error: requested move from immutable $.typename";
@@ -226,8 +261,10 @@ class MoveFrom::RO is Exception
 # end X::Crane::MoveFrom::RO }}}
 # X::Crane::MoveParentToChild {{{
 
-class MoveParentToChild is Exception
+class X::Crane::MoveParentToChild
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -239,8 +276,10 @@ class MoveParentToChild is Exception
 # end X::Crane::MoveParentToChild }}}
 # X::Crane::MovePathNotFound {{{
 
-class MovePathNotFound is Exception
+class X::Crane::MovePathNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -251,10 +290,13 @@ class MovePathNotFound is Exception
 # end X::Crane::MovePathNotFound }}}
 # X::Crane::MovePathOutOfRange {{{
 
-class MovePathOutOfRange is Exception
+class X::Crane::MovePathOutOfRange
 {
+    also is Exception;
+
     has Str:D $.add-path-out-of-range is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             $.add-path-out-of-range.subst(/'add operation'/, 'move operation');
@@ -264,10 +306,13 @@ class MovePathOutOfRange is Exception
 # end X::Crane::MovePathOutOfRange }}}
 # X::Crane::MovePath::RO {{{
 
-class MovePath::RO is Exception
+class X::Crane::MovePath::RO
 {
+    also is Exception;
+
     has Str:D $.typename is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             "✗ Crane error: requested move path is immutable $.typename";
@@ -277,10 +322,13 @@ class MovePath::RO is Exception
 # end X::Crane::MovePath::RO }}}
 # X::Crane::Patch {{{
 
-class Patch is Exception
+class X::Crane::Patch
 {
+    also is Exception;
+
     has Str:D $.help-text is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message = $.help-text;
     }
@@ -289,8 +337,10 @@ class Patch is Exception
 # end X::Crane::Patch }}}
 # X::Crane::PatchAddFailed {{{
 
-class PatchAddFailed is Exception
+class X::Crane::PatchAddFailed
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message = '✗ Crane error: patch operation failed, add failed';
@@ -300,8 +350,10 @@ class PatchAddFailed is Exception
 # end X::Crane::PatchAddFailed }}}
 # X::Crane::PatchCopyFailed {{{
 
-class PatchCopyFailed is Exception
+class X::Crane::PatchCopyFailed
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -312,8 +364,10 @@ class PatchCopyFailed is Exception
 # end X::Crane::PatchCopyFailed }}}
 # X::Crane::PatchMoveFailed {{{
 
-class PatchMoveFailed is Exception
+class X::Crane::PatchMoveFailed
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -324,8 +378,10 @@ class PatchMoveFailed is Exception
 # end X::Crane::PatchMoveFailed }}}
 # X::Crane::PatchRemoveFailed {{{
 
-class PatchRemoveFailed is Exception
+class X::Crane::PatchRemoveFailed
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -336,8 +392,10 @@ class PatchRemoveFailed is Exception
 # end X::Crane::PatchRemoveFailed }}}
 # X::Crane::PatchReplaceFailed {{{
 
-class PatchReplaceFailed is Exception
+class X::Crane::PatchReplaceFailed
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -348,8 +406,10 @@ class PatchReplaceFailed is Exception
 # end X::Crane::PatchReplaceFailed }}}
 # X::Crane::PatchTestFailed {{{
 
-class PatchTestFailed is Exception
+class X::Crane::PatchTestFailed
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -360,8 +420,10 @@ class PatchTestFailed is Exception
 # end X::Crane::PatchTestFailed }}}
 # X::Crane::PositionalIndexDNE {{{
 
-class PositionalIndexDNE is Exception
+class X::Crane::PositionalIndexDNE
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message = '✗ Crane error: positional index does not exist';
@@ -371,8 +433,10 @@ class PositionalIndexDNE is Exception
 # end X::Crane::PositionalIndexDNE }}}
 # X::Crane::PositionalIndexInvalid {{{
 
-class PositionalIndexInvalid is Exception
+class X::Crane::PositionalIndexInvalid
 {
+    also is Exception;
+
     has Str:D $.classifier is required;
 
     my Str:D $error-message-intm =
@@ -401,8 +465,10 @@ class PositionalIndexInvalid is Exception
 # end X::Crane::PositionalIndexInvalid }}}
 # X::Crane::RemovePathNotFound {{{
 
-class RemovePathNotFound is Exception
+class X::Crane::RemovePathNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -414,10 +480,13 @@ class RemovePathNotFound is Exception
 # end X::Crane::RemovePathNotFound }}}
 # X::Crane::Remove::RO {{{
 
-class Remove::RO is Exception
+class X::Crane::Remove::RO
 {
+    also is Exception;
+
     has Str:D $.typename is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             "✗ Crane error: requested remove operation on immutable $.typename";
@@ -427,8 +496,10 @@ class Remove::RO is Exception
 # end X::Crane::Remove::RO }}}
 # X::Crane::ReplacePathNotFound {{{
 
-class ReplacePathNotFound is Exception
+class X::Crane::ReplacePathNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -440,10 +511,13 @@ class ReplacePathNotFound is Exception
 # end X::Crane::ReplacePathNotFound }}}
 # X::Crane::Replace::RO {{{
 
-class Replace::RO is Exception
+class X::Crane::Replace::RO
 {
+    also is Exception;
+
     has Str:D $.typename is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             '✗ Crane error: replace requested modifying an immutable '
@@ -454,10 +528,13 @@ class Replace::RO is Exception
 # end X::Crane::Replace::RO }}}
 # X::Crane::OpSet::RO {{{
 
-class OpSet::RO is Exception
+class X::Crane::OpSet::RO
 {
+    also is Exception;
+
     has Str:D $.typename is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             "✗ Crane error: set requested modifying an immutable $.typename";
@@ -467,8 +544,10 @@ class OpSet::RO is Exception
 # end X::Crane::OpSet::RO }}}
 # X::Crane::TestPathNotFound {{{
 
-class TestPathNotFound is Exception
+class X::Crane::TestPathNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -479,8 +558,10 @@ class TestPathNotFound is Exception
 # end X::Crane::TestPathNotFound }}}
 # X::Crane::TransformCallableRaisedException {{{
 
-class TransformCallableRaisedException is Exception
+class X::Crane::TransformCallableRaisedException
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -492,8 +573,10 @@ class TransformCallableRaisedException is Exception
 # end X::Crane::TransformCallableRaisedException }}}
 # X::Crane::TransformCallableSignatureParams {{{
 
-class TransformCallableSignatureParams is Exception
+class X::Crane::TransformCallableSignatureParams
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -505,8 +588,10 @@ class TransformCallableSignatureParams is Exception
 # end X::Crane::TransformCallableSignatureParams }}}
 # X::Crane::TransformPathNotFound {{{
 
-class TransformPathNotFound is Exception
+class X::Crane::TransformPathNotFound
 {
+    also is Exception;
+
     method message(--> Str:D)
     {
         my Str:D $message =
@@ -517,10 +602,13 @@ class TransformPathNotFound is Exception
 # end X::Crane::TransformPathNotFound }}}
 # X::Crane::Transform::RO {{{
 
-class Transform::RO is Exception
+class X::Crane::Transform::RO
 {
+    also is Exception;
+
     has Str:D $.typename is required;
-    method message(--> Str:D)
+
+    method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message =
             '✗ Crane error: transform requested modifying an immutable'
