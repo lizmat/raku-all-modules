@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-ncurses.git
+	branch = master
+	commit = 91cc41f8f4dce10f7d659fe39b971d7796ea8a5e
+	parent = ce5d9bb30d980b0193621b5ec126f0cf68f573d9
+	cmdver = 0.4.0
