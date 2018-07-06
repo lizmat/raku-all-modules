@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sergot/datetime-parse.git
+	branch = master
+	commit = f5788ace3f28380df1d9a46bf56cf807a249cdb5
+	parent = ccd3c9315eceaf8648ee80ae5801938f65e54e4c
+	cmdver = 0.4.0
