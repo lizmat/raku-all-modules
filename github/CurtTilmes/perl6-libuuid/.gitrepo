@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-libuuid.git
+	branch = master
+	commit = aa63c4518b0f11c909252bfe0255d92777cf4e51
+	parent = f96e1034e458c3d9aa86e5409fde90abd76d0e5b
+	cmdver = 0.4.0
