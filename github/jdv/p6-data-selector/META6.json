@@ -1,0 +1,19 @@
+{
+    "perl" : "v6",
+    "name" : "Data::Selector",
+    "version" : "v1.02",
+    "description" : "data selection dsl parser and applicator",
+    "authors" : [ "Justin DeVuyst" ],
+    "provides" : {
+        "Data::Selector::SelectorString::Actions" : "lib/Data/Selector.pm",
+        "Data::Selector::SelectorString::Grammar" : "lib/Data/Selector.pm",
+        "Data::Selector"                          : "lib/Data/Selector.pm"
+    },
+    "support" : {
+        "email" : "justin@devuyst.com",
+        "bugtracker" : "https://github.com/jdv/p6-data-selector/issues",
+        "source" : "https://github.com/jdv/p6-data-selector.git",
+        "irc" : "irc://irc.freenode.net/perl6"
+    },
+    "license" : "artistic_2"
+}
