@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/atweiden/sustenance.git
 	branch = master
-	commit = fb9e93e16f493d421a0150ef80c80c5f6d512cb7
-	parent = 34e5bb9dda3b072ab25c7c31e2caf32527036495
+	commit = 8a9c7aae7c2c1ed2ce693a78dda45c847d4d7b15
+	parent = 3ef34028435c7caa0fa7a6cd67857bb5cd5b4c08
 	cmdver = 0.4.0

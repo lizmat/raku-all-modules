@@ -2,8 +2,10 @@ use v6;
 
 # X::Sustenance::FoodMissing {{{
 
-class X::Sustenance::FoodMissing is Exception
+class X::Sustenance::FoodMissing
 {
+    also is Exception;
+
     has Str:D $.name is required;
 
     method message(::?CLASS:D: --> Str:D)
