@@ -1,0 +1,15 @@
+{
+    "perl" : "6.*",
+    "name" : "Hash::Consistent",
+    "version" : "0.0.3",
+    "description" : "Basic Consistent Hash implementation.",
+    "author" : "Brad Clawsie",
+    "provides" : {
+        "Hash::Consistent" : "lib/Hash/Consistent.pm6"
+    },
+    "depends" : [
+              "String::CRC32",
+              "Subsets::Common"
+    ],
+    "source-url" : "git://github.com/bradclawsie/Hash-Consistent.git"
+}
