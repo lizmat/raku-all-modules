@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/thundergnat/Acme-Scrub.git
 	branch = master
-	commit = cfe911efde360c284cae7e2f544a27bcc27f4902
-	parent = ae4748e54c913689b31bc876c7ac626af1474878
+	commit = d7740bfb87ef2117c75534dfef4102bdf7cf7481
+	parent = ceb4a8be7f1f72d6f2bec869d179e2db75858afa
 	cmdver = 0.4.0
