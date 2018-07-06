@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/supernovus/perl6-method-modifiers.git
+	branch = master
+	commit = 4a4180e88badf102be62c7cf99edbcd31b31a449
+	parent = 9f7df0aa75b752784c802fd59ac216a6f9a25242
+	cmdver = 0.4.0
