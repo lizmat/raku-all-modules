@@ -11,5 +11,5 @@
     "source-type" : "git",
     "source-url"  : "git://github.com/thundergnat/Text-Levenshtein.git",
     "license"     : "Artistic-2.0",
-    "tags"        : [ "Text", "Difference", "Diff" ]
+    "tags"        : [ "Text", "Difference", "Diff", "CPAN5" ]
 }
