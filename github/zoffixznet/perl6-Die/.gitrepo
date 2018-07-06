@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Die.git
 	branch = master
-	commit = 932f4e0b73a57586a569bc1dd545eeb548c93a9c
-	parent = 90a694387d52db43fd6a74072facdfd5e0c1f0f9
+	commit = 3e461885160e16f4f6fb30be76e153dc34b06160
+	parent = 1b6661ad054a7f349f8f9693942c356f7fef8444
 	cmdver = 0.4.0
