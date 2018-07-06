@@ -1,10 +1,11 @@
 use v6;
-unit module X::Config::TOML;
 
 # X::Config::TOML::DuplicateKeys {{{
 
-class DuplicateKeys is Exception
+class X::Config::TOML::DuplicateKeys
 {
+    also is Exception;
+
     has Str:D $.subject is required;
     has Str:D $.text is required;
 
@@ -23,23 +24,34 @@ class DuplicateKeys is Exception
 # end X::Config::TOML::DuplicateKeys }}}
 # X::Config::TOML::AOH::DuplicateKeys {{{
 
-class AOH::DuplicateKeys is DuplicateKeys {*}
+class X::Config::TOML::AOH::DuplicateKeys
+{
+    also is X::Config::TOML::DuplicateKeys;
+}
 
 # end X::Config::TOML::AOH::DuplicateKeys }}}
 # X::Config::TOML::HOH::DuplicateKeys {{{
 
-class HOH::DuplicateKeys is DuplicateKeys {*}
+class X::Config::TOML::HOH::DuplicateKeys
+{
+    also is X::Config::TOML::DuplicateKeys;
+}
 
 # end X::Config::TOML::HOH::DuplicateKeys }}}
 # X::Config::TOML::InlineTable::DuplicateKeys {{{
 
-class InlineTable::DuplicateKeys is DuplicateKeys {*}
+class X::Config::TOML::InlineTable::DuplicateKeys
+{
+    also is X::Config::TOML::DuplicateKeys;
+}
 
 # end X::Config::TOML::InlineTable::DuplicateKeys }}}
 # X::Config::TOML::KeypairLine::DuplicateKeys {{{
 
-class KeypairLine::DuplicateKeys is Exception
+class X::Config::TOML::KeypairLine::DuplicateKeys
 {
+    also is Exception;
+
     has Str:D $.keypair-line-text is required;
     has @.path is required;
 
@@ -59,8 +71,10 @@ class KeypairLine::DuplicateKeys is Exception
 # end X::Config::TOML::KeypairLine::DuplicateKeys }}}
 # X::Config::TOML::AOH {{{
 
-class AOH is Exception
+class X::Config::TOML::AOH
 {
+    also is Exception;
+
     has Str:D $.aoh-text is required;
     has @.path is required;
 
@@ -79,8 +93,10 @@ class AOH is Exception
 # end X::Config::TOML::AOH }}}
 # X::Config::TOML::AOH::OverwritesHOH {{{
 
-class AOH::OverwritesHOH is AOH
+class X::Config::TOML::AOH::OverwritesHOH
 {
+    also is X::Config::TOML::AOH;
+
     has Str:D $.aoh-header-text is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -99,8 +115,10 @@ class AOH::OverwritesHOH is AOH
 # end X::Config::TOML::AOH::OverwritesHOH }}}
 # X::Config::TOML::AOH::OverwritesKey {{{
 
-class AOH::OverwritesKey is AOH
+class X::Config::TOML::AOH::OverwritesKey
 {
+    also is X::Config::TOML::AOH;
+
     has Str:D $.aoh-header-text is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -119,8 +137,10 @@ class AOH::OverwritesKey is AOH
 # end X::Config::TOML::AOH::OverwritesKey }}}
 # X::Config::TOML::HOH {{{
 
-class HOH is Exception
+class X::Config::TOML::HOH
 {
+    also is Exception;
+
     has Str:D $.hoh-text is required;
     has @.path is required;
 
@@ -139,8 +159,10 @@ class HOH is Exception
 # end X::Config::TOML::HOH }}}
 # X::Config::TOML::HOH::Seen {{{
 
-class HOH::Seen is HOH
+class X::Config::TOML::HOH::Seen
 {
+    also is X::Config::TOML::HOH;
+
     has Str:D $.hoh-header-text is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -158,13 +180,18 @@ class HOH::Seen is HOH
 # end X::Config::TOML::HOH::Seen }}}
 # X::Config::TOML::HOH::Seen::AOH {{{
 
-class HOH::Seen::AOH is HOH::Seen {*}
+class X::Config::TOML::HOH::Seen::AOH
+{
+    also is X::Config::TOML::HOH::Seen;
+}
 
 # end X::Config::TOML::HOH::Seen::AOH }}}
 # X::Config::TOML::HOH::Seen::Key {{{
 
-class HOH::Seen::Key is HOH
+class X::Config::TOML::HOH::Seen::Key
 {
+    also is X::Config::TOML::HOH;
+
     method message(::?CLASS:D: --> Str:D)
     {
         my Str:D $message = qq:to/EOF/.trim;
@@ -180,8 +207,10 @@ class HOH::Seen::Key is HOH
 # end X::Config::TOML::HOH::Seen::Key }}}
 # X::Config::TOML::Keypath {{{
 
-class Keypath is Exception
+class X::Config::TOML::Keypath
 {
+    also is Exception;
+
     has @.path is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -195,23 +224,34 @@ class Keypath is Exception
 # end X::Config::TOML::Keypath }}}
 # X::Config::TOML::Keypath::AOH {{{
 
-class Keypath::AOH is AOH {*}
+class X::Config::TOML::Keypath::AOH
+{
+    also is X::Config::TOML::AOH;
+}
 
 # end X::Config::TOML::Keypath::AOH }}}
 # X::Config::TOML::Keypath::HOH {{{
 
-class Keypath::HOH is HOH {*}
+class X::Config::TOML::Keypath::HOH
+{
+    also is X::Config::TOML::HOH;
+}
 
 # end X::Config::TOML::Keypath::HOH }}}
 # X::Config::TOML::BadKeypath::ArrayNotAOH {{{
 
-class BadKeypath::ArrayNotAOH is Exception {*}
+class X::Config::TOML::BadKeypath::ArrayNotAOH
+{
+    also is Exception;
+}
 
 # end X::Config::TOML::BadKeypath::ArrayNotAOH }}}
 # X::Config::TOML::ParseFailed {{{
 
-class ParseFailed is Exception
+class X::Config::TOML::ParseFailed
 {
+    also is Exception;
+
     has Str:D $.content is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -227,8 +267,10 @@ class ParseFailed is Exception
 # end X::Config::TOML::ParseFailed }}}
 # X::Config::TOML::ParsefileFailed {{{
 
-class ParsefileFailed is Exception
+class X::Config::TOML::ParsefileFailed
 {
+    also is Exception;
+
     has Str:D $.file is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -241,8 +283,10 @@ class ParsefileFailed is Exception
 # end X::Config::TOML::ParsefileFailed }}}
 # X::Config::TOML::Dumper::BadKey {{{
 
-class Dumper::BadKey is Exception
+class X::Config::TOML::Dumper::BadKey
 {
+    also is Exception;
+
     has $.key is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -257,8 +301,10 @@ class Dumper::BadKey is Exception
 # end X::Config::TOML::Dumper::BadKey }}}
 # X::Config::TOML::Dumper::BadValue {{{
 
-class Dumper::BadValue is Exception
+class X::Config::TOML::Dumper::BadValue
 {
+    also is Exception;
+
     has $.value is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -274,8 +320,10 @@ class Dumper::BadValue is Exception
 # end X::Config::TOML::Dumper::BadValue }}}
 # X::Config::TOML::Dumper::BadArray {{{
 
-class Dumper::BadArray is Exception
+class X::Config::TOML::Dumper::BadArray
 {
+    also is Exception;
+
     has Positional:D $.array is required;
 
     method message(::?CLASS:D: --> Str:D)
@@ -291,8 +339,10 @@ class Dumper::BadArray is Exception
 # end X::Config::TOML::Dumper::BadArray }}}
 # X::Config::TOML::String::EscapeSequence {{{
 
-class String::EscapeSequence is Exception
+class X::Config::TOML::String::EscapeSequence
 {
+    also is Exception;
+
     has Str:D $.esc is required;
 
     method message(::?CLASS:D: --> Str:D)
