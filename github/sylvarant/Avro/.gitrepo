@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sylvarant/Avro.git
+	branch = master
+	commit = d8c97ac79288e56013b975b5ea49446f716fdb22
+	parent = a9ca667fcb92683c0f604f6cc7e61aa802ccc64c
+	cmdver = 0.4.0
