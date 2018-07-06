@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/rakudo-p5/v5.git
+	branch = master
+	commit = 2f7d4da791b69694ed605fd337945c75919ff9bb
+	parent = c15ad93dc6041a342c304e32c2aa7d8600bccee6
+	cmdver = 0.4.0

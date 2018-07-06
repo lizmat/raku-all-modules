@@ -1,0 +1,11 @@
+t/spec
+*.v5
+*.pbc
+*.pir
+*.moarvm
+*.moar
+*.jar
+*.class
+Makefile
+REGRESSIONS
+STATUS.md.new
