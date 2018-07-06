@@ -1,0 +1,12 @@
+
+= UPDATE LOG
+
+* 2018-07-05
+
+    Add value attribute to `pos`(NonOption::Pos), it will be set when `pos`(NonOption::Pos) matched.
+
+    Fix a bug of `pos` index matching.
+
+    You can access type manager of OptionSet now.
+
+    Update some documents of `pos`(NonOption::Pos).

@@ -216,8 +216,7 @@ when all `cmd` not matched.
 
 === main
 
-`NonOption` `main` capture all NOA, and it's callback will be called when `main`
-exists.
+`NonOption` `main` capture all `NOA`, and it's callback will be called by the parser.
 
 NOTE: The parser will check `main` last.
 
@@ -248,7 +247,7 @@ return value.
 
 Using `&wrap-command` wrap your command, provide new command line option or even new feature.
 It using `&getopt` parse the command line, then call `&tweak`(provide by user) modify the
-left command line argument(member `noa` of return value), 
+left command line argument(member `noa` of return value),
 then pass all the command line argument to your command.Here is an example:
 
 .wrapfind
@@ -260,7 +259,7 @@ constant CMD = "find";
 
 wrap-command(
     OptionSet.new.push("e|extension=s"),  # add -e | --extension option to find command line
-    CMD, 
+    CMD,
     tweak => sub ($os, $ret) {
         $ret.noa.append("-iname", "*." ~ $os<e>) if $os<e>;
     }
@@ -837,7 +836,7 @@ It can support create multi command program, or something like `MAIN` of Perl6.
 
 * success() of Bool
 +
-Return True when the non-option callback called successed.
+Return True when the non-option callback called successful.
 
 * callback()
 +
@@ -878,6 +877,12 @@ Return the usage of the non-option.
 +
 Return an deep copy of current non-option.
 
+=== Method of NonOption::Pos
+
+* value()
++
+It will be set when current `pos` matched.
+
 == `Group`
 
 === Method of role Group
@@ -892,7 +897,7 @@ Return True if current group has option `$name`.
 
 * remove(Str:D $name where $name !~~ /^\s+$/) of Bool
 +
-Return True if successed remove option `$name`.
+Return True if success remove option `$name`.
 
 * check()
 +
@@ -944,7 +949,7 @@ In the end, it will call all `main`s and return all the return value.
 passed and user set `help` or `version` option.
 
 NOTE: `ga-pre-parser` will not cause any error if an `Option` not exists,
-or `NonOption` not matched. And it will set `noa` of return value to all the aguments of command line , 
+or `NonOption` not matched. And it will set `noa` of return value to all the aguments of command line ,
 not an Array of `Argument`.
 
 

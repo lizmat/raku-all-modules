@@ -22,9 +22,13 @@ use Getopt::Advance::Exception;
         getopt(<plus 1 2 3 >, $optset);
     }, "plus ok";
 
+    is $optset.get-pos("arthmetic", 0).value, "plus", "value set when pos matched!";
+
     lives-ok {
         getopt(<multi 1 2 3 >, $optset);
     }, "multi ok";
+
+    is $optset.get-pos("arthmetic", 0).value, "multi", "value set when pos matched!";
 
     lives-ok {
         getopt([], $optset);
@@ -46,9 +50,13 @@ use Getopt::Advance::Exception;
         getopt(<check some dir1/ >, $optset);
     }, "add ok";
 
+    is $optset.get-pos("dir", * - 1).value, "dir1/", "value set when pos matched!";
+
     lives-ok {
         getopt(<find other dir2/ >, $optset);
     }, "multi ok";
+
+    is $optset.get-pos("dir", * - 1).value, "dir2/", "value set when pos matched!";
 
     lives-ok {
         getopt([], $optset);

@@ -569,12 +569,14 @@ sub will-not-process-main($optset) {
     $optset.has('help') && $optset<help>;
 }
 
+# all the modify to the noa will not effect to other main
 sub process-main($optset, @noa) {
     my %all = $optset.get-main();
     my %ret;
 
     for %all -> $all {
-        %ret{$all.key} = $all.value.($optset, @noa);
+        my @mnoa = @noa;
+        %ret{$all.key} = $all.value.($optset, @mnoa);
     }
     return %ret;
 }
@@ -625,6 +627,7 @@ sub process-pos($optset, @noa is copy) {
             try {
                 if $front.($optset, @fix-noa[0]) {
                     $front-matched = True;
+                    $front.set-value(@fix-noa[0].value);
                     last;
                 }
                 CATCH {
@@ -654,6 +657,7 @@ sub process-pos($optset, @noa is copy) {
             for @(%need-sort-pos{$index}) -> $pos {
                 try {
                     if $pos.($optset, @fix-noa[$index]) {
+                        $pos.set-value(@fix-noa[$index].value);
                         last;
                     }
                     CATCH {
@@ -713,6 +717,7 @@ sub process-pos-quite($optset, @noa is copy) {
         for @(%need-sort-pos{0}) -> $front {
             try {
                 if $front.($optset, @fix-noa[0]) {
+                    $front.set-value(@fix-noa[0].value);
                     $front-matched = True;
                     last;
                 }
@@ -743,6 +748,7 @@ sub process-pos-quite($optset, @noa is copy) {
             for @(%need-sort-pos{$index}) -> $pos {
                 try {
                     if $pos.($optset, @fix-noa[$index]) {
+                        $pos.set-value(@fix-noa[$index].value);
                         last;
                     }
                     CATCH {
@@ -756,4 +762,3 @@ sub process-pos-quite($optset, @noa is copy) {
         }
     }
 }
-

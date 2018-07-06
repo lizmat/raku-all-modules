@@ -142,7 +142,7 @@ class OptionSet {
     has %.no-all;
     has %.no-pos;
     has %.no-cmd;
-    has $!types;
+    has $.types;
     has $!counter;
 
     method new-from-optstring(Str $optstring is copy) {
@@ -153,13 +153,15 @@ class OptionSet {
     }
 
     submethod TWEAK() {
-        $!types = Types::Manager.new;
-        $!types.register('b', Option::Boolean)
-              .register('i', Option::Integer)
-              .register('s', Option::String)
-              .register('a', Option::Array)
-              .register('h', Option::Hash)
-              .register('f', Option::Float);
+        if not $!types.defined {
+            $!types = Types::Manager.new;
+            $!types.register('b', Option::Boolean)
+                   .register('i', Option::Integer)
+                   .register('s', Option::String)
+                   .register('a', Option::Array)
+                   .register('h', Option::Hash)
+                   .register('f', Option::Float);
+        }
     }
 
     method keys(::?CLASS::D:) {
@@ -559,7 +561,7 @@ class OptionSet {
 #| call &tweak after &getopt called
 sub wrap-command(OptionSet $os, $cmd, @args is copy = @*ARGS, :&tweak, :$async, *%args) is export {
     my %gargs = parser =>&ga-pre-parser;
-    
+
     # remove the args of getopt
     for < helper stdout stderr strict autohv version bsd-style x-style > {
         if %args{$_}:exists {

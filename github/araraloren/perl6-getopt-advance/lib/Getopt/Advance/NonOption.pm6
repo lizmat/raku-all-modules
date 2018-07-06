@@ -126,6 +126,7 @@ class NonOption::Cmd does NonOption {
 
 class NonOption::Pos does NonOption {
     has $.name;
+    has $.value;
     has $.index;
 
     submethod TWEAK(:&callback, :$index) {
@@ -145,10 +146,12 @@ class NonOption::Pos does NonOption {
         &!callback = &callback;
     }
 
-    method match-index(Int $total, Int $index) {
+    method match-index(Int $total, $index) {
         my $expect-index = $!index ~~ WhateverCode ??
             $!index.($total) !! $!index;
-        return $index == $expect-index;
+        my $readl-index = $index ~~ WhateverCode ??
+                $index.($total) !! $index;
+        return $readl-index == $expect-index;
     }
 
     method match-name(Str $name) {
@@ -201,5 +204,13 @@ class NonOption::Pos does NonOption {
             |%_,
             index => * - 1
         );
+    }
+
+    method set-value($value) {
+        $!value = $value;
+    }
+
+    method value {
+        $!value;
     }
 }
