@@ -2,7 +2,7 @@ use v6;
 use JSON::Tiny;
 unit sub MAIN(Bool :$delete=True, Bool :$fetch=True, Bool :$ignore-errors);
 
-run <wget -O cpan.json http://modules.perl6.org/s/from:cpan/.json>
+run <wget -O cpan.json https://modules.perl6.org/s/from:cpan/.json>
     if $fetch;
 
 run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json'
@@ -14,6 +14,7 @@ my %local-seen;
 for @cpan-projects -> $project {
     my $local = "cpan/$project<author_id>/" ~ $project<name>.subst(:g, '::', '-');
     %local-seen{$local} = True;
+    next unless $project<url> ~~ m{ ^http.*tar};
     shell qq:to/EOF/;
         git rm -rf $local
         mkdir -p $local
