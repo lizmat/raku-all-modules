@@ -1,4 +1,4 @@
-=begin pod :tag<index>
+=begin pod :tag<index> :page-order<a17>
 
 =TITLE FAQ
 
@@ -34,13 +34,16 @@ implementing Perl 6.c.
 X<|v6.d (FAQ)>
 =head2 When is v6.d going to be released?
 
-Hopefully within a few months. Details at L<https://github.com/perl6/6.d-prep>
+There is no planned date, although L<Diwali 2018|https://en.wikipedia.org/wiki/Diwali>
+looks to be an attractive date for a release codenamed C<Diwali>.
 
-You can already use some of the new features by using C<use v6.d.PREVIEW>
-L<pragma|https://docs.perl6.org/language/pragmas>. Also, many of the 6.d
-features were already implemented in 6.c compiler, due to the lack (at the
-time) of the infrastructure to support separate language versions.  Thus, when
-6.d is released, you may find you were already using many of the new features.
+The vast majority of 6.d features are already implemented and available in
+in the Rakudo compiler without requiring any special pragmas, as they did
+not conflict with the 6.c specification.
+A smaller set of features and behaviours is available automatically if you
+use C<use v6.d.PREVIEW> pragma at the top of the file. The rest of about
+3100 new commits to the language specificication simply clarify previously
+undefined behaviour.
 
 X<|Rakudo Star DMG binary installer (FAQ)> X<|Rakudo Star MSI binary installer (FAQ)> X<|Rakudo Star docker image (FAQ)>
 X<|Rakudo Star for Linux (FAQ)> X<|Rakudo Star for Windows (FAQ)> X<|Rakudo Star for Mac (FAQ)>
@@ -91,6 +94,8 @@ the L<Resources page|https://perl6.org/resources/>.
 You can also consult this
 L<great cheatsheet|http://htmlpreview.github.io/?https://github.com/perl6/mu/blob/master/docs/Perl6/Cheatsheet/cheatsheet.html>.
 
+L<perl6book.com|https://perl6book.com/> contains a list of dead tree books.
+
 Be mindful of publication dates when reading third-party articles. Anything
 published before December, 2015 likely describes pre-release version of Perl 6.
 
@@ -135,7 +140,9 @@ X<|CPAN (FAQ)>X<|ecosystem>
 
 Yes, it's the same L<CPAN|http://cpan.org/> as for Perl 5! The only difference
 is when using L<PAUSE|http://pause.perl.org/> to upload the module, you'd select
-C<Perl 6> as the target directory. The
+C<Perl 6> as the target directory and the uploaded modules show up on
+L<modules.perl6.org|https://modules.perl6.org/> instead
+of L<MetaCPAN|https://metacpan.org/>. The
 L«C<App::Mi6> tool|https://modules.perl6.org/l/App::Mi6» can simplify the
 uploading process. Latest versions of
 L«C<zef> module installer|https://github.com/ugexe/zef»
@@ -170,7 +177,7 @@ X<|UNIX library functions (FAQ)>
 X<|POSIX (FAQ)>
 =head2 Where have all the traditional UNIX library functions gone?
 
-It's very easy to use Nativecall to access them.
+It's fairly easy to use L<NativeCall|/language/nativecall> to access them.
 
 An ecosystem module L<POSIX|https://github.com/cspencer/perl6-posix> is
 also available.
@@ -759,11 +766,12 @@ Fibonacci sequence, or all prime numbers.
 
 =item Native data types for faster, closer to the metal, processing.
 
-=item Interfacing to external libraries in C / C++ are trivially simple with
-NativeCall.
+=item Interfacing to external libraries in C / C++ is fairly easy with
+L<NativeCall|/language/nativecall>.
 
-=item Interfacing with Perl 5 (CPAN) / Python modules trivially simple with
-Inline::Perl5 and Inline::Python.
+=item Interfacing with Perl 5 (CPAN) / Python modules is fairly easy with
+L<Inline::Perl5|https://modules.perl6.org/dist/Inline::Perl5:cpan:NINE> and
+L<Inline::Python|https://modules.perl6.org/dist/Inline::Python>
 
 =item Can have multiple versions of a module installed and loaded
 simultaneously.

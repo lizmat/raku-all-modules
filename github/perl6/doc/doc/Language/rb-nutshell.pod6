@@ -1,6 +1,6 @@
-=begin pod :tag<convert>
+=begin pod :tag<convert> :page-order<a49>
 
-=TITLE Perl 6 from Ruby - Nutshell
+=TITLE Ruby to Perl 6 - Nutshell
 
 =SUBTITLE Learning Perl 6 from Ruby, in a nutshell: What do I already know?
 
