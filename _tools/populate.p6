@@ -32,6 +32,7 @@ for @projects {
         warn "No source-url for $_.perl()";
         next;
     }
+    $url ~~ s[ 'git://github.com/' ] = 'git@github.com:';
 
     my @chunks = $url.split('/');
     my $local = join '/', @chunks[*-2, *-1];
