@@ -55,8 +55,13 @@ enum fann_errno_enum is export «
     FANN_E_OUTPUT_NO_MATCH
 »;
 
+class fann_connection is repr('CStruct') is export {
+    has uint32 $from-neuron;
+    has uint32 $to-neuron;
+    has fann_type $weight;
+}
+
 class fann              is repr('CPointer') is export {*}
 class fann_train_data   is repr('CPointer') is export {*}
-class fann_connection   is repr('CPointer') is export {*}
 class fann_error        is repr('CPointer') is export {*}
 

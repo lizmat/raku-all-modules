@@ -6,6 +6,7 @@ use AI::FANN::Raw::Cascade;
 use AI::FANN::Raw::Error;
 use AI::FANN::Raw::IO;
 
+
 sub EXPORT {
     return Map.new(
         %(AI::FANN::Raw::Base::EXPORT::DEFAULT::),
