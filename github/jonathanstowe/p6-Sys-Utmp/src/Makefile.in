@@ -1,7 +1,0 @@
-all: %DESTDIR%/%utmphelper%
-
-%DESTDIR%/%utmphelper%: utmphelper%O%
-	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/%utmphelper% utmphelper%O%
-
-utmphelper%O%: utmphelper.c
-	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT% utmphelper%O% utmphelper.c

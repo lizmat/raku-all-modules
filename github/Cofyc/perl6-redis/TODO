@@ -1,3 +1,0 @@
-* better unit testing, it's dangerous to test with external daemon
-* complete method signatures
-* support timeout options

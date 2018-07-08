@@ -1,8 +1,0 @@
-language: perl6
-env:
-    - TEST_AUTHOR=1
-perl6:
-    - latest
-install:
-    - rakudobrew build-zef
-    - zef install Test::META

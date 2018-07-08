@@ -1,9 +1,0 @@
-From: example@example.com
-To: example2@example.com
-Subject: Test encoding
-Date: Fri, 4 Aug 2006 18:52:34 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: testencoding
-
-This is some testing text.

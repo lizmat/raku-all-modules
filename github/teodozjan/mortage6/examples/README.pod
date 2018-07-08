@@ -1,5 +1,0 @@
-=begin pod
-
-Examples are old need some improvments
-
-=end pod

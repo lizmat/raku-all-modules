@@ -1,8 +1,0 @@
-language: perl6
-perl6:
-  - latest
-install:
-  - perl6 -v
-script:
-  - NETWORK_TESTING=1 prove -v -e 'perl6 -I.' t/
-sudo: false

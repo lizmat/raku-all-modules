@@ -1,5 +1,0 @@
-Simple	t/Simple.pm	/class Simple/;"	p
-Simple::do-it	t/Simple.pm	/^    method do\-it/;"	s
-Simple::do-that	t/Simple.pm	/^    method do\-that/;"	s
-do-it	t/Simple.pm	/^    method do\-it/;"	s
-do-that	t/Simple.pm	/^    method do\-that/;"	s

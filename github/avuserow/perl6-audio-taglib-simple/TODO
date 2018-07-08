@@ -1,5 +1,0 @@
-- API to tell TagLib the file type of a given file (requires figuring out how
-  to include the enum)
-- Figure out a way to remove the need for the free() method call. We
-  could probably do some tricks with reading the tags, freeing the
-  pointers, and then re-opening them on save calls.

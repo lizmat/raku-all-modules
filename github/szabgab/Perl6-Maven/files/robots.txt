@@ -1,2 +1,0 @@
-Sitemap: http://perl6maven.com/sitemap.xml
-

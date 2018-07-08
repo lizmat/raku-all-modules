@@ -1,7 +1,0 @@
-branches:
-sudo: false
-language: perl6
-perl6:
-  - latest
-script:
-  - perl6 -Ilib bin/prove6 -l t

@@ -1,8 +1,0 @@
-.directory
-*.html
-*/*.html
-Old/*
-*.log
-.precomp
-*/.procomp
-*.zargo~

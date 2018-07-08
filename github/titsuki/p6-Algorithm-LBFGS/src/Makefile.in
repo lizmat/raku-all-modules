@@ -1,8 +1,0 @@
-name = %lbfgs%
-
-all: %DESTDIR%/resources/libraries/%lbfgs%
-clean:
-	rm %DESTDIR%/resources/libraries/%lbfgs%
-
-%DESTDIR%/resources/libraries/%lbfgs%: lbfgs.c
-	%CC% -shared %CCSHARED% %CCFLAGS% lbfgs.c -o %DESTDIR%/resources/libraries/%lbfgs%

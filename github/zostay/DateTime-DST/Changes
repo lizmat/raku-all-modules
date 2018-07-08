@@ -1,9 +1,0 @@
-v0.2
-
-    * Bugfix: Previous release probably didn't work. This one should.
-    * Added a C-library to help with portability issues related to the fact that
-      some time implementations are 32-bit, others are 64-bit.
-
-v0.1
-
-    * Initial release.

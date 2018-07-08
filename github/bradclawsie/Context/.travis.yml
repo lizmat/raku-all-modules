@@ -1,7 +1,0 @@
-sudo: required
-
-language: perl6
-
-perl6:
-  - latest
-

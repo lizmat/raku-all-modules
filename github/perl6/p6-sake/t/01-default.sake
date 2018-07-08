@@ -1,7 +1,0 @@
-task 'first', {
-    say "first";
-}
-task 'default', {
-    say "default ok";
-}
-

@@ -1,2 +1,0 @@
-use Test;
-done-testing;

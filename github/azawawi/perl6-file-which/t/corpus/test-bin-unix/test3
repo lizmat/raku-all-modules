@@ -1,5 +1,0 @@
-#!sh
- 
-# ^ above shebang is needed for Cygwin
-echo "Just testing File::Which"
-echo "Nothing interesting here"

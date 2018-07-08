@@ -1,7 +1,0 @@
-Hello [%name%].
-
-Your fellow workers are:
-
-[% for users as user %]
- * [%user.name%], the [%user.job%], who is [%user.age%] and was born in [%user.birthyear%]
-[% end %]
