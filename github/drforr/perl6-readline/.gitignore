@@ -1,3 +1,5 @@
+*.swp
+*.swo
 lib/.precomp
 Makefile
 Makefile.old

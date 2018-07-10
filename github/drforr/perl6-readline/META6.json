@@ -1,31 +1,31 @@
 {
-   "meta6" : "0",
-   "tags" : [
-		"terminal",
-		"CLI"
-   ],
-   "provides" : {
-      "Readline"	: "lib/Readline.pm"
-   },
-   "test-depends" : [
-      "Test"
-   ],
-   "support" : {
-      "source" : "https://github.com/drforr/perl6-readline"
-   },
-   "perl" : "6.c",
-   "build-depends" : [
-      "LibraryCheck"
-   ],
-   "auth" : "github:drforr",
-   "source-url" : "https://github.com/drforr/perl6-readline.git",
-   "depends" : [
-   ],
-   "name" : "Readline",
-   "authors" : [
-      "Jeffrey Goff <drforr@pobox.com>"
-   ],
-   "version" : "0.0.2",
-   "license" : "Artistic-2.0",
-   "description"   : "Perl 6 interface to GNU Readline, the CLI-based line reading library"
+  "auth" : "github:drforr",
+  "authors" : [
+    "Jeffrey Goff <drforr@pobox.com>"
+  ],
+  "build-depends" : [
+    "LibraryCheck"
+  ],
+  "depends" : [ ],
+  "description" : "Perl 6 interface to GNU Readline, the CLI-based line reading library",
+  "license" : "Artistic-2.0",
+  "meta6" : "0",
+  "name" : "Readline",
+  "perl" : "6.c",
+  "provides" : {
+    "Readline" : "lib/Readline.pm"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/drforr/perl6-readline.git",
+  "support" : {
+    "source" : "https://github.com/drforr/perl6-readline"
+  },
+  "tags" : [
+    "terminal",
+    "CLI"
+  ],
+  "test-depends" : [
+    "Test"
+  ],
+  "version" : "0.0.2"
 }
