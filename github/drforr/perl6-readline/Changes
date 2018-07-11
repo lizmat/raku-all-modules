@@ -1,4 +1,9 @@
 Revision history for Readline
 
 {{$NEXT}}
+
+0.1.2  2018-07-10T17:19:17-06:00
+    - Check library versions on Linux, add ereadline for OBSD
+
+0.1.1  2018-07-10T17:13:34-06:00
     - Initial version

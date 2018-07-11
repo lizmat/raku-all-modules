@@ -653,8 +653,46 @@ These methods manipulate signal handling for L<Readline>.
 
 =end pod
 
-class Readline {
-  my constant LIB = ( 'readline', v7 );
+class Readline:ver<0.1.2> {
+
+  sub LIBREADLINE {
+    my $library = 'readline';
+    my $version = v7;
+
+    # Collect library paths from arbitrary OSen to search.
+    #
+    my constant LIBRARY-PATHS = (
+      '/lib/x86_64-linux-gnu', # Author's VM
+      '/usr/lib64'             # Slackware 14 among others
+    );
+    my @library-path = grep { .IO.e }, LIBRARY-PATHS;
+
+    given $*VM.osname {
+      when 'openbsd' {
+        $library = 'ereadline';
+        my sub tgetnum(Str --> int32) is native('ncurses') { * }
+        tgetnum('');
+      }
+
+      # Search each of the LIBRARY-PATHS paths for libreadline.
+      #
+      default {
+        for @library-path -> $path {
+          # Filter out everything but libreadline.so.*
+          # Sort it so the last entry is the latest
+          #
+          my @dir = sort dir( $path, :test( /:i libreadline\.so\.\d+ $ /) );
+          next unless @dir;
+
+          @dir[*-1] ~~ / libreadline\.so\.(\d+) $ /;
+          $version = Version.new( ( $0 ) );
+          last;
+        }
+      }
+    }
+
+    ( $library, $version )
+  }
 
   # Embedded typedefs here
   #
@@ -722,7 +760,7 @@ class Readline {
   # just initializes the interactive variables.
   #
   sub using_history( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method using-history( ) {
     using_history() }
 
@@ -730,7 +768,7 @@ class Readline {
   #
   sub history_get_history_state( )
     returns HISTORY_STATE
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-get-history-state( )
     returns HISTORY_STATE {
     history_get_history_state() }
@@ -738,7 +776,7 @@ class Readline {
   # Set the state of the current history array to STATE.
   #
   sub history_set_history_state( HISTORY_STATE )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-set-history-state( HISTORY_STATE $state ) {
     history_set_history_state( $state ) }
 
@@ -748,7 +786,7 @@ class Readline {
   # The associated data field (if any) is set to NULL.
   #
   sub add_history( Str ) is export
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method add-history( Str $history ) {
     add_history( $history ) }
 
@@ -756,7 +794,7 @@ class Readline {
   # STRING.
   #
   sub add_history_time( Str )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method add-history-time( Str $timestamp ) {
     add_history_time( $timestamp ) }
 
@@ -766,7 +804,7 @@ class Readline {
   #
   sub remove_history( int32 )
     returns HIST_ENTRY
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method remove-history( int32 $which )
     returns HIST_ENTRY {
     remove_history( $which ) }
@@ -777,7 +815,7 @@ class Readline {
   sub free_history_entry( HIST_ENTRY )
 #    returns histdata_t
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method free-history-entry( HIST_ENTRY $entry )
 #    returns histdata_t {
     returns Str {
@@ -786,30 +824,30 @@ class Readline {
 #  sub replace_history_entry( int32, Str, histdata_t )
   sub replace_history_entry( int32, Str, Str )
     returns HIST_ENTRY
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
 #  method replace-history-entry( int32 $which, Str $line, histdata_t $data )
   method replace-history-entry( int32 $which, Str $line, Str $data )
     returns HIST_ENTRY {
       replace_history_entry( $which, $line, $data ) }
 
   sub clear_history( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method clear-history( ) {
     clear_history() }
 
   sub stifle_history( int32 )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method stifle-history( int32 $max ) {
     stifle_history( $max ) }
 
   sub unstifle_history( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method unstifle-history( ) {
     unstifle_history() }
 
   sub history_is_stifled( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-is-stifled( )
     returns Bool {
     history_is_stifled() ?? True !! False }
@@ -818,42 +856,42 @@ class Readline {
   #
   sub history_list( )
     returns CArray[HIST_ENTRY]
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-list( )
     returns CArray[HIST_ENTRY] {
     history_list() }
 
   sub where_history( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method where-history( )
     returns int32 {
     where_history() }
 
   sub current_history( int32 )
     returns HIST_ENTRY
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method current-history( int32 $which )
     returns HIST_ENTRY {
     current_history( $which ) }
 
   sub history_get( int32 )
     returns HIST_ENTRY
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-get( int32 $which )
     returns HIST_ENTRY {
     history_get( $which ) }
 
   sub history_get_time( HIST_ENTRY )
     returns time_t
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-get-time( HIST_ENTRY $h )
     returns time_t {
     history_get_time( $h ) }
 
   sub history_total_bytes( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-total-bytes( )
     returns int32 {
     history_total_bytes( ) }
@@ -862,21 +900,21 @@ class Readline {
   #
   sub history_set_pos( int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-set-pos( int32 $pos )
     returns int32 {
     history_set_pos( $pos ) }
 
   sub previous_history( )
     returns HIST_ENTRY
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method previous-history( )
     returns HIST_ENTRY {
     previous_history( ) }
 
   sub next_history( )
     returns HIST_ENTRY
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method next-history( )
     returns HIST_ENTRY {
     next_history( ) }
@@ -885,21 +923,21 @@ class Readline {
   #
   sub history_search( Str, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-search( Str $text, int32 $pos )
     returns int32 {
     history_search( $text, $pos ) }
 
   sub history_search_prefix( Str, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-search-prefix( Str $text, int32 $pos )
     returns int32 {
     history_search_prefix( $text, $pos ) }
 
   sub history_search_pos( Str, int32, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-search-pos( Str $text, int32 $pos, int32 $dir )
     returns int32 {
     history_search_pos( $text, $pos, $dir ) }
@@ -908,7 +946,7 @@ class Readline {
   #
   sub read_history( Str )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method read-history( Str $text )
     returns int32 {
     my $rv = read_history( $text );
@@ -916,14 +954,14 @@ class Readline {
 
   sub read_history_range( Str, int32, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method read-history-range( Str $text, int32 $from, int32 $to )
     returns int32 {
     read_history_range( $text, $from, $to ) }
 
   sub write_history( Str )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method write-history( Str $filename )
     returns int32 {
     my $rv = write_history( $filename );
@@ -931,14 +969,14 @@ class Readline {
 
   sub append_history( int32, Str )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method append-history( int32 $offset, Str $filename )
     returns int32 {
     append_history( $offset, $filename ) }
 
   sub history_truncate_file( Str, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-truncate-file( Str $filename, int32 $nLines )
     returns int32 {
     my $rv = history_truncate_file( $filename, $nLines );
@@ -948,21 +986,21 @@ class Readline {
   #
   sub history_expand( Str, Pointer[Str] )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-expand( Str $string, Pointer[Str] $output )
     returns int32 {
     history_expand( $string, $output ) }
 
   sub history_arg_extract( int32, int32, Str )
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-arg-extract( int32 $first, int32 $last, Str $string )
     returns Str {
     history_arg_extract( $first, $last, $string ) }
 
   sub get_history_event( Str, Pointer[int32], int32 )
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method get-history-event( Str $string, Pointer[int32] $index, Str $delimiting-quote )
     returns Str {
     get_history_event( $string, $index, ord( $delimiting-quote.substr(0,1) ) ) }
@@ -970,7 +1008,7 @@ class Readline {
 
   sub history_tokenize( Str )
     returns CArray[Str]
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method history-tokenize( Str $string )
     returns CArray[Str] {
     history_tokenize( $string ) }
@@ -1036,32 +1074,32 @@ class Readline {
 
   sub rl_make_bare_keymap( )
     returns Keymap
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method make-bare-keymap( )
     returns Keymap {
     rl_make_bare_keymap( ) }
 
   sub rl_copy_keymap( Keymap )
     returns Keymap
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method copy-keymap( Keymap $map )
     returns Keymap {
     rl_copy_keymap( $map ) }
 
   sub rl_make_keymap( )
     returns Keymap
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method make-keymap( )
     returns Keymap {
     rl_make_keymap( ) }
 
   sub rl_discard_keymap( Keymap )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method discard-keymap( Keymap $map ) {
     rl_discard_keymap( $map ) }
 
   sub rl_free_keymap( Keymap )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method free-keymap( Keymap $map ) {
     rl_free_keymap( $map ) }
 
@@ -1069,27 +1107,27 @@ class Readline {
   #
   sub rl_get_keymap_by_name( Str )
     returns Keymap
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method get-keymap-by-name( Str $name )
     returns Keymap {
     rl_get_keymap_by_name( $name ) }
 
   sub rl_get_keymap( )
     returns Keymap
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method get-keymap( )
     returns Keymap {
     rl_get_keymap( ) }
 
   sub rl_get_keymap_name( Keymap )
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method get-keymap-name( Keymap $map )
     returns Str {
     rl_get_keymap_name( $map ) }
 
   sub rl_set_keymap( Keymap )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method set-keymap( Keymap $map ) {
     rl_set_keymap( $map ) }
 
@@ -1140,179 +1178,179 @@ class Readline {
   #
   # These should only be passed as callbacks, I believe.
   #
-  sub rl_digit_argument( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_universal_argument( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_digit_argument( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_universal_argument( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for moving the cursor.
   #
-  sub rl_forward_byte( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_forward_char( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_forward( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_backward_byte( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_backward_char( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_backward( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_beg_of_line( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_end_of_line( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_forward_word( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_backward_word( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_refresh_line( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_clear_screen( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_skip_csi_sequence( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_arrow_keys( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_forward_byte( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_forward_char( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_forward( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_backward_byte( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_backward_char( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_backward( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_beg_of_line( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_end_of_line( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_forward_word( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_backward_word( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_refresh_line( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_clear_screen( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_skip_csi_sequence( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_arrow_keys( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for inserting and deleting text.
   #
-  sub rl_insert( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_quoted_insert( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_tab_insert( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_newline( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_do_lowercase_version( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_rubout( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_delete( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_rubout_or_delete( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_delete_horizontal_space( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_insert( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_quoted_insert( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_tab_insert( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_newline( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_do_lowercase_version( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_rubout( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_delete( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_rubout_or_delete( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_delete_horizontal_space( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
   sub rl_delete_or_show_completions( int32, int32 ) returns int32
-    is native( LIB ) { * }
-  sub rl_insert_comment( int32, int32 ) returns int32 is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
+  sub rl_insert_comment( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for changing case.
   #
-  sub rl_upcase_word( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_downcase_word( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_capitalize_word( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_upcase_word( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_downcase_word( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_capitalize_word( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for transposing characters and words.
   #
-  sub rl_transpose_words( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_transpose_chars( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_transpose_words( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_transpose_chars( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for searching within a line.
   #
-  sub rl_char_search( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_backward_char_search( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_char_search( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_backward_char_search( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for readline's interface to the command history.
   #
-  sub rl_beginning_of_history ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_end_of_history ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_get_next_history ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_get_previous_history ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_beginning_of_history ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_end_of_history ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_get_next_history ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_get_previous_history ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for managing the mark and region.
   #
-  sub rl_set_mark ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_exchange_point_and_mark ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_set_mark ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_exchange_point_and_mark ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands to set the editing mode (emacs or vi).
   #
-  sub rl_vi_editing_mode ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_emacs_editing_mode ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_vi_editing_mode ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_emacs_editing_mode ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands to change the insert mode (insert or overwrite)
   #
-  sub rl_overwrite_mode ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_overwrite_mode ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for managing key bindings.
   #
-  sub rl_re_read_init_file ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_dump_functions ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_dump_macros ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_dump_variables ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_re_read_init_file ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_dump_functions ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_dump_macros ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_dump_variables ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for word completion.
   #
-  sub rl_complete ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_possible_completions ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_insert_completions ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_old_menu_complete ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_menu_complete ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_backward_menu_complete ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_complete ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_possible_completions ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_insert_completions ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_old_menu_complete ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_menu_complete ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_backward_menu_complete ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for killing and yanking text, and managing the kill ring.
   #
-  sub rl_kill_word ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_backward_kill_word ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_kill_line ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_backward_kill_line ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_kill_full_line ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_unix_word_rubout ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_unix_filename_rubout ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_unix_line_discard ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_copy_region_to_kill ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_kill_region ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_copy_forward_word ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_copy_backward_word ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_yank ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_yank_pop ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_yank_nth_arg ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_yank_last_arg ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_paste_from_clipboard ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_kill_word ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_backward_kill_word ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_kill_line ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_backward_kill_line ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_kill_full_line ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_unix_word_rubout ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_unix_filename_rubout ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_unix_line_discard ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_copy_region_to_kill ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_kill_region ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_copy_forward_word ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_copy_backward_word ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_yank ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_yank_pop ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_yank_nth_arg ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_yank_last_arg ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_paste_from_clipboard ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for incremental searching.
   #
-  sub rl_reverse_search_history ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_forward_search_history ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_reverse_search_history ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_forward_search_history ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable keyboard macro commands.
   #
-  sub rl_start_kbd_macro ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_end_kbd_macro ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_call_last_kbd_macro ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_print_last_kbd_macro ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_start_kbd_macro ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_end_kbd_macro ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_call_last_kbd_macro ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_print_last_kbd_macro ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
   #
   # Bindable undo commands.
   #
-  sub rl_revert_line ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_undo_command ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_revert_line ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_undo_command ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable tilde expansion commands.
   #
-  sub rl_tilde_expand ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_tilde_expand ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable terminal control commands.
   #
-  sub rl_restart_output ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_stop_output ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_restart_output ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_stop_output ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Miscellaneous bindable commands.
   #
-  sub rl_abort ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_tty_status ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_abort ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_tty_status ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Bindable commands for incremental and non-incremental history searching.
   #
-  sub rl_history_search_forward ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_history_search_backward ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_history_search_forward ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_history_search_backward ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
   sub rl_history_substr_search_forward ( int32, int32 ) returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   sub rl_history_substr_search_backward ( int32, int32 ) returns int32
-    is native( LIB ) { * }
-  sub rl_noninc_forward_search ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_noninc_reverse_search ( int32, int32 ) returns int32 is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
+  sub rl_noninc_forward_search ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_noninc_reverse_search ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
   sub rl_noninc_forward_search_again ( int32, int32 ) returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   sub rl_noninc_reverse_search_again ( int32, int32 ) returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
 
   # Bindable command used when inserting a matching close character.
   #
-  sub rl_insert_close ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_insert_close ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # Not available unless READLINE_CALLBACKS is defined.
   #
 
  sub rl_callback_handler_install( Str, &callback (Str) ) is export
-   is native( LIB ) { * }
+   is native( LIBREADLINE ) { * }
 #  method callback-handler-install( Str $s, &callback (Str) ) {
 #    rl_callback_handler_install( $s, $cb ) }
 
   sub rl_callback_read_char( ) is export
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method callback-read-char( ) {
     rl_callback_read_char( ) }
  
   sub rl_callback_handler_remove( ) is export
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method callback-handler-remove( ) {
     rl_callback_handler_remove( ) }
 
@@ -1320,61 +1358,61 @@ class Readline {
   #
   # VI-mode bindable commands.
   #
-  sub rl_vi_redo ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_undo ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_yank_arg ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_fetch_history ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_search_again ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_search ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_complete ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_tilde_expand ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_prev_word ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_next_word ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_end_word ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_insert_beg ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_append_mode ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_append_eol ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_eof_maybe ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_insertion_mode ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_insert_mode ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_movement_mode ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_arg_digit ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_change_case ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_put ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_column ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_delete_to ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_change_to ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_yank_to ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_rubout ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_delete ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_back_to_indent ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_first_print ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_char_search ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_match ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_change_char ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_subst ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_overstrike ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_overstrike_delete ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_replace ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_set_mark ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_goto_mark ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_vi_redo ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_undo ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_yank_arg ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_fetch_history ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_search_again ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_search ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_complete ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_tilde_expand ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_prev_word ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_next_word ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_end_word ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_insert_beg ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_append_mode ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_append_eol ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_eof_maybe ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_insertion_mode ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_insert_mode ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_movement_mode ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_arg_digit ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_change_case ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_put ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_column ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_delete_to ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_change_to ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_yank_to ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_rubout ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_delete ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_back_to_indent ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_first_print ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_char_search ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_match ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_change_char ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_subst ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_overstrike ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_overstrike_delete ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_replace ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_set_mark ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_goto_mark ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # VI-mode utility functions.
   #
-  sub rl_vi_check( ) returns int32 is native( LIB ) { * }
-  sub rl_vi_domove( int32, Pointer[int32] ) returns int32 is native( LIB ) { * }
-  sub rl_vi_bracktype( int32 ) returns int32 is native( LIB ) { * }
+  sub rl_vi_check( ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_domove( int32, Pointer[int32] ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_bracktype( int32 ) returns int32 is native( LIBREADLINE ) { * }
 
-  sub rl_vi_start_inserting( int32, int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_vi_start_inserting( int32, int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   # VI-mode pseudo-bindable commands, used as utility functions.
   #
-  sub rl_vi_fWord ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_bWord ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_eWord ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_fword ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_bword ( int32, int32 ) returns int32 is native( LIB ) { * }
-  sub rl_vi_eword ( int32, int32 ) returns int32 is native( LIB ) { * }
+  sub rl_vi_fWord ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_bWord ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_eWord ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_fword ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_bword ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
+  sub rl_vi_eword ( int32, int32 ) returns int32 is native( LIBREADLINE ) { * }
 
   ###################################################################
   #								    #
@@ -1387,28 +1425,28 @@ class Readline {
   sub readline( Str )
     is export
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method readline( Str $prompt )
     returns Str {
     readline( $prompt ) }
 
   sub rl_set_prompt( Str )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method set-prompt( Str $prompt )
     returns int32 {
     rl_set_prompt( $prompt ) }
 
   sub rl_expand_prompt( Str )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method expand-prompt( Str $prompt )
     returns int32 {
     rl_expand_prompt( $prompt ) }
 
   sub rl_initialize( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method initialize( )
     returns int32 {
     rl_initialize( ) }
@@ -1417,42 +1455,42 @@ class Readline {
   #
   sub rl_bind_key( int32, &callback (int32, int32 --> int32) )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method bind-key( Str $key, $cb )
     returns int32 {
     rl_bind_key( ord( $key.substr(0,1) ), $cb ) }
 
   sub rl_bind_key_in_map( int32, &callback (int32, int32 --> int32), Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method bind-key-in-map( Str $key, $cb, Keymap $map )
     returns int32 {
     rl_bind_key_in_map( ord( $key.substr(0,1) ), $cb, $map ) }
 
   sub rl_unbind_key( int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method unbind-key( Str $key )
     returns Bool {
     rl_unbind_key( ord( $key.substr(0,1) ) ) != 0 ?? False !! True }
 
   sub rl_unbind_key_in_map( int32, Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method unbind-key-in-map( Str $key, Keymap $map )
     returns Bool {
     rl_unbind_key_in_map( ord( $key.substr(0,1) ), $map ) != 0 ?? False !! True }
 
   sub rl_bind_key_if_unbound( int32, &callback (int32, int32 --> int32) )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method bind-key-if-unbound( Str $key, $cb )
     returns int32 {
     rl_bind_key_if_unbound( ord( $key.substr(0,1) ), $cb ) }
 
   sub rl_bind_key_if_unbound_in_map( int32, &callback (int32, int32 --> int32), Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method bind-key-if-unbound-in-map
     ( Str $key, $cb, Keymap $map )
     returns Bool {
@@ -1460,28 +1498,28 @@ class Readline {
 
   sub rl_unbind_function_in_map( &callback (int32, int32 --> int32), Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method unbind-function-in-map ( $cb, Keymap $map )
     returns int32 {
       rl_unbind_function_in_map( $cb, $map ) }
 
   sub rl_bind_keyseq( Str, &callback (int32, int32 --> int32) )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method bind-keyseq( Str $str, $cb )
     returns Bool {
       rl_bind_keyseq( $str, $cb ) != 0 ?? False !! True }
 
   sub rl_bind_keyseq_in_map( Str, &callback (int32, int32 --> int32), Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method bind-keyseq-in-map( Str $str, $cb, Keymap $map )
     returns Bool {
       rl_bind_keyseq_in_map( $str, $cb, $map ) != 0 ?? False !! True }
 
   sub rl_bind_keyseq_if_unbound( Str, &callback (int32, int32 --> int32) )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method bind-keyseq-if-unbound( Str $str, $cb )
    returns Bool {
     rl_bind_keyseq_if_unbound( $str, $cb ) != 0 ?? False !! True }
@@ -1489,7 +1527,7 @@ class Readline {
   sub rl_bind_keyseq_if_unbound_in_map
     ( Str, &callback (int32, int32 --> int32), Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method bind-keyseq-if-unbound-in-map
     ( Str $str, $cb, Keymap $map )
     returns Bool {
@@ -1498,28 +1536,28 @@ class Readline {
 
   sub rl_generic_bind( int32, Str, Str, Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method generic-bind( int32 $i, Str $s, Str $t, Keymap $map )
     returns int32 {
     rl_generic_bind( $i, $s, $t, $map ) }
 
   sub rl_add_defun( Str, &callback (int32, int32 --> int32), int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method add-defun( Str $str, $cb, Str $key )
     returns int32 {
     rl_add_defun( $str, $cb, ord( $key.substr(0,1) ) ) }
 
   sub rl_variable_value( Str )
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method variable-value( Str $s )
     returns Str {
     rl_variable_value( $s ) }
 
   sub rl_variable_bind( Str, Str )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method variable-bind( Str $s, Str $t )
     returns int32 {
     rl_variable_bind( $s, $t ) }
@@ -1528,7 +1566,7 @@ class Readline {
   #
   sub rl_set_key( Str, &callback (int32, int32 --> int32), Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method set-key( Str $str, $cb, Keymap $map )
     returns int32 {
       rl_set_key( $str, $cb, $map ) }
@@ -1537,28 +1575,28 @@ class Readline {
   #
   sub rl_macro_bind( Str, Str, Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method macro-bind( Str $str, Str $b, Keymap $map )
     returns int32 {
     rl_macro_bind( $str, $b, $map ) }
 
   sub rl_named_function( Str, Str, Keymap )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
 #  method named-function( Str $str ) {
 #    returns &callback (int32, int32 --> int32) {
 #    rl_macro_bind( $str, $b, $map ) }
 
   sub rl_translate_keyseq( Str, Str, Pointer[int32] )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method translate-keyseq( Str $str, Str $b, Pointer[int32] $k )
     returns int32 {
     rl_translate_keyseq( $str, $b, $k ) }
 
   sub rl_untranslate_keyseq( int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method untranslate-keyseq( int32 $i )
     returns int32 {
     rl_untranslate_keyseq( $i ) }
@@ -1567,7 +1605,7 @@ class Readline {
 #
 #  sub rl_named_function( Str )
 #    returns &callback (int32, int32 --> int32)
-#    is native( LIB ) { * }
+#    is native( LIBREADLINE ) { * }
 #  method named-function( Str $s )
 #    returns rl_command_func_t {
 #    rl_named_function( $s ) }
@@ -1576,53 +1614,53 @@ class Readline {
 #
 #  sub rl_function_of_keyseq( Str, Keymap, Pointer[int32] )
 #    returns &callback (int32, int32 --> int32)
-#    is native( LIB ) { * }
+#    is native( LIBREADLINE ) { * }
 #  method function-of-keyseq( Str $s, Keymap $map, Pointer[int32] $p )
 #    returns rl_command_func_t {
 #      rl_function_of_keyseq( $s, $map, $p ) }
 
   sub rl_list_funmap_names( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method list-funmap-names( ) {
     rl_list_funmap_names( ) }
 
   sub rl_invoking_keyseqs_in_map( &callback (int32, int32 --> int32), Keymap )
     returns CArray[Str]
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method invoking-keyseqs-in-map( $cb, Keymap $map )
     returns CArray[Str] {
       rl_invoking_keyseqs_in_map( $cb, $map ) }
 
   sub rl_invoking_keyseqs( &callback (int32, int32 --> int32) )
     returns CArray[Str]
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method invoking-keyseqs( $cb )
     returns CArray[Str] {
     rl_invoking_keyseqs( $cb ) }
 
   sub rl_function_dumper( int32 )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method function-dumper( Bool $readable ) {
     rl_function_dumper( $readable ?? 1 !! 0 ) }
 
   sub rl_macro_dumper( int32 )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method macro-dumper( Bool $readable ) {
     rl_macro_dumper( $readable ?? 1 !! 0 ) }
 
   sub rl_variable_dumper( int32 )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method variable-dumper( Bool $readable ) {
     rl_variable_dumper( $readable ?? 1 !! 0 ) }
 
   sub rl_read_init_file( Str )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method read-init-file( Str $line ) {
     rl_read_init_file( $line ) }
 
   sub rl_parse_and_bind( Str )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method parse-and-bind( Str $line )
     returns int32 {
     rl_parse_and_bind( $line ) }
@@ -1632,14 +1670,14 @@ class Readline {
   #
   sub rl_add_funmap_entry( Str, &callback (int32, int32 --> int32) )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method add-funmap-entry( Str $name, $cb ) # XXX Type this properly
     returns int32 {
     rl_add_funmap_entry( $name, $cb ) }
 
   sub rl_funmap_names( )
     returns CArray[Str]
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method funmap-names( )
     returns CArray[Str] {
     rl_funmap_names( ) }
@@ -1647,46 +1685,46 @@ class Readline {
   # Utility functions for managing keyboard macros.
   #
   sub rl_push_macro_input( Str )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method push-macro-input( Str $macro ) {
     rl_push_macro_input( $macro ) }
 
   # Functions for undoing, from undo.c
   #
   sub rl_add_undo( int32, int32, int32, Str ) # XXX first arg is undo_code
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method add-undo( int32 $code, int32 $a, int32 $b, Str $mark ) {
     rl_add_undo( $code, $a, $b, $mark ) }
 
   sub rl_free_undo_list( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method free-undo-list( ) {
     rl_free_undo_list( ) }
 
   sub rl_do_undo( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method do-undo( )
     returns Bool {
     rl_do_undo( ) == 0 ?? False !! True }
 
   sub rl_begin_undo_group( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method begin-undo-group( )
     returns int32 {
     rl_begin_undo_group( ) }
 
   sub rl_end_undo_group( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method end-undo-group( )
     returns int32 {
     rl_end_undo_group( ) }
 
   sub rl_modifying( int32, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method modifying( int32 $start, int32 $end )
     returns int32 {
     rl_modifying( $start, $end ) }
@@ -1694,48 +1732,48 @@ class Readline {
   # Functions for redisplay.
   #
   sub rl_redisplay( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method redisplay( ) {
     rl_redisplay( ) }
 
   sub rl_on_new_line( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method on-new-line( )
     returns int32 {
     rl_on_new_line( ) }
 
   sub rl_on_new_line_with_prompt( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method on-new-line-with-prompt( )
     returns int32 {
     rl_on_new_line_with_prompt( ) }
 
   sub rl_forced_update_display( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method forced-update-display( )
     returns int32 {
     rl_forced_update_display( ) }
 
   sub rl_clear_message( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method clear-message( )
     returns int32 {
     rl_clear_message( ) }
 
   sub rl_reset_line_state( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method reset-line-state( )
     returns int32 {
     rl_reset_line_state( ) }
 
   sub rl_crlf( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method crlf( )
     returns int32 {
     rl_crlf( ) }
@@ -1744,7 +1782,7 @@ class Readline {
 
   sub rl_show_char( int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method show-char( Str $c )
     returns int32 {
     rl_show_char( ord( $c.substr(0,1) ) ) }
@@ -1753,7 +1791,7 @@ class Readline {
   #
   sub rl_character_len( int32, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method character-len( int32 $c, int32 $d )
     returns int32 {
     rl_character_len( $c, $d ) }
@@ -1761,46 +1799,46 @@ class Readline {
   # Save and restore internal prompt redisplay information.
   #
   sub rl_save_prompt( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method save-prompt( ) {
     rl_save_prompt( ) }
 
   sub rl_restore_prompt( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method restore-prompt( ) {
     rl_restore_prompt( ) }
 
   # Modifying text.
   #
   sub rl_replace_line( Str, int32 )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method replace-line( Str $text, int32 $clear-undo ) {
     rl_replace_line( $text, $clear-undo ) }
 
   sub rl_insert_text( Str )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method insert-text( Str $text )
     returns int32 {
     rl_insert_text( $text ) }
 
   sub rl_delete_text( int32, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method delete-text( int32 $start, int32 $end )
     returns int32 {
     rl_delete_text( $start, $end ) }
 
   sub rl_kill_text( int32, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method kill-text( int32 $start, int32 $end )
     returns int32 {
     rl_kill_text( $start, $end ) }
 
   sub rl_copy_text( int32, int32 )
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method copy-text( int32 $start, int32 $end )
     returns Str {
     rl_copy_text( $start, $end ) }
@@ -1808,55 +1846,55 @@ class Readline {
   # Terminal and tty mode management.
   #
   sub rl_prep_terminal( int32 )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method prep-terminal( int32 $meta-flag ) {
     rl_prep_terminal( $meta-flag ) }
 
   sub rl_deprep_terminal( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method deprep-terminal( ) {
     rl_deprep_terminal( ) }
 
   sub rl_tty_set_default_bindings( Keymap )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method tty-set-default-bindings( Keymap $map ) {
     rl_tty_set_default_bindings ( $map ) }
 
   sub rl_tty_unset_default_bindings ( Keymap )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method tty-unset-default-bindings( Keymap $map ) {
     rl_tty_unset_default_bindings ( $map ) }
 
   sub rl_reset_terminal( Str )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method reset-terminal( Str $terminal-name )
     returns int32 {
     rl_reset_terminal( $terminal-name ) }
 
   sub rl_resize_terminal( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method resize-terminal( ) {
     rl_resize_terminal( ) }
 
   sub rl_set_screen_size( int32, int32 )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method set-screen-size( int32 $rows, int32 $cols ) {
     rl_set_screen_size( $rows, $cols ) }
 
   sub rl_get_screen_size( Pointer[int32], Pointer[int32] )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method get-screen-size( Pointer[int32] $rows, Pointer[int32] $cols ) {
     rl_get_screen_size( $rows, $cols ) }
 
   sub rl_reset_screen_size( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method reset-screen-size( ) {
     rl_reset_screen_size( ) }
 
   sub rl_get_termcap( Str )
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method get-termcap( Str $cap )
     returns Str {
     rl_get_termcap( $cap ) }
@@ -1868,28 +1906,28 @@ class Readline {
 
   sub rl_stuff_char( int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method stuff-char( int32 $c )
     returns int32 {
     rl_stuff_char( $c ) }
 
   sub rl_execute_next( int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method execute-next( int32 $c )
     returns int32 {
     rl_execute_next( $c ) }
 
   sub rl_clear_pending_input( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method clear-pending-input( )
     returns int32 {
     rl_clear_pending_input( ) }
 
   sub rl_read_key( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method read-key( )
     returns int32 {
     rl_read_key( ) }
@@ -1897,26 +1935,26 @@ class Readline {
   # `Public' utility functions.
   #
   sub rl_extend_line_buffer( int32 )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method extend-line-buffer( int32 $len ) {
     rl_extend_line_buffer( $len ) }
 
   sub rl_ding( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method ding( )
     returns int32 {
     rl_ding( ) }
 
   sub rl_alphabetic( int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method alphabetic( Str $c )
     returns Bool {
     rl_alphabetic( ord( $c.substr(0,1) ) ) == 1 ?? True !! False }
 
   sub rl_free( Pointer )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method free( Pointer $mem ) {
     rl_free( $mem ) }
 
@@ -1924,41 +1962,41 @@ class Readline {
   #
   sub rl_set_signals( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method set-signals( )
     returns int32 {
     rl_set_signals( ) }
 
   sub rl_clear_signals( )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method clear-signals( )
     returns int32 {
     rl_clear_signals( ) }
 
   sub rl_cleanup_after_signal( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method cleanup-after-signal( ) {
     rl_cleanup_after_signal( ) }
 
   sub rl_reset_after_signal( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method reset-after-signal( ) {
     rl_reset_after_signal( ) }
 
   sub rl_free_line_state( )
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method free-line-state( ) {
     rl_free_line_state( ) }
 
 #  sub rl_echo_signal( int32 )
-#    is native( LIB ) { * }
+#    is native( LIBREADLINE ) { * }
 #  method echo-signal( int32 $c ) {
 #    rl_echo_signal( $c ) }
 
   sub rl_set_paren_blink_timeout( int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method set-paren-blink-timeout( int32 $c )
     returns int32 {
     rl_set_paren_blink_timeout( $c ) }
@@ -1966,27 +2004,27 @@ class Readline {
   # Completion functions.
   #
   sub rl_complete_internal( int32 ) returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method complete-internal( int32 $what-to-do ) returns int32 {
     rl_complete_internal( $what-to-do ) }
 
   sub rl_display_match_list( CArray[Str], int32, int32 )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method display-match-list( CArray[Str] $list, int32 $a, int32 $b )
     returns int32 {
     rl_display_match_list( $list, $a, $b ) }
 
   sub rl_completion_matches( Str, &callback (Str, int32 --> Str) )
     returns Pointer[Str]
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method completion-matches( Str $text, $cb )
     returns Pointer[Str] {
     rl_completion_matches( $text, $cb ) }
 
   sub rl_completion_mode( &callback (int32, int32 --> int32) )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method completion-mode( $cb )
     returns int32 {
     rl_completion_mode( $cb ) }
@@ -2085,7 +2123,8 @@ class Readline {
 #my $GlobalInt := cglobal('./10-cglobals', 'GlobalInt', int32);
 
   # XXX sizeof(FILE*) width.
-  our $rl_instream := cglobal( LIB, 'rl_instream', num64 ); # 64-bit pointer
+  # 64-bit pointer
+  our $rl_instream := cglobal( LIBREADLINE, 'rl_instream', num64 );
 
   #extern FILE *rl_instream;
   #extern FILE *rl_outstream;
@@ -2508,14 +2547,14 @@ class Readline {
 
   sub rl_save_state( readline_state )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method save-state( readline_state $state )
     returns int32 {
     rl_save_state( $state ) }
 
   sub rl_restore_state( readline_state )
     returns int32
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method restore-state( readline_state $state )
     returns int32 {
     rl_restore_state( $state ) }
@@ -2596,20 +2635,20 @@ class Readline {
   #
   sub tilde_expand( Str )
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method tilde-expand( Str $filename )
     returns Str {
     tilde_expand( $filename ) }
 
   sub tilde_expand_word( Str )
     returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method tilde-expand-word( Str $filename )
     returns Str {
     tilde_expand_word( $filename ) }
 
   sub tilde_find_word( Str, int32, Pointer[int32] ) returns Str
-    is native( LIB ) { * }
+    is native( LIBREADLINE ) { * }
   method tilde-find-word( Str $str, int32 $offset, Pointer[int32] $p-offset )
     returns Str {
       tilde_find_word( $str, $offset, $p-offset ) }
