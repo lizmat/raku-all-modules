@@ -16,7 +16,7 @@ for @cpan-projects -> $project {
     %local-seen{$local} = True;
     next unless $project<url> ~~ m{ ^http.*tar};
     shell qq:to/EOF/;
-        git rm -rf $local
+        git rm -rf $local || true
         mkdir -p $local
         wget -O - $project<url> | tar --strip-components=1 -xz --directory $local/
         git add -f $local
