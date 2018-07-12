@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-App-Lang-French-VerbTrainer.git
+	branch = master
+	commit = 338c4be9ac0dabd089d170d0ace17d7116413a8c
+	parent = eef9f92498e25028b00d22c0bc14ba68c1198cbe
+	cmdver = 0.4.0

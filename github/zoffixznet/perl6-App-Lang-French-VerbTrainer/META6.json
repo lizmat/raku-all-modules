@@ -1,0 +1,18 @@
+{
+    "perl"         : "6.c",
+    "name"         : "App::Lang::French::VerbTrainer",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001001",
+    "description"  : "Training program for learning tenses and conjugations of French verbs",
+    "tags"         : [ "language" ],
+    "depends"      : [ ],
+    "test-depends" : [
+        "Test"
+    ],
+    "provides"     : {
+        "App::Lang::French::VerbTrainer" : "lib/App/Lang/French/VerbTrainer.pm6",
+        "ValidFrenchVerb": "lib/App/Lang/French/VerbTrainer.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source" : "https://github.com/zoffixznet/perl6-App-Lang-French-VerbTrainer.git"}
+}
