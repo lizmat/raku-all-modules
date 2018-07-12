@@ -2,6 +2,9 @@ Revision history for Readline
 
 {{$NEXT}}
 
+0.1.3  2018-07-11T19:14:48-06:00
+    - Track OpenBSD ereadline version
+
 0.1.2  2018-07-10T17:19:17-06:00
     - Check library versions on Linux, add ereadline for OBSD
 
