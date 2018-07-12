@@ -2,7 +2,7 @@
     "perl"         : "6.c",
     "name"         : "Proxee",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001003",
+    "version"      : "1.001004",
     "description"  : "A more usable Proxy with bells",
     "tags"         : [ "containers" ],
     "depends"      : [ ],

@@ -8,7 +8,7 @@ class Proxee::X::CannotProxeeStore is Exception {
 }
 
 proto method new(|) { * }
-multi method new (&block) {
+multi method new (&block) is rw {
     my $v := block;
     $v =:= Nil
         ?? self.new
@@ -16,7 +16,7 @@ multi method new (&block) {
             ?? self.new(|$v.Capture)
             !! self.new(|$v)
 }
-multi method new(\coercer where {.HOW ~~ Metamodel::CoercionHOW}) {
+multi method new(\coercer where {.HOW ~~ Metamodel::CoercionHOW}) is rw {
     my \from     = coercer.^constraint_type;
     my \to       = coercer.^target_type;
     my $to-name := to.^name;
@@ -31,7 +31,7 @@ multi method new(\coercer where {.HOW ~~ Metamodel::CoercionHOW}) {
         $STORAGE
     }
 }
-multi method new (:&PROXEE, :&STORE, :&FETCH) {
+multi method new (:&PROXEE, :&STORE, :&FETCH) is rw {
     &PROXEE and &STORE and die Proxee::X::CannotProxeeStore.new;
 
     my &store := &PROXEE ?? { $*PROXEE = PROXEE $_ }

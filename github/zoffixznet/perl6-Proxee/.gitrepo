@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-Proxee.git
 	branch = master
-	commit = 43a96aefe3dd3cdd8108770c2c3aae2bcfaefe91
-	parent = 89dcae34d8628ffa3c2fc9998738a79ad514bca4
+	commit = 4c39fe1ae91b9ef1cf59097e21fb8f3ddfd5527a
+	parent = 395433f08286a66c421da45e4a58e6efc4422c28
 	cmdver = 0.4.0
