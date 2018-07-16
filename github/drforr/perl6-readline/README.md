@@ -9,12 +9,14 @@ XXX For the moment keep all the code here in the Readline module.
 Installation
 ============
 
-* Since Readline uses libreadline, libreadline.so.5 must be found in /usr/lib.
-To install libreadline5 on Debian for example, please use the following command:
+Please make sure that libreadline is installed beforehand, the tests will fail otherwise. If libreadline is installed but the tests still fail, please note that the Perl 6 package searches a given set of directories for libreadline.{so,dynlib}.* files, otherwise it defaults to v7. If your libreadline installation isn't on any of these paths, or requires non-standard setup, please file an issue.
+
+For those of you on Linux Debian and Linux-alike systems, you should be able to get the latest version with this CLI invocation:
 
 ```
-	sudo apt-get install libreadline5
+	sudo apt-get install libreadline7
 ```
+(I'd prefer to use LibraryCheck, but it fails inside the 'is native()' method call.)
 
 * Using zef (a module management tool bundled with Rakudo Star):
 

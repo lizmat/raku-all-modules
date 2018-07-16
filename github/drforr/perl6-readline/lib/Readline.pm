@@ -34,6 +34,19 @@ Any chapter references in the documentation refer to the GNU Readline or GNU His
 
 =end DESCRIPTION
 
+=begin LIBRARY
+
+By default the Perl 6 module searches for libreadline.so.* and takes the most recent match it can find.
+
+If you're on OS X, it searches for libreadline.dynlib.*.
+On OpenBSD it searches for libereadline.so.*.
+
+While I'd prefer to use L<LibraryCheck>'s technique of just attempting to link to a library, it doesn't seem to work inside of the C<is native(&func)> attribute. So instead, it defaults to v7 (the current version as of 2018-07-14) and searches for other versions along a fixed set of library paths, taken from bug reports.
+
+I'll eventually put this into a proper library-find method.
+
+=end LIBRARY
+
 =begin METHODS
 
 =item readline( Str $prompt ) returns Str
@@ -653,43 +666,49 @@ These methods manipulate signal handling for L<Readline>.
 
 =end pod
 
-class Readline:ver<0.1.3> {
+class Readline:ver<0.1.4> {
 
   sub LIBREADLINE {
     my $library = 'readline';
+    my $library-match = rx/:i libreadline\.so\.(\d+) $/;
     my $version = v7;
 
     # Collect library paths from arbitrary OSen to search.
     #
     my constant LIBRARY-PATHS = (
       '/lib/x86_64-linux-gnu', # Author's VM
-      '/usr/lib64'             # Slackware 14 among others
+      '/usr/local/lib',        # Generic path
+      '/usr/lib64',            # Slackware 14 among others
+      '/usr/lib',              # Generic path
+      '/lib'                   # even more generic.
     );
     my @library-path = grep { .IO.e }, LIBRARY-PATHS;
 
     given $*VM.osname {
       when 'openbsd' {
         $library = 'ereadline';
+        $library-match = rx/:i libereadline\.so\.(\d+) $/;
         $version = v1.0;
         my sub tgetnum(Str --> int32) is native('ncurses') { * }
         tgetnum('');
       }
-
-      # Search each of the LIBRARY-PATHS paths for libreadline.
-      #
-      default {
-        for @library-path -> $path {
-          # Filter out everything but libreadline.so.*
-          # Sort it so the last entry is the latest
-          #
-          my @dir = sort dir( $path, :test( /:i libreadline\.so\.\d+ $ /) );
-          next unless @dir;
-
-          @dir[*-1] ~~ / libreadline\.so\.(\d+) $ /;
-          $version = Version.new( ( $0 ) );
-          last;
-        }
+      when 'darwin' {
+        $library-match = rx/:i libreadline\.dynlib\.\d+ $/;
       }
+    }
+
+    # Search each of the LIBRARY-PATHS paths for libreadline.
+    #
+    for @library-path -> $path {
+      # Filter out everything but libreadline.{so,dynlib}.*
+      # Sort it so the last entry is the latest
+      #
+      my @dir = sort dir( $path, :test( $library-match ) );
+      next unless @dir;
+
+      @dir[*-1] ~~ $library-match;
+      $version = Version.new( ( $0 ) );
+      last;
     }
 
     ( $library, $version )

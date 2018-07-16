@@ -2,6 +2,9 @@ Revision history for Readline
 
 {{$NEXT}}
 
+0.1.4  2018-07-15T08:02:22-06:00
+    - Fix for Darwin, refactor code, update documentation to reflect reality
+
 0.1.3  2018-07-11T19:14:48-06:00
     - Track OpenBSD ereadline version
 
