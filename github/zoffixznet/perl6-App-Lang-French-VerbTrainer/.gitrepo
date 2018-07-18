@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-App-Lang-French-VerbTrainer.git
 	branch = master
-	commit = 338c4be9ac0dabd089d170d0ace17d7116413a8c
-	parent = eef9f92498e25028b00d22c0bc14ba68c1198cbe
+	commit = 7669a41cfd826467e2bc47ec8b064fbdd9d028ec
+	parent = 0c1c8452e9c456421a8bf870292661b546003792
 	cmdver = 0.4.0

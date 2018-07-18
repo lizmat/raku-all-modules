@@ -31,8 +31,8 @@ Future proche:
 # DESCRIPTION
 
 You start the program giving a French verb as a command line argument and it asks you to conjugate
-it in several tenses. All verbs are supported and the idea is this trainer program will train you
-proper endings, etc.
+it in several tenses. All **regular** verbs are supported and the idea is this trainer program will train you
+proper endings, etc. Future versions may support irregular verbs as well.
 
 Currently, only Présent, Future Proche, Imparfait, and Passé Composé tenses
 are supported. Will add more, once I learn them.
