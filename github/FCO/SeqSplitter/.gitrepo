@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/FCO/SeqSplitter.git
+	branch = master
+	commit = 59618b601fd1cb19ec3cec7e16d354d06512f047
+	parent = c2d61a5919a8289029e6c7583c0b105ffc29c405
+	cmdver = 0.4.0
