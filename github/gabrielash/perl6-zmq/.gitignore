@@ -1,0 +1,8 @@
+lib/.precomp
+Makefile
+*.swp
+*.bak
+*~
+*.out
+*.so
+*.o
