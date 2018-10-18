@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/whity/perl6-log.git
+	branch = master
+	commit = 8214583f86ff82e3ce2e8a50dbcd4f08e05d5397
+	parent = 77647952474bf82a2c8f175ca20ea9dd3eb00339
+	cmdver = 0.4.0
