@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/gfldex/perl6-proc-async-timeout.git
+	branch = master
+	commit = 7d1b03199a12ee74f0af159ddb5ed5807d7fe83b
+	parent = 3f6ff6423d8c179c30b9231af693dd2eeaf9a11d
+	cmdver = 0.4.0
