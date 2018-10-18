@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Leont/build-graph6.git
+	branch = master
+	commit = ec807d1da46cc00e031e2e856d0a18cbe454ee99
+	parent = af8f95696a13f9865085b78a51197a93107c3464
+	cmdver = 0.4.0
