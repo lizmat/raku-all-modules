@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-tcc.git
+	branch = master
+	commit = 17fd731044842810c54c55517033acf7d2dce8ae
+	parent = cf8db9c90e0fa0f1378c7f1ef3ecb4e8af4058a6
+	cmdver = 0.4.0

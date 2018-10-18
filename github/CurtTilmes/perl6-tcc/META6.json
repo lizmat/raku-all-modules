@@ -1,0 +1,32 @@
+{
+    "name" : "TCC",
+
+    "description" : "Perl 6 bindings for TCC, The Tiny C Compiler",
+
+    "auth" : "github:CurtTilmes",
+
+    "version" : "0.1",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-tcc.git",
+
+    "perl" : "6.c",
+
+    "tags" : [ "inline", "c", "compiler", "nativecall" ],
+
+    "provides" : {
+        "TCC" : "lib/TCC.pm6"
+    },
+
+    "depends" : [ "NativeCall" ],
+
+    "test-depends" : [ "Test" ],
+
+    "license" : "Artistic-2.0",
+
+    "authors" : [ "Curt Tilmes <ctilmes@cpan.org>" ],
+
+    "support" : {
+      "source" : "https://github.com/CurtTilmes/perl6-tcc.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-tcc/issues"
+    }
+}
