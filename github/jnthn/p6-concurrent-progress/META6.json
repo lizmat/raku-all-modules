@@ -1,0 +1,14 @@
+{
+    "perl"          : "6.*",
+    "name"          : "Concurrent::Progress",
+    "version"       : "1.1",
+    "description"   : "An object to help with reporting the progress of a concurrent operation.",
+    "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
+    "license"       : "Artistic-2.0",
+    "depends"       : [],
+    "test-depends"  : ["Test::Scheduler"],
+    "provides"      : {
+		"Concurrent::Progress" : "lib/Concurrent/Progress.pm6"
+    },
+    "source-url"    : "https://github.com/jnthn/p6-concurrent-progress.git"
+}
