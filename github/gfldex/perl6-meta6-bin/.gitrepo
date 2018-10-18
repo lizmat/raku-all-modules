@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/gfldex/perl6-meta6-bin.git
+	branch = master
+	commit = b378d5013ed3b396744e94ad8987bd39625b222c
+	parent = a4cbd67dc408919e0bad17ab02024c52984a797c
+	cmdver = 0.4.0
