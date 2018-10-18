@@ -1,0 +1,6 @@
+/blib/
+/src/*.o
+/Makefile
+/.panda-work
+/resources
+.precomp/

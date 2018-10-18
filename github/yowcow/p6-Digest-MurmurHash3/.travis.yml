@@ -1,0 +1,11 @@
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build zef
+  - zef --/test install Test::META
+  - zef --/test --deps-only install .
+script:
+  - zef build -v .
+  - zef test -v .
+sudo: false

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/yowcow/p6-Digest-MurmurHash3.git
+	branch = master
+	commit = 8c2d9f8e19befe4c39ae98bfab89ec8eae02bd2c
+	parent = ba4ac90db775009df10b3ea2317358fe521ebb12
+	cmdver = 0.4.0
