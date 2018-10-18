@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-Benchy.git
+	branch = master
+	commit = 9a25e01c87e9db739a986c447d9c886f113844dd
+	parent = 523b7d0796ce8b33b5ea9512f9130d2599933ff9
+	cmdver = 0.4.0
