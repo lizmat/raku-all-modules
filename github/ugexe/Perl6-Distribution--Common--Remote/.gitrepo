@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ugexe/Perl6-Distribution--Common--Remote.git
+	branch = master
+	commit = ef527e3d0ef6c11ef3902a58e0971fcd11baf187
+	parent = 1afab63069bf820c8a71e95298ebc2a78fa750d9
+	cmdver = 0.4.0

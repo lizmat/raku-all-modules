@@ -1,0 +1,35 @@
+os: Visual Studio 2015
+
+platform: x64
+
+environment:
+    GITHUB_ACCESS_TOKEN:
+        secure: 0FS2kEueti8xs9Ekdjz5ZlyZ8fzVVlcDa/qinGe032oZlZYNaZQp5XkuVpFKIP9j
+
+install:
+    - '"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64'
+    - appveyor-retry choco install strawberryperl --allow-empty-checksums
+    - SET PATH=C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
+    - appveyor-retry git clone https://github.com/rakudo/rakudo.git %APPVEYOR_BUILD_FOLDER%\..\rakudo
+    - cd %APPVEYOR_BUILD_FOLDER%\..\rakudo
+    - perl Configure.pl --gen-moar --gen-nqp
+    - nmake install
+    - SET PATH=%APPVEYOR_BUILD_FOLDER%\..\rakudo\install\bin;%PATH%
+    - SET PATH=%APPVEYOR_BUILD_FOLDER%\..\rakudo\install\share\perl6\site\bin;%PATH%
+    - cd %APPVEYOR_BUILD_FOLDER%
+    - git clone https://github.com/ugexe/zef %APPVEYOR_BUILD_FOLDER%\..\zef
+    - perl6 -I %APPVEYOR_BUILD_FOLDER%\..\zef %APPVEYOR_BUILD_FOLDER%\..\zef\bin\zef --deps-only install .
+
+build: off
+
+test_script:
+    # Test it works loaded as a CURFS
+    - prove -v -e "perl6 -I." t/
+
+    # Test it can install
+    - perl6 -I %APPVEYOR_BUILD_FOLDER%\..\zef %APPVEYOR_BUILD_FOLDER%\..\zef\bin\zef --/test install .
+
+    # Test it works loaded as a CURI
+    - prove -v -e perl6 t/
+
+shallow_clone: true
