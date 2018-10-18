@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/hoelzro/p6-algorithm-elo.git
+	branch = master
+	commit = b412f3e037cd83eaa985262908efb917efb8e851
+	parent = 55efddf5e91655493874d7c5632c67d87d16155c
+	cmdver = 0.4.0
