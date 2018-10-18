@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/skids/perl6sum.git
+	branch = master
+	commit = c2a8ac662b0c10dfc85ae05eec674e7be2702906
+	parent = e1b2bc7bf49558070993431cb6c3b9830db9bd31
+	cmdver = 0.4.0
