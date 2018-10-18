@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/hoelzro/p6-io-string.git
+	branch = master
+	commit = 364df2753eef8976d902ed51b4085e77f1dda23c
+	parent = ea55d8dded64060350b297ef7423397d1f718b54
+	cmdver = 0.4.0
