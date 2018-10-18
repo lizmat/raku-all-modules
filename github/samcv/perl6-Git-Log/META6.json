@@ -1,0 +1,34 @@
+{
+  "api": "0",
+  "authors": [
+    "Samantha McVey <samantham@posteo.net>"
+  ],
+  "depends": [
+
+  ],
+  "description": "Gets the git log as a Perl 6 object",
+  "license": "Artistic-2.0",
+  "support": {
+    "license": "http://www.perlfoundation.org/artistic_license_2_0",
+    "bugtracker": "https://github.com/samcv/perl6-Git-Log/issues"
+  },
+  "source-url": "https://github.com/samcv/perl6-Git-Log.git",
+  "meta-version": 0,
+  "name": "Git::Log",
+  "perl": "6.c",
+  "provides": {
+    "Git::Log": "lib/Git/Log.pm6"
+  },
+  "resources": [
+    
+  ],
+  "source-url": "https://github.com/samcv/perl6-Git-Log.git",
+  "support": {
+    "bugtracker": "https://github.com/samcv/perl6-Git-Log/issues",
+    "license": "http://www.perlfoundation.org/artistic_license_2_0"
+  },
+  "tags": [
+    
+  ],
+  "version": "0.2.0"
+}
