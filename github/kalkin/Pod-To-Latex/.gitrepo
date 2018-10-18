@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kalkin/Pod-To-Latex.git
+	branch = master
+	commit = b706dbb5a3a7e8797de991f9a4c23dd1478faa07
+	parent = 8836b4ed8eb00be5c946ad1aaca9ee2957f94610
+	cmdver = 0.4.0

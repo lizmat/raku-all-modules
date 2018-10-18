@@ -1,0 +1,22 @@
+{
+  "name" : "Pod::To::Latex",
+  "source-url" : "https://github.com/kalkin/Pod-To-Latex.git",
+  "support" : {
+    "source" : "https://github.com/kalkin/Pod-To-Latex.git",
+    "bugtracker": "https://github.com/kalkin/Pod-To-Latex/issues"
+  },
+  "perl" : "6.c",
+  "license" : "GPL-3.0",
+  "test-depends" : [
+    "Test::META"
+  ],
+  "provides" : {
+    "Pod::To::Latex" : "lib/Pod/To/Latex.pm6"
+  },
+  "version" : "0.1.1",
+  "meta-version" : "0",
+  "authors" : [
+    "Bahtiar `kalkin-` Gadimov"
+  ],
+  "description" : "Convert pod to LaTeX."
+}
