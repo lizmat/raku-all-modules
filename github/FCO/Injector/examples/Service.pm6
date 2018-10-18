@@ -1,0 +1,4 @@
+role Service {
+	method name {…}
+}
+

@@ -1,0 +1,27 @@
+{
+    "perl" : "6.*",
+    "name" : "Injector",
+    "version" : "0.0.1",
+    "description" : "Dependency injector",
+    "authors" : [ "Fernando Corrêa de Oliveira" ],
+    "provides" : {
+        "Injector"                      : "lib/Injector.pm6",
+        "Injector::Bind::Clone"         : "lib/Injector/Bind/Clone.pm6",
+        "Injector::Bind::Instance"      : "lib/Injector/Bind/Instance.pm6",
+        "Injector::Bind::ObjectType"    : "lib/Injector/Bind/ObjectType.pm6",
+        "Injector::Bind::Singleton"     : "lib/Injector/Bind/Singleton.pm6",
+        "Injector::Bind"                : "lib/Injector/Bind.pm6",
+        "Injector::Storage"             : "lib/Injector/Storage.pm6",
+        "Injector::Injected"            : "lib/Injector/Injected.pm6",
+        "Injector::Injected::Attribute" : "lib/Injector/Injected/Attribute.pm6",
+        "Injector::Injected::Variable"  : "lib/Injector/Injected/Variable.pm6"
+    },
+	"tags": ["inject", "dependency", "ioc", "inversion of control"],
+    "depends" : [ ],
+    "test-depends" : [
+        "Test",
+        "Test::META"
+   ],
+    "resources" : [ ],
+    "source-url" : "https://github.com/FCO/Injector.git"
+}

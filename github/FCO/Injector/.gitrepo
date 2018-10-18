@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/FCO/Injector.git
+	branch = master
+	commit = 104989d31d682bd71f7e7b1de860c65a4224045a
+	parent = 989cd42970d923f79296763a7be744dc67e7c5b8
+	cmdver = 0.4.0
