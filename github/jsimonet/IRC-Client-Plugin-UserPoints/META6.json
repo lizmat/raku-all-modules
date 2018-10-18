@@ -1,0 +1,14 @@
+{
+	"perl" : "6.c",
+	"name" : "IRC::Client::Plugin::UserPoints",
+	"license" : "Artistic-2.0",
+	"version" : "0.1.3",
+	"description" : "Plugin for counting user points.",
+	"authors" : [ "Julien Simonet" ],
+	"provides" : {
+		"IRC::Client::Plugin::UserPoints" : "lib/IRC/Client/Plugin/UserPoints.pm6"
+	},
+	"depends" : [ "PerlStore::FileStore", "IRC::Client" ],
+	"resources" : [ ],
+	"source-url" : "https://github.com/jsimonet/IRC-Client-Plugin-UserPoints.git"
+}
