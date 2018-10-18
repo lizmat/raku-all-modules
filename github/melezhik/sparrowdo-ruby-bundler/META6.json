@@ -1,0 +1,19 @@
+{
+  "perl"        : "6.*",
+  "name"        : "Sparrowdo::Ruby::Bundler",
+  "version"     : "*",
+  "description" : "Sparrowdo module to manage Ruby gems via Ruby bundler.",
+  "authors" : [ "Alexey Melezhik" ],
+  "depends"     : [
+                    "Sparrowdo"
+                  ],
+  "source-type" : "git",
+  "support" : {
+        "bugtracker" : "https://github.com/melezhik/sparrowdo-ruby-bundler/issues",
+        "source" : "https://github.com/melezhik/sparrowdo-ruby-bundler.git"
+    },
+   "provides" : {
+        "Sparrowdo::Ruby::Bundler" : "lib/Sparrowdo/Ruby/Bundler.pm6"
+  },
+  "source-url"  : "https://github.com/melezhik/sparrowdo-ruby-bundler.git"
+}
