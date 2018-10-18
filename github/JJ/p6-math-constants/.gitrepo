@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/JJ/p6-math-constants
 	branch = master
-	commit = fe74409c06b752a73d56bba0aac57ec5f085686e
-	parent = 3406487217e04a86895e2eac0a7baab4216b40c5
+	commit = e10c2ad91e4832d4dfa15ade3d2c40506c230034
+	parent = c524c5f6666a18937c04a899d3d685604c09f2e3
 	cmdver = 0.4.0
