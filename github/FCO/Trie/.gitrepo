@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/FCO/Trie.git
+	branch = master
+	commit = cd4c6ace267767e3e6b481c237555e0b43521a95
+	parent = 6832730203e89ec586dafbd2b936910b3cb7bfb1
+	cmdver = 0.4.0
