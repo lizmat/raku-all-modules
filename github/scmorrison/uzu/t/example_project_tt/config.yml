@@ -1,0 +1,13 @@
+---
+name: uzu-testing
+language:
+  - en
+  - ja
+themes:
+  - default
+  - summer2017:
+      port: 4333
+      exclude_pages:
+        - excludeme
+url: https://gitlab.com/samcns/uzu
+author: Sam Morrison

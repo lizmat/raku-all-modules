@@ -1,0 +1,14 @@
+---
+name: uzu-tests
+language:
+  - en
+  - ja
+themes:
+  - default
+  - summer2017:
+      port: 4333
+      exclude_pages:
+        - excludeme
+template_engine: mustache
+url: https://gitlab.com/samcns/uzu
+author: Sam Morrison

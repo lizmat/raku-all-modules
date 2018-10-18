@@ -1,0 +1,98 @@
+---
+author: Page Author
+related_pages:
+    - page: about
+      title: Let's use this title
+    - page: blog/fiji
+    - page: https://www.perl6.org
+      title: The Perl 6 Programming Language
+      author: Perl 6
+other_pages:
+    - page: blog/fiji
+    - page: https://modules.perl6.org
+      title:  Perl 6 Modules Directory
+      author: Perl 6
+    - page: about
+going_down:
+    - something: important
+    - deep_pages:
+        - page: blog/fiji
+        - page: about
+        - page: https://github.com/scmorrison/uzu/
+          author: Sam Morrison
+          title: Uzu is a static site generator
+    - deeper_still:
+        - deeper_pages:
+            - page: index
+            - page: about
+            - page: blog/fiji
+categories:
+  - title: General tasks
+    category_pages:
+      - page: http://www.perl6.org
+        title: Perl 6
+      - page: index
+      - page: blog/fiji
+      - page: about
+  - title: Other tasks
+    category_pages:
+      - page: about
+      - page: index
+  - title: Even more tasks
+    category_pages:
+      - page: blog/fiji
+      - page: about
+---
+related pages
+<ul>
+{{#related_pages}}
+    <li>
+        <a href="{{ url }}">{{ title }}</a> [{{ author }}]
+    </li>
+{{/related_pages}}
+</ul>
+
+other pages
+<ul>
+{{#other_pages}}
+    <li>
+        <a href="{{ url }}">{{ title }}</a> [{{ author }}]
+    </li>
+{{/other_pages}}
+</ul>
+
+deep pages
+<ul>
+{{#going_down}}
+{{#deep_pages}}
+    <li>
+        <a href="{{ url }}">{{ title }}</a> [{{ author }}]
+    </li>
+{{/deep_pages}}
+{{/going_down}}
+</ul>
+
+deeper pages
+<ul>
+{{#going_down}}
+{{#deeper_still}}
+{{#deeper_pages}}
+    <li>
+        <a href="{{ url }}">{{ title }}</a> [{{ author }}
+    </li>
+{{/deeper_pages}}
+{{/deeper_still}}
+{{/going_down}}
+</ul>
+
+categories
+<p>
+{{#categories}}
+<em>{{ title }}</em>
+<ul>
+{{#category_pages}}
+<li><a href="{{ url }}">{{ title }}</a> [{{ author }}</li>
+{{/category_pages}}
+</ul>
+{{/categories}}
+</p>
