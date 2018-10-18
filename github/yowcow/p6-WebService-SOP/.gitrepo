@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/yowcow/p6-WebService-SOP.git
+	branch = master
+	commit = be395d44c35eb4169303223397bdd2e8614b9cba
+	parent = 3c042ea6412ffe5c085df5b8c229545db7276a91
+	cmdver = 0.4.0
