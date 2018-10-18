@@ -1,0 +1,18 @@
+{
+    "perl"          : "6.*",
+    "name"          : "Math::PascalTriangle",
+    "version"       : "0.1.0",
+    "description"   : "Simple Pascal's Triangle",
+    "authors"       : ["Fernando Correa de Oliveira"],
+    "tags"          : ["math", "pascal"],
+    "provides"      : {
+        "Math::PascalTriangle" : "lib/Math/PascalTriangle.pm6"
+    },
+    "depends"       : [ ],
+    "test-depends"  : [
+        "Test",
+        "Test::META"
+   ],
+    "resources"     : [ ],
+    "source-url"    : "https://github.com/FCO/Math-PascalTriangle.git"
+}
