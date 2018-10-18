@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ppentchev/Serialize-Naive.git
+	branch = master
+	commit = 997a445afef10eb46249f3de621bb0321994727a
+	parent = 15813a74b81d11099268e0723535c002e8261d12
+	cmdver = 0.4.0
