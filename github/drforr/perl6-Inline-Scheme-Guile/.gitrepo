@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/drforr/perl6-Inline-Scheme-Guile.git
+	branch = master
+	commit = a7cc8b555784d3bc44198139008f93c604f6a300
+	parent = d14bdcc8c87ec27e10412375002f0a53327bde0d
+	cmdver = 0.4.0

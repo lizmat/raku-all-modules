@@ -1,0 +1,14 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+sudo: true
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq -y guile-2.0-dev
+perl6:
+  - latest
+install:
+  - rakudobrew build-panda
+  - panda installdeps .
+  - perl6 configure.pl6
