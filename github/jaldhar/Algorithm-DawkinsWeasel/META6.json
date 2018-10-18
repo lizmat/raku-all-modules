@@ -1,0 +1,22 @@
+{
+  "authors" : [
+    "Jaldhar H. Vyas"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "An Illustration of Cumulative Selection",
+  "license" : [
+    "Artistic-2.0",
+    "GPL-2.0+"
+  ],
+  "name" : "Algorithm::DawkinsWeasel",
+  "perl" : "6.c",
+  "provides" : {
+    "Algorithm::DawkinsWeasel" : "lib/Algorithm/DawkinsWeasel.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/jaldhar/Algorithm-DawkinsWeasel.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.1.1"
+}

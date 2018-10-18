@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jaldhar/Algorithm-DawkinsWeasel.git
+	branch = master
+	commit = cfa2396d01e2248664545f078a46798ac9f69e72
+	parent = fcb6bc79dac8ba1de9998a847030f17d0d4298b3
+	cmdver = 0.4.0
