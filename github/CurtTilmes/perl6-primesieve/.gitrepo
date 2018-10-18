@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-primesieve.git
+	branch = master
+	commit = 9106513a002cb55030b5899c4c60f2ff0ce9e85d
+	parent = c734b74f3bfef091163d7a981b61d1e60a4f9669
+	cmdver = 0.4.0
