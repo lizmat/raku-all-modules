@@ -1,7 +1,0 @@
-#! /usr/bin/env perl6
-
-use v6.c;
-
-use META6::bin :MAIN;
-
-# META6::bin::MAIN(:check);

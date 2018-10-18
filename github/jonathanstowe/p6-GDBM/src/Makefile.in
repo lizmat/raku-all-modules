@@ -1,7 +1,0 @@
-all: %DESTDIR%/%gdbmhelper%
-
-%DESTDIR%/%gdbmhelper%: gdbmhelper%O%
-	%LD% %LDSHARED% %LDFLAGS% gdbmhelper%O% %LIBS% %LDOUT%%DESTDIR%/%gdbmhelper% 
-
-gdbmhelper%O%: gdbmhelper.c
-	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT% gdbmhelper%O% gdbmhelper.c

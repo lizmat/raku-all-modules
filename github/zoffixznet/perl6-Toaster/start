@@ -1,2 +1,0 @@
-#!/bin/sh
-screen -L -S toast perl6 bin/toaster-viewer

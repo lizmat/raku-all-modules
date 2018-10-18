@@ -1,8 +1,0 @@
-language: perl6
-install:
-  - rakudobrew build-zef
-before_script:
-  - zef --debug --depsonly install .
-
-script:
-  - zef --debug install .
