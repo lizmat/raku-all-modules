@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kalkin/perl6-hashids.git
+	branch = master
+	commit = c6ffe2aeac9db5198410c4c2dd9ef0610bcec18b
+	parent = 42eafde043d341075bb1514468eb55fd670af1f7
+	cmdver = 0.4.0
