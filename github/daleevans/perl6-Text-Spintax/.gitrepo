@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/daleevans/perl6-Text-Spintax
+	branch = master
+	commit = 56f52d1013483ea125a1e44ef20b30f0e0eb6e33
+	parent = e4f5f12b2ce379f09cd1f6dd791b04b1b1d0d0a2
+	cmdver = 0.4.0
