@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/stmuk/p6-html-restrict.git
+	branch = master
+	commit = 891c1ff50a6a3d409f5eccfe456136073b447b6d
+	parent = 44f5d04d8eb961e2dd42e09a694df8bdb7c56f7d
+	cmdver = 0.4.0
