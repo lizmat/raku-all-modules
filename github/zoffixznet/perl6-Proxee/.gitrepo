@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-Proxee.git
+	branch = master
+	commit = 4c39fe1ae91b9ef1cf59097e21fb8f3ddfd5527a
+	parent = 9354281760e93acdad73e100188ba1170cfe5956
+	cmdver = 0.4.0
