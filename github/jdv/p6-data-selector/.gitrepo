@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jdv/p6-data-selector.git
+	branch = master
+	commit = a2e9b11fabfc75ede4205c510f55a07d21c8f23f
+	parent = f85f51f4cbc819cd251ccd716ac49ee9d8e88be5
+	cmdver = 0.4.0
