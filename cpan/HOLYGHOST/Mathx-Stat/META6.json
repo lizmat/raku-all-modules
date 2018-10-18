@@ -1,0 +1,27 @@
+{
+        "perl" : "6.c",
+        "name" : "Mathx::Stat",
+        "auth" : "CPAN:HOLYGHOST",
+        "api" : "1",
+        "version" : "0.1.5",
+        "description" : "Statistics package unto Correlation Dimension.",
+        "authors" : [ "The Holy Ghost" ],
+        "license" : "General Public License 3, Artistic-2.0",
+        "provides" : {
+            "Mathx::Stat::Correlation" : "lib/Mathx/Stat/Correlation.pm6",
+            "Mathx::Stat::CorrelationDimension" : "lib/Mathx/Stat/CorrelationDimension.pm6",
+            "Mathx::Stat::Dimension" : "lib/Mathx/Stat/Dimension.pm6",
+            "Mathx::Stat::Covariance" : "lib/Mathx/Stat/Covariance.pm6",
+            "Mathx::Stat::Population" : "lib/Mathx/Stat/Population.pm6",
+            "Mathx::Stat::DistributionPopulation" : "lib/Mathx/Stat/DistributionPopulation.pm6",
+            "Mathx::Stat::Probablity" : "lib/Mathx/Stat/Probability.pm6"
+        },
+        "depends" : [ ],
+        "build-depends" : [ ],
+        "test-depends" : [ ],
+        "resources" : [ ],
+        "tags": [
+          "Mathx", "Stat"
+        ],
+        "source-url" : "http://cpan.metacpan.org/authors/id/H/HO/HOLYGHOST/Perl6/Mathx-Stat-0.1.5.tar.gz"
+    }
