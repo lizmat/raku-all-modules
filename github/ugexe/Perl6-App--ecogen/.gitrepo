@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ugexe/Perl6-App--ecogen.git
+	branch = master
+	commit = 3110ec7214ea364d3c8e64a677b3a279ac342bec
+	parent = 4dc947ce1d1b738272c2e5b3f288d5b67f8ab3d9
+	cmdver = 0.4.0

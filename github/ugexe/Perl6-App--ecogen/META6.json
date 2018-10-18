@@ -1,0 +1,22 @@
+{
+    "perl"          : "6.c",
+    "name"          : "App::ecogen",
+    "version"       : "0.0.5",
+    "auth"          : "github:ugexe",
+    "authors"       : ["ugexe"],
+    "license"       : "Artistic-2.0",
+    "description"   : "Generate an ecosystem from a list of META files",
+    "provides"      : {
+        "App::ecogen"       : "lib/App/ecogen.pm6",
+        "App::ecogen::p6c"  : "lib/App/ecogen/p6c.pm6",
+        "App::ecogen::cpan" : "lib/App/ecogen/cpan.pm6"
+    },
+    "depends"       : [ ],
+    "test-depends"  : [ "Test" ],
+    "build-depends" : [ ],
+    "tags"          : [ "ecosystem", "meta6" ],
+    "support"       : {
+        "source"     : "https://github.com/ugexe/Perl6-App--ecogen.git",
+        "bugtracker" : "https://github.com/ugexe/Perl6-App--ecogen/issues"
+    }
+}

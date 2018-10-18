@@ -1,0 +1,24 @@
+#!/usr/bin/env perl6
+
+
+multi MAIN(
+    'update',
+    :$local-uri  = $*HOME.child('.ecogen').absolute,
+    :$remote-uri = "git@github.com:ugexe/Perl6-ecosystems.git",
+    Bool :$local  = True,
+    Bool :$remote = True,
+    *@ecosystems ($, *@)
+) {
+    my $local-dir = $local-uri.IO;
+    try { mkdir($local-uri) unless $local-uri.e }
+
+    for @ecosystems -> $econame {
+        my $ecosystem-module = "App::ecogen::{$econame}";
+        next() R, note("Ecosystem [$ecosystem-module] could not be loaded") if (try require ::($ecosystem-module)) ~~ Nil;
+
+        my $ecosystem = ::($ecosystem-module).new( :prefix($local-dir.child($econame)) );
+
+        $ecosystem.update-local-package-list()             if $local;
+        $ecosystem.update-remote-package-list($remote-uri) if $remote;
+    }
+}
