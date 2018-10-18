@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kalkin/License-Software.git
+	branch = master
+	commit = 0b115fe34743b7bec78c3ced63e5fc1ec16afa19
+	parent = 3ca53a7cd9f5dd1008778417394c89d0363d4736
+	cmdver = 0.4.0
