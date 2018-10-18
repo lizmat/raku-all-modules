@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/niner/CompUnit-Repository-Mask.git
+	branch = master
+	commit = 760679f18b915181a1ad2d7073baf3a93f735714
+	parent = aeb643b1ff44ae290ec8ee2ec0f21bdfff403ae7
+	cmdver = 0.4.0
