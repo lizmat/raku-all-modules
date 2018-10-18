@@ -1,0 +1,43 @@
+language: perl
+
+os:
+    - linux
+    - osx
+
+env:
+    global:
+        - secure: "cSz5tN8OQbWj7wfr6sBCAAjvvky8Xp/NktOOQUU6RzW47GWfLlqx8MwP7QYQG/hRAZ7FgwMdDt8AbBP+KeOBn9Xim6kPSCKpPwPvWheAzhdoSGiVXf/qNTTkW7iBLi9nfbuqwIb9oUdVvXKYJYTgy8clljnYlkRiWpJ/RFeNbPcZAd+yg3sLGA+7q3+XN6w6qbk0qJUD0DHER6QHQodyp8BedXHPnqIM7wVpT7jOXG98bjj6C2/l0Szn78pCbNsTrBuA3XIMtBV1/aPqvmMQZRX7kQZR3rLsEugoO/TbE3AuOoXX7rM9NV1dzG1OJbMBQ3uvsqZmSYo2jin+mBuByW81aCxfdHJRtoAtTxnmRKfQbbHGpY5zEZaIH6PdtD00uB62U0wJvXgoJxEBBpAzBGoB79QlidwrZVx72BfxcR0OZ9hZSEg0ltkTDnW4yCCQTGsYi79RCxFwv6dfxHUKLYmgEXfv900qOHquDVfaI34nLLAgM/IxSUC+TMxGUgtcY/EE3J0VXNQwkMJnZXi9f06NXkrTlOj6DEM/E2yC+CE16lpSy1pcXp3IezdSrD1xF/9iSyMM/KP5aRi+M1gE5f7SLJcmgKHqP0Y7m8QCufb6mlKPyegTTekoKuq2P+3+K2QBVWq/UL2X5noU+EbN22/MUUW+ftbAnFX4X5BZmbM="
+    matrix:
+        - BACKEND=moar
+        - BACKEND=jvm
+
+matrix:
+    allow_failures:
+        - env: BACKEND=jvm
+    fast_finish: true
+
+sudo: false
+
+before_install:
+    - 'if [[ $BACKEND == "moar" ]]; then export VM_OPTS="--gen-moar"; fi'
+    - git clone https://github.com/rakudo/rakudo.git $HOME/rakudo
+    - cd $HOME/rakudo
+    - perl Configure.pl $VM_OPTS --gen-nqp --backends=$BACKEND
+    - make install
+    - export PATH=$HOME/rakudo/install/bin:$PATH
+    - export PATH=$HOME/rakudo/install/share/perl6/site/bin:$PATH
+    - cd $TRAVIS_BUILD_DIR
+
+install:
+    - git clone https://github.com/ugexe/zef $HOME/zef
+    - perl6 -I $HOME/zef $HOME/zef/bin/zef --deps-only install .
+
+script:
+    # Test it works loaded as a CURFS
+    - prove -v -e 'perl6 -I.' t/
+
+    # Test it can install
+    - perl6 -I $HOME/zef $HOME/zef/bin/zef --/test install .
+
+    # Test it works loaded as a CURI
+    - prove -v -e perl6 t/

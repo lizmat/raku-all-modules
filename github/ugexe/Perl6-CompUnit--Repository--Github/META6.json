@@ -1,0 +1,22 @@
+{
+    "meta-version" : "0",
+    "perl"         : "6.c",
+    "name"         : "CompUnit::Repository::Github",
+    "api"          : "0",
+    "version"      : "0.0.2",
+    "auth"         : "github:ugexe",
+    "authors"      : ["ugexe"],
+    "license"       : "Artistic-2.0",
+    "description"  : "Load module code using the GitHub API as a remote file system",
+    "provides"     : {
+        "CompUnit::Repository::Github" : "lib/CompUnit/Repository/Github.pm6"
+    },
+    "build-depends" : [ ],
+    "test-depends"  : [ "Test" ],
+    "depends"       : [ "Distribution::Common::Remote" ],
+    "support"       : {
+        "bugtracker" : "https://github.com/ugexe/Perl6-CompUnit--Repository--Github/issues",
+        "source"     : "https://github.com/ugexe/Perl6-CompUnit--Repository--Github.git"
+    },
+    "tags"         : [ "CompUnit", "Repository", "Github" ]
+}

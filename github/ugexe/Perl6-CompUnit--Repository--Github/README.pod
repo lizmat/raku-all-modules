@@ -1,0 +1,24 @@
+=pod
+
+=encoding utf8
+
+=head2 CompUnit::Repository::Github
+
+Load modules directly from the Github API over http. Fuck it.
+
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-CompUnit--Repository--Github"><img src="https://travis-ci.org/ugexe/Perl6-CompUnit--Repository--Github.svg?branch=master"></a>
+          <a href="https://ci.appveyor.com/project/ugexe/perl6-compunit-repository-github/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/ugexe/Perl6-CompUnit--Repository--Github?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
+
+=head3 Synopsis
+
+    BEGIN %*ENV<GITHUB_ACCESS_TOKEN> = "..."; # optional, but useful due to api rate limiting
+
+    use CompUnit::Repository::Github;
+    use lib "CompUnit::Repository::Github#user<ugexe>#repo<Perl6-PathTools>#branch<master>#/";
+
+    require ::("PathTools") <&ls>;
+    say &ls($*CWD);
+
+See: L<tests|https://github.com/ugexe/Perl6-CompUnit--Repository--Github/blob/master/t>
+
+=cut
