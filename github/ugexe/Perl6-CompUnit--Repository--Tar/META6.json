@@ -1,0 +1,22 @@
+{
+    "perl"        : "6.c",
+    "name"        : "CompUnit::Repository::Tar",
+    "api"         : "0",
+    "version"     : "0.0.2",
+    "auth"        : "github:ugexe",
+    "authors"     : ["ugexe"],
+    "license"     : "Artistic-2.0",
+    "description" : "Load modules directory from a .tar.gz archive",
+    "provides"    : {
+        "CompUnit::Repository::Tar" : "lib/CompUnit/Repository/Tar.pm6"
+    },
+    "resources"   : [
+        "test-dists/zef.tar.gz"
+    ],
+    "depends"     : [ "Distribution::Common" ],
+    "support"     : {
+        "bugtracker" : "https://github.com/ugexe/Perl6-CompUnit--Repository--Tar/issues",
+        "source"     : "https://github.com/ugexe/Perl6-CompUnit--Repository--Tar.git"
+    },
+    "tags"        : [ "CompUnit", "Repository", "Tar" ]
+}
