@@ -37,8 +37,7 @@ sub MAIN(Str :$directory!, Str :$name) {
         my $kit = Audio::Hydrogen::Drumkit.new(name => ($name // $d.basename));
         for $d.dir(test => /:i '.' [wav|flac] $/).grep({ $_.f }) -> $file {
             my $filename = $file.basename;
-            my $name = $filename.subst(/:i '.' [wav|flac]/, '');
-            $name.subst-mutate(/<[_-]>+/, ' ', :g);
+            my $name = $filename.subst(/:i '.' [wav|flac]/, '').subst(/<[_-]>+/, ' ', :g);
             my $instrument = Audio::Hydrogen::Instrument.new(:$id, :$filename, :$name, volume => 1.0);
             $kit.instruments.append: $instrument;
             $id++;

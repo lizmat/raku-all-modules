@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/Audio-Hydrogen.git
 	branch = master
-	commit = 3282c16e1a98cc8181e1cf363dab81687a02b32b
-	parent = ab3c416b26af45cc4fb709d5a1958d6a015d23a0
+	commit = 92ed3dfe4f6cd39e93e994d6086db9225043208a
+	parent = ef5b991eb0d9d64a52d572008e4eac9c36c1b05d
 	cmdver = 0.4.0

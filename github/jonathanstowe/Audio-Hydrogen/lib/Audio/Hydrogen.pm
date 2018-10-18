@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -44,13 +44,13 @@ path to the C<data-paths> attribute before search for the drumkits.
 use Audio::Hydrogen::Drumkit;
 use Audio::Hydrogen::Song;
 
-class Audio::Hydrogen:ver<0.0.2>:auth<github:jonathanstowe> {
+class Audio::Hydrogen:ver<0.0.3>:auth<github:jonathanstowe> {
 
     class DrumkitInfo {
         has Str $.name;
         has IO::Path $.path;
 
-        method drumkit() returns Audio::Hydrogen::Drumkit {
+        method drumkit( --> Audio::Hydrogen::Drumkit ) {
             my $xml = $!path.add('drumkit.xml').slurp;
             my $dk = Audio::Hydrogen::Drumkit.from-xml($xml);
             $dk.make-absolute($!path);

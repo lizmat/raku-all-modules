@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -139,8 +139,8 @@ use Audio::Hydrogen::Pattern;
 use Audio::Hydrogen::Instrument;
 
 class Audio::Hydrogen::Song does XML::Class[xml-element => 'song'] {
-    sub from-version($v) { $v.Str }
-    sub to-version($v)   { Version.new($v) }
+    sub from-version(Version $v --> Str) { $v.Str }
+    sub to-version(Str $v --> Version)   { Version.new($v) }
     has Version $.version is xml-element is xml-serialise(&from-version) is xml-deserialise(&to-version) = Version.new("0.9.5");
     has Int     $.bpm               is xml-element is rw = 120;
     has Rat     $.volume            is xml-element is rw = 1.0;
