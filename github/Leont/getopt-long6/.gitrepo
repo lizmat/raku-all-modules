@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Leont/getopt-long6.git
+	branch = master
+	commit = ddf8e015f1b0010ec1e5695f779a084e7594f2ed
+	parent = f1871d7a179b0a0d3e736278b936a6b8883b9d5e
+	cmdver = 0.4.0
