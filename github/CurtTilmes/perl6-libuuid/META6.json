@@ -1,0 +1,32 @@
+{
+    "name" : "LibUUID",
+
+    "description" : "Perl 6 bindings for libuuid, for UUID generation",
+
+    "auth" : "github:CurtTilmes",
+
+    "version" : "0.1",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-libuuid.git",
+
+    "perl" : "6.c",
+
+    "tags" : [ "UUID" ],
+
+    "provides" : {
+        "LibUUID" : "lib/LibUUID.pm6"
+    },
+
+    "depends" : [ "NativeCall" ],
+
+    "test-depends" : [ "Test", "Test::When", "Test::META" ],
+
+    "license" : "Artistic-2.0",
+
+    "authors" : [ "Curt Tilmes <ctilmes@cpan.org>" ],
+
+    "support" : {
+      "source" : "https://github.com/CurtTilmes/perl6-libuuid.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-libuuid/issues"
+    }
+}
