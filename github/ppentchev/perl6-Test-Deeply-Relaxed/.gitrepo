@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ppentchev/perl6-Test-Deeply-Relaxed.git
+	branch = master
+	commit = b7de0be8bae2137612afe9e8c1087ffdd407ec56
+	parent = 8627b3f7ac0b9993236d62d522833c199140d003
+	cmdver = 0.4.0
