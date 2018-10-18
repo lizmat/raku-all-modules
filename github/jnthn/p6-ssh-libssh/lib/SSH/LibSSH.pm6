@@ -29,17 +29,19 @@ class X::SSH::LibSSH::Error is Exception {
 }
 
 class SSH::LibSSH {
-    multi sub error-check($what, $result) {
-        if $result == -1 {
+    multi sub error-check($what, Int $result) returns int32 {
+        my int32 $res = $result;
+        if $res == SSH_ERROR {
             die X::SSH::LibSSH::Error.new(message => "Failed to $what");
         }
-        $result
+        $res
     }
-    multi sub error-check(SSHSession $s, $result) {
-        if $result == -1 {
+    multi sub error-check(SSHSession $s, Int $result) returns int32 {
+        my int32 $res = $result;
+        if $res == SSH_ERROR {
             die X::SSH::LibSSH::Error.new(message => ssh_get_error($s));
         }
-        $result
+        $res
     }
 
     # We use libssh exclusively in non-blocking mode. A single event loop
@@ -461,6 +463,65 @@ class SSH::LibSSH {
                     }
                 }
             }
+        }
+
+        method interactive(Str $terminal!, Int $cols!, Int $rows! --> Promise) {
+            my $p = Promise.new;
+            my $v = $p.vow;
+            given get-event-loop() -> $loop {
+                $loop.run-on-loop: {
+                    my $channel = ssh_channel_new($!session-handle);
+                    with $channel {
+                        my int32 $open  = SSH_AGAIN;
+                        my int32 $pty   = SSH_AGAIN;
+                        my int32 $shell = SSH_AGAIN;
+
+                        unless $open == SSH_OK && $pty == SSH_OK && $shell == SSH_OK {
+                            $loop.add-poller: -> $remove is rw {
+                                if $open == SSH_AGAIN {
+                                    $open = error-check("open session",
+                                        ssh_channel_open_session($channel));
+                                }
+
+                                if $open == SSH_OK {
+                                    if $pty == SSH_AGAIN {
+                                        $pty = error-check('request a pty',
+                                            ssh_channel_request_pty_size($channel, $terminal, $cols, $rows));
+                                    }
+                                    if $shell == SSH_AGAIN && $pty == SSH_OK {
+                                        $shell = error-check('request shell',
+                                            ssh_channel_request_shell($channel));
+                                    }
+                                    if $pty == SSH_OK && $shell == SSH_OK {
+                                        if ssh_channel_is_open($channel) == 1 {
+                                            $remove = True;
+                                            $v.keep(Channel.from-raw-handle($channel, self));
+                                        } else {
+                                            die "Failed to open channel";
+                                        }
+                                    }
+                                }
+
+                                CATCH {
+                                    default {
+                                        $remove = True;
+                                        $v.break($_);
+                                    }
+                                }
+                            }
+                        }
+                        CATCH {
+                            default {
+                                $v.break($_);
+                            }
+                        }
+                    }
+                    else {
+                        $v.break(X::SSH::LibSSH::Error.new(message => 'Could not allocate channel for interactive session'));
+                    }
+                }
+            }
+            $p
         }
 
         method execute($command --> Promise) {
@@ -912,7 +973,7 @@ class SSH::LibSSH {
             given get-event-loop() -> $loop {
                 $loop.run-on-loop: {
                     $loop.add-poller: -> $remove is rw {
-                        if $!stdout-eof && $!stderr-eof {
+                        if $!stdout-eof || $!stderr-eof {
                             my $exit = ssh_channel_get_exit_status($!channel-handle);
                             if $exit >= 0 {
                                 $remove = True;
