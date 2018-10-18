@@ -1,0 +1,16 @@
+language: perl
+
+before_install:
+  - export PATH=/opt/rakudo/bin:$PATH
+  - cat /dev/zero | ssh-keygen -q -N ""
+  - cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+  - chmod og-wx ~/.ssh/authorized_keys
+install:
+    - export PATH=/opt/rakudo/bin:~/.perl6/bin:$PATH
+    - wget https://github.com/nxadm/rakudo-pkg/releases/download/2017.03_02/perl6-rakudo-moarvm-ubuntu16.04_20170300-02_amd64.deb
+    - sudo dpkg -i *.deb
+    - install_zef_as_user.sh
+    - zef install .
+script:
+- sparrowdo --host=127.0.0.1 --bootstrap
+
