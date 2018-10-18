@@ -1,0 +1,25 @@
+{
+    "perl"        : "6.c",
+    "name"        : "Distribution::Common",
+    "api"         : "0",
+    "version"     : "0.0.2",
+    "auth"        : "github:ugexe",
+    "authors"     : ["ugexe"],
+    "description" : "Create an installable Distribution from common sources",
+    "license" : "Artistic-2.0",
+    "provides"    : {
+        "Distribution::Common"              : "lib/Distribution/Common.pm6",
+        "Distribution::Common::Directory"   : "lib/Distribution/Common/Directory.pm6",
+        "Distribution::Common::Git"         : "lib/Distribution/Common/Git.pm6",
+        "Distribution::Common::Tar"         : "lib/Distribution/Common/Tar.pm6",
+        "Distribution::IO"                  : "lib/Distribution/IO.pm6",
+        "Distribution::IO::Directory"       : "lib/Distribution/IO/Directory.pm6",
+        "Distribution::IO::Proc::Git"       : "lib/Distribution/IO/Proc/Git.pm6",
+        "Distribution::IO::Proc::Tar"       : "lib/Distribution/IO/Proc/Tar.pm6"
+    },
+    "depends"     : [ ],
+    "support"     : {
+        "bugtracker" : "https://github.com/ugexe/Perl6-Distribution--Common/issues",
+        "source"     : "https://github.com/ugexe/Perl6-Distribution--Common.git"
+    }
+}
