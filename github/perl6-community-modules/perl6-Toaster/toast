@@ -1,0 +1,2 @@
+#!/bin/sh
+screen -L -S toast /usr/bin/time perl6 bin/toaster-perl6 master

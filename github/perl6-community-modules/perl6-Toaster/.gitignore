@@ -1,0 +1,8 @@
+/output/
+.precomp
+*.sqlite.db
+/build
+/screenlog.*
+/old-db/
+/toast.sqlite.db-shm
+/toast.sqlite.db-wal
