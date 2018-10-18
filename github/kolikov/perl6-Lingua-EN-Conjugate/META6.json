@@ -5,7 +5,7 @@
     "description" : "A module that conjugates English verbs",
     "author" : "Romuald Nuguet",
     "provides" : {
-        "Lingua::EN::Conjugate" : "lib/Lingua/EN/Conjugate/Conjugate.pm6"
+        "Lingua::EN::Conjugate" : "lib/Lingua/EN/Conjugate.pm6"
     },
     "depends" : [],
     "source-url" : "https://github.com/kolikov/perl6-Lingua-EN-Conjugate.git"
