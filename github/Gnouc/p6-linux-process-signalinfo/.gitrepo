@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Gnouc/p6-linux-process-signalinfo.git
+	branch = master
+	commit = 74ccc09959a7728f244362cad4d504de3965b077
+	parent = 791f6f5a568fbc2cdce7528684e8f5410a196416
+	cmdver = 0.4.0
