@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/darrenf/p6-test-declare.git
+	branch = master
+	commit = 18b6bd209c218c10f251c68fdf90fc0b876ec120
+	parent = c002d04e6c1f421fcfa6a82b0a5db05e65096267
+	cmdver = 0.4.0
