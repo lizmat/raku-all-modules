@@ -1,0 +1,30 @@
+{
+        "perl" : "6.c",
+        "name" : "Game::Markov",
+        "auth" : "CPAN:HOLYGHOST",
+        "api" : "1",
+        "version" : "0.1.5",
+        "description" : "Markov Strategy kit for games",
+        "authors" : [ "The Holy Ghost" ],
+        "license" : "General Public License 3, Artistic-2.0",
+        "provides" : {
+            "Game::Markov::AbstractMarkovChain" : "lib/Game/Markov/AbstractMarkovChain.pm6",
+            "Game::Markov::HMMMarkovChain" : "lib/Game/Markov/HMMMarkovChain.pm6",
+            "Game::Markov::MarkovChain" : "lib/Game/Markov/MarkovChain.pm6",
+            "Game::Markov::MarkovTick" : "lib/Game/Markov/MarkovTick.pm6",
+            "Game::Markov::MarkovTime" : "lib/Game/Markov/MarkovTime.pm6",
+            "Game::Markov::Tick" : "lib/Game/Markov/Tick.pm6",
+            "Game::Markov::Time" : "lib/Game/Markov/Time.pm6",
+            "Game::Markov::TimeChain" : "lib/Game/Markov/TimeChain.pm6",
+            "Game::Markov::TruncatedGaussian" : "lib/Game/Markov/TruncatedGaussian.pm6",
+            "Game::Markov::SamplePopulation" : "lib/Game/Markov/SamplePopulation.pm6"
+        },
+        "depends" : [ "Mathx::Stat" ],
+        "build-depends" : [ ],
+        "test-depends" : [ ],
+        "resources" : [ ],
+        "tags": [
+          "Game", "Markov"
+        ],
+        "source-url" : "http://cpan.metacpan.org/authors/id/H/HO/HOLYGHOST/Perl6/Game-Markov-0.1.5.tar.gz"
+    }
