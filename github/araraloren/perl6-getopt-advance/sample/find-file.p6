@@ -1,7 +1,7 @@
 #!/usr/bin/env perl6
 
 use Getopt::Advance;
-use Getopt::Advance::Helper;
+use Getopt::Advance::Parser;
 use Getopt::Advance::Exception;
 
 my @files = [];
@@ -57,7 +57,8 @@ $optset.insert-main(
         }
     }
 );
-&getopt($optset, :autohv, helper => &ga-helper2);
+
+&getopt($optset, :autohv, parser => &ga-parser2);
 
 sub find($dir) {
     for $dir.dir() -> $f {

@@ -1,54 +1,58 @@
 
+use Getopt::Advance::Utils;
+use Getopt::Advance::Types;
 use Getopt::Advance::Exception;
 
-class Group::OptionName {
-    has $.long is rw;
-    has $.short is rw;
+unit module Getopt::Advance::Group;
+
+class OptionInfo {
+    has $.optref;
+    has $.long;
+    has $.short;
+
+    method name() {
+        self.long eq "" ?? self.short() !! self.long();
+    }
 }
 
-role Group {
-    has $.optsetref;
-    has @.names;
+role Group does RefOptionSet {
+    has @.infos;
     has $.optional = True;
 
     # @options are names of options in group
     submethod TWEAK(:@options) {
-        @!names = [];
+        @!infos = [];
         for @options {
-            @!names.push(
-                Group::OptionName.new(long => .long, short => .short)
+            @!infos.push(
+                OptionInfo.new(optref => $_, long => .long, short => .short)
             );
         }
     }
 
-    method usage() {
+    method usage( --> Str) {
         my $usage = "";
 
         $usage ~= $!optional ?? "+\[ " !! "+\< ";
-        $usage ~= $!optsetref.get(.long eq "" ?? .short !! .long).usage() for @!names;
+        $usage ~= self.owner.get(.name()).usage() for @!infos;
         $usage ~= $!optional ?? " \]+" !! " \>+";
         $usage;
     }
 
-    method has(Str:D $name --> Bool) {
-        for @!names {
-            return True if $name eq .long | .short;
+    method has(Str:D $name --> False) {
+        for @!infos {
+            if $name eq .long || $name eq .short {
+                return True;
+            }
         }
-        False;
     }
 
-    method remove(Str:D $name where $name !~~ /^\s+$/) {
-        for ^+@!names -> $index {
-            my $optn := @!names[$index];
-            if $name eq $optn.long {
-                $optn.long = "";
-            }
-            if $name eq $optn.short {
-                $optn.short = "";
-            }
-            if $optn.long eq "" and $optn.short eq "" {
-                @!names.splice($index, 1);
-                return True;
+    method remove(Str:D $name--> False) {
+        for ^+@!infos -> $index {
+            given @!infos[$index] {
+                if $name eq .long || $name eq .short {
+                    @!infos.splice($index, 1);
+                    return True;
+                }
             }
         }
     }
@@ -57,8 +61,7 @@ role Group {
 
     method clone(*%_) {
         nextwith(
-            optsetref => %_<optsetref> // $!optsetref,
-            names => %_<names> // @!names.clone,
+            infos => %_<infos> // @!infos.clone,
             optional => %_<optional> // $!optional,
             |%_
         );
@@ -69,18 +72,18 @@ class Group::Radio does Group {
     method check() {
         my $count = 0;
 
-        for @!names {
+        for @!infos {
             my $name = .long eq "" ?? .short !! .long;
-            $count += 1 if $!optsetref.get($name).has-value;
+            $count += 1 if self.owner.get($name).has-value;
         }
         given $count {
             when 0 {
                 unless $!optional {
-                    ga-group-error("{self.usage}: Radio option group value is force required!");
+                    &ga-group-error("{self.usage}: Radio option group value is force required!");
                 }
             }
             when * > 1 {
-                ga-group-error("{self.usage}: Radio group value only allow set one!");
+                &ga-group-error("{self.usage}: Radio group value only allow set one!");
             }
         }
     }
@@ -91,12 +94,12 @@ class Group::Multi does Group {
         unless $!optional {
             my $count = 0;
 
-            for @!names {
+            for @!infos {
                 my $name = .long eq "" ?? .short !! .long;
-                $count += 1 if $!optsetref.get($name).has-value;
+                $count += 1 if self.owner.get($name).has-value;
             }
-            if $count < +@!names {
-                ga-group-error("{self.usage}: Multi option group value is force required!");
+            if $count < +@!infos {
+                &ga-group-error("{self.usage}: Multi option group value is force required!");
             }
         }
     }

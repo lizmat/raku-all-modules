@@ -1,20 +1,59 @@
 
-use Getopt::Advance::Argument;
 use Getopt::Advance::Exception;
+use Getopt::Advance::Utils;
 
-constant NOALL  = "all";
-constant NOCMD  = "cmd";
-constant NOPOS  = "position";
+unit module Getopt::Advance::NonOption;
 
-role NonOption {
-    has $.success;
-    has &.callback;
+class NonOptionInfo does Info {
+    has $.optname;
+    has &.check;
+    has $.opt;
 
-    method set-callback(&callback) { ... }
-    method has-callback of Bool { &!callback.defined; }
-    method match-index(Int $total, Int $index) { ... }
-    method match-name(Str $name) { ... }
-    method reset-success { $!success = False; }
+    method name() { $!optname; }
+
+    method check(Message $msg) {
+        &!check($msg.style);
+    }
+
+    method process($data) { $data.process($!opt); }
+}
+
+role NonOption does RefOptionSet does Subscriber {
+    has Str  $.name;
+    has Any  $.value; #| return value if callback
+    has Supplier $.supplier = Supplier.new;
+    has $.index;
+    has &!callback;
+    has $.annotation = "";
+
+    method init() { }
+
+    method set-callback(&!callback) { }
+
+    method set-annotation($!annotation) { }
+
+    #| match method
+    method match-index(Int $total, Int $index --> Bool) { ... }
+
+    method match-name(Str $name --> Bool) { ... }
+
+    method match-style($style --> Bool) { ... }
+
+    #| others
+    method Supply { $!supplier.Supply; }
+
+    method success() { so $!value; }
+
+    method annotation() { $!annotation; }
+
+    method reset-success() { $!value = Any; }
+
+    method reset() { $!value = Any; }
+
+    method has-callback( --> Bool) { &!callback.defined; }
+
+    method has-annotation( --> Bool) { $!annotation ne ""; }
+
     method CALL-ME(|c) {
         my $ret;
         given &!callback.signature {
@@ -28,16 +67,74 @@ role NonOption {
 				$ret = &!callback();
 			}
         }
-        $!success = True;
         return $ret;
     }
-    method type of Str { ... }
-    method clone(*%_) { ... }
-    method usage { ... }
+
+    method type( --> Str) { ... }
+
+    method usage( --> Str) { ... }
+
+    #| clone lose the value and sucess
+    method clone() {
+        nextwith(
+            index => %_<index> // $!index.clone,
+            name  => %_<name>  // $!name.clone,
+            callback => %_<callback> // &!callback.clone,
+            supplier    => Supplier.new,
+            |%_
+        );
+    }
 }
 
-class NonOption::All does NonOption {
+class NonOption::Main does NonOption {
     submethod TWEAK(:&callback) {
+        unless &callback.defined {
+            &ga-raise-error('You should provide a &callback to NonOption');
+        }
+        $!index = -1;
+        self.set-callback(&callback);
+    }
+
+    method set-callback(
+        &callback where .signature ~~ :($, @) | :(@) | :()
+    ) {
+        self.NonOption::set-callback(&callback);
+    }
+
+    method subscribe(Publisher $p) {
+        $p.subscribe(
+            NonOptionInfo.new(
+                optname  => self.usage(),
+                check   => sub (\style) {
+                    style eq Style::MAIN;
+                },
+                opt => self,
+            )
+        );
+    }
+
+    method match-index(Int $total, Int $index --> True) { }
+
+    method match-name(Str $name --> True) {}
+
+    method match-style($style --> Bool) { $style == Style::MAIN; }
+
+    method CALL-ME(|c) {
+        $!value = self.NonOption::CALL-ME(|c);
+        $!supplier.emit([self.owner(), self, c.[* - 1]]);
+    }
+
+    method type(--> "main") { }
+
+    method usage() { '*@args' }
+}
+
+class NonOption::Cmd does NonOption {
+    submethod TWEAK(:&callback) {
+        unless &callback.defined {
+            &ga-raise-error('You should provide a &callback to NonOption');
+        }
+        $!index = 0;
         self.set-callback(&callback);
     }
 
@@ -47,35 +144,47 @@ class NonOption::All does NonOption {
         &!callback = &callback;
     }
 
-    method match-index(Int $total, Int $index) {
-        True;
-    }
-
-    method match-name(Str $name) {
-        True;
-    }
-
-    method type of Str {
-        NOALL;
-    }
-
-    method clone(*%_) {
-        nextwith(
-            callback    => %_<callback> // &!callback.clone,
-            |%_
+    method subscribe(Publisher $p) {
+        $p.subscribe(
+            NonOptionInfo.new(
+                optname  => self.usage(),
+                check   => sub (\style) {
+                    style eq Style::CMD;
+                },
+                opt => self,
+            )
         );
     }
 
-    method usage() {
-        "main";
+    method match-index(Int $total, Int $index --> Bool) {
+        $index == $!index;
     }
+
+    method match-name(Str $name --> Bool) {
+        self.name() eq $name;
+    }
+
+    method match-style($style --> Bool) { $style == Style::CMD; }
+
+    method CALL-ME(|c) {
+        $!value = so self.NonOption::CALL-ME(|c);
+        $!supplier.emit([self.owner(), self, c.[* - 1]]);
+    }
+
+    method type( --> "cmd") { }
+
+    method usage() { self.name(); }
 }
 
-class NonOption::Cmd does NonOption {
-    has $.name;
-
-    submethod TWEAK(:&callback) {
+class NonOption::Pos does NonOption {
+    submethod TWEAK(:&callback, :$index) {
+        unless &callback.defined {
+            &ga-raise-error('You should provide a &callback to NonOption');
+        }
         self.set-callback(&callback);
+        if $index ~~ Int && $index < 0 {
+            &ga-raise-error("Index should be positive number!");
+        }
     }
 
     method set-callback(
@@ -84,133 +193,52 @@ class NonOption::Cmd does NonOption {
         &!callback = &callback;
     }
 
-    method match-index(Int $total, Int $index) {
-        $index == 0;
-    }
-
-    method match-name(Str $name) {
-        $!name eq $name;
-    }
-
-    method CALL-ME(|c) {
-        given &!callback.signature {
-            when :($, @) {
-                &!callback(|c);
-            }
-            when :(@) {
-                &!callback(c.[* - 1]);
-            }
-			when :() {
-				&!callback();
-			}
-        }
-        $!success = True;
-    }
-
-    method type of Str {
-        NOCMD;
-    }
-
-    method clone(*%_) {
-        nextwith(
-            callback    => %_<callback> // &!callback.clone,
-            name        => %_<name> // $!name.clone,
-            |%_
+    method subscribe(Publisher $p) {
+        $p.subscribe(
+            NonOptionInfo.new(
+                optname  => self.usage(),
+                check   => sub (\style) {
+                    style eq (self.index ~~ WhateverCode ?? Style::WHATEVERPOS !! Style::POS);
+                },
+                opt => self,
+            )
         );
-    }
-
-    method usage() {
-        $!name;
-    }
-}
-
-class NonOption::Pos does NonOption {
-    has $.name;
-    has $.value;
-    has $.index;
-
-    submethod TWEAK(:&callback, :$index) {
-        self.set-callback(&callback);
-        if $index ~~ Int && $index < 0 {
-            &ga-raise-error("Index should be positive number!");
-        }
-    }
-
-    method set-index(Int:D $index) {
-        $!index = $index;
-    }
-
-    method set-callback(
-        &callback # where .signature ~~ :($, Argument $) | :(Argument $)
-    ) {
-        &!callback = &callback;
     }
 
     method match-index(Int $total, $index) {
         my $expect-index = $!index ~~ WhateverCode ??
             $!index.($total) !! $!index;
-        my $readl-index = $index ~~ WhateverCode ??
+        my $real-index = $index ~~ WhateverCode ??
                 $index.($total) !! $index;
-        return $readl-index == $expect-index;
+        return $real-index == $expect-index;
     }
 
-    method match-name(Str $name) {
-        $!name eq $name;
+    method match-name(Str $name --> True ) { }
+
+    method match-style($style --> Bool) {
+        $style eq (self.index ~~ WhateverCode ?? Style::WHATEVERPOS !! Style::POS);
     }
 
     method CALL-ME(|c) {
+        my $ret;
         given &!callback.signature {
             when :($, $) {
-                &!callback(|c);
+                $ret = &!callback(|c);
             }
             when :($) {
-                &!callback(c.[* - 1]);
+                $ret = &!callback(c.[* - 1]);
             }
 			when :() {
-				&!callback();
+				$ret = &!callback();
 			}
         }
-        $!success = True;
+        $!supplier.emit([self.owner(), self, c.[* - 1]]);
+        return ($!value = $ret);
     }
 
-    method type of Str {
-        NOPOS;
-    }
-
-    method clone(*%_) {
-        nextwith(
-            callback    => %_<callback> // &!callback.clone,
-            name        => %_<name> // $!name.clone,
-            index       => %_<index> // $!index.clone,
-            |%_
-        );
-    }
+    method type( --> "pos") { }
 
     method usage() {
-        "{$!name}";
-    }
-
-    method new-front(*%_) {
-        %_<index>:delete;
-        self.new(
-            |%_,
-            index => 0
-        );
-    }
-
-    method new-last(*%_) {
-        %_<index>:delete;
-        self.new(
-            |%_,
-            index => * - 1
-        );
-    }
-
-    method set-value($value) {
-        $!value = $value;
-    }
-
-    method value {
-        $!value;
+        return "{self.name()}\@{self.index ~~ WhateverCode ?? '*' !! self.index }";
     }
 }

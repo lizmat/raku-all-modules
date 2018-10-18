@@ -12,7 +12,7 @@ $optset.insert-main(sub main($, @) {
     nok $optset.has("z"), "clone ok";
 });
 
-my $another = $optset.clone();
+my OptionSet $another = $optset.clone();
 
 $optset.push("v|version=b");
 $optset.append("a=s;b=b;c=f", :radio);

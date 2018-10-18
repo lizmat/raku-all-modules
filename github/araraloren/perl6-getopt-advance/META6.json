@@ -1,7 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "Getopt::Advance",
-    "version"     : "0.3.5",
+    "version"     : "1.1.3",
     "license"     : "MIT",
     "description" : "Advanced command line parse module for perl6",
     "depends"     : [
@@ -14,18 +14,23 @@
         "getopt",
         "unix",
         "gnu",
-        "bsd"
+        "bsd",
+        "main",
+        "command"
     ],
     "provides"    : {
         "Getopt::Advance"               : "lib/Getopt/Advance.pm6",
         "Getopt::Advance::Argument"     : "lib/Getopt/Advance/Argument.pm6",
+        "Getopt::Advance::Context"      : "lib/Getopt/Advance/Context.pm6",
         "Getopt::Advance::Exception"    : "lib/Getopt/Advance/Exception.pm6",
         "Getopt::Advance::Group"        : "lib/Getopt/Advance/Group.pm6",
         "Getopt::Advance::Helper"       : "lib/Getopt/Advance/Helper.pm6",
         "Getopt::Advance::NonOption"    : "lib/Getopt/Advance/NonOption.pm6",
         "Getopt::Advance::Option"       : "lib/Getopt/Advance/Option.pm6",
         "Getopt::Advance::Parser"       : "lib/Getopt/Advance/Parser.pm6",
-        "Getopt::Advance::Types"        : "lib/Getopt/Advance/Types.pm6"
+        "Getopt::Advance::Subs"         : "lib/Getopt/Advance/Subs.pm6",
+        "Getopt::Advance::Types"        : "lib/Getopt/Advance/Types.pm6",
+        "Getopt::Advance::Utils"        : "lib/Getopt/Advance/Utils.pm6"
     },
 	"auth" : "github:araraloren",
     "authors" : "Loren",

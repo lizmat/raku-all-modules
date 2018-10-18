@@ -1,6 +1,71 @@
 
 = UPDATE LOG
 
+* 2018-10-05
+
+    Fix the option name not allow dash character. 
+
+* 2018-10-02
+    Fix syntax error of reset `Option` value.
+    Fix error that not clean the subscriber, that will cause some stranger behavior.
+
+* 2018-10-01
+
+    Print the `CMDs` and `POSs` which not have annotation.
+    Add named argument `one-section-cmd` to `ga-helper`, using it by pass it to `&getopt`.
+
+* 2018-09-30
+
+    Make help generator more readable.
+    Add `COMMANDs`, `POSITIONs`, `POSITIONs` when generate for single `OptionSet`.
+    Current, show the `COMMANDs`, and `POSITIONs` information for multiple `OptionSet`.
+    Add named arguments `disable-pos-help`, `disable-cmd-help` to `&ga-helper`, using it by pass it to `&getopt`.
+
+* 2018-09-29
+
+    Should check the cmd after broadcast non-option in `PreParser`.
+    Fix the issue not clean the `prenoa`.
+    Add more test for `PreParser`.
+    Fix the issue not handle the multiple `OptionSet` correctly.
+    Add a named argument for `&ga-helper`, disable it by pass `:!compact-help` to `&getopt`, default is False.
+
+* 2018-09-27
+
+    Fix the value which passed to `Option::Array` and `Option::Hash` callback.
+    Update the README.
+    Add a method `unregiste` to TypesManager.
+    Add a sample redefine the option prefix.
+
+* 2018-09-26
+
+    Fix the issue that not clean the `@!noa` of Parser.
+    Fix the some method signature of Option.
+
+* 2018-09-25
+
+    Fix issue about skip argument.
+
+* 2018-09-18
+
+    Fix some issue about autohv.
+
+* 2018-09-16
+
+    Do refactoring with a few API changed.
+    Easy way to expand things.
+
+* 2018-09-04
+
+    Fix the signature error of `Cmd`.
+
+* 2018-08-25
+
+    Add a method `merge` to `OptionSet`.
+
+* 2018-07-06
+
+    Replace the method new-from-optstring with from-optstring.
+
 * 2018-07-05
 
     Add value attribute to `pos`(NonOption::Pos), it will be set when `pos`(NonOption::Pos) matched.

@@ -3,12 +3,17 @@ use Test;
 use Getopt::Advance;
 use Getopt::Advance::Exception;
 
-plan 6;
+plan 7;
 
 my OptionSet $optset .= new;
 
 $optset.insert-cmd("plus");
-$optset.insert-cmd("multi");
+
+supply {
+    whenever $optset.Supply($optset.insert-cmd("multi")) {
+        ok True, 'call the cmd callback';
+    }
+}.tap;
 
 &main(|getopt(<plus 1 2 3 4 5 6 7 8 9 10>, $optset,));
 
@@ -42,18 +47,19 @@ $osa.insert-main(sub ($os, @_) { $os });
 $osa.insert-pos(
     "want-digit",
     0,
-    sub ($_) {
-        &ga-try-next-pos("want a digit");
-    }
+    sub ($_) { False }
 );
 
 my OptionSet $osb = $osa.clone();
 my OptionSet $osc = $osa.clone();
 
-$osa.insert-cmd("a");
-$osb.insert-cmd("b");
-$osc.insert-cmd("c");
+my $a = $osa.insert-cmd("a");
+my $b = $osb.insert-cmd("b");
+my $c = $osc.insert-cmd("c");
 
 for < a b c > -> $cmd {
     is &getopt(<< $cmd >>.List, $osa, $osb, $osc).optionset, {a => $osa, b => $osb, c => $osc}{$cmd}, "match cmd ok";
+    $osa.reset-cmd($a);
+    $osb.reset-cmd($b);
+    $osc.reset-cmd($c);
 }

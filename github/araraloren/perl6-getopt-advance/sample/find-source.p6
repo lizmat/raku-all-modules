@@ -79,12 +79,9 @@ my $id = $os.insert-pos(
 
         my $supplier = Supplier.new;
 
-        react {
-            start whenever $supplier.Supply {
-                put Q :qq '"$_"';
-                LAST done
-            }
-        }
+        $supplier.Supply.tap( sub (\v) {
+            put Q :qq '"{v}"';
+        });
 
         while @stack {
             note "CURR FILES => ", @stack if $os<d>;

@@ -1,31 +1,45 @@
 
+unit module Getopt::Advance::Exception;
+
 class X::GA::Exception is Exception {
     has Str $.message;
 }
 
-class X::GA::ParseFailed is X::GA::Exception { }
+class X::GA::ParseError is X::GA::Exception { }
 
-sub ga-try-next(Str $msg) is export {
-    X::GA::ParseFailed
+sub ga-parse-error(Str $msg) is export {
+    X::GA::ParseError
     .new(message => $msg)
     .throw;
 }
 
-class X::GA::OptionInvalid is X::GA::Exception { }
+constant &ga-try-next is export = &ga-parse-error;
 
-sub ga-invalid-value(Str $msg) is export {
-    X::GA::OptionInvalid
+class X::GA::OptionError is X::GA::Exception { }
+
+sub ga-option-error(Str $msg) is export {
+    X::GA::OptionError
     .new(message => $msg)
     .throw;
 }
 
-class X::GA::PosCallFailed is X::GA::Exception { }
+class X::GA::GroupError is X::GA::Exception { }
 
-sub ga-try-next-pos(Str $msg) is export {
-    X::GA::PosCallFailed
+sub ga-group-error(Str $msg) is export {
+    X::GA::GroupError
     .new(message => $msg)
     .throw;
 }
+
+class X::GA::NonOptionError is X::GA::Exception { }
+
+sub ga-non-option-error(Str $msg) is export {
+    X::GA::NonOptionError
+    .new(message => $msg)
+    .throw;
+}
+
+constant &ga-invalid-value is export = &ga-option-error;
 
 class X::GA::Error is X::GA::Exception { }
 
@@ -45,12 +59,4 @@ class X::GA::WantPrintAllHelper is X::GA::Exception { }
 
 sub ga-want-all-helper() is export {
     X::GA::WantPrintAllHelper.new().throw;
-}
-
-class X::GA::GroupValueInvalid is X::GA::Exception { }
-
-sub ga-group-error(Str $msg) is export {
-    X::GA::GroupValueInvalid
-    .new(message => $msg)
-    .throw;
 }

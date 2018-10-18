@@ -26,6 +26,123 @@ non-option argument, it provide `main`、`pos` and `cmd` feature.
 
 = Usage
 
+== Try it
+
+=== Normal version
+
+[source,perl6]
+---------------
+use Getopt::Advance;
+
+my OptionSet $os .= new();
+
+$os.push(
+    "h|help=b",
+    "print help message.",
+    callback => sub ($, $) {
+        say "The h option is set by user";
+    });
+
+&getopt($os);
+say "Exit!";
+---------------
+
+=== With react
+
+[source,perl6]
+---------------
+use Getopt::Advance;
+
+my OptionSet $os .= new();
+
+$os.push("h|help=b", "print help message.");
+
+react {
+    whenever $os.Supply("h") {
+        say "The h option is set by user";
+    }
+    whenever &getopt($os) {
+        say "Exit!";
+        done;
+    }
+}
+---------------
+
+== Feature
+
+The feature support by this module, more information please refer documents.
+
+* Option with type
+
+** Long and short option supported, such as `-o` and `--option`.
+
+** X-style option supported, such as `-option`.
+
+** Combing-style option supported, such as `-abc` is same as `-a` `-b` `-c`.
+
+** BSD-style supported, such as `abc` is set the boolean option `a`, `b` and `c`.
+
+** Multiple style provide option arguments, such as `-a=b`, `-a b`, `-ab` is mean
+set the value of option `a` to `b`.
+
+** Deactivate-style support, mean you can disable some option by using `-/o`.
+
+** Type supported, such as `Boolean`, `Integer`, `Array`, and `String`,
+i.e. will check the option argument provide by user.
+
+* Non Option with index
+
+** Sub command supported, it can provide different feature to user,
+such as `script.p6 add ...` and `script.p6 del ...`.
+
+** Position argument base on index supported, such as `script.p6 <file>` will capture
+the first non-option argument provide by user.
+
+** Main function supported. Main function will call with all the non-option arguments.
+
+* Option rule
+
+** With `radio` group, can only set one by user, or must set one by user.
+
+** With `multi` group, can limiting the options set at least one.
+
+** Must be set by user if optional of option is False.
+
+* Callback of Option/Non Option
+
+** Can set the callback of Option/Non Option, it will be called when it set by user.
+
+* Auto-generated help, version message
+
+** It can generate help and version message for you.
+
+** If `autohv` is set, it can automate print help or version message
+when corresponding option set by user.
+
+* PreParser
+
+** With the parser, you can process some option first, and process other with another call.
+
+* Interrupt the program
+
+** With sub such as `ga-want-helper`, you can interrupt the program and print help immediately.
+
+* Default value of Option
+
+* Load option from class/sub (not implement)
+
+* Load from the configure file easily
+
+** Refer the example link:sample/make-cpan-pack.p6[make-cpan-pack].
+
+* Thing can Custom by user
+
+** Help generator.
+** Option Parser.
+** Style supported and the priority of them.
+** The order of `Option` value assignment and `Pos`, `Cmd` process.
+
+
 == Document
 
 link:doc/Getopt/Advance.adoc[Getopt-Advance]
@@ -59,21 +176,21 @@ link:sample/find-file.p6[find-file]
 -----------------------
 $ ./find-file.p6
 Usage:
-./find-file.p6 <directory>  [-h|--help] [-v|--version] [-?] [--size=<integer>] [-d] [-l] [-f]  *@args
+./sample/find-file.p6 [directory] OPTIONs
 
--h|--help         print this help.
+-d               specify file type to directory
 
--v|--version      print program version.
+-v|--version     print program version.
 
--?                same as -h.
+--size=<integer> the minimum size limit of file.
 
---size=<integer>  the minimum size limit of file.
+-?               same as -h.
 
--d                specify file type to directory
+-h|--help        print this help.
 
--l                specify file type to symlink
+-f               specify file type to normal file
 
--f                specify file type to normal file
+-l               specify file type to symlink
 -----------------------
 
 .find
@@ -96,6 +213,5 @@ The MIT License (MIT).
 
 = TODO
 
-* add option can reference variable.
-* add callback only mode
-* let user set option name autohv
+* Update documents
+* Update subs feature

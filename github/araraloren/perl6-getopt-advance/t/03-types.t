@@ -1,17 +1,20 @@
 
 use Test;
-use Getopt::Advance;
 use Getopt::Advance::Types;
 use Getopt::Advance::Option;
+use Getopt::Advance::NonOption;
 
-my $types = Types::Manager.new;
+my $types = TypesManager.new;
 
-$types.register('b', Option::Boolean)
-      .register('i', Option::Integer)
-      .register('s', Option::String)
-      .register('a', Option::Array)
-      .register('h', Option::Hash)
-      .register('f', Option::Float);
+$types.registe('b', Option::Boolean)
+      .registe('i', Option::Integer)
+      .registe('s', Option::String)
+      .registe('a', Option::Array)
+      .registe('h', Option::Hash)
+      .registe('f', Option::Float)
+      .registe('c', NonOption::Cmd)
+      .registe('p', NonOption::Pos)
+      .registe('m', NonOption::Main);
 
 # short option
 for < b i s a h f> -> $type {
@@ -354,6 +357,16 @@ for < b i s a h f> Z, (True, 42, "earth", [1, 2, 3], %{2 => 3}, 0.10) -> ($type,
         dies-ok {
             my $opt = $types.create("$shoptname|$lgoptname={$type}!/");
         }, "not support deactivate style except boolean option.";
+    }
+}
+
+{
+    my $name = 'command';
+
+    for < m p c > -> $type {
+        my $no = $types.create("{$name}={$type}", callback => sub () {});
+
+        is $no.name, $name, 'create a non-option ' ~ $no.type ~ ' named ' ~ $name;
     }
 }
 

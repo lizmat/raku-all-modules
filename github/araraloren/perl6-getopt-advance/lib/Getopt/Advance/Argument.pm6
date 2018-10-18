@@ -1,25 +1,28 @@
 
-unit class Argument;
+unit module Getopt::Advance::Argument;
 
-has $.index;
-has $.value;
 
-method pairup() of Pair {
-    return Pair.new($!index, $!value);
-}
+class Argument is export {
+    has $.index;
+    has $.value;
 
-method Str() {
-    return $!value.Str;
-}
+    method pairup() of Pair {
+        return Pair.new($!index, $!value);
+    }
 
-method Int() {
-    return $!value.Int;
-}
+    method Str() {
+        return $!value.Str;
+    }
 
-method clone(*%_) {
-    nextwith(
-        index => %_<index> // $!index.clone,
-        value => %_<value> // $!value.clone,
-        |%_
-    );
+    method Int() {
+        return $!value.Int;
+    }
+
+    method clone(*%_) {
+        nextwith(
+            index => %_<index> // $!index.clone,
+            value => %_<value> // $!value.clone,
+            |%_
+        );
+    }
 }

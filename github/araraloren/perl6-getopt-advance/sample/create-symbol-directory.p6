@@ -63,11 +63,11 @@ id=SYMBOL_NONE
 ftime=2 fps
 NONE
 
-# insert a pos 
+# insert a pos
 $os.insert-pos(
     "directory",
     sub make-symbol ($os, $dira) {
-        return if $os<h> || $os<v>; # maybe add a help function check autohv 
+        return if $os<h> || $os<v>; # maybe add a help function check autohv
         my ($dir, $out) = ($dira.value.IO, $os<output>.IO);
 
         $dir.add("reel.png").copy($out.add("reel.png"));

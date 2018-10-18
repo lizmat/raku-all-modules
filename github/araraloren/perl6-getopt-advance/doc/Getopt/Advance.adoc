@@ -1,5 +1,7 @@
 = NAME
 
+:vbar: |
+
 Getopt::Advance - An advance command line option parsing tools.
 
 = SYNOPSIS
@@ -9,7 +11,7 @@ Getopt::Advance - An advance command line option parsing tools.
 #!/usr/bin/env perl6
 
 use Getopt::Advance;
-use Getopt::Advance::Helper;
+use Getopt::Advance::Parser;
 use Getopt::Advance::Exception;
 
 my @files = [];
@@ -50,6 +52,7 @@ $optset.push(
 );
 $optset.insert-main(
     sub main($optset, @args) {
+        return 0 if $optset<help> ^ $optset<version>;
         if $optset.get-pos('directory', 0).?success {
             @args.shift;
         } else {
@@ -64,7 +67,8 @@ $optset.insert-main(
         }
     }
 );
-&getopt($optset, :autohv, helper => &ga-helper2);
+
+&getopt($optset, :autohv, parser => &ga-parser2);
 
 sub find($dir) {
     for $dir.dir() -> $f {
@@ -81,37 +85,38 @@ sub find($dir) {
 [source,sh]
 -------------------
 Usage:
-    ./find-file.p6 <directory>  [-h|--help] [-v|--version] [-?] [--size=<integer>] [-d] [-l] [-f]  *@args
+./sample/find-file.p6 [directory] OPTIONs
 
-    -h|--help         print this help.
+-d               specify file type to directory
 
-    -v|--version      print program version.
+-v|--version     print program version.
 
-    -?                same as -h.
+--size=<integer> the minimum size limit of file.
 
-    --size=<integer>  the minimum size limit of file.
+-?               same as -h.
 
-    -d                specify file type to directory
+-h|--help        print this help.
 
-    -l                specify file type to symlink
+-f               specify file type to normal file
 
-    -f                specify file type to normal file
+-l               specify file type to symlink
 -------------------
 
 = DESCRIPTION
 
-`Getopt::Advance` is a powerful command line option parsing module, it support many
-style such as: `unix-style`、`gnu-style`、`bsd-style`.etc. It support `Hash`、`Array`
-option compared to traditional command line tools. In addition, it also support
-`radio`、`multi` group mechanism which can manage option realtionship. And to handle
-non-option argument, it provide `main`、`pos` and `cmd` feature.
+`Getopt::Advance` is a powerful command line option parsing tool, it support many style such as: **unix-style**,
+**gnu-style** etc.
+It can support `Option` have type such as `Integer`, `Array`, `Hash` compared to traditional command line
+tools.
+And for non-option argument, it provide `NonOption` feature.
+In addition, it also provide `Multi` and `Radio` which can manager multiple options relationship.
 
 = USAGE
 
 == OptionSet
 
 `OptionSet` is a set of `Option` as the literal mean. Provide interface manage your
-`Option`.
+`Options`.
 
 === new
 
@@ -119,129 +124,265 @@ There are no argument of new:
 
 `my OptionSet $optset .= new();`
 
-=== Add Option
+=== Option
 
-* `push(::OptionSet::D: Str:D $opt, :$value, :&callback) of ::OptionSet`
-* `push(::OptionSet::D: Str:D $opt, Str:D $annotation, :$value, :&callback) of ::OptionSet`
-* `append(::OptionSet::D: Str:D $opts) of ::OptionSet`
-* `append(::OptionSet::D: *@optpairs where all(@optpairs) ~~ Pair) of ::OptionSet`
+`Option` is represent an option in the command line argument, for example '-c 42'.
 
-`$optset.push("c|count=i", "set something int", value \=> 3);`
+* `push(::OptionSet::D: Option:D $option -\-> OptionSet)`
+* `push(::OptionSet::D: Str:D $opt, :$value, :&callback -\-> OptionSet)`
+* `push(::OptionSet::D: Str:D $opt, Str:D $annotation, :$value, :&callback -\-> OptionSet)`
 
-This is add an option with short name **c** and long name **count**. And the second
-parameter set annotation of option is `"set something int"`, it will be display with
-usage generate by `&helper` (helper generator pass to `&getopt`). The third parameter is
-an named argument, it set the default value of option is **3**.And if you provide
-`&callback`, it will be called when option value are set.
+.example
+[source,perl6]
+$optset.push("c|count=i", "set something int", value => 3, callback => sub ($option, $value) { say "get value $value"; });
 
-`$optset.append("c|count=i" \=> "set something int", "s|string=s" \=> "set something string")`
+Above code add an option to the `OptionSet`, which with short name **c** and long name **count**.
+The second parameter set annotation of option to __set something int__, it will be used to generate
+help message.
+The `value` and `callback` are named argument, it will set the default value of option to **3**.
+And the `callback` will be called when option value set.
 
-This is append two option with their name and annotation.
+NOTE: The first parameter of `callback` is current **Option** processed, and second is **value** set by user.
 
-=== Add Group
+* `append(::OptionSet::D: @options -\-> OptionSet)`
+* `append(::OptionSet::D: Str:D $opts -\-> OptionSet)`
+* `append(::OptionSet::D: *@optpairs where all(@optpairs) ~~ Pair -\-> OptionSet)`
 
-* `append(::OptionSet::D: Str:D $opts, :$optional = True, :$radio, :$multi) of ::OptionSet`
-* `append(::OptionSet::D: :$optional = True, :$radio, :$multi, *@optpairs where all(@optpairs) ~~ Pair) of ::OptionSet`
+.example
+[source,perl6]
+$optset.append("c|count=i" => "set something int", "s|string=s" => "set something string")
 
-`$optset.append("c|count=c;s|string=s", :radio);`
+This code append two `Options` with their name and annotation to the `OptionSet`.
 
-This is add a radio group, it has two option: `c|count=c`、`s|string=s`.
+* `get(::OptionSet::D: Str:D $name, Str:D $type = WhateverType)`
 
-=== Add NonOption
+.example
+[source,perl6]
+$optset.get('c', 'i');
 
-* `insert-main(::OptionSet::D: &callback) of Int`
-* `insert-cmd(::OptionSet::D: Str:D $name) of Int`
-* `insert-cmd(::OptionSet::D: Str:D $name, &callback) of Int`
-* `insert-pos(::OptionSet::D: Str:D $name, &callback, :$front!) of Int`
-* `insert-pos(::OptionSet::D: Str:D $name, &callback, :$last!) of Int`
-* `insert-pos(::OptionSet::D: Str:D $name, $index where Int:D | WhateverCode , &callback) of Int`
+This will try to get a `Option` by its name and type, the sub will return **Any** if the `Option` not exists.
 
-`$optset.insert-main(sub main (@args) { .say of @args; });`
+* `has(::OptionSet::D: Str:D $name, Str:D $type = WhateverType -\-> Bool)`
 
-This is insert a main to `$optset`, it print all non-option argument.
+.example
+[source,perl6]
+$optset.has('c', 'i');
 
-=== Get Option Value
+This code check if there is a `Option` called **c** and it's type is **i**.
 
-`my $x = $optset<x>;`
-`my @x := $optset<x>;`
+* `Supply(::OptionSet::D: Str:D $name, Str:D $type = WhateverType -\-> Supply)`
 
-NOTE: Use bind operator when you want bind `Option::Array`'s value to
-an Positional/Association variable.
+.example
+[source,perl6]
+---------------
+$optset.Supply('c').tap(-> \v {
+    my ($optset, $option, $v) = @(v);
+    # ... more
+})
+---------------
+
+This will return a Supply. When the `Option` set by user,
+current `OptionSet`, current `Option` and the `value` will be emitted.
+
+=== Group Operation
+
+`Group` can manage more than one `Option`, it provide some feature about option.
+For example, with radio group, it only accept one option in same time.
+
+* `append(::OptionSet::D: Str:D $opts, :$optional = True, :$multi -\-> ::OptionSet)`
+* `append(::OptionSet::D: Str:D $opts, :$optional = True, :$radio -\-> ::OptionSet)`
+* `append(::OptionSet::D: :$optional = True, :$multi, *@optpairs where all(@optpairs) ~~ Pair -\-> ::OptionSet)`
+* `append(::OptionSet::D: :$optional = True, :$radio, *@optpairs where all(@optpairs) ~~ Pair -\-> ::OptionSet)`
+
+.example
+[source,perl6]
+$optset.append("c|count=c;s|string=s", :radio);
+
+This add a radio group, it's only allow set one of them in same time.
+
+.example
+[source,perl6]
+$optset.append("c|count=c;s|string=s", :multi);
+
+This add a multiple group.
+
+=== NonOption Operation
+
+`NonOption` is represent non-option arguments in the command line arguments.
+
+* `insert-main(::OptionSet::D: &callback = sub () { True } -\-> Int)`
+* `insert-main(::OptionSet::D: Str:D $name, &callback = sub () { True } -\-> Int)`
+
+.example
+[source,perl6]
+$optset.insert-main(sub (@args) { .say for @args; });
+
+This insert a `NonOption::Main` to `OptionSet`, it will call with all non-option arguments.
+
+* `insert-cmd(::OptionSet::D: Str:D $name, &callback = sub () { True } -\-> Int)`
+* `insert-cmd(::OptionSet::D: Str:D $name, Str:D $annotation, &callback = sub () { True } -\-> Int)`
+
+.example
+[source,perl6]
+$optset.insert-cmd("load", sub (@args) { .say for @args; True; } );
+
+This insert a `NonOption::Cmd` to `OptionSet`, it will call with all non-option arguments except the name(load).
+It need user provide the command in the command line arguments, for example `scrpt.p6 load *OPTIONs`.
+
+* `insert-pos(::OptionSet::D: Str:D $name, &callback = sub () { True }, :$front, :$last -\-> Int)`
+* `insert-pos(::OptionSet::D: Str:D $name, Str:D $annotation, &callback = sub () { True }, :$front, :$last -\-> Int)`
+* `insert-pos(::OptionSet::D: Str:D $name, $index where Int:D | WhateverCode , &callback = sub () { True } --> Int)`
+* `insert-pos(::OptionSet::D: Str:D $name, Str:D $annotation, $index where Int:D | WhateverCode , &callback = sub () { True } --> Int)`
+
+.example
+[source,perl6]
+$optset.insert-pos("load", 0, sub ($arg) { say $arg; True; });
+
+This insert a `NonOption::Pos` to `OptionSet`, it will call with non-option argument matched by index(base on zero).
+The `front` and `last` will insert a `NonOption::Pos` with index 0 and * - 1, respectively.
+
+* `get(::OptionSet::D: Int:D $id)`
+* `get-main(::OptionSet::D:)`
+* `get-main(::OptionSet::D: Int:D $id)`
+* `get-main(::OptionSet::D: Str:D $name)`
+* `get-cmd(::OptionSet::D:)`
+* `get-cmd(::OptionSet::D: Int:D $id)`
+* `get-cmd(::OptionSet::D: Str:D $name)`
+* `get-pos(::OptionSet::D:)`
+* `get-pos(::OptionSet::D: Int:D $id)`
+* `get-pos(::OptionSet::D: Str:D $name, $index)`
+
+.example
+[source,perl6]
+$optset.get(2);
+$optset.get-main(2);
+
+The first line get an `NonOption` which id is 2.
+The second line get the `NonOption::Main` which id is 2.
+
+* `has(::OptionSet::D: Int:D $id -\-> False)`
+
+.example
+[source,perl6]
+$optset.has(2);
+
+Return True if the `NonOption` which id is 2 exists.
+
+* `Supply(::OptionSet::D: Int:D $id -\-> Supply)`
+* `Supply(::OptionSet::D: Int:D $id, :$main!, -\-> Supply)`
+* `Supply(::OptionSet::D: Int:D $id, :$cmd! , -\-> Supply)`
+* `Supply(::OptionSet::D: Int:D $id, :$pos! , -\-> Supply)`
+
+.example
+[source,perl6]
+---------------------
+$optset.Supply(2).tap(sub \v {
+    my ($optset, $no, $v) = @(v);
+    #... do more
+});
+---------------------
+
+This will return a Supply. When the `NonOption` set by user,
+current `OptionSet`, current `NonOption` and the `value` will be emitted.
 
 == Option
 
-`Option` can be create by a string. For example, `"a|action=b"` represent an option
-with two kind name, long name is `action`, and short name is `a`, and the option
-type is `boolean`. So you can set **action** argument to true by append `-a` or `--action`
+`Option` can be create by a string.
+For example, `"a|action=b"` represent an option with two kind name,
+long name is `action`, and short name is `a`, and the option type is `boolean`.
+So you can set **action** argument to true by append `-a` or `--action`
 after your program.
 
 The list of Option type:
 
 .OptionType
-[cols="h,^.^,^.^,^.^m,^.^2m,^.^3m",options="header",width="100%"]
+[cols="h,^.^,^.^,^.^m,^.^2m,^.^3m",options="header",width="100%",separator=^]
 |==================================
-| type | has argument | represent | create example | set example | support style
-| boolean | no  | b | a\|action=b | -a   | unix gnu x bsd deactivate
-| integer | yes | i | a\|action=i | -a=1 | unix gnu x
-| float   | yes | f | a\|action=f | -a 0.1| unix gnu x
-| string  | yes | s | a\|action=s | --action "u" | unix gnu x
-| array   | yes | a | a\|action=a | --action "item" | unix gnu x
-| hash    | yes | h | a\|action=h | -a ":answer(42)" | unix gnu x
+^type ^has argument ^represent ^create example ^set example ^support style
+^boolean ^no  ^b ^a|action=b ^-a   ^unix gnu x bsd deactivate
+^integer ^yes ^i ^a|action=i ^-a=1 ^unix gnu x
+^float   ^yes ^f ^a|action=f ^-a 0.1^unix gnu x
+^string  ^yes ^s ^a|action=s ^--action "u" ^unix gnu x
+^array   ^yes ^a ^a|action=a ^--action "item" ^unix gnu x
+^hash    ^yes ^h ^a|action=h ^-a ":answer(42)" ^unix gnu x
 |==================================
 
 == NonOption
 
 `NonOption` can be use to handle `NOA`(short for non-option argument). You can get
-specific `NOA`, match them or call `callback` when matched. The `NOA` index begin from
-**0**.
+specific `NOA`, match them or call `callback` when matched.
+And value of the `NonOption` will set to return value of callback, default is True.
+The `NOA` index begin from **0**.
 
-NOTE: The parser will check `NonOption` after all option argument matched.
+NOTE: The `ga-parser` will process `NonOption` after all option argument matched after the value set.
+And `ga-parser2` will process `CMD` and `POS` before the `Option` value set, after process over.
+Then set the value, process the `MAIN` feature. Check the link:../../sample/find-file.p6[find-file] for more.
 
-=== pos
+=== POS
 
-`NonOption` `pos` capture `NOA` of specific postion, but it's not force user supply an
+`NonOption` `POS` capture `NOA` of specific position, but it's not force user supply an
 `NOA`. The parser will call it's callback when the `NOA` index matched.
 
-NOTE: The parser will check `pos` after `cmd`, and before `main`.
-The `pos` with index is 0 maybe matched when `cmd` not matched.
+NOTE: The parser will process `POS` after `CMD`, and before `main`.
+The `POS` with index is 0 (i.e. front POS) maybe matched when `CMD` not matched.
 
-=== cmd
+=== CMD
 
-`NonOption` `cmd` always capture the first NOA, and it's force user supply one of
-available cmd. The parser will call it's callback when the `NOA` name matched.
+`NonOption` `CMD` always capture the first NOA, and it's force user supply one of
+available `CMDs`. The parser will call it's callback when first `NOA` name matched.
 
-NOTE: The parser will check `cmd` first. If a `pos` (with index 0) provide,
-parser will not throw exception when `pos` matched, otherwise it will raise an exception
-when all `cmd` not matched.
+NOTE: The parser will process `CMD` first. If a `POS` (with index 0) provide,
+parser will not throw exception when `POS` matched, otherwise it will raise an exception
+when all `CMD` not matched.
 
-=== main
+=== MAIN
 
-`NonOption` `main` capture all `NOA`, and it's callback will be called by the parser.
+`NonOption` `MAIN` capture all `NOAs`, and it's callback will be called by the parser.
 
-NOTE: The parser will check `main` last.
+NOTE: The parser will process `main` last.
+
+==== Return value
+
+`ga-parser` or `ga-parser2` will generate a return value of each `MAIN` like this:
+[source,perl6]
+-----------------------------
+ReturnValue.new(
+    optionset   => $optset,         # current optionset
+    noa         => $parserobj.noa,  # current NOA, Array of Argument
+    parser      => $parserobj,
+    return-value=> do {             # return value of each MAIN
+        my %rvs;
+        for %($optset.get-main()) {
+            %rvs{.key} = .value.value;
+        }
+        %rvs;
+    }
+);
+-----------------------------
+And for `ga-pre-parser`, it set the **noa** to left command line arguments, not the Array of `Argument`.
 
 == Group
 
-`Group` provide a way set up association between multi `Option`, and it has a check method.
-The parser will call it's check method before return to `&getopt`.
+`Group` provide a way set up association between multiple `Option`, and it has a check method
+which can force the `Group` must be set.
+The parser will call it's check method after `Option` value set.
 
 === radio
 
 In `radio` `Group`, `Option` can be set only one at the same time. And it force user
-supply an option when `Option` is not optional.
+supply an option when `Group` is not optional.
 
 === multi
 
 `multi` `Group` is just provide a possibility in having better style of source code.
-Also it force user supply an option when `Option` is not optional.
+Also it force user supply an option when `Group` is not optional.
 
 == getopt
 
-Sub `&getopt` accept one or multi `OptionSet`, pass it and command line argument to the `&parser`.
+Sub `&getopt` accept one or multiple `OptionSet`, pass it and command line argument to the `parser`.
 `&getopt` can accept traditional getopt(in C) string, and convert it to `OptionSet`.
-Once an `OptionSet` matching success, it will return `Getopt::Advance::ReturnValue`.
-This class contain matched `OptionSet`、all `NOA(Non-Option Argument)`, and `main`'s id and
-return value.
+Once an `OptionSet` matching success, it will return an instance of `ReturnValue`.
+The return value contain matched `OptionSet`、all `NOA(Non-Option Argument)`, and `MAIN`'s id with the return value.
 
 == wrap-command
 
@@ -270,23 +411,23 @@ wrap-command(
 
 == `&getopt`
 
-Sub `&getopt` accept one or multi `OptionSet`, pass it and command line argument
-to the `&parser`. Once an `OptionSet` matching success, it will return an instance
-of `Getopt::Advance::ReturnValue`. When all `OptionSet` match failed, it will
-produced the help message, and rethrow the exception or call `exit` end the script.
+Sub `&getopt` accept one or multiple `OptionSet`, pass it and command line argument to the `parser`.
+`&getopt` can accept traditional getopt(in C) string, and convert it to `OptionSet`.
+Once an `OptionSet` matching success, it will return an instance of `ReturnValue`.
+The return value contain matched `OptionSet`、all `NOA(Non-Option Argument)`, and `MAIN`'s id with the return value.
 
 === Return value
 
-* class Getopt::Advance::ReturnValue
+* class ReturnValue
 **    has $.optionset;
 +
 The OptionSet which mathed
 **    has @.noa;
 +
-The left non-option argument
+The left non-option argument depends on the parser
 **    has %.return-value;
 +
-Return value of main, the key is main's id.
+Return value of `MAIN`, the key is `MAIN`'s id.
 
 === The help message
 
@@ -295,29 +436,31 @@ Sub `&getopt` will display the help message in the following cases:
 * all of OptionSet match failed
 * `&ga-want-helper` called
 * `&ga-want-all-helper` called
-* The OptionSet has option named `help`, and `:autohv` passed to `&getopt`.
+* The OptionSet has option named set by `&set-autohv` , and `:autohv` passed to `&getopt`.
 
 === Exception
 
-If an `OptionSet` match failed, consider follow serveral situation:
+If an `OptionSet` match failed, consider follow several situation:
 
 * default
 +
-`&getopt` will print helper(when help generator `&helper` defined) of current
-`OptionSet`, print error message, and rethrow the exception.
+Will throw the exception.
 
-* X::GA::ParseFailed
+* X::GA::ParseError
+* X::GA::OptionError
+* X::GA::GroupError
+* X::GA::NonOptionError
 +
-The `&parser`(except `&ga-pre-parser`) will call `&ga-try-next` throw an X::GA::ParseFailed exception
-when `OptionSet` match failed. When `&getopt` caught this exception, it will
-try next `OptionSet` supplied. If no more `OptionSet`, it will print helper
-(when help generator `&helper` defined) of all `OptionSet`,  print error message,
-and rethrow the exception. The user also can throw this exception in
-`&callback` of `Option`.
+The `parser`(except `&ga-pre-parser`) will call `&ga-try-next` throw an
+X::GA::ParseError exception when `OptionSet` match failed.
+When `&getopt` caught this exception, it will try next `OptionSet` supplied.
+If no more `OptionSet`, it will print helper (when help generator `&helper` defined)
+of all `OptionSet`,  print error message, and rethrow the exception.
+The user also can throw this exception.
 
 * X::GA::WantPrintHelper
 +
-The user can call `&ga-want-helper` ask `&parser` interrupt the parsing process,
+The user can call `&ga-want-helper` ask `parser` interrupt the parsing process,
 and print help message of current `OptionSet`. `&getopt` will print helper (when
 help generator `&helper` defined) of current `OptionSet` and exit with 0.
 
@@ -327,21 +470,29 @@ The user can call `&ga-want-all-helper` ask `&parser` interrupt the parsing proc
 and print help message of all `OptionSet`. `&getopt` will print helper(when
 help generator `&helper` defined) of all `OptionSet` and exit with 0.
 
-=== Signature
+=== Candidates
 
 * getopt(@args = @*ARGS, Str $optstring, *%args)
 * getopt(@args = @*ARGS, *@optsets,      *%args)
 
-==== The positional argument
+==== The positional arguments
 
 * @args
 +
 This is the command line argument passed to `&getopt`, the default value is `@*ARGS`.
-And it means you can provide yours "command line argument" to `&getopt`.
+And it means you can provide yours "command line arguments" to `&getopt`.
 
 NOTE: The sub `&getopt` will not modify `@*ARGS`.
 
-==== The named argument of &getopt
+* $optstring
++
+`&getopt` also work fine with traditional Option string (in C) to .
+
+* `*@optsets`
++
+The `OptionSet` supplied by user.
+
+==== The named arguments
 
 * :&helper = &ga-helper
 +
@@ -349,37 +500,54 @@ NOTE: The sub `&getopt` will not modify `@*ARGS`.
 
 * :$stdout = $*OUT
 +
-Help message will print to `$stdout`, default is `$*OUT`.
+Current not used, default is `$*OUT`.
 
 * :$stderr = $*ERR
 +
-Error message will print to `$stderr`, default is `$*ERR`.
+Help message will print to `$stderr`, default is `$*ERR`.
 
 * :$parser = &ga-parser
 +
-Command line argument parser, default is `&ga-parser`.
+Command line argument parser, default is `&ga-parser`, other can be `&ga-pre-parser`, `&ga-parser2`.
+
+* :$parserclass
++
+Before parsing, `&getopt` will get a instance of `&parserclass`, then pass it to `&parser` when parsing.
 
 * :$strict = True
 +
-When `$strict` is True, argument of an option should not be start with `-` or `--`.
+When `$strict` is True, argument of an option should not be start with option prefix, default is `-` or `--`.
 
 * :$autohv = False
 +
-When `$autohv` is True, `&getopt` will automate print `$version` information and help message.
-The `:autohv` will not work if you don't have a option named `help` and `version`.
-Without `:autohv`, you need deal the `help` or `version` manually.
+If `$autohv` is True, `&getopt` will automate print `$version` information and help message
+when the related option set.
+The `:autohv` will not work if you don't have a option in `@autohv-opt`,
+default is `help` and `version`. Set the option name by sub `set-autohv(@ops)`.
+Without `:autohv`, you need deal the help option manually.
+
+NOTE: Will skip the `MAIN` if the `autohv` is triggered.
 
 * :$version
 +
 Program version information.
 
-* :$bsd-style
+* :$bsd-style = False
 +
 When `$bsd-style` is True, `&parser` will accept bsd style option.
 
-* :$x-style
+* :@styles = [ :long, :xopt, :short, :ziparg, :comb ]
 +
-When `$x-style` is True, x-style option have priority over unix-style.
+The style need support by the `parser`.
+
+* :@order = []
++
+The priority of the styles, default is default order.
+
+* *%args
++
+The left named arguments will also pass to `new` of `$parserclass`,
+`&helper` and `&parser`.
 
 == `&wrap-command`
 
@@ -403,6 +571,8 @@ Left parameters will pass to `&getopt`.
 
 NOTE: &wrap-command using `run` run your command.
 
+== OUTDATE 
+
 == `OptionSet`
 
 `OptionSet` is a set of `Option` as the literal mean.
@@ -416,7 +586,7 @@ And use `:exists` check if the option exists.
 
 === Method of option
 
-* new-from-optstring(Str $optstring is copy)
+* from-optstring(Str $optstring is copy)
 +
 This method can convert the traditional option string, and create an OptionSet
 contain options descripte by that string.
@@ -490,7 +660,7 @@ And the same of callback. The `$annotation` is the help message of the option.
 ** append(::?CLASS::D: :$optional = True, :$multi!, *@optpairs where all(@optpairs) ~~ Pair) of ::?CLASS
 
 +
-Add multi options to the `OptionSet`, make sure the string is split by `;`.
+Add multiple options to the `OptionSet`, make sure the string is split by `;`.
 You can make them as a radio group or multi group by pass `:radio`、`:multi`.
 
 === Method of non-option
@@ -606,6 +776,10 @@ Check `radio`, `multi` group and non-optional option.
 * annotation(::?CLASS::D:)
 +
 Use `Terminal::Table` format help message, and return it as an array.
+
+* merge(::?CLASS::D: ::?CLASS:D $os) of ::?CLASS
++
+Merge the `Option`s and `NonOption`s of `$os` to current `OptionSet`.
 
 * clone(*%_)
 +
