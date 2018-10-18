@@ -1,0 +1,4 @@
+module_run 'Nginx', %(
+  document_root => '/usr/share/nginx/html'
+);
+

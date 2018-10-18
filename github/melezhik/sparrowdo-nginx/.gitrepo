@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-nginx.git
+	branch = master
+	commit = 29f5d2c8542494b461961f3eaccfa66b7f1f8a02
+	parent = bbccb3229239a1343d761e27c0d86e6a59fe81ae
+	cmdver = 0.4.0
