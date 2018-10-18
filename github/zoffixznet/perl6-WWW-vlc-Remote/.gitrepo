@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-WWW-vlc-Remote.git
+	branch = master
+	commit = f74c287ddfe64822bee052f4370617ee23455adc
+	parent = c999d78ffb2976ce7e1ad09a6898854bff9b0df0
+	cmdver = 0.4.0

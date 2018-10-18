@@ -1,0 +1,18 @@
+{
+    "perl"         : "6.c",
+    "name"         : "WWW::vlc::Remote",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001008",
+    "description"  : "Control vlc media player via its Web interface",
+    "depends"      : [ "DOM::Tiny", "HTTP::UserAgent", "URI::Encode" ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "WWW::vlc::Remote"             : "lib/WWW/vlc/Remote.pm6",
+        "WWW::vlc::Remote::X"          : "lib/WWW/vlc/Remote.pm6",
+        "WWW::vlc::Remote::X::Network" : "lib/WWW/vlc/Remote.pm6",
+        "WWW::vlc::Remote::Track"      : "lib/WWW/vlc/Remote.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   :
+        "https://github.com/zoffixznet/perl6-WWW-vlc-Remote.git"
+}
