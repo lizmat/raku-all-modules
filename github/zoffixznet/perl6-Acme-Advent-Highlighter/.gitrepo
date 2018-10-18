@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-Acme-Advent-Highlighter.git
+	branch = master
+	commit = 0b0b8c76a8c925da5fa1cbb9f3c82a93707854f1
+	parent = b9629bf292dd988cd5ec5b84c6e32942f3ba7a0c
+	cmdver = 0.4.0
