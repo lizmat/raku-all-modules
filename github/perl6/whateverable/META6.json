@@ -1,0 +1,51 @@
+{
+    "perl"        : "6.c",
+    "name"        : "Whateverable",
+    "version"     : "1.0.2",
+    "description" : "Different IRC bots that operate on a bunch of prebuilt Rakudo versions",
+    "authors"     : [
+        "Aleks-Daniel Jakimenko-Aleksejev <alex.jakimenko@gmail.com>",
+        "Daniel Green <ddgreen@gmail.com>"
+    ],
+    "license"     : "AGPL-3.0-or-later",
+    "provides"    : {
+        "Whateverable"               : "lib/Whateverable.pm6",
+        "Whateverable::Bisection"    : "lib/Whateverable/Bisection.pm6",
+        "Whateverable::Bits"         : "lib/Whateverable/Bits.pm6",
+        "Whateverable::Builds"       : "lib/Whateverable/Builds.pm6",
+        "Whateverable::Config"       : "lib/Whateverable/Config.pm6",
+        "Whateverable::Configurable" : "lib/Whateverable/Configurable.pm6",
+        "Whateverable::Heartbeat"    : "lib/Whateverable/Heartbeat.pm6",
+        "Whateverable::Messages"     : "lib/Whateverable/Messages.pm6",
+        "Whateverable::Output"       : "lib/Whateverable/Output.pm6",
+        "Whateverable::Processing"   : "lib/Whateverable/Processing.pm6",
+        "Whateverable::Replaceable"  : "lib/Whateverable/Replaceable.pm6",
+        "Whateverable::Running"      : "lib/Whateverable/Running.pm6",
+        "Whateverable::Uniprops"     : "lib/Whateverable/Uniprops.pm6"
+    },
+    "depends"     : [
+        "App::GPTrixie",
+        "Config::INI",
+        "Cro",
+        "Digest",
+        "Digest::HMAC",
+        "Digest::SHA256::Native",
+        "File::Directory::Tree",
+        "File::Temp",
+        "HTTP::Server::Async",
+        "HTTP::UserAgent",
+        "IO::Socket::SSL",
+        "IRC::Client",
+        "IRC::TextColor",
+        "JSON::Fast",
+        "Number::Denominate",
+        "Pastebin::Gist",
+        "SVG::Plot",
+        "Sake",
+        "Stats",
+        "Terminal::ANSIColor",
+        "Text::Diff::Sift4"
+    ],
+    "resources"   : [ ],
+    "source-url"  : "https://github.com/perl6/whateverable.git"
+}

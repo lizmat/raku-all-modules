@@ -1,0 +1,53 @@
+#!/usr/bin/env perl6
+my @bots = dir ‘xbin’, test => / ‘able.p6’ $ /;
+
+task ‘help’, {
+    note ‘Useful commands:’;
+    note ‘  sake debug:botname     (example: ｢sake debug:bisectable｣)’;
+    note ‘  sake kill:botname      (example: ｢sake kill:committable｣)’;
+    note ‘  sake killall’;
+    note ‘  sake test              (run the test suite)’;
+    note ‘  sake mothership-pull   (pulls the current version from the server)’;
+}
+
+sub to-name($_) { .extension(‘’).basename }
+
+for @bots -> $file {
+    my $bot = to-name $file;
+    task ‘debug:’ ~ ( $bot | $bot.lc ), {
+        note “Starting $bot…”;
+        my $config = ‘config.json’.IO.open || ‘config-default.json’.IO.open;
+        run $file, :in($config),
+                   :env(|%*ENV, PERL6LIB => ‘lib’, DEBUGGABLE => 1);
+        True
+    }
+    task ‘kill:’ ~ ( $bot | $bot.lc ), {
+        note “Killing $bot…”;
+        my $pid = run(:out, ‘systemctl’, ‘--property=MainPID’, ‘--’,
+                      ‘show’, “whateverable@$bot.service”).out.slurp.trim;
+        $pid .= subst: /^‘MainPID=’/, ‘’;
+        run ‘kill’, ‘--’, $pid;
+        True
+    }
+}
+
+task ‘start-all’, {
+    note ‘start-all is no longer needed, ’
+    ~ ‘systemd should start (and restart) the bots automatically’;
+    exit 1
+}
+
+task <kill stop>.any ~ <-all all>.any => @bots.map({‘kill:’ ~ to-name $_}), {;}
+task ‘test’, { run <prove -j 8 --exec perl6 xt>; True }
+task ‘upgrade’ => ‘stop-all’, { run ‘rakudobrew’, ‘build’, ‘moar’; True }
+
+my $RSYNC = ‘bisectable@94.23.219.181:/home/bisectable/git/whateverable/’;
+task ‘mothership-pull’, {
+     run ‘rsync’, ‘--archive’, ‘--verbose’, ‘--fuzzy’, ‘--compress’,
+         ‘--human-readable’,
+         ‘--exclude=data’, ‘--exclude=.git’, ‘--exclude=.precomp’,
+         $RSYNC, ‘.’;
+     True
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
