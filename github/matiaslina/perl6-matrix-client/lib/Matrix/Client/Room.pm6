@@ -1,32 +1,28 @@
 use JSON::Tiny;
 use Matrix::Client::Common;
 use Matrix::Client::Requester;
+use Matrix::Response;
 
 unit class Matrix::Client::Room does Matrix::Client::Requester;
 
 has $!name;
 has $.id;
 
-multi submethod BUILD(Str :$!id!, :$!home-server!, :$!access-token!, :$json?) {
+submethod TWEAK {
     $!url-prefix = "/rooms/$!id";
-    
-    if so $json {
-        my @events = $json<state><events>.clone;
-        for @events -> $ev {
-            if $ev<type> eq "m.room.name" {
-                $!name = $ev<content><name>;
-            }
-        }
-    }
 }
 
 method !get-name() {
-    my $res = $.get('/state/m.room.name');
-    if $res.is-success {
-        $!name = from-json($res.content)<name>
-    } else {
-        warn "Error {$res.status-line}, content {$res.content}";
+    CATCH {
+        when X::Matrix::Response {
+            .code ~~ /M_NOT_FOUND/
+            ?? ($!name = '')
+            !! fail
+        }
+        default { fail }
     }
+    my $data = $.state('m.room.name');
+    $!name = $data<name>;
 }
 
 method name() {
@@ -51,12 +47,29 @@ method send(Str $body!, Str :$type? = "m.text") {
     from-json($res.content)<event_id>
 }
 
-method leave() {
-    $.post('/leave')
+multi method state(--> Seq) {
+    my $data = from-json($.get('/state').content);
+
+    gather for $data.List -> $event {
+        take Matrix::Response::StateEvent.new(:room-id($.id), |$event)
+    }
 }
 
-method gist(--> Str) {
-    "Room<id: {self.id}>"
+multi method state(Str $event-type) {
+    from-json($.get("/state/$event-type").content)
+}
+
+method send-state(Str:D $event-type, :$state-key = "", *%args --> Str) {
+    my $res = $.put(
+        "/state/$event-type/$state-key",
+        |%args
+    );
+    from-json($res.content)<event_id>
+}
+
+
+method leave() {
+    $.post('/leave')
 }
 
 method Str(--> Str) {

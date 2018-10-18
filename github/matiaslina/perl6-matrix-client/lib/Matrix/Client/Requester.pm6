@@ -14,7 +14,7 @@ has $!client-endpoint = "/_matrix/client/r0";
 has $!url-prefix = "";
 has $!sync-since = "";
 
-method !handle-error($response) {
+method !handle-error($response) is hidden-from-backtrace {
     unless $response.is-success {
         my $data = from-json($response.content);
         X::Matrix::Response.new(:code($data<errcode>), :error($data<error>)).throw;
@@ -27,12 +27,12 @@ method !access-token-arg {
 }
 
 method get(Str $path, :$media = False, *%data) {
-    my $q = "$path?{self!access-token-arg}";
+    my $query = "?{self!access-token-arg}";
     for %data.kv -> $k,$v {
-        $q ~= "&$k=$v" if $v.so;
+        $query ~= "&$k=$v" if $v.so;
     }
-    my $uri = uri_encode($.base-url(:$media) ~ $q);
-
+    my $encoded-path = $path.subst('#', '%23');
+    my $uri = $.base-url(:$media) ~ $encoded-path ~ uri_encode($query);
     return self!handle-error($!ua.get($uri));
 }
 
@@ -45,7 +45,8 @@ method base-url(Bool :$media? = False --> Str) {
 }
 
 multi method post(Str $path, Str $json, :$media = False) {
-    my $url = $.base-url(:$media) ~ $path ~ "?{self!access-token-arg}";
+    my $encoded-path = $path.subst('#', '%23');
+    my $url = $.base-url(:$media) ~ $encoded-path ~ "?{self!access-token-arg}";
     my $req = HTTP::Request.new(POST => $url,
                                 Content-Type => 'application/json');
     $req.add-content($json);
@@ -58,12 +59,19 @@ multi method post(Str $path, :$media = False, *%params) {
 }
 
 method post-bin(Str $path, Buf $buf, :$content-type) {
-    my $req = POST($.base-url(:media) ~ $path ~ "?{self!access-token-arg}", content => $buf, Content-Type => $content-type);
+    my $encoded-path = $path.subst('#', '%23');
+    my $req = POST($.base-url(:media)
+            ~ $encoded-path
+            ~ "?{self!access-token-arg}",
+        content => $buf,
+        Content-Type => $content-type
+    );
     return self!handle-error($!ua.request($req));
 }
 
 multi method put(Str $path, Str $json) {
-    my $req = HTTP::Request.new(PUT => $.base-url() ~ $path ~ "?{self!access-token-arg}",
+    my $encoded-path = $path.subst('#', '%23');
+    my $req = HTTP::Request.new(PUT => $.base-url() ~ $encoded-path ~ "?{self!access-token-arg}",
                                 Content-Type => 'application/json');
     $req.add-content($json);
     return self!handle-error($!ua.request($req))
@@ -71,4 +79,12 @@ multi method put(Str $path, Str $json) {
 
 multi method put(Str $path, *%params) {
     self.put($path, to-json(%params))
+}
+
+method delete(Str $path) {
+    my $encoded-path = $path.subst('#', '%23');
+    my $req = HTTP::Request.new(
+        DELETE => $.base-url ~ $encoded-path ~ "?{self!access-token-arg}",
+        Content-Type => 'application/json');
+    return self!handle-error($!ua.request($req))
 }

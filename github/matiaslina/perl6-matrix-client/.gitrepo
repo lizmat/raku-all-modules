@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/matiaslina/perl6-matrix-client.git
 	branch = master
-	commit = 305bb42b3311c8ac9d04235e5548ae9b67de06ac
-	parent = 42907cf0f6d414eedfd04ecc3f36fce9a2902b5d
+	commit = 3d6d5a4828e602837886358918e324f34e37b962
+	parent = aafb95f1a3333a98464e8bfd782b17d58e2fe8e8
 	cmdver = 0.4.0
