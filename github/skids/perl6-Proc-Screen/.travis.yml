@@ -1,0 +1,16 @@
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build-panda
+  - panda --notests installdeps .
+script:
+  # Once with screen installed
+  - sudo apt-get install -y screen
+  - PERL6LIB=$PWD/blib/lib prove -v -e perl6 -r t/
+  # And once again after compilation
+  - PERL6LIB=$PWD/blib/lib prove -v -e perl6 -r t/
+  # And once again with gnu screen unavailable
+  - sudo apt-get remove -y screen
+  - PERL6LIB=$PWD/blib/lib prove -v -e perl6 -r t/
+sudo: true
