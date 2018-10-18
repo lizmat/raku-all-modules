@@ -3,12 +3,14 @@ use Crust::Request;
 
 unit class Hematite::Request is Crust::Request;
 
+use JSON::Fast;
+
 has $!body_params  = Nil;
 has $!query_params = Nil;
 
 # instance methods
 
-method FALLBACK(Str $name where /^accepts\-(\w+)$/) returns Bool {
+multi method FALLBACK(Str $name where /^accepts\-(\w+)$/) returns Bool {
     my $type    = ($name ~~ /^accepts\-(\w+)$/)[0];
     my @accepts = self.accepts;
 
@@ -51,6 +53,16 @@ method accepts() returns Array {
 
     @matches = @matches.map(-> $item { $item[0] });
     return @matches;
+}
+
+method json() {
+    my $supply = self.body;
+    my $body   = "";
+
+    $supply.tap(-> $chunk { $body ~= $chunk.decode("utf-8"); });
+    $supply.wait;
+
+    return from-json($body);
 }
 
 # helper functions

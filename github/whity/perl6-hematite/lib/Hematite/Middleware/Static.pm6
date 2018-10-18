@@ -1,6 +1,6 @@
 unit class Hematite::Middleware::Static does Callable;
 
-has Str $.public_dir;
+has Str $.public_dir is required;
 
 method CALL-ME($ctx, $next) {
     my IO::Path $request_path = "{ self.public_dir }/{ $ctx.req.path }".IO;
