@@ -1,0 +1,7 @@
+# install "realtime-stdout"  branch
+module_run 'Cpanm::GitHub', %(
+    user    => "melezhik",        # github user, required
+    project => "outthentic",      # GitHub project
+    branch  => "realtime-stdout"  # Branch name; If not set master branch installed
+);
+
