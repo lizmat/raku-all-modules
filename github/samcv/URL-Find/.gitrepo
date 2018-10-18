@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/samcv/URL-Find.git
+	branch = master
+	commit = 474233bae2dd956ad2f9d09b31bf4bec8876f87e
+	parent = 0f04e697f06f5662f705f41bc7392201d91aa2be
+	cmdver = 0.4.0
