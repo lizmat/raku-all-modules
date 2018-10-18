@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/FCO/DateTime-Extended.git
+	branch = master
+	commit = b91b304fdfd6a44b8786daca9ae7a46305d83113
+	parent = b95b1b7a368aeaf01b72ccd7b38403721fc2c4b7
+	cmdver = 0.4.0
