@@ -1,0 +1,37 @@
+{
+    "perl"        : "6.*",
+    "name"        : "App::snippet",
+    "version"     : "0.2.1",
+    "license"     : "MIT",
+    "description" : "run c/cpp or other language code snippet",
+    "depends"     : [
+        "Readline",
+        "PathTools",
+        "Getopt::Advance",
+        "File::Which",
+        "Pluggable"
+    ],
+    "test-depends": [
+        "Test::META"
+    ],
+    "tags": [
+        "c",
+        "cpp",
+        "snippet"
+    ],
+    "provides"    : {
+        "App::snippet"                      : "lib/App/snippet.pm6",
+        "App::snippet::Compiler::GCC"       : "lib/App/snippet/Compiler/GCC.pm6",
+        "App::snippet::Compiler::Clang"     : "lib/App/snippet/Compiler/Clang.pm6",
+        "App::snippet::Common"              : "lib/App/snippet/Common.pm6",
+        "App::snippet::Interface::C"        : "lib/App/snippet/Interface/C.pm6",
+        "App::snippet::Interface::Cpp"      : "lib/App/snippet/Interface/Cpp.pm6"
+    },
+	"auth" : "github:araraloren",
+    "authors" : "Loren",
+    "source-url"  : "https://github.com/araraloren/perl6-app-snippet.git",
+    "support" : {
+        "bugtracker" : "https://github.com.araraloren/perl6-app-snippet/issues",
+        "source" : "https://github.com/araraloren/perl6-app-snippet.git"
+    }
+}

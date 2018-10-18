@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/araraloren/perl6-app-snippet.git
+	branch = master
+	commit = a4b0fdc9919e7525303e7bf9955a4e03efb4cc92
+	parent = e5aa96b93430dfeb6e173a3f4ff9a457b1b361f0
+	cmdver = 0.4.0
