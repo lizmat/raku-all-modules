@@ -5,6 +5,7 @@ use JSON::Fast;
 use Getopt::Advance;
 use Config::Searcher;
 use Getopt::Advance::Parser;
+use Getopt::Advance::Helper;
 
 my %category := SetHash.new;
 my %configs = &loading-config();
@@ -42,7 +43,7 @@ sub main() {
         }
     );
 
-    my $rv = &getopt($os, parser => &ga-pre-parser);
+    my $rv = &getopt($os, parser => &ga-pre-parser, helper => &fs-helper);
 
     %category<w> = %category<a> = True;
 
@@ -171,11 +172,12 @@ sub main() {
                                 ).flat);
                 @stack = @stack-t;
             };
+            True;
         },
         :last
     );
 
-    &getopt($rv.noa, $os);
+    &getopt($rv.noa, $os, helper => &fs-helper);
 }
 
 sub loading-config() is export {
@@ -217,4 +219,18 @@ sub get-sub-files($path) {
     nqp::closedir($dh);
 
     return @ret;
+}
+
+sub fs-helper(@optset, $outfh, *%args) is export {
+    my $helper = &ga-helper-impl(@optset[0]);
+
+    $outfh.say("Usage:");
+    $outfh.say(sprintf "{$*PROGRAM-NAME} [add|remove|list] <file>\n");
+    $outfh.say(sprintf "{$*PROGRAM-NAME} <directory> OPTIONs\n");
+
+    require Terminal::Table <&array-to-table>;
+
+    my @annotation = &array-to-table($helper.annotation(), style => 'none');
+
+    $outfh.say(.join(" ") ~ "\n") for @annotation;
 }

@@ -1,7 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "App::FindSource",
-    "version"     : "0.0.5",
+    "version"     : "0.0.6",
     "license"     : "GPL",
     "description" : "Find your source file easily.",
     "depends"     : [
