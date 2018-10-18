@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Altai-man/perl6-Java-Generate.git
+	branch = master
+	commit = 5c21b2f3713a904ef4935d6e21e99c61602da020
+	parent = 9ed14a93ee17ad9e97d63d2a353d80d1a2758614
+	cmdver = 0.4.0
