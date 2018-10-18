@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-IO-CatHandle-AutoLines.git
 	branch = master
-	commit = 8d62b735517905ca172f670f82036956dbd28658
-	parent = 7150310c56ab8004e6b51ee230d97dd256833895
+	commit = 62deb96acb2f00613503237adfd05ce0b7cb34b5
+	parent = aa3b58576ce7311198c741c272830d28bc61a326
 	cmdver = 0.4.0

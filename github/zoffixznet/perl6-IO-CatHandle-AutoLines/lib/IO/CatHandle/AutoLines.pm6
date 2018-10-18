@@ -1,5 +1,3 @@
-use RakudoPrereq v2017.05.270.g.5227828.a.8,
-    'IO::CatHandle::AutoLines module requires Rakudo v2017.06 or newer';
 use MONKEY-GUTS;
 
 role IO::CatHandle::AutoLines[Bool:D :$reset = True] {

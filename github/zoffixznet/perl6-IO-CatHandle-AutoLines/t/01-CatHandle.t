@@ -134,5 +134,6 @@ is-run $*EXECUTABLE, :args[
         use IO::CatHandle::AutoLines;
         42 does IO::CatHandle::AutoLines;
     ｣,
-], :err(/"IO::CatHandle::AutoLines can only be mixed into an IO::CatHandle"/),
+], :status{.so},
+   :err(/"IO::CatHandle::AutoLines can only be mixed into an IO::CatHandle"/),
    'trying to mix into wrong object';
