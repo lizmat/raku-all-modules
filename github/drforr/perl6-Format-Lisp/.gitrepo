@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/drforr/perl6-Format-Lisp.git
+	branch = master
+	commit = a46d8ab4421990ab6deda31ceee9c6850b6a5e0d
+	parent = e2ee92fff751e1fc333a863f59e8c79b9ad752cf
+	cmdver = 0.4.0
