@@ -1,0 +1,12 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+sudo: required
+perl6:
+  - latest
+install:
+  - sudo apt-get install -y libgdbm-dev
+  - rakudobrew build-zef
+  - zef --/test --deps-only install .
+  - zef build .
