@@ -49,7 +49,7 @@
         "Template6",
         "Template::Mojo",
         "Terminal::ANSIColor",
-        "Test::Meta",
+        "Test::META",
         "Test::Mock",
         "URI",
         "URI::Encode",

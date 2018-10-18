@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://gitlab.com/stmuk/p6-task-galaxy.git
 	branch = master
-	commit = 600adfac93f0da62025097853f8f021604a35e8f
-	parent = 72c7b83d061209b58db086f8f657e18a5cfcb2f1
+	commit = ca1484a794d74c7dc3a1768e40822ebbce9a4d2a
+	parent = c450bbb2d4b04fadc62ab886f65bfa5ed1818a6b
 	cmdver = 0.4.0
