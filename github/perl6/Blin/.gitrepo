@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/perl6/Blin.git
+	branch = master
+	commit = 953c12d91d3f076a530f48f3741be123c4b7a0a2
+	parent = afb9a4f6659d8c1f1b41c41ef085e8f28ee72f1e
+	cmdver = 0.4.0
