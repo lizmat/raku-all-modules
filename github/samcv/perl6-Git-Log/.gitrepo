@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/samcv/perl6-Git-Log.git
 	branch = master
-	commit = 15c3a39f2696db533a704a1eb3a59035228a6404
-	parent = a598b6a59768dc32903f1d05a4afedc9b7c89fea
+	commit = 6d88f6f393fc8d8cd0e8a69cfaed6f37d1a2c0f2
+	parent = 9c539d23d8b27ed047a4530b400f7005b12d34e9
 	cmdver = 0.4.0

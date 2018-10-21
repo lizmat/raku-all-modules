@@ -12,7 +12,6 @@
     "license": "http://www.perlfoundation.org/artistic_license_2_0",
     "bugtracker": "https://github.com/samcv/perl6-Git-Log/issues"
   },
-  "source-url": "https://github.com/samcv/perl6-Git-Log.git",
   "meta-version": 0,
   "name": "Git::Log",
   "perl": "6.c",
