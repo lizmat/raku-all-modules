@@ -344,8 +344,14 @@ a813f251ae7500c04afa583b2c01ffce23132997
 #| Test some $module on some commit ($full-commit-hash)
 sub test-module($full-commit-hash, $module,
                 :$install=False,
-                :$zef-path!, :$timeout!,
+                :$zef-path!, :$zef-config-path, :$timeout!,
                 :@always-unpacked, :$testable=True) is export {
+
+    if $full-commit-hash eq @annoying-revisions.any {
+        return %(output => ‘This revision is known to divert bisection into the wrong direction’,
+                 exit-code => -1, signal => -1, time => -1,)
+    }
+
     build-exists $full-commit-hash;
     my $install-path = $module.install-path;
     mkdir $install-path;
@@ -354,11 +360,6 @@ sub test-module($full-commit-hash, $module,
     @deps .= unique;
 
     sub run-it($path) { # basically runs zef
-        if $full-commit-hash eq @annoying-revisions.any {
-            return %(output => ‘This revision is known to divert bisection into the wrong direction’,
-                     exit-code => -1, signal => -1, time => -1,)
-        }
-
         my $binary-path = $path.IO.add: ‘bin/perl6’;
         my %tweaked-env = %*ENV;
         %tweaked-env<PATH> = join ‘:’, $binary-path.parent, (%tweaked-env<PATH> // Empty);
@@ -376,6 +377,7 @@ sub test-module($full-commit-hash, $module,
         my $result = get-output $binary-path,
                      ‘--’,
                      $zef-path.add(‘/bin/zef’),
+                     “--config-path=$zef-config-path”,
                      <--verbose --force-build --force-install>,
                      ($testable ?? ‘--force-test’ !! ‘--/test’),
                      <--/depends --/test-depends --/build-depends>,
@@ -401,7 +403,7 @@ sub test-module($full-commit-hash, $module,
 sub process-module(Module $module,
                    :$deflap!,
                    :$start-point-full!, :$end-point-full!,
-                   :$zef-path!, :$timeout!,
+                   :$zef-path!, :$zef-config-path, :$timeout!,
                    :@always-unpacked,
                    :$testable=True,
                   ) is export {
@@ -419,20 +421,23 @@ sub process-module(Module $module,
     my $OK = $testable ?? OK !! InstallableButUntested;
 
     note “🥞🥞🥞 Testing $module.name() (new)”; # (new revision, end point)
-    my $new-result = test-module   $end-point-full, $module, :$zef-path, :$timeout,
+    my $new-result = test-module   $end-point-full, $module,
+                                 :$zef-path, :$zef-config-path, :$timeout,
                                  :@always-unpacked, :$testable,
                                  install => $module.needed;
     spurt $module.install-path.IO.add(‘log’), $new-result<output>;
     return $module.done.keep: $OK if alright $new-result; # don't even test the old one
     note “🥞🥞🥞 Testing $module.name() (old)”; # (old revision, start point)
-    my $old-result = test-module $start-point-full, $module, :$zef-path, :$timeout,
+    my $old-result = test-module $start-point-full, $module,
+                                 :$zef-path, :$zef-config-path, :$timeout,
                                  :@always-unpacked, :$testable;
 
     return $module.done.keep: AlwaysFail unless alright $old-result;
 
     note “🥞🥞🥞 Testing $module.name() for flappiness”;
     for ^$deflap {
-        if alright test-module $end-point-full, $module, :$zef-path, :$timeout,
+        if alright test-module $end-point-full, $module,
+                               :$zef-path, :$zef-config-path, :$timeout,
                                :@always-unpacked, :$testable {
             return $module.done.keep: Flapper
         }
@@ -453,7 +458,7 @@ sub process-module(Module $module,
     my $init-result = get-output cwd => $repo-cwd, <git bisect new>, $end-point-full;
 
     my &runner = -> :$current-commit, *%_ { test-module $current-commit, $module,
-                                            :$zef-path, :$timeout,
+                                            :$zef-path, :$zef-config-path, :$timeout,
                                             :@always-unpacked, :$testable
                                           };
     my $bisect-result = run-bisect &runner, :$repo-cwd,

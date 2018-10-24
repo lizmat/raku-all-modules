@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/perl6/Blin.git
 	branch = master
-	commit = efff604814f258ddce6215ce672af639a7d96a78
-	parent = 83f20242d4e446bbffab6d46342ec8bfe268af1c
+	commit = 977ca80686a4b47a29ce881aa52a69cd82f79b90
+	parent = feed08df0671e23fa7824ec0a29031f6cb5fdea6
 	cmdver = 0.4.0
