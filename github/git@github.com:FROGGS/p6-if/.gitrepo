@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:FROGGS/p6-if.git
+	branch = master
+	commit = 84ccedc4cf408de83a2ce7c7777e84fd824bd587
+	parent = 2cceb1f1aa442e20536823cb3d953ffd10dfc5a8
+	cmdver = 0.3.1
