@@ -1,0 +1,24 @@
+{
+    "perl" : "6.*",
+    "name" : "Grammar::Debugger",
+    "version" : "1.0.1",
+    "auth" : "github:jnthn",
+    "license" : "Artistic-2.0",
+    "creator" : "Jonathan Worthington",
+    "description" : "Simple tracing and debugging support for Perl 6 grammars",
+    "build-depends" : [
+        "Terminal::ANSIColor"
+    ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [
+        "Terminal::ANSIColor"
+    ],
+    "provides" : {
+        "Grammar::Tracer" : "lib/Grammar/Tracer.pm6",
+        "Grammar::Debugger" : "lib/Grammar/Debugger.pm6",
+        "Grammar::Debugger::WrapCache" : "lib/Grammar/Debugger/WrapCache.pm6"
+    },
+    "source-url" : "git://github.com/jnthn/grammar-debugger.git"
+}

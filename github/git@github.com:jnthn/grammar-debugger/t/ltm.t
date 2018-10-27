@@ -1,0 +1,33 @@
+use v6;
+
+use Test;
+use Grammar::Tracer;
+
+plan 1;
+
+# Test case taken from GitHub Issue #13
+
+grammar MyGrammar {
+    proto token test { * }
+    token test:sym<first> {
+        {} aa
+    }
+    token test:sym<longest> {
+        aa
+    }
+}
+
+class MyActions {
+    method test:sym<first>($/) {
+        make 'wrong'
+    }
+    method test:sym<longest>($/) {
+        make 'correct'
+    }
+}
+
+my $outcome = do {
+    my $*OUT = class { method say(*@x) { }; method print(*@x) { }; method flush(*@x) { } }
+	MyGrammar.parse('aa', :rule<test>, :actions(MyActions)).made
+}
+is $outcome, 'correct', 'Picked longest token';

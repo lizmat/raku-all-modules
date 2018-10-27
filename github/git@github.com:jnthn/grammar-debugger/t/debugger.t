@@ -1,0 +1,21 @@
+use v6;
+
+use Test;
+use Grammar::Debugger;
+
+plan 1;
+
+
+grammar Sample {
+    token TOP { <foo> }
+    token foo { x }
+}
+
+lives-ok
+    {
+        #my $*OUT = class { method say(*@x) { }; method print(*@x) { }; method flush(*@x) { } };
+        #my $*IN  = class { method get(*@x) { 'get'.say; "\n" } };
+        #Sample.parse('x')
+        qw< the $*IN thing stopped working.. >;
+    },
+    'grammar.parse(...) with the debugger works';
