@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:niner/Grammar-Highlighter.git
+	branch = master
+	commit = 7561779940ae22a4d7e2441d522acd9a564db600
+	parent = 7ca426af6724eaa3ff5193a3ee3a0fa51946165a
+	cmdver = 0.3.1
