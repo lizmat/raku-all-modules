@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:hoelzro/p6-algorithm-lcs.git
+	branch = master
+	commit = 602dae17fd846567ae0fc2843137baca011b87c0
+	parent = 32ada015542a888db18c49d9a4e1cda7a6f50b9c
+	cmdver = 0.3.1
