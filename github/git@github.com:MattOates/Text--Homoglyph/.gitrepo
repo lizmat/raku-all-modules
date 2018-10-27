@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:MattOates/Text--Homoglyph.git
+	branch = master
+	commit = 276f607c4036f83a2963d6f5c9ce707a047fd94b
+	parent = 328615dfe8dfb65307fd1b6b095a4e70361191a2
+	cmdver = 0.3.1
