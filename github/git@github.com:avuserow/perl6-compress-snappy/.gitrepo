@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:avuserow/perl6-compress-snappy.git
+	branch = master
+	commit = 97535eac86e76eb4fc1e754312e4d76b4de16c62
+	parent = e841103930c71ddecf2c3a7cd32d7e4404973ad9
+	cmdver = 0.3.1
