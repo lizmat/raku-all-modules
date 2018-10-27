@@ -1,0 +1,12 @@
+{
+	"perl" : "v6",
+        "name" : "NativeCall::TypeDiag",
+        "version" : "*",
+        "description" : "A module to look at your nativecall types, like class A is repr('CStruct')",
+        "author" : "Sylvain Colinet",
+        "provides" : {
+            "NativeCall::TypeDiag" : "lib/NativeCall/TypeDiag.pm6"
+        },
+        "depends" : [ "File::Temp" ],
+        "source-url" : "git://github.com/Skarsnik/nativecall-typediag.git"
+}
