@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/temporal-utils.git
+	branch = master
+	commit = 90d76bc350b13ad43a1614847a05e92c5dc6cfd9
+	parent = 6f33acffb6f9c803c8a37ceffb315e550f166c40
+	cmdver = 0.3.1
