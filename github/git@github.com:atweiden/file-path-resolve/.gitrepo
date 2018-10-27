@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:atweiden/file-path-resolve.git
+	branch = master
+	commit = 57c53c520108cda96b992604138af4ceb9470caf
+	parent = 192272cfafe69622257f42d31a5fe9cf9d367c1a
+	cmdver = 0.3.1
