@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/Template-Mojo.git
+	branch = master
+	commit = 3d38f92636a0c44dfd4cec2e7b8b67f12e43c026
+	parent = 60a952a6f77a5d993fbd131b40a7de63331e7dc2
+	cmdver = 0.3.1
