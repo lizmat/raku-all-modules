@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tokuhirom/p6-Crust.git
+	branch = master
+	commit = fe89509964d5714c03374842325e2fb54808ed72
+	parent = ecca8a6efd60e42fb826f75823d5df8bd6fd0a27
+	cmdver = 0.3.1
