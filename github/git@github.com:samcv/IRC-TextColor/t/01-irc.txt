@@ -1,0 +1,6 @@
+04===SORRY!04=== Error while compiling /home/samantha/github/IRC-TextColor/./test.p6
+Couldn't find terminator } (corresponding { was at line 3)
+at /home/samantha/github/IRC-TextColor/./test.p6:4
+------> 03<BOL>08⏏04<EOL>
+    expecting any of:
+        }

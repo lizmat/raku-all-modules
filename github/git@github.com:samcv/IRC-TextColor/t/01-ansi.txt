@@ -1,0 +1,6 @@
+[31m===[0mSORRY![31m===[0m Error while compiling /home/samantha/github/IRC-TextColor/./test.p6
+Couldn't find terminator } (corresponding { was at line 3)
+at /home/samantha/github/IRC-TextColor/./test.p6:4
+------> [32m<BOL>[33m⏏[31m<EOL>[0m
+    expecting any of:
+        }
