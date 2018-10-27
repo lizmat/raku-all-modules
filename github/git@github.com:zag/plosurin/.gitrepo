@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:zag/plosurin.git
+	branch = master
+	commit = 16c767375cb90866cb196fb53f9b9932ae956fa1
+	parent = 51444a8e9c870a10f28b70c5c3ede2923b524faa
+	cmdver = 0.3.1
