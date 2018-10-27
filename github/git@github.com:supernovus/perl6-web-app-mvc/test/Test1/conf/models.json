@@ -1,0 +1,6 @@
+{
+  "Test1::Model" : {
+    ".include"   : "db.default",
+    "table"      : "users"
+  }
+}
