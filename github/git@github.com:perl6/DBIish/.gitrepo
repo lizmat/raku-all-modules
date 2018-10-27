@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:perl6/DBIish.git
+	branch = master
+	commit = 80029f8400223790efde155cfce390d5186809b2
+	parent = 1bc20d9aec5f27dbb98fdcc07f2351b3847b1c87
+	cmdver = 0.3.1

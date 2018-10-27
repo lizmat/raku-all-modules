@@ -1,0 +1,10 @@
+Makefile
+blib/
+dbdish-sqlite-test.sqlite3
+*.moarvm
+*.jar
+*~
+.precomp
+*.swp
+lib/.precomp
+/.panda-work/
