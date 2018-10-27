@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jaffa4/Dependency-Sort.git
+	branch = master
+	commit = ae14049d8fe70d45f6fd9781f583c9481edb813d
+	parent = d3552d448925b6b127f6a4735177a0b69f6cfe22
+	cmdver = 0.3.1
