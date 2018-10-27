@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jnthn/oo-monitors.git
+	branch = master
+	commit = 6dc1a363c7859b760bf973d0ada0773cfdb14356
+	parent = 30825839932e4e51a425321c589bb650093e7c4a
+	cmdver = 0.3.1
