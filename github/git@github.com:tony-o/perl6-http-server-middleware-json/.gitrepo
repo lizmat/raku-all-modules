@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/perl6-http-server-middleware-json.git
+	branch = master
+	commit = 4fec7140236c3197646144a6c77cfd32f158c8b4
+	parent = 89350d06e8242eade8fc4075e8fd5cd38177a7ae
+	cmdver = 0.3.1
