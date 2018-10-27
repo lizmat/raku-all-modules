@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:arnsholt/Net-ZMQ.git
+	branch = master
+	commit = 4442cb7756ebfe0e93cfaed25d19dd2fa634c2c3
+	parent = 871c720b4840a3a8298614598258fc30fa28cee5
+	cmdver = 0.3.1
