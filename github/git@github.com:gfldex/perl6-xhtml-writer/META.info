@@ -1,0 +1,13 @@
+{
+    "perl" : "6.*",
+    "name" : "XHTML::Writer",
+    "version" : "0.1.0",
+    "description" : "Generate XHTML1.1 with subs (many, many subs)",
+    "authors" : [ "Wenzel P. P. Peppmeyer" ],
+    "provides" : {
+        "XHTML::Writer" : "lib/XHTML/Writer.pm6",
+        "XHTML::Skeleton" : "lib/XHTML/Skeleton.pm6"
+    },
+    "depends" : [ "XML" ],
+    "source-url" : "git://github.com/gfldex/perl6-xhtml-writer.git"
+}
