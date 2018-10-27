@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:teodozjan/pod6-coverage.git
+	branch = master
+	commit = 95cd44c767f858303d4cb544fc865dca287c2b60
+	parent = 8b093fa9979d5ed8e617a3309d150bfd5e133eec
+	cmdver = 0.3.1
