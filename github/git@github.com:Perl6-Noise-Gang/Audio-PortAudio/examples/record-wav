@@ -1,0 +1,111 @@
+#!perl6
+
+use v6.c;
+
+=begin pod
+
+=head1 NAME
+
+record-wav - record data from some source to a WAV file
+
+=head1 SYNOPSIS
+
+=begin code
+
+record-wav [--source=<source name>] [--buffer=<256>] outfile
+
+=end code
+
+=head1 DESCRIPTION
+
+By default this will record audio from the default source (as
+determinied by PortAudio, and probably your computers microphone
+or line in,) to the specified .wav file as a 16 bit / 44100 WAV.
+
+The source can be specified by name which can be determined by
+the script C<enum-devices>, the source must have two input channels.
+
+Some sources (such as JACK,) may require a specific, fixed, buffer
+size in order to work in a consistent manner and this can be set
+with the C<buffer> option which is the size in "frames" of the buffer
+to be used by portaudio and the number of frames to be read at once.
+
+=end pod
+
+use Audio::PortAudio;
+use Audio::Sndfile;
+
+sub MAIN(Str $filename, Str :$source, Int :$buffer = 256) {
+    my $pa = Audio::PortAudio.new;
+    my $format = Audio::Sndfile::Info::Format::WAV +| Audio::Sndfile::Info::Subformat::PCM_16;
+    my $out-file = Audio::Sndfile.new(:$filename, channels => 2, samplerate => 44100, :$format, :w);
+    my $st;
+    
+    if $source.defined {
+        my $index = 0;
+        for $pa.devices -> $device {
+            if $device.name eq $source {
+                if $device.max-input-channels < 2 {
+                    die "Device $source does not have enough input channels";
+                }
+                else {
+                    my $la = $device.default-high-input-latency;
+                    my $si = Audio::PortAudio::StreamParameters.new(device => $index,
+                                                                    channel-count => 2,
+                                                                    sample-format => Audio::PortAudio::StreamFormat::Float32,
+                                                                    suggested-latency => ($la || 0.05e0 ));
+                    $st = $pa.open-stream($si, Audio::PortAudio::StreamParameters, 44100, $buffer );
+                    last;
+                }
+
+            }
+            $index++;
+        }
+        if !$st.defined {
+            die "Couldn't find a device for '$source'";
+        }
+    }
+    else {
+        $st = $pa.open-default-stream(2,0, Audio::PortAudio::StreamFormat::Float32, 44100, $buffer);
+    }
+    $st.start;
+    my $p = Promise.new;
+    signal(SIGINT).act({
+        say "stopping recording";
+        $p.keep: "stopped";
+        $out-file.close;
+        $st.close;
+        exit;
+    });
+    my Channel $write-channel = Channel.new;
+    my $write-promise = start {
+        react {
+            whenever $write-channel -> $item {
+                if $p.status ~~ Planned {
+                    $out-file.write-float($item[0], $item[1]);
+                    $out-file.sync;
+                }
+                else {
+                    done;
+                }
+            }
+        }
+    };
+
+    loop {
+        if $p.status ~~ Planned {
+            my $f = $buffer || $st.read-available;
+            if $f > 0 {
+                my $buff = $st.read($f,2, num32);
+                $write-channel.send([$buff, $f]);
+            }
+        }
+        else {
+            last;
+        }
+    }
+
+}
+
+
+# vim: expandtab shiftwidth=4 ft=perl6
