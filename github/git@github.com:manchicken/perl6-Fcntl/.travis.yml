@@ -1,0 +1,20 @@
+language: perl6
+
+os:
+  - linux
+  - osx
+
+perl6:
+  - latest
+
+sudo: false
+
+install:
+  - uname -a
+  - rakudobrew build zef
+  - zef --depsonly install .
+  - zef --verbose build .
+  - echo "ABOUT TO RUN TESTS!!! $TRAVIS_BUILD_DIR $DYLD_FALLBACK_LIBRARY_PATH $PWD"
+  - find $TRAVIS_BUILD_DIR -type f
+  - AUTHOR_TESTING=1 prove -ve "perl6 -Ilib -Iresources/lib"
+  - zef --verbose install .
