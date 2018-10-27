@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:PerlGameDev/SDL6.git
+	branch = master
+	commit = dbbd8fdca02d179231385508b4ea79760f14d6d4
+	parent = 8c3b9d8ee0cde49ff9299d86456d4ccaf1cfbb17
+	cmdver = 0.3.1
