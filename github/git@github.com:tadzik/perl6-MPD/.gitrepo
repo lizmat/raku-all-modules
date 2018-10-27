@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/perl6-MPD.git
+	branch = master
+	commit = 4373a2705fbe056c849df1b4f4532f6801d1c76f
+	parent = d2ee3a1ec329380b3aea2e68e9c48c676df5a1bc
+	cmdver = 0.3.1
