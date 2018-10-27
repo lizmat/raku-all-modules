@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:leont/yamlish.git
+	branch = master
+	commit = 3f9091352d3bfbc6ad6709e03125df1112cd1abe
+	parent = fb394534bc37a3339aeff3a8128a1db1550f5fed
+	cmdver = 0.3.1
