@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:spebern/Parser-FreeXL-Native.git
+	branch = master
+	commit = 9dd80a1d20d4ca666053b05a7ce04332226d7ea8
+	parent = 4f1ea899006ecb8e65ee6d8f22bdd4655e6b77da
+	cmdver = 0.3.1
