@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:patch/geo-region-pm6.git
+	branch = master
+	commit = a2472d16fb9c778af5f925edf472a78c9e38191a
+	parent = 61dbdc381f9081b643e33415ee10a0e7ff49cb39
+	cmdver = 0.3.1
