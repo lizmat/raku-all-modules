@@ -1,0 +1,2 @@
+all: 
+	%CC% -DHAVE_SOCKLEN -Dlint -Wall %CCFLAGS% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/%fcgi% *.c
