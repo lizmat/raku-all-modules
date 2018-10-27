@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/io-prompter.git
+	branch = master
+	commit = f6d08af1a6351ef47656f45035c51c25abbe6f2f
+	parent = 5f675dc8288579d01d22169318464b047fb7c615
+	cmdver = 0.3.1
