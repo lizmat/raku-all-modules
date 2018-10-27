@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/JSON-Unmarshal.git
+	branch = master
+	commit = e1b6288c5f3165058f36c0f4e171cdf2dfd640da
+	parent = 079882fcb7ae7da37f327384eaae1e9b808d24d6
+	cmdver = 0.3.1
