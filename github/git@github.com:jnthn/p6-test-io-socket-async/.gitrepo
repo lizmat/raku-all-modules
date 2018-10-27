@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jnthn/p6-test-io-socket-async.git
+	branch = master
+	commit = 048c42d7af77dcd52e390c4f38839d23663e908e
+	parent = e8193f831155dafd5b1bb714c4c9a041ff13a03c
+	cmdver = 0.3.1
