@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cygx/p6-tinycc.git
+	branch = master
+	commit = a090e663f284a2aee73872ffbc92637bcbd62310
+	parent = 634ab7133fc2ed3263f3c50e1f5f68ae08008497
+	cmdver = 0.3.1
