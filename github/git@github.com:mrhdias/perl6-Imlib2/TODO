@@ -1,0 +1,213 @@
+Legend:
+
+G - Group.
+I - Is implemented.
+D - Is documented.
+T - Has test.
+E - Has example.
+
+ 1 - context handling.
+ 2 - context setting.
+ 3 - context getting.
+ 4 - loading functions.
+ 5 - query/modify image parameters.
+ 6 - rendering functions.
+ 7 - creation functions.
+ 8 - imlib updates.
+ 9 - image modification.
+10 - fonts_and_text.
+11 - color modifiers.
+12 - drawing on images.
+13 - polygons.
+14 - ellipses.
+15 - color ranges.
+16 - image data.
+17 - saving.
+18 - rotation/skewing.
+19 - image filters.
+
+Function__________________________________________|_G|I|D|T|E|
+imlib_context_new_________________________________|_1|_|_|_|_|
+imlib_context_free________________________________|_1|_|_|_|_|
+imlib_context_push________________________________|_1|_|_|_|_|
+imlib_context_pop_________________________________|_1|_|_|_|_|
+imlib_context_get_________________________________|_1|_|_|_|_|
+imlib_context_set_dither_mask_____________________|_2|x|x|x|_|
+imlib_context_get_dither_mask_____________________|_3|x|x|x|_|
+imlib_context_set_anti_alias______________________|_2|x|x|x|_|
+imlib_context_get_anti_alias______________________|_3|x|x|x|_|
+imlib_context_set_mask_alpha_threshold____________|_2|x|x|x|_|
+imlib_context_get_mask_alpha_threshold____________|_3|x|x|x|_|
+imlib_context_set_dither__________________________|_2|x|x|x|_|
+imlib_context_get_dither__________________________|_3|x|x|x|_|
+imlib_context_set_blend___________________________|_2|x|x|x|x|
+imlib_context_get_blend___________________________|_3|x|x|x|_|
+imlib_context_set_color_modifier__________________|_2|x|x|x|x|
+imlib_context_get_color_modifier__________________|_3|x|x|x|_|
+imlib_context_set_operation_______________________|_2|x|x|x|_|
+imlib_context_get_operation_______________________|_3|x|x|x|_|
+imlib_context_set_font____________________________|10|x|x|x|x|
+imlib_context_get_font____________________________|_3|x|x|x|_|
+imlib_context_set_direction_______________________|_2|x|x|x|x|
+imlib_context_get_direction_______________________|_3|x|x|x|_|
+imlib_context_set_angle___________________________|_2|x|x|x|x|
+imlib_context_get_angle___________________________|_3|x|x|x|x|
+imlib_context_set_color___________________________|_2|x|x|x|x|
+imlib_context_get_color___________________________|_3|x|x|x|x|
+imlib_context_get_imlib_color_____________________|_3|?|_|_|_|
+imlib_context_set_color_hsva______________________|_2|x|x|x|_|
+imlib_context_get_color_hsva______________________|_3|?|x|?|_|
+imlib_context_set_color_hlsa______________________|_2|x|x|x|_|
+imlib_context_get_color_hlsa______________________|_3|?|x|?|_|
+imlib_context_set_color_cmya______________________|_2|x|x|x|_|
+imlib_context_get_color_cmya______________________|_3|x|x|x|_|
+imlib_context_set_color_range_____________________|15|x|x|x|_|
+imlib_context_get_color_range_____________________|_3|x|x|?|x|
+imlib_context_set_progress_function_______________|_2|_|_|_|_|
+imlib_context_get_progress_function_______________|_3|_|_|_|_|
+imlib_context_set_progress_granularity____________|_2|_|_|_|_|
+imlib_context_get_progress_granularity____________|_3|_|_|_|_|
+imlib_context_set_image___________________________|_2|x|x|x|x|
+imlib_context_get_image___________________________|_3|x|x|x|_|
+imlib_context_set_cliprect________________________|_2|x|x|x|_|
+imlib_context_get_cliprect________________________|_3|x|x|x|_|
+imlib_context_set_TTF_encoding____________________|_2|_|_|_|_|
+imlib_context_get_TTF_encoding____________________|_3|_|_|_|_|
+imlib_set_cache_size______________________________|_2|x|x|x|_|
+imlib_get_cache_size______________________________|_3|x|x|x|_|
+imlib_set_color_usage_____________________________|_2|x|x|x|_|
+imlib_get_color_usage_____________________________|_3|x|x|x|_|
+imlib_load_image__________________________________|_4|x|x|x|x|
+imlib_load_image_immediately______________________|_4|x|x|x|_|
+imlib_load_image_without_cache____________________|_4|x|x|x|_|
+imlib_load_image_immediately_without_cache________|_4|x|x|x|_|
+imlib_load_image_with_error_return________________|_4|x|x|x|_|
+imlib_free_image__________________________________|_4|x|x|x|x|
+imlib_free_image_and_decache______________________|_4|x|x|x|_|
+imlib_flush_loaders_______________________________|_4|x|x|x|_|
+imlib_image_get_width_____________________________|_5|x|x|x|x|
+imlib_image_get_height____________________________|_5|x|x|x|x|
+imlib_image_get_filename__________________________|_5|x|x|x|_|
+imlib_image_get_data______________________________|_5|_|_|_|_|
+imlib_image_get_data_for_reading_only_____________|_5|_|_|_|_|
+imlib_image_put_back_data_________________________|_5|_|_|_|_|
+imlib_image_set_has_alpha_________________________|_5|x|x|x|_|
+imlib_image_has_alpha_____________________________|_5|x|x|x|_|
+imlib_image_set_changes_on_disk___________________|_5|x|x|x|_|
+imlib_image_set_border____________________________|_5|x|x|x|x|
+imlib_image_get_border____________________________|_5|x|x|x|_|
+imlib_image_set_format____________________________|_5|x|x|x|_|
+imlib_image_format________________________________|_5|x|x|x|_|
+imlib_image_set_irrelevant_format_________________|_5|x|x|x|_|
+imlib_image_set_irrelevant_border_________________|_5|x|x|x|_|
+imlib_image_set_irrelevant_alpha__________________|_5|x|x|x|_|
+imlib_image_query_pixel___________________________|_5|_|_|_|_|
+imlib_image_query_pixel_hsva______________________|_5|_|_|_|_|
+imlib_image_query_pixel_hlsa______________________|_5|_|_|_|_|
+imlib_image_query_pixel_cmya______________________|_5|_|_|_|_|
+imlib_blend_image_onto_image______________________|_6|x|x|x|x|
+imlib_create_image________________________________|_7|x|x|x|x|
+imlib_create_image_using_data_____________________|_7|_|_|_|_|
+imlib_create_image_using_copied_data______________|_7|_|_|_|_|
+imlib_clone_image_________________________________|_7|x|x|x|x|
+imlib_create_cropped_image________________________|_7|x|x|x|x|
+imlib_create_cropped_scaled_image_________________|_7|x|x|x|_|
+imlib_updates_clone_______________________________|_8|_|_|_|_|
+imlib_update_append_rect__________________________|_8|_|_|_|_|
+imlib_updates_merge_______________________________|_8|_|_|_|_|
+imlib_updates_merge_for_rendering_________________|_8|_|_|_|_|
+imlib_updates_free________________________________|_8|_|_|_|_|
+imlib_updates_get_next____________________________|_8|_|_|_|_|
+imlib_updates_get_coordinates_____________________|_8|_|_|_|_|
+imlib_updates_set_coordinates_____________________|_8|_|_|_|_|
+imlib_render_image_updates_on_drawable____________|_8|_|_|_|_|
+imlib_updates_init________________________________|_8|_|_|_|_|
+imlib_updates_append_updates______________________|_8|_|_|_|_|
+imlib_image_flip_horizontal_______________________|_9|x|x|x|x|
+imlib_image_flip_vertical_________________________|_9|x|x|x|x|
+imlib_image_flip_diagonal_________________________|_9|x|x|x|x|
+imlib_image_orientate_____________________________|_9|x|x|x|x|
+imlib_image_tile__________________________________|_9|x|x|x|_|
+imlib_image_tile_horizontal_______________________|_9|x|x|x|_|
+imlib_image_tile_vertical_________________________|_9|x|x|x|_|
+imlib_image_blur__________________________________|_9|x|x|x|x|
+imlib_image_sharpen_______________________________|_9|x|x|x|x|
+imlib_load_font___________________________________|10|x|x|x|_|
+imlib_free_font___________________________________|10|x|x|x|_|
+imlib_text_draw___________________________________|10|x|x|x|_|
+imlib_text_draw_with_return_metrics_______________|10|x|x|x|_|
+imlib_get_text_size_______________________________|10|x|x|x|_|
+imlib_get_text_advance____________________________|10|x|x|x|_|
+imlib_get_text_inset______________________________|10|x|x|x|_|
+imlib_text_get_index_and_location_________________|10|?|_|_|_|
+imlib_text_get_location_at_index__________________|10|?|_|_|_|
+imlib_add_path_to_font_path_______________________|10|x|x|x|_|
+imlib_remove_path_from_font_path__________________|10|x|x|x|_|
+imlib_list_font_path______________________________|10|x|x|x|_|
+imlib_list_fonts__________________________________|10|x|x|x|_|
+imlib_free_font_list______________________________|10|x|x|x|_|
+imlib_set_font_cache_size_________________________|10|x|x|x|x|
+imlib_get_font_cache_size_________________________|10|x|x|x|x|
+imlib_flush_font_cache____________________________|10|x|x|x|_|
+imlib_get_font_ascent_____________________________|10|x|x|x|_|
+imlib_get_font_descent____________________________|10|x|x|x|_|
+imlib_get_maximum_font_ascent_____________________|10|x|x|x|_|
+imlib_get_maximum_font_descent____________________|10|x|x|x|_|
+imlib_create_color_modifier_______________________|11|x|x|x|_|
+imlib_free_color_modifier_________________________|11|x|x|x|_|
+imlib_modify_color_modifier_gamma_________________|11|x|x|x|_|
+imlib_modify_color_modifier_brightness____________|11|x|x|x|_|
+imlib_modify_color_modifier_contrast______________|11|x|x|x|_|
+imlib_set_color_modifier_tables___________________|11|x|x|x|_|
+imlib_get_color_modifier_tables___________________|11|x|x|x|_|
+imlib_reset_color_modifier________________________|11|x|x|x|_|
+imlib_apply_color_modifier________________________|11|x|x|x|_|
+imlib_apply_color_modifier_to_rectangle___________|11|x|x|x|_|
+imlib_image_draw_pixel____________________________|12|x|x|x|x|
+imlib_image_draw_line_____________________________|12|x|x|x|x|
+imlib_image_draw_rectangle________________________|12|x|x|x|_|
+imlib_image_fill_rectangle________________________|12|x|x|x|_|
+imlib_image_copy_alpha_to_image___________________|12|_|_|_|_|
+imlib_image_copy_alpha_rectangle_to_image_________|12|_|_|_|_|
+imlib_image_scroll_rect___________________________|12|_|_|_|_|
+imlib_image_copy_rect_____________________________|12|_|_|_|_|
+imlib_polygon_new_________________________________|13|x|x|x|_|
+imlib_polygon_free________________________________|13|x|x|x|_|
+imlib_polygon_add_point___________________________|13|x|x|x|_|
+imlib_polygon_contains_point______________________|13|x|x|x|_|
+imlib_polygon_get_bounds__________________________|13|x|x|x|x|
+imlib_image_draw_polygon__________________________|13|x|x|x|x|
+imlib_image_fill_polygon__________________________|13|x|x|x|x|
+imlib_image_draw_ellipse__________________________|14|x|x|x|x|
+imlib_image_fill_ellipse__________________________|14|x|x|x|x|
+imlib_create_color_range__________________________|15|x|x|x|x|
+imlib_free_color_range____________________________|15|x|x|x|x|
+imlib_add_color_to_color_range____________________|15|x|x|x|x|
+imlib_image_fill_color_range_rectangle____________|15|x|x|x|x|
+imlib_image_fill_hsva_color_range_rectangle_______|15|x|x|x|x|
+imlib_image_attach_data_value_____________________|16|_|_|_|_|
+imlib_image_get_attached_data_____________________|16|_|_|_|_|
+imlib_image_get_attached_value____________________|16|_|_|_|_|
+imlib_image_remove_attached_data_value____________|16|_|_|_|_|
+imlib_image_remove_and_free_attached_data_value___|16|_|_|_|_|
+imlib_save_image__________________________________|17|x|x|x|x|
+imlib_save_image_with_error_return________________|17|x|x|x|_|
+imlib_create_rotated_image________________________|18|x|x|x|x|
+imlib_rotate_image_from_buffer____________________|18|_|_|_|_|
+imlib_blend_image_onto_image_at_angle_____________|18|_|_|_|_|
+imlib_blend_image_onto_image_skewed_______________|18|_|_|_|_|
+imlib_image_filter________________________________|19|_|_|_|_|
+imlib_create_filter_______________________________|19|_|_|_|_|
+imlib_context_set_filter__________________________|19|_|_|_|_|
+imlib_context_get_filter__________________________|19|_|_|_|_|
+imlib_free_filter_________________________________|19|_|_|_|_|
+imlib_filter_set__________________________________|19|_|_|_|_|
+imlib_filter_set_alpha____________________________|19|_|_|_|_|
+imlib_filter_set_red______________________________|19|_|_|_|_|
+imlib_filter_set_green____________________________|19|_|_|_|_|
+imlib_filter_set_blue_____________________________|19|_|_|_|_|
+imlib_filter_constants____________________________|19|_|_|_|_|
+imlib_filter_divisors_____________________________|19|_|_|_|_|
+imlib_apply_filter________________________________|19|_|_|_|_|
+imlib_image_clear_________________________________|19|_|_|_|_|
+imlib_image_clear_color___________________________|19|_|_|_|_|
