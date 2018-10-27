@@ -1,0 +1,7 @@
+{
+    "name"        : "Test::Junkie",
+    "version"     : "*",
+    "description" : "A continuous test runner for Perl 6",
+    "depends"     : [ ],
+    "source-url"  : "git://github.com/colomon/Test-Junkie.git"
+}

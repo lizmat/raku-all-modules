@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/Test-Junkie.git
+	branch = master
+	commit = fd0b92864dc127e75ec20f02b8ff23d4a0ba066d
+	parent = 73de08674c5c0602a68efa27d83682dd980d7d81
+	cmdver = 0.3.1
