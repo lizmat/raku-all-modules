@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:nige123/app.123.do.git
+	branch = master
+	commit = 55710eab26a54008cfa4344adf341837f3ef7816
+	parent = b293bcb024d85915d97d7eebfdffdab2505e7734
+	cmdver = 0.3.1
