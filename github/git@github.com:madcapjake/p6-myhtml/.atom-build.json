@@ -1,0 +1,18 @@
+{
+  "cmd": "perl6",
+  "name": "Perl 6 Check Mode",
+  "args": ["-Ilib", "-c", "{FILE_ACTIVE}"],
+  "sh": true,
+  "cwd": "/home/jrusso/github/p6-myhtml",
+  "errorMatch": "\\s*at (?<file>\\/(?:[\\w\\-]+\\/)+\\w+.pm6)(?:\\s+\\((?:\\w|:)+\\))?:(?<line>\\d+)",
+  "keymap": "ctrl+alt+c",
+  "atomCommandName": "Perl6:Check",
+  "targets": {
+    "Perl 6 Tests": {
+      "cmd": "prove",
+      "args": ["-v", "-e", "'perl6 -Ilib'", "t/"],
+      "atomCommandName": "Perl6:Test"
+    }
+  }
+
+}
