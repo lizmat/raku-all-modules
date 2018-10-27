@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:azawawi/perl6-net-curl.git
+	branch = master
+	commit = 6058c370112a2477b71608ee273231cde1d8f4ae
+	parent = bea9c2139b012474116a8fc5e61fd7de1548eff8
+	cmdver = 0.3.1
