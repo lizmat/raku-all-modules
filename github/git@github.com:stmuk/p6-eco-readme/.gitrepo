@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:stmuk/p6-eco-readme.git
+	branch = master
+	commit = 29a08bff45cc57624479a0d497f2db3685d5ea7e
+	parent = 257d6ca04c0073bd9f8d3ce8bd29215ec250bb76
+	cmdver = 0.3.1
