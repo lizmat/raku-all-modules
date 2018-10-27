@@ -1,0 +1,7 @@
+/blib/
+Makefile
+*.o
+/resources/*/*.so
+/resources/*/*.dylib
+.precomp/
+*~
