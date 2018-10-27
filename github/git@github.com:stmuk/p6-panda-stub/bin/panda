@@ -1,0 +1,4 @@
+#!/usr/bin/env perl6
+use v6;
+note "\nDEPRECATED\n'panda' has now been removed from Rakudo Star and replaced by 'zef'.\n'zef' is available in this release and recommended over 'panda'";
+note "\nCurrently panda can still be installed via \n\"zef uninstall panda-stub && zef install panda\"\nbut it will be removed from the ecosystem some time soon";
