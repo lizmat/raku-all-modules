@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:japhb/Text-MiscUtils.git
+	branch = master
+	commit = eede12f787363324c64f6024ec221f6eb8a4033d
+	parent = f804c45c8fb0e977b661e1bed1685011a5cc1492
+	cmdver = 0.3.1
