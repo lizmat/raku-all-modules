@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:edumentab/p6-ecma262regex.git
+	branch = master
+	commit = 4dd66c067e9182212bca875c8b963ecec8d83fdc
+	parent = 522aa169364a5c2b8242432f6500d479d0cb2b4e
+	cmdver = 0.3.1
