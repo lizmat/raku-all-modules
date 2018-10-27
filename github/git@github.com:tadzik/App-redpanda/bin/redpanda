@@ -1,0 +1,92 @@
+#!/usr/bin/env perl6
+use Module::Toolkit;
+use Shell::Command;
+use File::Temp;
+use JSON::Fast;
+use Getopt::Type;
+
+my $mt = Module::Toolkit.new;
+
+my $workdir = $*CWD.child('.redpanda-work');
+
+LEAVE rm_rf $workdir;
+
+class X::Redpanda is Exception {
+}
+
+sub do-resolve(Distribution $dist, %opts) {
+    sub test($dir) {
+        if %opts<verbose> {
+            $mt.test($dir, output => $*OUT)
+        } else {
+            $mt.test($dir)
+        }
+    }
+
+    my $tmpdir = tempdir(:tempdir($workdir), :!unlink);
+    mkpath $tmpdir;
+    say "Fetching {$dist.name}";
+    $mt.fetch($dist, $tmpdir.IO);
+    unless %opts<notests> {
+        say "Testing {$dist.name}";
+        unless test($tmpdir.IO) or %opts<force> {
+            say "Tests failed for {$dist.name}";
+            die X::Redpanda.new;
+        }
+    }
+    say "Installing {$dist.name}";
+    $mt.install($tmpdir.IO, :force(%opts<force> or %opts<update>));
+    say "Successfully installed {$dist.name}";
+}
+
+sub MAIN(*@targets, *%opts where getopt(<n|notests d|nodeps f|force
+                                         u|update  v|verbose>)) {
+    sub resolve($target) {
+        do-resolve($target, %opts)
+    };
+
+    sub should-skip($target) {
+        !%opts<force> and !%opts<update> and $mt.is-installed($target);
+    }
+
+    TARGETLOOP: for @targets -> $name {
+        my $dist = $mt.get-project($name);
+        unless $dist {
+            my $tmpdir = tempdir(:tempdir($workdir), :!unlink);
+            mkpath $tmpdir;
+            $dist = $mt.dist-from-location($name, $tmpdir.IO);
+            if $dist {
+                say "Installing {$dist.name} "
+                  ~ "from a custom location $name";
+            } else {
+                say "I don't know how to install $name :(";
+                exit 1;
+            }
+        }
+        if should-skip($dist) {
+            say "{$dist.name} is already installed";
+            next TARGETLOOP;
+        }
+        unless %opts<nodeps> {
+            my @deps = $mt.get-dependencies($dist);
+            say "{$dist.name} depends on {@deps».name.join(", ")}"
+                if +@deps;
+            for @deps -> $dep {
+                if should-skip($dep) {
+                    say "{$dep.name} is already installed";
+                    next;
+                }
+                &resolve($dep);
+                CATCH { when X::Redpanda {
+                    say "Dependencies for {$dist.name} "
+                      ~ "could not be installed";
+                    next TARGETLOOP;
+                }}
+            }
+        }
+        &resolve($dist);
+        CATCH { when X::Redpanda {
+            say "Unable to install {$dist.name}";
+        }}
+    }
+}
