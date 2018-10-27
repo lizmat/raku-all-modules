@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:drforr/perl6-Marpa.git
+	branch = master
+	commit = 265c6d4bbf3bf16f3272f5da893a4b7df9f5cd00
+	parent = b46a31b8fd545e7cf657cfd5d5cbf899efb37781
+	cmdver = 0.3.1
