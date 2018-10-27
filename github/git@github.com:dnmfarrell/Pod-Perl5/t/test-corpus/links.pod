@@ -1,0 +1,27 @@
+=pod
+
+L<Some::Name>
+
+L<Some::Name/section>
+
+L</section>
+
+L<Some::Name|/section>
+
+L<Some::Name|section>
+
+L<Some text|Some::Name/section>
+
+L<http://example.com>
+
+L<Link text|http://example.com>
+
+L<Link text|https://example.com>
+
+L<Link text|ftp://example.com>
+
+A paragraph with a links L<Some::Module> inside
+it url: L<http example|http://example.com>
+
+=cut
+

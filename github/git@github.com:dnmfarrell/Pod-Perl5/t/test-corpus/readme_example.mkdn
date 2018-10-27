@@ -1,0 +1,47 @@
+
+*This is a __realistic__ document for testing parsing on*
+
+# NAME
+
+Pod::Perl5 - a Perl 6 parser for Perl 5 pod
+
+# VERSION
+
+0.01
+
+# DESCRIPTION
+
+This is a Perl6 module for parsing __Perl 5__ pod. The grammar for this module lives at `Pod::Perl5::Grammar`.
+
+# SYNOPSIS
+
+  use Pod::Perl5;
+
+  my $match = Pod::Perl5.parse_file('/some.pod');
+
+  # or:
+
+  my $match = Pod::Perl5::parse_string($pod);
+
+# AUTHOR
+
+David Farrell &copy; 2015
+
+# LICENSE
+
+FreeBSD, see LICENSE file
+
+# SEE ALSO
+
+* [perlpod documentation](http://perldoc.perl.org/perlpod.html) is the reference spec for this grammar
+* 
+[perlvar#DESCRIPTION](http://perldoc.perl.org/perlvar.html#DESCRIPTION) should convert into a perldoc link to perlvar with a section
+
+    1. [This is a link for the Time::Piece module](https://metacpan.org/pod/Time::Piece#USAGE) should convert into a perldoc link to Time::Piece
+    2. [Time::Piece](https://metacpan.org/pod/Time::Piece) should convert into a perldoc link to Time::Piece
+    3. [https://github.com](https://github.com) should just be a pure url (text and href equal)
+
+* [perlpod](http://perldoc.perl.org/perlpod.html) *should* convert into a link to perlpod
+
+<p>This code lives on <a href="https://github.com/dnmfarrell/Pod-Perl5">GitHub</a></p>
+

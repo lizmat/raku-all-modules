@@ -1,0 +1,2 @@
+=for HTML <a href='#'>some inline hyperlink</a>
+
