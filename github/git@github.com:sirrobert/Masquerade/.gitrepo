@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:sirrobert/Masquerade.git
+	branch = master
+	commit = 34729eed72ad2801f4c3e25495e277fee1473ea5
+	parent = c49038f5a2ca9487bfeba4316f366303e2f5d986
+	cmdver = 0.3.1
