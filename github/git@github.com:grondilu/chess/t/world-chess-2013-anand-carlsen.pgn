@@ -1,0 +1,328 @@
+[Event "WCh 2013"]
+[Site "Chennai IND"]
+[Date "2013.11.09"]
+[Round "1"]
+[White "Carlsen, Magnus"]
+[Black "Anand, Viswanathan"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2870"]
+[BlackElo "2775"]
+[ECO "A07"]
+[Opening "Reti"]
+[Variation "King's Indian attack"]
+[WhiteFideId "1503014"]
+[BlackFideId "5000017"]
+[Annotator "Crowther, Mark"]
+[EventDate "2013.11.09"]
+
+1. Nf3 d5 2. g3 g6 3. Bg2 Bg7 4. d4 c6 5. O-O Nf6 6. b3 O-O 7. Bb2 Bf5 8. c4
+Nbd7 9. Nc3 dxc4 (9... Ne4) 10. bxc4 Nb6 {"It developed kind of fast. 10...Nb6
+is a rather sharp idea basically forcing the play straight away. " Anand} 11.
+c5 Nc4 12. Bc1 {Carlsen spent around 12 minutes here. "12.Bc1 was a bit of a
+surprise." Anand.} (12. Qb3 {"To be honest I expected 12..Qb3 although after
+12...Be6 black is probably doing fine. " Anand.} Be6 13. Qc2 Bf5 14. Qb3 {is a
+possible repetition here.}) 12... Nd5 $1 (12... Ne4 {Wagner,F (2249)-Aring,G 
+(2205) Gerlingen 2011 is at least equal for black.}) 13. Qb3 {"After 13.Qb3 I
+can force this draw." Anand.} (13. Qe1 $2 Nb4 $1 {"is even getting very
+unpleasant for white." Anand.} (13... Nc7 {is also good.})) 13... Na5 {Anand
+decided to repeat because he didn't see any real advantage in the
+complications of 13...b5.} (13... b5 $5 {would have led to some reasonably
+interesting tactics.} 14. cxb6 {"14.cxb6 is what I thought he would play."
+Anand.} (14. a4 $5) 14... Na5 15. Qb2 axb6 (15... Qxb6 {is quite interesting.}
+16. e4 Nxc3 17. exf5) 16. Ne5 {"Ne5 I thought is keeping the balance reaonably
+well." - Anand.} (16. e4 $5 {may be better.} Nxc3 17. exf5 Bxd4 18. Bh6)) 14.
+Qa3 Nc4 15. Qb3 Na5 16. Qa3 Nc4 {1hr 8 mins vs 1hr 21 mins.} 1/2-1/2
+
+[Event "WCh 2013"]
+[Site "Chennai IND"]
+[Date "2013.11.10"]
+[Round "2"]
+[White "Anand, Viswanathan"]
+[Black "Carlsen, Magnus"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2775"]
+[BlackElo "2870"]
+[ECO "B18"]
+[Opening "Caro-Kann"]
+[Variation "classical, 6.h4"]
+[WhiteFideId "5000017"]
+[BlackFideId "1503014"]
+[Annotator "Crowther, Mark"]
+[EventDate "2013.11.09"]
+
+1. e4 c6 {A small surprise from Carlsen as he hasn't played this move more
+than half a dozen times before. However the Caro-Kann is an extremely
+respectable opening which has featured many times in world championship
+matches.} 2. d4 d5 3. Nc3 dxe4 4. Nxe4 Bf5 5. Ng3 Bg6 6. h4 h6 7. Nf3 e6 {With
+this move Carlsen seems to be inviting Anand to repeat his game against Liren
+Ding from the Alekhine Memorial.} (7... Nd7 {is by far and away the most
+popular choice here.}) (7... Nf6 {is the second most popular and 7...e6 only
+the third but all have been played by black at the highest level. It's a
+genuine choice.}) 8. Ne5 (8. h5 {is the other common move here.}) 8... Bh7 9.
+Bd3 Bxd3 10. Qxd3 Nd7 11. f4 Bb4+ (11... Ngf6 {is an equally popular
+continuation for black.}) (11... c5 {has also been played a few times.}) 12. c3
+(12. Bd2 Bxd2+ 13. Qxd2 Ngf6 14. O-O-O O-O 15. Qe2 Qc7 16. Ne4 Nxe4 17. Qxe4
+Rad8 18. Qe3 Nxe5 19. dxe5 {1/2-1/2 Jakovenko,D (2724)-Eljanov,P (2702)/Tromso
+NOR 2013/The Week in Chess 980}) 12... Be7 {"It was a mild surprise. The
+position after move 12 is a very sharp one and I hadn't really expected it,
+that was clear. I had to decide if I wanted to fly blind or... I chose a
+slightly solid line." - Anand.} 13. Bd2 {Not the sharpest.} 
+(13. Nh5 {might well be the critical continuation.} Bxh4+
+14. Kd1 Bf6 15. Kc2 Qe7) (13. Qf3 {also may be a try.} Bxh4 14. O-O) 13... Ngf6
+14. O-O-O {Anand has had this position before this year, here he decides to
+deviate from his game against Ding Liren from the Alekhine Memorial.} (14. Qe2
+{So far no-one has used this move again.} c5 15. dxc5 Qc7 16. b4 O-O 17. O-O a5
+18. a3 Nxe5 19. fxe5 Nd7 20. Ne4 axb4 21. cxb4 Qxe5 22. Bc3 Qc7 23. Rad1 Rad8
+24. Qg4 g6 25. Nd6 e5 26. Qc4 Nb6 27. Qe4 Nd7 28. h5 gxh5 29. Qf5 Bf6 30. Qxh5
+Qc6 31. Rxf6 Nxf6 32. Qxe5 {1-0 Anand,V (2783)-Ding Liren (2707)/Paris/St
+Petersburg FRA/RUS 2013/The Week in Chess 964}) (14. Qf3 $5 Qa5 15. c4 Qa6 16.
+O-O Qb6) 14... O-O (14... c5 15. Be3 O-O 16. Kb1 Qc7 17. Ne4 Nxe4 18. Qxe4 Nxe5
+19. dxe5 Rfd8 20. h5 Rxd1+ 21. Rxd1 Rd8 22. Rxd8+ Qxd8 23. Kc2 Qd7 24. b3 Bf8
+25. g4 Qb5 26. Bd2 Qa6 27. Kb2 Qf1 28. Qxb7 Qe2 29. Kc2 Qxg4 30. Qxa7 Qxh5 31.
+Qb7 Qg6+ 32. Kc1 Qg1+ 33. Kc2 h5 34. a4 h4 35. Qf3 c4 36. b4 Qa1 37. f5 Qxa4+
+38. Kc1 exf5 39. Qxf5 Qc6 40. Qg4 Be7 41. Kb2 Qd5 42. Be3 Qxe5 43. Bd4 Qh2+ 44.
+Ka3 Bf8 45. Qc8 h3 46. Ka4 Qc2+ 47. Kb5 h2 48. Qa8 Qc1 {0-1 Inarkiev,E (2693)
+-Eljanov,P (2702)/Poikovsky RUS 2013/The Week in Chess 982}) 15. Ne4 {Allowing
+some piece exchanges.} (15. c4 {has been played in a couple of GM games and
+was a clear alternative.}) 15... Nxe4 (15... Nxe5 {is an alternative.} 16. fxe5
+(16. Nxf6+ Bxf6 17. fxe5 Bxh4 18. Kb1 Rc8 19. Rh3 Bg5 20. Rdh1 f5) 16... Nxe4
+17. Qxe4 Qd5 18. Qg4 Kh7 19. Kb1 Rad8 20. Rde1 c5) 16. Qxe4 Nxe5 (16... f5 $6 {
+doesn't look like a move Carlsen would ever play.} 17. Qe2 Nxe5 18. dxe5 Qd5 $6
+(18... Qa5 19. Kb1 Rad8) 19. c4 Qd7 20. Bb4 Qe8 21. Bd6 c5 {1-0 Smeets,J (2613)
+-Lauber,A (2465)/Forchheim GER 2012 (64) and white was well on top and went on
+to win.}) (16... Nf6 {is a Khalifman suggestion whose line continues:} 17. Qb1
+{already this looks very odd.} (17. Qe2 $5) 17... c5 (17... Qd5 18. g4 Ne4 19.
+Rh2 Rad8) 18. g4 cxd4 19. g5 Nd5 (19... dxc3 $5 20. Bxc3) 20. gxh6 Qc7 $2 (
+20... dxc3 21. Bxc3) 21. Rdg1 g5 22. c4 Bf6 23. Qe4 Bxe5 24. fxe5 {with a
+crushing position for white in 1.e4 According to Anand by Khalifman but this
+is a strange line.}) (16... a5 $5) 17. fxe5 Qd5 (17... Qa5 $6 18. Qg4) 18. Qxd5
+$6 {It's Anand's turn to "pull the emergency brake" to use Carlsen's game one
+phrase but it doesn't seem terribly necessary here and now black is at least
+equal.} (18. Qg4 {was the obvious alternative for white and it has been seen
+in a correspondence game.} f5 {Carlsen thought this less accurate but was
+sufficient for a draw in this the only test and might very well be the best
+here. Perhaps he feared Carlsen was still in preparation but this seems
+unlikely given that Carlsen's suggestion here doesn't seem the best. Of course
+hardly anyone tells the full truth at press conferences and Carlsen outright
+refused to say where his preparation ended.} (18... Kh7 {was Carlsen's
+suggestion after the game but it might not be that strong.} 19. Kb1 (19. Bg5 $5
+) 19... f5 (19... Rad8 {although white seems better here too.}) 20. exf6 Rxf6
+21. Bg5 Rg6 22. c4 $3 {Houdini and white is well on top.}) (18... Qxa2 19. Bxh6
+Qa1+ 20. Kc2 Qa4+ 21. Kb1 {is winning for white.}) 19. Qg6 Qxa2 20. Bxh6 Rf7
+21. g4 fxg4 22. Qxg4 a5 23. Rhg1 Bf8 24. Kc2 a4 25. Rdf1 Qb3+ 26. Kd3 Rxf1 27.
+Rxf1 Qb5+ 28. c4 Qb3+ 29. Ke4 {1/2-1/2 Epure,C (2411)-Tikhobaev,A (2227)/ICCF
+2010}) 18... cxd5 19. h5 b5 20. Rh3 {Black's queenside play is clear and quite
+fast but white is just in time with his pressure on the kingside.} a5 21. Rf1
+Rac8 {Inviting the draw seen in the game not that there is much to do to avoid
+it.} 22. Rg3 {White best get on with forcing the draw before black arrives
+with b4.} (22. Kb1 Kh7 23. Rhf3 Kg8 24. Rg3 Kh7 25. Rgf3 Kg8 {is another draw.}
+) 22... Kh7 23. Rgf3 {An attack on the vulnerable f7 pawn is white's main
+counter-play here.} Kg8 24. Rg3 Kh7 25. Rgf3 Kg8 1/2-1/2
+
+[Event "WCh 2013"]
+[Site "Chennai IND"]
+[Date "2013.11.12"]
+[Round "3"]
+[White "Carlsen, Magnus"]
+[Black "Anand, Viswanathan"]
+[Result "1/2-1/2"]
+[WhiteTitle "GM"]
+[BlackTitle "GM"]
+[WhiteElo "2870"]
+[BlackElo "2775"]
+[ECO "A07"]
+[Opening "Reti"]
+[Variation "King's Indian attack"]
+[WhiteFideId "1503014"]
+[BlackFideId "5000017"]
+[Annotator "Mark Crowther"]
+[EventDate "2013.11.09"]
+
+1. Nf3 d5 2. g3 g6 3. c4 {Carlsen is the first to deviate.} (3. Bg2 {was
+chosen by Carlsen in game one.}) 3... dxc4 {White's opening is hardly critical
+so grabbing a pawn to slow white's development seems a good test.} (3... c6) (
+3... d4 {are both respectable and more commonly played alternatives.}) 4. Qa4+
+(4. Na3 {is the main alternative.}) 4... Nc6 5. Bg2 (5. Qxc4) 5... Bg7 6. Nc3 (
+6. O-O e5 7. Qxc4) 6... e5 {Grabbing a share of the centre.} (6... Nh6 7. Qxc4
+Nf5 8. O-O O-O 9. d3 h6 10. Bd2 Nfd4 {1-0 Polugaevsky,L (2575)-Dlugy,M (2545)/
+London 1986 Was perfectly fine for black and led to an interesting game
+settled on the run up to first time control.}) 7. Qxc4 (7. Nxe5 Bxe5 8. Bxc6+
+bxc6 9. Qxc6+ Bd7 10. Qe4 f6 11. f4 Ne7 12. fxe5 Bc6 $1 {was a nice line given
+by Kasparov.}) 7... Nge7 8. O-O (8. d3 O-O 9. Bg5 Be6 10. Bxe7 Qxe7 11. Qa4 Nd4
+{1/2-1/2 Vukic,M (2482)-Palac,M (2565)/Neum BIH 2004}) 8... O-O 9. d3 h6 $5 (
+9... Be6 {has been played more frequently.} 10. Qh4 Nf5 11. Qxd8 Rfxd8 12. Ng5
+Bd7 13. Nge4 Nfe7 14. Bg5 h6 15. Nf6+ Kh8 16. Nxd7 Rxd7 17. Be3 Rb8 18. Rfc1
+Nd4 19. Kf1 c5 20. Rab1 b6 21. b4 cxb4 22. Rxb4 Rc8 23. Rbb1 Rdc7 24. Bd2 Nef5
+25. e3 Ne6 26. Nb5 Rxc1+ 27. Rxc1 Rxc1+ 28. Bxc1 a6 29. Nc3 Nc5 30. Ke2 Kg8 31.
+g4 Nd6 32. Bc6 Bf8 33. Nd5 f5 34. gxf5 gxf5 35. Nxb6 e4 36. d4 Nd3 37. Bd2 Nb5
+38. Bb7 Nb4 39. a4 Nd6 40. Ba8 a5 {time 1-0 Stein,L-Averbakh,Y/Riga 1970/
+URS-ch.} (40... a5 41. Bxb4 axb4 42. a5 $18)) 10. Bd2 Nd4 $5 $146 {starting to
+exchange pieces and grabbing space.} (10... Be6 11. Qa4 Nd4 (11... f5 $5 {has
+been very successful for black but has been only tested at a low level.}) 12.
+Rfc1 f5 13. Ne1 c5 14. Bxb7 Rb8 15. Bg2 Rxb2 {was a draw in Kuzubov,Y (2624)
+-Negi,P (2607) New Delhi 2011 (40 moves).}) 11. Nxd4 {"I missed some simple
+things when I went for this whole 11.Nxd4, 12.Ne4, 13.Bb4 operation so I think
+already then I misplayed something." - Carlsen.} (11. Rac1 Be6 12. Qa4 b6 {
+seems fine for black.}) 11... exd4 12. Ne4 (12. Na4 Be6) 12... c6 13. Bb4 {
+This seems to allow black complete equalisation but there doesn't seem to be
+very much if anything for white here already. Carlsen commented that this
+position wasn't a disaster because if he had had this as black it would be a
+fairly common position from the Maroczy structure.} (13. h4 Be6 14. Qc1 Nf5 $11
+) (13. Qc1 {may offer the best chances for something.} Kh7 14. Bb4 Be6 15. Nc5
+Bc8 16. Re1) 13... Be6 14. Qc1 (14. Qc5 Nd5 15. Ba3 Qc7 16. Rfc1) 14... Bd5 15.
+a4 b6 16. Bxe7 Qxe7 17. a5 Rab8 18. Re1 Rfc8 19. axb6 axb6 20. Qf4 (20. Ra6)
+20... Rd8 21. h4 Kh7 22. Nd2 {White's queen is terribly short of squares.} Be5
+23. Qg4 h5 (23... f5 {was my thought when watching the game it seems black is
+so in control he can play on either side of the board.} 24. Qh3 f4 $5 (24... h5
+) 25. Bxd5 Rxd5 26. g4 Rb5) (23... Be6 {at first looks like it will lead to a
+repetition but:} 24. Qf3 Bd5 25. e4 $5 Be6 (25... dxe3 $6 26. Qxe3 Re8 27. Nc4
+Bxc4 28. Bxc6 Rec8 29. Bg2) 26. Qe2 Qb4 27. f4 Bg7 28. e5 {which also looks
+better for white.}) 24. Qh3 Be6 25. Qh1 c5 26. Ne4 Kg7 27. Ng5 {"Here it felt
+like white had more or less gotten enough counterplay, I'll have to check that
+was indeed the case. I felt if we swapped light squared bishops white was not
+risking anything to that rules out for me Bf5, Bg4 such moves and I didn't
+really see where else I could go. Bb3 is a bit ridiculous so I decided just to
+go for the opposite bishops." - Anand.} b5 $1 {Carlsen admitted he
+"underestimated this plan with b5 giving up the bishop".} (27... Bf5 28. Bh3
+Bxh3 29. Qxh3) (27... Bg4 28. Bf3 (28. Bh3 Bxh3 29. Qxh3 {transposes.}) 28...
+f6 29. Ne4 Bd7) 28. e3 $6 {"I really didn't have any idea what was happening
+next so I was happy to survive." - Carlsen. I think around here Carlsen lost
+the thread of the position after being surprised by b5.} (28. Nxe6+ Qxe6 29.
+Bh3 {was Carlsen's initial intention but it "didn't seem to work out"
+nevertheless most probably he should have played it.} Qe7 (29... f5 30. Qf3 Qf7
+) 30. Qc6 c4 31. dxc4 bxc4 32. Qxc4 Rxb2 {with a draw to follow.}) 28... dxe3
+29. Rxe3 Bd4 $5 (29... Bxb2 $1 {is the best according to Houdini but only if
+you see a finesse quite deep into the line.} 30. Rae1 Rb6 31. Bd5 (31. Bh3 {"I
+thought white had full compensation, I didn't see the point in going for that.
+" Anand.} Bd4 {is the move Houdini gives against this line of Anand's with
+advantage to him.}) 31... Bd4 32. Rxe6 fxe6 33. Rxe6 Qf8 $3 {Houdini} (33...
+Rxe6 34. Nxe6+ Kh6 35. Nxd8 Qxd8 36. Qf3 {is completely equal.}) 34. Qg2 {when
+black is better.}) 30. Re2 c4 {"I think I have enough counterplay here." Anand
+didn't comment at all on 28.e3 suggesting that he didn't considered it an
+important moment.} 31. Nxe6+ fxe6 32. Be4 cxd3 33. Rd2 Qb4 $6 {Kasparov was
+surprised Anand played this move so quickly.} (33... Rf8 $5 34. Bxd3 Qd6 35.
+Qg2 Rxf2 36. Rxf2 Rf8 37. Raf1 Bxf2+ 38. Rxf2 Rxf2 39. Qxf2 Qxd3) 34. Rad1 Bxb2
+(34... Rf8 {"The thing is we were getting very short of time. Even if I win
+the pawn on f2 if he plays Bd3 and Qe4 I don't see how I'm better. It seems to
+me my upside was quite limited anyway." Anand.} 35. Bxd3 (35. Kh2 {doesn't
+seem any better.}) 35... Rxf2 (35... Qd6 $5 {may be the critical try that
+Anand missed as it stops Qe4.} 36. Qg2 Rxf2 37. Rxf2 Rf8 38. Rdd2 Rxf2 39. Rxf2
+Bxf2+ 40. Qxf2 Qxd3 {with a pawn up in a Queen and Pawn ending but this I
+think may be a long way from being won.}) 36. Rxf2 Rf8 37. Qe4 Bxf2+ 38. Kg2
+Qxe4+ 39. Bxe4) 35. Qf3 Bf6 (35... Bd4) 36. Rxd3 Rxd3 37. Rxd3 Rd8 {A tacit
+draw offer. "The thing is that although black has an extra pawn I'm not really
+in danger of queening it. The problem is with these opposite coloured bishop
+white's always going to have a backstop and the other thing is that g6. I saw
+I could play Bd4 and normally this is what I would have done but I simply
+didn't see anything anyway with something like Qe2, I didn't see any progress.
+And then I was just swapping down with Rd8." Anand.} (37... Bd4) 38. Rxd8 Bxd8
+39. Bd3 Qd4 40. Bxb5 Qf6 {Accompanied by a draw offer from Anand.} 41. Qb7+ {
+Carlsen turns down the draw offer but there are no chances here. The first two
+games were settled by three-fold repetition and perhaps this indicates Carlsen
+won't agree any draws but will play out the games until the end. The players
+quickly trade down to an absolute draw.} Be7 42. Kg2 g5 43. hxg5 Qxg5 44. Bc4
+h4 45. Qc7 hxg3 46. Qxg3 e5 47. Kf3 Qxg3+ 48. fxg3 Bc5 49. Ke4 Bd4 50. Kf5 Bf2
+51. Kxe5 Bxg3+ {Finally insufficient mating material for both sides, so draw.}
+1/2-1/2
+
+[Event "WCh 2013"]
+[Site "Chennai IND"]
+[Date "2013.11.13"]
+[Round "4"]
+[White "Anand, Viswanathan"]
+[Black "Carlsen, Magnus"]
+[Result "1/2-1/2"]
+[ECO "C67"]
+[WhiteElo "2775"]
+[BlackElo "2870"]
+[Annotator "Mark Crowther"]
+[PlyCount "127"]
+[EventDate "2013.11.09"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 Nf6 4. O-O Nxe4 5. d4 Nd6 6. Bxc6 dxc6 7. dxe5 Nf5
+8. Qxd8+ Kxd8 {Kasparov talked on twitter about the Berlin Defence that caused
+him so many problems. "The Berlin is a sharp & rich middlegame, not an ending.
+This was Kramnik's discovery, or re-discovery, vs me in 2000 that I didn't
+grasp. Nor did most others then. Berlin is more than a wall. After I lost to
+Kramnik & failed vs his Berlin in 2000, many said it was still lousy, only
+good against me. Now every top player uses it! Berlin also has benefit of
+rendering most machine analysis useless. Human chess, deep strategic planning
+only way. Great from both players." Kasparov has written an essay for
+Informant 118 on this issue.} 9. h3 (9. Nc3) (9. Rd1+) 9... Bd7 10. Rd1 Be7 {
+Quite a rare continuation.} (10... Kc8 {has been played a lot here.}) 11. Nc3 (
+11. Bg5 Kc8 12. g4 h6 13. Bd2 (13. Bxe7 Nxe7 14. Kh2 Re8 15. Nbd2 b6 16. Re1 c5
+17. Ne4 Bc6 18. h4 Kb7 {
+0-1 Sutovsky,E (2692)-Hammer,J (2606)/Aix-les-Bains FRA 2011 (44 moves)}) 13...
+Nh4 14. Nxh4 Bxh4 15. Bc3 h5 16. f3 hxg4 17. hxg4 Bg3 {
+1-0 Ganguly,S (2651)-Hammer,J (2647)/ Wijk aan Zee NED 2011 (67 moves)}) 11...
+Kc8 12. Bg5 h6 13. Bxe7 Nxe7 14. Rd2 (14. a4 a5 15. Rd2 c5 16. Rad1 Bc6 17. e6
+fxe6 18. Ne5 Re8 19. Nb5 Bxb5 20. axb5 Nd5 21. c4 Nb6 22. h4 a4 23. h5 a3 24.
+b3 a2 25. Ra1 Rd8 26. Rdxa2 Rxa2 27. Rxa2 Rd1+ 28. Kh2 Rb1 29. Ra3 Nd7 30. Ra8+
+Nb8 31. Ra3 Nd7 32. Ra8+ Nb8 33. Ra3 Nd7 {
+1/2-1/2 Berg,E (2587)-Hammer,J (2630)/Achaea GRE 2012/The Week in Chess 921})
+14... c5 15. Rad1 $146 {"Something went horribly wrong in the opening - I made
+one illogical move after the next" - Anand. This is the first new move in the
+game. One can assume Anand's comment refers some if not all of this and the
+next couple of moves.} (15. Ne4 b6 16. Ng3 Bc6 17. Nh2 Ng6 18. Re1 Nf4 19. f3
+Kb7 20. Kf2 Rad8 21. Rxd8 Rxd8 22. Nhf1 g6 23. Ne2 Ne6 24. Ne3 Bb5 25. Nc3 Rd2+
+26. Kg3 Bc6 27. Rd1 Rd4 28. Kf2 Kc8 29. Ne2 Rxd1 30. Nxd1 Nd4 31. c3 Kd7 32.
+Ne3 Nxe2 33. Kxe2 Ke6 34. f4 g5 35. g3 Be4 36. Ng4 gxf4 37. gxf4 h5 38. Nf6 Bg6
+39. Kf3 c6 40. Ne8 f5 41. Nd6 h4 42. a4 Bh5+ 43. Ke3 Bd1 44. a5 bxa5 45. c4 Bb3
+46. Kd3 Bd1 47. Ke3 Bb3 48. Kd3 Bd1 49. Nb7 Bf3 50. Nxc5+ Ke7 51. Nb3 Bg2 52.
+Nd4 Bxh3 53. Nxc6+ Kd7 54. Nd4 Bf1+ 55. Ke3 h3 56. Nf3 Bxc4 57. Kf2 Bd5 58. Kg3
+h2 59. Nxh2 Kc6 60. Nf1 Kc5 61. Kf2 Kd4 62. Ng3 Be6 63. Nh5 Kd3 64. Ng7 Bc8 65.
+e6 Kc2 66. e7 Bd7 67. Nxf5 Kxb2 68. Nd6 a4 69. f5 a3 70. f6 a2 71. f7 {
+1-0 Jakovenko,D (2710)-Almasi,Z (2691)/Khanty-Mansiysk 2007/CBM 122}) (15. Ne1)
+15... Be6 16. Ne1 $6 Ng6 17. Nd3 b6 18. Ne2 {"I just missed something after 18.
+Ne2 and suddenly I was basically lost." - Anand who expanded on the theme
+later saying that he played the move "just to be consistant" and that he
+thought there might be tactics with a timely e6 that turned out not to work.} (
+18. f4) (18. b3) 18... Bxa2 {The bishop cannot be rounded up. White has some
+compensation for the pawn but almost certainly not enough.} 19. b3 c4 20. Ndc1
+cxb3 21. cxb3 Bb1 22. f4 Kb7 23. Nc3 Bf5 24. g4 Bc8 25. Nd3 h5 (25... Ne7 {
+"I don't think there's anything wrong with 25...h5 but I thought 25...Ne7 was
+even stronger.} 26. f5 Nc6 {
+Anand said he "didn't see how I could get anything" in this position.}) 26. f5
+Ne7 27. Nb5 hxg4 28. hxg4 (28. Rc1 {
+was a suggestion of Boris Gelfand's in commentary.} Nd5 {
+The only move that promises any advantage.} (28... Nc6 29. Rdc2 {
+is what white is hoping for.}) 29. Nc5+ bxc5 30. Rxd5 Bxf5 31. Rdxc5 Rac8 {
+is better for black but I'm not sure by how much. "It just seemed to me some
+kind of fantasyland" said Anand about his rejection of this line although he
+showed a rather different set of ideas than this line. But he obviously
+considered it for some time.}) 28... Rh4 $5 (28... Nc6 29. Rc1 Rh4 30. Nf2 a5 (
+30... g6)) (28... a6 {If Carlsen wants to drive away the white knight then
+this proves to be the last chance to do it.}) 29. Nf2 {Forced.} Nc6 30. Rc2 (
+30. Rc1) 30... a5 (30... g6 $5) 31. Rc4 g6 32. Rdc1 Bd7 33. e6 fxe6 34. fxe6
+Be8 35. Ne4 {"Curious that - 35.Ne4 was the only move Kasparov wanted to
+analyse ten minutes ago in Chennai" Ian Rogers on twitter.} (35. R1c3 {
+is an alternative.}) 35... Rxg4+ 36. Kf2 Rf4+ (36... Rd8 $5 {may be the best
+but maybe Carlsen missed it due to the rather rare tactical idea involved.} 37.
+Ned6+ (37. Ke3 {is the best white has and black is better.}) 37... cxd6 38.
+Rxg4 Ne5 $3 {when black is threatening at least three things and is winning.})
+37. Ke3 Rf8 $6 (37... g5 $1 {maintains black's advantage.}) 38. Nd4 $1 {
+Carlsen looked very unhappy when this appeared on the board.} Nxd4 39. Rxc7+ {
+Anand commented that he was lucky that here and on move 59 he had checks to
+take him to time control when short of time.} Ka6 40. Kxd4 Rd8+ 41. Kc3 Rf3+
+42. Kb2 Re3 43. Rc8 {There was the expectation that the players would soon
+agree to a draw but Carlsen kept the problems going for another 20 moves.} Rdd3
+$1 (43... Rxc8 44. Rxc8 Bc6 45. Rxc6 Rxe4 46. Rd6 Kb5 47. e7 Rxe7 48. Rxg6 {
+and the ending is a simple technical draw for a player of Anand's class.}) 44.
+Ra8+ {This finesse may or may not be an improvement over directly capturing
+the bishop straight away.} Kb7 45. Rxe8 Rxe4 46. e7 Rg3 {
+Black needs to hang on to the g-pawn if he is to have any chance to win.} 47.
+Rc3 Re2+ 48. Rc2 Ree3 49. Ka2 g5 $5 {Again the most taxing.} (49... Rxb3 $2 50.
+Rb8+ {wins for white.}) 50. Rd2 Re5 51. Rd7+ Kc6 52. Red8 Rge3 53. Rd6+ Kb7 54.
+R8d7+ Ka6 55. Rd5 Re2+ 56. Ka3 Re6 $5 {setting up a final rather evil plot.}
+57. Rd8 (57. e8=N Rxe8 58. Rxg5 R8e6 59. Rgg7) (57. Rxg5 $4 b5 {and mate or
+ruiness loss of material follows. Anand said he thought he had checked
+everything before this final problem turned up.}) 57... g4 58. Rg5 Rxe7 59.
+Ra8+ {a welcome check to take Anand to the time control.} Kb7 60. Rag8 a4 61.
+Rxg4 axb3 62. R8g7 {In spite of getting more time Anand played very fast at
+the end showing he had everything under control.} Ka6 63. Rxe7 Rxe7 64. Kxb3
+1/2-1/2
+
