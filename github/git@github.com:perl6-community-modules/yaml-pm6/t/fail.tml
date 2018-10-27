@@ -1,0 +1,18 @@
+%TestML: 1.0
+%Title: Failing Tests For People to Hack On
+%Plan: 1
+%PointMarker: +++
+
+
+*perl.eval_perl().dump_to_yaml() == *yaml;
+
+# Add failing tests to the end. Remove the +++ LAST line, to run the failing
+# tests. Leave the first test here to satisfy the 'make test'.
+
+=== This is a dummy passing test
++++ LAST
++++ perl: 'pass'
++++ yaml
+--- pass
+...
+
