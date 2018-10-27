@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:azawawi/perl6-browser-open.git
+	branch = master
+	commit = 7743349b3948a2fa4431854b282a31f4e9933d1a
+	parent = b955cc39b2595429d8189dd153bcdaee4bd79e46
+	cmdver = 0.3.1
