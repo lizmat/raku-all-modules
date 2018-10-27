@@ -1,0 +1,18 @@
+{
+    "perl" : "6.*",
+    "name" : "Avro",
+    "version" : "0.1.1",
+    "description" : "Perl6 Avro Data Serialization",
+    "author" : "Adriaan Larmuseau",
+    "depends" : ["JSON::Tiny","Compress::Zlib"],
+    "provides" : {
+      "Avro":             "lib/Avro.pm",
+      "Avro::Schema":     "lib/Avro/Schema.pm",
+      "Avro::Encode":     "lib/Avro/Encode.pm",
+      "Avro::Decode":     "lib/Avro/Decode.pm",
+      "Avro::DataFile":   "lib/Avro/DataFile.pm",
+      "Avro::Auxiliary":  "lib/Avro/Auxiliary.pm"
+    },
+    "source-url" : "git://github.com/sylvarant/Avro.git"
+}
+
