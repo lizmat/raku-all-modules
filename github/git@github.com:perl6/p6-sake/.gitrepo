@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:perl6/p6-sake.git
+	branch = master
+	commit = 08ce6c0628cd3332af726043c955b175d7b4b24a
+	parent = 625a834f1c5a884cbd1d8cbdb2df3075295aeac0
+	cmdver = 0.3.1
