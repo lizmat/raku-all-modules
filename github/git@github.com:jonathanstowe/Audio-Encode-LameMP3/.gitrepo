@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/Audio-Encode-LameMP3.git
+	branch = master
+	commit = 093db0fd5678d5ad2d306d6648947791d454db6c
+	parent = ba66fdba46cb2905384e73009e0632e8da526231
+	cmdver = 0.3.1
