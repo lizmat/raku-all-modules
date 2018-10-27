@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jpve/perl6-pod-strip.git
+	branch = master
+	commit = 2bb9b9dc3d593cbddc53092dcc3519b2a666afeb
+	parent = 89cbc389cbcc53af4c067a676ca3863f8a5fb714
+	cmdver = 0.3.1
