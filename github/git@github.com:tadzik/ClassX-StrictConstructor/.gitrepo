@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/ClassX-StrictConstructor.git
+	branch = master
+	commit = 30374c0deaa8c252f1859b5432a112e043e7c438
+	parent = a866af708bcebf94dd8709b7fe7b6be5764f11c2
+	cmdver = 0.3.1
