@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:vendethiel/Serialize-Tiny.pm6.git
+	branch = master
+	commit = 902696cd1ac32ad77a96bf5772b5586567e3ce4e
+	parent = 5be5ad97f45aa18c9b069debc3a6ac3dc53fda83
+	cmdver = 0.3.1
