@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jnthn/oo-actors.git
+	branch = master
+	commit = 0b5cb2ac9d077d30b10fa84c437002d458f3d06f
+	parent = ffb21298e32d89a435f056dd0212a43d60328485
+	cmdver = 0.3.1

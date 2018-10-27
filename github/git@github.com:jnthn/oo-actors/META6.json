@@ -1,0 +1,12 @@
+{
+    "perl" : "6.*",
+    "name" : "OO::Actors",
+    "version" : "0.1",
+    "description" : "Basic Actor model support. A work in progress.",
+    "provides" : {
+        "OO::Actors" : "lib/OO/Actors.pm6"
+    },
+    "depends" : [ ],
+    "repo-type" : "git",
+    "source-url" : "git://github.com/jnthn/oo-actors.git"
+}
