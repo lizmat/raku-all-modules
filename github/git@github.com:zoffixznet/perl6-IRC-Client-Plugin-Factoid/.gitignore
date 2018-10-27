@@ -1,0 +1,9 @@
+lib/.precomp
+out.html
+out.p6
+old_out.p6
+test.p6
+factoids.db
+factoids.db-shm
+factoids.db-wal
+test.db
