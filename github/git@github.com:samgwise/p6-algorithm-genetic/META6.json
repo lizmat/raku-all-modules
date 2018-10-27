@@ -1,0 +1,23 @@
+{
+  "authors" : [
+    "Sam Gillespie"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "A basic genetic algorithm implementation for Perl6!",
+  "license" : "Artistic-2.0",
+  "name" : "Algorithm::Genetic",
+  "perl" : "6.c",
+  "provides" : {
+    "Algorithm::Genetic" : "lib/Algorithm/Genetic.pm6",
+    "Algorithm::Genetic::Crossoverable" : "lib/Algorithm/Genetic/Crossoverable.pm6",
+    "Algorithm::Genetic::Genotype" : "lib/Algorithm/Genetic/Genotype.pm6",
+    "Algorithm::Genetic::Selection" : "lib/Algorithm/Genetic/Selection.pm6",
+    "Algorithm::Genetic::Selection::Roulette" : "lib/Algorithm/Genetic/Selection/Roulette.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/samgwise/p6-algorithm-genetic.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
