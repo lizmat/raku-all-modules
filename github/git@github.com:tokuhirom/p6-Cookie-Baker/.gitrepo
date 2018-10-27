@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tokuhirom/p6-Cookie-Baker.git
+	branch = master
+	commit = ab521f96c6a19b1a9df5863e36b806d024d35256
+	parent = 797ceeefa4e73ea3e899a40ce3768c31ee281a68
+	cmdver = 0.3.1
