@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/perl6-operator-feq.git
+	branch = master
+	commit = db8db5030c524819b27ad1081260ba4c4fc9fd7e
+	parent = eab1534c5a79881a968532f64b3000fc2cc02efe
+	cmdver = 0.3.1
