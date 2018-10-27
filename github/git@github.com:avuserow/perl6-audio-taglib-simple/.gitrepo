@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:avuserow/perl6-audio-taglib-simple.git
+	branch = master
+	commit = bbb6c55fa6f285530cf1124a5ec2367af157e416
+	parent = f3825bc749d49d4ed1c8d6781be53b5cf31c39cf
+	cmdver = 0.3.1
