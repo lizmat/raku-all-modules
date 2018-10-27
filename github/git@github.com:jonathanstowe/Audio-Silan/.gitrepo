@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/Audio-Silan.git
+	branch = master
+	commit = 5e3174e9a21df4c2f4ced95e0b0258c293ff966e
+	parent = d91bb501cd7b18b8ed457700aeb0d437d9672ddf
+	cmdver = 0.3.1

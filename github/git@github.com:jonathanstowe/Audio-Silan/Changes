@@ -1,0 +1,8 @@
+v0.0.4		Sat Jun 10 09:10:32 2017 +0100 
+	* Test needs to skip if there is no silan
+v0.0.3		Sat Mar 12 10:52:18 2016 +0000 
+	* Remove version literal
+v0.0.2		Thu Dec 24 23:49:37 2015 +0000 
+	* Fix dependencies
+		 
+	* Add test for exception
