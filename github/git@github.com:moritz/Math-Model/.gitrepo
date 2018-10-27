@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:moritz/Math-Model.git
+	branch = master
+	commit = cdc618c6c028a6dd9308bd2de0df9f10afd095a3
+	parent = a811eca7aee0e64d7e518cb022a9334571eb5b50
+	cmdver = 0.3.1
