@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:raydiak/Inline-Lua.git
+	branch = master
+	commit = 234f6f40674b7e62d519653611d7156f2b908f07
+	parent = b7b456ef967880c25e8d49da8c66e2f62197d5b4
+	cmdver = 0.3.1
