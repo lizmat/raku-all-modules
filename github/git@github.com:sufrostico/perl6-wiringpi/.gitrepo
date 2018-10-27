@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:sufrostico/perl6-wiringpi.git
+	branch = master
+	commit = c407a9f0dc665de0fd7e971bb857b344b122573e
+	parent = fb4aa9c742043ac37496743956e01b2975dfb64a
+	cmdver = 0.3.1
