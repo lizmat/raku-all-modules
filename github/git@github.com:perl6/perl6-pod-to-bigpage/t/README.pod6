@@ -1,0 +1,15 @@
+=begin pod
+
+=TITLE Pod::To::BigPage Tests
+
+=begin SYNOPSIS
+
+Tests (not enough) for the module
+
+=end SYNOPSIS
+
+=head2 X<Options|Testing options>
+
+To enable network tests to be run, set C<ONLINE_TESTING> environment variable to a true value.
+
+=end pod
