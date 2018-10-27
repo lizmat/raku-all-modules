@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:xfix/Acme-DSON.git
+	branch = master
+	commit = 45f3c1fee5a33b9ad8453b9e2b214bf3adc393c5
+	parent = 991b691182bd23a2c8ddda48d8bc1104f49998eb
+	cmdver = 0.3.1
