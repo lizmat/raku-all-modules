@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:skinkade/p6-crypt-argon2.git
+	branch = master
+	commit = 1a3eff0543a031f3d749658d906452cdebfbb467
+	parent = 9c8220fdffe0f8b2e748bd8bdc95ff370873bc72
+	cmdver = 0.3.1
