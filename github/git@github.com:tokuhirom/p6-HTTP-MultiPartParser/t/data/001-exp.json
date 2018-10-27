@@ -1,0 +1,72 @@
+[
+   {
+      "body" : "Ratione accusamus aspernatur aliquam",
+      "header" : [
+         "Content-Disposition: form-data; name=\"text1\""
+      ]
+   },
+   {
+      "header" : [
+         "Content-Disposition: form-data; name=\"text2\""
+      ],
+      "body" : ""
+   },
+   {
+      "header" : [
+         "Content-Disposition: form-data; name=\"select\""
+      ],
+      "body" : "A"
+   },
+   {
+      "body" : "B",
+      "header" : [
+         "Content-Disposition: form-data; name=\"select\""
+      ]
+   },
+   {
+      "body" : "Voluptatem cumque voluptate sit recusandae at. Et quas facere rerum unde esse. Sit est et voluptatem. Vel temporibus velit neque odio non.\r\n\r\nMolestias rerum ut sapiente facere repellendus illo. Eum nulla quis aut. Quidem voluptas vitae ipsam officia voluptatibus eveniet. Aspernatur cupiditate ratione aliquam quidem corrupti. Eos sunt rerum non optio culpa.",
+      "header" : [
+         "Content-Disposition: form-data; name=\"textarea\""
+      ]
+   },
+   {
+      "body" : "#!/usr/bin/perl\r\n\r\nuse strict;\r\nuse warnings;\r\n\r\nprint \"Hello World :)\\n\";\r\n\r\n",
+      "header" : [
+         "Content-Disposition: form-data; name=\"upload\"; filename=\"hello.pl\"",
+         "Content-Type: application/octet-stream"
+      ]
+   },
+   {
+      "body" : "#!/usr/bin/perl\r\n\r\nuse strict;\r\nuse warnings;\r\n\r\nprint \"Hello World :)\\n\";\r\n\r\n",
+      "header" : [
+         "Content-Disposition: form-data; name=\"upload\"; filename=\"hello.pl\"",
+         "Content-Type: application/octet-stream"
+      ]
+   },
+   {
+      "header" : [
+         "Content-Disposition: form-data; name=\"upload1\"; filename=\"\""
+      ],
+      "body" : ""
+   },
+   {
+      "header" : [
+         "Content-Disposition: form-data; name=\"upload2\"; filename=\"hello.pl\"",
+         "Content-Type: application/octet-stream"
+      ],
+      "body" : "#!/usr/bin/perl\r\n\r\nuse strict;\r\nuse warnings;\r\n\r\nprint \"Hello World :)\\n\";\r\n\r\n"
+   },
+   {
+      "body" : "",
+      "header" : [
+         "Content-Disposition: form-data; name=\"upload3\"; filename=\"blank.pl\"",
+         "Content-Type: application/octet-stream"
+      ]
+   },
+   {
+      "body" : "",
+      "header" : [
+         "Content-Disposition: form-data; name=\"upload4\"; filename=\"0\""
+      ]
+   }
+]
