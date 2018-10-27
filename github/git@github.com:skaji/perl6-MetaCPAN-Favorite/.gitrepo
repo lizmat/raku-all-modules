@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:skaji/perl6-MetaCPAN-Favorite.git
+	branch = master
+	commit = 275aac5ce3c139e21938bebb22ed02fafe9c97fe
+	parent = 082d01a4c00ff9b240335af31d430d7947dc8de4
+	cmdver = 0.3.1
