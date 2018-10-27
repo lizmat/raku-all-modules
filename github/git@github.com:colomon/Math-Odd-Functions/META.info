@@ -1,0 +1,11 @@
+{
+    "name"        : "Math::OddFunctions",
+    "version"     : "*",
+    "description" : "Standard math function odds and ends",
+    "provides"    : {
+        "Math::OddFunctions" : "lib/Math/OddFunctions.pm"
+    },
+    "depends"     : [],
+    "source-type"   : "git",
+    "source-url"    : "git://github.com/colomon/Math-Odd-Functions.git"
+}
