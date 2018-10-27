@@ -1,0 +1,11 @@
+{
+    "perl" : "6.*",
+    "name" : "Rakudo::Perl6::Format",
+    "version" : "0.1",
+    "description" : "format Perl6",
+    "depends" : ["Rakudo::Perl6::Parsing"],
+    "provides" : {
+        "Rakudo::Perl6::Format" : "lib/Perl6/Format.pm"
+    },
+    "source-url" : "git://github.com/jaffa4/perl6format.git"
+}
