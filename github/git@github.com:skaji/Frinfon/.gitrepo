@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:skaji/Frinfon.git
+	branch = master
+	commit = 9c01279bfdab2dc57b49c11607b45bbd01ec14cb
+	parent = 5b8e52b2ea4a32b1f13c12b4bf1d3b9e472326e6
+	cmdver = 0.3.1
