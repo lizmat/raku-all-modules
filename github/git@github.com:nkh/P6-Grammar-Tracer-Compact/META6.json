@@ -1,0 +1,15 @@
+{
+
+"perl" : "6.c",
+
+"name" : "Grammar::Tracer::Compact",
+"version" : "1.0",
+"license" : "Artistic-2.0",
+"authors" : ["Nadim Khemir"],
+"description" : "Simple tracing for Perl 6 grammars",
+"build-depends" : [ "Terminal::ANSIColor" ],
+"test-depends" : [ "Test" ],
+"depends" : [ "Terminal::ANSIColor" ],
+"provides" : { "Grammar::Tracer::Compact" : "lib/Grammar/Tracer/Compact.pm" },
+"source-url" : "git://github.com/nkh/P6-Grammar-Tracer-Compact.git"
+}
