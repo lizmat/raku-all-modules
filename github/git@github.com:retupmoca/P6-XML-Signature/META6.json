@@ -1,0 +1,18 @@
+{
+    "perl" : "6.*",
+    "name" : "XML::Signature",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "XML Signature",
+    "depends" : [ "XML",
+                  "XML::Canonical",
+                  "Digest",
+                  "MIME::Base64",
+                  "OpenSSL",
+                  "UUID"
+                ],
+    "provides" : {
+        "XML::Signature" : "lib/XML/Signature.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-XML-Signature.git"
+}
