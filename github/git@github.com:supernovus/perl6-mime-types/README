@@ -1,0 +1,26 @@
+MIME::Types
+------------
+A Perl 6 library that reads the mime.types file as used by
+many Linux distributions, and web servers, and returns an object
+that can be queried by either type or extension.
+
+Example:
+
+  use MIME::Types;
+  my $mime = MIME::Types.new("/etc/mime.types");
+  my $type = $mime.type('txt'); ## Returns: 'text/plain';
+  my @known_extensions = $mime.extensions('application/vnd.ms-excel');
+  ## Returns: [ 'xls', 'xlb', 'xlt' ]
+
+An example mime.types is included in the doc/ directory, and is used by
+the tests in t/.
+
+= License =
+
+Artistic 2.0=
+
+= Author =
+
+Timothy Totten 
+http://huri.net/
+https://github.com/supernovus/
