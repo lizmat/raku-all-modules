@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/exemel.git
+	branch = master
+	commit = 3fae353a18518055ae79b08c21c1c4b3d03485f0
+	parent = ed991d7f3fe80968ca2b8969cd6982bbdb42ccbc
+	cmdver = 0.3.1
