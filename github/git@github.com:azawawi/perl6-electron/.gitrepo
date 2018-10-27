@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:azawawi/perl6-electron.git
+	branch = master
+	commit = f764290c756c77799013694953c2fea0140a832c
+	parent = 383a960d2604e12c1b8bfc27b00943d1e394d911
+	cmdver = 0.3.1

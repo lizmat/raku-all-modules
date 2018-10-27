@@ -1,0 +1,19 @@
+language: perl6
+
+os:
+  - linux
+  - osx
+
+perl6:
+  - 2016.11
+  - latest
+
+install:
+  - rakudobrew build zef
+  - zef --depsonly install .
+  - zef install Test::META
+  - zef build .
+
+script:
+    - AUTHOR_TESTING=1 prove -ve "perl6 -Ilib"
+    - zef install .
