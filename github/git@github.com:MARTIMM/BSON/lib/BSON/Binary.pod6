@@ -1,0 +1,64 @@
+use v6;
+
+=begin pod
+
+=TITLE class BSON::Binary
+
+=SUBTITLE Container for binary data
+
+  unit package BSON;
+  class Binary { ... }
+
+=head1 Synopsis
+
+=begin code
+
+use UUID;
+use BSON::Binary;
+
+my UUID $uuid .= new(:version(4));
+my BSON::Binary $bin .= new(
+  :data($uuid.Blob),
+  :type(BSON::C-UUID)
+);
+
+=end code
+
+=head1 Methods
+
+=head2 new
+
+  submethod BUILD ( Buf :$data, Int :$type = BSON::C-GENERIC )
+
+Store binary data in the object. The following codes are available:
+
+=item1 C<C-GENERIC>. Generic binary data. Used for any non structured data.
+=item1 C<C-FUNCTION>. Encoding of function code.
+=item1 C<C-UUID>. Encoding of UUID.
+=item1 C<C-MD5>. Encoding of MD5.
+
+=head2 perl
+
+  method perl ( Int $indent = 0 --> Str )
+
+Should be used like any other perl without the $indent set. Otherwise it starts
+of indented.
+
+=head2 encode
+
+  method encode ( --> Buf )
+
+Encode the binary data. Mostly called from BSON::Document.
+
+=head2 decode
+
+  method decode (
+    Buf:D $b,
+    Int:D $index is copy,
+    Int:D $nbr-bytes
+    --> BSON::Binary
+  )
+
+Decode a Buf to BSON::Binary. Mostly called from BSON::Document.
+
+=end pod
