@@ -1,0 +1,13 @@
+v0.2.1
+
+    * Bugfix: Previous release was broken. Fixes broken require-from method and
+      tests.
+
+v0.2
+
+    * Work around RT #129109. The internal implementation has changed slightly
+      to avoid "Cannot invoke this object (REPR: Null; VMNull)" errors.
+
+v0.1
+
+    * Initial implementation.

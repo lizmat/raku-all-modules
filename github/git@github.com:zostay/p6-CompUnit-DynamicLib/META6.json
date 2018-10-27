@@ -1,0 +1,24 @@
+{
+   "meta6" : "0",
+   "provides" : {
+      "CompUnit::DynamicLib" : "lib/CompUnit/DynamicLib.pm6"
+   },
+   "test-depends" : [
+      "Test", "Test::META"
+   ],
+   "support" : {
+      "source" : "git://github.com/zostay/p6-CompUnit-DynamicLib.git"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:zostay",
+   "source-url" : "git://github.com/zostay/p6-CompUnit-DynamicLib.git",
+   "depends" : [],
+   "name" : "CompUnit::DynamicLib",
+   "authors" : [
+      "Sterling Hanenkamp <hanenkamp@cpan.org>"
+   ],
+   "version" : "0.2.1",
+   "license" : "Artistic",
+   "description" : "Load modules from temporarily included locations"
+}
