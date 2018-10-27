@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jaffa4/perl6tracer.git
+	branch = master
+	commit = 6b324fba11a939149000b29467d75544c851e32d
+	parent = 960a75eb27a9e49aec9a50650f1d40e338ba058e
+	cmdver = 0.3.1
