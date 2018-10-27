@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:atweiden/sustenance.git
+	branch = master
+	commit = 08512d8816f973ab4d60da3798e11c84f6f6f7d5
+	parent = d65ad87110edb7eb8f845ad942999995a0c21cfe
+	cmdver = 0.3.1
