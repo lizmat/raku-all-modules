@@ -1,0 +1,12 @@
+v0.0.6		Tue Jul 18 12:57:17 2017 +0100 
+	* Some tidying up
+v0.0.5		Mon May 30 11:15:41 2016 +0100 
+	* use JSON::Fast in preference to JSON::Tiny
+v0.0.4		Sat Mar 12 10:48:09 2016 +0000 
+	* Remove version literal
+		 
+	* Add the travis badge to the README
+		 
+	* stringify before encoding
+		 
+	* TODO the tests if URI::Encode is still broken
