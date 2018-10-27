@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:azawawi/perl6-gtk-simpler.git
+	branch = master
+	commit = 668a5602327ce4f97048045885adb2cf9507d721
+	parent = a4a00e2ac4e1c5a9d001b53a96db389955d2dc29
+	cmdver = 0.3.1
