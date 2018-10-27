@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:moznion/p6-Stream-Buffered.git
+	branch = master
+	commit = e048700db6bb063c03c0a51cf8313a36f9565bf1
+	parent = 9b3bcdab3c51a2bc8a18a91e61dfbcfb546dfd20
+	cmdver = 0.3.1
