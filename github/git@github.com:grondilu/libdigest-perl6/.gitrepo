@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:grondilu/libdigest-perl6.git
+	branch = master
+	commit = 255c84d92247a10e4541684cd6a21eb171f37b1c
+	parent = 2756f470274c7b73437b2cb4ba23843b1cb30edf
+	cmdver = 0.3.1
