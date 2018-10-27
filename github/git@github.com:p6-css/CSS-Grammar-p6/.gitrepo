@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:p6-css/CSS-Grammar-p6.git
+	branch = master
+	commit = 79c4bfb9d7f5efcd2654e35a404e926a04016e5d
+	parent = ae011af70bf6a56f0db9bf10078ef457283a9046
+	cmdver = 0.3.1
