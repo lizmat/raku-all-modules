@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:prodotiscus/perl6-Dictionary-Create.git
+	branch = master
+	commit = 5436b34a877ddf1454036c7f8b1a43da76865942
+	parent = 8a2017c4b2119af22588432a016857592a1800fe
+	cmdver = 0.3.1
