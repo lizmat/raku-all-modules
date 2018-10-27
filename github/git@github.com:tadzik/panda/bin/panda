@@ -1,0 +1,177 @@
+#!/usr/bin/env perl6
+use Shell::Command;
+use Panda;
+use Panda::Ecosystem;
+use Panda::App;
+
+my $*MAIN-ALLOW-NAMED-ANYWHERE       = True; # old way
+(my %*SUB-MAIN-OPTS)<named-anywhere> = True; # new way (since v2017.06.112.g.40.b.0169.d.0)
+
+# default opts for MAIN
+if %*ENV<PANDA_DEFAULT_OPTS> {
+    @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ (@*ARGS ?? ' ' ~ @*ARGS !! '');
+}
+my %failed;
+
+#| Install the specified modules
+multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force = False,
+            Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    for @modules -> $x {
+        $panda.resolve($x, :$notests, :$nodeps, :action<install>, :$force,
+                       :$prefix);
+        CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
+    }
+}
+
+#| Install dependencies, but don't build the modules themselves
+multi MAIN ('installdeps', *@modules, Bool :$notests, Bool :$force = False, Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    for @modules -> $x {
+        $panda.resolve($x, :$notests, :action<install-deps-only>, :$force,
+                       :$prefix);
+        CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
+    }
+}
+
+#| Uninstall the specified modules
+multi MAIN ('uninstall', *@modules, Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    for $@modules -> $x {
+        $panda.resolve($x, :action<uninstall>);
+        CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
+    }
+    }
+
+#| List all available modules
+multi MAIN ('list', Bool :$installed, Bool :$verbose, Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    listprojects($panda, :$installed, :$verbose);
+}
+
+#| Update the module database
+multi MAIN ('update', Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    $panda.ecosystem.update;
+}
+
+#| Display information about specified modules
+multi MAIN ('info', *@modules, Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    projectinfo($panda, @modules);
+}
+
+#| Search the name/description
+multi MAIN ('search', $pattern = '', Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    search-projects($panda, $pattern);
+}
+
+#| Autogenerate META.info
+multi MAIN ('gen-meta', Bool :$notests, Str :$name, Str :$auth,
+            Str :$ver, Str :$desc, Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    $panda.bundler.bundle($panda, :$notests, :$name, :$auth, :$ver, :$desc);
+}
+
+#| Test and install all known distributions
+multi MAIN ('smoke', :$exclude = 'panda', Str :$prefix) {
+    my @exclude = $exclude.split(',');
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    my @projects = $panda.ecosystem.project-list;
+    for @projects -> $p {
+        next if $p ~~ any @exclude;
+        @exclude.push: $p;
+        try {
+            $panda.resolve($p, :action<install>);
+            CATCH {
+                default { }
+            }
+        }
+    }
+}
+
+#| Download and unpack the distribution and then open the directory with your shell.
+multi MAIN ('look', *@modules, Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    for @modules -> $x {
+        $panda.resolve($x, :notests, :nodeps, :action<look>);
+        CATCH { when X::Panda { %failed{$x}.push($_)  && say $_ } };
+    }
+}
+
+#| prints USAGE and exits
+multi sub MAIN('help') { USAGE }
+multi sub MAIN(Bool :$help) { USAGE }
+
+sub USAGE {
+    note q:to/END_USAGE/.chomp; # 'note' adds a newline, so get rid of heredoc's
+Panda -- Perl 6 Module Installer
+
+Usage:
+    panda <action> [options]
+
+Examples:
+    panda list --installed           # List only installed modules
+    panda install --force Foo::Bar   # Reinstall module
+
+Common options:
+    --prefix=/path/to/modules    Place to put modules, executable scripts, etc.
+    --help                       Print the help/usage text.
+
+Actions:
+    install        Installs the modules listed on the command line, and their
+                   dependencies.
+        --force      Install even if the same version of the module is already installed
+        --notests    Don't run tests for the modules being installed.
+        --nodeps     Skip installing modules' dependencies.
+
+    installdeps    Installs the dependencies of the listed modules, but not the
+                   modules themselves.
+        --notests    Don't run tests for the dependencies being installed.
+
+    uninstall      Uninstall the module listed on the command line, leaving
+                   dependencies installed.
+
+    list           Lists all the modules available.
+        --verbose      Provide verbose output
+        --installed    List only installed modules
+
+    update         Updates the local copy of the module database.
+
+    info           Lists information available on given modules.
+
+    search         Searches the database for module names/descriptions matching
+                   the given substring.
+
+    gen-meta       Generates a META.info with supplied options (see below).
+        --notests          Specifies that the module whose META.info is being
+                           generated doesn't have tests(?)
+        --name=A::Name     Specify the module's name
+        --auth=JRandom     Specify the author's name
+        --ver=v0.1         Specify the module version
+        --desc="A desc"    Specify the module description
+
+    smoke          Tests and installs all packages. (Not for typical use.)
+        --exclude=A::Name    Specifies a package to skip testing.
+
+    look           Downloads and unpacks the listed modules, afterwards going to
+                   them with your shell.
+
+'list', 'update', and 'smoke' don't take a list of module names to install.
+'search' takes a string to search case-insensitively for in the database.
+END_USAGE
+}
+
+END {
+    rm_rf '.panda-work' if '.panda-work'.IO.e;
+
+    for %failed.kv -> $source,$messages {
+        FIRST say "\nFailure Summary\n----------------";
+        say "$source",("\n\t*$_" for $messages.list);
+        LAST exit 1;
+    }
+    exit 0;
+}
+
+# vim: ft=perl6

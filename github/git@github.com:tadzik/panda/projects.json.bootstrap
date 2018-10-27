@@ -1,0 +1,49 @@
+[
+    {
+        "source-type" : "local",
+        "source-url" : "_BASEDIR_/File__Find",
+        "version" : "*",
+        "name" : "File::Find",
+        "description" : "Bla bla",
+        "depends" : [],
+        "provides" : { "File::Find" : "lib/File/Find.pm" }
+    },
+    {
+        "source-type" : "local",
+        "source-url" : "_BASEDIR_/Shell__Command",
+        "version" : "*",
+        "name" : "Shell::Command",
+        "description" : "Ble ble",
+        "depends" : ["File::Find"],
+        "provides" : { "Shell::Command" : "lib/Shell/Command.pm" }
+    },
+    {
+        "perl" : "v6",
+        "name" : "JSON::Fast",
+        "description" : "A naive, but hopefully fast json parser; drop-in replacement for JSON::Tiny",
+        "version" : "0.2",
+        "test-depends" : [
+            "Test"
+        ],
+        "provides" : {
+            "JSON::Fast" : "lib/JSON/Fast.pm"
+        },
+        "source-type" : "local",
+        "source-url" : "_BASEDIR_/JSON__Fast"
+    },
+{
+    "name"        : "File::Which",
+    "version"     : "*",
+    "perl"        : "6.c",
+    "description" : "Cross platform Perl 6 executable path finder (aka which on UNIX)",
+    "depends"     : [],
+    "provides"    : {
+        "File::Which"          : "lib/File/Which.pm6",
+        "File::Which::MacOSX"  : "lib/File/Which/MacOSX.pm6",
+        "File::Which::Unix"    : "lib/File/Which/Unix.pm6",
+        "File::Which::Win32"   : "lib/File/Which/Win32.pm6"
+    },
+    "source-type" : "local",
+    "source-url"  : "_BASEDIR_/File__Which"
+}
+]

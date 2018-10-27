@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/panda.git
+	branch = master
+	commit = 46b7940708c5916da407760d5c0c591fd40633e8
+	parent = d92b4a3c6f2ffd09cf1b9361c388650ae5ba1ff7
+	cmdver = 0.3.1
