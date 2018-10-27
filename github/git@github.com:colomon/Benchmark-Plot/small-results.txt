@@ -1,0 +1,16 @@
+latest-rakudo, iteration.p6, 1.1708023, 1.158356, 1.186015
+latest-rakudo, trans-sprintf.pl, 5.1236996, 5.099428, 5.154195
+rakudo-star-2010.07, iteration.p6, 1.709158, 1.696138, 1.723527
+rakudo-star-2010.07, trans-sprintf.pl, 3.1849216, 3.173867, 3.199044
+rakudo-star-2010.08, iteration.p6, 1.498886, 1.495863, 1.503878
+rakudo-star-2010.08, trans-sprintf.pl, 2.168044, 2.159279, 2.178881
+rakudo-star-2010.09, iteration.p6, 1.7509642, 1.741844, 1.759956
+rakudo-star-2010.09, trans-sprintf.pl, 2.6255329, 2.6055, 2.68731
+rakudo-star-2010.10, iteration.p6, 1.3149465, 1.303348, 1.321748
+rakudo-star-2010.10, trans-sprintf.pl, 2.258484, 2.245845, 2.272775
+rakudo-star-2010.11, iteration.p6, 1.4862288, 1.479845, 1.492696
+rakudo-star-2010.11, trans-sprintf.pl, 5.1463826, 5.0407, 5.403882
+rakudo-star-2010.12, iteration.p6, 1.5002203, 1.492066, 1.513928
+rakudo-star-2010.12, trans-sprintf.pl, 3.6952154, 3.613322, 3.809183
+rakudo-star-2011.01, iteration.p6, 1.2337188, 1.223257, 1.242128
+rakudo-star-2011.01, trans-sprintf.pl, 5.4277885, 5.256917, 5.611269

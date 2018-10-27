@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/Benchmark-Plot.git
+	branch = master
+	commit = 3ed6f20fd5c8b8c66215d46ecf0a67d0a84df8ed
+	parent = 978c940705f023c8e54bd6a74706aa2719682be7
+	cmdver = 0.3.1
