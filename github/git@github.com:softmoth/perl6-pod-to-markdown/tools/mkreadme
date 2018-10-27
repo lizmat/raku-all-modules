@@ -1,0 +1,17 @@
+#! /bin/sh
+
+perl6 ./lib/Pod/To/Markdown.pm6 | perl6 -pe '
+
+my $gh-repo = "softmoth/perl6-pod-to-markdown";
+
+if / ^ "#"* SYNOPSIS / {
+    print qq:to/END/ if ".travis.yml".IO.e;
+        [![Build Status](https://travis-ci.org/$gh-repo.svg?branch=master)](https://travis-ci.org/$gh-repo)
+        END
+    print qq:to/END/ if "appveyor.yml".IO.e;
+        [![Windows status](https://ci.appveyor.com/api/projects/status/github/$gh-repo?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true)](https://ci.appveyor.com/project/$gh-repo/branch/master)
+        END
+    print "\n";
+}
+
+' > README.md
