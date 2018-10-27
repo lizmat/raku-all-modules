@@ -1,0 +1,59 @@
+#!/usr/bin/env perl6
+# Copyright © 2018
+#     Aleks-Daniel Jakimenko-Aleksejev <alex.jakimenko@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+use JSON::Fast;
+
+sub MAIN(IO() $file, :$min-height = 5) {
+    my %chars;
+    my $ord;
+    my @bitmap;
+    my $in-bitmap = False;
+    my $width;
+    my $height;
+    my $x-shift;
+    my $y-shift;
+    for $file.lines {
+        when /^‘BBX’ \s+ $<width>=[\d+]   \s+ $<height>=[\d+] \s+
+                         $<x-shift>=[‘-’?\d+] \s+ $<y-shift>=[‘-’?\d+] / {
+            $width   = +$<width>;
+            $height  = +$<height>;
+            $x-shift = +$<x-shift>;
+            $y-shift = +$<y-shift>;
+        }
+        when /^‘BITMAP’/ {
+            $in-bitmap = True;
+        }
+        when /^(<.xdigit>+)$/ and $in-bitmap {
+            my $pattern = ‘%0’~ ($0.Str.chars × 4) ~‘b’;
+            my $conv = sprintf $pattern, $0.Str.parse-base: 16;
+            @bitmap.push: $conv.substr(0, $width).comb».Int».so.Array;
+        }
+        when /^‘ENCODING’ \s+ (\d+)/ {
+            $ord = +$0
+        }
+        when /^‘ENDCHAR’/ {
+            .prepend: False xx $x-shift for @bitmap;
+            @bitmap.push:    () for ^$y-shift;
+            { @bitmap.unshift: () for ^($y-shift.abs) } if $y-shift < 0 and @bitmap ≤ $min-height;
+            @bitmap.unshift: () while @bitmap < $min-height;
+            %chars{$ord} = @bitmap.clone;
+            $in-bitmap = False;
+            @bitmap = ();
+        }
+    }
+    say to-json %chars
+}
