@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:niner/Inline-Python.git
+	branch = master
+	commit = 32a8cbe889739ce667dfc2d7d44e312567318af1
+	parent = b3045ce8151cbe255c4909088689c859e6fc20de
+	cmdver = 0.3.1
