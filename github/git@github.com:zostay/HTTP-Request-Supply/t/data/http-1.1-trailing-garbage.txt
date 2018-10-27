@@ -1,0 +1,14 @@
+POST /index.html HTTP/1.1
+Content-Type: application/x-www-form-urlencoded; charset=utf8
+Content-Length: 11
+Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==
+Referer: http://example.com/awesome.html
+Connection: close
+User-Agent: Mozilla/Inf
+
+a=1&b=2&c=3gobbledygook
+
+;bkfha;osdhf
+sdf
+asdffj
+
