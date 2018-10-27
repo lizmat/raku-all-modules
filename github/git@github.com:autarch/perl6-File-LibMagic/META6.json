@@ -1,0 +1,12 @@
+{
+    "perl"        : "6.*",
+    "name"        : "File::LibMagic",
+    "version"     : "0.0.1",
+    "author"      : "Dave Rolsky <autarch@urth.org>",
+    "description" : "Use libmagic to determine MIME type and encodings of content",
+    "depends"     : ["File::Temp"],
+    "provides"    : {
+        "File::LibMagic" : "lib/File/LibMagic.pm6"
+    },
+    "source-url"  : "git://github.com/autarch/perl6-File-LibMagic.git"
+}
