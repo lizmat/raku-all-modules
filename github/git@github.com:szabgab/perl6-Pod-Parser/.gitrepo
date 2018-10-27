@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:szabgab/perl6-Pod-Parser.git
+	branch = master
+	commit = 01dd5d63203767f236281456f7ffb9e81db2887d
+	parent = 67799889ab8f3b1c746d894bb3ed8890c01126a6
+	cmdver = 0.3.1
