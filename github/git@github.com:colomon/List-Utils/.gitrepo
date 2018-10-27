@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/List-Utils.git
+	branch = master
+	commit = b8eb232844b3b308f2b53af2b4a971e3076bcdf3
+	parent = fed044ed72285ff98aeeffe97e65802bb8b158eb
+	cmdver = 0.3.1
