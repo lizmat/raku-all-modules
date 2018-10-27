@@ -1,0 +1,4 @@
+.precomp
+*.o
+*.a
+*.so
