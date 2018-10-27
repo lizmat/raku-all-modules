@@ -1,0 +1,23 @@
+{
+  "authors" : [
+    "Dagur Valberg Johannsson"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "GD::Raw"
+  ],
+  "description" : "Resize images using GD",
+  "license" : "Artistic-2.0",
+  "name" : "Image::Resize",
+  "perl" : "6.*",
+  "provides" : {
+    "Image::Resize" : "lib/Image/Resize.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/dagurval/perl6-image-resize.git",
+  "tags" : [ ],
+  "test-depends" : [
+    "Test::META"
+  ],
+  "version" : "0.01"
+}

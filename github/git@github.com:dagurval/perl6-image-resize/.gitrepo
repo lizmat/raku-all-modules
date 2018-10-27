@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:dagurval/perl6-image-resize.git
+	branch = master
+	commit = fb81c8706988c11ee0d4af58ab7dd9e85b998612
+	parent = ebd5bae75bf795bd16c452d4068b8655166c7076
+	cmdver = 0.3.1
