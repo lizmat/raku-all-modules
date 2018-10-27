@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/perl6-template-protone.git
+	branch = master
+	commit = fd3760277d3b2bfdebfe0b5149372f2ed7dd6e6e
+	parent = a3a8d0992bbcb29aa784dc71408696384b48a7ec
+	cmdver = 0.3.1
