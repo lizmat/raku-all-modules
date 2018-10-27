@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:FROGGS/p6-JSON-Pretty.git
+	branch = master
+	commit = c7c90d7358e4c806ee5460dfa25cb248e75c31a5
+	parent = 8975c0e0d853dccd9e070e815b48d3b85af0de44
+	cmdver = 0.3.1
