@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cygx/p6-uni63.git
+	branch = master
+	commit = b6499cbf25e7838405ceb2bc97a49ccc80ed3e9e
+	parent = 549e5a1f6d61840cccd323ea940305d470c9e688
+	cmdver = 0.3.1
