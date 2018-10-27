@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/Math-Vector.git
+	branch = master
+	commit = 0124769d780fcdca78b6241c4a8e50858cad7bc7
+	parent = 951a641cde43a253f2ae49253d7879c5dbbe66a8
+	cmdver = 0.3.1
