@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-UUID.git
+	branch = master
+	commit = 26cb869622057da286b1b60780ee39e3b4ece0a4
+	parent = 46b4d9f71d4d576b816b233d0114efe1552ada85
+	cmdver = 0.3.1
