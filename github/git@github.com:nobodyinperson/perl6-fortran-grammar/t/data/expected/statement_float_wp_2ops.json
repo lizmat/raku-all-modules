@@ -1,0 +1,31 @@
+{
+  "value-returning-code-no-statement": [
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": {
+              "precision-spec": {
+                "name": "wp"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": {
+              "precision-spec": {
+                "name": "wp"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "operator": "+"
+}

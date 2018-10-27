@@ -1,0 +1,27 @@
+{
+  "value-returning-code": [
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "integer": {
+              "digits": "1"
+            }
+          }
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "integer": {
+              "digits": "1"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "relational-operator": ".eq."
+}

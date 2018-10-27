@@ -1,0 +1,25 @@
+{
+  "in-place": {
+    "in-place-array": {
+      "numbers": {
+        "number": [
+          {
+            "integer": {
+              "digits": "1"
+            }
+          },
+          {
+            "integer": {
+              "digits": "2"
+            }
+          },
+          {
+            "integer": {
+              "digits": "3"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "logical-operator": [
+    ".and."
+  ],
+  "logical-value-returning-code": [
+    {
+      "boolean": ".true. "
+    },
+    {
+      "boolean": ".true."
+    }
+  ]
+}
