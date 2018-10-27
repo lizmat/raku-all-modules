@@ -1,0 +1,14 @@
+{
+    "name"        : "Benchmark",
+    "version"     : "*",
+    "description" : "Benchmark running times of Perl 6 code",
+    "build-depends" : [ ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [ ],
+    "provides" : {
+        "Benchmark" : "lib/Benchmark.pm6"
+    },
+    "source-url"  : "git://github.com/perlpilot/benchmark.git"
+}
