@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/Math-ContinuedFractions.git
+	branch = master
+	commit = d657704ad389fb3a0943d89547223fc0f1647467
+	parent = 3edde354e2e73606bdf6a3e47afce01eb72755bd
+	cmdver = 0.3.1

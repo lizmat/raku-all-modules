@@ -1,0 +1,11 @@
+{
+    "name"        : "Math::ContinuedFractions",
+    "version"     : "*",
+    "description" : "Basic continued fraction arithmetic",
+    "provides"    : {
+        "Math::ContinuedFractions" : "lib/Math/ContinuedFraction.pm"
+    },
+    "depends"     : [],
+    "source-type"   : "git",
+    "source-url"    : "git://github.com/colomon/Math-ContinuedFractions.git"
+}
