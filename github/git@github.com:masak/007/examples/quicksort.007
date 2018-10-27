@@ -1,0 +1,16 @@
+func quicksort(array) {
+    if array.size() > 1 {
+        my pivot = array[0];
+        my less = quicksort(array.filter(func (e) { return e < pivot }));
+        my equal = array.filter(func (e) { return e == pivot });
+        my greater = quicksort(array.filter(func (e) { return e > pivot }));
+        array = less.concat(equal.concat(greater));
+    }
+    return array;
+}
+
+my unsorted = (^20).shuffle();
+say("Unsorted: ", unsorted);
+say("Sorting...");
+my sorted = quicksort(unsorted);
+say("Sorted: ", sorted);
