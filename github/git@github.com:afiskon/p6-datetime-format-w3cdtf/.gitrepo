@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:afiskon/p6-datetime-format-w3cdtf.git
+	branch = master
+	commit = 086b5b28be27f71c445cca26485089d322090a4b
+	parent = 200586b4dd57d68b9f36dbc85b2519a7f8249f83
+	cmdver = 0.3.1
