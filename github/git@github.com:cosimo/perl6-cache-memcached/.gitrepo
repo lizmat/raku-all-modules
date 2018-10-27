@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cosimo/perl6-cache-memcached.git
+	branch = master
+	commit = a18e25c472f8c255dfefdbe4258343bdfbbd7e03
+	parent = 3dee70c2b7240637c8ebd4e7ac69fe909be68a87
+	cmdver = 0.3.1

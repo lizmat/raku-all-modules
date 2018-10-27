@@ -1,0 +1,12 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+services:
+  - memcached
+sudo: false
+perl6:
+  - latest
+install:
+  - rakudobrew build-zef
+  - zef --deps-only install .
