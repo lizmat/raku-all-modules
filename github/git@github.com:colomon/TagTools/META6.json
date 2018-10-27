@@ -1,0 +1,9 @@
+{
+    "name"        : "colomon::App::TagTools",
+    "version"     : "*",
+    "description" : "Scripts for manipulating MP3 tags",
+    "provides"    : { },
+    "depends"     : ["Audio::Taglib::Simple"],
+    "source-type"   : "git",
+    "source-url"    : "git://github.com/colomon/TagTools.git"
+}

@@ -1,0 +1,40 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Audio::Taglib::Simple;
+
+sub MAIN(*@files, :$make-change?) {
+    for @files -> $filename {
+        my @path-parts = $filename.split('/').map(&Scrub);
+        my $number-and-title = @path-parts.pop;
+        next unless $number-and-title ~~ m/(\d+) \- (.*) .mp3/;
+        my $track-number = ~$0;
+        my $title = ~$1;
+        my $album = @path-parts.pop;
+        my $artist = @path-parts.pop;
+        say "$artist: $album: $title (track $track-number)";
+
+        if $make-change {
+            my $tags;
+            {
+                $tags = Audio::Taglib::Simple.new($filename);
+                CATCH { say "Error reading $filename" }
+            }
+
+            $tags.track = $track-number.Int;
+            $tags.album = $album;
+            $tags.title = $title;
+            $tags.artist = $artist;
+        
+            {
+                $tags.save;
+                CATCH { say "Error saving changes to $filename" }
+            }
+        }
+    }
+}
+
+sub Scrub($a) {
+    $a.subst('_', ' ', :global);
+}
+

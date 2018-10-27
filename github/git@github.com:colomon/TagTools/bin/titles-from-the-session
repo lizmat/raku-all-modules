@@ -1,0 +1,103 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Audio::Taglib::Simple;
+# use Grammar::Tracer;
+
+grammar session-html {
+    rule TOP { .*? <manifest-class> .* }
+    
+    rule manifest-class {
+        '<ol class="manifest">'
+            <list-item>+
+        '</ol>'
+    }
+    
+    rule list-item {
+        '<li>'
+            [<manifest-item-title> <br>]+
+        '</li>'
+    }
+    
+    rule br {
+        '<br>'
+    }
+    
+    rule manifest-item-title {
+        '<span class="manifest-item-title">'
+            [ <anchor> | <plain-title>  ]
+        '</span><!-- /.manifest-item-title -->'
+    }
+    
+    token anchor {
+        <anchor-start> <plain-title> '</a>'
+    }
+
+    token anchor-start {
+        '<a href' \V*? '>'
+    }
+
+
+    token plain-title {
+        <-[<]>+
+    }
+}
+
+class session-html-actions {
+    has $!track = 1;
+    has %.list-items;
+    
+    method plain-title($/) {
+        make $/.subst(/'&#8217;'/, "'", :global).trim;
+    }
+    
+    method anchor($/) {
+        make $<plain-title>.ast;
+    }
+    
+    method manifest-item-title($/) {
+        make $<anchor> ?? $<anchor>.ast !! $<plain-title>.ast;
+    }
+    
+    method list-item($/) {
+        %.list-items{$!track++} = $<manifest-item-title>.list.map(*.ast).join(" / ");
+    }
+}
+
+sub MAIN($filename, *@files) {
+    my %file-map;
+    for @files -> $filename {
+        if $filename ~~ /^(\d+)/ {
+            %file-map{+$0} = $filename;
+        }
+    }
+
+    my $file = slurp($filename);
+    
+    # cut out the beginning and end to make debugging easier
+    if $file ~~ /'<ol class="manifest">'/ {
+        $file = $file.substr($/.from);
+        if $file ~~ /'</ol>'/ {
+            $file = $file.substr(0, $/.to);
+        }
+    }
+    
+    my $actions = session-html-actions.new;
+    my $match = session-html.parse($file, :rule<manifest-class>, :$actions);
+    
+    for $actions.list-items.kv -> $track, $title {
+        if %file-map{$track} {
+            my $file = %file-map{$track};
+            my $tags = Audio::Taglib::Simple.new($file);
+            $tags.title = $title;
+            $tags.save;
+            
+            say "$file => $title";
+            
+            CATCH { say "Error working with $file" }
+        } else {
+            say "Couldn't find file for track $track ($title)";
+        }
+    }
+}
+

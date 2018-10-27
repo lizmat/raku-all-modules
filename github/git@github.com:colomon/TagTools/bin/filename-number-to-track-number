@@ -1,0 +1,27 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Audio::Taglib::Simple;
+
+sub MAIN(*@tracks) {
+    for @tracks -> $filename {
+        say :$filename.perl;
+        if $filename ~~ /^(\d+)/ {
+            my $track-number = +$0;
+        
+            my $tags;
+            {
+                $tags = Audio::Taglib::Simple.new($filename);
+                CATCH { say "Error reading $filename" }
+            }
+        
+            $tags.track = $track-number;
+            say $tags.track;
+    
+            {
+                $tags.save;
+                CATCH { say "Error saving changes to $filename" }
+            }
+        }
+    }
+}

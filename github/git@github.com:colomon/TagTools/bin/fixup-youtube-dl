@@ -1,0 +1,63 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Audio::Taglib::Simple;
+
+sub common-prefix($a, $b) {
+    # (($a.comb Z=> $b.comb) ...^ { $_.key ne $_.value }).map(*.key).join;
+    my $result = "";
+    for $a.comb Z $b.comb -> $c, $d {
+        last if $c ne $d;
+        $result ~= $c;
+    }
+    $result;
+}
+
+sub common-prefix-N(@strings) {
+    my $result = @strings[0];
+    for @strings {
+        $result = common-prefix($result, $_);
+    }
+    $result;
+}
+
+class YouTubeDLFile {
+    has $.filename;
+    has $.track-number;
+    has $.title;
+    
+    method new($filename) {
+        my $track-number = ($filename.path.basename ~~ /^ \d+ /).Int;
+        my $tags = Audio::Taglib::Simple.new($filename);
+        my $self = self.bless(:$filename, :$track-number, :title($tags.title));
+        $tags.free;
+        $self;
+    }
+}
+
+sub MAIN(*@files) {
+    my @dl-files = @files.map({ YouTubeDLFile.new($_) });
+    say @dl-files.map(*.title).join("\n");
+    my $common-prefix = common-prefix-N(@dl-files.map(*.title));
+    say $common-prefix;
+    for @dl-files -> $file {
+        print "\n" if $file ne @files[0];
+    
+        my $tags = Audio::Taglib::Simple.new($file.filename);
+        
+        my $new-title = $file.title.substr($common-prefix.chars);
+        $new-title .= subst(/^ "-"/, "");
+        $new-title .= subst(/^ \s+/, "");
+        
+        $tags.title = $new-title;
+        $tags.track = $file.track-number;
+    
+        say $file.filename ~ ":";
+        say "    Track Number: { $tags.track }";
+        say "    Title: { $tags.title }";
+
+        $tags.save;
+        
+        CATCH { say "Error working with $file" }
+    }
+}

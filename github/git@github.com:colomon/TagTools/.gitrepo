@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/TagTools.git
+	branch = master
+	commit = 4cd927a25e6d19beedffa68534e415628ab2f888
+	parent = 5fb2a40dd591225fc2159820cf5b15e6eb445fd3
+	cmdver = 0.3.1
