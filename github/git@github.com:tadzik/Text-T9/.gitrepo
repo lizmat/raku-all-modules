@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/Text-T9.git
+	branch = master
+	commit = 1f5bd31918e80128f65cd861ec379eced7f64112
+	parent = 95ef9d562abef5f18ed717cb31e8c1fe28b975ed
+	cmdver = 0.3.1
