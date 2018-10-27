@@ -1,0 +1,19 @@
+{
+    "perl" : "6.c",
+    "name" : "Foo::Dependencies::Self",
+    "auth" : "github:AlexDaniel",
+    "api" : "1",
+    "version" : "0.0.1",
+    "description" : "A module that depends on itself.",
+    "authors" : [ "Aleks-Daniel Jakimenko-Aleksejev" ],
+    "license" : "GPL-3.0-or-later",
+    "provides" : {
+        "Foo::Dependencies::Self" : "lib/Foo/Dependencies/Self.pm6"
+    },
+    "depends" : [ "Foo::Dependencies::Self" ],
+    "build-depends" : [ "Foo::Dependencies::Self" ],
+    "test-depends" : [ "Foo::Dependencies::Self" ],
+    "resources" : [ ],
+    "tags": [ ],
+    "source-url" : "git://github.com/AlexDaniel/foo-dependencies-self.git"
+}
