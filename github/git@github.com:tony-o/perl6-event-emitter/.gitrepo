@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/perl6-event-emitter.git
+	branch = master
+	commit = 1fc59bde3917b20bc5b6ace5115e4607fd7e0ee0
+	parent = 68774f3d814df5c1a720f20de53558a3a6c0657d
+	cmdver = 0.3.1
