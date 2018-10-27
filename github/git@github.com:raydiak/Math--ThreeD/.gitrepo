@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:raydiak/Math--ThreeD.git
+	branch = master
+	commit = e2245b8b8bc1532385e6fcd949ef0ad507fb221c
+	parent = cdbf03051511c32e4582a3e4d05cd92f0b787fb5
+	cmdver = 0.3.1
