@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:grondilu/openssl.git
+	branch = master
+	commit = 6f523e717164f99ef913f429c799074ad947ee43
+	parent = da6b1b6fd298eaef9d7840997eb679765d30e775
+	cmdver = 0.3.1
