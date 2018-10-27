@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:albastev/Grammar-Modelica.git
+	branch = master
+	commit = e98b467ab3f8ab3fb317072bdd13269dc9820bb4
+	parent = e6ec23809966f76d9c96896b542a4656fdb0b104
+	cmdver = 0.3.1
