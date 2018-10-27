@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:skinkade/p6-Crypt-Bcrypt.git
+	branch = master
+	commit = cba10d2d05eaeb35b33bcf886a50b409393e1206
+	parent = 8aad49a1104b62f2ff188eaf685dcd838402b411
+	cmdver = 0.3.1
