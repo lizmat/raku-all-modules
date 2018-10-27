@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cjfields/bioperl6.git
+	branch = master
+	commit = dcf2c56f7871820b767ec274c5c7f8a7347d1d01
+	parent = d2ea32f314592ae6bd75731e9ddcc4981dc18f6a
+	cmdver = 0.3.1
