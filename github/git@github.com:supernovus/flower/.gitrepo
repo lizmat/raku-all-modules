@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/flower.git
+	branch = master
+	commit = ab4816c3f2d6e29a43296e1f3626106e314d081f
+	parent = 34d555e79e803d0e45f00fde12580b5700ae2aad
+	cmdver = 0.3.1

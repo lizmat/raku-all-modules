@@ -1,0 +1,1 @@
+* Re-add DateTime::Utils to the dependencies once Rakudo bugs are fixed.
