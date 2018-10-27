@@ -1,0 +1,17 @@
+branches:
+    only:
+        - master
+
+language: perl6
+
+perl6:
+    - latest
+
+sudo: false
+
+env:
+    - PATH=~/.rakudobrew/bin:$PATH
+
+install:
+    - rakudobrew build zef
+    - zef --deps-only --/test install .
