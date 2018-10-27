@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/p6-unix-privileges.git
+	branch = master
+	commit = d40af1a799d6c3e1e1cdf51fa6e62f382183babc
+	parent = ac6c7d47307dddfaf68b9ad6ae96e0efee87abef
+	cmdver = 0.3.1

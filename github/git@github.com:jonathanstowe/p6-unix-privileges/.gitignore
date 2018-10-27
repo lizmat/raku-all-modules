@@ -1,0 +1,5 @@
+blib/
+resources
+.precomp
+Makefile
+*.o

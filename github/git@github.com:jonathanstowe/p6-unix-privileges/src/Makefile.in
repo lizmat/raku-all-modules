@@ -1,0 +1,7 @@
+all: %DESTDIR%/%unix_privileges%
+
+%DESTDIR%/%unix_privileges%: unix_privileges%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/%unix_privileges% unix_privileges%O%
+
+unix_privileges%O%: unix_privileges.c
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT% unix_privileges%O% unix_privileges.c
