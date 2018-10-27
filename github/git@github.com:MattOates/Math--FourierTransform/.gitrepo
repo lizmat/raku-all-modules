@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:MattOates/Math--FourierTransform.git
+	branch = master
+	commit = cc8631926d8ee12e1b8bd1cfa2e740632fd44513
+	parent = 3ce3c2048e294458f40409dc8ce4f66654e8a759
+	cmdver = 0.3.1
