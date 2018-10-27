@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:azawawi/perl6-parse-selenese.git
+	branch = master
+	commit = 31a8c8f1f2a840408bc12322fc4c0272bf444cb1
+	parent = ae2f17c7dbc99109abdf6fd0ec2dcb1a436e4532
+	cmdver = 0.3.1
