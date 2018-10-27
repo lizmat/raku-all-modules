@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:gfldex/http-server-simple.git
+	branch = master
+	commit = 13390c5eb8315f60a4e28517349f23109b6fa740
+	parent = 24109afb866d1f0925e1d4487e810cf2435a57cc
+	cmdver = 0.3.1
