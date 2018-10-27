@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:azawawi/perl6-terminal-caca.git
+	branch = master
+	commit = 54cb49178c6f9dc0bbd3830021c66b2745471400
+	parent = 842d517fcd0e5ea80f2975d8a01bdda2c0813c46
+	cmdver = 0.3.1
