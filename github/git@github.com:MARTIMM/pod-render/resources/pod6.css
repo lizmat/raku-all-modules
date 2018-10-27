@@ -1,0 +1,126 @@
+pre {
+  border-width:         2px;
+  border-style:         solid;
+  border-color:         #006000;
+  padding:              2px 0 1px 5px;
+  color:                #00501e;
+  box-shadow:           16px 6px 4px #aaafaa;
+  border-radius:        4px;
+  page-break-inside:    avoid;
+}
+
+pre.pod-block-code {
+  background-color:     #eaefea;
+  font-family:          FreeMono;
+  font-size:            11pt;
+}
+
+table {
+  width:                95%;
+  margin-left:          auto;
+  margin-right:         auto;
+}
+
+td {
+  vertical-align:       top;
+}
+
+td.toc-number {
+  width:                40pt;
+/*  text-align:           right;
+*/
+}
+
+/* Adjust the google settings for linenumber padding */
+ol.linenums {
+  padding:              0;
+}
+
+table.pod-table {
+  border-style:         solid;
+  border-color:         #006000;
+  border-width:         1px;
+  box-shadow:           10px 10px 5px #a0b060;
+  background-size:      45px;
+  border-radius:        7px;
+  margin-bottom:        15px;
+  page-break-inside:    avoid;
+  font-size:            11pt;
+}
+
+table.pod-table tr:nth-child(even) {
+  background-color:     #e0ffe0;
+  border-width:         1px;
+}
+
+table.pod-table tr th {
+  background:           #c0e472;
+}
+
+h1.title {
+  border-width:         1px;
+  border-style:         solid;
+  border-color:         #006000;
+  height:               40px;
+  font-size:            1.8em;
+  padding-left:         2.0em;
+  padding-top:          2px;
+  background-color:     #c0e472;
+  background-image:     url("https://docs.perl6.org/images/Camelia.svg");
+  background-repeat:    no-repeat;
+  background-position:  7px 0px;
+  background-size:      45px;
+  box-shadow:           10px 10px 5px #a0b060;
+  border-radius:        7px;
+}
+
+a {
+  color:                blue;
+  text-decoration:      none;
+}
+
+a:hover {
+  color:                blue;
+  text-decoration:      underline;
+}
+
+a.u {
+  color:                #607f00;
+  text-decoration:      none;
+}
+
+
+a.u:hover {
+  color:                #607f00;
+  text-decoration:      underline;
+}
+
+p.subtitle {
+  font-size:            1.3em;
+}
+
+code {
+  color:                #208072;
+  font-size:            larger;
+}
+
+.footer {
+/*
+  position:             absolute;
+  right:                0;
+  bottom:               0;
+  left:                 0;
+*/
+  right:                0;
+  left:                 0;
+  padding:              2px 5px 0 0;
+  background-color:     #c0e472;
+  font-size:            8pt;
+  text-align:           right;
+  box-shadow:           6px 6px 4px #a0b060;
+  border-radius:        4px;
+  border-width:         1px;
+  border-style:         solid;
+  border-color:         #006000;
+}
+
