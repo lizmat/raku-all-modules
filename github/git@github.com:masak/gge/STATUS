@@ -1,0 +1,81 @@
+PGE contains three regex engines: a Perl 6 one, a Perl 5 one, and one for
+file globbing. The current focus on GGE is to port the Perl 6 regex engine
+enough to be able to parse arbitrary Perl 6 grammars (to the extent that
+PGE can).
+
+The implementation work proceeds in order of the PGE test files. The
+rx_quantifiers was the first one to be attacked, because quantifiers seemed
+like great fun.
+
+The OPTable tests were next. Only one test was marked TODO in there; it
+depends on the :parsed argument accepting a GGE::Perl6Regex object as its
+value. (No real obstacle to that one; just haven't found it necessary.)
+
+All tests pass in rx_metachars. A few tests are marked TODO in rx_charclass,
+having to do with double-quoted literals. The test marked TODO in rx_backtrack
+is marked TODO in PGE as well, and pmichaud has confirmed it's likely bogus.
+
+Some tests had to be marked TODO in rx_modifiers, because they used lookahead,
+which isn't implemented yet. Some TODOs in rx_captures were inherited from
+PGE.
+
+name          tests status
+--------------------------------------------------
+rx_quantifiers  179 DONE (a few todo tests remain)
+t/03-optable.t   42 DONE (one todo test remains)
+rx_metachars    238 DONE
+rx_charclass     63 DONE (a few todo tests remain)
+rx_backtrack     23 DONE (one todo test remains)
+rx_modifiers    102 DONE (a few todo tests remain)
+rx_captures      48 DONE (a few todo tests remain)
+rx_subrules      60 DONE
+rx_lookarounds   33 DONE
+rx_goal          11 work in progress
+
+rx_syntax        33 to be done
+
+Here's a copy of PGE's STATUS, adapted for GGE:
+
+Perl 6 rule features implemented
+--------------------------------
+* standard regular expression constructs
+* quantifiers (*, +, ?, *?, +?, ??, **{m..n}?)
+* alternation  (|)
+* conjunction  (&)
+* non-capturing groups
+* enumerated character lists (<[abcdef]>, <-[a..f]>)
+* character classes (., \d, \w, \s, \n, \e, \f, \r, \t, \x[hhh], \o[nnn])
+* anchors (^, $, ^^, $$, \b, \b)
+* \c[...] and \C[...]
+* cut operators (:, ::, :::, <commit>)
+* capturing groups
+* modifiers :i, :ignorecase, :s, :sigspace (with synonyms :w and :words)
+* negated character classes 
+* capturing subrules (<expr>)
+* non-capturing subrules  (<.expr>)
+* negated subrules (<!expr>)
+* built-in rules: <alpha>, <digit>, <alnum>, <upper>, <lower>,
+    <xdigit>, <space>, <punct>
+* backreferences ($0, $1, $<foo>)
+* scalar subrule and subpattern aliases ($<foo>:=(...), $0:=(...))
+* composed character classes (<+alpha-[aeiou]>)
+
+
+Perl 6 rule features to-do
+--------------------------
+* lookahead and lookbehind (<before> and <after>)
+* built-in rules: <null>, <fail>, <print>, <graph>,
+    <blank>, <sp>, <lt>, <gt>, <dot>, <ws>, <p6rule>, <p5regexp>
+* balanced delimited text (<GGE::Text::bracketed>)
+* embedded closures ({{ puts "hello" }})
+* :lang() modifier
+* firstchar/nextchar optimizations
+* lookbehind according to S05 definition 
+* <cut> assertion
+* versions of <commit> and cuts that release backtracking state
+* :perl5 modifier
+* literal assertions (<'literal'>)
+* interpolated assertions (<"literal">)
+* array and hash aliasing (@<foo>:=(...), %<foo>:=(...))
+* don't generate unneeded internal data structures (e.g., gpad)
+
