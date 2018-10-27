@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Takadonet/Algorithm--Diff.git
+	branch = master
+	commit = 3e2e24b4757506885a6ea6539d5f40c092389aa9
+	parent = e8e00f22ea9dca785104791f8f0db88730098028
+	cmdver = 0.3.1
