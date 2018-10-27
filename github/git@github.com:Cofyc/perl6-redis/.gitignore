@@ -1,0 +1,5 @@
+/Makefile
+/.DS_Store
+/blib
+dump.rdb
+.precomp

@@ -1,0 +1,16 @@
+{
+  "name": "Redis",
+  "source-url": "git://github.com/Cofyc/perl6-redis.git",
+  "perl": "6.*",
+  "source-type": "git",
+  "author": "Yecheng Fu",
+  "depends": [
+    
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "Redis": "lib/Redis.pm"
+  },
+  "version": "0.1.0",
+  "description": "A Perl6 binding for Redis"
+}

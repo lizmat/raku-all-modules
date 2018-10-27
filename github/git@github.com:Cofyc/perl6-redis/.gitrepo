@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Cofyc/perl6-redis.git
+	branch = master
+	commit = 6793f7fb3c3d9f07de5f34cd0c6fcf3132b177ef
+	parent = 84b68284e8f51d3ad164e690f2370b3a35a6d676
+	cmdver = 0.3.1
