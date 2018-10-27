@@ -1,0 +1,30 @@
+Yapsi Roadmap
+-------------
+
+Last updated: 2011-05-01
+
+This roadmap deliberately limits itself by the horizons of the current
+design. That is, it would certainly be possible to dream further than
+this document does, but this document doesn't.
+
+C backend
+---------
+
+It would be interesting to explore how fast a SIC *bytecode* interpreter
+could be made to run. (SIC bytecode would simply be the textual SIC
+instructions converted into a bytecode format.) The Perl 6 Yapsi runtime
+isn't optimized to be fast, but this one could be.
+
+Mid-term goals
+--------------
+
++ &return
++ FIRST, LAST phasers
++ &last, &redo, &next (using control exceptions)
++ &return re-implemented using control exceptions
++ &die using control exceptions
++ INIT, END phasers
++ START phaser
++ LEAVE/KEEP/UNDO phasers
++ PRE, POST phasers
++ CATCH, CONTROL phasers

@@ -1,0 +1,50 @@
+#!/usr/bin/env perl6
+use v6;
+use Yapsi;
+
+constant @TARGETS = <run future sic>;
+
+sub run-code($program, :$target) {
+    state Yapsi::Compiler $compiler .= new;
+    state Yapsi::Runtime  $runtime  .= new;
+    
+    try {
+        my @output = $target eq 'future'
+            ?? $compiler.to-future($program)
+            !! $compiler.compile($program);
+        warn $_ for $compiler.warnings;
+        
+        if $target eq 'run' {
+            $runtime.run(@output);
+        }
+        else {
+            .say for @output;
+        }
+        CATCH {
+            default {
+                say $_;
+            }
+        }
+    }
+}
+
+multi MAIN(  Str $file-name
+           , Str :$target = 'run') {
+    run-code $file-name.IO.slurp, :$target;
+}
+
+multi MAIN(  Str :e($programm)!
+           , Str :$target = 'run') {
+    
+    run-code $programm, :$target;
+}
+
+multi MAIN(Str :$target = 'run') {
+    while defined my $program = prompt('>>> ') {
+        run-code($program, :$target);
+    }
+}
+
+sub USAGE {
+    say "Usage: $*PROGRAM-NAME [--target=<@TARGETS[]>] [-e=<expression>] <file-name>"
+}
