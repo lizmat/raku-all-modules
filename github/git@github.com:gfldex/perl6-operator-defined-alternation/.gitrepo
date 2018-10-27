@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:gfldex/perl6-operator-defined-alternation.git
+	branch = master
+	commit = 78be622c14e953fc0ac14b230d2ada52d6ceb5a5
+	parent = 4054e9adf11d89dba9c11ccb02d3e03fed69d842
+	cmdver = 0.3.1
