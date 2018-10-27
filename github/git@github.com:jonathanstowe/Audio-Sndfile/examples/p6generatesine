@@ -1,0 +1,15 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+use Audio::Sndfile;
+
+multi sub MAIN(Int :$samplerate = 44100, Int :$frequency = 440, Int :$duration = 1, Str :$filename!) {
+    my $format = Audio::Sndfile::Info::WAV +| Audio::Sndfile::Info::FLOAT;
+    my $as = Audio::Sndfile.new(:$filename, :$format, channels => 1, :$samplerate, :w);
+    my Num @sin =  (0 .. ($samplerate/$frequency)).map({ sin(($_/($samplerate/$frequency)) * (2 * pi))});
+    my $m = ( $samplerate / @sin.elems ) * $duration;
+    @sin = @sin xx $m;
+    $as.write-float(@sin);
+    $as.close;
+}
