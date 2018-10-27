@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/RPi-Device-SMBus.git
+	branch = master
+	commit = 02078f1f2596b05de5933b37661d7b780aa2b89b
+	parent = e9da546a19828140f903e518ac440d1949a216e5
+	cmdver = 0.3.1
