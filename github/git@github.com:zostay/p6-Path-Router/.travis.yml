@@ -1,0 +1,11 @@
+language: perl6
+perl6:
+  - latest
+  - '2018.04'
+install:
+  - rakudobrew build-zef
+  - zef install --depsonly .
+script:
+  - prove -v -e "perl6 --ll-exception -Ilib" t
+after_success:
+  - zef list --installed --verbose
