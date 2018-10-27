@@ -1,0 +1,8 @@
+language: perl6
+os:
+  - linux
+  - osx
+sudo: required
+before_install:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libgeoip1; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install geoip; fi
