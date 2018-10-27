@@ -1,0 +1,10 @@
+.directory
+#*.pdf
+*.html
+*/*.html
+Old/*
+Tests/*
+*.log
+.precomp
+*/.procomp
+*.zargo~
