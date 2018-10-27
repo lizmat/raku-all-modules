@@ -1,0 +1,36 @@
+{
+	"name" : "Printer::ESCPOS",
+	"version" : "1.0.1",
+	"description" : "Interface to ESCPOS printers",
+	"author": "Shantanu Bhadoria <shantanu@cpan.org>",
+	"authors" : [
+		"Shantanu Bhadoria <shantanu@cpan.org>"
+	],
+	"auth" : "github:shantanubhadoria",
+	"support" : {
+	  "source" : "git://github.com/shantanubhadoria/p6-Printer-ESCPOS.git",
+		"bugtracker" : "git://github.com/shantanubhadoria/p6-Printer-ESCPOS/issues"
+	},
+	"source-url" : "git://github.com/shantanubhadoria/p6-Printer-ESCPOS.git",
+	"perl" : "6",
+	"build-depends" : [],
+	"depends" : [],
+	"test-depends" : [
+		"Test"
+	],
+	"provides" : {
+		"Printer::ESCPOS" : "lib/Printer/ESCPOS.pm6",
+		"Printer::ESCPOS::Network" : "lib/Printer/ESCPOS/Network.pm6",
+		"Printer::ESCPOS::Network::Async" : "lib/Printer/ESCPOS/Network/Async.pm6"
+	},
+	"tags" : [
+	  "Printer",
+	  "ESCPOS",
+	  "Receipt",
+	  "Thermal",
+	  "ESC/P",
+	  "EPSON"
+	],
+	"resources" : [  ],
+	"license" : "Artistic"
+}
