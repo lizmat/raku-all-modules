@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:timo/cairo-p6.git
+	branch = master
+	commit = db531f0f997e7e9ec768fcd4749517c1afc6f6a6
+	parent = 0ef5c26283cf301240ad5d44dafe380c77c834c9
+	cmdver = 0.3.1

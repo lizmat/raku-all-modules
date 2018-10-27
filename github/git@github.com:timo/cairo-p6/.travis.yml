@@ -1,0 +1,13 @@
+language: perl6
+perl6:
+  - latest
+addons:
+  apt:
+    packages:
+      - libcairo2
+install:
+  - rakudobrew build-zef
+  - zef install --depsonly .
+script:
+  - zef test .
+sudo: false
