@@ -1,0 +1,47 @@
+#!perl6
+
+=begin pod
+
+=head1 NAME
+
+lumberjack-application  -  run the Lumberjack::Application
+
+=head1 SYNOPSIS
+
+=begin code
+
+    lumberjack-application [--port=8898] [--console]
+
+=end code
+
+=head1 DESCRIPTION
+
+This is a simple wrapper to run the Lumberjack::Application in the
+default P6SGI container (HTTP::Server::Tiny) on a specified port.
+
+It provides a minimal facility for receiving the log messages
+sent by C<Lumberjack::Dispatcher::Proxy> and serving them up on
+a WebSocket application for viewing.
+
+This uses the default configuration for the web layout as provided
+by Lumberjack::Application - that is the log receiver is located at
+C</log>, the Websocket endpoint is at C</socket> and the main log
+page is at C</> : if you require a different configuration then you
+may want to assemble the parts yourself.
+
+=end pod
+
+use Lumberjack;
+use Lumberjack::Application;
+
+multi sub MAIN(Int :$port = 8898, Bool :$console = False) {
+
+    if $console {
+        Lumberjack.dispatchers.append: Lumberjack::Dispatcher::Console.new(:colour);
+    }
+
+    my $application = Lumberjack::Application.new(:$port);
+    $application.run;
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
