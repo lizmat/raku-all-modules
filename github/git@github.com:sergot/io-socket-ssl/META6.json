@@ -1,0 +1,11 @@
+{
+    "perl"        : "6.*",
+    "name"        : "IO::Socket::SSL",
+    "version"     : "0.0.1",
+    "auth"        : "github:sergot",
+    "description" : "IO::Socket::SSL for Perl 6 using OpenSSL",
+    "depends"     : ["OpenSSL"],
+    "provides"    : { "IO::Socket::SSL" : "lib/IO/Socket/SSL.pm6" },
+    "source-url"  : "git://github.com/sergot/io-socket-ssl.git",
+    "tags"        : [ "SSL", "Sockets" ]
+}
