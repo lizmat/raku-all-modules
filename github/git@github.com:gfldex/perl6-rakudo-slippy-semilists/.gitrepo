@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:gfldex/perl6-rakudo-slippy-semilists.git
+	branch = master
+	commit = 3cfd2989acdbd61297c5ba20c14e069bc3f9f095
+	parent = 544d9f4026a9d942e155b669ff86a55a098b07de
+	cmdver = 0.3.1
