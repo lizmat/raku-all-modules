@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:perl6-community-modules/URI-Encode.git
+	branch = master
+	commit = 2bcd7edda251007d844d80f9db09b08f3caefcb8
+	parent = 56e3ac8d8ff005e9c6ef31fcc5c2ff6ea9b52ea6
+	cmdver = 0.3.1
