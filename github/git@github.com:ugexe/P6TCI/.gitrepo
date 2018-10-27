@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:ugexe/P6TCI.git
+	branch = master
+	commit = de2637881b763094b3eebea713b076eac4e6316b
+	parent = af63ffe8db583ab51b7295c86088923897a498b4
+	cmdver = 0.3.1
