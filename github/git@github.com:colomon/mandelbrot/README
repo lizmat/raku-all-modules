@@ -1,0 +1,2 @@
+The Perl 6 sccripts mandelbrot.pl and mandelbrot-color.pl emit PBM and PMM
+files to STDOUT, showing a small Mandelbrot fractal.
