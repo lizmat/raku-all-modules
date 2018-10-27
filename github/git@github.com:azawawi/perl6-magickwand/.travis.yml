@@ -1,0 +1,22 @@
+sudo: required
+
+language: perl6
+
+os:
+  - linux
+  - osx
+
+perl6:
+  - latest
+
+install:
+  - echo $TRAVIS_OS_NAME
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get -qq update                   ; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libmagickwand-dev ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then brew update                               ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then brew install imagemagick@6                ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then ln -s /usr/local/opt/imagemagick@6/lib/*.dylib* /usr/local/lib/ ; fi
+  - rakudobrew build zef
+  - zef --depsonly install .
+
+script: prove -v -e perl6 t/

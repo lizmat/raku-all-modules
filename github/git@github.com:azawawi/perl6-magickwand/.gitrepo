@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:azawawi/perl6-magickwand.git
+	branch = master
+	commit = 13bc0b051775f74f2422833017915dc87aebcaec
+	parent = 35ad62a522d2d6e9c82f336a11c1fd22b306916c
+	cmdver = 0.3.1
