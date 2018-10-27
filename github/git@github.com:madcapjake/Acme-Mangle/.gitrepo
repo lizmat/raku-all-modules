@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:madcapjake/Acme-Mangle.git
+	branch = master
+	commit = 9880219c13e00f8585fbb091aef0412d4a063804
+	parent = c139abc369cbce5456bf9ccc853bb8201ae73f79
+	cmdver = 0.3.1
