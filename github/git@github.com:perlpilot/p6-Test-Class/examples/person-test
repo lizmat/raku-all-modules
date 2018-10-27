@@ -1,0 +1,29 @@
+#!/usr/bin/env perl6
+
+use Person;
+use Person::Employee;
+use Test::Class;
+
+class TestsFor::Person does Test::Class {
+    has Person $.test-person is rw;
+
+    method test_setup() is test-setup {
+        $.test-person .= new( :first-name("Bob"), :last-name("Dobbs") );
+    }
+
+    method test_constructor is test(3) {
+        ok $.test-person, "We should have a test person";
+        isa-ok $.test-person, "Person", "... and the object it returns";
+        is $.test-person.full-name, 'Bob Dobbs', '... and it should return the correct full name';
+    }
+}
+
+class TestsFor::Person::Employee is TestsFor::Person {
+    method test_constructor is test {
+        callsame;
+        $.test-person.employee-number = 666;
+    }
+}
+
+Test::Class.run-tests(TestsFor::Person::Employee.new);
+#Test::Class.run-tests(TestsFor::Person::Employee.new);

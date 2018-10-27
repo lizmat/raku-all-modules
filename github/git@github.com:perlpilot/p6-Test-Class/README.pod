@@ -1,0 +1,32 @@
+=pod
+
+=head1 Test::Class
+
+Some people at work are enamored of Perl 5's Test::Class, so I thought
+I'd have a look at it. This module is an attempt to recreate much of the
+same functionality for Perl 6.
+
+There are no docs yet.  See the programs in examples/ for how to use it.
+
+Random things that come to mind though:
+
+=over 4
+
+=item * this Test::Class is a role that you can compose into your own classes
+
+=item * Instead of running Test::Class.run-tests, you execute YourClass.run-tests
+or Test::Class.run-tests(YourClass)
+
+=item * where in P5 you'd say "sub foo : Test", here you'd say "method foo is test"
+
+=item * instead of ": Test(no_plan)", you say "is test(*)" or "is tests"
+
+=item * this Test::Class will also export the Test routines so that you
+don't have to (i.e., in P5 you'd need to say "use Test::Class; use
+Test::More;" if you wanted to use the is(), ok(), etc. routines. For
+this version of Test::Class, you just say "use Test::Class;" and you've
+automatically got those routines in your lexical scope)
+
+=back
+
+=cut
