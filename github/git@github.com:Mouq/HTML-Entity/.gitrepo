@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Mouq/HTML-Entity.git
+	branch = master
+	commit = 57931c74f08344fe06459368d80f2b3a16cc5dee
+	parent = 42cfbd9c4e27f758231aaeee3e5095d5e3d621ba
+	cmdver = 0.3.1
