@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-Net-DNS.git
+	branch = master
+	commit = 9e4f973dffdac9b4ffd5dae4c1d20781df6df881
+	parent = 5115e8a3386aaeba17a1e27391a8a3d51ad9ce91
+	cmdver = 0.3.1
