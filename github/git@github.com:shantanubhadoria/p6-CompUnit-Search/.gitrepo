@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:shantanubhadoria/p6-CompUnit-Search.git
+	branch = master
+	commit = 46b1592e248a1582d5f2212c8847ee0f92297269
+	parent = 8e405ac3a201615784d423dd2a915e329b22884d
+	cmdver = 0.3.1
