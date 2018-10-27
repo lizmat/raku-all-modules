@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:moznion/p6-Text-LTSV.git
+	branch = master
+	commit = 299f787c4855d9cc26017ab15e74e2645c4481d6
+	parent = 745730770263dab158a7bfa8df84dce13ad01a72
+	cmdver = 0.3.1
