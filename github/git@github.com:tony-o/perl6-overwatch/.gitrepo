@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/perl6-overwatch.git
+	branch = master
+	commit = 265776a03930f823f2d3e4b6bd10284ef46c35e3
+	parent = 0be56f8f326124611d47ec14575da08d4584f1b1
+	cmdver = 0.3.1
