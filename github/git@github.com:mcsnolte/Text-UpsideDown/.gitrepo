@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:mcsnolte/Text-UpsideDown.git
+	branch = master
+	commit = fd45300cebd54a12e446c1f40ac0574026e1f0af
+	parent = 3d24c7c6029ccdd4808c157495147417f4f8d9c5
+	cmdver = 0.3.1
