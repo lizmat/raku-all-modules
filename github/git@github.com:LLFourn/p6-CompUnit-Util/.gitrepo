@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:LLFourn/p6-CompUnit-Util.git
+	branch = master
+	commit = fdbdc605663d951c43cd3229411d1860f725b0e3
+	parent = 3da8ab2f0b2eb4980a08d984d6f4ebfe4c1a36e1
+	cmdver = 0.3.1
