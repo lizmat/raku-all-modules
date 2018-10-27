@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/ABC.git
+	branch = master
+	commit = e9187c26814fde5d9707ba6767e6f416bfe640f4
+	parent = 2ad437c7c92513c539f1c5b9504ab1f3aa4746bf
+	cmdver = 0.3.1
