@@ -1,0 +1,6 @@
+$line_length	/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6	3	variable
+$tempfile	/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6	4	variable
+$count	/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6	5	variable
+words	/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6	14	sub
+lines	/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6	19	sub
+$length	/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6	20	variable

@@ -1,0 +1,77 @@
+#!/usr/bin/env perl6
+
+use File::Find;
+
+use lib 'lib';
+use Diviner;
+use Clairvoyant;
+
+multi sub MAIN (Bool :$help!) {
+  my $me = IO::Path.new($*PROGRAM-NAME).basename;
+
+  say 'What will it do for you?';
+  say 'You can divine completions [or examine syntax]';
+  say "Examples: $me --complete='Bar::' --file='lib/Foo/Bar.pm6'";
+  # say "          $me check lib/Foo/Bar.pm6";
+  # say "          $me check lib/Foo";
+  # say "";
+  # say 'You can provide a custom set of rules:';
+  # say "          $me check -o ~/p6dx-rules.info lib/Foo";
+  say "";
+  say 'You can use a META.info file to gather completions:';
+  say "          $me --complete='Bar::' --meta";
+}
+
+multi sub MAIN (Str :$complete!, Str :$file) {
+  my @files = do with $file { $file.IO.flat.list } else {
+    find(
+      :dir('.'),
+      :type('file'),
+      :name(rx!(\.p[m|l]?6?)$!)
+    )».IO.flat.list;
+  }
+  say completions($complete, @files);
+}
+
+multi sub MAIN (Str :$complete!, Bool :$meta!) {
+  my @files = find(
+      :dir('.'),
+      :type('file'),
+      :name(rx!(\.p[m|l]?6?)$!)
+    )».IO.flat.list;
+  my @src-comps = completions($complete, @files);
+  my @dep-comps = completions($complete, dep-mod-files(), :external);
+  with @dep-comps { @src-comps.append: @dep-comps } else { @src-comps }
+}
+
+multi sub MAIN (Str :$complete!, Int :$meta!) {
+  say meta-info($meta);
+}
+
+multi sub MAIN (Bool :$tags!, IO(Str) :$file, Bool :$json, Bool :$ctag, Bool :$all) {
+  my @files = do with $file { [$file] } else {
+    find(:dir('.'), :type('file'), :name(rx!(\.p[m|l]?6?)$!))».IO.flat.list;
+  }
+  if $json {
+    say tags-json(@files, :$all);
+  } elsif $ctag {
+    tags-ctag(@files, :$all).map: { .say };
+  } else {
+    say "Unknown tag style!";
+  }
+}
+
+=for debugging
+multi sub MAIN (Bool :$deps!) { for dep-mod-files() { .fmt.say } }
+
+multi sub MAIN (Bool :$test!) { say $Diviner::foo }
+
+=for Juerd
+multi sub MAIN ('complete', Str $begin, Bool :$m) {
+  # Clairvoyant::meta-info();
+  say 'worked!'
+}
+multi sub MAIN ('complete', Str $begin, Bool :$m!, Int :$depth) {
+  # Clairvoyant::meta-info($depth);
+  say 'depth worked!'
+}

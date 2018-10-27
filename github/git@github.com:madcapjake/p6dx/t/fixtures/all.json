@@ -1,0 +1,8 @@
+[
+	{ "line" : 3, "name" : "$line_length", "file" : "/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6", "kind" : "variable" },
+	{ "line" : 4, "name" : "$tempfile", "file" : "/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6", "kind" : "variable" },
+	{ "line" : 5, "name" : "$count", "file" : "/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6", "kind" : "variable" },
+	{ "line" : 14, "name" : "words", "file" : "/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6", "kind" : "sub" },
+	{ "line" : 19, "name" : "lines", "file" : "/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6", "kind" : "sub" },
+	{ "line" : 20, "name" : "$length", "file" : "/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6", "kind" : "variable" }
+]
