@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:bbkr/jsonrpc.git
+	branch = master
+	commit = 3b4797efc92d501fa5d5a3198457b7c16e091f7d
+	parent = 132f47c9669bfc1a67ae14ea42de6a82327a93a5
+	cmdver = 0.3.1

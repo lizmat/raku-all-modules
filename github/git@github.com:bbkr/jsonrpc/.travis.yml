@@ -1,0 +1,7 @@
+language: perl6
+os:
+    - linux
+    - osx
+install:
+    - rakudobrew build zef
+    - zef --depsonly --force-test install .
