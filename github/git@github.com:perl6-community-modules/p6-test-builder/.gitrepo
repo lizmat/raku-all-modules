@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:perl6-community-modules/p6-test-builder.git
+	branch = master
+	commit = 36c076924d4831d9bce523771b712c18b396ba6e
+	parent = b175a504332d4ad31b613da7877d35952ebc3f6c
+	cmdver = 0.3.1
