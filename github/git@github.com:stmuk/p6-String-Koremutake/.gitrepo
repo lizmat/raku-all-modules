@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:stmuk/p6-String-Koremutake.git
+	branch = master
+	commit = 9bd817c3883c3080823b76458a6594f9f0a2f1fc
+	parent = 0311dcbe120fe966103034df1ddb2f68d082128b
+	cmdver = 0.3.1
