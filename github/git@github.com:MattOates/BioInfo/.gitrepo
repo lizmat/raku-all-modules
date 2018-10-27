@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:MattOates/BioInfo.git
+	branch = master
+	commit = d7a1f33eead5a8674fd5cb214d4765c22f4059fc
+	parent = 7229327de946144c0866a59b124b8e98565c1f95
+	cmdver = 0.3.1
