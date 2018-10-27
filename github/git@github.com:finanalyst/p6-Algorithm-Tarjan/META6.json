@@ -1,0 +1,18 @@
+{
+  "authors" : [
+    "Richard Hainsworth aka finanalyst"
+  ],
+  "build-depends" : [],
+  "depends" : [],
+  "description" : "Find cycles in a directed graph using Tarjan's strongly connected component algorithm",
+  "name" : "Algorithm::Tarjan",
+  "perl" : "6.c",
+  "provides" : {
+    "Algorithm::Tarjan" : "lib/Algorithm/Tarjan.pm6"
+  },
+  "resources" : [],
+  "source-url" : "git://github.com/finanalyst/p6-Algorithm-Tarjan.git",
+  "test-depends" : ["Test" ],
+  "version" : "0.01",
+  "license": "Artistic"
+}
