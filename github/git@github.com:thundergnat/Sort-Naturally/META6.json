@@ -1,0 +1,16 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Sort::Naturally",
+    "version"     : "0.2.1",
+    "description" : "Provides several routines to ease natural sorting.",
+    "authors"     : [ "Steve Schulze (thundergnat)" ],
+    "provides"    : {
+        "Sort::Naturally" : "lib/Sort/Naturally.pm6"
+    },
+    "depends"     : [],
+    "source-type" : "git",
+    "source-url"  : "git://github.com/thundergnat/Sort-Naturally.git",
+    "license"     : "Artistic-2.0",
+    "tags"        : [ "Sort", "Comparitor", "Number String" ]
+}
+
