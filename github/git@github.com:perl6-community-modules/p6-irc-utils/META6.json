@@ -1,0 +1,17 @@
+{
+  "name": "IRC::Utils",
+  "source-url": "git://github.com/perl6-community-modules/p6-irc-utils.git",
+  "authority": "soh-cah-toa",
+  "perl": "6.*",
+  "source-type": "git",
+  "author": "Kevin Polulak",
+  "depends": [
+    
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "IRC::Utils": "lib/IRC/Utils.pm"
+  },
+  "version": "0.2.0",
+  "description": "A Perl 6 port of the IRC::Utils module"
+}

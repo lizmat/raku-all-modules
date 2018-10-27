@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:perl6-community-modules/p6-irc-utils.git
+	branch = master
+	commit = 14749902fc818388c8fbe164e59e7384cb394eb8
+	parent = a722e62bf48fb05e5550f6b805593382577c9819
+	cmdver = 0.3.1
