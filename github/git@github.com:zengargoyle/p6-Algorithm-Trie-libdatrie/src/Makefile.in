@@ -1,0 +1,19 @@
+
+LIBRARY = libdatrie%SO%
+
+OBJECTS = \
+					alpha-map%O%   \
+					darray%O%      \
+					dstring%O%     \
+					fileutils%O%   \
+					tail%O%        \
+					trie%O%        \
+					trie-string%O%
+
+all: %DESTDIR%/$(LIBRARY)
+
+%DESTDIR%/$(LIBRARY): $(OBJECTS)
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/$(LIBRARY) $(OBJECTS)
+
+.c%O%:
+	%CC% -c %CCSHARED% %CCFLAGS% -I. %CCOUT%$@ $<
