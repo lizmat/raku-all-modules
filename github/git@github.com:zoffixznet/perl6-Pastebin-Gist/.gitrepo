@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:zoffixznet/perl6-Pastebin-Gist.git
+	branch = master
+	commit = d1f9d69756ba8182b098da187d3e1f4fd6f71e14
+	parent = 63dd7f658f74c02a9baf357a9e96c0ce280d1795
+	cmdver = 0.3.1
