@@ -1,0 +1,14 @@
+{
+    "perl" : "6.*",
+    "name" : "PerlMongers::Hannover",
+    "version" : "0.8.6",
+    "description" : "Hannover Perl Mongers.",
+    "provides" : {
+        "PerlMongers::Hannover" : "lib/PerlMongers/Hannover.pm"
+    },
+    "authors" : "Paul Cochrane",
+    "license" : "Artistic-2.0",
+    "depends" : [ "IO::Capture::Simple" ],
+    "test-depends" : [ "Test::META" ],
+    "source-url" : "git://github.com/paultcochrane/Perl6Mongers-Hannover.git"
+}
