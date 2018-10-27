@@ -1,0 +1,15 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Acme::Addslashes",
+    "version"     : "0.1.2",
+    "description" : "PHP security. Now in Perl 6.",
+    "build-depends" : [ ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [ ],
+    "provides" : {
+        "Acme::Addslashes" : "lib/Acme/Addslashes.pm"
+    },
+    "source-url"  : "git://github.com/xfix/perl6-Acme-Addslashes.git"
+}
