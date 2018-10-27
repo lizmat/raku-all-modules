@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/Module-Toolkit.git
+	branch = master
+	commit = 659aee08c46e133c91a8619019a7b724f8e7b2ca
+	parent = d73803e08d470406cf5b0a79f16169716b62eeed
+	cmdver = 0.3.1
