@@ -1,0 +1,20 @@
+A simple Perl 6 module for serializing and deserializing JSON5. (see: json5.org)
+
+This is a fork of JSON::Tiny modified to support the JSON5 format.
+
+All files (unless noted otherwise) can be used, modified and redistributed
+under the terms of the Artistic License Version 2. Examples (in the
+documentation, in tests or distributed as separate files) can be considered
+public domain.
+
+Missing features:
+
+ * Correct handling and tests for surrogate pairs
+ * Detection of cycles in input data structures (might never be fixed)
+
+Credits for JSON::Tiny
+    Moritz Lenz <moritz@faui2k3.org>
+    Johan Viklund
+    Jonathan Worthington
+
+Alexander Moquin (Mouq) added the JSON5 features.

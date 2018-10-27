@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Mouq/json5.git
+	branch = master
+	commit = b2968f31859596336e59a05ebe1226c1bcfaf698
+	parent = cc740221c0c9269e9fc75f0c012df7d8910c6a89
+	cmdver = 0.3.1
