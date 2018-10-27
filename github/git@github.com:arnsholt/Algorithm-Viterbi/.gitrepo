@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:arnsholt/Algorithm-Viterbi.git
+	branch = master
+	commit = 329f269db71b1f21269add626ffc8ab73e1b47f6
+	parent = f37e14376303c24827ec8b331cc704a8065475a5
+	cmdver = 0.3.1
