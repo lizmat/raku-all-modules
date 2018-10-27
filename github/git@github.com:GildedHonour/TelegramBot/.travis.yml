@@ -1,0 +1,15 @@
+language: perl6
+
+notifications:
+  email: false
+
+perl6:
+  - latest
+
+branches:
+  only:
+    - master
+
+install:
+    - rakudobrew build-panda
+    - panda install HTTP::UserAgent JSON::Tiny
