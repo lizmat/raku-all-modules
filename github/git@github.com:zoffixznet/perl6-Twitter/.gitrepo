@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:zoffixznet/perl6-Twitter.git
+	branch = master
+	commit = 3eae6e7f0eb298237cd6643484ab0957d9079b76
+	parent = 3363f855bbae0faeb19de626b5da2bc3e2423b63
+	cmdver = 0.3.1
