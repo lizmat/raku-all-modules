@@ -1,0 +1,15 @@
+.PHONY: clean test
+
+all: %DESTDIR%/resources/libraries/%sha1%
+
+clean:
+	-rm %DESTDIR%/resources/libraries/%sha1% %DESTDIR%/*.o
+
+%DESTDIR%/resources/libraries/%sha1%: sha1%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/resources/libraries/%sha1% sha1%O%
+
+sha1%O%: src/sha1.c
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT% sha1%O% src/sha1.c
+
+test: all
+	prove -e "perl6 -Ilib" t
