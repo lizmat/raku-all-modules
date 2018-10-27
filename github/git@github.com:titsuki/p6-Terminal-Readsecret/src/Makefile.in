@@ -1,0 +1,8 @@
+name = %readsecret%
+
+all: %DESTDIR%/resources/libraries/%readsecret%
+clean:
+	rm %DESTDIR%/resources/libraries/%readsecret%
+
+%DESTDIR%/resources/libraries/%readsecret%: readsecret.c
+	%CC% -shared %CCSHARED% %CCFLAGS% readsecret.c -o %DESTDIR%/resources/libraries/%readsecret%
