@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-Net-IMAP.git
+	branch = master
+	commit = b5d072331a28693c029e33ca0deece35163e8161
+	parent = 17ddb84c80321350ffe14987bd66d7b904df1885
+	cmdver = 0.3.1
