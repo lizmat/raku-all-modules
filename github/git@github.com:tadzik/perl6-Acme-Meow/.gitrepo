@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/perl6-Acme-Meow.git
+	branch = master
+	commit = 5b1e7553da1686b3a141334a6b1e966daf5e3463
+	parent = da7f40cae03938271665402366989399bd12704e
+	cmdver = 0.3.1
