@@ -1,0 +1,11 @@
+{
+	"perl"		: "6.*",
+	"name"		: "Term::ProgressBar",
+	"version"	: "*",
+	"description"	: "Perl 6 implementation of Progress Bar.",
+	"provides" : {
+		"Term::ProgressBar" : "lib/Term/ProgressBar.pm"
+	},
+	"depends"	: ["IO::Capture::Simple"],
+	"source-url"	: "git://github.com/sergot/Term--ProgressBar.git"
+}
