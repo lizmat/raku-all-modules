@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Heather/ignore.git
+	branch = master
+	commit = 6901aecff4c02a1751d277c263b0f5da90c637bd
+	parent = 506c3ddb653873e1899271679535971ae1e9c9ab
+	cmdver = 0.3.1
