@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:zoffixznet/perl6-RakudoPrereq.git
+	branch = master
+	commit = deadfbebf4bcb89331c33f293a4f869d875f27d5
+	parent = 7b5928d4a84a2d988950a92b16b48bb6a6ddbd43
+	cmdver = 0.3.1
