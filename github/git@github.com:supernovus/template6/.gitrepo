@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/template6.git
+	branch = master
+	commit = b49623478a221840875850e5382bebed8a2b643a
+	parent = 3b15705bd02706ea6f8bc25ee741ccbb819b2eeb
+	cmdver = 0.3.1
