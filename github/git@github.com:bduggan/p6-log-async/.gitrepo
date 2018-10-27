@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:bduggan/p6-log-async.git
+	branch = master
+	commit = c049ed705b2e0c09ba9bedbc59e8de70f0571be0
+	parent = 6595991940e725c223370ee8afb3e4bcd04077dd
+	cmdver = 0.3.1
