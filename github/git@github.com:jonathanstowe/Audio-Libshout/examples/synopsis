@@ -1,0 +1,14 @@
+use Audio::Libshout;
+
+my $shout = Audio::Libshout.new(password => 'hackme', mount => '/foo', format => Audio::Libshout::Format::MP3);
+my $fh = @*ARGS[0].IO.open(:bin);
+my $channel = $shout.send-channel;
+
+while not $fh.eof {
+	my $buf = $fh.read(4096);
+	$channel.send($buf);
+}
+
+$fh.close;
+$channel.close;
+$shout.close;

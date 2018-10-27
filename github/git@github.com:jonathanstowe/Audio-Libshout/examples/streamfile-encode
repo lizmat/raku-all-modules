@@ -1,0 +1,49 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+use AccessorFacade;
+use Audio::Encode::LameMP3;
+use Audio::Libshout;
+use Audio::Sndfile;
+
+multi sub MAIN(Str :$host = 'localhost', Int :$port = 8000, Str :$user = 'source', Str :$password!, Int :$bitrate = 128, Int :$quality = 5, Int :$bufsize = 512, Str :$mount = '/stream', Str :$file!, *%extra) {
+    my $file-io = $file.IO;
+
+    my $format = Audio::Libshout::Format::MP3;
+    my $sndfile = Audio::Sndfile.new(filename => $file, :r);
+
+    my $mode = do given $sndfile.channels {
+        when 2 {
+            Audio::Encode::LameMP3::JointStereo;
+        }
+        when 1 {
+            Audio::Encode::LameMP3::Mono;
+        }
+        default {
+            die "$file has $_ channels - I only support 2 at most";
+        }
+    }
+    my $in-samplerate = $sndfile.samplerate;
+ 
+
+    my $shout = Audio::Libshout.new(:$host, :$port, :$user, :$password, :$mount, :$format, |%extra);
+    my $encoder = Audio::Encode::LameMP3.new(:$bitrate, :$mode, :$quality);
+
+    my $send-channel = $shout.send-channel;
+
+    loop {
+            my $in-pcm = $sndfile.read-short($bufsize, :raw);
+            my $encoded = $encoder.encode-short($in-pcm[0], $in-pcm[1], :raw);
+            $send-channel.send($encoded);
+            last if $in-pcm[1] != $bufsize;
+    }
+    $sndfile.close;
+    my $encoded = $encoder.encode-flush(:raw);
+    $send-channel.send($encoded);
+    $send-channel.close;
+
+    $shout.close;
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
