@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:pierre-vigier/Perl6-Math-Matrix.git
+	branch = master
+	commit = e13b20787af677fdd3b144e99268649ea677f7ad
+	parent = ad141464de9b2d23304f01da1ac07f2cedd79b52
+	cmdver = 0.3.1
