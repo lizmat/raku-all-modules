@@ -1,0 +1,14 @@
+{
+    "perl" : "6.*",
+    "name" : "DB::Rscs",
+    "version" : "0.0.2",
+    "description" : "A client library for the Ridiculously Simple Configuration System",
+    "author" : "Brad Clawsie",
+    "provides" : {
+        "DB::RSCS" : "lib/DB/Rscs.pm6"
+    },
+    "depends" : [ "HTTP::UserAgent", "JSON::Tiny" ],
+    "test-depends" : [ "HTTP::UserAgent", "JSON::Tiny" ],
+    "build-depends" : [ "HTTP::UserAgent", "JSON::Tiny" ],
+    "source-url" : "git://github.com/bradclawsie/DB-Rscs.git"
+}

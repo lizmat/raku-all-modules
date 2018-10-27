@@ -1,0 +1,21 @@
+sudo: required
+
+language: perl6
+
+perl6:
+  - latest
+
+before_install:
+  - mkdir -p $HOME/gopath/bin
+  - git clone https://github.com/bradclawsie/rscs-download $HOME/rscs-download
+  - mv $HOME/rscs-download/rscs $HOME/gopath/bin/.
+  
+install:
+  - rakudobrew build zef
+
+before_script:
+  - zef --/test --/test-depends install HTTP::UserAgent
+  - zef --/test --/test-depends install JSON::Tiny
+
+env:
+  - GOPATH=$HOME/gopath  
