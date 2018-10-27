@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:labster/p6-file-directory-tree.git
+	branch = master
+	commit = 25faef927c83eea1b688b5a324d5e11011f7305f
+	parent = 66c528843d16ff3931f5a83ae8994a2bfb6fa94c
+	cmdver = 0.3.1
