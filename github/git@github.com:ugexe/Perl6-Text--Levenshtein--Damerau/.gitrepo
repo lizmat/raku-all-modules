@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:ugexe/Perl6-Text--Levenshtein--Damerau.git
+	branch = master
+	commit = 0986a87611ce89ac1fd04b277d6295c235b1ca76
+	parent = b94d91b8e9b184617d574d2eb9411ac5f6072cb8
+	cmdver = 0.3.1
