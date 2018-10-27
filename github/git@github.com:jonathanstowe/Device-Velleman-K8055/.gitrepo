@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/Device-Velleman-K8055.git
+	branch = master
+	commit = 18b7eaad9a8d50f47a71a719e2aea222a422eac4
+	parent = d40d418fdeae074e8a8b65d3e3c3684829342089
+	cmdver = 0.3.1
