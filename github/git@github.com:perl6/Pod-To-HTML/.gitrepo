@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:perl6/Pod-To-HTML.git
+	branch = master
+	commit = e49c4d0908770334eaba126ee809635012ffacd7
+	parent = e88519fbe834dd147d2480bebdf0d31e8bc9bed5
+	cmdver = 0.3.1
