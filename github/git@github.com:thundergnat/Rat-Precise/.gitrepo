@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:thundergnat/Rat-Precise.git
+	branch = master
+	commit = 08688cafebe5f26b3d4224e8a0f4f9910ab77adc
+	parent = ca359f6a01fcc66cb3bd21a8ea2508c9c68e4295
+	cmdver = 0.3.1
