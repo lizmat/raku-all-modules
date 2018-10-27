@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:thundergnat/Prime-Factor.git
+	branch = master
+	commit = 89c22860d00696e59da195c0039b971af611642b
+	parent = f65b2cc5436e3cd7eb594158a906c1dc75fb8a9f
+	cmdver = 0.3.1
