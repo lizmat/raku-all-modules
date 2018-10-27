@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jpve/perl6-net-packet.git
+	branch = master
+	commit = afed2d712c05414687e662a4be4e7d02ff2a5f0a
+	parent = 1bab00dade3510ded9104f015f52a6fb2c70aea3
+	cmdver = 0.3.1
