@@ -1,0 +1,12 @@
+{
+    "web": {
+        "port": 8080,
+        "secret": "a_terrible_secret",
+        "logLevel": "DEBUG"
+    },
+    "db": {
+        "host": "localhost",
+        "port": 27017,
+        "auth": false
+    }
+}

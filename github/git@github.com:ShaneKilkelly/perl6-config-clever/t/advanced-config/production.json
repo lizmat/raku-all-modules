@@ -1,0 +1,12 @@
+{
+    "web": {
+        "secret": "a_real_good_secret",
+        "logLevel": "WARN"
+    },
+    "db": {
+        "host": "db.example.com",
+        "auth": true,
+        "user": "someuser",
+        "password": "password"
+    }
+}
