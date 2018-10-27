@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-LibraryMake.git
+	branch = master
+	commit = 7aae514f09c18b54e2a5d584df340b70d9776a6d
+	parent = 527fa94b272ebb4ac45f9df00acd1c2ef42d98f3
+	cmdver = 0.3.1
