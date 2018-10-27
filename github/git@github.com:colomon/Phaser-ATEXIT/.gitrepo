@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/Phaser-ATEXIT.git
+	branch = master
+	commit = 48ac3c547bee8e5c10dcdad3dd2d622e3748b3e1
+	parent = 2b07f916e2510119ed131fe36d277361278cfe47
+	cmdver = 0.3.1
