@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:dagurval/HTML-Strip.git
+	branch = master
+	commit = 43527117e067496b498d4cafe8a86f9974323b3b
+	parent = 1a3c460ce57df270822f5a9945995f00ae0f96de
+	cmdver = 0.3.1
