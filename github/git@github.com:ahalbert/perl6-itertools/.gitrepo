@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:ahalbert/perl6-itertools.git
+	branch = master
+	commit = f46f6626a617888f0edd94ed5e292b3d2f54735e
+	parent = b4931fc9513862df28b4cef666b2696f87b73c47
+	cmdver = 0.3.1
