@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/perl6-web-app-ballet.git
+	branch = master
+	commit = 59aa35f1f8af41656d601bd05d42566f02ae9e15
+	parent = c84928777bfa61ca4b3459d2b604a8dfc1da001e
+	cmdver = 0.3.1
