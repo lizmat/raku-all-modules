@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-Auth-PAM-Simple.git
+	branch = master
+	commit = 964a8bb2e1cdf11e9989f4e334f1cac28690d2f4
+	parent = 843617197a6cb14fd360737d20d0769626240a94
+	cmdver = 0.3.1
