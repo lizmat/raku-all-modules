@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/perl6-hiker.git
+	branch = master
+	commit = 9801edb62a0559cc2460550fe76dae5ace0cd589
+	parent = 1727d49985a11e2fce126ac1e5078b8506ef4591
+	cmdver = 0.3.1
