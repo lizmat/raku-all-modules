@@ -1,0 +1,33 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+use Audio::Convert::Samplerate;
+use Audio::Sndfile;
+
+
+multi sub MAIN(Str :$in-file!, Str :$out-file!, Int :$samplerate!) {
+    my $bufsize = 4192;
+    my Audio::Sndfile $in-obj = Audio::Sndfile.new(filename => $in-file, :r);
+    my Audio::Convert::Samplerate $conv-obj =  Audio::Convert::Samplerate.new(channels => $in-obj.channels);
+    my Num $ratio = ($samplerate / $in-obj.samplerate ).Num;
+
+    my Audio::Sndfile $out-obj = Audio::Sndfile.new(filename   => $out-file, 
+                                                    channels   => $in-obj.channels, 
+                                                    format     => $in-obj.format,
+                                                    samplerate => $samplerate, :w);
+
+
+    loop {
+        my @data-in = $in-obj.read-int($bufsize);
+        my Bool $last = (@data-in.elems != ($bufsize * $in-obj.channels));
+        my @data-out = $conv-obj.process-int(@data-in, $ratio, $last);
+        $out-obj.write-int(@data-out);
+        last if $last;
+    }
+
+    $in-obj.close;
+    $out-obj.close;
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
