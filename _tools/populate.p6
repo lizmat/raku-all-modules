@@ -65,7 +65,7 @@ for dir().grep(*.d).grep(*.basename eq none('_tools', '.git'))\ # source
         if $delete && $local.IO.e {
             say "Removing $local";
             use fatal;
-            try run 'git', 'rm', '-rf', $local;
+            try sink run 'git', 'rm', '-rf', $local;
             $removed++;
         }
         else {
