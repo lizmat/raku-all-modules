@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:salortiz/p6-LMDB.git
+	branch = master
+	commit = 9edd0c83b22092f918f9635591eaccb5bf4dead7
+	parent = 73553ffee62c91ab1cb3539b76ed145705bf6e1c
+	cmdver = 0.3.1
