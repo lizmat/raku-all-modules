@@ -1,0 +1,5 @@
+MessagePack.pm6 は MessagePack の Perl 6 実装です。
+
+MessagePack.pm6 の作成にあたっては以下のライブラリを参考にしています：
+    - MessagePack-JS http://github.com/cuzic/MessagePack-JS
+    - msgpack_pure   http://github.com/nayutaya/msgpack-pure

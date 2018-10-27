@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:uasi/messagepack-pm6.git
+	branch = master
+	commit = 711bd11c7e6aeb69d117e0c9b4b9b88efe4d479b
+	parent = 0b675a777d313df8a57b8f5b1ba81eea692943bc
+	cmdver = 0.3.1
