@@ -1,0 +1,34 @@
+{
+    "camera": {
+        "position":    { "x":2, "y":-7, "z":3 },
+        "object": { "x":0, "y":-0.25, "z":0 },
+        "fov": 23
+    }, "lights": [
+        {
+            "position": { "x":-3, "y":-7, "z":2 },
+            "color": { "r":0.2, "g":0.8, "b":1 },
+            "intensity": 30
+        }, {
+            "position": { "x":7, "y":-3, "z":5 },
+            "color": { "r":0.95, "g":1, "b":0.975 },
+            "intensity": 45
+        }
+    ], "objects": [
+        {
+            "geometry": {
+                "primitive": "cube",
+                "csg": [
+                    "subtract", {
+                        "primitive": "sphere",
+                        "position": { "x":1, "y":-1, "z":1 }
+                    }
+                ]
+            },
+            "material": {
+                "ambient": { "intensity": 0.01 },
+                "diffuse": { },
+                "specular": { "intensity": 0.25, "sharpness": 85 }
+            }
+        }
+    ]
+}

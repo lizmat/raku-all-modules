@@ -1,0 +1,37 @@
+{
+    "camera": {
+        "position":    { "x":-2, "y":-7, "z":3 },
+        "fov": 18
+    }, "lights": [ {
+        "position": { "x":30, "y":-60, "z":40 },
+        "intensity": 5000
+    } ], "objects": [
+        {
+            "geometry": {
+                "primitive": "cylinder",
+                "csg": [
+                    "intersect", {
+                        "primitive": "cylinder",
+                        "rotate": { "x":90 }
+                    }, "intersect", {
+                        "primitive": "cylinder",
+                        "rotate": { "y":90 }
+                    }
+                ]
+            },
+            "material": {
+                "ambient": {
+                    "color": { "r":0.4, "g":0.8, "b":1 },
+                    "intensity": 0.065
+                }, "diffuse": {
+                    "color": { "r":0.4, "g":0.8, "b":1 },
+                    "intensity": 0.85
+                }, "specular": {
+                    "color": { "r":0.85, "g":0.95, "b":1 },
+                    "intensity": 0.5,
+                    "sharpness": 80
+                }
+            }
+        }
+    ]
+}

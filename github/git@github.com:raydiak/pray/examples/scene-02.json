@@ -1,0 +1,64 @@
+{
+    "refraction": 1.3330,
+    "camera": {
+        "position":    { "x":0.5, "y":-1, "z":0.5 },
+        "object": { "x":-0.65, "y":5, "z":0.65 },
+        "fov": 35
+    },
+    "objects": [
+        {
+            "geometry": {
+                "primitive": "sphere",
+                "position": { "x":-1.75, "y":9, "z":1.25 },
+                "scale": { "x":2, "y":2, "z":2 }
+            }, "material": {
+                "ambient": {
+                    "color": { "r": 0.5, "g": 1, "b": 0.75 },
+                    "intensity": 0.1
+                }, "diffuse": {
+                    "color": { "r": 0.5, "g": 1, "b": 0.75 },
+                    "intensity": 1 
+                }, "specular": {
+                    "color": { "r": 0.5, "g": 1, "b": 0.75 },
+                    "intensity": 1,
+                    "sharpness": 77
+                }, "reflective": {
+                    "color": { "r": 0.5, "g": 1, "b": 0.75 },
+                    "intensity": 0.9
+                }
+            }
+        }, {
+            "geometry": {
+                "primitive": "sphere",
+                "position": { "x":0, "y":5, "z":0 },
+                "radius": 1
+            }, "material": {
+                "ambient": {
+                    "color": { "r": 0.25, "g": 0.5, "b": 1 },
+                    "intensity": 0.1
+                }, "diffuse": {
+                    "color": { "r": 0.25, "g": 0.5, "b": 1 },
+                    "intensity": 1 
+                }, "specular": {
+                    "color": { "r": 0.25, "g": 0.5, "b": 1 },
+                    "intensity": 1,
+                    "sharpness": 77
+                }, "reflective": {
+                    "color": { "r": 0.25, "g": 0.5, "b": 1 },
+                    "intensity": 0.9
+                }, "transparent": {
+                    "color": { "r": 0.25, "g": 0.5, "b": 1 },
+                    "intensity": 0.75,
+                    "refraction": 1.1
+                }
+            }
+        }
+    ],
+    "lights": [
+        {
+            "position": { "x":3, "y":0, "z":1 },
+            "color": { "r": 1, "g": 0.9, "b": 0.8 },
+            "intensity": 75
+        }
+    ]
+}
