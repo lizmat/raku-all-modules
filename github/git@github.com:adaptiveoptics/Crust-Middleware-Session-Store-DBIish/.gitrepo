@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:adaptiveoptics/Crust-Middleware-Session-Store-DBIish.git
+	branch = master
+	commit = 48b42b527862e82af61f0c1e855759107945e4f7
+	parent = bf94486ce668d427c1561969c34bebb7bbaee650
+	cmdver = 0.3.1
