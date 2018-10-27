@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-Compress-Zlib.git
+	branch = master
+	commit = 59e77d41cc4c68b1b617940aa0560400e0835e21
+	parent = ec24a6c4905e76845ac2aa6b412b5f04523779d4
+	cmdver = 0.3.1
