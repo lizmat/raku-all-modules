@@ -1,0 +1,14 @@
+{
+  "name"        : "Net::Pcap",
+  "version"     : "v0.0.1",
+  "description" : "libpcap bindings",
+  "author"      : "Jorn van Engelen",
+  "depends"     : [ ],
+  "provides"    : {
+    "Net::Pcap"            : "lib/Net/Pcap.pm6",
+    "Net::Pcap::C_Buf"     : "lib/Net/Pcap/C_Buf.pm6",
+    "Net::Pcap::Linktype"  : "lib/Net/Pcap/Linktype.pm6",
+    "Net::Pcap::Dump"      : "lib/Net/Pcap/Dump.pm6"
+  },
+  "source-url"  : "git://github.com/jpve/perl6-net-pcap.git"
+}

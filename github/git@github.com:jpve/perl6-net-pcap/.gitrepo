@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jpve/perl6-net-pcap.git
+	branch = master
+	commit = 102fb43876843557f7de448b44105761151f6acf
+	parent = 831d187097551696f777eb28368b32cb1b38b183
+	cmdver = 0.3.1
