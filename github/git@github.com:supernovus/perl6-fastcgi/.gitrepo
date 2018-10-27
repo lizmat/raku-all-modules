@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/perl6-fastcgi.git
+	branch = master
+	commit = 8ff38e79080bf06a3406947be8fac3b654c9644c
+	parent = 08a1fae10ecd604ba808d84e98fb18be74e85e38
+	cmdver = 0.3.1

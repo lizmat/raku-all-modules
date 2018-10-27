@@ -1,0 +1,329 @@
+(FastCGI) [1349308828.5344] Loaded and waiting for connections.
+(FastCGI) [1349308834.6447] Received request. <6.1104>
+(C::handle) [1349308834.6513] Reading header.
+(C::handle) [1349308834.6581] Header read, parsing it. <0.0068>
+(C::handle) [1349308834.6768] Header parsed. Now reading record. <0.0186>
+(C::handle) [1349308834.6884] Record read, parsing it. <0.0116>
+(C::handle) [1349308834.7109] Record parsed. <0.0225>
+(C::handle) [1349308834.7180] Creating Request object. <0.0071>
+(C::handle) [1349308834.7252] Object created. <0.0072>
+(C::handle) [1349308834.7316] Reading header. <0.0065>
+(C::handle) [1349308834.7380] Header read, parsing it. <0.0064>
+(C::handle) [1349308834.7503] Header parsed. Now reading record. <0.0123>
+(C::handle) [1349308834.7546] Record read, parsing it. <0.0043>
+(C::handle) [1349308834.7627] Record parsed. <0.0081>
+(C::handle) [1349308834.7687] Parsing param. <0.0060>
+(C::handle) [1349308834.7750] Param parsed. <0.0063>
+(C::handle) [1349308834.7809] Reading header. <0.0059>
+(C::handle) [1349308834.7886] Header read, parsing it. <0.0078>
+(C::handle) [1349308834.8029] Header parsed. Now reading record. <0.0143>
+(C::handle) [1349308834.8104] Record read, parsing it. <0.0075>
+(C::handle) [1349308834.8278] Record parsed. <0.0174>
+(C::handle) [1349308834.8394] Parsing param. <0.0116>
+(C::handle) [1349308834.8466] Param parsed. <0.0072>
+(C::handle) [1349308834.8526] Reading header. <0.0061>
+(C::handle) [1349308834.8592] Header read, parsing it. <0.0066>
+(C::handle) [1349308834.8733] Header parsed. Now reading record. <0.0141>
+(C::handle) [1349308834.8800] Record read, parsing it. <0.0067>
+(C::handle) [1349308834.8874] Record parsed. <0.0075>
+(C::handle) [1349308834.8943] Parsing STDIN <0.0068>
+(R::env) [1349308834.9006] Going to parse params.
+(R::env) [1349308835.2428] Parsed params, adding extra meta data. <0.3422>
+(R::env) [1349308835.2485] Added meta data, returning env. <0.0056>
+(C::handle) [1349308835.2624] Build environment, sending to closure. <0.3681>
+(C::handle) [1349308835.2749] Got response from closure, sending it. <0.0126>
+(C::response) [1349308835.2828] Building status code
+(C::response) [1349308835.2886] Status built, building headers. <0.0059>
+(C::response) [1349308835.2962] Headers built, adding body. <0.0075>
+(C::response) [1349308835.3030] Building response. <0.0069>
+(C::response) [1349308835.3475] Response built, writing to socket. <0.0445>
+(C::response) [1349308835.3529] Wrote response. <0.0054>
+(C::handle) [1349308835.3578] Sent response. <0.0828>
+(FastCGI) [1349308835.3634] Completed request. <0.7186>
+(FastCGI) [1349308843.5809] Received request. <8.2175>
+(C::handle) [1349308843.5922] Reading header.
+(C::handle) [1349308843.6052] Header read, parsing it. <0.0130>
+(C::handle) [1349308843.6246] Header parsed. Now reading record. <0.0194>
+(C::handle) [1349308843.6363] Record read, parsing it. <0.0118>
+(C::handle) [1349308843.6512] Record parsed. <0.0149>
+(C::handle) [1349308843.6571] Creating Request object. <0.0059>
+(C::handle) [1349308843.6629] Object created. <0.0058>
+(C::handle) [1349308843.6683] Reading header. <0.0053>
+(C::handle) [1349308843.6736] Header read, parsing it. <0.0053>
+(C::handle) [1349308843.6859] Header parsed. Now reading record. <0.0123>
+(C::handle) [1349308843.6921] Record read, parsing it. <0.0062>
+(C::handle) [1349308843.6992] Record parsed. <0.0071>
+(C::handle) [1349308843.7057] Parsing param. <0.0065>
+(C::handle) [1349308843.7114] Param parsed. <0.0057>
+(C::handle) [1349308843.7175] Reading header. <0.0061>
+(C::handle) [1349308843.7245] Header read, parsing it. <0.0070>
+(C::handle) [1349308843.7384] Header parsed. Now reading record. <0.0139>
+(C::handle) [1349308843.7446] Record read, parsing it. <0.0062>
+(C::handle) [1349308843.7529] Record parsed. <0.0083>
+(C::handle) [1349308843.7578] Parsing param. <0.0048>
+(C::handle) [1349308843.7634] Param parsed. <0.0056>
+(C::handle) [1349308843.7691] Reading header. <0.0057>
+(C::handle) [1349308843.7739] Header read, parsing it. <0.0048>
+(C::handle) [1349308843.7866] Header parsed. Now reading record. <0.0126>
+(C::handle) [1349308843.7932] Record read, parsing it. <0.0066>
+(C::handle) [1349308843.8006] Record parsed. <0.0074>
+(C::handle) [1349308843.8056] Parsing STDIN <0.0050>
+(R::env) [1349308843.8105] Going to parse params.
+(R::env) [1349308844.0921] Parsed params, adding extra meta data. <0.2816>
+(R::env) [1349308844.0978] Added meta data, returning env. <0.0056>
+(C::handle) [1349308844.1058] Build environment, sending to closure. <0.3002>
+(C::handle) [1349308844.1107] Got response from closure, sending it. <0.0049>
+(C::response) [1349308844.1158] Building status code
+(C::response) [1349308844.1212] Status built, building headers. <0.0054>
+(C::response) [1349308844.1271] Headers built, adding body. <0.0059>
+(C::response) [1349308844.1348] Building response. <0.0077>
+(C::response) [1349308844.1809] Response built, writing to socket. <0.0461>
+(C::response) [1349308844.1875] Wrote response. <0.0066>
+(C::handle) [1349308844.1956] Sent response. <0.0849>
+(FastCGI) [1349308844.2049] Completed request. <0.6241>
+(FastCGI) [1349308845.3894] Received request. <1.1845>
+(C::handle) [1349308845.3957] Reading header.
+(C::handle) [1349308845.4018] Header read, parsing it. <0.0061>
+(C::handle) [1349308845.4158] Header parsed. Now reading record. <0.0140>
+(C::handle) [1349308845.4240] Record read, parsing it. <0.0082>
+(C::handle) [1349308845.4466] Record parsed. <0.0226>
+(C::handle) [1349308845.4534] Creating Request object. <0.0069>
+(C::handle) [1349308845.4606] Object created. <0.0071>
+(C::handle) [1349308845.4662] Reading header. <0.0056>
+(C::handle) [1349308845.4714] Header read, parsing it. <0.0053>
+(C::handle) [1349308845.4822] Header parsed. Now reading record. <0.0108>
+(C::handle) [1349308845.4877] Record read, parsing it. <0.0055>
+(C::handle) [1349308845.4952] Record parsed. <0.0076>
+(C::handle) [1349308845.4997] Parsing param. <0.0045>
+(C::handle) [1349308845.5033] Param parsed. <0.0036>
+(C::handle) [1349308845.5087] Reading header. <0.0054>
+(C::handle) [1349308845.5137] Header read, parsing it. <0.0050>
+(C::handle) [1349308845.5266] Header parsed. Now reading record. <0.0129>
+(C::handle) [1349308845.5324] Record read, parsing it. <0.0058>
+(C::handle) [1349308845.5400] Record parsed. <0.0075>
+(C::handle) [1349308845.5451] Parsing param. <0.0052>
+(C::handle) [1349308845.5509] Param parsed. <0.0058>
+(C::handle) [1349308845.5571] Reading header. <0.0062>
+(C::handle) [1349308845.5635] Header read, parsing it. <0.0064>
+(C::handle) [1349308845.5760] Header parsed. Now reading record. <0.0125>
+(C::handle) [1349308845.5833] Record read, parsing it. <0.0073>
+(C::handle) [1349308845.5907] Record parsed. <0.0074>
+(C::handle) [1349308845.5971] Parsing STDIN <0.0064>
+(R::env) [1349308845.6022] Going to parse params.
+(R::env) [1349308846.0751] Parsed params, adding extra meta data. <0.4729>
+(R::env) [1349308846.0800] Added meta data, returning env. <0.0049>
+(C::handle) [1349308846.0871] Build environment, sending to closure. <0.4901>
+(C::handle) [1349308846.0925] Got response from closure, sending it. <0.0053>
+(C::response) [1349308846.0979] Building status code
+(C::response) [1349308846.1031] Status built, building headers. <0.0052>
+(C::response) [1349308846.1100] Headers built, adding body. <0.0069>
+(C::response) [1349308846.1150] Building response. <0.0050>
+(C::response) [1349308846.1606] Response built, writing to socket. <0.0456>
+(C::response) [1349308846.1657] Wrote response. <0.0051>
+(C::handle) [1349308846.1704] Sent response. <0.0779>
+(FastCGI) [1349308846.1761] Completed request. <0.7867>
+(FastCGI) [1349308847.2764] Received request. <1.1003>
+(C::handle) [1349308847.2839] Reading header.
+(C::handle) [1349308847.2896] Header read, parsing it. <0.0057>
+(C::handle) [1349308847.3093] Header parsed. Now reading record. <0.0197>
+(C::handle) [1349308847.3196] Record read, parsing it. <0.0103>
+(C::handle) [1349308847.3395] Record parsed. <0.0199>
+(C::handle) [1349308847.3458] Creating Request object. <0.0063>
+(C::handle) [1349308847.3530] Object created. <0.0072>
+(C::handle) [1349308847.3579] Reading header. <0.0050>
+(C::handle) [1349308847.3637] Header read, parsing it. <0.0058>
+(C::handle) [1349308847.3748] Header parsed. Now reading record. <0.0111>
+(C::handle) [1349308847.3797] Record read, parsing it. <0.0049>
+(C::handle) [1349308847.3879] Record parsed. <0.0081>
+(C::handle) [1349308847.3944] Parsing param. <0.0065>
+(C::handle) [1349308847.4006] Param parsed. <0.0061>
+(C::handle) [1349308847.4050] Reading header. <0.0044>
+(C::handle) [1349308847.4115] Header read, parsing it. <0.0065>
+(C::handle) [1349308847.4226] Header parsed. Now reading record. <0.0111>
+(C::handle) [1349308847.4293] Record read, parsing it. <0.0067>
+(C::handle) [1349308847.4362] Record parsed. <0.0069>
+(C::handle) [1349308847.4424] Parsing param. <0.0062>
+(C::handle) [1349308847.4477] Param parsed. <0.0053>
+(C::handle) [1349308847.4530] Reading header. <0.0052>
+(C::handle) [1349308847.4595] Header read, parsing it. <0.0065>
+(C::handle) [1349308847.4710] Header parsed. Now reading record. <0.0115>
+(C::handle) [1349308847.4754] Record read, parsing it. <0.0044>
+(C::handle) [1349308847.4826] Record parsed. <0.0073>
+(C::handle) [1349308847.4875] Parsing STDIN <0.0048>
+(R::env) [1349308847.4921] Going to parse params.
+(R::env) [1349308847.7601] Parsed params, adding extra meta data. <0.2680>
+(R::env) [1349308847.7657] Added meta data, returning env. <0.0056>
+(C::handle) [1349308847.7757] Build environment, sending to closure. <0.2882>
+(C::handle) [1349308847.7817] Got response from closure, sending it. <0.0061>
+(C::response) [1349308847.7883] Building status code
+(C::response) [1349308847.7960] Status built, building headers. <0.0077>
+(C::response) [1349308847.8031] Headers built, adding body. <0.0071>
+(C::response) [1349308847.8109] Building response. <0.0078>
+(C::response) [1349308847.8711] Response built, writing to socket. <0.0602>
+(C::response) [1349308847.8771] Wrote response. <0.0060>
+(C::handle) [1349308847.8830] Sent response. <0.1013>
+(FastCGI) [1349308847.8947] Completed request. <0.6184>
+(FastCGI) [1349308848.8697] Received request. <0.9750>
+(C::handle) [1349308848.8809] Reading header.
+(C::handle) [1349308848.8909] Header read, parsing it. <0.0100>
+(C::handle) [1349308848.9137] Header parsed. Now reading record. <0.0228>
+(C::handle) [1349308848.9211] Record read, parsing it. <0.0074>
+(C::handle) [1349308848.9374] Record parsed. <0.0163>
+(C::handle) [1349308848.9459] Creating Request object. <0.0085>
+(C::handle) [1349308848.9554] Object created. <0.0095>
+(C::handle) [1349308848.9625] Reading header. <0.0071>
+(C::handle) [1349308848.9686] Header read, parsing it. <0.0061>
+(C::handle) [1349308848.9811] Header parsed. Now reading record. <0.0125>
+(C::handle) [1349308848.9859] Record read, parsing it. <0.0048>
+(C::handle) [1349308848.9922] Record parsed. <0.0063>
+(C::handle) [1349308848.9962] Parsing param. <0.0039>
+(C::handle) [1349308849.0006] Param parsed. <0.0044>
+(C::handle) [1349308849.0037] Reading header. <0.0031>
+(C::handle) [1349308849.0081] Header read, parsing it. <0.0043>
+(C::handle) [1349308849.0173] Header parsed. Now reading record. <0.0093>
+(C::handle) [1349308849.0217] Record read, parsing it. <0.0044>
+(C::handle) [1349308849.0277] Record parsed. <0.0059>
+(C::handle) [1349308849.0320] Parsing param. <0.0044>
+(C::handle) [1349308849.0368] Param parsed. <0.0048>
+(C::handle) [1349308849.0407] Reading header. <0.0039>
+(C::handle) [1349308849.0459] Header read, parsing it. <0.0052>
+(C::handle) [1349308849.0568] Header parsed. Now reading record. <0.0109>
+(C::handle) [1349308849.0616] Record read, parsing it. <0.0048>
+(C::handle) [1349308849.0684] Record parsed. <0.0068>
+(C::handle) [1349308849.0741] Parsing STDIN <0.0057>
+(R::env) [1349308849.0781] Going to parse params.
+(R::env) [1349308849.3413] Parsed params, adding extra meta data. <0.2632>
+(R::env) [1349308849.3469] Added meta data, returning env. <0.0056>
+(C::handle) [1349308849.3551] Build environment, sending to closure. <0.2810>
+(C::handle) [1349308849.3614] Got response from closure, sending it. <0.0064>
+(C::response) [1349308849.3667] Building status code
+(C::response) [1349308849.3722] Status built, building headers. <0.0055>
+(C::response) [1349308849.3788] Headers built, adding body. <0.0066>
+(C::response) [1349308849.3858] Building response. <0.0070>
+(C::response) [1349308849.4306] Response built, writing to socket. <0.0448>
+(C::response) [1349308849.4355] Wrote response. <0.0049>
+(C::handle) [1349308849.4416] Sent response. <0.0802>
+(FastCGI) [1349308849.4490] Completed request. <0.5793>
+(FastCGI) [1349308850.8375] Received request. <1.3885>
+(C::handle) [1349308850.8428] Reading header.
+(C::handle) [1349308850.8490] Header read, parsing it. <0.0062>
+(C::handle) [1349308850.8628] Header parsed. Now reading record. <0.0138>
+(C::handle) [1349308850.8691] Record read, parsing it. <0.0063>
+(C::handle) [1349308850.8828] Record parsed. <0.0137>
+(C::handle) [1349308850.8897] Creating Request object. <0.0069>
+(C::handle) [1349308850.8960] Object created. <0.0063>
+(C::handle) [1349308850.9032] Reading header. <0.0071>
+(C::handle) [1349308850.9089] Header read, parsing it. <0.0058>
+(C::handle) [1349308850.9214] Header parsed. Now reading record. <0.0125>
+(C::handle) [1349308850.9280] Record read, parsing it. <0.0066>
+(C::handle) [1349308850.9367] Record parsed. <0.0086>
+(C::handle) [1349308850.9433] Parsing param. <0.0066>
+(C::handle) [1349308850.9498] Param parsed. <0.0066>
+(C::handle) [1349308850.9549] Reading header. <0.0051>
+(C::handle) [1349308850.9604] Header read, parsing it. <0.0055>
+(C::handle) [1349308850.9718] Header parsed. Now reading record. <0.0114>
+(C::handle) [1349308850.9763] Record read, parsing it. <0.0045>
+(C::handle) [1349308850.9841] Record parsed. <0.0078>
+(C::handle) [1349308850.9882] Parsing param. <0.0041>
+(C::handle) [1349308850.9931] Param parsed. <0.0049>
+(C::handle) [1349308850.9971] Reading header. <0.0040>
+(C::handle) [1349308851.0013] Header read, parsing it. <0.0042>
+(C::handle) [1349308851.0109] Header parsed. Now reading record. <0.0096>
+(C::handle) [1349308851.0145] Record read, parsing it. <0.0036>
+(C::handle) [1349308851.0206] Record parsed. <0.0061>
+(C::handle) [1349308851.0259] Parsing STDIN <0.0054>
+(R::env) [1349308851.0310] Going to parse params.
+(R::env) [1349308851.3104] Parsed params, adding extra meta data. <0.2794>
+(R::env) [1349308851.3163] Added meta data, returning env. <0.0059>
+(C::handle) [1349308851.3248] Build environment, sending to closure. <0.2988>
+(C::handle) [1349308851.3307] Got response from closure, sending it. <0.0059>
+(C::response) [1349308851.3349] Building status code
+(C::response) [1349308851.3398] Status built, building headers. <0.0049>
+(C::response) [1349308851.3476] Headers built, adding body. <0.0078>
+(C::response) [1349308851.3537] Building response. <0.0061>
+(C::response) [1349308851.4021] Response built, writing to socket. <0.0485>
+(C::response) [1349308851.4077] Wrote response. <0.0056>
+(C::handle) [1349308851.4143] Sent response. <0.0837>
+(FastCGI) [1349308851.4210] Completed request. <0.5835>
+(FastCGI) [1349308852.4847] Received request. <1.0637>
+(C::handle) [1349308852.4963] Reading header.
+(C::handle) [1349308852.5019] Header read, parsing it. <0.0056>
+(C::handle) [1349308852.7414] Header parsed. Now reading record. <0.2394>
+(C::handle) [1349308852.7473] Record read, parsing it. <0.0060>
+(C::handle) [1349308852.7593] Record parsed. <0.0120>
+(C::handle) [1349308852.7642] Creating Request object. <0.0049>
+(C::handle) [1349308852.7696] Object created. <0.0054>
+(C::handle) [1349308852.7758] Reading header. <0.0062>
+(C::handle) [1349308852.7828] Header read, parsing it. <0.0070>
+(C::handle) [1349308852.7955] Header parsed. Now reading record. <0.0127>
+(C::handle) [1349308852.8009] Record read, parsing it. <0.0054>
+(C::handle) [1349308852.8074] Record parsed. <0.0065>
+(C::handle) [1349308852.8127] Parsing param. <0.0053>
+(C::handle) [1349308852.8181] Param parsed. <0.0054>
+(C::handle) [1349308852.8226] Reading header. <0.0044>
+(C::handle) [1349308852.8287] Header read, parsing it. <0.0061>
+(C::handle) [1349308852.8413] Header parsed. Now reading record. <0.0126>
+(C::handle) [1349308852.8467] Record read, parsing it. <0.0054>
+(C::handle) [1349308852.8550] Record parsed. <0.0083>
+(C::handle) [1349308852.8612] Parsing param. <0.0062>
+(C::handle) [1349308852.8670] Param parsed. <0.0058>
+(C::handle) [1349308852.8731] Reading header. <0.0062>
+(C::handle) [1349308852.8784] Header read, parsing it. <0.0053>
+(C::handle) [1349308852.8901] Header parsed. Now reading record. <0.0117>
+(C::handle) [1349308852.8960] Record read, parsing it. <0.0058>
+(C::handle) [1349308852.9050] Record parsed. <0.0091>
+(C::handle) [1349308852.9108] Parsing STDIN <0.0057>
+(R::env) [1349308852.9167] Going to parse params.
+(R::env) [1349308853.2062] Parsed params, adding extra meta data. <0.2895>
+(R::env) [1349308853.2124] Added meta data, returning env. <0.0062>
+(C::handle) [1349308853.2217] Build environment, sending to closure. <0.3109>
+(C::handle) [1349308853.2274] Got response from closure, sending it. <0.0057>
+(C::response) [1349308853.2337] Building status code
+(C::response) [1349308853.2394] Status built, building headers. <0.0056>
+(C::response) [1349308853.2470] Headers built, adding body. <0.0076>
+(C::response) [1349308853.2525] Building response. <0.0055>
+(C::response) [1349308853.2972] Response built, writing to socket. <0.0448>
+(C::response) [1349308853.3036] Wrote response. <0.0064>
+(C::handle) [1349308853.3086] Sent response. <0.0811>
+(FastCGI) [1349308853.3138] Completed request. <0.8291>
+(FastCGI) [1349308854.3403] Received request. <1.0265>
+(C::handle) [1349308854.3504] Reading header.
+(C::handle) [1349308854.3617] Header read, parsing it. <0.0113>
+(C::handle) [1349308854.3841] Header parsed. Now reading record. <0.0224>
+(C::handle) [1349308854.3932] Record read, parsing it. <0.0091>
+(C::handle) [1349308854.4068] Record parsed. <0.0136>
+(C::handle) [1349308854.4169] Creating Request object. <0.0102>
+(C::handle) [1349308854.4265] Object created. <0.0096>
+(C::handle) [1349308854.4348] Reading header. <0.0083>
+(C::handle) [1349308854.4408] Header read, parsing it. <0.0060>
+(C::handle) [1349308854.4544] Header parsed. Now reading record. <0.0136>
+(C::handle) [1349308854.4591] Record read, parsing it. <0.0047>
+(C::handle) [1349308854.4672] Record parsed. <0.0081>
+(C::handle) [1349308854.4716] Parsing param. <0.0044>
+(C::handle) [1349308854.4765] Param parsed. <0.0049>
+(C::handle) [1349308854.4813] Reading header. <0.0048>
+(C::handle) [1349308854.4865] Header read, parsing it. <0.0052>
+(C::handle) [1349308854.4970] Header parsed. Now reading record. <0.0106>
+(C::handle) [1349308854.5011] Record read, parsing it. <0.0041>
+(C::handle) [1349308854.5079] Record parsed. <0.0068>
+(C::handle) [1349308854.5131] Parsing param. <0.0052>
+(C::handle) [1349308854.5192] Param parsed. <0.0061>
+(C::handle) [1349308854.5248] Reading header. <0.0057>
+(C::handle) [1349308854.5309] Header read, parsing it. <0.0061>
+(C::handle) [1349308854.5437] Header parsed. Now reading record. <0.0128>
+(C::handle) [1349308854.5498] Record read, parsing it. <0.0061>
+(C::handle) [1349308854.5579] Record parsed. <0.0081>
+(C::handle) [1349308854.5640] Parsing STDIN <0.0061>
+(R::env) [1349308854.5698] Going to parse params.
+(R::env) [1349308854.8370] Parsed params, adding extra meta data. <0.2672>
+(R::env) [1349308854.8422] Added meta data, returning env. <0.0052>
+(C::handle) [1349308854.8504] Build environment, sending to closure. <0.2864>
+(C::handle) [1349308854.8569] Got response from closure, sending it. <0.0065>
+(C::response) [1349308854.8617] Building status code
+(C::response) [1349308854.8672] Status built, building headers. <0.0055>
+(C::response) [1349308854.8734] Headers built, adding body. <0.0062>
+(C::response) [1349308854.8796] Building response. <0.0062>
+(C::response) [1349308854.9247] Response built, writing to socket. <0.0451>
+(C::response) [1349308854.9305] Wrote response. <0.0058>
+(C::handle) [1349308854.9376] Sent response. <0.0807>
+(FastCGI) [1349308854.9420] Completed request. <0.6016>
