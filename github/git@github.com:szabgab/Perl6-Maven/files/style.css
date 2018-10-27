@@ -1,0 +1,20 @@
+.error {
+	color: red;
+}
+
+.pod {
+	font-size: 14px;
+}
+
+#notification {
+ background-color: #f4df41;
+ color: #000;
+         border-radius: 15px;
+    -moz-border-radius: 15px;
+ -webkit-border-radius: 15px;
+ padding: 10px;
+ text-align: center;
+ margin: 20px;
+}
+
+
