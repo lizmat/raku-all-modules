@@ -1,0 +1,13 @@
+#!perl6
+
+use v6.c;
+
+use Audio::Icecast;
+
+sub MAIN(Str :$mount!, Str :$title!, Str :$host = 'localhost', Int :$port = 8000, Str :$user = 'admin', Str :$password = 'hackme') {
+    my $ai = Audio::Icecast.new(:$host, :$port, :$user, :$password);
+    $ai.update-metadata($mount, $title);
+
+
+}
+# vim: expandtab shiftwidth=4 ft=perl6
