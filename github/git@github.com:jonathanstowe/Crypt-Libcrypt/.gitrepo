@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/Crypt-Libcrypt.git
+	branch = master
+	commit = 5e3a9f6b10f410a89bef458e0ecdbc9fb43ac42c
+	parent = d4e080f96be4c9d0cc07c33d919feb5a2580f2a5
+	cmdver = 0.3.1
