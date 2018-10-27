@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/perl6-text-table-list.git
+	branch = master
+	commit = 5d56135cac14961b39a57740b382080764199656
+	parent = 3cb4f5e9a71ec0e7f9f280642a129c8f14c28469
+	cmdver = 0.3.1
