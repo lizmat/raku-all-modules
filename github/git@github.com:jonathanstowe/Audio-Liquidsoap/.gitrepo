@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/Audio-Liquidsoap.git
+	branch = master
+	commit = 4c2f108deb1be9ce08f0b040d5d2b007b7f2a77b
+	parent = 45fd7e0f80e418825a926b8163d0883f4e4d59b4
+	cmdver = 0.3.1
