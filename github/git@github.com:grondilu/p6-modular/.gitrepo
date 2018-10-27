@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:grondilu/p6-modular.git
+	branch = master
+	commit = 990846d44b11998eef4685f8cc7d1648c031cffb
+	parent = 5a2ef9dab3b7048c5993badeb5ec2267fada059e
+	cmdver = 0.3.1
