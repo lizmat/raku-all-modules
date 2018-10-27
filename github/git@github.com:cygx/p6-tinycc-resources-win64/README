@@ -1,0 +1,8 @@
+Win64 build of the Tiny C Compiler for distribution as a Perl 6 module
+
+Only the DLL and the necessary support libraries and headers are packaged.
+Releases are cut from the 'mob' branch of http://repo.or.cz/tinycc.git,
+without review of the commits.
+
+This is Free Software, subject to the terms and conditions of the
+GNU LGPL, version 2.1; see the file COPYING for licensing details.
