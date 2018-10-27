@@ -3,7 +3,7 @@
         "name" : "Game::Markov",
         "auth" : "CPAN:HOLYGHOST",
         "api" : "1",
-        "version" : "0.1.5",
+        "version" : "0.1.6",
         "description" : "Markov Strategy kit for games",
         "authors" : [ "The Holy Ghost" ],
         "license" : "General Public License 3, Artistic-2.0",
@@ -26,5 +26,5 @@
         "tags": [
           "Game", "Markov"
         ],
-        "source-url" : "http://cpan.metacpan.org/authors/id/H/HO/HOLYGHOST/Perl6/Game-Markov-0.1.5.tar.gz"
+        "source-url" : "http://cpan.metacpan.org/authors/id/H/HO/HOLYGHOST/Perl6/Game-Markov-0.1.6.tar.gz"
     }
