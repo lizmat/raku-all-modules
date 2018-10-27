@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-iCal.git
+	branch = master
+	commit = c6f83d0e177d9cae72c0c8eef8a0594b277f82e7
+	parent = 8b01d59d4f0bc315fca73c0e04cf2181390c5129
+	cmdver = 0.3.1
