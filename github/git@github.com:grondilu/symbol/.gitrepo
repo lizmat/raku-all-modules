@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:grondilu/symbol.git
+	branch = master
+	commit = 2e59c95c2709df489ac009ea87f4aacbf5f60644
+	parent = 8173f7b98ad3ffd27390d0d3b9e5e4cee327fa32
+	cmdver = 0.3.1
