@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cygx/p6-image-rgba-text.git
+	branch = master
+	commit = 8fe9030f2d0d6de8a89144368abb924d9d1af45d
+	parent = ee19b9d7b003668b26203ace48ddbd1bf435ea2a
+	cmdver = 0.3.1

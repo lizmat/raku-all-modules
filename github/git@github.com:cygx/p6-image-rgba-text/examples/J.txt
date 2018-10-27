@@ -1,0 +1,16 @@
+A tiny image of the capital letter J
+
+=rgba 5 8 J
+=map . f
+=scale 10
+
+    . . . . .
+    . 0 0 0 .
+    . . . 0 .
+    . . . 0 . # <-- look, a comment
+    . . . 0 .
+    . . . 0 .
+    . 0 0 . .
+    . . . . .
+
+THE END
