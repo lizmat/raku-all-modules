@@ -1,0 +1,35 @@
+[
+
+  {
+    "task" : "install perl6",
+    "plugin" : "rakudo-install",
+    "data" : {
+      "url" : "https://github.com/nxadm/rakudo-pkg/releases/download/v2017.10/rakudo-CentOS7.4.1708-20171000-01.x86_64.rpm"
+    }
+  },
+  {
+    "task" : "install git",
+    "plugin" : "package-generic",
+    "data" : {
+        "list" : "git"
+    }
+  },
+  {
+    "task" : "installs Bailador dependencies",
+    "plugin" : "zef",
+    "data" : {
+        "list" : [ "." ],
+        "options" : "--deps-only"
+    }
+  },
+  {
+    "task" : "run t/ tests",
+    "plugin" : "bash",
+    "data" : {
+        "command" : "prove6 -l",
+        "envvars" : {
+          "PATH" : "/opt/rakudo/bin:/opt/rakudo/share/perl6/site/bin:$PATH"
+        }
+    }
+  }
+]
