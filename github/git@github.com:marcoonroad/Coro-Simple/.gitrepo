@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:marcoonroad/Coro-Simple.git
+	branch = master
+	commit = 081a5e91b58a84095ff523d89babf765498f5a3f
+	parent = 4437f702d079e0b32fc23387715c9a538c6008f1
+	cmdver = 0.3.1
