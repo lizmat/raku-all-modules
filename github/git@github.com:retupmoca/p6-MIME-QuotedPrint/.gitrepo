@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/p6-MIME-QuotedPrint.git
+	branch = master
+	commit = a4149c73c9ba95c4d0ee3b7a7a03eff9410c5f69
+	parent = 9fec2497559ee945f94a39c06096a3b5455bd351
+	cmdver = 0.3.1
