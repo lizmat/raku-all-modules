@@ -75,7 +75,7 @@ for dir().grep(*.d).grep(*.basename eq none('_tools', '.git'))\ # source
 }
 
 if $removed {
-    run 'git', 'commit', '-m', "Remove repos that no longer exist\n\n(This commit was automatically generated)";
+    try sink run 'git', 'commit', '-m', "Remove repos that no longer exist\n\n(This commit was automatically generated)";
 }
 
 say "Done updating, now doing a repack to save space";
