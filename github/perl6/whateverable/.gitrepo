@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/perl6/whateverable.git
 	branch = master
-	commit = fbb0469f5e3ca6b3e221ca1ac40b9502136bfeb7
-	parent = bb0c1caf55d690c54564c13774c5c66037bb58fd
-	cmdver = 0.4.0
+	commit = e0c8c53246f12e92e2aae205cb07f7be69f82600
+	parent = f11c5792746b7c463af24da0b3443b21420f6888
+	cmdver = 0.3.1
