@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:ufobat/p6-XML-XPath.git
+	branch = master
+	commit = 8ad4baf8740847a0285188334c0904dd4ac80cfb
+	parent = 14a1b014a569450476873300ee46fbed9c673254
+	cmdver = 0.3.1
