@@ -1,0 +1,6 @@
+v0.0.3		Sat Mar 12 11:14:57 2016 +0000 
+	* Remove version literal
+		 
+	* Made a cock-up in the META.info up version
+		 
+	* Forget the versioning on the class
