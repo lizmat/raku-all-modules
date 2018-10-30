@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:mempko/PKafka.git
+	branch = master
+	commit = c3b63cf5306357afd0c6250dc228c13ea8291ca8
+	parent = 08dcb368e7a6e3ed50d51cda09bcad8e62733ed7
+	cmdver = 0.3.1
