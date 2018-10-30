@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/Math-Polynomial.git
+	branch = master
+	commit = be0c31dac06b5a5ff10c9018f66c835f60c19f29
+	parent = 70db1e72bd66626af7dc6299277877c9b6b9570a
+	cmdver = 0.3.1
