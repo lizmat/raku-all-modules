@@ -1,0 +1,20 @@
+{
+  "perl" : "6",
+  "name" : "JSON::Fast",
+  "description" : "A naive, fast json parser and serializer; drop-in replacement for JSON::Tiny",
+  "version" : "0.4",
+  "test-depends" : [
+    "Test"
+  ],
+  "authors" : [
+      "Timo Paulssen",
+      "Tony O'Dell"
+  ],
+  "provides" : {
+    "JSON::Fast" : "lib/JSON/Fast.pm"
+  },
+  "source-url" : "git://github.com/timo/json_fast.git",
+  "support" : {
+    "source" : "git://github.com/timo/json_fast.git"
+  }
+}
