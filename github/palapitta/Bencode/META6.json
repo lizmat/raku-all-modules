@@ -1,0 +1,12 @@
+{
+  "name" : "Bencode",
+  "version" : "0.1.1",
+  "description" : "Encode and Decode Bencoding strings",
+  "authors" : [
+            "Rajkumar Reddy"
+  ],
+  "provides" : {
+            "Bencode" : "lib/Bencode.pm6"
+  },
+  "source-url" : "git://github.com/palapitta/Bencode"
+}
