@@ -1,0 +1,8 @@
+{
+  subtitle => {
+    file => "Dune_sub.txt".Str,
+  },
+  video    => {
+    title => "Dune".Str,
+  },
+}
