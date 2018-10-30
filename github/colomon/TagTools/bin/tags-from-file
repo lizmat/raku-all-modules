@@ -1,0 +1,41 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Audio::Taglib::Simple;
+
+sub MAIN($tag-file, *@files) {
+    my %file-map;
+    for @files -> $filename {
+        if $filename ~~ /^(\d+)/ {
+            %file-map{+$0} = $filename;
+        }
+    }
+
+    for slurp($tag-file).lines -> $line {
+        if $line ~~ /^(\d+) \s+ (.*?) \s+ \d+ ":" \d+ \s+ (.*)/ {
+            my $track-number = +$0;
+            my $title = ~$1;
+            my $artist = ~$2;
+            say "$track-number: $title";
+            if %file-map{$track-number} {
+                my $file = %file-map{$track-number};
+                my $tags = Audio::Taglib::Simple.new($file);
+            
+                $tags.title = $title;
+                $tags.artist = $artist;
+            
+                say "$file:";
+                say "    Artist: { $tags.artist }";
+                say "    Album: { $tags.album }";
+                say "    Track Number: { $tags.track }";
+                say "    Title: { $tags.title }";
+            
+                $tags.save;
+                
+                CATCH { say "Error working with $file" }
+            } else {
+                say "Couldn't find file for track $track-number";
+            }
+        }
+    }
+}
