@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-Net-SOCKS.git
+	branch = master
+	commit = 45d3232f558fa4e1552b757aa5088e21a3acdb68
+	parent = 95b129f4e13c962ec8287ae6ac9ccd9e426a6dc2
+	cmdver = 0.3.1
