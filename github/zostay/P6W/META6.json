@@ -1,0 +1,15 @@
+{
+    "name" : "P6W",
+    "license" : "Artistic-2.0",
+    "version" : "0.7.Draft",
+    "description" : "Web API for Perl 6",
+    "authors" : [
+        "Sterling Hanenkamp <hanenkamp@cpan.org>"
+    ],
+    "perl" : "6.c",
+    "provides" : {
+        "P6W": "P6W.pod"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/zostay/P6W.git"
+}
