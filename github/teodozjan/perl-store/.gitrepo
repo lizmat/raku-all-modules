@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:teodozjan/perl-store.git
+	branch = master
+	commit = 959879eb7f491185626b75ba06946ecd3667956a
+	parent = 7c8aaa07cbccabcc1e70e28cf25df4738c6b8cd6
+	cmdver = 0.3.1
