@@ -1,0 +1,23 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Facter;
+
+my %facts;
+my $facter = Facter.new;
+my @name = @*ARGS;
+
+if @name {
+    for @name -> $name {
+        # TODO doesn't work... 
+        %facts{$name} = $facter.fact($name).value;
+    }
+}
+else {
+    %facts = $facter.to_hash;
+}
+
+for %facts.kv -> $name, $value {
+        say $name, " => ", $value;
+}
+
