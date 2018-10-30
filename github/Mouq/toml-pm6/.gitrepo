@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Mouq/toml-pm6.git
+	branch = master
+	commit = 287feac8aaa8055853a9de74e3b5b14c3055465f
+	parent = 87b92c0b2094ed9cdc942afb4becc6da8a6d0664
+	cmdver = 0.3.1
