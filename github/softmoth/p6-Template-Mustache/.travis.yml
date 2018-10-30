@@ -1,0 +1,12 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+perl6:
+  - latest
+sudo: false
+install:
+    - rakudobrew build-zef ${TRAVIS_PERL6_VERSION#latest}
+    - zef install --force --/test Test::META
+    - zef --depsonly install .
+    - git clone --depth 1 https://github.com/softmoth/mustache-spec.git ../mustache-spec

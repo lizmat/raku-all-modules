@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:softmoth/p6-Template-Mustache.git
+	branch = master
+	commit = d84fdf303480622805de119024e930c05c9fd6d2
+	parent = d985c1e2432f9a2ffa73c708d14e2da2ee55fc8b
+	cmdver = 0.3.1
