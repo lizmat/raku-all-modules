@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:fayland/perl6-Locale-Codes.git
+	branch = master
+	commit = 07bf8816f4f9f305b46f7b8f9029a00264ce0053
+	parent = b9a6b68a8cfeeabd49bdf8e5087db6a1e374b19f
+	cmdver = 0.3.1
