@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:labster/perl6-File-Find-Duplicates.git
+	branch = master
+	commit = 919725f6c79be36b6019c498588721a66e5262df
+	parent = f8b2ca384a52801b67b164e1e0e3bbb0bf1a5625
+	cmdver = 0.3.1
