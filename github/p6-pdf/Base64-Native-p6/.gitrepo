@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:p6-pdf/Base64-Native-p6.git
+	branch = master
+	commit = 063dbd124a4d613f20ea6a6b6b0fc3d0af2411e6
+	parent = d9679bd3249927727c71665d37bd3187ac4f50cf
+	cmdver = 0.3.1
