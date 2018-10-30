@@ -1,0 +1,18 @@
+{
+    "name"          : "GTK::Scintilla",
+    "version"       : "0.0.5",
+    "perl"          : "6.c",
+    "description"   : "GTK Scintilla widget for source code editing",
+    "test-depends"  : [
+        "GTK::Simple",
+        "Test"
+    ],
+    "provides"      : {
+        "GTK::Scintilla"         : "lib/GTK/Scintilla.pm6",
+        "GTK::Scintilla::Raw"    : "lib/GTK/Scintilla/Raw.pm6",
+        "GTK::Scintilla::Editor" : "lib/GTK/Scintilla/Editor.pm6"
+    },
+    "resources"     : [ "libwidget.so" ],
+    "repo-type"     : "git",
+    "source-url"    : "git://github.com/azawawi/perl6-gtk-scintilla.git"
+}

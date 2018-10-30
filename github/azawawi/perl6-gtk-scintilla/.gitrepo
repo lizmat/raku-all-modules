@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:azawawi/perl6-gtk-scintilla.git
+	branch = master
+	commit = 7664d7498ed835202f6d4c624f7a94970698ac85
+	parent = 8945de33cae6e2e2d3b988604485dc09c7f7977b
+	cmdver = 0.3.1
