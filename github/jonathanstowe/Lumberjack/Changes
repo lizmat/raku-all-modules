@@ -1,0 +1,12 @@
+v0.0.6		Sat Oct 7 09:44:07 2017 +0100 
+	* Make the file dispatcher work properly again
+v0.0.5		Mon Sep 26 17:46:48 2016 +0100 
+	* Replace the samewith for performance reasons
+v0.0.4		Fri May 27 16:56:24 2016 +0100 
+	* Remove the dependency on Staticish
+v0.0.3		Thu Mar 31 17:16:01 2016 +0100 
+	* Message.backtrace is now an array of Frames
+v0.0.2		Wed Mar 30 14:54:42 2016 +0100 
+	* Had left a key dependency out
+v0.0.1		Tue Mar 29 11:48:19 2016 +0100 
+	* Initial release
