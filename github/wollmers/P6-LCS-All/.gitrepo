@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:wollmers/P6-LCS-All.git
+	branch = master
+	commit = 2ff4926dc74d570e66862b9cec997c3926988a72
+	parent = 97e72b5e41545df05759ed9a60b225b1353fb343
+	cmdver = 0.3.1
