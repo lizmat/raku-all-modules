@@ -1,0 +1,11 @@
+<html>
+<head>
+<title>Ballet Dancer</title>
+</head>
+<body>
+<h1>Ballet Dancer</h1>
+<p>
+Please welcome the newest dancer: [% who %].
+</p>
+</body>
+</html>
