@@ -1,0 +1,7 @@
+all: %DESTDIR%/Imlib2%SO%
+
+%DESTDIR%/Imlib2%SO%: Imlib2%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDUSR%Imlib2 %LDOUT%%DESTDIR%/Imlib2%SO% Imlib2%O%
+
+Imlib2%O%: Imlib2.c
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT%Imlib2%O% Imlib2.c
