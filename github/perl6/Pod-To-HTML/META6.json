@@ -1,0 +1,12 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Pod::To::HTML",
+    "version"     : "0.3.22",
+    "description" : "Convert Perl 6 Pod to HTML",
+    "license"     : "Artistic-2.0",
+    "depends"     : ["URI"],
+    "provides"    : {
+        "Pod::To::HTML" : "lib/Pod/To/HTML.pm"
+    },
+    "source-url"  : "git://github.com/perl6/Pod-To-HTML.git"
+}
