@@ -1,0 +1,23 @@
+{
+    "auth"          : "github:azawawi",
+    "authors"       : [ "Ahmad M. Zawawi" ],
+    "description"   : "Perl 6 native bindings for PLplot",
+    "name"          : "Graphics::PLplot",
+    "license"       : "MIT",
+    "perl"          : "6.*",
+    "provides"      : {
+        "Graphics::PLplot"      : "lib/Graphics/PLplot.pm6",
+        "Graphics::PLplot::Raw" : "lib/Graphics/PLplot/Raw.pm6"
+    },
+    "repo-type"     : "git",
+    "source-url"    : "git://github.com/azawawi/perl6-graphics-plplot.git",
+    "tags"          : [
+        "Chart",
+        "Plot",
+        "NativeCall"
+    ],
+    "test-depends"  : [
+        "Test"
+    ],
+    "version"       : "0.0.2"
+}
