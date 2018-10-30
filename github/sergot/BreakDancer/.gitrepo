@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:sergot/BreakDancer.git
+	branch = master
+	commit = 30839f6c6a35a1ef9533aec30d02ccbc095c8510
+	parent = 7a1c4df2a45bc9ecdf027f3a68fd89657562accb
+	cmdver = 0.3.1
