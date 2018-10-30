@@ -1,0 +1,12 @@
+sudo: required
+notifications:
+  email: false
+language: perl6
+perl6:
+  - latest
+install:
+  - git clone git://repo.or.cz/tinycc.git
+  - pushd tinycc && ./configure --prefix=/usr --disable-static && make && sudo make install && popd
+  - rakudobrew build-zef
+script:
+  - LIBTCC=/usr/lib/libtcc.so zef install .
