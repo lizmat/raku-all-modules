@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:TiMBuS/Net--IRC.git
+	branch = master
+	commit = cfc00411fd10eb41c63c90a7e82f451b6c9127bf
+	parent = 1676bd0a58898b4640d0228a92042c2917d1d0f4
+	cmdver = 0.3.1
