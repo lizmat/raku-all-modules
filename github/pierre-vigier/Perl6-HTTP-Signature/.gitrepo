@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:pierre-vigier/Perl6-HTTP-Signature.git
+	branch = master
+	commit = b154f95ef1e4485a47d92ad8e875f3f74b616378
+	parent = c6370f1eedde82975f51bd28bbd985d3f0005e80
+	cmdver = 0.3.1
