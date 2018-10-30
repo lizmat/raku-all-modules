@@ -1,0 +1,12 @@
+{
+	"perl" : "6",
+        "name" : "Acme::WTF",
+        "version" : "1.0",
+        "description" : "Seriously, WTF?",
+        "authors" : ["Sylvain Colinet <scolinet@gmail.com>"],
+        "provides" : {
+            "Acme::WTF" : "lib/Acme/WTF.pm6"
+        },
+	"depends" : [ "Test::META", "Test::Output" ],
+        "source-url" : "git://github.com/Skarsnik/acme-wtf.git"
+}
