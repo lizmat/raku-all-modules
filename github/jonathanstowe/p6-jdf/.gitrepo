@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/p6-jdf.git
+	branch = master
+	commit = e3965d33dd57fba77b7e03f8536833ec29fb1c82
+	parent = 9334162444722d75286508ff1b46f0e10f092a55
+	cmdver = 0.3.1
