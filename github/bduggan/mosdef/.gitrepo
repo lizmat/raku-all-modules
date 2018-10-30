@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:bduggan/mosdef.git
+	branch = master
+	commit = 8d9867f23ec7a354083fbf9a36482ff0e4809c01
+	parent = 363b83fe01cde5c6553df570d53a034c52154712
+	cmdver = 0.3.1
