@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:hipek8/p6-UNIX-Daemonize.git
+	branch = master
+	commit = 044a39528a21da78010f26f49d39b24aaf233450
+	parent = 7b7d1d86bc285c8426c093d72c2c989814d41c50
+	cmdver = 0.3.1
