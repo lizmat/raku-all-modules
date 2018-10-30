@@ -1,0 +1,12 @@
+{
+    "name" : "RPi::GpioDirect",
+    "version" : "0.1.0",
+    "description" : "RPi::GpioDirect - Access the Raspberry Pi GPIO",
+    "authors" : "Donald Hunter",
+    "provides" : {
+        "RPi::GpioDirect" : "lib/RPi/GpioDirect.pm"
+    },
+    "test-depends" : [ "Test" ],
+    "source-url" : "git://github.com/donaldh/Perl6-RPi-GpioDirect.git",
+    "perl" : 6
+}
