@@ -1,0 +1,17 @@
+language: perl6
+perl6:
+  - latest
+  - '2018.04'
+before_install:
+  - echo 'America/Chicago' | sudo tee /etc/timezone
+  - sudo dpkg-reconfigure --frontend noninteractive tzdata
+  - export TZ=America/Chicago
+  - perl6 -e 'DateTime.now.timezone.say'
+install:
+  - rakudobrew build-zef
+  - zef install --depsonly .
+script:
+  - zef build .
+  - prove -v -e "perl6 --ll-exception -Ilib" t
+after_success:
+  - zef list --installed --verbose
