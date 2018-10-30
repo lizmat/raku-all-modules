@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:timo/ADT.git
+	branch = master
+	commit = a423ac781b9762adaeb29e38f30e1c24af379025
+	parent = 2dafde89e684d4726d53e9a8840cb1e9de2b16fd
+	cmdver = 0.3.1
