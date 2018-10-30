@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Skarsnik/perl6-gumbo.git
+	branch = master
+	commit = 91db0ee9eac0aa924d895b7055e965fa6338ea6f
+	parent = 8a00ce55b02ec3f6942c33b370d4d84a45297644
+	cmdver = 0.3.1
