@@ -1,0 +1,20 @@
+v0.0.10		Tue Jan 24 21:30:37 2017 +0000 
+	* Make zef compatible
+v0.0.9		Sun Feb 28 23:44:44 2016 +0000 
+	* Fix the Build.pm
+v0.0.8		Fri Jan 29 10:05:15 2016 +0000 
+	* Alter regarding stricter NativeCall
+v0.0.7		Thu Dec 24 23:39:00 2015 +0000 
+	* Changes for 6.c
+		 
+	* Up version
+		 
+	* Up version and add test dep
+		 
+	* Up version Add "panda" to build-depends
+		 
+	* Use NativeHelpers::Array
+		 
+	* :ver doesn't work there
+		 
+	* done -> done-testing
