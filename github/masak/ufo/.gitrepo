@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:masak/ufo.git
+	branch = master
+	commit = 76a0682dc342e6e52242c9901daba7d3fc338024
+	parent = 9d0762f4ed916a645990d8d0f6accd6769ef531b
+	cmdver = 0.3.1
