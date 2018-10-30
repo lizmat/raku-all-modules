@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/perl6-html-parser-xml.git
+	branch = master
+	commit = 8eeaf21826646a8805d0191b64b4e71e092e2bbc
+	parent = ce4f98bba4579f3ecccedce795ac6008bb44da55
+	cmdver = 0.3.1
