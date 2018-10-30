@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:zengargoyle/p6-Search-Dict.git
+	branch = master
+	commit = a374faea981a7ffaf1b89b79e324cbdbae858bf6
+	parent = 0cddf0315d259d12bbfc4caf3f0c3da455550205
+	cmdver = 0.3.1
