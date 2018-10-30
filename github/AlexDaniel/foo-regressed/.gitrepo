@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:AlexDaniel/foo-regressed.git
+	branch = master
+	commit = 590175d3f74b2cc8016e59654dd913ea38ed48e3
+	parent = c72edcb7e69af5febc53bfc4114333188f830634
+	cmdver = 0.3.1
