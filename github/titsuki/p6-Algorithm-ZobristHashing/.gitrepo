@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:titsuki/p6-Algorithm-ZobristHashing.git
+	branch = master
+	commit = ca9dc1f395d7a2fc0b4b35c2d50bce8c5ec681d9
+	parent = 08d76c0b7b4612e91118c0e04e49f64b2e4fc0b3
+	cmdver = 0.3.1
