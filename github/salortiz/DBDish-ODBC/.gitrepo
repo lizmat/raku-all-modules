@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:salortiz/DBDish-ODBC.git
+	branch = master
+	commit = bc8247b83a3e52b4d6239adb427e8dd1efd9280e
+	parent = f415a60213a3c1569a30d8cf31efc5048c29e6ed
+	cmdver = 0.3.1
