@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:bradclawsie/WebService-AWS-V4.git
+	branch = master
+	commit = c4a6f44c3a37d01c513bda1514f74d8f8f29eda5
+	parent = f420d33c7cfc8789bd28749e37fccb349bc8cae9
+	cmdver = 0.3.1
