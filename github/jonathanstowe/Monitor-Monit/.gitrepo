@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/Monitor-Monit.git
+	branch = master
+	commit = af8fbb8f323eba0fd5606265ca9567ce4fba9829
+	parent = ce7c85f80d24f73ccef21c598b009e88fdb8cc95
+	cmdver = 0.3.1
