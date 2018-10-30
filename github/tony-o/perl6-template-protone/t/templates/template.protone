@@ -1,0 +1,5 @@
+hello <% print 'world'; %>
+
+<% for ^5 { %>
+  <% print $_; %>
+<% } %>
