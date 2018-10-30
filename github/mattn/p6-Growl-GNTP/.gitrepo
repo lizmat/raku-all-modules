@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:mattn/p6-Growl-GNTP.git
+	branch = master
+	commit = ed255d348de9120fb5c6b67b5b0f3453350a4de9
+	parent = 5861182a0967f11c7d8daa1e95a3c047cd2cb944
+	cmdver = 0.3.1
