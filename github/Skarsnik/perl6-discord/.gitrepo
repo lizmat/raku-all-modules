@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Skarsnik/perl6-discord.git
+	branch = master
+	commit = 3c8065188a1b3625806838851c6b1bccb7625037
+	parent = cf09abcd6a3676a4280a7a4bde93192d123c6222
+	cmdver = 0.3.1
