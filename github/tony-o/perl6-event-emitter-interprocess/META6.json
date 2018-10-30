@@ -1,0 +1,19 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Event::Emitter::Inter-Process",
+    "version"     : "1.0.0",
+    "description" : "Inter-process event emitter for Event::Emitter.",
+    "depends"     : [ "Event::Emitter" ],
+    "provides"    : {
+      "Event::Emitter::Inter-Process": "lib/Event/Emitter/Inter-Process.pm6"
+    },
+    "authors" : [
+        "Tony O'Dell"       
+    ],
+    "auth": "github:tony-o",
+    "support" : {
+        "source"  : "git://github.com/tony-o/perl6-event-emitter-interprocess.git",
+        "bugtracker"  : "https://github.com/tony-o/perl6-event-emitter-interprocess/issues"
+    },
+    "source-url"  : "git://github.com/tony-o/perl6-event-emitter-interprocess.git"
+}
