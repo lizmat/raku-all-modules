@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Altai-man/deredere.git
+	branch = master
+	commit = 697cd43669331b6af0870003a540db26644e9ee1
+	parent = c1f7f4e32ffbc52f199402e54c34ef0a50d423ae
+	cmdver = 0.3.1
