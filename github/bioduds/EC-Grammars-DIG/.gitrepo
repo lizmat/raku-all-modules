@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:bioduds/EC-Grammars-DIG.git
+	branch = master
+	commit = f6b23da23deb643b91ac66a220a057e64c55c3b9
+	parent = 640dd7492706ad96bab35d7fd536d23171d766b8
+	cmdver = 0.3.1
