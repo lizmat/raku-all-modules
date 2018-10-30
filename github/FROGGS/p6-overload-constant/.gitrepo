@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:FROGGS/p6-overload-constant.git
+	branch = master
+	commit = 9bbfc7a4bad522762d2de6ed0d4bfb3cfb547b72
+	parent = 190ce4200c2b4835bd7864cc64aa6584f7383d64
+	cmdver = 0.3.1
