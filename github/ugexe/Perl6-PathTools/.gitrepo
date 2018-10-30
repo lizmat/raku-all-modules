@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:ugexe/Perl6-PathTools.git
+	branch = master
+	commit = 6a1f3633b6ce0d4d6e98c55486a7e209c8fddfdb
+	parent = de9f0c53b98a5d327dae42cefbd531c5e4618045
+	cmdver = 0.3.1
