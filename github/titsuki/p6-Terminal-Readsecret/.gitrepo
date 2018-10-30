@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:titsuki/p6-Terminal-Readsecret.git
+	branch = master
+	commit = 0819cbdf4835859a079b7ccd12eb908202214d85
+	parent = 4a422f0de9eaff10e35834edf00205667a4d7550
+	cmdver = 0.3.1
