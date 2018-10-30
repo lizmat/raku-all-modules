@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:samgwise/p6-Numeric-Pack.git
+	branch = master
+	commit = 9c5782b4757d51c446333f5ea5a0f9934f4fe322
+	parent = bedba432621f1925807491bb9867bc8109b58c8a
+	cmdver = 0.3.1

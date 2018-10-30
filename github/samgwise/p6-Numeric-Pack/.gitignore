@@ -1,0 +1,9 @@
+/blib/
+*.o
+*.dll.a
+Makefile
+/.panda-work
+*.so
+*.dylib
+*.dll
+.precomp/
