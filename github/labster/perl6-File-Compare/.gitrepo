@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:labster/perl6-File-Compare.git
+	branch = master
+	commit = 53f2f610c9744b173df5bdb825a9fb85bf82a6d7
+	parent = 6aed92846da4a899ee427f2e2c001f364a7f257f
+	cmdver = 0.3.1
