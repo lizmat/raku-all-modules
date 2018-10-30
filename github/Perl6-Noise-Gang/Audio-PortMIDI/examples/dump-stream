@@ -1,0 +1,22 @@
+#!perl6
+
+use Audio::PortMIDI;
+
+sub MAIN(Int :$device) {
+
+    my $pm = Audio::PortMIDI.new;
+
+    my Int $i = $device // $pm.default-input-device.device-id;
+
+    my $stream = $pm.open-input($i, 32);
+
+    loop {
+        if $stream.poll {
+            my @a = $stream.read(1);
+            say @a[0];
+        }
+    }
+
+    $stream.close;
+}
+# vim: expandtab shiftwidth=4 ft=perl6
