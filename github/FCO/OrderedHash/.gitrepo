@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:FCO/OrderedHash.git
+	branch = master
+	commit = d70b1f82f51a28ef78d93f902c90b593da8acea7
+	parent = b0858a796a897d2b095cb26aa8f20765d179e560
+	cmdver = 0.3.1
