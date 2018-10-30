@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:adaptiveoptics/P6-Prompt-Gruff.git
+	branch = master
+	commit = f4ead814f04dc15d00ac8d56a3dfa6b0b5841303
+	parent = 9e9b0c2168d0f74be058e170689ca5c3078e6da4
+	cmdver = 0.3.1
