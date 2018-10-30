@@ -1,0 +1,41 @@
+Distribution Perl6-Math-Quaternion
+Module       Math::Quaternion
+Class        Math::Quaternion
+
+This distribution implements an OO class for Quaternions, which are the
+simplest of the hyper-complex numbers. It adds the operators needed for basic
+math on the Qs, and should be a good base class for future modules to support
+the other hyper-complex numbers.
+
+RECOMMENDATIONS
+    I intend this module to be a high-quality example of Perl 6 numeric OO,
+    usable as a reference for future module authors.
+
+WARNINGS
+    This module is a mostly-from-scratch re-implementation of Quaternions;
+    its API differs from the excellent Perl 5 Math::Quaternion module.
+
+ACKNOWLEDGEMENTS
+    Thanks to:
+        * Jonathan Chin for the original Perl 5 Math::Quaternion.
+        * Solomon "colomon" Foster for encouraging this module's release.
+        * Will "Coke" Coleda for fixes to match changes in Rakudo and in the
+          Perl 6 specs.
+        * RosettaCode for the challenge that provoked the initial code:
+            http://rosettacode.org/wiki/Quaternion_type#Perl_6
+
+SEE ALSO
+    http://en.wikipedia.org/wiki/Quaternion
+    http://en.wikipedia.org/wiki/Hypercomplex_number
+
+REPOSITORY
+    https://github.com/Util/Perl6-Math-Quaternion
+
+AUTHOR
+    Bruce Gray <bruce.gray@acm.org>
+    (Bruce Gray is "Util" on IRC and PerlMonks)
+
+COPYRIGHT AND LICENSE
+    Copyright 2010-2011,2013 by Bruce Gray
+
+    This module may be used under the terms of the Artistic License 2.0.

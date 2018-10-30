@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Util/Perl6-Math-Quaternion.git
+	branch = master
+	commit = 3b90e593f6a428c9b8747bfa02e24087dbf2dcf2
+	parent = 8ff54e3d5e6cc2d27409f6ebfe16b50ea70477ba
+	cmdver = 0.3.1
