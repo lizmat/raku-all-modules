@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:titsuki/p6-App-AizuOnlineJudge.git
+	branch = master
+	commit = 79003941f2f7ed332584385b62baf714688a6ac1
+	parent = ac7bef308828a45afc31002d2d536d4dbbcae7d6
+	cmdver = 0.3.1
