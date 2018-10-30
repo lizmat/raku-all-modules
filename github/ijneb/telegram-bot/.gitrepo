@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:ijneb/telegram-bot.git
+	branch = master
+	commit = 52c688835f469c3b93670fd259de11332d529b0d
+	parent = a06005220f0a93f75640802d5e851042b7db9272
+	cmdver = 0.3.1
