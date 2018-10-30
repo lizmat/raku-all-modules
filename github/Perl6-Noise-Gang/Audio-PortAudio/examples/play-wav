@@ -1,0 +1,68 @@
+#!perl6
+
+=begin pod
+
+=head1 NAME
+
+play-wav - play a PCM file
+
+=head1 SYNOPSIS
+
+   play-wav <filename>
+
+=head1 DESCRIPTION
+
+This simply plays the supplied file (which must be some uncompressed format
+that Audio::Sndfile understands,) to the default output device.
+
+If the switch '--jack' is supplied then it will attempt to output to the
+default 'jack' output if the jack daemon is running (this will typicaly
+be 'system' but may differ on your computer.)
+
+=end pod
+
+use Audio::PortAudio;
+use Audio::Sndfile;
+
+sub MAIN(Str $filename, Bool :$jack) { 
+
+    my $pa = Audio::PortAudio.new;
+    my $in-file = Audio::Sndfile.new(:$filename, :r);
+
+    my Audio::PortAudio::Stream $st;
+    
+    
+    if $jack {
+        my $ha = $pa.host-api(Audio::PortAudio::HostApiTypeId::JACK);
+        my $la = $pa.device-info($ha.default-output-device).default-low-output-latency;
+        if $ha.device-count {
+            my $si = Audio::PortAudio::StreamParameters.new(device              => $ha.default-output-device,
+                                                            channel-count       => $in-file.channels,
+                                                            sample-format       => Audio::PortAudio::StreamFormat::Float32,
+                                                            suggested-latency   => $la);
+            $st = $pa.open-stream(Audio::PortAudio::StreamParameters, $si, $in-file.samplerate);
+        }
+        else {
+            die "no jack devices";
+        }
+    }
+    else {
+        $st = $pa.open-default-stream(0,$in-file.channels, Audio::PortAudio::StreamFormat::Float32, $in-file.samplerate);
+    }
+
+
+    $st.start;
+
+    loop {
+	    my ( $buf, $frames) = $in-file.read-float(512, :raw);
+	    $st.write($buf, $frames);
+	    last if $frames < 512;
+    }
+
+    $in-file.close;
+    $st.close;
+    $pa.terminate;
+}
+
+
+# vim: expandtab shiftwidth=4 ft=perl6
