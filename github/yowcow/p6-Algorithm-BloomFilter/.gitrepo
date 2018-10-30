@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:yowcow/p6-Algorithm-BloomFilter.git
+	branch = master
+	commit = 2cecaa4e8aa8cb360625338c2e0ca331f626b424
+	parent = 0c57141c7fbfff252d2fe151428da412b2fcaf4e
+	cmdver = 0.3.1
