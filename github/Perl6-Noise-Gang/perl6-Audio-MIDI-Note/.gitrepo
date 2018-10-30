@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Perl6-Noise-Gang/perl6-Audio-MIDI-Note.git
+	branch = master
+	commit = 49db041be0c50e6a1f8b1609d69bdf1399c5bc41
+	parent = 3ff9bef312057928fae68a3251dde578c1a50696
+	cmdver = 0.3.1
