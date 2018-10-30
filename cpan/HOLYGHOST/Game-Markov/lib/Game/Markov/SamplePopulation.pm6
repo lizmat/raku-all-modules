@@ -49,13 +49,52 @@ class SamplePopulation
 	}
 
 	method RaoBlackwellization($index, @indices) { 
-		my $sum = 0.0;
+		my $I = 0.0;
 
 		for @indices -> $x {
-			$sum += .distributions[$index].population[$x];
+			$I += .distributions[$index].population[$x];
 		}
 
-		return $sum / .distributions[$index].Expectance();
+		 $I /= .distributions[$index].Expectance();
+
+		my @ps = <>;	
+		for @indices -> $x {
+			push(@ps, .distributions[$index].population[$x]);	
+		}
+
+		my $VARI = 0.0;
+		my $Ipop = new DistributionPopulation(@ps);
+		$VARI = $Ipop.Variance() / $Ipop.Expectance();	
+
+		my $p = new Probability(@ps);
+		my $sp = new SamplePopulation();
+		@ps = <>;
+		my $idx = 0;
+		for $p.population.population -> $x {
+			my $idx2 = 0;
+			@ps = <>;
+			for $p.population.population -> $x2 {
+				push(@ps, $p.CalculatedCondP($idx, $p.CalculatedCondP($idx2,$idx)));
+				$idx2++;
+			}
+			$idx++;
+			$sp.population.add(new DistributionPopulation(@ps));
+		}
+
+
+		my $varI2 = 0.0;
+		my $I2 = 0.0;
+		my $estimates = new DistributionPopulation();
+		for $sp.population -> $x {
+			$I2 += $x.population.Expectance();
+			$estimates.add($x.population.Expectance());
+		}
+		$I2 /= $idx;
+
+		$varI2 = $estimates.Variance();
+
+		return ($VARI, $var2I);
+
 	}
 			
 
