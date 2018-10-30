@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:afiskon/p6-xml-parser-tiny.git
+	branch = master
+	commit = fdb5aab5f2f012df599a82cb3f8693852e330ec5
+	parent = 674f88d1ce5b04d8a31f6978320ae54577bafea0
+	cmdver = 0.3.1
