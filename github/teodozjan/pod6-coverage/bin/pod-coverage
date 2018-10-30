@@ -1,0 +1,21 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Pod::Coverage;
+
+multi MAIN('meta', Str $path = './META.info', Bool :$anypod) {
+    for Pod::Coverage.use-meta($path,$anypod) -> $res {
+        say-results($res);
+    }   
+}
+
+multi MAIN('package', Str $package, Str :$toload, Str :$dir = './lib', Bool :$anypod){
+    my $to-load = $toload // $package;
+    my $res = Pod::Coverage.coverage($to-load,$package, $dir,$anypod);
+    say-results($res);
+
+}
+
+sub say-results($res){
+    say join("\n", $res.get-results>>.gist);
+}
