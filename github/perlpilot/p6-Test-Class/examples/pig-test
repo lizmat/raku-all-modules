@@ -1,0 +1,34 @@
+#!/usr/bin/env perl6
+
+use Test::Class;
+
+class Pig {
+    has $.hungry = True;
+    has $.alive = True;
+    method feed { $!hungry = !$!hungry; return !$!hungry } 
+}
+
+class PigTest does Test::Class {
+    method pig is test-setup {
+        self does role { has $.test-pig = Pig.new }
+    }
+
+    method born-hungry is test {
+        my $pig = self.test-pig;
+        ok $pig.hungry, 'pigs are born hungry';
+    }
+
+    method eats is test(3) {
+        my $pig = self.test-pig;
+        ok $pig.feed, 'pig fed okay';
+        ok !$pig.hungry, 'fed pig not hungry';
+        ok !$pig.feed, 'cannot feed full pig';
+    }
+
+    method pig-alive is test-teardown(1) {
+        my $pig = self.test-pig;
+        ok $pig.alive, 'pig survived tests';
+    }
+}
+
+PigTest.new.run-tests;

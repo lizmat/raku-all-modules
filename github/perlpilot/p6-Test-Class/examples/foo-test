@@ -1,0 +1,39 @@
+#!/usr/bin/env perl6
+
+use Test::Class;
+
+class Foo does Test::Class {
+    my @test-array;
+
+    method make-fixture is test-setup {
+        @test-array = (1,2);
+    }
+
+    method test-pop is test(*) {
+        my @a = @test-array;
+        is @a.pop, 2, 'pop = 2';
+        is @a.pop, 1, 'pop = 1';
+        is-deeply @a, [], 'array empty';
+        is try {@a.pop}, Nil, 'pop = Nil';
+    }
+
+    method test-push is test {
+        my @a = @test-array;
+        @a.push: 3;
+        is-deeply(@a, [1,2,3], "push worked");
+    }
+
+    method test-down is test-teardown {
+        my @a = @test-array;
+        diag "array = {@a} after test(s)";
+    }
+
+    method test-begin is test-startup {
+    }
+
+    method test-end is test-shutdown {
+    }
+
+}
+
+Test::Class.run-tests(Foo,Foo);
