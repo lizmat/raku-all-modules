@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:FROGGS/p6-Digest-PSHA1.git
+	branch = master
+	commit = fbf942e8f53834f42a0edb0bca10f296ce4e1731
+	parent = e8e18d0ea992b303f911fbf330622d1d07657113
+	cmdver = 0.3.1
