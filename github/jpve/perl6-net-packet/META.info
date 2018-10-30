@@ -1,0 +1,22 @@
+{
+  "name"        : "Net::Packet",
+  "version"     : "v0.0.1",
+  "description" : "Decodeing network frames",
+  "author"      : "Jorn van Engelen",
+  "depends"     : [ ],
+  "provides"    : {
+    "Net::Packet"               : "lib/Net/Packet.pm6",
+    "Net::Packet::Base"         : "lib/Net/Packet/Base.pm6",
+    "Net::Packet::Ethernet"     : "lib/Net/Packet/Ethernet.pm6",
+    "Net::Packet::EtherType"    : "lib/Net/Packet/EtherType.pm6",
+    "Net::Packet::MAC_addr"     : "lib/Net/Packet/MAC_addr.pm6",
+    "Net::Packet::IPv4"         : "lib/Net/Packet/IPv4.pm6",
+    "Net::Packet::IPv4_addr"    : "lib/Net/Packet/IPv4_addr.pm6",
+    "Net::Packet::IP_proto"     : "lib/Net/Packet/IP_proto.pm6",
+    "Net::Packet::UDP"          : "lib/Net/Packet/UDP.pm6",
+    "Net::Packet::ARP"          : "lib/Net/Packet/ARP.pm6",
+    "Net::Packet::ICMP"         : "lib/Net/Packet/ICMP.pm6"
+  },
+  "source-url"  : "git://github.com/jpve/perl6-net-packet.git"
+}
+
