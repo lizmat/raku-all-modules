@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:samcv/IRC-TextColor.git
+	branch = master
+	commit = d29948457feb9f55f2815f1c520bc1401b9b8fa2
+	parent = d7638c25332673a5ffe8c2732a81d8a02d08d9f9
+	cmdver = 0.3.1
