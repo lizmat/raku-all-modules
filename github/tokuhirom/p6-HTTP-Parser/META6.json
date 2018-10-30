@@ -1,0 +1,16 @@
+{
+  "name" : "HTTP::Parser",
+  "source-url" : "git://github.com/tokuhirom/p6-HTTP-Parser.git",
+  "perl" : "6",
+  "build-depends" : [ ],
+  "provides" : {
+    "HTTP::Parser" : "lib/HTTP/Parser.pm6"
+  },
+  "depends" : [ ],
+  "description" : "HTTP parser.",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "Tokuhiro Matsuno"
+  ]
+}

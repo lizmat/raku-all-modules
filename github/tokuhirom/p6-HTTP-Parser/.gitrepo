@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tokuhirom/p6-HTTP-Parser.git
+	branch = master
+	commit = 188e1c96ea072f6161d57b891834a159b4df3213
+	parent = 94a0f14f8046e9d1fae4c6d570a613a2e103739c
+	cmdver = 0.3.1
