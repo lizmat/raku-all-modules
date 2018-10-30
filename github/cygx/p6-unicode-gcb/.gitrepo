@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cygx/p6-unicode-gcb.git
+	branch = master
+	commit = dfbc6eb3bb0b2bd2a7c4583d81cc2d21bc60e526
+	parent = c5434889d7bf325cf703a897e67890d3290313bd
+	cmdver = 0.3.1
