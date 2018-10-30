@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:garu/Zef-Reporter.git
+	branch = master
+	commit = a967ab614433dd5db39b028d16021d0ec93c59a5
+	parent = 45862cc61c3bf2bca3e014c86bee9f691e6084ce
+	cmdver = 0.3.1
