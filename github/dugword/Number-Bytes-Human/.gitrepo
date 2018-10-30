@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:dugword/Number-Bytes-Human.git
+	branch = master
+	commit = b610a5cbda9db2b348bcaf01b622108e817f3d3b
+	parent = 06db26a18b08014e24562bb5091bd3f6f43ca76a
+	cmdver = 0.3.1
