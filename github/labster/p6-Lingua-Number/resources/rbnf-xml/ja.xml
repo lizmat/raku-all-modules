@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<ldml>
+    <identity>
+        <version number="$Revision: 7363 $"/>
+        <generation date="$Date: 2012-07-02 22:20:50 -0700 (Mon, 02 Jul 2012) $"/>
+        <language type="ja"/>
+    </identity>
+    <rbnf>
+        <rulesetGrouping type="SpelloutRules">
+            <ruleset type="spellout-numbering-year">
+                <rbnfrule value="x.x">=#,###0.#=;</rbnfrule>
+                <rbnfrule value="0">=%spellout-numbering=;</rbnfrule>
+            </ruleset>
+            <ruleset type="spellout-numbering">
+                <rbnfrule value="0">=%spellout-cardinal=;</rbnfrule>
+            </ruleset>
+            <ruleset type="spellout-cardinal-financial">
+                <rbnfrule value="-x">マイナス→→;</rbnfrule>
+                <rbnfrule value="x.x">←←点→→→;</rbnfrule>
+                <rbnfrule value="0">零;</rbnfrule>
+                <rbnfrule value="1">壱;</rbnfrule>
+                <rbnfrule value="2">弐;</rbnfrule>
+                <rbnfrule value="3">参;</rbnfrule>
+                <rbnfrule value="4">四;</rbnfrule>
+                <rbnfrule value="5">伍;</rbnfrule>
+                <rbnfrule value="6">六;</rbnfrule>
+                <rbnfrule value="7">七;</rbnfrule>
+                <rbnfrule value="8">八;</rbnfrule>
+                <rbnfrule value="9">九;</rbnfrule>
+                <rbnfrule value="10">拾[→→];</rbnfrule>
+                <rbnfrule value="20">←←拾[→→];</rbnfrule>
+                <rbnfrule value="100">←←百[→→];</rbnfrule>
+                <rbnfrule value="1000">←←千[→→];</rbnfrule>
+                <rbnfrule value="10000">←←萬[→→];</rbnfrule>
+                <rbnfrule value="100000000">←←億[→→];</rbnfrule>
+                <rbnfrule value="1000000000000">←←兆[→→];</rbnfrule>
+                <rbnfrule value="10000000000000000">←←京[→→];</rbnfrule>
+                <rbnfrule value="1000000000000000000">=#,###0=;</rbnfrule>
+            </ruleset>
+            <ruleset type="spellout-cardinal">
+                <rbnfrule value="-x">マイナス→→;</rbnfrule>
+                <rbnfrule value="x.x">←←・→→→;</rbnfrule>
+                <rbnfrule value="0">〇;</rbnfrule>
+                <rbnfrule value="1">一;</rbnfrule>
+                <rbnfrule value="2">二;</rbnfrule>
+                <rbnfrule value="3">三;</rbnfrule>
+                <rbnfrule value="4">四;</rbnfrule>
+                <rbnfrule value="5">五;</rbnfrule>
+                <rbnfrule value="6">六;</rbnfrule>
+                <rbnfrule value="7">七;</rbnfrule>
+                <rbnfrule value="8">八;</rbnfrule>
+                <rbnfrule value="9">九;</rbnfrule>
+                <rbnfrule value="10">十[→→];</rbnfrule>
+                <rbnfrule value="20">←←十[→→];</rbnfrule>
+                <rbnfrule value="100">百[→→];</rbnfrule>
+                <rbnfrule value="200">←←百[→→];</rbnfrule>
+                <rbnfrule value="1000">千[→→];</rbnfrule>
+                <rbnfrule value="2000">←←千[→→];</rbnfrule>
+                <rbnfrule value="10000">←←万[→→];</rbnfrule>
+                <rbnfrule value="100000000">←←億[→→];</rbnfrule>
+                <rbnfrule value="1000000000000">←←兆[→→];</rbnfrule>
+                <rbnfrule value="10000000000000000">←←京[→→];</rbnfrule>
+                <rbnfrule value="1000000000000000000">=#,###0=;</rbnfrule>
+            </ruleset>
+            <ruleset type="spellout-cardinal-romaji">
+                <rbnfrule value="-x">mainasu→→;</rbnfrule>
+                <rbnfrule value="x.x">←← ten →→→;</rbnfrule>
+                <rbnfrule value="0">zero;</rbnfrule>
+                <rbnfrule value="1">ichi;</rbnfrule>
+                <rbnfrule value="2">ni;</rbnfrule>
+                <rbnfrule value="3">san;</rbnfrule>
+                <rbnfrule value="4">yon;</rbnfrule>
+                <rbnfrule value="5">go;</rbnfrule>
+                <rbnfrule value="6">roku;</rbnfrule>
+                <rbnfrule value="7">nana;</rbnfrule>
+                <rbnfrule value="8">hachi;</rbnfrule>
+                <rbnfrule value="9">kyuu;</rbnfrule>
+                <rbnfrule value="10">juu [→→];</rbnfrule>
+                <rbnfrule value="20">←←-juu [→→];</rbnfrule>
+                <rbnfrule value="100">hyaku[ →→];</rbnfrule>
+                <rbnfrule value="200">nihyaku[ →→];</rbnfrule>
+                <rbnfrule value="300">sanbyaku[ →→];</rbnfrule>
+                <rbnfrule value="400">←←hyaku[ →→];</rbnfrule>
+                <rbnfrule value="600">roppyaku[ →→];</rbnfrule>
+                <rbnfrule value="700">nanahyaku[ →→];</rbnfrule>
+                <rbnfrule value="800">happyaku[ →→];</rbnfrule>
+                <rbnfrule value="900">←←hyaku[ →→];</rbnfrule>
+                <rbnfrule value="1000">sen[ →→];</rbnfrule>
+                <rbnfrule value="2000">ni-sen[ →→];</rbnfrule>
+                <rbnfrule value="3000">sanzen[ →→];</rbnfrule>
+                <rbnfrule value="4000">←←-sen[ →→];</rbnfrule>
+                <rbnfrule value="8000">hassen[ →→];</rbnfrule>
+                <rbnfrule value="2000">←←-sen[ →→];</rbnfrule>
+                <rbnfrule value="10000">←← man [→→];</rbnfrule>
+                <rbnfrule value="100000000">←← oku [→→];</rbnfrule>
+                <rbnfrule value="1000000000000">←%%romaji-chou←chou [→→];</rbnfrule>
+                <rbnfrule value="10000000000000000">←%%romaji-kei←kei [→→];</rbnfrule>
+                <rbnfrule value="10000000000000000000">=#,###0=;</rbnfrule>
+            </ruleset>
+            <ruleset type="romaji-chou" access="private">
+                <rbnfrule value="1">it;</rbnfrule>
+                <rbnfrule value="2">=%spellout-cardinal-romaji= ;</rbnfrule>
+                <rbnfrule value="8">hat;</rbnfrule>
+                <rbnfrule value="9">kyuu;</rbnfrule>
+                <rbnfrule value="10">jut;</rbnfrule>
+                <rbnfrule value="11">juu [→→];</rbnfrule>
+                <rbnfrule value="20">←%spellout-cardinal-romaji←-jut[→→];</rbnfrule>
+                <rbnfrule value="21">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="30">←%spellout-cardinal-romaji←-jut[→→];</rbnfrule>
+                <rbnfrule value="31">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="40">←%spellout-cardinal-romaji←-jut[→→];</rbnfrule>
+                <rbnfrule value="41">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="50">←%spellout-cardinal-romaji←-jut[→→];</rbnfrule>
+                <rbnfrule value="51">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="60">←%spellout-cardinal-romaji←-jut[→→];</rbnfrule>
+                <rbnfrule value="61">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="70">←%spellout-cardinal-romaji←-jut[→→];</rbnfrule>
+                <rbnfrule value="71">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="80">←%spellout-cardinal-romaji←-jut[→→];</rbnfrule>
+                <rbnfrule value="81">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="90">←%spellout-cardinal-romaji←-jut[→→];</rbnfrule>
+                <rbnfrule value="91">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="100">hyaku [→→];</rbnfrule>
+                <rbnfrule value="200">nihyaku [→→];</rbnfrule>
+                <rbnfrule value="300">sanbyaku [→→];</rbnfrule>
+                <rbnfrule value="400">←%spellout-cardinal-romaji←hyaku [→→];</rbnfrule>
+                <rbnfrule value="600">roppyaku [→→];</rbnfrule>
+                <rbnfrule value="700">nanahyaku [→→];</rbnfrule>
+                <rbnfrule value="800">happyaku [→→];</rbnfrule>
+                <rbnfrule value="900">←%spellout-cardinal-romaji←hyaku [→→];</rbnfrule>
+            </ruleset>
+            <ruleset type="romaji-kei" access="private">
+                <rbnfrule value="1">ik;</rbnfrule>
+                <rbnfrule value="2">=%spellout-cardinal-romaji= ;</rbnfrule>
+                <rbnfrule value="6">rok;</rbnfrule>
+                <rbnfrule value="7">nana ;</rbnfrule>
+                <rbnfrule value="8">hat;</rbnfrule>
+                <rbnfrule value="9">kyuu ;</rbnfrule>
+                <rbnfrule value="10">juk;</rbnfrule>
+                <rbnfrule value="11">juu [→→];</rbnfrule>
+                <rbnfrule value="20">←%spellout-cardinal-romaji←-juk;</rbnfrule>
+                <rbnfrule value="21">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="30">←%spellout-cardinal-romaji←-juk;</rbnfrule>
+                <rbnfrule value="31">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="40">←%spellout-cardinal-romaji←-juk;</rbnfrule>
+                <rbnfrule value="41">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="50">←%spellout-cardinal-romaji←-juk;</rbnfrule>
+                <rbnfrule value="51">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="60">←%spellout-cardinal-romaji←-juk;</rbnfrule>
+                <rbnfrule value="61">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="70">←%spellout-cardinal-romaji←-juk;</rbnfrule>
+                <rbnfrule value="71">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="80">←%spellout-cardinal-romaji←-juk;</rbnfrule>
+                <rbnfrule value="81">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="90">←%spellout-cardinal-romaji←-juk;</rbnfrule>
+                <rbnfrule value="91">←%spellout-cardinal-romaji←-juu [→→];</rbnfrule>
+                <rbnfrule value="100">hyak;</rbnfrule>
+                <rbnfrule value="101">hyaku [→→];</rbnfrule>
+                <rbnfrule value="200">nihyak;</rbnfrule>
+                <rbnfrule value="201">nihyaku [→→];</rbnfrule>
+                <rbnfrule value="300">sanbyak;</rbnfrule>
+                <rbnfrule value="301">sanbyaku [→→];</rbnfrule>
+                <rbnfrule value="400">yonhyak;</rbnfrule>
+                <rbnfrule value="401">yonhyaku [→→];</rbnfrule>
+                <rbnfrule value="500">gohyak;</rbnfrule>
+                <rbnfrule value="501">gohyaku [→→];</rbnfrule>
+                <rbnfrule value="600">roppyak;</rbnfrule>
+                <rbnfrule value="601">roppyaku [→→];</rbnfrule>
+                <rbnfrule value="700">nanahyak;</rbnfrule>
+                <rbnfrule value="701">nanahyaku [→→];</rbnfrule>
+                <rbnfrule value="800">happyak;</rbnfrule>
+                <rbnfrule value="801">happyaku [→→];</rbnfrule>
+                <rbnfrule value="900">←←hyak;</rbnfrule>
+                <rbnfrule value="901">←←hyaku [→→];</rbnfrule>
+            </ruleset>
+            <ruleset type="spellout-ordinal">
+                <rbnfrule value="x.x">=#,###0.#=;</rbnfrule>
+                <rbnfrule value="0">第=%spellout-numbering=;</rbnfrule>
+            </ruleset>
+            <ruleset type="spellout-ordinal-romaji">
+                <rbnfrule value="x.x">=#,###0.#=;</rbnfrule>
+                <rbnfrule value="0">dai =%spellout-cardinal-romaji=;</rbnfrule>
+            </ruleset>
+        </rulesetGrouping>
+        <rulesetGrouping type="OrdinalRules">
+            <ruleset type="digits-ordinal">
+                <rbnfrule value="-x">第−→#,###0→;</rbnfrule>
+                <rbnfrule value="0">第=#,###0=;</rbnfrule>
+            </ruleset>
+        </rulesetGrouping>
+    </rbnf>
+</ldml>
