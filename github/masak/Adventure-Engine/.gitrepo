@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:masak/Adventure-Engine.git
+	branch = master
+	commit = 5b2d53bfa495fd5a7b8fc7fac6ec85a08e9bad05
+	parent = e6f85091b4f11f611cf4795a2b2d6c5810e0fa56
+	cmdver = 0.3.1
