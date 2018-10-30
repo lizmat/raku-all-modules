@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cygx/p6-nqp-eval.git
+	branch = master
+	commit = ca5ef5a28759d7774a7196349d8c340e3e22de60
+	parent = abbc8502cd60b9ad1b7b9cc015b57f0e4dfcd3e6
+	cmdver = 0.3.1
