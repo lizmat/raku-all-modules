@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:MARTIMM/mongo-perl6-driver.git
+	branch = master
+	commit = fd66ba85437c2e6ec2ea35eee11b700db158be7d
+	parent = 1db0fd929dc05c5b5ef5d35f87f9481c6f0f689a
+	cmdver = 0.3.1

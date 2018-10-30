@@ -1,0 +1,12 @@
+.directory
+*.html
+*/*.html
+Old/*
+Tests/insert*
+Sandbox/*
+t/Travis-ci/*.tgz
+*.log
+.precomp
+*/.precomp
+*.zargo~
+~*
