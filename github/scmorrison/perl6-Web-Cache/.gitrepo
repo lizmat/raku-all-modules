@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:scmorrison/perl6-Web-Cache.git
+	branch = master
+	commit = 97990f4c2ac0d68836f29febe0a4de9ded8fdb86
+	parent = 6f0e5107116cdc7e2f234facf551d7a2a38c2d6e
+	cmdver = 0.3.1
