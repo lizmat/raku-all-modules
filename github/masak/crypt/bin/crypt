@@ -1,0 +1,334 @@
+#! /usr/local/bin/nom
+
+use Test;
+use Game::Crypt;
+
+sub MAIN {
+    say "CRYPT";
+    say "=====";
+    say "";
+
+    say "You've heard there's supposed to be an ancient hidden crypt in these";
+    say "woods. One containing a priceless treasure. Well, there's only one way";
+    say "to find out...";
+    say "";
+
+    my $game = Game::Crypt.new();
+    my $save;
+    my %descriptions;
+    for slurp("game-data/descriptions").trim.split(/\n\n/) {
+        /^^ '== ' (\N+) \n (.*)/
+            or die "Could not parse 'descriptions' file: $_";
+        %descriptions{$0} = ~$1;
+    }
+
+    sub params($method) {
+        $method.signature.params ==>
+            grep { .positional && !.invocant } ==>
+            map { .name.substr(1) }
+    }
+    my %commands = map { $^m.name => params($m) }, $game.^methods;
+
+    my %verb_synonyms =
+        "go"        => "walk",
+        "l"         => "look",
+        "x"         => "examine",
+        "place"     => "put",
+        "put"       => "put",
+        "pick"      => "take",
+        "pick up"   => "take",
+        "get"       => "take",
+        "retrieve"  => "take",
+        "retreive"  => "take",  # might as well
+        "turn on"   => "use",
+        "switch on" => "use",
+        "i"         => "inventory",
+    ;
+    my @verbs = %commands.keys, %verb_synonyms.keys;
+
+    my @possible_directions = <
+        north south east west
+        northeast northwest southeast southwest
+        up down in out
+        n s e w ne nw se sw u d
+    >;
+
+    given 'clearing' {
+        say .tc;
+        say "";
+        say %descriptions{$_};
+        say "Your car is parked here.";
+        say "You can go east.";
+        say "";
+    }
+
+    my @all_events;
+    my $player_has_tiny_disk = False;
+
+    loop {
+        my $command = prompt('> ');
+        given $command {
+            when !.defined || .lc eq "q" | "quit" {
+                say "";
+                last;
+            }
+
+            $command .= lc;
+            $command .= trim;
+
+            when /^help>>/|"h"|"?" {
+                .say given # poor man's heredoc
+"Here are some (made-up) examples of commands you can use:
+
+look                         | take banana
+examine banana               | drop banana
+[walk] north/south/east/west | put banana in bag
+       (or just n/s/e/w)     | place banana on throne
+open bag                     | close bag
+inventory";
+            }
+
+            when /^ save>> / {
+                $save = $game.save;
+                say "Game saved.";
+            }
+
+            when /^ restore>> / {
+                when !defined $save {
+                    say "No game has been saved yet.";
+                }
+                $game.restore($save);
+
+                my @events = $game.look;
+                for @events {
+                    when Adventure::PlayerLooked {
+                        say tc .room;
+                        say "";
+                        say %descriptions{.room};
+                        if .room eq 'hall' {
+                            Game::Hanoi::print_hanoi_game(@all_events);
+                            say "";
+                        }
+                        for .things -> $thing {
+                            sub announce($thing) {
+                                if %descriptions{"phrase:$thing"} -> $phrase {
+                                    say sprintf $phrase, $thing;
+                                }
+                                else {
+                                    say "There is a $thing here.";
+                                }
+                            }
+
+                            if $thing ~~ Pair {
+                                announce $thing.key;
+                                # XXX: Needs to work for nested calls, too
+                                say "The $thing.key() contains:";
+                                for $thing.value.list -> $containee {
+                                    say "  A $containee.";
+                                }
+                            }
+                            else {
+                                announce $thing;
+                            }
+                        }
+                        if .exits {
+                            say "You can go {join ' and ', .exits}.";
+                        }
+                    }
+                }
+            }
+
+            when any @possible_directions {
+                $command = "walk $command";
+                proceed;
+            }
+
+            my grammar Command {
+                regex TOP {
+                    ^
+                    [
+                    | $<verb>='move' \h+ $<arg1>=[\w+] \h+ $<arg2>=[\w+]
+                    | <verb>
+                      [
+                          \h+ ['the' \h+]? $<arg1>=<.noun>
+                          [
+                              \h+ <prep> \h+ ['the' \h+]? $<arg2>=<.noun>
+                          ]?
+                      ]?
+                    ]
+                    $
+                }
+                regex verb { \w+ [\h+ \w+]?? <?{ $/ eq any @verbs }> }
+                regex noun { \w+ [\h+ ['disk'|'rod']]? }
+                regex prep { 'in' | 'on' }
+            }
+
+            when !Command.parse($command) {
+                say "Sorry, I did not understand that.";
+            }
+
+            my $verb = %verb_synonyms{$<verb>} // ~$<verb>;
+            my @args;
+            if $<arg1> {
+                push @args, ~$<arg1>;
+                if $<arg2> {
+                    if $verb eq 'put' {
+                        $verb = "put_thing_$<prep>";
+                    }
+                    push @args, ~$<arg2>;
+                }
+            }
+
+            when /^ :s [move|put] [the]?
+                    $<disk>=[[tiny||small||medium||large||huge] disk]
+                    [on|to] [the]?
+                    $<target>=[left||middle||right]
+                    [rod]? $/ {
+
+                unless $<disk> eq 'tiny disk' && $player_has_tiny_disk {
+                    $verb = 'move';
+                    @args = ~$<disk>, ~$<target>;
+                }
+                proceed;
+            }
+
+            when /^ :s [move|put] [the]?
+                    $<source>=[left||middle||right]
+                    [disk|rod] [on|to] [the]?
+                    $<target>=[left||middle||right]
+                    [rod]? $/ {
+
+                $verb = 'move';
+                @args = ~$<source>, ~$<target>;
+                proceed;
+            }
+
+            when %commands.exists($verb) {
+                my @req_args = %commands{$verb}.list;
+                when @args != @req_args {
+                    say "You passed in {+@args} arguments, but $verb requires {+@req_args}.";
+                    if @req_args {
+                        say "The arguments are {map { "<$_>" }, @req_args}.";
+                    }
+                }
+                my @events = $game."$verb"(|@args);
+                push @all_events, @events;
+                for @events {
+                    when Adventure::PlayerWalked { say tc .to; }
+                    when Adventure::PlayerLooked {
+                        say "";
+                        say %descriptions{.room};
+                        if .room eq 'hall' {
+                            Game::Hanoi::print_hanoi_game(@all_events);
+                            say "";
+                        }
+                        for .things -> $thing {
+                            sub announce($thing) {
+                                if %descriptions{"phrase:$thing"} -> $phrase {
+                                    say sprintf $phrase, $thing;
+                                }
+                                else {
+                                    say "There is a $thing here.";
+                                }
+                            }
+
+                            if $thing ~~ Pair {
+                                announce $thing.key;
+                                # XXX: Needs to work for nested calls, too
+                                say "The $thing.key() contains:";
+                                for $thing.value.list -> $containee {
+                                    say "  A $containee.";
+                                }
+                            }
+                            else {
+                                announce $thing;
+                            }
+                        }
+                        if .exits {
+                            say "You can go {join ' and ', .exits}.";
+                        }
+                    }
+                    when Adventure::PlayerLookedAtDarkness { say "It is pitch black." }
+                    when Adventure::PlayerExamined { say %descriptions{.thing} }
+                    when Adventure::ContentsRevealed {
+                        my $contents = join " and ", map { "a $_" }, .contents;
+                        say "Opening the {.container} reveals $contents.";
+                    }
+                    when Adventure::PlayerTook {
+                        say "You take the {.thing}.";
+                        if .thing eq 'tiny disk' {
+                            $player_has_tiny_disk = True;
+                        }
+                    }
+                    when Adventure::PlayerDropped {
+                        say "You drop the {.thing} on the ground.";
+                    }
+                    when Adventure::PlayerOpened {
+                        say "You open the {.thing}.";
+                    }
+                    when Adventure::PlayerPutIn {
+                        say "You put the {.thing} in the {.in}.";
+                    }
+                    when Adventure::PlayerPutOn {
+                        say "You put the {.thing} on the {.on}.";
+                        if .thing eq 'tiny disk' && .on ~~ /' rod'/ {
+                            $player_has_tiny_disk = False;
+                            Game::Hanoi::print_hanoi_game(@all_events);
+                            say "";
+                        }
+                    }
+                    when Adventure::GameRemarked {
+                        say %descriptions{"remark:{.remark}"};
+                    }
+                    when Adventure::PlayerRead {
+                        say %descriptions{"{.thing}"};
+                    }
+                    when Game::Hanoi::DiskMoved {
+                        say "You put the {.disk} on the {.target} rod.";
+                        Game::Hanoi::print_hanoi_game(@all_events);
+                    }
+                    when Adventure::PlayerCheckedInventory {
+                        if .things {
+                            say "You are carrying:";
+                            for .things -> $thing {
+                                sub announce($thing) {
+                                    if %descriptions{"phrase:$thing"} -> $phrase {
+                                        say sprintf $phrase, $thing;
+                                    }
+                                    else {
+                                        say "A $thing.";
+                                    }
+                                }
+
+                                if $thing ~~ Pair {
+                                    announce $thing.key;
+                                    # XXX: Needs to work for nested calls, too
+                                    say "The $thing.key() contains:";
+                                    for $thing.value.list -> $containee {
+                                        say "  A $containee.";
+                                    }
+                                }
+                                else {
+                                    announce $thing;
+                                }
+                            }
+                        }
+                        else {
+                            say "You are empty-handed.";
+                        }
+                    }
+                    when Adventure::GameFinished {
+                        exit;
+                    }
+                }
+                CATCH {
+                    when X::Adventure { say .message, '.' }
+                    when X::Hanoi { say .message, '.' }
+                    when X::Crypt { say .message, '.' }
+                }
+            }
+        }
+        say "";
+    }
+    say "Thanks for playing.";
+}

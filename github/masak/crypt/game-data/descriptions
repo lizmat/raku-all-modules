@@ -1,0 +1,172 @@
+== clearing
+The forest road stops here, and the gaps between the trees widen into a
+patch of un-forest. The sky above is clear apart from a few harmless clouds.
+
+== hill
+A flat, broad hill interrupts the dense-ish forest here. Only grass and
+small bushes grow on the hill.
+
+== chamber
+This is a cramped space just inside the hidden opening in the hill. The
+sun gets in enough to illuminate the place. There are some scribblings on
+the wall.
+
+== hall
+It's hard to believe that this kind of room can fit under a hill. It's tall,
+long, and quite spacious. Hieroglyphs adorn all four of the walls. The
+floor slants a bit.
+
+== cave
+This is a perfectly cylindrical chamber. An oversized fire-pit takes up most
+of the floor space in the middle of the room. Ancient runes run along the
+circumference of the wall. It's hot and stuffy.
+
+== crypt
+The air is stale and smells a bit metallic. Three impenetrable sarcophagi
+sit next to each other on the floor. On the walls are numerous finely
+inscribed ideograms.
+
+== flashlight
+The flashlight, a trusty Flexmann 520, has been serving you for countless
+adventures.
+
+== rope
+The rope is 5 meters and 31 centimeters long. It's twined together from
+sturdy fiber of some kind.
+
+== car
+Small, kind of old, and beginning to rust. But it still gets you places.
+
+== brook
+Clear water flows over and around a few fixed stones in the brook. It's
+probably from a spring higher up in the hills somewhere. It looks chilly.
+
+== grass
+It's lustrous and, you know, green.
+
+== bushes
+Those are some seriously uninteresting bushes.
+
+== door
+It's made of stone but covered with dirt and grass on top.
+
+== trees
+Autumn trees are just so lovely. They look like they're just about to drop
+all their leaves -- red, yellow, brown ones -- to the ground.
+
+== leaves
+They look like the kind of leaves that would love a good rustle.
+
+== sign
+It says "LEAVE " with big, scrawly lettering. Maybe a warning or a threat.
+On closer inspection, though, it looks like there might once have been one
+more letter at the end, but it has since been worn away.
+
+== basket
+It's fixed to the ground under the sign. For some reason it reminds you of
+objects used during religious ceremonies for offerings of different kinds.
+
+== hanoi
+The rods! The disks! So monstrous in its simplicity! So beautiful in its
+complexity!
+
+== tiny disk
+It's a bit heavy.
+
+== small disk
+It's very heavy.
+
+== middle disk
+It's enormously heavy.
+
+== large disk
+It's indescribably heavy.
+
+== huge disk
+It's so heavy that this description doesn't do its weight justice.
+
+== left rod
+It's a rod and it's on the left.
+
+== middle rod
+It's a rod and it's between the left rod and the right rod.
+
+== right rod
+It's a rod and it's on the right. It's made of liquorice.
+Nah, just kidding! It looks to be made of copper or something.
+
+== helmet
+Once surely part of a big metal uniform, now it's just the helmet. The visor,
+seems to be fixed in place. The whole headpiece look like a big pot without a
+handle. The metal is thin and light, so the helmet doesn't weigh much.
+
+== fire
+It's massive, and sort of yellow-red-orangeish. Also, it's really, really hot!
+
+== pedestal
+It's made of stone. It points up from the ground. It appears to contain a
+deadly, unreachable contraption built to discourage tomb raiders.
+
+== sarcophagi
+They're boxes containing deceased people. Better just leave them be.
+
+== butterfly
+It's made of gold, silver, enamel, diamond, ruby, emerald, and various other
+precious stones and metals you can't identify. You feel rich just looking
+at it.
+
+== remark:car-full-of-leaves
+Great. Now your car is full of leaves.
+
+== remark:door-under-grass
+You discover a door in the hill, under the thick grass!
+
+== remark:passageway-opens-up
+The ground rumbles and shakes a bit.
+A passageway opens up to the south, into the caverns.
+
+== remark:floor-reveals-hole
+The whole floor tips, and reveals a hole beneath the wall.
+
+== remark:floor-hides-hole
+The whole floor tips back, hiding the hole again.
+
+== remark:bare-hands-carry-water
+Your bare hands aren't very good at carrying water.
+
+== remark:car-is-now-wet
+What doesn't discolor the seats collects in miserable little puddles on the
+floor mats.
+
+== remark:fire-dies
+The fire wanes and dies out.
+
+== remark:walk-past-fire-too-hot
+You try to walk past the fire, but it's too hot!
+
+== remark:alarm-starts
+An alarm starts sounding in the whole cavern.
+
+== remark:alarm-stops
+The alarm stops.
+
+== remark:cavern-collapses
+The alarm starts sounding louder.
+The whole cavern shakes, and falls in on itself.
+You die.
+
+== remark:made-it-out-with-treasure
+Congratulations! You found the treasure and got out with it
+alive!
+
+== phrase:car
+Your %s is parked here.
+
+== phrase:leaves
+69,105 %s.
+
+== phrase:brook
+A small %s runs through the forest.
+
+== phrase:water
+Some %s.
