@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:azawawi/perl6-file-zip.git
+	branch = master
+	commit = 91446975e69e90bdf6763d4e556cf617ce33a2a3
+	parent = 79aba93f9e722aef24a88b98e3c36a32b4f5822f
+	cmdver = 0.3.1
