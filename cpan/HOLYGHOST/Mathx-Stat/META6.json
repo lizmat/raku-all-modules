@@ -3,7 +3,7 @@
         "name" : "Mathx::Stat",
         "auth" : "CPAN:HOLYGHOST",
         "api" : "1",
-        "version" : "0.1.5",
+        "version" : "0.1.9",
         "description" : "Statistics package unto Correlation Dimension.",
         "authors" : [ "The Holy Ghost" ],
         "license" : "General Public License 3, Artistic-2.0",
@@ -23,5 +23,5 @@
         "tags": [
           "Mathx", "Stat"
         ],
-        "source-url" : "http://cpan.metacpan.org/authors/id/H/HO/HOLYGHOST/Perl6/Mathx-Stat-0.1.5.tar.gz"
+        "source-url" : "http://cpan.metacpan.org/authors/id/H/HO/HOLYGHOST/Perl6/Mathx-Stat-0.1.9.tar.gz"
     }

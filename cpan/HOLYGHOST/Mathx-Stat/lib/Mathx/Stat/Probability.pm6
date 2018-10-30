@@ -28,9 +28,36 @@ class Probability {
 		return self.P($index0) + self.P($index1) - self.Pand($index0, $pbconda);
 	}
 
+	method Porp($index0, $p, $pbconda) {
+		return self.P($index0) + $p - self.Pand($index0, $pbconda);
+	}
+
 	### conditional probability (pbconda == P(B|A))
 	method CondP($index0, $pbconda) {
 		return self.Pand($index0, $pbconda) / self.P($index0);
+	}
+
+	### conditional probability P(B|A)
+	#
+	# iterative calculation of conditional probability
+	#
+	method CalculatedCondP0($index0) {
+		my $iterp = .population.nth($index0);
+		my $pand = 0.0;
+
+		### Union of i<=j Pands
+		loop (my $i = 0; $i < $iterp; $i+=0.001) {
+			$pand += self.Porp($index0, self.Pand($index0,$iterp), $iterp);			
+		}
+
+		return $pand;
+	
+	}
+
+
+	### conditional probability P(B|A)
+	method CalculatedCondP($index0, $n) {
+		return CalculatedCondP0($index0) / self.P($n);
 	}
 
 	### Sometimes P(A|B) = P(A), so ($pbconda and self.P($index) == 1.0)
