@@ -1,0 +1,14 @@
+{
+   "name" : "Exportable",
+   "version" : "0.0.2",
+   "description" : "Simple function exporting",
+   "perl" : "6.c",
+   "authors" : [ "Joshua Yeshouroun" ],
+   "provides" : {
+      "Exportable" : "lib/Exportable.pm6"
+   },
+   "depends" : [ ],
+   "source-url" : "git://github.com/0racle/p6-Exportable.git",
+   "license"    : "Artistic-2.0"
+}
+
