@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:bradclawsie/Net-IP-Parse.git
+	branch = master
+	commit = ad9b79879a032dbc510ac1b75b09cbc896e54b1d
+	parent = 52e93f69ebbab970cf96527d684d382ac77822ad
+	cmdver = 0.3.1
