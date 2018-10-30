@@ -1,0 +1,37 @@
+{
+  "name": "FastCGI::NativeCall::PSGI",
+  "source-url": "git://github.com/jonathanstowe/p6-fcgi-psgi.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/p6-fcgi-psgi.git",
+    "bugtracker" : "https://github.com/jonathanstowe/p6-fcgi-psgi/issues"
+  },
+  "perl": "6.c",
+  "resources": [
+  ],
+  "build-depends": [
+  ],
+  "author": "github:carbin",
+  "auth": "github:carbin",
+  "depends": [
+    "PSGI",
+    "FastCGI::NativeCall"
+  ],
+  "tags": [
+    "http",
+    "fastcgi",
+    "fcgi",
+    "psgi"
+  ],
+  "license": "ISC",
+  "test-depends": [
+  ],
+  "provides": {
+    "FastCGI::NativeCall::PSGI": "lib/FastCGI/NativeCall/PSGI.pm6"
+  },
+  "version": "0.0.3",
+  "meta-version": "0",
+  "authors": [
+    "carbin"
+  ],
+  "description": "A PSGI interface for FastCGI::NativeCall"
+}

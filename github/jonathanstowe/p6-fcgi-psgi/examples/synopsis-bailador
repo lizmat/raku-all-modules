@@ -1,0 +1,15 @@
+#!/usr/bin/env perl6
+
+use FastCGI::NativeCall::PSGI;
+use Bailador;
+
+get "/" => sub {
+    "Hello world";
+}
+
+
+my $psgi = FastCGI::NativeCall::PSGI.new(path => "/tmp/fastcgi.sock", backlog => 32);
+$psgi.run(get-psgi-app());
+
+
+# vim: expandtab shiftwidth=4 ft=perl6
