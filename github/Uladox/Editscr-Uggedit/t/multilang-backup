@@ -1,0 +1,27 @@
+//@uggedit src_k {
+    kajlfka
+	asfsad
+	asfas
+	asfsad
+//@uggedit src_k }
+//@uggedit src_k/edit var b \
+// var g var e code python {
+#! a = field
+#! b = "turn around\""
+#! g = "mask"
+#! e = "of evil"
+//@uggedit src_k/edit }
+//@uggedit src_k/edit code perl {
+#! print $b . "\n";
+#! print $g . "\n";
+#! print $e . "\n";
+#! $field .= "#! e = \"demons\"\n";
+//@uggedit src_k/edit }
+//@uggedit src_k/edit code perl6 {
+#! print $b ~ "\n\"";
+#! print $g ~ "\n";
+#! print $e ~ "\n";
+#! $field ~= "#! \$e = \"cats\";\n";
+//@uggedit src_k/edit }
+asf
+afs
