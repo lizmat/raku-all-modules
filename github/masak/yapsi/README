@@ -1,0 +1,58 @@
+= Yapsi -- Yet Another Perl Six Implementation
+
+This is an implementation of a Perl 6 compiler-and-runtime in Perl 6.
+
+== Building Yapsi
+
+$ ufo && make
+
+'ufo' is a Makefile generator, and can be found at
+<http://github.com/masak/ufo>.
+
+== Features currently available in Yapsi
+
+Right now you can do things like this:
+
+$ bin/yapsi -e 'say 42'
+42
+
+$ bin/yapsi -e 'my $a; my $b = { $a = 5 }; $b(); say $a'
+5
+
+$ bin/yapsi -e 'my $a = 5; my $b := $a; $b = 41; ++$b; say $a'
+42
+
+$ bin/yapsi -e 'my $a = 42; while --$a { say $a }'
+
+In other words, Yapsi currently handles scalar variables, declaration, blocks,
+assignment, binding, prefix increment/decrement, if/while, and say.
+
+The compiler also detects syntax errors.
+
+$ bin/yapsi -e 'say say'
+Could not parse
+
+== Near-future directions
+
+Things we hope to implement in the immediate future:
+
+* More loops
+* Function calls
+* Phasers
+
+For more detailed information, see doc/ROADMAP.
+
+== Raison d'être
+
+Besides being useful as a p6-in-p6 implementation, Yapsi also might work as
+a fast vehicle for exploring the following underexplored areas of the Perl 6
+spec:
+
+* Phasers
+* Constant folding
+* Early catching of errors
+* Increased communication between compiler and runtime
+
+== License
+
+Yapsi is released under Artistic 2.0. See LICENSE.
