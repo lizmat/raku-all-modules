@@ -1,0 +1,18 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Sake;
+
+sub MAIN(*@tasks,
+         :$file = ‘Sakefile’,
+         :$force = False,
+        ) {
+
+    if !$file.IO.e {
+        note “Could not find file $file!”;
+        exit 2
+    }
+    EVALFILE $file;
+    sake-precheck :$force;
+    execute @tasks || ‘default’
+}
