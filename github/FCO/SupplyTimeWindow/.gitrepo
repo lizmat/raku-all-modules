@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:FCO/SupplyTimeWindow.git
+	branch = master
+	commit = 7d6b48e75268712d88f49719d5dc64c67b265c8e
+	parent = 74dd41c0a7eb55a35f2245a6eda754d27b8ea1ec
+	cmdver = 0.3.1
