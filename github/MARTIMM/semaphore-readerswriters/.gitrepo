@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:MARTIMM/semaphore-readerswriters.git
+	branch = master
+	commit = d45d81aec26e56800cae6832b6256a811fe9e4a5
+	parent = 6c265b554cd33cd4b49b50ab878bc155e2a8bdce
+	cmdver = 0.3.1
