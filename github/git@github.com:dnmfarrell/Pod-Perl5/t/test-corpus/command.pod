@@ -1,5 +1,0 @@
-=pod
-
-=encoding utf8
-
-=cut

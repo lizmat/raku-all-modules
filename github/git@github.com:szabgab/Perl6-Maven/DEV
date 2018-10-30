@@ -1,2 +1,0 @@
-time perl6 -Ilib script/generate.p6 --indir=/home/gabor/work/perl6maven.com --outdir=/home/gabor/work/perl6maven-live.com/ $*
-

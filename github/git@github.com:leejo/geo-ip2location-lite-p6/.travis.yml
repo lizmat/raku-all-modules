@@ -1,3 +1,0 @@
-language: perl6
-script:
-    - PERL6LIB=lib prove -v -r --exec=perl6 t/

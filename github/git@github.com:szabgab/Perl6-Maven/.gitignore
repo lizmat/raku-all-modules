@@ -1,8 +1,0 @@
-*.swp
-/logs/
-/lib/.precomp/
-.precomp/
-
-/test.out
-/test.err
-/TEST

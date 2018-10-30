@@ -1,6 +1,0 @@
-lib/.precomp
-/blib/
-/Makefile
-*.o
-*~
-#*

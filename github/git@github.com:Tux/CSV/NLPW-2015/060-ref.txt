@@ -1,7 +1,0 @@
-References
-
- \$foo  vs  [ $foo ]
-
- bind_columns
-
- speed considerations

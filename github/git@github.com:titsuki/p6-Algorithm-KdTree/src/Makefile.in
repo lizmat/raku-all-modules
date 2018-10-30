@@ -1,8 +1,0 @@
-name = %kdtree%
-
-all: %DESTDIR%/resources/libraries/%kdtree%
-clean:
-	rm %DESTDIR%/resources/libraries/%kdtree%
-
-%DESTDIR%/resources/libraries/%kdtree%: kdtree.c
-	%CC% -shared %CCSHARED% %CCFLAGS% kdtree.c -o %DESTDIR%/resources/libraries/%kdtree%

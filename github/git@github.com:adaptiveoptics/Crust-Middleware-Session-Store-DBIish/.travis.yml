@@ -1,9 +1,0 @@
-language: perl6
-perl6:
- - latest
-install:
-  - rakudobrew build-zef
-  - zef install --/test --depsonly .
-script:
-  - prove -vr -e 'perl6 -Ilib' t/
-sudo: false

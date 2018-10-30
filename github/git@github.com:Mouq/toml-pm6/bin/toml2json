@@ -1,7 +1,0 @@
-#!/usr/bin/env perl6
-use lib <lib>;
-use TOML;
-use JSON::Tiny;
-
-my $*JSON_COMPAT = True;
-$*IN.slurp-rest.&from-toml.&to-json.say;

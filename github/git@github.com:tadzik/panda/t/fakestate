@@ -1,3 +1,0 @@
-foo absent {}
-bar installed-dep {}
-baz installed {}

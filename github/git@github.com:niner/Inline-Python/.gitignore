@@ -1,6 +1,0 @@
-.prove
-lib/Inline/pyhelper.so
-Makefile
-lib/.precomp
-t/lib/.precomp
-resources

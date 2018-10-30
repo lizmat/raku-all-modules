@@ -1,7 +1,0 @@
-language: perl6
-perl6:
-    - latest
-
-install:
-    - rakudobrew build-zef
-    - DO_RAKUDO_PREREQ_TESTS=1 zef --debug install .

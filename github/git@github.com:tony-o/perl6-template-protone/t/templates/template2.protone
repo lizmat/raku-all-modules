@@ -1,7 +1,0 @@
-hello <% print 'world'; %>
-
-$data<HELLO> = '<% print $data<HELLO>; %>'
-
-<% for ^5 { %>
-  <% say $_; %>
-<% } %>

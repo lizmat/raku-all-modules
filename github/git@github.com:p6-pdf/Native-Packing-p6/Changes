@@ -1,9 +1,0 @@
-Release 0.0.3
-    - handle sub-records of type Native::Packing
-    - added UInt :offset option to read() and unpack() methods
-
-Release 0.0.2
-    - fixed endian test
-
-Release 0.0.1
-    - initial release

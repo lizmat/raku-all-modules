@@ -1,5 +1,0 @@
-# Rakudo compilation cache
-.precomp
-
-# Vim temporary file
-*.swp

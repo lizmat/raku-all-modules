@@ -1,9 +1,0 @@
-{
-  "options": [{
-    "value": {
-      "by-distro.name": {
-        "": "option one"
-      }
-    }
-  }, { "by-distro.name": { "": "option two" } }, "option three"]
-}

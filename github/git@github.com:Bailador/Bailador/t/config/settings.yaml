@@ -1,5 +1,0 @@
-mode: 'development'
-host: 'www.example.com'
-port: 9090
-
-name: 'local config'

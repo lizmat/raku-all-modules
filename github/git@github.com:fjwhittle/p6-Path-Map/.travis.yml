@@ -1,3 +1,0 @@
-language: perl6
-script:
-  - prove -v -e "perl6 --ll-exception -Ilib" t
