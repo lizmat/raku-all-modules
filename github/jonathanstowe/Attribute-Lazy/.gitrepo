@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/Attribute-Lazy.git
+	branch = master
+	commit = e27794aaaa799e926b61803c3a550df1440c1cb7
+	parent = 1137b4f6c6585f9c4fd2cf0963cc4bab65c7183d
+	cmdver = 0.3.1
