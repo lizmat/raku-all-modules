@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:lestrrat/p6-Crust-Middleware-Session.git
+	branch = master
+	commit = dda68790dd32589f9372e885e6d1aea2f085b35f
+	parent = 37a80905f79a6350769b7a6fa61c874ccd7fbff9
+	cmdver = 0.3.1
