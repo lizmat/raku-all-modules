@@ -1,0 +1,15 @@
+#!env perl6
+
+use v6;
+use Automata::Cellular;
+
+multi sub MAIN(Bool :$about) {
+  if $about {
+    say "Wolfram elementary automata."
+  }
+}
+
+multi sub MAIN(Int :$rule) {
+  my Wolfram $w .= new(:number($rule));
+  $w.run();
+}
