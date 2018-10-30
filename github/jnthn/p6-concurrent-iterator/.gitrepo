@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jnthn/p6-concurrent-iterator.git
+	branch = master
+	commit = 867645fe8aa4e18f241f65ac3176fc63a9095fd7
+	parent = 2a609944fd90f9adfb892583d4f5ac511655e7bf
+	cmdver = 0.3.1
