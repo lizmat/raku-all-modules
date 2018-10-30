@@ -1,0 +1,15 @@
+{
+    "name" : "Text::Homoglyph",
+    "license" : "Artistic-2.0",
+    "version" : "0.0.2",
+    "description" : "Map ASCII to unicode homoglyphs.",
+    "author" : "Matt Oates",
+    "tags" : [ "Text", "Hacker", "Joke", "Unicode" ],
+    "perl" : "6.*",
+    "depends" : [ ],
+    "source-type" : "git",
+    "source-url" : "git://github.com/MattOates/Text--Homoglyph.git",
+    "provides" : {
+        "Text::Homoglyph" : "lib/Text/Homoglyph.pm6"
+    }
+}
