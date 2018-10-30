@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:bbkr/GeoIP2.git
+	branch = master
+	commit = bfbe598f084ac05cf5cc079072821d1e27d68fed
+	parent = dcc34836dc78c9fe1c72630d6d9589011e9068de
+	cmdver = 0.3.1
