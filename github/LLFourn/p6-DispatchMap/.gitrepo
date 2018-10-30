@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:LLFourn/p6-DispatchMap.git
+	branch = master
+	commit = 3372d5300e15a1a13fe46013c718c9e30859aa3a
+	parent = 54d316fa1fd16ca1d0d5f0287ee722251e2c0c97
+	cmdver = 0.3.1
