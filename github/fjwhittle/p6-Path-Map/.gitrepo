@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:fjwhittle/p6-Path-Map.git
+	branch = master
+	commit = 81d0bd4ccff1a7763511d39d9dc46dcf495e6199
+	parent = 720b6915477815dfc8ea217eefb68d1ff8d62f9c
+	cmdver = 0.3.1
