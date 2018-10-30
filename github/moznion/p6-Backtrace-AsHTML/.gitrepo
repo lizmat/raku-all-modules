@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:moznion/p6-Backtrace-AsHTML.git
+	branch = master
+	commit = 93b46da52922cc686a69163ceb96649b65579032
+	parent = d807de1e95f275ae7d55efdaea39efc8268c10aa
+	cmdver = 0.3.1
