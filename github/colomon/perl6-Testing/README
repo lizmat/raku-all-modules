@@ -1,0 +1,10 @@
+This is Damian Conway's Perl 6 testing module.
+This represents his source code as of 1/1/2011.
+
+The 1/1/2011 edition of masak's ufo will make a 
+lovely makefile for this project:
+
+ufo
+make
+make test
+make install
