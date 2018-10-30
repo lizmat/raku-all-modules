@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/p6-Email-MIME.git
+	branch = master
+	commit = ba75f8c02a3f5c370a68adb0e53a0ca117a581c8
+	parent = 3758509a1a5a73265e102ebb22e5aea5a089ccc3
+	cmdver = 0.3.1
