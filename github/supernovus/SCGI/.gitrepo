@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/SCGI.git
+	branch = master
+	commit = e6581f5d1111f7d0d7d20a7385b0d3a0a3ec658c
+	parent = 4c412fa623634a290728eb981fbc7a9d20ce379a
+	cmdver = 0.3.1
