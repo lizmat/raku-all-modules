@@ -1,0 +1,19 @@
+{
+    "perl" : "6.c",
+    "name" : "Foo::Dependencies::A-on-B",
+    "auth" : "github:AlexDaniel",
+    "api" : "1",
+    "version" : "0.0.1",
+    "description" : "A module that depends on another module that depends on this module.",
+    "authors" : [ "Aleks-Daniel Jakimenko-Aleksejev" ],
+    "license" : "GPL-3.0-or-later",
+    "provides" : {
+        "Foo::Dependencies::A-on-B" : "lib/Foo/Dependencies/A-on-B.pm6"
+    },
+    "depends" : [ "Foo::Dependencies::B-on-A" ],
+    "build-depends" : [ "Foo::Dependencies::B-on-A" ],
+    "test-depends" : [ "Foo::Dependencies::B-on-A" ],
+    "resources" : [ ],
+    "tags": [ ],
+    "source-url" : "git://github.com/AlexDaniel/foo-dependencies-a-on-b.git"
+}
