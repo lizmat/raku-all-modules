@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:colomon/Math-ChebyshevPolynomial.git
+	branch = master
+	commit = 29c3ff50360da2b9bc1c010ebc6d7464cd816eee
+	parent = a5722ed7aedaac93d85afac0c21afbd32cb096f0
+	cmdver = 0.3.1
