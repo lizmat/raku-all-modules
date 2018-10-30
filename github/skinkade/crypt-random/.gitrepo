@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:skinkade/crypt-random.git
+	branch = master
+	commit = c1bf9393ab736ac5e5de2d0c3f56078c178cc071
+	parent = 400befa5ac6af6251ae9eb70b1dc656ad9ebd1bc
+	cmdver = 0.3.1
