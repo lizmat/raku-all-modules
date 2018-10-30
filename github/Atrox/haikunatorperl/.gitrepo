@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Atrox/haikunatorperl.git
+	branch = master
+	commit = 5108b616847c06f1bf8e93c5d6a8affbcafda52f
+	parent = 0a6b83759cc4a35f9a289f415a311e0586ea0f78
+	cmdver = 0.3.1
