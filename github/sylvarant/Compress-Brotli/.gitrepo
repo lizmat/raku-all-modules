@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:sylvarant/Compress-Brotli.git
+	branch = master
+	commit = 4f81971485d7a617481923d8560e5a60ede4a288
+	parent = 25c95eb17634a28c16f7b9e50427f8700eddf6a1
+	cmdver = 0.3.1
