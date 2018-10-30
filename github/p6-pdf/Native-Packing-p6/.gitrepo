@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:p6-pdf/Native-Packing-p6.git
+	branch = master
+	commit = 23dcfc761d0c0c0b0032d7cb8dce1e32ce387794
+	parent = 59eb8d3ac791dd73d1314064e1dd5df9b6b671d9
+	cmdver = 0.3.1
