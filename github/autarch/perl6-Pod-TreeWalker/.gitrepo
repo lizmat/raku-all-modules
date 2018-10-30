@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:autarch/perl6-Pod-TreeWalker.git
+	branch = master
+	commit = 94a0408c9ffb7a2be0674e89fd3c5f92b532c605
+	parent = f7dc5de49bda40003e491fa354f4afdf20e95c37
+	cmdver = 0.3.1
