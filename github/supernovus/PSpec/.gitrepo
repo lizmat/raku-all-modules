@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/PSpec.git
+	branch = master
+	commit = cabad26c7f51a6ca29467a056b450e5aa8c9c367
+	parent = b6342dd5b5982a03f8e26092595dc544d0e3d848
+	cmdver = 0.3.1
