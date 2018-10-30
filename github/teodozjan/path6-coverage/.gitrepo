@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:teodozjan/path6-coverage.git
+	branch = master
+	commit = f22c8eb398a890a851fb153ecb7230bda9f760b0
+	parent = 31ed56158da3d4f14c288c190a18e4e76c5be862
+	cmdver = 0.3.1
