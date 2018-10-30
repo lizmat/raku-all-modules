@@ -1,0 +1,9 @@
+{
+    "perl"        : "6.*",
+    "name"        : "ignore",
+    "version"     : "*",
+    "description" : "cli util that adds stuff to VCS ignore files",
+    "provides"    : { },
+    "depends"     : ["File::Find"],
+    "source-url"  : "git://github.com/Heather/ignore.git"
+}
