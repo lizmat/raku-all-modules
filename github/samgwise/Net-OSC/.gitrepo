@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:samgwise/Net-OSC.git
+	branch = master
+	commit = 20b5c133a6e5900d04abd228df5340d37afd0387
+	parent = dfe99fdaed2d28eed7c7be029470b7f1d0d2b5ab
+	cmdver = 0.3.1
