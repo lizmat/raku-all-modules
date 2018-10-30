@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:labster/p6-IO-Path-More.git
+	branch = master
+	commit = 4c68d680bffe2aacc80e849011f18ff88269c273
+	parent = f29c559e4be21d2ab8730b01daaaa186dc31fe47
+	cmdver = 0.3.1
