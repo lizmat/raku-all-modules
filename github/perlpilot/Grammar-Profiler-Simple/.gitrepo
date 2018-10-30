@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:perlpilot/Grammar-Profiler-Simple.git
+	branch = master
+	commit = c0aca5fab323b2974821dabd6b89330c609e0b7d
+	parent = 80250c2e3f3823032e0505e708b49396922ff0ab
+	cmdver = 0.3.1
