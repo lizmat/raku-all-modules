@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tokuhirom/p6-Protocol-WebSocket.git
+	branch = master
+	commit = ca9ac790a556e6dc2a0c7e991c5c8717f1f1c445
+	parent = 284ef95fe7c5e8b96ae6c6d71bd096f8857631d3
+	cmdver = 0.3.1
