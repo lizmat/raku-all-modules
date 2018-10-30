@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:stmuk/p6-Text-VimColour.git
+	branch = master
+	commit = 3e7f4e942cc6b88527838e1d32abaad200fc52fe
+	parent = 0744ae55e8d865ffc49fea50cd827a2431259f86
+	cmdver = 0.3.1
