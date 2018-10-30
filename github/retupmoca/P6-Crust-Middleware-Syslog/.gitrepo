@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-Crust-Middleware-Syslog.git
+	branch = master
+	commit = 2da5706ab7735edaaa6678d2a58f2be7ed1feb6d
+	parent = c4e66003fed12e070d49494a7cd9bf9fdee6e09d
+	cmdver = 0.3.1
