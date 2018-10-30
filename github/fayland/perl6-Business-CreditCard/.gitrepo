@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:fayland/perl6-Business-CreditCard.git
+	branch = master
+	commit = f10039a1c426ac26cf009eafb530170fb94e84ad
+	parent = fabb735fde3fe6ecdf757956f5e966107c1ce9c9
+	cmdver = 0.3.1
