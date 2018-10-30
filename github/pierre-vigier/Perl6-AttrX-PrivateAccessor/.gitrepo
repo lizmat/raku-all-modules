@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:pierre-vigier/Perl6-AttrX-PrivateAccessor.git
+	branch = master
+	commit = 0e6f7a462b3a016cfd7f1d78b048ec681a54262c
+	parent = 35219686319e272cb3d94bf6235ef378b79c164f
+	cmdver = 0.3.1
