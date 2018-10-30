@@ -1,0 +1,17 @@
+{
+  "authors"       : [ "tony-o" ],
+  "perl"          : "6.*",
+  "name"          : "HTTP::Server::Router::YAML",
+  "tags"          : [ "yaml", "router", "http" ], 
+  "version"       : "0.0.1",
+  "auth"          : "github:tony-o",
+  "description"   : "YAML routing for HTTP::Server::Router-s",
+  "source-url"    : "git://github.com/tony-o/perl6-http-server-router-yaml.git",
+  "depends"       : [ "YAML::Parser::LibYAML", "HTTP::Server::Router", "HTTP::Server" ],
+  "build-depends" : [ ],
+  "test-depends"  : [ "HTTP::Server::Async" ],
+  "provides"      : {
+      "HTTP::Server::Router::YAML" : "lib/HTTP/Server/Router/YAML.pm6"
+  },
+  "resources" : [ ]
+}

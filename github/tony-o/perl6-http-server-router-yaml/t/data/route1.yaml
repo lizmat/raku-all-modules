@@ -1,0 +1,14 @@
+---
+paths:
+  /test0:
+    controller: Whatever
+    sub:        whatever
+  /test1:
+    controller: Whatever
+    sub:        test 
+  /test2:
+    controller: Whatever::Sub
+    sub:        test
+  /test3:
+    controller: Whatever::Sub
+    sub:        yolo
