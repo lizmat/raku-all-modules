@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:masak/html-template.git
+	branch = master
+	commit = fa19261aa85b4e7dc50fe56de1e953fc821e6456
+	parent = 5a920c4fec5516ca5137f9ae4365662a9104b8df
+	cmdver = 0.3.1
