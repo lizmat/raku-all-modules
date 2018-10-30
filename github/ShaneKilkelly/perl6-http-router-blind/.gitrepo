@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:ShaneKilkelly/perl6-http-router-blind.git
+	branch = master
+	commit = 477501f182ea6b5e83469cda36567c379d548d73
+	parent = 9574226cefa8c2cc8f7afeb1a4d761b190178a87
+	cmdver = 0.3.1
