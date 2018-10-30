@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:nunorc/p6-Pekyll.git
+	branch = master
+	commit = f980516e0bbc309f3fe4c8ca30041605dbed76d2
+	parent = 1aa86c0ba7f9cfd1869558c54fcf99fc9dc2d1e6
+	cmdver = 0.3.1
