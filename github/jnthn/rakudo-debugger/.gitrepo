@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jnthn/rakudo-debugger.git
+	branch = master
+	commit = f81ab6323f1fb1051aa750e414c75797e6b1bb00
+	parent = fa5f6d7fdbe189511abf0fa66b2bfdeda1c8a89d
+	cmdver = 0.3.1
