@@ -1,0 +1,22 @@
+env:
+  global:
+    - TMPDIR=/tmp
+    - RAKUDO_PKG_URL=https://github.com/nxadm/rakudo-pkg/releases/download/v2018.02.1/rakudo-pkg-Ubuntu14.04_2018.02.1-01_amd64.deb
+
+# https://docs.travis-ci.com/user/installing-dependencies/#Installing-Packages-without-an-APT-Repository
+before_install:
+  - cd ${TMPDIR}
+  # https://github.com/nxadm/rakudo-pkg
+  - wget -O rakudo-pkg.deb ${RAKUDO_PKG_URL}
+  - ls -l
+  - sudo dpkg -i rakudo-pkg.deb
+  - export PATH=$PATH:~/.perl6/bin:/opt/rakudo-pkg/bin
+  # https://github.com/ugexe/zef
+  - git clone https://github.com/ugexe/zef.git && cd zef && perl6 -Ilib bin/zef install .
+
+install:
+  - cd ${TRAVIS_BUILD_DIR}
+  - zef --debug --depsonly install .
+
+script:
+  - prove -v -r -e "perl6 --ll-exception -Ilib" t
