@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Altai-man/p6-Texas-To-Uni.git
+	branch = master
+	commit = 278b94efa286e4141221a26bd0e0567420931d99
+	parent = 454ef9fffa70427447b5cd358ae40f4e5b479bd6
+	cmdver = 0.3.1

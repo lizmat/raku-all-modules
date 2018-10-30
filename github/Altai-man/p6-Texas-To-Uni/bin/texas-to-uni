@@ -1,0 +1,7 @@
+use v6;
+
+use Texas::To::Uni;
+
+sub MAIN(:file($data)!) {
+    convert-file($data); # Very simple.
+}
