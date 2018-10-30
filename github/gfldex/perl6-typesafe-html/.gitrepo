@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:gfldex/perl6-typesafe-html.git
+	branch = master
+	commit = 2a0933e6a8ce1969a5d73eaa1352a64b87e18cbb
+	parent = df7c08f500faa7cd9203880a083db92bf0a966ab
+	cmdver = 0.3.1
