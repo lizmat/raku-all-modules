@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:teodozjan/mortage6.git
+	branch = master
+	commit = 205cdda0144957fc0196d1e0e8bdee8358a7c529
+	parent = c98dde1818ae5e23468e1b022606e4ce4a9b6a10
+	cmdver = 0.3.1
