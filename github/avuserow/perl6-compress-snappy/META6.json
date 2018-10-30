@@ -1,0 +1,13 @@
+{
+	"perl" : "6.*",
+	"name" : "Compress::Snappy",
+	"license" : "MIT",
+	"version" : "0.0.3",
+	"description" : "(de)compress data in Google's Snappy compression format",
+	"provides": {
+		"Compress::Snappy": "lib/Compress/Snappy.pm"
+	},
+	"author" : "Adrian Kreher",
+	"depends" : [],
+	"source-url" : "git://github.com/avuserow/perl6-compress-snappy.git"
+}

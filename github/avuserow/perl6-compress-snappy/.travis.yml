@@ -1,0 +1,12 @@
+sudo: required
+
+language: perl6
+
+perl6:
+    - latest
+
+install:
+    - sudo apt-get install libsnappy-dev
+    - rakudobrew build zef
+    - zef install .
+
