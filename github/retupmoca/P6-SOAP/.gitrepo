@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-SOAP.git
+	branch = master
+	commit = 05b4f2f6293a6975324aaac7ca8063db366a55bd
+	parent = 1d5148b0c55cbb2422a52ad18449fe4701ac87ff
+	cmdver = 0.3.1
