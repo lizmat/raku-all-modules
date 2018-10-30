@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:avuserow/perl6-webservice-lastfm.git
+	branch = master
+	commit = 2ad43664420e0b4d64b3ab6e37ea198a9388dc84
+	parent = e59731aaa79d257f95fc97b3e8d14ea915527c19
+	cmdver = 0.3.1
