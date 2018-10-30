@@ -1,0 +1,32 @@
+table: customer
+name: Customer
+columns:
+  id:
+    type: integer
+    nullable: false
+    is-primary-key: true
+    auto-increment: true
+  name:
+    type: text
+  contact:
+    type: text
+  country:
+    type: text
+relations:
+  orders:
+    has-many: true
+    model: Order
+    relate:
+      id: customer_id
+  open_orders:
+    has-many: true
+    model: Order
+    relate:
+      id: customer_id
+      +status: open
+  completed_orders:
+    has-many: true
+    model: Order
+    relate:
+      id: customer_id
+      +status: closed
