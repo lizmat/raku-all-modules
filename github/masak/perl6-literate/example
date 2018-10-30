@@ -1,0 +1,13 @@
+This is ordinary text. It will be turned into a comment by the literate
+Perl 6 preprocessor. This paragraph is followed by a paragraph of code,
+which begins with a '>' character. I have a space after the '>', because
+I think it's nice. It's not a necessity, though.
+
+> say "OH HAI";
+
+There are empty lines before and after the lines of code starting with
+'>'. If those empty lines were to be removed, the preprocessor will flag
+an error and not produce any output. According to HaskellWiki, "the idea
+behind this restriction is capturing the mistake of not inserting the >
+mark at the beginning of the line. In general this is not only good
+practice, but also a formatting that makes the code more readable."

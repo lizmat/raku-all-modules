@@ -1,0 +1,16 @@
+#!/usr/local/bin/perl6 -Ilib
+use v6;
+use Perl6::Literate;
+
+sub MAIN($scriptfile) {
+    die "Usage: $*PROGRAM_NAME <script>\n"
+        unless $scriptfile.IO ~~ :e;
+
+    my $tempfile = [~] 'temp_', map { (1..9).pick }, ^5;
+    given open $tempfile, :w {
+        .print: Perl6::Literate::convert( slurp($scriptfile) );
+        .close;
+    }
+    shell("perl6 $tempfile");
+    unlink($tempfile);
+}

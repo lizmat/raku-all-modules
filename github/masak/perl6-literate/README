@@ -1,0 +1,8 @@
+Literate Perl 6.
+
+This project is not under heavy development, and was mostly created as
+an experiment with this blog post: <http://use.perl.org/~masak/journal/39568>
+
+If you're after a full-featured Perl environment for literate
+programming, have a look at <http://github.com/unixtechie/Literate-Molly>
+which already has many more features than this project will ever have. :)
