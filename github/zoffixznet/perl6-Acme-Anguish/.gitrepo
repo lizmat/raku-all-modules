@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:zoffixznet/perl6-Acme-Anguish.git
+	branch = master
+	commit = 811b72c3266a5c019ee77f541a7858a828008b22
+	parent = a097084d72848c036796f1c113c51a6d7e3eb495
+	cmdver = 0.3.1
