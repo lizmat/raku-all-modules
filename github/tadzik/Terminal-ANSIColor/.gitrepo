@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/Terminal-ANSIColor.git
+	branch = master
+	commit = eeb2dadd2cc2b7df34588be7869768213fd9fff4
+	parent = 2d97f47b3e8235ade24b1e669f4d5c437c9104b0
+	cmdver = 0.3.1
