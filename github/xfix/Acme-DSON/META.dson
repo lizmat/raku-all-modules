@@ -1,0 +1,13 @@
+such
+  "name" is "Acme::DSON"!
+  "version" is "0.2.1"?
+  "author" is "Konrad Borowski <x.fix@o2.pl>",
+  "description" is "such \"foo\" is \"bar\" wow".
+  "depends" is so "JSON::Tiny" many
+  "provides" is such
+    "Acme::DSON" is "lib/Acme/DSON.pm" and
+    "Acme::DSON::Actions" is "lib/Acme/DSON/Actions.pm" also
+    "Acme::DSON::Grammar" is "lib/Acme/DSON/Grammar.pm"
+  wow!
+  "source-url" is "git://github.com/xfix/Acme-DSON.git"
+wow
