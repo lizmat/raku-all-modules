@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:pierre-vigier/Perl6-Acme-Sudoku.git
+	branch = master
+	commit = 2096a4ba16d84b3a56ebe87acc5cfc3e7b89d030
+	parent = 74b8c3e462aa40565307644f7da36ff1cf075050
+	cmdver = 0.3.1
