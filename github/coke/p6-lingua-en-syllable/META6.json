@@ -1,0 +1,15 @@
+{
+  "name": "Lingua::EN::Syllable",
+  "source-url": "git://github.com/coke/p6-lingua-en-syllable.git",
+  "perl": "6.*",
+  "author": "Will “Coke” Coleda",
+  "depends": [
+    
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "Lingua::EN::Syllable": "lib/Lingua/EN/Syllable.pm"
+  },
+  "version": "*",
+  "description": "Guess the number of syllables in an English word"
+}
