@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:awwaiid/p6-Inline-Ruby.git
+	branch = master
+	commit = 3fcd253288e9bb6caca8a5fe2e6c2e9090a6b5ab
+	parent = 7ea20acc1b09e1b947c228c124566d07e28fbe50
+	cmdver = 0.3.1
