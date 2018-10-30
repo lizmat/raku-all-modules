@@ -1,0 +1,3 @@
+role PDF::Content::Fontish {
+
+}
