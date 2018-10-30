@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jnthn/p6-app-moarvm-heapanalyzer.git
+	branch = master
+	commit = 8b80eff309b5c95a5c384b8e5318e6081b7afa0c
+	parent = 50217bbcdee6f5725b91241a3aac40f02f0231d8
+	cmdver = 0.3.1

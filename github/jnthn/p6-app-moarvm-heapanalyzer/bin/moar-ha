@@ -1,0 +1,6 @@
+use App::MoarVM::HeapAnalyzer::Shell;
+
+sub MAIN(IO(Str) $heap-snapshot-file) {
+    App::MoarVM::HeapAnalyzer::Shell.new
+        .interactive($heap-snapshot-file)
+}
