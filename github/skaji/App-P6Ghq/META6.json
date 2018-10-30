@@ -1,0 +1,21 @@
+{
+  "authors" : [
+    "Shoichi Kaji"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Zef"
+  ],
+  "description" : "get Perl6 module's repository by ghq",
+  "license" : "Artistic-2.0",
+  "name" : "App::P6Ghq",
+  "perl" : "6.c",
+  "provides" : {
+    "App::P6Ghq" : "lib/App/P6Ghq.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/skaji/App-P6Ghq.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
