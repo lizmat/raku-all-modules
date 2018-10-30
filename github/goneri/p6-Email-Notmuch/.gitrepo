@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:goneri/p6-Email-Notmuch.git
+	branch = master
+	commit = 3503e5931148c35bdbad0400c5827bdd1543689e
+	parent = 7bc0b70bce7234fde5a1e117bc31eb6efdc0f33f
+	cmdver = 0.3.1
