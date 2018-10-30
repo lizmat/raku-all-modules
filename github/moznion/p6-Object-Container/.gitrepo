@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:moznion/p6-Object-Container.git
+	branch = master
+	commit = bf1ad6154c7c192cbc44948c510d86f70f5665e8
+	parent = 45e23560c4fdfbab97ebf80c347b7604a448ec86
+	cmdver = 0.3.1
