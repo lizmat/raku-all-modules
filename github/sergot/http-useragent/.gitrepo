@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:sergot/http-useragent.git
+	branch = master
+	commit = db754a0a6a7c0e0462d426a6f04cd628c040f2e2
+	parent = 5a8d23343bea0378a6d91c9cbaf4a3e1d17021ab
+	cmdver = 0.3.1
