@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jaffa4/pathutil.git
+	branch = master
+	commit = a16707857db3164e84f4c0ef5c38d524e0f2d9af
+	parent = 18c2aaf26a2d4b0aef9a5e8970747f8d4c90fff7
+	cmdver = 0.3.1
