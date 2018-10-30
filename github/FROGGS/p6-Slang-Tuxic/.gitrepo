@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:FROGGS/p6-Slang-Tuxic.git
+	branch = master
+	commit = 888a4a229a40d9b35b9fb4ccb8d05c1c63c0a18a
+	parent = 305f2a829bbf078efc21f5019d9d78004d5b0191
+	cmdver = 0.3.1
