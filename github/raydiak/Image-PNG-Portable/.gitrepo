@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:raydiak/Image-PNG-Portable.git
+	branch = master
+	commit = def950367201a02c098ab7acea6fd1f4468d4eca
+	parent = ed2dfb3c262409074db9bfa2cd344decae93593d
+	cmdver = 0.3.1
