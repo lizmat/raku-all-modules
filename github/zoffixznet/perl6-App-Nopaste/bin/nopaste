@@ -1,0 +1,20 @@
+#!/usr/bin/env perl6
+
+use App::Nopaste;
+
+constant GIST-TOKEN-ERROR = 'Please generate a GitHub token with `gist` '
+    ~ 'permission and set PASTEBIN_GIST_TOKEN env var to it';
+
+# Usage
+multi MAIN() { say 'Specify URL to fetch or file(s) to paste'; }
+
+# Paste
+multi MAIN( *@files ) { say App::Nopaste.new.paste( @files ); }
+
+# Fetch
+multi MAIN(Str $url where /^ 'http's? '://' [gist|fpaste]/ ) {
+    fail GIST-TOKEN-ERROR if $url ~~ /gist/ and not %*ENV<PASTEBIN_GIST_TOKEN>;
+
+    my ( $paste, $desc ) = App::Nopaste.new.fetch($url);
+    say "#### Description: $desc\n$paste";
+}
