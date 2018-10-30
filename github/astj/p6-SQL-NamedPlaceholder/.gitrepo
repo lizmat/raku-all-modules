@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:astj/p6-SQL-NamedPlaceholder.git
+	branch = master
+	commit = 68204b4df64df67f9eecc1efad8b58334a0e1875
+	parent = e5ea1d76dd4685a8c43f6973c0674027e998302e
+	cmdver = 0.3.1
