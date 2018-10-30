@@ -1,0 +1,12 @@
+{
+    "perl" : "6.*",
+    "name": "LCS::BV",
+    "version": "0.4.0",
+    "description": "Bit Vector implementation of the Longest Common Subsequence Algorithm",
+    "author": "Helmut Wollmersdorfer",
+    "depends": [ "LCS::All" ],
+    "provides" : {
+        "LCS::BV" : "lib/LCS/BV.pm"
+    },
+    "source-url": "git://github.com/wollmers/P6-LCS-BV.git"
+}
