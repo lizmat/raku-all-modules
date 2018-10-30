@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/p6-warthog.git
+	branch = master
+	commit = f06ffee092a546dec9647a23318b4611de5a4adb
+	parent = 75247844854823f69fd0adcb46de58a6a6a5c923
+	cmdver = 0.3.1
