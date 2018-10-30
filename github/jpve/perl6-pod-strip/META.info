@@ -1,0 +1,11 @@
+{
+  "name"        : "Pod::Strip",
+  "version"     : "v0.0.1",
+  "description" : "Strip Pod annotation from Perl6 code",
+  "author"      : "Jorn van Engelen",
+  "depends"     : [ ],
+  "provides"    : {
+    "Pod::Strip"     : "lib/Pod/Strip.pm6"
+  },
+  "source-url"  : "git://github.com/jpve/perl6-pod-strip.git"
+}
