@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:perlpilot/p6-File-Temp.git
+	branch = master
+	commit = 7f128adc5bbad8d172f87e868c52eb85339fc90f
+	parent = 9ea43e97308c274fbd5a593d47d46b812eac231a
+	cmdver = 0.3.1
