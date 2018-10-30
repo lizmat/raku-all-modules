@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jnthn/p6-http-hpack.git
+	branch = master
+	commit = 608a74c5f56d76891ce9c7f9422320e9fdd5b6af
+	parent = 230c9200f421ea6f76ac41835af2ade6f34ed0ab
+	cmdver = 0.3.1
