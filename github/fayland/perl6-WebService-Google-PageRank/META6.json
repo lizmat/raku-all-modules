@@ -1,0 +1,11 @@
+{
+    "name"          : "WebService::Google::PageRank",
+    "version"       : "0.1.0",
+    "author"        : "github:fayland",
+    "description"   : "Query Google PageRank",
+    "depends"       : [ "URI::Escape", "HTTP::Tinyish" ],
+    "provides" : {
+        "WebService::Google::PageRank"    : "lib/WebService/Google/PageRank.pm"
+    },
+    "source-url"    : "git://github.com/fayland/perl6-WebService-Google-PageRank.git"
+}
