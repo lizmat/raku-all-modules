@@ -1,0 +1,31 @@
+ {
+   "playlist" : {
+     "title"         : "JSPF example",
+     "creator"       : "Name of playlist author",
+     "annotation"    : "Super playlist",
+     "info"          : "http://example.com/",
+     "location"      : "http://example.com/",
+     "identifier"    : "http://example.com/",
+     "image"         : "http://example.com/",
+     "date"          : "2005-01-08T17:10:47-05:00",
+     "license"       : "http://example.com/",
+     "attribution"   : [
+       {"identifier"   : "http://example.com/"},
+       {"location"     : "http://example.com/"}
+     ],
+     "track"         : [
+       {
+         "location"      : ["http://example.com/1.ogg", "http://example.com/2.mp3"],
+         "identifier"    : ["http://example.com/1/", "http://example.com/2/"],
+         "title"         : "Track title",
+         "creator"       : "Artist name",
+         "annotation"    : "Some text",
+         "info"          : "http://example.com/",
+         "image"         : "http://example.com/",
+         "album"         : "Album name",
+         "trackNum"      : 1,
+         "duration"      : 0
+       }
+     ]
+   }
+}
