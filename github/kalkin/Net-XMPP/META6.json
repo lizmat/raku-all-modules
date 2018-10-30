@@ -1,0 +1,35 @@
+{
+  "name" : "Net::XMPP",
+  "source-url" : "git://github.com/kalkin/Net-XMPP.git",
+  "support" : {
+    "source" : null
+  },
+  "perl" : "6.c",
+  "auth" : "kalkin",
+  "provides" : {
+    "Net::XMPP" : "lib/Net/XMPP.pm6",
+    "Net::XMPP::IQ" : "lib/Net/XMPP/IQ.pm6",
+    "Net::XMPP::Presence" : "lib/Net/XMPP/Presence.pm6",
+    "Net::XMPP::Message" : "lib/Net/XMPP/Message.pm6"
+  },
+  "depends" : [
+    "MIME::Base64",
+    "Net::DNS",
+    "XML"
+  ],
+  "test-depends" : [
+    "Test::META"
+  ],
+  "description" : "an XMPP client module",
+  "production" : false,
+  "version" : "0.0.1",
+  "meta6" : "0",
+  "authors" : [
+    "Andrew Egeler",
+    "Bahtiar `kalkin-` Gadimov",
+    "Paul Cochrane",
+    "Rob Hoelz",
+    "Zoffix Znet",
+    "nbrown"
+  ]
+}
