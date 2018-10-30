@@ -1,0 +1,13 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Coro::Simple",
+    "license"     : "Artistic-2.0",
+    "version"     : "*",
+    "description" : "Simple coroutines for Perl 6, inspired by the Lua coroutines.",
+    "provides": {
+        "Coro::Simple": "lib/Coro/Simple.pm"
+    },
+    "author"      : "Marco Aurélio da Silva",
+    "depends"     : [ ],
+    "source-url"  : "git://github.com/marcoonroad/Coro-Simple.git"
+}
