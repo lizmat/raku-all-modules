@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:perl6/perl6-pod-to-bigpage.git
+	branch = master
+	commit = 195273a014f3974affe67e329f65f4a9da7661fe
+	parent = 5465e5889cefaca7f4dcd09725c117edd7d07834
+	cmdver = 0.3.1
