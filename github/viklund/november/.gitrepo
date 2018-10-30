@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:viklund/november.git
+	branch = master
+	commit = 24117b2d001572f25cfa6fffeea9e2b9a84ed411
+	parent = 1def202eab0adef13e3d45c526a11852391a30e2
+	cmdver = 0.3.1
