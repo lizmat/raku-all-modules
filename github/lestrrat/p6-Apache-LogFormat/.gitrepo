@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:lestrrat/p6-Apache-LogFormat.git
+	branch = master
+	commit = 46b65c453f1e47999d4895a2ad6ffe6caaca8c3b
+	parent = d2c24882e237cfef82ce8862eab4227f76914efe
+	cmdver = 0.3.1
