@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/perl6-encoding-huffman-pp6.git
+	branch = master
+	commit = b2ad6157dcef34f7dd9cd00fe99d13d100635ff8
+	parent = 6e182bf822cfbeaf4e50605b1c07bfd0c35e96c4
+	cmdver = 0.3.1
