@@ -1,0 +1,16 @@
+v0.0.9		Mon May 1 09:31:02 2017 +0100 
+	* Fix test failures on CI platforms
+v0.0.8		Tue Jan 24 20:53:14 2017 +0000 
+	* Make zef compatible
+v0.0.7		Tue Jan 12 21:46:20 2016 +0000 
+	* Remove Int from signature that was giving a warning
+v0.0.6		Fri Dec 25 19:01:15 2015 +0000 
+	* Update for 6.c
+v0.0.5		Mon Dec 7 16:12:57 2015 +0000 
+	* Make the build sane
+		 
+	* done -> done-testing
+		 
+	* Move .pm6 to .pm
+		 
+	* Try to avert some test failures
