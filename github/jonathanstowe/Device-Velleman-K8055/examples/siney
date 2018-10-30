@@ -1,0 +1,40 @@
+#!perl6
+
+use Device::Velleman::K8055;
+
+sub MAIN(Int :$address where 0 <= * < 4 = 0, Int :$samplerate = 44100, Int :$frequency = 440, Int :$bpm = 120 ) {
+
+    sub get-pos(Int() $gen, Int $samplerate, Int $frequency) {
+        ((sin(($gen/($samplerate/$frequency)) * (2 * pi)) * 127) + 127).Int
+    }
+
+    my $d = Device::Velleman::K8055.new(:$address);
+
+    signal(SIGINT).tap({
+        if $d.defined {
+            $d.close(:reset);
+            exit;
+        }
+    });
+
+
+    my $sec = 60/($bpm * 4);
+    my $inc = $samplerate * $sec;
+
+    my $pos = 0;
+    react {
+        whenever Supply.interval($sec) {
+            my $bits = get-pos($pos, $samplerate, $frequency);
+            $d.set-all-digital($bits);
+            $d.set-all-analog($bits, 255 - $bits);
+            $pos += $inc;
+        }
+    }
+
+    END {
+    }
+
+    
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
