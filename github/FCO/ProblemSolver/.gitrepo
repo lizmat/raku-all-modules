@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:FCO/ProblemSolver.git
+	branch = master
+	commit = 1ae3b15757af8ec46b1af30efaf713fa559314ed
+	parent = 11ae777df4fb351a594860d35c6f23e5e490a10d
+	cmdver = 0.3.1
