@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:AlexDaniel/orgsleep.git
+	branch = master
+	commit = c7ac458a1fde84c3a9eda0e86a5df96dcecd820d
+	parent = 0d637485b1571fcae9d5af6e4e2178201bf3bcf0
+	cmdver = 0.3.1
