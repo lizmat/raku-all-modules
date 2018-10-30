@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:0racle/p6-Net-Netmask.git
+	branch = master
+	commit = 7ec563ef01819cefd60e374cbf4fc7008d50a80b
+	parent = 17b312e29d312b32710358540eb4999654106756
+	cmdver = 0.3.1
