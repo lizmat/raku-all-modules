@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cbk/API-USNavalObservatory.git
+	branch = master
+	commit = ccd2b2b0f940fcca4e473690f2edf9435ed3dfa7
+	parent = 118f3d892f19228c53de68466a1371c8192ade22
+	cmdver = 0.3.1
