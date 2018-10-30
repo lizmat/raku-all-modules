@@ -1,0 +1,9 @@
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build-zef
+  - zef --deps-only install .
+script:
+  - NETWORK_TESTING=1 prove -v -e 'perl6 -I.' t/
+sudo: false

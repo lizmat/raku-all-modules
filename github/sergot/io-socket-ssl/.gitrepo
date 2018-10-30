@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:sergot/io-socket-ssl.git
+	branch = master
+	commit = f07010c8965855ff734de297466c883afffbb560
+	parent = 887cc198478f38d1b95fa0fecfe0535a0df5eb67
+	cmdver = 0.3.1
