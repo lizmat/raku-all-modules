@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cbk/WebService-HazIP.git
+	branch = master
+	commit = d5867c50f4a65e15fd1a7c2397bbfba23c2b136d
+	parent = 08da730a78f62579d0be3f65eeee677a8ee737e4
+	cmdver = 0.3.1
