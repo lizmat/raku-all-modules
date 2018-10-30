@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:kmwallio/p6-Text-TFIdf.git
+	branch = master
+	commit = fc3e018872d02c215b208d1fe73119820463e924
+	parent = dfbbe8f36d18c87c37cead6d2a4038dee5b8dc42
+	cmdver = 0.3.1
