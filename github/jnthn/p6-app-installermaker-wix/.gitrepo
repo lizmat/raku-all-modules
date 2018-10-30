@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jnthn/p6-app-installermaker-wix.git
+	branch = master
+	commit = 20366162ebfa9ce3fb0be306e0330df05c2035ac
+	parent = 79a157bd6d2550645de99ddf78a53ee4817259e5
+	cmdver = 0.3.1
