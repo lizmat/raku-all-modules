@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:palapitta/Movieinfo.git
+	branch = master
+	commit = a392a385fbb3fa9eaf83a528f91e1453ad9ffadb
+	parent = 4a7dd6a429013cc6704658b1613d5add6eece377
+	cmdver = 0.3.1
