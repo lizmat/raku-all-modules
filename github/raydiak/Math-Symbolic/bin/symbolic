@@ -1,0 +1,39 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+# simple command-line interface
+# a few other front ends eventually could be cool
+    # REPL
+    # GUI analyzer/solver/teacher
+
+use Math::Symbolic;
+
+sub MAIN (
+    $expression,
+    $isolate_var?,
+    Bool:D :$perl-routine = False,
+    Bool:D :$strip-var = False,
+    *%vars
+) {
+    my $obj = Math::Symbolic.new($expression);
+
+    $obj.evaluate(|%vars) if %vars;
+
+    if defined $isolate_var {
+        if $isolate_var eq '0' { $obj.poly }
+        else {
+            if $strip-var {
+                $obj .= expression: $isolate_var;
+            } else {
+                $obj.isolate: $isolate_var
+            }
+        }
+    }
+
+    $obj.simplify;
+
+    say $perl-routine ?? $obj.routine !! $obj.Str;
+}
+
+
