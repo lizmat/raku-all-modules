@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cosimo/perl6-digest-md5.git
+	branch = master
+	commit = 2194250ff2d50a37f92d4f82fac216729f4eba87
+	parent = 3dd3b6457b213fe52a63fc06f8046d40ff3f43e5
+	cmdver = 0.3.1
