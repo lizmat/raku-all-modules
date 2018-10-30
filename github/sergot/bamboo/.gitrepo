@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:sergot/bamboo.git
+	branch = master
+	commit = a72d2d9956ad4aaf22124b8fe011d812b4f6deae
+	parent = 5ed134b81c7dcf88f80b5efb3d03830e23a39de3
+	cmdver = 0.3.1
