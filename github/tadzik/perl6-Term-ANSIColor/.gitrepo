@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/perl6-Term-ANSIColor.git
+	branch = master
+	commit = 97c524d6079dbb7de13672f7badb31200dbc90dd
+	parent = b88a533c84ecc7b9b461ce136dcde8adc3e4aa76
+	cmdver = 0.3.1
