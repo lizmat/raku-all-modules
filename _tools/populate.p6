@@ -35,7 +35,7 @@ for @projects {
     }
     $url ~~ s[ 'git://github.com/' ] = 'git@github.com:';
 
-    my @chunks = $url.split('/');
+    my @chunks = $url.split(['/', ':']);
     my $local = join '/', @chunks[*-2, *-1];
     $local ~~ s/ '.git' $ //;
     my $prefix = $url.contains('gitlab.com') ?? 'gitlab' !! 'github';
