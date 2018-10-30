@@ -1,0 +1,51 @@
+=begin pod
+
+=TITLE class StrictNamedArguments
+
+=SUBTITLE Checks for extra named parameters on method calls and throws C<X::Parameter::ExtraNamed>. 
+
+=head1 SYNOPSIS
+
+	use v6;
+	use StrictNamedArguments;
+
+	# Just use the trait 'strict' for methods
+	class Foo { 	 # your class
+	    has $.valid; # attribute, used by .new
+	
+		# A regular method that expects a named argument:
+		# msg => 'some_value'
+		# and returns the value in upper case (in this example)
+	    method shout(:$msg) is strict { $msg.uc.say; self }
+	
+		# The Perl6 constructor is a regular method and can also
+		# me made strict if you provide the method strictly.
+		# The syntax of named parameters is a hash to be blessed.
+	    method new(:$valid) is strict { self.bless(valid => $valid) }
+	}
+
+	Foo.new(:not-valid).shout(:not-valid);
+
+	CATCH {
+		when X::Parameter::ExtraNamed {
+			note Backtrace.new.full;
+			note .gist;
+		} 
+	}
+
+=head1 DESCRIPTION
+
+Module StrictNamedArguments adds the trait C<is strict> that wraps any method and applies
+a check for extra named arguments. If a call to the wrapped methods does got extra
+named arguments the exception C<X::Parameter::ExtraNamed> is thrown.
+
+=head1 CREDITS
+
+=item Claudio Ramirez ()
+=item Wenzel P. P. Peppmeyer (wenzel.peppmeyer@gmx.de)
+
+=head1 BUGS
+
+Please file bug reports on L<github|https://github.com/nxadm/StrictNamedArguments/issues>.
+
+=end pod
