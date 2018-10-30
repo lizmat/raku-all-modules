@@ -1,0 +1,45 @@
+#!/usr/bin/env perl6
+use v6;
+use JSON::Fast;
+use Bailador::CLI;
+use Bailador;
+
+my $*MAIN-ALLOW-NAMED-ANYWHERE = True;
+
+multi sub MAIN('new', Str $name) {
+    say "Generating $name";
+    if $name.IO.e {
+        say "$name already exists. Exiting.";
+        exit;
+    }
+    write-skeletonfiles($name);
+}
+
+multi sub MAIN('version') {
+    say "Bailador " ~ Bailador.^ver;
+}
+
+#| Invokes your app on top of HTTP::Easy, reloads your app when changes are detected
+multi sub MAIN ('watch', Str $app, Str :$w = 'lib,bin,views', Str :$config) {
+    bootup-file('watch', $app, $w, $config);
+}
+
+#| Invokes your app on top of HTTP::Easy
+multi sub MAIN ('easy', Str $app, Str :$config) {
+    bootup-file('easy', $app, $config);
+}
+
+#| Displays all the routes of your app
+multi sub MAIN ('routes', Str $app, Bool :$t = False, Str :$config) {
+    bootup-file('routes', $app, $t, $config);
+}
+
+#| Invokes your app on top of HTTP::Server::Ogre
+multi sub MAIN ('ogre', Str $app, Str :$config) {
+    bootup-file('ogre', $app, $config);
+}
+
+#| Invokes your app on top of HTTP::Server::Tiny
+multi sub MAIN ('tiny', Str $app, Str :$config) {
+    bootup-file('tiny', $app, $config);
+}
