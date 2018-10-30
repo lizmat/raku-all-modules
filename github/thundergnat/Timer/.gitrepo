@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:thundergnat/Timer.git
+	branch = master
+	commit = f8f545ade20db104363ff6d9f1fc50727ffea927
+	parent = c08fe2c97c98212c289dedb5ee136ecc6dcab8d3
+	cmdver = 0.3.1

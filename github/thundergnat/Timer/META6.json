@@ -1,0 +1,15 @@
+{
+    "perl"          : "6.c",
+    "name"          : "Timer",
+    "version"       : "0.0.1",
+    "description"   : "Simple timer for callable code blocks",
+    "authors"       : [ "Steve Schulze (thundergnat)" ],
+    "provides"      : { "Timer" : "lib/Timer.pm6" },
+    "depends"       : [ ],
+    "build-depends" : [ ],
+    "test-depends"  : [ "Test" ],
+    "source-type"   : "git",
+    "source-url"    : "git://github.com/thundergnat/Timer.git",
+    "license"       : "Artistic-2.0",
+    "tags"          : [ "Timer", "Timing", "Bench", "Benchmark" ]
+}
