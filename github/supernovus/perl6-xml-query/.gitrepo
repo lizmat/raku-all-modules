@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/perl6-xml-query.git
+	branch = master
+	commit = 986e3c9fbc6736782804e3d9bd22ffedb1760c27
+	parent = 5255a5aecd447a66c685e876fbe400b4e4340256
+	cmdver = 0.3.1
