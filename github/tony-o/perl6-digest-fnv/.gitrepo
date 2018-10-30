@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tony-o/perl6-digest-fnv.git
+	branch = master
+	commit = 6a50c7dddf64ba809ca0d27d9b01bb71f638cfd8
+	parent = 29e2bfd3280c5c20eedf6e02aa7235b6f5db4f51
+	cmdver = 0.3.1
