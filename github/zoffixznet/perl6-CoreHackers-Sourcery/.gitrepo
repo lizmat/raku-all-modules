@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:zoffixznet/perl6-CoreHackers-Sourcery.git
+	branch = master
+	commit = fb9344f6fc155b54f46075e448d1ae09379c9765
+	parent = fb4b6bfaecc9666f1a9248fea60173750055b5b3
+	cmdver = 0.3.1
