@@ -1,0 +1,45 @@
+use v6;
+use GGE::Exp;
+use GGE::OPTable;
+
+class Algebra::Literal is GGE::Exp does GGE::ShowContents {
+    method evaluate() {
+        +$.ast;
+    }
+}
+
+class Algebra::BinOp is GGE::Exp does GGE::ShowContents {
+}
+
+class Algebra::Addition is Algebra::BinOp {
+    method evaluate() {
+        $.llist[0].evaluate() + $.llist[1].evaluate();
+    }
+}
+
+class Algebra::Multiplication is Algebra::BinOp {
+    method evaluate() {
+        $.llist[0].evaluate() * $.llist[1].evaluate();
+    }
+}
+
+given GGE::OPTable.new() -> $optable {
+    $optable.newtok('term:',   :precedence<=>,
+                               :parsed(&Perl6::Grammar::number),
+                               :match(Algebra::Literal));
+    $optable.newtok('infix:+', :looser<term:>,
+                               :match(Algebra::Addition));
+    $optable.newtok('infix:*', :tighter<infix:+>,
+                               :match(Algebra::Multiplication));
+
+    while prompt('> ') -> $input {
+        my $match = $optable.parse($input);
+        if $match.to < $input.chars {
+            warn 'Could not parse the arithmetic expression';
+            next;
+        }
+        my $expr = $match.hash-access('expr');
+        say $expr.evaluate;
+    }
+    say '';
+}
