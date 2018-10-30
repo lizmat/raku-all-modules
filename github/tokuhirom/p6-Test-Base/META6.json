@@ -1,0 +1,19 @@
+{
+  "name" : "Test::Base",
+  "source-url" : "git://github.com/tokuhirom/p6-Test-Base.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "Test::Base::Actions" : "lib/Test/Base/Actions.pm",
+    "Test::Base::Block" : "lib/Test/Base/Block.pm",
+    "Test::Base::Grammar" : "lib/Test/Base/Grammar.pm",
+    "Test::Base" : "lib/Test/Base.pm6"
+  },
+  "depends" : [ ],
+  "description" : "Data driven development for Perl6",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "Tokuhiro Matsuno"
+  ]
+}
