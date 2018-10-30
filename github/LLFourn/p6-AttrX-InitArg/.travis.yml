@@ -1,0 +1,6 @@
+language: perl6
+perl6:
+  - latest
+script:
+  - prove -v -e 'perl6 -Ilib' t/
+sudo: false
