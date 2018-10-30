@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:moznion/p6-Router-Boost.git
+	branch = master
+	commit = 902a28dfef437e7e776dae79da2c00baea045827
+	parent = 7220f41a50a741e8966d9ae8928c23b5bfe6aaf8
+	cmdver = 0.3.1
