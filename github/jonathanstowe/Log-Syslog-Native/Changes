@@ -1,0 +1,10 @@
+v0.0.7		Fri Mar 10 19:00:21 2017 +0000 
+	* Update the META
+v0.0.6		Wed Apr 27 17:47:53 2016 +0100 
+	* Spring clean
+v0.0.5		Thu Jan 28 23:28:01 2016 +0000 
+	* Fix Int declarations
+		 
+	* Upversion
+		 
+	* Add auth and ver to class declaration
