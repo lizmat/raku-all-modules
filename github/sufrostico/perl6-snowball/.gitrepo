@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:sufrostico/perl6-snowball.git
+	branch = master
+	commit = f552a7ed34bd2b7f2225eda9db305fd0e420ec69
+	parent = a3a1db355e0916e6aee0f31dc92f80869889b633
+	cmdver = 0.3.1
