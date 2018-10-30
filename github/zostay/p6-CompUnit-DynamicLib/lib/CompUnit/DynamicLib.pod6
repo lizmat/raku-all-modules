@@ -1,0 +1,69 @@
+=begin pod
+
+=NAME CompUnit::DynamicLoader - load modules from temporarily included locations
+
+=begin SYNOPSIS
+
+    use CompUnit::DynamicLib;
+
+    my @includes = <plugin/lib module/lib other/lib>;
+
+    require-from(@includes, "MyPlugin::Module");
+
+    use-lib-do @includes, {
+        require ModuleX;
+        require ModuleY <&something>;
+    }
+
+=end SYNOPSIS
+
+=begin DESCRIPTION
+
+B<Experimental:> I do not really know if what this module does is a good idea or the best way to do it, but I am trying it out. Please use with caution and let me know if you have any problems.
+
+When searching for compilation units (more commonly referred to as just "modules" or "packages" or "classes") in Perl 6, the VM hunts through all the L<CompUnit::Repository> objects chained in C<$*REPO> (this is a more flexible solution to the C<@INC> setting using in Perl 5).
+
+Normally, to add a new repository to the list, you would just run:
+
+    use lib "my-other-lib";
+    # load your modules here
+
+However, perhaps you don't wnat to normally load from a location in your program. You might want to load from a location just long enough to get files out of it and then never see it again. This is a common scenario if your application allows for the use of custom plugin code.
+
+This library makes it possible to add a directory to the list of repositories, load the modules you want, and then remove them so that no more code will be loaded from there:
+
+    use-lib-do "my-other-lib", {
+        # load your modules here
+    }
+
+=end DESCRIPTION
+
+=head1 EXPORTED ROUTINES
+
+=head2 sub use-lib-do
+
+    multi sub use-lib-do(@include, &block)
+    multi sub use-lib-do($include, &block)
+
+Given a set of repository specs to C<@include> (or C<$include>) and a C<&block> to run, add those repositories (usually directory names) to C<$*REPO>, run the C<&block>, and then strip the temporary repositories back out again.
+
+=head2 sub require-from
+
+    multi sub require-from(@include, $module-name)
+    multi sub require-from($include, $module-name)
+
+In cases where you only need to load a single module, this can be used as a shortcut for:
+
+    use-lib-do @include, { require ::($module-name) };
+
+=head1 CAVEATS
+
+This is not implemented correctly as of v0.2. The original implementation in v0.1 tripped on a Perl 6 bug reported in L<https://rt.perl.org/Ticket/Display.html?id=129109>. The chosen work-around is not ideal.
+
+=head1 AUTHOR & COPYRIGHT
+
+Copyright 2016 Sterling Hanenkamp.
+
+This software is made available under the same terms as Perl 6 itself.
+
+=end pod
