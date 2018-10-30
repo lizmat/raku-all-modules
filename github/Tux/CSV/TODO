@@ -1,0 +1,64 @@
+• PASS more tests
+
+• Str/Buf/Blob - binary data (+ tests)
+
+  Current thought:  remove the meaning of "binary" as currently is
+  implemented, as everything is valid Str already.
+
+  Add binary support by allowing *real* binary  (images, raw data)
+  by adding a Blob entry in CSV::Field and use that instead of the
+  current Str $.text by using CATCH blocks.
+
+  When fetching the field, check if Buf is set and return that (if
+  possible)
+
+    Str    = String of characters
+    Buf    = Mutable buffer for binary data
+    Blob   = Common interface for binary large objects
+
+• csv () function
+
+• Documentation
+
+• Speed
+
+  Once Regexes are "fast" again, and $!eol can be embedded in $chx,
+  re-enable the ~~ $eol again. For now disable the use of Regex in
+  eol attribute.
+
+   new (eol => Str,                     # supported
+   new (eol => "\n",                    # supported
+   new (eol => "\r\n",                  # supported
+   new (eol => rx{ \s* \r?\n },         # future
+
+• Decide if types should be dealt with beyond current overloading
+
+  Also of possible impact to Text::CSV.list
+
+  See use of hashes (_hr)
+
+  Decide if $!meta should be an attribute again, so .list and .fields
+  can merge. Mind csv () and fragment ("cells="...")
+
+• bind_columns and hashes
+
+  If returning hashes, consider if returning Str:Str kv pairs is
+  the way to go instead of Str:CSV::Field. If so, then column types
+  might be useful again.
+
+• merge masak's Text::CSV
+
+  :strict
+
+  Throw an error if a row has a different number of columns than
+  the previous ones.
+
+  :trim
+
+  Removes whitespace on both ends of each value.Currently implemented
+  as :allow-whitespace, but that does not trim inside quotation
+
+  :skip-header
+
+  Causes the first line not to be included in the output. Function &
+  method csv () already supports headers => "skip" (NYI)
