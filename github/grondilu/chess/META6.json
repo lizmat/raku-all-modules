@@ -1,0 +1,19 @@
+{
+    "perl" : "6.*",
+    "name" : "Chess",
+    "license" : "Artistic-2.0",
+    "version" : "0.2.0",
+    "description" : "Chess-related stuff in Perl 6.",
+    "author" : "L. Grondin",
+    "build-depends" : [ ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [ ],
+    "provides" : {
+        "Chess::FEN" : "lib/Chess/FEN.pm6",
+        "Chess::PGN" : "lib/Chess/PGN.pm6",
+        "Chess"      : "lib/Chess.pm6"
+    },
+    "source-url" : "git://github.com/grondilu/chess.git"
+}
