@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jonathanstowe/Audio-Playlist-JSPF.git
+	branch = master
+	commit = 2b4c23657b8e619c0a1cd4b11625d619dc82a830
+	parent = 8378afcd4333ba5dc3d650f14398d04188eec2be
+	cmdver = 0.3.1
