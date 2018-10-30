@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:szabgab/Perl6-Maven.git
+	branch = main
+	commit = 1d9a6f2f7c06d4fd2f5dadba7b52b3ca03d46b2b
+	parent = 7bd495bf384a4335d9bc7c25bb552020e156904a
+	cmdver = 0.3.1
