@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:edumentab/p6-moarvm-remote.git
+	branch = master
+	commit = 4d2716d223784c54218d28788ca1055901849ee8
+	parent = 1c3d47f92aabb35674eb2dc2b4ac71728e2a15c0
+	cmdver = 0.3.1
