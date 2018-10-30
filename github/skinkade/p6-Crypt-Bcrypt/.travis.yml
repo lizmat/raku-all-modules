@@ -1,0 +1,11 @@
+language: perl6
+
+perl6:
+    - 2016.01
+
+sudo: false
+install:
+    - rakudobrew build-panda
+    - panda installdeps .
+    - panda-build
+    - panda install .
