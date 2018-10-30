@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:zostay/p6-Path-Router.git
+	branch = master
+	commit = ed7b2b10221a3567d820936cefcceecfce0a34fd
+	parent = 4fe3ace856b76e1e6f098982874eff39bc112bcb
+	cmdver = 0.3.1

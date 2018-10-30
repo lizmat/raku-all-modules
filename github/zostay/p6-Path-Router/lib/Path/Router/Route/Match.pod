@@ -1,0 +1,67 @@
+=TITLE Path::Router::Route::Match
+
+=SUBTITLE The result of a Path::Router match
+
+=begin pod
+
+=begin DESCRIPTION
+
+This is the object returned from calling C<match> on a L<Path::Router>
+instance. It contains all the information you would need to do any
+dispatching nessecary.
+
+=end DESCRIPTION
+
+=head1 Attributes
+
+=head2 has $.path
+
+    has Str $.path
+
+This is the path that was matched.
+
+=head2 has %.mapping
+
+    has %.mapping
+
+This is the mapping of your router part names to the actual parts of
+the path. If your route had no "variables", then this will be an empty
+HASH ref.
+
+=head2 has $.route
+
+    has Path::Router::Route $.route
+
+This is the L<Path::Router::Route> instance that was matched.
+
+=head1 Methods
+
+=head2 method target
+
+    method target
+
+This method simply delegates to the C<target> method of the C<route>
+that was matched.
+
+=for BUG
+All complex software has bugs lurking in it, and this module is no
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=begin AUTHOR
+
+Andrew Sterling Hanenkamp E<lt>hanenkamp@cpan.orgE<gt>
+
+Based very closely on the original Perl 5 version by
+Stevan Little E<lt>stevan.little@iinteractive.comE<gt>
+
+=end AUTHOR
+
+=for COPYRIGHT
+Copyright 2015 Andrew Sterling Hanenkamp.
+
+=for LICENSE
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=end pod
