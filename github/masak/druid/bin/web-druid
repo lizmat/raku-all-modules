@@ -1,0 +1,9 @@
+#!/usr/local/bin/perl6
+use v6;
+use Druid::Webapp;
+
+use Web::Handler::HTTPDaemon;
+
+my $port = 8888;
+say "Druid now runs on http://127.0.0.1:$port/";
+Web::Handler::HTTPDaemon.run( Druid::Webapp.new );
