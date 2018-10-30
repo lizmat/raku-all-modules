@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:masak/xml-writer.git
+	branch = master
+	commit = 4d30a9d8e06033ca97387971b653817becd5a759
+	parent = ec7a006a5559eb97af748928d81a1a94436e4df3
+	cmdver = 0.3.1
