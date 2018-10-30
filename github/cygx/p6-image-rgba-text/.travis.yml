@@ -1,0 +1,17 @@
+notifications:
+  email: false
+branches:
+  except:
+    - gh-pages
+sudo: false
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build-panda
+  - gcc -o pngcheck pngcheck.c
+  - panda install Image::PNG::Inflated
+script:
+  - panda install .
+  - perl6 FEEP.p6
+  - ./pngcheck FEEP-basic.png  FEEP-grayscale.png  FEEP-rgb.png
