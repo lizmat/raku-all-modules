@@ -1,0 +1,135 @@
+{
+  "formatVersion" : "v1.0",
+  "disclaimer" : "This pricing list is for informational purposes only. All prices are subject to the additional terms included in the pricing pages on http://aws.amazon.com. All Free Tier prices are also subject to the terms included at https://aws.amazon.com/free/",
+  "offerCode" : "AmazonS3",
+  "version" : "20160627182528",
+  "publicationDate" : "2016-06-27T18:25:28Z",
+  "products" : {
+    "MQ4SWZ54XKFN5QMV" : {
+      "sku" : "MQ4SWZ54XKFN5QMV",
+      "productFamily" : "Data Transfer",
+      "attributes" : {
+        "servicecode" : "AWSDataTransfer",
+        "transferType" : "Accelerated InterRegion Outbound using edge locations outside US, Europe or Japan",
+        "fromLocation" : "US West (Oregon)",
+        "fromLocationType" : "AWS Region",
+        "toLocation" : "South America (Sao Paulo)",
+        "toLocationType" : "AWS Region",
+        "usagetype" : "USW2-SAE1-AWS-Out-ABytes-T2",
+        "operation" : ""
+      }
+    },
+    "H5E9YMCWD6EFJMVB" : {
+      "sku" : "H5E9YMCWD6EFJMVB",
+      "productFamily" : "Data Transfer",
+      "attributes" : {
+        "servicecode" : "AWSDataTransfer",
+        "transferType" : "Accelerated InterRegion Outbound using edge locations outside US, Europe or Japan",
+        "fromLocation" : "US East (N. Virginia)",
+        "fromLocationType" : "AWS Region",
+        "toLocation" : "US West (Oregon)",
+        "toLocationType" : "AWS Region",
+        "usagetype" : "USE1-USW2-AWS-Out-ABytes-T2",
+        "operation" : ""
+      }
+    },
+    "YTBTUFDC7FRAJJAP" : {
+      "sku" : "YTBTUFDC7FRAJJAP",
+      "productFamily" : "Data Transfer",
+      "attributes" : {
+        "servicecode" : "AWSDataTransfer",
+        "transferType" : "Accelerated InterRegion Outbound using edge locations within US, Europe or Japan",
+        "fromLocation" : "EU (Ireland)",
+        "fromLocationType" : "AWS Region",
+        "toLocation" : "South America (Sao Paulo)",
+        "toLocationType" : "AWS Region",
+        "usagetype" : "EU-SAE1-AWS-Out-ABytes-T1",
+        "operation" : ""
+      }
+    },
+    "FK7HCTWUWCQ6N23S" : {
+      "sku" : "FK7HCTWUWCQ6N23S",
+      "productFamily" : "Data Transfer",
+      "attributes" : {
+        "servicecode" : "AWSDataTransfer",
+        "transferType" : "InterRegion Outbound",
+        "fromLocation" : "Asia Pacific (Mumbai)",
+        "fromLocationType" : "AWS Region",
+        "toLocation" : "Asia Pacific (Sydney)",
+        "toLocationType" : "AWS Region",
+        "usagetype" : "APS3-APS2-AWS-Out-Bytes",
+        "operation" : ""
+      }
+    },
+    "JHA6FJYZKNUD6SQH" : {
+      "sku" : "JHA6FJYZKNUD6SQH",
+      "productFamily" : "Data Transfer",
+      "attributes" : {
+        "servicecode" : "AWSDataTransfer",
+        "transferType" : "Accelerated AWS Inbound using edge locations outside US, Europe or Japan",
+        "fromLocation" : "External",
+        "fromLocationType" : "Other",
+        "toLocation" : "EU (Frankfurt)",
+        "toLocationType" : "AWS Region",
+        "usagetype" : "EUC1-DataTransfer-In-ABytes-T2",
+        "operation" : ""
+      }
+    },
+    "6JYCTCU9RNJ5FAY9" : {
+      "sku" : "6JYCTCU9RNJ5FAY9",
+      "productFamily" : "Data Transfer",
+      "attributes" : {
+        "servicecode" : "AWSDataTransfer",
+        "transferType" : "Accelerated InterRegion Outbound using edge locations outside US, Europe or Japan",
+        "fromLocation" : "US East (N. Virginia)",
+        "fromLocationType" : "AWS Region",
+        "toLocation" : "Asia Pacific (Mumbai)",
+        "toLocationType" : "AWS Region",
+        "usagetype" : "USE1-APS3-AWS-Out-ABytes-T2",
+        "operation" : ""
+      }
+    },
+    "R7D2XMASHBYQ2PQ4" : {
+      "sku" : "R7D2XMASHBYQ2PQ4",
+      "productFamily" : "Data Transfer",
+      "attributes" : {
+        "servicecode" : "AWSDataTransfer",
+        "transferType" : "Accelerated AWS Outbound using edge locations within US, Europe or Japan",
+        "fromLocation" : "US West (N. California)",
+        "fromLocationType" : "AWS Region",
+        "toLocation" : "External",
+        "toLocationType" : "Other",
+        "usagetype" : "USW1-DataTransfer-Out-ABytes-T1",
+        "operation" : ""
+      }
+    },
+    "W3PUKFKG7RDK3KA5" : {
+      "sku" : "W3PUKFKG7RDK3KA5",
+      "productFamily" : "Data Transfer",
+      "attributes" : {
+        "servicecode" : "AWSDataTransfer",
+        "transferType" : "InterRegion Inbound",
+        "fromLocation" : "EU (Frankfurt)",
+        "fromLocationType" : "AWS Region",
+        "toLocation" : "Asia Pacific (Singapore)",
+        "toLocationType" : "AWS Region",
+        "usagetype" : "EUC1-APS1-AWS-In-Bytes",
+        "operation" : ""
+      }
+    },
+    "FDZYAMDYBPMZXZZN" : {
+      "sku" : "FDZYAMDYBPMZXZZN",
+      "productFamily" : "Data Transfer",
+      "attributes" : {
+        "servicecode" : "AWSDataTransfer",
+        "transferType" : "Accelerated InterRegion Outbound using edge locations within US, Europe or Japan",
+        "fromLocation" : "Asia Pacific (Tokyo)",
+        "fromLocationType" : "AWS Region",
+        "toLocation" : "Asia Pacific (Sydney)",
+        "toLocationType" : "AWS Region",
+        "usagetype" : "APN1-APS2-AWS-Out-ABytes-T1",
+        "operation" : ""
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "formatVersion" : "v1.0",
+  "disclaimer" : "This pricing list is for informational purposes only. All prices are subject to the additional terms included in the pricing pages on http://aws.amazon.com. All Free Tier prices are also subject to the terms included at https://aws.amazon.com/free/",
+  "publicationDate" : "2016-06-28T05:22:49Z",
+  "offers" : {
+    "AmazonS3" : {
+      "offerCode" : "AmazonS3",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonS3/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonS3/current/index.json"
+    },
+    "AmazonGlacier" : {
+      "offerCode" : "AmazonGlacier",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonGlacier/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonGlacier/current/index.json"
+    },
+    "AmazonSES" : {
+      "offerCode" : "AmazonSES",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonSES/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonSES/current/index.json"
+    },
+    "AmazonRDS" : {
+      "offerCode" : "AmazonRDS",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonRDS/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonRDS/current/index.json"
+    },
+    "AmazonSimpleDB" : {
+      "offerCode" : "AmazonSimpleDB",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonSimpleDB/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonSimpleDB/current/index.json"
+    },
+    "AmazonDynamoDB" : {
+      "offerCode" : "AmazonDynamoDB",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonDynamoDB/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonDynamoDB/current/index.json"
+    },
+    "AmazonEC2" : {
+      "offerCode" : "AmazonEC2",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonEC2/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonEC2/current/index.json"
+    },
+    "AmazonRoute53" : {
+      "offerCode" : "AmazonRoute53",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonRoute53/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonRoute53/current/index.json"
+    },
+    "AmazonRedshift" : {
+      "offerCode" : "AmazonRedshift",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonRedshift/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonRedshift/current/index.json"
+    },
+    "AmazonElastiCache" : {
+      "offerCode" : "AmazonElastiCache",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonElastiCache/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonElastiCache/current/index.json"
+    },
+    "AmazonCloudFront" : {
+      "offerCode" : "AmazonCloudFront",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonCloudFront/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonCloudFront/current/index.json"
+    },
+    "awskms" : {
+      "offerCode" : "awskms",
+      "versionIndexUrl" : "/offers/v1.0/aws/awskms/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/awskms/current/index.json"
+    },
+    "AmazonVPC" : {
+      "offerCode" : "AmazonVPC",
+      "versionIndexUrl" : "/offers/v1.0/aws/AmazonVPC/index.json",
+      "currentVersionUrl" : "/offers/v1.0/aws/AmazonVPC/current/index.json"
+    }
+  }
+}
