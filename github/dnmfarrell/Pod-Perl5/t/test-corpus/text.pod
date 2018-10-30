@@ -1,0 +1,25 @@
+=pod
+
+A plain text paragraph
+consists of text, whitespace
+and is terminated by a blank line
+
+  use v6;
+  say "Hello, World!";
+
+  some more code
+
+=cut
+
+This text should be ignored
+
+=pod
+
+  if (1 ==1)
+  {
+    say "yes!";
+  }
+
+This text should be captured
+it's terminated by the end of 
+the file.

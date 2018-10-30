@@ -1,0 +1,60 @@
+=over
+
+=item 1 bullet point one
+
+=item 2 bullet point two
+
+=item * bullet point three
+
+=item *
+
+=item 0 
+
+=item 345
+
+paragraph one
+
+	verbatim paragraph one
+	verbatim paragraph one
+	verbatim paragraph one
+
+paragraph two
+paragraph two
+paragraph two
+paragraph two
+
+	verbatim paragraph two
+	verbatim paragraph two
+	verbatim paragraph two
+
+=item *
+
+=back
+
+=over 4
+
+=item * one
+
+=item * two
+
+=item * three
+
+=back
+
+=over 4
+
+=item 1 outer list bullet one
+
+=item 2 outer list bullet two
+
+=over 8
+
+=item 1 inner list bullet one
+
+=item 2 inner list bullet two
+
+=back
+
+=item 3 outer list bullet three
+
+=back
