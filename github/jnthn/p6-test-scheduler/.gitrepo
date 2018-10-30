@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:jnthn/p6-test-scheduler.git
+	branch = master
+	commit = 7ad352ae85732fab315b81489a80c72496a2aaec
+	parent = c2363024bea4895181df81af78a185dd9744039d
+	cmdver = 0.3.1
