@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:titsuki/p6-Algorithm-Treap.git
+	branch = master
+	commit = d9f648169ce59622acb690ce382e8342df5c1b3a
+	parent = c34e27c7f0d74eccf69d19714477e1189af86782
+	cmdver = 0.3.1
