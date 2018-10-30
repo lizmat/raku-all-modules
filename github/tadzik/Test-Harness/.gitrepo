@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:tadzik/Test-Harness.git
+	branch = master
+	commit = 4e1c88b10791821cadf5399109a4097fb2564a03
+	parent = 3e551216eb5dc5c17c9077c85d08c8a774fd8efd
+	cmdver = 0.3.1
