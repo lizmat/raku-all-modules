@@ -1,0 +1,4 @@
+
+- Prepare for changes Re: use experimental :pack
+  Maybe copy simple 'N' and 'C' (un)pack code from core/Buf.pm
+

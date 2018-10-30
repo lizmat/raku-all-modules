@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:zengargoyle/Text-Fortune.git
+	branch = master
+	commit = 410a367eb2fe4de3ed8934bb8a0e877629dce9b0
+	parent = 84c56353f050df95ffae214a52f899f5c585e7e4
+	cmdver = 0.3.1
