@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:ramiroencinas/perl6-FileSystem-Capacity.git
+	branch = master
+	commit = 5dc0a9c53119414e0112f679aa8add8b9b90cc12
+	parent = abf7f1d45c62c045814d565a41b250e686203b10
+	cmdver = 0.3.1
