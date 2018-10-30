@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:atweiden/digest-xxhash.git
+	branch = master
+	commit = f172db31cec09292583d9c06a03a873b392e7e27
+	parent = 093ad27ddcc992e6470854005352a2c8d55a334b
+	cmdver = 0.3.1
