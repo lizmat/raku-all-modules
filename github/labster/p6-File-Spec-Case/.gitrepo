@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:labster/p6-File-Spec-Case.git
+	branch = master
+	commit = b6ab64fd975b3b8366c878978335306f314cd176
+	parent = 8ece6f54e8dba773eb09bdc56e52f5e51d0756c4
+	cmdver = 0.3.1
