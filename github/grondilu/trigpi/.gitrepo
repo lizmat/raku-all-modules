@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:grondilu/trigpi.git
+	branch = master
+	commit = a6160d14b14faa566ba601fbdc258caeab454f9a
+	parent = c9acdd8e19a980d629860425304d095f646c1bc5
+	cmdver = 0.3.1
