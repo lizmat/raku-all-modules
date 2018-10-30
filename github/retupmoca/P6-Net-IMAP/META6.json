@@ -1,0 +1,15 @@
+{
+    "perl" : "6.*",
+    "name" : "Net::IMAP",
+    "version" : "1.0.1",
+    "author" : "github:retupmoca",
+    "description" : "Simple IMAP Client",
+    "depends" : [ "Email::MIME", "IO::Socket::SSL" ],
+    "provides" : {
+        "Net::IMAP"          : "lib/Net/IMAP.pm6",
+        "Net::IMAP::Raw"     : "lib/Net/IMAP/Raw.pm6",
+        "Net::IMAP::Simple"  : "lib/Net/IMAP/Simple.pm6",
+        "Net::IMAP::Message" : "lib/Net/IMAP/Message.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-Net-IMAP.git"
+}
