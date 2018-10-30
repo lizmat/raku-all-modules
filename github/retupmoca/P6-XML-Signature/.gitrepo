@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:retupmoca/P6-XML-Signature.git
+	branch = master
+	commit = fa70c5456e2e254e4e31f26fd3dd1ec71e54fbeb
+	parent = fa08edffcb4069470d71479a0e9d4ec2f1b6a5d9
+	cmdver = 0.3.1
