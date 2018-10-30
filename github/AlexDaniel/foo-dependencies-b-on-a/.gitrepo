@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:AlexDaniel/foo-dependencies-b-on-a.git
+	branch = master
+	commit = 41e15fe7b3aa2274321819cb65e91c705f138871
+	parent = e98c21900f8b6cbd0d0958e94c98bd20a8e2a6e8
+	cmdver = 0.3.1
