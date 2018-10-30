@@ -1,0 +1,5 @@
+*.pir
+blib/
+Makefile
+*.swp
+lib/.precomp
