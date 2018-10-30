@@ -1,0 +1,30 @@
+{
+  "indexed-array": {
+    "name": "var",
+    "array-indices": {
+      "array-index": [
+        {
+          "array-index-region": {
+            "value-returning-code": [
+              
+            ]
+          }
+        },
+        {
+          "array-index-region": {
+            "value-returning-code": [
+              
+            ]
+          }
+        },
+        {
+          "array-index-region": {
+            "value-returning-code": [
+              
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "in-place": {
+    "atomic": {
+      "number": {
+        "sign": "- ",
+        "float": {
+          "digits": [
+            "12",
+            "34"
+          ]
+        }
+      }
+    }
+  }
+}

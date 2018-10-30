@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:nobodyinperson/perl6-fortran-grammar.git
+	branch = master
+	commit = 613ee19f9580d837152f3eedcf08c868d527ad7c
+	parent = 08b49873d736925bd77d90502912e45ee81512c6
+	cmdver = 0.3.1

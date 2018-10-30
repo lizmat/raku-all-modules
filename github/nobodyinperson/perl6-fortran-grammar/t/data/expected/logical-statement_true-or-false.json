@@ -1,0 +1,13 @@
+{
+  "logical-operator": [
+    ".or."
+  ],
+  "logical-value-returning-code": [
+    {
+      "boolean": ".true. "
+    },
+    {
+      "boolean": ".false."
+    }
+  ]
+}

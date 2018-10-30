@@ -1,0 +1,93 @@
+{
+  "indexed-array": {
+    "name": "var",
+    "array-indices": {
+      "array-index": [
+        {
+          "array-index-region": {
+            "value-returning-code": [
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "1"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "10"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "array-index-region": {
+            "value-returning-code": [
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "11"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "20"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "array-index-region": {
+            "value-returning-code": [
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "21"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "30"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

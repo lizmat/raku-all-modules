@@ -1,0 +1,78 @@
+{
+  "name": "sub",
+  "arguments": {
+    "argument": [
+      {
+        "value-returning-code": {
+          "in-place": {
+            "atomic": {
+              "number": {
+                "integer": {
+                  "digits": "1"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "value-returning-code": {
+          "in-place": {
+            "atomic": {
+              "number": {
+                "float": {
+                  "digits": [
+                    "2",
+                    "34"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "value-returning-code": {
+          "function-call": {
+            "name": "func"
+          }
+        }
+      },
+      {
+        "value-returning-code": {
+          "accessed-variable": {
+            "name": "var"
+          }
+        }
+      },
+      {
+        "value-returning-code": {
+          "accessed-variable": {
+            "indexed-array": {
+              "name": "var2",
+              "array-indices": {
+                "array-index": [
+                  {
+                    "integer": {
+                      "digits": "1",
+                      "precision-spec": {
+                        "name": "wp"
+                      }
+                    }
+                  },
+                  {
+                    "array-index-region": {
+                      "value-returning-code": [
+                        
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

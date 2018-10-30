@@ -1,0 +1,23 @@
+{
+  "value-returning-code-no-statement": [
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": "1"
+          }
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": "1"
+          }
+        }
+      }
+    }
+  ],
+  "operator": "+"
+}

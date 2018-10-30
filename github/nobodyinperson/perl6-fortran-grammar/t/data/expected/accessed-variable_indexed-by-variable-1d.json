@@ -1,0 +1,12 @@
+{
+  "indexed-array": {
+    "name": "var",
+    "array-indices": {
+      "array-index": [
+        {
+          "name": "n"
+        }
+      ]
+    }
+  }
+}

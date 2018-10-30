@@ -1,0 +1,11 @@
+{
+  "in-place": {
+    "atomic": {
+      "strings": {
+        "string": [
+          "\"this is a string\""
+        ]
+      }
+    }
+  }
+}
