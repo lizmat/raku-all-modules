@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:stmuk/p6-panda-stub.git
+	branch = master
+	commit = 55b7779b1d440ff36871c5b90d0a6ea5ab090f54
+	parent = 15e6d8991c9b7d17a291a412902c5541e8f6f585
+	cmdver = 0.3.1
