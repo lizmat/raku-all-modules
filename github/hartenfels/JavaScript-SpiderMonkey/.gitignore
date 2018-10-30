@@ -1,0 +1,3 @@
+*.so
+mozjs-*
+lib/.precomp
