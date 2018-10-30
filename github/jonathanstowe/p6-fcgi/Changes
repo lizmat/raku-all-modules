@@ -1,0 +1,8 @@
+v0.0.5		Tue Oct 10 09:11:34 2017 +0100 
+	* Work with apache nicely
+v0.0.4		Sun Sep 3 10:42:33 2017 +0100 
+	* Add a header helper
+v0.0.3		Sat Sep 2 16:01:36 2017 +0100 
+	* Add a .close method to support FastCGI::NativeCall::Async
+v0.0.2		Sat Aug 26 21:32:16 2017 +0100 
+	* A bit of a spruce up
