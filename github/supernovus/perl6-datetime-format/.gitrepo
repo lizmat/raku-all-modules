@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:supernovus/perl6-datetime-format.git
+	branch = master
+	commit = 3f3c99314e36029e36738097685a51dd94a188cf
+	parent = 4a1fc9ada1074d663ad00c97cbb43acd616941d5
+	cmdver = 0.3.1
