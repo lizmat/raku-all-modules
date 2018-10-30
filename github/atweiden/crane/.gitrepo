@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:atweiden/crane.git
+	branch = master
+	commit = 77270457082ff654f91ab13ad52e359ea6c68752
+	parent = 0937d7ef9d08a4c5d196528ba5b3c90fde37f4e6
+	cmdver = 0.3.1
