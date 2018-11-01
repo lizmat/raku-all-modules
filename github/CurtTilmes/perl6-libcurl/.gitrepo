@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/CurtTilmes/perl6-libcurl.git
 	branch = master
-	commit = 035ee61b406ab2fccf51a86b8f36d32e0fc6738e
-	parent = ca9910e5c5178a418333d3fe5cfa781fe69fa46e
-	cmdver = 0.4.0
+	commit = 13927952da72e12002b79f3ba7f17d17c0eb1b62
+	parent = 35b1f9b0d092012c2bb18e0b27068222b9a05bd6
+	cmdver = 0.3.1
