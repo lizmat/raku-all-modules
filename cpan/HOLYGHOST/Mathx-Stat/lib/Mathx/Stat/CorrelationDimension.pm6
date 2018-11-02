@@ -1,5 +1,4 @@
-use Correlation;
-use Dimension;
+unit module Mathx::Stat;
 
 role ThisCorrelation { 
 	method correlation($x,$y) { Correlation().correlation($x,$y); } 

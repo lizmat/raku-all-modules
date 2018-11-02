@@ -1,9 +1,10 @@
+unit module Mathx::Stat;
+
 class Population
 {
 	has @.population;
 
 	method BUILD() {
-		.population = <>;
 	}
 
 	method add($x) {

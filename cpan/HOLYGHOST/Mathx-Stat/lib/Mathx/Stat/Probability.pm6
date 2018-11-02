@@ -1,3 +1,5 @@
+unit module Mathx::Stat;
+
 
 ### Multi-variate probability class with a distribution of probabilities
 
@@ -6,7 +8,7 @@ class Probability {
 	has $.population;
 
 	method BUILD(@xpop) {
-		.population = new DistributionPopulation();
+		.population = DistributionPopulation.new;
 
 		for @xpop -> $p {
 			.population.add($p);
@@ -57,7 +59,7 @@ class Probability {
 
 	### conditional probability P(B|A)
 	method CalculatedCondP($index0, $n) {
-		return CalculatedCondP0($index0) / self.P($n);
+		return self.CalculatedCondP0($index0) / self.P($n);
 	}
 
 	### Sometimes P(A|B) = P(A), so ($pbconda and self.P($index) == 1.0)

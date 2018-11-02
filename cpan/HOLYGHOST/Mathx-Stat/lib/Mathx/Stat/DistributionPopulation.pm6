@@ -1,4 +1,4 @@
-use Population;
+unit module Mathx::Stat;
 
 class DistributionPopulation is Population
 {

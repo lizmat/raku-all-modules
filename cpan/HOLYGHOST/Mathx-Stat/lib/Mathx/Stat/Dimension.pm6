@@ -1,3 +1,5 @@
+unit module Mathx::Stat;
+
 class Dimension {
 
 	method BUILD() {

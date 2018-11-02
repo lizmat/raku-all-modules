@@ -1,4 +1,4 @@
-use Covariance;
+unit module Mathx::Stat;
 
 role ThisCovariance { method cov($xpop,$ypop) {
 	return Covariance().Covariance($xpop,$ypop);

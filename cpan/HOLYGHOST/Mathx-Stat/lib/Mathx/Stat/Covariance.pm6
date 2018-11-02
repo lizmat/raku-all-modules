@@ -1,3 +1,6 @@
+unit module Mathx::Stat;
+
+
 class Covariance { 
 
 	method Covariance($xpop,$ypop) {
