@@ -1,0 +1,59 @@
+
+{
+    "perl" : "6.*",
+    "name" : "CCLog",
+    "auth" : "github:ccworld1000, ccworld1000@gmail.com, 2291108617@qq.com",
+    "api" : "*",
+    "version" : "0.0.1", 
+    "description" : "CCLog Simple and lightweight cross-platform logs, easy-to-use simple learning, and support for multiple languages, such as C, C++, Perl 6, shell, Objective-C .",
+    "authors" : [ "youhua deng (deng you hua | CC)" ],
+    "license" : "GPL-2.0",
+    "provides" : {
+        "CCLog" : "CCLog/lib/CCLog.pm6",
+        "CCLogFull" : "CCLog/lib/CCLogFull.pm6"
+    },
+    "depends" : [ "NativeCall" ],
+    "build-depends" : [ ],
+    "test-depends" : [ ],
+    "resources" : [
+      "libCCLog.dylib",
+      "libCCLog.so"
+    ],
+   "tags": [
+      "CCLog",
+      "CCLogFull",
+      "log",
+      "colorlog",
+      "debug",
+      "colordebug",
+      "C",
+      "C++",
+      "Perl 6",
+      "shell",
+      "Objective-C",
+      "NativeCall",
+      "ccnormal",
+      "CCLog_normal",
+      "ccwarning",
+      "CCLog_warning",
+      "ccerror",
+      "CCLog_error",
+      "cctimer",
+      "CCLog_timer",
+      "ccloop",
+      "CCLog_loop",
+      "ccthread",
+      "CCLog_thread",
+      "ccprint",
+      "CCLog_print",
+      "ccsay",
+      "CCLog_say",
+      "ccdie",
+      "CCLog_die",
+      "ccnetwork",
+      "CCLog_network",
+      "cross-platform"
+   ],
+    "source-url" : "https://github.com/ccworld1000/CCLog.git"
+}
+

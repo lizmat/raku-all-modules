@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ccworld1000/CCLog.git
+	branch = master
+	commit = 565ca3beaeb53013a4e40f7865597818b9ab981e
+	parent = cccc002d283ca39d0948f389545e9e3836d93669
+	cmdver = 0.3.1
