@@ -59,18 +59,6 @@ typedef enum {
     */
     CCLogColorTypeYellow = 33,
     /*
-      White color
-    */
-    CCLogColorTypeWhite = 37,
-    /*
-      Green color
-    */
-    CCLogColorTypeGreen = 32,
-    /*
-      SkyBlue color
-    */
-    CCLogColorTypeSkyBlue = 36,
-    /*
       Blue color
     */
     CCLogColorTypeBlue = 34,
@@ -79,9 +67,21 @@ typedef enum {
     */
     CCLogColorTypePurple = 35,
     /*
+      SkyBlue color
+    */
+    CCLogColorTypeSkyBlue = 36,
+    /*
+      Green color
+    */
+    CCLogColorTypeGreen = 32,
+    /*
       Red color
     */
     CCLogColorTypeRed = 31,
+    /*
+      White color
+    */
+    CCLogColorTypeWhite = 37,
 } CCLogColorType;
 
 /*
@@ -92,55 +92,110 @@ CC_EXPORT void CCLog_showColor (int isShowColor);
 /*
  CCLog_showLogTips
 */
-CC_EXPORT void CCLog_showColor (int isShowLogTips);
+CC_EXPORT void CCLog_showLogTips (int isShowLogTips);
 
 /*
-  CCLog_normal
+ CCLog_all_displayLog
+*/
+CC_EXPORT void CCLog_all_displayLog (int isDisplay);
+
+/*
+ CCLog_normal_displayLog
+*/
+CC_EXPORT void CCLog_normal_displayLog (int isDisplay);
+
+/*
+ CCLog_warning_displayLog
+*/
+CC_EXPORT void CCLog_warning_displayLog (int isDisplay);
+
+/*
+ CCLog_error_displayLog
+*/
+CC_EXPORT void CCLog_error_displayLog (int isDisplay);
+
+/*
+ CCLog_timer_displayLog
+*/
+CC_EXPORT void CCLog_timer_displayLog (int isDisplay);
+
+/*
+ CCLog_loop_displayLog
+*/
+CC_EXPORT void CCLog_loop_displayLog (int isDisplay);
+
+/*
+ CCLog_thread_displayLog
+*/
+CC_EXPORT void CCLog_thread_displayLog (int isDisplay);
+
+/*
+ CCLog_print_displayLog
+*/
+CC_EXPORT void CCLog_print_displayLog (int isDisplay);
+
+/*
+ CCLog_say_displayLog
+*/
+CC_EXPORT void CCLog_say_displayLog (int isDisplay);
+
+/*
+ CCLog_die_displayLog
+*/
+CC_EXPORT void CCLog_die_displayLog (int isDisplay);
+
+/*
+ CCLog_network_displayLog
+*/
+CC_EXPORT void CCLog_network_displayLog (int isDisplay);
+
+/*
+ CCLog_normal
 */
 CC_EXPORT void CCLog_normal (char * content);
 
 /*
-  CCLog_warning
+ CCLog_warning
 */
 CC_EXPORT void CCLog_warning (char * content);
 
 /*
-  CCLog_error
+ CCLog_error
 */
 CC_EXPORT void CCLog_error (char * content);
 
 /*
-  CCLog_timer
+ CCLog_timer
 */
 CC_EXPORT void CCLog_timer (char * content);
 
 /*
-  CCLog_loop
+ CCLog_loop
 */
 CC_EXPORT void CCLog_loop (char * content);
 
 /*
-  CCLog_thread
+ CCLog_thread
 */
 CC_EXPORT void CCLog_thread (char * content);
 
 /*
-  CCLog_print
+ CCLog_print
 */
 CC_EXPORT void CCLog_print (char * content);
 
 /*
-  CCLog_say
+ CCLog_say
 */
 CC_EXPORT void CCLog_say (char * content);
 
 /*
-  CCLog_die
+ CCLog_die
 */
 CC_EXPORT void CCLog_die (char * content);
 
 /*
-  CCLog_network
+ CCLog_network
 */
 CC_EXPORT void CCLog_network (char * content);
 

@@ -1,4 +1,4 @@
-unit module CCLogFull:ver<0.0.1>:auth<youhua deng (deng you hua | CC) (ccworld1000@gmail.com, 2291108617@qq.com)>;
+unit module CCLogFull:ver<0.0.3>:auth<youhua deng (deng you hua | CC) (ccworld1000@gmail.com, 2291108617@qq.com)>;
 
 #!/usr/bin/env perl6
 #
@@ -51,12 +51,12 @@ our enum CCLogType is export
 our enum CCLogColorType is export
 (
 	CCLogColorTypeYellow => 33,
-	CCLogColorTypeWhite => 37,
-	CCLogColorTypeGreen => 32,
-	CCLogColorTypeSkyBlue => 36,
 	CCLogColorTypeBlue => 34,
 	CCLogColorTypePurple => 35,
+	CCLogColorTypeSkyBlue => 36,
+	CCLogColorTypeGreen => 32,
 	CCLogColorTypeRed => 31,
+	CCLogColorTypeWhite => 37,
 );
   
 
@@ -72,6 +72,72 @@ sub CCLog_showLogTips (int32 $isShowLogTips)
                   is export
                   {*}
 
+sub CCLog_all_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_all_displayLog')
+                is export
+                {*}
+                
+sub CCLog_normal_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_normal_displayLog')
+                is export
+                {*}
+                
+sub CCLog_warning_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_warning_displayLog')
+                is export
+                {*}
+                
+sub CCLog_error_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_error_displayLog')
+                is export
+                {*}
+                
+sub CCLog_timer_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_timer_displayLog')
+                is export
+                {*}
+                
+sub CCLog_loop_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_loop_displayLog')
+                is export
+                {*}
+                
+sub CCLog_thread_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_thread_displayLog')
+                is export
+                {*}
+                
+sub CCLog_print_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_print_displayLog')
+                is export
+                {*}
+                
+sub CCLog_say_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_say_displayLog')
+                is export
+                {*}
+                
+sub CCLog_die_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_die_displayLog')
+                is export
+                {*}
+                
+sub CCLog_network_displayLog (int32 $isDisplay)
+                is native($dlib)
+                is symbol('CCLog_network_displayLog')
+                is export
+                {*}
+                
 sub CCLog_normal (Str $content)
                   returns int32
                   is native($dlib)

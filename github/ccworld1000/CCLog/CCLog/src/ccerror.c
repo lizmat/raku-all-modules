@@ -33,6 +33,9 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
 
+  CCLog_all_displayLog(1);
+  CCLog_showLogTips(0);
+
   for (int i = 1; i < argc; i++) {
     char *arg = (char *)(*(argv + i));
     CCLog_error(arg);

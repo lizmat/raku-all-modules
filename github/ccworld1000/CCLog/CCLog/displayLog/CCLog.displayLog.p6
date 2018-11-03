@@ -1,5 +1,6 @@
+#!/usr/bin/env perl6
 #
-#  Build.pm6
+#  CCLog.displayLog.p6
 #
 #  Created by CC on 2018/10/12.
 #  Copyright 2018 - now youhua deng (deng you hua | CC) <ccworld1000@gmail.com>
@@ -22,16 +23,35 @@
 #
 #
     
+use CCLog;
 
-unit class Build;
+ccwarning_displayLog 1;
+ccwarning "CCLog test 1";
 
-method build($dir) {
-    if $*DISTRO.is-win {
-        die "not support or maybe later or call c source";
-        return -1;
-    }
+ccwarning_displayLog 0;
+ccwarning "CCLog test 2";
 
-    "$dir/resources".IO.mkdir;
+ccwarning_displayLog 1;
+ccwarning "CCLog test 3";
 
-    shell "sh install.sh";
-}
+ccwarning_displayLog 0;
+ccwarning "CCLog test 4";
+
+ccwarning_displayLog 1;
+ccwarning "CCLog test 5";
+
+ccwarning_displayLog 0;
+ccwarning "CCLog test 6";
+
+ccwarning_displayLog 1;
+ccwarning "CCLog test 7";
+
+ccwarning_displayLog 0;
+ccwarning "CCLog test 8";
+
+ccwarning_displayLog 1;
+ccwarning "CCLog test 9";
+
+ccwarning_displayLog 0;
+ccwarning "CCLog test 10";
+
