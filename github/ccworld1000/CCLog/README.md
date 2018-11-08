@@ -3,6 +3,8 @@
     easy-to-use simple learning,
     and support for multiple languages,
     such as C, C++, Perl 6, shell, Objective-C
+    support ios, osx, watchos, tvos
+    support pod, cocoapods https://cocoapods.org/pods/CCLog
 
 ## Perl 6
     There are 2 (CCLog & CCLogFull) ways of binding.

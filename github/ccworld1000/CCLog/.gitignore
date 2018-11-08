@@ -57,4 +57,5 @@ CCLog.podspec
 *.swp
 .DS_Store
 .precomp
+CCWriteLog
 CCWriteLog.p6

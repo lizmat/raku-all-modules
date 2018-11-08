@@ -28,8 +28,9 @@
 
 int main(int argc, char const *argv[]) {
   if (argc == 1) {
-    CCLog_warning ("Forget the input parameters?");
-    CCLog_warning ("Update or more information to access URL : https://github.com/ccworld1000/CCLog");
+    CCLog_warning (gCCLogWarningMsgParam);
+    CCLog_warning (gCCLogWarningMsgMore);
+
     return -1;
   }
 

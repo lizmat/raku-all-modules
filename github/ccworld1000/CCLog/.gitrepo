@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/ccworld1000/CCLog.git
 	branch = master
-	commit = 79faafcd3e49aeefeb0f55b5b2359ad247bd9a44
-	parent = a22b333b5bffc2a5a7af1b82503f9d61237bdd91
+	commit = 31d1a26556cbcd0390c5d989ef06ad84c906b74d
+	parent = ea2cf41552a01aca497203e9b6fa080ea539ef61
 	cmdver = 0.3.1

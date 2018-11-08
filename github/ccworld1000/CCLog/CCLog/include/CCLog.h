@@ -55,34 +55,44 @@ typedef enum {
 
 typedef enum {
     /*
-      Yellow color
-    */
-    CCLogColorTypeYellow = 33,
-    /*
       Blue color
     */
     CCLogColorTypeBlue = 34,
-    /*
-      Purple color
-    */
-    CCLogColorTypePurple = 35,
-    /*
-      SkyBlue color
-    */
-    CCLogColorTypeSkyBlue = 36,
-    /*
-      Green color
-    */
-    CCLogColorTypeGreen = 32,
     /*
       Red color
     */
     CCLogColorTypeRed = 31,
     /*
+      Green color
+    */
+    CCLogColorTypeGreen = 32,
+    /*
+      SkyBlue color
+    */
+    CCLogColorTypeSkyBlue = 36,
+    /*
       White color
     */
     CCLogColorTypeWhite = 37,
+    /*
+      Purple color
+    */
+    CCLogColorTypePurple = 35,
+    /*
+      Yellow color
+    */
+    CCLogColorTypeYellow = 33,
 } CCLogColorType;
+
+/*
+  warning Msg Param [for shell]
+*/
+CC_EXPORT char * gCCLogWarningMsgParam ;
+
+/*
+  warning Msg More [for shell]
+*/
+CC_EXPORT char * gCCLogWarningMsgMore;
 
 /*
  CCLog_showColor

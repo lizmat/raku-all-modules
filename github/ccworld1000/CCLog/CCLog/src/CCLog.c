@@ -6,6 +6,16 @@
 
 
 /*
+  warning Msg Param
+*/
+char * gCCLogWarningMsgParam = "Forget the input parameters?";
+
+/*
+  warning Msg More
+*/
+char * gCCLogWarningMsgMore = "Update or more information to access URL : https://github.com/ccworld1000/CCLog";
+
+/*
   show color control
 */
 int gCCLogShowColor = 1;
