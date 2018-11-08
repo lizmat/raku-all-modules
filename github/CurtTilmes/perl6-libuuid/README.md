@@ -21,6 +21,8 @@ it must be installed first.
 
 For Linux ubuntu, try `sudo apt-get install uuid-dev`.
 
+On Mac you can get hold of it via `brew install ossp-uuid`
+
 Then install this module with `zef install LibUUID`.
 
 Usage

@@ -2,15 +2,15 @@ use v6;
 
 use NativeCall;
 
-constant LIB = 'uuid'; # libuuid.so
+my constant LIBUUID = 'uuid'; # libuuid.so
 
 class UUID
 {
     has $.bytes;
 
-    sub uuid_generate(Blob) is native(LIB) {}
-    sub uuid_unparse(Blob, Blob) is native(LIB) {}
-    sub uuid_parse(Blob, Blob) returns int32 is native(LIB) {}
+    sub uuid_generate(Blob) is native(LIBUUID) {}
+    sub uuid_unparse(Blob, Blob) is native(LIBUUID) {}
+    sub uuid_parse(Blob, Blob) returns int32 is native(LIBUUID) {}
 
     proto method new(|) {*}
 

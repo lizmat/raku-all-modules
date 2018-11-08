@@ -5,11 +5,11 @@
 
     "auth" : "github:CurtTilmes",
 
-    "version" : "0.1",
+    "version" : "0.2",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-libuuid.git",
 
-    "perl" : "6.c",
+    "perl" : "6.*",
 
     "tags" : [ "UUID" ],
 
