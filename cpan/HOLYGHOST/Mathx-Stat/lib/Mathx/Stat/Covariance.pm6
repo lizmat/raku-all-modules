@@ -1,7 +1,6 @@
-unit module Mathx::Stat;
+use v6.c;
 
-
-class Covariance { 
+class Mathx::Stat::Covariance { 
 
 	method Covariance($xpop,$ypop) {
 		my $ex = $xpop.Expectance();		

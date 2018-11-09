@@ -1,10 +1,12 @@
-unit module Mathx::Stat;
+use v6.c;
+
+use Mathx::Stat::Dimension;
 
 role ThisCorrelation { 
 	method correlation($x,$y) { Correlation().correlation($x,$y); } 
 };
 
-class CorrelationDimension is Dimension does ThisCorrelation {
+class Mathx::Stat::CorrelationDimension is Mathx::Stat::Dimension does ThisCorrelation {
 
 	has $.r;
 	has $.rthreshold;

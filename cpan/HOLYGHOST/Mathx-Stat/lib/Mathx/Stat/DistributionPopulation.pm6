@@ -1,6 +1,8 @@
-unit module Mathx::Stat;
+use v6.c;
 
-class DistributionPopulation is Population
+use Mathx::Stat:Population;
+
+class Mathx::Stat::DistributionPopulation is Mathx::Stat::Population
 {
 	method BUILD() {
 		

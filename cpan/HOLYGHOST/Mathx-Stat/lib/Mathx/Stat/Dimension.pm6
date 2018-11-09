@@ -1,6 +1,6 @@
-unit module Mathx::Stat;
+use v6.c;
 
-class Dimension {
+class Mathx::Stat::Dimension {
 
 	method BUILD() {
 			

@@ -1,9 +1,10 @@
-unit module Mathx::Stat;
+use v6.c;
 
+use Mathx::Stat::DistributionPopulation;
 
 ### Multi-variate probability class with a distribution of probabilities
 
-class Probability {
+class Mathx::Stat::Probability {
 
 	has $.population;
 

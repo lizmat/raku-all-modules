@@ -1,4 +1,4 @@
-unit module Mathx::Stat;
+use v6.c;
 
 role ThisCovariance { method cov($xpop,$ypop) {
 	return Covariance().Covariance($xpop,$ypop);
@@ -6,7 +6,7 @@ role ThisCovariance { method cov($xpop,$ypop) {
 }
 		
 
-class Correlation does ThisCovariance {
+class Mathx::Stat::Correlation does ThisCovariance {
 	method BUILD() {
 			
 	}

@@ -1,6 +1,6 @@
-unit module Mathx::Stat;
+use v6.c;
 
-class Population
+class Mathx::Stat::Population
 {
 	has @.population;
 
