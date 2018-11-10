@@ -59,3 +59,5 @@ CCLog.podspec
 .precomp
 CCWriteLog
 CCWriteLog.p6
+
+CCTar
