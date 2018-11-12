@@ -1,0 +1,11 @@
+.DS_Store
+.precomp
+/*.sh
+/*.m
+/*.h
+/*.c
+/*.o
+/*.png
+/*.jpg
+*.swp
+CC

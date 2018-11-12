@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ccworld1000/CCChart.git
+	branch = master
+	commit = bf627e3895e07a3f0a3c68ed30dd32f6630b6a91
+	parent = f9e46aef9e975e32f5e12747e13641ebabf77f8b
+	cmdver = 0.3.1

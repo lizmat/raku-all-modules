@@ -1,0 +1,29 @@
+
+{
+    "perl" : "6.*",
+    "name" : "CCChart",
+    "auth" : "github:ccworld1000, ccworld1000@gmail.com, 2291108617@qq.com",
+    "api" : "*",
+    "version" : "0.0.1", 
+    "description" : "Simple draw chart for Perl 6 , easy-to-use simple learning.",
+    "authors" : [ "youhua deng (deng you hua | CC)" ],
+    "license" : "GPL-2.0",
+    "provides" : {
+        "CCChart" : "lib/CCChart.pm6"
+    },
+    "depends" : [ "CCLog", "Cairo" ],
+    "build-depends" : [ ],
+    "test-depends" : [ ],
+    "resources" : [
+    ],
+   "tags": [
+      "CCChart",
+      "chart",
+      "png",
+      "Perl 6",
+      "draw",
+      "pie"
+   ],
+    "source-url" : "https://github.com/ccworld1000/CCChart.git"
+}
+
