@@ -4,19 +4,21 @@
         "auth" : "CPAN:HOLYGHOST",
         "api" : "1",
         "version" : "0.2.3",
-        "description" : "AI network Agent system, Music Link Agent",
+        "description" : "AI network Agent system",
         "authors" : [ "The Holy Ghost" ],
         "license" : "General Public License 3, Artistic-2.0",
         "provides" : {
-            "AI::Agent::Music::MusicAgent" : "lib/AI/Agent/Music/MusicAgent.pm6",
-            "AI::Agent::Music::MusicDB" : "lib/AI/Agent/Music/MusicDB.pm6"
+            "AI::Agent::Actor" : "lib/AI/Agent/Actor.pm6",
+            "AI::Agent::Agent" : "lib/AI/Agent/Agent.pm6",
+            "AI::Agent::DB" : "lib/AI/Agent/DB.pm6",
+            "AI::Agent::HashedAgent" : "lib/AI/Agent/HashedAgent.pm6"
         },
-        "depends" : [ "AI::Agent" ],
+        "depends" : [ ],
         "build-depends" : [ ],
         "test-depends" : [ ],
         "resources" : [ ],
         "tags": [
-          "AI", "Agent", "Music"
+          "AI", "Agent"
         ],
-        "source-url" : "http://cpan.metacpan.org/authors/id/H/HO/HOLYGHOST/Perl6/AI-Agent-Music-0.2.3.tar.gz"
+        "source-url" : "http://cpan.metacpan.org/authors/id/H/HO/HOLYGHOST/Perl6/AI-Agent-0.2.3.tar.gz"
     }
