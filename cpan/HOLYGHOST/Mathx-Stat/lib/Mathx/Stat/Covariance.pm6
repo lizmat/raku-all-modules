@@ -12,7 +12,7 @@ class Mathx::Stat::Covariance {
 			$cov += ($p - $ex)  * ($q - $ey);	
 		}
 
-		return $cov / $xpop.population.length;
+		return $cov / $xpop.population.elems;
 
 	}
 }

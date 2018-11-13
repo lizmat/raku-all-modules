@@ -1,6 +1,6 @@
 use v6.c;
 
-use Mathx::Stat:Population;
+use Mathx::Stat::Population;
 
 class Mathx::Stat::DistributionPopulation is Mathx::Stat::Population
 {
@@ -16,7 +16,7 @@ class Mathx::Stat::DistributionPopulation is Mathx::Stat::Population
 			$e += $p;
 		}
 
-		return $e / .population.length;
+		return $e / .population.elems;
 	}
 
 	method Variance () {
@@ -27,7 +27,7 @@ class Mathx::Stat::DistributionPopulation is Mathx::Stat::Population
 			$var += ($p - $e) * ($p - $e);
 		}
 
-		return $var / (.population.length - 1);
+		return $var / (.population.elems - 1);
 	}
 
 
