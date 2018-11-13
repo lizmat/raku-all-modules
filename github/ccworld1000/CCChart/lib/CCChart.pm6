@@ -123,3 +123,105 @@ sub pie (@values, @titles = (), @colors = (), int32 $width = 300, int32 $height 
 
   ccsay "Finish Pie";
 }
+
+# create coordinate line
+sub createCoordinateLine (Cairo::Context $c, $width, $height) {
+  next unless $c;
+
+  my $offset = 1;
+  my @cs = (($offset, $offset), ($offset, $height), ($width, $height));
+  loop (my $step = 0; $step < @cs.elems; $step++) {
+    next if $step > 1;
+
+    my ($firstX, $firstY) = @cs[$step];
+    my ($secondX, $secondY) = @cs[$step+1];
+
+    ccloop "first : ($firstX, $firstY), second ($secondX, $secondY)" if $isDebug;
+
+    $c.move_to($firstX, $firstY);
+    $c.line_to($secondX, $secondY);
+  }
+}
+
+sub lines (@values, int32 $width = 300, int32 $height = 300, Str $dst = "default_lines.png") is export {
+  unless @values {
+    ccwarning 'At least to import @values';
+    return -1;
+  }
+
+  unless $width > $minSizeLimt {
+    ccwarning "too samll width";
+    return -1;
+  }
+
+  unless $height > $minSizeLimt {
+    ccwarning "too samll height";
+    return -1;
+  }
+
+  given Cairo::Image.create(Cairo::FORMAT_ARGB32, $width, $height) {
+    ccsay "Begin gen lines ......";
+    given Cairo::Context.new($_) {
+      .rgb(0, 0, 1);
+
+      createCoordinateLine($_, $width, $height);
+
+      .line_width = 2.0;
+      .line_cap = Cairo::LINE_CAP_ROUND;
+
+      my $max = -1;
+      for @values -> $item {
+        if $item > $max {
+          $max = $item;
+        }
+      }
+
+      unless $max > 0 {
+        ccwarning "ill max value";
+        return -1;
+      }
+
+      say "Max $max" if $isDebug;
+
+      my @xyList = ();
+      my $count = @values.elems;
+      my $index = 1;
+      for @values -> $item {
+        my $s = $item.Int / $max;
+
+        my $x = $index * ($width / ($count + 1));
+        my $y = (1 - $s) * $height;
+
+        @xyList.push(($x, $y));
+        $index++;
+      }
+
+      $count = @xyList.elems;
+
+      $index = 1;
+
+      if $count > 1 {
+        for (@xyList) -> ($x, $y) {
+          next if ($count - 1) == $index;
+
+          ccloop "move to($x, $y)" if $isDebug;
+          .move_to($x, $y);
+
+          my ($sX, $sY) = @xyList[$index];
+
+          .line_to($sX, $sY);
+
+          $index++;
+        }
+      } else {
+        ccwarning "Array elements are at least 2.";
+      }
+
+      .stroke;
+    }
+
+    .write_png($dst);
+  }
+
+  ccsay "Finish lines";
+}
