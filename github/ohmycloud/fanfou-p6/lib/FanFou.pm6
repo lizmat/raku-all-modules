@@ -88,9 +88,9 @@ class Auth {
         my $data = "";
         if (%headers{'content-type'} // '') eq self.form_urlencoded {
             $data = oauth_query(%args);
-        } elsif (%headers{'content-type'} // '').contains('form-data') { # multipart/form-data
+        } elsif (%headers{'content-type'} // '').contains('multipart/form-data') { # multipart/form-data
             $data = %args{'form-data'};
-        } else {
+        } else { # GET
             $data = "";
         }
 
