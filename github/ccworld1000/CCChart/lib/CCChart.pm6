@@ -28,6 +28,11 @@ unit module CCChart;
 use CCLog;
 use Cairo;
 
+enum CCChartLineMode is export
+<
+CCChartLineModeDefault
+CCChartLineModeRect
+>;
 
 my Bool $isDebug = False;
 
@@ -128,6 +133,9 @@ sub pie (@values, @titles = (), @colors = (), int32 $width = 300, int32 $height 
 sub createCoordinateLine (Cairo::Context $c, $width, $height) {
   next unless $c;
 
+  $c.save();
+  $c.line_width = 2.0;
+
   my $offset = 1;
   my @cs = (($offset, $offset), ($offset, $height), ($width, $height));
   loop (my $step = 0; $step < @cs.elems; $step++) {
@@ -141,10 +149,13 @@ sub createCoordinateLine (Cairo::Context $c, $width, $height) {
     $c.move_to($firstX, $firstY);
     $c.line_to($secondX, $secondY);
   }
+
+  $c.stroke;
+  $c.restore();
 }
 
-sub lines (@values, int32 $width = 300, int32 $height = 300, Str $dst = "default_lines.png") is export {
-  unless @values {
+sub lines (@values, CCChartLineMode $lineMode = CCChartLineModeRect, int32 $width = 300, int32 $height = 300, Bool $showCoordinateLine = True ,Str $dst = "default_lines.png") is export {
+  unless @values.elems > 2 {
     ccwarning 'At least to import @values';
     return -1;
   }
@@ -164,10 +175,24 @@ sub lines (@values, int32 $width = 300, int32 $height = 300, Str $dst = "default
     given Cairo::Context.new($_) {
       .rgb(0, 0, 1);
 
-      createCoordinateLine($_, $width, $height);
+      if $showCoordinateLine {
+        createCoordinateLine($_, $width, $height);
+      }
 
-      .line_width = 2.0;
-      .line_cap = Cairo::LINE_CAP_ROUND;
+      my $count = @values.elems;
+      if $lineMode === CCChartLineModeRect {
+        my $defautLineWidth = 20.0;
+
+        if ($count * 2 - 1) * $defautLineWidth >= $width {
+          $defautLineWidth = $width / ($count * 2 - 1);
+        }
+
+        .line_width = $defautLineWidth;
+      } else {
+        # enter default
+        .line_width = 2.0;
+        .line_cap = Cairo::LINE_CAP_ROUND;
+      }
 
       my $max = -1;
       for @values -> $item {
@@ -184,7 +209,6 @@ sub lines (@values, int32 $width = 300, int32 $height = 300, Str $dst = "default
       say "Max $max" if $isDebug;
 
       my @xyList = ();
-      my $count = @values.elems;
       my $index = 1;
       for @values -> $item {
         my $s = $item.Int / $max;
@@ -202,14 +226,20 @@ sub lines (@values, int32 $width = 300, int32 $height = 300, Str $dst = "default
 
       if $count > 1 {
         for (@xyList) -> ($x, $y) {
-          next if ($count - 1) == $index;
+          unless $lineMode === CCChartLineModeRect {
+            next if ($count - 1) == $index;
+          }
 
           ccloop "move to($x, $y)" if $isDebug;
           .move_to($x, $y);
 
-          my ($sX, $sY) = @xyList[$index];
+          if $lineMode === CCChartLineModeRect {
+            .line_to($x, $height);
+          } else {
+            my ($sX, $sY) = @xyList[$index];
 
-          .line_to($sX, $sY);
+            .line_to($sX, $sY);
+          }
 
           $index++;
         }

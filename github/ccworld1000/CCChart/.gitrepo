@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/ccworld1000/CCChart.git
 	branch = master
-	commit = 9ebfd9d5f394e65b3ef770243a8e58da1df239e7
-	parent = 95c8b4d64d4463aec4fd844ae6131448f1ce560a
+	commit = 2e1c6673721487974a2f4a12c653f1899845e9c5
+	parent = 40842ae5f0ccd5fb19ed89a030bc813f29c9fb79
 	cmdver = 0.3.1

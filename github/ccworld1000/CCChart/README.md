@@ -34,6 +34,16 @@ zef install CCChart
 
 ![CCChart pie](https://raw.githubusercontent.com/ccworld1000/CCChart/master//doc/screenshot/default_lines.png)
 
+## 
+
+## CCChart rect
+
+
+
+![CCChart pie](https://raw.githubusercontent.com/ccworld1000/CCChart/master//doc/screenshot/default_rect.png)
+
+## 
+
 ## CCChart test
 
 The call will generate a default "default.png" in the command line execution directory.
