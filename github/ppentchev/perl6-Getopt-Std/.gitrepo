@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/ppentchev/perl6-Getopt-Std.git
 	branch = master
-	commit = 7a4241c9c0e256feee424dab14d9dc7c8ee93539
-	parent = 6b85b406708ffdbe3f4033131378a2d917a90d43
-	cmdver = 0.4.0
+	commit = 8a592c3c432830e0e6b8c070f70170b059cb0863
+	parent = 1a290eca16a1c407a26d2cd1ab88b11196dfa732
+	cmdver = 0.3.1
