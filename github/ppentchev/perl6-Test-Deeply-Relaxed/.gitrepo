@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/ppentchev/perl6-Test-Deeply-Relaxed.git
 	branch = master
-	commit = b7de0be8bae2137612afe9e8c1087ffdd407ec56
-	parent = 8627b3f7ac0b9993236d62d522833c199140d003
-	cmdver = 0.4.0
+	commit = bdc0e1316ee14f70ad039fd94133a0b48631733e
+	parent = ffe3d6761a758589da6dc88f9e87de43e3732afa
+	cmdver = 0.3.1
