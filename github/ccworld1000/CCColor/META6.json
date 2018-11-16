@@ -1,0 +1,33 @@
+{
+    "perl" : "6.*",
+    "name" : "CCColor",
+    "auth" : "github:ccworld1000, ccworld1000@gmail.com, 2291108617@qq.com",
+    "api" : "*",
+    "version" : "0.0.1", 
+    "description" : "Simple and flexible color color conversion module for Perl 6 , easy-to-use simple learning.",
+    "authors" : [ "youhua deng (deng you hua | CC)" ],
+    "license" : "GPL-2.0",
+    "provides" : {
+        "CCColor" : "lib/CCColor.pm6"
+    },
+    "depends" : [ ],
+    "build-depends" : [ ],
+    "test-depends" : [ ],
+    "resources" : [
+    ],
+   "tags": [
+      "CCColor",
+      "chart",
+      "color",
+      "draw",
+      "line",
+      "graphics",
+      "hex",
+      "hex2rgba",
+      "rgb",
+      "rgba",
+      "color conversion",
+      "Perl 6"
+   ],
+    "source-url" : "https://github.com/ccworld1000/CCColor.git"
+}

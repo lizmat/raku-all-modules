@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ccworld1000/CCColor.git
+	branch = master
+	commit = d6fe35fafdc4e4c18c1690e1cb7930e047ec1db1
+	parent = 05a50fca33ed7708760d3279ceeea95443a67263
+	cmdver = 0.3.1
