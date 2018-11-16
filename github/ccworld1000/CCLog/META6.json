@@ -4,7 +4,7 @@
     "name" : "CCLog",
     "auth" : "github:ccworld1000, ccworld1000@gmail.com, 2291108617@qq.com",
     "api" : "*",
-    "version" : "0.0.4", 
+    "version" : "0.0.5", 
     "description" : "CCLog Simple and lightweight cross-platform logs, easy-to-use simple learning, and support for multiple languages, such as C, C++, Perl 6, shell, Objective-C, support ios, osx, watchos, tvos, pod .",
     "authors" : [ "youhua deng (deng you hua | CC)" ],
     "license" : "GPL-2.0",
