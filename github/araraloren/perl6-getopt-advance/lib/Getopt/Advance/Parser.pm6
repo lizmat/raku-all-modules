@@ -440,8 +440,6 @@ role Parser does Getopt::Advance::Utils::Publisher does RefOptionSet is export {
     }
 
     method CALL-ME() {
-        my @delaypos;
-
         while $!index < $!count {
             ($!arg, my $actions) = ( @!args[$!index], self.type.optactions.new );
 

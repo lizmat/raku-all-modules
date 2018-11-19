@@ -30,7 +30,10 @@ my %cmd-map = %{
 };
 my $os = OptionSet.new;
 
-$os.insert-cmd($_) for %cmd-map.keys;
+$os.insert-cmd(
+	$_,
+	" => {%cmd-map{$_}}",
+) for %cmd-map.keys;
 
 await wrap-command(
 	$os,

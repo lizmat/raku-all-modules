@@ -561,7 +561,7 @@ class OptionSet is export {
 
     my constant &true-block = sub () { True; };
 
-    multi method insert-main(::?CLASS::D: &callback = &true-block --> Int ) {
+    multi method insert-main(::?CLASS::D: &callback --> Int ) {
         my $id = $!counter++;
         %!main.push(
             $id => self.create("main=m", :&callback)
@@ -569,7 +569,7 @@ class OptionSet is export {
         return $id;
     }
 
-    multi method insert-main(::?CLASS::D: Str:D $name, &callback = &true-block --> Int ) {
+    multi method insert-main(::?CLASS::D: Str:D $name, &callback --> Int ) {
         my $id = $!counter++;
         %!main.push(
             $id => self.create("{$name}=m", :&callback)

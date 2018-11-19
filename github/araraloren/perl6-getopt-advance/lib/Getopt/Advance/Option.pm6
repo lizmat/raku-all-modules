@@ -196,8 +196,8 @@ class Option::Boolean does Option {
             self.set-value(True, :!callback);
         } else {
             if $value.defined {
-                self.set-default-value($value);
-                self.set-value($value, :!callback);
+                self.set-default-value($value.so);
+                self.set-value($value.so, :!callback);
             }
         }
     }
