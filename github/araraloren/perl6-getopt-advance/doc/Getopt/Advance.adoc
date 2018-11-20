@@ -1,5 +1,16 @@
 = NAME
 
+:toc-title: contents
+:keywords: getopt command line option
+:Email: blackcatoverwall@gmail.com
+:Revision: 1.0
+:icons: font
+:source-highlighter: pygments
+:source-language: perl6
+:pygments-linenums-mode: table
+:toc: left
+:lang: en
+
 Getopt::Advance - An advance command line option parsing tools.
 
 = SYNOPSIS
@@ -1447,68 +1458,236 @@ Return True if the `$value` is a Pair or can convert to a Pair, or can parse to 
 
 == `NonOption`
 
+* also does RefOptionSet
+* also does Subscriber
+
 === role NonOption
 
 The `NonOption` represent NOA(non-option argument) of command line argument base on the index.
 
 ==== Attribute
 
+* Str $.name
++
+The name of current non-option.
+
+* Any $.value
++
+The value of current non-option, the return value of the callback will be saved in this attribute.
+
+* $.index
++
+The index of current non-option, base on zero.
+
+* &!callback
++
+The callback of current non-option.
+
+* $.annotation = ""
++
+The annotation of current non-option, default is "".
 
 ==== Method
 
-
-=== Method of role NonOption
-
-* success() of Bool
+* init()
 +
-Return True when the non-option callback called successful.
+Initialize method, will called by `TypesManager` when create instance of non-option type.
 
-* callback()
+* set-callback(&!callback)
 +
-Return callback of the non-option.
+Set the non-option's callback.
 
-* set-callback(&callback)
+* set-annotation($!annotation)
 +
-Set callback of the non-option.
-The child class of `NonOption` will check the callback
-signature.
+Set the non-option's annotation.
 
-* has-callback() of Bool
+* match-index(Int $total, Int $index -\-> Bool) { ... }
 +
-Return True when the non-option has callback.
+Match the given index against `$!index`, the `$total` is needed if `$!index` is `WhateverCode`.
+
+* match-name(Str $name -\-> Bool) { ... }
++
+Match the name.
+
+* match-style($style -\-> Bool) { ... }
++
+Match the non-option style.
+
+* Supply(-\-> Supply)
++
+Return an Supply, current `OptionSet`, current non-option and the value will be emitted when non-option
+matched successfully.
+
+* success( -\-> Bool)
++
+Return the value of current non-option as a boolean value.
+
+* annotation()
++
+Get the annotation.
+
+* reset-success()
+* reset()
++
+Set the value to `Any`.
+
+* has-callback(-\-> Bool)
++
+Return True if the `&!callback` defined.
+
+* has-annotation(-\-> Bool)
++
+Return True if the annotation is not "".
+
+* CALL-ME(|c)
++
+Call the `&!callback` with given Capture `c`, return the return value of `&!callback`.
+In default, the signatures supported are:
+
+** `:($, @)`
++
+First argument is the `OptionSet`, second argument is all the `NOA`.
+
+** `:(@)`
++
+The argument is all the `NOA`.
+
+** `:()`
++
+Empty.
+
+* type(-\-> Str) { ... }
++
+Return the type name of non-option type.
+
+* usage(-\-> Str) { ... }
++
+Return the usage message.
+
+=== NonOption::Main does NonOption
+
+`NonOption::Main` will accept all the `NOA` of command line arguments, it will be called after
+`POS` and `CMD` processed.
+
+==== Method
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::Main`.
 
 * match-index(Int $total, Int $index)
 +
-Check index of the non-option, `$total` is the
-number of command line non-option arguments.
+Always return True.
 
 * match-name(Str $name)
 +
-Return True if `$name` equal non-option's name.
+Always return True.
 
-* reset-success()
+* match-style($style -\-> Bool)
 +
-Reset the status of non-option.
+Return True if the `$style` is `Style::Main`.
 
-* type() of Str
+* type()
 +
-Return the identify name of the non-option class.
+In default type name is `"main"`.
 
-* usage() of Str
+* usage()
 +
-Return the usage of the non-option.
+In default usage is `"*@args"`.
 
-* clone(*%_)
+=== NonOption::Cmd does NonOption
+
+`NonOption::Cmd` will accept the first `NOA` of command line arguments, it will be process in first.
+
+==== Method
+
+* subscribe(Publisher $p)
 +
-Return an deep copy of current non-option.
+Subscribe the style `Style::Cmd`.
 
-=== Method of NonOption::Pos
-
-* value()
+* match-index(Int $total, Int $index)
 +
-It will be set when current `pos` matched.
+Return True if the `$index` is equal 0.
+
+* match-name(Str $name)
++
+Return True if `$name` equal to `$!name`.
+
+* match-style($style -\-> Bool)
++
+Return True if the `$style` is `Style::Cmd`.
+
+* type()
++
+In default type name is `"cmd"`.
+
+* usage()
++
+In default usage is the name of current non-option.
+
+=== NonOption::Pos does NonOption
+
+`NonOption::Pos` will accept the `NOA` matched of command line arguments, it will be process after `CMD`
+but before `MAIN`.
+
+==== Method
+
+* set-callback
++
+The signatures supported by `NonOption::Pos` are:
+
+** `:($, $)`
++
+First argument is the `OptionSet`, second argument is the `NOA` matched with index.
+
+** `:($)`
++
+The argument is the `NOA` matched with index.
+
+** `:()`
++
+Empty.
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::POS` or `Style::WHATEVERPOS`.
+
+* match-index(Int $total, Int $index)
++
+Return True if the index matched.
+If the `$!index` is WhateverCode, it will using `$total` to calculate the real index.
+
+* match-name(Str $name)
++
+Always return True.
+
+* match-style($style -\-> Bool)
++
+Return True if the `$style` is `Style::WHATEVERPOS` or `Style::POS` according the type of `$!index`.
+
+* type()
++
+In default type name is `"pos"`.
+
+* usage()
++
+In default usage is the name of current non-option and the index like `"no@0"`.
 
 == `Parser`
+
+=== role Parser
+
+=== role TypeOverload
+
+=== role ResultHandler
+
+=== role ResultHandlerOverload
+
+=== OptionGrammar
+
+=== OptionActions
+
+=== ReturnValue
 
 The `&ga-parser` and `&ga-pre-parser` will first check the options,
 it will set the value provide by user when all option matched.
