@@ -3,6 +3,9 @@
     easy-to-use simple learning.
 
 
+## HEX Color (use CCColor)
+
+![colors](https://raw.githubusercontent.com/ccworld1000/CCColor/master/doc/screenshot/colors.png)
 
 ## See test
 

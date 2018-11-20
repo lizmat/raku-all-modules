@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/ccworld1000/CCColor.git
 	branch = master
-	commit = d6fe35fafdc4e4c18c1690e1cb7930e047ec1db1
-	parent = 05a50fca33ed7708760d3279ceeea95443a67263
+	commit = c0e3eead932d0d070d84199cea96c749b5848841
+	parent = 77c3492786169570b223af5e2ba69e153a1f2a6b
 	cmdver = 0.3.1

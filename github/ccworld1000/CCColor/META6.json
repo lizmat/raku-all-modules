@@ -3,8 +3,8 @@
     "name" : "CCColor",
     "auth" : "github:ccworld1000, ccworld1000@gmail.com, 2291108617@qq.com",
     "api" : "*",
-    "version" : "0.0.1", 
-    "description" : "Simple and flexible color color conversion module for Perl 6 , easy-to-use simple learning.",
+    "version" : "0.0.2", 
+    "description" : "Simple and flexible color color conversion module for Raku Perl 6 , easy-to-use simple learning.",
     "authors" : [ "youhua deng (deng you hua | CC)" ],
     "license" : "GPL-2.0",
     "provides" : {
@@ -26,7 +26,11 @@
       "hex2rgba",
       "rgb",
       "rgba",
+      "rgb32",
       "color conversion",
+      "color format",
+      "hex color",
+      "Raku",
       "Perl 6"
    ],
     "source-url" : "https://github.com/ccworld1000/CCColor.git"
