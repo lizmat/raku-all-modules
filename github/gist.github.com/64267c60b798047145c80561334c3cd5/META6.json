@@ -1,0 +1,13 @@
+{
+  "perl"          : "6.*",
+  "name"          : "Acme::Gistribution",
+  "version"       : "0.0.1",
+  "description"   : "A Perl 6 test distribution in a GitHub Gist",
+  "authors"       : [ "Lucas Buchala" ],
+  "license"       : "Artistic-2.0",
+  "provides"      : { "Acme::Gistribution"          : "Gistribution.pm",
+                      "Acme::Gistribution::Example" : "Example.pm" },
+  "depends"       : [],
+  "build-depends" : [],
+  "source-url"    : "https://gist.github.com/64267c60b798047145c80561334c3cd5.git"
+}
