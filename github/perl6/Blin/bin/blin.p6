@@ -335,7 +335,10 @@ sub save-overview {
         spurt $overview-path, @modules.sort(*.name).map({
             my $result = .done ?? .done.result !! Unknown;
             my $line = “{.name} – $result”;
-            $line ~= “, Bisected: {.bisected}” if $result == Fail;
+            if $result == Fail {
+                $line ~= “, Bisected: {.bisected}”;
+                spurt $output-path.add(‘output_’ ~ .handle), .output-new;
+            }
             $line
         }).join: “\n”
     }
@@ -366,10 +369,10 @@ for $to-visualize.keys -> $module {
         when ZefFailure             { ‘crimson’     }
         when UnhandledException     { ‘hotpink’     }
     }
-    $dot ~= “    "{$module.name}" [color=$color];\n”;
+    $dot ~= “    "{$module.handle}" [color=$color];\n”;
     for $module.depends.keys {
         next unless $_ ∈ $to-visualize;
-        $dot ~= “    "{$module.name}" -> "{.name}";\n”;
+        $dot ~= “    "{$module.handle}" -> "{.handle}";\n”;
     }
     $dot ~= “\n”;
 }

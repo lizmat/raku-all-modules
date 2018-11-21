@@ -9,10 +9,16 @@ has         $.bisected; #← to store the offending commit/commits
 has Str     @.errors;
 has Bool    $.visited;
 has Promise $.done = Promise.new;
+has Str     $.output-old;
+has Str     $.output-new;
+
+method handle {
+    # TODO surely we can do better to ensure it won't clash
+    $.name ~ ‘_’ ~ $.version
+}
 
 method install-path {
-    # TODO surely we can do better to ensure it won't clash
-    ‘installed/’ ~ $.name ~ ‘_’ ~ $.version
+    ‘installed/’ ~ self.handle
 }
 
 method deps($leaf = False) {
