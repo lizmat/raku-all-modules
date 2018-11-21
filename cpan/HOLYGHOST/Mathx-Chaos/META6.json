@@ -1,0 +1,22 @@
+{
+        "perl" : "6.c",
+        "name" : "Mathx::Chaos",
+        "auth" : "CPAN:HOLYGHOST",
+        "api" : "1",
+        "version" : "0.1.1",
+        "description" : "Chaos mathematics package",
+        "authors" : [ "The Holy Ghost" ],
+        "license" : "General Public License 3, Artistic-2.0",
+        "provides" : {
+            "Mathx::Chaos::CorrelationDimension" : "lib/Mathx/Chaos/CorrelationDimension.pm6",
+            "Mathx::Chaos::Dimension" : "lib/Mathx/Chaos/Dimension.pm6"
+        },
+        "depends" : [ "Mathx::Stat" ],
+        "build-depends" : [ ],
+        "test-depends" : [ ],
+        "resources" : [ ],
+        "tags": [
+          "Mathx", "Chaos"
+        ],
+        "source-url" : "http://cpan.metacpan.org/authors/id/H/HO/HOLYGHOST/Perl6/Mathx-Chaos-0.1.1.tar.gz"
+    }
