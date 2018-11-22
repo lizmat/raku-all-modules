@@ -26,7 +26,7 @@ loop (my $i = $pp, my $j = 0; $i <= 1.0; $i+=0.1, $j++) {
 
 my $corrdim = Mathx::Chaos::CorrelationDimension.new;
 
-ok $corrdim.dimension($pop,$pop), $corrdim.dimension($pop,$pop);
-ok $corrdim.morerandomdimension($pop,$pop), $corrdim.morerandomdimension($pop,$pop);
+is-deeply $corrdim.dimension($pop,$pop), $corrdim.dimension($pop,$pop);
+is-deeply $corrdim.morerandomdimension($pop,$pop), $corrdim.morerandomdimension($pop,$pop);
 
 done-testing;  # optional with 'plan' 
