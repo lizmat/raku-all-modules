@@ -1675,19 +1675,176 @@ In default usage is the name of current non-option and the index like `"no@0"`.
 
 == `Parser`
 
-=== role Parser
-
 === role TypeOverload
+
+==== Attribute
+
+* $.optgrammar is rw
++
+The default option grammar class using for parsing command line arguments.
+
+* $.optactions is rw
++
+The default option actions class using for generate and send the match context.
+
+* $.optcontext is rw
++
+The default option match context class, using for create option match context.
+
+* $.poscontext is rw
++
+The default `POS` match context class, using for create `POS` match context.
+
+* $.cmdcontext is rw
++
+The default `CMD` match context class, using for create `CMD` match context.
+
+* $.maincontext is rw
++
+The default `MAIN` match context class, using for create `MAIN` match context.
+
+* $.contextprocessor is rw
++
+The default context processor, using for process the matching of match context and option/non-option.
 
 === role ResultHandler
 
+`ResultHandler` is using for process the result of once match.
+
+==== Attribute
+
+* $.success
++
+Whether or not the match is successful.
+
+* $.skiparg
++
+Whether or not need skip next command line argument.
+
+==== Method
+
+* set-success()
++
+Mark the match is successful.
+
+* reset()
++
+Reset the attribute value to False.
+
+* handle($parser)
++
+Process the result of current match, default do nothing.
+
+* skip-next-arg()
++
+Skip the next command line argument, default do nothing.
+
 === role ResultHandlerOverload
+
+==== Attribute
+
+* $.prh is rw
++
+The default result handler type of `POS`.
+
+* $.crh is rw
++
+The default result handler type of `CMD`.
+
+* $.mrh is rw
++
+The default result handler type of `MAIN`.
+
+* $.brh is rw
++
+The default result handler type of bsd-style option.
+
+* $.orh is rw
++
+The default result handler type of option.
 
 === OptionGrammar
 
+The default grammar of `Parser`, using for parsing the command line arguments.
+
 === OptionActions
 
+The default actions class of `Parser`, using for generate and send the match context.
+
 === ReturnValue
+
+`ReturnValue` is the return type of `&getopt`.
+
+==== Attribute
+
+* $.optionset
++
+The `OptionSet` which the `Parser` used.
+
+* @.noa
++
+All `NOA` of command line arguments.
+
+* $.parser
++
+The `Parser` used for parsing.
+
+* %.return-value
++
+The value is return value of `MAIN`, key is the id of `MAIN`.
+
+=== role Parser does Publisher does RefOptionSet
+
+`Parser` is using grammar parsing command line arguments, using actions class generate the match context and
+send it to the `Subscriber`.
+
+==== Attribute
+
+* Bool $.strict
+
+* Bool $.autohv
+
+* Bool $.bsd-style
+
+* Int $.index
+
+* Int $.count
+
+* Int $!noaIndex
+
+* $.arg
+
+* @.noa
+
+* &.is-next-arg-available
+
+* &.optcheck
+
+* &.cmdcheck
+
+* @.styles
+
+* @.args
+
+* $.typeoverload
+
+* $.handler
+
+==== Method
+
+* init(@!args, :@order)
+
+* skip()
+
+* ignore()
+
+* type()
+
+* handler()
+
+* CALL-ME()
+
+=== Sub
 
 The `&ga-parser` and `&ga-pre-parser` will first check the options,
 it will set the value provide by user when all option matched.

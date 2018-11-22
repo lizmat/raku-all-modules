@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/araraloren/perl6-getopt-advance.git
 	branch = master
-	commit = 63631763ab28b6fc6b3218d04dd7ba4959b9a422
-	parent = ad38db6674e8e597de4edb8dc4b19ae8150e7864
+	commit = 99fcfe6b2e9b5e7ee3cbd6a11701d2ab07300ebe
+	parent = 7287787461f7433d1d7ad397b414a079f1b49f5d
 	cmdver = 0.3.1

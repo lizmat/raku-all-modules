@@ -1,6 +1,10 @@
 
 = UPDATE LOG
 
+* 2018-11-20
+
+    Fix the type of attribute of ReturnValue, should be Array.
+
 * 2018-10-13
 
     `MAIN` should not have empty block.
@@ -8,7 +12,7 @@
 
 * 2018-10-05
 
-    Fix the option name not allow dash character. 
+    Fix the option name not allow dash character.
 
 * 2018-10-02
     Fix syntax error of reset `Option` value.

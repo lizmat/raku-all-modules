@@ -18,7 +18,7 @@ role ResultHandlerOverload { ... }
 
 class ReturnValue is export {
     has $.optionset;
-    has $.noa;
+    has @.noa;
     has $.parser;
     has %.return-value;
 }
