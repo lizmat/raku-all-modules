@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lucasbuchala/p6pairs.git
+	branch = master
+	commit = bbe23800caa7a7396dcab5e9c8e925139454b55d
+	parent = 6edb5225ad47ee71cc7fa94a183509789375f4d3
+	cmdver = 0.3.1

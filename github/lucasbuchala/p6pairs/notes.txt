@@ -1,0 +1,154 @@
+
+DEVELOPMENT NOTES
+
+Name:
+
+  Pair::Data
+  Pair::Real
+  Pair::Object
+  Pair::Mutable
+  Pair::Special
+  Pair::More
+  Pair::Super
+  Pair::Simple
+  Pair::Tiny
+  Pair::ReadWrite, Pair::RW
+  Pair::Again
+
+  Data::Pair
+  Tuple::Pair
+  NonCore::Pair
+
+  Pair::
+  PairX::
+  Paired::
+  Pairing::
+  Pairable::
+
+  Duo::
+  Par::
+  Paire::
+  Couple::
+
+  Repair::
+  Despair::
+
+Junctions
+
+  (k → a|b|c)  =>  (k → a) | (k → b) | (k → c)
+  (k → a&b&c)  =>  (k → a) & (k → b) & (k → c)
+
+Operator
+
+  k => v
+  k =» v
+  k ≡> v
+  k ≡» v
+
+  k → v
+  k ↠ v
+  k ↦ v
+  k ⇒ v
+  k ⇨ v
+  k ⇾ v
+  k ⊳ v
+
+Core Perl 6 Pair class (src/core/Pair.pm6):
+
+  class Pair does Associative {
+    has $.key   is default(Nil);
+    has $.value is default(Nil) is rw;
+  }
+
+Alternative ways:
+
+  Both key and value as read-writable attributes.
+
+  class SomePair {  # key/value of type Any
+    has $.key   is rw;
+    has $.value is rw;
+  }
+
+  class SomePair {  # key/value of type Mu
+    has Mu $.key   is rw;
+    has Mu $.value is rw;
+  }
+
+  role Paired[::KeyType, ::ValueType] {
+    has KeyType   $.key   is rw;
+    has ValueType $.value is rw;
+  }
+
+  role Paired[::KeyType = SomeType, ::ValueType = SomeType] {...}  # default types
+
+  class SomePair does Paired[Mu,   Mu  ] {...}
+  class SomePair does Paired[Any,  Any ] {...}
+  class SomePair does Paired[Cool, Cool] {...}
+  class SomePair does Paired[Str,  Any ] {...}  # string key
+  class SomePair does Paired[Str,  Str ] {...}  # strictly stringy
+
+  class SomePair::Super       is SomePair does Positional does Associative {...}
+  class SomePair::Positional  is SomePair does Positional  {...}
+  class SomePair::Associative is SomePair does Associative {...}
+
+roles Positional and Associative
+
+  method AT-POS
+  method EXISTS-POS
+  method AT-KEY
+  method EXISTS-KEY
+  method STORE
+
+Associative:
+
+  Getting
+
+    $value = $pair{$key};
+
+    if $key matches $pair.key, then returns $pair.value
+    otherwise ...
+
+  Setting
+
+    $pair{$key} = $value;
+
+    if $key matches $pair.key, then sets $pair.value to $value
+    otherwise ...
+
+Positional:
+
+  Getting
+
+    $pair[0]  #=> returns key
+    $pair[1]  #=> returns value
+    $pair[2]  #=> returns what? Nil, Any, Mu, The::Pair::Object? fail? die? warn?
+
+  Setting
+
+    $pair[0] = 'key';    # sets key
+    $pair[1] = 'value';  # sets value
+    $pair[2] = ... ;     # do what? fail? die?
+
+Method names:
+  mirror, mirrored
+
+  for k/v types: method is-heterogenous(--> Bool) { not self.is-homogeneous }
+
+  key-type, value-type
+  key-of, value-of
+
+  reversible
+  invertible
+  flippable
+
+---
+
+Remove role to test problems:
+
+class Duo {
+    # also does Duo::Role[Any, Any];
+    has Any $.key   is rw;
+    has Any $.value is rw;
+    multi method new($key, $value = Any) { self.new(:$key, :$value) }
+    method set(\k, \v) is aka<update> { ($!key, $!value) = (k, v); self }
+}
