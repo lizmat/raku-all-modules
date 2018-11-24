@@ -136,8 +136,8 @@ sub createCoordinateLine (Cairo::Context $c, $width, $height) {
   $c.save();
   $c.line_width = 2.0;
 
-  my $offset = 1;
-  my @cs = (($offset, $offset), ($offset, $height), ($width, $height));
+  my $offset = 0;
+  my @cs = (($offset, $offset), ($offset, $height), ($width - $offset, $height - $offset));
   loop (my $step = 0; $step < @cs.elems; $step++) {
     next if $step > 1;
 
@@ -154,7 +154,7 @@ sub createCoordinateLine (Cairo::Context $c, $width, $height) {
   $c.restore();
 }
 
-sub lines (@values, CCChartLineMode $lineMode = CCChartLineModeRect, int32 $width = 300, int32 $height = 300, Bool $showCoordinateLine = True ,Str $dst = "default_lines.png") is export {
+sub lines (@values, CCChartLineMode $lineMode = CCChartLineModeDefault, int32 $width = 300, int32 $height = 300, Bool $showCoordinateLine = True ,Str $dst = "default_lines.png") is export {
   unless @values.elems > 2 {
     ccwarning 'At least to import @values';
     return -1;

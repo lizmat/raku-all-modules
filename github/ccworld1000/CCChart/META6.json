@@ -3,7 +3,7 @@
     "name" : "CCChart",
     "auth" : "github:ccworld1000, ccworld1000@gmail.com, 2291108617@qq.com",
     "api" : "*",
-    "version" : "0.0.3", 
+    "version" : "0.0.4", 
     "description" : "Simple draw chart for Perl 6 , easy-to-use simple learning.",
     "authors" : [ "youhua deng (deng you hua | CC)" ],
     "license" : "GPL-2.0",
@@ -28,6 +28,8 @@
       "trend",
       "Cairo",
       "CCLog",
+      "Raku",
+      "Perl",
       "png"
    ],
     "source-url" : "https://github.com/ccworld1000/CCChart.git"
