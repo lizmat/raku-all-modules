@@ -22,10 +22,7 @@
 #
 #
     
-use lib "../../lib";
-
 use CCLog;
-
 
 if not cctimer  "--->[Ignore this information] cctimer test string" {
    say "==>some error, please check it!;"

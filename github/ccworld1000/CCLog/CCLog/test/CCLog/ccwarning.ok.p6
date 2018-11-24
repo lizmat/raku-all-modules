@@ -22,10 +22,7 @@
 #
 #
     
-use lib "../../lib";
-
 use CCLog;
-
 
 if not ccwarning  "--->[Ignore this information] ccwarning test string" {
    say "==>some error, please check it!;"

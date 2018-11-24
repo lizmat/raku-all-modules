@@ -22,10 +22,7 @@
 #
 #
     
-use lib "../../lib";
-
 use CCLogFull;
-
 
 if not CCLog_network  "--->[Ignore this information] CCLog_network test string" {
    say "==>some error, please check it!;"

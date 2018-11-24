@@ -55,21 +55,9 @@ typedef enum {
 
 typedef enum {
     /*
-      White color
-    */
-    CCLogColorTypeWhite = 37,
-    /*
       Blue color
     */
     CCLogColorTypeBlue = 34,
-    /*
-      Purple color
-    */
-    CCLogColorTypePurple = 35,
-    /*
-      Yellow color
-    */
-    CCLogColorTypeYellow = 33,
     /*
       Red color
     */
@@ -82,6 +70,18 @@ typedef enum {
       Green color
     */
     CCLogColorTypeGreen = 32,
+    /*
+      Purple color
+    */
+    CCLogColorTypePurple = 35,
+    /*
+      White color
+    */
+    CCLogColorTypeWhite = 37,
+    /*
+      Yellow color
+    */
+    CCLogColorTypeYellow = 33,
 } CCLogColorType;
 
 /*

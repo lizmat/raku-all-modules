@@ -22,10 +22,7 @@
 #
 #
     
-use lib "../../lib";
-
 use CCLog;
-
 
 if not ccthread  "--->[Ignore this information] ccthread test string" {
    say "==>some error, please check it!;"

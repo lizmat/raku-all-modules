@@ -22,10 +22,7 @@
 #
 #
     
-use lib "../../lib";
-
 use CCLogFull;
-
 
 my Str $msg;
 if not CCLog_thread $msg {

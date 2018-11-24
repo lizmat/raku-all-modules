@@ -22,10 +22,7 @@
 #
 #
     
-use lib "../../lib";
-
 use CCLog;
-
 
 my Str $msg;
 if not ccerror $msg {

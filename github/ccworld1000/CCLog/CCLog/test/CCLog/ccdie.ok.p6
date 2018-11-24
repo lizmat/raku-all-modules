@@ -22,10 +22,7 @@
 #
 #
     
-use lib "../../lib";
-
 use CCLog;
-
 
 if not ccdie  "--->[Ignore this information] ccdie test string" {
    say "==>some error, please check it!;"
