@@ -1801,48 +1801,126 @@ send it to the `Subscriber`.
 ==== Attribute
 
 * Bool $.strict
++
+`Parser` will not treat command line argument that start with option prefix as option argument
+if `$.strict` is True.
 
 * Bool $.autohv
++
+With autohv feature enabled, will auto print the help message instead of call the `MAIN` when
+corresponding option set by user.
 
 * Bool $.bsd-style
++
+Whether or not if we support bsd-style option.
 
 * Int $.index
++
+Current command line argument index.
 
 * Int $.count
++
+The count number of command line arguments.
 
 * Int $!noaIndex
++
+`NOA` index counter.
 
 * $.arg
++
+Current command line argument process by `Parser`.
 
 * @.noa
++
+All the `NOA`.
 
-* &.is-next-arg-available
+* &.is-next-arg-available (:(Parser $parser --> Bool))
++
+Should return True if the argument of option is available.
 
 * &.optcheck
++
+Do option check after the option process over.
 
 * &.cmdcheck
++
+Do `CMD` check after the `CMD` and `POS` process over.
 
 * @.styles
++
+The styles which need to be process by `Parser`.
 
 * @.args
++
+All the command line arguments.
 
 * $.typeoverload
++
+The default type using by `Parser` are:
+[source,perl6]
+optgrammar => OptionGrammar,
+optactions => OptionActions,
+optcontext => TheContext::Option,
+poscontext => TheContext::Pos,
+cmdcontext => TheContext::NonOption,
+maincontext=> TheContext::NonOption,
+contextprocessor => Getopt::Advance::Utils::ContextProcessor
 
 * $.handler
++
+The default handler using by `Parser` are:
+[source,perl6]
+orh => OptionResultHandler.new,
+prh => ResultHandler.new,
+crh => ResultHandler.new,
+brh => ResultHandler.new,
+mrh => ResultHandler.new but role :: {
+    method set-success() { } # skip the set-success, we need call all the MAINs
+}
 
 ==== Method
 
 * init(@!args, :@order)
++
+Initialize the data and callback that needed.
+Clean all the subscriber.
 
 * skip()
++
+Increment the `$!index` to skip next command line argument
 
 * ignore()
++
+Ignore current command line argument, add it to `NOA` array `@!noa` and return the `NOA`.
 
 * type()
++
+Current `TypeOverload` instance.
 
 * handler()
++
+Current `ResultHandlerOverload` instance.
 
 * CALL-ME()
++
+In default, parsing the command line argument and try to match the option/non-option in below order:
+
++
+`option`  `CMD`  `POS`  `MAIN`
+
++
+You can also specific the order of option style through `&getopt`.
+
+=== PreParser does Parser
+
+By comparison with `Parser`, `PreParser` will not throw exception when the option not found in current
+`OptionSet`. And you can get the left command line arguments (not `NOA`) through the return value of `PreParser`.
+
+=== Parser2 does Parser
+
+By comparison with `Parser`, instead of match and set option value.
+`Parser2` will match the option first, then process `CMD` and `POS`,
+last set the option value before process `MAIN`
 
 === Sub
 

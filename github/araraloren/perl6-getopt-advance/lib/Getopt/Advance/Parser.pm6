@@ -351,7 +351,15 @@ role Parser does Getopt::Advance::Utils::Publisher does RefOptionSet is export {
         maincontext=> TheContext::NonOption,
         contextprocessor => Getopt::Advance::Utils::ContextProcessor, #| seems like a bug, need module package
     );
-    has $.handler = ResultHandlerOverload.new;
+    has $.handler = ResultHandlerOverload.new(
+        orh => OptionResultHandler.new,
+        prh => ResultHandler.new,
+        crh => ResultHandler.new,
+        brh => ResultHandler.new,
+        mrh => ResultHandler.new but role :: {
+            method set-success() { } # skip the set-success, we need call all the MAINs
+        }
+    );
 
     method init(@!args,  :@order) {
         $!noaIndex = $!index = 0;
@@ -372,25 +380,6 @@ role Parser does Getopt::Advance::Utils::Publisher does RefOptionSet is export {
                 }
             }
         }
-        unless $!handler.orh.defined {
-            $!handler.orh = OptionResultHandler.new;
-        }
-        unless $!handler.prh.defined {
-            $!handler.prh = ResultHandler.new;
-        }
-        unless $!handler.crh.defined {
-            $!handler.crh = ResultHandler.new;
-        }
-        if $!bsd-style {
-            unless $!handler.brh.defined {
-                $!handler.brh = ResultHandler.new;
-            }
-        }
-		unless $!handler.mrh.defined {
-			$!handler.mrh = class :: does ResultHandler {
-				method set-success() { } # skip the set-success, we need call all the MAINs
-			}.new;
-		}
         unless &!cmdcheck.defined {
             &!cmdcheck = sub (\self) {
                 self.owner.check-cmd(+@!noa);
