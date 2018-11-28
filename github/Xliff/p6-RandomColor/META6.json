@@ -1,0 +1,18 @@
+{
+    "depends": [],
+    "description": "A port of the randomColor Javascript library for generating attractive random colors",
+    "version": "v0.1",
+    "meta-version": "0",
+    "license": "",
+    "source-url": "https://github.com/Xliff/p6-RandomColor",
+    "provides": {
+      "RandomColor": "lib/RandomColor.pm6"
+    },
+    "name": "p6-RandomColor",
+    "perl": "6.c",
+    "test-depends": ["Test::META"],
+    "build-depends": [],
+    "support": {"source": null},
+    "authors": ["clifton.wood@gmail.com"],
+    "tags": [ "color" ]
+}

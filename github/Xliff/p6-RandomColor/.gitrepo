@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Xliff/p6-RandomColor
+	branch = master
+	commit = fd63f34fb7beee3f590d4c2ca4095847357d4684
+	parent = 165f5055fdbcbfa3d1340f7b798f77997cc10a95
+	cmdver = 0.3.1
