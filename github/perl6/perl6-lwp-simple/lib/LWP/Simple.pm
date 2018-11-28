@@ -6,9 +6,9 @@ use MIME::Base64;
 use URI;
 use URI::Escape;
 
-unit class LWP::Simple:auth<perl6>:ver<0.100>;
+unit class LWP::Simple:auth<perl6>:ver<0.105>;
 
-our $VERSION = '0.100';
+our $VERSION = '0.105';
 
 enum RequestType <GET POST PUT HEAD DELETE>;
 
@@ -327,7 +327,7 @@ method parse_response (Blob $resp) {
     if ($header_end_pos < $resp.bytes) {
         my @header_lines = $resp.subbuf(
             0, $header_end_pos
-        ).decode('ascii').split(/\r\n/);
+        ).decode('latin-1').split(/\r\n/);
         my Str $status_line = @header_lines.shift;
 
         for @header_lines {

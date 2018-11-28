@@ -11,11 +11,12 @@ if %*ENV<NO_NETWORK_TESTING> {
     exit;
 }
 
-my $host    = 'http://froggs.de/cgi-bin/test/test.cgi';
+my $host    = 'http://eu.httpbin.org/anything';
 my %headers = ( 'Content-Type' => 'application/json' );
 my $content = '{"method":"echo","params":["Hello from Perl6"],"id":1}';
 my $html    = LWP::Simple.post($host, %headers, $content);
 
+say $html;
 if $html {
     ok(
         $html.match('Hello from Perl6'),

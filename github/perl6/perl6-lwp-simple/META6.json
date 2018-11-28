@@ -1,14 +1,14 @@
 {
     "perl"         : "6.*",
     "name"         : "LWP::Simple",
-    "version"      : "0.104",
+    "version"      : "0.106",
     "description"  : "LWP::Simple quick & dirty implementation for Rakudo Perl 6",
     "depends"      : [ "MIME::Base64", "URI" ],
     "test-depends" : [ "JSON::Tiny" ],
     "provides"     : {
         "LWP::Simple" : "lib/LWP/Simple.pm"
     },
-    "author"       : "Cosimo Streppone",
+    "author"       : "Perl 6 team",
     "auth"         : "github:perl6",
     "source-url"   : "https://github.com/perl6/perl6-lwp-simple.git"
 }

@@ -3,7 +3,7 @@ use Test;
 
 use LWP::Simple;
 
-plan 2;
+plan 1;
 
 if %*ENV<NO_NETWORK_TESTING> {
     diag "NO_NETWORK_TESTING was set";
@@ -11,21 +11,11 @@ if %*ENV<NO_NETWORK_TESTING> {
     exit;
 }
 
-# don't use rakudo.org anymore, it has proven to be rather unreliable :(
-my $html = LWP::Simple.get('http://http.perl6.org');
+my $html = LWP::Simple.get('http://eu.httpbin.org/html');
 
 ok(
-    $html.match('Perl'),
-    'homepage is downloaded and has "Perl" in it'
+    $html.match('Herman'),
+    'homepage is downloaded and has "Herman" in it'
 );
 
-# a page over 64K would be ideal but a bit slow and not really needed yet
-# beware of this link redirecting to https which will often break the test
 
-$html = LWP::Simple.get('http://examples.perl6.org/categories/99-problems.html');
-ok(
-    $html.match('P91-edpratomo.pl') &&
-        $html.match('</html>'),
-    'make sure we pulled down whole document for some substantial size'
-);
-#diag("Content\n" ~ $html);

@@ -12,7 +12,7 @@ if %*ENV<NO_NETWORK_TESTING> {
 }
 
 # test getstore under http
-getstore-tests('http://www.w3c.org', rx/Web/);
+getstore-tests('http://eu.httpbin.org/anything/Web', rx/Web/);
 
 try require IO::Socket::SSL;
 if $! {

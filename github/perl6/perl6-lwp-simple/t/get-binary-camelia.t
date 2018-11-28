@@ -11,11 +11,11 @@ if %*ENV<NO_NETWORK_TESTING> {
     exit;
 }
 
-# don't use rakudo.org anymore, it has proven to be rather unreliable :(
-my $logo = LWP::Simple.get('http://http.perl6.org/camelia-logo.png');
+my $logo = LWP::Simple.get('http://eu.httpbin.org/image/png');
 
+say $logo.bytes ~ " " ~ $logo[333];
 ok(
-    $logo.bytes == 57601 && $logo[ 57_600 ] == 130,
+    $logo.bytes == 8090 && $logo[ 333 ] == 68,
     'Fetched Camelia Logo'
 );
 
