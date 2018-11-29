@@ -24,6 +24,39 @@ my %body = 'status' => "Hi, fan, I'm a robot";
 $client.request('/statuses/update', 'POST', %body);
 ```
 
+You can use `Terminal::ANSIColor` and `Terminal::Spinners` for better format and experience:
+
+```perl6
+use FanFou;
+use JSON::Fast;
+use Terminal::ANSIColor;
+use Terminal::Spinners;
+
+sub MAIN($str?) {
+    my %oauth_consumer = key => 'xxx', secret => 'xxx';
+    my $client = FanFou::XAuth.new(oauth_consumer => %oauth_consumer, username => 'xxx', password => 'xxx');
+
+    if $str.defined {
+        # post a message
+        my %body = 'status' => "$str";
+        $client.request('/statuses/update', 'POST', %body);
+    } else {
+
+        my $dots = Spinner.new: type => 'dots';
+        my $promise = start {
+            my $resp = from-json await $client.request('/statuses/home_timeline', 'GET').body-text;
+            say '';
+            for @$resp.sort(*.{'user'}.{'unique_id'}) -> $p {
+                say '[' , colored("{$p.{'user'}.{'name'}}", "{(^256).pick}"), '] ', $p.{'text'};
+            }
+        }; # promise of your long running process
+        until $promise.status {
+            $dots.next; # prints the next spinner frame
+        }
+    }
+}
+```
+
 ## AUTHOR
 
 ohmycloud@gmail.com
