@@ -15,11 +15,26 @@ class Mathx::Chaos::CorrelationDimension is Mathx::Chaos::Dimension does ThisCor
 	method BUILD() {
 		$.r = 1.0;
 		$.rthreshold = 0.0000001;
-			
 	}
 
 
 	### Public Methods
+	method correlationdimension($x,$y,$r) {
+
+		### |X - Y| < D;
+
+		my $c = self.correlation($x,$y);
+
+		return log ($c + $r) / log ($r);
+	}	
+	
+
+	### The following function can be used to calculate a (high) limit
+	### which is a correlation dimension
+
+	### Note that a Boltzmann function can approximate Monte Carlo samples
+	### just as the dimension of the chaotic problem (dynamic system)
+	
 
 	method dimension($x,$y) {
 
@@ -83,6 +98,5 @@ class Mathx::Chaos::CorrelationDimension is Mathx::Chaos::Dimension does ThisCor
 		}
 	}
 
-	
 }
 

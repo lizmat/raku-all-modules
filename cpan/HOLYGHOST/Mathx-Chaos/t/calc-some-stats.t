@@ -5,7 +5,7 @@ use lib 'lib';
 use Mathx::Stat::DistributionPopulation;
 use Mathx::Chaos::CorrelationDimension;
 
-my $num-tests = 2;
+my $num-tests = 3;
 
 plan $num-tests;
  
@@ -28,5 +28,6 @@ my $corrdim = Mathx::Chaos::CorrelationDimension.new;
 
 is-deeply $corrdim.dimension($pop,$pop), $corrdim.dimension($pop,$pop);
 is-deeply $corrdim.morerandomdimension($pop,$pop), $corrdim.morerandomdimension($pop,$pop);
+is-deeply $corrdim.correlationdimension($pop,$pop,0.5), $corrdim.correlationdimension($pop,$pop,0.5);
 
 done-testing;  # optional with 'plan' 
