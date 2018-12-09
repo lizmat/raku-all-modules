@@ -1,0 +1,10 @@
+language: perl6
+perl6:
+  - latest
+  - 2018.11
+install:
+  - rakudobrew build-zef
+  - zef --deps-only install .
+branches:
+  only:
+    - master

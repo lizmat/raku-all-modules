@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Xliff/p6-RandomColor
 	branch = master
-	commit = fd63f34fb7beee3f590d4c2ca4095847357d4684
-	parent = 165f5055fdbcbfa3d1340f7b798f77997cc10a95
+	commit = 1f9fc9a31774dbb1ccee84de70b29ce2ca66b2f1
+	parent = f765fbe4d9fee30f8b419eaa7e8cc9d4fc4f7265
 	cmdver = 0.3.1

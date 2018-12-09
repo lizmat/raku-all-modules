@@ -2,6 +2,8 @@ use v6.c;
 
 use Test;
 
+plan 46;
+
 my token fp { (\d+) [ '.' (\d+) ]? }
 
 # Can use RandomColor
