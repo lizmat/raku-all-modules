@@ -1920,75 +1920,324 @@ By comparison with `Parser`, `PreParser` will not throw exception when the optio
 
 By comparison with `Parser`, instead of match and set option value.
 `Parser2` will match the option first, then process `CMD` and `POS`,
-last set the option value before process `MAIN`
+last set the option value before process `MAIN`.
 
 === Sub
 
-The `&ga-parser` and `&ga-pre-parser` will first check the options,
-it will set the value provide by user when all option matched.
-Then check the options inside group.
-And next check `cmd` and `pos`, call its callback when matched.
-In the end, it will call all `main`s and return all the return value.
-
-* sub ga-parser( @args, $optset,
-    :$strict,
-    :$x-style where :!so,
-    :$bsd-style,
-    :$autohv ) of Getopt::Advance::ReturnValue
-
-* sub ga-parser( @args, $optset,
-    :$strict,
-    :$x-style where :so,
-    :$bsd-style,
-    :$autohv ) of Getopt::Advance::ReturnValue
-
-* sub ga-pre-parser(
-    @args,
-    $optset,
-    :$strict,
-    :$x-style where :!so,
-    :$bsd-style,
-    :$autohv
-) of Getopt::Advance::ReturnValue
-
-* sub ga-pre-parser(
-    @args,
-    $optset,
-    :$strict,
-    :$x-style where :so,
-    :$bsd-style,
-    :$autohv
-) of Getopt::Advance::ReturnValue
+* ga-parser($parserobj, @args, $optset, *%args) is export
+* ga-pre-parser($parserobj, @args, $optset, *%args) is export
+* ga-parser2($parserobj, @args, $optset, *%args) is export
 +
-`ga-parser` will return the return value of each main except autohv
-passed and user set `help` or `version` option.
-
-NOTE: `ga-pre-parser` will not cause any error if an `Option` not exists,
-or `NonOption` not matched. And it will set `noa` of return value to all the aguments of command line ,
-not an Array of `Argument`.
-
+The sub is in charge of call the `.init` method to initialize the `$parserobj` with `@args`.
+Call the `.set-owner` on `$parserobj` set the owner of parser, and call the `.set-parser` on `$optset` set the parser of
+`OptionSet` before parsing the command line arguments.
+Last it will return an instance of `ReturnValue`.
+For the three sub, the `$parserobj` will the instance of `Parser`, `Pre-Parser` and `Parser2` respectively.
 
 == `Types`
 
-=== Method of class Types::Manager
+=== TypesManager does RefOptionSet
 
-* has(Str $name) of Bool
+`TypesManager` hold the short name of option/non-option types, parsing the create string, create the
+instance of option/non-option.
+
+==== Attribute
+
+* $.types
++
+The key is short name of the type, value is the type object.
+
+==== Method
+
+* has(Str $name -\-> Bool)
 +
 Return True if manager has type `$name`.
 
-* innername(Str:D $name) of Str
+* innername(Str:D $name -\-> Str)
 +
-Return the name of type .
+Return the whole name of type, in default it will get the name through the `.type` method of a type.
 
-* register(Str:D $name, Mu:U $type) of ::?CLASS:D
+* registe(Str:D $name, Mu:U $type -\-> ::?CLASS:D)
 +
-Registe a type to the manager.
+Register a type to the manager.
+Make sure the type have a `.type` method.
 
-* create(Str $str, :$value, :&callback)
-* create(Str $str,  Str:D $annotation, :$value, :&callback)
+* unregiste(Str:D $name -\-> ::?CLASS:D)
++
+Remove a type from the manager.
+
+* create(Str $str, *%args)
 +
 Create a option of type with the given option string.
 
 * clone(*%_)
 +
 Return an deep copy of current manager.
+
+== `Utils`
+
+=== Prefix
+
+The prefix type of an command line argument.
+
+* LONG
++
+It has a long prefix, in default parser grammar it is `--`.
+
+* SHORT
++
+It has a short prefix, in default parser grammar it is `-`.
+
+* NULL
++
+It has no prefix, such as BSD style option.
+
+* DEFAULT
++
+A default value.
+
+=== Style
+
+The style type of an option/non-option match context.
+
+* XOPT
++
+The context option has a short prefix and long name such as `-option` or `-option=2`.
+
+* LONG
++
+The context option has a long prefix such as `--o`, `--option` or `--option=2`.
+
+* SHORT
++
+The context option has a short prefix and one letter name such as `-o` or `-o=2`.
+
+* ZIPARG
++
+The context option has one letter name and a value such as `-o2` or `--o2`.
+
+* COMB
++
+The context option has multiple options in one command line argument.
+
+* BSD
++
+The context option is an bsd-style option such as `o`.
+
+* MAIN
++
+The context non-option type is `MAIN`.
+
+* CMD
++
+The context non-option type is `CMD`.
+
+* POS
++
+The context non-option type is `POS`.
+
+* WHATEVERPOS
++
+The context non-option type is `POS`, but has a `WhateverCode` position.
+
+* DEFAULT
++
+A default value.
+
+=== role Info
+
+The subscribe info of a subscriber.
+
+==== Method
+
+* check(Message $msg -\-> Bool) { ... }
++
+Check if the subscriber can accept the message.
+
+* process($data) { ... }
++
+Process the info with the `data` of the message.
+
+=== role Message
+
+The message which will send from `Publisher` and processed by `Subscriber`.
+
+==== Method
+
+* id( -\-> Int) { ... }
++
+An integer which using for debug message.
+
+* data() { ... }
++
+The data of the message.
+
+=== role Publisher
+
+The publisher type, hold the info the subscriber, publish the message to all the subscriber.
+
+==== Attribute
+
+* Info @.infos
++
+All the info of subscriber.
+
+==== Method
+
+* publish(Message $msg)
++
+Publish the message to all subscriber, in default it will call the `.check` method check the message.
+Call the `.process` method if the message accepted by the subscriber.
+
+* subscribe(Info $info)
++
+Register the subscriber information to current publisher.
+
+* clean-subscriber()
++
+Clean all the subscriber information.
+
+=== role Subscriber
+
+The subscriber type, which register the self to the publisher.
+
+==== Method
+
+* subscribe(Publisher $p) { ... }
++
+Register self to the publisher `$p`.
+
+=== role ContextProcessor does Message
+
+The default message produced by the publisher(`parser`).
+
+==== Attribute
+
+* $.style
++
+Current style type of match context.
+
+* @.contexts
++
+All the match contexts.
+
+* $.handler
++
+Current result handler instance.
+
+* $.id
++
+Identified integer of current message.
+
+==== Method
+
+* id()
++
+Return the `$.id`.
+
+* data()
++
+Return the `self`.
+
+* matched()
++
+Return the status of result handler `$.handler`.
+
+* process($o)
++
+In default, match the context against with option/non-option `$o`,
+set the value of `$o` if matched successful.
+Call `.set-success` method of `$.handler` and skip the next command line argument if necessary.
+Will skip if current context already matched successful.
+
+=== role RefOptionSet
+
+Represent a type which hold the `OptionSet`.
+
+==== Attribute
+
+* $.owner
++
+The owner of current object.
+
+==== Method
+
+* set-owner($!owner)
++
+Set the owner of current object.
+
+* owner()
++
+Get owner of current object.
+
+=== Debug
+
+The tools using for print debug message.
+
+==== LEVEL
+
+* DEBUG
+* INFO
+* WARN
+* ERROR
+* DIE
+* NOLOG
+
+==== Subs
+
+* setLevel(LEVEL $level)
++
+Set the minimum level of debug message.
+
+* setStderr(IO::Handle $handle)
++
+Set current error message output handler.
+
+* print(Str $log, LEVEL $level = $g-level)
++
+Print the log message to current handler with level `$level`.
+
+* debug(Str $log)
+* info(Str $log)
+* warn(Str $log)
+* error(Str $log)
++
+Print the log with `DEBUG`, `INFO`, `WARN` and `ERROR` respectively.
+
+* die(Str $log)
++
+Call `die` with log `$log`.
+
+=== OptionValueSetter
+
+Hold an option and the value.
+
+==== Attribute
+
+* $.optref
++
+Current option.
+
+* $.value
++
+The value will be set by `OptionValueSetter`.
+
+==== Method
+
+* set-value()
++
+Call `.set-value` method of current option with `$!value` and `:callback`.
+
+=== Sub
+
+* set-autohv(Str:D $help, Str:D $version) is export
++
+Set current option name of `autohv` feature.
+
+* get-autohv($optset) is export
++
+Get the status of current `autohv` option.
+
+* check-if-need-autohv($optset) is export
++
+Return true if the `autohv` is triggered by user command line argument.
