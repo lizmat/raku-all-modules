@@ -1,4 +1,4 @@
-class Tick {
+class Game::Markov::Tick {
 
 	### NOTE : seconds are tick based not real time seconds e.g. the time
 	###        is virtual but uses nanoseconds as a measure of virtual time
@@ -11,7 +11,7 @@ class Tick {
 	has $.time; ### total nanosecond time
 	has $.tick; ### tick number or id, sorted or not
 
-	method BUILD($s, $ms, $ns, $t = undef) {
+	method BUILD($s, $ms, $ns, $t = Nil) {
 
 		.seconds = $s;
 		.milliseconds = $ms;

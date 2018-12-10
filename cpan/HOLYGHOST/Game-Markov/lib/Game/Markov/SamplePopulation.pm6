@@ -1,13 +1,13 @@
 use Mathx::Stat;
 
 ### A list of DistributionPopulation instances
-class SamplePopulation
+class Game::Markov::SamplePopulation
 {
-	has @.distributions;
+	has @.distributions is rw;
 
-	method BUILD(@distributions = <>) { ### use the gen methods to fill
+	method BUILD(@distributions) { ### use the gen methods to fill
 	                                    ### with random numbers
-		.distributions = @distributions;
+		@.distributions = @distributions;
 	}
 
 	### Stratified Sampling method (a variance)
@@ -16,7 +16,7 @@ class SamplePopulation
 	
 		my $var = 0.0;
 
-		for .distributions -> $x {
+		for @.distributions -> $x {
 			$var += $x.Variance() / $x.Expectance();
 		}
 
@@ -29,19 +29,19 @@ class SamplePopulation
 		### Monte Carlo samples with variance
 		my $b = 0.01;
 
-		return .distributions[$index0].Variance() + 2 * $b * Covariance().Covariance(.distributions[$index0], .distributions[$index1]) + $b * $b * .distributions[$index1].Variance();
+		return @.distributions[$index0].Variance() + 2 * $b * Covariance().Covariance(@.distributions[$index0], @.distributions[$index1]) + $b * $b * @.distributions[$index1].Variance();
 
 	}
 
 	method antitheticvariatesmethod($index, $function) { ### monotonic func
-		my $d = new DistributionPopulation();
-		my $l = new DistributionPopulation();
+		my $d = Mathx::Stat::DistributionPopulation.new();
+		my $l = Mathx::Stat::DistributionPopulation.new();
 
-		for .distributions[$index].population -> $x {
+		for @.distributions[$index].population -> $x {
 			$l.add($function($x));
 		}
 
-		for .distributions[$index].population -> $x {
+		for @.distributions[$index].population -> $x {
 			$d.add($function(1-$x));
 		}
 
@@ -52,19 +52,19 @@ class SamplePopulation
 		my $I = 0.0;
 
 		for @indices -> $x {
-			$I += .distributions[$index].population[$x];
+			$I += @.distributions[$index].population[$x];
 		}
 
-		 $I /= .distributions[$index].Expectance();
+		 $I /= @.distributions[$index].Expectance();
 
 		my @ps = <>;	
 		for @indices -> $x {
-			push(@ps, .distributions[$index].population[$x]);	
+			push(@ps, @.distributions[$index].population[$x]);	
 		}
 
-		my $VARI = 0.0;
-		my $Ipop = new DistributionPopulation(@ps);
-		$VARI = $Ipop.Variance() / $Ipop.Expectance();	
+		my $varI = 0.0;
+		my $Ipop = Mathx::Stat::DistributionPopulation.new(@ps);
+		$varI = $Ipop.Variance() / $Ipop.Expectance();	
 
 		my $p = new Probability(@ps);
 		my $sp = new SamplePopulation();
@@ -78,13 +78,13 @@ class SamplePopulation
 				$idx2++;
 			}
 			$idx++;
-			$sp.population.add(new DistributionPopulation(@ps));
+			$sp.population.add(Mathx::Stat::DistributionPopulation.new(@ps));
 		}
 
 
 		my $varI2 = 0.0;
 		my $I2 = 0.0;
-		my $estimates = new DistributionPopulation();
+		my $estimates = Mathx::Stat::DistributionPopulation.new;
 		for $sp.population -> $x {
 			$I2 += $x.population.Expectance();
 			$estimates.add($x.population.Expectance());
@@ -93,7 +93,7 @@ class SamplePopulation
 
 		$varI2 = $estimates.Variance();
 
-		return ($VARI, $var2I);
+		return ($varI, $var2I);
 
 	}
 			

@@ -1,16 +1,17 @@
-use Tick;
+use Game::Markov::Tick;
 
 role ThisTime { method ticksover($time, $t) { return $time + $t; } 
 		method newtime($time) { ### return tuple of time in s,ms,ns
-				return (<($time
-				- $time / 1000
-				- $time / 1000000),
-				($time - ($time / 1000000) * 1000) % 1000
-				($time * 1000000) % 1000>);
+
+			my $ns = ($time * 1000000) % 1000;
+			my $ms = ($time * 1000) % 1000 - $ns;
+			my $s = $time - $ns - $ms;
+
+				return (<$s,$ms,$n>);
 		}
 }; 
 
-class Time does ThisTime {
+class Game::Markov::Time does ThisTime {
 
 	has $.currenttime;  ### current time, last Tick start time + delta(t)
 	has $.currenttick;  ### end - start time in a Tick instance 
@@ -20,7 +21,7 @@ class Time does ThisTime {
 
 	method BUILD($starttime, $endtime) {
 
-		.currenttick = new Tick(newtime($endtime - $starttime)[0], 
+		.currenttick = Game::Markov::Tick.new(newtime($endtime - $starttime)[0], 
 					newtime($endtime - $starttime)[1], 
 					newtime($endtime - $starttime)[2]); 
 				
@@ -39,7 +40,7 @@ class Time does ThisTime {
 		} else {
 			### push a new Tick as last Tick has expired
 			.currenttime += $t;
-			my $tick = new Tick(newtime(.currenttime.seconds + $t)[0],
+			my $tick = Game::Markov::Tick.new(newtime(.currenttime.seconds + $t)[0],
 					newtime(.currenttime.seconds + $t)[1],
 					newtime(.currenttime.seconds + $t)[2]);
 			.currenttick = $tick;

@@ -1,4 +1,4 @@
-use TimeChain;
+use Game::Markov::TimeChain;
 
 ### The following makes a MarkovChain abstract
 role MarkovP { method chance($A) { 
@@ -8,9 +8,9 @@ role MarkovP { method chance($A) {
 	}
 };
 
-class AbstractMarkovChain is TimeChain does MarkovP {
+class Game::Markov::AbstractMarkovChain is Game::Markov::TimeChain does MarkovP {
 	
-	method BUILD(@timebasedvars = undef) {
+	method BUILD(@timebasedvars = Nil) {
 
 		.time = new Time(0, @timebasedvars.length);
 		(.timedata = @timebasedvars) unless (not @timebasedvars) {

@@ -1,6 +1,6 @@
-use Tick;
+use Game::Markov::Tick;
 
-class MarkovTick is Tick {
+class Game::Markov::MarkovTick is Game::Markov::Tick {
 
 	### This is forward and backward time (mostly for Hidden Markov Models)
 

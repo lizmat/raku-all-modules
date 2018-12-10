@@ -1,6 +1,6 @@
-use Time;
+use Game::Markov::Time;
 
-class TimeChain {
+class Game::Markov::TimeChain {
 	
 	has $.time;
 	has @.timedata;

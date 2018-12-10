@@ -1,11 +1,11 @@
-use MarkovTick;
-use Time;
+use Game::Markov::MarkovTick;
+use Game::Markov::Time;
 
-class MarkovTime is Time {
+class Game::Markov::MarkovTime is Game::Markov::Time {
 
 	method BUILD($starttime, $endtime) {
 
-		.currenttick = new MarkovTick(newtime($endtime - $starttime)[0], 
+		.currenttick = Game::Markov::MarkovTick.new(newtime($endtime - $starttime)[0], 
 					newtime($endtime - $starttime)[1], 
 					newtime($endtime - $starttime)[2]); 
 				
@@ -24,7 +24,7 @@ class MarkovTime is Time {
 		} else {
 			### push a new Tick as last Tick has expired
 			.currenttime += $t;
-			my $tick = new MarkovTick(newtime(.currenttime.seconds + $t)[0],
+			my $tick = Game::Markov::MarkovTick.new(newtime(.currenttime.seconds + $t)[0],
 					newtime(.currenttime.seconds + $t)[1],
 					newtime(.currenttime.seconds + $t)[2]);
 			.currenttick = $tick;

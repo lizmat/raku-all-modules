@@ -1,8 +1,8 @@
-use MarkovChain;
+use Game::Markov::MarkovChain;
 
 ### Vector based Chain (HMM == Hidden Markov Model)
 
-class HMMMarkovChain is MarkovChain {
+class Game::Markov::HMMMarkovChain is Game::Markov::MarkovChain {
 	
 	method addVector($v) {
 		self.add($v);
