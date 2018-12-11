@@ -10,16 +10,16 @@ role MarkovP { method chance($A) {
 
 class Game::Markov::AbstractMarkovChain is Game::Markov::TimeChain does MarkovP {
 	
-	method BUILD(@timebasedvars = Nil) {
+	method BUILD(:@timebasedvars = Nil) {
 
-		.time = new Time(0, @timebasedvars.length);
-		(.timedata = @timebasedvars) unless (not @timebasedvars) {
-				@timebasedvars = <>};
+		$.time = Time.new(startttime => 0, endtime => @timebasedvars.elems);
+		(@.timedata = @timebasedvars) unless (not @timebasedvars) {
+				@timebasedvars = ()};
 
 	}
 
 	method addVector($v) {
-		push (.timedata, $v);
+		push (@.timedata, $v);
 		self.tick(1); ### add one nanotick
 	}
 

@@ -4,16 +4,16 @@ use TimeChain;
 
 class MarkovChain is TimeChain {
 	
-	method BUILD(@timebasedvars = undef) {
+	method BUILD(:@timebasedvars) {
 
-		.time = new Time(0, @timebasedvars.length);
-		(.timedata = @timebasedvars) unless (not @timebasedvars) {
-				@timebasedvars = <>}; ### markov chain vectors
+		$.time = Time.new(startttime => 0, endtime => @timebasedvars.elems);
+		(@.timedata = @timebasedvars) unless (not @timebasedvars) {
+				@timebasedvars; }; ### markov chain vectors
 
 	}
 
 	method add($v) {
-		push (.timedata, $v);
+		push (@.timedata, $v);
 	}
 
 }

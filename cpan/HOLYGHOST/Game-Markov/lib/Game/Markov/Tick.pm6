@@ -11,24 +11,24 @@ class Game::Markov::Tick {
 	has $.time; ### total nanosecond time
 	has $.tick; ### tick number or id, sorted or not
 
-	method BUILD($s, $ms, $ns, $t = Nil) {
+	method BUILD(:$s, :$ms, :$ns, :$t = Nil) {
 
-		.seconds = $s;
-		.milliseconds = $ms;
-		.nanoseconds = $ns;
+		$.seconds = $s;
+		$.milliseconds = $ms;
+		$.nanoseconds = $ns;
 
-		.tick = $t;
+		$.tick = $t;
 
 	}
 
 	method time() {
 
-		$.time = .seconds + .milliseconds / 1000 + .nanoseconds / 1000000;
+		$.time = $.seconds + $.milliseconds / 1000 + $.nanoseconds / 1000000;
 
-		return .time;
+		return $.time;
 	}
 
 	method tick() {
-		return .tick;
+		return $.tick;
 	}
 }

@@ -28,10 +28,10 @@ loop (my $i = 0; $i < 10000; $i+=3) {
 push(@distribs, $distrib0);
 push(@distribs, $distrib1);
 
-my $sampledistribs =  Game::Markov::SamplePopulation.new;
+my $sampledistribs =  Game::Markov::SamplePopulation.new(distributions => @distribs);
 
 is-deeply $sampledistribs.stratifiedsampling, $sampledistribs.stratifiedsampling;
-is-deeply $sampledistribs.controlvariatesmethod(0), $sampledistribs.controlvariatesmethod(0);
+is-deeply $sampledistribs.controlvariatesmethod(index0 => 0), $sampledistribs.controlvariatesmethod(index1 => 0);
 
 is-deeply Game::Markov::AbstractMarkovChain.new, Game::Markov::AbstractMarkovChain.new;
 
@@ -41,7 +41,7 @@ loop (my $i = 0; $i < 4; $i++) {
 	push(@l,$i);
 }
 
-is-deeply $sampledistribs.RaoBlackwellization(0, @l), $sampledistribs.RaoBlackwellization(0, @l);
+is-deeply $sampledistribs.RaoBlackwellization(index0 => 0, indeices => @l), $sampledistribs.RaoBlackwellization(0, @l);
 
 
 

@@ -3,32 +3,32 @@ use Game::Markov::Time;
 
 class Game::Markov::MarkovTime is Game::Markov::Time {
 
-	method BUILD($starttime, $endtime) {
+	method BUILD(:$starttime, :$endtime) {
 
-		.currenttick = Game::Markov::MarkovTick.new(newtime($endtime - $starttime)[0], 
-					newtime($endtime - $starttime)[1], 
-					newtime($endtime - $starttime)[2]); 
+		$.currenttick = Game::Markov::MarkovTick.new(s => newtime($endtime - $starttime)[0], 
+					ms => newtime($endtime - $starttime)[1], 
+					ns => newtime($endtime - $starttime)[2]); 
 				
 
-		.currenttime = $starttime;
+		$.currenttime = $starttime;
 
 	}
 
 	method tick($t) { ### $t in ticks ~ seconds (decimal)
-		if ($t < .currenttick.time()) { 
+		if ($t < $.currenttick.time()) { 
 			### $t is not beyond last tick (end)time
-			.currenttime += $t;
+			$.currenttime += $t;
 
 			return ticksover(.currenttime, $t);
 
 		} else {
 			### push a new Tick as last Tick has expired
-			.currenttime += $t;
-			my $tick = Game::Markov::MarkovTick.new(newtime(.currenttime.seconds + $t)[0],
-					newtime(.currenttime.seconds + $t)[1],
-					newtime(.currenttime.seconds + $t)[2]);
-			.currenttick = $tick;
-			push (.ticksarray, $tick); 
+			$.currenttime += $t;
+			my $tick = Game::Markov::MarkovTick.new(s => newtime(.currenttime.seconds + $t)[0],
+					ms => newtime(.currenttime.seconds + $t)[1],
+					ns => newtime(.currenttime.seconds + $t)[2]);
+			$.currenttick = $tick;
+			push (@.ticksarray, $tick); 
 		}
 	} 
 	

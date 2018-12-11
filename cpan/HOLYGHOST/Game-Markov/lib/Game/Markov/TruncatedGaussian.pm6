@@ -5,7 +5,7 @@ class RandomStratifiers
 
 	has $b;
 
-	method BUILD($c) {
+	method BUILD(:$c) {
 		.cmax = $c;
 		.lambda = ($cmax + sqrt($cmax * $cmax + 4)) / 2
 		.phifunc = phifunc;	

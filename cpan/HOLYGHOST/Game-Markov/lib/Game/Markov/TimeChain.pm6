@@ -2,19 +2,19 @@ use Game::Markov::Time;
 
 class Game::Markov::TimeChain {
 	
-	has $.time;
-	has @.timedata;
+	has $.time is rw;
+	has @.timedata is rw;
 
 
 	method BUILD(@timebasedvars, $starttime = 0.0) {
 
-		.time = new Time($starttime, @timebasedvars.length);
-		.timedata = timebasedvars;
+		$.time = Time.new(starttime => $starttime, endtime => @timebasedvars.elems);
+		@.timedata = @timebasedvars;
 
 	}
 
 	method nth($index) {
-		return .timedata[$index];
+		return @.timedata[$index];
 	}
 
 }

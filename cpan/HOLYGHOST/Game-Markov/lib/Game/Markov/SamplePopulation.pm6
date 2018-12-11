@@ -5,7 +5,7 @@ class Game::Markov::SamplePopulation
 {
 	has @.distributions is rw;
 
-	method BUILD(@distributions) { ### use the gen methods to fill
+	method BUILD(:@distributions) { ### use the gen methods to fill
 	                                    ### with random numbers
 		@.distributions = @distributions;
 	}
@@ -34,8 +34,8 @@ class Game::Markov::SamplePopulation
 	}
 
 	method antitheticvariatesmethod($index, $function) { ### monotonic func
-		my $d = Mathx::Stat::DistributionPopulation.new();
-		my $l = Mathx::Stat::DistributionPopulation.new();
+		my $d = Mathx::Stat::DistributionPopulation.new;
+		my $l = Mathx::Stat::DistributionPopulation.new;
 
 		for @.distributions[$index].population -> $x {
 			$l.add($function($x));
@@ -57,28 +57,40 @@ class Game::Markov::SamplePopulation
 
 		 $I /= @.distributions[$index].Expectance();
 
-		my @ps = <>;	
+		my @ps;	
 		for @indices -> $x {
 			push(@ps, @.distributions[$index].population[$x]);	
 		}
 
 		my $varI = 0.0;
-		my $Ipop = Mathx::Stat::DistributionPopulation.new(@ps);
+		my $Ipop = Mathx::Stat::DistributionPopulation.new;
+
+		for @ps -> $p {
+			$Ipop.add($p);
+		}
+
+
 		$varI = $Ipop.Variance() / $Ipop.Expectance();	
 
-		my $p = new Probability(@ps);
-		my $sp = new SamplePopulation();
-		@ps = <>;
+		my $p = Probability.new(xpop => @ps);
+		my $sp = SamplePopulation().new;
+		@ps = ();
 		my $idx = 0;
 		for $p.population.population -> $x {
 			my $idx2 = 0;
-			@ps = <>;
+			@ps = ();
 			for $p.population.population -> $x2 {
 				push(@ps, $p.CalculatedCondP($idx, $p.CalculatedCondP($idx2,$idx)));
 				$idx2++;
 			}
 			$idx++;
-			$sp.population.add(Mathx::Stat::DistributionPopulation.new(@ps));
+			my $Jpop = Mathx::Stat::DistributionPopulation.new;
+			for @ps -> $p {
+				$Jpop.add($p);
+			}
+
+			$sp.population.add($Jpop);
+
 		}
 
 
