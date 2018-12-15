@@ -54,8 +54,13 @@ role Tester {
 }
 
 role Builder {
-    method build($path, :@includes) { ... }
+    method build($dist, :@includes) { ... }
     method build-matcher($path) { ... }
+}
+
+role Installer {
+    method install($dist, :$cur, :$force) { ... }
+    method install-matcher($dist) { ... }
 }
 
 role Reporter {
