@@ -1,7 +1,7 @@
 use Test;
-use Test::META;
+use Pluggable;
 
 plan 1;
 
-meta-ok();
+ok 1;
 

@@ -82,6 +82,11 @@ The name of the namespace within *$base* that contains plugins.
 
 If present, the name of any module found will be compared with this and only returned if they match.
 
+DEBUGGING
+=========
+
+If you're having trouble with an object you think should be loading but would like to find out what is bonking in `require`, set `$*DEBUG-PLUGINS` to a truthy value.
+
 LICENSE
 =======
 

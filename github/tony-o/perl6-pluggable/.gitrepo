@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/tony-o/perl6-pluggable.git
+	remote = https://github.com/tony-o/perl6-pluggable.git
 	branch = master
-	commit = 7548fff96dd206edc31c307708b077dfdca5e204
-	parent = def8d38d5638777c018b311e92341023825699e1
-	cmdver = 0.4.0
+	commit = 834f08b8ae75aa5350011430f1d2620d4afd8a1b
+	parent = 22ecc0b5579bee05dddfe860a6b7738e4397465c
+	cmdver = 0.3.1
