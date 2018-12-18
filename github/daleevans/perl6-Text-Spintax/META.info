@@ -5,7 +5,7 @@
     "description" : "A parser and renderer for spintax formatted text",
     "authors" : ["Dale Evans"],
     "perl" : "6.c",
-    "source-url" : "https://github.com/daleevans/perl6-Text-Spintax",
+    "source-url" : "https://github.com/daleevans/perl6-Text-Spintax.git",
     "depends" : [ "Test::META" ],
     "provides" : {
       "Text::Spintax" : "lib/Text/Spintax.pm6"

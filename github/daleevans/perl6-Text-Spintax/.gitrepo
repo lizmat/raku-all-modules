@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/daleevans/perl6-Text-Spintax
+	remote = https://github.com/daleevans/perl6-Text-Spintax.git
 	branch = master
-	commit = 56f52d1013483ea125a1e44ef20b30f0e0eb6e33
-	parent = e4f5f12b2ce379f09cd1f6dd791b04b1b1d0d0a2
-	cmdver = 0.4.0
+	commit = e42956c8526544b88d0b8caef7930b581883970a
+	parent = f1a135c91fd03b65bbd96065207e7ef2b73b0090
+	cmdver = 0.3.1
