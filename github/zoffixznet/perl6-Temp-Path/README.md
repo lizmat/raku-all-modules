@@ -40,7 +40,7 @@ with make-temp-dir {
 }
 
 {
-    temp $*TMPDIR = make-temp-dir :chmod<700>;
+    temp $*TMPDIR = make-temp-dir :chmod<0o700>;
     $*TMPDIR.say;
     # OUTPUT:
     # "/tmp/F5AA112627DA7B59C038900A3C8C7CB05477DCCCEADF2DC447EC304017A1009E".IO
