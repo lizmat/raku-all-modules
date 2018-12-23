@@ -9,7 +9,7 @@ plan 4 ;
 # this is a small example of a filter. I was curious about how DDT would
 # render itself. After a few try runs, with different options, I got tired of
 # seeing a long list which consists of a lot of colors so I decided to filter
-# them out 
+# them out
 
 
 # remove the Hashes
@@ -45,7 +45,7 @@ multi sub elements_filter($dumper, Data::Dump::Tree $s, ($depth, $glyph, @render
 my $d = Data::Dump::Tree.new does DDTR::AsciiGlyphs ;
 my $dump = $d.ddt: :get, $d, :!color, :width<80>, :header_filters[&header_filter], :elements_filters[&elements_filter] ;
 
-is $dump.lines.elems, 48, 'lines output' or diag $dump ;
+is $dump.lines.elems, 49, 'lines output' or diag $dump ;
 like $dump, /removing/, 'removing' or diag $dump ;
 like $dump, /'not removing'/, 'not removing' or diag $dump ;
 like $dump, /'SUB ELEMENTS'/, 'sub elements filter' or diag $dump ;
