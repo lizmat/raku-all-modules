@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/Xliff/p6-RandomColor
+	remote = https://github.com/Xliff/p6-RandomColor.git
 	branch = master
-	commit = 1f9fc9a31774dbb1ccee84de70b29ce2ca66b2f1
-	parent = f765fbe4d9fee30f8b419eaa7e8cc9d4fc4f7265
+	commit = 6123ac832c5c5065f590e4dee265e4c3951a667b
+	parent = 070407c76dc24e0890e9df91426428960a750828
 	cmdver = 0.3.1

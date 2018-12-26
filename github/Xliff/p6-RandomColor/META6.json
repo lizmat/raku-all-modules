@@ -4,7 +4,7 @@
     "version": "v0.1",
     "meta-version": "0",
     "license": "",
-    "source-url": "https://github.com/Xliff/p6-RandomColor",
+    "source-url": "https://github.com/Xliff/p6-RandomColor.git",
     "provides": {
       "RandomColor": "lib/RandomColor.pm6"
     },
