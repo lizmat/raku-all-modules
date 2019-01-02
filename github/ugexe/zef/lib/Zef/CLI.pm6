@@ -5,6 +5,7 @@ use Zef::Utils::FileSystem;
 use Zef::Identity;
 use Zef::Distribution;
 use Zef::Utils::SystemInfo;
+use nqp;
 
 # Content was cut+pasted from bin/zef, leaving bin/zef's contents as just: `use Zef::CLI;`
 # This allows the bin/zef original code to be precompiled, halving bare start up time.
@@ -401,7 +402,7 @@ package Zef::CLI {
         if !$sha1 {
             if $identity.ends-with('.pm' | '.pm6') {
                 my @candis = $client.list-installed.grep({
-                    .dist.compat.meta<provides>.values.grep({.keys[0] eq $identity}).so;
+                    .dist.compat.meta<provides>.values.grep({parse-value($_) eq $identity}).so;
                 });
 
                 for @candis -> $candi {
@@ -409,10 +410,15 @@ package Zef::CLI {
                     NEXT say '';
 
                     if $candi {
-                        my $libs = $candi.dist.compat.meta<provides>;
-                        my $lib  = $libs.first({.value.keys[0] eq $identity});
+                        # This is relying on implementation details for compatability purposes. It will
+                        # use something more appropriate sometime in 2019.
+                        my %meta = $candi.dist.compat.meta;
+                        %meta<provides> = %meta<provides>.map({ $_.key => parse-value($_.value) }).hash;
+                        my $lib = %meta<provides>.hash.antipairs.hash.{$identity};
+                        my $lib-sha1 = nqp::sha1($lib ~ CompUnit::Repository::Distribution.new($candi.dist.compat).id);
+
                         say "===> From Distribution: {~$candi.dist}";
-                        say "{$lib.keys[0]} => {$candi.from.prefix.child('sources').child($lib.value.values[0]<file>)}";
+                        say "{$lib} => {$candi.from.prefix.child('sources').child($lib-sha1)}";
                     }
                 }
             }
@@ -440,16 +446,20 @@ package Zef::CLI {
 
                     say "===> From Distribution: {~$candi.dist}";
                     my $source-prefix = $candi.from.prefix.child('sources');
-                    my $source-path   = $source-prefix.child($candi.dist.compat.meta<provides>{$identity}.values[0]<file> // '');
+                    my $source-path   = $source-prefix.child(nqp::sha1($identity ~ CompUnit::Repository::Distribution.new($candi.dist.compat).id));
                     say "{$identity} => {$source-path}" if $source-path.IO.f;
                 }
             }
         }
         else {
-            my @candis = $client.list-installed.grep({
-                my $meta := $_.dist.compat.meta;
-                my @source_files   = $meta<provides>.values.flatmap(*.values.map(*.<file>));
-                my @resource_files = $meta<files>.values.first({$_ eq $identity});
+            my @candis = $client.list-installed.grep(-> $candi {
+                # This is relying on implementation details for compatability purposes. It will
+                # use something more appropriate sometime in 2019.
+                use nqp;
+                my %meta = $candi.dist.compat.meta;
+                %meta<provides> = %meta<provides>.map({ $_.key => parse-value($_.value) }).hash;
+                my @source_files   = %meta<provides>.map({ nqp::sha1($_.key ~ CompUnit::Repository::Distribution.new($candi.dist.compat).id) });
+                my @resource_files = %meta<files>.values.first({$_ eq $identity});
                 $identity ~~ any(grep *.defined, flat @source_files, @resource_files);
             });
 
@@ -458,9 +468,13 @@ package Zef::CLI {
                 NEXT say '';
 
                 if $candi {
+                    my %meta = $candi.dist.compat.meta;
+                    %meta<provides> = %meta<provides>.map({ $_.key => parse-value($_.value) }).hash;
+                    my %sources = %meta<provides>.map({ $_.key => nqp::sha1($_.key ~ CompUnit::Repository::Distribution.new($candi.dist.compat).id) }).hash;
+
                     say "===> From Distribution: {~$candi.dist}";
-                    $identity ~~ any($candi.dist.compat.meta<provides>.values.flatmap(*.values.map(*.<file>)))
-                        ?? (say "{.keys[0]} => {$candi.from.prefix.child('sources').child(.values[0]<file>)}" for $candi.dist.compat.meta<provides>.values.grep(*.values.first({ .<file> eq $identity })).first(*.so))
+                    $identity ~~ any(%sources.values)
+                        ?? (say "{$_} => {$candi.from.prefix.child('sources').child($identity)}" for %sources.antipairs.hash{$identity})
                         !! (say "{.key} => {.value}" for $candi.dist.compat.meta<files>.first({.value eq $identity}));
 
                 }
@@ -496,27 +510,14 @@ package Zef::CLI {
         say "Provides: {@provides.elems} modules";
         if ?($verbosity >= VERBOSE) {
 
-            my sub parse-value($str-or-kv) {
-                do given $str-or-kv {
-                    when Str  { $_ }
-                    when Hash { $_.keys[0] }
-                    when Pair { $_.key     }
-                }
-            }
-
             my $meta := $dist.compat.meta;
             my @rows = eager gather for @provides -> $lib {
                 FIRST {
-                    take $meta<provides>.values[0] ~~ Hash
-                        ?? [<Module Path-Name File-ID>]
-                        !! [<Module Path-Name>]
+                    take [<Module Path-Name>]
                 }
                 my $module-name = $lib.key;
                 my $name-path   = parse-value($lib.value);
-                my $real-path   = try { $meta<provides>{$module-name}{$name-path}<file> };
-                take $real-path
-                    ?? [ $module-name, $name-path, $real-path ]
-                    !! [ $module-name, $name-path ];
+                take [ $module-name, $name-path ];
             }
             print-table(@rows, :$wrap);
         }
@@ -931,6 +932,14 @@ package Zef::CLI {
             say "{$sep}\n{@fixed-rows[0]}\n{$sep}";
             .say for @fixed-rows[1..*];
             say $sep;
+        }
+    }
+
+    sub parse-value($str-or-kv) {
+        do given $str-or-kv {
+            when Str  { $_ }
+            when Hash { $_.keys[0] }
+            when Pair { $_.key     }
         }
     }
 }
