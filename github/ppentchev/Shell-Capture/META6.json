@@ -2,7 +2,7 @@
   "perl": "6.c",
   "name": "Shell::Capture",
   "license" : "Artistic-2.0",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "Capture a command's output and exit code",
   "authors": [ "Peter Pentchev" ],
   "provides": {

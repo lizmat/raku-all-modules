@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/ppentchev/Shell-Capture.git
 	branch = master
-	commit = aba733381e62604c9ec8e1626a1719e2d4a32738
-	parent = a6e2b04220a559ff89c9a68a4f01eaecf67ffeaf
+	commit = 3dea9b126c7a67f885d176fb9a5d00575de4ce84
+	parent = 09581e5d0056aa2c0b099874dda4dd71770c4a23
 	cmdver = 0.3.1
