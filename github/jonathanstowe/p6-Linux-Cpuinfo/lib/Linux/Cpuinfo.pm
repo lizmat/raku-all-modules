@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 use Linux::Cpuinfo::Cpu;
 
@@ -43,7 +43,7 @@ in Perl programs.
 
 =end pod
 
-class Linux::Cpuinfo:ver<0.0.8>:auth<github:jonathanstowe> {
+class Linux::Cpuinfo:ver<0.0.9>:auth<github:jonathanstowe>:api<1.0> {
     has Str                 $.filename = '/proc/cpuinfo';
     has Str                 $.cpu-info;
     has Linux::Cpuinfo::Cpu @.cpus;
@@ -82,7 +82,7 @@ class Linux::Cpuinfo:ver<0.0.8>:auth<github:jonathanstowe> {
     }
 
     #| Build a sub class of Linux::Cpuinfo::Cpu
-    method cpu-class() {
+    method cpu-class( --> Mu ) {
         if not $!cpu-class.isa(Linux::Cpuinfo::Cpu) {
             my $class-name = 'Linux::Cpuinfo::Cpu::' ~ $!arch.tc;
             $!cpu-class := Metamodel::ClassHOW.new_type(name => $class-name);
@@ -95,7 +95,7 @@ class Linux::Cpuinfo:ver<0.0.8>:auth<github:jonathanstowe> {
     #| Returns the number of CPU cores reported by the kernel.
     #| This may be the number of "virtual cores" if the CPU
     #| has a mechanism such as "hyper-threading"
-    method num-cpus() returns Int {
+    method num-cpus( --> Int ) {
         if not $!num-cpus.defined {
             $!num-cpus = self.cpus.elems;
         }

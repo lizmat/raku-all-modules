@@ -40,9 +40,7 @@ install this with *zef* :
 
 ## Support
 
-Suggestions/patches are welcomed via github at:
-
-https://github.com/jonathanstowe/p6-Linux-Cpuinfo/issues
+Suggestions/patches are welcomed via github at https://github.com/jonathanstowe/p6-Linux-Cpuinfo/issues
 
 I'd be particularly interested in the /proc/cpuinfo from a variety of
 architectures to test against, the ones that I already have can be seen
@@ -55,4 +53,4 @@ would be appreciated.
 
 Please see the [LICENCE](LICENCE) file in the distribution.
 
-© Jonathan Stowe 2015, 2016, 2017
+© Jonathan Stowe 2015, 2016, 2017, 2019

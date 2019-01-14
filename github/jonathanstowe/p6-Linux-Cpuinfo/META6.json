@@ -1,22 +1,21 @@
 {
   "name": "Linux::Cpuinfo",
+  "version": "0.0.9",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
   "source-url": "https://github.com/jonathanstowe/p6-Linux-Cpuinfo.git",
   "support": {
     "source": "git://github.com/jonathanstowe/p6-Linux-Cpuinfo.git",
     "bugtracker" : "https://github.com/jonathanstowe/p6-Linux-Cpuinfo/issues/",
     "email": "jns+git@gellyfish.co.uk"
   },
-  "perl": "6.c",
+  "perl": "6.*",
   "resources": [
-    
   ],
   "build-depends": [
-    
   ],
   "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
-  "auth": "github:jonathanstowe",
   "depends": [
-    
   ],
   "tags": [
     "linux",
@@ -32,7 +31,6 @@
     "Linux::Cpuinfo": "lib/Linux/Cpuinfo.pm",
     "Linux::Cpuinfo::Cpu": "lib/Linux/Cpuinfo/Cpu.pm"
   },
-  "version": "0.0.8",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],

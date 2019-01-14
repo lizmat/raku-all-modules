@@ -1,6 +1,6 @@
 #!perl6
 
-use v6.c;
+use v6;
 
 use Test;
 plan 332;
@@ -8,7 +8,7 @@ plan 332;
 use Linux::Cpuinfo;
 
 if $*KERNEL.name eq 'linux' {
-    for 't/proc'.IO.dir.grep({ .f }) -> $file {
+    for 't/proc'.IO.dir.grep( *.f ) -> $file {
         $file.Str ~~ / \.$<arch>=\w+$ /;
 
         ok(my $ci = Linux::Cpuinfo.new(filename => $file.Str, arch => ~$<arch>), "get object for a $<arch>");

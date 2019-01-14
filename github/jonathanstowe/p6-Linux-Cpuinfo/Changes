@@ -1,10 +1,10 @@
+v0.0.9		Sun 13 Jan 11:15:20 GMT 2019
+	* Spring clean and upload to CPAN
 v0.0.8		Mon Sep 4 21:48:20 2017 +0100 
 	* Expose the cpu-info as an attribute
 v0.0.7		Wed Apr 27 14:22:48 2016 +0100 
 	* Spring cleaning
 v0.0.6		Sat Mar 12 13:54:46 2016 +0000 
 	* Remove version literal
-		 
 	* done -> done-testing
-		 
 	* Add vim modeline
