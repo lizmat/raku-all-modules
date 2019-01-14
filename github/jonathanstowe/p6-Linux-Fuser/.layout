@@ -1,0 +1,80 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "purpose": null,
+      "type": "directory",
+      "name": "t",
+      "children": [
+        {
+          "name": "01-basic.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "00-meta.t"
+        }
+      ]
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "p6fuser"
+        }
+      ],
+      "name": "bin",
+      "type": "directory"
+    },
+    {
+      "name": "lib",
+      "children": [
+        {
+          "purpose": null,
+          "type": "directory",
+          "name": "Linux",
+          "children": [
+            {
+              "purpose": null,
+              "name": "Fuser",
+              "children": [
+                {
+                  "name": "Procinfo.pm",
+                  "type": "file"
+                },
+                {
+                  "type": "file",
+                  "name": "FileDescriptor.pm"
+                }
+              ],
+              "type": "directory"
+            },
+            {
+              "name": "Fuser.pm",
+              "type": "file"
+            }
+          ]
+        }
+      ],
+      "type": "directory",
+      "purpose": null
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}

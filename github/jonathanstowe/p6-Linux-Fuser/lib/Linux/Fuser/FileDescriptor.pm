@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 =begin pod
 
@@ -28,7 +28,7 @@ There are no public methods only attributes.
 
 =end pod
 
-class Linux::Fuser::FileDescriptor:ver<0.0.9>:auth<github:jonathanstowe> {
+class Linux::Fuser::FileDescriptor {
 
     #| The file descriptor number in use by the process
     has Int $.fd;
