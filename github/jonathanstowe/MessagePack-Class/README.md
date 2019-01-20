@@ -104,4 +104,4 @@ prefer a pull request with tests if you can do that.
 
 This is free software. Please see the [LICENCE](LICENCE) file in this repository.
 
-© Jonathan Stowe 2017
+© Jonathan Stowe 2017, 2019

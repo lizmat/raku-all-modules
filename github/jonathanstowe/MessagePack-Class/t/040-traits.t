@@ -1,5 +1,7 @@
 #!perl6
-use v6.c;
+
+use v6;
+
 use Test;
 
 use MessagePack::Class;
