@@ -81,5 +81,5 @@ https://github.com/jonathanstowe/MQ-Posix/issues
 
 This is free software, please see the [LICENCE](LICENCE) for details.
 
-© Jonathan Stowe 2017
+© Jonathan Stowe 2017, 2019
 

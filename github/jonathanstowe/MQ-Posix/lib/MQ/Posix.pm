@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 =begin pod
 
@@ -222,7 +222,7 @@ class MQ::Posix {
 
     my $errno := cglobal(Str, 'errno', int32);
 
-    sub mq_open(Str $name, int32 $oflag, int32 $mode, Attr $attr) is native(LIB) returns mqd_t  { * }
+    sub mq_open(Str $name, int32 $oflag, int32 $mode, Attr $attr --> mqd_t ) is native(LIB) { * }
 
 
     method queue-descriptor(--> mqd_t) {
@@ -250,18 +250,6 @@ class MQ::Posix {
         ?($!open-flags +& ( WriteOnly | ReadWrite));
     }
 
-# == /usr/include/mqueue.h ==
-
-#-From /usr/include/mqueue.h:40
-#/* Establish connection between a process and a message queue NAME and
-#   return message queue descriptor or (mqd_t) -1 on error.  OFLAG determines
-#   the type of access used.  If O_CREAT is on OFLAG, the third argument is
-#   taken as a `mode_t', the mode of the created message queue, and the fourth
-#   argument is taken as `struct Attr *', pointer to message queue
-#   attributes.  If the fourth argument is NULL, default attributes are
-#   used.  */
-#extern mqd_t mq_open (const char *__name, int __oflag, ...)
-
 
     submethod BUILD(Str :$!name!, Bool :$r, Bool :$w, Bool :$create, Bool :$exclusive, Int :$!max-messages, Int :$!message-size, Int :$!mode = 0o660) {
         if !$!name.starts-with('/') {
@@ -286,15 +274,10 @@ class MQ::Posix {
 
     }
 
-#-From /usr/include/mqueue.h:45
-#/* Removes the association between message queue descriptor MQDES and its
-#   message queue.  */
-#extern int mq_close (mqd_t __mqdes) __THROW;
-
     class X::MQ::Close is X::MQ::System {
     }
 
-    sub mq_close(mqd_t $mqdes ) is native(LIB) returns int32 { * }
+    sub mq_close(mqd_t $mqdes --> int32 ) is native(LIB) { * }
 
     method close( --> Bool) {
         my Bool $rc = True;
@@ -307,14 +290,10 @@ class MQ::Posix {
         $rc;
     }
 
-#-From /usr/include/mqueue.h:48
-#/* Query status and attributes of message queue MQDES.  */
-#extern int mq_getattr (mqd_t __mqdes, struct Attr *__mqstat)
-
     class X::MQ::Attributes is X::MQ::System {
     }
 
-    sub mq_getattr(mqd_t $mqdes, Attr $mqstat is rw) is native(LIB) returns int32  { * }
+    sub mq_getattr(mqd_t $mqdes, Attr $mqstat is rw --> int32 ) is native(LIB) { * }
 
     method attributes(--> Attr) {
         $!attributes //= do {
@@ -327,14 +306,10 @@ class MQ::Posix {
     }
 
 
-#-From /usr/include/mqueue.h:59
-#/* Remove message queue named NAME.  */
-#extern int mq_unlink (const char *__name) __THROW __nonnull ((1));
-
     class X::MQ::Unlink is X::MQ::System {
     }
 
-    sub mq_unlink(Str $name ) is native(LIB) returns int32 { * }
+    sub mq_unlink(Str $name  --> int32 ) is native(LIB) { * }
 
     method unlink(--> Bool) {
         if mq_unlink($!name) < 0 {
@@ -343,25 +318,10 @@ class MQ::Posix {
         True;
     }
 
-#`(
-#-From /usr/include/mqueue.h:63
-#/* Register notification issued upon message arrival to an empty
-#   message queue MQDES.  */
-#extern int mq_notify (mqd_t __mqdes, const struct sigevent *__notification)
-sub mq_notify(mqd_t                         $__mqdes # Typedef<mqd_t>->|int|
-             ,sigevent                      $__notification # const sigevent*
-              ) is native(LIB) returns int32 is export { * }
-)
-
-#-From /usr/include/mqueue.h:68
-#/* Receive the oldest from highest priority messages in message queue
-#   MQDES.  */
-#extern ssize_t mq_receive (mqd_t __mqdes, char *__msg_ptr, size_t __msg_len,
-
     class X::MQ::Receive is X::MQ::System {
     }
 
-    sub mq_receive(mqd_t $mqdes, CArray[uint8] $msg_ptr is rw, size_t $msg_len, Pointer[uint32] $msg_prio) is native(LIB) returns ssize_t { * }
+    sub mq_receive(mqd_t $mqdes, CArray[uint8] $msg_ptr is rw, size_t $msg_len, Pointer[uint32] $msg_prio --> ssize_t ) is native(LIB) { * }
 
     method receive(--> Promise ) {
         start {
@@ -378,14 +338,10 @@ sub mq_notify(mqd_t                         $__mqdes # Typedef<mqd_t>->|int|
         }
     }
 
-#-From /usr/include/mqueue.h:72
-#/* Add message pointed by MSG_PTR to message queue MQDES.  */
-#extern int mq_send (mqd_t __mqdes, const char *__msg_ptr, size_t __msg_len,
-
     class X::MQ::Send is X::MQ::System {
     }
 
-    sub mq_send(mqd_t $mqdes, CArray[uint8] $msg_ptr, size_t  $msg_len, uint32 $msg_prio ) is native(LIB) returns int32  { * }
+    sub mq_send(mqd_t $mqdes, CArray[uint8] $msg_ptr, size_t  $msg_len, uint32 $msg_prio --> int32 ) is native(LIB) { * }
 
     proto method send(|c) { * }
 
