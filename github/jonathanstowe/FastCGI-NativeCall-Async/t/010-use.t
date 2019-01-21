@@ -1,5 +1,7 @@
 #!/usr/bin/env perls
 
+use v6;
+
 use Test;
 
 plan 1;

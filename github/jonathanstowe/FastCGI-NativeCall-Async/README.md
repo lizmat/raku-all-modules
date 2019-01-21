@@ -18,7 +18,6 @@ react {
 	    say $fcgi.env;
         $fcgi.Print("Content-Type: text/html\r\n\r\n{++$count}");
     }
-
 }
 ```
 
@@ -60,4 +59,4 @@ I'd be interested in working configurations for various HTTP servers.
 
 This is free software see the [LICENCE](LICENCE) file in the distribution.
 
-© 2017 Jonathan Stowe
+© 2017, 2019 Jonathan Stowe

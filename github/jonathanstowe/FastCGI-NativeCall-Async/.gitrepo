@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/FastCGI-NativeCall-Async.git
 	branch = master
-	commit = 16a6775e491f77995b7ac727dc8be2a2aed87dab
-	parent = 506254a2a9ebfb5d6e09c98057ed8762072a18e5
-	cmdver = 0.4.0
+	commit = f0c0c4283cb39fef9c69082d68b6e8e15904cc53
+	parent = 2aef9b9d43f02d034f43bba21f47c0c1d63c4fbf
+	cmdver = 0.3.1
