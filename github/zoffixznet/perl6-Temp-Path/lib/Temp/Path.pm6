@@ -37,6 +37,7 @@ sub make-rand-path (--> IO::Path) {
 
     my role AutoDel [IO::Path:D $orig] {
         submethod DESTROY {
+            CATCH { when X::Channel::SendOnClosed { } }; # ignore - happens if 'nuke' invokes DESTROY
             $GOODS.send: (<forget delete>[self === $orig], $orig.absolute)
         }
         method to-IO-Path { self.absolute.IO }
