@@ -74,5 +74,5 @@ https://github.com/jonathanstowe/p6-GDBM/issues
 
 This is free software, please see the [LICENCE](LICENCE) file for details.
 
-© Jonathan Stowe 2017
+© Jonathan Stowe 2017 - 2019
 
