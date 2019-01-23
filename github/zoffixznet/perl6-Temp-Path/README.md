@@ -144,7 +144,9 @@ Note that deletion will happen only if the
 path was created by this module. Doing `make-temp-dir.sibling: 'foo'` will
 still give you an `IO::Path` with `Temp::Path::AutoDel` mixed in due to how
 `IO::Path` methods create new objects, but *that* new object created by
-'.sibling' won't be deleted, because *you* created it and not the module.
+'.sibling' won't be deleted, when the object gets garbage collected, because
+*you* created it and not the module. Of course, when the parent directory, that
+was crated by this module gets deleted, all the `.siblings` on disk get removed.
 
 ----
 

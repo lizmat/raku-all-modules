@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-Temp-Path.git
 	branch = master
-	commit = 851b8d096d58368f0ca79a976d4526d014132f70
-	parent = 8e9704202e1dccdaf55ef9e34e55092cfffbd7cf
+	commit = 79bbd49ca424d05039752fc8c849cb1f49e2e12f
+	parent = 450c92dc1f4246a890e3365605f5a779f9671755
 	cmdver = 0.3.1

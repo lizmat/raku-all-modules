@@ -13,7 +13,6 @@ END { $GOODS.send: ('nuke',); await $GOODS.closed }
             $p.d ?? $p.&rmtree !! $p.e && $p.unlink
         }
         when 'add'    {                 %goods{$path}++                      }
-        when 'forget' {                 %goods{$path}:delete                 }
         when 'delete' {   nuke-path     %goods{$path}:delete:k               }
         when 'nuke'   { .&nuke-path for %goods{  *  }:delete:k; $GOODS.close }
         die 'Unknown $GOODS command';
@@ -38,7 +37,7 @@ sub make-rand-path (--> IO::Path) {
     my role AutoDel [IO::Path:D $orig] {
         submethod DESTROY {
             CATCH { when X::Channel::SendOnClosed { } }; # ignore - happens if 'nuke' invokes DESTROY
-            $GOODS.send: (<forget delete>[self === $orig], $orig.absolute)
+            $GOODS.send: ('delete', $orig.absolute) if self === $orig;
         }
         method to-IO-Path { self.absolute.IO }
     }
