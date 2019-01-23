@@ -1,3 +1,4 @@
+dist: xenial
 branches:
   except:
     - gh-pages
@@ -5,8 +6,11 @@ language: perl6
 sudo: required
 perl6:
   - latest
-install:
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y libgdbm3
   - sudo apt-get install -y libgdbm-dev
+install:
   - rakudobrew build-zef
   - zef --/test --deps-only install .
   - zef build .
