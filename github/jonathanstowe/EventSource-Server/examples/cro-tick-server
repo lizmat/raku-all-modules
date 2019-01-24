@@ -1,0 +1,26 @@
+#!/usr/bin/env perl6
+
+use EventSource::Server;
+
+use Cro::HTTP::Router;
+use Cro::HTTP::Server;
+
+my $supply = Supply.interval(1).map( { EventSource::Server::Event.new(type => 'tick', data => DateTime.now.Str) } );
+
+my $es = EventSource::Server.new(:$supply);
+
+my $app = route {
+    get -> {
+        content 'text/event-stream', $es.out-supply;
+    }
+};
+
+my Cro::Service $tick = Cro::HTTP::Server.new(:host<localhost>, :port<7798>, application => $app);
+
+$tick.start;
+
+react whenever signal(SIGINT) { $tick.stop; exit; }
+
+
+
+# vim: ft=perl6

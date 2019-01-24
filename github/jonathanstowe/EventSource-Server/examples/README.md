@@ -5,21 +5,23 @@ This directory contains some short examples of the ways that this module can be 
 There is also a small node.js client that can be used to exercise the examples
 from the command line.
 
-All of the examples require [HTTP::Server::Tiny](https://github.com/tokuhirom/p6-HTTP-Server-Tiny)
+Most of the examples require [HTTP::Server::Tiny](https://github.com/tokuhirom/p6-HTTP-Server-Tiny)
 which can be installed with
-
-	panda install HTTP::Server::Tiny
-
-or
 
 	zef install HTTP::Server::Tiny
 
-depending on your preference.
 
 ## [tick-server](tick-server)
 
 This sends a "tick" event wuth the Date time every second.
 
+
+## [cro-tick-server](cro-tick-server)
+
+This implements the [tick-server](tick-server) as above, but using [Cro](https://cro.services/) 
+instead of HTTP::Server::Tiny which can be installed with:
+
+    zef install --/test cro
 
 ## [amqp-bridge](amqp-bridge)
 
@@ -27,10 +29,5 @@ This demonstrates bridging an AMQP message queue to an EventSource, you will nee
 such as RabbitMQ and [Net::AMQP](https://github.com/retupmoca/P6-Net-AMQP) which can be
 installed with
 
-    panda install Net::AMQP
-
-or
-
     zef install Net::AMQP
-
 

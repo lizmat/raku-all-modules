@@ -75,6 +75,4 @@ https://github.com/jonathanstowe/EventSource-Server/issues
 This is free software, please see the [LICENCE](LICENCE) file in the
 distribution.
 
-© Jonathan Stowe 2017
-
-
+© Jonathan Stowe 2017 - 2019

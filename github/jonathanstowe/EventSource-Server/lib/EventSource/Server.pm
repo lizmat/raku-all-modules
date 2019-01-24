@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 =begin pod
 
@@ -78,29 +78,29 @@ class EventSource::Server does Callable {
 
     proto sub map-supply(|c) { * }
 
-    multi sub map-supply(Event $e) returns Event {
+    multi sub map-supply(Event $e --> Event ) {
         $e;
     }
 
-    multi sub map-supply(Str $data) returns Event {
+    multi sub map-supply(Str $data --> Event ) {
         Event.new(:$data);
     }
 
-    multi sub map-supply($ (Str $type, Str $data)) returns Event {
+    multi sub map-supply($ (Str $type, Str $data) --> Event ) {
         Event.new(:$type, :$data);
     }
 
-    method out-supply() {
+    method out-supply( --> Supply ) {
         $!out-supply //= Supply.merge(self.supplier.Supply, self.supply).map(&map-supply).map({ $_.encode });
     }
 
     # If we weren't supplied with a Supply then
     # we just use a no-op one
-    method supply() returns Supply {
+    method supply( --> Supply ) {
         $!supply //= supply { };
     }
 
-    method supplier() returns Supplier handles <emit> {
+    method supplier( --> Supplier ) handles <emit> {
         $!supplier //= Supplier.new;
     }
 
