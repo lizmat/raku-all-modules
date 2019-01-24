@@ -2,7 +2,7 @@
     "perl"         : "6.c",
     "name"         : "Temp::Path",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001005",
+    "version"      : "1.001006",
     "description"  : "Make a temporary path, file, or directory",
     "tags"         : [ "filesystem" ],
     "depends"      : [

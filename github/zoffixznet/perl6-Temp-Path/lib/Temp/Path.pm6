@@ -20,16 +20,17 @@ END { $GOODS.send: ('nuke',); await $GOODS.closed }
     }
 }
 
-sub make-rand-path (--> IO::Path) {
+sub make-rand-path (Str:D $prefix, Str:D $suffix --> IO::Path) {
     my $p = $*TMPDIR;
     # XXX TODO .resolve is broken on Windows in Rakudo; .resolve for all OSes
     # when it is fixed
     $p .= resolve unless $*DISTRO.is-win;
     loop {
-        $p = $p.resolve.add: (
+        my $filename = (
             rand, $*PROGRAM.basename, (try callframe(3).code.line)||'',
             rand, time, rand
         ).join.encode('utf8-c8').&sha256».fmt('%02X').join;
+        $p = $p.resolve.add: ($prefix, $filename, $suffix).join;
         last unless $p.e;
         $++ > 10 and die 'IO::Path module failed to create a unique path'
     }
@@ -45,16 +46,25 @@ sub make-rand-path (--> IO::Path) {
 }
 
 sub term:<make-temp-path> (
-    :$content where Any|Blob:D|Cool:D, Int :$chmod --> IO::Path:D
+    :$content where Any|Blob:D|Cool:D,
+    Int :$chmod,
+    Str() :$suffix = '',
+    Str() :$prefix = '',
+    --> IO::Path:D
 ) is export
 {
-    $GOODS.send: ('add', (my \p = make-rand-path).absolute);
+    $GOODS.send: ('add', (my \p = make-rand-path($prefix, $suffix)).absolute);
     with   $chmod   { p.spurt: $content // ''; p.chmod: $_ }
     orwith $content { p.spurt: $_ }
     p
 }
-sub term:<make-temp-dir> (Int :$chmod --> IO::Path:D) is export {
-    $GOODS.send: ('add', (my \p = make-rand-path).absolute);
+sub term:<make-temp-dir> (
+    Int :$chmod,
+    Str() :$suffix = '',
+    Str() :$prefix = '',
+    --> IO::Path:D
+) is export {
+    $GOODS.send: ('add', (my \p = make-rand-path($prefix, $suffix)).absolute);
     with $chmod { p.mkdir: $chmod; p.chmod: $chmod }
     else { p.mkdir }
     p

@@ -29,9 +29,10 @@ with make-temp-path {
     say .absolute;    # OUTPUT: «/tmp/1E508EE56B7C069B7ABB7C71F2DE0A3CE40C20A1398B45535AF3694E39199E9A␤»
 }
 
-with make-temp-path :content<meows> :chmod<423> {
+with make-temp-path :content<meows> :chmod<423> :suffix<.txt> {
     .slurp.say; # OUTPUT: «meows␤»
     .mode .say; # OUTPUT: «0647␤»
+    say .absolute; # OUTPUT «/tmp/8E548EE56B7C119B7ABB7C71F2DE0A3CE40C20A1398B45535AF3694E39199EAE.txt␤»
 }
 
 with make-temp-dir {
@@ -74,7 +75,11 @@ Defined as:
 
 ```perl6
     sub term:<make-temp-path> (
-        :$content where Any|Blob:D|Cool:D, Int :$chmod --> IO::Path:D
+        :$content where Any|Blob:D|Cool:D,
+        Int :$chmod,
+        Str() :$prefix = '',
+        Str() :$suffix = ''
+        --> IO::Path:D
     )
 ```
 
@@ -108,7 +113,7 @@ file.
 Defined as:
 
 ```perl6
-    sub term:<make-temp-dir> (Int :$chmod --> IO::Path:D)
+    sub term:<make-temp-dir> (Int :$chmod, Str() :$prefix = '', Str() :$suffix = '' --> IO::Path:D)
 ```
 
 Creates a directory inside
