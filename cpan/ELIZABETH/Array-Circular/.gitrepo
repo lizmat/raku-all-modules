@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Array-Circular.git
+	branch = master
+	commit = 7c12f6306d4e7c9e27d9ad267b7368d23e512aa4
+	parent = 9ccbc4ab08198d8fd9a56979e3a9916d8e7d93c0
+	cmdver = 0.3.1
