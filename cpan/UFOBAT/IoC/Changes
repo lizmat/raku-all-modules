@@ -1,0 +1,11 @@
+Revision history for IoC
+
+{{$NEXT}}
+
+0.0.3  2018-12-19T11:14:01+01:00
+    - Tried to impove error handling
+    - Fixed a runtime issue causing a warning when you're not using a singleton
+
+0.0.2  2018-12-13T09:20:47+01:00
+    - Parameter support for BlockInjection
+    - Initial version on CPAN
