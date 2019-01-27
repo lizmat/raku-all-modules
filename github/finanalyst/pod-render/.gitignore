@@ -1,0 +1,4 @@
+.precomp
+lib/.precomp
+t/tmp/*
+!resources/assets/pod.css

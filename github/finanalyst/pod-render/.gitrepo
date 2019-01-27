@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:finanalyst/pod-render.git
+	branch = master
+	commit = 02c49579afd206f85eb59113b30fc5344ff421f1
+	parent = 90b4f4f7e7d49e61f5dcb3c1784c9bffea4266a9
+	cmdver = 0.3.1
