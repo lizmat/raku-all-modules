@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jnthn/p6-concurrent-trie.git
+	branch = master
+	commit = 6ba9370e5bb00c0b45346d832c70f98cedcc1c25
+	parent = e8a7e30e811e718c35d9761e88b44e6de4109845
+	cmdver = 0.3.1
