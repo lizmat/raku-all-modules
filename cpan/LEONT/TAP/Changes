@@ -1,0 +1,17 @@
+Revision history for TAP
+
+{{$NEXT}}
+        - Move prove6 to App::Prove6
+        - Make coloring optional
+
+0.0.7
+        - Run all and only .t and .t6 files
+        - Automatically set some configuration values from environment
+        - Skip dot files and directories
+
+0.0.6
+        - Reupload to fix packaging issues
+
+0.0.5
+        - Make prove6 look for files recursively
+        - Work around a module loading bug involving dynamic loading

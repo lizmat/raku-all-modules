@@ -1,0 +1,7 @@
+branches:
+sudo: false
+language: perl6
+perl6:
+  - latest
+script:
+  - PERL6LIB=lib perl6 -MTAP -e 'exit(TAP::Harness.new.run(@*ARGS).result.has-errors)' t/*.t
