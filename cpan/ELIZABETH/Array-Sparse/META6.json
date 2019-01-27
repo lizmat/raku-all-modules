@@ -1,0 +1,24 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Array::Agnostic:ver<0.0.4>"
+  ],
+  "description" : "role for sparsely populated Arrays",
+  "license" : "Artistic-2.0",
+  "name" : "Array::Sparse",
+  "perl" : "6.c",
+  "provides" : {
+    "Array::Sparse" : "lib/Array/Sparse.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Array-Sparse.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.4"
+}

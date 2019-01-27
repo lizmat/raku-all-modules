@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Array-Sparse.git
+	branch = master
+	commit = 7005c065fbc8b7e0e4c9ea5453720f59d9dbca48
+	parent = 6fb9a0eb185bb257a40d8f74151118871cb97492
+	cmdver = 0.3.1
