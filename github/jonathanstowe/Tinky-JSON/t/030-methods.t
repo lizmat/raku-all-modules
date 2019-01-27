@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-use v6.c;
+use v6;
 
 use Test;
 
@@ -18,10 +18,12 @@ for $workflow.states -> $state {
 }
 
 for $workflow.transitions -> $transition {
-    ok $workflow.transition($transition.name).elems > 0, "got at least one transtion with the name '{ $transition.name }'";
+    ok $workflow.transition($transition.name).elems > 0, "got at least one transition with the name '{ $transition.name }'";
     ok $workflow.find-transition($transition.from.name, $transition.to.name) === $workflow.find-transition($transition.from, $transition.to), "find-transition { $transition.name }";
     ok $workflow.transitions-for-state($transition.from.name).elems, "transitions for state on the from state must return at least one";
 }
+
+throws-like { $workflow.transitions-for-state('Xtotally-bogus-stateX') }, Tinky::JSON::X::NoState, "got expected exception for bogus state";
 
 done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

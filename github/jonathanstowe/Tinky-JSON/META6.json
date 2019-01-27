@@ -33,7 +33,7 @@
   "provides": {
     "Tinky::JSON": "lib/Tinky/JSON.pm"
   },
-  "version": "0.0.2",
+  "version": "0.0.4",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],

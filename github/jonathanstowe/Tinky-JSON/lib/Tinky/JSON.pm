@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 use Tinky;
 use JSON::Class;
@@ -186,7 +186,7 @@ Given the name of a state in the workflow this will return the Tinky::JSON::Stat
 with that name, this is useful to access the methods of the state where there
 isn't a helper provided.
 
-If the name provided isn't that of a valid state then a C<X::NoState> exception
+If the name provided isn't that of a valid state then a C<Tinky::JSON::X::NoState> exception
 will be thrown.
 
 =head2 method transition
@@ -209,14 +209,14 @@ a unique result.
     multi method enter-supply(Str $state) returns Supply
 
 Given the name of a state in the workflow this will return the state's enter-supply.
-If the name is not that of a valid state then an C<X::NoState> exception will be thrown.
+If the name is not that of a valid state then an C<Tinky::JSON::X::NoState> exception will be thrown.
 
 =head2 method leave-supply
 
     multi method leave-supply(Str $state) returns Supply
 
 Given the name of a state in the workflow this will return that state's leave-supply.
-If the name is not that of a valid state then an C<X::NoState> exception will be thrown.
+If the name is not that of a valid state then an C<Tinky::JSON::X::NoState> exception will be thrown.
 
 =head2 method transitions-for-state
 
@@ -228,7 +228,7 @@ so a common idiom might be something like
 
     $workflow.transitions-for-state('current-state').map({ $_.to });
 
-If the name supplied isn't that of a valid state in the workflow then an C<X::NoState>
+If the name supplied isn't that of a valid state in the workflow then an C<Tinky::JSON::X::NoState>
 will be thrown.
 
 =head2 method find-transition
@@ -239,14 +239,14 @@ Given the names of a "from" state and a "to" state this will return the matching
 if any.  There should be only one transition with the matching definition in the workflow.
 
 If either of the supplied state names are not those of a valid state in the workflow then
-an C<X::NoState> exception will be thrown.
+an C<Tinky::JSON::X::NoState> exception will be thrown.
 
 
 =end pod
 
 class Tinky::JSON {
 
-    class X::NoState is X::Fail {
+    class Tinky::JSON::X::NoState is Tinky::X::Fail {
         has Str $.name is required;
         method message() returns Str {
             "There is no state '{ $!name }' in this workflow";
@@ -285,7 +285,7 @@ class Tinky::JSON {
         has Tinky::JSON::Transition @.transitions;
 
         method state(Str:D $state) returns State {
-            self.states.first({ $_ ~~ $state }) // X::NoState.new(name => $state).throw;
+            self.states.first({ $_ ~~ $state }) // Tinky::JSON::X::NoState.new(name => $state).throw;
         }
 
         method transition(Str:D $trans) {

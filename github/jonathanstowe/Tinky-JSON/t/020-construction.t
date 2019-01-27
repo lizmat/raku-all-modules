@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-use v6.c;
+use v6;
 
 use Test;
 
@@ -11,7 +11,7 @@ my $json = $*PROGRAM.parent.child('data/ticket.json').slurp;
 
 my $workflow;
 
-lives-ok { 
+lives-ok {
     $workflow = Tinky::JSON::Workflow.from-json($json) ;
     }, "can make the object okay";
 
