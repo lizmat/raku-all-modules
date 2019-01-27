@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jkramer/p6-Term-ReadKey.git
+	branch = master
+	commit = 705fd9567e0829d540b881b0046a9cdd218a9948
+	parent = 33c78aca0f8deb7ced2593b101f663a380d716d1
+	cmdver = 0.3.1
