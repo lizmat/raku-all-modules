@@ -42,11 +42,7 @@ before_install: |
   make install
   # Export the library search path.
   export LD_LIBRARY_PATH=$HOME/.local/lib
-  # Install the python bindings.
-  cd bindings/python
-  pip install .
-  # Move out of the notmuch dir again.
-  cd ../../..
+  cd ..
 
 install:
   - rakudobrew build zef
