@@ -198,7 +198,7 @@ method gen-txn-pkg-file-ext(--> Str:D)
 # end method gen-txn-pkg-file-ext }}}
 # sub gen-entities-seen {{{
 
-sub gen-entities-seen(Entry:D @entry --> Array:D)
+sub gen-entities-seen(Entry:D @entry --> Array[VarName:D])
 {
     my VarName:D @entities-seen =
         @entry
