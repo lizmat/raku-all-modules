@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Env.git
+	branch = master
+	commit = bf5bfca6e689cae71ff1c4767410a6202694101a
+	parent = 5046617774e26b0f1db4e36f91f6908363f13ca5
+	cmdver = 0.3.1
