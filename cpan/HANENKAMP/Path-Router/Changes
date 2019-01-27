@@ -1,0 +1,37 @@
+{{$NEXT}}
+
+v0.4.0	2019-01-21
+
+    * Added conditions to routes, which can be used to only allow routes to be
+      available when certain conditions apply.
+    * Added context to .match and .path-for methods for matching against
+      conditions.
+    * Revised the documentation a bit more, fixing more corrections needed form
+      the Perl 5 to Perl 6 port that I'd overlooked previously.
+
+v0.3.0	2019-01-12
+
+    * COMPATIBILITY BREAKING: Prior to this revision, .add-route(...) allowed
+      the options part of the argument to be specified as a list of pairs rather
+      than always as a hash. This was a mistake. The second argument, regardless
+      of whether it is passed using the two argument multi or as a list of
+      pairs, the options must always be passed as a hash.
+    * COMPATIBILITY BREAKING: The X::Path::Router::BadRoute exception has been
+      renamed to X::Path::Router::BadValidation, which inherits from
+      X::Path::Router::BadRoute.
+    * DEPRECATION: .uri-for() is now deprecated. Use .path-for() instead.
+    * Much improved documentation. Still could use more TLC.
+    * Add support for UInt coercion in validation.
+    * Adding support for slurpy parameters using * and +.
+    * A new X::Path::Router::BadSlurpy exception has been added.
+    * Should be slightly more robust and the internals use better idiomatic
+      Perl 6. The original code having been one of the first Perl 6 modules I
+      wrote, with most of the work pre-dating the release of 6.c.
+
+v0.2	2018-11-11
+
+    * Fix location of use v6 for v6.d. :(
+
+v0.1
+
+    * Initial release.
