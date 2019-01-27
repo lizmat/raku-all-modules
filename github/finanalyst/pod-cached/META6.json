@@ -1,0 +1,27 @@
+{
+    "perl" : "6.*",
+    "name" : "Pod::To::Cached",
+    "version" : "0.2.0",
+    "author" : "Richard Hainsworth",
+    "description" : "Precompile a collection of pod files into a cache.",
+    "license" : "Artistic-2.0",
+    "provides" : {
+        "Pod::To::Cached" : "lib/Cached.pm6",
+        "CompUnit::PrecompilationRepository::Document": "lib/PrecompilationDoc.pm6"
+    },
+    "support" : {
+        "source" : "https://github.com/finanalyst/pod-cached"
+    },
+    "depends" : [
+        "File::Directory::Tree",
+        "JSON::Fast"
+        ],
+    "test-depends" : [
+        "Test",
+        "Test::Output",
+        "JSON::Fast",
+        "File::Directory::Tree"
+    ],
+    "source-type" : "git",
+    "source-url" : "git://github.com/finanalyst/pod-cached.git"
+}

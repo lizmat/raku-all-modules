@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:finanalyst/pod-cached.git
+	branch = master
+	commit = 5ec09b9320e4b98edcf068def75c2218c82692c3
+	parent = ae3673812725bd4c4551950fd579335313fd8310
+	cmdver = 0.3.1
