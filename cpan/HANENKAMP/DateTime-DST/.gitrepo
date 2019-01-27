@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/DateTime-DST.git
+	branch = master
+	commit = 5de603fcac60c94359649705b92c1db81ee512e9
+	parent = e6149f82cb7baeea08307aaa1235af1402a84bd9
+	cmdver = 0.3.1
