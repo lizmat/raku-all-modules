@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/p6-webservice-discourse.git
+	branch = master
+	commit = d44268c706db71d92409bc0ce386ce4188b0efe3
+	parent = 329cc088637429210255e7ddb713b869ff2f6546
+	cmdver = 0.3.1
