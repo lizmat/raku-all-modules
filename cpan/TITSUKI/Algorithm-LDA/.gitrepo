@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/titsuki/p6-Algorithm-LDA.git
+	branch = master
+	commit = dad7c953041cad38542c3da5fc1c24c28fa34d51
+	parent = 1ab684c614f71d5c2e255be60567d7a8310a5983
+	cmdver = 0.3.1
