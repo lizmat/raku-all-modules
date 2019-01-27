@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Acme-_-.git
+	branch = master
+	commit = c09eff056cd36f5dead9a9350557a22fd01b8ec7
+	parent = 9ed9657d0477d90cf1404f9c05f9a95ebd9dd8a7
+	cmdver = 0.3.1

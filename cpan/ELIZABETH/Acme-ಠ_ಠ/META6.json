@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "send warnings with ಠ_ಠ",
+  "license" : "Artistic-2.0",
+  "name" : "Acme::ಠ_ಠ",
+  "perl" : "6.c",
+  "provides" : {
+    "Acme::\u0ca0_\u0ca0" : "lib/Acme/ಠ_ಠ.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Acme-_-.git",
+  "tags" : [
+    "CPAN5",
+    "ACME"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
