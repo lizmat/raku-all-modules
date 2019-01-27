@@ -186,7 +186,7 @@ sub gdImageBmp(gdImageStruct $im, OpaquePointer $f, int32)
     is native(LIB) is export { ... }
 
 sub gdImageArc (gdImagePtr $im, int32 $cx, int32 $cy, int32 $w, int32 $h,
-    int32 $s, int32 $e, int32 $color) is export
+    int32 $s, int32 $e, int32 $color)
     # returns void
     is native(LIB) is export { * }
 
@@ -205,7 +205,7 @@ sub gdImageCopyResampled(gdImageStruct $dst, gdImageStruct $src,
     int32 $dstX, int32 $dstY, int32 $srcX, int32 $srcY, int32 $dstW, int32 $dstH, int32 $srcW, int32 $srcH)
     is native(LIB) is export { ... }
 
-sub gdImageSetAntiAliased (gdImagePtr $im, int32 $c) is export
+sub gdImageSetAntiAliased (gdImagePtr $im, int32 $c)
     #returns void
     is native(LIB) is export { * }
 
@@ -237,7 +237,7 @@ sub gdImageGetPixel(gdImagePtr $im, int32 $x, int32 $y)
     returns int32
     is native(LIB) is export { * }
 
-sub gdImageLine (gdImagePtr $im, int32 $x1, int32 $y1, int32 $x2, int32 $y2, int32 $color) is export
+sub gdImageLine (gdImagePtr $im, int32 $x1, int32 $y1, int32 $x2, int32 $y2, int32 $color)
     #returns void
     is native(LIB) is export { * }
 
