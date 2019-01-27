@@ -1,0 +1,22 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "be an array without knowing how",
+  "license" : "Artistic-2.0",
+  "name" : "Array::Agnostic",
+  "perl" : "6.c",
+  "provides" : {
+    "Array::Agnostic" : "lib/Array/Agnostic.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Array-Agnostic.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.6"
+}

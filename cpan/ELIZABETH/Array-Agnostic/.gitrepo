@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Array-Agnostic.git
+	branch = master
+	commit = a7cad4d49d7d425847d98a588155bebafc066d07
+	parent = fcb790c4080032837d4180bcc128a957674bf369
+	cmdver = 0.3.1

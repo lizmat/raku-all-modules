@@ -1,0 +1,32 @@
+Revision history for Array-Agnostic
+
+{{$NEXT}}
+
+0.0.6  2018-09-19T11:08:22+02:00
+    - Fixed default ASSIGN-POS implementation
+
+0.0.5  2018-09-18T13:14:54+02:00
+    - Fill in the documentation framework
+    - Add documentation for "is-container" helper sub
+
+0.0.4  2018-09-17T13:39:56+02:00
+    - Export "is-container" sub
+
+0.0.3  2018-09-17T11:43:43+02:00
+    - Reimplement move-indexes-up/down
+      - properly handle holes
+      - properly handle containers at previously bound locations
+      - remove positions that are no longer supposed to be there
+
+0.0.2  2018-09-16T14:23:50+02:00
+    - Now also does Iterable
+    - Fixed .pairs / .list / .List / .Array / .Slip
+    - Removed .head / .tail
+    - Abstracted .push / .append logic into !append
+    - Abstracted .unshift / .prepend logic into !prepend
+    - Fix containerish thinko in move-indexes-up/down
+    - Make sure move-indexs-down removes elements at end
+    - Make move-indexes-up/down something a consumer can do for performance
+
+0.0.1  2018-09-16T00:08:25+02:00
+    - Initial version
