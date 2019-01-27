@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/p6steve/perl6-Math-Polygons.git
+	branch = master
+	commit = bb23cba23bc10afbc8e092945fdc2f640a279100
+	parent = 85e534ed1c914efe92a03ffac80a2848b46602ec
+	cmdver = 0.3.1
