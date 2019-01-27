@@ -1,4 +1,4 @@
-role t::GfxParent {
+role FakeGfxParent {
     has $!key = 'R0';
     has Str %!keys{Any};
     method find-resource(&match, :$type) {

@@ -105,7 +105,7 @@ role PDF::Content::Graphics {
         %dict<Type> = :name<XObject>;
         %dict<Subtype> = :name<Form>;
         %dict<Resources> //= {};
-        %dict<BBox> //= [0,0,612,792];
+        %dict<BBox> //= [0, 0, 612, 792];
         %dict<Group> //= %( :S( :name<Transparency> ) )
             if $group;
         PDF::COS.coerce( :stream{ :%dict });

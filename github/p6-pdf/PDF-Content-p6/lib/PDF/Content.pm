@@ -1,7 +1,7 @@
 use v6;
 use PDF::Content::Ops :OpCode, :GraphicsContext, :ExtGState;
 
-class PDF::Content:ver<0.2.4>
+class PDF::Content:ver<0.2.8>
     is PDF::Content::Ops {
 
     use PDF::COS;
@@ -16,14 +16,14 @@ class PDF::Content:ver<0.2.4>
 
     method graphics( &do-stuff! ) {
         $.op(Save);
-        my \ret = &do-stuff(self);
+        my \ret = do-stuff(self);
         $.op(Restore);
         ret;
     }
 
     method text( &do-stuff! ) {
         $.op(BeginText);
-        my \ret = &do-stuff(self);
+        my \ret = do-stuff(self);
         $.op(EndText);
         ret
     }
@@ -36,14 +36,14 @@ class PDF::Content:ver<0.2.4>
                                  &do-stuff!,
                                  Hash :$props! where .so) {
         $.BeginMarkedContentDict($tag, $props);
-        my \ret = &do-stuff(self);
+        my \ret = do-stuff(self);
         $.EndMarkedContent;
         ret;
     }
 
     multi method marked-content( Str $tag, &do-stuff! ) {
         $.BeginMarkedContent($tag);
-        my \ret = &do-stuff(self);
+        my \ret = do-stuff(self);
         $.EndMarkedContent;
         ret;
     }
@@ -54,8 +54,8 @@ class PDF::Content:ver<0.2.4>
         self.draw($canvas);
     }
 
-    method load-image(Str $spec ) {
-        PDF::Content::XObject.open( $spec );
+    method load-image($spec) {
+        PDF::Content::XObject.open($spec);
     }
 
     #| extract any inline images from the content stream. returns an array of XObject Images
@@ -124,17 +124,15 @@ class PDF::Content:ver<0.2.4>
         $dx *= $width;
         $dy *= $height;
 
-        with $obj<Subtype> {
-            when 'Form' {
-                $obj.finish;
-                $width /= $obj-width;
-                $height /= $obj-height;
-            }
+        if $obj<Subtype> ~~ 'Form' {
+            $obj.finish;
+            $width /= $obj-width;
+            $height /= $obj-height;
         }
 
         self.graphics: {
             $.op(ConcatMatrix, $width, 0, 0, $height, $x + $dx, $y + $dy);
-            if $inline && $obj.Subtype eq 'Image' {
+            if $inline && $obj<Subtype> ~~ 'Image' {
                 # serialize the image to the content stream, aka: :BI[:$dict], :ID[:$encoded], :EI[]
                 $.ops( $obj.inline-content );
             }
@@ -142,7 +140,12 @@ class PDF::Content:ver<0.2.4>
                 my Str:D $key = $.resource-key($obj),
                 $.op(XObject, $key);
             }
-        };
+        }
+        # return the display rectangle for the image
+       ($x + $dx,
+        $y + $dy,
+        $x + $dx + $width,
+        $y + $dy + $height);
     }
 
     my subset Pattern of Hash where .<PatternType> ~~ 1|2;
@@ -155,16 +158,18 @@ class PDF::Content:ver<0.2.4>
 
     multi method paint(Bool :$fill! where .so, Bool :$even-odd,
                        Bool :$close, Bool :$stroke) {
-        my constant @FillOps = [
-            [[<Fill>,         <FillStroke>],
-             [<EOFill>,       <EOFillStroke>],
-            ],
-            [[<Close Fill>,   <CloseFillStroke>],
-             [<Close EOFill>, <CloseEOFillStroke>],
-            ]];
+        my @paint-ops = $even-odd
+            ?? ($close
+                ?? ($stroke ?? <CloseEOFillStroke> !! <Close EOFill>)
+                !! ($stroke ?? <EOFillStroke>      !! <EOFill>)
+               )
+            !! ($close
+                ?? ($stroke ?? <CloseFillStroke>   !! <Close Fill>)
+                !! ($stroke ?? <FillStroke>        !! <Fill>)
+               );
 
         self."$_"()
-            for @FillOps[?$close][?$even-odd][?$stroke].list;
+            for @paint-ops;
     }
 
     multi method paint(Bool :$stroke! where .so, Bool :$close) {
@@ -264,18 +269,21 @@ class PDF::Content:ver<0.2.4>
 
         self!set-position($text-block, $_, :$left, :$top)
             with $position;
-
+        my ($x, $y) = $.text-position;
         my Numeric \font-size = $text-block.font-size;
         my \font = $.use-font($text-block.font);
 
         self.set-font(font, font-size);
-        $text-block.render(self, :$nl, :$top, :$left, :$preserve);
+        my ($x-shift, $y-shift) = $text-block.render(self, :$nl, :$top, :$left, :$preserve);
+        $x += $x-shift;
+        $y += $y-shift;
 
         unless in-text {
             self.EndText;
             self.EndMarkedContent;
         }
-        $text-block;
+        # return the display rectangle for the text block
+        ($x, $y, $x + $text-block.width, $y + $text-block.height);
     }
 
     #| output text; move the text position down one line
@@ -310,10 +318,22 @@ class PDF::Content:ver<0.2.4>
         nextwith( $text, :$font, |c);
     }
 
-    method draw($canvas) {
-        my $renderer = (require HTML::Canvas::To::PDF).new: :gfx(self);
-
+    method draw($canvas, :$renderer = (require HTML::Canvas::To::PDF).new: :gfx(self)) {
         $canvas.render($renderer);
     }
 
+    # map transformed user coordinates to untransformed (default) coordinates
+    use PDF::Content::Matrix :dot;
+    method base-coords(*@coords where .elems %% 2, :$user = True, :$text = False) {
+        (
+            flat @coords.map: -> $x is copy, $y is copy {
+                ($x, $y) = dot($.TextMatrix, $x, $y) if $text;
+                ($x, $y) = dot($.CTM, $x, $y) if $user;
+                $x, $y;
+            }
+        )
+    }
+    method user-default-coords(|c) is DEPRECATED('base-coords') {
+        $.base-coords(|c);
+    }
 }

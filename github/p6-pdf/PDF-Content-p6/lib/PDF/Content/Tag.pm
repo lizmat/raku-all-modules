@@ -7,7 +7,7 @@ class PDF::Content::Tag {
     has UInt $.start is rw;
     has UInt $.end is rw;
     has PDF::Content::Tag $.parent is rw;
-    has PDF::Content::Tag @.children handles<AT-POS>;
+    has @.children handles<AT-POS>;
     submethod TWEAK(:$mcid) {
         $!props<MCID> = $_ with $mcid;
     }
@@ -18,16 +18,23 @@ class PDF::Content::Tag {
     method mcid is rw {
         Proxy.new(
             FETCH => sub ($) { .<MCID> with $!props },
-            STORE => sub ($,UInt $_) {
+            STORE => sub ($, UInt $_) {
                 $!props<MCID> = $_
             },
         );
     }
     method gist {
+        my $atts = do with $.mcid {
+            ' mcid="' ~ $_ ~ '"';
+        }
+        else {
+            '';
+        };
+
         @!children
-        ?? [~] flat("<{$.name}>",
+        ?? [~] flat("<{$.name}$atts>",
                     @!children.map(*.gist),
                     "</{$.name}>")
-        !! "<{$.name}/>";
+        !! "<{$.name}$atts/>";
     }
 }

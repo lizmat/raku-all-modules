@@ -1,17 +1,17 @@
 use v6;
 use Test;
-plan 105;
+plan 109;
 
-use lib '.';
+use lib 't/lib';
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content;
 use PDF::Content::Ops :OpCode;
 use PDF::Content::Matrix :scale;
-use t::GfxParent;
+use FakeGfxParent;
 
 my $dummy-font = %() does role { method cb-finish {} }
 
-my $parent = { :Font{ :F1($dummy-font) }, } does t::GfxParent;
+my $parent = { :Font{ :F1($dummy-font) }, } does FakeGfxParent;
 my PDF::Content $g .= new: :$parent;
 
 $g.op(Save);
@@ -52,7 +52,7 @@ lives-ok { $g.BeginMarkedContentDict('P', ${ :MCID(42) }) }, '$g.BeginMarkedCont
 is-deeply $g.MoveShowText("move-show-text"), ("'" => [ :literal<move-show-text> ] ), 'MoveShowText';
 lives-ok { $g.EndMarkedContent }, '$g.EndMarkedContent';
 
-is $g.tags[0].gist, '<P/>', 'tags';
+is $g.tags[0].gist, '<P mcid="42"/>', 'tags';
 
 $g.StrokeColor = :DeviceN[.7, .8];
 is-deeply $g.StrokeColor, (:DeviceN[.7, .8]), '$g.StrokeColor - deviceN';
@@ -219,7 +219,7 @@ is-json-equiv [ $g.ops[*-4..*] ], [
     :ET[],
 ], 'Text block parse';
 
-$g .= new :comment-ops;
+$g .= new( :comment-ops, :$parent);
 
 $g.ops("175 720 m 175 700 l 300 800 400 720 v h S");
 $g.add-comment("That's all!");
@@ -251,11 +251,23 @@ $g.CTM = [0, -2, 2, 0, 40, -20];
 is-deeply [ $g.CTM.list ], [0.0, -2.0, 2.0, 0.0, 40.0, -20.0], 'graphics matrix assignment';
 $g.Restore;
 
+my ($x, $y) = $g.base-coords(80, 100);
+is-deeply ($x, $y), (80, 100), 'base coordinates';
+
 $g.Save;
 $g.ConcatMatrix(1,0,0,1,0,792);
 $g.ConcatMatrix(2,0,0,2,0,0);
 $g.ConcatMatrix(1,0,0,1,75,-25,);
 is-deeply [ $g.CTM.list ], [2, 0, 0, 2, 150, 742], "chained matrix transforms";
+$g.text: {
+    .text-position = 5, 10;
+    ($x, $y) = $g.base-coords(80, -100);
+    is-deeply ($x, $y), (310, 542), 'graphics to base user coordinates';
+    ($x, $y) = $g.base-coords(80, -100, :text);
+    is-deeply ($x, $y), (320, 562), 'graphics+text to base user coordinates, :text';
+    ($x, $y) = $g.base-coords(80, -100, :text, :!user);
+    is-deeply ($x, $y), (85, -90), 'text to graphics coordinates';
+}
 $g.Restore;
 
 $g.Save;

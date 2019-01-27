@@ -22,7 +22,7 @@ role PDF::Content::PageNode {
         self."$bbox"();
     }
 
-    method bbox(BoxName $box-name) is rw {
+    method bbox(BoxName $box-name = 'media') is rw {
         my &fetch-sub := do given $box-name {
             when 'media' { sub ($) { self.MediaBox // [0, 0, 612, 792] } }
             when 'crop'  { sub ($) { self.CropBox // self.bbox('media') } }
@@ -35,6 +35,27 @@ role PDF::Content::PageNode {
                 self!get-prop($box-name) = $rect;
             },
            );
+    }
+
+    method bleed is rw {
+        my enum <lx ly ux uy>;
+        Proxy.new(
+            FETCH => -> $_ {
+                my @t[4] = $.bbox('trim');
+                my @b[4] = $.bbox('bleed');
+                @t[lx]-@b[lx], @t[ly]-@b[ly], @b[ux]-@t[ux], @b[uy]-@t[uy]; 
+            },
+            STORE => -> $, Array() $b is copy {
+                my @t[4] = $.bbox('trim');
+
+                $b[lx] //= 8.5;
+                $b[ly] //= $b[lx];
+                $b[ux] //= $b[lx];
+                $b[uy] //= $b[ly];
+
+                self.BleedBox = @t[lx]-$b[lx], @t[ly]-$b[ly], @t[ux]+$b[ux], @t[uy]+$b[uy];
+            },
+        );
     }
 
     method media-box(|c) is rw { self.bbox('media', |c) }

@@ -1,13 +1,13 @@
 use v6;
 use Test;
 plan 1;
-use lib '.';
+use lib 't/lib';
 use PDF::Content::Ops :OpCode;
-use t::PDFTiny;
+use PDFTiny;
 # ensure consistant document ID generation
 srand(123456);
 
-my t::PDFTiny $pdf .= new;
+my PDFTiny $pdf .= new;
 my $page = $pdf.add-page;
 my $gfx = $page.gfx;
 my $width = 50;

@@ -1,6 +1,6 @@
 use v6;
 use PDF;
-class t::PDFTiny is PDF {
+class PDFTiny is PDF {
     use PDF::COS;
     use PDF::COS::Tie;
     use PDF::COS::Loader;

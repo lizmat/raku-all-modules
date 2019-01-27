@@ -1,3 +1,19 @@
+Release 0.2.7
+- Added $page.bleed() method. Convenience method for getting
+  or setting bleed as a gutter around the crop box.
+- Fix tests for Rakudo 2018.12+ bleed
+
+Release 0.2.6
+- $gfx.do() and $text-block.print() now return rectangles
+  representing the display coordinates
+- Added method user-default-coords() to convert coordinates or
+  rectangles from transformed user-space to default user-space.
+
+Release 0.2.5
+- Streamline Save(q) and Restore(Q) methods in PDF::Content::Ops
+- Fixed Extended Graphics State Smoothness method. Renamed BlackGenerationFunction
+  -> BlackGeneration and UnderColorRemovalFunction -> UnderColorRemoval
+
 Release 0.2.4
 - Added PDF::Content::Tag and $.marked-content method for tag extraction
 - Added PDF::Content::Font::Enc::Glyphic role

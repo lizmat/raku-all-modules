@@ -1,12 +1,12 @@
 use v6;
 use Test;
 plan 6;
-use lib '.';
+use lib 't/lib';
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content::Text::Block;
 use PDF::Content::Font::CoreFont;
 use PDF::Content::Color :color, :ColorName;
-use t::PDFTiny;
+use PDFTiny;
 
 # ensure consistant document ID generation
 srand(123456);
@@ -18,7 +18,7 @@ is-deeply @chunks, ["z80", " ", "a-", "b.", " ", "-", "3", "   ", "{nbsp}A{nbsp}
 my PDF::Content::Font::CoreFont $font .= load-font( :family<helvetica>, :weight<bold> );
 my $font-size = 16;
 my $text = "Hello.  Ting, ting-ting. Attention! … ATTENTION! ";
-my t::PDFTiny $pdf .= new;
+my PDFTiny $pdf .= new;
 my PDF::Content::Text::Block $text-block .= new( :$text, :$font, :$font-size );
 is-approx $text-block.content-width, 360.88, '$.content-width';
 is-approx $text-block.content-height, 17.6, '$.content-height';

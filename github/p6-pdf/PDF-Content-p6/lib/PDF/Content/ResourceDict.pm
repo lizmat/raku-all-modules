@@ -45,7 +45,7 @@ role PDF::Content::ResourceDict {
 
             for $resources.keys {
                 my $resource = $resources{$_};
-                if &match($resource) {
+                if match($resource) {
 		    $entry = $resource;
 		    %!resource-key{$entry.WHICH} = $_;
                     last;

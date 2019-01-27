@@ -1,12 +1,12 @@
 use v6;
 use Test;
-use lib '.';
-use t::PDFTiny;
+use lib 't/lib';
+use PDFTiny;
 
 # ensure consistant document ID generation
 srand(123456);
 
-my t::PDFTiny $pdf .= new;
+my PDFTiny $pdf .= new;
 my $page = $pdf.add-page;
 
 lives-ok {

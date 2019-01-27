@@ -1,12 +1,12 @@
 use v6;
 use Test;
 
-use lib '.';
+use lib 't/lib';
 use PDF::Grammar::Test :is-json-equiv;
 use PDF::Content;
 use PDF::Content::Ops :OpCode;
 use PDF::Content::Matrix :scale;
-use t::GfxParent;
+use FakeGfxParent;
 
 sub warns-like(&code, $ex-type, $desc = 'warning') {
     my $ex;
@@ -32,7 +32,7 @@ my $dummy-font = %() does role { method cb-finish {} }
 my $parent = {
     :Font{ :F1($dummy-font) },
     :ExtGState{ :G1{ :ca(0.5) } },
-} does t::GfxParent;
+} does FakeGfxParent;
 my PDF::Content $g .= new: :$parent;
 
 throws-like {$g.Blah}, X::Method::NotFound, :message("No such method 'Blah' for invocant of type 'PDF::Content'");
