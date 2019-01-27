@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git@github.com:madcapjake/Acme-Mangle.git
 	branch = master
-	commit = 9880219c13e00f8585fbb091aef0412d4a063804
-	parent = ec558da6ed3fe92615aab7fdfa802dcda8130aa4
+	commit = 9e041a269510fc0c50cdd60537377b8b692ccceb
+	parent = acaa159096be035ac8518bd216a3946a47f1f44d
 	cmdver = 0.3.1
