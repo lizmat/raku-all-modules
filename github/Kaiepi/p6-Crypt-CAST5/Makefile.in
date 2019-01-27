@@ -1,0 +1,15 @@
+.PHONY: clean test
+
+all: %DESTDIR%/resources/libraries/%cast5%
+
+clean:
+	-rm %DESTDIR%/resources/libraries/%cast5% %DESTDIR%/*.o %DESTDIR%/Makefile
+
+%DESTDIR%/resources/libraries/%cast5%: cast5%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT% %DESTDIR%/resources/libraries/%cast5% cast5%O%
+
+cast5%O%: src/cast5.c src/cast5.h
+	%CC% -c %CCSHARED% %CCFLAGS% -O0 %CCOUT% cast5%O% src/cast5.c
+
+test: all
+	PERL6LIB=lib prove -e perl6 -vr t
