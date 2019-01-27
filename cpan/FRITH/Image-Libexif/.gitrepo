@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/frithnanth/perl6-Image-Libexif.git
+	branch = master
+	commit = 318ef7299af22f497da29668244cbdd22f4a0555
+	parent = a66931a6ec94985738c83b62e68b376d03d73ab4
+	cmdver = 0.3.1
