@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/coke/p6-unicode-mangler.git
+	branch = master
+	commit = f9116d40a0f6688c2e45dd7505d158ddc6851692
+	parent = daf5afc2f52c90f434453c3f5520f906c4a4a225
+	cmdver = 0.3.1
