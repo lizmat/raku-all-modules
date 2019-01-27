@@ -2,12 +2,12 @@
     "perl" : "6.*",
     "name" : "Test::Mock",
     "authors" : [ "Jonathan Worthington <jnthn@jnthn.net>" ],
-    "version" : "1.4",
+    "version" : "1.5",
     "description" : "Creation of stub objects using the Arrange, Act, Assert pattern.",
     "license"     : "Artistic-2.0",
     "depends" : [ "OO::Monitors" ],
     "provides" : {
-        "Test::Mock" : "lib/Test/Mock.pm"
+        "Test::Mock" : "lib/Test/Mock.pm6"
     },
     "source-url" : "git://github.com/jnthn/test-mock.git"
 }
