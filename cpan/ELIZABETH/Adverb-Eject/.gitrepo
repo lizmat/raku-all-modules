@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Adverb-Eject.git
+	branch = master
+	commit = 3b755624ffeacd1cd449dde99f918bdd15134fcd
+	parent = 143830b9815f0e2ac75115dd7bcb83191d161707
+	cmdver = 0.3.1
