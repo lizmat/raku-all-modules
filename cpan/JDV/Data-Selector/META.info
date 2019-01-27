@@ -1,0 +1,13 @@
+{
+    "name" : "Data::Selector",
+    "version" : "1.02",
+    "description" : "data selection dsl parser and applicator",
+    "author" : "Justin DeVuyst",
+    "depends" : [ ],
+    "provides" : {
+        "Data::Selector::SelectorString::Actions" : "lib/Data/Selector.pm",
+        "Data::Selector::SelectorString::Grammar" : "lib/Data/Selector.pm",
+        "Data::Selector"                          : "lib/Data/Selector.pm"
+    },
+    "source-url" : "git://github.com/jdv/p6-data-selector.git"
+}

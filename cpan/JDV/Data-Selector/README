@@ -1,0 +1,10 @@
+NAME
+    Data::Selector - data selection dsl parser and applicator
+
+INSTALLATION
+    To install this module type the following:
+
+    panda install Data::Selector
+
+SEE ALSO
+    See the individual module documentation for more information.
