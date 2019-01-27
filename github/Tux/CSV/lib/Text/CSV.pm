@@ -32,7 +32,7 @@ my %errors =
     # Syntax errors
     1500 => "PRM - Invalid/unsupported argument(s)",
     # For perl5 compatability. Due to strict typing, these do not apply
-#   1501 => "PRM - The key attribute is passed as an unsupported type",
+    1501 => "PRM - The key attribute is passed as an unsupported type",
 
     # Parse errors
     2010 => "ECR - QUO char inside quotes followed by CR not part of EOL", # 5
@@ -77,6 +77,9 @@ my %errors =
     3010 => "EHR - print (Hash) called with invalid arguments",
 
     3100 => "EHK - Unsupported callback",
+
+    # Content errors
+    4001 => "PRM - The key does not exist as field in the data",
 
     # csv CI
     5000 => "CSV - Unsupported type for in",
@@ -399,6 +402,14 @@ class CSV::Row does Iterable does Positional does Associative {
     method splice (*@args) { @!fields.splice (@args); }
     method keys ()         { $!csv.column_names; }
 
+    method ASSIGN-POS (int $i, $v) {
+        @!fields.AT-POS ($i).text = $v.Str;
+        }
+    method ASSIGN-KEY (Str:D $k, $v) {
+        $!csv.column_names and
+            %($!csv.column_names Z=> @!fields){$k}.text = $v.Str;
+        }
+
     multi method push (CSV::Field $f) { @!fields.push: $f; }
     multi method push (Cool       $f) { @!fields.push: CSV::Field.new ($f); }
     multi method push (CSV::Row   $r) { @!fields.append: $r.fields; }
@@ -686,7 +697,7 @@ class Text::CSV {
         my @row = self.strings          or  self!fail (1010);
         $munge-column-names ~~ Callable and @row = @row.map ($munge-column-names);
         @row.grep ("")                  and self!fail (1012);
-        @row.Bag.elems == @row.elems    or  self!fail (1013);
+        if (my @dup = @row.repeated) {      self!fail (1013, @dup.Bag.map ({ "{$_.key}({$_.value+1})" }).join: ", "); }
         $set-column-names               and self.column-names: @row;
         self;
         }
@@ -1151,7 +1162,7 @@ class Text::CSV {
 
                             # ,1,"foo, 3"056",,bar,\r\n
                             #            ^
-                            if ($next ~~ /^ "0"/) {
+                            if ($next.starts-with ("0")) {
                                 @ch[$i + 1] ~~ s{^ "0"} = "";
                                 $ppos = $ppos + 1;
                                 $opt_v > 8 and progress ($i, "Add NIL");
@@ -1552,7 +1563,7 @@ class Text::CSV {
     method CSV ( Any    :$in!,
                  Any    :$out!     is copy,
                  Any    :$headers  is copy,
-                 Str    :$key,
+                 Any    :$key,
                  Str    :$encoding is copy,
                  Str    :$fragment is copy,
                  Bool   :$strict = False,
@@ -1654,6 +1665,11 @@ class Text::CSV {
 
         # Rest is for Text::CSV
         self!set-attributes (%args);
+
+        if ($key.defined) {
+            $out     //= Hash if $out === Any;
+            $headers //= "auto";
+            }
 
         my @in; # Either AoA or AoH
 
@@ -1866,9 +1882,24 @@ class Text::CSV {
             if ($out ~~ Hash or @h.elems) {
                 # AOH
                 @h or return [];
+                if (my @dup = @h.repeated) {
+                    self!fail (1013, @dup.Bag.map ({ "{$_.key}({$_.value+1})" }).join: ", ");
+                    }
                 @in.elems && @in[0] ~~ Hash or @in = @in.map (-> @r { $%( @h Z=> @r ) });
-                $key && @in[0]{$key}.defined and
-                    return $%( @in.map ( -> \h --> Pair { h{$key} => h }) );
+                if ($key) {
+                    if ($key ~~ Str) {
+                        @in[0]{$key }:exists or self!fail (4001);
+                        return $%( @in.map ( -> \h --> Pair { h{$key} => h }) );
+                        }
+                    if ($key ~~ Array && $key.elems > 1) {
+                        my @k   = @$key;
+                        my $sep = @k.shift;
+                        @k.map ({@in[0]{$_}:exists}).all or self!fail (4001);
+                        return $%( @in.map ( -> \h --> Pair {
+                            (@k.map ({h{$_}}).join: $sep) => h }));
+                        }
+                    self!fail (1501);
+                    }
                 return @in;
                 }
             # AOA
@@ -1925,7 +1956,7 @@ class Text::CSV {
     method csv ( Any       :$in   is copy,
                  Any       :$out  is copy,
                  Any       :$headers,
-                 Str       :$key,
+                 Any       :$key,
                  Str       :$encoding,
                  Str       :$fragment,
                  Bool      :$meta is copy,

@@ -39,7 +39,8 @@ my %lang = (
      4 => [ ".php", "php",     "-nq"   ],
      5 => [ ".pl",  "perl",            ],
      6 => [ ".pl",  "perl6",   "-Ilib" ],
-     7 => [ ".lua", "lua"              ],
+     7 => [ ".lua", "lua5.1"           ],
+    21 => [ ".lua", "lua5.3"           ],
      8 => [ ".go",  "go",      "run"   ],
      9 => [ "",     "C"                ],
     14 => [ "",     "java6",   "-cp csv-java6.jar:opencsv-2.3.jar csvJava" ],
@@ -53,6 +54,7 @@ my %lang = (
     18 => [ "",     "java10",  "-cp csv-java10.jar:opencsv-2.3.jar csvJava" ],
     19 => [ "",     "java11",  "-cp csv-java11.jar:opencsv-2.3.jar csvJava" ],
     20 => [ "",     "java12",  "-cp csv-java12.jar:opencsv-2.3.jar csvJava" ],
+    22 => [ "",     "java13",  "-cp csv-java13.jar:opencsv-2.3.jar csvJava" ],
     );
 my @test = (
     # lang irc script
@@ -80,9 +82,11 @@ my @test = (
     [  9, 0, "csv-c-20"        ],
     [ 15, 0, "csv-cc"          ],
     [  7, 0, "csv-lua"         ],
+    [ 21, 0, "csv-lua"         ],
     [  2, 0, "csv-python2"     ],
     [  3, 0, "csv-python3"     ],
     [  4, 0, "csv-php"         ],
+    [ 22, 0, "csv-java13"      ],
     [ 20, 0, "csv-java12"      ],
     [ 19, 0, "csv-java11"      ],
     [ 18, 0, "csv-java10"      ],
@@ -264,6 +268,7 @@ EOH
 	$t->{exe} =~ s/perl$/perl5/;
 	my $class = $t->{script} =~ m/-pi\b/ ? "perlito" : $t->{exe} =~ m/^perl/ ? $t->{exe} : "";
 	my $scrpt = join " " => grep m/\S/ => $t->{s_script}, $t->{args};
+	$scrpt =~ s/--race\K(?:\s+--race)+//;
 	#DDumper { t => $t, class => $class, script => $scrpt };
 	my $b = $scrpt =~ m/^(csv-xsbc|test-t)$/ ? q{ style="font-weight:bold"} : "";
 	say $fh
