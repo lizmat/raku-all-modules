@@ -1,0 +1,19 @@
+{
+  "authors" : [
+    "Ben Davies"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Support for BubbleBabble string encoding and decoding",
+  "license" : "Artistic-2.0",
+  "name" : "Digest::BubbleBabble",
+  "perl" : "6.c",
+  "provides" : {
+    "Digest::BubbleBabble" : "lib/Digest/BubbleBabble.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/Kaiepi/p6-Digest-BubbleBabble.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}

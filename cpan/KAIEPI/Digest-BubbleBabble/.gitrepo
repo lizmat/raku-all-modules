@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Kaiepi/p6-Digest-BubbleBabble.git
+	branch = master
+	commit = 2ac0bc7f390f6c6a52e444b81107db57c9b07dc0
+	parent = bc7ce70c683a4ac3f1fddad31d553b4724cc35f8
+	cmdver = 0.3.1
