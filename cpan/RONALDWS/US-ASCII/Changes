@@ -1,0 +1,10 @@
+Revision history for US-ASCII
+
+0.6.6 2018-06-14
+    - Fix tarball name for compatibility with CPAN
+0.6.5 2018-06-14
+    - Fix appveyor and status reporting in README.md
+0.6.4 2018-06-12
+    - include underscore '_' in alpha and alnum
+    - add US-ASCIIx module which does not have underscore in alpha and alnum
+    - add ident token and related tests

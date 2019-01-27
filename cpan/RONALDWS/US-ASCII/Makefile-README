@@ -1,0 +1,19 @@
+all: README.md README-ABNF-Core.md
+
+# upgrade to use variable
+POD6_TO_MD=perl6 -Ilib --doc=Markdown
+
+define readme_status
+[![Build Status](https://travis-ci.org/ronaldxs/Perl6-US-ASCII.png)](https://travis-ci.org/ronaldxs/Perl6-US-ASCII)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/ronaldxs/Perl6-US-ASCII?svg=true)](https://ci.appveyor.com/project/ronaldxs/Perl6-US-ASCII/branch/master)
+
+
+endef
+export readme_status
+
+README.md: lib/US-ASCII.pm6
+	$(POD6_TO_MD) lib/US-ASCII.pm6 >>$@
+	perl -i -pe 'print $$ENV{readme_status} if /^SYNOPSIS$$/' $@
+
+README-ABNF-Core.md: lib/US-ASCII/ABNF/Core.pm6
+	$(POD6_TO_MD) lib/US-ASCII/ABNF/Core.pm6 >$@
