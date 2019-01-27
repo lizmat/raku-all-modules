@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MARTIMM/BSON.git
+	branch = master
+	commit = f5ba613c858e4e72ca9ae50f763009c8f56123be
+	parent = ddc5bfb9929fdaa999e655e09140667f4766dfa6
+	cmdver = 0.3.1
