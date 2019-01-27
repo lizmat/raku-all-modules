@@ -11,8 +11,8 @@ my $timestamp = 0;
 if library-exists('portmidi', v0) {
     # Want to test a "large number" to weed out bit manipulation errors
     for NoteOn, NoteOff, ControlChange -> $event-type {
-        for ^16 -> $channel {
-            for ^12 -> $data-one { # note or control
+        for ^3 -> $channel {
+            for ^2 -> $data-one { # note or control
                 for ^12 -> $data-two { # velocity or value
                     my $ev;
                     lives-ok { $ev = Audio::PortMIDI::Event.new(:$channel, :$event-type, :$data-one, :$data-two, :$timestamp) }, "create an event";
@@ -20,8 +20,8 @@ if library-exists('portmidi', v0) {
                     lives-ok { $int = $ev.Int }, "get the int value";
                     ok $int > 0, "and it is at least greater than 0";
                     my $ev2;
-                    #lives-ok { 
-                    $ev2 = Audio::PortMIDI::Event.new(event => $int); # }, "create one from an int";
+                    lives-ok { 
+                    $ev2 = Audio::PortMIDI::Event.new(event => $int);  }, "create one from an int";
                     is $ev2.channel, $ev.channel, "channel is right";
                     is $ev2.event-type, $ev.event-type, "event-type is right";
                     is $ev2.data-one, $ev.data-one, "data-one is right";

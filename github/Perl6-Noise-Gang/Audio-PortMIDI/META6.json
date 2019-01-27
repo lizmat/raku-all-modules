@@ -5,14 +5,13 @@
     "irc": "irc://irc.freenode.net/perl6-noise-gang",
     "source": "git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git"
   },
-  "perl": "6.c",
+  "perl": "6.*",
   "resources": [
-    
   ],
   "build-depends": [
-    
   ],
   "auth": "github:Perl6-Noise-Gang",
+  "api": "1.0",
   "depends": [
     "Util::Bitfield"
   ],
@@ -30,7 +29,7 @@
   "provides": {
     "Audio::PortMIDI": "lib/Audio/PortMIDI.pm"
   },
-  "version": "0.0.9",
+  "version": "0.0.10",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>",
     "Pepe Schwarz <peschwa@gmail.com>"

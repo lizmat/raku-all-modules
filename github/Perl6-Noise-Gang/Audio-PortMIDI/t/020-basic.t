@@ -29,7 +29,6 @@ if library-exists('portmidi', v0) {
     }
     else {
         skip "no devices";
-
     }
 }
 else {
