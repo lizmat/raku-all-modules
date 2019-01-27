@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "if",
-    "version"     : "0.1.0",
+    "version"     : "0.1.1",
     "author"      : "github:FROGGS",
     "description" : "conditionally use packages",
     "depends"     : [ ],
