@@ -30,7 +30,7 @@ say base64-decode("TG9yZW0gaXBzdW0=").decode;
 
 ### URI Encoding
 
-By default, characters 63 and 64 are encoded to '+' and '/'. The `:uri` option
+By default, codes 63 and 64 are encoded to '+' and '/'. The `:uri` option
 maps these to '-' and '_'.
 ```
 use Base64::Native;

@@ -34,7 +34,9 @@ is base64-decode("YQ==").decode, "a", "decode to 1 bytes";
 is base64-decode("").decode, "", "decode to 0 bytes";
 is base64-decode("YWJjZA==").decode, "abcd", "decode to 4 bytes";
 is base64-decode("YWJjZA").decode, "abcd", "decode no padding";
-is base64-decode(" Y\nWJj ZA == ").decode, "abcd", "decode whitespace";
+constant nbsp = 0xA0.chr;
+is base64-decode(" ").decode, "", "decode whitespace";
+is base64-decode(" Y\nWJ{nbsp}j ZA == ").decode, "abcd", "decode whitespace";
 is-deeply base64-decode("-_== "), base64-decode("+/== "), "URI encoding";
 dies-ok {base64-decode("YW(=").decode}, "decode invalid input";
 
