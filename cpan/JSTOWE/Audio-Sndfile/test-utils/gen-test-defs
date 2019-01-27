@@ -1,0 +1,46 @@
+#!/usr/bin/env perl6
+
+use v6;
+use File::Find;
+
+my $basedir = "t/data";
+my $files = find(dir => 't/data', name => rx/1sec'-'chirp'-'/);
+
+my regex sample-rate { "Sample Rate : " $<value> = [ \d+ ] }
+my regex frames { "Frames      : " $<value> = [ \d+ ] }
+my regex channels { "Channels    : " $<value> = [ \d+ ] }
+my regex format { "Format      : " $<value> = [ 0x<[ 0 .. 9 a .. f A .. F]>+ ] }
+my regex sections { "Sections    : " $<value> = [ \d+ ] }
+my regex seekable { "Seekable    : " $<value> = [ TRUE | FALSE ] }
+my regex duration { "Duration    : " $<value> = [ <[ 0 .. 9 . : ]>+ ] }
+
+my @tests;
+
+for $files.list -> $f {
+    my $data = {};
+    my $file = $*SPEC.catfile($basedir,$f.basename);
+    $data<filename> = $file;
+    my $info = qqx{sndfile-info $file};
+    if $info ~~ /<sample-rate>/ {
+        $data<sample-rate> = Int($<sample-rate><value>);
+    }
+    if $info ~~ /<frames>/ {
+        $data<frames> = Int($<frames><value>);
+    }
+    if $info ~~ /<channels>/ {
+        $data<channels> = Int($<channels><value>);
+    }
+    if $info ~~ /<format>/ {
+        $data<format> = Int($<format><value>);
+    }
+    if $info ~~ /<sections>/ {
+        $data<sections> = Int($<sections><value>);
+    }
+    if $info ~~ /<seekable>/ {
+        $data<seekable> = $<seekable><value> eq 'TRUE' ?? True !! False;
+    }
+
+    @tests.push($data);
+}
+
+say @tests.perl;

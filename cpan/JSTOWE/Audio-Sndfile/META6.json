@@ -1,0 +1,37 @@
+{
+  "name": "Audio::Sndfile",
+  "version": "0.0.13",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "Binding for libsndfile - read/write multiple audio formats",
+  "source-url": "git://github.com/jonathanstowe/Audio-Sndfile.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/Audio-Sndfile.git",
+	"bugtracker" : "https://github.com/jonathanstowe/Audio-Sndfile/issues",
+	"email" : "jns+git@gellyfish.co.uk"
+  },
+  "perl": "6.*",
+  "resources": [ ],
+  "build-depends": [ ],
+  "depends": [ ],
+  "tags": [
+    "audio",
+    "utils",
+    "convert"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "Test",
+    "LibraryCheck",
+    "File::Find",
+    "Shell::Command"
+  ],
+  "provides": {
+    "Audio::Sndfile": "lib/Audio/Sndfile.pm",
+    "Audio::Sndfile::Info": "lib/Audio/Sndfile/Info.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}

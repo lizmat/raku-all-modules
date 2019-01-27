@@ -1,0 +1,203 @@
+{
+  "children": [
+    {
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "p6generatesine"
+        },
+        {
+          "type": "file",
+          "name": "p6sndfile-convert"
+        }
+      ],
+      "purpose": null,
+      "name": "examples"
+    },
+    {
+      "type": "directory",
+      "name": "t",
+      "purpose": null,
+      "children": [
+        {
+          "purpose": null,
+          "name": "data",
+          "children": [
+            {
+              "type": "file",
+              "name": "cw_glitch_noise15.wav"
+            },
+            {
+              "name": "1sec-chirp-44100.caf",
+              "type": "file"
+            },
+            {
+              "name": "1sec-chirp-44100.w64",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-48000.w64"
+            },
+            {
+              "type": "file",
+              "name": "empty_16le_48000_2ch.wav"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-48000.aifc"
+            },
+            {
+              "name": "1sec-chirp-44100.aif",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-44100.au"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-44100.wav"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-22050.w64"
+            },
+            {
+              "name": "1sec-chirp-48000.aiff",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-22050.wav"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-44100.aifc"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-22050.aiff"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-48000.aif"
+            },
+            {
+              "name": "1sec-chirp-22050.au",
+              "type": "file"
+            },
+            {
+              "name": "1sec-chirp-22050.aif",
+              "type": "file"
+            },
+            {
+              "name": "1sec-chirp-48000.au",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "1second_16le_48000_2ch.wav"
+            },
+            {
+              "name": "1sec-chirp-48000.wav",
+              "type": "file"
+            },
+            {
+              "name": "1sec-chirp-22050.caf",
+              "type": "file"
+            },
+            {
+              "name": "1sec-chirp-44100.aiff",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "1sec-chirp-48000.caf"
+            },
+            {
+              "name": "1sec-chirp-22050.aifc",
+              "type": "file"
+            }
+          ],
+          "type": "directory"
+        },
+        {
+          "name": "010-basic.t",
+          "type": "file"
+        },
+        {
+          "name": "030-constructor.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "050-sanity.t"
+        },
+        {
+          "name": "060-write.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "040-read.t"
+        }
+      ]
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Documentation.md"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "children": [
+            {
+              "type": "file",
+              "name": "Sndfile.pm"
+            },
+            {
+              "type": "directory",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "Info.pm"
+                }
+              ],
+              "purpose": null,
+              "name": "Sndfile"
+            }
+          ],
+          "purpose": null,
+          "name": "Audio",
+          "type": "directory"
+        }
+      ],
+      "purpose": null,
+      "name": "lib"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
