@@ -1,0 +1,24 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Map::Agnostic:ver<0.0.1>:auth<cpan:ELIZABETH>"
+  ],
+  "description" : "role for ordered Maps",
+  "license" : "Artistic-2.0",
+  "name" : "Map::Ordered",
+  "perl" : "6.c",
+  "provides" : {
+    "Map::Ordered" : "lib/Map/Ordered.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Map-Ordered.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}

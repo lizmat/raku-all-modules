@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Map-Ordered.git
+	branch = master
+	commit = 7c8807dd5209ed845765dffb42287c47235258c8
+	parent = aedd1e0df2f0e8ed6fc7044053a95a2ea6676cf8
+	cmdver = 0.3.1
