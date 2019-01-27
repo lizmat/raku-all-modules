@@ -45,9 +45,9 @@ subtest {
 
     my @expect = (
          { :start, :type('named'), :name('pod') },
-         { :start, :type('code'), :allowed([]) },
+         { :start, :type('code') },
          { :text('$code.goes-here;') },
-         { :end, :type('code'), :allowed([]) },
+         { :end, :type('code') },
          { :end, :type('named'), :name('pod') },
     );
 

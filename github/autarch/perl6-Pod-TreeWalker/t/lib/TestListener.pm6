@@ -3,11 +3,11 @@ class TestListener does Pod::TreeWalker::Listener {
     has @.events;
 
     multi method start (Pod::Block::Code $node) {
-        @.events.push( { :start, :type('code') :allowed($node.allowed) } );
+        @.events.push( { :start, :type('code') } );
         return True;
     }
     multi method end (Pod::Block::Code $node) {
-        @.events.push( { :end, :type('code'), :allowed($node.allowed) } );
+        @.events.push( { :end, :type('code') } );
     }
 
     multi method start (Pod::Block::Comment $node) {
