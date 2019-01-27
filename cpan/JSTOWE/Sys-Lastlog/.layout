@@ -1,0 +1,92 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "010-basic.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "name": "020-lastlog.t",
+          "type": "file"
+        }
+      ],
+      "name": "t",
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "name": "Build.pm",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "p6lastlog"
+        }
+      ],
+      "name": "bin",
+      "type": "directory"
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "purpose": null,
+          "children": [
+            {
+              "type": "file",
+              "name": "Lastlog.pm"
+            }
+          ],
+          "name": "Sys",
+          "type": "directory"
+        }
+      ],
+      "name": "lib",
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "name": "src",
+      "type": "directory",
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "lastloghelper.c"
+        },
+        {
+          "name": "Configure.pl6",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "Makefile.in"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}
