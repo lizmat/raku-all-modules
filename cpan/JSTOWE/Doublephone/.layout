@@ -1,0 +1,81 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "020-words.t"
+        },
+        {
+          "name": "010-use.t",
+          "type": "file"
+        },
+        {
+          "name": "data",
+          "children": [
+            {
+              "name": "words",
+              "type": "file"
+            }
+          ],
+          "type": "directory",
+          "purpose": null
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        }
+      ],
+      "purpose": null,
+      "name": "t"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "type": "file",
+      "name": "Build.pm"
+    },
+    {
+      "children": [
+        {
+          "name": "Doublephone.pm",
+          "type": "file"
+        }
+      ],
+      "type": "directory",
+      "purpose": null,
+      "name": "lib"
+    },
+    {
+      "name": "src",
+      "purpose": null,
+      "type": "directory",
+      "children": [
+        {
+          "name": "Makefile.in",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "double_metaphone.c"
+        },
+        {
+          "type": "file",
+          "name": "double_metaphone.h"
+        }
+      ]
+    }
+  ]
+}
