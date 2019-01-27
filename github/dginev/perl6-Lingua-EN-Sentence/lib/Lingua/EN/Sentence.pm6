@@ -1,5 +1,5 @@
-unit module Lingua::EN::Sentence:auth<LlamaRider>;
 use v6;
+unit module Lingua::EN::Sentence:auth<LlamaRider>;
 
 my Str $EOS="\0\0\0";
 my token termpunct { <[.?!]> }
