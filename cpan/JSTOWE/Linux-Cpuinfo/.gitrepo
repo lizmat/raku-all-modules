@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/p6-Linux-Cpuinfo.git
+	branch = master
+	commit = e63717aec0bec9e3f5969328a50f6fa4960571aa
+	parent = c9c2e36245a34db9575bf4311d2c6c86d518ce49
+	cmdver = 0.3.1

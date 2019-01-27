@@ -1,0 +1,124 @@
+{
+  "children": [
+    {
+      "children": [
+        {
+          "type": "file",
+          "name": "03-samples.t"
+        },
+        {
+          "type": "directory",
+          "name": "proc",
+          "purpose": null,
+          "children": [
+            {
+              "type": "file",
+              "name": "cpuinfo.alpha"
+            },
+            {
+              "type": "file",
+              "name": "cpuinfo.ppc"
+            },
+            {
+              "name": "cpuinfo.x86_smp",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "cpuinfo.armv6hl_rpi"
+            },
+            {
+              "type": "file",
+              "name": "cpuinfo.Xeon_smp"
+            },
+            {
+              "name": "cpuinfo.sparc",
+              "type": "file"
+            },
+            {
+              "name": "cpuinfo.agenda_mips",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "cpuinfo.Marvel_PJ4Bv7"
+            },
+            {
+              "type": "file",
+              "name": "cpuinfo.arm7_BCM2709_rpi"
+            },
+            {
+              "name": "cpuinfo.celeron_II",
+              "type": "file"
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "02-this_machine.t"
+        },
+        {
+          "type": "file",
+          "name": "04-armv67-bug.t"
+        },
+        {
+          "name": "01-basic.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "00-meta.t"
+        }
+      ],
+      "purpose": null,
+      "name": "t",
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "type": "directory",
+      "name": "lib",
+      "purpose": null,
+      "children": [
+        {
+          "type": "directory",
+          "name": "Linux",
+          "purpose": null,
+          "children": [
+            {
+              "name": "Cpuinfo.pm",
+              "type": "file"
+            },
+            {
+              "type": "directory",
+              "name": "Cpuinfo",
+              "purpose": null,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "Cpu.pm"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
