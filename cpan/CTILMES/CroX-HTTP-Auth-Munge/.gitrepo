@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-crox-http-auth-munge.git
+	branch = master
+	commit = ae6c06927a00a8c1610bb4470a8ea553067ac3ea
+	parent = 18d2d420bf3ba6f7a711d059a1e9b86724161cac
+	cmdver = 0.3.1
