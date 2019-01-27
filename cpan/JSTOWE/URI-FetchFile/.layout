@@ -1,0 +1,74 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "directory",
+      "purpose": null,
+      "name": "t",
+      "children": [
+        {
+          "name": "070-fetch-uri.t",
+          "type": "file"
+        },
+        {
+          "name": "050-provider-lwp-simple.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        },
+        {
+          "type": "file",
+          "name": "060-http-useragent.t"
+        },
+        {
+          "type": "file",
+          "name": "030-provider-curl.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "name": "040-provider-wget.t",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "children": [
+        {
+          "name": "URI",
+          "children": [
+            {
+              "name": "FetchFile.pm",
+              "type": "file"
+            }
+          ],
+          "type": "directory",
+          "purpose": null
+        }
+      ],
+      "name": "lib",
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}
