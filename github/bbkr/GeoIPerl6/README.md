@@ -1,7 +1,5 @@
 # MaxMind GeoIP legacy free/pro interface
 
-[![Build Status](https://travis-ci.org/bbkr/GeoIPerl6.svg?branch=master)](https://travis-ci.org/bbkr/GeoIPerl6)
-
 ## WARNING
 
 GeoIP v1 databases are deprecated and [will be terminated on January 2, 2019](https://dev.maxmind.com/geoip/legacy/geolite/).
