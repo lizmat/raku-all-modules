@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Tux/CSV.git
+	branch = master
+	commit = d89a1f53376dcdd31456ca33298a28c463cc2e2a
+	parent = 68e07880ad727afc54c8de1ea8960d313e49d0c6
+	cmdver = 0.3.1
