@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/croservices/json-schema.git
+	branch = master
+	commit = 894e76d07f149a6d0a5145741899c2cf3db906c2
+	parent = ad40bd4589b5361d784dbed12df117b024b73e90
+	cmdver = 0.3.1
