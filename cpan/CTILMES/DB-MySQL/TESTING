@@ -1,0 +1,10 @@
+Start up a mysql server with docker:
+
+docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=rootpw -e MYSQL_DATABASE=perltest -e MYSQL_USER=perltest -e MYSQL_PASSWORD=testpass -d mysql:latest
+
+Put this in ~/.my.cnf:
+[client]
+protocol=tcp
+user=perltest
+password=testpass
+database=perltest

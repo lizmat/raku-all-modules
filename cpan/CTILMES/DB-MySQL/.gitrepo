@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-dbmysql.git
+	branch = master
+	commit = 98fc036d6f1bdb7f66490019153b8c9a0869ffea
+	parent = f5d440911e204e44c0a0ac814e586a679b21e40d
+	cmdver = 0.3.1

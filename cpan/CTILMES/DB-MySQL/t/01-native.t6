@@ -1,0 +1,12 @@
+use Test;
+use Test::When <extended>;
+
+use DB::MySQL::Native;
+
+plan 2;
+
+ok DB::MySQL::Native.client-version, 'client-version';
+
+ok DB::MySQL::Native.client-info, 'client-info';
+
+done-testing;

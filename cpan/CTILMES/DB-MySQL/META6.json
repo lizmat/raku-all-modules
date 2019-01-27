@@ -1,0 +1,35 @@
+{
+    "name" : "DB::MySQL",
+
+    "version" : "0.2",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-dbmysql.git",
+
+    "perl" : "6.*",
+
+    "tags" : [ "DATABASE", "MYSQL" ],
+
+    "provides" : {
+        "DB::MySQL"             : "lib/DB/MySQL.pm6",
+        "DB::MySQL::Connection" : "lib/DB/MySQL/Connection.pm6",
+        "DB::MySQL::Statement"  : "lib/DB/MySQL/Statement.pm6",
+        "DB::MySQL::Result"     : "lib/DB/MySQL/Result.pm6",
+        "DB::MySQL::Native"     : "lib/DB/MySQL/Native.pm6",
+        "DB::MySQL::Converter"  : "lib/DB/MySQL/Converter.pm6"
+    },
+
+    "depends" : [ "DB", "NativeLibs", "NativeCall" ],
+
+    "description" : "MySQL access for Perl6",
+
+    "test-depends" : [ "Test", "Test::When", "Test::META" ],
+
+    "license" : "BSD-2-Clause",
+
+    "authors" : [ "Curt Tilmes <ctilmes@cpan.org>" ],
+
+    "support" : {
+      "source" : "https://github.com/CurtTilmes/perl6-dbmysql.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-dbmysql/issues"
+    }
+}

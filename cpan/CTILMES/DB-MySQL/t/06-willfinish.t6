@@ -1,0 +1,29 @@
+use Test;
+use Test::When <extended>;
+
+use DB::MySQL;
+
+plan 9;
+
+isa-ok my $m = DB::MySQL.new(), DB::MySQL, 'Create object';
+
+{
+    isa-ok my $db will leave { .finish } = $m.db,
+        DB::MySQL::Connection, 'connection';
+    is $db.query('select 42').value, 42, 'select';
+}
+
+is $m.connections.elems, 1, 'Connection returned to cache';
+
+{
+    isa-ok my $sth will leave { .finish } = $m.db.prepare('select ?'),
+        DB::MySQL::Statement, 'prepare';
+
+    is $m.connections.elems, 0, 'Got the cached connection';
+
+    is $sth.execute(17).value, 17, 'select';
+}
+
+is $m.connections.elems, 1, 'Connection returned to cache';
+
+lives-ok { $m.finish }, 'finish object';

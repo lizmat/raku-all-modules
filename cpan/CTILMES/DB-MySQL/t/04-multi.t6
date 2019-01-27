@@ -1,0 +1,34 @@
+use Test;
+use Test::When <extended>;
+
+use DB::MySQL;
+
+plan 5;
+
+isa-ok my $m = DB::MySQL.new(), DB::MySQL, 'Create object';
+
+lives-ok { $m.execute('create table foo(x int, y int)') },
+    'create table';
+
+await do for ^50 -> $x
+{
+    start
+    {
+        my $db = $m.db;
+        my $sth = $db.prepare('insert into foo values (?,?)');
+        $db.begin;
+        for ^1000 -> $y
+        {
+            $sth.execute($x, $y);
+        }
+        $db.commit.finish;
+    }
+}
+
+is $m.query('select count(*) from foo').value, 50000, 'all rows present';
+
+lives-ok { $m.execute('drop table foo') }, 'drop table';
+
+lives-ok { $m.finish }, 'finish';
+
+done-testing;

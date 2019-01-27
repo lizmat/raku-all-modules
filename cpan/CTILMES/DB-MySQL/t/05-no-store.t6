@@ -1,0 +1,25 @@
+use Test;
+use Test::When <extended>;
+
+use DB::MySQL;
+
+plan 6;
+
+isa-ok my $m = DB::MySQL.new(), DB::MySQL, 'Create object';
+
+is $m.execute('create table foo (x int)'), 0, 'create table';
+
+$m.query('insert foo values (?)', $_) for ^5;
+
+is $m.execute('select * from foo', :!store).arrays,
+    ((0),(1),(2),(3),(4)), 'execute no store arrays';
+
+is $m.query('select * from foo').arrays,
+    ((0),(1),(2),(3),(4)), 'query no store arrays';
+
+is $m.query('select * from foo', :!store).arrays,
+    ((0),(1),(2),(3),(4)), 'query no store arrays';
+
+lives-ok { $m.execute('drop table foo') }, 'drop table';
+
+done-testing;

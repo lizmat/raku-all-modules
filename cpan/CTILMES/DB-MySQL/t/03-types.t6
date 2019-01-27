@@ -1,0 +1,92 @@
+use Test;
+use Test::When <extended>;
+
+use DB::MySQL;
+
+plan 6;
+
+isa-ok my $m = DB::MySQL.new(), DB::MySQL, 'Create object';
+
+is $m.execute(q:to/END/), 0, 'create table';
+create table foo
+(
+    a tinyint,
+    b bool,
+    c smallint,
+    d mediumint,
+    e int,
+    f bigint,
+    g decimal(6,2),
+    h float,
+    i double,
+    j varchar(20),
+    k tinyblob,
+    l blob,
+    m mediumblob,
+    n longblob,
+    o enum('a','b','c'),
+    p set('a', 'b', 'c'),
+    q date,
+    r datetime,
+    s json,
+    t json
+)
+END
+
+#my $blob = buf8.new(do for ^10_000 { $_ % 256 });
+my $blob = buf8.new(do for ^3 { $_ % 256 });
+
+is $m.query('insert into foo values
+                    (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+    3,                                                          # a
+    True,                                                       # b
+    1234,                                                       # c
+    4000000,                                                    # d
+    -2_000_000_000,                                             # e
+    10_000_000_000_000_000,                                     # f
+    3.432,                                                      # g
+    4.373e12,                                                   # h
+    1.234e123,                                                  # i
+    'this',                                                     # j
+    buf8.new(1,2,3,4),                                          # k
+    $blob,                                                      # l
+    $blob,                                                      # m
+    $blob,                                                      # n
+    'b',                                                        # o
+    (set <b c b>),                                              # p
+    Date.new('2000-01-01'),                                     # q
+    '2000-01-01T12:34:56',                                      # r
+    %( a => 12, b => 'this' ),                                  # s
+    ( 1,2,3 ),                                                  # t
+    ), 1, 'insert row';
+
+is-deeply $m.execute('select * from foo').hash,
+    %(
+    a => 3,
+    b => 1,
+    c => 1234,
+    d => 4000000,
+    e => -2_000_000_000,
+    f => 10_000_000_000_000_000,
+    g => 3.43,
+    h => 4.373e12,
+    i => 1.234e123,
+    j => 'this',
+    k => buf8.new(1,2,3,4),
+    l => $blob,
+    m => $blob,
+    n => $blob,
+    o => 'b',
+    p => 'b,c',
+    q => Date.new(2000,1,1),
+    r => DateTime.new('2000-01-01T12:34:56', :timezone($*TZ)),
+    s => %( a => 12, b => 'this'),
+    t => [ 1,2,3 ],
+    ), 'verify values';
+
+is $m.execute('drop table foo'), 0, 'drop table';
+
+lives-ok { $m.finish }, 'finish';
+
+done-testing;
+
