@@ -1,0 +1,17 @@
+#!/usr/bin/env perl6
+
+use MQ::Posix;
+
+my $queue = MQ::Posix.new(name => 'test-queue', :create, :r );
+
+react {
+    whenever $queue.Supply -> $buf {
+        say $buf.decode;
+    }
+    whenever signal(SIGINT) {
+        $queue.close;
+        $queue.unlink;
+        done;
+    }
+}
+
