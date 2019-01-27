@@ -1,0 +1,30 @@
+{
+    "name" : "Native::Exec",
+
+    "version" : "0.1",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-native-exec.git",
+
+    "perl" : "6.c",
+
+    "tags" : [ "EXEC", "NATIVECALL" ],
+
+    "provides" : {
+        "Native::Exec" : "lib/Native/Exec.pm6"
+    },
+
+    "depends" : [ "NativeCall" ],
+
+    "description" : "NativeCall bindings for Unix exec*() calls",
+
+    "test-depends" : [ "Test", "Test::When", "Test::META" ],
+
+    "license" : "Artistic-2.0",
+
+    "authors" : [ "Curt Tilmes <ctilmes@cpan.org>" ],
+
+    "support" : {
+      "source" : "https://github.com/CurtTilmes/perl6-native-exec.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-native-exec/issues"
+    }
+}
