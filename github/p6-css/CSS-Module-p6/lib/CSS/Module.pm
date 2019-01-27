@@ -4,13 +4,13 @@ class CSS::Module:ver<0.4.9> {
     has $.name;
     has $.grammar is required  #| grammar
                   handles <parse subparse parsefile>;
-    has $.actions is required   #| actions class
+    has $.actions is required  #| actions class
                   handles <colors>;
     has %.property-metadata;
     has CSS::Module %.sub-module;
 
     #| parse an individual property-specific expression
-    method parse-property(Str $property-name, Str $val, Bool :$warn = True) {
+    method parse-property(Str() $property-name, Str() $val, Bool :$warn = True) {
         my $actions = $.actions.new;
         my \p = $.grammar.parse($val, :rule('expr-' ~ $property-name.lc), :$actions );
 
