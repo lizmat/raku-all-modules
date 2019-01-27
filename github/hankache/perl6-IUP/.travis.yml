@@ -1,0 +1,20 @@
+sudo: required
+
+language: perl6
+
+perl6:
+  - latest
+
+before_install:
+  - perl6 -v
+install:
+  - mkdir travistest
+  - cd travistest
+  - curl -L https://sourceforge.net/projects/iup/files/3.25/Linux%20Libraries/iup-3.25_Linux44_64_lib.tar.gz > libiup.tar.gz
+  - tar xvzf libiup.tar.gz
+  - echo | sudo bash install
+  - echo | sudo bash install_dev
+  - cd ..
+  - rakudobrew build zef
+  - zef --depsonly install .
+  - zef --debug install .

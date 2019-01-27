@@ -1,0 +1,15 @@
+{
+	"perl" : "6.*",
+	"name" : "IUP",
+	"version" : "0.0.2",
+	"description" : "Perl 6 interface to the IUP toolkit for building GUI's",
+	"license" : "Artistic-2.0",
+	"provides": {
+		"IUP": "lib/IUP.pm6"
+	},
+	"resources": [ "lib/IUP.so"],
+	"author" : "Henrique Dias",
+	"depends" : [ "LibraryMake" ],
+	"source-type" : "git",
+	"source-url" : "git://github.com/hankache/perl6-IUP.git"
+}
