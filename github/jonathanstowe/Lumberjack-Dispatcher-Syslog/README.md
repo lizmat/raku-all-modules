@@ -53,7 +53,7 @@ default configuration (or put them in separate files.)
 ## Installation
 
 Assuming you have got a working installation of Rakudo perl 6 you
-should be able to install this with zef:
+should be able to install this with *zef*:
 
     zef install Lumberjack::Dispatcher::Syslog
 
@@ -78,5 +78,5 @@ please feel free to post at https://github.com/jonathanstowe/Lumberjack-Dispatch
 
 This is free software. Please see the [LICENCE](LICENCE) file in the repository.
 
-© Jonathan Stowe, 2016, 2017
+© Jonathan Stowe, 2016 - 2019
 

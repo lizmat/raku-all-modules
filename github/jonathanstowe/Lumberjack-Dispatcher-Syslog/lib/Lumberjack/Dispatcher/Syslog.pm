@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 =begin pod
 
@@ -54,7 +54,7 @@ default configuration (or put them in separate files.)
 
 As a "plugin" to C<Lumberjack> this has no methods of its own.  All of
 the following configuration can be passed to the constructor prior
-to adding it to the "dispatchers" list of C<Lumberjack>. 
+to adding it to the "dispatchers" list of C<Lumberjack>.
 
 =head2 ident
 
