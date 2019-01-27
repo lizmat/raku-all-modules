@@ -1,0 +1,101 @@
+{
+  "children": [
+    {
+      "purpose": null,
+      "name": "examples",
+      "type": "directory",
+      "children": [
+        {
+          "name": "my-meta.pl",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": "t",
+      "purpose": null,
+      "type": "directory",
+      "children": [
+        {
+          "type": "directory",
+          "children": [
+            {
+              "type": "file",
+              "name": "projects.json"
+            },
+            {
+              "name": "META-V.info",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "META6.json"
+            }
+          ],
+          "name": "data",
+          "purpose": null
+        },
+        {
+          "type": "file",
+          "name": "030-versions.t"
+        },
+        {
+          "type": "file",
+          "name": "015-constructor.t"
+        },
+        {
+          "name": "060-stringify.t",
+          "type": "file"
+        },
+        {
+          "name": "040-projects.t",
+          "type": "file"
+        },
+        {
+          "name": "050-assoc.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        },
+        {
+          "type": "file",
+          "name": "020-basic.t"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "purpose": null,
+      "name": "lib",
+      "children": [
+        {
+          "name": "META6.pm",
+          "type": "file"
+        }
+      ],
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Makefile"
+    }
+  ],
+  "type": "layout"
+}

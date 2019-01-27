@@ -1,0 +1,39 @@
+{
+  "name": "META6",
+  "version": "0.0.21",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "Work with Perl 6 META files",
+  "source-url": "git://github.com/jonathanstowe/META6.git",
+  "support": {
+	"email" : "jns+git@gellyfish.co.uk",
+    "source": "git://github.com/jonathanstowe/META6.git",
+    "bugtracker": "https://github.com/jonathanstowe/META6/issues"
+  },
+  "perl": "6.*",
+  "resources": [
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+    "JSON::Class:ver<0.0.5+>"
+  ],
+  "tags": [
+    "devel",
+    "meta",
+    "utils"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "JSON::Fast",
+    "Test"
+  ],
+  "provides": {
+    "META6": "lib/META6.pm"
+  },
+  "production": true,
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}

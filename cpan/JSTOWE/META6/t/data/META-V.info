@@ -1,0 +1,15 @@
+{
+  "name" : "JSON::Marshal",
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/JSON-Marshal.git"
+  },
+  "source-url" : "git://github.com/jonathanstowe/JSON-Marshal.git",
+  "perl" : "v6",
+  "provides" : {
+     "JSON::Marshal" : "lib/JSON/Marshal.pm"
+  },
+  "depends" : [],
+  "test-depends" : [],
+  "description" : "Simple serialisation of objects to JSON",
+  "version" : "v0.0.1"
+}
