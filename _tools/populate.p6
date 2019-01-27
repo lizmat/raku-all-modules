@@ -15,6 +15,10 @@ for @cpan-projects -> $project {
     my $local = "cpan/$project<author_id>/" ~ $project<name>.subst(:g, '::', '-');
     %local-seen{$local} = True;
     unless $project<url> ~~ m{ ^http.*tar} {
+        if $project<url>.ends-width('.git') {
+            git-clone($project<url>, $local);
+            next;
+        }
         note "Dist $local: URL $project<url> is not a HTTP(s) link to a tarball.";
         next;
     }
@@ -48,16 +52,7 @@ for @projects {
     my $prefix = $url.contains('gitlab.com') ?? 'gitlab' !! 'github';
     $local = "$prefix/$local";
     %local-seen{$local} = True;
-    if $ignore-errors {
-       my $proc = run 'git', 'subrepo', 'clone', '-f', $url, $local;
-       if $proc.exitcode {
-            run 'git', 'reset', 'HEAD';
-            run 'git', 'checkout', '.';
-        }
-    }
-    else {
-        run 'git', 'subrepo', 'clone', '-f', $url, $local;
-    }
+    git-clone($url, $local);
 }
 
 # find all dirs of the form author/module and potentially remove them
@@ -78,6 +73,18 @@ for dir().grep(*.d).grep(*.basename eq none('_tools', '.git'))\ # source
         else {
             say "Would remove $local";
         }
+    }
+}
+sub git-clone($url, $local) {
+    if $ignore-errors {
+       my $proc = run 'git', 'subrepo', 'clone', '-f', $url, $local;
+       if $proc.exitcode {
+            run 'git', 'reset', 'HEAD';
+            run 'git', 'checkout', '.';
+        }
+    }
+    else {
+        run 'git', 'subrepo', 'clone', '-f', $url, $local;
     }
 }
 
