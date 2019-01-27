@@ -19,6 +19,8 @@ This text is Z<blabla>invisible.
 
 This text contains a link to L<https://perl6.org/>.
 
+This text contains a bare fragment link L<#anchor>.
+
 This text contains a link with label to L<TPF|https://perlfoundation.org/>.
 
 And awesome L<link B<with I<formatting>>|http://p6weekly.wordpress.com/>!
@@ -38,6 +40,8 @@ This text is <var>to be replaced</var>.
 This text is invisible.
 
 This text contains a link to [https://perl6.org/](https://perl6.org/).
+
+This text contains a bare fragment link [anchor](#anchor).
 
 This text contains a link with label to [TPF](https://perlfoundation.org/).
 

@@ -176,7 +176,7 @@ multi sub node2md(Pod::FormattingCode $pod) {
         if $pod.meta.elems > 0 {
             $text =  '[' ~ $text ~ '](' ~ $pod.meta[0] ~ ')';
         } else {
-            $text = '[' ~ $text ~ '](' ~ $text ~ ')';
+            $text = '[' ~ $text.subst(/ ^ '#' /, '') ~ '](' ~ $text ~ ')';
         }
     }
     # If the code contains a backtick, we need to do more work
