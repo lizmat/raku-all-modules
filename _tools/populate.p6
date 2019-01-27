@@ -14,7 +14,10 @@ my %local-seen;
 for @cpan-projects -> $project {
     my $local = "cpan/$project<author_id>/" ~ $project<name>.subst(:g, '::', '-');
     %local-seen{$local} = True;
-    next unless $project<url> ~~ m{ ^http.*tar};
+    unless $project<url> ~~ m{ ^http.*tar} {
+        note "Dist $local: URL $project<url> is not a HTTP(s) link to a tarball.";
+        next;
+    }
     shell qq:to/EOF/;
         git rm -rf $local || true
         mkdir -p $local
