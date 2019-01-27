@@ -1,0 +1,27 @@
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf8
+Content-Length: 21
+
+{"hello":"world"}
+
+HTTP/1.1 200 Pretty Good
+Content-Type: text/plain; charset=utf8
+Transfer-Encoding: chunked
+Trailer: Magic
+
+1
+a
+2
+ab
+3
+abc
+4
+abcd
+0
+Magic: off
+
+HTTP/1.1 200 Freaking Amazing
+Content-Type: text/html; charset=latin-1
+Content-Length: 27
+
+<em>Neat-o Mosquito!</em>

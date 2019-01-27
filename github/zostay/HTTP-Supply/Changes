@@ -1,0 +1,48 @@
+{{$NEXT}}
+
+v0.3.5	2019-01-07
+
+    * We work harder not to emit 0 byte bufs in the body.
+    * Responses with no Content-Length now work.
+    * A body that is too short should result in an exception.
+
+v0.3.4	2018-12-23
+
+    * Bugfix: Fixing missing provides in the META6.json
+ 
+v0.3.2	2018-12-23
+
+    * Bugfix: Previous releases did not handle trailers correctly. They were
+      being emitted with the body as a hash, but should have been emitted as a
+      array.
+    * Adds testing for response pipelines.
+
+v0.3.1	2018-12-21
+
+    * Corrected missing HTTP::Supply::Request to DEPRECATED old name in the
+      provides section of the META6.
+
+v0.3.0	2018-12-21
+
+    * BREAKING: X::HTTP::Request::Supply::UnsupportedProtocol has been
+      renamed to X::HTTP::Supply::UnsupportedProtocol.
+    * BREAKING: X::HTTP::Request::Supply::BadRequest has been renamed to
+      X::HTTP::Supply::BadMessage.
+    * DEPRECATED: HTTP::Request::Supply has been renamed to
+      HTTP::Supply::Request with the distribution now being named HTTP::Supply.
+    * HTTP::Supply::Response has been added to perform the
+      complementary response parser for HTTP/1.x pipelines.
+    * All exceptions thrown now inherit from X::HTTP::Supply.
+
+v0.2.0	2018-12-17
+
+    * Complete rewrite of the core parser, modeled after the RequestParser class
+      of Cro.
+
+v0.1.2	2018-11-11
+
+    * Fix location of use v6 for v6.d. :(
+
+v0.1.1
+
+    * Initial release.
