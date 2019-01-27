@@ -81,7 +81,7 @@ use _007::Test;
         }
         .
 
-    outputs $program, "None\n", "using an outer lexical in a func that's called before the outer lexical's declaration";
+    outputs $program, "none\n", "using an outer lexical in a func that's called before the outer lexical's declaration";
 }
 
 {
@@ -115,7 +115,7 @@ use _007::Test;
 
     parse-error
         $program,
-        X::Assignment::RO,
+        X::Assignment::ReadOnly,
         "cannot assign to a subroutine (#68)";
 }
 
@@ -131,7 +131,7 @@ use _007::Test;
         .
 
     outputs $program,
-        "True\nFalse\n",
+        "true\nfalse\n",
         "can assign to a parameter which hides a subroutine (#68)";
 }
 

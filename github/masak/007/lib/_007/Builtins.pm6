@@ -1,6 +1,7 @@
 use _007::Val;
 use _007::Q;
 use _007::OpScope;
+use _007::Equal;
 
 class X::Control::Exit is Exception {
     has Int $.exit-code;
@@ -26,55 +27,6 @@ sub assert-type(:$value, ValOrQ:U :$type, Str :$operation) {
 sub assert-nonzero(:$value, :$operation, :$numerator) {
     die X::Numeric::DivideByZero.new(:using($operation), :$numerator)
         if $value == 0;
-}
-
-# These multis are used below by infix:<==> and infix:<!=>
-multi equal-value($, $) { False }
-multi equal-value(Val::NoneType, Val::NoneType) { True }
-multi equal-value(Val::Bool $l, Val::Bool $r) { $l.value == $r.value }
-multi equal-value(Val::Int $l, Val::Int $r) { $l.value == $r.value }
-multi equal-value(Val::Str $l, Val::Str $r) { $l.value eq $r.value }
-multi equal-value(Val::Array $l, Val::Array $r) {
-    if %*equality-seen{$l.WHICH} && %*equality-seen{$r.WHICH} {
-        return $l === $r;
-    }
-    %*equality-seen{$l.WHICH}++;
-    %*equality-seen{$r.WHICH}++;
-
-    sub equal-at-index($i) {
-        equal-value($l.elements[$i], $r.elements[$i]);
-    }
-
-    [&&] $l.elements == $r.elements,
-        |(^$l.elements).map(&equal-at-index);
-}
-multi equal-value(Val::Object $l, Val::Object $r) {
-    if %*equality-seen{$l.WHICH} && %*equality-seen{$r.WHICH} {
-        return $l === $r;
-    }
-    %*equality-seen{$l.WHICH}++;
-    %*equality-seen{$r.WHICH}++;
-
-    sub equal-at-key(Str $key) {
-        equal-value($l.properties{$key}, $r.properties{$key});
-    }
-
-    [&&] $l.properties.keys.sort.perl eq $r.properties.keys.sort.perl,
-        |($l.properties.keys).map(&equal-at-key);
-}
-multi equal-value(Val::Type $l, Val::Type $r) {
-    $l.type === $r.type
-}
-multi equal-value(Val::Func $l, Val::Func $r) {
-    $l === $r
-}
-multi equal-value(Q $l, Q $r) {
-    sub same-avalue($attr) {
-        equal-value($attr.get_value($l), $attr.get_value($r));
-    }
-
-    [&&] $l.WHAT === $r.WHAT,
-        |$l.attributes.map(&same-avalue);
 }
 
 multi less-value($l, $) {
@@ -119,6 +71,10 @@ my @builtins =
         my $exit-code = $int.value % 256;
         die X::Control::Exit.new(:$exit-code);
     },
+    assertType => -> $value, $type {
+        assert-type(:value($type), :type(Val::Type), :operation("assertType (checking the Type parameter)"));
+        assert-type(:$value, :type($type.type), :operation<assertType>);
+    },
 
     # OPERATORS (from loosest to tightest within each category)
 
@@ -148,21 +104,22 @@ my @builtins =
             my %*equality-seen;
             return wrap(equal-value($lhs, $rhs));
         },
-        :qtype(Q::Infix::Eq),
+        :qtype(Q::Infix),
+        :assoc<non>,
     ),
     'infix:!=' => op(
         sub ($lhs, $rhs) {
             my %*equality-seen;
             return wrap(!equal-value($lhs, $rhs))
         },
-        :qtype(Q::Infix::Ne),
+        :qtype(Q::Infix),
         :precedence{ equiv => "infix:==" },
     ),
     'infix:<' => op(
         sub ($lhs, $rhs) {
             return wrap(less-value($lhs, $rhs))
         },
-        :qtype(Q::Infix::Lt),
+        :qtype(Q::Infix),
         :precedence{ equiv => "infix:==" },
     ),
     'infix:<=' => op(
@@ -170,14 +127,14 @@ my @builtins =
             my %*equality-seen;
             return wrap(less-value($lhs, $rhs) || equal-value($lhs, $rhs))
         },
-        :qtype(Q::Infix::Le),
+        :qtype(Q::Infix),
         :precedence{ equiv => "infix:==" },
     ),
     'infix:>' => op(
         sub ($lhs, $rhs) {
             return wrap(more-value($lhs, $rhs) )
         },
-        :qtype(Q::Infix::Gt),
+        :qtype(Q::Infix),
         :precedence{ equiv => "infix:==" },
     ),
     'infix:>=' => op(
@@ -185,7 +142,7 @@ my @builtins =
             my %*equality-seen;
             return wrap(more-value($lhs, $rhs) || equal-value($lhs, $rhs))
         },
-        :qtype(Q::Infix::Ge),
+        :qtype(Q::Infix),
         :precedence{ equiv => "infix:==" },
     ),
     'infix:~~' => op(
@@ -194,7 +151,7 @@ my @builtins =
 
             return wrap($lhs ~~ $rhs.type);
         },
-        :qtype(Q::Infix::TypeMatch),
+        :qtype(Q::Infix),
         :precedence{ equiv => "infix:==" },
     ),
     'infix:!~~' => op(
@@ -203,7 +160,7 @@ my @builtins =
 
             return wrap($lhs !~~ $rhs.type);
         },
-        :qtype(Q::Infix::TypeNonMatch),
+        :qtype(Q::Infix),
         :precedence{ equiv => "infix:==" },
     ),
 
@@ -215,13 +172,13 @@ my @builtins =
 
             return wrap($lhs.value + $rhs.value);
         },
-        :qtype(Q::Infix::Addition),
+        :qtype(Q::Infix),
     ),
     'infix:~' => op(
         sub ($lhs, $rhs) {
             return wrap($lhs.Str ~ $rhs.Str);
         },
-        :qtype(Q::Infix::Concat),
+        :qtype(Q::Infix),
         :precedence{ equiv => "infix:+" },
     ),
     'infix:-' => op(
@@ -231,7 +188,7 @@ my @builtins =
 
             return wrap($lhs.value - $rhs.value);
         },
-        :qtype(Q::Infix::Subtraction),
+        :qtype(Q::Infix),
     ),
 
     # multiplicative precedence
@@ -242,7 +199,7 @@ my @builtins =
 
             return wrap($lhs.value * $rhs.value);
         },
-        :qtype(Q::Infix::Multiplication),
+        :qtype(Q::Infix),
     ),
     'infix:%' => op(
         sub ($lhs, $rhs) {
@@ -252,7 +209,7 @@ my @builtins =
 
             return wrap($lhs.value % $rhs.value);
         },
-        :qtype(Q::Infix::Modulo),
+        :qtype(Q::Infix),
     ),
     'infix:%%' => op(
         sub ($lhs, $rhs) {
@@ -262,7 +219,7 @@ my @builtins =
 
             return wrap($lhs.value %% $rhs.value);
         },
-        :qtype(Q::Infix::Divisibility),
+        :qtype(Q::Infix),
     ),
     'infix:divmod' => op(
         sub ($lhs, $rhs) {
@@ -275,7 +232,7 @@ my @builtins =
                 wrap($lhs.value % $rhs.value),
             ]));
         },
-        :qtype(Q::Infix::Modulo),
+        :qtype(Q::Infix),
     ),
 
     # prefixes
@@ -283,7 +240,7 @@ my @builtins =
         sub prefix-str($expr) {
             Val::Str.new(:value($expr.Str));
         },
-        :qtype(Q::Prefix::Str),
+        :qtype(Q::Prefix),
     ),
     'prefix:+' => op(
         sub prefix-plus($_) {
@@ -297,7 +254,7 @@ my @builtins =
             }
             assert-type(:value($_), :type(Val::Int), :operation("prefix:<+>"));
         },
-        :qtype(Q::Prefix::Plus),
+        :qtype(Q::Prefix),
     ),
     'prefix:-' => op(
         sub prefix-minus($_) {
@@ -311,19 +268,19 @@ my @builtins =
             }
             assert-type(:value($_), :type(Val::Int), :operation("prefix:<->"));
         },
-        :qtype(Q::Prefix::Minus),
+        :qtype(Q::Prefix),
     ),
     'prefix:?' => op(
         sub ($a) {
             return wrap(?$a.truthy)
         },
-        :qtype(Q::Prefix::So),
+        :qtype(Q::Prefix),
     ),
     'prefix:!' => op(
         sub ($a) {
             return wrap(!$a.truthy)
         },
-        :qtype(Q::Prefix::Not),
+        :qtype(Q::Prefix),
     ),
     'prefix:^' => op(
         sub ($n) {
@@ -331,7 +288,7 @@ my @builtins =
 
             return wrap([^$n.value]);
         },
-        :qtype(Q::Prefix::Upto),
+        :qtype(Q::Prefix),
     ),
 
     # postfixes

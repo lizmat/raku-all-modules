@@ -1,6 +1,7 @@
 use _007::Val;
 use _007::Q;
 use _007::Builtins;
+use _007::Equal;
 
 constant NO_OUTER = Val::Object.new;
 constant RETURN_TO = Q::Identifier.new(
@@ -11,6 +12,7 @@ constant EXIT_SUCCESS = 0;
 class _007::Runtime {
     has $.input;
     has $.output;
+    has @.arguments;
     has @!frames;
     has $.builtin-opscope;
     has $.builtin-frame;
@@ -19,7 +21,7 @@ class _007::Runtime {
     has $!exit-builtin;
     has $.exit-code;
 
-    submethod BUILD(:$!input, :$!output) {
+    submethod BUILD(:$!input, :$!output, :@!arguments) {
         $!builtin-opscope = opscope();
         $!builtin-frame = Val::Object.new(:properties(
             :outer-frame(NO_OUTER),
@@ -33,7 +35,10 @@ class _007::Runtime {
     }
 
     method run(Q::CompUnit $compunit) {
-        $compunit.run(self);
+        self.enter(self.current-frame, $compunit.block.static-lexpad, $compunit.block.statementlist);
+        $compunit.block.statementlist.run(self);
+        self.handle-main();
+        self.leave();
         CATCH {
             when X::Control::Return {
                 die X::ControlFlow::Return.new;
@@ -42,6 +47,32 @@ class _007::Runtime {
                 $!exit-code = .exit-code;
             }
         }
+    }
+
+    method handle-main() {
+        if self.maybe-get-var("MAIN") -> $main {
+            if $main ~~ Val::Func {
+                self.call($main, @!arguments.map(-> $value {
+                    Val::Str.new(:$value)
+                }));
+
+                CATCH {
+                    when X::ParameterMismatch {
+                        my @main-parameters = $main.parameterlist.parameters.elements.map(*.identifier.name.value);
+                        self.print-usage(@main-parameters);
+                        $!exit-code = 1;
+                    }
+                }
+            }
+        }
+    }
+
+    method print-usage(@main-parameters) {
+        $.output.print("Usage:");
+        $.output.print("\n");
+        $.output.print("  bin/007 <script> ");
+        $.output.print(@main-parameters.map({ "<" ~ $_ ~ ">" }).join(" "));
+        $.output.print("\n");
     }
 
     method enter($outer-frame, $static-lexpad, $statementlist, $routine?) {
@@ -97,7 +128,7 @@ class _007::Runtime {
     }
 
     method !maybe-find-pad(Str $symbol, $frame is copy) {
-        if $frame ~~ Val::NoneType {    # XXX: make a `defined` method on NoneType so we can use `//`
+        if $frame ~~ Val::None {    # XXX: make a `defined` method on None so we can use `//`
             $frame = self.current-frame;
         }
         repeat until $frame === NO_OUTER {
@@ -111,7 +142,7 @@ class _007::Runtime {
 
     method put-var(Q::Identifier $identifier, $value) {
         my $name = $identifier.name.value;
-        my $frame = $identifier.frame ~~ Val::NoneType
+        my $frame = $identifier.frame ~~ Val::None
             ?? self.current-frame
             !! $identifier.frame;
         my $pad = self!find-pad($name, $frame);
@@ -131,7 +162,7 @@ class _007::Runtime {
 
     method declare-var(Q::Identifier $identifier, $value?) {
         my $name = $identifier.name.value;
-        my Val::Object $frame = $identifier.frame ~~ Val::NoneType
+        my Val::Object $frame = $identifier.frame ~~ Val::None
             ?? self.current-frame
             !! $identifier.frame;
         $frame.properties<pad>.properties{$name} = $value // NONE;
@@ -177,7 +208,12 @@ class _007::Runtime {
         if $c === $!prompt-builtin {
             $.output.print(@arguments[0].Str);
             $.output.flush();
-            return Val::Str.new(:value($.input.get()));
+            my $value = $.input.get();
+            if !$value.defined {
+                $.output.print("\n");
+                return NONE;
+            }
+            return Val::Str.new(:$value);
         }
         if $c.hook -> &hook {
             return &hook(|@arguments) || NONE;
@@ -297,6 +333,19 @@ class _007::Runtime {
                 return Val::Int.new(:value($obj.elements.elems));
             });
         }
+        elsif $obj ~~ Val::Array && $propname eq "index" {
+            return builtin(sub index($value) {
+                return Val::Int.new(:value(sub () {
+                    for ^$obj.elements.elems -> $i {
+                        my %*equality-seen;
+                        if equal-value($obj.elements[$i], $value) {
+                            return $i;
+                        }
+                    }
+                    return -1;
+                }()));
+            });
+        }
         elsif $obj ~~ Val::Array && $propname eq "reverse" {
             return builtin(sub reverse() {
                 return Val::Array.new(:elements($obj.elements.reverse));
@@ -355,7 +404,7 @@ class _007::Runtime {
                 die X::TypeCheck.new(:operation<contains>, :got($substr), :expected(Val::Str))
                     unless $substr ~~ Val::Str;
 
-                return Val::Int.new(:value(
+                return Val::Bool.new(:value(
                         $obj.value.contains($substr.value)
                 ));
             });
@@ -408,6 +457,21 @@ class _007::Runtime {
         elsif $obj ~~ Val::Array && $propname eq "map" {
             return builtin(sub map($fn) {
                 my @elements = $obj.elements.map({ self.call($fn, [$_]) });
+                return Val::Array.new(:@elements);
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "flatMap" {
+            return builtin(sub flatMap($fn) {
+                my @elements;
+                for $obj.elements -> $e {
+                    my $r = self.call($fn, [$e]);
+                    if $r ~~ Val::Array {
+                        @elements.push(|$r.elements);
+                    }
+                    else {
+                        @elements.push($r);
+                    }
+                }
                 return Val::Array.new(:@elements);
             });
         }

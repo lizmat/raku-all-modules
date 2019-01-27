@@ -12,10 +12,18 @@ use _007::Test;
 
 {
     my $program = q:to/./;
-        say(type(None));
+        say(type(prompt(">>> ")));
         .
 
-    outputs $program, "<type NoneType>\n", "None type() works";
+    outputs $program, ">>> \n<type None>\n", "say() works";
+}
+
+{
+    my $program = q:to/./;
+        say(type(none));
+        .
+
+    outputs $program, "<type None>\n", "none type() works";
 }
 
 {
@@ -111,6 +119,35 @@ use _007::Test;
         .
 
     outputs $program, "", "nothing is run after exit()";
+}
+
+{
+    my $program = q:to/./;
+        assertType(5, Int);
+        .
+
+    outputs $program, "", "assertType does nothing if it finds something of the right type";
+}
+
+{
+    my $program = q:to/./;
+        macro moo() {}
+
+        assertType(moo, Func);
+        .
+
+    outputs $program, "", "assertType respects inheritance, so this will work since a Macro is a Func";
+}
+
+{
+    my $program = q:to/./;
+        assertType(5, Str);
+        .
+
+    runtime-error
+        $program,
+        X::TypeCheck,
+        "asserType throws a typecheck exception if the value is of the wrong type";
 }
 
 done-testing;

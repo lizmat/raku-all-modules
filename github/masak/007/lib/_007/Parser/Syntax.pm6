@@ -28,7 +28,7 @@ grammar _007::Parser::Syntax {
     } }
 
     rule statementlist {
-        '' [<statement><.eat_terminator> ]*
+        <.semicolon>* [<statement>[<.semicolon>+|<.eat_terminator>] ]*
     }
 
     method panic($what) {
@@ -139,8 +139,11 @@ grammar _007::Parser::Syntax {
         <EXPR> <pblock>
     }
 
+    token semicolon {
+        <.ws> ';'
+    }
+
     token eat_terminator {
-        || <.ws> ';'
         || <?after '}'> $$
         || <.ws> <?before '}'>
         || <.ws> $
@@ -189,9 +192,9 @@ grammar _007::Parser::Syntax {
     }
 
     proto token term {*}
-    token term:none { None» }
-    token term:false { False» }
-    token term:true { True» }
+    token term:none { none» }
+    token term:false { false» }
+    token term:true { true» }
     token term:int { \d+ }
     token term:array { '[' ~ ']' [[<.ws> <EXPR>]* %% [\h* ','] <.ws>] }
     token term:str { <str> }

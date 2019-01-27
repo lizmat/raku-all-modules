@@ -40,17 +40,20 @@ ensure-feature-flag("CLASS");
 
 {
     my $program = q:to/./;
-        constant Builtin::Object = Object;
+        my BuiltinObject;
+        BEGIN {
+            BuiltinObject = Object;
+        }
         {
             class Object {
             }
 
-            say({} ~~ Builtin::Object);
+            say({} ~~ BuiltinObject);
             say({} ~~ Object);
         }
         .
 
-    outputs $program, "True\nFalse\n", "the `\{\}` syntax uses the built-in Object, even when overridden";
+    outputs $program, "true\nfalse\n", "the `\{\}` syntax uses the built-in Object, even when overridden";
 }
 
 {
@@ -70,7 +73,7 @@ ensure-feature-flag("CLASS");
         say(moo() ~~ C);
         .
 
-    outputs $program, "False\n", "lookup stays hygienic even when a `new C \{\}` is expanded";
+    outputs $program, "false\n", "lookup stays hygienic even when a `new C \{\}` is expanded";
 }
 
 {
@@ -84,7 +87,7 @@ ensure-feature-flag("CLASS");
         say(new D {} ~~ C);
         .
 
-    outputs $program, "False\n", "two different classes are not type compatible";
+    outputs $program, "false\n", "two different classes are not type compatible";
 }
 
 done-testing;

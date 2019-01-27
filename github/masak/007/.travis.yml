@@ -1,10 +1,6 @@
-branches:
-  except:
-    - gh-pages
 language: perl6
 sudo: false
 perl6:
   - latest
-#install:
-#  - rakudobrew build-panda
-#  - panda installdeps .
+env:
+  - FLAG_007_REGEX=1 FLAG_007_CLASS=1

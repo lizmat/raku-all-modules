@@ -202,6 +202,28 @@ use _007::Test;
 
 {
     my $program = q:to/./;
+        func f(n) { [n * 2, n * 2 + 1] }
+        my a = [1, 2, 3];
+        say(a.flatMap(f));
+        say(a);
+        .
+
+    outputs $program, "[2, 3, 4, 5, 6, 7]\n[1, 2, 3]\n", "flatMap() works like map() but flattens one layer of array";
+}
+
+{
+    my $program = q:to/./;
+        func f(n) { ~n }
+        my a = [1, 2, 3];
+        say(a.flatMap(f));
+        say(a);
+        .
+
+    outputs $program, qq!["1", "2", "3"]\n[1, 2, 3]\n!, "flatMap() does nothing if there's no array to remove";
+}
+
+{
+    my $program = q:to/./;
         macro so_hygienic() {
             my x = "yay, clean!";
             return quasi {
@@ -298,7 +320,15 @@ use _007::Test;
         say(a.contains("8"));
         .
 
-    outputs $program, "True\nFalse\n", "contains() returns whether a string contains another";
+    outputs $program, "true\nfalse\n", "contains() returns whether a string contains another";
+}
+
+{
+    my $program = q:to/./;
+        say("foobar".contains("foo") ~~ Bool);
+        .
+
+    outputs $program, "true\n", "contains() returns a Bool value";
 }
 
 {
@@ -359,18 +389,45 @@ use _007::Test;
 
 {
     my $program = q:to/./;
-        say(NoneType.create([]));
+        say(None.create([]));
         .
 
-    runtime-error $program, X::Uninstantiable, "can't instantiate a NoneType";
+    runtime-error $program, X::Uninstantiable, "can't instantiate a None";
 }
 
 {
     my $program = q:to/./;
-        say(Bool.create([["value", False]]));
+        say(Bool.create([["value", false]]));
         .
 
     runtime-error $program, X::Uninstantiable, "can't instantiate a Bool";
+}
+
+{
+    my $program = q:to/./;
+        say([1, 3, 3, 4].index(1));
+        say([1, 3, 3, 4].index(3));
+        say([1, 3, 3, 4].index(4));
+        .
+
+    outputs $program, "0\n1\n3\n", "index() returns the index of the first occurrence of an element";
+}
+
+{
+    my $program = q:to/./;
+        say([1, 3, 3, 4].index(2));
+        say([1, 3, 3, 4].index(7));
+        .
+
+    outputs $program, "-1\n-1\n", "index() returns -1 when a value is not an element";
+}
+
+{
+    my $program = q:to/./;
+        say([[1, 3], [1, 2]].index([1, 2]));
+        .
+
+    outputs $program, "1\n", "index() on Array uses infix:<==> semantics";
 }
 
 done-testing;

@@ -101,8 +101,8 @@ variables more finely, controlling exactly when to read and/or assign to them.
 
 In 007, these "scalar value" types are built in:
 
-    None          NoneType
-    False         Bool
+    none          None
+    false         Bool
     42            Int
     "Bond"        Str
 
@@ -136,7 +136,7 @@ docs.)
 `x`.
 
 **Arithmetic**. The infix operators `+ - * %` work as you'd expect. `%%` tests
-for divisibility, so it returns `True` whenever `%` returns `0`. `divmod` does
+for divisibility, so it returns `true` whenever `%` returns `0`. `divmod` does
 an integer division resulting in a tuple `(q, r)` where `q` is the quotient and
 `r` is the reminder.
 
@@ -148,7 +148,7 @@ whether values are equal or unequal. `< <= > >=` compare ordered types like
 integers or strings. `~~ !~~` match a value against a type.
 
 **Logical connectives**. The infixes `||` and `&&` allow you to combine boolean
-(or really, any) values. Furthermore, `//` allows you to replace `None` values
+(or really, any) values. Furthermore, `//` allows you to replace `none` values
 with a default. (All of these operators are short-circuiting. See the
 individual operators for more information.)
 
@@ -227,7 +227,7 @@ func f3() {}    say("oh noes")  # not ok
 probably won't look too surprising to anyone who has seen C-like syntax before:
 
 ```_007
-my array = [5, func() { say("OH HAI") }, None];
+my array = [5, func() { say("OH HAI") }, none];
 for array -> e {
     if e ~~ Int {
         while e > 0 {
@@ -250,8 +250,8 @@ parentheses (`()`) are optional around expressions after `if`, `for` and
 `while`.
 
 The `if` and `while` statements evaluate their expression and runs their block
-if the resulting value is `True`, possibly after coercing to `Bool`. (We
-sometimes refer to a value that is `True` when coerced to `Bool` as _truthy_,
+if the resulting value is `true`, possibly after coercing to `Bool`. (We
+sometimes refer to a value that is `true` when coerced to `Bool` as _truthy_,
 and the other values as _falsy_.) Several other mechanisms in 007, such as `&&`
 and the `.filter` method, accept these "generalized `Bool` values".
 
@@ -294,7 +294,7 @@ say("3 + 4 = ", add(3, 4));
 ```
 
 The `return` statement immediately returns out of a function, optionally with a
-value. If no value is supplied (as in `return;`), the value `None` is returned.
+value. If no value is supplied (as in `return;`), the value `none` is returned.
 Implicit returns are OK too; the statement in the `add` function above could
 have been written as just `n1 + n2;` because it's last in the function.
 
@@ -343,20 +343,22 @@ func goodnight(name) {
 When calling a function, we instead talk about *arguments*. Arguments are
 expressions that we pass in with the function call.
 
-    goodnight("moon");
+```_007
+goodnight("moon");
+```
 
 As the function call happens, all the arguments are evaluated, and their
 resulting values are *bound* to the parameters. It's a (runtime) error for
 the number of arguments to differ from the number of parameters.
 
-> ### 🔮 Future feature: static checking
+> #### 🔮 Future feature: static checking
 >
 > In the cases where the function definition is known/visible from the
 > callsite, we could even give this error at compile time (like Perl 6 but
 > unlike Python or Perl 5). Flagging up the error during compilation makes
 > sense, since the call would definitely fail at runtime anyway.
 
-> ### 🔮 Future feature: optional parameter and parameter defaults
+> #### 🔮 Future feature: optional parameter and parameter defaults
 >
 > 007 will at some point incorporate optional parameters and parameter default
 > values into the language. It's undecided whether these will require a pragma
@@ -364,7 +366,7 @@ the number of arguments to differ from the number of parameters.
 > of non-optional parameters. Non-optional parameters can only occur before
 > optional ones.
 
-> ### 🔮 Future feature: rest parameters and spread arguments
+> #### 🔮 Future feature: rest parameters and spread arguments
 >
 > The syntax `...` will at some point work to denote a *rest parameter* (which
 > accepts any remaining arguments into an array), and a *spread argument*
@@ -372,7 +374,7 @@ the number of arguments to differ from the number of parameters.
 > presence of a rest parameter, the number of arguments accepted is of course
 > unbounded.
 
-> ### 🔮 Future feature: named arguments
+> #### 🔮 Future feature: named arguments
 >
 > Borrowing from Python, it will at some point be possible to specify arguments
 > *by name*; the above call would for example be written as
@@ -461,7 +463,7 @@ builtins.
 
 ## Classes and objects
 
-> ### 🔮 Future feature: classes
+> #### 🔮 Future feature: classes
 >
 > The implementation of classes has started behind a feature flag, but mostly,
 > classes are not implemented yet in 007.
@@ -539,7 +541,7 @@ BEGIN my AlphaColor = Type(
 
 (Note how `self` has been made an explicit parameter along the way.)
 
-`NoneType`, `Int`, `Str`, `Bool`, `Array`, `Tuple`, `Dict`, `Regex`, `Symbol`,
+`None`, `Int`, `Str`, `Bool`, `Array`, `Tuple`, `Dict`, `Regex`, `Symbol`,
 and `Type` are all built-in types in 007. Besides that, there are all the types
 in [the `Q` hierarchy](#the-q-hierarchy), used to reasoning about program
 structure. There are also a number of exception types, under the `X` hierarchy.
@@ -587,7 +589,7 @@ same class can also be declared on the outside of the class `Range`: `class
 Range.Iterator`. Only if we declare it nested inside `Range` do we skip the
 full name.
 
-> ### 🔮 Future feature: generator functions
+> #### 🔮 Future feature: generator functions
 >
 > Using generator functions, we could skip writing the `Range.Iterator` class,
 > and write the `iterator` method like this:
@@ -702,7 +704,7 @@ func postfix:<!>(N) {
 }
 ```
 
-> ### 🔮 Future feature: ternary operator
+> #### 🔮 Future feature: ternary operator
 >
 > With the ternary operator macro imported, the solution becomes downright cute:
 >
@@ -862,13 +864,13 @@ of whether the already installed operator is a built-in or user-defined.
 
 ## Modules
 
-> ### 🔮 Future feature: modules
+> #### 🔮 Future feature: modules
 >
 > Modules have not been implemented yet in 007. This whole chapter is a
 > best-guess at how they will work.
 
 007 files can be run directly as _scripts_, or they can be imported from other
-007 programs as _modules_.
+007 files as _modules_.
 
 The purpose of modules is to break up a big program into multiple independent
 compilation units.
@@ -879,8 +881,8 @@ compilation units.
 
 * Since each module decides exactly what to export to the outside world, a
   module boundary also confers a means of _encapsulation_ and _information
-  hiding_. Some aspects of a module can be "public", others private and
-  internal.
+  hiding_. Some aspects of a module can be exported to the outside;, the ones
+  that aren't are completely private and internal.
 
 * The same module can be used in multiple places in a code base, or in several
   different programs. This _re-use_ is often preferable to manually copying
@@ -933,11 +935,11 @@ scope:
 import { nameA, nameB, nameC } from some.module;
 ```
 
-Each name imported counts as a declaration; it's a compile-time error import
-and otherwise declare the same name in the same scope.
+Each name imported counts as a declaration; importing and otherwise declaring
+the same name in the same scope is a compile-time error.
 
-In the imported module, every export declaration exports a *name*, and together
-all the exported names make up the *export list*.
+In the imported module, every export declaration exports an identifier, and
+together all the exported names make up the *export list*.
 
 The *star import* form imports the entire export list into the current scope:
 
@@ -966,7 +968,8 @@ import { foo } from some.module;
 
 ### Forms of export
 
-You're only allowed to `export` statements on the top level of a module file.
+You're only allowed to `export` statements outside of any block in a module
+file.
 
 There are two forms of export statement:
 
@@ -980,8 +983,8 @@ export macro moo(...) ...;
 export class SomeClass ...;
 ```
 
-The declared name is made available in the lexical scope, and put on the export
-list.
+Exactly as you'd think, this not only declares a new identifier in the local
+scope, but also exports it.
 
 The *export list* form lists existing names to export:
 
@@ -992,21 +995,6 @@ export { nameA, nameB, nameC };
 There can be several of these export statements in a module, but it's
 recommended to put one at the end.
 
-### The lib path
-
-If your program contains an import, you need to have an environment variable
-`007LIB` set:
-
-```sh
-$ export 007LIB=$(pwd)/lib
-```
-
-If you want, you can specify several paths, separated by colons. The module
-importer will search through all these paths, in order, when a module is
-imported. It will import the first one it finds, from left to right.
-
-If no module is found, a compile-time error is reported.
-
 # Macrology
 
 007 is an extensible language. In a trivial sense, this is true of almost any
@@ -1014,103 +1002,336 @@ language; defining a new variable or function introduces a new name into some
 environment, thus "extending" the language with the new name.
 
 Custom operators represent a more ambitious form of extension. Not only do they
-introduce the operator name into the local scope, they also lexically extend
-the _grammar_ in such a way that a new operator is recognized.
+introduce the operator name into the local scope, they also make the _grammar_
+recognize a new operator, thus extending the language's syntax.
 
 007 is a _very_ extensible language. It lets you define the syntax and
 semantics not just for operators, but for terms and statements as well.
 
 The overriding goal is for things in the core language, as well as language
-extensions, to be _user-definable_.
+extensions, to be _user-definable_. This largely happens thanks to macros.
 
-This extreme in-language definability happens largely through macros. In order
-to talk about those, we first need to talk about program elements.
+As we move into the macrology sections, it might be good to know more is
+required of you, the reader. In extending in the language's reach, you will
+need to relate to aspects of the parser, the object system, and the execution
+model at a higher fidelity than the average "end user" of the language.
 
-## The Q hierarchy
-
-Every part of your program, from large to small, is represented by an object of
-a subtype of the type `Q`. Your entire program is a `Q.CompUnit`; an integer
-term (for example) is a `Q.Term.Int`. Together, all these objects form a tree;
-an "abstract syntax tree" describing your code.
-
-You can read more about all the Q types in the API section, but what's most
-important is that each Q node contains enough property data to describe the
-corresponding part of the program text.
-
-## Quasiquotes
-
-Describing a piece of code as nested `Q` objects will always be more cumbersome
-and lengthy than just writing the code as code. That's the problem quasi blocks
-solve: they allow you to express some code as code.
-
-As an example, here's a statement:
-
-```007
-say("Hello, world!");
-```
-
-The syntax tree that corresponds to that statement:
-
-```007
-my statement = new Q.Statement.Expr {
-    expr: new Q.Postfix.Call {
-        identifier: new Q.Identifier { name: "postfix:()" },
-        operand: new Q.Identifier { name: "say" },
-        argumentlist: new Q.ArgumentList {
-            arguments: [
-                new Q.Literal.Str { value: "Hello, world!" }
-            ]
-        }
-    }
-};
-```
-
-As you can see, writing out the syntax tree in 007 code is a fair amount of
-work, just to describe a single `say` statement.
-
-Maybe this conclusion can be summarized as "it's far shorter to _be_ code than
-to _describe_ code".
-
-That's why quasiquotes exist: they help you express code as _code_, not as
-syntax trees. But you still get the syntax tree.
-
-```007
-my statement = quasi {
-    say("Hello, world!");
-};
-```
-
-The reason they're called "quasiquotes" and not just "quotes" are that besides
-expressing fixed code, they also allow injecting interpolated bits of syntax
-trees ("unquotes"):
-
-```007
-quasi {
-    say( {{{expr}}} );
-};
-```
-
-This is analogous to how template strings allow interpolated expressions.
+Moreover, in the crowded space of lanuage extension, you're being held at a
+higher-than-usual standard of care and empathy. Your particular extension might
+need to interoperate not just with the core language but with other people's
+(past, present, and future) extensions.
 
 ## Macros
 
-Macros, the central feature of 007, work a lot like functions do. You can call
-a macro just like you can call a function.
+Function calls run at runtime:
 
-The main way they differ is that _functions are invoked at runtime_, whereas
-_macro calls are expanded at compile time_.
+```_007
+func foo() {
+    say("OH HAI");
+}
 
-Of course, the main consequence of this is that functions accept and return
-normal runtime values, whereas macros accept and return syntax tree fragments.
+say("before");
+foo();
+say("after");
+```
 
-Because macros return syntax tree fragments, quasiquotes are a really good fit.
-Typically, a macro ends with `return quasi { ... };`.
+This will output `before`, `OH HAI`, and `after`.
 
-XXX give two examples: prefix:<exists> and swap, perhaps?
+Compare this to a macro call:
+
+```_007
+macro moo() {
+    say("OH HAI");
+}
+
+say("before");
+moo();
+say("after");
+```
+
+This will output `OH HAI`, `before`, and `after`. In fact, the `moo` macro runs
+so early, it runs during the compilation process itself. (Macros run at `BEGIN`
+time.)
+
+Macros can return code, which will then be injected at the point of the macro
+call. Code that we return has to be *quoted*, so that it doesn't run
+immediately:
+
+```_007
+macro moo() {
+    return quasi {
+        say("OH HAI");
+    };
+}
+
+say("before");
+moo();
+say("after");
+```
+
+This code, again, outputs `before`, `OH HAI`, and `after` &mdash; the code in
+the `quasi` block was injected at the point of the `moo()` call.
+
+The above macros were not real examples, so let's do two macros that are
+actually potentially useful in your code:
+
+Let's say you want an operator for repeating an array. Let's call the new
+operator `infix:<xx>`:
+
+```_007
+[1] xx 5;                   # [1, 1, 1, 1, 1]
+[1, 2] xx 3;                # [1, 2, 1, 2, 1, 2]
+```
+
+The above is perfectly definable as an operator _function_, but... we could get
+a little bit of extra use out of the thing if the left-hand side was
+re-evaluated each time:
+
+```_007
+my i = 0;
+[i = i + 10] xx 4;          # [10, 20, 30, 40]
+```
+
+(For more on re-evaluation, see "thunky semantics" in the [Evaluating
+expressions](#evaluating-expressions) chapter.)
+
+Here's how an implementation of `infix:<xx>` might look:
+
+```_007
+macro infix:<xx>(left, right) is equiv(infix:<*>) {
+    return quasi {
+        (^{{{right}}}).flatMap(func(_) { {{{left}}} })
+    }
+}
+```
+
+The second example comes from C#, which has a [`nameof`
+operator](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/nameof).
+This is a little helper that takes a variable, and returns its _name_. The
+benefit of using such an operator (over just writing the names as strings in
+the code directly) comes when renaming things using automatic refactor actions
+&mdash; the variable in the `nameof` expression will be renamed with everything
+else, but a name in a string won't be.
+
+Here's a 007 implementation of this operator:
+
+```_007
+macro prefix:<nameof>(expr) {
+    assertType(expr, Q.Identifier);
+    return quasi { expr.name };
+}
+```
+
+And here's how to use it:
+
+```_007
+my agents = ["Bond", "Nexus"];
+
+say(nameof agents);         # "agents"
+```
+
+### Quasis
+
+A _`quasi`_ (or _`quasi` block_ or _quasiquote_) is a way to create a Qtree
+program fragment by simply typing out the code as you'd usually do.
+
+```_007
+macro moo() {
+    return quasi {
+        say("OH HAI");
+    };
+}
+```
+
+Whereas regular code runs directly, and code in a function runs only when the
+function is called, the code in a quasi isn't even in the program yet. It's
+waiting to be inserted somewhere.
+
+The typical way to insert code from a quasi into the regular code is via a
+macro. A macro contains one or more quasis, and the resulting bit of code is
+returned at the end. The compiler takes the resulting code and re-injects it in
+the place of the macro call.
+
+Sometimes the code where the macro is inserted is called the _mainline_ code,
+just to distinguish it from what happens within the macro. (The distinction is
+a bit bogus. Macros can call other macros.)
+
+By the way, the act of replacing a macro call by its returned code is
+traditionally called _macro expansion_.
+
+Together with the ability to represent code literally, quasis also allow you to
+_interpolate code_ into the `quasi` code:
+
+```_007
+macro doubleDo(stmt) {
+    return quasi {
+        {{{stmt}}};
+        {{{stmt}}};
+    };
+}
+
+doubleDo(
+    say("OH HAI")
+);                  # prints "OH HAI" twice
+```
+
+The interpolation capability is what makes quasiquotes interesting. (And also
+why they are called _quasi_quotes, and not just quotes.) It's a really neat way
+to switch between literal code that's the same between macro calls, and
+parameterized code that can vary from call to call.
+
+### The Q hierarchy
+
+What's the value of a `quasi` block? When a macro returns, what does it
+actually return?
+
+In 007, your entire program is a _document_, much like the HTML DOM treats an
+HTML page as a document. This document is made up of _nodes_, all subclasses of
+the `Q` class. (Usually referred to as _Qnodes_.)
+
+In other words, they are regular 007 values, instances of some subclass of `Q`.
+
+* Any statement is a `Q.Statement`.
+* Any expression or expression fragment is a `Q.Expr`.
+* Operators belong to `Q.Prefix`, `Q.Infix`, or `Q.Postfix`.
+
+And so on. The entire Q hierarchy is detailed in the API documentation.
+
+Philosophically, this is where 007 departs from Lisp. In Lisp, everything is
+nested lists, even the entire program structure. 007 instead exposes an
+object-oriented API to the program structure. It will never be as simple and
+uniform as the list interface, but it can have other strengths, such as the
+ability to strongly type the program structure, or access values in Qnodes
+through named properties.
+
+In the end, the essential point of Qnodes is that the compiler toolchain and
+the runtime are able to act on the same values without any fuss.
 
 ## Stateful macros
 
-XXX hidden variables using Symbols
+Consider this macro:
+
+```_007
+macro onlyOnce(expr) {
+    my alreadyRan = false;
+    return quasi {
+        if !alreadyRan {
+            {{{expr}}};
+            alreadyRan = true;
+        }
+    };
+}
+
+for [1, 2, 3] {
+    onlyOnce(say("OH HAI"));        # "OH HAI" once, not three times
+}
+for [1, 2] {
+    onlyOnce(say("OH HAI"));        # "OH HAI" once, not twice
+}
+```
+
+The above demonstrates two things:
+
+* Code in a quasi can read/modify variables defined in the macro. The values in
+  such variables will persist between runs of the quasi code.
+
+* Each macro _expasion_ (that is, each call to the macro in the code) gets its
+  own fresh copies of these variables, since the macro runs anew each time.
+
+We describe this by saying that the `alreadyRan` variable belongs to the
+macro's local _state_. Macros with local state are called _stateful_.
+
+As a prototypical example of a stateful macro, consider the `infix:<ff>`
+operator from Perl 6 (spelled `infix:<..>` in Perl 5):
+
+```_007
+my values = ["A", "B", "A", "B", "A"];
+for values -> v {
+    if v == "B" ff v == "B" {
+        say(v);
+    }
+    else {
+        say("x");
+    }
+}
+# Output: xBxBx
+```
+
+Here's how we can simply implement this macro:
+
+```_007
+macro infix:<ff>(lhs, rhs) {
+    my active = false;
+    return quasi {
+        if {{{lhs}}} {
+            active = true;
+        }
+        my result = active;
+        if {{{rhs}}} {
+            active = false;
+        }
+        result;
+    };
+}
+```
+
+This declaration works, but has one downside: the macro state is program-wide,
+but what we tend to expect/want is for the macro state to "reset" every time
+its surrounding block is re-entered.
+
+Here's an implementation that stores the state such that it's per block entry,
+not per program run:
+
+```_007
+macro infix:<ff>(lhs, rhs) {
+    my active = new Symbol { name: "active" };
+    return quasi {
+        my COMPILING.{{{Q.Identifier @ active}}};
+        once {
+            COMPILING.{{{Q.Identifier @ active}}} = false;
+        }
+        if {{{lhs}}} {
+            COMPILING.{{{Q.Identifier @ active}}} = true;
+        }
+        my result = COMPILING.{{{Q.Identifier @ active}}};
+        if {{{rhs}}} {
+            COMPILING.{{{Q.Identifier @ active}}} = false;
+        }
+        result;
+    };
+}
+```
+
+> #### 💡 Symbols
+>
+> Symbols can be used in place of strings as dictionary keys, and also as
+> names of variables in a scope. They're used when something unique,
+> unguessable, and hidden is called for. This tends to happen in macros.
+
+> #### 💡 `COMPILING`
+>
+> The `COMPILING` pseudomodule can be used inside of macro bodies (including
+> in quasis), and refers to the lexical scope from which the macro was called.
+> It's the only module one is allowed to declare variables in "at a distance".
+
+In this case, we're using the `active` symbol so that we can install it in the
+`COMPILING` scope. This protects us against collisions with:
+
+* A variable in the mainline scope called `active`.
+
+* Other macros which might also install a variable called `active` in the
+  mainline scope.
+
+* Other expansions of the _same_ macro (`infix:<ff>`) which would want to
+  install a variable called `active` in the mainline scope.
+
+As for the last point, each macro call gets its own fresh `active` symbol,
+and so they don't collide, even if they're in the same scope.
+
+> #### 💡 `once`
+>
+> The `once` macro runs a statement or block at most once per entry to the
+> surrounding block.
 
 ## Closures in macros
 
@@ -1149,6 +1370,8 @@ XXX example: `+=`, `.=`
 
 XXX important here to state the single evaluation rule
 
+XXX thunky semantics
+
 XXX location protocol
 
 ## Interacting with control flow
@@ -1163,10 +1386,12 @@ XXX example: `<-` (`amb`)
 
 # API reference
 
-## Built-in types
+## Types
 
-## Built-in functions
+## Functions
 
-## Built-in operators
+## Operators
+
+## Exceptions
 
 # How to contribute to 007

@@ -58,6 +58,13 @@ class X::Export::Nothing is Exception {
     method message { "Nothing to export" }
 }
 
+class X::Assignment::ReadOnly is Exception {
+    has Str $.declname;
+    has Str $.symbol;
+
+    method message { "Cannot assign to $.declname $.symbol" }
+}
+
 class _007::Parser::Actions {
     sub finish-block($block) {
         $block.static-lexpad = $*runtime.current-frame.properties<pad>;
@@ -317,11 +324,15 @@ class _007::Parser::Actions {
                 if $infix ~~ Q::Infix::Assignment && $t1 ~~ Q::Identifier {
                     my $frame = $*runtime.current-frame;
                     my $symbol = $t1.name.value;
-                    die X::Undeclared.new(:$symbol)
-                        unless @*declstack[*-1]{$symbol} :exists;
+                    if @*declstack[*-1]{$symbol} :!exists {
+                        if $*runtime.maybe-get-var($symbol) {
+                            die X::Assignment::ReadOnly.new(:declname("builtin"), :$symbol);
+                        }
+                        die X::Undeclared.new(:$symbol)
+                    }
                     my $decltype = @*declstack[*-1]{$symbol};
                     my $declname = $decltype.^name.subst(/ .* '::'/, "").lc;
-                    die X::Assignment::RO.new(:typename("$declname '$symbol'"))
+                    die X::Assignment::ReadOnly.new(:$declname, :$symbol)
                         unless $decltype.is-assignable;
                     %*assigned{$frame.id ~ $symbol}++;
                 }
@@ -445,7 +456,7 @@ class _007::Parser::Actions {
             :name(Val::Str.new(:value("prefix:$op"))),
             :frame($*runtime.current-frame),
         );
-        make $*parser.opscope.ops<prefix>{$op}.new(:$identifier, :operand(Val::NoneType));
+        make $*parser.opscope.ops<prefix>{$op}.new(:$identifier, :operand(Val::None));
     }
 
     method prefix-unquote($/) {

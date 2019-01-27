@@ -112,7 +112,7 @@ role Q::Term does Q::Expr {
 ### ### Q::Literal
 ###
 ### A literal; a constant value written out explicitly in the program, such as
-### `None`, `True`, `5`, or `"James Bond"`.
+### `none`, `true`, `5`, or `"James Bond"`.
 ###
 ### Compound values such as arrays and objects are considered terms but not
 ### literals.
@@ -122,7 +122,7 @@ role Q::Literal does Q::Term {
 
 ### ### Q::Literal::None
 ###
-### The `None` literal.
+### The `none` literal.
 ###
 class Q::Literal::None does Q::Literal {
     method eval($) { NONE }
@@ -130,7 +130,7 @@ class Q::Literal::None does Q::Literal {
 
 ### ### Q::Literal::Bool
 ###
-### A boolean literal; either `True` or `False`.
+### A boolean literal; either `true` or `false`.
 ###
 class Q::Literal::Bool does Q::Literal {
     has Val::Bool $.value;
@@ -378,7 +378,7 @@ class Q::Term::Func does Q::Term does Q::Declaration {
     method attribute-order { <identifier traitlist block> }
 
     method eval($runtime) {
-        my $name = $.identifier ~~ Val::NoneType
+        my $name = $.identifier ~~ Val::None
             ?? Val::Str.new(:value(""))
             !! $.identifier.name;
         return Val::Func.new(
@@ -429,43 +429,6 @@ class Q::Prefix does Q::Expr {
     }
 }
 
-### ### Q::Prefix::Str
-###
-### A stringification operator.
-###
-class Q::Prefix::Str is Q::Prefix {}
-
-### ### Q::Prefix::Plus
-###
-### A numification operator.
-###
-class Q::Prefix::Plus is Q::Prefix {}
-
-### ### Q::Prefix::Minus
-###
-### A numeric negation operator.
-###
-class Q::Prefix::Minus is Q::Prefix {}
-
-### ### Q::Prefix::So
-###
-### A boolification operator.
-###
-class Q::Prefix::So is Q::Prefix {}
-
-### ### Q::Prefix::Not
-###
-### A boolean negation operator.
-###
-class Q::Prefix::Not is Q::Prefix {}
-
-### ### Q::Prefix::Upto
-###
-### An "upto" operator; applied to a number `n` it produces an array
-### of values `[0, 1, ..., n-1]`.
-###
-class Q::Prefix::Upto is Q::Prefix {}
-
 ### ### Q::Infix
 ###
 ### An infix operator; something like the `+` in `2 + 2` that occurs between
@@ -486,52 +449,6 @@ class Q::Infix does Q::Expr {
     }
 }
 
-### ### Q::Infix::Addition
-###
-### A numeric addition operator.
-###
-class Q::Infix::Addition is Q::Infix {}
-
-### ### Q::Infix::Addition
-###
-### A numeric subtraction operator.
-###
-class Q::Infix::Subtraction is Q::Infix {}
-
-### ### Q::Infix::Multiplication
-###
-### A numeric multiplication operator.
-###
-class Q::Infix::Multiplication is Q::Infix {}
-
-### ### Q::Infix::Modulo
-###
-### A numeric modulo operator; produces the *remainder* left from an integer
-### division between two numbers. For example, `456 % 100` is `56` because the
-### remainder from dividing `456` by `100` is `56`.
-###
-class Q::Infix::Modulo is Q::Infix {}
-
-### ### Q::Infix::Divisibility
-###
-### A divisibility test operator. Returns `True` exactly when the remainder
-### operator would return `0`.
-###
-class Q::Infix::Divisibility is Q::Infix {}
-
-### ### Q::Infix::Divmod
-###
-### A division/modulo operator. Returns a tuple with the quotient and reminder.
-###
-class Q::Infix::Divmod is Q::Infix {}
-
-### ### Q::Infix::Concat
-###
-### A string concatenation operator. Returns a single string that is the
-### result of sequentially putting two strings together.
-###
-class Q::Infix::Concat is Q::Infix {}
-
 ### ### Q::Infix::Assignment
 ###
 ### An assignment operator. Puts a value in a storage location.
@@ -543,42 +460,6 @@ class Q::Infix::Assignment is Q::Infix {
         return $value;
     }
 }
-
-### ### Q::Infix::Eq
-###
-### An equality test operator.
-###
-class Q::Infix::Eq is Q::Infix {}
-
-### ### Q::Infix::Ne
-###
-### An inequality test operator.
-###
-class Q::Infix::Ne is Q::Infix {}
-
-### ### Q::Infix::Gt
-###
-### A greater-than test operator.
-###
-class Q::Infix::Gt is Q::Infix {}
-
-### ### Q::Infix::Lt
-###
-### A less-than test operator.
-###
-class Q::Infix::Lt is Q::Infix {}
-
-### ### Q::Infix::Ge
-###
-### A greater-than-or-equal test operator.
-###
-class Q::Infix::Ge is Q::Infix {}
-
-### ### Q::Infix::Le
-###
-### A less-than-or-equal test operator.
-###
-class Q::Infix::Le is Q::Infix {}
 
 ### ### Q::Infix::Or
 ###
@@ -597,12 +478,12 @@ class Q::Infix::Or is Q::Infix {
 ### ### Q::Infix::DefinedOr
 ###
 ### A short-circuiting "defined-or" operator. Evaluates its
-### right-hand side only if the left-hand side is `None`.
+### right-hand side only if the left-hand side is `none`.
 ###
 class Q::Infix::DefinedOr is Q::Infix {
     method eval($runtime) {
         my $l = $.lhs.eval($runtime);
-        return $l !~~ Val::NoneType
+        return $l !~~ Val::None
             ?? $l
             !! $.rhs.eval($runtime);
     }
@@ -621,20 +502,6 @@ class Q::Infix::And is Q::Infix {
             !! $.rhs.eval($runtime);
     }
 }
-
-### ### Q::Infix::TypeMatch
-###
-### A type match operator. Checks if a value on the left-hand side has
-### the type on the right-hand side, including subtypes.
-###
-class Q::Infix::TypeMatch is Q::Infix {}
-
-### ### Q::Infix::TypeNonMatch
-###
-### A negative type match operator. Returns `True` exactly in the cases
-### a type match would return `False`.
-###
-class Q::Infix::TypeNonMatch is Q::Infix {}
 
 ### ### Q::Postfix
 ###
@@ -1041,7 +908,7 @@ class Q::Statement::Return does Q::Statement {
     has $.expr = NONE;
 
     method run($runtime) {
-        my $value = $.expr ~~ Val::NoneType ?? $.expr !! $.expr.eval($runtime);
+        my $value = $.expr ~~ Val::None ?? $.expr !! $.expr.eval($runtime);
         my $frame = $runtime.get-var("--RETURN-TO--");
         die X::Control::Return.new(:$value, :$frame);
     }
@@ -1055,7 +922,7 @@ class Q::Statement::Throw does Q::Statement {
     has $.expr = NONE;
 
     method run($runtime) {
-        my $value = $.expr ~~ Val::NoneType
+        my $value = $.expr ~~ Val::None
             ?? Val::Exception.new(:message(Val::Str.new(:value("Died"))))
             !! $.expr.eval($runtime);
         die X::TypeCheck.new(:got($value), :excpected(Val::Exception))
