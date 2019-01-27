@@ -102,7 +102,7 @@ grammar ABC::Grammar
     token clef-middle { "middle=" <basenote> <octave> }
 
     token key { [ [<key-def> [\h+ <clef>]?] | <clef> | "HP" | "Hp" ] \h* }
-    token key-def { <basenote> <chord_accidental>? <mode>? [\h+ <global-accidental>]* }
+    token key-def { <basenote> <chord_accidental>? [\h* <mode>]? [\h+ <global-accidental>]* }
     token mode { <minor> | <major> | <lydian> | <ionian> | <mixolydian> | <dorian> | <aeolian> | <phrygian> | <locrian> }
     token minor { "m" ["in" ["o" ["r"]?]?]? } # m, min, mino, minor - all modes are case insensitive
     token major { "maj" ["o" ["r"]?]? }
