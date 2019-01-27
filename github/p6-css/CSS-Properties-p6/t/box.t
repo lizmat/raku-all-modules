@@ -6,7 +6,7 @@ use CSS::Properties;
 use CSS::Properties::Units :pt;
 use CSS::Properties::Box;
 
-my $css = CSS::Properties.new;
+my CSS::Properties $css .= new;
 
 $css.padding = 5pt;
 $css.border-width = 3pt;
@@ -17,7 +17,7 @@ my $right  = 50e0pt;
 my $bottom = 0e0pt;
 my $left   = 0e0pt;
 
-my $box = CSS::Properties::Box.new( :$top, :$left, :$bottom, :$right, :$css );
+my CSS::Properties::Box $box .= new( :$top, :$left, :$bottom, :$right, :$css );
 
 is-deeply $box.Array, [$top, $right, $bottom, $left], '.Array';
 is $box.padding, [$top+5, $right+5, $bottom-5, $left-5], '.padding';

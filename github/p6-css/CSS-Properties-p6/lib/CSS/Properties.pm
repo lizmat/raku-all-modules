@@ -1,7 +1,7 @@
 use v6;
 
 #| management class for a set of CSS Properties
-class CSS::Properties:ver<0.3.9> {
+class CSS::Properties:ver<0.4.1> {
 
     use CSS::Module:ver(v0.4.6+);
     use CSS::Module::CSS3;
@@ -15,71 +15,68 @@ class CSS::Properties:ver<0.3.9> {
     my %module-properties{CSS::Module};   # per-module property attributes
 
     # contextual variables
-    has Any %!values;         # property values
-    has Any %!default;
+    has Any   %!values handles <keys>;    # property values
+    has Any   %!default;
     has Array %!box;
-    has Hash %!struct;
-    has Bool %!important;
+    has Hash  %!struct;
+    has Bool  %!important;
     my subset Handling of Str where 'initial'|'inherit';
     has Handling %!handling;
-    has CSS::Module $.module = CSS::Module::CSS3.module; #| associated CSS module
+    has CSS::Module $.module handles <parse-property> = CSS::Module::CSS3.module; #| associated CSS module
     has @.warnings;
     has Bool $.warn = True;
     has Hash $!metadata;
     has Hash $!properties;
+    has Str $.units = 'pt';
+    has Numeric $!scale;
+    has Numeric $.viewport-width;
+    method viewport-width { $!viewport-width // fail "viewport-width is unknown" }
+    has Numeric $.viewport-height;
+    method viewport-height { $!viewport-height // fail "viewport-height is unknown" }
 
-    #| normalised point value
-    class NumPt is Num does CSS::Properties::Units::Type["pt"] {};
-
-    my subset ZeroHash of Hash where {
+    my subset ZeroHash where {
         # e.g. { :px(0) } === { :mm(0.0) }
         with .values[0] { $_ ~~ Numeric && $_ =~= 0 }
     };
-    multi sub css-eqv(ZeroHash:D $a, ZeroHash:D $b) { True }
-    multi sub css-eqv(Hash:D $a, Hash:D $b) {
-	if +$a != +$b { return False }
-        for $a.kv -> $k, $v {
+    multi sub css-eqv(%a, %b) {
+        return True if %a ~~ ZeroHash && %b ~~ ZeroHash;
+	if %a.elems != %b.elems { return False }
+        for %a.kv -> $k, $v {
             return False
-                unless $b{$k}:exists && css-eqv($v, $b{$k});
+                unless %b{$k}:exists && css-eqv($v, %b{$k});
 	}
 	True;
     }
-    multi sub css-eqv(List:D $a, List:D $b) {
-	if +$a != +$b { return False }
-	for $a.kv -> $k, $v {
+    multi sub css-eqv(@a, @b) {
+	if +@a != +@b { return False }
+	for @a.kv -> $k, $v {
 	    return False
-		unless (css-eqv($v, $b[$k]));
+		unless css-eqv($v, @b[$k]);
 	}
 	True;
     }
     multi sub css-eqv(Numeric:D $a, Numeric:D $b) { $a == $b }
     multi sub css-eqv(Stringy $a, Stringy $b) { $a eq $b }
     multi sub css-eqv(Any $a, Any $b) is default {
-        when $a.isa(Pair) { css-eqv( %$a, $b) }
-        when $b.isa(Pair) { css-eqv( $a, %$b) }
-        when !$a.defined && !$b.defined { True }
-	default { False }
+        !$a.defined && !$b.defined
     }
-    our sub measure($_,
+    method measure($_,
                     Numeric :$em = 12,
                     Numeric :$ex = $em * 3/4,
-                    Numeric :$vw,
-                    Numeric :$vh) is export(:measure) {
-        state %roles;
+                  ) {
         when Numeric {
-            my Str $units = .?type // 'pt';
+            my Str $units = .?type // $!units;
             my Numeric $scale = do given $units {
                 when 'em'   { $em }
                 when 'ex'   { $ex }
-                when 'vw'   { $vw // die 'Viewport width is unknown' }
-                when 'vh'   { $vh // die 'Viewport height is unknown' }
-                when 'vmin' { min($vw // die 'Viewport dimensions are unknown', $vh) }
-                when 'vmax' { max($vw // die 'Viewport dimensions are unknown', $vh) }
+                when 'vw'   { $.viewport-width }
+                when 'vh'   { $.viewport-height }
+                when 'vmin' { min($.viewport-width, $.viewport-height) }
+                when 'vmax' { max($.viewport-width, $.viewport-height) }
                 when 'percent' { 0 }
                 default { Scale.enums{$units} }
             } // die "unknown units: $units";
-            my $num = $_ // 0;
-            NumPt.new($num * $scale);
+           ($_ * $scale / $!scale) but CSS::Properties::Units::Type[$!units];
         }
         default { Nil }
     }
@@ -175,7 +172,8 @@ class CSS::Properties:ver<0.3.9> {
     }
 
     submethod TWEAK( Str :$style, :$inherit = [], :$copy, :$declarations,
-                     :$module, :$warn, # stop these leaking through to %props
+                     :module($), :warn($), :units($), # stop these leaking through to %props
+                     :viewport-width($), :viewport-height($),
                      *%props, ) {
         $!metadata = %module-metadata{$!module} //= $!module.property-metadata
             // die "module {$!module.name} lacks meta-data";
@@ -187,6 +185,7 @@ class CSS::Properties:ver<0.3.9> {
         self.inherit($_) for $inherit.list;
         self!copy($_) with $copy;
         self.set-properties(|%props);
+        $!scale = Scale.enums{$!units};
     }
 
     method !box-value(Str $prop, List $edges) is rw {
@@ -234,15 +233,17 @@ class CSS::Properties:ver<0.3.9> {
             },
 	    STORE => -> $, $rval {
                 my %vals;
-                given $rval {
-                    when Nil         { self.delete($prop); }
+                with $rval {
                     when Associative { %vals = .Hash; }
                     default {
-                        with self.module.parse-property($prop, $_, :$!warn) -> $expr {
+                        with self.parse-property($prop, $_, :$!warn) -> $expr {
                             my @props = self!get-props($prop, $expr);
                             %vals{.key} = .value for @props;
                         }
                     }
+                }
+                else {
+                    self.delete($prop);
                 }
 
                 for $children.list -> $prop {
@@ -282,13 +283,12 @@ class CSS::Properties:ver<0.3.9> {
                     %!values{$prop} = self!default($prop)
                 }
             },
-            STORE => -> $,$v {
-                if $v ~~ Nil {
-                    self.delete($prop);
+            STORE => -> $, $v {
+                with self!coerce( $v, :$prop ) {
+                    %!values{$prop} = $_;
                 }
                 else {
-                    %!values{$prop} = $_
-                        with self!coerce( $v, :$prop );
+                    self.delete($prop);
                 }
             }
         );
@@ -351,11 +351,11 @@ class CSS::Properties:ver<0.3.9> {
         $color does CSS::Properties::Units::Type[$type];
     }
     multi method from-ast(Pair $v is copy where .key eq 'keyw') {
-        state %cache;
-        if $v.value eq 'transparent' {
-            $v = 'rgba' => INIT Color.new: :r(0), :g(0), :b(0), :a(0)
-        }
-        %cache{$v.value} //= $v.value but CSS::Properties::Units::Type[$v.key]
+        state $cache //= %(
+            'transparent' => (Color
+                              but CSS::Properties::Units::Type['rgba']).new( :r(0), :g(0), :b(0), :a(0));
+        );
+        $cache{$v.value} //= $v.value but CSS::Properties::Units::Type[$v.key]
     }
     method !set-type(\v, \type) {
         v ~~ Color|Hash|Array
@@ -387,10 +387,10 @@ class CSS::Properties:ver<0.3.9> {
     multi sub coerce-str($_) is default {
         .Str if $_ ~~ Str|Numeric && ! .can('type');
     }
-    has %!prop-cache; # cache, for performance
+    has %!ast-cache{Str}; # cache, for performance
     method !coerce($val, Str :$prop) {
         my \expr = do with $prop && coerce-str($val) {
-            (%!prop-cache{$prop}{$_} //= $.module.parse-property($prop, $_, :$!warn))
+            (%!ast-cache{$prop}{$_} //= $.parse-property($prop, $_, :$!warn))
         }
         else {
             $val;
@@ -505,31 +505,35 @@ class CSS::Properties:ver<0.3.9> {
         $obj;
     }
 
-    # Avoid these serialization optimizations, which won't parse correctly:
-    #     font: bold;
-    #     font: bold Helvetica;
-    # Need a font-size to disambiguate, e.g.:
+    #| determine if it is advantageous to combine component properties
+    #| into compound properties, e.g. font-family font-style ... into font
+    proto sub optimizable(Str $compound-prop, :%props) { * }
+
+    # Avoid these font serialization optimizations, which won't parse correctly:
+    #     font: bold;            // font-weight or font-style only
+    #     font: bold Helvetica;  // ... + family-name
+    # Need a font-size or font-family to disambiguate, e.g.:
     #     font: bold medium Helvetica;
     #     font: medium Helvetica;
-    multi method optimizable('font', Set :$kids!
-                              where <font-size font-family>.Set ⊈ $kids ) {
-        False;
+    multi method optimizable('font', :%props (:$font-size, :$font-family, |c) ) {
+        $font-size.defined && $font-family.defined;
     }
 
-    multi method optimizable(Str $, Set :$kids!) is default {
-        +$kids >= 2;
+    # only worthwhile, if there's more than one component
+    multi method optimizable(Str $, :props(%p)) is default {
+        %p.elems >= 2;
     }
 
     method optimize( @ast ) {
         my %prop-ast;
-        for @ast {
-            next unless .key eq 'property';
+        for @ast.grep(*.key eq 'property') {
             my %v = .value;
             %prop-ast{$_} = %v
                 with %v<ident>:delete;
         }
 
         self!optimize-ast(%prop-ast);
+        tweak-ast(%prop-ast);
         assemble-ast(%prop-ast);
     }
 
@@ -551,9 +555,7 @@ class CSS::Properties:ver<0.3.9> {
                 my \default = self.to-ast: self!default(prop);
 
                 %prop-ast{prop}:delete
-                    if (val.elems == 1
-                        ?? css-eqv(val, default[0])
-                        !! css-eqv(val, default));
+                    if css-eqv(val, default[0]);
             }
             %edges{info.edge}++ if info.edge;
         }
@@ -585,19 +587,24 @@ class CSS::Properties:ver<0.3.9> {
                     while +@asts > 1
                     && css-eqv( @asts.tail, @asts[ DefaultIdx[+@asts] ] );
 
-                %prop-ast{$prop} = { :expr[ @asts.map: *<expr> ] };
+                my @expr;
+                @expr.append: .<expr>.list
+                   for @asts;
+
+                %prop-ast{$prop} = { :@expr };
                 %prop-ast{$prop}<prio> = $_
                     with @asts[0]<prio>;
             }
         }
-        for self!compound-properties.list -> \prop {
+        for self!compound-properties.list -> \compound-prop {
             # top-down aggregation of compound properties. e.g. border-width, border-style => border
 
-            my @children = metadata{prop}<children>.list.grep: {
+            my @children = metadata{compound-prop}<children>.list.grep: {
                 %prop-ast{$_}:exists
             }
 
-            next unless @children && $.optimizable(prop, :kids(@children.Set));
+            my %props = %(@children.Set);
+            next unless @children && $.optimizable(compound-prop, :%props);
 
             # agregrate related children to a compound property, where possible.
             # -- if child properties are 'initial', or 'inherit', they all
@@ -629,16 +636,16 @@ class CSS::Properties:ver<0.3.9> {
                 given %groups{$_}.list -> @children {
                     when Handling {
                         %prop-ast{$_}:delete for @children;
-                        %prop-ast{prop} = { :expr[ :keyw($_) ] };
+                        %prop-ast{compound-prop} = { :expr[ :keyw($_) ] };
                     }
                     when 'important'|'normal' {
-                        my %ast = expr => [ @children.map: {
+                        my %ast = :expr[ @children.map: {
                             my \sub-prop = %prop-ast{$_}:delete;
                             'expr:'~$_ => sub-prop<expr>;
                         } ];
                         %ast<prio> = $_
                             when 'important';
-                        %prop-ast{prop} = %ast;
+                        %prop-ast{compound-prop} = %ast;
                     }
                 }
             }
@@ -646,16 +653,18 @@ class CSS::Properties:ver<0.3.9> {
         %prop-ast;
     }
 
-    sub assemble-ast(%prop-ast) {
-        with %prop-ast<font> {
-            # reinsert font '/' operator if needed...
-            with .<expr> {
-                # e.g.: font: italic bold 10pt/12pt times-roman;
-                $_ = [ flat .map: { .key eq 'expr:line-height' ?? [ :op('/'), $_, ] !! $_ } ];
-            }
-        }
+    multi sub tweak-ast(% ( :%font! ( :$expr! is rw ))) {
+        # reinsert font '/' operator if needed...
+        # e.g.: font: italic bold 10pt/12pt times-roman;
+        $_ = [ flat .map: { .key eq 'expr:line-height' ?? [ :op('/'), $_, ] !! $_ } ]
+            given $expr;
+    }
+    multi sub tweak-ast(%) is default {
+        # nothing to do
+    }
 
-        #| assemble property list
+    #| assemble property list
+    multi sub assemble-ast(%prop-ast) {
         my @declaration-list = %prop-ast.keys.sort.map: -> \prop {
             my %property = %prop-ast{prop};
             %property.push: 'ident' => prop;
@@ -683,14 +692,17 @@ class CSS::Properties:ver<0.3.9> {
         #| expressions
         for %!values.keys.sort -> \prop {
             with %!values{prop} -> \value {
-                my \ast = self.to-ast: value;
-                %prop-ast{prop}<expr> = [ ast ];
+                my $ast = self.to-ast: value;
+                $ast = [ $ast ]
+                    unless $ast ~~ List;
+                %prop-ast{prop}<expr> = $ast;
             }
         }
 
         self!optimize-ast(%prop-ast)
             if $optimize;
 
+        tweak-ast(%prop-ast);
         assemble-ast(%prop-ast);
     }
 

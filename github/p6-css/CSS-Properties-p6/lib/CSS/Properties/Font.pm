@@ -1,6 +1,6 @@
 use v6;
 class CSS::Properties::Font {
-    use CSS::Properties :measure;
+    use CSS::Properties;
     use CSS::Properties::Units :pt;
 
     has Numeric $.em is rw = 10;
@@ -12,7 +12,7 @@ class CSS::Properties::Font {
     has Str $.style = 'normal';
     has Numeric $.line-height;
     has Str $.stretch;
-    has CSS::Properties $.css = CSS::Properties.new;
+    has CSS::Properties $.css handles <units viewport-width viewport-height> = CSS::Properties.new;
     method css is rw {
         Proxy.new(
             FETCH => sub ($) { $!css },
@@ -55,8 +55,33 @@ class CSS::Properties::Font {
             });
     }
 
-    method length($v) {
-        measure($v, :$!em, :$!ex);
+    multi method measure($_, :$font! where .so) returns Numeric {
+        if $_ ~~ Numeric {
+            .?type ~~ 'percent'
+                ?? $!em * $_ / 100
+                !! self.measure($_);
+        }
+        else {
+            given .lc {
+                when 'xx-small' { 6pt }
+                when 'x-small'  { 7.5pt }
+                when 'small'    { 10pt }
+                when 'medium'   { 12pt }
+                when 'large'    { 13.5pt }
+                when 'x-large'  { 18pt }
+                when 'xx-large' { 24pt }
+                when 'larger'   { $!em * 1.2 }
+                when 'smaller'  { $!em / 1.2 }
+                default {
+                    warn "unhandled font-size: $_";
+                    12pt;
+                }
+            }
+        }
+    }
+
+    multi method measure($v) is default {
+        $!css.measure($v, :$!em, :$!ex);
     }
 
     #| converts a weight name to a three digit number:
@@ -80,31 +105,6 @@ class CSS::Properties::Font {
         }
     }
 
-    method font-length($_) returns Numeric {
-        if $_ ~~ Numeric {
-            .?type ~~ 'percent'
-                ?? $!em * $_ / 100
-                !! self.length($_);
-        }
-        else {
-            given .lc {
-                when 'xx-small' { 6pt }
-                when 'x-small'  { 7.5pt }
-                when 'small'    { 10pt }
-                when 'medium'   { 12pt }
-                when 'large'    { 13.5pt }
-                when 'x-large'  { 18pt }
-                when 'xx-large' { 24pt }
-                when 'larger'   { $!em * 1.2 }
-                when 'smaller'  { $!em / 1.2 }
-                default {
-                    warn "unhandled font-size: $_";
-                    12pt;
-                }
-            }
-        }
-    }
-
     method setup(CSS::Properties $css = $!css) {
         @!family = [];
         with $css.font-family {
@@ -122,12 +122,12 @@ class CSS::Properties::Font {
 
         $!style = $css.font-style;
         $!weight = self!font-weight($css.font-weight);
-        $!em = self.font-length($css.font-size);
+        $!em = self.measure($css.font-size, :font);
         $!stretch = $css.font-stretch;
         $!line-height = do given $css.line-height {
             when .type eq 'num'     { $_ * $!em }
             when 'normal'           { $!em * 1.2 }
-            default                 { self.font-length($_) }
+            default                 { self.measure($_, :font) }
         }
 	self;
     }

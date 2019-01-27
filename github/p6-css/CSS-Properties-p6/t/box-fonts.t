@@ -13,7 +13,7 @@ is $font.style, 'italic', 'font-style';
 is $font.weight, '700', 'font-weight';
 is $font.family, 'times-roman', 'font-family';
 is $font.line-height, 12, 'line-height';
-is $font.length(15px), 11.25, 'length';
+is $font.measure(15px), 11.25, 'measure';
 is $font.fontconfig-pattern, 'times-roman:slant=italic:weight=bold', 'fontconfig-pattern';
 
 is CSS::Properties::Font.new( :font-style("500 condensed 12px/30px Georgia, serif, Times") ).fontconfig-pattern, 'Georgia serif,Times:weight=medium:width=condensed', 'fontconfig-pattern';

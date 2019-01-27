@@ -147,7 +147,7 @@ Properties can be deleted via the `delete` method, or by assigning the property 
 
 A child class can inherit from one or more parent classes. This follows CSS standards:
 
-- not all properties are inherited; for example `color` is inherited, but `margin` is not.
+- not all properties are inherited by default; for example `color` is, but `margin` is not.
 
 - the `inherit` keyword can be used in the child property to ensure inheritance.
 
@@ -179,22 +179,25 @@ The `.write` or `.Str` methods can be used to produce CSS. Properties are optimi
 
 - properties with default values are omitted
 
-- simple properties are consolidated to containers (e.g. `font-family` to `font`).
+- multiple component properties are consolidated to compound properties, where possible (e.g. `font-family` and `font-size`
+  are consolidated to `font`).
 
 - rgb masks are translated to color-names, where possible
 
 ```
 use CSS::Properties;
-my CSS::Properties $css .= new( :style("border-style: groove; border-width: 2pt 2pt; color: rgb(255,0,0);") );
-say $css.write;  # "border: 2pt; color: red;"
+my CSS::Properties $css .= new( :style("background-repeat:repeat; border-style: groove; border-width: 2pt 2pt; color: rgb(255,0,0);") );
+# - 'border-width' and 'border-style' are consolidated to the 'border' compound property
+# - rgb(255,0,0) is mapped to 'red'
+say $css.write;  # "border:2pt groove; color: red;"
 ```
 
 Notice that:
 
-- `border-style` was omitted because it has the default value
+- `background-repeat` was omitted because it has the default value
 
-- `border-width` has been consolidated to the `border` container property. This was possible
-because all four borders had the common value `2pt`
+- `border-style` and `border-width` have been consolidated to the `border` container property. This is possible
+because all four borders have common values
 
 - `color` has been translated from a color mask to a color
 
@@ -261,17 +264,23 @@ margin-right: 5 mm
 
 ## Length Units
 
-CSS::Declaration::Units is a convenience module that provides some simple post-fix length unit definitions, plus `+css` and `-css` infix operators.
-operators. These are understood by the CSS::Properties class.
+CSS::Declaration::Units is a convenience module that provides some simple post-fix length unit definitions.
 
-The `+css` and `-css` operators convert to the left-hand operand's units.
+The `:ops` export overloads  `+` and `-` to perform unit
+calculations. `+css` and `-css` are also available as
+more explicit infix operators:
+
+All infix operators convert to the left-hand operand's units.
 
 ```
 use CSS::Properties::Units :ops, :pt, :px, :in, :mm;
 my $css = (require CSS::Properties).new: :margin[5pt, 10px, .1in, 2mm];
 
 # display margins in millimeters
-say "%.2f mm".sprintf(0mm +css $_) for $css.margin.list;
+say "%.2f mm".sprintf(0mm + $_) for $css.margin.list;
+
+# display padding in inches
+say "%.2f in".sprintf(0in +css $_) for $css.padding.list;
 ```
 
 ## Box Model
@@ -302,39 +311,37 @@ The margin edge surrounds the box margin. If the margin has 0 width, the margin 
 
 `CSS::Properties::Box` is an abstract class for modelling Box Model elements.
 
-```
-use CSS::Properties;
-use CSS::Properties::Box;
-use CSS::Properties::Units :px, :pt, :em, :percent;
+    use CSS::Properties::Box;
+    use CSS::Properties::Units :px, :pt, :em, :percent;
+    use CSS::Properties;
 
-my $style = q:to"END";
-    width:   300px;
-    border:  25px solid green;
-    padding: 25px;
-    margin:  25px;
-    font:    italic bold 10pt/12pt times-roman;
-    END
+    my $style = q:to"END";
+        width:   300px;
+        border:  25px solid green;
+        padding: 25px;
+        margin:  25px;
+        font:    italic bold 10pt/12pt times-roman;
+        END
 
-my CSS::Properties $css .= new: :$style;
-my $top    = 80pt;
-my $right  = 50pt;
-my $bottom = 10pt;
-my $left   = 10pt;
+    my CSS::Properties $css .= new: :$style;
+    my $top    = 80pt;
+    my $right  = 50pt;
+    my $bottom = 10pt;
+    my $left   = 10pt;
 
-my CSS::Properties::Box $box .= new( :$top, :$left, :$bottom, :$right, :$css );
-say $box.padding;           # dimensions of padding box;
-say $box.margin;            # dimensions of margin box;
-say $box.border-right;      # vertical position of right border
-say $box.border-width;      # border-right - border-left
-say $box.width("border");   # border-width
-say $box.height("content"); # height of content box
+    my CSS::Properties::Box $box .= new( :$top, :$left, :$bottom, :$right, :$css );
+    say $box.padding;           # dimensions of padding box;
+    say $box.margin;            # dimensions of margin box;
+    say $box.border-right;      # vertical position of right border
+    say $box.border-width;      # border-right - border-left
+    say $box.width("border");   # border-width
+    say $box.height("content"); # height of content box
 
-say $box.font.family;        # 'times-roman'
-# calculate some relative font lengths
-say $box.font-length(1.5em);    # 15
-say $box.font-length(200%);     # 20
-say $box.font-length('larger'); # 12
-```
+    say $box.font.family;        # 'times-roman'
+    # calculate some relative font lengths
+    say $box.font-length(1.5em);    # 15
+    say $box.font-length(200%);     # 20
+    say $box.font-length('larger'); # 12
 
 ### Box Methods
 
@@ -354,9 +361,25 @@ The box `new` constructor accepts:
 
 The '.font' accessor returns an object of type `CSS::Properties::Font`, with accessor methods: `em`, `ex`, `weight`, `family`, `style`, `leading`, `find-font` and `fontconfig-pattern`.
 
+#### measure
+
+This method converts various length units to normalized base units (default 'pt').
+
+    use CSS::Properties::Units :mm, :in, :pt, :px;
+    use CSS::Properties::Box;
+    use CSS::Properties;
+    my CSS::Properties::Box $box .= new;
+    # default base units is points
+    say [(1mm, 1in, 1pt, 1px).map: {$box.measure($_)}];
+    # produces: [2.8346pt 72pt 1pt 0.75pt]
+    # change base units to inches
+    $box .= new: :units<in>;
+    say [(1in, 72pt).map: {$box.measure($_)}];
+    # produces: [1in, 1in]
+
 #### top, right, bottom, left
 
-These methods return the positions of each of the four corners of the inner content box. They
+These methods return measured positions of each of the four corners of the inner content box. They
 are rw accessors, e.g.:
 
     $box.top += 5;
@@ -365,14 +388,14 @@ Outer boxes will grow and shrink, retaining their original width and height.
 
 #### padding, margin, border
 
-This returns all four corners of the given box, e.g.:
+This returns all four corners (measured) of the given box, e.g.:
 
     my Numeric ($top, $right, $bottom, $left) = $box.padding
 
 
 #### content
 
-This returns all four corners of the content box, e.g.:
+This returns all four corners (measured) of the content box, e.g.:
 
     my Numeric ($top, $right, $bottom, $left) = $box.content;
 
@@ -386,13 +409,13 @@ Outer boxes, will grow or shrink to retain their original widths.
 
      say "margin box is size {$box.margin-width} X {$box.margin-height}";
 
-This family of accessors return the width, or height of the given box.
+This family of accessors return the measured width, or height of the given box.
 
 #### [padding|margin|border|content]-[top|right|bottom|left]
 
      say "margin left, top is ({$box.margin-left}, {$box.margin-top})";
 
-This family of accessors return the x or y position of the given edge
+This family of accessors return the measured x or y position of the given edge
 
 #### translate, move
 

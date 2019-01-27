@@ -1,7 +1,21 @@
+0.4.1
+   - Add measure() and units() methods. Allow for
+     variable base units.
+   - Add viewport-width and viewport-height attributes
+   - Renamed method widths to measurements
+0.4.0
+   - Reintroduce '+' and '-' infix overloading for
+     units calculations. '+css' and '-css' are
+     still available as more explict and strongly
+     typed operators.
+   - Adding CSS::Properties::PageBox (WIP)
+0.3.10
+   - Minor adjustments for Rakudo 2018.11+ Bleed
 0.3.9
    - Adjust to Rakudo 2018.06+, including unordered
      hash keys and rw proxy accessors
    - Added +css and -css as experimental infix operators
+   - Minor refactors to ast and optimize methods
 0.3.8
    - Rename module CSS::Declarations -> CSS::Properties
 0.3.7

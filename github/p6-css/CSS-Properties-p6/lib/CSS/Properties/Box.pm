@@ -1,7 +1,8 @@
 use v6;
 
 class CSS::Properties::Box {
-    use CSS::Properties::Units :pt;
+    use CSS::Properties;
+    use CSS::Properties::Units :pt, :ops;
     my Int enum Edges is export(:Edges) <Top Right Bottom Left>;
     has Numeric $.top;
     has Numeric $.right;
@@ -13,7 +14,7 @@ class CSS::Properties::Box {
     has Array $!margin;
 
     use CSS::Properties::Font;
-    has CSS::Properties::Font $.font is rw handles <font-length>;
+    has CSS::Properties::Font $.font is rw handles <font-size measure units em ex viewport-width viewport-height>;
     has CSS::Properties $.css;
 
     has Hash @.save;
@@ -29,8 +30,10 @@ class CSS::Properties::Box {
         Str :$style = '',
         Numeric :$em = 12pt,
         Numeric :$ex = 0.75 * $em,
+        :font($),
+        |c
     ) {
-        $!css //= CSS::Properties.new(:$style),
+        $!css //= CSS::Properties.new(:$style, |c),
         $!font //= CSS::Properties::Font.new: :$em, :$ex, :$!css;
         self!resize;
     }
@@ -81,26 +84,23 @@ class CSS::Properties::Box {
         box[Top] - box[Bottom]
     }
 
-    method !length($v) {
-        self.font.length($v);
+    method !width($qty is copy) {
+        $qty = $_ with { :thin(1pt), :medium(2pt), :thick(3pt) }{$qty};
+        self.measure($qty);
     }
 
-    method !width($qty) {
-        { :thin(1pt), :medium(2pt), :thick(3pt) }{$qty} // self!length($qty)
-    }
-
-    method widths(List $qtys) {
+    method measurements(List $qtys) {
         [ $qtys.map: { self!width($_) } ]
     }
 
     method padding returns Array {
-        $!padding //= self!enclose($.Array, self.widths($!css.padding));
+        $!padding //= self!enclose($.Array, self.measurements($!css.padding));
     }
     method border returns Array {
-        $!border //= self!enclose($.padding, self.widths($!css.border-width));
+        $!border //= self!enclose($.padding, self.measurements($!css.border-width));
     }
     method margin returns Array {
-        $!margin //= self!enclose($.border, self.widths($!css.margin));
+        $!margin //= self!enclose($.border, self.measurements($!css.margin));
     }
 
     method content returns Array is rw { self.Array }
@@ -115,12 +115,12 @@ class CSS::Properties::Box {
     }
 
     method css-height($css = $!css) {
-        my Numeric $height = $_ with self!length($css.height);
-        with self!length($css.max-height) {
+        my Numeric $height = $_ with $.measure($css.height);
+        with $.measure($css.max-height) {
             $height = $_
                 if $height.defined && $height > $_;
         }
-        with self!length($css.min-height) {
+        with $.measure($css.min-height) {
             $height = $_
                 if $height.defined && $height < $_;
         }
@@ -128,12 +128,12 @@ class CSS::Properties::Box {
     }
 
     method css-width($css = $!css) {
-        my Numeric $width = $_ with self!length($css.width);
-        with self!length($css.max-width) {
+        my Numeric $width = $_ with $.measure($css.width);
+        with $.measure($css.max-width) {
             $width = $_
                 if !$width.defined || $width > $_;
         }
-        with self!length($css.min-width) {
+        with $.measure($css.min-width) {
             $width = $_
                 if $width.defined && $width < $_;
         }
@@ -156,11 +156,11 @@ class CSS::Properties::Box {
             });
     }
 
-    method move( \x = 0, \y = 0) {
+    method move( \x, \y) {
         self.Array = [y, x ];
     }
 
-    method translate( \x = 0, \y = 0) {
+    method translate( \x, \y) {
         self.Array = [ $!top + y, $!right + x ];
     }
 

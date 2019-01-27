@@ -18,6 +18,7 @@
     "CSS::Properties::Box" : "lib/CSS/Properties/Box.pm",
     "CSS::Properties::Edges" : "lib/CSS/Properties/Edges.pm",
     "CSS::Properties::Font" : "lib/CSS/Properties/Font.pm",
+    "CSS::Properties::PageBox" : "lib/CSS/Properties/PageBox.pm",
     "CSS::Properties::Property" : "lib/CSS/Properties/Property.pm",
     "CSS::Properties::Units" : "lib/CSS/Properties/Units.pm"
   },
@@ -27,5 +28,5 @@
     "css"
   ],
   "test-depends" : [ ],
-  "version" : "0.3.9"
+  "version" : "0.4.1"
 }
