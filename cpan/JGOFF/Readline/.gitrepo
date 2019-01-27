@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/drforr/perl6-readline.git
+	branch = master
+	commit = c0d2b0e82bc9c856d36c263da720266f105c6e28
+	parent = 9801cc86951fd59367f785b843cd9b2c1282f1ed
+	cmdver = 0.3.1
