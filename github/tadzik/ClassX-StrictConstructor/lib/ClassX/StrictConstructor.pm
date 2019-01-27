@@ -9,12 +9,14 @@ class X::UnknownAttribute is Exception {
 
 role ClassX::StrictConstructor {
     sub has_attr($type, $attr) {
-        my $ret = True;
-        $type.^get_attribute_for_usage('$!' ~ $attr);
-        CATCH {
-            default { $ret = False }
-        }
-        return $ret;
+	for ('$!', '@!', '%!') -> $prefix {
+            $type.^get_attribute_for_usage($prefix ~ $attr);
+            CATCH {
+                default { next; }
+            }
+	    return True;
+	}
+        return False;
     }
 
     method new(*%attrs) {
