@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/markldevine/perl6-Async-Command.git
+	branch = master
+	commit = 2de7f381429d19f68349a6c8e6b664a1ad2b3ac6
+	parent = 7a38869ce3ef138cd160d1d1b57a4260f1c4ac76
+	cmdver = 0.3.1

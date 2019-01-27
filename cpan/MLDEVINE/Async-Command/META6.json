@@ -1,0 +1,23 @@
+{
+  "auth": "github:markldevine",
+  "authors": [
+    "Mark Devine <mark@markdevine.com>"
+  ],
+  "depends": [ ],
+  "description": "Async::Command - Run external command(s) asynchronously",
+  "license": "GPL-3.0",
+  "meta-version": 0,
+  "name": "Async::Command",
+  "perl": "6.c",
+  "provides": {
+    "Async::Command": "lib/Async/Command.pm6",
+    "Async::Command::Multi": "lib/Async/Command/Multi.pm6",
+    "Async::Command::Result": "lib/Async/Command/Result.pm6"
+  },
+  "resources": [ ],
+  "source-url": "https://github.com/markldevine/perl6-Async-Command.git",
+  "tags": [
+    "Async"
+  ],
+  "version": "0.0.3"
+}
