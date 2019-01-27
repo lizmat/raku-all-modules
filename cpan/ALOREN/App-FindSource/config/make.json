@@ -1,0 +1,17 @@
+{
+	"option" : [
+		{
+			"short" : "w",
+			"value" : [ "Makefile", "makefile" ],
+			"annotation" : ""
+		},
+		{
+			"short" : "make",
+			"value" : [
+				"mk",
+				"m4"
+			],
+			"annotation" : "*make* tools file extension list. "
+		}
+	]
+}

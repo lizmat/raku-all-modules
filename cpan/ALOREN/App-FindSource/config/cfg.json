@@ -1,0 +1,18 @@
+{
+	"option" : [
+		{
+			"short" : "cfg",
+			"value" : [
+				"config",
+				"cfg",
+				"ini",
+				"json",
+				"xml",
+				"conf",
+				"toml",
+				"yaml"
+			],
+			"annotation" : "config file extension list. "
+		}
+	]
+}
