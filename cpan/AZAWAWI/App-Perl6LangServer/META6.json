@@ -1,0 +1,23 @@
+{
+  "name"          : "App::Perl6LangServer",
+  "license"       : "MIT",
+  "version"       : "0.2.0",
+  "perl"          : "6.c",
+  "description"   : "Perl 6 Language Server.",
+  "depends"       : [
+    "File::Temp",
+    "JSON::Tiny",
+    "IO::Socket::SSL",
+    "p6doc"
+  ],
+  "test-depends"  : [
+    "Test"
+  ],
+  "auth"          : "github:azawawi",
+  "authors"       : [ "Ahmad M. Zawawi" ],
+  "provides"      : {
+    "App::Perl6LangServer" : "lib/App/Perl6LangServer.pm6"
+  },
+  "resources"     : [ ],
+  "source-url"    : "git://github.com/azawawi/app-perl6langserver.git"
+}
