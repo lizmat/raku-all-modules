@@ -1,0 +1,32 @@
+{
+  "name": "LibraryCheck",
+  "version": "0.0.8",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "Quick hack to determine whether a shared libray is present",
+  "source-url": "git://github.com/jonathanstowe/LibraryCheck.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/LibraryCheck.git",
+    "bugtracker": "https://github.com/jonathanstowe/LibraryCheck/issues"
+  },
+  "perl": "6.*",
+  "resources": [ ],
+  "depends": [ ],
+  "build-depends": [ ],
+  "test-depends": [
+    "Test"
+  ],
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "tags": [
+    "build",
+    "utils"
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "LibraryCheck": "lib/LibraryCheck.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}

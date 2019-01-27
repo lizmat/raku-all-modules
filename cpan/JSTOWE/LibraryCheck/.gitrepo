@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/LibraryCheck.git
+	branch = master
+	commit = 717f678665b99b8e52f8b58fb366e6e447f99224
+	parent = 67033814ce13433fc373bf317cd5e07a3d702981
+	cmdver = 0.3.1

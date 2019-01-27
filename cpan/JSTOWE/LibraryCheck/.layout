@@ -1,0 +1,47 @@
+{
+  "children": [
+    {
+      "type": "directory",
+      "purpose": null,
+      "name": "t",
+      "children": [
+        {
+          "type": "file",
+          "name": "010-basic.t"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "purpose": null,
+      "children": [
+        {
+          "name": "LibraryCheck.pm",
+          "type": "file"
+        }
+      ],
+      "name": "lib"
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}
