@@ -1,0 +1,73 @@
+{
+  "children": [
+    {
+      "type": "directory",
+      "purpose": null,
+      "children": [
+        {
+          "type": "directory",
+          "purpose": null,
+          "children": [
+            {
+              "name": "cannibal.xml",
+              "type": "file"
+            }
+          ],
+          "name": "data"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "name": "030-status.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "040-live.t"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        }
+      ],
+      "name": "t"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "purpose": null,
+      "name": "lib",
+      "children": [
+        {
+          "purpose": null,
+          "type": "directory",
+          "name": "Monitor",
+          "children": [
+            {
+              "name": "Monit.pm",
+              "type": "file"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}

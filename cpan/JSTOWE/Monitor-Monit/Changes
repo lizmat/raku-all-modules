@@ -1,0 +1,7 @@
+v0.0.3		Sun 27 Jan 13:38:02 GMT 2019
+	* Skip live tests by default
+v0.0.2		Thu 24 Jan 21:23:45 GMT 2019
+	* Support CSRF security token
+	* Spring clean and upload to CPAN
+v0.0.1		Tue Oct 25 20:39:19 2016 +0100 
+	* Initial release
