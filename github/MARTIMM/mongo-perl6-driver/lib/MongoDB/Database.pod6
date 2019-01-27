@@ -35,59 +35,54 @@ Stored name of the database.
 Client used by database. Set when creating object.
 
 
-=head2 read-concern
-
-  has BSON::Document $.read-concern;
-
-The read-concern is a structure to have some control over the read operations
-to which server the operations are directed to. Default is an empty structure.
-The structure will be explained elsewhere.
-
-
 =head1 Methods
 
 =head2 new
 
-  submethod BUILD (
-    ClientType:D :$client, Str:D :$name, BSON::Document :$read-concern
-  )
+  submethod BUILD ( ClientType:D :$client, Str:D :$name )
 
 Create a database object. Can be called directly although not done often, e.g.
 
   my MongoDB::Database $d .= new( $client, 'my_db');
 
-When read-concern is absent it is taken from $client.
-
 
 =head2 collection
 
-  method collection (
-    Str $name, BSON::Document :$read-concern
-    --> MongoDB::Collection
-  )
+  method collection ( Str $name --> MongoDB::Collection )
 
 Select collection and return a collection object. When the collection is new it
 will only be created when data is inserted.
 
-When read-concern is absent it is taken from its $database.
-
 
 =head2 run-command
 
-  multi method run-command (
-    BSON::Document:D $command,
-    BSON::Document :$read-concern
-    --> BSON::Document
-  )
+  multi method run-command ( BSON::Document:D $command --> BSON::Document)
 
-  multi method run-command ( |command-capture --> BSON::Document )
+  multi method run-command ( List $pairs --> BSON::Document ) {
+
+  multi method run-command (
+    BSON::Document:D $command, Bool:D :$cursor!
+    --> MongoDB::Cursor
+  ) {
+
+  multi method run-command (
+    List:D $pairs, Bool:D :$cursor!
+    --> MongoDB::Cursor
+  ) {
 
 Run a command against the database. For proper handling of this command it is
 nesseary to study the documentation on the MongoDB site. A good starting point
 is L<at this page|https://docs.mongodb.org/manual/reference/command/>.
 
 The command argument is a C<BSON::Document> or List of Pair of which the latter
-might be more convenient. Mind the comma's when describing list of one Pair!
+might be more convenient.
+
+When the :cursor option is used, the method returns a Cursor object. That
+object can be used to get the documents from using its fetch() method. This
+form is used when the command is returning a cursor document. E.g. find and
+parallelCollectionScan are such commands.
+
+Mind the comma's when describing list of one Pair!
 This is very important see e.g. the following perl6 REPL interaction;
 
   > 123.WHAT.say

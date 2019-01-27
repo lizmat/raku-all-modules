@@ -23,24 +23,11 @@ This class is your most often used class. It maintains the connection to the
 servers specified in the given uri. In the background it herds a set of
 C<MongoDB::Server> objects.
 
-=head1 Readonly attributes
-
-=head2 read-concern
-
-  has BSON::Document $.read-concern;
-
-The read-concern is a structure to have some control over the read operations
-to which server the operations are directed to. Default is an empty structure.
-The structure will be explained elsewhere.
-
-
 =head1 Methods
 
 =head2 new
 
-  submethod BUILD (
-    Str:D :$uri, BSON::Document :$read-concern,
-  )
+  submethod BUILD ( Str:D :$uri )
 =comment    TopologyType :$topology-type = TT-Unknown,
 =comment    Int :$!idle-write-period-ms = 10_000,
 
@@ -82,9 +69,6 @@ C<MongoDB::Client> object to create a new one!
   $c2 = MongoDB::Client.new(...);
 
 
-=head3 read-concern
-
-Read concern will overwrite the default concern.
 
 =head3 uri
 
@@ -386,21 +370,13 @@ next;
 
   multi method select-server ( Str:D :$servername! --> MongoDB::Server )
 
-  multi method select-server (
-    BSON::Document :$read-concern is copy
-    --> MongoDB::Server
-  )
+  multi method select-server ( --> MongoDB::Server )
 
 The first method tries to get a specific server while the second is running
 through a selection mechanism using the server state and client topology.
 
 Select a server for operations. It returns a Server object. In single server
-setups it is always the server you want to have. When however selecting a server
-from a replicaset the server is selected according to several rules such as
-C<read-concern>, operation type (read or write) and round trip time to the server.
-When C<read-concern> is not defined, the data is taken from this Clients
-read-concern. B<Note>, this method is used internally and most of the time of no
-concern to the user.
+setups it is always the server you want to have.
 
 =begin comment
 add-servers() is used internally to add new servers to the todo list. This
@@ -409,31 +385,19 @@ is done on the server when other servers found in the replica ismaster results.
 
 =head2 database
 
-  method database (
-    Str:D $name, BSON::Document :$read-concern
-    --> MongoDB::Database
-  )
+  method database ( Str:D $name --> MongoDB::Database )
 
 Create a Database object. In mongodb a database and its collections are only
 created when data is written in a collection.
 
-The read-concern when defined will overide the one of the Client. If not
-defined, the structure of the client is taken.
-
 
 =head2 collection
 
-  method collection (
-    Str:D $full-collection-name, BSON::Document :$read-concern
-    --> MongoDB::Collection
-  )
+  method collection ( Str:D $full-collection-name --> MongoDB::Collection )
 
 A shortcut to define a database and collection at once. The names for the
 database and collection are given in the string full-collection-name. This is a
 string of two names separated by a dot '.'.
-
-When the read-concern is defined it overides the one from Client. If not
-defined, the structure of the client is taken.
 
 
 =head2 cleanup

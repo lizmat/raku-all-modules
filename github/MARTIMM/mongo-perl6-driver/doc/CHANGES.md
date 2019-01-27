@@ -2,6 +2,17 @@
 
 See [semantic versioning](http://semver.org/). Please note point 4. on that page: ***Major version zero (0.y.z) is for initial development. Anything may change at any time. The public API should not be considered stable.***
 
+* 0.43.3
+  * Major cleanup now that is decided that older version servers are not
+    supported.
+    * read-concern is removed from many method arguments because it can be set by the user on the specific commands. E.g. on the find command.
+    * write-concern will not be implemented. Also this field can be set by the user on the specific commands. E.g. delete, insert, update.
+    
+* 0.43.2
+  * Tested for perl6 version 6.d
+  * Support for only last few versions of mongodb, i.e. 4.0, 3.6 and 3.4 (2018-12-27).
+* 0.43.1
+  * Stopping a server is changed because on window systems the option --shutdown is not available. This will cause a timeout when called on a non-running server.
 * 0.43.0
   * **make-replicaset.pl6**: Program to create a replicaset or add servers to the replicaset.
 * 0.42.0

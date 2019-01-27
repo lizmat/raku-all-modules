@@ -5,6 +5,7 @@ unit package MongoDB:auth<github:MARTIMM>;
 
 use MongoDB;
 use MongoDB::Collection;
+use MongoDB::Cursor;
 use BSON::Document;
 
 #-------------------------------------------------------------------------------
@@ -12,15 +13,13 @@ class Database {
 
   has Str $.name;
   has ClientType $.client;
-  has BSON::Document $.read-concern;
   has MongoDB::Collection $!cmd-collection;
 
-  #-----------------------------------------------------------------------------
-  submethod BUILD (
-    ClientType:D :$client, Str:D :$name, BSON::Document :$read-concern
-  ) {
+  # Batch of documents in last response
+  has @!documents;
 
-    $!read-concern = $read-concern // $client.read-concern;
+  #-----------------------------------------------------------------------------
+  submethod BUILD ( ClientType:D :$client, Str:D :$name ) {
 
     self!set-name($name);
     $!client = $client;
@@ -28,24 +27,16 @@ class Database {
     trace-message("create database $name");
 
     # Create a collection $cmd to be used with run-command()
-    $!cmd-collection = self.collection( '$cmd', :$read-concern);
+    $!cmd-collection = self.collection('$cmd');
   }
 
   #-----------------------------------------------------------------------------
   # Select a collection. When it is new it comes into existence only
   # after inserting data
   #
-  method collection (
-    Str:D $name,
-    BSON::Document :$read-concern
-    --> MongoDB::Collection ) {
+  method collection ( Str:D $name --> MongoDB::Collection ) {
 
-    $!read-concern =
-      $read-concern.defined ?? $read-concern !! $!read-concern;
-
-    return MongoDB::Collection.new(
-      :database(self), :name($name), :$read-concern
-    );
+    return MongoDB::Collection.new( :database(self), :name($name));
   }
 
   #-----------------------------------------------------------------------------
@@ -54,45 +45,74 @@ class Database {
   # it a special one.
   #
   # Run command using the BSON::Document.
-  multi method run-command (
-    BSON::Document:D $command, BSON::Document :$read-concern
-    --> BSON::Document
-  ) {
+  multi method run-command ( BSON::Document:D $command --> BSON::Document ) {
 
     debug-message("run command {$command.keys[0]}");
-
-    my BSON::Document $rc = $read-concern // $!read-concern;
-
-    # And use it to do a find on it, get the doc and return it.
-    my MongoDB::Cursor $cursor = $!cmd-collection.find(
-      :criteria($command), :number-to-return(1), :read-concern($rc)
-    );
-
-    # Return undefined on server problems
-    if not $cursor.defined {
-      error-message("No cursor returned");
-      return BSON::Document;
-    }
-
-    my $doc = $cursor.fetch;
-    return $doc.defined ?? $doc !! BSON::Document.new;
+    self!execute($command);
   }
 
-  #-----------------------------------------------------------------------------
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Run command using List of Pair.
-  multi method run-command (
-    List $pairs, BSON::Document :$read-concern
-    --> BSON::Document
-  ) {
+  multi method run-command ( List $pairs --> BSON::Document ) {
 
     my BSON::Document $command .= new: $pairs;
     debug-message("run command {$command.keys[0]}");
+    self!execute($command);
+  }
 
-    my BSON::Document $rc = $read-concern // $!read-concern;
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Run command using the BSON::Document.
+  multi method run-command (
+    BSON::Document:D $command, Bool:D :$cursor!
+    --> MongoDB::Cursor
+  ) {
 
-    # And use it to do a find on it, get the doc and return it.
+    debug-message("run command cursor {$command.keys[0]}");
+
+    my MongoDB::Cursor $c;
+    my BSON::Document $doc = self!execute($command);
+#note "Cursor doc 1: ", $doc<cursor><firstBatch>.perl;
+    if ? $doc<cursor><firstBatch> {
+      $c .= new(
+        :$!client, :database(self), :cursor-doc($doc<cursor>), :modern
+      );
+    }
+
+    $c
+  }
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Run command using the BSON::Document.
+  multi method run-command (
+    List:D $pairs, Bool:D :$cursor!
+    --> MongoDB::Cursor
+  ) {
+
+    my BSON::Document $command .= new: $pairs;
+    debug-message("run command cursor {$command.keys[0]}");
+
+    my MongoDB::Cursor $c;
+    my BSON::Document $doc = self!execute($command);
+#note "Cursor doc 2: ", $doc<cursor>.perl;
+    if ? $doc<cursor> {
+      $c .= new(
+        :$!client, :database(self), :cursor-doc($doc<cursor>), :modern
+      );
+    }
+
+    $c
+  }
+
+  #-----------------------------------------------------------------------------
+  method !execute ( BSON::Document $command --> BSON::Document ) {
+
+#    my MongoDB::Cursor $cursor = self!find(:$command);
+
+    # Commands for the command collection ($cmd) always return one document
+    # Lately, the default setting 0 for number-to-return is not accepted and
+    # must be set to 1 explicitly.
     my MongoDB::Cursor $cursor = $!cmd-collection.find(
-      :criteria($command), :number-to-return(1), :read-concern($rc)
+      :criteria($command), :number-to-return(1)
     );
 
     # Return undefined on server problems
@@ -102,8 +122,6 @@ class Database {
     }
 
     my $doc = $cursor.fetch;
-    debug-message("command done {$command.keys[0]}");
-    trace-message("command result {($doc // '-').perl}");
     return $doc.defined ?? $doc !! BSON::Document.new;
   }
 

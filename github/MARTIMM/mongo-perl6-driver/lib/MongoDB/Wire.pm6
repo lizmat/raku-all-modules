@@ -134,10 +134,14 @@ class Wire {
     my MongoDB::Header $header .= new;
     my BSON::Document $result;
 
+    # Cursor id is an int64 (8 byte buffer). When set to 8 0 bytes, there are
+    # no documents on the server or the cursor is killed.
+    my Buf $cursor-id = $header.encode-cursor-id($cursor.id);
+
     try {
 
       ( my Buf $encoded-get-more, my Int $request-id) = $header.encode-get-more(
-        $cursor.full-collection-name, $cursor.id, :$number-to-return
+        $cursor.full-collection-name, $cursor-id, :$number-to-return
       );
 
       $!socket = $server.get-socket;
@@ -201,23 +205,27 @@ class Wire {
   }
 
   #-----------------------------------------------------------------------------
-  method kill-cursors ( @cursors where .elems > 0, ServerType:D :$server! ) {
+  method kill-cursors ( @cursors where .elems > 0, ServerType:D :$!server! ) {
 
-    $!server = $server;
     my MongoDB::Header $header .= new;
 
     # Gather the ids only when they are non-zero.i.e. still active.
     my Buf @cursor-ids;
     for @cursors -> $cursor {
-      @cursor-ids.push($cursor.id) if [+] $cursor.id.list;
+      if $cursor.id {
+        # Cursor-id is an int64 (8 byte buffer). When set to 8 0 bytes, there
+        # are no documents on the server or the cursor is killed.
+        my Buf $cursor-id = $header.encode-cursor-id($cursor.id);
+        @cursor-ids.push($cursor-id);
+      }
     }
 
     # Kill the cursors if found any
     try {
-      fatal-message("No server available") unless $server.defined;
-      $!socket = $server.get-socket;
+      fatal-message("No server available") unless $!server.defined;
+      $!socket = $!server.get-socket;
       if ! $!socket.defined {
-        warn-message("server {$server.name} cleaned up");
+        warn-message("server {$!server.name} cleaned up");
         return BSON::Document;
       }
 

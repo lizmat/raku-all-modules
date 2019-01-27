@@ -232,6 +232,9 @@ sub check-document ( $criteria, $field-list, $projection = ())
 #  $cursor = $collection.find( :$criteria, :$projection);
 #  while $cursor.fetch() -> BSON::Document $document {
 
+#note "Type of return from find: ",
+#     $collection.find( :$criteria, :$projection).perl;
+
   for $collection.find( :$criteria, :$projection) -> BSON::Document $document {
     for @$field-list -> $pair {
       if $pair.value == 1 {

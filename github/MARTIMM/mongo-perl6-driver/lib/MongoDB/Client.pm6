@@ -10,8 +10,6 @@ use MongoDB::Uri;
 use MongoDB::Server;
 use MongoDB::Database;
 use MongoDB::Collection;
-use MongoDB::Wire;
-use MongoDB::Authenticate::Credential;
 
 use BSON::Document;
 use Semaphore::ReadersWriters;
@@ -35,10 +33,9 @@ class Client {
   has Str $!uri;
   has MongoDB::Uri $.uri-obj;
 
-  has BSON::Document $.read-concern;
-  has Str $!Replicaset;
+  #has Str $!replicaset;
 
-  has Promise $!Background-discovery;
+  has Promise $!background-discovery;
   has Bool $!repeat-discovery-loop;
 
   # Only for single threaded implementations according to mongodb documents
@@ -65,8 +62,7 @@ class Client {
 
   #-----------------------------------------------------------------------------
 #TODO pod doc arguments
-  submethod BUILD (
-    Str:D :$uri, BSON::Document :$read-concern,
+  submethod BUILD ( Str:D :$uri
 #    TopologyType :$topology-type = TT-Unknown,
 #    Int :$!idle-write-period-ms = 10_000,
   ) {
@@ -86,17 +82,6 @@ class Client {
       <servers todo topology>, :RWPatternType(C-RW-WRITERPRIO)
     );
 
-#TODO check version: read-concern introduced in version 3.2
-    # Store read concern or initialize to default
-    $!read-concern = $read-concern // BSON::Document.new: (
-      mode => RCM-Primary,
-#TODO  next key only when max-wire-version >= 5 ??
-#      max-staleness-seconds => 90,
-#      must be > C-SMALLEST-MAX-STALENESS-SECONDS
-#           or > $!heartbeat-frequency-ms + $!idle-write-period-ms
-      tag-sets => [BSON::Document.new(),]
-    );
-
     # Parse the uri and get info in $!uri-obj. Fields are protocol, username,
     # password, servers, database and options.
     $!uri = $uri;
@@ -112,7 +97,7 @@ class Client {
     }
 
     # Background proces to handle server monitoring data
-    $!Background-discovery = Promise.start( {
+    $!background-discovery = Promise.start( {
 
         # counter to check if there are new servers added. if so, the counter
         # is set to 0. if less then 5 the sleeptime is about a second. When count
@@ -381,12 +366,8 @@ class Client {
 
   #-----------------------------------------------------------------------------
   # Read/write concern selection
-  multi method select-server (
-    BSON::Document :$read-concern is copy
-    --> MongoDB::Server
-  ) {
+  multi method select-server ( --> MongoDB::Server ) {
 
-    $read-concern //= $!read-concern;
     my MongoDB::Server $selected-server;
 
     # record the server selection start time. used also in debug message
@@ -416,7 +397,6 @@ class Client {
 
         when TT-ReplicaSetWithPrimary {
 
-#TODO read concern
 #TODO check replica set option in uri
           for $servers.keys -> $sname {
             $selected-server = $servers{$sname};
@@ -427,7 +407,6 @@ class Client {
 
         when TT-ReplicaSetNoPrimary {
 
-#TODO read concern
 #TODO check replica set option in uri if SS-RSSecondary
           for $servers.keys -> $sname {
             my $s = $servers{$sname};
@@ -517,15 +496,15 @@ class Client {
   method !check-discovery-process ( ) {
     state $check-count = 0;
 
-    if $!Background-discovery.status ~~ any(Broken|Kept) {
+    if $!background-discovery.status ~~ any(Broken|Kept) {
       # set if loop crashed
       $!repeat-discovery-loop = False;
 
       info-message(
         'Server discovery stopped: ' ~ (
-          $!Background-discovery.status ~~ Broken
-                         ?? $!Background-discovery.cause
-                         !! $!Background-discovery.result
+          $!background-discovery.status ~~ Broken
+                         ?? $!background-discovery.cause
+                         !! $!background-discovery.result
         )
       );
 
@@ -617,36 +596,19 @@ class Client {
   }
 
   #-----------------------------------------------------------------------------
-  method database (
-    Str:D $name, BSON::Document :$read-concern
-    --> MongoDB::Database
-  ) {
+  method database ( Str:D $name --> MongoDB::Database ) {
 
-    my BSON::Document $rc =
-       $read-concern.defined ?? $read-concern !! $!read-concern;
-
-    MongoDB::Database.new( :client(self), :name($name), :read-concern($rc));
+    MongoDB::Database.new( :client(self), :name($name));
   }
 
   #-----------------------------------------------------------------------------
-  method collection (
-    Str:D $full-collection-name, BSON::Document :$read-concern
-    --> MongoDB::Collection
-  ) {
+  method collection ( Str:D $full-collection-name --> MongoDB::Collection ) {
 #TODO check for dot in the name
-
-    my BSON::Document $rc =
-       $read-concern.defined ?? $read-concern !! $!read-concern;
 
     ( my $db-name, my $cll-name) = $full-collection-name.split( '.', 2);
 
-    my MongoDB::Database $db .= new(
-      :client(self),
-      :name($db-name),
-      :read-concern($rc)
-    );
-
-    return $db.collection( $cll-name, :read-concern($rc));
+    my MongoDB::Database $db .= new( :client(self), :name($db-name));
+    return $db.collection($cll-name);
   }
 
   #-----------------------------------------------------------------------------
@@ -665,7 +627,7 @@ class Client {
     # stop loop and wait for exit
     if $!repeat-discovery-loop {
       $!repeat-discovery-loop = False;
-      $!Background-discovery.result;
+      $!background-discovery.result;
     }
 
     # Remove all servers concurrently. Shouldn't be many per client.

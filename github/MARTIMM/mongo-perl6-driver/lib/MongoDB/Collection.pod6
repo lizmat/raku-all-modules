@@ -57,22 +57,11 @@ the database name and collection name separated by a dot. E.g. I<person.address>
 means collection I<address> in database I<person>.
 
 
-=head2 read-concern
-
-  has BSON::Document $.read-concern;
-
-The read-concern is a structure to have some control over the read operations
-to which server the operations are directed to. Default is taken from the
-database. The structure will be explained elsewhere.
-
-
 =head1 Methods
 
 =head2 new
 
-  submethod BUILD (
-    DatabaseType:D :$database, Str:D :$name, BSON::Document :$read-concern
-  )
+  submethod BUILD ( DatabaseType:D :$database, Str:D :$name )
 
 Example
 
@@ -98,7 +87,6 @@ or
     List :$projection where all(@$projection) ~~ Pair = (),
     Int :$number-to-skip = 0, Int :$number-to-return = 0,
     QueryFindFlags :@flags = Array[QueryFindFlags].new,
-    List :$read-concern
     --> MongoDB::Cursor
   )
 
@@ -116,7 +104,6 @@ a pair instead of a list of pairs.
     BSON::Document :$projection?,
     Int :$number-to-skip = 0, Int :$number-to-return = 0,
     QueryFindFlags :@flags = Array[QueryFindFlags].new,
-    BSON::Document :$read-concern
     --> MongoDB::Cursor
   )
 

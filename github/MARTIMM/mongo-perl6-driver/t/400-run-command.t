@@ -6,6 +6,7 @@ use Test-support;
 use MongoDB;
 use MongoDB::Client;
 use MongoDB::Database;
+use MongoDB::Cursor;
 use BSON::Document;
 
 #-------------------------------------------------------------------------------
@@ -139,6 +140,7 @@ subtest "Diagnostic Commands", {
     my Bool $f-cl1 = False;
     my Bool $f-cl2 = False;
     while $c.fetch -> BSON::Document $d {
+    #for $c -> BSON::Document $d {
       $f-cl1 = True if $d<name> eq 'cl1';
       $f-cl2 = True if $d<name> eq 'cl2';
     }
@@ -149,10 +151,18 @@ subtest "Diagnostic Commands", {
     # Second attempt using iteratable role
     $f-cl1 = False;
     $f-cl2 = False;
-    $doc = $database.run-command: (listCollections => 1,);
-    for MongoDB::Cursor.new( :$client, :cursor-doc($doc<cursor>)) -> BSON::Document $d {
+#    $doc = $database.run-command: (listCollections => 1,);
+#    for MongoDB::Cursor.new( :$client, :cursor-doc($doc<cursor>)) -> BSON::Document $d {
+    $c = $database.run-command( (:listCollections(1),), :cursor);
+#note "run-command ret type: ", $c.WHAT;
+
+    while $c.fetch -> BSON::Document $d {
+    #for $c -> BSON::Document $d {
+#note "Doc d: ", $d.perl;
       $f-cl1 = True if $d<name> eq 'cl1';
       $f-cl2 = True if $d<name> eq 'cl2';
+
+      last if ( $f-cl1 and $f-cl2 );
     }
 
     ok $f-cl1, 'Collection cl1 listed';

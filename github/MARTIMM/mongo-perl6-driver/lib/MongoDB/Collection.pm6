@@ -14,16 +14,9 @@ class Collection {
   has DatabaseType $.database;
   has Str $.name;
   has Str $.full-collection-name;
-  has BSON::Document $.read-concern;
 
   #-----------------------------------------------------------------------------
-  submethod BUILD (
-    DatabaseType:D :$database,
-    Str:D :$name,
-    BSON::Document :$read-concern
-  ) {
-
-    $!read-concern = $read-concern // $database.read-concern;
+  submethod BUILD ( DatabaseType:D :$database, Str:D :$name ) {
 
     $!database = $database;
     self!set-name($name) if ?$name;
@@ -34,21 +27,17 @@ class Collection {
   #-----------------------------------------------------------------------------
   # Find record in a collection. One of the few left to use the wire protocol.
   #
+#TODO deprecate find and add query instead with less arguments
   # Method using Pair.
   multi method find (
     List :$criteria where all(@$criteria) ~~ Pair = (),
     List :$projection where all(@$projection) ~~ Pair = (),
     Int :$number-to-skip = 0, Int :$number-to-return = 0,
-    QueryFindFlags :@flags = Array[QueryFindFlags].new,
-    List :$read-concern
+    QueryFindFlags :@flags = Array[QueryFindFlags].new
     --> MongoDB::Cursor
   ) {
 
-    my BSON::Document $rc =
-       $read-concern.defined ?? BSON::Document.new: $read-concern
-                             !! $!read-concern;
-
-    my ServerType $server = $!database.client.select-server(:read-concern($rc));
+    my ServerType $server = $!database.client.select-server;
 
     unless $server.defined {
       error-message("No server object for query");
@@ -73,19 +62,17 @@ class Collection {
     );
   }
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Find record in a collection using a BSON::Document
   multi method find (
     BSON::Document :$criteria = BSON::Document.new,
     BSON::Document :$projection?,
     Int :$number-to-skip = 0, Int :$number-to-return = 0,
-    QueryFindFlags :@flags = Array[QueryFindFlags].new,
-    BSON::Document :$read-concern
+    QueryFindFlags :@flags = Array[QueryFindFlags].new
     --> MongoDB::Cursor
   ) {
 
-    my BSON::Document $rc = $read-concern // $!read-concern;
-
-    my ServerType $server = $!database.client.select-server(:read-concern($rc));
+    my ServerType $server = $!database.client.select-server;
 
     unless $server.defined {
       error-message("No server object for query");

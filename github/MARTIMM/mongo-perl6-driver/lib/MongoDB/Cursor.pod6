@@ -84,8 +84,12 @@ This is the same as B<<[~] $database.name, '.', $collection.name>>.
 
   multi submethod BUILD (
     MongoDB::Client:D :$client!,
-    BSON::Document:D :$cursor-doc!,
-    BSON::Document :$read-concern
+    BSON::Document:D :$cursor-doc!
+  )
+
+  multi submethod BUILD (
+    MongoDB::ClientType:D :$!client!, MongoDB::DatabaseType:D :$!database!,
+    BSON::Document:D :$cursor-doc!, Bool:D :$modern!
   )
 
 Create a new Cursor object. the find() method in MongoDB::Collection will return
