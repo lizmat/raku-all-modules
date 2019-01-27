@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Object-Delayed.git
+	branch = master
+	commit = 4991013b7a19a07ab33daa59366195f4233208f4
+	parent = ba5f35abab13741a954be846d9c0b405c3eefe3c
+	cmdver = 0.3.1

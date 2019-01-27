@@ -1,0 +1,24 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Object::Trampoline"
+  ],
+  "description" : "export subs for lazy object creation",
+  "license" : "Artistic-2.0",
+  "name" : "Object::Delayed",
+  "perl" : "6.c",
+  "provides" : {
+    "Object::Delayed" : "lib/Object/Delayed.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Object-Delayed.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.6"
+}

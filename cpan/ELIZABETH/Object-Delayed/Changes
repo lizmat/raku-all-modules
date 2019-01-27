@@ -1,0 +1,22 @@
+Revision history for Object-Delayed
+
+{{$NEXT}}
+
+0.0.6  2019-01-10T21:41:41+01:00
+    - make sure Object::Trampoline is at 0.0.5 *or higher*
+
+0.0.5  2018-12-01T12:31:26+01:00
+    - Expand pod a little bit, emphasize 2 subs being exported
+    - Fix wording in pod about "catchup"
+
+0.0.4  2018-11-16T13:04:04+01:00
+    - Version bump to try to get Travis to go to green
+
+0.0.3  2018-09-22T22:36:48+02:00
+    - Finally got slack to work with class attributes
+
+0.0.2  2018-09-22T20:50:47+02:00
+    - Fixed race condition in catchup tests
+
+0.0.1  2018-09-22T19:15:13+02:00
+    - Initial version
