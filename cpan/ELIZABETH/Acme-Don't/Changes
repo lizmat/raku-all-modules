@@ -1,0 +1,12 @@
+Revision history for Acme-Don't
+
+{{$NEXT}}
+
+0.0.2  2018-06-21T10:23:13-06:00
+    - Added META tags
+    - Some pod fixes, mention Damian Conway
+    - Added another test
+    - Removed entry from .gitignore that is no longer needed
+
+0.0.1  2018-06-20T22:37:30-06:00
+    - Initial version

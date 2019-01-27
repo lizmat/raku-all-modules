@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "The opposite of do",
+  "license" : "Artistic-2.0",
+  "name" : "Acme::Don't",
+  "perl" : "6.c",
+  "provides" : {
+    "Acme::Don't" : "lib/Acme/Don't.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Acme-Don-t.git",
+  "tags" : [
+    "CPAN5",
+    "ACME"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
