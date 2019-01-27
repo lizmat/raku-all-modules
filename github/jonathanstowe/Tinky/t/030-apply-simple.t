@@ -16,7 +16,7 @@ my $obj = FooTest.new(state => @states[0]);
 
 for @transitions -> $trans {
     for @transitions.grep({ $obj !~~ $_ }) -> $no-trans {
-        throws-like { $obj.apply-transition($no-trans) }, X::InvalidTransition, "throws trying to apply wrong transition";
+        throws-like { $obj.apply-transition($no-trans) }, Tinky::X::InvalidTransition, "throws trying to apply wrong transition";
     }
 
     lives-ok { $obj.apply-transition($trans) }, "apply-transition with '{ $trans.name }' lives";
@@ -24,7 +24,7 @@ for @transitions -> $trans {
 }
 
 $obj = FooTest.new;
-throws-like {  $obj.apply-transition(@transitions[0]) }, X::NoState, "should throw X::NoState with apply-transition and state not set";
+throws-like {  $obj.apply-transition(@transitions[0]) }, Tinky::X::NoState, "should throw X::NoState with apply-transition and state not set";
 
 done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

@@ -12,7 +12,7 @@ my @transitions = @states.rotor(2 => -1).map(-> ($from, $to) { my $name = $from.
 
 class FooTest does Tinky::Object { }
 
-throws-like { Tinky::Workflow.new.states }, X::NoTransitions, ".states throws if there aren't any transitions";
+throws-like { Tinky::Workflow.new.states }, Tinky::X::NoTransitions, ".states throws if there aren't any transitions";
 
 my Tinky::Workflow $wf;
 
@@ -32,8 +32,8 @@ for @states.rotor(2 => -1) -> ($from, $to) {
 my $obj = FooTest.new(state => @states[0]);
 
 
-throws-like { $obj.transitions }, X::NoWorkflow, "'transitions' throws without workflow";
-throws-like { $obj.transition-for-state(@states[0]) }, X::NoWorkflow, "'transition-for-state' throws without workflow";
+throws-like { $obj.transitions }, Tinky::X::NoWorkflow, "'transitions' throws without workflow";
+throws-like { $obj.transition-for-state(@states[0]) }, Tinky::X::NoWorkflow, "'transition-for-state' throws without workflow";
 
 lives-ok { $obj.apply-workflow($wf) }, "apply workflow";
 
@@ -45,7 +45,7 @@ nok $obj.transition-for-state(@states[3]).defined, "and there is no transition f
 for @transitions -> $trans {
     can-ok $obj, $trans.name, "Object has '{ $trans.name }' method";
     for @transitions.grep({ $_.name ne $trans.name }) -> $no-trans {
-        throws-like { $obj."{ $no-trans.name }"() }, X::InvalidTransition, "'{ $no-trans.name }' method throws";
+        throws-like { $obj."{ $no-trans.name }"() }, Tinky::X::InvalidTransition, "'{ $no-trans.name }' method throws";
     }
     lives-ok { $obj."{ $trans.name }"() }, "'{ $trans.name }' method works";
     is $obj.state, $trans.to, "and it got changed to the '{ $trans.to.name }' state";
@@ -64,7 +64,7 @@ subtest {
     my $wf = Tinky::Workflow.new(:@transitions, initial-state => @states[0]);
     ok $wf.initial-state ~~ @states[0], "just check the initial-state got set";
     my $obj = FooTest.new();
-    #lives-ok { 
+    #lives-ok {
     $obj.apply-workflow($wf); # }, "apply workflow with an initial-state (object has no state)";
     ok $obj.state ~~ @states[0], "and the new object now has that state";
     my $new-state = Tinky::State.new(name => 'new-state');

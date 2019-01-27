@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 =begin pod
 
@@ -40,7 +40,7 @@ $state-rejected.enter-supply.act( -> $object { say "** sending rejected e-mail f
 
 my $open              = Tinky::Transition.new(name => 'open', from => $state-new, to => $state-open);
 
-# Where  more than one transition has the same name, the transition which matches the object's 
+# Where  more than one transition has the same name, the transition which matches the object's
 # current state will be use.
 my $reject-new        = Tinky::Transition.new(name => 'reject', from => $state-new, to => $state-rejected);
 my $reject-open       = Tinky::Transition.new(name => 'reject', from => $state-open, to => $state-rejected);
@@ -68,7 +68,7 @@ my @transitions = $open, $reject-new, $reject-open, $reject-stalled, $stall-open
 my $workflow = Tinky::Workflow.new(:@transitions, name => 'ticket-workflow', initial-state => $state-new );
 
 # The workflow aggregates the Supplies of the transitions and the states.
-# This could be to a logging subsystem for instance. 
+# This could be to a logging subsystem for instance.
 
 $workflow.transition-supply.act(-> ($trans, $object) { say "Ticket '{ $object.ticket-number }' went from { $trans.from.name }' to '{ $trans.to.name }'" });
 
@@ -144,7 +144,7 @@ type (or sub-classes thereof.)
 
 A similar mechanism is used for method callbacks.
 
-=head2 class Tinky::State 
+=head2 class Tinky::State
 
 The L<Tinky::State> is the managed state that is applied to an object,
 it provides a mechanism for validating whether on object should enter
@@ -168,18 +168,18 @@ be unique with any given workflow (though this is not currently constrained.)
 
 =head3 method enter
 
-        method enter(Object:D $object) 
+        method enter(Object:D $object)
 
 This is called with the L<Tinky::Object> instance when the state has been
 entered by the object, the default implementation arranges for the object
-to be emitted on the C<enter-supply>, so if it is over-ridden in a 
+to be emitted on the C<enter-supply>, so if it is over-ridden in a
 sub-class it should nonetheless call the base implementation with C<nextsame>
 in order to provide the object to the supply.  It would probably be better
 however to simply tap the L<enter-supply>.
 
 =head3 method validate-enter
 
-        method validate-enter(Object $object) returns Promise 
+        method validate-enter(Object $object) returns Promise
 
 This is called prior to the transition being actually performed and
 returns a L<Promise> that will be kept with L<True> if all of the
@@ -198,18 +198,18 @@ method.
 
 =head3 method leave
 
-        method leave(Object:D $object) 
+        method leave(Object:D $object)
 
 This is called when an object leaves this state, with the object
 instance as the argument. Like <enter> the default implementation
-provides for the object to emitted on the C<leave-supply> so 
+provides for the object to emitted on the C<leave-supply> so
 any over-ride implementation should arrange to call this base method.
 Typically it would be preferred to tap the C<leave-supply> if some
 action is required on leaving a state.
 
 =head3 method validate-leave
 
-        method validate-leave(Object $object) returns Promise 
+        method validate-leave(Object $object) returns Promise
 
 This is called prior to the transition being actually performed and
 returns a L<Promise> that will be kept with L<True> if all of the
@@ -217,7 +217,7 @@ leave validators return True, or False otherwise.  It can be
 over-ridden in a sub-class if some other validation mechanism to
 the callbacks is required, but B<must> return a L<Promise>
 
-=head3 method leave-supply 
+=head3 method leave-supply
 
         method leave-supply() returns Supply
 
@@ -228,15 +228,15 @@ should generally be preferred to over-riding C<leave>.
 
 =head3 method Str
 
-        method Str() 
+        method Str()
 
 This returns a sensible string representation of the State,
 
 =head3 method ACCEPTS
 
-        multi method ACCEPTS(State:D $state) returns Bool 
-        multi method ACCEPTS(Transition:D $transition) returns Bool 
-        multi method ACCEPTS(Object:D $object) returns Bool 
+        multi method ACCEPTS(State:D $state) returns Bool
+        multi method ACCEPTS(Transition:D $transition) returns Bool
+        multi method ACCEPTS(Object:D $object) returns Bool
 
 This provides for smart-matching against another L<State> ( returning
 true if they evaluate to the same state,)  a L<Transition> ( returning
@@ -289,7 +289,7 @@ trait like:
 This may be useful if you have fixed states and wish to substitute runtime
 complexity.
 
-=head2 class Tinky::Transition 
+=head2 class Tinky::Transition
 
 A transition is the configured change between two pre-determined states,  Only
 changes described by a transition are allowed to be performed. The transaction
@@ -319,7 +319,7 @@ Additionally an array of ValidateCallback subroutines can be supplied
 
 =head3 method applied
 
-        method applied(Object:D $object) 
+        method applied(Object:D $object)
 
 This is called with the Tinky::Object instance after the transition
 has been successfully implied, the default implementation arranges for
@@ -331,7 +331,7 @@ most cases.
 
 =head3 method validate
 
-        method validate(Object:D $object) returns Promise 
+        method validate(Object:D $object) returns Promise
 
 This will be called with an instance of Tinky::Object and returns
 a Promise that will be Kept with True if all of the validators
@@ -346,9 +346,9 @@ validator subroutine or method anyway.
 
 =head3 method  validate-apply
 
-        method validate-apply(Object:D $object) returns Promise 
+        method validate-apply(Object:D $object) returns Promise
 
-This is the top-level method that is used to check whether a 
+This is the top-level method that is used to check whether a
 transition should be applied, it returns a Promise that will be
 kept with True if all of the promises returned by the transition's
 C<validate>, the C<from> state's C<leave-validate> and the C<to>
@@ -360,7 +360,7 @@ kept with a Bool.
 
 =head3 method supply
 
-        method supply() returns Supply 
+        method supply() returns Supply
 
 This returns a L<Supply> to which will be emitted every
 L<Tinky::Object> instance that has this transition applied.
@@ -370,14 +370,14 @@ implementation of C<apply>.
 
 =head3 method Str
 
-        method Str() 
+        method Str()
 
 Returns a plausible string representation of the transition.
 
 =head3 method ACCEPTS
 
-        multi method ACCEPTS(State:D $state) returns Bool 
-        multi method ACCEPTS(Object:D $object) returns Bool 
+        multi method ACCEPTS(State:D $state) returns Bool
+        multi method ACCEPTS(Object:D $object) returns Bool
 
 This is used to smart match the transition against either a
 L<Tinky::State> (returning True if the State matches the
@@ -409,11 +409,11 @@ The same rules for execution based on the signature and the
 object to which the transition is being applied are true for
 methods as for validation subroutines.
 
-=head2 class Tinky::Workflow 
+=head2 class Tinky::Workflow
 
 The L<Tinky::Workflow> class brings together a collection of
 transitions together and provides additional functionality to
-objects that consume the workflow as well as aggregating 
+objects that consume the workflow as well as aggregating
 the various L<Supply>s that are provided by State and Transition.
 
 Whilst it is possible that standalone transitions can be applied to any
@@ -444,7 +444,7 @@ if there is more than one workflow in a system.
 
 =head3  method states
 
-        method states() 
+        method states()
 
 This is an array of the L<Tinky::State> objects that are defined for
 this workflow, it will be constructed from the unique states found in the
@@ -473,7 +473,7 @@ notwithstanding.)
 
 =head3 method validate-apply
 
-        method validate-apply(Object:D $object) returns Promise 
+        method validate-apply(Object:D $object) returns Promise
 
 This is called prior to the actual application of the workflow to a
 Tinky::Object and returns a Promise that will be kept with True if all
@@ -485,7 +485,7 @@ cases however the existing validation mechanisms should be sufficient.
 
 =head3 method applied
 
-        method applied(Object:D $object) 
+        method applied(Object:D $object)
 
 This is called with the Tinky::Object instance to which the workflow has
 been applied immediately after the application has completed.  It will
@@ -497,14 +497,14 @@ C<applied-supply> is usually preferrable.
 
 =head3 method applied-supply
 
-        method applied-supply() returns Supply 
+        method applied-supply() returns Supply
 
 This is a Supply to which all of the Tinky::Object instances to which the
 workflow has been applied are emitted.
 
 =head3 method enter-supply
 
-        method enter-supply() returns Supply 
+        method enter-supply() returns Supply
 
 This is a Supply which aggregates the C<enter-supply> of all the C<states>
 in the Workflow, it will emit a two element array comprising the State
@@ -512,7 +512,7 @@ object that was entered and the Tinky::Object instance.
 
 =head3 method leave-supply
 
-        method leave-supply() returns Supply 
+        method leave-supply() returns Supply
 
 This is a Supply which aggregates the C<leave-supply> of all the C<states>
 in the Workflow, it will emit a two element array comprising the State
@@ -520,7 +520,7 @@ object that was left and the Tinky::Object instance.
 
 =head3 method final-supply
 
-        method final-supply() returns Supply 
+        method final-supply() returns Supply
 
 This returns a Supply onto which are emitted an Array of State and
 Object whenever an object enters a state from which there are no further
@@ -531,7 +531,7 @@ for instance.
 =head3 method transition-supply
 
 
-        method transition-supply() returns Supply 
+        method transition-supply() returns Supply
 
 This returns a Supply that aggregates the C<supply> of all the transitions
 of the workflow, it emits a two element array of the Transition object
@@ -576,7 +576,7 @@ The same rules for execution based on the signature and the
 object to which the transition is being applied are true for
 methods as for validation subroutines.
 
-=head2 role Tinky::Object 
+=head2 role Tinky::Object
 
 This is a role that should should be applied to any application object
 that is to have a state managed by L<Tink::Workflow>, it provides the
@@ -586,7 +586,7 @@ and L<Tinky::Transition>
 
 =head3 method state
 
-        method state(Object:D: ) is rw 
+        method state(Object:D: ) is rw
 
 This is read/write method that allows the state of an object to be
 set directly with a L<Tinky::State> object.  If the object has no
@@ -601,7 +601,7 @@ throw an exception if it cannot be applied.
 
 =head3 method apply-workflow
 
-        method apply-workflow(Tinky::Workflow:D $wf) 
+        method apply-workflow(Tinky::Workflow:D $wf)
 
 This should be called with the Tinky::Workflow object that is to manage
 the objects state, it will call the C<validators> subroutines of the
@@ -614,13 +614,13 @@ processing required.
 
 =head3 method apply-transition
 
-        method apply-transition(Tinky::Transition $trans) returns Tinky::State 
+        method apply-transition(Tinky::Transition $trans) returns Tinky::State
 
 Applies the transition supplied to the object, if the current state
 of the object doesn't match the C<from> state of transition then an
-L<X::InvalidTransition> will be thrown, if one or more state or transition
-validators return False then a L<X::TransitionRejected> exception will
-be thrown,  If the object has no current state then  L<X::NoState>
+L<Tinky::X::InvalidTransition> will be thrown, if one or more state or transition
+validators return False then a L<Tinky::X::TransitionRejected> exception will
+be thrown,  If the object has no current state then  L<Tinky::X::NoState>
 will be thrown.
 
 If the application is successfull then the state of the object will
@@ -654,9 +654,9 @@ no such transition.)
 
 =head3 method ACCEPTS
 
-        multi method ACCEPTS(State:D $state) returns Bool 
-        multi method ACCEPTS(Transition:D $trans) returns Bool 
-        
+        multi method ACCEPTS(State:D $state) returns Bool
+        multi method ACCEPTS(Transition:D $trans) returns Bool
+
 Used to smart match the object against either a State (returns True if
 the state matches the current state of the object,) or a Transition
 (returns True if the C<from> state matches the current state of the
@@ -664,26 +664,26 @@ object.)
 
 =head2 EXCEPTIONS
 
-The methods for applying a transition to an object will signal an 
+The methods for applying a transition to an object will signal an
 inability to apply the transition by means of an exception.
 
 The below documents the location where the exceptions are thrown
 directly, of course they may be the result of some higher level
 method.
 
-=head3 class Tinky::X::Fail is Exception 
+=head3 class Tinky::X::Fail is Exception
 
 This is used as a base class for all of the exceptions thrown by
 Tinky, it will never be thrown itself.
 
-=head3 class Tinky::X::Workflow is X::Fail
+=head3 class Tinky::X::Workflow is Tinky::X::Fail
 
-This is an additional sub-class of L<X::Fail> that is used by
+This is an additional sub-class of L<Tinky::X::Fail> that is used by
 some of the other exceptions.
 
-=head3 class Tinky::X::InvalidState is X::Workflow 
+=head3 class Tinky::X::InvalidState is Tinky::X::Workflow
 
-=head3 class Tinky::X::InvalidTransition is X::Workflow 
+=head3 class Tinky::X::InvalidTransition is Tinky::X::Workflow
 
 This will be thrown by the helper methods provided by the
 application of the workflow if the current state of the
@@ -692,35 +692,35 @@ transitions. It will also be thrown by C<apply-transition>
 if the C<from> state of the transition supplied doesn't match
 the current state of the object.
 
-=head3 class Tinky::X::NoTransition is X::Fail 
+=head3 class Tinky::X::NoTransition is Tinky::X::Fail
 
 This will be thrown when attempting to set the state of
 the object by assignment when there is no transition that
 goes from the object's current state to the supplied state.
 
-=head3 class Tinky::X::NoWorkflow is X::Fail 
+=head3 class Tinky::X::NoWorkflow is Tinky::X::Fail
 
 This is thrown by C<transitions> and C<transitions-for-state>
 on the L<Tinky::Object> if they are called when no workflow
 has yet been applied to the object.
 
-=head3 class Tinky::X::NoTransitions is X::Fail 
+=head3 class Tinky::X::NoTransitions is Tinky::X::Fail
 
 This is thrown by the L<Workflow> C<states> method if it
 is called and there are no transitions defined.
 
-=head3 class Tinky::X::TransitionRejected is X::Fail 
+=head3 class Tinky::X::TransitionRejected is Tinky::X::Fail
 
 This is thrown by C<apply-transition> when the transition
 validation resulted in a False value, because the transition,
 leave state or enter state validators returned false.
 
-=head3 class Tinky::X::ObjectRejected is X::Fail 
+=head3 class Tinky::X::ObjectRejected is Tinky::X::Fail
 
 This is thrown on C<apply-workflow> if one or more of the
 workflow's apply validators returned false.
 
-=head3 class Tinky::X::NoState is X::Fail 
+=head3 class Tinky::X::NoState is Tinky::X::Fail
 
 This will be thrown by apply-transition if there is no
 current state on the object.
@@ -793,28 +793,28 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
         @meths;
     }
 
-    class X::Fail is Exception {
+    class Tinky::X::Fail is Exception {
     }
 
-    class X::Workflow is X::Fail {
+    class Tinky::X::Workflow is Tinky::X::Fail {
         has State       $.state;
         has Transition  $.transition;
     }
 
-    class X::InvalidState is X::Workflow {
+    class Tinky::X::InvalidState is Tinky::X::Workflow {
         method message() {
             "State '{ $.state.Str }' is not valid for Transition '{ $.transition.Str }'";
         }
     }
 
-    class X::InvalidTransition is X::Workflow {
+    class Tinky::X::InvalidTransition is Tinky::X::Workflow {
         has Str $.message;
         method message() {
             $!message // "Transition '{ $.transition.Str }' is not valid for State '{ $.state.Str }'";
         }
     }
 
-    class X::NoTransition is X::Fail {
+    class Tinky::X::NoTransition is Tinky::X::Fail {
         has State $.from;
         has State $.to;
         has Str   $.message;
@@ -823,33 +823,33 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
         }
     }
 
-    class X::NoWorkflow is X::Fail {
+    class Tinky::X::NoWorkflow is Tinky::X::Fail {
         has Str $.message = "No workflow defined";
 
     }
 
-    class X::NoTransitions is X::Fail {
+    class Tinky::X::NoTransitions is Tinky::X::Fail {
         has Str $.message = "No Transitions defined in workflow";
     }
 
-    class X::TransitionRejected is X::Fail {
+    class Tinky::X::TransitionRejected is Tinky::X::Fail {
         has Transition $.transition;
         method message() {
             "Transition '{ $!transition.Str }' was rejected by one or more validators";
         }
     }
 
-    class X::ObjectRejected is X::Fail {
+    class Tinky::X::ObjectRejected is Tinky::X::Fail {
         has Workflow $.workflow;
         method message() {
             "The Workflow '{ $!workflow.Str }' rejected the object at apply";
         }
     }
 
-    class X::NoState is X::Fail {
+    class Tinky::X::NoState is Tinky::X::Fail {
         has Str $.message = "No current state";
     }
-    
+
 
     class State {
         has Str $.name is required;
@@ -985,7 +985,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
                     @!states = @!transitions.map({ $_.from, $_.to }).flat.unique;
                 }
                 else {
-                    X::NoTransitions.new.throw;
+                    Tinky::X::NoTransitions.new.throw;
                 }
             }
             @!states;
@@ -1039,7 +1039,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
 
         # I'm half tempted to have this throw if there is more than one
         multi method find-transition(State:D $from, State:D $to) {
-            return self.transitions-for-state($from).first({ $_.to ~~ $to }); 
+            return self.transitions-for-state($from).first({ $_.to ~~ $to });
         }
 
         method role() returns Role {
@@ -1051,7 +1051,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
                             self.apply-transition($tran, |c);
                         }
                         else {
-                            X::InvalidTransition.new(message => "No transition '$name' for state '{ self.state.Str }'").throw;
+                            Tinky::X::InvalidTransition.new(message => "No transition '$name' for state '{ self.state.Str }'").throw;
                         }
                     }
                     $!role.^add_method($name, $method);
@@ -1084,7 +1084,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
                             $SELF.apply-transition($trans);
                         }
                         else {
-                            X::NoTransition.new(from => $SELF.state, to => $val).throw;
+                            Tinky::X::NoTransition.new(from => $SELF.state, to => $val).throw;
                         }
                     }
                     $SELF!state;
@@ -1103,7 +1103,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
                 $wf.applied(self);;
             }
             else {
-                X::ObjectRejected.new(workflow => $wf).throw;
+                Tinky::X::ObjectRejected.new(workflow => $wf).throw;
             }
         }
 
@@ -1121,7 +1121,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
                 @trans = $!workflow.transitions-for-state($!state);
             }
             else {
-                X::NoWorkflow.new.throw;
+                Tinky::X::NoWorkflow.new.throw;
             }
             @trans;
         }
@@ -1137,7 +1137,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
                 $trans = $!workflow.find-transition($!state, $to-state);
             }
             else {
-                X::NoWorkflow.new.throw;
+                Tinky::X::NoWorkflow.new.throw;
             }
             $trans;
         }
@@ -1151,21 +1151,21 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
                         $!state;
                     }
                     else {
-                        X::TransitionRejected.new(transition => $trans).throw;
+                        Tinky::X::TransitionRejected.new(transition => $trans).throw;
                     }
                 }
                 else {
                     if $!state.defined {
-                        X::InvalidTransition.new(state => $!state, transition => $trans).throw;
+                        Tinky::X::InvalidTransition.new(state => $!state, transition => $trans).throw;
                     }
                     else {
-                        X::NoState.new.throw;
+                        Tinky::X::NoState.new.throw;
                     }
 
                 }
             }
             else {
-                X::NoState.new.throw;
+                Tinky::X::NoState.new.throw;
             }
         }
     }

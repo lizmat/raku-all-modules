@@ -1,3 +1,5 @@
+v0.0.6      Mon 26 Nov 13:46:24 GMT 2018
+    * Fully qualify exception classes
 v0.0.5		Sat Apr 29 16:15:36 2017 +0100 
 	* Fix flappiness on slow and thread constrained computers
 v0.0.4		Mon Dec 5 22:15:15 2016 +0000 

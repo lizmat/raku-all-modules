@@ -17,7 +17,7 @@ my @transitions = @states.rotor(2 => -1).map(-> ($from, $to) { my $name = $from.
 
 class FooTest does Tinky::Object { }
 
-throws-like { Tinky::Workflow.new.states }, X::NoTransitions, ".states throws if there aren't any transitions";
+throws-like { Tinky::Workflow.new.states }, Tinky::X::NoTransitions, ".states throws if there aren't any transitions";
 
 my Tinky::Workflow $wf;
 

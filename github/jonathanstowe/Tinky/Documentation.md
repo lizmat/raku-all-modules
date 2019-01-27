@@ -411,7 +411,7 @@ This should be called with the Tinky::Workflow object that is to manage the obje
 
     method apply-transition(Tinky::Transition $trans) returns Tinky::State
 
-Applies the transition supplied to the object, if the current state of the object doesn't match the `from` state of transition then an [X::InvalidTransition](X::InvalidTransition) will be thrown, if one or more state or transition validators return False then a [X::TransitionRejected](X::TransitionRejected) exception will be thrown, If the object has no current state then [X::NoState](X::NoState) will be thrown.
+Applies the transition supplied to the object, if the current state of the object doesn't match the `from` state of transition then an [Tinky::X::InvalidTransition](Tinky::X::InvalidTransition) will be thrown, if one or more state or transition validators return False then a [Tinky::X::TransitionRejected](Tinky::X::TransitionRejected) exception will be thrown, If the object has no current state then [Tinky::X::NoState](Tinky::X::NoState) will be thrown.
 
 If the application is successfull then the state of the object will be changed to the `to` state of the transition and the object will be emitted to the appropriate supplies of the left and entered states and the transition.
 
@@ -451,36 +451,36 @@ The below documents the location where the exceptions are thrown directly, of co
 
 This is used as a base class for all of the exceptions thrown by Tinky, it will never be thrown itself.
 
-### class Tinky::X::Workflow is X::Fail
+### class Tinky::X::Workflow is Tinky::X::Fail
 
-This is an additional sub-class of [X::Fail](X::Fail) that is used by some of the other exceptions.
+This is an additional sub-class of [Tinky::X::Fail](Tinky::X::Fail) that is used by some of the other exceptions.
 
-### class Tinky::X::InvalidState is X::Workflow 
+### class Tinky::X::InvalidState is Tinky::X::Workflow 
 
-### class Tinky::X::InvalidTransition is X::Workflow 
+### class Tinky::X::InvalidTransition is Tinky::X::Workflow 
 
 This will be thrown by the helper methods provided by the application of the workflow if the current state of the object does match the `from` state of any of the applicable transitions. It will also be thrown by `apply-transition` if the `from` state of the transition supplied doesn't match the current state of the object.
 
-### class Tinky::X::NoTransition is X::Fail 
+### class Tinky::X::NoTransition is Tinky::X::Fail 
 
 This will be thrown when attempting to set the state of the object by assignment when there is no transition that goes from the object's current state to the supplied state.
 
-### class Tinky::X::NoWorkflow is X::Fail 
+### class Tinky::X::NoWorkflow is Tinky::X::Fail 
 
 This is thrown by `transitions` and `transitions-for-state` on the [Tinky::Object](Tinky::Object) if they are called when no workflow has yet been applied to the object.
 
-### class Tinky::X::NoTransitions is X::Fail 
+### class Tinky::X::NoTransitions is Tinky::X::Fail 
 
 This is thrown by the [Workflow](Workflow) `states` method if it is called and there are no transitions defined.
 
-### class Tinky::X::TransitionRejected is X::Fail 
+### class Tinky::X::TransitionRejected is Tinky::X::Fail 
 
 This is thrown by `apply-transition` when the transition validation resulted in a False value, because the transition, leave state or enter state validators returned false.
 
-### class Tinky::X::ObjectRejected is X::Fail 
+### class Tinky::X::ObjectRejected is Tinky::X::Fail 
 
 This is thrown on `apply-workflow` if one or more of the workflow's apply validators returned false.
 
-### class Tinky::X::NoState is X::Fail 
+### class Tinky::X::NoState is Tinky::X::Fail 
 
 This will be thrown by apply-transition if there is no current state on the object.

@@ -1,6 +1,6 @@
 #!perl6
 
-use v6.c;
+use v6;
 
 use Test;
 plan 53;
@@ -83,7 +83,7 @@ my $wf = Tinky::Workflow.new(:@transitions);
 my $one = ObjectOne.new(state => @states[0]);
 $one.apply-workflow($wf);
 
-throws-like { $one.apply-transition(@transitions[0]) }, X::TransitionRejected, "transition rejected";
+throws-like { $one.apply-transition(@transitions[0]) }, Tinky::X::TransitionRejected, "transition rejected";
 
 my $two = ObjectTwo.new(state => @states[0]);
 $two.apply-workflow($wf);
@@ -92,7 +92,7 @@ lives-ok { $two.apply-transition(@transitions[0]) }, "another object is okay";
 
 @transitions[1].to.enter-validators.push: sub (ObjectTwo $) returns Bool { False };
 
-throws-like { $two.apply-transition(@transitions[1]) }, X::TransitionRejected, "transition rejected (with fail on to state)";
+throws-like { $two.apply-transition(@transitions[1]) }, Tinky::X::TransitionRejected, "transition rejected (with fail on to state)";
 
 # Tests for methods
 # multi sub trait_mod:<is> ( Method $m, :$enter-validator! ) is export
@@ -142,13 +142,13 @@ class SafeOne does Tinky::Object {}
 
 my $wont-leave = WontLeave.new(state => $foo-transition.from);
 $wont-leave.apply-workflow($new-wf);
-throws-like { $wont-leave.apply-transition($foo-transition) }, X::TransitionRejected, "apply-transition fails with leave-validator";
+throws-like { $wont-leave.apply-transition($foo-transition) }, Tinky::X::TransitionRejected, "apply-transition fails with leave-validator";
 my $wont-enter = WontEnter.new(state => $foo-transition.from);
 $wont-enter.apply-workflow($new-wf);
-throws-like { diag $wont-enter.apply-transition($foo-transition) }, X::TransitionRejected, "apply-transition fails with enter-validator";
+throws-like { diag $wont-enter.apply-transition($foo-transition) }, Tinky::X::TransitionRejected, "apply-transition fails with enter-validator";
 my $wont-apply = WontApply.new(state => $foo-transition.from);
 $wont-apply.apply-workflow($new-wf);
-throws-like { diag $wont-apply.apply-transition($foo-transition) }, X::TransitionRejected, "apply-transition fails with apply-validator";
+throws-like { diag $wont-apply.apply-transition($foo-transition) }, Tinky::X::TransitionRejected, "apply-transition fails with apply-validator";
 my $safe = SafeOne.new(state => $foo-transition.from);
 $safe.apply-workflow($new-wf);
 lives-ok { $safe.apply-transition($foo-transition) }, "object with no specific validators applies fine";
@@ -168,7 +168,7 @@ nok do { await $apply-workflow.validate-apply(WorkflowBad.new) }, "Workflow.vali
 $apply-workflow.validators.push: sub (WorkflowGood $obj) returns Bool { True };
 ok do { await $apply-workflow.validate-apply(WorkflowGood.new) }, "Workflow.validate-apply with True validator";
 
-throws-like { WorkflowBad.new.apply-workflow($apply-workflow) }, X::ObjectRejected, "Workflow.apply-workflow with False validate as sub";
+throws-like { WorkflowBad.new.apply-workflow($apply-workflow) }, Tinky::X::ObjectRejected, "Workflow.apply-workflow with False validate as sub";
 lives-ok { WorkflowGood.new.apply-workflow($apply-workflow) }, "Workflow.apply-workflow with True validate as sub";
 
 class TestWorkflow is Tinky::Workflow {
@@ -185,7 +185,7 @@ my $apply-wf-meths = TestWorkflow.new;
 nok do { await $apply-wf-meths.validate-apply(WorkflowBad.new) }, "Workflow.validate-apply with False validator as method";
 ok do { await $apply-wf-meths.validate-apply(WorkflowGood.new) }, "Workflow.validate-apply with True validator as method";
 
-throws-like { WorkflowBad.new.apply-workflow($apply-wf-meths) }, X::ObjectRejected, "Workflow.apply-workflow with False validate as method";
+throws-like { WorkflowBad.new.apply-workflow($apply-wf-meths) }, Tinky::X::ObjectRejected, "Workflow.apply-workflow with False validate as method";
 lives-ok { WorkflowGood.new.apply-workflow($apply-wf-meths) }, "Workflow.apply-workflow with True validate as method";
 
 
