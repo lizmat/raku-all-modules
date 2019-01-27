@@ -1,0 +1,13 @@
+# install 007 module
+my $user = input_params('SshUser');
+
+zef '007', %( user => $user );
+
+# Force install
+zef '007', %( force => True, user => $user );
+
+# Sets custom description
+zef '007', %( description => 'Database interface module', user => $user );
+
+# Show debug info when install
+zef '007', %( debug => True, user => $user );

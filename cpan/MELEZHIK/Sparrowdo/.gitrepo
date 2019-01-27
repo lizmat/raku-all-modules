@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo.git
+	branch = master
+	commit = 074141eea888b7b680af5640a8691db8dac30529
+	parent = 0879a8d567606acc3c8e0d6fb10d1e81267fbbbd
+	cmdver = 0.3.1

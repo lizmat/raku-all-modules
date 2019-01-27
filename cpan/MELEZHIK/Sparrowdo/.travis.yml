@@ -1,0 +1,30 @@
+language: "perl"
+
+services:
+  - docker
+
+env:
+  - TEST=prove
+  - TEST=api
+  - TEST=bootstrap:alpine
+  #- TEST=bootstrap:amazon
+  - TEST=bootstrap:archlinux
+  #- TEST=bootstrap:centos
+  - TEST=bootstrap:debian
+  - TEST=bootstrap:fedora
+  #- TEST=bootstrap:funtoo
+  - TEST=bootstrap:ubuntu
+    
+install:
+  - cpanm https://github.com/melezhik/outthentic.git
+  - cpanm https://github.com/melezhik/sparrow.git
+  - sparrow index update
+  - sparrow plg install rakudo-install
+  - sparrow plg run rakudo-install --param user_install=on --param sudo=on
+  - export PATH=$PATH:$HOME/.perl6/bin:/opt/rakudo-pkg/bin
+  - zef install .
+  - zef install Sparrowdo::Sparrow::Update
+  - zef install Sparrowdo::Cpanm::GitHub
+
+script:
+  - sh ./.travis.d/run.sh "$TEST"

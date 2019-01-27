@@ -1,0 +1,204 @@
+use Terminal::ANSIColor;
+use JSON::Tiny;
+use Sparrowdo;
+use Sparrowdo::Core::DSL::User;
+use Sparrowdo::Core::DSL::Group;
+use Sparrowdo::Core::DSL::File;
+use Sparrowdo::Core::DSL::Directory;
+use Sparrowdo::Core::DSL::Template;
+use Sparrowdo::Core::DSL::Systemd;
+use Sparrowdo::Core::DSL::Package;
+use Sparrowdo::Core::DSL::CPAN::Package;
+use Sparrowdo::Core::DSL::Zef;
+use Sparrowdo::Core::DSL::Git;
+use Sparrowdo::Core::DSL::Service;
+use Sparrowdo::Core::DSL::Bash;
+use Sparrowdo::Core::DSL::Ssh;
+use Sparrowdo::Core::DSL::Assert;
+use Config::Simple;
+use File::Directory::Tree;
+
+sub MAIN (
+
+  Str  :$sparrowfile, 
+  Str  :$http_proxy, 
+  Str  :$https_proxy, 
+  Bool :$verbose = False, 
+  Bool :$check_syntax = False, 
+  Str  :$module_run,
+       :$task_run, 
+  Bool :$purge_cache = True,
+  Bool :$no_color = False,
+  Bool :$no_index_update = False,
+  Str  :$repo,
+  Str  :$cwd, 
+  Str  :$format, 
+  Str  :$git,
+       :$var
+)
+
+{
+
+  # read config if exists
+
+  my $sparrowind-cache = %*ENV<USER> ?? 'C:/Users/' ~ %*ENV<USER> ~ '/.sparrowind/cache'  !! 'C:/.sparrowind/cache';
+  my $sparrow-root = %*ENV<USER> ?? 'C:/Users/' ~ %*ENV<USER> ~ '/.sparrowind/sparrow' !! 'C:/.sparrowind/sparrow';
+
+  mktree $sparrowind-cache;
+  empty-directory $sparrowind-cache;
+  mktree "$sparrowind-cache/plugins";
+
+  mktree $sparrow-root;
+
+  if ($git) {
+    mkdir "$sparrowind-cache/sparrlet";
+    shell "cd $sparrowind-cache/sparrlet && git clone $git .";
+    if "config.pl6".IO ~~ :e {
+      copy "config.pl6".IO, "$sparrowind-cache/sparrlet/config.pl6";
+    }        
+    chdir "$sparrowind-cache/sparrlet";
+  }
+
+  my $conf-ini-file = %*ENV<USER> ?? 'C:/Users' ~ %*ENV<USER> ~ '/sparrowdo.ini' !!  "C:/sparrowdo.ini";
+
+  my $conf-ini = Hash.new;
+
+  if $conf-ini-file.IO ~~ :e {
+    $conf-ini = Config::Simple.read($conf-ini-file,:f("ini"));
+    say "found ini file: $conf-ini-file";
+  }
+  
+  my $verbose_val = $verbose;
+
+  $verbose_val = True if $conf-ini<sparrowdo><verbose> && ! $verbose_val;
+
+  my $format_val = $conf-ini<sparrowdo><format> ?? $conf-ini<sparrowdo><format> !! %*ENV<OUTTHENTIC_FORMAT> || 'default';
+    
+  my $no_index_update_val = $no_index_update;
+  $no_index_update_val = True if $conf-ini<sparrowdo><no_index_update> && ! $no_index_update_val;
+
+  my $repo_val = $repo;
+
+  $repo_val = $conf-ini<sparrowdo><repo> if $conf-ini<sparrowdo><repo> && ! $repo_val;
+  
+  set_input_params %(  
+    Sparrowfile => $sparrowfile,
+    Cwd => $cwd || $*CWD, 
+    HttpProxy => $http_proxy, 
+    HttpsProxy => $https_proxy, 
+    Verbose => $verbose_val,
+    Format => $format || $format_val,
+    PurgeCache => $purge_cache,
+    NoColor => $no_color,
+    NoIndexUpdate => $no_index_update_val,
+    Repo => $repo_val,
+    SparrowhubApi => $conf-ini<sparrowdo><sparrowhub_api>,
+    SparrowindCache => $sparrowind-cache,
+    SparrowRoot => $sparrow-root,
+  );
+
+  say $no_color ?? 
+  'running sparrow tasks on localhost ... ' !!
+  colored( 'running sparrow tasks on localhost  ... ', 'bold black on_yellow');
+
+  set_target_os "windows";
+
+  say $no_color ??
+  ('target OS is - '~ target_os ) !!
+  colored('target OS is - '~ target_os, 'black on_white');
+
+  if 'config.pl6'.IO.e {
+    say $no_color ??
+    'load variables from config.pl6 ...' !!
+    colored('load variables from config.pl6 ...', 'blue on_green');
+    config_set(EVALFILE 'config.pl6'); 
+  }
+
+  if $var {
+    runtime-vars-set( $var );
+  }
+
+
+  if $module_run {
+    module_run $module_run;
+  } elsif $task_run {
+    plg-run($task_run);
+  } else {
+    EVALFILE $sparrowfile||'sparrowfile';
+  }
+
+  exit if $check_syntax;
+
+  if $repo_val {
+    local-cmd "echo repo: $repo_val > $sparrowind-cache/sparrow.yaml";
+    say input_params('NoColor') ??
+    "set custom repo to $repo_val - OK" !!
+    colored("set custom repo to $repo_val - OK", 'bold green on_black');
+  }
+
+  local-cmd 'sparrow index update' unless input_params('NoIndexUpdate');
+
+  # plugins mode
+  if ($task_run) {
+    for plg-list() -> @p {
+      local-cmd "sparrow plg install " ~ @p[0];
+      if @p[1] {
+        spurt "$sparrowind-cache/plugins/@p[0].args", @p[1].join: "\n";
+        local-cmd "sparrow plg run " ~ @p[0] ~ ' --args-file ' ~ "$sparrowind-cache/plugins/" ~ "@p[0].args";
+        Nil;
+      } else {
+        local-cmd "sparrow plg run " ~ @p[0];
+        Nil;
+      }
+    } 
+    # task box mode  
+  } else {
+    spurt "$sparrowind-cache/task-box.json", (to-json get_tasks());
+    say input_params('NoColor') ??
+    "set up task box file - $sparrowind-cache/task-box.json - OK" !!
+    colored("set up task box file - $sparrowind-cache/task-box.json - OK", 'bold green on_black');
+    if input_params('PurgeCache') {
+      local-cmd "sparrow box run $sparrowind-cache/task-box.json --mode quiet --purge-cache";
+    } else {
+      local-cmd "sparrow box run $sparrowind-cache/task-box.json --mode quiet";    
+    }
+  }
+
+}
+
+sub local-cmd ( $cmd ) {
+
+
+  my @bash_commands = ( 'set LC_ALL=English_United States.1252' );
+  @bash_commands.push: 'set LANG=English_United States.1252';
+  
+  my $sparrowind-cache = input_params('SparrowindCache');
+  my $sparrow-root = input_params('SparrowRoot');
+
+  @bash_commands.push:  'set http_proxy=' ~ input_params('HttpProxy') if input_params('HttpProxy');
+  @bash_commands.push:  'set https_proxy=' ~ input_params('HttpsProxy') if input_params('HttpsProxy');
+  @bash_commands.push:  'set GIT_PROTOCOL=https';
+  @bash_commands.push:  'set PERL_USE_UNSAFE_INC=1';
+  @bash_commands.push:  'set SPARROW_ROOT=' ~ "$sparrow-root";
+  @bash_commands.push:  'set SPARROW_NO_COLOR=1' if input_params('NoColor');
+  @bash_commands.push:  "set SPARROW_CONF_PATH=$sparrowind-cache/sparrow.yaml";
+  @bash_commands.push:  'set OUTTHENTIC_CWD=' ~ input_params('Cwd') if input_params('Cwd');
+  @bash_commands.push:  'set sparrow_hub_api_url=' ~ input_params('SparrowhubApi') if input_params('SparrowhubApi');
+  @bash_commands.push:  'set OUTTHENTIC_FORMAT=' ~ input_params('Format');
+
+  @bash_commands.push:  $cmd;
+
+  my $ssh_cmd;
+
+
+  $ssh_cmd ~=  ~ ( join ' && ', @bash_commands );
+
+  say input_params('NoColor') ??
+  $ssh_cmd !!
+  colored($ssh_cmd, 'bold green') if input_params('Verbose');
+
+  shell $ssh_cmd;
+
+}
+
+# vim: ft=perl6 et sw=2 ts=2
