@@ -1,6 +1,7 @@
 use Net::AMQP::Payload::ArgumentSerialization;
+use Net::AMQP::Payload;
 
-unit class Net::AMQP::Payload::Header does Net::AMQP::Payload::ArgumentSerialization;
+unit class Net::AMQP::Payload::Header does Net::AMQP::Payload::ArgumentSerialization does Net::AMQP::Payload;
 
 use experimental :pack;
 

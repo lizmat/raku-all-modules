@@ -21,7 +21,7 @@ my $channel = $channel-promise.result;
 
 my $exchange = $channel.exchange.result;
 
-my $queue = $channel.declare-queue("netamqptest").result;
+my $queue = $channel.declare-queue().result;
 
 my $p = Promise.new;
 
@@ -37,14 +37,14 @@ my $ck = "nanananiwo";
 
 is do { await $queue.consume(consumer-tag => $ck) }, $ck, "got back the consumer code we supplied" ;
 
-$exchange.publish(routing-key => 'netamqptest', body => 'test'.encode);
+$exchange.publish(routing-key => $queue.name, body => 'test'.encode);
 
 await $p;
 
 await $queue.delete;
 
 my $bind-exchange = $channel.declare-exchange('bind_test', 'direct').result;
-my $bind-queue = $channel.declare-queue('', :exclusive).result;
+my $bind-queue = $channel.declare-queue( :exclusive).result;
 await $bind-queue.bind('bind_test', 'test-key-good');
 $bind-queue.consume;
 my $body-supply = $bind-queue.message-supply.map( -> $v { $v.body.decode }).share;
@@ -123,3 +123,4 @@ is $multi-one-count, 1, "first multi tap only saw one message";
 is $multi-two-count, 1, "second multi tap only saw one message";
 
 done-testing;
+# vim: ft=perl6

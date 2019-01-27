@@ -1,36 +1,27 @@
 unit class Net::AMQP::Exchange;
 
-use Net::AMQP::Frame;
+use Net::AMQP::Payload::Header;
 use Net::AMQP::Payload::Method;
+use Net::AMQP::Payload::Body;
 
-has $.name;
+has Str $.name;
 has $.type;
 has $.durable;
 has $.passive;
 
-has $!conn;
 has $!login;
 has $!frame-max;
-has $!methods;
 has $!channel;
-has $!channel-lock;
 
-submethod BUILD(:$!name, :$!type, :$!durable, :$!passive, :$!conn, :$!methods,
-                :$!channel, :$!login, :$!channel-lock, :$!frame-max) { }
+submethod BUILD(:$!name, :$!type, :$!durable, :$!passive,
+                :$!channel, :$!login, :$!frame-max) { }
 
-method Str {
+method Str( --> Str ) {
     $.name;
 }
 
-method declare {
-    my $p = Promise.new;
-    my $v = $p.vow;
-
-    my $tap = $!methods.grep(*.method-name eq 'exchange.declare-ok').tap({
-        $tap.close;
-
-        $v.keep(self);
-    });
+method declare( --> Promise )  {
+    my $p = $!channel.ok-method-promise('exchange.declare-ok', keep => self);
 
     my $declare = Net::AMQP::Payload::Method.new('exchange.declare',
                                                  0,
@@ -42,32 +33,20 @@ method declare {
                                                  0,
                                                  0,
                                                  Nil);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $declare).Buf);
-    };
-
-    return $p;
+    $!channel.write-frame($declare);
+    $p;
 }
 
-method delete($if-unused = 0) {
-    my $p = Promise.new;
-    my $v = $p.vow;
-
-    my $tap = $!methods.grep(*.method-name eq 'exchange.delete-ok').tap({
-        $tap.close;
-
-        $v.keep(1);
-    });
+method delete($if-unused = 0 --> Promise) {
+    my $p = $!channel.ok-method-promise('exchange.delete-ok');
 
     my $delete = Net::AMQP::Payload::Method.new('exchange.delete',
                                                 0,
                                                 $.name,
                                                 $if-unused,
                                                 0);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $delete).Buf);
-    };
-    return $p;
+    $!channel.write-frame($delete);
+    $p;
 }
 
 method publish(:$routing-key = "", Bool :$mandatory, Bool :$immediate, :$content-type, :$content-encoding ,
@@ -76,7 +55,7 @@ method publish(:$routing-key = "", Bool :$mandatory, Bool :$immediate, :$content
                :$app-id, :$body is copy, *%headers) {
 
 
-    $!channel-lock.protect: {
+    $!channel.protect: {
         #method
         my $publish = Net::AMQP::Payload::Method.new('basic.publish',
                                                      0,
@@ -84,7 +63,7 @@ method publish(:$routing-key = "", Bool :$mandatory, Bool :$immediate, :$content
                                                      $routing-key,
                                                      $mandatory,
                                                      $immediate);
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $publish).Buf);
+        $!channel.write-frame($publish, :no-lock);
 
         # header
         my $delivery-mode = 1;
@@ -104,7 +83,7 @@ method publish(:$routing-key = "", Bool :$mandatory, Bool :$immediate, :$content
                                                     :$type,
                                                     user-id => $!login,
                                                     :$app-id);
-        $!conn.write(Net::AMQP::Frame.new(type => 2, channel => $!channel, payload => $header).Buf);
+        $!channel.write-frame($header, :no-lock);
 
         # content
         my $max-frame-size = $!frame-max;
@@ -119,15 +98,16 @@ method publish(:$routing-key = "", Bool :$mandatory, Bool :$immediate, :$content
                 $body = buf8.new;
             }
 
-            $!conn.write(Net::AMQP::Frame.new(type => 3, channel => $!channel, payload => $chunk).Buf);
+            my $body-part = Net::AMQP::Payload::Body.new(content => $chunk);
+            $!channel.write-frame($body-part, :no-lock);
         }
     };
 }
 
 method return-supply(--> Supply) {
-    $!methods.grep(*.method-name eq 'basic.return');
+    $!channel.method-supply('basic.return');
 }
 
-method ack-supply {
-
+method ack-supply(--> Supply) {
+    $!channel.method-supply('basic.ack');
 }

@@ -1,3 +1,5 @@
+v0.1.12     Thu  6 Dec 14:17:22 GMT 2018
+    * Implement Queue.cancel
 v0.1.11     Sat Apr 14 20:54:27 2018 +0100
     * Fix for unsupported use of qos() 
 	* Fix vow.break on socket "done"

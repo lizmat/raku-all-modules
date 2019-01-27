@@ -3,6 +3,7 @@ unit class Net::AMQP::Channel;
 use Net::AMQP::Exchange;
 use Net::AMQP::Queue;
 
+need Net::AMQP::Payload;
 use Net::AMQP::Payload::Method;
 use Net::AMQP::Frame;
 
@@ -37,20 +38,14 @@ submethod BUILD(:$!id, :$!conn, :$!methods, :$!headers, :$!bodies, :$!login, :$!
     $!conn = class { method write($stuff) { $wl.protect: { $c.write($stuff); }; }; method real { $c }; };
 }
 
-method open {
-    my $p = Promise.new;
-    my $v = $p.vow;
+method open( --> Promise ) {
 
     $!closed     = Promise.new;
     $!closed-vow = $!closed.vow;
 
-    my $tap = $!methods.grep(*.method-name eq 'channel.open-ok').tap({
-        $tap.close;
+    my $p = self.ok-method-promise('channel.open-ok', keep => self);
 
-        $v.keep(self);
-    });
-
-    $!methods.grep(*.method-name eq 'channel.flow').tap({
+    self.method-supply('channel.flow').tap({
         my $flow-ok = Net::AMQP::Payload::Method.new("channel.flow-ok",
                                                      $_.arguments[0]);
         if $_.arguments[0] {
@@ -69,29 +64,28 @@ method open {
 
     });
 
-    my $closed-tap = $!methods.grep(*.method-name eq 'channel.close').tap({
+    my $closed-tap = self.method-supply('channel.close').tap({
         $closed-tap.close;
         $!closed-vow.keep(True);
     });
 
     my $open = Net::AMQP::Payload::Method.new("channel.open", "");
-    $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $open).Buf);
+    self.write-frame($open, :no-lock);
 
-    return $p;
+    $p;
 }
 
-method close($reply-code, $reply-text, $class-id = 0, $method-id = 0) {
+method close($reply-code = '', $reply-text = '', $class-id = 0, $method-id = 0 --> Promise ) {
     my $p = Promise.new;
     my $v = $p.vow;
 
     if $!closed.status ~~ Kept {
-        $v.keep(1);
+        $v.keep(True);
     }
     else {
-        my $tap = $!methods.grep(*.method-name eq 'channel.close-ok').tap({
-            $tap.close;
+        self.ok-method-promise('channel.close-ok').then({
             $!closed-vow.keep(True);
-            $v.keep(1);
+            $v.keep(True);
         });
 
         my $close = Net::AMQP::Payload::Method.new("channel.close",
@@ -99,69 +93,57 @@ method close($reply-code, $reply-text, $class-id = 0, $method-id = 0) {
                                                 $reply-text,
                                                 $class-id,
                                                 $method-id);
-        $!channel-lock.protect: {
-            $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $close).Buf);
-        };
+        $.write-frame($close);
     }
-    return $p;
+    $p;
 }
 
-method declare-exchange($name, $type, :$durable = 0, :$passive = 0) {
-    return Net::AMQP::Exchange.new(:$name,
-                                   :$type,
-                                   :$durable,
-                                   :$passive,
-                                   conn => $!conn,
-                                   channel-lock => $!channel-lock,
-                                   login => $!login,
-                                   frame-max => $!frame-max,
-                                   methods => $!methods,
-                                   channel => $.id).declare;
+method declare-exchange($name, $type, :$durable = 0, :$passive = 0 --> Promise) {
+    Net::AMQP::Exchange.new(:$name,
+                            :$type,
+                            :$durable,
+                            :$passive,
+                            login => $!login,
+                            frame-max => $!frame-max,
+                            channel => self).declare;
 }
 
-method exchange($name = "") {
+method exchange($name = "" --> Promise ) {
     my $p = Promise.new;
     $p.keep(Net::AMQP::Exchange.new(:$name,
-                                   conn => $!conn,
-                                   channel-lock => $!channel-lock,
                                    login => $!login,
                                    frame-max => $!frame-max,
-                                   methods => $!methods,
-                                   channel => $.id));
-    return $p;
+                                   channel => self));
+    $p;
 }
 
 proto method declare-queue(|c) { * }
 
-multi method declare-queue(*%args) {
+multi method declare-queue(*%args --> Promise ) {
     self.declare-queue('', |%args);
 }
 
-multi method declare-queue($name, :$passive, :$durable, :$exclusive, :$auto-delete, *%arguments) {
-    return Net::AMQP::Queue.new(:$name,
+multi method declare-queue($name, :$passive, :$durable, :$exclusive, :$auto-delete, *%arguments --> Promise ) {
+    Net::AMQP::Queue.new(:$name,
                                 :$passive,
                                 :$durable,
                                 :$exclusive,
                                 :$auto-delete,
                                 arguments => $%arguments,
-                                conn => $!conn,
-                                channel-lock => $!channel-lock,
                                 methods => $!methods,
                                 headers => $!headers,
                                 bodies => $!bodies,
-                                channel => $.id).declare;
+                                channel => self).declare;
 }
 
 method queue( Str $name --> Promise ) {
     my $p = Promise.new;
     $p.keep(Net::AMQP::Queue.new(:$name,
-                                conn => $!conn,
-                                channel-lock => $!channel-lock,
                                 methods => $!methods,
                                 headers => $!headers,
                                 bodies => $!bodies,
-                                channel => $.id));
-    return $p;
+                                channel => self));
+    $p;
 }
 
 proto method qos(|c) { * }
@@ -172,62 +154,18 @@ multi method qos( Int $, Int $prefetch-count, Bool :$global = False --> Promise 
 }
 
 multi method qos( Int $prefetch-count, Bool :$global = False --> Promise ){
-    my $p = Promise.new;
-    my $v = $p.vow;
-
-    my $tap = $!methods.grep(*.method-name eq 'basic.qos-ok').tap({
-        $tap.close;
-
-        $v.keep(1);
-    });
-
-    my $qos = Net::AMQP::Payload::Method.new("basic.qos",
-                                             0,
-                                             $prefetch-count,
-                                             $global);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $qos).Buf);
-    };
-    return $p;
+    self!basic-method("basic.qos",'basic.qos-ok',0, $prefetch-count,$global);
 }
 
-method flow($status) {
-    my $p = Promise.new;
-    my $v = $p.vow;
-
-    my $tap = $!methods.grep(*.method-name eq 'channel.flow-ok').tap({
-        $tap.close;
-
-        $v.keep(1);
-    });
-
-    my $flow = Net::AMQP::Payload::Method.new("channel.flow",
-                                             $status);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $flow).Buf);
-    }
-    return $p;
+method flow($status --> Promise) {
+    self!basic-method("channel.flow",'channel.flow-ok',$status);
 }
 
-method recover($requeue) {
-    my $p = Promise.new;
-    my $v = $p.vow;
-
-    my $tap = $!methods.grep(*.method-name eq 'basic.recover-ok').tap({
-        $tap.close;
-
-        $v.keep(1);
-    });
-
-    my $recover = Net::AMQP::Payload::Method.new("basic.recover",
-                                              $requeue);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $recover).Buf);
-    }
-    return $p;
+method recover($requeue --> Promise) {
+    self!basic-method("basic.recover", 'basic.recover-ok', $requeue);
 }
 
-method ack(Int() $delivery-tag, Bool :$multiple) returns Promise {
+method ack(Int() $delivery-tag, Bool :$multiple --> Promise ) {
     self!basic-method('basic.ack', 'basic.ack-ok', $delivery-tag, $multiple);
 }
 
@@ -237,19 +175,50 @@ method reject(Int() $delivery-tag, Bool :$requeue --> Promise ) {
 
 # Helper to make implementing/refactoring basic methods on channel easier
 # it is the responsibility of the caller to ensure the right args are passed.
-method !basic-method(Str:D $method, Str:D $ok-method, *@args ) returns Promise {
+method !basic-method(Str:D $method, Str:D $ok-method, *@args --> Promise ) {
+    my $p = self.ok-method-promise($ok-method);
+
+    my $method-payload = Net::AMQP::Payload::Method.new($method, @args);
+
+    $.write-frame($method-payload);
+    $p;
+}
+
+multi method method-supply(Str $method --> Supply) {
+    $!methods.grep(*.method-name eq $method);
+}
+
+# For ok methods where only want to keep a Promise.
+
+method ok-method-promise(Str:D $ok-method, Any:D :$keep = True, Bool :$with-method --> Promise ) {
     my $p = Promise.new;
     my $v = $p.vow;
 
-    my $tap = $!methods.grep(*.method-name eq $ok-method).tap({
+    my $tap = self.method-supply($ok-method).tap(-> $method {
         $tap.close;
-
-        $v.keep(1);
+        $v.keep($with-method ?? $method !! $keep );
     });
-
-    my $method-payload = Net::AMQP::Payload::Method.new($method, @args);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $.id, payload => $method-payload).Buf);
-    }
-    return $p;
+    $p;
 }
+
+# This should be public so that we a) don't need to repear the frame creation pattern and
+# b) only need to pass the channel to exchange and queue
+
+method write-frame(Net::AMQP::Payload $payload, Bool :$no-lock) {
+
+    my $frame-buf = Net::AMQP::Frame.new(channel => $.id, payload => $payload).Buf;
+    if $no-lock {
+        $!conn.write: $frame-buf;
+    }
+    else {
+        self.protect: {
+            $!conn.write: $frame-buf;
+        }
+    }
+}
+
+method protect( Callable $block ) {
+    $!channel-lock.protect: $block;
+}
+
+# vim: ft=perl6

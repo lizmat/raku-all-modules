@@ -169,7 +169,7 @@ method connect(){
     $p;
 }
 
-method close($reply-code, $reply-text, $class-id = 0, $method-id = 0) {
+method close($reply-code = '', $reply-text = '', $class-id = 0, $method-id = 0) {
 
     my $tap = $!method-supply.grep({ $_<method>.method-name eq 'connection.close-ok' }).tap({
         $tap.close;

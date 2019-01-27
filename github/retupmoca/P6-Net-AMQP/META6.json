@@ -1,7 +1,7 @@
 {
     "perl": "6.c",
     "name": "Net::AMQP",
-    "version": "0.1.11",
+    "version": "0.1.13",
     "authors": [
         "Andrew Egeler"
     ],
@@ -17,6 +17,7 @@
         "Net::AMQP::Exchange": "lib/Net/AMQP/Exchange.pm6",
         "Net::AMQP::Frame": "lib/Net/AMQP/Frame.pm6",
         "Net::AMQP::Queue": "lib/Net/AMQP/Queue.pm6",
+        "Net::AMQP::Payload": "lib/Net/AMQP/Payload.pm6",
         "Net::AMQP::Payload::ArgumentSerialization": "lib/Net/AMQP/Payload/ArgumentSerialization.pm6",
         "Net::AMQP::Payload::Body": "lib/Net/AMQP/Payload/Body.pm6",
         "Net::AMQP::Payload::Header": "lib/Net/AMQP/Payload/Header.pm6",

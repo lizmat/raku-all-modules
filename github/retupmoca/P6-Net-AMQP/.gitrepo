@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git@github.com:retupmoca/P6-Net-AMQP.git
 	branch = master
-	commit = b96b498f3bc6035167870f1783b259f09eb0abc8
-	parent = 5bca63d51462e5374b43632dd5b637c969ff4d3f
+	commit = 60a78b8d8e1fd2b878f68978c8d7356ab3a8f6ee
+	parent = e627b582c278a005d5070b66c4a13b78397120ae
 	cmdver = 0.3.1

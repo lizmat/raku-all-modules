@@ -1,7 +1,6 @@
 unit class Net::AMQP::Queue;
 
 use Net::AMQP::Payload::Method;
-use Net::AMQP::Frame;
 
 has $.name;
 has $.passive;
@@ -10,24 +9,23 @@ has $.exclusive;
 has $.auto-delete;
 has $.arguments;
 
-has $!conn;
-has $!login;
-has $!methods;
-has $!headers;
-has $!bodies;
+has Supply $!methods;
+has Supply $!headers;
+has Supply $!bodies;
 has $!channel;
-has $!channel-lock;
 
 has Str $.consumer-tag;
 
-submethod BUILD(:$!name, :$!passive, :$!durable, :$!exclusive, :$!auto-delete, :$!conn, :$!methods,
-                :$!headers, :$!bodies, :$!channel, :$!channel-lock, :$!arguments) { }
+has Supplier $!message-supplier;
 
-method Str {
+submethod BUILD(:$!name, :$!passive, :$!durable, :$!exclusive, :$!auto-delete, :$!methods,
+                :$!headers, :$!bodies, :$!channel, :$!arguments) { }
+
+method Str( --> Str ) {
     $.name;
 }
 
-method declare {
+method declare( --> Promise ) {
     my $p = Promise.new;
     my $v = $p.vow;
 
@@ -50,22 +48,15 @@ method declare {
                                                  $.auto-delete,
                                                  0,
                                                  $.arguments);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $declare).Buf);
-    };
 
-    return $p;
+    $!channel.write-frame($declare);
+
+    $p;
 }
 
-method bind($exchange, $routing-key = '', *%arguments) {
-    my $p = Promise.new;
-    my $v = $p.vow;
+method bind($exchange, $routing-key = '', *%arguments --> Promise) {
 
-    my $tap = $!methods.grep(*.method-name eq 'queue.bind-ok').tap({
-        $tap.close;
-
-        $v.keep(1);
-    });
+    my $p = $!channel.ok-method-promise('queue.bind-ok');
 
     my $bind = Net::AMQP::Payload::Method.new('queue.bind',
                                                0,
@@ -74,37 +65,26 @@ method bind($exchange, $routing-key = '', *%arguments) {
                                                $routing-key,
                                                0,
                                                $%arguments);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $bind).Buf);
-    };
+    $!channel.write-frame($bind);
 
-    return $p;
+    $p;
 }
 
-method unbind($exchange, $routing-key = '', *%arguments) {
-    my $p = Promise.new;
-    my $v = $p.vow;
+method unbind($exchange, $routing-key = '', *%arguments --> Promise) {
 
-    my $tap = $!methods.grep(*.method-name eq 'queue.unbind-ok').tap({
-        $tap.close;
+    my $p = $!channel.ok-method-promise('queue.unbind-ok');
 
-        $v.keep(1);
-    });
-
-    my $bind = Net::AMQP::Payload::Method.new('queue.unbind',
+    my $unbind = Net::AMQP::Payload::Method.new('queue.unbind',
                                                0,
                                                $.name,
                                                ~$exchange,
                                                $routing-key,
                                                $%arguments);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $bind).Buf);
-    };
-
-    return $p;
+    $!channel.write-frame($unbind);
+    $p;
 }
 
-method purge {
+method purge( --> Promise ) {
     my $p = Promise.new;
     my $v = $p.vow;
 
@@ -118,22 +98,13 @@ method purge {
                                                0,
                                                $.name,
                                                0);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $purge).Buf);
-    };
-
-    return $p;
+    $!channel.write-frame($purge);
+    $p;
 }
 
-method delete(:$if-unused, :$if-empty) {
-    my $p = Promise.new;
-    my $v = $p.vow;
+method delete(:$if-unused, :$if-empty --> Promise ) {
 
-    my $tap = $!methods.grep(*.method-name eq 'queue.delete-ok').tap({
-        $tap.close;
-
-        $v.keep(1);
-    });
+    my $p = $!channel.ok-method-promise('queue.delete-ok');
 
     my $delete = Net::AMQP::Payload::Method.new('queue.delete',
                                                 0,
@@ -141,24 +112,21 @@ method delete(:$if-unused, :$if-empty) {
                                                 $if-unused,
                                                 $if-empty,
                                                 0);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $delete).Buf);
-    };
-
-    return $p;
+    $!channel.write-frame($delete);
+    $p;
 }
 
 method get {
 
 }
 
-method consume(:$consumer-tag = "", :$exclusive, :$no-local, :$ack, *%arguments) {
+method consume(:$consumer-tag = "", :$exclusive, :$no-local, :$ack, *%arguments --> Promise ) {
     my $p = Promise.new;
     my $v = $p.vow;
 
     $!consumer-tag = $consumer-tag;
 
-    my $tap = $!methods.grep(*.method-name eq 'basic.consume-ok').tap({
+    my $tap = $!channel.method-supply('basic.consume-ok').tap({
         $tap.close;
 
         if not $!consumer-tag {
@@ -177,15 +145,25 @@ method consume(:$consumer-tag = "", :$exclusive, :$no-local, :$ack, *%arguments)
                                                 $exclusive,
                                                 0,
                                                 $%arguments);
-    $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $consume).Buf);
-    };
-
-    return $p;
+    $!channel.write-frame($consume);
+    $p;
 }
 
-method cancel {
+# Deliberately ignoring the no-wait as allowing this would
+# prevent us from finishing the message-supplier;
+method cancel( --> Promise ) {
 
+    my $p = $!channel.ok-method-promise('basic.cancel-ok');
+    $p.then({
+        if $!message-supplier.defined {
+            $!message-supplier.done;
+        }
+    });
+
+    my $cancel = Net::AMQP::Payload::Method.new('basic.cancel',$!consumer-tag, 0);
+    $!channel.write-frame($cancel);
+
+    $p;
 }
 
 class Message {
@@ -199,7 +177,7 @@ class Message {
     has $.body;
 }
 
-method !accept-message(Net::AMQP::Payload::Method $method where { $_.method-name eq 'basic.deliver' }) returns Bool {
+method !accept-message(Net::AMQP::Payload::Method $method where { $_.method-name eq 'basic.deliver' } --> Bool) {
     my @checks;
     if $!consumer-tag {
         if $method.arguments[0] ne $!consumer-tag {
@@ -209,62 +187,65 @@ method !accept-message(Net::AMQP::Payload::Method $method where { $_.method-name
     return so all(@checks);
 }
 
-method message-supply() returns Supply {
-    my $s = Supplier.new;
+method message-supply( --> Supply ) {
 
-    my $delivery-lock = Lock.new;
+    $!message-supplier //= do {
+        my $s = Supplier.new;
 
-    $!methods.grep(*.method-name eq 'basic.deliver').tap(-> $method {
-        if self!accept-message($method) {
-            $delivery-lock.lock();
+        my $delivery-lock = Lock.new;
 
-            my $header-payload;
-            my $body = buf8.new();
+        $!methods.grep(*.method-name eq 'basic.deliver').tap(-> $method {
+            if self!accept-message($method) {
+                $delivery-lock.lock();
 
-            my $htap = $!headers.tap({
-                $htap.close;
-                $header-payload = $_;
-                $delivery-lock.unlock();
-            });
+                my $header-payload;
+                my $body = buf8.new();
 
-            my $btap = $!bodies.tap(-> $chunk {
-                $delivery-lock.protect: {
-                    $body ~= $chunk;
-                    if $header-payload.body-size == $body.bytes {
-                        # last chunk
-                        $btap.close;
+                my $htap = $!headers.tap({
+                    $htap.close;
+                    $header-payload = $_;
+                    $delivery-lock.unlock();
+                });
 
-                        my $h = $header-payload.headers;
-                        my %headers = %$h;
-                        %headers<content-type> = $header-payload.content-type;
-                        %headers<content-encoding> = $header-payload.content-encoding;
-                        %headers<delivery-mode> = $header-payload.delivery-mode;
-                        %headers<priority> = $header-payload.priority;
-                        %headers<correlation-id> = $header-payload.correlation-id;
-                        %headers<reply-to> = $header-payload.reply-to;
-                        %headers<expiration> = $header-payload.expiration;
-                        %headers<message-id> = $header-payload.message-id;
-                        %headers<timestamp> = $header-payload.timestamp;
-                        %headers<type> = $header-payload.type;
-                        %headers<user-id> = $header-payload.user-id;
-                        %headers<app-id> = $header-payload.app-id;
+                my $btap = $!bodies.tap(-> $chunk {
+                    $delivery-lock.protect: {
+                        $body ~= $chunk;
+                        if $header-payload.body-size == $body.bytes {
+                            # last chunk
+                            $btap.close;
 
-                        start {
-                        $s.emit(Message.new(consumer-tag => $method.arguments[0],
-                                            delivery-tag => $method.arguments[1],
-                                            redelivered => $method.arguments[2],
-                                            exchange-name => $method.arguments[3],
-                                            routing-key => $method.arguments[4],
-                                            :%headers,
-                                            :$body));
+                            my $h = $header-payload.headers;
+                            my %headers = %$h;
+                            %headers<content-type> = $header-payload.content-type;
+                            %headers<content-encoding> = $header-payload.content-encoding;
+                            %headers<delivery-mode> = $header-payload.delivery-mode;
+                            %headers<priority> = $header-payload.priority;
+                            %headers<correlation-id> = $header-payload.correlation-id;
+                            %headers<reply-to> = $header-payload.reply-to;
+                            %headers<expiration> = $header-payload.expiration;
+                            %headers<message-id> = $header-payload.message-id;
+                            %headers<timestamp> = $header-payload.timestamp;
+                            %headers<type> = $header-payload.type;
+                            %headers<user-id> = $header-payload.user-id;
+                            %headers<app-id> = $header-payload.app-id;
+
+                            start {
+                            $s.emit(Message.new(consumer-tag => $method.arguments[0],
+                                                delivery-tag => $method.arguments[1],
+                                                redelivered => $method.arguments[2],
+                                                exchange-name => $method.arguments[3],
+                                                routing-key => $method.arguments[4],
+                                                :%headers,
+                                                :$body));
+                            }
                         }
-                    }
-                };
-            });
-        }
-    });
-
-    return $s.Supply;
+                    };
+                });
+            }
+        });
+        $s;
+    }
+    $!message-supplier.Supply;
 }
 
 method recover {
