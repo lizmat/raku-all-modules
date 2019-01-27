@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/maettu/db-migration-simple.git
+	branch = master
+	commit = 120dfb68496d23d0a5051e3139e51c7e916a8827
+	parent = 425df362143b95643c20bbaae6c4a8eed610528c
+	cmdver = 0.3.1

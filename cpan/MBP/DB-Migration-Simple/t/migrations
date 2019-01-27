@@ -1,0 +1,27 @@
+-- 1 up # comment
+CREATE TABLE table_version_1( /* comment */
+    # comment
+    /* or, SQL style comment */
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    msg TEXT
+); ; 
+INSERT INTO table_version_1 (msg) VALUES("This is version 1");
+
+# comment
+
+--1 down
+DROP TABLE table_version_1;
+
+
+-- 2 up
+CREATE TABLE table_version_2 (msg TEXT);
+INSERT INTO table_version_2 VALUES ("This is version 2");
+
+-- 2 down
+DROP TABLE table_version_2;
+
+-- 3 up
+CREATE TABLE table_version_3 (msg TEXT);
+
+-- 3 down
+DROP TABLE table_version_3;
