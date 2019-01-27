@@ -1,0 +1,65 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "directory",
+      "name": "t",
+      "children": [
+        {
+          "type": "file",
+          "name": "010-basic.t"
+        },
+        {
+          "type": "file",
+          "name": "020-syslog.t"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "children": [
+        {
+          "type": "directory",
+          "name": "Log",
+          "children": [
+            {
+              "children": [
+                {
+                  "type": "file",
+                  "name": "Native.pm"
+                }
+              ],
+              "purpose": null,
+              "type": "directory",
+              "name": "Syslog"
+            }
+          ],
+          "purpose": null
+        }
+      ],
+      "purpose": null,
+      "type": "directory",
+      "name": "lib"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}
