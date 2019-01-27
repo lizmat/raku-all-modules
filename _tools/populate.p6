@@ -15,7 +15,7 @@ for @cpan-projects -> $project {
     my $local = "cpan/$project<author_id>/" ~ $project<name>.subst(:g, '::', '-');
     %local-seen{$local} = True;
     unless $project<url> ~~ m{ ^http.*tar} {
-        if $project<url>.ends-width('.git') {
+        if $project<url>.ends-with('.git') {
             git-clone($project<url>, $local);
             next;
         }
