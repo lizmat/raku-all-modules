@@ -91,7 +91,7 @@ class Hiker {
           my $model;
           try {
             CATCH { default { warn $_; } }
-            $model = .values.grep({ .^name eq ( $obj.^can('model') ?? $obj.model !! '' ) })[0].new 
+            $model //= .values.grep({ .^name eq ( $obj.^can('model') ?? $obj.model !! '' ) })[0].new 
               for @models;
           }
           route $obj.path, sub ($req, $res) {

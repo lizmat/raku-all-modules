@@ -73,6 +73,12 @@ class MyApp::Model does Hiker::Model {
 
 This will create a boilerplate application for you in the current directory
 
+## Run the webapp
+```
+# perl6 app.pl6
+```
+This will run your webapp in localhost:8080
+
 ## Request Flow
 
 - Request is received
