@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/p6-Getopt-ForClass.git
+	branch = master
+	commit = 00bb1fafee5d878f8afb701ed670588271493cae
+	parent = 0bce1be166fd6cc9933e9289ce90d87e32d453b6
+	cmdver = 0.3.1

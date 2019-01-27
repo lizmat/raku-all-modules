@@ -1,0 +1,13 @@
+{{$NEXT}}
+
+v0.3	2018-11-12
+
+    * Fix location of use v6 for v6.d. :(
+
+v0.2	2018-08-06
+
+    * Bugfix #1: Corrected problems with the META and LICENSE. (HT: @samgwise)
+
+v0.1
+
+    * Initial release.
