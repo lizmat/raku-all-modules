@@ -11,7 +11,7 @@ my $router = Path::Router.new;
 throws-like(
     {
         $router.add-route(
-            '/foo/:bar' => (
+            '/foo/:bar' => %(
                 validations => {
                     baz => 'Int',
                 },

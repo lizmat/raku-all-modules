@@ -23,43 +23,43 @@ Loaded Path Part actions:
 =table
     Path Spec                           | Private
     ====================================+======================================
-    /plan/*/confirm                     | /plan/load_plan_from_store (1)       
-                                        | -> /plan/end_transition (0)          
-                                        | => /plan/confirm                     
+    /plan/*/confirm                     | /plan/load_plan_from_store (1)
+                                        | -> /plan/end_transition (0)
+                                        | => /plan/confirm
     ------------------------------------+--------------------------------------
-    /plan/*/delete                      | /plan/load_plan_from_store (1)       
-                                        | => /plan/delete                      
+    /plan/*/delete                      | /plan/load_plan_from_store (1)
+                                        | => /plan/delete
     ------------------------------------+--------------------------------------
-    /plan/*/edit                        | /plan/load_plan_from_store (1)       
-                                        | -> /plan/edit (0)                    
-                                        | => /plan/edit_next                   
+    /plan/*/edit                        | /plan/load_plan_from_store (1)
+                                        | -> /plan/edit (0)
+                                        | => /plan/edit_next
     ------------------------------------+--------------------------------------
-    /plan/*/edit/engagement_framework   | /plan/load_plan_from_store (1)       
-                                        | -> /plan/edit (0)                    
-                                        | => /plan/engagement_framework        
+    /plan/*/edit/engagement_framework   | /plan/load_plan_from_store (1)
+                                        | -> /plan/edit (0)
+                                        | => /plan/engagement_framework
     ------------------------------------+--------------------------------------
-    /plan/*/edit/key_drivers            | /plan/load_plan_from_store (1)       
-                                        | -> /plan/edit (0)                    
-                                        | => /plan/key_drivers                 
+    /plan/*/edit/key_drivers            | /plan/load_plan_from_store (1)
+                                        | -> /plan/edit (0)
+                                        | => /plan/key_drivers
     ------------------------------------+--------------------------------------
-    /plan/*/edit/priorities             | /plan/load_plan_from_store (1)       
-                                        | -> /plan/edit (0)                    
-                                        | => /plan/priorities                  
+    /plan/*/edit/priorities             | /plan/load_plan_from_store (1)
+                                        | -> /plan/edit (0)
+                                        | => /plan/priorities
     ------------------------------------+--------------------------------------
-    /plan/*/submit                      | /plan/load_plan_from_store (1)       
-                                        | -> /plan/end_transition (0)          
-                                        | => /plan/submit                      
+    /plan/*/submit                      | /plan/load_plan_from_store (1)
+                                        | -> /plan/end_transition (0)
+                                        | => /plan/submit
     ------------------------------------+--------------------------------------
-    /plan/*/edit/title                  | /plan/load_plan_from_store (1)       
-                                        | -> /plan/edit (0)                    
-                                        | => /plan/title                       
+    /plan/*/edit/title                  | /plan/load_plan_from_store (1)
+                                        | -> /plan/edit (0)
+                                        | => /plan/title
     ------------------------------------+--------------------------------------
-    /plan/*/unsubmit                    | /plan/load_plan_from_store (1)       
-                                        | -> /plan/end_transition (0)          
-                                        | => /plan/unsubmit                    
+    /plan/*/unsubmit                    | /plan/load_plan_from_store (1)
+                                        | -> /plan/end_transition (0)
+                                        | => /plan/unsubmit
     ------------------------------------+--------------------------------------
-    /plan/*/view                        | /plan/load_plan_from_store (1)       
-                                        | => /plan/view                        
+    /plan/*/view                        | /plan/load_plan_from_store (1)
+                                        | => /plan/view
 
 =end pod
 
@@ -68,7 +68,7 @@ isa-ok($router, 'Path::Router');
 
 $router.add-route(':controller');
 
-$router.add-route('plan/:action' => (
+$router.add-route('plan/:action' => %(
     defaults => {
         controller => 'plan',
     },
@@ -77,7 +77,7 @@ $router.add-route('plan/:action' => (
     }
 ));
 
-$router.add-route('plan/:id/edit/?:edit_action' => (
+$router.add-route('plan/:id/edit/?:edit_action' => %(
     defaults => {
         controller  => 'plan',
         action      => 'edit',
@@ -89,7 +89,7 @@ $router.add-route('plan/:id/edit/?:edit_action' => (
     }
 ));
 
-$router.add-route('plan/:id/:action' => (
+$router.add-route('plan/:id/:action' => %(
     defaults => {
         controller => 'plan'
     },

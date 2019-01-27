@@ -12,14 +12,14 @@ isa-ok($poll-router, 'Path::Router');
 
 # create some routes
 
-$poll-router.add-route('' => (
+$poll-router.add-route('' => %(
     defaults       => {
         controller => 'polls',
         action     => 'index',
     }
 ));
 
-$poll-router.add-route(':id/vote' => (
+$poll-router.add-route(':id/vote' => %(
     defaults       => {
         controller => 'polls',
         action     => 'vote',
@@ -29,7 +29,7 @@ $poll-router.add-route(':id/vote' => (
     }
 ));
 
-$poll-router.add-route(':id/results' => (
+$poll-router.add-route(':id/results' => %(
     defaults       => {
         controller => 'polls',
         action     => 'results',
@@ -71,14 +71,14 @@ isa-ok($router, 'Path::Router');
 
 # create some routes
 
-$router.add-route('' => (
+$router.add-route('' => %(
     defaults       => {
         controller => 'mysite',
         action     => 'index',
     }
 ));
 
-$router.add-route('admin' => (
+$router.add-route('admin' => %(
     defaults       => {
         controller => 'admin',
         action     => 'index',
@@ -129,14 +129,14 @@ isa-ok($test-router, 'Path::Router');
 
 # create some routes
 
-$test-router.add-route('testing' => (
+$test-router.add-route('testing' => %(
     defaults       => {
         controller => 'testing',
         action     => 'index',
     }
 ));
 
-$test-router.add-route('testing/:id' => (
+$test-router.add-route('testing/:id' => %(
     defaults       => {
         controller => 'testing',
         action     => 'get_id',

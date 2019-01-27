@@ -15,7 +15,7 @@ my $router  = Path::Router.new;
 sub init-io {
     my $output = IO::String.new;
     my $error  = IO::String.new;
- 
+
     Test::output()         = $output;
     Test::failure_output() = $error;
     Test::todo_output()    = $output;
@@ -23,11 +23,11 @@ sub init-io {
     return ($output, $error);
 }
 
-$router.add-route('blog' => (
+$router.add-route('blog' => %(
     defaults => { controller => 'Blog' }
 ));
 
-$router.add-route('feed' => (
+$router.add-route('feed' => %(
     defaults => { controller => 'Feed' }
 ));
 
@@ -123,7 +123,7 @@ for %tests.keys.sort -> $function {
     my &coderef = %tests{$function}<coderef>;
 
     for <pass fail> -> $state {
-        
+
         my ($output, $error) = init-io;
 
         my @arguments   = %tests{$function}{$state}<args>.Slip;

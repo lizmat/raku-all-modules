@@ -1,8 +1,8 @@
+=begin pod
+
 =TITLE Path::Router::Route::Match
 
 =SUBTITLE The result of a Path::Router match
-
-=begin pod
 
 =begin DESCRIPTION
 
@@ -12,15 +12,15 @@ dispatching nessecary.
 
 =end DESCRIPTION
 
-=head1 Attributes
+=head1 ATTRIBUTES
 
-=head2 has $.path
+=head2 path
 
     has Str $.path
 
 This is the path that was matched.
 
-=head2 has %.mapping
+=head2 mapping
 
     has %.mapping
 
@@ -28,25 +28,20 @@ This is the mapping of your router part names to the actual parts of
 the path. If your route had no "variables", then this will be an empty
 HASH ref.
 
-=head2 has $.route
+=head2 route
 
     has Path::Router::Route $.route
 
 This is the L<Path::Router::Route> instance that was matched.
 
-=head1 Methods
+=head1 METHODS
 
 =head2 method target
 
-    method target
+    method target(--> Any)
 
 This method simply delegates to the C<target> method of the C<route>
 that was matched.
-
-=for BUG
-All complex software has bugs lurking in it, and this module is no
-exception. If you find a bug please either email me, or add the bug
-to cpan-RT.
 
 =begin AUTHOR
 

@@ -1,17 +1,13 @@
-unit module Test::Path::Router;
-
 use v6;
+
+unit module Test::Path::Router;
 
 use Path::Router;
 
-=TITLE Test::Path::Router
-
-=SUBTITLE A testing module for testing routes
-
 use Test;
 
-# TODO Perl 6 does have a tool named Test::Builder, but it doesn't do enought to
-# really warrant using it yet. 
+# TODO Perl 6 does have a tool named Test::Builder, but it doesn't do enough to
+# really warrant using it yet.
 
 sub routes-ok(Path::Router $router, %routes, Str $message = '') is export {
     my ($passed, $reason);
@@ -20,22 +16,24 @@ sub routes-ok(Path::Router $router, %routes, Str $message = '') is export {
 
         for %routes.kv -> $path, %mapping {
 
-            my $generated-path = $router.uri-for(|%mapping);
+            my $generated-path = $router.path-for(|%mapping);
 
-            $generated-path = '' unless defined $generated-path;
+            $generated-path = '' without $generated-path;
 
             # the path generated from the hash
             # is the same as the path supplied
             if $path ne $generated-path {
                 ok(False, 'checking generated path');
                 diag("... paths do not match\n" ~
-                    "   got:      '" ~ $generated-path ~ "'\n" ~
-                    "   expected: '" ~ $path ~ "'");
+                    "   got:      '$generated-path'\n" ~
+                    "   expected: '$path'");
 
                 last;
             }
 
-            my $match = $router.match($path);
+            my %context = %mapping<context> :delete
+                if %mapping<context> :exists;
+            my $match = $router.match($path, :%context);
             my %generated-mapping = $match.mapping if $match;
 
             ok( $match && $match.path eq $path, "matched path (" ~ ($match ?? $match.path !! '<no match>') ~ ") and requested paths ($path) match" );
@@ -77,7 +75,7 @@ sub path-is(Path::Router $router, Str $path, %expected, Str $message = '') is ex
 }
 
 sub mapping-ok(Path::Router $router, %mapping, Str $message = '') is export {
-    if $router.uri-for(|%mapping).defined {
+    if $router.path-for(|%mapping).defined {
         ok(True, $message);
     }
     else {
@@ -86,7 +84,7 @@ sub mapping-ok(Path::Router $router, %mapping, Str $message = '') is export {
 }
 
 sub mapping-not-ok(Path::Router $router, %mapping, Str $message = '') is export {
-    if !$router.uri-for(|%mapping).defined {
+    if !$router.path-for(|%mapping).defined {
         ok(True, $message);
     }
     else {
@@ -95,11 +93,11 @@ sub mapping-not-ok(Path::Router $router, %mapping, Str $message = '') is export 
 }
 
 sub mapping-is(Path::Router $router, %mapping, Str $expected is copy, Str $message) is export {
-    my Str $generated-path = $router.uri-for(|%mapping);
+    my Str $generated-path = $router.path-for(|%mapping);
 
     # the path generated from the hash
     # is the same as the path supplied
-    if 
+    if
         (defined $generated-path and not defined $expected) or
         (defined $expected       and not defined $generated-path) or
         (defined $generated-path and     defined $expected
@@ -120,6 +118,10 @@ sub mapping-is(Path::Router $router, %mapping, Str $expected is copy, Str $messa
 
 =begin pod
 
+=TITLE Test::Path::Router
+
+=SUBTITLE A testing module for testing routes
+
 =begin SYNOPSIS
 
   use Test;
@@ -129,30 +131,30 @@ sub mapping-is(Path::Router $router, %mapping, Str $expected is copy, Str $messa
 
   # ... define some routes
 
-  path-ok($router, 'admin/remove_user/56', '... this is a valid path');
+  path-ok($router, 'admin/remove-user/56', '... this is a valid path');
 
   path-is($router,
-      'admin/edit_user/5',
+      'admin/edit-user/5',
       {
           controller => 'admin',
-          action     => 'edit_user',
+          action     => 'edit-user',
           id         => 5,
       },
   '... the path and mapping match');
 
   mapping-ok($router, {
       controller => 'admin',
-      action     => 'edit_user',
+      action     => 'edit-user',
       id         => 5,
   }, '... this maps to a valid path');
 
   mapping-is($router,
       {
           controller => 'admin',
-          action     => 'edit_user',
+          action     => 'edit-user',
           id         => 5,
       },
-      'admin/edit_user/5',
+      'admin/edit-user/5',
   '... the mapping and path match');
 
   routes-ok($router, {
@@ -160,13 +162,13 @@ sub mapping-is(Path::Router $router, %mapping, Str $expected is copy, Str $messa
           controller => 'admin',
           action     => 'index',
       },
-      'admin/add_user' => {
+      'admin/add-user' => {
           controller => 'admin',
-          action     => 'add_user',
+          action     => 'add-user',
       },
-      'admin/edit_user/5' => {
+      'admin/edit-user/5' => {
           controller => 'admin',
-          action     => 'edit_user',
+          action     => 'edit-user',
           id         => 5,
       }
   },
@@ -206,11 +208,11 @@ they are valid.
 
 =item method routes-ok
 
-    method routes-ok(Path::Router $router, %test_routes, Str $message?)
+    method routes-ok(Path::Router $router, %test-routes, Str $message?)
 
-This test function will accept a set of C<%test_routes> which
+This test function will accept a set of C<%test-routes> which
 will get checked against your C<$router> instance. This will
-check to be sure that all paths in C<%test_routes> procude
+check to be sure that all paths in C<%test-routes> produce
 the expected mappings, and that all mappings also produce the
 expected paths. It basically assures you that your paths
 are roundtrippable, so that you can be confident in them.

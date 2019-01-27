@@ -8,20 +8,20 @@ use Path::Router;
 
 my $router = Path::Router.new;
 
-$router.add-route('/', (
+$router.add-route('/', %(
     defaults => {
         controller => 'root',
         action     => 'index',
     }
 ));
 
-$router.add-route('/name/?:first', (
+$router.add-route('/name/?:first', %(
     defaults => {
         controller => 'name',
     },
 ));
 
-$router.add-route('/:name', (
+$router.add-route('/:name', %(
     defaults => {
         controller => 'root',
         action     => 'hello',

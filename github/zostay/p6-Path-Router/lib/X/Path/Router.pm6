@@ -34,13 +34,23 @@ class X::Path::Router::BadInclusion is X::Path::Router {
 }
 
 class X::Path::Router::BadRoute is X::Path::Router {
-    has Str $.validation;
     has Str $.path;
 
     method message() {
-          "Validation provided for component :$!validation, but the"
-        ~ " path $!path doesn't contain a variable"
-        ~ " component with that name"
+        "The path $!path will not work"
     }
 }
 
+class X::Path::Router::BadValidation is X::Path::Router::BadRoute {
+    has Str $.validation;
+
+    method message() {
+        callsame() ~ ": Validation provided for component :$!validation, but no variable component for that name is found in the path"
+    }
+}
+
+class X::Path::Router::BadSlurpy is X::Path::Router::BadRoute {
+    method message() {
+        callsame() ~ ": Slurpy components must be at the end of the path";
+    }
+}

@@ -3,10 +3,6 @@ use v6;
 use Path::Router;
 use Linenoise;
 
-=TITLE Path::Router::Shell
-
-=SUBTITLE An interactive shell for testing router configurations
-
 class Path::Router::Shell {
     has Path::Router $.router;
 
@@ -33,10 +29,14 @@ class Path::Router::Shell {
 
 =begin pod
 
+=TITLE Path::Router::Shell
+
+=SUBTITLE An interactive shell for testing router configurations
+
 =begin SYNOPSIS
 
     #!/usr/bin/perl6
-    
+
     use v6;
 
     use My::App::Router;
@@ -55,16 +55,23 @@ you can use it to test new routes or debug routing issues, etc etc etc.
 
 =end DESCRIPTION
 
-=head2 has $.router
+=head1 ATTRIBUTES
 
-=head1 Methods
+=head2 router
+
+    has $.router
+
+This is the router that is being tested.
+
+=head1 METHODS
 
 =head2 method shell
 
-=for BUG
-All complex software has bugs lurking in it, and this module is no
-exception. If you find a bug please either email me, or add the bug
-to cpan-RT.
+    method shell()
+
+This starts the shell. It will only return when "q" or "Q" are the only
+characters on a line. It uses L<Linenoise> to handle reading lines, history,
+etc.
 
 =begin AUTHOR
 
