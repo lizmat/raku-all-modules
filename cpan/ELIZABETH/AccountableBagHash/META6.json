@@ -1,0 +1,22 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "be an accountable BagHash",
+  "license" : "Artistic-2.0",
+  "name" : "AccountableBagHash",
+  "perl" : "6.c",
+  "provides" : {
+    "AccountableBagHash" : "lib/AccountableBagHash.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/AccountableBagHash.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}

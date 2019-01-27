@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/AccountableBagHash.git
+	branch = master
+	commit = 871a68ba279ec2e4de447038aa58863827219d2a
+	parent = 88ee07cc1d83ce2aeff78397f7004864718209c1
+	cmdver = 0.3.1
