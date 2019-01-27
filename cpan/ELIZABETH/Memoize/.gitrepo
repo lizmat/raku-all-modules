@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Memoize.git
+	branch = master
+	commit = 52f999b1baa7ff246aa90513b9587d42fc253e67
+	parent = 86f8cd17fd3202ace732b8fd95e36f135e8105e9
+	cmdver = 0.3.1
