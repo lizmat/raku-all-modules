@@ -1,0 +1,17 @@
+sudo: required
+
+language: perl6
+
+perl6:
+  - latest
+
+before_install:
+  - perl6 -v
+install:
+  - echo $TRAVIS_OS_NAME
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get -qq update               ; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libimlib2-dev ; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install screen ; fi
+  - rakudobrew build zef
+  - zef --depsonly install .
+  - zef --debug install .

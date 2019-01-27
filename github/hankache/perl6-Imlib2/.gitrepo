@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:hankache/perl6-Imlib2.git
+	branch = master
+	commit = c04089abc18d3aaabe3d420abb5f210b80ba62d3
+	parent = a04518c6974e0f1f0eb29001c7f0f0dd315f4fb2
+	cmdver = 0.3.1

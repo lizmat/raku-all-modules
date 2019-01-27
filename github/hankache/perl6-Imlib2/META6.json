@@ -1,0 +1,12 @@
+{
+	"name" : "Imlib2",
+	"version" : "0.0.2",
+	"description" : "Perl 6 interface to the Imlib2 image library.",
+	"license" : "Artistic-2.0",
+	"provides" : { "Imlib2": "lib/Imlib2.pm6" },
+	"authors" : ["Henrique Dias"],
+	"perl" : "6.c",
+	"depends" : [ "LibraryMake" ],
+	"source-type" : "git",
+	"source-url" : "git://github.com/hankache/perl6-Imlib2.git"
+}
