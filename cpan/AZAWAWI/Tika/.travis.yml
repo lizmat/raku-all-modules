@@ -1,0 +1,35 @@
+language: generic
+
+os:
+  - linux
+  - osx
+
+env:
+  global:
+    - export PATH="/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH"
+addons:
+  apt:
+    sources:
+      - sourceline: 'deb https://dl.bintray.com/nxadm/rakudo-pkg-debs $(lsb_release -cs) main'
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?search=0x379CE192D401AB61&op=get'
+    packages:
+      - rakudo-pkg
+
+before_install:
+    # Display OS name
+  - echo $TRAVIS_OS_NAME
+
+  # Debian-based Linux java installation
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update              ; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install default-jre ; fi
+
+  # macOS java and rakudo-star installation
+  # Note: rakudo-star is needed on macOS since rakudo-pkg only covers Linux
+  # platforms
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update                ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap caskroom/versions ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew cask install java8    ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install rakudo-star   ; fi
+
+install:
+  - zef install . && zef test . --verbose

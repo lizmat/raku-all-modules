@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/p6-tika.git
+	branch = master
+	commit = da492b013766793db7f05c7761136c419fdd341d
+	parent = f3cac8f0e74f41f7be7d849e2d886fbc9a862949
+	cmdver = 0.3.1
