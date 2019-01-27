@@ -16,6 +16,20 @@ L<Any|/type/Any>.
 
 =head1 Methods
 
+
+=head2 method iterator
+
+Defined as:
+
+    method iterator(--> Iterator)
+
+Coerces the invocant to a C<list> by applying its L«C<.list>|/routine/list»
+method and uses L«C<iterator>|/type/Iterable#method_iterator» on it.
+
+    my $it = Mu.iterator;
+    say $it.pull-one; # OUTPUT: «(Mu)␤»
+    say $it.pull-one; # OUTPUT: «IterationEnd␤»
+
 =head2 method defined X<|method,defined>
 
 Declared as
@@ -71,7 +85,7 @@ Returns C<True> if and only if the invocant conforms to type C<$type>.
     say $d.does(Any);                 # True    (Date is a subclass of Any)
     say $d.does(DateTime);            # False   (Date is not a subclass of DateTime)
 
-Unlike L<C<isa>|https://docs.perl6.org/routine/isa#(Mu)_routine_isa>, which
+Unlike L<C<isa>|/routine/isa#(Mu)_routine_isa>, which
 returns C<True> only for superclasses, C<does> includes both superclasses and
 roles.
 
@@ -112,7 +126,7 @@ Declared as:
 
     method Capture(Mu:D: --> Capture:D)
 
-Returns a L<Capture> with named arguments corresponding to invocant's
+Returns a L<Capture|/type/Capture> with named arguments corresponding to invocant's
 public attributes:
 
     class Foo {
@@ -139,12 +153,12 @@ Returns a string representation of the invocant, optimized for fast recognition
 by humans. As such lists will be truncated at 100 elements. Use C<.perl> to get
 all elements.
 
-The default C<gist> method in C<Mu> re-dispatches to the L<perl> method for
+The default C<gist> method in C<Mu> re-dispatches to the L<perl|/routine/perl> method for
 defined invocants, and returns the type name in parenthesis for type object
 invocants. Many built-in classes override the case of instances to something
 more specific that may truncate output.
 
-C<gist> is the method that L<say> calls implicitly, so C<say $something> and
+C<gist> is the method that L<say|/routine/say> calls implicitly, so C<say $something> and
 C<say $something.gist> generally produce the same output.
 
     say Mu.gist;        # OUTPUT: «(Mu)␤»
@@ -408,8 +422,8 @@ stringifying non-C<Str> object using the C<.Str> method.
 
     multi method say(--> Bool:D)
 
-Will L<C<say>|https://docs.perl6.org/type/IO::Handle#method_say> to
-L<standard output|/language/variables#index-entry-%24*OUT>.
+Will L<C<say>|/type/IO::Handle#method_say> to
+L<standard output|/language/variables#index-entry-$*OUT>.
 To produce machine readable output use C<.put> instead.
 
     say 42;                 # OUTPUT: «42␤»
@@ -443,7 +457,7 @@ mechanism when no direct candidate is available to dispatch to.
 
     multi method WHICH(--> ObjAt:D)
 
-Returns an object of type L<ObjAt> which uniquely identifies the object.
+Returns an object of type L<ObjAt|/type/ObjAt> which uniquely identifies the object.
 Value types override this method which makes sure that two equivalent objects
 return the same return value from C<WHICH>.
 
@@ -504,8 +518,8 @@ can be caught with L<CONTROL|/language/phasers#CONTROL>.
 
 =head2 method return-rw
 
-Same as method L<C<return>|/type/Mu#method_return> except that L<C<return-rw>|/syntax/return-rw> returns a writable
-container to the invocant (see more details here: L<C<return-rw>|/syntax/return-rw>).
+Same as method L<C<return>|/type/Mu#method_return> except that C<return-rw> returns a writable
+container to the invocant (see more details here: L<C<return-rw>|/language/control#return-rw>).
 
 =head2 method emit
 

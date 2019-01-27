@@ -1,14 +1,30 @@
 # Official Documentation of Perl 6
 
-[![Build Status](https://travis-ci.org/perl6/doc.svg?branch=master)](https://travis-ci.org/perl6/doc) [![artistic](https://img.shields.io/badge/license-Artistic%202.0-blue.svg?style=flat)](https://opensource.org/licenses/Artistic-2.0)
-
-[![Run Status](https://api.shippable.com/projects/591e99923f2f790700098a30/badge?branch=master)](https://app.shippable.com/github/perl6/doc)
+[![Build Status](https://travis-ci.org/perl6/doc.svg?branch=master)](https://travis-ci.org/perl6/doc) [![artistic](https://img.shields.io/badge/license-Artistic%202.0-blue.svg?style=flat)](https://opensource.org/licenses/Artistic-2.0) [![Run Status](https://api.shippable.com/projects/591e99923f2f790700098a30/badge?branch=master)](https://app.shippable.com/github/perl6/doc)
 
 An HTML version of this documentation can be found at [https://docs.perl6.org/](https://docs.perl6.org/).
 This is currently the recommended way to consume the documentation.
 
 There is also a command line tool called `p6doc`, which you can use to
 browse the documentation once it's installed (see below).
+
+## Docker container
+
+This documentation is also published as
+the
+[`jjmerelo/perl6-doc`](https://hub.docker.com/r/jjmerelo/perl6-doc) Docker
+container. It includes a copy of the web publised in port 3000, so you
+can run it with:
+
+    docker run --rm -it -p 3000:3000 jjmerelo/perl6-doc
+
+or
+
+    docker run --rm -it -p 31415:3000 jjmerelo/perl6-doc
+
+in case you want it published somewhere else. You can direct your
+browser to http://localhost:3000 (or 31415, as the case may be).
+
 
 ## README in other languages
 
@@ -27,10 +43,12 @@ This module is available via the Perl 6 module ecosystem. Use:
 
     $ zef install p6doc
 
-to install the binaries and make it available in your binaries
+to install the "binaries" and make them available in your binaries
 execution path.
 
-**Note**: Please note that, due to changes in the parsing of Pod6, this will fail in versions older than 2018.06. Please upgrade to that version, or install using `--force`.
+**Note**: Please note that, due to changes in the parsing of Pod6,
+this will fail in versions of Perl 6 older than 2018.06. Please upgrade to that
+version, or install using `--force`.
 
 ## Use p6doc
 
@@ -48,14 +66,18 @@ skip the `./bin` part if you have installed it via
 
     $ p6doc -f slurp
 
-to browse the documentation of standard functions. Depending on your
+to browse the documentation of standard functions (which, in this
+particular case, will actually return multiple matches, which you can
+check individually). Depending on your
 disk speed and Rakudo version, it might take a while.
 
 -------
 
 ## Building the HTML documentation
 
-Install dependencies by running the following in the checkout directory:
+You might want to have a copy of the documentation and run the web
+site locally yourself. In that case, install dependencies by running
+the following in the checkout directory:
 
     $ zef --deps-only install .
 
@@ -72,6 +94,9 @@ on Debian you can do by running:
 To build the documentation web pages, simply run:
 
     $ make html
+
+> For best results, we recommend that you use the latest released versions, specially any one after 2018.11.
+
 
 Please note that you will need to have [nodejs](https://nodejs.org)
 installed to produce HTML content with the above command, in particular

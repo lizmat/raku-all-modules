@@ -631,7 +631,7 @@ sub find-definitions(:$pod, :$origin, :$min-level = -1, :$url) {
                             :categories($subkinds),
                     ;
                 }
-                when 'class'|'role'|'enum' {
+                when 'class'|'role'|'enum' { # This is never called.
                     my $summary = '';
                     if @pod-section[$i+1] ~~ {$_ ~~ Pod::Block::Named and .name eq "SUBTITLE"} {
                         $summary = @pod-section[$i+1].contents[0].contents[0];
@@ -971,7 +971,7 @@ sub write-main-index(:$kind, :&summary = {Nil}) {
             "Use the above menu to narrow it down topically."
         ),
         pod-table(
-            :headers[<Name  Declarator  Source>],
+            :headers[<Name  Type  Description>],
             [
                 $*DR.lookup($kind, :by<kind>)\
                 .categorize(*.name).sort(*.key)>>.value

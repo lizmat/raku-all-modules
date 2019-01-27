@@ -9,7 +9,7 @@
 A C<BagHash> is a mutable bag/multiset, meaning a collection of distinct
 elements in no particular order that each have an integer weight assigned to
 them signifying how many copies of that element are considered "in the bag".
-(For I<immutable> bags, see L<Bag> instead.)
+(For I<immutable> bags, see L<Bag|/type/Bag> instead.)
 
 Objects/values of any type are allowed as bag elements.  Within a C<BagHash>,
 items that would compare positively with the L<===> operator are considered the
@@ -74,6 +74,30 @@ the bag, and the (cumulative) values become the associated integer weights:
     my $n = ("a" => 0, "b" => 1, "c" => 2, "c" => 2).BagHash;
     say $m.perl;             # OUTPUT: «("b"=>1,"a"=>1,"c"=>2).BagHash␤»
     say $n.perl;             # OUTPUT: «("b"=>1,"c"=>4).BagHash␤»
+
+You can also create C<BagHash> masquerading as a hash by using the C<is> trait:
+
+    my %bh is BagHash = <a b b c c c>;
+    say %bh<b>;  # 2
+    say %bh<d>;  # 0
+
+Since 6.d (2019.01 and later) it is also possible to specify the type of values
+you would like to allow in a C<BagHash>.  This can either be done when calling
+C<.new>:
+
+    # only allow strings
+    my $n = BagHash[Str].new: <a b b c c c>;
+
+or using the masquerading syntax:
+
+    # only allow strings
+    my %bh is BagHash[Str] = <a b b c c c>;
+    say %bh<b>;  # 2
+    say %bh<d>;  # 0
+
+    # only allow whole numbers
+    my %bh is BagHash[Int] = <a b b c c c>;
+    # Type check failed in binding; expected Int but got Str ("a")
 
 =head1 Operators
 

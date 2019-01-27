@@ -6,7 +6,7 @@
 
     class Hash is Map { }
 
-A C<Hash> is a mutable L<Map>.
+A C<Hash> is a mutable L<Map|/type/Map>.
 
 C<Hash> implements C<Associative> through its inheritance of C<Map> and as such
 provides support for looking up values using keys, providing support for
@@ -35,10 +35,9 @@ Defined as:
     multi method classify-list(%mapper, *@list, :&as --> Hash:D)
     multi method classify-list(@mapper, *@list, :&as --> Hash:D)
 
-Populates a L«C<Hash>|/type/Hash» by classifying the
-possibly-empty C<@list> of values using the given C<mapper>, optionally
-altering the values using the C<:&as> L«C<Callable>|/type/Callable». The
-C<@list> cannot be lazy.
+Populates a L«C<Hash>|/type/Hash» by classifying the possibly-empty C<@list> of
+values using the given C<mapper>, optionally altering the values using the
+C<:&as> L«C<Callable>|/type/Callable». The C<@list> cannot be lazy.
 
 The mapper can be a L«C<Callable>|/type/Callable» that takes a single argument,
 an L«C<Associative>|/type/Associative», or an L«C<Iterable>|/type/Iterable».
@@ -50,16 +49,18 @@ return value will be used as the mapper's value.
 
 =head3 Simple classification
 
-In simple classification mode, each mapper's value is any non-Iterable and
+In simple classification mode, each mapper's value is any non-C<Iterable> and
 represents a key to classify C<@list>'s item under:
 
-    say % .classify-list: { $_ %% 2 ?? 'even' !! 'odd' }, ^10;
-    # OUTPUT: «{even => [0 2 4 6 8], odd => [1 3 5 7 9]}␤»
+=begin code
+say % .classify-list: { $_ %% 2 ?? 'even' !! 'odd' }, ^10;
+# OUTPUT: «{even => [0 2 4 6 8], odd => [1 3 5 7 9]}␤»
 
-    my @mapper = <zero one two three four five>;
-    my %hash = foo => 'bar';
-    say %hash.classify-list: @mapper, 1, 2, 3, 4, 4;
-    # OUTPUT: «{foo => bar, four => [4 4], one => [1], three => [3], two => [2]}␤»
+my @mapper = <zero one two three four five>;
+my %hash = foo => 'bar';
+say %hash.classify-list: @mapper, 1, 2, 3, 4, 4;
+# OUTPUT: «{foo => bar, four => [4 4], one => [1], three => [3], two => [2]}␤»
+=end code
 
 The mapper's value is used as the key of the L«C<Hash>|/type/Hash» to
 which the C<@list>'s item will be L«C<push>ed|/routine/push». See
@@ -90,10 +91,10 @@ C<@list>'s item under:
     #     }
     # }
 
-B<NOTE:> each of those L«C<Iterables>|/type/Iterable»
-must have the same number of elements, or the method will throw an exception.
-This restriction exists to avoid conflicts when the same key is a
-leaf of one value's classification but a node of another value's classification.
+B<NOTE:> each of those L«C<Iterables>|/type/Iterable»s must have the same number
+of elements, or the method will throw an exception. This restriction exists to
+avoid conflicts when the same key is a leaf of one value's classification but a
+node of another value's classification.
 
 =head3 C<:&as> value modifier
 
@@ -157,7 +158,7 @@ Notice how some items, e.g. C<6> and C<7>, are present in several categories.
 
 In multi-level categorization, the categories produced by the mapper can are
 L<Iterables|/type/Iterable> and categorization combines features
-of L<classify>, by producing nested hashes of classifications
+of L<classify|/routine/classify>, by producing nested hashes of classifications
 for each category.
 
     say % .categorize-list: {
@@ -216,10 +217,10 @@ assignment, but with three exceptions:
 =item The hash isn't emptied first, i.e. old pairs are not deleted.
 
 =item If a key already exists in the hash, and the corresponding value is an
-L<Array>, the new value is pushed onto the array (instead of replacing it).
+L<Array|/type/Array>, the new value is pushed onto the array (instead of replacing it).
 
 =item If a key already exists in the hash, and the corresponding value is not
-an L<Array>, old and new value are both placed into an array in the place
+an L<Array|/type/Array>, old and new value are both placed into an array in the place
 of the old value.
 
 Example:
@@ -299,10 +300,10 @@ Defined as:
 
     method default()
 
-Returns the default value of the invocant, i.e. the value which is returned
-when a non existing key is used to access an element in the C<Hash>.
-Unless the C<Hash> is declared as having a default value by using the
-L<is default|/routine/is default (Variable)> trait the method returns the type object
+Returns the default value of the invocant, i.e. the value which is returned when
+a non existing key is used to access an element in the C<Hash>. Unless the
+C<Hash> is declared as having a default value by using the
+L<is default|/syntax/trait is default> trait the method returns the type object
 C<(Any)>.
 
     my %h1 = 'apples' => 3, 'oranges' => 7;
@@ -373,7 +374,7 @@ If you declare a variable with the C<*> twigil C<is dynamic> is implied.
     my %*b;
     say %*b.dynamic;                         # OUTPUT: «True␤»
 
-Note that in the L<Scalar> case you have to use the C<VAR> method in
+Note that in the L<Scalar|/type/Scalar> case you have to use the C<VAR> method in
 order to get correct information.
 
     my $s is dynamic = %('apples' => 5);

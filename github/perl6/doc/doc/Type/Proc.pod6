@@ -43,7 +43,8 @@ my $captured-output = $p.out.slurp: :close;
 my $captured-error  = $p.err.slurp: :close;
 my $exit-code       = $p.exitcode;
 
-B<Note:> Versions of L<Rakudo|/language/glossary#Rakudo> older than 2017.04 do not have C<.slurp> available on L<IO::Pipe> objects; use
+B<Note:> Versions of L<Rakudo|/language/glossary#Rakudo> older than 2017.04 do
+not have C<.slurp> available on L<IO::Pipe> objects; use
 L«C<.slurp-rest>|/routine/slurp-rest» instead.
 
 Use L<Proc::Async|/type/Proc::Async> for non-blocking operations.
@@ -52,7 +53,7 @@ Use L<Proc::Async|/type/Proc::Async> for non-blocking operations.
 
 =head2 method new
 
-=begin code :skip-test
+=begin code :skip-test<compile time error>
 method new(Proc:U:
         :$in = '-',
         :$out = '-',
@@ -149,22 +150,22 @@ merged in C<$proc.out>.
 Defined as:
 
 =for code :method
-    sub run(
-        *@args ($, *@),
-        :$in = '-',
-        :$out = '-',
-        :$err = '-',
-        Bool :$bin = False,
-        Bool :$chomp = True,
-        Bool :$merge = False,
-        Str:D :$enc = 'UTF-8',
-        Str:D :$nl = "\n",
-        :$cwd = $*CWD,
-        Hash() :$env = %*ENV
-    --> Proc:D)
+sub run(
+    *@args ($, *@),
+    :$in = '-',
+    :$out = '-',
+    :$err = '-',
+    Bool :$bin = False,
+    Bool :$chomp = True,
+    Bool :$merge = False,
+    Str:D :$enc = 'UTF-8',
+    Str:D :$nl = "\n",
+    :$cwd = $*CWD,
+    Hash() :$env = %*ENV
+--> Proc:D)
 
 Runs an external command I<without involving a shell> and returns a
-L<Proc> object. By default, the external command will print to standard
+L<Proc|/type/Proc> object. By default, the external command will print to standard
 output and error, and read from standard input.
 
     run 'touch', '>foo.txt'; # Create a file named >foo.txt
@@ -189,9 +190,9 @@ Note that C<--> is required for many programs to disambiguate between
 command-line arguments and
 L<filenames that begin with hyphens|https://mywiki.wooledge.org/BashPitfalls#Filenames_with_leading_dashes>.
 
-A sunk L<Proc> object for a process that L<exited|/routine/exitcode>
+A sunk L<Proc|/type/Proc> object for a process that L<exited|/routine/exitcode>
 unsuccessfully will throw. If you wish to ignore such failures, simply
-use L<run> in non-sink context:
+use L<run|/routine/run> in non-sink context:
 
     run 'false';     # SUNK! Will throw
     run('false').so; # OK. Evaluates Proc in Bool context; no sinking

@@ -91,7 +91,7 @@ should only be used to parse text; if you wish to extract complex data, you can
 add actions within the grammar, or an
 L<action object|/language/grammars#Action_objects> is recommended to be used in
 conjunction with the grammar. If action objects are not used, C<.parse> returns
-a L<Match> object and sets, by default, the
+a L<Match|/type/Match> object and sets, by default, the
 L<default match object C<$/>|/syntax/$$SOLIDUS>, to the same value.
 
 
@@ -264,7 +264,7 @@ This comes in handy when you're already differentiating the proto regexes with
 the strings you're going to match, as using C«<sym>» token prevents repetition
 of those strings.
 
-X<|<?>>
+X«|<?>»
 =head3 "Always succeed" assertion
 
 The C«<?>» is the I<always succeed> assertion. When used as a grammar
@@ -274,9 +274,9 @@ succeed assertion.
 
 In the action class, we use calls to the C<succ> method to do set up (in this
 case, we prepare a new element in C<@!numbers>). In the C<digit> method,
-we convert an Arabic digit into a Devanagari digit and add it to the last
-element of C<@!numbers>. Thanks to C<succ>, the last element will always be
-the number for the currently parsed C<digit> digits.
+we use the Arabic digit as an index into a list of Devanagari digits and add
+it to the last element of C<@!numbers>. Thanks to C<succ>, the last element
+will always be the number for the currently parsed C<digit> digits.
 
     grammar Digifier {
         rule TOP {
@@ -288,7 +288,7 @@ the number for the currently parsed C<digit> digits.
 
     class Devanagari {
         has @!numbers;
-        method digit ($/) { @!numbers[*-1] ~= $/.ord.&[+](2358).chr }
+        method digit ($/) { @!numbers.tail ~= <०  १  २  ३  ४  ५  ६  ७  ८  ९>[$/] }
         method succ  ($)  { @!numbers.push: ''     }
         method TOP   ($/) { make @!numbers[^(*-1)] }
     }
@@ -353,129 +353,136 @@ Here, text such as "use rules for significant whitespace by default" will only
 match if the state assigned by whether rules, tokens, or regexes are mentioned
 matches with the correct guard:
 
-    =begin code :preamble<grammar GrammarAdvice{};>
-    say GrammarAdvice.subparse("use rules for significant whitespace by default");
-    # OUTPUT: «use rules for significant whitespace by default»
+=begin code :preamble<grammar GrammarAdvice{};>
+say GrammarAdvice.subparse("use rules for significant whitespace by default");
+# OUTPUT: «use rules for significant whitespace by default»
 
-    say GrammarAdvice.subparse("use tokens for insignificant whitespace by default");
-    # OUTPUT: «use tokens for insignificant whitespace by default»
+say GrammarAdvice.subparse("use tokens for insignificant whitespace by default");
+# OUTPUT: «use tokens for insignificant whitespace by default»
 
-    say GrammarAdvice.subparse("use regexes for insignificant whitespace by default");
-    # OUTPUT: «use regexes for insignificant whitespace by default»
+say GrammarAdvice.subparse("use regexes for insignificant whitespace by default");
+# OUTPUT: «use regexes for insignificant whitespace by default»
 
-    say GrammarAdvice.subparse("use regexes for significant whitespace by default")
-    # OUTPUT: #<failed match>
-    =end code
+say GrammarAdvice.subparse("use regexes for significant whitespace by default")
+# OUTPUT: #<failed match>
+=end code
 
 =head2 Attributes in grammars
 
 Attributes may be defined in grammars. However, they can only be accessed by
-methods. Attempting to use them from within a token will throw an exception
-because tokens are methods of L<Cursor|/type/Cursor>, not of the grammar
-itself. Note that mutating an attribute from within a method called in a token
-will I<only modify the attribute for that token's own match object>! Grammar
-attributes can be accessed in the match returned after parsing if made public:
+methods; in effect, grammars are classes, so these attributes behave in much the
+same way as object attributes. Attempting to use them from within a token will
+throw an exception because tokens are methods of L<Cursor|/type/Cursor>, not of
+the grammar itself; C<Cursor>s, in effect, behave as instances of the class that
+is the grammar. Note that mutating an attribute from within a method called in a
+token will I<only modify the attribute for that token's own match object>!
+Grammar attributes can be accessed in the match returned after parsing if made
+public:
 
 =begin code
-    grammar HTTPRequest {
-        has Bool $.invalid;
+grammar HTTPRequest {
+    has Bool $.invalid;
 
-        token TOP {
-            <type> <path> 'HTTP/1.1' \r\n
-            [<field> \r\n]+
-            \r\n
-            $<body>=.*
-        }
-
-        token type {
-            | GET | POST | OPTIONS | HEAD | PUT | DELETE | TRACE | CONNECT
-            | \S+ <.error>
-        }
-
-        token path {
-            | '/' [[\w+]+ % \/] [\.\w+]?
-            | '*'
-            | \S+ <.error>
-        }
-
-        token field {
-            | $<name>=\w+ : $<value>=<-[\r\n]>*
-            | <-[\r\n]>+ <.error>
-        }
-
-        method error(--> ::?CLASS:D) {
-            $!invalid = True;
-            self;
-        }
+    token TOP {
+        <type> <path> 'HTTP/1.1' \r\n
+        [<field> \r\n]+
+        \r\n
+        $<body>=.*
     }
 
-    my $header = "MEOWS / HTTP/1.1\r\nHost: docs.perl6.org\r\nsup lol\r\n\r\n";
-    my $/ = HTTPRequest.parse($header);
-    say $<type>.invalid;
-    # OUTPUT: True
-    say $<path>.invalid;
-    # OUTPUT: (Bool)
-    say $<field>».invalid;
-    # OUTPUT: [(Bool) True]
+    token type {
+        | GET | POST | OPTIONS | HEAD | PUT | DELETE | TRACE | CONNECT
+        | \S+ <.error>
+    }
+
+    token path {
+        | '/' [[\w+]+ % \/] [\.\w+]?
+        | '*'
+        | \S+ <.error>
+    }
+
+    token field {
+        | $<name>=\w+ : $<value>=<-[\r\n]>*
+        | <-[\r\n]>+ <.error>
+    }
+
+    method error(--> ::?CLASS:D) {
+        $!invalid = True;
+        self;
+    }
+}
+
+my $header = "MEOWS / HTTP/1.1\r\nHost: docs.perl6.org\r\nsup lol\r\n\r\n";
+my $/ = HTTPRequest.parse($header);
+say $<type>.invalid;
+# OUTPUT: True
+say $<path>.invalid;
+# OUTPUT: (Bool)
+say $<field>».invalid;
+# OUTPUT: [(Bool) True]
 =end code
 
 =head2 Passing arguments into grammars
 
-To pass arguments into a grammar, you can use the named argument of C<:args> on any of the parsing methods of grammar. The arguments passed should be in a C<list>.
+To pass arguments into a grammar, you can use the named argument of C<:args> on
+any of the parsing methods of grammar. The arguments passed should be in a
+C<list>.
 
 =begin code
-    grammar demonstrate-arguments {
-        rule TOP ($word) {
-        "I like" $word
-        }
+grammar demonstrate-arguments {
+    rule TOP ($word) {
+    "I like" $word
     }
+}
 
-    # Notice the comma after "sweets" when passed to :args to coerce it to a list
-    say demonstrate-arguments.parse("I like sweets", :args(("sweets",))); # OUTPUT: «｢I like sweets｣␤»
+# Notice the comma after "sweets" when passed to :args to coerce it to a list
+say demonstrate-arguments.parse("I like sweets", :args(("sweets",)));
+# OUTPUT: «｢I like sweets｣␤»
 =end code
 
-Once the arguments are passed in, they can be used in a call to a named regex inside the grammar.
+Once the arguments are passed in, they can be used in a call to a named regex
+inside the grammar.
 
 =begin code
-    grammar demonstrate-arguments-again {
-        rule TOP ($word) {
-        <phrase-stem><added-word($word)>
-        }
+grammar demonstrate-arguments-again {
+    rule TOP ($word) {
+    <phrase-stem><added-word($word)>
+    }
 
-        rule phrase-stem {
-           "I like"
-        }
+    rule phrase-stem {
+       "I like"
+    }
 
-        rule added-word($passed-word) {
-           $passed-word
-        }
-     }
+    rule added-word($passed-word) {
+       $passed-word
+    }
+ }
 
-     say demonstrate-arguments-again.parse("I like vegetables", :args(("vegetables",)));
-     # OUTPUT: ｢I like vegetables｣␤»
-     # OUTPUT:  «phrase-stem => ｢I like ｣␤»
-     # OUTPUT:  «added-word => ｢vegetables｣␤»
+ say demonstrate-arguments-again.parse("I like vegetables", :args(("vegetables",)));
+ # OUTPUT: ｢I like vegetables｣␤»
+ # OUTPUT:  «phrase-stem => ｢I like ｣␤»
+ # OUTPUT:  «added-word => ｢vegetables｣␤»
 =end code
 
 Alternatively, you can initialise dynamic variables and use any arguments that way within the grammar.
 
 =begin code
-     grammar demonstrate-arguments-dynamic {
-         rule TOP ($*word, $*extra) {
-            <phrase-stem><added-words>
-         }
-         rule phrase-stem {
-            "I like"
-         }
-         rule added-words {
-            $*word $*extra
-         }
-      }
+grammar demonstrate-arguments-dynamic {
+   rule TOP ($*word, $*extra) {
+      <phrase-stem><added-words>
+   }
+   rule phrase-stem {
+      "I like"
+   }
+   rule added-words {
+      $*word $*extra
+   }
+}
 
-     say demonstrate-arguments-dynamic.parse("I like everything else", :args(("everything", "else")));
-     # OUTPUT: «｢I like everything else｣␤»
-     # OUTPUT:  «phrase-stem => ｢I like ｣␤»
-     # OUTPUT:  «added-words => ｢everything else｣␤»
+say demonstrate-arguments-dynamic.parse("I like everything else", :args(("everything", "else")));
+# OUTPUT: «｢I like everything else｣␤»
+# OUTPUT:  «phrase-stem => ｢I like ｣␤»
+# OUTPUT:  «added-words => ｢everything else｣␤»
 =end code
 
 X<|Actions>
@@ -511,7 +518,7 @@ Here is a contrived example of a grammar and actions in action:
     =end code
 
 An instance of C<TestActions> is passed as named argument C<actions> to the
-L<parse> call, and when token C<TOP> has matched successfully,
+L<parse|/routine/parse> call, and when token C<TOP> has matched successfully,
 it automatically calls method C<TOP>, passing the match object as an argument.
 
 To make it clear that the argument is a match object, the example uses C<$/>

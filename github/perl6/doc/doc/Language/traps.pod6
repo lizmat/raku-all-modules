@@ -26,7 +26,7 @@ Constants are computed at compile time, so if you use them in modules
 keep in mind that their values will be frozen due to pre-compilation of
 the module itself:
 
-=for code :skip-test
+=for code :solo
 # WRONG (most likely):
 unit module Something::Or::Other;
 constant $config-file = "config.txt".IO.slurp;
@@ -40,7 +40,7 @@ L<binding a value|/language/containers#Binding>
 to a variable that offers a
 behaviour similar to a constant, but allowing the value to get updated:
 
-=for code :skip-test
+=for code :solo
 # Good; file gets updated from 'config.txt' file on each script run:
 unit module Something::Or::Other;
 my $config-file := "config.txt".IO.slurp;
@@ -48,7 +48,7 @@ my $config-file := "config.txt".IO.slurp;
 =head2 Assigning to C<Nil> produces a different value, usually C<Any>
 
 Actually, assigning to C<Nil>
-L<reverts the variable to its default value|https://docs.perl6.org/type/Nil>. So:
+L<reverts the variable to its default value|/type/Nil>. So:
 
 =begin code
 my @a = 4, 8, 15, 16;
@@ -79,7 +79,7 @@ my $result2 = 'abcdef' ~~ / dex /;
 say "Result2 is { $result2.^name }"; # OUTPUT: «Result2 is Any␤»
 =end code
 
-A L<C<Match> will be C<Nil>|https://docs.perl6.org/language/regexes#Literals>
+A L<C<Match> will be C<Nil>|/language/regexes#Literals>
 if it finds nothing; however it assigning C<Nil> to C<$result2> above
 will result in its default value, which is C<Any> as shown.
 
@@ -152,6 +152,31 @@ Alternatively, you can also use the L<concatenation operator|/routine/~> instead
     sub count-it { say "Count is " ~ $++ }
     =end code
 
+=head2 Using set subroutines on Associative when the value is falsey
+
+Using L<(cont)|/routine/(cont)>, L<∋|/routine/∋>, L<∌|/routine/∌>,
+L<(elem)|/routine/(elem)>, L<∈|/routine/∈>, or L<∉|/routine/∉> on classes
+implementing L<Associative|/type/Associative> will return C<False> if the value
+of the key is falsey:
+
+    =begin code
+    enum Foo «a b»;
+    say Foo.enums ∋ 'a';
+
+    # OUTPUT:
+    # False
+    =end code
+
+Instead, use C<:exists>:
+
+    =begin code
+    enum Foo «a b»;
+    say Foo.enums<a>:exists;
+
+    # OUTPUT:
+    # True
+    =end code
+
 =head1 Blocks
 
 =head2 Beware of empty "blocks"
@@ -184,7 +209,6 @@ That's not the case.
 For example
 
 =begin code
-use v6.c;
 class Point {
     has $.x;
     has $.y;
@@ -223,7 +247,6 @@ When you define your own C<BUILD> submethod, you must take care of
 initializing all attributes by yourself. For example
 
 =begin code
-use v6.c;
 class A {
     has $.x;
     has $.y;
@@ -382,7 +405,7 @@ value extracted, and the desired outcome achieved.
 
 Perl 6 includes a L<Cool|/type/Cool> class, which provides some of the DWIM
 behaviors we got used to by coercing arguments when necessary. However, DWIM is
-never perfect. Especially with L<List>s, which are C<Cool>, there are many
+never perfect. Especially with L<List|/type/List>s, which are C<Cool>, there are many
 methods that will not do what you probably think they do, including C<contains>,
 C<starts-with> or C<index>. Please see some examples in the section below.
 
@@ -466,13 +489,13 @@ say @colors.roll;       # blue
 say @colors.pick(2);    # yellow violet  (cannot repeat)
 say @colors.roll(3);    # red green red  (can repeat)
 
-=head2 List numify to their number of elements in numeric context
+=head2 C<List>s numify to their number of elements in numeric context
 
 You want to check whether a number is divisible by any of a set of numbers:
 
     say 42 %% <11 33 88 55 111 20325>; # OUTPUT: «True␤»
 
-What? There's no single number 42 should be divisible by. However, that list has 6 elements, and 42 is divisible by 6. That's why the output is true. In this case, you should turn the C<List> into a L<Junction>:
+What? There's no single number 42 should be divisible by. However, that list has 6 elements, and 42 is divisible by 6. That's why the output is true. In this case, you should turn the C<List> into a L<Junction|/type/Junction>:
 
     say 42 %% <11 33 88 55 111 20325>.any; # OUTPUT: «any(False, False, False, False, False, False)␤»
 
@@ -629,19 +652,19 @@ to any filehandles.
 
 =head2 Allomorphs generally follow numeric semantics
 
-L<Str> C<"0"> is C<True>, while L<Numeric> is C<False>. So what's the L<Bool> value of
+L<Str|/type/Str> C<"0"> is C<True>, while L<Numeric|/type/Numeric> is C<False>. So what's the L<Bool|/type/Bool> value of
 L<allomorph|/language/glossary#index-entry-Allomorph> C«<0>»?
 
-In general, allomorphs follow L<Numeric> semantics, so the ones that I<numerically> evaluate
+In general, allomorphs follow L<Numeric|/type/Numeric> semantics, so the ones that I<numerically> evaluate
 to zero are C<False>:
 
     say so   <0>; # OUTPUT: «False␤»
     say so <0e0>; # OUTPUT: «False␤»
     say so <0.0>; # OUTPUT: «False␤»
 
-To force comparison being done for the L<Stringy> part of the allomorph, use
-L«prefix C<~> operator|/routine/~» or the L<Str> method to coerce the allomorph
-to L<Str>, or use the L<chars> routine to test whether the allomorph has any length:
+To force comparison being done for the L<Stringy|/type/Stringy> part of the allomorph, use
+L«prefix C<~> operator|/routine/~» or the L<Str|/type/Str> method to coerce the allomorph
+to L<Str|/type/Str>, or use the L<chars|/routine/chars> routine to test whether the allomorph has any length:
 
     say so      ~<0>;     # OUTPUT: «True␤»
     say so       <0>.Str; # OUTPUT: «True␤»
@@ -758,7 +781,7 @@ equivalent|/language/unicode_ascii> C<…^>).
 
 If you place whitespace between the ellipsis (C<…>) and the caret (C<^>),
 it's no longer a single infix operator, but an infix inclusive sequence operator
-(C<…>) and a prefix L<Range> operator (C<^>). L«Iterables|/type/Iterable»
+(C<…>) and a prefix L<Range|/type/Range> operator (C<^>). L«Iterables|/type/Iterable»
 are valid endpoints for the sequence operator, so the result you'll get might
 not be what you expected.
 
@@ -768,7 +791,7 @@ In some languages, using strings as range end points, considers the entire
 string when figuring out what the next string should be; loosely treating the
 strings as numbers in a large base. Here's Perl 5 version:
 
-=for code :skip-test
+=for code
 say join ", ", "az".."bc";
 # OUTPUT: «az, ba, bb, bc␤»
 
@@ -859,7 +882,7 @@ in mind that C<+=> isn't defined as method on the left hand argument
 Here C<@a> is assigned the result of adding C<@a> (which has three elements)
 and C<10>; C<13> is therefore placed in C<@a>.
 
-Use the L<hyper form|https://docs.perl6.org/language/operators#Hyper_operators>
+Use the L<hyper form|/language/operators#Hyper_operators>
 of the assignment operators instead:
 
     my @a = 1, 2, 3;
@@ -884,7 +907,7 @@ Internally C«<{…}>» EVAL-s the given string inside an anonymous regex, while
 C<$(…)> lexically interpolates the given string. So C«<{…}>» immediately breaks
 with more complicated inputs. For example:
 
-=for code :skip-test
+=for code
 my $x = ‘ailemac#’;
 say ‘I ♥ #camelia’ ~~ / $($x.flip) /; # OUTPUT: «｢#camelia｣␤»
 #                    ⚠ ↓↓ WRONG ↓↓ ⚠
@@ -960,7 +983,7 @@ Within a regex, the following are lists with a single item, C<'foo'>:
 
 but this is a call to the named rule C<foo>:
 
-=begin code :skip-test
+=begin code
 say 'foo' ~~ /<foo>/;
 # OUTPUT: «No such method 'foo' for invocant of type 'Match'␤ in block <unit> at <unknown file> line 1␤»
 =end code
@@ -1037,6 +1060,16 @@ to a power, use parentheses:
 =for code
 say (-1)²;   # OUTPUT: «1␤»
 say (-1)**2; # OUTPUT: «1␤»
+
+=head2 Method operator calls and prefix minus
+
+Prefix minus binds looser than dotty method op calls. The prefix minus will be
+applied to  the return value from the method. To ensure the minus gets
+passed as part of the argument, enclose in parenthesis.
+
+=for code
+say  -1.abs;  # OUTPUT: «-1␤»
+say (-1).abs; # OUTPUT: «1␤»
 
 =head1 Subroutine and method calls
 
@@ -1173,7 +1206,7 @@ say @b.elems # OUTPUT: «999999␤»
 
 =head2 Phasers and implicit return
 
-=begin code :skip-test<Issues a warning>
+=begin code
 sub returns-ret () {
     CATCH {
         default {}
@@ -1193,7 +1226,7 @@ say doesn't-return-ret;
 # BAD: outputs «Nil» and a warning «Useless use of constant string "ret" in sink context (line 13)»
 =end code
 
-Code for C<returns-ret> and C<doesn't-return-ret> might look exactly the same, since in principle it does not matter where the L<C<CATCH>|https://docs.perl6.org/language/phasers#index-entry-Phasers__CATCH-CATCH> block goes. However, a block is an object and the last object in a C<sub> will be returned, so the C<doesn't-return-ret> will return C<Nil>, and, besides, since "ret" will be now in sink context, it will issue a warning. In case you want to place phasers last for conventional reasons, use the explicit form of C<return>.
+Code for C<returns-ret> and C<doesn't-return-ret> might look exactly the same, since in principle it does not matter where the L<C<CATCH>|/language/phasers#index-entry-Phasers__CATCH-CATCH> block goes. However, a block is an object and the last object in a C<sub> will be returned, so the C<doesn't-return-ret> will return C<Nil>, and, besides, since "ret" will be now in sink context, it will issue a warning. In case you want to place phasers last for conventional reasons, use the explicit form of C<return>.
 
 =begin code
 sub explicitly-return-ret () {
@@ -1211,13 +1244,13 @@ sub explicitly-return-ret () {
 
 Unlike some other languages, Perl 6 does not use reference counting,
 and so B<the filehandles are NOT closed when they go out of scope>. You
-have to explicitly close them either by using L<close> routine or using the
+have to explicitly close them either by using L<close|/routine/close> routine or using the
 C<:close> argument several of L<IO::Handle's|/type/IO::Handle> methods accept.
 See L«C<IO::Handle.close>|/type/IO::Handle#routine_close» for details.
 
 The same rules apply to L<IO::Handle's|/type/IO::Handle> subclass
-L<IO::Pipe>, which is what you operate on when reading from a L<Proc> you get
-with routines L<run> and L<shell>.
+L<IO::Pipe>, which is what you operate on when reading from a L<Proc|/type/Proc> you get
+with routines L<run|/routine/run> and L<shell|/routine/shell>.
 
 The caveat applies to L<IO::CatHandle> type as well, though not as severely.
 See L«C<IO::CatHandle.close>|/type/IO::CatHandle#method_close» for details.
@@ -1226,12 +1259,12 @@ See L«C<IO::CatHandle.close>|/type/IO::CatHandle#method_close» for details.
 
 Partly for historical reasons and partly by design, an L<IO::Path> object
 L<stringifies|/type/IO::Path#method_Str> without considering its
-L«C<CWD> attribute|/type/IO::Path#attribute_CWD», which means if you L<chdir>
+L«C<CWD> attribute|/type/IO::Path#attribute_CWD», which means if you L<chdir|/routine/chdir>
 and then stringify an L<IO::Path>, or stringify an L<IO::Path> with custom
 C<$!CWD> attribute, the resultant string won't reference the original
 filesystem object:
 
-=begin code :skip-test
+=begin code
 with 'foo'.IO {
     .Str.say;       # OUTPUT: «foo␤»
     .relative.say;  # OUTPUT: «foo␤»
@@ -1250,13 +1283,13 @@ Core routines that work with paths can take an L<IO::Path> object, so you don't
 need to stringify the paths.
 
 If you do have a case where you need a stringified version of an L<IO::Path>, use
-L<absolute> or L<relative> methods to stringify it into an absolute or relative
+L<absolute|/routine/absolute> or L<relative|/routine/relative> methods to stringify it into an absolute or relative
 path, respectively.
 
-If you are facing this issue because you use L<chdir> in your code,
+If you are facing this issue because you use L<chdir|/routine/chdir> in your code,
 consider rewriting it in a way that does not involve changing the
 current directory. For example, you can pass C<cwd> named argument to
-L<run> without having to use C<chdir> around it.
+L<run|/routine/run> without having to use C<chdir> around it.
 
 =head2 Splitting the input data into lines
 
@@ -1265,7 +1298,7 @@ L«C<IO::Handle>|/type/IO::Handle#routine_lines» and on a
 L«C<Str>|/type/Str#routine_lines». The trap arises if you start
 assuming that both split data the same way.
 
-=begin code :skip-test
+=begin code
 say $_.perl for $*IN.lines # .lines called on IO::Handle
 # OUTPUT:
 # "foox"
@@ -1282,7 +1315,7 @@ be “smart” about processing data from different operating
 systems. Therefore, it will split by all possible variations of a
 newline.
 
-=begin code :skip-test
+=begin code
 say $_.perl for $*IN.slurp(:bin).decode.lines # .lines called on a Str
 # OUTPUT:
 # "foox"
@@ -1329,7 +1362,7 @@ once, so it may cause a hard-to-detect intermittent fail.
 
 Here is an example that demonstrates the issue:
 
-=begin code :skip-test
+=begin code
 loop {
     my $proc = Proc::Async.new: :w, ‘head’, ‘-n’, ‘1’;
     my $got-something;
@@ -1415,7 +1448,7 @@ trick: C<whenever $proc.stdout { $out ~= $_ }>.
 
 =head2 Sunk C<Proc>
 
-Some methods return a L<Proc> object. If it represents a failed process, C<Proc> itself
+Some methods return a L<Proc|/type/Proc> object. If it represents a failed process, C<Proc> itself
 won't be exception-like, but B<sinking it> will cause an L<X::Proc::Unsuccessful>
 exception to be thrown. That means this construct will throw, despite the C<try> in place:
 
@@ -1499,14 +1532,14 @@ possibility of a race condition, as multiple invocations may happen
 simultaneously, from different threads.
 
 =comment This is an actual output from Rakudo 2015.09
-=begin code :skip-test
+=begin code
 <a b c d>».say # OUTPUT: «d␤b␤c␤a␤»
 =end code
 
 Second, C<»> checks the L<nodality|/routine/is%20nodal> of the routine being
-invoked and based on that will use either L<deepmap> or L<nodemap> to map over
-the list, which can be different from how a L<map> call would map over it:
-=begin code :skip-test
+invoked and based on that will use either L<deepmap|/routine/deepmap> or L<nodemap|/routine/nodemap> to map over
+the list, which can be different from how a L<map|/routine/map> call would map over it:
+=begin code
 say ((1, 2, 3), [^4], '5')».Numeric;       # OUTPUT: «((1 2 3) [0 1 2 3] 5)␤»
 say ((1, 2, 3), [^4], '5').map: *.Numeric; # OUTPUT: «(3 4 5)␤»
 =end code
@@ -1594,7 +1627,7 @@ the program is stopped with L«C<exit>|/routine/exit».
 
 The following nondeterministic example should demonstrate the
 complications of this trap:
-=begin code :skip-test
+=begin code
 my $x = say ‘Opened some resource’;
 LEAVE say ‘Closing the resource gracefully’ with $x;
 
@@ -1676,7 +1709,7 @@ say foo rand; # OUTPUT: «Type check failed in binding to parameter '<anon>'; ex
 
 =head2 Using regexes within grammar's actions
 
-=begin code :skip-test
+=begin code
 grammar will-fail {
     token TOP {^ <word> $}
     token word { \w+ }
@@ -1723,7 +1756,7 @@ C«item» seems innocuous enough, but it is a L<C<sub> defined in class
 C<Mu>|/routine/item>. The message is a bit cryptic and totally unrelated to that
 fact, but that is why this is listed as a trap. In general, all subs defined in
 any part of the hierarchy are going to cause problems; some methods will too.
-For instance, C<CREATE>, C<take> and C<defined> (which are defined in L<Mu>). In
+For instance, C<CREATE>, C<take> and C<defined> (which are defined in L<Mu|/type/Mu>). In
 general, multi methods and simple methods will not have any problem, but it
 might not be a good practice to use them as rule names.
 
@@ -1747,7 +1780,7 @@ say ‘Huh‽’     if %h<x y>:exists; # ← WRONG; returns a 2-item list
 =end code
 
 Did you mean “if C<any> of them exists”, or did you mean that C<all>
-of them should exist? Use C<any> or C<all> L<Junction> to clarify:
+of them should exist? Use C<any> or C<all> L<Junction|/type/Junction> to clarify:
 
 =begin code
 my %h = a => 1, b => 2;
@@ -1758,8 +1791,8 @@ say ‘a and b’    if all %h<a b>:exists;   # ← RIGHT (all); True
 =end code
 
 The reason why it is always C<True> (without using a junction) is that
-it returns a list with L<Bool> values for each requested
-lookup. Non-empty lists always give C<True> when you L<Bool>ify them,
+it returns a list with L<Bool|/type/Bool> values for each requested
+lookup. Non-empty lists always give C<True> when you L<Bool|/type/Bool>ify them,
 so the check always succeeds no matter what keys you give it.
 
 =head2 Using C<[…]> metaoperator with a list of lists
@@ -1790,7 +1823,7 @@ there are other cases when this kind of a generalization may not work.
 =head2 Using [~] for concatenating a list of blobs
 
 The L<C<~> infix operator|/routine/~#(Operators)_infix_~> can be used
-to concatenate L<Str>s I<or> L<Blob>s. However, an empty list will
+to concatenate L<Str|/type/Str>s I<or> L<Blob|/type/Blob>s. However, an empty list will
 I<always> be reduced to an empty C<Str>. This is due to the fact that,
 in the presence of a list with no elements, the
 L<reduction|/language/operators#Reduction_operators> metaoperator
@@ -1807,7 +1840,7 @@ say ([~] @chunks).perl; # OUTPUT: «""␤»
 This might cause a problem if you attempt to use the result while
 assuming that it is a Blob:
 
-=for code :skip-test<Documenting the error>
+=for code
 my Blob @chunks;
 say ([~] @chunks).decode;
 # OUTPUT: «No such method 'decode' for invocant of type 'Str'. Did you mean 'encode'?␤…»
@@ -1846,7 +1879,7 @@ other operators.
 
 =head2 Beware of nesting C<Map>s in sink context
 
-Maps apply an expression to every element of a L<List> and return a L<Seq>:
+Maps apply an expression to every element of a L<List|/type/List> and return a L<Seq|/type/Seq>:
 
     say <þor oðin loki>.map: *.codes; # OUTPUT: «(3 4 4)␤»
 
@@ -1888,7 +1921,7 @@ as it will be saving the two nested sequences from void context:
 =head1 Smartmatching
 
 The
-L<smartmatch operator|language/operators#index-entry-smartmatch_operator>
+L<smartmatch operator|/language/operators#index-entry-smartmatch_operator>
 shortcuts to the right hand side I<accepting> the left hand side. This
 may cause some confusion.
 
@@ -1897,7 +1930,7 @@ may cause some confusion.
 Using C<WhateverCode> in the left hand side of a smartmatch does not
 work as expected, or at all:
 
-=begin code :skip-test<Illustrates error>
+=begin code
 my @a = <1 2 3>;
 say @a.grep( *.Int ~~ 2 );
 # OUTPUT: «Cannot use Bool as Matcher with '.grep'.  Did you mean to

@@ -24,7 +24,8 @@ The usual way to obtain an object of type C<Attribute> is by introspection:
     say $a.package;         # OUTPUT: «(Useless)␤»
     say $a.has_accessor;    # OUTPUT: «False␤»
 
-Modifying a private attribute from the outside is usually not possible, but since Attribute is at the level of the meta class, all is fair game
+Modifying a private attribute from the outside is usually not possible, but
+since Attribute is at the level of the meta class, all is fair game
 
 =begin code :preamble<class Useless { has @!things }; my $a>
 my $instance = Useless.new;
@@ -67,7 +68,7 @@ compiler 2018.08+):
 
 You can specify a reason why the attribute is required:
 
-=begin code :skip-test<NYI>
+=begin code
 class D {
     has $.a is required("it is a good idea");
 }
@@ -239,7 +240,7 @@ during object construction, an exception is thrown.
 
 C<is required> doesn't just affect the default constructor, it checks for the
 attribute at a lower level, so it will work for custom constructors written
-using L<bless>.
+using L<bless|/routine/bless>.
 
 
 =head2 trait is rw

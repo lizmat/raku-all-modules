@@ -6,27 +6,27 @@
 
     class Cool is Any { }
 
-C<Cool>, also known as the B<C>onvenient B<OO> B<L>oop, is a base class
-employed by a number of built-in classes whose instances can be meaningfully
-coerced to a string and a number. For example, an L<Array> can be used
-in mathematical operations, where its numerical representation is the
-number of elements it contains. At the same time, it can be concatenated
-to a string, where its stringy representation is all of its elements
-L<joined|/routine/join> by a space. Because L<Array> is L<Cool>, the
-appropriate coercion happens automatically.
+C<Cool>, also known as the B<C>onvenient B<OO> B<L>oop, is a base class employed
+by a number of built-in classes whose instances can be meaningfully coerced to a
+string and a number. For example, an L<Array|/type/Array> can be used in
+mathematical operations, where its numerical representation is the number of
+elements it contains. At the same time, it can be concatenated to a string,
+where its stringy representation is all of its elements L<joined|/routine/join>
+by a space. Because L<Array|/type/Array> is L<Cool|/type/Cool>, the appropriate
+coercion happens automatically.
 
 Methods in C<Cool> coerce the invocant to a more specific type, and then call
-the same method on that type. For example both L<Int> and L<Str> inherit from
+the same method on that type. For example both L<Int|/type/Int> and L<Str|/type/Str> inherit from
 C<Cool>, and calling method C<substr> on an C<Int> converts the integer to
 C<Str> first.
 
     123.substr(1, 1);   # '2', same as 123.Str.substr(1, 1)
 
 The following built-in types inherit from C<Cool>:
-L<Array> L<Bool> L<Complex> L<Cool>
-L<Duration> L<Map> L<FatRat> L<Hash> L<Instant>
-L<Int> L<List> L<Match> L<Nil> L<Num>
-L<Range> L<Seq> L<Stash> L<Str>
+L<Array|/type/Array> L<Bool|/type/Bool> L<Complex|/type/Complex> L<Cool|/type/Cool>
+L<Duration|/type/Duration> L<Map|/type/Map> L<FatRat|/type/FatRat> L<Hash|/type/Hash> L<Instant|/type/Instant>
+L<Int|/type/Int> L<List|/type/List> L<Match|/type/Match> L<Nil|/type/Nil> L<Num|/type/Num>
+L<Range|/type/Range> L<Seq|/type/Seq> L<Stash|/type/Stash> L<Str|/type/Str>
 
 The following table summarizes the methods that C<Cool> provides, and
 what type they coerce to:
@@ -272,16 +272,17 @@ radians.
 
 Defined as:
 
-    sub atan2(Numeric() $x, Numeric() $y = 1e0)
     method atan2($y = 1e0)
 
-Coerces the arguments (including the invocant in the method form) to
-L<Numeric|/type/Numeric>, and returns their two-argument
-L<arc-tangent|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
-radians.
+Coerces self and argument to L<Numeric|/type/Numeric>, using them to compute the
+two-argument L<arc-tangent|https://en.wikipedia.org/wiki/Atan2> in radians.
 
-    say atan2(3);               # OUTPUT: «1.24904577239825␤»
     say 3.atan2;                # OUTPUT: «1.24904577239825␤»
+    say ⅔.atan2(⅓);             # OUTPUT: «1.1071487177940904␤»
+
+The first argument defaults to 1, so in the first case the function will return
+the angle θ in radians between a vector that goes from origin to the point (3, 1)
+and the x axis.
 
 =head2 routine sec
 
@@ -612,9 +613,9 @@ Always rounds B<up> if the number is at mid-point:
     say ( .55).round(.1);   # OUTPUT: «0.6␤»
 
 B<Pay attention> to types when using this method, as ending up with the wrong type may
-affect the precision you seek to achieve. For L<Real> types, the type of the result
-is the type of the argument (L<Complex> argument gets coerced to L<Real>, ending up a L<Num>).
-If rounding a L<Complex>, the result is L<Complex> as well, regardless of the type of the argument.
+affect the precision you seek to achieve. For L<Real|/type/Real> types, the type of the result
+is the type of the argument (L<Complex|/type/Complex> argument gets coerced to L<Real|/type/Real>, ending up a L<Num|/type/Num>).
+If rounding a L<Complex|/type/Complex>, the result is L<Complex|/type/Complex> as well, regardless of the type of the argument.
 
     9930972392403501.round(1)      .perl.say; # OUTPUT: «9930972392403501␤»
     9930972392403501.round(1e0)    .perl.say; # OUTPUT: «9.9309723924035e+15␤»
@@ -640,8 +641,8 @@ Defined as:
 
     method fmt($format = '%s')
 
-Equivalent to calling L<sprintf> with C<$format> as format and the invocant
-as the second argument. The C<$format> will be coerced to L<Stringy> and
+Equivalent to calling L<sprintf|/routine/sprintf> with C<$format> as format and the invocant
+as the second argument. The C<$format> will be coerced to L<Stringy|/type/Stringy> and
 defaults to C<'%s'>
 
 =head2 routine ceiling
@@ -731,7 +732,7 @@ number of characters in the string. Please note that on the JVM, you currently g
 codepoints instead of graphemes.
 
     say 'møp'.chars;    # OUTPUT: «3␤»
-    say 'ã̷̠̬̊'.chars;     # OUTPUT: «1␤»
+    say 'ã̷̠̬̊'.chars;     # OUTPUT: «1␤»
     say '👨‍👩‍👧‍👦🏿'.chars;    # OUTPUT: «1␤»
 
 X<|Grapheme>
@@ -749,7 +750,7 @@ there are many other cases when this may happen. Another example is C<\c[ZWJ]>
 You can check C<Grapheme_Cluster_Break> property of a character in
 order to see how it is going to behave:
 
-    say ‘ã̷̠̬̊’.uniprops(‘Grapheme_Cluster_Break’); # OUTPUT: «(Other Extend Extend Extend Extend)␤»
+    say ‘ã̷̠̬̊’.uniprops(‘Grapheme_Cluster_Break’); # OUTPUT: «(Other Extend Extend Extend Extend)␤»
     say ‘👨‍👩‍👧‍👦🏿’.uniprops(‘Grapheme_Cluster_Break’); # OUTPUT: «(E_Base_GAZ ZWJ E_Base_GAZ ZWJ E_Base_GAZ ZWJ E_Base_GAZ E_Modifier)␤»
 
 You can read more about graphemes in the
@@ -772,7 +773,7 @@ The same result will be obtained with
 
     say +'møp'.ords;    # OUTPUT: «3␤»
 
-L<ords> first obtains the actual codepoints, so there might be a difference in speed.
+L<ords|/routine/ords> first obtains the actual codepoints, so there might be a difference in speed.
 
 =head2 routine flip
 
@@ -976,7 +977,7 @@ Defined as:
 Interprets the invocant or first argument as a L<Str|/type/Str>, and returns the
 Unicode codepoint name of the first codepoint of the first character. See
 L<uninames|/routine/uninames> for a routine that works with multiple
-codepoints, and L<uniparse> for the opposite direction.
+codepoints, and L<uniparse|/routine/uniparse> for the opposite direction.
 
     # Camelia in Unicode
     say ‘»ö«’.uniname;
@@ -1007,7 +1008,7 @@ codepoints in that character.
     say "Ḍ̇'oh".comb>>.uninames.perl;
     # OUTPUT: «(("LATIN CAPITAL LETTER D WITH DOT BELOW", "COMBINING DOT ABOVE").Seq, ("APOSTROPHE",).Seq, ("LATIN SMALL LETTER O",).Seq, ("LATIN SMALL LETTER H",).Seq)␤»
 
-See L<uniparse> for the opposite direction.
+See L<uniparse|/routine/uniparse> for the opposite direction.
 
 =head2 routine unimatch
 
@@ -1085,9 +1086,9 @@ L<Str|/type/Str>, and returns a list of Unicode codepoints for each character.
     say "Camelia".ords;              # OUTPUT: «67 97 109 101 108 105 97␤»
     say ords 10;                     # OUTPUT: «49 48␤»
 
-This is the list-returning version of L<ord>. The inverse operation in
-L<chrs>. If you are only interested in the number of codepoints,
-L<codes> is a possibly faster option.
+This is the list-returning version of L<ord|/routine/ord>. The inverse operation in
+L<chrs|/routine/chrs>. If you are only interested in the number of codepoints,
+L<codes|/routine/codes> is a possibly faster option.
 
 =head2 routine chrs
 
@@ -1102,7 +1103,7 @@ Unicode codepoint, and joining the characters.
 
     say <67 97 109 101 108 105 97>.chrs;   # OUTPUT: «Camelia␤»
 
-This is the list-input version of L<chr>. The inverse operation is L<ords>.
+This is the list-input version of L<chr|/routine/chr>. The inverse operation is L<ords|/routine/ords>.
 
 =head2 routine split
 
@@ -1115,7 +1116,7 @@ Defined as:
     multi method split(Regex:D $delimiter, $limit = Inf, :$k, :$v, :$kv, :$p, :$skip-empty)
     multi method split(@delimiters, $limit = Inf, :$k, :$v, :$kv, :$p, :$skip-empty)
 
-N<I«the L<comb> routine is a much better choice for many tasks that in other
+N<I«the L<comb|/routine/comb> routine is a much better choice for many tasks that in other
 languages are handled by the C<split>.»>
 
 Coerces the invocant (or in the sub form, the second argument) to
@@ -1215,25 +1216,26 @@ Defined as:
     method words(Cool:D: |c)
 
 Coerces the invocant (or first argument, if it is called as a subroutine) to
-L<Str|/type/Str>, and returns a list of words that make up the string (and if
-C<$limit> is supplied and is not equal to C<Inf>, only the first C<$limit>
-words).
+L<Str|/type/Str>, and returns a list of words that make up the string. Check
+L<C<Str.words>|/type/Str#routine_words> for additional arguments and its
+meaning.
 
-    say <The quick brown fox>.words.join('|');      # OUTPUT: «The|quick|brown|fox␤»
-    say <The quick brown fox>.words(2).join('|');   # OUTPUT: «The|quick␤»
+=for code
+say <The quick brown fox>.words.join('|');   # OUTPUT: «The|quick|brown|fox␤»
+say <The quick brown fox>.words(2).join('|');# OUTPUT: «The|quick␤»
 
 C<Cool> is the base class for many other classes, and some of them, like
-L<Match>, can be converted to a string. This is what happens in this case:
+L<Match|/type/Match>, can be converted to a string. This is what happens in this case:
 
     say ( "easy come, easy goes" ~~ m:g/(ea\w+)/).words(Inf);
     # OUTPUT: «(easy easy)␤»
     say words( "easy come, easy goes" ~~ m:g/(ea\w+)/ , ∞);
     # OUTPUT: «(easy easy)␤»
 
-The example above shows the two ways C<words> can be invoked, with the first
-argument turned into invocant by its signature. Of course, C<Inf> is the default
-value of the second argument, so in both cases (and forms) it can be simply
-omited.
+The example above illustrates two of the ways C<words> can be invoked, with the
+first argument turned into invocant by its signature. Of course, C<Inf> is the
+default value of the second argument, so in both cases (and forms) it can be
+simply omited.
 
 Only whitespace (including no-break space) counts as word boundaries
 
@@ -1245,20 +1247,38 @@ only had 4 elements:
 
     say <Don't we ♥ Perl 6>.join("|");# OUTPUT: «Don't|we|♥|Perl 6␤»
 
-Please see L<C<Str.words>|/type/Str#routine_words> for more examples.
+Please see L<C<Str.words>|/type/Str#routine_words> for more examples and ways to
+invoke it.
 
 =head2 routine comb
 
 Defined as:
 
-    multi sub comb(Regex $matcher, Str(Cool) $input, $limit = * --> Seq)
-    multi method comb(Regex $matcher, $limit = * --> Seq)
+    multi sub comb(Regex $matcher, Cool $input, $limit = *)
+    multi sub comb(Str $matcher, Cool $input, $limit = *)
+    multi sub comb(Int:D $size, Cool $input, $limit = *)
+    multi method comb(|c)
 
-Returns all (or if supplied, at most C<$limit>) matches of the invocant
-(method form) or the second argument (sub form) against the
-L<Regex|/type/Regex> as a list of strings.
+Returns a list of all (or if supplied, at most C<$limit>) matches of the
+invocant (method form) or the second argument (sub form) against the
+L<Regex|/type/Regex>, string or defined number.
 
     say "6 or 12".comb(/\d+/).join(", ");           # OUTPUT: «6, 12␤»
+    say comb(/\d <[1..9]> /,(11..30)).join("--");
+    # OUTPUT:
+    # «11--12--13--14--15--16--17--18--19--21--22--23--24--25--26--27--28--29␤»
+
+The second statement exemplifies the first form of C<comb>, with a C<Regex> that
+excludes multiples of ten, and a C<Range> (which is C<Cool>) as C<$input>.
+C<comb> stringifies the C<Range> before applying C<.comb> on the resulting
+string. Check L<C<Str.comb>|/type/Str#routine_comb> for its effect on different
+kind of input strings. When the first argument is an integer, it indicates the
+(maximum) size of the chunks the input is going to be divided in
+
+    say comb(3,[3,33,333,3333]).join("*");# OUTPUT: «3 3*3 3*33 *333*3␤»
+
+In this case the input is a list, which after transformation to C<Str> (which
+includes the spaces) is divided in chunks of size 3.
 
 =head2 method contains
 
@@ -1272,12 +1292,12 @@ that version of the method for arguments and general syntax.
 
     say 123.contains("2")# OUTPUT: «True␤»
 
-Since L<Int> is a subclass of C<Cool>, C<123> is coerced to a C<Str> and
+Since L<Int|/type/Int> is a subclass of C<Cool>, C<123> is coerced to a C<Str> and
 then C<contains> is called on it.
 
     say (1,1, * + * … * > 250).contains(233)# OUTPUT: «True␤»
 
-L<Seq>s are also subclasses of C<Cool>, and they are stringified to a
+L<Seq|/type/Seq>s are also subclasses of C<Cool>, and they are stringified to a
 comma-separated form. In this case we are also using an C<Int>, which is
 going to be stringified also; C<"233"> is included in that sequence, so
 it returns C<True>. Please note that this sequence is not lazy; the
@@ -1288,16 +1308,15 @@ their components for obvious reasons.
 
 Defined as:
 
-    multi sub    index(Str(Cool) $s, Str:D $needle, Int(Cool) $startpos = 0 --> Int)
-    multi method index(Str(Cool) $needle, Int(Cool) $startpos = 0 --> Int)
+    multi sub index(Cool $s, Cool $needle, Cool $pos = 0)
+    method    index(Cool:D: |c)
 
-Coerces the first two arguments (in method form, also counting the
-invocant) to L<Str|/type/Str>, and searches for C<$needle> in the string
-starting from C<$startpos>. It returns the offset into the string where
-C<$needle> was found, and an undefined value if it was not found.
+Coerces the first two arguments (in method form, also counting the invocant) to
+a L<Str|/type/Str>, and searches for C<$needle> in the string C<$s> starting
+from C<$startpos>. It returns the offset into the string where C<$needle> was
+found, and an undefined value if it was not found.
 
-See L<the documentation in type Str|/type/Str#routine_index> for
-examples.
+See L<the documentation in type Str|/type/Str#routine_index> for examples.
 
 =head2 routine rindex
 
@@ -1372,7 +1391,7 @@ Defined as:
 
     method match(|)
 
-Coerces the invocant to L<Stringy> and calls
+Coerces the invocant to L<Stringy|/type/Stringy> and calls
 L<Str.match|/type/Str#method_match>.
 
 =head2 method subst
@@ -1381,7 +1400,7 @@ Defined as:
 
     method subst(|)
 
-Coerces the invocant to L<Stringy> and calls L<Str.subst|/type/Str#method_subst>.
+Coerces the invocant to L<Stringy|/type/Stringy> and calls L<Str.subst|/type/Str#method_subst>.
 
 =head2 method trans
 
@@ -1389,7 +1408,7 @@ Defined as:
 
     method trans(|)
 
-Coerces the invocant to L<Str> and calls L<Str.trans|/type/Str#method_trans>
+Coerces the invocant to L<Str|/type/Str> and calls L<Str.trans|/type/Str#method_trans>
 
 =head2 method IO
 
@@ -1411,11 +1430,12 @@ method EVAL(*%_)
 =for code
 sub EVAL($code where Cool|Blob, :$lang = 'perl6')
 
-The method form calls subroutine form with invocant as C<$code>, passing
-along named args, if any. Subroutine form coerces L<Cool> C<$code> to
-L<Str>. If C<$code> is a L<Blob>, it'll be processed using the same
-encoding as the C<$lang> compiler would: for C<perl6> C<$lang>, uses C<utf-8>;
-for C<Perl5>, processes using the same rules as C<perl>.
+If it is invoked as a method, it calls the subroutine form with
+invocant as the first argument, C<$code>, passing along named args, if any; this
+coerces L<Cool|/type/Cool> C<$code> to L<Str|/type/Str>. If C<$code> is a
+L<Blob|/type/Blob>, it'll be processed using the same encoding as the C<$lang>
+compiler would: for C<perl6> C<$lang>, uses C<utf-8>; for C<Perl5>, processes
+using the same rules as C<perl>.
 
 This works as-is with a literal string parameter. More complex input,
 such as a variable or string with embedded code, is illegal by default.
@@ -1428,17 +1448,17 @@ This can be overridden in any of several ways:
     # any of the above allows:
     EVAL "say { 5 + 5 }";   # OUTPUT: «10␤»
 
-In case the C<MONKEY-SEE-NO-EVAL> pragma is not activated, the compiler
-will complain with a C<EVAL is a very dangerous function!!!> exception.
-And it is essentially right, since that will run arbitrary code with the
-same permissions as the program. You should take care of cleaning the
-code that is going to pass through EVAL if you activate the
-C<MONKEY-SEE-NO-EVAL> pragma.
+In case the C<MONKEY-SEE-NO-EVAL> pragma is not activated, the compiler will
+complain with a C<EVAL is a very dangerous function!!!> exception. And it is
+essentially right, since that will run arbitrary code with the same permissions
+as the program. You should take care of cleaning the code that is going to pass
+through EVAL if you activate the C<MONKEY-SEE-NO-EVAL> pragma.
 
 Please note that you can interpolate to create routine names using
 quotation, as can be seen in
 L<this example|/language/quoting#index-entry-%26_(interpolation)>
-or  L<other ways to interpolate to create identifier names|/language/syntax#Identifiers>.
+or
+L<other ways to interpolate to create identifier names|/language/syntax#Identifiers>.
 This only works, however, for already declared functions and other
 objects and is thus safer to use.
 
@@ -1451,7 +1471,7 @@ However, since the set of symbols in a lexical scope is immutable after
 compile time, an EVAL can never introduce symbols into the surrounding
 scope.
 
-=for code :skip-test
+=for code :skip-test<compile time error>
 EVAL 'my $lives = 9'; say $lives;   # error, $lives not declared
 
 Furthermore, the C<EVAL> is evaluated in the current package:
@@ -1461,7 +1481,7 @@ Furthermore, the C<EVAL> is evaluated in the current package:
     }
     say $M::answer;         # OUTPUT: «42␤»
 
-And also the current language, meaning any added syntax is available:
+And also in the current language, meaning any added syntax is available:
 
     sub infix:<mean>(*@a) is assoc<list> {
         @a.sum / @a.elems
@@ -1489,7 +1509,7 @@ Defined as:
     sub EVALFILE($filename where Blob|Cool, :$lang = 'perl6')
 
 Slurps the specified file and evaluates it. Behaves the same way as
-C<EVAL> with regard to L<Blob> decoding, scoping, and the C<$lang>
+C<EVAL> with regard to L<Blob|/type/Blob> decoding, scoping, and the C<$lang>
 parameter. Evaluates to the value produced by the final statement in the
 file.
 
@@ -1533,7 +1553,7 @@ Defined as:
     method sprintf(*@args)
     multi sub sprintf(Cool:D $format, *@args)
 
-Formats and outputs a string, following the
+Formats and outputs a string, following
 L<the same language as C<Str.sprintf>|/type/Str#routine_sprintf>, using as such
 format either the object (if called in method form) or the first argument (if
 called as a routine)

@@ -41,22 +41,25 @@ C<subtest>'s L«C<Callable>|/type/Callable». For that reason, to be able to
 use C<:skip-all> inside a C<subtest>, you must use a C<sub> instead of a
 regular block:
 
-    plan 2;
-    subtest "Some Windows tests" => sub { # <-- note the `sub`; can't use bare block
-        plan :skip-all<We aren't on Windows> unless $*DISTRO.is-win;
-        plan 1;
-        ok dir 'C:/'; # this won't get run on non-Windows
-    }
-    ok 42; # this will run everywhere and isn't affected by skip-all inside subtest
+=begin code
+plan 2;
+subtest "Some Windows tests" => sub { # <-- note the `sub`; can't use bare block
+    plan :skip-all<We aren't on Windows> unless $*DISTRO.is-win;
+    plan 1;
+    ok dir 'C:/'; # this won't get run on non-Windows
+}
+ok 42; # this will run everywhere and isn't affected by skip-all inside subtest
+=end code
 
-Note that C<plan> with C<:skip-all> is to avoid performing any tests without marking the
-test run as failed (i.e. the plan is to not run anything and that's all good). Use
-L«C<skip-rest>|/language/testing#index-entry-skip-rest-skip-rest($reason?)» to skip
-all further tests, once the run has started (i.e. planned to run some tests, maybe
-even ran some, but now we're skipping all the rest of them). Use
-L«C<bail-out>|/language/testing#index-entry-bail-out-bail-out($reason?)» to fail the
-test run without running any further tests (i.e. things are so bad, there's no point
-in running anything else; we've failed).
+Note that C<plan> with C<:skip-all> is to avoid performing any tests without
+marking the test run as failed (i.e. the plan is to not run anything and that's
+all good). Use
+L«C<skip-rest>|/language/testing#index-entry-skip-rest-skip-rest($reason?)» to
+skip all further tests, once the run has started (i.e. planned to run some
+tests, maybe even ran some, but now we're skipping all the rest of them). Use
+L«C<bail-out>|/language/testing#index-entry-bail-out-bail-out($reason?)» to fail
+the test run without running any further tests (i.e. things are so bad, there's
+no point in running anything else; we've failed).
 
 =head2 sub done-testing
 
@@ -107,7 +110,8 @@ Defined as:
 
 The C<ok> function marks a test as passed if the given C<$value> evaluates to
 C<True>. The C<nok> function marks a test as passed if the given value evaluates
-to C<False>. Both functions accept an optional C<$description> of the test.
+to C<False>. Both functions accept an optional description of the test as second
+parameter.
 
     my $response; my $query; ...;
     ok  $response.success, 'HTTP response was successful';
@@ -130,7 +134,8 @@ Defined as:
     multi sub nok(Mu $cond, $desc = '')
 
 The C<nok> function marks a test as passed if the given value evaluates to
-C<False>. It also accepts an optional C<$description> of the test.
+C<False>. It also accepts an optional description of the test as second
+argument.
 
     my $response; my $query; ...;
     ok  $response.success, 'HTTP response was successful';
@@ -146,13 +151,13 @@ Defined as
 
 Marks a test as passed if C<$value> and C<$expected> compare positively with the
 L<eq operator|/routine/eq>, unless C<$expected> is a type object, in which case
-C<===> operator will be used instead; accepts an optional C<$description> of the
-test.
+C<===> operator will be used instead; accepts an optional description of the
+test as the last argument.
 
-B<NOTE:> C<eq> operator the C<is()> uses stringifies,
-which means C<is()> is not a good function for testing more complex things, such
-as lists: C<is (1, (2, (3,))), [1, 2, 3]> passes the test, even though the operands
-are vastly different. For those cases, use
+B<NOTE:> C<eq> operator the C<is()> uses stringifies, which means C<is()> is not
+a good function for testing more complex things, such as lists: C<is (1, (2,
+(3,))), [1, 2, 3]> passes the test, even though the operands are vastly
+different. For those cases, use
 L«C<is-deeply> routine|/language/testing#index-entry-is-deeply-is-deeply($value,_$expected,_$description?)»
 
     my $pdf-document; sub factorial($x) { ... }; ...;
@@ -165,8 +170,9 @@ B<Note:> if I<only> whitespace differs between the values, C<is()> will output f
 message differently, to show the whitespace in each values. For example, in the
 output below, the second test shows the literal C<\t> in the C<got:> line:
 
-    is "foo\tbar", "foo\tbaz";   # expected: 'foo     baz'␤#      got: 'foo   bar'
-    is "foo\tbar", "foo    bar"; # expected: "foo    bar"␤#      got: "foo\tbar"
+=for code
+is "foo\tbar", "foo\tbaz";   # expected: 'foo     baz'␤#      got: 'foo   bar'
+is "foo\tbar", "foo    bar"; # expected: "foo    bar"␤#      got: "foo\tbar"
 
 =head2 sub isnt
 
@@ -176,7 +182,7 @@ Defined as:
     multi sub isnt(Mu $got, Mu:D $expected, $desc = '')
 
 Marks a test as passed if C<$value> and C<$expected> are B<not> equal using
-the same rules as C<is()>.  The function accepts an optional C<$description>
+the same rules as C<is()>.  The function accepts an optional description
 of the test.
 
     isnt pi, 3, 'The constant π is not equal to 3';
@@ -190,10 +196,23 @@ of the test.
 Defined as:
 
     multi sub is-approx(Numeric $got, Numeric $expected, $desc = '')
-    multi sub is-approx(Numeric $got, Numeric $expected, Numeric $abs-tol,$desc = '')
-    multi sub is-approx(Numeric $got, Numeric $expected, $desc = '', Numeric :$rel-tol is required)
-    multi sub is-approx(Numeric $got, Numeric $expected, $desc = '', Numeric :$abs-tol is required)
-    multi sub is-approx(Numeric $got, Numeric $expected, $desc = '',Numeric :$rel-tol is required, Numeric :$abs-tol is required)
+
+=for code :method
+multi sub is-approx(Numeric $got, Numeric $expected, Numeric $abs-tol,
+                    $desc = '')
+
+=for code :method
+multi sub is-approx(Numeric $got, Numeric $expected, $desc = '',
+                    Numeric :$rel-tol is required)
+
+=for code :method
+multi sub is-approx(Numeric $got, Numeric $expected, $desc = '',
+                    Numeric :$abs-tol is required)
+
+=for code :method
+multi sub is-approx(Numeric $got, Numeric $expected, $desc = '',
+                    Numeric :$rel-tol is required,
+                    Numeric :$abs-tol is required)
 
 Marks a test as passed if the C<$value> and C<$expected> numerical values
 are approximately equal to each other. The subroutine can be called in numerous
@@ -238,9 +257,9 @@ than C<2>.
 
 =head3 Relative tolerance
 
-When a relative tolerance is set, the test checks the relative difference between
-values. Given the same tolerance, the larger the numbers given, the larger the
-value they can differ by can be.
+When a relative tolerance is set, the test checks the relative difference
+between values. Given the same tolerance, the larger the numbers given, the
+larger the value they can differ by can be.
 
 For example:
 
@@ -264,7 +283,7 @@ and the test will fail if C<rel-diff> is higher than C<$rel-tol>.
 
 =head3 Both absolute and relative tolerance specified
 
-=for code :skip-test
+=for code :skip-test<compile time error>
 is-approx $value, $expected, :rel-tol<.5>, :abs-tol<10>;
 
 When both absolute and relative tolerances are specified, each will be
@@ -293,10 +312,9 @@ Defined as:
 Marks a test as passed if C<$value> and C<$expected> are equivalent, using the
 same semantics as the L<eqv operator|/routine/eqv>. This is the best way to
 check for equality of (deep) data structures. The function accepts an optional
-C<$description> of the test.
+description of the test as the last argument.
 
 =begin code
-use v6.c;
 use Test;
 plan 1;
 
@@ -328,21 +346,21 @@ L«C<cmp-ok $got, 'eqv', $expected, $desc>|/language/testing#By_arbitrary_compar
     multi sub cmp-ok(Mu $got is raw, $op, Mu $expected is raw, $desc = '')
 
 Compares C<$value> and C<$expected> with the given C<$comparison> comparator and
-passes the test if the comparison yields a C<True> value. The C<$description>
+passes the test if the comparison yields a C<True> value. The description
 of the test is optional.
 
-The C<$comparison> comparator can be either a L<Callable> or
-a L<Str> containing an infix operator, such as C<'=='>, a C<'~~'>, or a
+The C<$comparison> comparator can be either a L<Callable|/type/Callable> or
+a L<Str|/type/Str> containing an infix operator, such as C<'=='>, a C<'~~'>, or a
 user-defined infix.
 
     cmp-ok 'my spelling is apperling', '~~', /perl/, "bad speller";
 
-Metaoperators cannot be given as a string; pass them as a L<Callable>
+Metaoperators cannot be given as a string; pass them as a L<Callable|/type/Callable>
 instead:
 
     cmp-ok <a b c>, &[!eqv], <b d e>, 'not equal';
 
-A L<Callable> C<$comparison> lets you use custom comparisons:
+A L<Callable|/type/Callable> C<$comparison> lets you use custom comparisons:
 
     sub my-comp { $^a / $^b  < rand };
     cmp-ok 1, &my-comp, 2, 'the dice giveth and the dice taketh away'
@@ -358,7 +376,8 @@ Defined as:
 
 Marks a test as passed if the given object C<$value> is, or inherits from, the
 given C<$expected-type>.  For convenience, types may also be specified as a
-string.  The function accepts an optional C<$description> of the test.
+string.  The function accepts an optional description of the test, which
+defaults to a string that describes the object.
 
     class Womble {}
     class GreatUncleBulgaria is Womble {}
@@ -374,7 +393,7 @@ Defined as:
     multi sub can-ok(Mu $var, Str $meth,$desc = "..." )
 
 Marks a test as passed if the given C<$variable> can run the given
-C<$method-name>.  The function accepts an optional C<$description>.  For
+C<$method-name>.  The function accepts an optional description.  For
 instance:
 
     class Womble {};
@@ -395,7 +414,7 @@ Defined as:
     multi sub does-ok(Mu $var, Mu $type, $desc = "...")
 
 Marks a test as passed if the given C<$variable> can do the given C<$role>.
-The function accepts an optional C<$description> of the test.
+The function accepts an optional description of the test.
 
     # create a Womble who can invent
     role Invent {
@@ -428,8 +447,8 @@ Use it this way:
     like 'foo', /fo/, 'foo looks like fo';
 
 Marks a test as passed if the C<$value>, when coerced to a string, matches the
-C<$expected-regex>.  The function accepts an optional C<$description> of the
-test.
+C<$expected-regex>.  The function accepts an optional description of the
+test with a default value printing the expected match.
 
 =head2 sub unlike
 
@@ -442,8 +461,8 @@ Used this way:
     unlike 'foo', /bar/, 'foo does not look like bar';
 
 Marks a test as passed if the C<$value>, when coerced to a string, does B<not>
-match the C<$expected-regex>.  The function accepts an optional C<$description>
-of the test.
+match the C<$expected-regex>.  The function accepts an optional description
+of the test, which defaults to printing the text that did not match.
 
 =head2 sub use-ok
 
@@ -463,7 +482,7 @@ Defined as:
 
 Marks a test as passed if the given C<$code> throws an exception.
 
-The function accepts an optional C<$description> of the test.
+The function accepts an optional description of the test.
 
 =begin code
 sub saruman(Bool :$ents-destroy-isengard) {
@@ -482,7 +501,7 @@ Defined as:
 Marks a test as passed if the given C<$code> B<does not> throw an
 exception.
 
-The function accepts an optional C<$description> of the test.
+The function accepts an optional description of the test.
 
 =begin code
 sub frodo(Bool :$destroys-ring) {
@@ -501,7 +520,7 @@ Defined as:
 Marks a test as passed if the given C<$string> throws an exception when
 C<eval>ed as code.
 
-The function accepts an optional C<$description> of the test.
+The function accepts an optional description of the test.
 
 =begin code
 eval-dies-ok q[my $joffrey = "nasty";
@@ -518,7 +537,7 @@ Defined as:
 Marks a test as passed if the given C<$string> B<does not> throw an
 exception when C<eval>ed as code.
 
-The function accepts an optional C<$description> of the test.
+The function accepts an optional description of the test.
 
 =begin code
 eval-lives-ok q[my $daenerys-burns = False;
@@ -533,25 +552,28 @@ Defined as:
     sub throws-like($code, $ex_type, $reason?, *%matcher)
 
 Marks a test as passed if the given C<$code> throws the specific exception
-C<$expected-exception>. The code C<$code> may be specified as something
-C<Callable> or as a string to be C<EVAL>ed. The exception may be specified
-as a type object or as a string containing its type name.
+expected exception type C<$ex_type>. The code C<$code> may be specified as
+something C<Callable> or as a string to be C<EVAL>ed. The exception may be
+specified as a type object or as a string containing its type name.
 
 If an exception was thrown, it will also try to match the matcher hash,
 where the key is the name of the method to be called on the exception, and
 the value is the value it should have to pass. For example:
 
 =begin code
-sub frodo(Bool :$destroys-ring) { fail "Oops. Frodo dies" unless $destroys-ring };
+sub frodo(Bool :$destroys-ring) {
+    fail "Oops. Frodo dies" unless $destroys-ring
+};
 throws-like { frodo }, Exception, message => /dies/;
 =end code
 
-The function accepts an optional C<$description> of the test.
+The function accepts an optional description of the test as the third
+positional argument.
 
 The routine makes L<Failures|/type/Failure> fatal. If you wish to avoid that,
 use L«C<no fatal> pragma|/language/pragmas#index-entry-fatal-fatal» and ensure
 the tested code does not sink the possible L<Failures|/type/Failure>. If you
-wish to test that the code returns a L<Failure> instead of throwing, use
+wish to test that the code returns a L<Failure|/type/Failure> instead of throwing, use
 C<fails-like> routine instead.
 
     sub fails-not-throws { +"a" }
@@ -574,8 +596,8 @@ Defined as:
     sub fails-like ( \test where Callable:D|Str:D, $ex-type, $reason?, *%matcher)
 
 Same interface as C<throws-like>, except checks that the code returns a
-L<Failure> instead of throwing. If the code does throw or if the returned
-L<Failure> has already been L<handled>, that will be considered as a failed
+L<Failure|/type/Failure> instead of throwing. If the code does throw or if the returned
+L<Failure|/type/Failure> has already been L<handled|/routine/handled>, that will be considered as a failed
 test.
 
     fails-like { +"a" }, X::Str::Numeric,
@@ -594,7 +616,7 @@ The C<subtest> function executes the given block, consisting of usually more
 than one test, possibly including a C<plan> or C<done-testing>, and counts as
 I<one> test in C<plan>, C<todo>, or C<skip> counts. It will pass the
 test only if B<all> tests in the block pass. The function accepts an
-optional C<$description> of the test.
+optional description of the subtest.
 
 =begin code
 class Womble {}
@@ -753,7 +775,7 @@ Defined as:
     multi sub pass($desc = '')
 
 The C<pass> function marks a test as passed. C<flunk> marks a test as
-B<not> passed. Both functions accept an optional test C<$description>.
+B<not> passed. Both functions accept an optional test description.
 
     pass "Actually, this test has passed";
 

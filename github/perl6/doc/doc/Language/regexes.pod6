@@ -1,3 +1,4 @@
+
 =begin pod :tag<perl6>
 
 =TITLE Regexes
@@ -62,9 +63,9 @@ Strings are searched left to right, so it is enough if only part of the string
 matches the regex:
 
     if 'Life, the Universe and Everything' ~~ / and / {
-        say ~$/;           # OUTPUT: «and␤»
-        say $/.prematch;   # OUTPUT: «Life, the Universe ␤»
-        say $/.postmatch;  # OUTPUT: « Everything␤»
+        say ~$/;            # OUTPUT: «and␤»
+        say $/.prematch;    # OUTPUT: «Life, the Universe ␤»
+        say $/.postmatch;   # OUTPUT: « Everything␤»
         say $/.from;        # OUTPUT: «19␤»
         say $/.to;          # OUTPUT: «22␤»
     };
@@ -112,19 +113,18 @@ C<\n>. So the text below match:
 There are predefined character classes of the form C<\w>. Its negation is
 written with an upper-case letter, C<\W>.
 
-=item X<C<\n> and C<\N>|regex,\n;regex,\N>
+=head3 X<C<\n> and C<\N>|regex,\n;regex,\N>
 
-C<\n> matches a single, logical newline character.C<\N> matches a single
+C<\n> matches a single, logical newline character. C<\N> matches a single
 character that's not a logical newline.
 
-What is considered as a single newline character is defined via the compile
-time variable L«C<$?NL>|/language/variables#index-entry-$?NL», and the
-L<newline pragma|/language/pragmas>.
+What is considered as a single newline character is defined via the compile time
+variable L«C<$?NL>|/language/variables#index-entry-$?NL», and the
+L<newline pragma|/language/pragmas>; therefore, C<\n> is supposed to be able to
+match either a Unix-like newline C<"\n">, a Microsoft Windows style one
+C<"\r\n">, or one in the Mac style C<"\r">.
 
-Therefore, C<\n> is supposed to be able to match either a Unix-like
-newline C<"\n">, a Microsoft Windows style one C<"\r\n">, or one in the Mac style C<"\r">.
-
-=item X<C<\t> and C<\T>|regex,\t;regex,\T>
+=head3 X<C<\t> and C<\T>|regex,\t;regex,\T>
 
 C<\t> matches a single tab/tabulation character, C<U+0009>. C<\T> matches a
 single character that is not a tab.
@@ -132,7 +132,7 @@ single character that is not a tab.
 Note that exotic tabs like the C<U+000B VERTICAL TABULATION> character are not
 included here.
 
-=item X<C<\h> and C<\H>|regex,\h;regex,\H>
+=head3 X<C<\h> and C<\H>|regex,\h;regex,\H>
 
 C<\h> matches a single horizontal whitespace character. C<\H> matches a
 single character that is not a horizontal whitespace character.
@@ -146,10 +146,10 @@ Examples for horizontal whitespace characters are
     U+2001 EM QUAD
     =end code
 
-Vertical whitespace like newline characters are explicitly excluded; those
-can be matched with C<\v>, and C<\s> matches any kind of whitespace.
+Vertical whitespace such as newline characters are explicitly excluded; those
+can be matched with C<\v>; C<\s> matches any kind of whitespace.
 
-=item X<C<\v> and C<\V>|regex,\v;regex,\V>
+=head3 X<C<\v> and C<\V>|regex,\v;regex,\V>
 
 C<\v> matches a single vertical whitespace character. C<\V> matches a single
 character that is not vertical whitespace.
@@ -168,7 +168,7 @@ Examples for vertical whitespace characters:
 
 Use C<\s> to match any kind of whitespace, not just vertical whitespace.
 
-=item X<C<\s> and C<\S>|regex,\s;regex,\S>
+=head3 X<C<\s> and C<\S>|regex,\s;regex,\S>
 
 C<\s> matches a single whitespace character. C<\S> matches a single
 character that is not whitespace.
@@ -176,7 +176,7 @@ character that is not whitespace.
     say $/.prematch if 'Match the first word.' ~~ / \s+ /;
     # OUTPUT: «Match␤»
 
-=item X<C<\d> and C<\D>|regex,\d;regex,\D>
+=head3 X<C<\d> and C<\D>|regex,\d;regex,\D>
 
 C<\d> matches a single digit (Unicode property C<N>) and C<\D> matches a
 single character that is not a digit.
@@ -196,7 +196,7 @@ Examples for digits are:
     U+17E5 ៥ KHMER DIGIT FIVE
     =end code
 
-=item X<C<\w> and C<\W>|regex,\w;regex,\W>
+=head3 X<C<\w> and C<\W>|regex,\w;regex,\W>
 
 C<\w> matches a single word character, i.e. a letter (Unicode category
 L), a digit or an underscore. C<\W> matches a single character that is
@@ -257,7 +257,7 @@ L<C<uniprop>|/routine/uniprop>:
     "a".uniprop('Block');                  # OUTPUT: «Basic Latin␤»
     "a" ~~ / <:Block('Basic Latin')> /;    # OUTPUT: «｢a｣␤»
 
-These are the unicode general categories used for matching:
+These are the Unicode general categories used for matching:
 
 =begin table
 
@@ -341,7 +341,7 @@ whitespace.
     "αβγ" ~~ /<[\c[GREEK SMALL LETTER ALPHA]..\c[GREEK SMALL LETTER GAMMA]]>*/;
 
 Within the C«< >» you can use C<+> and C<-> to add or remove multiple range
-definitions and even mix in some of the unicode categories above. You can also
+definitions and even mix in some of the Unicode categories above. You can also
 write the backslashed forms for character classes between the C<[ ]>.
 
     / <[\d] - [13579]> /;
@@ -402,7 +402,7 @@ like this:
 The C<*> quantifier makes the preceding atom match zero or more times, with
 no upper limit.
 
-For example, to allow optional whitespace between C<a> and C<b> you can write
+For example, to allow optional whitespace between C<a> and C<b> you can write:
 
     / a \s* b /
 
@@ -417,8 +417,8 @@ For example, to match C<dog> or C<dogs>, you can write:
 =head2 X<General quantifier: C<** min..max>|regex quantifier,**>
 
 To quantify an atom an arbitrary number of times, use the C<**> quantifier,
-which takes a single L<Int> or a L<Range> on the right-hand side that specifies
-the number of times to match. If L<Range> is specified, the end-points specify
+which takes a single L<Int|/type/Int> or a L<Range|/type/Range> on the right-hand side that specifies
+the number of times to match. If L<Range|/type/Range> is specified, the end-points specify
 the minimum and maximum number of times to match.
 
     =begin code
@@ -433,8 +433,8 @@ the minimum and maximum number of times to match.
 
 Only basic literal syntax for the right-hand side of the quantifier
 is supported, to avoid ambiguities with other regex constructs. If you need
-to use a more complex expression, for example, a L<Range> made from
-variables, enclose the L<Range> into curly braces:
+to use a more complex expression, for example, a L<Range|/type/Range> made from
+variables, enclose the L<Range|/type/Range> into curly braces:
 
     =begin code
     my $start = 3;
@@ -452,7 +452,7 @@ Negative values are treated like zero:
     =end code
 
 If then, the resultant value is C<Inf>
-or C<NaN> or the resultant L<Range> is empty, non-Numeric, contains C<NaN>
+or C<NaN> or the resultant L<Range|/type/Range> is empty, non-Numeric, contains C<NaN>
 end-points, or has minimum effective end-point as C<Inf>, the
 C<X::Syntax::Regex::QuantifierValue> exception will be thrown:
 
@@ -517,15 +517,17 @@ In most cases, you will want to prevent backtracking for efficiency reasons, for
 instance here:
 
 =for code :preamble<my $str>
-    say $str ~~ m:g/[(<[ACGT]> **: 3) \s*]+ \s+ (<[A..Z a..z \s]>+)/;
-    # OUTPUT:
-    # (｢ACG GCT ACT An interesting chain｣
-    # 0 => ｢ACG｣
-    # 0 => ｢GCT｣
-    # 0 => ｢ACT｣
-    # 1 => ｢An interesting chain｣)
+say $str ~~ m:g/[(<[ACGT]> **: 3) \s*]+ \s+ (<[A..Z a..z \s]>+)/;
+# OUTPUT:
+# (｢ACG GCT ACT An interesting chain｣
+# 0 => ｢ACG｣
+# 0 => ｢GCT｣
+# 0 => ｢ACT｣
+# 1 => ｢An interesting chain｣)
 
-Although in this case, eliminating the C<:> from behind C<**> would make it behave exactly in the same way. The best use is to create I<tokens> that will not be backtracked:
+Although in this case, eliminating the C<:> from behind C<**> would make it
+behave exactly in the same way. The best use is to create I<tokens> that will
+not be backtracked:
 
     $_ = "ACG GCT ACT IDAQT";
     say  m:g/[(\w+:) \s*]+ (\w+) $$/;
@@ -778,10 +780,9 @@ two leading spaces each.
 =head2 X«Word boundary|regex, <|w>;regex, <!|w>»
 
 To match any word boundary, use C«<|w>» or C«<?wb>». This is similar to
-X«C<\b>|regex deprecated,\b» of other languages.
-
-To match not a word boundary, use C«<!|w>» or C«<!wb>». This is similar to
-X«C<\B>|regex deprecated,\B» of other languages.
+X«C<\b>|regex deprecated,\b» in other languages. To match the opposite, any
+character that is not bounding a word, use C«<!|w>» or C«<!wb>». This is similar
+to X«C<\B>|regex deprecated,\B» in other languages.
 
 These are both zero-width regex elements.
 
@@ -968,15 +969,15 @@ The same grouping applies to quantifiers:
     / (a b)+ /;        # matches one or more sequences of 'ab'
     / (a || b)+ /;     # matches a string of 'a's and 'b's, except empty string
 
-An unquantified capture produces a L<Match> object. When a capture is
+An unquantified capture produces a L<Match|/type/Match> object. When a capture is
 quantified (except with the C<?> quantifier) the capture becomes a list of
-L<Match> objects instead.
+L<Match|/type/Match> objects instead.
 
 =head2 X«Capturing|regex,( )»
 
 The round parentheses don't just group, they also I<capture>; that is, they
 make the string matched within the group available as a variable, and also as
-an element of the resulting L<Match> object:
+an element of the resulting L<Match|/type/Match> object:
 
     my $str =  'number 42';
     if $str ~~ /'number ' (\d+) / {
@@ -1077,7 +1078,7 @@ regex. This can be used for debugging inside regular expressions, for instance:
     say "Matched $counter lines"; # OUTPUT: «Matched 3 lines␤»
 
 X<|:our>
-The C<:our>, similarly to L<C<our>|/syntax/our> in classes, can be used in L<Grammar>s to declare variables that can be accessed, via its fully qualified name, from outside the grammar:
+The C<:our>, similarly to L<C<our>|/syntax/our> in classes, can be used in L<Grammar|/type/Grammar>s to declare variables that can be accessed, via its fully qualified name, from outside the grammar:
 
 =begin code
 grammar HasOur {
@@ -1577,21 +1578,31 @@ Adverbs, which modify how regexes work and provide convenient shortcuts for
 certain kinds of recurring tasks, are combinations of one or more letters
 preceded by a colon C<:>.
 
-There are two kinds of adverbs: I<regex> adverbs apply at the point where a
-regex is defined, and I<matching> adverbs apply at the point that a regex
-matches against a string.
+The so-called I<regex> adverbs apply at the point where a regex is defined;
+additionally, I<matching> adverbs apply at the point that a regex matches
+against a string and I<substitution> adverbs are applied exclusively in
+substitutions.
 
 This distinction often blurs, because matching and declaration are often
 textually close but using the method form of matching, that is, C<.match>, makes
 the distinction clear.
 
-C<'abc' ~~ /../> is roughly equivalent to C<'abc'.match(/../)>, or even more
-clearly written in separate lines:
+    say "Abra abra CADABRA" ~~ m:exhaustive/:i a \w+ a/;
+    # OUTPUT: «(｢Abra｣ ｢abra｣ ｢ADABRA｣ ｢ADA｣ ｢ABRA｣)␤»
+    my $regex = /:i a \w+ a /;
+    say "Abra abra CADABRA".match($regex,:ex);
+    # OUTPUT: «(｢Abra｣ ｢abra｣ ｢ADABRA｣ ｢ADA｣ ｢ABRA｣)␤»
 
-    my $regex = /../;           # definition
-    if 'abc'.match($regex) {    # matching
-        say "'abc' has at least two characters";
-    }
+In the first example, the matching adverb (C<:exhaustive>) is contiguous to the
+regex adverb (C<:i>), and as a matter of fact, the "definition" and the
+"matching" go together; however, by using C<match> it becomes clear than C<:i>
+is only used when defining the C<$regex> variable, and C<:ex> (short for
+C<:exhaustive>) as an argument when matching. As a matter of fact, matching
+adverbs cannot even be used in the definition of a regex:
+
+=for code :skip-test<illustrates error>
+my $regex = rx:ex/:i a \w+ a /;
+# ===SORRY!=== Error while compiling (...)␤Adverb ex not allowed on rx
 
 Regex adverbs like C<:i> go into the definition line and matching adverbs like
 C<:overlap> (which can be abbreviated to C<:ov>) are appended to the match call:
@@ -1862,7 +1873,7 @@ abra
        abra
 =end code
 
-=head3 X<Global|regex adverb,:global;regex adverb,:g>
+=head3 X<Global|matching adverb,:global;matching adverb,:g>
 
 Instead of searching for just one match and returning a
 L<Match object|/type/Match>, search for every non-overlapping match and
@@ -1877,7 +1888,7 @@ adverb:
 
 C<:g> is shorthand for C<:global>.
 
-=head3 X<Pos|regex adverb,:pos;regex adverb,:p>
+=head3 X<Pos|matching adverb,:pos;matching adverb,:p>
 
 Anchor the match at a specific position in the string:
 
@@ -1895,7 +1906,7 @@ instead of attempting to match further down the string:
     say "abcdefg" ~~ m:c(3)/e.+/; # OUTPUT: «｢efg｣␤»
     say "abcdefg" ~~ m:p(3)/e.+/; # OUTPUT: «False␤»
 
-=head3 X<Overlap|regex adverb,:overlap;regex adverb,:ov>
+=head3 X<Overlap|matching adverb,:overlap;matching adverb,:ov>
 
 To get several matches, including overlapping matches, but only one (the
 longest) from each starting position, specify the C<:overlap> (short C<:ov>)
@@ -1965,206 +1976,6 @@ say S:samespace/a ./c d/.perl given "a\nb";     # OUTPUT: «"c\nd"»
 
 The C<ss/.../.../> syntactic form is a shorthand for
 C<s:samespace/.../.../>.
-
-=head1 Best practices and gotchas
-
-To help with robust regexes and grammars, here are some best practices
-for code layout and readability, what to actually match, and avoiding common
-pitfalls.
-
-=head2 Code layout
-
-Without the C<:sigspace> adverb, whitespace is not significant in Perl 6
-regexes. Use that to your own advantage and insert whitespace where it
-increases readability. Also, insert comments where necessary.
-
-Compare the very compact
-
-    my regex float { <[+-]>?\d*'.'\d+[e<[+-]>?\d+]? }
-
-to the more readable
-
-    my regex float {
-         <[+-]>?        # optional sign
-         \d*            # leading digits, optional
-         '.'
-         \d+
-         [              # optional exponent
-            e <[+-]>?  \d+
-         ]?
-    }
-
-As a rule of thumb, use whitespace around atoms and inside groups; put
-quantifiers directly after the atom; and vertically align opening and closing
-square brackets and parentheses.
-
-When you use a list of alternations inside parentheses or square brackets, align
-the vertical bars:
-
-    my regex example {
-        <preamble>
-        [
-        || <choice_1>
-        || <choice_2>
-        || <choice_3>
-        ]+
-        <postamble>
-    }
-
-=head2 Keep it small
-
-Regexes are often more compact than regular code. Because they do so much with
-so little, keep regexes short.
-
-When you can name a part of a regex, it's usually best to
-put it into a separate, named regex.
-
-For example, you could take the float regex from earlier:
-
-    my regex float {
-         <[+-]>?        # optional sign
-         \d*            # leading digits, optional
-         '.'
-         \d+
-         [              # optional exponent
-            e <[+-]>?  \d+
-         ]?
-    }
-
-And decompose it into parts:
-
-    my token sign { <[+-]> }
-    my token decimal { \d+ }
-    my token exponent { 'e' <sign>? <decimal> }
-    my regex float {
-        <sign>?
-        <decimal>?
-        '.'
-        <decimal>
-        <exponent>?
-    }
-
-That helps, especially when the regex becomes more complicated. For example,
-you might want to make the decimal point optional in the presence of an exponent.
-
-    my regex float {
-        <sign>?
-        [
-        || <decimal>?  '.' <decimal> <exponent>?
-        || <decimal> <exponent>
-        ]
-    }
-
-=head2 What to match
-
-Often the input data format has no clear-cut specification, or the
-specification is not known to the programmer. Then, it's good to be liberal
-in what you expect, but only so long as there are no possible ambiguities.
-
-For example, in C<ini> files:
-
-    =begin code :skip-test
-    [section]
-    key=value
-    =end code
-
-What can be inside the section header? Allowing only a word might be too
-restrictive. Somebody might write C<[two words]>, or use dashes, etc.
-Instead of asking what's allowed on the inside, it might be worth asking
-instead: I<what's not allowed?>
-
-Clearly, closing square brackets are not allowed, because C<[a]b]> would be
-ambiguous. By the same argument, opening square brackets should be forbidden.
-This leaves us with
-
-    token header { '[' <-[ \[\] ]>+ ']' }
-
-which is fine if you are only processing one line. But if you're processing
-a whole file, suddenly the regex parses
-
-    =begin code :lang<text>
-    [with a
-    newline in between]
-    =end code
-
-which might not be a good idea.  A compromise would be
-
-    token header { '[' <-[ \[\] \n ]>+ ']' }
-
-and then, in the post-processing, strip leading and trailing spaces and tabs
-from the section header.
-
-=head2 Matching whitespace
-
-The C<:sigspace> adverb (or using the C<rule> declarator instead of C<token>
-or C<regex>) is very handy for implicitly parsing whitespace that can appear
-in many places.
-
-Going back to the example of parsing C<ini> files, we have
-
-    my regex kvpair { \s* <key=identifier> '=' <value=identifier> \n+ }
-
-which is probably not as liberal as we want it to be, since the user might
-put spaces around the equals sign. So, then we may try this:
-
-    my regex kvpair { \s* <key=identifier> \s* '=' \s* <value=identifier> \n+ }
-
-But that's looking unwieldy, so we try something else:
-
-    my rule kvpair { <key=identifier> '=' <value=identifier> \n+ }
-
-But wait! The implicit whitespace matching after the value uses up all
-whitespace, including newline characters, so the C<\n+> doesn't have
-anything left to match (and C<rule> also disables backtracking, so no luck
-there).
-
-Therefore, it's important to redefine your definition of implicit whitespace
-to whitespace that is not significant in the input format.
-
-This works by redefining the token C<ws>; however, it only works for
-L<grammars|/language/grammars>:
-
-    grammar IniFormat {
-        token ws { <!ww> \h* }
-        rule header { \s* '[' (\w+) ']' \n+ }
-        token identifier  { \w+ }
-        rule kvpair { \s* <key=identifier> '=' <value=identifier> \n+ }
-        token section {
-            <header>
-            <kvpair>*
-        }
-
-        token TOP {
-            <section>*
-        }
-    }
-
-    my $contents = q:to/EOI/;
-        [passwords]
-            jack = password1
-            joy = muchmoresecure123
-        [quotas]
-            jack = 123
-            joy = 42
-    EOI
-    say so IniFormat.parse($contents);
-
-Besides putting all regexes into a grammar and turning them into tokens
-(because they don't need to backtrack anyway), the interesting new bit is
-
-        token ws { <!ww> \h* }
-
-which gets called for implicit whitespace parsing. It matches when it's not
-between two word characters (C<< <!ww> >>, negated "within word" assertion),
-and zero or more horizontal space characters. The limitation to horizontal
-whitespace is important, because newlines (which are vertical whitespace)
-delimit records and shouldn't be matched implicitly.
-
-Still, there's some whitespace-related trouble lurking. The regex C<\n+>
-won't match a string like C<"\n \n">, because there's a blank between the
-two newlines. To allow such input strings, replace C<\n+> with C<\n\s*>.
-
-
 
 =head1 Backtracking
 
@@ -2433,7 +2244,11 @@ say $/<x>;          # OUTPUT: Nil
 say $/<capital>;    # OUTPUT: Nil
 =end code
 
+=head1 Best practices and gotchas
 
+The L<Regexes: Best practices and gotchas|/language/regexes-best-practices>
+provides useful information on how to avoid common pitfalls when writing regexes
+and grammars.
 
 =end pod
 # vim: expandtab softtabstop=4 shiftwidth=4 ft=perl6

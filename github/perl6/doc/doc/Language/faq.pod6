@@ -6,24 +6,24 @@
 
 =head1 General
 
-X<|Rakudo and Perl 6 (FAQ)>
-=head2 What's the difference between Rakudo and Perl 6?
+X<|Rakudo, Raku and Perl 6 (FAQ)>
+=head2 What's the difference between Raku, Rakudo and Perl 6?
 
-Properly speaking, L<Rakudo|https://rakudo.org/> is an implementation of
-Perl 6. It's currently the most developed, but there have been other
-implementations in the past and there will likely be others in the
-future. Perl 6 is the definition of the language. Often, Rakudo and
-Perl 6 will be used interchangeably.
+Properly speaking, L<Rakudo|https://rakudo.org/> is an implementation of Perl 6.
+It's currently the most developed, but there have been other implementations in
+the past and there will likely be others in the future. Perl 6 (which can also
+be called "Raku") is the definition of the language. When talking about the
+current interpreter, Rakudo and Perl 6 can be used interchangeably.
 
-=head2 Has Perl 6 been released?
+=head2 When was Perl 6 released?
 
-Yes with the Rakudo 2015.12 implementation version on December 25th 2015.
+The Rakudo 2015.12 implementation version was released on December 25th 2015.
 
 =head2 Is there a Perl 6 version 6.0.0?
 
 No. The first stable language specification version is v6.c
 ("Christmas"). Future versions of the spec may have point releases (e.g.
-v6.c.2) or major releases (e.g., v6.d).
+v6.d.2) or major releases (e.g., v6.e).
 
 Running C<perl6 -v> will display the language version your compiler
 implements:
@@ -34,17 +34,19 @@ This is Rakudo version 2017.07 built on MoarVM version 2017.07
 implementing Perl 6.c.
 
 X<|v6.d (FAQ)>
-=head2 When is v6.d going to be released?
+=head2 When was v6.d released?
 
-The Specification will be released on L<Diwali 2018|https://en.wikipedia.org/wiki/Diwali>,
-which is November 6–7, in a convenient time zone. And compilers will follow their
-regular release schedule, coming up with 6.d enabled by default after the spec release.
+The v6.d Specification was released on
+L<Diwali 2018|https://en.wikipedia.org/wiki/Diwali>,
+which was November 6–7 2018, in a
+convenient time zone.  6.d was enabled by default in the Rakudo compiler
+release of 2018.11.
 
-The vast majority of 6.d features are already implemented and available
+The vast majority of 6.d features were already implemented and available
 in in the Rakudo compiler without requiring any special pragmas, as they
 did not conflict with the 6.c specification. A smaller set of features
 and behaviours is available automatically if you have the C<use
-v6.d.PREVIEW> pragma at the top of the file. The rest of about 3100 new
+v6.d> pragma at the top of the file. The rest of about 3100 new
 commits to the language specification simply clarify previously
 undefined behaviour.
 
@@ -94,8 +96,8 @@ L<ecosystem|https://modules.perl6.org/>.
 
 =head2 Where can I find good documentation on Perl 6?
 
-See L<the official documentation website|https://docs.perl6.org/>
-(especially its L<"Language" section|https://docs.perl6.org/language.html>) as well as the
+See L<the official documentation website|/>
+(especially its L<"Language" section|/language>) as well as the
 L<Resources page|https://perl6.org/resources/>. You can also consult
 this L<great cheatsheet|https://htmlpreview.github.io/?https://github.com/perl6/mu/blob/master/docs/Perl6/Cheatsheet/cheatsheet.html>.
 
@@ -103,10 +105,12 @@ L<perl6book.com|https://perl6book.com/> contains a list of dead tree and
 electronic books.
 
 Be mindful of publication dates when reading third-party articles.
-Anything published before December, 2015 likely describes pre-release
+Anything published before December, 2015 likely describes a pre-release
 version of Perl 6.
 
-You can always L<get help from a live human in our help chat|https://webchat.freenode.net/?channels=#perl6> or L<search the chat logs|https://www.google.com/search?q=site:irclog.perlgeek.de+inurl:perl6>.
+You can always
+L<get help from a live human in our help chat|https://webchat.freenode.net/?channels=#perl6>
+or L<search the chat logs|https://colabti.org/irclogger/irclogger_log_search/perl6>.
 
 X<|Books>
 =head2 Can I get some books about Perl 6?
@@ -160,13 +164,13 @@ Yes, see L<glossary|/language/glossary>.
 =head2 I'm a Perl 5 programmer. Where is a list of differences between Perl 5
 and Perl 6?
 
-There are several I<Perl 5 to Perl 6> guides in the L<Language section of the documentation|https://docs.perl6.org/language.html>, most notable of which
+There are several I<Perl 5 to Perl 6> guides in the L<Language section of the documentation|/language>, most notable of which
 is the L<Overview|/language/5to6-nutshell>.
 
 X<|Ruby Quickstart (FAQ)>
 =head2 I'm a Ruby programmer looking for quickstart type docs?
 
-See the L<rb-nutshell|https://docs.perl6.org/language/rb-nutshell> guide.
+See the L<rb-nutshell|/language/rb-nutshell> guide.
 
 =head1 Modules
 
@@ -200,7 +204,7 @@ well with most Perl 5 modules. It can even run Perl 5 Catalyst and DBI.
 X<|C and C++ (FAQ)>
 =head2 Can I use C and C++ from Perl 6?
 
-L<Nativecall|https://docs.perl6.org/language/nativecall> makes this
+L<Nativecall|/language/nativecall> makes this
 particularly easy.
 
 =head2 Nativecall can't find libfoo.so and I only have libfoo.so.1.2!
@@ -223,7 +227,7 @@ X<|Core standard library (FAQ)> X<|Rakudo Star distribution and compiler-only re
 L<Rakudo Star distribution|https://rakudo.perl6.org/downloads/star/> does come
 with L<many useful modules|https://github.com/rakudo/star/tree/master/modules>.
 
-Rakudo compiler-only release includes L<only a couple of the most basic modules|https://docs.perl6.org/language/modules-core>.
+Rakudo compiler-only release includes L<only a couple of the most basic modules|/language/modules-core>.
 
 Many more modules can be found in the L<ecosystem|https://modules.perl6.org/>.
 
@@ -273,14 +277,14 @@ X<|Data::Dumper (FAQ)>
 =head2 How can I dump Perl 6 data structures
 (like Perl 5 Data::Dumper and similar)?
 
-Typical options are to use L<say> routine that uses L<gist> method that
+Typical options are to use L<say|/routine/say> routine that uses L<gist|/routine/gist> method that
 gives the "gist" of the object being dumped. More detailed output can be
-obtained by calling L<perl> method that typically returns representation
+obtained by calling L<perl|/routine/perl> method that typically returns representation
 in L<EVAL|/routine/EVAL>-able code.
 
 If you're using the L<rakudo|https://rakudo.org> implementation, you can use
 the L«rakudo-specific C<dd> routine|/programs/01-debugging#Dumper_function_dd»
-for dumping, whose output is similar to L<perl>, but with more information.
+for dumping, whose output is similar to L<perl|/routine/perl>, but with more information.
 
 Examples:
 
@@ -344,11 +348,11 @@ say $bar; # OUTPUT: «70␤»
 =end code
 
 To test whether a variable has any defined values, see
-L<DEFINITE|/language/classtut#index-entry-.DEFINITE> and L<defined>
+L<DEFINITE|/language/classtut#index-entry-.DEFINITE> and L<defined|/routine/defined>
 routines. Several other constructs exist that test for definiteness, such as
 L«C<with>, C<orwith>, and C<without>|/syntax/with%20orwith%20without»
-statements, L«C<//>|/routine/$SOLIDUS$SOLIDUS», L<andthen>, L<notandthen>, and
-L<orelse> operators, as well as L<type constraint smileys|/type/Signature#Constraining_defined_and_undefined_values>.
+statements, L«C<//>|/routine/$SOLIDUS$SOLIDUS», L<andthen|/routine/andthen>, L<notandthen|/routine/notandthen>, and
+L<orelse|/routine/orelse> operators, as well as L<type constraint smileys|/type/Signature#Constraining_defined_and_undefined_values>.
 
 =head2 What is C<so>?
 
@@ -672,7 +676,7 @@ C<OpaquePointer> is deprecated and has been replaced with C<Pointer>.
 
 =head2 You can have colonpairs in identifiers. What's the justification?
 
-L<Identifiers can include colon pairs, which become part of their name|https://docs.perl6.org/language/syntax#Identifiers>. According to L<Larry Wall's answer to the issue|https://github.com/perl6/doc/issues/1753#issuecomment-362875676>, I<We already had the colon pair mechanism available, so it was a no-brainer to use that to extend any name that needs to be able to quote uniquefying but non-standard characters (or other information with a unique stringification to such characters)>.
+L<Identifiers can include colon pairs, which become part of their name|/language/syntax#Identifiers>. According to L<Larry Wall's answer to the issue|https://github.com/perl6/doc/issues/1753#issuecomment-362875676>, I<We already had the colon pair mechanism available, so it was a no-brainer to use that to extend any name that needs to be able to quote uniquefying but non-standard characters (or other information with a unique stringification to such characters)>.
 
 =head2 How do most people enter unicode characters?
 
@@ -887,7 +891,7 @@ Try it on your system. You may be pleasantly surprised!
 
 Examples:
 
-    =begin code
+    =begin code :solo
     # Perl 6 version
     use v6.c;
 

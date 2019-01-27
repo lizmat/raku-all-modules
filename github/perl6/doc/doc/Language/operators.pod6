@@ -4,7 +4,7 @@
 
 =SUBTITLE Common Perl 6 infixes, prefixes, postfixes, and more!
 
-See L<Sub> on how to define operators.
+See L<Sub|/type/Sub> on how to define new operators.
 
 =head1 Operator precedence
 
@@ -173,7 +173,7 @@ You can also use a different delimiter:
     say $str; # OUTPUT: «fox den␤»
 
 Non-paired characters can simply replace the original slashes. Paired
-characters, like braces, are used only on the match portion, with the
+characters, like curly braces, are used only on the match portion, with the
 substitution given by assignment (of anything: a string, a routine call, etc.).
 
 =head2 X«C<S///> non-destructive substitution»
@@ -200,7 +200,7 @@ Alternatively, use the L«C<.subst> method|/routine/subst».
 
 C<tr///> operates on the C<$_> topical variable and changes it in place.
 It behaves similar to
-L«C<Str.trans>|/routine/trans» called with a single L<Pair> argument, where
+L«C<Str.trans>|/routine/trans» called with a single L<Pair|/type/Pair> argument, where
 key is the matching part (characters C<dol> in the example above) and value is
 the replacement part (characters C<wne> in the example above). Accepts the
 same adverbs as L«C<Str.trans>|/routine/trans». Returns the StrDistance object
@@ -343,7 +343,7 @@ all values that have keys in both hashes.
 
 Hyper operators can take user-defined operators as their operator argument.
 
-    sub pretty-file-site (Int $size --> Str) {
+    sub pretty-file-size (Int $size --> Str) {
         # rounding version of infix:</>(Int, Int)
         sub infix:<r/>(Int \i1, Int \i2) {
             round(i1 / i2, 0.1)
@@ -362,7 +362,7 @@ Hyper operators can take user-defined operators as their operator argument.
 
     for 60, 50, 40, 30, 20, 10 -> $test {
         my &a = { (2 ** $test) * (1/4, 1/2, 1, 10, 100).pick * (1..10).pick };
-        print pretty-file-site(a.Int) xx 2, ' ';
+        print pretty-file-size(a.Int) xx 2, ' ';
     }
 
     # OUTPUT: «10 EB 4 EB 2 PB 5 PB 0.5 PB 4 TB 300 GB 4.5 GB 50 MB 200 MB 9 KB 0.6 MB␤»
@@ -385,7 +385,7 @@ X<|[] (reduction metaoperators)>X<|[+] (reduction metaoperators)>
 =head1 Reduction metaoperators
 
 The reduction metaoperator, C<[ ]>, reduces a list with the given infix
-operator. It gives the same result as the L<reduce> routine - see there for
+operator. It gives the same result as the L<reduce|/routine/reduce> routine - see there for
 details.
 
     # These two are equivalent:
@@ -439,7 +439,8 @@ element of C<*> will repeat its 2nd last element indefinitely.
     my @l = <a b c d> Z~ ':' xx *;  # RESULT: «<a: b: c: d:>»
        @l = <a b c d> Z~ 1, 2, *;   # RESULT: «<a1 b2 c2 d2>»
 
-If an infix operator is not given, C<,> (comma operator) will be used by default:
+If an infix operator is not given, the C<,> (comma operator) will be used by
+default:
 
     my @l = 1 Z 2;  # RESULT: «[(1 2)]»
 
@@ -465,10 +466,9 @@ compiler understand you.
 
 =head2 term C«< >»
 
-The X<quote-words|qw;quote-words> construct breaks up the contents on whitespace and returns
-a L<List|/type/List> of the words. If a word
-looks like a number literal or a C<Pair> literal, it's converted to the
-appropriate number.
+The X<quote-words|qw;quote-words> construct breaks up the contents on whitespace
+and returns a L<List|/type/List> of the words. If a word looks like a number
+literal or a C<Pair> literal, it's converted to the appropriate number.
 
     say <a b c>[1];   # OUTPUT: «b␤»
 
@@ -490,14 +490,16 @@ being interpreted as a named argument.
 
 =head2 term C«{ }»
 
-L<Block> or L<Hash> constructor.X<|block constructor;hash constructor>
+L<Block|/type/Block> or L<Hash|/type/Hash> constructor.X<|block constructor;hash constructor>
 
-If the content is empty, or contains a single list that starts with a L<Pair> literal or
-C<%>-sigiled variable, and the L«C<$_> variable|/syntax/$_» or placeholder parameters are
-not used, the constructor returns a L<Hash>. Otherwise it constructs a L<Block>.
+If the content is empty, or contains a single list that starts with a L<Pair|/type/Pair>
+literal or C<%>-sigiled variable, and the L«C<$_> variable|/syntax/$_» or
+placeholder parameters are not used, the constructor returns a L<Hash|/type/Hash>.
+Otherwise it constructs a L<Block|/type/Block>.
 
-To force construction of a L<Block>, follow the opening brace with a semicolon.
-To always ensure you end up with a L<Hash>, you can use C<%( )> coercer or L<hash> routine instead:
+To force construction of a L<Block|/type/Block>, follow the opening brace with a semicolon.
+To always ensure you end up with a L<Hash|/type/Hash>, you can use C<%( )> coercer or
+L<hash|/routine/hash> routine instead:
 
     {}.^name.say;        # OUTPUT: «Hash␤»
     {;}.^name.say;       # OUTPUT: «Block␤»
@@ -508,14 +510,14 @@ To always ensure you end up with a L<Hash>, you can use C<%( )> coercer or L<has
 
 =head2 circumfix C«[ ]»
 
-The X<L<Array> constructor> returns an itemized L<Array> that does not flatten
+The X<L<Array|/type/Array> constructor> returns an itemized L<Array|/type/Array> that does not flatten
 in list context. Check this:
 
     say .perl for [3,2,[1,0]]; # OUTPUT: «3␤2␤$[1, 0]␤»
 
 This array is itemized, in the sense that every element constitutes an item, as
 shown by the C<$> preceding the last element of the array, the
-L<(list) item contextualizer|https://docs.perl6.org/type/Any#index-entry-%24_%28item_contextualizer%29>.
+L<(list) item contextualizer|/type/Any#index-entry-%24_%28item_contextualizer%29>.
 
 The output will be (almost) the same if we attempt to flatten it using
 L<C<|> a. k. a. I<the flattener>|/routine/|>, which puts it in a list context:
@@ -576,23 +578,26 @@ in custom types.
 
 =head2 postcircumfix C«<>»
 
-Decontainerization operator, which extracts the value from a container and makes it independent of the container type.
+Decontainerization operator, which extracts the value from a container and makes
+it independent of the container type.
 
 =begin code
 use JSON::Tiny;
 
 my $config = from-json('{ "files": 3, "path": "/home/perl6/perl6.pod6" }');
-say $config.perl;            # OUTPUT: «${:files(3), :path("/home/perl6/perl6.pod6")}»
+say $config.perl;      # OUTPUT: «${:files(3), :path("/home/perl6/perl6.pod6")}»
 my %config-hash = $config<>;
-say %config-hash.perl;       # OUTPUT: «{:files(3), :path("/home/perl6/perl6.pod6")}»
+say %config-hash.perl; # OUTPUT: «{:files(3), :path("/home/perl6/perl6.pod6")}»
 =end code
 
-It's a C<Hash> in both cases, and it can be used like that; however, in the first case it was in item context, and in the second case it has been extracted to its proper context.
+It's a C<Hash> in both cases, and it can be used like that; however, in the
+first case it was in item context, and in the second case it has been extracted
+to its proper context.
 
 =head2 postcircumfix C«< >»
 
-Shortcut for L<C<postcircumfix { }>|/routine/{ }#(Operators)_postcircumfix_{_}> that quotes
-its argument using the same rules as the L«quote-words operator|
+Shortcut for L<C<postcircumfix { }>|/routine/{ }#(Operators)_postcircumfix_{_}>
+that quotes its argument using the same rules as the L«quote-words operator|
 /routine/< >#circumfix_<_>» of the same name.
 
     my %color = kiwi => "green", banana => "yellow", cherry => "red";
@@ -619,7 +624,7 @@ C<{ }> postcircumfix operator at compile-time.
 
 =head2 postcircumfix C«( )»
 
-The X<call operator> treats the invocant as a L<Callable> and invokes it,
+The X<call operator> treats the invocant as a L<Callable|/type/Callable> and invokes it,
 using the expression between the parentheses as arguments.
 
 Note that an identifier followed by a pair of parentheses is always parsed as a
@@ -669,7 +674,7 @@ X«|postfix .?»
 =head2 postfix C«.?»
 
 X<Safe call operator>. C<$invocant.?method> calls method C<method> on
-C<$invocant> if it has a method of such name. Otherwise it returns L<Nil>.
+C<$invocant> if it has a method of such name. Otherwise it returns L<Nil|/type/Nil>.
 
 Technically, not a real operator; it's syntax special-cased in the compiler.
 
@@ -680,7 +685,7 @@ C<$foo.+meth> walks the MRO and calls all the methods called C<meth> and submeth
 Those methods might be multis, in which case the matching candidate
 would be called.
 
-After that, a L<List> of the results are returned. If no such method was found,
+After that, a L<List|/type/List> of the results are returned. If no such method was found,
 it throws a L<X::Method::NotFound> exception.
 
     class A {
@@ -704,8 +709,8 @@ C<$foo.*meth> walks the MRO and calls all the methods called C<meth> and submeth
 Those methods might be multis, in which case the matching candidate
 would be called.
 
-After that, a L<List> of the results are returned. If no such method was found,
-an empty L<List> is returned.
+After that, a L<List|/type/List> of the results are returned. If no such method was found,
+an empty L<List|/type/List> is returned.
 
 Technically, postfix C<.+> calls C<.*> at first. Read postfix C<.+> section to
 see examples.
@@ -721,15 +726,19 @@ X<Hyper method call operator>. Will call a method on all elements of a C<List> o
     say @a».&foo;                     # So we can pretend to have a method call with a sub that got a good first positional argument.
     say @a».&{ .ord};                 # Blocks have an implicit positional arguments that lands in $_. The latter can be omitted for method calls.
 
-Hyper method calls may appear to be the same as doing a L<map> call, however along with being a hint to the compiler
-that it can parallelize the call, the behaviour is also affected by L<nodality of the method|https://docs.perl6.org/routine/is%20nodal>
-being invoked, depending on which either L<nodemap> or L<deepmap> semantics are used to perform the call.
+Hyper method calls may appear to be the same as doing a L<map|/routine/map> call, however
+along with being a hint to the compiler that it can parallelize the call, the
+behaviour is also affected by
+L<nodality of the method|/routine/is%20nodal>
+being invoked, depending on
+which either L<nodemap|/routine/nodemap> or L<deepmap|/routine/deepmap> semantics are used to perform the call.
 
-The nodality is checked by looking up whether the L<Callable> provides C<nodal> method.
-If the hyper is applied to a method, that L<Callable> is that method name, looked up on L<List> type;
-if the hyper is applied to a routine (e.g. C<».&foo>), that routine functions as that L<Callable>. If the
-L<Callable> is determined to provide C<nodal> method, L<nodemap> semantics are used to perform the hyper call,
-otherwise L<duckmap> semantics are used.
+The nodality is checked by looking up whether the L<Callable|/type/Callable> provides C<nodal>
+method. If the hyper is applied to a method, that L<Callable|/type/Callable> is that method
+name, looked up on L<List|/type/List> type; if the hyper is applied to a routine (e.g.
+C<».&foo>), that routine functions as that L<Callable|/type/Callable>. If the L<Callable|/type/Callable> is
+determined to provide C<nodal> method, L<nodemap|/routine/nodemap> semantics are used to perform
+the hyper call, otherwise L<duckmap|/routine/duckmap> semantics are used.
 
 Take care to avoid a
 L<common mistake|/language/traps#Using_»_and_map_interchangeably> of expecting
@@ -798,6 +807,15 @@ class or role, even after it has been redefined in the child class.
     }
     say Foo.Bar::baz;       # OUTPUT: «42␤»
 
+=head2 postfix C<,=>
+
+Creates an object that concatenates, in a class-dependent way, the contents of
+the variable on the left hand side and the expression on the right hand side:
+
+    my %a = :11a, :22b;
+    %a ,= :33x;
+    say %a # OUTPUT: «{a => 11, b => 22, x => 33}␤»
+
 =head1 Autoincrement precedence
 
 =head2 prefix X<C«++»|prefix ++>
@@ -810,7 +828,7 @@ Increments its argument by one and returns the updated value.X<|prefix increment
     say ++$x;   # OUTPUT: «4␤»
     say $x;     # OUTPUT: «4␤»
 
-It works by calling the L<succ> method (for I<successor>) on its argument,
+It works by calling the L<succ|/routine/succ> method (for I<successor>) on its argument,
 which gives custom types the freedom to implement their own increment
 semantics.
 
@@ -825,7 +843,7 @@ Decrements its argument by one and returns the updated value.
     say --$x;   # OUTPUT: «2␤»
     say $x;     # OUTPUT: «2␤»
 
-It works by calling the L<pred> method (for I<predecessor>) on its argument,
+It works by calling the L<pred|/routine/pred> method (for I<predecessor>) on its argument,
 which gives custom types the freedom to implement their own decrement
 semantics.
 
@@ -840,7 +858,7 @@ Increments its argument by one and returns the original value.X<|postfix increme
     say $x++;   # OUTPUT: «3␤»
     say $x;     # OUTPUT: «4␤»
 
-It works by calling the L<succ> method (for I<successor>) on its argument,
+It works by calling the L<succ|/routine/succ> method (for I<successor>) on its argument,
 which gives custom types the freedom to implement their own increment
 semantics.
 
@@ -868,7 +886,7 @@ Decrements its argument by one and returns the original value.
     say $x--;   # OUTPUT: «3␤»
     say $x;     # OUTPUT: «2␤»
 
-It works by calling the L<pred> method (for I<predecessor>) on its argument,
+It works by calling the L<pred|/routine/pred> method (for I<predecessor>) on its argument,
 which gives custom types the freedom to implement their own decrement
 semantics.
 
@@ -893,11 +911,11 @@ Crossing 0 is prohibited and throws C<X::AdHoc>.
 
     multi sub infix:<**>(Any, Any --> Numeric:D) is assoc<right>
 
-The X<exponentiation operator> coerces both arguments to L<Numeric>
+The X<exponentiation operator> coerces both arguments to L<Numeric|/type/Numeric>
 and calculates the left-hand-side raised to the power of the right-hand side.
 
 If the right-hand side is a non-negative integer and the left-hand side
-is an arbitrary precision type (L<Int>, L<FatRat>), then the calculation
+is an arbitrary precision type (L<Int|/type/Int>, L<FatRat|/type/FatRat>), then the calculation
 is carried out without loss of precision.
 
 Unicode superscripts will behave in exactly the same way.
@@ -919,8 +937,8 @@ It also works for sequences of several Unicode superscript numbers
 
 X<Boolean context operator>.
 
-Coerces the argument to L<Bool> by calling the C<Bool> method on it.
-Note that this collapses L<Junction>s.
+Coerces the argument to L<Bool|/type/Bool> by calling the C<Bool> method on it.
+Note that this collapses L<Junction|/type/Junction>s.
 
 =head2 prefix C«!»
 
@@ -928,9 +946,9 @@ Note that this collapses L<Junction>s.
 
 X<Negated boolean context operator>.
 
-Coerces the argument to L<Bool> by calling the C<Bool> method on it,
+Coerces the argument to L<Bool|/type/Bool> by calling the C<Bool> method on it,
 and returns the negation of the result.
-Note that this collapses L<Junction>s.
+Note that this collapses L<Junction|/type/Junction>s.
 
 =head2 prefix C«+»
 
@@ -938,7 +956,7 @@ Note that this collapses L<Junction>s.
 
 X<Numeric context operator>.
 
-Coerces the argument to L<Numeric> by calling the C<Numeric> method on it.
+Coerces the argument to L<Numeric|/type/Numeric> by calling the C<Numeric> method on it.
 
 =head2 prefix C«-»
 
@@ -946,7 +964,7 @@ Coerces the argument to L<Numeric> by calling the C<Numeric> method on it.
 
 X<Negative numeric context operator>.
 
-Coerces the argument to L<Numeric> by calling the C<Numeric> method on it,
+Coerces the argument to L<Numeric|/type/Numeric> by calling the C<Numeric> method on it,
 and then negates the result.
 
 =head2 prefix C«~»
@@ -955,12 +973,12 @@ and then negates the result.
 
 X<String context operator>.
 
-Coerces the argument to L<Str> by calling the L<Str|/type/List#method_Str> method on it.
+Coerces the argument to L<Str|/type/Str> by calling the L<Str|/type/List#method_Str> method on it.
 
 =head2 prefix C«|»
 
-Flattens objects of type L<Capture>, L<Pair>, L<List>, L<Map> and
-L<Hash> into an argument list.
+Flattens objects of type L<Capture|/type/Capture>, L<Pair|/type/Pair>, L<List|/type/List>, L<Map|/type/Map> and
+L<Hash|/type/Hash> into an argument list.
 
     sub slurpee( |args ){
         say args.perl
@@ -983,7 +1001,7 @@ arguments.
     multi sub prefix:<+^>(Any --> Int:D)
 
 X<Integer bitwise negation operator>.
-Coerces the argument to L<Int> and does a bitwise negation on the
+Coerces the argument to L<Int|/type/Int> and does a bitwise negation on the
 result, assuming
 L<two's complement|https://en.wikipedia.org/wiki/Two%27s_complement>.
 
@@ -1000,7 +1018,7 @@ Please note that this has not yet been implemented.
 
 X<Boolean bitwise negation operator>.
 
-Coerces the argument to L<Bool> and then does a bit flip, which makes it the
+Coerces the argument to L<Bool|/type/Bool> and then does a bit flip, which makes it the
 same as C<< prefix:<!> >>.
 
 =head2 prefix C«^»
@@ -1009,7 +1027,7 @@ same as C<< prefix:<!> >>.
 
 I<upto> operator.X<|upto operator>
 
-Coerces the argument to L<Numeric>, and generates a range from 0 up to (but
+Coerces the argument to L<Numeric|/type/Numeric>, and generates a range from 0 up to (but
 excluding) the argument.
 
     say ^5;         # OUTPUT: «0..^5␤»
@@ -1060,8 +1078,8 @@ than postfix C<.meth>.
 
 X<Multiplication operator>.
 
-Coerces both arguments to L<Numeric> and multiplies them. The result
-is of the wider type. See L<Numeric> for details.
+Coerces both arguments to L<Numeric|/type/Numeric> and multiplies them. The result
+is of the wider type. See L<Numeric|/type/Numeric> for details.
 
 =head2 infix C«/»
 
@@ -1069,9 +1087,9 @@ is of the wider type. See L<Numeric> for details.
 
 X<Division operator>.
 
-Coerces both argument to L<Numeric> and divides the left through the right
-number. Division of L<Int> values returns L<Rat>, otherwise the "wider type"
-rule described in L<Numeric> holds.
+Coerces both argument to L<Numeric|/type/Numeric> and divides the left through the right
+number. Division of L<Int|/type/Int> values returns L<Rat|/type/Rat>, otherwise the "wider type"
+rule described in L<Numeric|/type/Numeric> holds.
 
 =head2 infix C«div»
 
@@ -1083,7 +1101,7 @@ X<Integer division operator>. Rounds down.
 
     multi sub infix:<%>($x, $y --> Numeric:D)
 
-X<Modulo operator>. Coerces to L<Numeric> first.
+X<Modulo operator>. Coerces to L<Numeric|/type/Numeric> first.
 
 Generally the following identity holds:
 
@@ -1106,7 +1124,7 @@ X<Integer modulo operator>. Returns the remainder of an integer modulo operation
 
     multi sub infix:<+&>($a, $b --> Int:D)
 
-Numeric bitwise I<AND> operator. Coerces both arguments to L<Int> and does a bitwise
+Numeric bitwise I<AND> operator. Coerces both arguments to L<Int|/type/Int> and does a bitwise
 I<AND> operation assuming two's complement.X<|Numeric bitwise AND operator>
 
 =head2 infix C«+<»
@@ -1145,13 +1163,13 @@ Please note that this has not yet been implemented.
 
     multi sub infix:<gcd>($a, $b --> Int:D)
 
-Coerces both arguments to L<Int> and returns the greatest common divisor.X<|greatest common divisor operator>
+Coerces both arguments to L<Int|/type/Int> and returns the greatest common divisor.X<|greatest common divisor operator>
 
 =head2 infix C«lcm»
 
     multi sub infix:<lcm>($a, $b --> Int:D)
 
-Coerces both arguments to L<Int> and returns the least common multiple; that is,
+Coerces both arguments to L<Int|/type/Int> and returns the least common multiple; that is,
 the smallest integer that is evenly divisible by both arguments.X<|least common multiple operator>
 
 =head1 Additive precedence
@@ -1162,7 +1180,7 @@ the smallest integer that is evenly divisible by both arguments.X<|least common 
 
 X<Addition operator>.
 
-Coerces both arguments to L<Numeric> and adds them.
+Coerces both arguments to L<Numeric|/type/Numeric> and adds them.
 
 =head2 infix C«-»
 
@@ -1170,7 +1188,7 @@ Coerces both arguments to L<Numeric> and adds them.
 
 X<Subtraction operator>.
 
-Coerces both arguments to L<Numeric> and subtracts the second from the
+Coerces both arguments to L<Numeric|/type/Numeric> and subtracts the second from the
 first.
 
 =head2 infix C«+|»
@@ -1179,7 +1197,7 @@ first.
 
 X<Integer bitwise OR operator>.
 
-Coerces both arguments to L<Int> and does a bitwise I<OR> (inclusive OR)
+Coerces both arguments to L<Int|/type/Int> and does a bitwise I<OR> (inclusive OR)
 operation.
 
 =head2 infix C«+^»
@@ -1188,7 +1206,7 @@ operation.
 
 X<Integer bitwise XOR operator>.
 
-Coerces both arguments to L<Int> and does a bitwise I<XOR> (exclusive OR)
+Coerces both arguments to L<Int|/type/Int> and does a bitwise I<XOR> (exclusive OR)
 operation.
 
 =head2 infix C«~|»
@@ -1209,7 +1227,7 @@ shorter buffer with zeroes.
 
 X<Boolean logical OR operator>.
 
-Coerces both arguments to L<Bool> and does a logical I<OR> (inclusive OR)
+Coerces both arguments to L<Bool|/type/Bool> and does a logical I<OR> (inclusive OR)
 operation.
 
 =head1 Replication precedence
@@ -1237,7 +1255,7 @@ and C<$b> L«C<Int>|/type/Int». Returns an empty string if C<< $b <= 0 >>.
 X<List repetition operator>.
 
 Returns a list of C<$a> repeated and evaluated C<$b> times (C<$b> is coerced
-to L<Int>). If C<< $b <= 0 >>, the empty list is returned.
+to L<Int|/type/Int>). If C<< $b <= 0 >>, the empty list is returned.
 
 The left-hand side is evaluated for each repetition, so
 
@@ -1263,7 +1281,7 @@ is returned.
 
 X<String concatenation operator>.
 
-Coerces both arguments to L<Str> and concatenates them. If both arguments are
+Coerces both arguments to L<Str|/type/Str> and concatenates them. If both arguments are
 L<Buf|/type/Buf>, a combined buffer is returned.
 
     say 'ab' ~ 'c';     # OUTPUT: «abc␤»
@@ -1320,7 +1338,7 @@ returns an identity routine that simply returns its argument.
 
 X<All junction operator>.
 
-Creates an I<all> L<Junction> from its arguments. See L<Junction> for more
+Creates an I<all> L<Junction|/type/Junction> from its arguments. See L<Junction|/type/Junction> for more
 details.
 
 =head1 Junctive OR (any) precedence
@@ -1330,7 +1348,7 @@ details.
     multi sub infix:<|>($a, $b --> Junction:D) is assoc<list>
 
 X<|Any junction operator>
-Creates an I<any> L<Junction> from its arguments.
+Creates an I<any> L<Junction|/type/Junction> from its arguments.
 
     my $three-letters = /<[a b c]>/ | /<[i j k]>/ | /<[x y z]>/;
     say $three-letters.perl; # OUTPUT: «any(/<[a b c]>/, /<[i j k]>/, /<[x y z]>/)␤»
@@ -1339,7 +1357,7 @@ Creates an I<any> L<Junction> from its arguments.
 This first creates an C<any> C<Junction> of three regular expressions
 (every one of them matching any of 3 letters), and then uses
 smartmatching to check whether the letter C<b> matches any of them,
-resulting in a positive match. See also L<Junction> for more details.
+resulting in a positive match. See also L<Junction|/type/Junction> for more details.
 
 =head2 infix C«^»
 
@@ -1347,7 +1365,7 @@ resulting in a positive match. See also L<Junction> for more details.
 
 X<One junction operator>.
 
-Creates a I<one> L<Junction> from its arguments. See L<Junction> for more
+Creates a I<one> L<Junction|/type/Junction> from its arguments. See L<Junction|/type/Junction> for more
 details.
 
 =head1 Named unary precedence
@@ -1378,7 +1396,7 @@ temp $a = "five";
 =end code
 
 Be warned the C<temp> effects get removed once the block is left. If
-you were to access the value from, say, within a L<Promise> after
+you were to access the value from, say, within a L<Promise|/type/Promise> after
 the C<temp> was undone, you'd get the original value, not the C<temp> one:
 
     =begin code
@@ -1441,7 +1459,7 @@ keep that.
 
 Mixes C<$role> into C<$obj> at runtime. Requires C<$obj> to be mutable.
 
-Similar to L<but> operator, the C<$role> can instead be an instantiated object,
+Similar to L<but|/routine/but> operator, the C<$role> can instead be an instantiated object,
 in which case, the operator will create a role for you automatically.
 The role will contain a single method named the same as C<$obj.^name>
 and that returns C<$obj>:
@@ -1501,7 +1519,7 @@ separated by comma. In this case conflicts will be reported at runtime.
 X<Generic, "smart" three-way comparator>.
 
 Compares strings with string semantics, numbers
-with number semantics, L<Pair> objects first by key and then by value etc.
+with number semantics, L<Pair|/type/Pair> objects first by key and then by value etc.
 
 if C<$a eqv $b>, then C<$a cmp $b> always returns C<Order::Same>.
 
@@ -1509,20 +1527,45 @@ if C<$a eqv $b>, then C<$a cmp $b> always returns C<Order::Same>.
     say 4        cmp 4.0;        # OUTPUT: «Same␤»
     say 'b'      cmp 'a';        # OUTPUT: «More␤»
 
-X<|infix coll>
+=head2 infix C<coll>
+
+Defined asN<These are not yet implemented in the JVM>:
+
+    multi sub infix:<coll>(Str:D \a, Str:D \b --> Order:D)
+    multi sub infix:<coll>(Cool:D \a, Cool:D \b --> Order:D)
+    multi sub infix:<coll>(Pair:D \a, Pair:D \b --> Order:D)
+
+C<coll> is a sorting operator that takes pairs of C<Str>s, C<Cool>s or C<Pair>s
+and returns an C<Order> that uses the C<$*COLLATION> order. The default behavior
+disregards diacritic marks and capitalization, for instance.
+
+    say "b" cmp "à";  # OUTPUT: «Less␤»
+    say "b" coll "à"; # OUTPUT: «More␤»
+
+In the first case, lexicographic or codepoint order is taken into account. In
+the second, which uses C<coll>, the diacritic is not considered and sorting
+happens according to intuitive order.
+
 =head2 infix C«unicmp»
 
-    multi sub infix:<unicmp>(Str:D \a, Str:D \b --> Order:D)
-    multi sub infix:<unicmp>(Pair:D \a, Pair:D \b)
+Defined asN<These are not yet implemented in the JVM>:
 
-Unlike the cmp operator which sorts according to codepoint, B<unicmp> and
-B<coll> sort according to how most users would expect, that is, disregarding aspects of the particular character like capitalization.
+    multi sub infix:<unicmp>(Str:D \a, Str:D \b --> Order:D)
+    multi sub infix:<unicmp>(Pair:D \a, Pair:D \b --> Order:D)
+    multi sub infix:<coll>(Pair:D \a, Pair:D \b --> Order:D)
+
+Unlike the cmp operator which sorts according to codepoint, C<unicmp> and
+C<coll> sort according to how most users would expect, that is, disregarding
+aspects of the particular character like capitalization.
 
     say 'a' unicmp 'Z'; # Less
     say 'a' coll 'Z';   # Less
     say 'a' cmp 'Z';    # More
 
-The main difference between C<coll> and C<unicmp> is that the behavior of the former can be changed by the (so far C<experimental>) L<C<$*COLLATION>|/language/experimental#index-entry-%24%2ACOLLATION-%24%2ACOLLATION> dynamic variable.
+The main difference between C<coll> and C<unicmp> is that the behavior of the
+former can be changed by the
+L<C<$*COLLATION>|/type/Any#index-entry-%24*COLLATION-%24*COLLATION> dynamic
+variable.
 
 =head2 infix C«leg»
 
@@ -1531,7 +1574,8 @@ The main difference between C<coll> and C<unicmp> is that the behavior of the fo
 
 X<String three-way comparator>. Short for I<less, equal or greater?>.
 
-Coerces both arguments to L<Str> and then does a lexicographic comparison.
+Coerces both arguments to L<Str|/type/Str> and then does a lexicographic
+comparison.
 
     say 'a' leg 'b';       # OUTPUT: «Less␤»
     say 'a' leg 'a';       # OUTPUT: «Same␤»
@@ -1543,7 +1587,7 @@ Coerces both arguments to L<Str> and then does a lexicographic comparison.
 
 X<Numeric three-way comparator>.X<|spaceship operator>
 
-Coerces both arguments to L<Real> and then does a numeric comparison.
+Coerces both arguments to L<Real|/type/Real> and then does a numeric comparison.
 
 =head2 infix C«..»
 
@@ -1551,7 +1595,7 @@ Coerces both arguments to L<Real> and then does a numeric comparison.
 
 X<Range operator>
 
-Constructs a L<Range> from the arguments.
+Constructs a L<Range|/type/Range> from the arguments.
 
 =head2 infix C«..^»
 
@@ -1559,7 +1603,7 @@ Constructs a L<Range> from the arguments.
 
 X<Right-open range operator>.
 
-Constructs a L<Range> from the arguments, excluding the end point.
+Constructs a L<Range|/type/Range> from the arguments, excluding the end point.
 
 =head2 infix C«^..»
 
@@ -1567,7 +1611,7 @@ Constructs a L<Range> from the arguments, excluding the end point.
 
 X<Left-open range operator>.
 
-Constructs a L<Range> from the arguments, excluding the start point.
+Constructs a L<Range|/type/Range> from the arguments, excluding the start point.
 
 =head2 infix C«^..^»
 
@@ -1575,7 +1619,7 @@ Constructs a L<Range> from the arguments, excluding the start point.
 
 X<Open range operator>
 
-Constructs a L<Range> from the arguments, excluding both start and end point.
+Constructs a L<Range|/type/Range> from the arguments, excluding both start and end point.
 
 =head1 Chaining binary precedence
 
@@ -1591,7 +1635,7 @@ Constructs a L<Range> from the arguments, excluding both start and end point.
 
 X<Numeric equality operator>.
 
-Coerces both arguments to L<Numeric> (if necessary); returns C<True>
+Coerces both arguments to L<Numeric|/type/Numeric> (if necessary); returns C<True>
 if they are equal.
 
 =head2 infix C«!=»
@@ -1600,7 +1644,7 @@ if they are equal.
 
 X<Numeric inequality operator>.
 
-Coerces both arguments to L<Numeric> (if necessary); returns C<True> if they are
+Coerces both arguments to L<Numeric|/type/Numeric> (if necessary); returns C<True> if they are
 distinct.
 
 Is an alias to C«!==».
@@ -1619,7 +1663,7 @@ Equivalent to L«!=», at codepoint U+2260 (NOT EQUAL TO).
 
 X<Numeric less than operator>.
 
-Coerces both arguments to L<Real> (if necessary); returns C<True> if the first argument
+Coerces both arguments to L<Real|/type/Real> (if necessary); returns C<True> if the first argument
 is smaller than the second.
 
 =head2 infix C«<=»
@@ -1630,7 +1674,7 @@ is smaller than the second.
 
 X<Numeric less than or equal to operator>.
 
-Coerces both arguments to L<Real> (if necessary); returns C<True> if the first argument
+Coerces both arguments to L<Real|/type/Real> (if necessary); returns C<True> if the first argument
 is smaller than or equal to the second.
 
 =head2 infix C«≤»
@@ -1647,7 +1691,7 @@ Equivalent to L«<=», at codepoint U+2264 (LESS-THAN OR EQUAL TO).
 
 X<Numeric greater than operator>.
 
-Coerces both arguments to L<Real> (if necessary); returns C<True> if the first argument
+Coerces both arguments to L<Real|/type/Real> (if necessary); returns C<True> if the first argument
 is larger than the second.
 
 =head2 infix C«>=»
@@ -1658,7 +1702,7 @@ is larger than the second.
 
 X<Numeric greater than or equal to operator>.
 
-Coerces both arguments to L<Real> (if necessary); returns C<True> if
+Coerces both arguments to L<Real|/type/Real> (if necessary); returns C<True> if
 the first argument is larger than or equal to the second.
 
 =head2 infix C«≥»
@@ -1674,7 +1718,7 @@ Equivalent to L«>=», at codepoint U+2265 (GREATER-THAN OR EQUAL TO).
 
 X<String equality operator>.
 
-Coerces both arguments to L<Str> (if necessary); returns C<True> if both
+Coerces both arguments to L<Str|/type/Str> (if necessary); returns C<True> if both
 are equal.
 
 Mnemonic: I<equal>
@@ -1686,7 +1730,7 @@ Mnemonic: I<equal>
 
 X<String inequality operator>.
 
-Coerces both arguments to L<Str> (if necessary); returns C<False> if both
+Coerces both arguments to L<Str|/type/Str> (if necessary); returns C<False> if both
 are equal.
 
 Mnemonic: I<not equal>
@@ -1698,7 +1742,7 @@ Mnemonic: I<not equal>
 
 X<String greater than operator>.
 
-Coerces both arguments to L<Str> (if necessary); returns C<True> if
+Coerces both arguments to L<Str|/type/Str> (if necessary); returns C<True> if
 the first is larger than the second, as determined by lexicographic
 comparison.
 
@@ -1711,7 +1755,7 @@ Mnemonic: I<greater than>
 
 X<String greater than or equal to operator>.
 
-Coerces both arguments to L<Str> (if necessary); returns C<True> if
+Coerces both arguments to L<Str|/type/Str> (if necessary); returns C<True> if
 the first is equal to or larger than the second, as determined by lexicographic
 comparison.
 
@@ -1724,7 +1768,7 @@ Mnemonic: I<greater or equal>
 
 X<String less than operator>.
 
-Coerces both arguments to L<Str> (if necessary); returns C<True> if
+Coerces both arguments to L<Str|/type/Str> (if necessary); returns C<True> if
 the first is smaller than the second, as determined by lexicographic
 comparison.
 
@@ -1737,7 +1781,7 @@ Mnemonic: I<less than>
 
 X<String less than or equal to operator>.
 
-Coerces both arguments to L<Str> (if necessary); returns C<True> if
+Coerces both arguments to L<Str|/type/Str> (if necessary); returns C<True> if
 the first is equal to or smaller than the second, as determined by lexicographic
 comparison.
 
@@ -1803,6 +1847,29 @@ implement an appropriate infix C<eqv> operator:
     }
     multi infix:<eqv>(A $l, A $r) { $l.a eqv $r.a }
     say A.new(a => 5) eqv A.new(a => 5);            # OUTPUT: «True␤»
+
+
+Note that C<eqv> does not work recursively on every kind of container type,
+e.g. C<Set>:
+
+    my class A {
+        has $.a;
+    }
+    say Set(A.new(a => 5)) eqv Set(A.new(a => 5));  # OUTPUT: «False␤»
+
+Even though the contents of the two sets are C<eqv>, the sets are not.
+The reason is that C<eqv> delegates the equality check to the C<Set> object
+which relies on element-wise C«===» comparison. Turning the class C<A>
+into a L<value type|/type/ValueObjAt> by giving it a C<WHICH> method
+produces the expected behavior:
+
+    my class A {
+        has $.a;
+        method WHICH {
+            ValueObjAt.new: "A|$!a.WHICH()"
+        }
+    }
+    say Set(A.new(a => 5)) eqv Set(A.new(a => 5));  # OUTPUT: «True␤»
 
 =head2 infix C«===»
 
@@ -1961,7 +2028,7 @@ any arguments after a 2nd true result.
 
     say 0 ^^ 42;                             # OUTPUT: «42␤»
     say '' ^^ 0;                             # OUTPUT: «0␤»
-    say 0 ^^ 42 ^^ 1 ^^ die "never called";  # OUTPUT: «␤»
+    say 0 ^^ 42 ^^ 1 ^^ die "never called";  # OUTPUT: «Nil␤»
 
 Note that the semantics of this operator may not be what you assume: infix C«^^»
 flips to the first true value it finds and then flips to Nil I<forever> after the
@@ -1977,14 +2044,14 @@ operand. Short-circuits.
 
 =head2 infix C«min»
 
-Returns the smallest of the arguments, as determined by L<cmp> semantics.
+Returns the smallest of the arguments, as determined by L<cmp|/routine/cmp> semantics.
 
     my $foo = 42;
     $foo min= 0   # read as: $foo decreases to 0
 
 =head2 infix C«max»
 
-Returns the largest of the arguments, as determined by L<cmp> semantics.
+Returns the largest of the arguments, as determined by L<cmp|/routine/cmp> semantics.
 
     my $foo = -42;
     $foo max= 0   # read as: $foo increases to 0
@@ -1992,7 +2059,7 @@ Returns the largest of the arguments, as determined by L<cmp> semantics.
 =head2 infix C«minmax»
 
 Returns the L<Range|/type/Range> starting from the lowest to the highest of the values,
-as determined by the L<cmp> semantics.
+as determined by the L<cmp|/routine/cmp> semantics.
 For instance:
 
 =begin code
@@ -2004,14 +2071,14 @@ For instance:
 'z' minmax 'k';  # "k".."z"
 =end code
 
-If the lowest and highest values coincide, the operator returns a L<Range>
+If the lowest and highest values coincide, the operator returns a L<Range|/type/Range>
 made by the same value:
 
 =begin code
 1 minmax 1;  # 1..1
 =end code
 
-When applied to L<List>s, the operator evaluates the lowest and highest values
+When applied to L<List|/type/List>s, the operator evaluates the lowest and highest values
 among all available values:
 
 =begin code
@@ -2019,7 +2086,7 @@ among all available values:
 ('a','b','z') minmax ('c','d','w');   # "a".."z"
 =end code
 
-Similarly, when applied to L<Hash>es, it performs a L<cmp> way comparison:
+Similarly, when applied to L<Hash|/type/Hash>es, it performs a L<cmp|/routine/cmp> way comparison:
 
 =begin code
 my %winner = points => 30, misses => 10;
@@ -2032,10 +2099,10 @@ my %loser = points => 20, misses => 10;
 =head1 Conditional operator precedence
 
 X<|operator,ternary>
-X<|operator,conditional>.
+X<|operator,conditional>
 =head2 infix C<?? !!>
 
-Also called I<ternary> or I<conditional> operator. C<$condition ?? $true !!
+Also called I<ternary> or I<conditional> operator, C<$condition ?? $true !!
 $false> evaluates C<$condition> and returns the expression right behind ??,
 in this case C<$true> if it is C<True>, otherwise evaluates and returns
 the expression behind !!, C<$false> in this case.
@@ -2045,12 +2112,10 @@ X<|operator,flipflop>
 
     sub infix:<ff>(Mu $a, Mu $b)
 
-Also called the I<flipflop operator>.
-
-Compares both arguments to C<$_> (that is, C<$_ ~~ $a> and C<$_ ~~ $b>).
-Evaluates to C<False> until the left-hand smartmatch is C<True>, at
-which point it evaluates to C<True> until the right-hand smartmatch is
-C<True>.
+Also called the I<flipflop operator>, compares both arguments to C<$_> (that is,
+C<$_ ~~ $a> and C<$_ ~~ $b>). Evaluates to C<False> until the left-hand
+smartmatch is C<True>, at which point it evaluates to C<True> until the
+right-hand smartmatch is C<True>.
 
 In effect, the left-hand argument is the "start" condition and the
 right-hand is the "stop" condition. This construct is typically used to
@@ -2069,7 +2134,6 @@ END
 my @codelines = gather for $excerpt.lines {
     take $_ if B<"=begin code" ff "=end code">
 }
-
 # this will print four lines, starting with "=begin code" and ending with
 # "=end code"
 say @codelines.join("\n");
@@ -2090,7 +2154,7 @@ condition, C<*> can be used as such.
         say $_ if /C/ ff *;    # OUTPUT: «C␤D␤E␤»
     }
 
-For the sed-like version, which does I<not> try C<$_> on the stop
+For the C<sed>-like version, which does I<not> try C<$_> on the stop
 condition after succeeding on the start condition, see L<C<fff>>.
 
 This operator cannot be overloaded, as it's handled specially by the
@@ -2184,7 +2248,8 @@ This operator cannot be overloaded, as it's handled specially by the compiler.
 
     sub infix:<fff^>(Mu $a, Mu $b)
 
-Like L<C<fff>>, except it does not return true for matches to the right argument.
+Like L<C<fff>>, except it does not return true for matches to the right
+argument.
 
     my @list = <A B C>;
     say $_ if /A/ fff /C/ for @list;   # OUTPUT: «A␤B␤C␤»
@@ -2229,9 +2294,9 @@ C<=> is parsed as item assignment or list assignment operator).
 
     sub infix:«=>»($key, Mu $value --> Pair:D)
 
-L<Pair> constructor.X<|pair constructor>
+L<Pair|/type/Pair> constructor.X<|pair constructor>
 
-Constructs a L<Pair> object with the left-hand side as the key and the
+Constructs a L<Pair|/type/Pair> object with the left-hand side as the key and the
 right-hand side as the value.
 
 Note that the C<< => >> operator is syntactically special-cased, in that
@@ -2241,7 +2306,7 @@ it allows unquoted identifier on the left-hand side.
     say $p.key;         # OUTPUT: «a␤»
     say $p.value;       # OUTPUT: «1␤»
 
-A L<Pair> within an argument list with an unquoted identifier on the left
+A L<Pair|/type/Pair> within an argument list with an unquoted identifier on the left
 is interpreted as a named argument.
 
 See L<the Terms language documentation|/language/terms#Pair> for more ways to
@@ -2253,7 +2318,7 @@ create C<Pair> objects.
 
     multi sub prefix:<not>(Mu $x --> Bool:D)
 
-Evaluates its argument in boolean context (and thus collapses L<Junction>s),
+Evaluates its argument in boolean context (and thus collapses L<Junction|/type/Junction>s),
 and negates the result. Please note that C<not> is easy to misuse. See
 L<traps|/language/traps#Loose_boolean_operators>.
 
@@ -2262,7 +2327,7 @@ L<traps|/language/traps#Loose_boolean_operators>.
 
     multi sub prefix:<so>(Mu $x --> Bool:D)
 
-Evaluates its argument in boolean context (and thus collapses L<Junction>s),
+Evaluates its argument in boolean context (and thus collapses L<Junction|/type/Junction>s),
 and returns the result.
 
 =head1 Comma operator precedence
@@ -2271,14 +2336,35 @@ and returns the result.
 
     sub infix:<,>(*@a --> List:D) is assoc<list>
 
-Constructs a L<List> from its arguments. Also used syntactically as the
-separator of arguments in calls.
+Constructs a higher-order L<Cool|/type/Cool> from its arguments.
+
+    my @list = :god('Þor'), ['is',"mighty"];
+    say @list;      # OUTPUT: «[god => Þor [is mighty]]␤»
+    my %hash = :god('Þor'), :is("mighty");
+    say %hash.perl; # OUTPUT: «{:god("Þor"), :is("mighty")}␤»
+    my %a = :11a, :22b;
+    say %(%a, :33x);  # OUTPUT: «{a => 11, b => 22, x => 33}␤»
+
+In the first case it returns a L<List|/type/List>, in the second case, since the arguments
+are L<Pair|/type/Pair>s, it builds a L<Hash|/type/Hash>.
+
+It can also be used for constructing variables from other variables, collating
+elements of different types, in this case a L<Hash|/type/Hash> and a L<Pair|/type/Pair>:
+
+=begin code :preamble<my %hash>
+my %features = %hash, :wields("hammer");
+say %features;  # OUTPUT: «{god => Þor, is => mighty, wields => hammer}␤»
+=end code
+
+The comma is also used syntactically as the separator of arguments in
+calls.
+
 
 =head2 infix C«:»
 
-Used as an argument separator just like infix C<,> and marks the argument to
-its left as the invocant. That turns what would otherwise be a function call
-into a method call.
+Used as an argument separator just like infix C<,> and marks the
+argument to its left as the invocant. That turns what would otherwise be
+a function call into a method call.
 
     substr('abc': 1);       # same as 'abc'.substr(1)
 
@@ -2310,13 +2396,13 @@ list:
     say 100, 200 Z+ 42, 23;             # OUTPUT: «(142 223)␤»
     say 1..3 Z~ <a b c> Z~ 'x' xx 3;    # OUTPUT: «(1ax 2bx 3cx)␤»
 
+X<|cross product operator>
 =head2 infix C«X»
 
     sub infix:<X>(**@lists --> List:D)
 
-Creates a cross product from all the lists, order so that the rightmost
-elements vary most rapidly:X<|cross product operator>
-
+Creates a cross product from all the lists, ordered so that the
+rightmost elements vary most rapidly:
     1..3 X <a b c> X 9
     # produces ((1 a 9) (1 b 9) (1 c 9)
     #           (2 a 9) (2 b 9) (2 c 9)
@@ -2334,41 +2420,49 @@ X<|...,operators>X<|...^,operators>X<|…,operators>X<|…^,operators>X<|lazy li
     multi sub infix:<...>(**@) is assoc<list>
     multi sub infix:<...^>(**@) is assoc<list>
 
-The X<sequence operator>, which can be written either C<...> or as C<…> (with variants C<...^> and C<…^>) will produce generic sequences on demand.
+The X<sequence operator>, which can be written either as C<...> or as
+C<…> (with variants C<...^> and C<…^>) will produce (possibly lazy)
+generic sequences on demand.
 
-The left-hand side will always include initial elements; it may
+The left-hand side will always include the initial elements; it may
 include a generator too. The right-hand side will have an endpoint,
-which can be C<Inf> or C<*> for "infinite" lists (whose elements are
-only produced on demand), an expression which will end the sequence
-when C<True>, or other elements such as L<Junctions>.
+which can be C<Inf> or C<*> for "infinite" lists (that is, I<lazy> lists
+whose elements are only produced on demand), an expression which will
+end the sequence when C<True>, or other elements such as
+L<Junctions|/type/Junction>.
 
 The sequence operator invokes the generator with as many arguments as
 necessary. The arguments are taken from the initial elements and the
-already generated elements. The default generator is C<*.>L<succ> or
-C<*.>L<pred>, depending on how the end points compare:
+already generated elements. The default generator is
+C<*.>L<succ|/routine/succ> or C<*.>L<pred|/routine/pred>, depending on how the
+end points compare:
 
     say 1 ... 4;        # OUTPUT: «(1 2 3 4)␤»
     say 4 ... 1;        # OUTPUT: «(4 3 2 1)␤»
     say 'a' ... 'e';    # OUTPUT: «(a b c d e)␤»
     say 'e' ... 'a';    # OUTPUT: «(e d c b a)␤»
 
-An endpoint of C<*> (L<Whatever>), C<Inf> or C<∞>  generates on demand an infinite sequence,
-with a default generator of *.succ
+An endpoint of C<*> (L<Whatever|/type/Whatever>), C<Inf> or C<∞>
+generates on demand an infinite sequence, with a default generator of
+C<*.succ>
 
     say (1 ... *)[^5];  # OUTPUT: «(1 2 3 4 5)␤»
 
-Custom generators need to be the last element of the list before the '...' operator.
-This one takes two arguments, and generates the Fibonacci numbers
+Custom generators need to be the last element of the list before the
+'...' operator. This one takes two arguments, and generates the
+eight first Fibonacci numbers
 
-    say (1, 1, -> $a, $b { $a + $b } ... *)[^8];    # OUTPUT: «(1 1 2 3 5 8 13 21)␤»
-    # same but shorter
-    say (1, 1, * + * ... *)[^8];                    # OUTPUT: «(1 1 2 3 5 8 13 21)␤»
+=for code
+say (1, 1, -> $a, $b { $a + $b } ... *)[^8]; # OUTPUT: «(1 1 2 3 5 8 13 21)␤»
+# same but shorter
+say (1, 1, * + * ... *)[^8];                 # OUTPUT: «(1 1 2 3 5 8 13 21)␤»
 
 Of course the generator can also take only one argument.
 
-    say 5, { $_ * 2 } ... 40;                       # OUTPUT: «5 10 20 40␤»
+    say 5, { $_ * 2 } ... 40;                # OUTPUT: «5 10 20 40␤»
 
-There must be at least as many initial elements as arguments to the generator.
+There must be at least as many initial elements as arguments to the
+generator.
 
 Without a generator and with more than one initial element and all initial
 elements numeric, the sequence operator tries to deduce the generator. It
@@ -2386,7 +2480,7 @@ This allows you to write
 
     say 1, 1, * + * ...^ *>= 100;
 
-To generate all Fibonacci numbers up to but excluding 100.
+to generate all Fibonacci numbers up to but excluding 100.
 
 The C<...> operators consider the initial values as "generated elements" as
 well, so they are also checked against the endpoint:
@@ -2398,18 +2492,20 @@ well, so they are also checked against the endpoint:
 =head1 List prefix precedence
 
 X<|list =>
+X<List assignment operator>.
 =head2 infix C«=»
 
-X<List assignment operator>. Its exact semantics are left to the container type
-on the left-hand side. See L<Array> and L<Hash> for common cases.
+In this context, it acts as the list assignment operator. Its exact
+semantics are left to the container type on the left-hand side. See
+L<Array|/type/Array> and L<Hash|/type/Hash> for common cases.
 
-The distinction between item assignment and list assignment is determined by
-the parser depending on the syntax of the left-hand side.
+The distinction between item assignment and list assignment is
+determined by the parser depending on the syntax of the left-hand side.
 
 =head2 infix C«:=»
 
-X<Binding operator>. Whereas C<$x = $y> puts the value in C<$y> into C<$x>, C<$x :=
-$y> makes C<$x> and C<$y> the same thing.
+X<Binding operator>. Whereas C<$x = $y> puts the value in C<$y> into
+C<$x>, C<$x := $y> makes C<$x> and C<$y> the same thing.
 
     my $a = 42;
     my $b = $a;
@@ -2428,10 +2524,11 @@ different.
 This will output 43, since C<$b> and C<$a> both represented the same
 object.
 
-If type constrains on variables or containers are present a type check will be
-performed at runtime. On failure C<X::TypeCheck::BindingType> will be thrown.
+If type constrains on variables or containers are present a type check
+will be performed at runtime. On failure C<X::TypeCheck::BindingType>
+will be thrown.
 
-Please note that C<:=> is a compile time construct. As such it can not
+Please note that C<:=> is a compile time operator. As such it can not
 be referred to at runtime and thus can't be used as an argument to
 metaoperators.
 
@@ -2440,40 +2537,37 @@ metaoperators.
 X<Read-only binding operator>, not yet implemented in Rakudo.
 See L<C<infix :=>|:=>.
 
+X<|stub operator>
 =head2 listop C«...»
 
-X<|stub operator>
-The I<yada, yada, yada> operator or I<stub> operator. If it's the only
-statement in a routine or type, it marks that routine or type as a stub
-(which is significant in the context of pre-declaring types and composing
-roles).
+Called the I<yada, yada, yada> operator or I<stub> operator, if it's the
+only statement in a routine or type, it marks that routine or type as a
+stub (which is significant in the context of pre-declaring types and
+composing roles).
 
-If the C<...> statement is executed, it calls L<fail|/routine/fail>, with the default
-message C<stub code executed>.
-
-=head2 listop C«!!!»
+If the C<...> statement is executed, it calls L<fail|/routine/fail>,
+with the default message C<Stub code executed>.
 
 X<Fatal stub operator>.
+=head2 listop C«!!!»
 
-If it's the only
-statement in a routine or type, it marks that routine or type as a stub
-(which is significant in the context of pre-declaring types and composing
-roles).
+If it's the only statement in a routine or type, it marks that routine
+or type as a stub (which is significant in the context of pre-declaring
+types and composing roles).
 
-If the C<!!!> statement is executed, it calls L<die|/routine/die>, with the default
-message C<stub code executed>.
+If the C<!!!> statement is executed, it calls L<die|/routine/die>, with
+the default message C<Stub code executed>.
 
-=head2 listop C«???»
 
 X<Admonitory stub operator>.
+=head2 listop C«???»
 
-If it's the only
-statement in a routine or type, it marks that routine or type as a stub
-(which is significant in the context of pre-declaring types and composing
-roles).
+If it's the only statement in a routine or type, it marks that routine
+or type as a stub (which is significant in the context of pre-declaring
+types and composing roles).
 
-If the C<???> statement is executed, it calls L<warn|/routine/warn>, with the default
-message C<stub code executed>.
+If the C<???> statement is executed, it calls L<warn|/routine/warn>,
+with the default message C<Stub code executed>.
 
 =head2 Reduction operators
 
@@ -2485,31 +2579,33 @@ that reduces using that operation.
     my @a = (5, 6);
     say [*] @a;           # 5 * 6 = 30
 
-Reduction operators have the same associativity as the operators they are based on.
+Reduction operators have the same associativity as the operators they
+are based on.
 
     say [-] 4, 3, 2;      # 4-3-2 = (4-3)-2 = -1
     say [**] 4, 3, 2;     # 4**3**2 = 4**(3**2) = 262144
 
 =head1 Loose AND precedence
 
-=head2 infix C«and»
+=head2 infix X<C«and»>
 
 Same as L<infix &&|/language/operators#infix_%26%26>, except with looser
 precedence.
 
-Short-circuits so that it returns the first operand that evaluates to C<False>, otherwise
-returns the last operand. Note that C<and> is easy
-to misuse. See L<traps|/language/traps#Loose_boolean_operators>.
+Short-circuits so that it returns the first operand that evaluates to
+C<False>, otherwise returns the last operand. Note that C<and> is easy
+to misuse, see L<traps|/language/traps#Loose_boolean_operators>.
 
-=head2 infix C«andthen» X<|andthen>
+=head2 infix X<C«andthen»>
 
-The C<andthen> operator returns L«C<Empty>|/type/Slip#index-entry-Empty-Empty» upon encountering
-the first L<undefined|/routine/defined> argument, otherwise the last argument.
-Last argument
-is returned as-is, without being checked for definedness at all.
-Short-circuits. The result of the left side is bound to C<$_> for the
-right side, or passed as arguments if the right side is a
-L«C<Callable>|/type/Callable», whose L<count> must be C<0> or C<1>.
+The C<andthen> operator returns
+L«C<Empty>|/type/Slip#index-entry-Empty-Empty» upon encountering the
+first L<undefined|/routine/defined> argument, otherwise the last
+argument. Last argument is returned as-is, without being checked for
+definedness at all. Short-circuits. The result of the left side is bound
+to C<$_> for the right side, or passed as arguments if the right side is
+a L«C<Callable>|/type/Callable», whose L<count|/routine/count> must be C<0>
+or C<1>.
 
 A handy use of this operator is to alias a routine's return value to C<$_> and
 to do additional manipulation with it, such as printing or returning it to
@@ -2541,21 +2637,24 @@ behaviour:
     .say with 42;
     42 andthen .say;
 
-=head2 infix C«notandthen»
+=head2 infix X<C«notandthen»>
 
-The X<notandthen> operator returns L«C<Empty>|/type/Slip#index-entry-Empty-Empty» upon encountering
-the first L<defined|/routine/defined> argument, otherwise the last argument.
-Last argument is returned as-is, without being checked for definedness at all.
-Short-circuits. The result of the left side is bound to C<$_> for the
-right side, or passed as arguments if the right side is a
-L«C<Callable>|/type/Callable», whose L<count> must be C<0> or C<1>.
+The C<notandthen> operator returns
+L«C<Empty>|/type/Slip#index-entry-Empty-Empty» upon encountering the first
+L<defined|/routine/defined> argument, otherwise the last argument. Last argument
+is returned as-is, without being checked for definedness at all. Short-circuits.
+The result of the left side is bound to C<$_> for the right side, or passed as
+arguments if the right side is a L«C<Callable>|/type/Callable», whose
+L<count|/routine/count> must be C<0> or C<1>.
 
-At first glance, L<notandthen> might appear to be the same thing as the L<orelse>
-operator. The difference is subtle: L<notandthen> returns
+At first glance, L<notandthen|/routine/notandthen> might appear to be the same
+thing as the L<orelse|/routine/orelse> operator. The difference is subtle:
+L<notandthen|/routine/notandthen> returns
 L«C<Empty>|/type/Slip#index-entry-Empty-Empty» when it encounters a
-L<defined> item (that isn't the last item), whereas L<orelse> returns that
-item. In other words, L<notandthen> is a means to act when items aren't
-defined, whereas L<orelse> is a means to obtain the first defined item:
+L<defined|/routine/defined> item (that isn't the last item), whereas
+L<orelse|/routine/orelse> returns that item. In other words,
+L<notandthen|/routine/notandthen> is a means to act when items aren't defined,
+whereas L<orelse|/routine/orelse> is a means to obtain the first defined item:
 
 =begin code
 sub all-sensors-down     { [notandthen] |@_, True             }
@@ -2602,11 +2701,11 @@ Returns the first defined argument, or else the last argument. Last argument
 is returned as-is, without being checked for definedness at all.
 Short-circuits. The result of the left side is bound to
 C<$_> for the right side, or passed as an argument if the right side is a
-L«C<Callable>|/type/Callable», whose L<count> must be C<0> or C<1>.
+L«C<Callable>|/type/Callable», whose L<count|/routine/count> must be C<0> or C<1>.
 
 This operator is useful for handling L<Failures|/type/Failure> returned by
-routines since the expected value is usually L<defined>
-and L<Failure> never is:
+routines since the expected value is usually L<defined|/routine/defined>
+and L<Failure|/type/Failure> never is:
 
     sub meows { ++$ < 4 ?? fail 'out of meows!' !! '🐱' }
 
@@ -2797,7 +2896,7 @@ language:
 Operator class | Identity value
 ===============+===============
 Equality       | Bool::True
-Arithmetic +   | 0
+Arithmetic \+  | 0
 Arithmetic *   | 1
 Comparison     | True
 Bitwise        | 0
@@ -2814,7 +2913,7 @@ For instance, union of an empty list will return an empty set:
 This only applies to operators where empty or 0 is always a valid operand. For
 instance, applying it to division will yield an exception.
 
-=for code :skip-test<Illustrates exception>
+=for code
 say [%] ();# OUTPUT: «(exit code 1) No zero-arg meaning for infix:<%>␤
 
 =end pod

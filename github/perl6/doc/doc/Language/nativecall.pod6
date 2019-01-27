@@ -41,7 +41,7 @@ are trying to create.
 NativeCall provides a C<symbol> trait for you to specify the name of the native
 routine in your library that may be different from your Perl subroutine name.
 
-=begin code :skip-test
+=begin code :solo
 unit module Foo;
 use NativeCall;
 our sub init() is native('foo') is symbol('FOO_INIT') { * }
@@ -125,13 +125,14 @@ my $result = clock_gettime( 0, $this-time);
 say "$result, $this-time"; # OUTPUT: «0, timespec<65385480>␤»
 =end code
 
-The L<original function we are calling,
-L<clock_gettime>|https://linux.die.net/man/3/clock_gettime>, uses a pointer to
-the C<timespec> struct as second argument. We declare it as a L<class> here, but
-specify its representation as C<is repr('CStruct')>, to indicate it corresponds
-to a C data structure. When we create an object of that class, we are creating
-exactly the kind of pointer C<clock_gettime> expects. This way, data can be
-transferred seamlessly to and from the native interface.
+The original function we are calling,
+L<clock_gettime|https://linux.die.net/man/3/clock_gettime>, uses a pointer to
+the C<timespec> struct as second argument. We declare it as a
+L<class|/syntax/class> here, but specify its representation as C<is
+repr('CStruct')>, to indicate it corresponds to a C data structure. When we
+create an object of that class, we are creating exactly the kind of pointer
+C<clock_gettime> expects. This way, data can be transferred seamlessly to and
+from the native interface.
 
 
 =head1 Basic use of pointers
@@ -309,7 +310,7 @@ from the Perl 6 point of view:
 
 =item C<AT-POS> provides a specific element at the given position (starting from zero);
 
-=item C<list> provides the L<List> of elements within the array building
+=item C<list> provides the L<List|/type/List> of elements within the array building
 it from the native array iterator.
 
 As an example, consider the following simple piece of code:
@@ -336,17 +337,17 @@ for 0..$native-array.elems - 1 -> $position {
 that produces the following output
 
 =for code :lang<output>
-  Number of elements: 5
-  Current element is: 1
-  Current element is: 2
-  Current element is: 3
-  Current element is: 4
-  Current element is: 5
-  Element at position 0 is 1
-  Element at position 1 is 2
-  Element at position 2 is 3
-  Element at position 3 is 4
-  Element at position 4 is 5
+Number of elements: 5
+Current element is: 1
+Current element is: 2
+Current element is: 3
+Current element is: 4
+Current element is: 5
+Element at position 0 is 1
+Element at position 1 is 2
+Element at position 2 is 3
+Element at position 3 is 4
+Element at position 4 is 5
 
 =head1 Structs
 
@@ -626,7 +627,7 @@ leaks.
 
 =head2 Buffers and blobs
 
-L<Blob>s and L<Buf>s are the Perl 6 way of storing binary data. We can use them
+L<Blob|/type/Blob>s and L<Buf|/type/Buf>s are the Perl 6 way of storing binary data. We can use them
 for interchange of data with native functions and data structures, although not
 directly. We will have to use L<C<nativecast>|/routine/nativecast>.
 
@@ -667,20 +668,20 @@ to be prepended with "lib" and appended with ".so" (or just appended with
 ".dll" on Windows), and will be searched for in the paths in the
 LD_LIBRARY_PATH (PATH on Windows) environment variable.
 
-=begin code :skip-test
-    use NativeCall;
-    constant LIBMYSQL = 'mysqlclient';
-    constant LIBFOO = '/usr/lib/libfoo.so.1';
-    sub LIBBAR {
-        my $path = qx/pkg-config --libs libbar/.chomp;
-        $path ~~ s/\/[[\w+]+ % \/]/\0\/bar/;
-        $path
-    }
-    # and later
+=begin code
+use NativeCall;
+constant LIBMYSQL = 'mysqlclient';
+constant LIBFOO = '/usr/lib/libfoo.so.1';
+sub LIBBAR {
+    my $path = qx/pkg-config --libs libbar/.chomp;
+    $path ~~ s/\/[[\w+]+ % \/]/\0\/bar/;
+    $path
+}
+# and later
 
-    sub mysql_affected_rows returns int32 is native(LIBMYSQL) {*};
-    sub bar is native(LIBFOO) {*}
-    sub baz is native(LIBBAR) {*}
+sub mysql_affected_rows returns int32 is native(LIBMYSQL) {*};
+sub bar is native(LIBFOO) {*}
+sub baz is native(LIBBAR) {*}
 =end code
 
 You can also put an incomplete path like './foo' and NativeCall will automatically put
@@ -986,7 +987,7 @@ a buffer with the C<addrinfo>.
 
 Putting all these together, leads to the following program:
 
-=begin code :skip-test<Code works as is. Error with compilation maybe related to wrapping>
+=begin code :solo
 #!/usr/bin/env perl6
 
 use v6;

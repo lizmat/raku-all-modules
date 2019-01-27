@@ -136,6 +136,7 @@ sub write-Language-files() {
     my @a = 'A' .. 'Z';     # for the group pages
     my @n = '001' .. '999'; # page order for all files
 
+    my %actually-generated;
     for $cloc.IO.lines -> $line is copy {
         $line = strip-comment $line;
         say "DEBUG cloc line: '$line'" if $debug;
@@ -165,6 +166,7 @@ sub write-Language-files() {
             my $key-fname = substr $line, $idx+$n;
             $key-fname .= trim;
             my $fname = $key-fname ~ '.pod6';
+            %actually-generated{$key-fname} = True;
 
             # source filename
             my $from = "$fromdir/$fname";
@@ -179,6 +181,7 @@ sub write-Language-files() {
             my $to = "$todir/{$page-order}-{$fname}";
             say "DEBUG: to '$to'" if $debug;
             my $fh = open $to, :w;
+            my $line-no = 1;
             for $from.IO.lines -> $line is copy {
                 if $line ~~ /^ \h* '=begin' \h* pod / {
                     # check any existing :page-order entry
@@ -187,17 +190,24 @@ sub write-Language-files() {
                     }
                     else {
                         #$fh.say: "$line :page-order<{$page-order}>";
-                        $fh.say: "# THIS FILE IS AUTO-GENERATED--ALL EDITS WILL BE LOST";
-                        $fh.say: $line ~ " :link<$key-fname>";
-                        #$fh.say: "=comment THIS FILE IS AUTO-GENERATED--ALL EDITS WILL BE LOST";
+                        if $line-no < 5 {
+                            $fh.say: "# THIS FILE IS AUTO-GENERATED--ALL EDITS WILL BE LOST";
+                            $fh.say: $line ~ " :link<$key-fname>";
+                            #$fh.say: "=comment THIS FILE IS AUTO-GENERATED--ALL EDITS WILL BE LOST";
+                        } else {
+                            $fh.say: $line;
+                        }
                     }
                     next;
                 }
+                $line-no++;
                 $fh.say: $line;
             }
             $fh.close;
         }
     }
+    my $not-generated = %data.keys (-) %actually-generated.keys;
+    say "These files → $not-generated\nhave not been generated" if $not-generated;
 
     say "Normal end.";
     say "See new target files in dir '$todir'";

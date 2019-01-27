@@ -64,7 +64,7 @@ concepts than in keystrokes.
 As a result, there are various places in the syntax where whitespace is
 optional in Ruby, but is either mandatory or forbidden in Perl 6. Many of those
 restrictions are unlikely to concern much real-life Perl code (e.g. whitespace
-being disallowed between an array variable and its square braces), but there
+being disallowed between an array variable and its square brackets), but there
 are a few that will unfortunately conflict with some Ruby hackers' habitual
 coding styles:
 
@@ -76,8 +76,9 @@ foo (3, 4, 1); # Not right in Ruby or Perl 6 (in Perl 6 this would
                # try to pass a single argument of type List to foo)
 =end code
 
-    foo(3, 4, 1);  # Ruby and Perl 6
-    foo 3, 4, 1;   # Ruby and Perl 6 - alternative parentheses-less style
+=for code :preamble<sub foo($,$,$) {...}>
+foo(3, 4, 1);  # Ruby and Perl 6
+foo 3, 4, 1;   # Ruby and Perl 6 - alternative parentheses-less style
 
 =end item
 
@@ -108,16 +109,21 @@ while $x > 5 { ... }        # Perl 6, more idiomatic
 I<No space allowed before a postfix/postcircumfix operator (including
 array/hash subscripts).>
 
-    seen [ :fish ] = 1    # Ruby, not idiomatic but allowed
-    %seen< fish > = 1;    # Perl 6, no space allowed after 'seen'
+=for code :lang<ruby>
+seen [ :fish ] = 1    # Ruby, not idiomatic but allowed
+
+=for code :preamble<my %seen>
+%seen< fish > = 1;    # Perl 6, no space allowed after 'seen'
 =end item
 
 =begin item
 I<Space required before an infix operator if it would
 conflict with an existing postfix/postcircumfix operator.>
 
-    n<1     # Ruby (in Perl 6 this would conflict with postcircumfix < >)
-    $n < 1; # Perl 6
+=for code :lang<ruby>
+n<1     # Ruby (in Perl 6 this would conflict with postcircumfix < >)
+=for code :preamble<my $n>
+$n < 1; # Perl 6
 
 =end item
 
@@ -196,15 +202,19 @@ positional indexing and slicing capabilities.
 =begin item
 I<Indexing>
 
-    puts months[2]; # Ruby
-    say @months[2]; # Perl 6
+=for code :lang<ruby>
+puts months[2]; # Ruby
+=for code :preamble<my @months>
+say @months[2]; # Perl 6
 =end item
 
 =begin item
 I<Value-slicing>
 
-    puts months[8..11].join(',') # Ruby
-    say @months[8..11].join(',') # Perl 6
+=for code :lang<ruby>
+puts months[8..11].join(',') # Ruby
+=for code :preamble<my @months>
+say @months[8..11].join(',') # Perl 6
 =end item
 
 
@@ -215,7 +225,7 @@ C<%calories<apple>>, C<%calories<pear plum>>). Variables using the C<%> sigil
 can only contain things that do the C<Associative> role.
 
 Ruby uses square brackets to access values for both Arrays and Hashes. Perl 6
-uses curly braces for hashes instead. The angle-brackets version is available
+uses curly braces for hashes instead. The angle brackets version is available
 which always autoquotes its contents (strings without quotes):
 
 Adverbs can be used to control the type of slice.
@@ -223,32 +233,40 @@ Adverbs can be used to control the type of slice.
 =begin item
 I<Indexing>
 
-    puts calories["apple"]  # Ruby
-    say %calories{"apple"}; # Perl 6
+=for code :lang<ruby>
+puts calories["apple"]  # Ruby
+=for code :preamble<my %calories>
+say %calories{"apple"}; # Perl 6
 
-    puts calories["apple"]  # Ruby
-    puts calories[:apple]   # Ruby, symbols for keys are common
-    say %calories<apple>;   # Perl 6 - angle brackets instead of single-quotes
-    say %calories«"$key"»;  # Perl 6 - double angles interpolate as double-quotes
+=for code :lang<ruby>
+puts calories["apple"]  # Ruby
+puts calories[:apple]   # Ruby, symbols for keys are common
+=for code :preamble<my %calories; my $key>
+say %calories<apple>;   # Perl 6 - angle brackets instead of single-quotes
+say %calories«"$key"»;  # Perl 6 - double angles interpolate as double-quotes
 =end item
 
 =begin item
 I<Value-slicing>
 
-    puts calories.values_at('pear', 'plum').join(',') # Ruby
-    puts calories.values_at(%w(pear plum)).join(',')  # Ruby, pretty?
-    say %calories{'pear', 'plum'}.join(',');          # Perl 6
-    say %calories<pear plum>.join(',');               # Perl 6 (prettier)
-    my $keys = 'pear plum';
-    say %calories«$keys».join(','); # Perl 6, interpolated split
+=for code :lang<ruby>
+puts calories.values_at('pear', 'plum').join(',') # Ruby
+puts calories.values_at(%w(pear plum)).join(',')  # Ruby, pretty?
+=for code :preamble<my %calories; my $keys>
+say %calories{'pear', 'plum'}.join(',');          # Perl 6
+say %calories<pear plum>.join(',');               # Perl 6 (prettier)
+my $keys = 'pear plum';
+say %calories« $keys ».join(','); # Perl 6, interpolated split
 =end item
 
 =begin item
 I<Key/value-slicing>
 
-    say calories.slice('pear', 'plum').join(','); # Ruby, with ActiveRecord
-    say %calories{'pear', 'plum'}:kv.join(',');   # Perl 6 - use :kv adverb
-    say %calories<pear plum>:kv.join(',');        # Perl 6 (prettier version)
+=for code :lang<ruby>
+say calories.slice('pear', 'plum').join(','); # Ruby, with ActiveRecord
+=for code :preamble<my %calories>
+say %calories{'pear', 'plum'}:kv.join(',');   # Perl 6 - use :kv adverb
+say %calories<pear plum>:kv.join(',');        # Perl 6 (prettier version)
 =end item
 
 =head3 C<&> Sub
@@ -1048,7 +1066,7 @@ $ PERL6LIB="/some/module/lib" perl6 program.p6
 As with Ruby, if you don't specify C<PERL6LIB>, you need to specify the
 library path within the program via the C<use lib> pragma:
 
-=for code :skip-test<can't use lib here>
+=for code :solo
 # Ruby and Perl 6
 use lib '/some/module/lib';
 

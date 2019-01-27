@@ -70,14 +70,14 @@ use a sigil before the parenthesis:
 Individual elements can be pulled out of a list using a subscript.  The
 first element of a list is at index number zero:
 
-    =for code
-    say (1, 2)[0];  # says 1
-    say (1, 2)[1];  # says 2
-    say (1, 2)[2];  # says Nil
-    =for code :skip-test<syntax error>
-    say (1, 2)[-1]; # Error
-    =for code
-    say ((<a b>,<c d>),(<e f>,<g h>))[1;0;1]; # says "f"
+=for code
+say (1, 2)[0];  # says 1
+say (1, 2)[1];  # says 2
+say (1, 2)[2];  # says Nil
+=for code :skip-test<syntax error>
+say (1, 2)[-1]; # Error
+=for code
+say ((<a b>,<c d>),(<e f>,<g h>))[1;0;1]; # says "f"
 
 =head1 The @ sigil
 
@@ -166,7 +166,7 @@ above, the single argument rule I<... makes for behavior as the programmer would
 =head1 Testing for elements
 
 To test for elements in a C<List> or C<Array>, you can use the
-L<"is element of"|https://docs.perl6.org/language/setbagmix#infix_(elem)>
+L<"is element of"|/language/setbagmix#infix_(elem)>
 L<C<Set>|/type/Set> operator.
 
     my @a = <foo bar buzz>;
@@ -176,7 +176,7 @@ L<C<Set>|/type/Set> operator.
 This is the equivalent of:
 
 =for code :preamble<my @a>
-    'bar' (elem) @a.Set;    # convert the array to a Set first
+'bar' (elem) @a.Set;    # convert the array to a Set first
 
 except that, if possible, it won't actually do the conversion.
 
@@ -198,7 +198,7 @@ never ask them for all their elements.  In some cases, you may want to
 avoid asking them how long they are too – Perl 6 will try to return
 C<Inf> if it knows a sequence is infinite, but it cannot always know.
 
-These lists can be built using the L<...|/operators#infix_...> operator,
+These lists can be built using the L<...|/language/operators#infix_...> operator,
 which builds lazy lists using a variety of generating expressions.
 
 Although the C<Seq> class does provide some positional subscripting, it
@@ -241,7 +241,7 @@ C<Seq>|/type/Seq> for details.
 
 =head2 Using C<.iterator>
 
-All lists mix in the L<Iterator> role, and as such have an C<.iterator>
+All lists mix in the L<Iterator|/type/Iterator> role, and as such have an C<.iterator>
 method they can use for a finer control over a list. We can use it like
 this, for instance:
 
@@ -287,7 +287,7 @@ X<|laziness in Iterable objects>
 =head1 Lazy lists
 
 C<List>s, C<Seq>s (and any class that subclasses them, like C<Array>s) and any
-other class thet implements the L<Iterable> role can be lazy, which means that
+other class thet implements the L<Iterable|/type/Iterable> role can be lazy, which means that
 their values are computed on demand and stored for later use. To create a lazy
 object use L<gather/take|/language/control#gather/take> or the L<sequence
 operator|/language/operators#infix_...>. You can also write a class that
@@ -475,7 +475,7 @@ mathematicians that C<Inf> equals C<Inf-1>.
     say @a[0..2];     # OUTPUT: «(1 2 3)␤»
     say @a[0..^2];    # OUTPUT: «(1 2)␤»
     say @a[0..*];     # OUTPUT: «(1 2 3 4 5)␤»
-    say @a[0..^*];    # OUTPUT: «(1 2 3 4 5)␤»
+    say @a[0..^*];    # OUTPUT: «(1 2 3 4)␤»
     say @a[0..Inf-1]; # OUTPUT: «(1 2 3 4 5)␤»
 
 =head2 Array constructor context
@@ -598,7 +598,7 @@ X<|Shaped arrays>
 =head2 Fixed size arrays
 
 To limit the dimensions of an C<Array>, provide the dimensions separated by C<,>
-or C<;> in brackets after the name of the array container in case there is more
+or C<;> in square brackets after the name of the array container in case there is more
 than one dimension; these are called I<shaped> arrays too. The values of such a
 kind of C<Array> will default to C<Any>. The shape can be accessed at runtime
 via the C<shape> method.
@@ -613,7 +613,7 @@ via the C<shape> method.
 
 Shape will control the amount of elements that can be assigned by dimension:
 
-=begin code :skip-test<Illustrates exception>
+=begin code
 my @just-two[2] = <alpha betta kappa>;
 # Will throw exception: «Index 2 for dimension 1 out of range (must be 0..1)»
 =end code

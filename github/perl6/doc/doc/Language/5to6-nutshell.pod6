@@ -209,7 +209,7 @@ to add whitespace in Perl 6 code in places where it is otherwise not
 allowed.
 
 See also
-L<other lexical conventions in the syntax page|https://docs.perl6.org/language/syntax#Lexical_conventions>.
+L<other lexical conventions in the syntax page|/language/syntax#Lexical_conventions>.
 
 =head2 Sigils
 
@@ -277,7 +277,7 @@ variable holding a code object as an argument:
 first_index { $_ > 5 } @values;
 &first_index($coderef, @values); # (disabling the prototype that parses a
                                      # literal block as the first argument)
-=for code
+=for code :preamble<my @values; my $coderef>
 # Perl 6:
 first { $_ > 5 }, @values, :k;   # the :k makes first return an index
 first $coderef, @values, :k;
@@ -294,7 +294,8 @@ exact equivalent in Perl 5.
 
 =for code :lang<perl5>
 sub foo { say "before"; &bar;     say "after" } # Perl 5
-=for code
+
+=for code :preamble<sub bar() {...}>
 sub foo { say "before"; bar(|@_); say "after" } # Perl 6 - have to be explicit
 
 
@@ -389,7 +390,7 @@ say join ',', %months[6, 8..11];    # Perl 5
 say join ',', @months[6, 8..11]:kv; # Perl 6 - @ instead of %; use :kv adverb
 =end item
 
-Also note that the subscripting brackets are now a normal postcircumfix
+Also note that the subscripting square brackets are now a normal postcircumfix
 operator rather than a special syntactic form, and thus L<checking for
 existence of elements|#exists> and L<unsetting elements|#delete> is done
 with adverbs.
@@ -399,7 +400,7 @@ with adverbs.
 Index and slice operations on hashes no longer inflect the variable's
 L<sigil|#%_Hash>, and adverbs can be used to control the type of slice.
 Also, single-word subscripts are no longer magically autoquoted inside the
-curly braces; instead, the new angle-brackets version is available which
+curly braces; instead, the new angle brackets version is available which
 always autoquotes its contents (using the same rules as the C<qw//> quoting
 construct):
 
@@ -619,8 +620,8 @@ a sub that expects a hashref, then the usage is likely identical.
 
 If you were using C«=>» as a convenient shortcut to not have to quote part
 of a list, or in passing arguments to a sub that expects a flat list of
-KEY, VALUE, KEY, VALUE, then continuing to use C«=>» may break your code.
-The easiest workaround is to change the fat comma to a regular comma, and
+C<KEY, VALUE, KEY, VALUE>, then continuing to use C«=>» may break your code.
+The easiest workaround is to change that I<fat arrow> to a regular comma, and
 manually add quotes to its left-hand side. Or, you can change the sub's API
 to L<slurp a hash|/type/Signature#Slurpy_(A.K.A._variadic)_parameters>.
 A better long-term solution is to change the sub's API to
@@ -1119,7 +1120,7 @@ So when the matching process becomes complex, you finally need to have some
 understanding of both, especially how LTM strategy works. Besides, C<|> may be
 a better choice for grammar reuse.
 
-TODO more rules. Use L<< C<translate_regex.pl> from Blue Tiger|https://github.com/Util/Blue_Tiger/ >> in the meantime.
+TODO more rules. Use L<< C<translate_regex.pl> from Blue Tiger|https://github.com/Util/Blue_Tiger/>> in the meantime.
 
 =head3 Comments
 
@@ -1410,6 +1411,22 @@ the C<lines> method on the result of C<slurp> instead:
 
     my @lines = "test-file".IO.slurp.lines;  # also auto-chomps
 
+Also, be aware that $! is not really relevant for file IO operation failures in
+Perl 6. An IO operation that fails will return a failure instead of throwing an
+exception. If you want to return the failure message, it is in the failure
+itself, not in $!. To do similar IO error checking and reporting as in Perl 5:
+
+    my $fh = open('./bad/path/to/file', :w) or die $fh;
+
+Note: $fh instead of $!. Or, you can set $_ to the failure and die with $_:
+
+    my $fh = open('./bad/path/to/file', :w) orelse .die;
+
+Any operation that tries to use the failure will cause the program to fault and
+terminate. Even just a call to the C<.self> method is sufficient.
+
+    my $fh = open('./bad/path/to/file', :w).self;
+
 =head2 Capturing the standard output of executables.
 
 Whereas in Perl 5 you would do:
@@ -1429,13 +1446,13 @@ my $captured = qx(echo $arg);
 In Perl 6, you will probably want to run commands without using the shell:
 
     my $arg = 'Hello';
-    my $captured = run('echo', $arg, :out).out.slurp-rest;
-    my $captured = run(«echo "$arg"», :out).out.slurp-rest;
+    my $captured = run('echo', $arg, :out).out.slurp;
+    my $captured = run(«echo "$arg"», :out).out.slurp;
 
 You can also use the shell if you really want to:
 
     my $arg = 'Hello';
-    my $captured = shell("echo $arg", :out).out.slurp-rest;
+    my $captured = shell("echo $arg", :out).out.slurp;
     my $captured = qqx{echo $arg};
 
 But beware that in this case there is B<no protection at all>! C<run> does
@@ -1524,10 +1541,10 @@ module like so:
 =for code :lang<perl5>
 use ModuleName qw{foo bar baz};
 
-In Perl 6 one specifies the functions which are to be exported by using the
-C<is export> role on the relevant subs and I<all> subs with this role are
-then exported.  Hence, the following module C<Bar> exports the subs C<foo>
-and C<bar> but not C<baz>:
+In Perl 6 one specifies the functions which are to be exported by using
+the C<is export> role on the relevant subs; I<all> subs with this role
+are then exported.  Hence, the following module C<Bar> exports the subs
+C<foo> and C<bar> but not C<baz>:
 
 =begin code :solo
 unit module Bar;
@@ -1549,16 +1566,14 @@ If one tries to use C<baz> an "Undeclared routine" error is raised at
 compile time.
 
 So, how does one recreate the Perl 5 behaviour of being able to
-selectively import functions? For this one needs to define an C<EXPORT>
-sub inside the module which specifies the functions to be exported and
-remove the C<module Bar> statement.
+selectively import functions? By defining an C<EXPORT> sub inside the
+module which specifies the functions to be exported and removing the
+C<module Bar> statement.
 
-The module C<Bar> now is merely a file called C<Bar.pm6> with the
+The former module C<Bar> now is merely a file called C<Bar.pm6> with the
 following contents:
 
 =begin code :preamble<no strict;>
-use v6.c;
-
 sub EXPORT(*@import-list) {
     my %exportable-subs =
         '&foo' => &foo,
@@ -1579,8 +1594,8 @@ sub baz($z) { say "baz, $z" }
 =end code
 
 Note that the subs are no longer explicitly exported via the C<is
-export> role.  We are defining an C<EXPORT> sub which specifies the subs
-in the module we want to be available for export and then we are
+export> role, but by an C<EXPORT> sub which specifies the subs
+in the module we want to make available for export and then we are
 populating a hash containing the subs which will actually be exported.
 The C<@import-list> is set by the C<use> statement in the calling code
 thus allowing us to selectively import the subs made available by the
@@ -1593,7 +1608,7 @@ calling code:
 use Bar <foo>;
 foo(1);       #=> "foo 1"
 
-Here we see that even though C<bar> is able to be exported, if we don't
+Here we see that even though C<bar> is exportable, if we don't
 explicitly import it, it's not available for use.  Hence this causes an
 "Undeclared routine" error at compile time:
 
@@ -1602,33 +1617,34 @@ use Bar <foo>;
 foo(1);
 bar(5);       #!> "Undeclared routine: bar used at line 3"
 
-however, this will work
+However, this will work
 
 =for code :skip-test
 use Bar <foo bar>;
 foo(1);       #=> "foo 1"
 bar(5);       #=> "bar 5"
 
-Note also that C<baz> remains unimportable even if specified in the C<use>
-statement:
+Note also that C<baz> remains unimportable even if specified in the
+C<use> statement:
 
 =for code :skip-test
 use Bar <foo bar baz>;
 baz(3);       #!> "Undeclared routine: baz used at line 2"
 
-In order to get this to work, one obviously has to jump through many hoops.
-In the standard use-case where one specifies the functions to be exported
-via the C<is export> role, Perl 6 automatically creates the C<EXPORT> sub in
-the correct manner for you, so one should consider very carefully whether or
-not writing one's own C<EXPORT> routine is worthwhile.
+In order to get this to work, one obviously has to jump through many
+hoops. In the standard use-case where one specifies the functions to be
+exported via the C<is export> role, Perl 6 automatically creates the
+C<EXPORT> sub in the correct manner for you, so one should consider very
+carefully whether or not writing one's own C<EXPORT> routine is
+worthwhile.
 
 =head2 Importing groups of specific functions from a module
 
 If you would like to export groups of functions from a module, you just
-need to assign names to the groups, and the rest will work automagically.
-When you specify C<is export> in a sub declaration, you are in fact adding
-this subroutine to the C<:DEFAULT> export group.  But you can add a subroutine
-to another group, or to multiple groups:
+need to assign names to the groups, and the rest will work
+automagically. When you specify C<is export> in a sub declaration, you
+are in fact adding this subroutine to the C<:DEFAULT> export group.  But
+you can add a subroutine to another group, or to multiple groups:
 
 =for code :solo
 unit module Bar;
@@ -1816,7 +1832,7 @@ live on GitHub. An online converter may become available at some point.
 =item L<https://perlgeek.de/en/article/5-to-6>
 =item L<https://github.com/Util/Blue_Tiger/>
 =item L<https://perl6advent.wordpress.com/2011/12/23/day-23-idiomatic-perl-6/>
-=item L<https://docs.perl6.org/language/5to6-overview>
+=item L</language/5to6-overview>
 
 =end pod
 

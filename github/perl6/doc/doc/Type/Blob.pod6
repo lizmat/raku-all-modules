@@ -86,9 +86,9 @@ Defined as:
 
     method gist(Blob:D: --> Str:D)
 
-Returns the string containing the "gist" of the L<Blob>,
+Returns the string containing the "gist" of the L<Blob|/type/Blob>,
 B<listing up to the first 100> elements, separated by space, appending an
-ellipsis if the L<Blob> has more than 100 elements.
+ellipsis if the L<Blob|/type/Blob> has more than 100 elements.
 
     put Blob.new(1, 2, 3).gist; # OUTPUT: «Blob:0x<01 02 03>␤»
     put Blob.new(1..2000).gist;
@@ -137,14 +137,17 @@ values are given to fill the entire C<Blob>.
 
 =head2 method unpack
 
-This method is considered B<experimental>, in order to use it you will need to do:
+This method is considered B<experimental>, in order to use it you will need to
+do:
 
     use experimental :pack;
 
-
 Defined as:
 
-    method unpack(Blob:D: $template --> List:D)
+    method unpack(Blob:D: Str:D $template)
+    method unpack(Blob:D: @template)
+    multi sub unpack(Blob:D \blob, Str:D $template)
+    multi sub unpack(Blob:D \blob, @template)
 
 Extracts features from the blob according to the template string, and
 returns them as a list.
@@ -169,8 +172,8 @@ The following letters are recognized:
     C       Extract an element from the blob as an integer
     H       Extracts a hex string
     L       Extracts four elements and returns them as a single unsigned integer
-    n       Extracts two elements and combines them in "network" (big-endian) byte order into a single integer
-    N       Extracts four elements and combines them in "network" (big-endian) byte order into a single integer
+    n       Extracts two elements and combines them in "network" (BigEndian) byte order into a single integer
+    N       Extracts four elements and combines them in "network" (BigEndian) byte order into a single integer
     S       Extracts two elements and returns them as a single unsigned integer
     v       Same as S
     V       Same as L
@@ -187,13 +190,15 @@ Example:
 
 =head2 sub pack
 
-This subroutine is considered B<experimental>,  in order to use it you will need to do:
+This subroutine is considered B<experimental>,  in order to use it you will need
+to do:
 
 =for code
 use experimental :pack;
 
 =for code
-sub pack(Str $template, *@items --> Buf)
+sub pack(Str $template, *@items)
+sub pack(@template, *@items)
 
 Packs the given items according to the template and returns a buffer
 containing the packed bytes.
@@ -213,6 +218,151 @@ Returns a Blob with all elements in reversed order.
     say Blob.new([1, 2, 3]).reverse;    # OUTPUT: «Blob:0x<03 02 01>␤»
     say blob16.new([2]).reverse;        # OUTPUT: «Blob[uint16]:0x<02>␤»
     say buf32.new([16, 32]).reverse;    # OUTPUT: «Buf[uint32]:0x<20 10>␤»
+
+=head1 Methods on blob8 only (6.d, 2018.12 and later)
+
+These methods are available on the blob8 (and C<buf8>) types only.  They allow
+low level access to reading bytes from the underlying data and interpreting
+them in different ways with regards to type (integer or floating point (num)),
+size (8, 16, 32, 64 or 128 bits), signed or unsigned (for integer values) and
+endianness (native, little and big endianness).  The returned values are
+always expanded to a 64 bit native value where possible, and to a (big)
+integer value if that is not possible.
+
+Endianness must be indicated by using values of the L<Endian|/type/Endian>
+enum as the B<second> parameter to these methods.  If no endianness is
+specified, C<NativeEndian> will be assumed.  Other values are
+C<LittleEndian> and C<BigEndian>.
+
+=head2 method read-uint8
+
+Defined as:
+
+    method read-uint8(blob8:D: uint $pos, $endian = NativeEndian --> uint)
+
+Returns an unsigned native integer value for the byte at the given position.
+The C<$endian> parameter has no meaning, but is available for consistency.
+
+=head2 method read-int8
+
+Defined as:
+
+    method read-int8(blob8:D: uint $pos, $endian = NativeEndian --> int)
+
+Returns a native C<int> value for the byte at the given position.
+The C<$endian> parameter has no meaning, but is available for consistency.
+
+=head2 method read-uint16
+
+Defined as:
+
+    method read-uint16(blob8:D: uint $pos, $endian = NativeEndian --> uint)
+
+Returns a native C<uint> value for the B<two> bytes starting at the
+given position.
+
+=head2 method read-int16
+
+Defined as:
+
+    method read-int16(blob8:D: uint $pos, $endian = NativeEndian --> int)
+
+Returns a native C<int> value for the B<two> bytes starting at the given
+position.
+
+=head2 method read-uint32
+
+Defined as:
+
+    method read-uint32(blob8:D: uint $pos, $endian = NativeEndian --> uint)
+
+Returns a native C<uint> value for the B<four> bytes starting at the
+given position.
+
+=head2 method read-int32
+
+Defined as:
+
+    method read-int32(blob8:D: uint $pos, $endian = NativeEndian --> int)
+
+Returns a native C<int> value for the B<four> bytes starting at the given
+position.
+
+=head2 method read-uint64
+
+Defined as:
+
+    method read-uint64(blob8:D: uint $pos, $endian = NativeEndian --> UInt:D)
+
+Returns an unsigned integer value for the B<eight> bytes starting at the
+given position.
+
+=head2 method read-int64
+
+Defined as:
+
+    method read-int64(blob8:D: uint $pos, $endian = NativeEndian --> int)
+
+Returns a native C<int> value for the B<eight> bytes starting at the given
+position.
+
+=head2 method read-uint128
+
+Defined as:
+
+    method read-uint128(blob8:D: uint $pos, $endian = NativeEndian --> UInt:D)
+
+Returns an unsigned integer value for the B<sixteen> bytes starting at the
+given position.
+
+=head2 method read-int128
+
+Defined as:
+
+    method read-int128(blob8:D: uint $pos, $endian = NativeEndian --> Int:D)
+
+Returns an integer value for the B<sixteen> bytes starting at the given
+position.
+
+=head2 method read-num32
+
+Defined as:
+
+    method read-num32(blob8:D: uint $pos, $endian = NativeEndian --> int)
+
+Returns a native C<num> value for the B<four> bytes starting at the given
+position.
+
+=head2 method read-num64
+
+Defined as:
+
+    method read-num64(blob8:D: uint $pos, $endian = NativeEndian --> int)
+
+Returns a native C<num> value for the B<eight> bytes starting at the given
+position.
+
+=head1 Methods on blob8 only (6.d, 2019.01 and later)
+
+=head2 method read-ubits
+
+Defined as:
+
+    method read-ubits(blob8:D: uint $pos, uint $bits --> UInt:D)
+
+Returns an unsigned integer value for the B<bits> from the given B<bit> offset
+and given number of bits.  The endianness of the bits is assumed to be
+C<BigEndian>.
+
+=head2 method read-bits
+
+Defined as:
+
+    method read-bits(blob8:D: uint $pos, uint $bits --> Int:D)
+
+Returns a signed integer value for the B<bits> from the given B<bit> offset
+and given number of bits.  The endianness of the bits is assumed to be
+C<BigEndian>.
 
 =end pod
 
