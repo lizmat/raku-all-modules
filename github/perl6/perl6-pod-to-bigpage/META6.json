@@ -1,8 +1,8 @@
 {
     "perl" : "6.*",
     "name" : "Pod::To::BigPage",
-    "version" : "0.4.0",
-    "author" : "Wenzel P. P. Peppmeyer",
+    "version" : "0.5.1",
+    "author" : "Perl 6",
     "description" : "Render many pod6-files into one (big) html-file.",
     "license" : "Artistic-2.0",
     "provides" : {
@@ -14,7 +14,8 @@
     "depends" : [ "LWP::Simple" ],
     "test-depends" : [
         "Test",
-        "Test::When"
+        "Test::When",
+        "IO::Socket::SSL"
     ],
     "source-type" : "git",
     "source-url" : "git://github.com/perl6/perl6-pod-to-bigpage.git"

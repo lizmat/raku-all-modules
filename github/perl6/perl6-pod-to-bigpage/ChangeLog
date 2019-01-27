@@ -1,0 +1,4 @@
+2019-01-13  Juan J. merelo  <jmerelo@penny>
+
+	* META6.json: Bumps up after fixing the problem with links-that-were-arrays: https://github.com/perl6/perl6-pod-to-bigpage/issues/34
+
