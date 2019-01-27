@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jnthn/json-path.git
+	branch = master
+	commit = 4950a825cc85d34c2eda2735fd1ad07938b77f88
+	parent = 62ac5a8d8f42840a0ff11544adc49defc5da16ab
+	cmdver = 0.3.1

@@ -1,0 +1,13 @@
+{
+    "license": "MIT",
+    "source-url": "git://github.com/jnthn/json-path.git",
+    "depends": ["JSON::Fast"],
+    "auth": "Jonathan Worthington <jonathan@edument.se>",
+    "provides": {"JSON::Path": "lib/JSON/Path.pm6"},
+    "name": "JSON::Path",
+    "description": "Implementation of the JSONPath data structure query language.",
+    "perl": "6.*",
+    "test-depends": [],
+    "build-depends": [],
+    "version": "1.5"
+}
