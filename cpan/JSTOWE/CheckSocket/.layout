@@ -1,0 +1,51 @@
+{
+  "children": [
+    {
+      "name": "t",
+      "children": [
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "name": "020-func.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        }
+      ],
+      "type": "directory",
+      "purpose": null
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "CheckSocket.pm"
+        }
+      ],
+      "name": "lib",
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
