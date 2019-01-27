@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-SetUnion.git
+	branch = master
+	commit = 9cbbd65c67431cf1f9cb8811ceb95c68d4c87f1e
+	parent = 46e8615f0aa539157dac44b2c658b477373b8f2b
+	cmdver = 0.3.1
