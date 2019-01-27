@@ -1,0 +1,4 @@
+HTTP-Supply-*.tar.gz
+
+.precomp
+t/lib/.precomp

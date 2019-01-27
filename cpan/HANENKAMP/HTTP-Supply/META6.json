@@ -1,0 +1,42 @@
+{
+  "auth": "github:zostay",
+  "support": {
+    "source": "git://github.com/zostay/HTTP-Supply.git"
+  },
+  "meta-version": "0",
+  "source-url": "git://github.com/zostay/HTTP-Supply.git",
+  "license": "Artistic-2.0",
+  "resources": [
+    
+  ],
+  "authors": [
+    "Sterling Hanenkamp <hanenkamp@cpan.org>"
+  ],
+  "description": "A modern HTTP pipeline parser",
+  "depends": [
+    
+  ],
+  "version": "0.3.5",
+  "tags": [
+    
+  ],
+  "test-depends": [
+    "Test",
+    "Test::META"
+  ],
+  "build-depends": [
+    
+  ],
+  "perl": "6.c",
+  "provides": {
+    "HTTP::Supply::Request": "lib/HTTP/Supply/Request.pm6",
+    "HTTP::Supply::Response": "lib/HTTP/Supply/Response.pm6",
+    "HTTP::Supply::Body::ContentLength": "lib/HTTP/Supply/Body.pm6",
+    "HTTP::Supply::Body": "lib/HTTP/Supply/Body.pm6",
+    "HTTP::Supply::Tools": "lib/HTTP/Supply/Tools.pm6",
+    "HTTP::Supply::Body::ChunkEncoding": "lib/HTTP/Supply/Body.pm6",
+    "HTTP::Supply": "lib/HTTP/Supply.pm6",
+    "HTTP::Request::Supply": "lib/HTTP/Request/Supply.pm6"
+  },
+  "name": "HTTP::Supply"
+}
