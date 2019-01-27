@@ -1,0 +1,16 @@
+{
+    "name" : "Future",
+    "license" : "Artistic-2.0",
+    "version" : "0.1",
+    "description" : "A futuristic extension to Promises and other awaitables",
+    "authors" : [
+        "Sterling Hanenkamp <hanenkamp@cpan.org>"
+    ],
+    "perl" : "6.c",
+    "provides" : {
+        "Future": "lib/Future.pm6"
+    },
+    "depends" : [ ],
+    "test-depends" : [ "Test", "Test::META" ],
+    "source-url" : "git://github.com/zostay/perl6-Future.git"
+}

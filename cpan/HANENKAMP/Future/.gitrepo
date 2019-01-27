@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/perl6-Future.git
+	branch = master
+	commit = f176ab16ac5c88e104f38bac66686eb1d893c464
+	parent = 20710684c2b2a3259b9c5362cb9bd84c82a3cf1b
+	cmdver = 0.3.1
