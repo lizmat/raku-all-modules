@@ -1,0 +1,16 @@
+{
+    "name" : "RDF::Turtle",
+    "license" : "MIT",
+    "version" : "0.0.2",
+    "perl" : "6.c",
+    "description" : "Parse RDF Turtle files",
+    "depends" : [ "Terminal::ANSIColor" ],
+    "provides" : {
+        "RDF::Turtle" : "lib/RDF/Turtle.pm6",
+        "RDF::Turtle::Grammar" : "lib/RDF/Turtle/Grammar.pm6",
+        "RDF::Turtle::Actions" : "lib/RDF/Turtle/Actions.pm6",
+        "RDF::Turtle::Error" : "lib/RDF/Turtle/Error.pm6"
+    },
+    "authors" : [ "Brian Duggan" ],
+    "source-url" : "git://github.com/bduggan/p6-rdf-turtle.git"
+}

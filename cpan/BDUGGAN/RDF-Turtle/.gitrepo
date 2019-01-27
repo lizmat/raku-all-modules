@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bduggan/p6-rdf-turtle.git
+	branch = master
+	commit = 65b0651b3d656a9dcfcb5f0d68ea32b8944fc72a
+	parent = 06fe1af6e3ad5651008b1d55a7af821b3a314b0b
+	cmdver = 0.3.1
