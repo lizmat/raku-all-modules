@@ -1,0 +1,70 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "type": "directory",
+      "name": "t",
+      "children": [
+        {
+          "type": "file",
+          "name": "040-method.t"
+        },
+        {
+          "type": "file",
+          "name": "030-simple.t"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        },
+        {
+          "name": "050-attribute.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "020-basic.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "children": [
+        {
+          "name": "Object",
+          "type": "directory",
+          "children": [
+            {
+              "name": "Permission.pm",
+              "type": "file"
+            }
+          ],
+          "purpose": null
+        }
+      ],
+      "type": "directory",
+      "name": "lib",
+      "purpose": null
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Object-Permission.git
+	branch = master
+	commit = ecddc062a9c36d7d574be7b01605ae42c751a601
+	parent = 1cb2d8dcece36b4c3c1cf792835c5c95e88ee4f8
+	cmdver = 0.3.1
