@@ -23,14 +23,14 @@ my $text1 = q:heredoc/END/;
     *first
   ]
 - - 1
-  - 2
+  - !!str 2
 # foo
 ...
 # bar
 END
 
 my $match = load-yaml($text1);
-is-deeply($match, [1, [1, 16], {:baz("quz"), :foo("bar"), :baaz("buuz")}, { :baz(1) }, [ 1 ], [1, 2] ], "First test matches");
+is-deeply($match, [1, [1, 16], {:baz("quz"), :foo("bar"), :baaz("buuz")}, { :baz(1) }, [1], [1, "2"] ], "First test matches");
 
 
 
@@ -89,7 +89,7 @@ Stack:
 END
 my $expected3 = {
 	Fatal => "Unknown variable \"bar\"",
-	Stack => [ 
+	Stack => [
 		{
 			file => "TopClass.pl",
 			line => 23,
@@ -104,15 +104,15 @@ my $expected3 = {
 	User => "ed",
 }
 is-deeply(load-yaml($text3), $expected3, "Third test matches");
-is-deeply(load-yamls($text3), [ $expected3 ], "Third test matches in multi-doc mode too");
+is-deeply(load-yamls($text3), ( $expected3, ), "Third test matches in multi-doc mode too");
 
 my $text4 = q:heredoc/END/;
 %TAG !yaml! tag:yaml.org,2002:
 ---
-!yaml!str "foo"
+!yaml!str 1
 ...
 END
-my $expected4 = "foo";
+my $expected4 = "1";
 is(load-yaml($text4), $expected4, 'Tags and directives seem to work');
 
 done-testing();
