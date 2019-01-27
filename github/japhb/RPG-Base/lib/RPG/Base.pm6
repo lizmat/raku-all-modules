@@ -1,5 +1,5 @@
-use v6.c;
-unit class RPG::Base:ver<0.0.7>;
+use v6.d;
+unit class RPG::Base:ver<0.0.9>;
 
 
 =begin pod
@@ -85,11 +85,15 @@ depending on this one.
 Stylistically, I generally keep with Larry Wall's classic Perl formatting
 rules (4 space indents, uncuddled elses, opening brace on same line as the
 control structure it goes with, and so on).  I prefer to use the Unicode
-forms of operators such as C<»> and C<∈> rather than the Texas (pure ASCII)
-forms.  Due to quirks of my brain, I will tend to favor aligning similar
-parts of consecutive lines when I can get it.  This tends to manifest most
-often in variable and class attribute definitions, where I align the type
-names, attribute names, and default values in columns.
+forms of operators such as C<»> and C<∈> rather than the pure ASCII forms.
+Due to quirks of my brain, I will tend to favor aligning similar parts of
+consecutive lines when I can get it.  This tends to manifest most often in
+variable and class attribute definitions, where I align the type names,
+attribute names, and default values in columns.  Finally, I treat overall
+readability as more important than strict adherence to 80 column width, which
+I see as a good default because it happens to be fairly readable and guides
+one towards limiting the complexity of each line, not a hard limit that should
+be enforced with an iron will.
 
 =head1 AUTHOR
 
@@ -97,7 +101,7 @@ Geoffrey Broadwell <gjb@sonic.net>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2016-2017 Geoffrey Broadwell
+Copyright 2016-2018 Geoffrey Broadwell
 
 This library is free software; you can redistribute it and/or modify it under
 the Artistic License 2.0.

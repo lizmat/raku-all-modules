@@ -78,7 +78,7 @@ role RPG::Base::StatsBearer {
     }
 
 
-    #| Stats recognized by all instances of this class (as stat-name => default pairs); override in classes
+    #| Non-computed stats recognized by all instances of this class (as stat-name => default pairs); override in classes
     method base-stats() {
         ()
     }
@@ -97,6 +97,11 @@ role RPG::Base::StatsBearer {
     #| Add additional computed stats
     method add-computed-stats(@pairs) {
         %!stats{.key} = .value for @pairs;
+    }
+
+    #| Find matching modifiers in the modifier stack
+    method modifiers-matching(Mu $matcher) {
+        my @ = @!modifiers.grep($matcher)
     }
 
     #| Add modifier to modifier stack

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git@github.com:japhb/RPG-Base.git
 	branch = master
-	commit = 6fa9b16c9081409829d08a44db6e28664e6b9dc7
-	parent = 7acb5fc4ceb936c629eb823a432b27aac12e35e8
+	commit = 60b45ba0492a8a7acfd4a2668ab5bd6700a650f5
+	parent = 762f93703587e7a9c961b374d5c7048ba3d0cd04
 	cmdver = 0.3.1

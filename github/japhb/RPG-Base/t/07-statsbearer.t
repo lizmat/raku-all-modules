@@ -3,7 +3,7 @@ use RPG::Base::StatModifier;
 use RPG::Base::StatsBearer;
 
 
-plan 38;
+plan 48;
 
 
 class SolidCube does RPG::Base::StatsBearer {
@@ -90,6 +90,27 @@ class SolidCube does RPG::Base::StatsBearer {
     throws-like { $water.remove-modifier($frozen) },
         X::RPG::Base::StatsBearer::NotActive,
             "Can't remove a modifier that was never successfully added";
+
+    my $hot = RPG::Base::StatModifier.new(:stat('density'), :change(-.04));
+    $water.add-modifier($hot);
+    my  @mass-mods = $water.modifiers-matching(*.stat eq 'mass');
+    is +@mass-mods, 1,           "only one mass modifier in effect";
+    ok  @mass-mods[0] === $tank, "mass modifier is tank";
+
+    my  @negative-mods = $water.modifiers-matching(*.change < 0);
+    is +@negative-mods, 1,          "only one negative modifier in effect";
+    ok  @negative-mods[0] === $hot, "negative modifier is heat";
+
+    my  @all-mods = $water.modifiers-matching(?*);
+    is +@all-mods, 2,  "two modifiers in effect";
+    ok $_ ∈ @all-mods, "$_.stat()$_.change() is in effect" for $tank, $hot;
+
+    $water.remove-modifier($hot);
+        @negative-mods = $water.modifiers-matching(*.change < 0);
+    is +@negative-mods, 0, "removed negative modifier no longer matches";
+        @all-mods = $water.modifiers-matching(?*);
+    is +@all-mods, 1, "only one modifier still in effect";
+    ok  @all-mods[0] === $tank, "remaining modifier is correct";
 }
 
 

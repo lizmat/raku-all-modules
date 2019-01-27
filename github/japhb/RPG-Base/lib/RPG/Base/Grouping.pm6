@@ -27,25 +27,22 @@ class X::RPG::Base::Grouping::AlreadyMember is Exception {
 role RPG::Base::Grouping[::T] {
     # XXXX: Make private, with method members() producing a read-only view?
     # XXXX: (The above would make .members more expensive, but safer.)
-    has SetHash $.members handles 'Set';
-
-
-    method BUILD(SetHash(Any) :$!members) { }
+    has %.members is SetHash;
 
 
     # Coercers
-    method list() { $!members.keys.sort.cache }
+    method list() { %!members.keys.sort.cache }
 
 
     # Invariant checkers
     method !throw-unless-member($member) {
         X::RPG::Base::Grouping::NotMember.new(:$member, :grouping(self)).throw
-            unless $!members{$member};
+            unless %!members{$member};
     }
 
     method !throw-if-already-member($member) {
         X::RPG::Base::Grouping::AlreadyMember.new(:$member, :grouping(self)).throw
-            if $!members{$member};
+            if %!members{$member};
     }
 
 
@@ -53,13 +50,13 @@ role RPG::Base::Grouping[::T] {
     method add-member(T $member) {
         self!throw-if-already-member($member);
 
-        $!members{$member} = True;
+        %!members{$member} = True;
     }
 
     #| Remove an existing member of this Grouping
     method remove-member(T $member) {
         self!throw-unless-member($member);
 
-        $!members{$member}:delete;
+        %!members{$member}:delete;
     }
 }

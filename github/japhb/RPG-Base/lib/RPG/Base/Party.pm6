@@ -7,7 +7,8 @@ class RPG::Base::Party
  does RPG::Base::Grouping[RPG::Base::Creature] {
 
     method gist() {
-        "{+$.members} member party"
-        ~ (': ' ~ $.members.keys».name.join(', ') if $.members)
+        my @members = self.list;
+        "{+@members} member party"
+        ~ (': ' ~ @members».name.join(', ') if @members)
     }
 }
