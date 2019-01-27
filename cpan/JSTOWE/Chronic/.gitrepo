@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Chronic.git
+	branch = master
+	commit = c1c4aea594ae473c549bb7a2d4ec0882c02e400b
+	parent = a57be38d05a36d390ab190627f9fd5c932b4848a
+	cmdver = 0.3.1

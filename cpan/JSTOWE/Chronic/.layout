@@ -1,0 +1,59 @@
+{
+  "children": [
+    {
+      "type": "directory",
+      "children": [
+        {
+          "name": "040-at.t",
+          "type": "file"
+        },
+        {
+          "name": "001-use.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "name": "030-pattern.t",
+          "type": "file"
+        },
+        {
+          "name": "020-basic.t",
+          "type": "file"
+        }
+      ],
+      "purpose": null,
+      "name": "t"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "name": "lib",
+      "children": [
+        {
+          "type": "file",
+          "name": "Chronic.pm"
+        }
+      ],
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
