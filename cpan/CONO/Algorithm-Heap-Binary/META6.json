@@ -1,0 +1,15 @@
+{
+    "perl" : "6.c",
+    "name" : "Algorithm::Heap::Binary",
+    "version" : "0.0.1",
+    "description" : "BinaryHeap data structure",
+    "authors" : [ "cono" ],
+    "license" : "Artistic-2.0",
+    "provides" : {
+	"Algorithm::Heap" : "lib/Algorithm/Heap.pm6",
+	"Algorithm::Heap::Binary" : "lib/Algorithm/Heap/Binary.pm6"
+    },
+    "depends" : [ ],
+    "resources" : [ ],
+    "source-url" : "git@github.com:cono/p6-algorithm-heap-binary.git"
+}

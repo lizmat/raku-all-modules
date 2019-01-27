@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:cono/p6-algorithm-heap-binary.git
+	branch = master
+	commit = bfc69d9ea4a9d6738f37d98e8d31f4ac7b32ffa2
+	parent = 839b6efd999b20541c912a1bc9bc9349af2377d0
+	cmdver = 0.3.1
