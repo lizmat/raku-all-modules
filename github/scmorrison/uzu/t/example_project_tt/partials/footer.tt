@@ -1,4 +1,0 @@
-<footer>
-    <p>[% i18n.copyright %]</p>
-    <a class="navbar-brand" href="/about.html">About Us</a>
-</footer>

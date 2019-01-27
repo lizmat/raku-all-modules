@@ -1,8 +1,0 @@
----
-open: "{"
-close: "}"
----
-[% open %]
-    "site_name": "[% i18n.site_name %]"
-
-[% close %]

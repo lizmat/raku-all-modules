@@ -1,3 +1,0 @@
-[% INCLUDE "head" %]
-    [% INCLUDE "content" %]
-[% INCLUDE "footer" %]
