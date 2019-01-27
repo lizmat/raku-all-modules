@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git@github.com:zostay/p6-Getopt-ForClass.git
 	branch = master
-	commit = 31a3b243e0faf74c2ce2d644a05648789809e916
-	parent = d83fd2552d695a5a247695de06084077dcbf3891
+	commit = 00bb1fafee5d878f8afb701ed670588271493cae
+	parent = afac2617070dbabac0c96bb9ca0c98c9f06506ba
 	cmdver = 0.3.1
