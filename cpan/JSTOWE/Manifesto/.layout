@@ -1,0 +1,74 @@
+{
+  "children": [
+    {
+      "purpose": null,
+      "name": "examples",
+      "type": "directory",
+      "children": [
+        {
+          "name": "schedule",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "synopsis"
+        }
+      ]
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "t",
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "010-use.t"
+        },
+        {
+          "type": "file",
+          "name": "040-synopsis.t"
+        },
+        {
+          "name": "020-promises.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "name": "030-failures.t",
+          "type": "file"
+        }
+      ],
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "name": "Manifesto.pm",
+          "type": "file"
+        }
+      ],
+      "purpose": null,
+      "name": "lib"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}
