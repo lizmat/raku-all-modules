@@ -2,7 +2,6 @@
 
 use v6;
 
-use v6;
 use lib 'lib';
 use Terminal::Caca;
 use Terminal::Caca::Point2D;
