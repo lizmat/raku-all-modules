@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:thundergnat/X11-Xdo.git
+	branch = master
+	commit = b846c0e5c1536da4da55e8ac32d264c8a14f95ca
+	parent = b665360c5c31e00978c8b3123614f603cbcaade1
+	cmdver = 0.3.1
