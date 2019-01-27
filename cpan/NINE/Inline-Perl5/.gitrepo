@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/niner/Inline-Perl5.git
+	branch = master
+	commit = d706991687574368dc526b2ea26a513b50b1f16c
+	parent = 2e5fbbc1dc4adf96f3a88ca7eb52ab66ae28836b
+	cmdver = 0.3.1
