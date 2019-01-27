@@ -15,10 +15,8 @@ class CSS::Writer {
 
     sub build-color-names(%colors) {
         %(
-            %colors.pairs.map: {
-                my (Str $name, Hash $val) = .kv;
-                my List $rgb = $val<rgb>;
-                my $hex = 256 * (256 * $rgb[0]  +  $rgb[1])  +  $rgb[2];
+            %colors.kv.map: -> Str $name, %foo ( :name($), :@rgb! ) {
+                my $hex = 256 * (256 * @rgb[0]  +  @rgb[1])  +  @rgb[2];
                 $hex => $name;
             }
         )
@@ -26,23 +24,21 @@ class CSS::Writer {
 
     sub build-color-values(%colors) {
         %(
-            %colors.pairs.map: {
-                my (Str $name, Hash $val) = .kv;
-                my List $rgb = $val<rgb>;
+            %colors.kv.map: -> Str $name, % ( :name($), :@rgb! ) {
 
                 with $name.index("gray") {
                     my $name-uk = $name;
                     $name-uk.substr-rw($_, 4) = 'grey';
-                    $name|$name-uk => $rgb;
+                    $name|$name-uk => @rgb;
                 }
                 else {
-                    $name => $rgb;
+                    $name => @rgb;
                 }
             }
         );
     }
 
-    my subset BoolOrHash where { !.defined || $_ ~~ Bool|Hash }
+    my subset BoolOrHash where { ($_//Bool) ~~ Bool|Hash }
     submethod TWEAK(BoolOrHash :$color-names, BoolOrHash :$color-values) {
 
         with $color-names {
@@ -133,17 +129,19 @@ class CSS::Writer {
     method write-expr( List $_ ) {
         my $sep = '';
 
-        [~] .map: -> $term is copy {
+        [~] .map: -> %term is copy {
 
-            $sep = '' if $term<op> && $term<op>;
+            $sep = '' if %term<op>;
 
-            if %!color-values && $term<ident> && my List $rgb = %!color-values{ $term<ident>.lc } {
-                # substitute a named color with it's rgb value
-                $term = {rgb => [ $rgb.map({ num => $_}) ]};
+            with %term<ident> {
+                with %!color-values{ .lc } -> @rgb {
+                    # substitute a named color with it's rgb value
+                    %term = %( rgb => [ @rgb.map({ num => $_}) ] );
+                }
             }
 
-            my $out = $sep ~ $.write($term);
-            $sep = $term<op> && $term<op> ne ',' ?? '' !! ' ';
+            my $out = $sep ~ $.write(%term);
+            $sep = %term<op> && %term<op> ne ',' ?? '' !! ' ';
             $out;
         }
     }
@@ -155,19 +153,19 @@ class CSS::Writer {
     #| @media all { body { background:lime; }} := $.write( :at-rule{ :at-keyw<media>, :media-list[ { :media-query[ :ident<all> ] } ], :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<body> } ] } ] ], :declarations[ { :ident<background>, :expr[ :ident<lime> ] }, ] } } ]} )
     #| @namespace svg url('http://www.w3.org/2000/svg'); := $.write( :at-rule{ :at-keyw<namespace>, :ns-prefix<svg>, :url<http://www.w3.org/2000/svg> } )
     #| @page :first { margin:5mm; } := $.write( :at-rule{ :at-keyw<page>, :pseudo-class<first>, :declarations[ { :ident<margin>, :expr[ :mm(5) ] }, ] } )
-    multi method write-at-rule(% (:$at-keyw where 'charset', :$string!) ) {
+    multi method write-at-rule(% (:$at-keyw! where 'charset', :$string!) ) {
         $.write-nodes( (:$at-keyw), (:$string) ) ~ ';'
     }
-    multi method write-at-rule(% (:$at-keyw where 'import', :$url, :$string, :$media-list) ) {
+    multi method write-at-rule(% (:$at-keyw! where 'import', :$url, :$string, :$media-list) ) {
         $.write-nodes( (:$at-keyw), (:$url), (:$string), (:$media-list) ) ~ ';'
     }
-    multi method write-at-rule(% (:$at-keyw where 'media', :$media-list, :$rule-list) ) {
+    multi method write-at-rule(% (:$at-keyw! where 'media', :$media-list, :$rule-list) ) {
         $.write-nodes( (:$at-keyw), (:$media-list), (:$rule-list) )
     }
-    multi method write-at-rule(% (:$at-keyw where 'namespace', :$ns-prefix, :$url) ) {
+    multi method write-at-rule(% (:$at-keyw! where 'namespace', :$ns-prefix, :$url) ) {
         $.write-nodes( (:$at-keyw), (:$ns-prefix), (:$url) ) ~ ';'
     }
-    multi method write-at-rule(% (:$at-keyw where 'page', :$pseudo-class, :$declarations) ) {
+    multi method write-at-rule(% (:$at-keyw! where 'page', :$pseudo-class, :$declarations) ) {
         $.write-nodes( (:$at-keyw), (:$pseudo-class), (:$declarations) )
     }
     multi method write-at-rule(% (:$at-keyw!, :$declarations!)) is default {
@@ -328,7 +326,7 @@ class CSS::Writer {
     }
 
     #| 'I\'d like some \BEE f!' := $.write-string("I'd like some \x[bee]f!")
-    method write-string( Str(Cool) $str --> Str) {
+    method write-string( Str() $str --> Str) {
         [~] flat ("'",
              $str.comb.map({
                  when /<CSS::Grammar::CSS3::stringchar-regular>|\"/ {$_}
@@ -409,7 +407,6 @@ class CSS::Writer {
     use CSS::Grammar::AST :CSSUnits;
 
     multi method write( *@args, *%opt ) is default {
-
         my $key = %opt.keys.sort.first({ $.can("write-$_") || (CSSUnits.enums{$_}:exists) })
             or die "unable to handle {%opt.keys} struct: {%opt.perl}";
         self."write-$key"(%opt{$key}, |%opt);

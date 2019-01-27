@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git@github.com:p6-css/CSS-Writer-p6.git
 	branch = master
-	commit = caf46adf3326df12e8ab793cfd257cb0a42079cb
-	parent = ec23395ad798b6776e48b859490d838cd14a8a8e
+	commit = 571791d28add37f1e7e3204bb018a5d6b3815ff4
+	parent = 6d8b8b4e5a18f7729a24def2bce81ba23ebc14aa
 	cmdver = 0.3.1
