@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/App-ModuleSnap.git
+	branch = master
+	commit = 1fd66844a764ab363d6d393c5070f000658c1c6e
+	parent = 3d57a992d962a82d29038aab969ad71fc14850c2
+	cmdver = 0.3.1

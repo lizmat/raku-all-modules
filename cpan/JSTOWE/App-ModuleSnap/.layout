@@ -1,0 +1,69 @@
+{
+  "children": [
+    {
+      "name": "t",
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        },
+        {
+          "name": "020-basic.t",
+          "type": "file"
+        }
+      ],
+      "type": "directory"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "type": "file",
+          "name": "p6-module-snapshot"
+        }
+      ],
+      "name": "bin",
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "children": [
+        {
+          "type": "directory",
+          "children": [
+            {
+              "type": "file",
+              "name": "ModuleSnap.pm"
+            }
+          ],
+          "name": "App",
+          "purpose": null
+        }
+      ],
+      "name": "lib",
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
