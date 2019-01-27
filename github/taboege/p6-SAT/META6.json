@@ -1,0 +1,22 @@
+{
+  "name"          : "SAT",
+  "version"       : "0.0.1",
+  "perl"          : "6.c",
+  "authors"       : "Tobias Boege",
+  "description"   : "Generic SAT solver interface and testing",
+  "tags"          : [ ],
+  "license"       : "Artistic-2.0",
+  "depends"       : [
+    "Compress::Zlib"
+  ],
+  "build-depends" : [ ],
+  "test-depends"  : [
+    "Test::META"
+  ],
+  "resources"     : [ ],
+  "provides"      : {
+    "SAT"         : "lib/SAT.pm6",
+    "Test::SAT"   : "lib/Test/SAT.pm6"
+  },
+  "source-url"    : "git://github.com/taboege/p6-SAT.git"
+}

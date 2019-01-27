@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:taboege/p6-SAT.git
+	branch = master
+	commit = bf2707323b6e9196361f2ed873d6b1587b20702c
+	parent = c360346f48191c65905b98cca401e1ff9bf44843
+	cmdver = 0.3.1

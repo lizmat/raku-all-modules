@@ -1,0 +1,17 @@
+  + Documentation and README. Test the testing routines?
+
+  + Import the test files used in existing SAT:: modules and provide
+    comprehensive subtests like basic-counter-test which performs what
+    is now the 01-samples.t in SAT::Counter::DSHARP, for instance.
+
+  + Define common error types for solvers.
+
+  + Like SAT::Solver modules can provide solvers with or without witnesses,
+    SAT::Counter should make provisions to support approximate counters.
+
+  + Solver configurability. This module should at least provide pure-perl
+    support for memory and time limit. A configuration interface should be
+    specified.
+
+  + Maybe implement pure-perl solvers of every kind in here to have (slow)
+    fallbacks.
