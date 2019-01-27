@@ -1,0 +1,21 @@
+Revision history for Algorithm-LBFGS
+
+{{$NEXT}}
+
+0.0.3  2018-08-04T08:21:05+09:00
+    - Fixes:
+      - Fix CArray handling
+    - Additions:
+    - Efficiency:
+
+0.0.2
+    - Fixes:
+       - Use SPDX identifier in license field of META6.json [#5]
+       - Use zef instead of panda [#6]
+    - Additions:
+       - Improve documentation
+    - Efficiency:
+       - Fix documentation
+
+0.0.1
+    - Initial version
