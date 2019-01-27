@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Method-Also.git
+	branch = master
+	commit = ccaf38554a3b2e58aa9db158c1ca719de08e8c7d
+	parent = 9d9ac5274410bba5ac2b6daf3e50e01f7440a1ab
+	cmdver = 0.3.1
