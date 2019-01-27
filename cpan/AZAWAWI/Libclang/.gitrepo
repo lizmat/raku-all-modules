@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/p6-libclang.git
+	branch = master
+	commit = 097ac8e7e25e9a1ac898bcf5de271d7ced5d232d
+	parent = 922811d2aa2fb576ccbac81564569504e581015c
+	cmdver = 0.3.1

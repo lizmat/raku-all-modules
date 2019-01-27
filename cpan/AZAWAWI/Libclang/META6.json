@@ -1,0 +1,31 @@
+{
+    "auth"          : "github:azawawi",
+    "authors"       : [
+        "Ahmad M. Zawawi"
+    ],
+    "description"   : "libclang bindings for Perl 6",
+    "license"       : "MIT",
+    "name"          : "Libclang",
+    "perl"          : "6.c",
+    "provides"      : {
+        "Libclang"                  : "lib/Libclang.pm6",
+        "Libclang::Cursor"          : "lib/Libclang/Cursor.pm6",
+        "Libclang::Index"           : "lib/Libclang/Index.pm6",
+        "Libclang::Raw"             : "lib/Libclang/Raw.pm6",
+        "Libclang::TranslationUnit" : "lib/Libclang/TranslationUnit.pm6"
+    },
+    "resources"     : [
+        "libclang-perl6.dll",
+        "libclang-perl6.dylib",
+        "libclang-perl6.so"
+    ],
+    "source-url"    : "git://github.com/azawawi/p6-libclang.git",
+    "tags"          : [
+        "libclang",
+        "NativeCall"
+    ],
+    "test-depends"  : [
+        "Test"
+    ],
+    "version"       : "0.3.0"
+}

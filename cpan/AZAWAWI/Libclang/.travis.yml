@@ -1,0 +1,34 @@
+language: generic
+
+os:
+  - linux
+  - osx
+
+env:
+  global:
+    - export PATH="/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH"
+addons:
+  apt:
+    sources:
+      - sourceline: 'deb https://dl.bintray.com/nxadm/rakudo-pkg-debs $(lsb_release -cs) main'
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?search=0x379CE192D401AB61&op=get'
+    packages:
+      - rakudo-pkg
+
+before_install:
+    # Display OS name
+  - echo $TRAVIS_OS_NAME
+
+  # Debian-based Linux libclang installation
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update               ; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install libclang-dev ; fi
+
+  # macOS libclang and rakudo-star installation
+  # Note: rakudo-star is needed on macOS since rakudo-pkg only covers Linux
+  # platforms
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update                    ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install llvm --with-clang ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install rakudo-star       ; fi
+
+install:
+  - zef install . && zef test . --verbose
