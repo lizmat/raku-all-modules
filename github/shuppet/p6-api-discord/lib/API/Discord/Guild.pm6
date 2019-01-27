@@ -1,4 +1,5 @@
 use API::Discord::Object;
+use API::Discord::Endpoints;
 
 unit class API::Discord::Guild does API::Discord::Object is export;
 
@@ -93,7 +94,53 @@ has @.members;
 has @.channels;
 has @.presences;
 
+method assign-role($user, *@role-ids) {
+    start {
+        my $e = endpoint-for( self, 'get-member', user-id => $user.id ) ;
+        my $member = await (await $.api.rest.get($e)).body;
+
+        $member<roles>.append: @role-ids;
+
+        await $.api.rest.patch($e,
+            body => {
+                roles => $member<roles>
+            }
+        );
+    }
+
+}
+
+method unassign-role($user, *@role-ids) {
+    start {
+        my $e = endpoint-for( self, 'get-member', user-id => $user.id ) ;
+        my $member = await (await $.api.rest.get($e)).body;
+
+        $member<roles> = $member<roles>.grep: @role-ids !~~ *;
+        say $member;
+
+        await $.api.rest.patch($e,
+            body => {
+                roles => $member<roles>
+            }
+        );
+    }
+}
+
 #! See L<Api::Discord::JSONy>
-method to-json {}
+method to-json {
+    my %self = self.Capture.hash;
+    my %json = %self<id name icon splash>:kv;
+
+    %json<owner> = %self<is-owner>;
+
+    return %json;
+}
+
 #! See L<Api::Discord::JSONy>
-method from-json ($json) {}
+method from-json (%json) {
+    my %constructor = %json<id name icon splash>:kv;
+    %constructor<is-owner> = %json<owner>;
+
+    %constructor<api> = %json<_api>;
+    return self.new(|%constructor);
+}
