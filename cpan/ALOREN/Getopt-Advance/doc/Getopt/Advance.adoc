@@ -1,0 +1,2243 @@
+= NAME
+
+:toc-title: contents
+:keywords: getopt command line option
+:Email: blackcatoverwall@gmail.com
+:Revision: 1.0
+:icons: font
+:source-highlighter: pygments
+:source-language: perl6
+:pygments-linenums-mode: table
+:toc: left
+:lang: en
+
+Getopt::Advance - An advance command line option parsing tools.
+
+= SYNOPSIS
+
+[source,perl6]
+-------------------------------
+#!/usr/bin/env perl6
+
+use Getopt::Advance;
+use Getopt::Advance::Parser;
+use Getopt::Advance::Exception;
+
+my @files = [];
+my OptionSet $optset .= new;
+
+$optset.insert-pos(
+    "directory",
+    0,
+    sub ($, $dirarg) {
+        die "$dirarg: Not a valid directory" if $dirarg.value.IO !~~ :d;
+        @files = gather &find($dirarg.value.IO);
+    }
+);
+$optset.append(
+    "h|help=b"      => "print this help.",
+    "v|version=b"   => "print program version.",
+    "?=b"           => "same as -h.",
+    :multi
+);
+$optset.append(
+    'd=b' => 'specify file type to directory',
+    'l=b' => 'specify file type to symlink',
+    'f=b' => 'specify file type to normal file',
+    :radio
+);
+for <d l f> -> $t {
+    $optset.set-callback(
+        $t,
+        -> $, $ { @files = @files.grep({ ."{$t}"(); }); }
+    );
+}
+$optset.push(
+    'size=i',
+    'the minimum size limit of file.',
+    callback => sub ($, $size) {
+        @files = @files.grep({ .s() >= $size.Int; });
+    }
+);
+$optset.insert-main(
+    sub main($optset, @args) {
+        return 0 if $optset<help> ^ $optset<version>;
+        if $optset.get-pos('directory', 0).?success {
+            @args.shift;
+        } else {
+            &ga-want-helper();
+        }
+        my $regex = +@args > 0 ?? @args.shift.value !! "";
+
+        if $regex eq "" {
+            .path.say for @files;
+        } else {
+            .path.say if .path ~~ /<$regex>/ for @files;
+        }
+    }
+);
+
+&getopt($optset, :autohv, parser => &ga-parser2);
+
+sub find($dir) {
+    for $dir.dir() -> $f {
+        take $f;
+        if $f ~~ :d {
+            &find($f);
+        }
+    }
+}
+-------------------------------
+
+
+.The help of script:
+[source,sh]
+-------------------
+Usage:
+./sample/find-file.p6 [directory] OPTIONs
+
+-d               specify file type to directory
+
+-v|--version     print program version.
+
+--size=<integer> the minimum size limit of file.
+
+-?               same as -h.
+
+-h|--help        print this help.
+
+-f               specify file type to normal file
+
+-l               specify file type to symlink
+-------------------
+
+= DESCRIPTION
+
+`Getopt::Advance` is a powerful command line option parsing tool, it support many style such as: **unix-style**,
+**gnu-style** etc.
+It can support `Option` have type such as `Integer`, `Array`, `Hash` compared to traditional command line
+tools.
+And for non-option argument, it provide `NonOption` feature.
+In addition, it also provide `Multi` and `Radio` which can manager multiple options relationship.
+
+= USAGE
+
+== OptionSet
+
+`OptionSet` is a set of `Option` as the literal mean. Provide interface manage your
+`Options`.
+
+=== new
+
+There are no argument of new:
+
+`my OptionSet $optset .= new();`
+
+=== Option
+
+`Option` is represent an option in the command line argument, for example '-c 42'.
+
+* `push(::OptionSet::D: Option:D $option -\-> OptionSet)`
+* `push(::OptionSet::D: Str:D $opt, :$value, :&callback -\-> OptionSet)`
+* `push(::OptionSet::D: Str:D $opt, Str:D $annotation, :$value, :&callback -\-> OptionSet)`
+
+.example
+[source,perl6]
+$optset.push("c|count=i", "set something int", value => 3, callback => sub ($option, $value) { say "get value $value"; });
+
+Above code add an option to the `OptionSet`, which with short name **c** and long name **count**.
+The second parameter set annotation of option to __set something int__, it will be used to generate
+help message.
+The `value` and `callback` are named argument, it will set the default value of option to **3**.
+And the `callback` will be called when option value set.
+
+NOTE: The first parameter of `callback` is current **Option** processed, and second is **value** set by user.
+
+* `append(::OptionSet::D: @options -\-> OptionSet)`
+* `append(::OptionSet::D: Str:D $opts -\-> OptionSet)`
+* `append(::OptionSet::D: *@optpairs where all(@optpairs) ~~ Pair -\-> OptionSet)`
+
+.example
+[source,perl6]
+$optset.append("c|count=i" => "set something int", "s|string=s" => "set something string")
+
+This code append two `Options` with their name and annotation to the `OptionSet`.
+
+* `get(::OptionSet::D: Str:D $name, Str:D $type = WhateverType)`
+
+.example
+[source,perl6]
+$optset.get('c', 'i');
+
+This will try to get a `Option` by its name and type, the sub will return **Any** if the `Option` not exists.
+
+* `has(::OptionSet::D: Str:D $name, Str:D $type = WhateverType -\-> Bool)`
+
+.example
+[source,perl6]
+$optset.has('c', 'i');
+
+This code check if there is a `Option` called **c** and it's type is **i**.
+
+* `Supply(::OptionSet::D: Str:D $name, Str:D $type = WhateverType -\-> Supply)`
+
+.example
+[source,perl6]
+---------------
+$optset.Supply('c').tap(-> \v {
+    my ($optset, $option, $v) = @(v);
+    # ... more
+})
+---------------
+
+This will return a Supply. When the `Option` set by user,
+current `OptionSet`, current `Option` and the `value` will be emitted.
+
+=== Group Operation
+
+`Group` can manage more than one `Option`, it provide some feature about option.
+For example, with radio group, it only accept one option in same time.
+
+* `append(::OptionSet::D: Str:D $opts, :$optional = True, :$multi -\-> ::OptionSet)`
+* `append(::OptionSet::D: Str:D $opts, :$optional = True, :$radio -\-> ::OptionSet)`
+* `append(::OptionSet::D: :$optional = True, :$multi, *@optpairs where all(@optpairs) ~~ Pair -\-> ::OptionSet)`
+* `append(::OptionSet::D: :$optional = True, :$radio, *@optpairs where all(@optpairs) ~~ Pair -\-> ::OptionSet)`
+
+.example
+[source,perl6]
+$optset.append("c|count=c;s|string=s", :radio);
+
+This add a radio group, it's only allow set one of them in same time.
+
+.example
+[source,perl6]
+$optset.append("c|count=c;s|string=s", :multi);
+
+This add a multiple group.
+
+=== NonOption Operation
+
+`NonOption` is represent non-option arguments in the command line arguments.
+
+* `insert-main(::OptionSet::D: &callback = sub () { True } -\-> Int)`
+* `insert-main(::OptionSet::D: Str:D $name, &callback = sub () { True } -\-> Int)`
+
+.example
+[source,perl6]
+$optset.insert-main(sub (@args) { .say for @args; });
+
+This insert a `NonOption::Main` to `OptionSet`, it will call with all non-option arguments.
+
+* `insert-cmd(::OptionSet::D: Str:D $name, &callback = sub () { True } -\-> Int)`
+* `insert-cmd(::OptionSet::D: Str:D $name, Str:D $annotation, &callback = sub () { True } -\-> Int)`
+
+.example
+[source,perl6]
+$optset.insert-cmd("load", sub (@args) { .say for @args; True; } );
+
+This insert a `NonOption::Cmd` to `OptionSet`, it will call with all non-option arguments except the name(load).
+It need user provide the command in the command line arguments, for example `scrpt.p6 load *OPTIONs`.
+
+* `insert-pos(::OptionSet::D: Str:D $name, &callback = sub () { True }, :$front, :$last -\-> Int)`
+* `insert-pos(::OptionSet::D: Str:D $name, Str:D $annotation, &callback = sub () { True }, :$front, :$last -\-> Int)`
+* `insert-pos(::OptionSet::D: Str:D $name, $index where Int:D | WhateverCode , &callback = sub () { True } --> Int)`
+* `insert-pos(::OptionSet::D: Str:D $name, Str:D $annotation, $index where Int:D | WhateverCode , &callback = sub () { True } --> Int)`
+
+.example
+[source,perl6]
+$optset.insert-pos("load", 0, sub ($arg) { say $arg; True; });
+
+This insert a `NonOption::Pos` to `OptionSet`, it will call with non-option argument matched by index(base on zero).
+The `front` and `last` will insert a `NonOption::Pos` with index 0 and * - 1, respectively.
+
+* `get(::OptionSet::D: Int:D $id)`
+* `get-main(::OptionSet::D:)`
+* `get-main(::OptionSet::D: Int:D $id)`
+* `get-main(::OptionSet::D: Str:D $name)`
+* `get-cmd(::OptionSet::D:)`
+* `get-cmd(::OptionSet::D: Int:D $id)`
+* `get-cmd(::OptionSet::D: Str:D $name)`
+* `get-pos(::OptionSet::D:)`
+* `get-pos(::OptionSet::D: Int:D $id)`
+* `get-pos(::OptionSet::D: Str:D $name, $index)`
+
+.example
+[source,perl6]
+$optset.get(2);
+$optset.get-main(2);
+
+The first line get an `NonOption` which id is 2.
+The second line get the `NonOption::Main` which id is 2.
+
+* `has(::OptionSet::D: Int:D $id -\-> False)`
+
+.example
+[source,perl6]
+$optset.has(2);
+
+Return True if the `NonOption` which id is 2 exists.
+
+* `Supply(::OptionSet::D: Int:D $id -\-> Supply)`
+* `Supply(::OptionSet::D: Int:D $id, :$main!, -\-> Supply)`
+* `Supply(::OptionSet::D: Int:D $id, :$cmd! , -\-> Supply)`
+* `Supply(::OptionSet::D: Int:D $id, :$pos! , -\-> Supply)`
+
+.example
+[source,perl6]
+---------------------
+$optset.Supply(2).tap(sub \v {
+    my ($optset, $no, $v) = @(v);
+    #... do more
+});
+---------------------
+
+This will return a Supply. When the `NonOption` set by user,
+current `OptionSet`, current `NonOption` and the `value` will be emitted.
+
+== Option
+
+`Option` can be create by a string.
+For example, `"a|action=b"` represent an option with two kind name,
+long name is `action`, and short name is `a`, and the option type is `boolean`.
+So you can set **action** argument to true by append `-a` or `--action`
+after your program.
+
+The list of Option type:
+
+.OptionType
+[cols="h,^.^,^.^,^.^m,^.^2m,^.^3m",options="header",width="100%",separator=^]
+|==================================
+^type ^has argument ^represent ^create example ^set example ^support style
+^boolean ^no  ^b ^a|action=b ^-a   ^unix gnu x bsd deactivate
+^integer ^yes ^i ^a|action=i ^-a=1 ^unix gnu x
+^float   ^yes ^f ^a|action=f ^-a 0.1^unix gnu x
+^string  ^yes ^s ^a|action=s ^--action "u" ^unix gnu x
+^array   ^yes ^a ^a|action=a ^--action "item" ^unix gnu x
+^hash    ^yes ^h ^a|action=h ^-a ":answer(42)" ^unix gnu x
+|==================================
+
+== NonOption
+
+`NonOption` can be use to handle `NOA`(short for non-option argument). You can get
+specific `NOA`, match them or call `callback` when matched.
+And value of the `NonOption` will set to return value of callback, default is True.
+The `NOA` index begin from **0**.
+
+NOTE: The `ga-parser` will process `NonOption` after all option argument matched after the value set.
+And `ga-parser2` will process `CMD` and `POS` before the `Option` value set, after process over.
+Then set the value, process the `MAIN` feature. Check the link:../../sample/find-file.p6[find-file] for more.
+
+=== POS
+
+`NonOption` `POS` capture `NOA` of specific position, but it's not force user supply an
+`NOA`. The parser will call it's callback when the `NOA` index matched.
+
+NOTE: The parser will process `POS` after `CMD`, and before `main`.
+The `POS` with index is 0 (i.e. front POS) maybe matched when `CMD` not matched.
+
+=== CMD
+
+`NonOption` `CMD` always capture the first NOA, and it's force user supply one of
+available `CMDs`. The parser will call it's callback when first `NOA` name matched.
+
+NOTE: The parser will process `CMD` first. If a `POS` (with index 0) provide,
+parser will not throw exception when `POS` matched, otherwise it will raise an exception
+when all `CMD` not matched.
+
+=== MAIN
+
+`NonOption` `MAIN` capture all `NOAs`, and it's callback will be called by the parser.
+
+NOTE: The parser will process `main` last.
+
+==== Return value
+
+`ga-parser` or `ga-parser2` will generate a return value of each `MAIN` like this:
+[source,perl6]
+-----------------------------
+ReturnValue.new(
+    optionset   => $optset,         # current optionset
+    noa         => $parserobj.noa,  # current NOA, Array of Argument
+    parser      => $parserobj,
+    return-value=> do {             # return value of each MAIN
+        my %rvs;
+        for %($optset.get-main()) {
+            %rvs{.key} = .value.value;
+        }
+        %rvs;
+    }
+);
+-----------------------------
+And for `ga-pre-parser`, it set the **noa** to left command line arguments, not the Array of `Argument`.
+
+== Group
+
+`Group` provide a way set up association between multiple `Option`, and it has a check method
+which can force the `Group` must be set.
+The parser will call it's check method after `Option` value set.
+
+=== radio
+
+In `radio` `Group`, `Option` can be set only one at the same time. And it force user
+supply an option when `Group` is not optional.
+
+=== multi
+
+`multi` `Group` is just provide a possibility in having better style of source code.
+Also it force user supply an option when `Group` is not optional.
+
+== getopt
+
+Sub `&getopt` accept one or multiple `OptionSet`, pass it and command line argument to the `parser`.
+`&getopt` can accept traditional getopt(in C) string, and convert it to `OptionSet`.
+Once an `OptionSet` matching success, it will return an instance of `ReturnValue`.
+The return value contain matched `OptionSet`、all `NOA(Non-Option Argument)`, and `MAIN`'s id with the return value.
+
+== wrap-command
+
+Using `&wrap-command` wrap your command, provide new command line option or even new feature.
+It using `&getopt` parse the command line, then call `&tweak`(provide by user) modify the
+left command line argument(member `noa` of return value),
+then pass all the command line argument to your command.Here is an example:
+
+.wrapfind
+[source, p6]
+-------------------------------
+use Getopt::Advance;
+
+constant CMD = "find";
+
+wrap-command(
+    OptionSet.new.push("e|extension=s"),  # add -e | --extension option to find command line
+    CMD,
+    tweak => sub ($os, $ret) {
+        $ret.noa.append("-iname", "*." ~ $os<e>) if $os<e>;
+    }
+);
+-------------------------------
+
+= REFERENCE
+
+== `&getopt`
+
+Sub `&getopt` accept one or multiple `OptionSet`, pass it and command line argument to the `parser`.
+`&getopt` can accept traditional getopt(in C) string, and convert it to `OptionSet`.
+Once an `OptionSet` matching success, it will return an instance of `ReturnValue`.
+The return value contain matched `OptionSet`、all `NOA(Non-Option Argument)`, and `MAIN`'s id with the return value.
+
+=== Return value
+
+* class ReturnValue
+**    has $.optionset;
++
+The OptionSet which mathed
+**    has @.noa;
++
+The left non-option argument depends on the parser
+**    has %.return-value;
++
+Return value of `MAIN`, the key is `MAIN`'s id.
+
+=== The help message
+
+Sub `&getopt` will display the help message in the following cases:
+
+* all of OptionSet match failed
+* `&ga-want-helper` called
+* `&ga-want-all-helper` called
+* The OptionSet has option named set by `&set-autohv` , and `:autohv` passed to `&getopt`.
+
+=== Exception
+
+If an `OptionSet` match failed, consider follow several situation:
+
+* default
++
+Will throw the exception.
+
+* X::GA::ParseError
+* X::GA::OptionError
+* X::GA::GroupError
+* X::GA::NonOptionError
++
+The `parser`(except `&ga-pre-parser`) will call `&ga-try-next` throw an
+X::GA::ParseError exception when `OptionSet` match failed.
+When `&getopt` caught this exception, it will try next `OptionSet` supplied.
+If no more `OptionSet`, it will print helper (when help generator `&helper` defined)
+of all `OptionSet`,  print error message, and rethrow the exception.
+The user also can throw this exception.
+
+* X::GA::WantPrintHelper
++
+The user can call `&ga-want-helper` ask `parser` interrupt the parsing process,
+and print help message of current `OptionSet`. `&getopt` will print helper (when
+help generator `&helper` defined) of current `OptionSet` and exit with 0.
+
+* X::GA::WantPrintAllHelper
++
+The user can call `&ga-want-all-helper` ask `&parser` interrupt the parsing process,
+and print help message of all `OptionSet`. `&getopt` will print helper(when
+help generator `&helper` defined) of all `OptionSet` and exit with 0.
+
+=== Candidates
+
+* getopt(@args = @*ARGS, Str $optstring, *%args)
+* getopt(@args = @*ARGS, *@optsets,      *%args)
+
+==== The positional arguments
+
+* @args
++
+This is the command line argument passed to `&getopt`, the default value is `@*ARGS`.
+And it means you can provide yours "command line arguments" to `&getopt`.
+
+NOTE: The sub `&getopt` will not modify `@*ARGS`.
+
+* $optstring
++
+`&getopt` also work fine with traditional Option string (in C) to .
+
+* `*@optsets`
++
+The `OptionSet` supplied by user.
+
+==== The named arguments
+
+* :&helper = &ga-helper
++
+`&helper` will generate and display help message of `OptionSet`, default is `&ga-helper`.
+
+* :$stdout = $*OUT
++
+Current not used, default is `$*OUT`.
+
+* :$stderr = $*ERR
++
+Help message will print to `$stderr`, default is `$*ERR`.
+
+* :$parser = &ga-parser
++
+Command line argument parser, default is `&ga-parser`, other can be `&ga-pre-parser`, `&ga-parser2`.
+
+* :$parserclass
++
+Before parsing, `&getopt` will get a instance of `&parserclass`, then pass it to `&parser` when parsing.
+
+* :$strict = True
++
+When `$strict` is True, argument of an option should not be start with option prefix, default is `-` or `--`.
+
+* :$autohv = False
++
+If `$autohv` is True, `&getopt` will automate print `$version` information and help message
+when the related option set.
+The `:autohv` will not work if you don't have a option in `@autohv-opt`,
+default is `help` and `version`. Set the option name by sub `set-autohv(@ops)`.
+Without `:autohv`, you need deal the help option manually.
+
+NOTE: Will skip the `MAIN` if the `autohv` is triggered.
+
+* :$version
++
+Program version information.
+
+* :$bsd-style = False
++
+When `$bsd-style` is True, `&parser` will accept bsd style option.
+
+* :@styles = [ :long, :xopt, :short, :ziparg, :comb ]
++
+The style need support by the `parser`.
+
+* :@order = []
++
+The priority of the styles, default is default order.
+
+* *%args
++
+The left named arguments will also pass to `new` of `$parserclass`,
+`&helper` and `&parser`.
+
+== `&wrap-command`
+
+* sub wrap-command(OptionSet $os, $cmd, @args is copy = @*ARGS, :&tweak, *%args) is export
+
+** $cmd
++
+The command you want wraped.
+
+** @args
++
+The command line arguments, default is `@*ARGS`.
+
+** :&tweak
++
+Callback provide by user, signature should be `(OptionSet $os, Getopt::Advance::ReturnValue $ret)`.
+Will be called after `&getopt` called.
+
+** :$async
++
+Using `Proc::Async` instead of `run`.
+
+** *%args
++
+Left parameters will pass to `&getopt`.
+
+NOTE: Default &wrap-command using `run` run your command.
+
+== `OptionSet`
+
+`OptionSet` is a set of `Option` as the literal mean.
+It provide a lot of interface can manage multiple `Options`.
+
+* support operator
++
+`OptionSet` support `{}` operator, and the `:exists` adverb.
+You can use `{}` access value of option or the non-option.
+And use `:exists` check if the option or non-option exists.
+
+=== Method of option
+
+* from-optstring(Str:D $optstring is copy -\-> OptionSet)
++
+This method can convert the traditional option string (in C),
+and create an `OptionSet` contain options descripte by that string.
+
++
+NOTE: You should use `&getopt(@args = @*ARGS, Str $optstring, *%args)` instead of this method.
+
+* keys(::?CLASS::D:)
++
+Return an Array include all the names of all options.
+
+* values(::?CLASS::D:)
++
+Return all options of this `OptionSet`.
+
+* get(::?CLASS::D: Str:D $name, Str:D $type = WhateverType)
++
+Return the option has the name `$name` and the type is `$type`,
+otherwise return `Any`.
+
+* has(::?CLASS::D: Str:D $name, Str:D $type = WhateverType -\-> Bool)
++
+Return True if the option exist.
+
+* Supply(::?CLASS::D: Str:D $name, Str:D $type = WhateverType -\-> Supply)
++
+Return an Supply, current `OptionSet`, current `Option` and the `value` will
+be emitted when the option set.
+
+* remove(::?CLASS::D: Str:D $name, Str:D $type = WhateverType -\-> Bool)
++
+Remove the option with the name `$name` and the type is `$type`,
+or return False if the option not exist.
+
+* reset(::?CLASS::D: Str:D $names, Str:D $type = WhateverType -\-> ::?CLASS)
++
+Reset the option to default value. It will call `reset-value` of the option.
+
+* set-value(::?CLASS::D: Str:D $name, $value, :$callback = True -\-> ::?CLASS)
+* set-value(::?CLASS::D: Str:D $name, Str:D $type, $value, :$callback = True -\-> ::?CLASS)
++
+Set the option's value to `$value`, and call the callback of option when `callback`
+set.
+
+* set-annotation(::?CLASS::D: Str:D $name, Str:D $annotation -\-> ::?CLASS)
+* set-annotation(::?CLASS::D: Str:D $name, Str:D $type, Str:D $annotation -\-> ::?CLASS)
++
+Set the option's annotation, the annotation will be print by `&helper`.
+
+* set-callback(::?CLASS::D: Str:D $name, &callback -\-> ::?CLASS)
+* set-callback(::?CLASS::D: Str:D $name, Str:D $type, &callback -\-> ::?CLASS)
++
+Set the callback of option. The callback will be called when option's value set.
+
+* push(::?CLASS::D: Option:D $opt -\-> ::?CLASS)
+* push(::?CLASS::D: Str:D $opt, :$value, :&callback -\-> ::?CLASS)
+* push(::?CLASS::D: Str:D $opt, Str:D $annotation, :$value, :&callback -\-> ::?CLASS)
++
+Add an option to the `OptionSet`.
+Set the default value by specified the named argument `:$value`.
+And the same as the callback.
+The `$annotation` is the help message of the option.
+
+* append(::?CLASS::D: @options -\-> ::?CLASS)
+* append(::?CLASS::D: Str:D $opts -\-> ::?CLASS)
+* append(::?CLASS::D: Str:D $opts, :$optional = True, :$radio! -\-> ::?CLASS)
+* append(::?CLASS::D: Str:D $opts, :$optional = True, :$multi! -\-> ::?CLASS)
+* append(::?CLASS::D: *@optpairs where all(@optpairs) ~~ Pair, :$radio where :!so, :$multi where :!so -\-> ::?CLASS)
+* append(::?CLASS::D: :$optional = True, :$radio!, *@optpairs where all(@optpairs) ~~ Pair -\-> ::?CLASS)
+* append(::?CLASS::D: :$optional = True, :$multi!, *@optpairs where all(@optpairs) ~~ Pair -\-> ::?CLASS)
++
+Add multiple options to the `OptionSet`, make sure the string is split by `;`.
+You can make them as a radio group or multi group by pass `:radio`、`:multi`.
+
+=== Method of non-option
+
+Like option identified by its name, every non-option has an integer id.
+
+* get(::?CLASS::D: Int:D $id -\-> Option)
++
+Get the non-option has id `$id`, return `Option` if it not exists.
+
+* has(::?CLASS::D: Int:D $id -\-> Bool)
++
+Return True if the non-option exists.
+
+* Supply(::?CLASS::D: Int:D $id -\-> Supply)
++
+Return an `Supply`, the current `OptionSet`, current `NonOption` and the `value` will be
+emitted when non-option set.
+
+* reset(::?CLASS::D: Int:D $id)
++
+Reset the value of non-option to `Any`.
+
+* remove(::?CLASS::D: Int:D $id)
++
+Remove the non-option specified by `$id`.
+
+* get-main(::?CLASS::D: -\-> Hash)
++
+Return all `MAINs` of the `OptionSet`, the key of return value is id.
+
+* get-main(::?CLASS::D: Int $id)
++
+Return the `MAIN` with id `$id`, or return Any.
+
+* get-main(::?CLASS::D: Str:D $name)
++
+Return the first `MAIN` with name `$name`, or return Any.
+
+* Supply(::?CLASS::D: Int:D $id, :$main -\-> Supply)
++
+Return an `Supply`, the current `OptionSet`, current `MAIN` and the `value` will be
+emitted when non-option set.
+
+* get-cmd(::?CLASS::D: -\-> Hash)
++
+Return all `CMDs` of the `OptionSet`, the key of return value is id.
+
+* get-cmd(::?CLASS::D: Int $id)
++
+Return the `CMD` with id `$id`, or return `Any`.
+
+* get-cmd(::?CLASS::D: Str $name)
++
+Return first `CMD` with name `$name`, or return `Any`
+
+* Supply(::?CLASS::D: Int:D $id, :$cmd -\-> Supply)
++
+Return an `Supply`, the current `OptionSet`, current `CMD` and the `value` will be
+emitted when non-option set.
+
+* get-pos(::?CLASS::D: -\-> Hash)
++
+Return all `POSs` of the `OptionSet`.
+
+* get-pos(::?CLASS::D: Int $id)
++
+Return the `POSs` with id `$id`, or return `Any`.
+
+* get-pos(::?CLASS::D: Str $name, $index)
++
+Return first `POS` which match the index `$index` and the name `$name`,
+or return `Any`.
+
+* Supply(::?CLASS::D: Int:D $id, :$pos -\-> Supply)
++
+Return an `Supply`, the current `OptionSet`, current `POS` and the `value` will be
+emitted when non-option set.
+
+* reset-main(::?CLASS::D: Int $id)
+* reset-main(::?CLASS::D: Str $name)
+* reset-cmd(::?CLASS::D: Int $id)
+* reset-cmd(::?CLASS::D: Str $name)
+* reset-pos(::?CLASS::D: Int $id)
+* reset-pos(::?CLASS::D: Str $name, $index)
++
+Reset the value of non-option to `Any`.
+
+* insert-main(::?CLASS::D: &callback -\-> Int)
+* insert-main(::?CLASS::D: Str:D $name, &callback -\-> Int)
++
+Insert a `MAIN` non-option into the `OptionSet`, and return its id.
+The default name of `MAIN` is "main".
+The callback of `MAIN` will be called by `&parser` before return to `&getopt`,
+with the `OptionSet` and all the non-option `Arguments`.
+The value of `MAIN` will set to the return value of its callback.
+
+* insert-cmd(::?CLASS::D: Str:D $name, &callback = &true-block -\-> Int)
+* insert-cmd(::?CLASS::D: Str:D $name, Str:D $annotation, &callback = &true-block -\-> Int)
++
+Insert a `CMD` with the name `$name` into the `OptionSet`, and return its id.
+The default callback of `CMD` is `sub { True }`.
+The callback will be called with the `OptionSet` and all the non-option
+arguments except `CMD` name.
+The return value of its callback will coerce to Bool and set it to the `CMD`.
+The annotation is using for generate usage information.
+
+* insert-pos(::?CLASS::D: Str:D $name, &callback = &true-block, :$front, :$last -\-> Int)
+* insert-pos(::?CLASS::D: Str:D $name, Str:D $annotation, &callback = &true-block, :$last, :$front -\-> Int)
+* insert-pos(::?CLASS::D: Str:D $name, $index where Int:D | WhateverCode , &callback -\-> Int)
+* insert-pos(::?CLASS::D: Str:D $name, Str:D $annotation, $index where Int:D | WhateverCode , &callback -\-> Int)
++
+Insert a `POS` with the name `$name`, and return its id.
+The default callback of `CMD` is `sub { True }`.
+The callback will be called with the `OptionSet` and current non-option `Argument`
+matched by index.
+If the `POS` set by user, the method `success` of it will return True.
+The annotation is using for generate usage information.
+The front and last `POS` means `POS` with index `0` and `* - 1`, respectively.
+
+* check(::?CLASS::D:)
++
+Check `radio`, `multi` group and non-optional option.
+Exception will raised when check failed.
+This method is used by `&parser`.
+
+* check-cmd(::?CLASS::D: $noacount)
++
+Check the `CMD` and front `POS`, throw an exception if no `CMD` or front `POS` set.
+This method is used by `&parser`.
+
+* set-parser(::?CLASS::D: Publisher $parser)
++
+Set the parser of current parsing.
+This method is used by `&parser`.
+
+* reset-owner(::?CLASS:D)
++
+Reset the owner of options, groups, non-options and type manager.
+This method is used by `&parser`.
+
+* merge(::?CLASS::D: ::?CLASS:D $os --> ::?CLASS)
++
+Merge all the thing include the `Options` and `NonOptions` of `$os`
+to current `OptionSet`.
+
+* clone()
++
+Return an deep copy of current `OptionSet`.
+
+== `Argument`
+
+`Argument` is using for represent command line argument, its include the index and value.
+The `&parser` use non-option argument create `Argument`, and pass it to `CMD`,
+`POS` or `MAIN`.
+
+=== Attribute
+
+* Int $.index
++
+Index (base on zero) of `Argument`.
+
+* Str $.value
++
+Value of `Argument`.
+
+=== Method
+
+* pairup( -\-> Pair)
++
+Construct an Pair use the index and value.
+
+* Str()
++
+Return value of the `Argument`.
+
+* Int()
++
+Coerce the value to `Int`.
+
+* clone()
++
+Return an deep copy of current `Argument`.
+
+== `Context`
+
+=== role Context
+
+`Context` is using for match with `option`/`non-option`.
+It has the possible information of `option`/`non-option`.
+If it matched, will set the value of `option`/`non-option`.
+This is processed by the `ContextProcessor`.
+
+* mark-matched()
++
+Marked the `Context` has matched successfully, or it still can be process by `ContextProcessor` next time.
+
+* match(ContextProcessor, $o) { ... }
++
+Return True if the `Context` matched successful `option`/`non-option` `$o`.
+
+* set(ContextProcessor, $o) { ... }
++
+Will called by `ContextProcessor` if the `Context` matched successfully.
+
+* gist() { ... }
++
+This is need by debug log.
+
+=== TheContext::Option
+
+It contain the information of an option, using for match with `Option`.
+
+==== Attribute
+
+* $.prefix
++
+The prefix style of option.
++
+Possible value are `Prefix::LONG`, `Prefix::SHORT`, `Prefix::NULL`, `Prefix::DEFAULT`.
+
+* $.name
++
+Name of the option.
+
+* $.hasarg;
++
+Whether or not it contain argument.
+
+* &.getarg
++
+Get the argument of option.
+
+* $.canskip
++
+Whether or not need skip next command line argument.
+
+==== Method
+
+* match(ContextProcessor $cp, $o)
++
+For given option, the method will match the name first.
+Then match the value of `$!hasarg` and `$o.need-argument`.
+If matched successful, will call the method `.match-value` of `$o` match the value of argument.
+Return True if everything is ok.
+
+* set(ContextProcessor $cp, $o)
++
+If context has matched successful with option `$o`.
+Call method `.mark-matched` mark the context has matched.
+Call method `.set-value` of `$o` set the value of option.
+
+=== TheContext::DelayOption is TheContext::Option
+
+The `DelayOption` is using for the `&ga-parser2`, it need set the option value
+after `CMD` and `POS` processing.
+
++ set(ContextProcessor $cp, $o)
++
+If context has matched successful with option `$o`.
+Call method `.mark-matched` mark the context has matched.
+Return `OptionValueSetter` reference the option and value of context.
+
+=== TheContext::NonOption
+
+It contain the information of an non-option, using for match with `NonOption`.
+
+==== Attribute
+
+* @.argument
++
+The all `Arguments` passed by `&parser`.
+
+* $.index
++
+Index using for matched with `POS`.
+
+==== Method
+
+* match(ContextProcessor $cp, $no)
++
+The method will call `.match-style` of `$no` check if matched with the `$cp.style`.
+If successfully,
+will call `.match-name` and `.match-index` method match name and index of `$no` respectively.
+If all matched, will call the callback of non-option.
+
+* set(ContextProcessor $cp, $no)
++
+Do nothing.
+
+=== TheContext::Pos is TheContext::NonOption
+
+None
+
+== `Exception`
+
+* X::GA::Exception
++
+All the exception is inherit from this class.
+
+* X::GA::ParseError
++
+Exception thrown when `&parser` parse failed.
+
++
+NOTE: thrown by `ga-parse-error(Str $msg)` or `&ga-try-next(Str $msg)`.
+
+* X::GA::OptionError
++
+Exception thrown when `Option` is invalid.
+
++
+NOTE: thrown by `ga-option-error(Str $msg)`.
+
+* X::GA::GroupError
++
+Exception thrown when `Group` is invalid.
+
++
+NOTE: thrown by `ga-group-error(Str $msg)`.
+
+* X::GA::NonOptionError
++
+Exception thrown when `NonOption` is invalid.
+
++
+NOTE: thrown by `ga-non-option-error(Str $msg)`.
+
+* X::GA::Error
++
+Exception thrown when error happened.
+
++
+NOTE: thrown by `ga-raise-error(Str $msg)`.
+
+* X::GA::WantPrintHelper
++
+Exception thrown when user want print help message of current
+`OptionSet`.
+
++
+NOTE: thrown by `ga-want-helper()`.
+
+* X::GA::WantPrintAllHelper
++
+Exception thrown when user want print help message of all
+`OptionSet`.
+
++
+NOTE: thrown by `ga-want-all-helper()`.
+
+== `Helper`
+
+=== role Helper
+
+`Helper` is using for generate usage and annotation message.
+
+* $.program is rw
++
+The program name, default will be set to `$*PROGRAM-NAME` by `&ga-helper-impl`.
+
+* $.main is rw
++
+The annotation of `MAIN` feature, default is nothing.
+
+* @.cmd
++
+All the `CMD` of current `OptionSet`.
+
+* %.pos
++
+All the `POS` of current `OptionSet`, the key of hash structure is index of `POS`.
+
+* %.option
++
+All the `Option` of current `OptionSet`, the key of hash structure is usage of `Option`.
+
+* @.multi
++
+`Multi` group of current `OptionSet`.
+
+* @.radio
++
+`Radio` group of current `OptionSet`.
+
+* $.maxopt is rw = 5
+* $.maxpos is rw = 2
++
+The usage information will not include detail of `Option's` when the
+number of `Option` and `POS` is large than `$!maxopt` and `$!maxpos` respectively .
+
+* $.commandhit is rw
++
+The usage of `CMD`, default is `COMMAND`.
+
+* $.optionhit is rw
++
+The usage of `Option`, default is `OPTIONs`.
+
+* $.positionhit is rw
++
+The usage of `POS`, default is `POSITIONs`.
+
+* $.usagehit is rw
++
+The hit string of usage.
+
+==== Method
+
+* usage(:$merge-group)
++
+Return an Array, element is usage information of current `OptionSet`.
+
+* full-usage(:$merge-group)
++
+Return an Array, element is detail usage information of current `OptionSet`.
+
+* annotation()
++
+Return an Array, element is Array contain usage and annotation information of `Option`.
+
+* cmdusage()
++
+Return an Array, element is Array contain usage and annotation information of `CMD`.
+
+* posusage()
++
+Return an Array, element is Array contain usage and annotation information of `POS`.
+
+=== Sub
+
+* &ga-helper($optset, $outfh, *%args) is export
++
+Generate helper message of `$optset` and output it to `$outfh`.
++
+Named arguments:
+
+** :compact-help
++
+Remove the newline after every line.
+
+** :disable-cmd-help
++
+Don't print usage message of `CMD`.
+
+** :disable-pos-help
++
+Don't print usage message of `POS`.
+
+* &ga-helper(@optset, $outfh, *%args) is export
++
+Generate helper message of `@optset` and output it to `$outfh`.
++
+Named arguments:
+
+** :compact-help
++
+Remove the newline after every line.
+
+* &ga-helper-impl($optset) is export
++
+Return an `Helper` instance of current `OptionSet`.
+
+* &ga-version($version, $outfh) is export
++
+Print the version message `$version` to `$outfh`.
+
+== `Option`
+
+=== role Option
+
+* also does RefOptionSet
+* also does Subscriber
+
+The `Option` represent an option of command line argument.
+It can have long or short name, annotation, and
+callback which will called when option value set by user.
+
+==== Attribute
+
+* $.long
++
+Long name of current option, default is "".
+
+* $.short
++
+Short name of current option, default is "".
+
+* &.callback
++
+Callback of current option, default is `Callable`.
+
+* $.optional
++
+Whether or not the option is optional, default is True.
+
+* $.annotation
++
+Annotation of current option, default is "".
+
+* $.value
++
+Value of current option, default is Any.
+
+* $.default-value
++
+The default value of current option, default is Any.
+
+==== Method
+
+* init()
++
+Initialize method, will called by `TypesManager` when create instance of option type.
+
+* value()
+* long()
+* short()
+* callback()
+* optional()
+* annotation()
+* default-value()
++
+Return the value of attribute.
+
+* Supply(-\-> Supply)
++
+Return an `Supply`, current `OptionSet`, current option and value provide by user will
+be emitted when option set.
+
+NOTE: This method is using by `OptionSet`.
+
+* set-value(Any $value, Bool :$callback)
++
+Set current option's value, call the `&.callback` with current option and
+value when `$callback` is True.
+
+* set-long(Str:D $long)
++
+Set current option's long name.
+
+* set-short(Str:D $short)
++
+Set current option's short name.
+
+* set-callback(&callback where .signature ~~ :($, $) | :($))
++
+Set current option's callback.
+
+* set-optional(Bool $optional)
++
+Set current option's optional attribute.
+
+* set-annotation(Str:D $annotation)
++
+Set current option's annotation.
+
+* set-default-value($value)
++
+Set current option's default value.
+
+* has-value(-\-> Bool)
++
+Return True if `$.value` is defined.
+
+* has-long(-\-> Bool)
++
+Return True if long name is not "".
+
+* has-short(-\-> Bool)
++
+Return True if short name is not "".
+
+* has-callback(-\-> Bool)
++
+Return True if callback is defined.
+
+* has-annotation(-\-> Bool)
++
+Return True if annotation is not "".
+
+* has-default-value(-\-> Bool)
++
+Return True if default value is defined.
+
+* reset-long()
+* reset-short()
+* reset-callback()
+* reset-annotation()
++
+Reset the attribute to default value.
+
+* reset-value()
++
+Reset the value to default value (get through `self.default-value()`).
+
+* type( -\-> Str) { ... }
++
+Type identify of current type, using by `TypesManager`.
+
+* check()
++
+Will call `ga-option-error` when optional is False and not have a value.
+
+* match-name(Str:D $name)
++
+Check if the `$name` matched with long or short name.
+
+* match-value(Any) { ... }
++
+Check the value.
+
+* lprefix()
++
+Get the long prefix string, default is '--'.
+
+* sprefix()
++
+Get the short prefix string, default is '-'.
+
+* need-argument(-\-> Bool)
++
+Return True if the option need an argument, default is True.
+
+* usage(-\-> Str)
++
+Return the usage message of current option.
+
+=== Option::Boolean does Option
+
+`Option::Boolean` represent boolean option, it can be using like `--bool` or `-bool`.
+
+==== Attribute
+
+* $.deactivate
++
+Whether or not the option is support deactivate style, such as '--/bool' can disable the option `bool`.
+
+==== Method
+
+* set-value(Any $value, Bool :$callback)
++
+Set the option's value to `$value.so`.
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::XOPT`, `Style::LONG`, `Style::SHORT`, `Style::ZIPARG`, `Style::COMB` and
+`Style::BSD`.
+
+* type()
++
+Return the option type name `BOOLEAN`.
+
+* lprefix(-\-> Str)
++
+Default return `--/` when option is deactivate style.
+
+* sprefix(-\-> Str)
++
+Default return `-/` when option is deactivate style.
+
+* need-argument(-\-> Bool)
++
+Default is False.
+
+* match-value(Any:D $value)
++
+Return False if option is deactivate style and `$value` is True.
+
+=== Option::Integer does Option
+
+`Option::Integer` represent the option which has a integer value,
+it can be using such as `--int 3` or `-int=3`.
+
+==== Method
+
+* set-value(Any:D $value, Bool :$callback)
++
+Call `&ga-invalid-value` if the `$value` not a integer value or can not convert to integer value.
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::XOPT`, `Style::LONG`, `Style::SHORT`, `Style::ZIPARG` and `Style::COMB`.
+
+* type()
++
+Return the option type name `INTEGER`.
+
+* match-value(Any:D $value)
++
+Return False if the `$value` is not a integer value or can not convert to a integer value.
+
+=== Option::Float does Option
+
+`Option::Float` represent the option which has a float point value,
+it can be using such as `--flt 3.1` or `-flt=3.1`.
+
+==== Method
+
+* set-value(Any:D $value, Bool :$callback)
++
+Call `&ga-invalid-value` if the `$value` not a float point value or can not convert to float point value.
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::XOPT`, `Style::LONG`, `Style::SHORT`, `Style::ZIPARG` and `Style::COMB`.
+
+* type()
++
+Return the option type name `FLOAT`.
+
+* match-value(Any:D $value)
++
+Return False if the `$value` is not a float point value or can not convert to a float point value.
+
+=== Option::String does Option
+
+`Option::String` represent the option which has a string value,
+it can be using such as `--str foo` or `-str=bar`.
+
+==== Method
+
+* set-value(Any:D $value, Bool :$callback)
++
+Call `&ga-invalid-value` if the `$value` not a string value or can not convert to string value.
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::XOPT`, `Style::LONG`, `Style::SHORT`, `Style::ZIPARG` and `Style::COMB`.
+
+* type()
++
+Return the option type name `STRING`.
+
+* match-value(Any:D $value)
++
+Return False if the `$value` is not a string value or can not convert to string value.
+
+=== Option::Array does Option
+
+`Option::Array` represent the option which has multiple value like an array.
+It can be set multiple time through command line like `--str foo`, `--str bar`.
+The value of option will contain the string `foo` and `bar`.
+
+==== Method
+
+* set-value(Any:D $value, Bool :$callback)
++
+Push the `$value` to current option value.
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::XOPT`, `Style::LONG`, `Style::SHORT`, `Style::ZIPARG` and `Style::COMB`.
+
+* type()
++
+Return the option type name `ARRAY`.
+
+* match-value(Any:D $value)
++
+Always return True.
+
+=== Option::Hash does Option
+
+`Option::Hash` represent the option which has multiple key and value like an hash.
+It can be set multiple time through command line like `--str ':foo(1)'`, `--str 'bar \=> 2'`.
+
+==== Method
+
+* set-value(Any:D $value, Bool :$callback)
++
+Call `&ga-invalid-value` if the `$value` not a Pair or can not parse to Pair.
+Otherwise insert the Pair to option value.
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::XOPT`, `Style::LONG`, `Style::SHORT`, `Style::ZIPARG` and `Style::COMB`.
+
+* type()
++
+Return the option type name `HASH`.
+
+* match-value(Any:D $value)
++
+Return True if the `$value` is a Pair or can convert to a Pair, or can parse to a Pair.
+
+== `NonOption`
+
+* also does RefOptionSet
+* also does Subscriber
+
+=== role NonOption
+
+The `NonOption` represent NOA(non-option argument) of command line argument base on the index.
+
+==== Attribute
+
+* Str $.name
++
+The name of current non-option.
+
+* Any $.value
++
+The value of current non-option, the return value of the callback will be saved in this attribute.
+
+* $.index
++
+The index of current non-option, base on zero.
+
+* &!callback
++
+The callback of current non-option.
+
+* $.annotation = ""
++
+The annotation of current non-option, default is "".
+
+==== Method
+
+* init()
++
+Initialize method, will called by `TypesManager` when create instance of non-option type.
+
+* set-callback(&!callback)
++
+Set the non-option's callback.
+
+* set-annotation($!annotation)
++
+Set the non-option's annotation.
+
+* match-index(Int $total, Int $index -\-> Bool) { ... }
++
+Match the given index against `$!index`, the `$total` is needed if `$!index` is `WhateverCode`.
+
+* match-name(Str $name -\-> Bool) { ... }
++
+Match the name.
+
+* match-style($style -\-> Bool) { ... }
++
+Match the non-option style.
+
+* Supply(-\-> Supply)
++
+Return an Supply, current `OptionSet`, current non-option and the value will be emitted when non-option
+matched successfully.
+
+* success( -\-> Bool)
++
+Return the value of current non-option as a boolean value.
+
+* annotation()
++
+Get the annotation.
+
+* reset-success()
+* reset()
++
+Set the value to `Any`.
+
+* has-callback(-\-> Bool)
++
+Return True if the `&!callback` defined.
+
+* has-annotation(-\-> Bool)
++
+Return True if the annotation is not "".
+
+* CALL-ME(|c)
++
+Call the `&!callback` with given Capture `c`, return the return value of `&!callback`.
+In default, the signatures supported are:
+
+** `:($, @)`
++
+First argument is the `OptionSet`, second argument is all the `NOA`.
+
+** `:(@)`
++
+The argument is all the `NOA`.
+
+** `:()`
++
+Empty.
+
+* type(-\-> Str) { ... }
++
+Return the type name of non-option type.
+
+* usage(-\-> Str) { ... }
++
+Return the usage message.
+
+=== NonOption::Main does NonOption
+
+`NonOption::Main` will accept all the `NOA` of command line arguments, it will be called after
+`POS` and `CMD` processed.
+
+==== Method
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::Main`.
+
+* match-index(Int $total, Int $index)
++
+Always return True.
+
+* match-name(Str $name)
++
+Always return True.
+
+* match-style($style -\-> Bool)
++
+Return True if the `$style` is `Style::Main`.
+
+* type()
++
+In default type name is `"main"`.
+
+* usage()
++
+In default usage is `"*@args"`.
+
+=== NonOption::Cmd does NonOption
+
+`NonOption::Cmd` will accept the first `NOA` of command line arguments, it will be process in first.
+
+==== Method
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::Cmd`.
+
+* match-index(Int $total, Int $index)
++
+Return True if the `$index` is equal 0.
+
+* match-name(Str $name)
++
+Return True if `$name` equal to `$!name`.
+
+* match-style($style -\-> Bool)
++
+Return True if the `$style` is `Style::Cmd`.
+
+* type()
++
+In default type name is `"cmd"`.
+
+* usage()
++
+In default usage is the name of current non-option.
+
+=== NonOption::Pos does NonOption
+
+`NonOption::Pos` will accept the `NOA` matched of command line arguments, it will be process after `CMD`
+but before `MAIN`.
+
+==== Method
+
+* set-callback
++
+The signatures supported by `NonOption::Pos` are:
+
+** `:($, $)`
++
+First argument is the `OptionSet`, second argument is the `NOA` matched with index.
+
+** `:($)`
++
+The argument is the `NOA` matched with index.
+
+** `:()`
++
+Empty.
+
+* subscribe(Publisher $p)
++
+Subscribe the style `Style::POS` or `Style::WHATEVERPOS`.
+
+* match-index(Int $total, Int $index)
++
+Return True if the index matched.
+If the `$!index` is WhateverCode, it will using `$total` to calculate the real index.
+
+* match-name(Str $name)
++
+Always return True.
+
+* match-style($style -\-> Bool)
++
+Return True if the `$style` is `Style::WHATEVERPOS` or `Style::POS` according the type of `$!index`.
+
+* type()
++
+In default type name is `"pos"`.
+
+* usage()
++
+In default usage is the name of current non-option and the index like `"no@0"`.
+
+== `Parser`
+
+=== role TypeOverload
+
+==== Attribute
+
+* $.optgrammar is rw
++
+The default option grammar class using for parsing command line arguments.
+
+* $.optactions is rw
++
+The default option actions class using for generate and send the match context.
+
+* $.optcontext is rw
++
+The default option match context class, using for create option match context.
+
+* $.poscontext is rw
++
+The default `POS` match context class, using for create `POS` match context.
+
+* $.cmdcontext is rw
++
+The default `CMD` match context class, using for create `CMD` match context.
+
+* $.maincontext is rw
++
+The default `MAIN` match context class, using for create `MAIN` match context.
+
+* $.contextprocessor is rw
++
+The default context processor, using for process the matching of match context and option/non-option.
+
+=== role ResultHandler
+
+`ResultHandler` is using for process the result of once match.
+
+==== Attribute
+
+* $.success
++
+Whether or not the match is successful.
+
+* $.skiparg
++
+Whether or not need skip next command line argument.
+
+==== Method
+
+* set-success()
++
+Mark the match is successful.
+
+* reset()
++
+Reset the attribute value to False.
+
+* handle($parser)
++
+Process the result of current match, default do nothing.
+
+* skip-next-arg()
++
+Skip the next command line argument, default do nothing.
+
+=== role ResultHandlerOverload
+
+==== Attribute
+
+* $.prh is rw
++
+The default result handler type of `POS`.
+
+* $.crh is rw
++
+The default result handler type of `CMD`.
+
+* $.mrh is rw
++
+The default result handler type of `MAIN`.
+
+* $.brh is rw
++
+The default result handler type of bsd-style option.
+
+* $.orh is rw
++
+The default result handler type of option.
+
+=== OptionGrammar
+
+The default grammar of `Parser`, using for parsing the command line arguments.
+
+=== OptionActions
+
+The default actions class of `Parser`, using for generate and send the match context.
+
+=== ReturnValue
+
+`ReturnValue` is the return type of `&getopt`.
+
+==== Attribute
+
+* $.optionset
++
+The `OptionSet` which the `Parser` used.
+
+* @.noa
++
+All `NOA` of command line arguments.
+
+* $.parser
++
+The `Parser` used for parsing.
+
+* %.return-value
++
+The value is return value of `MAIN`, key is the id of `MAIN`.
+
+=== role Parser does Publisher does RefOptionSet
+
+`Parser` is using grammar parsing command line arguments, using actions class generate the match context and
+send it to the `Subscriber`.
+
+==== Attribute
+
+* Bool $.strict
++
+`Parser` will not treat command line argument that start with option prefix as option argument
+if `$.strict` is True.
+
+* Bool $.autohv
++
+With autohv feature enabled, will auto print the help message instead of call the `MAIN` when
+corresponding option set by user.
+
+* Bool $.bsd-style
++
+Whether or not if we support bsd-style option.
+
+* Int $.index
++
+Current command line argument index.
+
+* Int $.count
++
+The count number of command line arguments.
+
+* Int $!noaIndex
++
+`NOA` index counter.
+
+* $.arg
++
+Current command line argument process by `Parser`.
+
+* @.noa
++
+All the `NOA`.
+
+* &.is-next-arg-available (:(Parser $parser --> Bool))
++
+Should return True if the argument of option is available.
+
+* &.optcheck
++
+Do option check after the option process over.
+
+* &.cmdcheck
++
+Do `CMD` check after the `CMD` and `POS` process over.
+
+* @.styles
++
+The styles which need to be process by `Parser`.
+
+* @.args
++
+All the command line arguments.
+
+* $.typeoverload
++
+The default type using by `Parser` are:
+[source,perl6]
+optgrammar => OptionGrammar,
+optactions => OptionActions,
+optcontext => TheContext::Option,
+poscontext => TheContext::Pos,
+cmdcontext => TheContext::NonOption,
+maincontext=> TheContext::NonOption,
+contextprocessor => Getopt::Advance::Utils::ContextProcessor
+
+* $.handler
++
+The default handler using by `Parser` are:
+[source,perl6]
+orh => OptionResultHandler.new,
+prh => ResultHandler.new,
+crh => ResultHandler.new,
+brh => ResultHandler.new,
+mrh => ResultHandler.new but role :: {
+    method set-success() { } # skip the set-success, we need call all the MAINs
+}
+
+==== Method
+
+* init(@!args, :@order)
++
+Initialize the data and callback that needed.
+Clean all the subscriber.
+
+* skip()
++
+Increment the `$!index` to skip next command line argument
+
+* ignore()
++
+Ignore current command line argument, add it to `NOA` array `@!noa` and return the `NOA`.
+
+* type()
++
+Current `TypeOverload` instance.
+
+* handler()
++
+Current `ResultHandlerOverload` instance.
+
+* CALL-ME()
++
+In default, parsing the command line argument and try to match the option/non-option in below order:
+
++
+`option`  `CMD`  `POS`  `MAIN`
+
++
+You can also specific the order of option style through `&getopt`.
+
+=== PreParser does Parser
+
+By comparison with `Parser`, `PreParser` will not throw exception when the option not found in current
+`OptionSet`. And you can get the left command line arguments (not `NOA`) through the return value of `PreParser`.
+
+=== Parser2 does Parser
+
+By comparison with `Parser`, instead of match and set option value.
+`Parser2` will match the option first, then process `CMD` and `POS`,
+last set the option value before process `MAIN`.
+
+=== Sub
+
+* ga-parser($parserobj, @args, $optset, *%args) is export
+* ga-pre-parser($parserobj, @args, $optset, *%args) is export
+* ga-parser2($parserobj, @args, $optset, *%args) is export
++
+The sub is in charge of call the `.init` method to initialize the `$parserobj` with `@args`.
+Call the `.set-owner` on `$parserobj` set the owner of parser, and call the `.set-parser` on `$optset` set the parser of
+`OptionSet` before parsing the command line arguments.
+Last it will return an instance of `ReturnValue`.
+For the three sub, the `$parserobj` will the instance of `Parser`, `Pre-Parser` and `Parser2` respectively.
+
+== `Types`
+
+=== TypesManager does RefOptionSet
+
+`TypesManager` hold the short name of option/non-option types, parsing the create string, create the
+instance of option/non-option.
+
+==== Attribute
+
+* $.types
++
+The key is short name of the type, value is the type object.
+
+==== Method
+
+* has(Str $name -\-> Bool)
++
+Return True if manager has type `$name`.
+
+* innername(Str:D $name -\-> Str)
++
+Return the whole name of type, in default it will get the name through the `.type` method of a type.
+
+* registe(Str:D $name, Mu:U $type -\-> ::?CLASS:D)
++
+Register a type to the manager.
+Make sure the type have a `.type` method.
+
+* unregiste(Str:D $name -\-> ::?CLASS:D)
++
+Remove a type from the manager.
+
+* create(Str $str, *%args)
++
+Create a option of type with the given option string.
+
+* clone(*%_)
++
+Return an deep copy of current manager.
+
+== `Utils`
+
+=== Prefix
+
+The prefix type of an command line argument.
+
+* LONG
++
+It has a long prefix, in default parser grammar it is `--`.
+
+* SHORT
++
+It has a short prefix, in default parser grammar it is `-`.
+
+* NULL
++
+It has no prefix, such as BSD style option.
+
+* DEFAULT
++
+A default value.
+
+=== Style
+
+The style type of an option/non-option match context.
+
+* XOPT
++
+The context option has a short prefix and long name such as `-option` or `-option=2`.
+
+* LONG
++
+The context option has a long prefix such as `--o`, `--option` or `--option=2`.
+
+* SHORT
++
+The context option has a short prefix and one letter name such as `-o` or `-o=2`.
+
+* ZIPARG
++
+The context option has one letter name and a value such as `-o2` or `--o2`.
+
+* COMB
++
+The context option has multiple options in one command line argument.
+
+* BSD
++
+The context option is an bsd-style option such as `o`.
+
+* MAIN
++
+The context non-option type is `MAIN`.
+
+* CMD
++
+The context non-option type is `CMD`.
+
+* POS
++
+The context non-option type is `POS`.
+
+* WHATEVERPOS
++
+The context non-option type is `POS`, but has a `WhateverCode` position.
+
+* DEFAULT
++
+A default value.
+
+=== role Info
+
+The subscribe info of a subscriber.
+
+==== Method
+
+* check(Message $msg -\-> Bool) { ... }
++
+Check if the subscriber can accept the message.
+
+* process($data) { ... }
++
+Process the info with the `data` of the message.
+
+=== role Message
+
+The message which will send from `Publisher` and processed by `Subscriber`.
+
+==== Method
+
+* id( -\-> Int) { ... }
++
+An integer which using for debug message.
+
+* data() { ... }
++
+The data of the message.
+
+=== role Publisher
+
+The publisher type, hold the info the subscriber, publish the message to all the subscriber.
+
+==== Attribute
+
+* Info @.infos
++
+All the info of subscriber.
+
+==== Method
+
+* publish(Message $msg)
++
+Publish the message to all subscriber, in default it will call the `.check` method check the message.
+Call the `.process` method if the message accepted by the subscriber.
+
+* subscribe(Info $info)
++
+Register the subscriber information to current publisher.
+
+* clean-subscriber()
++
+Clean all the subscriber information.
+
+=== role Subscriber
+
+The subscriber type, which register the self to the publisher.
+
+==== Method
+
+* subscribe(Publisher $p) { ... }
++
+Register self to the publisher `$p`.
+
+=== role ContextProcessor does Message
+
+The default message produced by the publisher(`parser`).
+
+==== Attribute
+
+* $.style
++
+Current style type of match context.
+
+* @.contexts
++
+All the match contexts.
+
+* $.handler
++
+Current result handler instance.
+
+* $.id
++
+Identified integer of current message.
+
+==== Method
+
+* id()
++
+Return the `$.id`.
+
+* data()
++
+Return the `self`.
+
+* matched()
++
+Return the status of result handler `$.handler`.
+
+* process($o)
++
+In default, match the context against with option/non-option `$o`,
+set the value of `$o` if matched successful.
+Call `.set-success` method of `$.handler` and skip the next command line argument if necessary.
+Will skip if current context already matched successful.
+
+=== role RefOptionSet
+
+Represent a type which hold the `OptionSet`.
+
+==== Attribute
+
+* $.owner
++
+The owner of current object.
+
+==== Method
+
+* set-owner($!owner)
++
+Set the owner of current object.
+
+* owner()
++
+Get owner of current object.
+
+=== Debug
+
+The tools using for print debug message.
+
+==== LEVEL
+
+* DEBUG
+* INFO
+* WARN
+* ERROR
+* DIE
+* NOLOG
+
+==== Subs
+
+* setLevel(LEVEL $level)
++
+Set the minimum level of debug message.
+
+* setStderr(IO::Handle $handle)
++
+Set current error message output handler.
+
+* print(Str $log, LEVEL $level = $g-level)
++
+Print the log message to current handler with level `$level`.
+
+* debug(Str $log)
+* info(Str $log)
+* warn(Str $log)
+* error(Str $log)
++
+Print the log with `DEBUG`, `INFO`, `WARN` and `ERROR` respectively.
+
+* die(Str $log)
++
+Call `die` with log `$log`.
+
+=== OptionValueSetter
+
+Hold an option and the value.
+
+==== Attribute
+
+* $.optref
++
+Current option.
+
+* $.value
++
+The value will be set by `OptionValueSetter`.
+
+==== Method
+
+* set-value()
++
+Call `.set-value` method of current option with `$!value` and `:callback`.
+
+=== Sub
+
+* set-autohv(Str:D $help, Str:D $version) is export
++
+Set current option name of `autohv` feature.
+
+* get-autohv($optset) is export
++
+Get the status of current `autohv` option.
+
+* check-if-need-autohv($optset) is export
++
+Return true if the `autohv` is triggered by user command line argument.

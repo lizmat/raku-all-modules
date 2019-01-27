@@ -1,0 +1,69 @@
+
+= perl6-getopt-advance
+
+An advance command line parse tool replace Getopt::Kinoko
+
+= 描述
+
+`Getopt::Advance` 是一个强大的命令行选项解析模块，支持 `unix-style`、`gnu-style` 以及
+`bsd-style` 等风格的命令行选项。相比传统的解析工具，它还额外支持了 `Hash`、`Array` 等种类的
+选项，并且还提供了类似 `Getopt::Kinoko` 管理选项的 `radio`、`multi` 组设施。此外你还可以
+使用设施 `main`、`cmd` 以及 `pos` 来处理非选项参数。
+
+= 帮助
+
+== 样例
+
+=== 普通版本
+
+[source,perl6]
+---------------
+use Getopt::Advance;
+
+my OptionSet $os .= new();
+
+$os.push(
+    "h|help=b",
+    "print help message.",
+    callback => sub ($, $) {
+        say "The h option is set by user";
+    });
+
+&getopt($os);
+say "Exit!";
+---------------
+
+=== 使用react
+
+[source,perl6]
+---------------
+use Getopt::Advance;
+
+my OptionSet $os .= new();
+
+$os.push("h|help=b", "print help message.");
+
+react {
+    whenever $os.Supply("h") {
+        say "The h option is set by user";
+    }
+    whenever &getopt($os) {
+        say "Exit!";
+        done;
+    }
+}
+---------------
+
+更多参考例子
+
+= 安装
+
+* 使用 `zef` 安装
+
+    zef install Getopt::Advance
+
+= Lincese
+
+The MIT License (MIT).
+
+= TODO
