@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/croservices/cro-websocket.git
+	branch = master
+	commit = 88515c3244796a7fe6c427439832174c82746df2
+	parent = a5df35b22ce1740d78ff048c714007f73a5f4775
+	cmdver = 0.3.1
