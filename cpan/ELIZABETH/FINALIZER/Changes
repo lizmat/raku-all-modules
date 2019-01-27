@@ -1,0 +1,25 @@
+Revision history for FINALIZER
+
+{{$NEXT}}
+
+0.0.5  2018-06-14T17:52:13+02:00
+    - Make sure that making changes to blocks is threadsafe
+    - Finalizer can now always call method, so no need for .?
+
+0.0.4  2018-06-14T16:30:21+02:00
+    - Reworked some internals
+    - FINALIZER.register now returns a code block for unregistering
+    - No longer installs a PROCESS::<$*FINALIZER), as per jnthn's suggestion
+    - Now always installs an instantiated FINALIZER in $*FINALIZER
+    - Modules should now use 'use FINALIZER <class-only>'
+
+0.0.3  2018-06-14T00:19:30+02:00
+    - Some more documentation added / clarified
+    - Add section "Relation to DESTROY method"
+
+0.0.2  2018-06-13T23:10:15+02:00
+    - Add missing documentation as a program developer.
+    - Add test for program exit
+
+0.0.1  2018-06-13T22:48:50+02:00
+    - Initial version.

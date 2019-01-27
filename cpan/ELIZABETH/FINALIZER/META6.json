@@ -1,0 +1,22 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "dynamic finalizing for objects that need finalizing",
+  "license" : "Artistic-2.0",
+  "name" : "FINALIZER",
+  "perl" : "6.c",
+  "provides" : {
+    "FINALIZER" : "lib/FINALIZER.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/FINALIZER.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.5"
+}

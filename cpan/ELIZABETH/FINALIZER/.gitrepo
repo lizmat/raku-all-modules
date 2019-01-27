@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/FINALIZER.git
+	branch = master
+	commit = a698287dcb8f24aa887daa38aea98962bf7352f4
+	parent = f1d5a16e05ce148041a4be15973cdc4a93f25ce2
+	cmdver = 0.3.1
