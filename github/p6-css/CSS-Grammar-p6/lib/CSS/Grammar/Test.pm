@@ -5,30 +5,27 @@ module CSS::Grammar::Test {
     use Test;
     use JSON::Fast;
 
+    proto sub json-eqv($,$) is export(:json-eqv) {*}
     # allow only json compatible data
-    multi sub json-eqv (Hash:D $a, Hash:D $b) {
-	if +$a != +$b { return False }
-	for $a.kv -> $k, $v {
-	    unless $b{$k}:exists && json-eqv($a{$k}, $b{$k}) {
-		return False;
-	    }
+    multi sub json-eqv (%a, %b) {
+	if %a.elems != %b.elems { return False }
+	for %a.kv -> $k, $v {
+            return False
+                unless %b{$k}:exists && json-eqv($v, %b{$k});
 	}
-	return True;
+	True;
     }
-    multi sub json-eqv (List:D $a, List:D $b) {
-	if +$a != +$b { return Bool::False }
-	for (0 .. +$a-1) {
+    multi sub json-eqv (@a, @b) {
+	if @a != @b { return False }
+	for @a.kv -> $k, $v {
 	    return False
-		unless (json-eqv($a[$_], $b[$_]));
+		unless (json-eqv($v, @b[$k]));
 	}
-	return True;
+	True;
     }
     multi sub json-eqv (Numeric:D $a, Numeric:D $b) { $a == $b }
     multi sub json-eqv (Stringy $a, Stringy $b) { $a eq $b }
-    multi sub json-eqv (Bool $a, Bool $b) { $a == $b }
     multi sub json-eqv (Any $a, Any $b) is default {
-        return json-eqv( %$a, $b) if $a.isa(Pair);
-        return json-eqv( $a, %$b) if $b.isa(Pair);
         return True if !$a.defined && !$b.defined;
 	note "data type mismatch";
 	note "    - expected: {to-json($b)}";
@@ -40,7 +37,7 @@ module CSS::Grammar::Test {
 			:$rule = 'TOP', :$suite = '', :$writer,
                         :%expected) is export(:parse-tests) {
 
-        $parse //= do { 
+        $parse //= do {
             $actions.reset if $actions.can('reset');
             $class.subparse( $input, :$rule, :$actions)
         };

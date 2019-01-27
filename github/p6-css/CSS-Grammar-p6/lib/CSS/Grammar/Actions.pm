@@ -59,8 +59,7 @@ class CSS::Grammar::Actions
 		$args,
 		:$type     = CSSValue::FunctionComponent,
 		:$arg-type = CSSValue::ArgumentListComponent,
-		|c
-	--> Pair) {
+		|c --> Pair) {
         my %ast = $args.isa(List)
             ?? ($arg-type => $args)
             !! $args;

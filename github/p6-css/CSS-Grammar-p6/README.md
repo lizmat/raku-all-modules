@@ -51,18 +51,12 @@ warnings for any unexpected input.
 
 - **`:lax`** Pass back, don't drop, quantities with unknown dimensions.
 
-Installation (Rakudo Star)
---------------------------
+Installation
+------------
 
-You'll first need to download and build Rakudo Star 2015.07 or better (http://rakudo.org/downloads/star/ - don't forget the final `make install`):
+You can use Perl6 `zef` module installer to test and install `CSS::Grammar`:
 
-Ensure that `perl6` and `panda` are available on your path, e.g. :
-
-    % export PATH=~/src/rakudo-star-2015.07/install/bin:$PATH
-
-You can then use `panda` to test and install `CSS::Grammar`:
-
-    % panda install CSS::Grammar
+    % zef install CSS::Grammar
 
 To try parsing some content:
 
