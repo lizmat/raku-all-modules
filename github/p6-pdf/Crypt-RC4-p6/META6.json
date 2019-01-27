@@ -1,0 +1,12 @@
+{   "perl"        : "6",
+    "name"        : "Crypt::RC4",
+    "license"     : "Artistic-2.0",
+    "version"     : "0.0.4",
+    "auth"        : "github:p6-pdf",
+    "description" : "Perl 6 implementation of the RC4 encryption algorithm",
+    "depends"     : [ ],
+    "source-url"  : "git://github.com/p6-pdf/Crypt-RC4-p6.git",
+    "provides"    : {
+        "Crypt::RC4" : "lib/Crypt/RC4.pm6"
+     }
+}
