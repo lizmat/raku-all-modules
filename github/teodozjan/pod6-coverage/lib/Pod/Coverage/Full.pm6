@@ -3,6 +3,7 @@ use Pod::Tester;
 use Pod::Coverage::Result;
 use Pod::Coverage::PodEgg;
 
+#| Checks if every  element is documented (methods fields and so on)
 unit class Pod::Coverage::Full does Pod::Tester;
 
 #| Sometimes filename is totally out of scope. That's the reason
@@ -22,7 +23,7 @@ has Bool $.ignore-accessors is rw = True;
 #|Attribute list for skipping accessor methods
 has @!currentAttr;
 
-
+#| Loading package
 method check{
     require ::($!toload);
     my $packageO = ::($!packageStr);
@@ -88,7 +89,7 @@ method parse($whoO) {
         
         for $whoO.^methods(:local) -> $m {
             if ((Mu.^methods.map: {.name}) ∋ $m.name) {
-                warn "skipping " ~ $m.name;
+                #warn "skipping " ~ $m.name;
                 next;
             }
             self.parse($m);
@@ -157,16 +158,21 @@ method correct-pod($filename) {
     @.results =  @new_results;
 }
 
+#| Run pod parser externally
+#| if perl gives better way use it
 sub read_pod($filename){
     
     dd qqx/$*EXECUTABLE-NAME --doc=Keywords $filename/;
     return qqx/$*EXECUTABLE-NAME --doc=Keywords $filename/.lines;
 }
 
+
+#| packing into result object
 sub routine-result($what){
     new-result(packagename => $what.package.^name, name => $what.name);
 }
 
+#| some stuff cannot be acessed other way
 method parse-exports($whoO) {
     for $whoO.WHO<EXPORT>.WHO<ALL>.WHO.values -> $val {
         next unless $val ~~ Sub;

@@ -37,6 +37,7 @@ pod-coverage --anypod
 
 =cut
 
+#| Documented in inline pod
 unit class Pod::Coverage;
 #| place to start to command line
 method use-meta($metafile,$anypod) {

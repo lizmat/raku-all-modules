@@ -9,6 +9,7 @@ unit class Pod::Coverage::Anypod does Pod::Tester;
 has $.path;
 has $.packageStr;
 
+#| Returns if document has any pod in it
 method check {
     self!file-haspod;
 }
@@ -23,6 +24,7 @@ method !file-haspod {
 }
 
 
+#| Ok if number of elements is greater than 0
 sub has-pod($path) returns Bool {
     #dd qqx/$*EXECUTABLE-NAME --doc $path/.lines.elems;
     $path.IO ~~ :f and qqx/$*EXECUTABLE-NAME --doc $path/.lines.elems.Bool;

@@ -3,7 +3,7 @@ use v6;
 
 use Pod::Coverage::Result;
     
-    
+#| Mixin for all testers    
 role Pod::Tester {
     has Pod::Coverage::Result @.results = ();
     #| true if any pod is missing
