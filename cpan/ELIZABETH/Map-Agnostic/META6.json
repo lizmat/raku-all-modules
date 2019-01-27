@@ -1,0 +1,24 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Hash::Agnostic:ver<0.0.3>:auth<cpan:ELIZABETH>"
+  ],
+  "description" : "be a map without knowing how",
+  "license" : "Artistic-2.0",
+  "name" : "Map::Agnostic",
+  "perl" : "6.c",
+  "provides" : {
+    "Map::Agnostic" : "lib/Map/Agnostic.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Map-Agnostic.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}

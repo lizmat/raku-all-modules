@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Map-Agnostic.git
+	branch = master
+	commit = 81ef05aec0cd96a470cb80bdc18c94be8c545800
+	parent = c0911b359918399bdacd99d9c809d9fa974a0f12
+	cmdver = 0.3.1
