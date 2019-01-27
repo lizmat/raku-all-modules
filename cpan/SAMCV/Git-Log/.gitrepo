@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/samcv/perl6-Git-Log.git
+	branch = master
+	commit = 6d88f6f393fc8d8cd0e8a69cfaed6f37d1a2c0f2
+	parent = e0cc839548ca404218f97b062085b261f66925e4
+	cmdver = 0.3.1
