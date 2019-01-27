@@ -1,0 +1,19 @@
+{
+  "name"          : "SDL2",
+  "license"       : "MIT",
+  "version"       : "0.0.2",
+  "perl"          : "6.c",
+  "description"   : "SDL2 with some OO-sugar.",
+  "test-depends"  : [
+    "Test",
+    "SDL2::Raw"
+  ],
+  "auth"          : "github:azawawi",
+  "authors"       : [ "Ahmad M. Zawawi" ],
+  "provides"      : {
+    "SDL2::Window"   : "lib/SDL2/Window.pm6",
+    "SDL2::Renderer" : "lib/SDL2/Renderer.pm6"
+  },
+  "resources"     : [ ],
+  "source-url"    : "git://github.com/azawawi/perl6-sdl2.git"
+}
