@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Altai-man/ASN-BER.git
+	branch = master
+	commit = 5ca7ee163bc40397daeae933b3de7a24e97e5066
+	parent = 48ebb7dfd149178c890595796a2702563d2c479b
+	cmdver = 0.3.1
