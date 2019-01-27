@@ -4,7 +4,7 @@ use Test;
 use CSS::Grammar::Test;
 use CSS::Grammar::CSS21;
 use CSS::Specification::Build;
-use lib '.';
+use lib 't/lib';
 
 sub capture($code, $output-path?) {
     my $output;
@@ -23,7 +23,7 @@ sub capture($code, $output-path?) {
     return $output-path // $output;
 }
 
-my $base-name = 't::CSS::Aural::Spec';
+my $base-name = 'Test::CSS::Aural::Spec';
 my $grammar-name = $base-name ~ '::Grammar';
 my $actions-name = $base-name ~ '::Actions';
 my $interface-name = $base-name ~ '::Interface';
@@ -35,28 +35,28 @@ is-deeply [@summary.grep({ .<box> })], [{:box, :!inherit, :name<border-color>, :
 
 capture({
     CSS::Specification::Build::generate( 'grammar', $grammar-name, :$input-path );
-}, 't/CSS/Aural/Spec/Grammar.pm');
+}, 't/lib/Test/CSS/Aural/Spec/Grammar.pm');
 lives-ok {require ::($grammar-name)}, "$grammar-name compilation";
 
 capture({
     CSS::Specification::Build::generate( 'actions', $actions-name, :$input-path );
-}, 't/CSS/Aural/Spec/Actions.pm');
+}, 't/lib/Test/CSS/Aural/Spec/Actions.pm');
 lives-ok {require ::($actions-name)}, "$actions-name compilation";
 
 capture({
     CSS::Specification::Build::generate( 'interface', $interface-name, :$input-path );
-}, 't/CSS/Aural/Spec/Interface.pm');
+}, 't/lib/Test/CSS/Aural/Spec/Interface.pm');
 lives-ok {require ::($interface-name)}, "$interface-name compilation";
 
-dies-ok {require ::("t::CSS::Aural::BadGrammar")}, 'grammar composition, unimplemented interface - dies';
+dies-ok {require ::("Test::CSS::Aural::BadGrammar")}, 'grammar composition, unimplemented interface - dies';
 
 my $aural-class;
-lives-ok {$aural-class = (require ::("t::CSS::Aural::Grammar"))}, 'grammar composition - lives';
+lives-ok {$aural-class = (require ::("Test::CSS::Aural::Grammar"))}, 'grammar composition - lives';
 isa-ok $aural-class, CSS::Grammar::CSS21;
 
 my $actions;
-lives-ok {$actions = (require ::("t::CSS::Aural::Actions")).new}, 'class composition - lives';
-ok $actions.defined, '::("t::CSS::Aural::Actions").new';
+lives-ok {$actions = (require ::("Test::CSS::Aural::Actions")).new}, 'class composition - lives';
+ok $actions.defined, '::("Test::CSS::Aural::Actions").new';
 
 for ('.aural-test { stress: 42; speech-rate: fast; volume: inherit; voice-family: female; }' =>
      {ast => { :stylesheet[
