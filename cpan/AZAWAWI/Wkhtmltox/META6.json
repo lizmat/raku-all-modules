@@ -1,0 +1,21 @@
+{
+  "name"          : "Wkhtmltox",
+  "license"       : "MIT",
+  "version"       : "0.0.2",
+  "perl"          : "6.c",
+  "description"   : "Convert HTML to PDF / Image using libwkhtmltox.",
+  "test-depends"  : [
+    "Test",
+    "NativeHelpers::Blob"
+  ],
+  "auth"          : "github:azawawi",
+  "authors"       : [ "Ahmad M. Zawawi" ],
+  "provides"      : {
+    "Wkhtmltox"         : "lib/Wkhtmltox.pm6",
+    "Wkhtmltox::Native" : "lib/Wkhtmltox/Native.pm6",
+    "Wkhtmltox::PDF"    : "lib/Wkhtmltox/PDF.pm6",
+    "Wkhtmltox::Image"  : "lib/Wkhtmltox/Image.pm6"
+  },
+  "resources"     : [ ],
+  "source-url"    : "git://github.com/azawawi/perl6-wkhtmltox.git"
+}

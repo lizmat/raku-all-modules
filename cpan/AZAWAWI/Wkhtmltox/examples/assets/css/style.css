@@ -1,0 +1,26 @@
+.table {
+  width: 100%;
+}
+.grid {
+  border-collapse: collapse;
+}
+.grid td, .grid th {
+    padding: 4px;
+}
+.grid tr:nth-child(even) {
+  background-color: #feb236;
+}
+.grid tr:nth-child(odd) {
+  background-color: #ff7b25;
+}
+.grid tr:hover {
+  background-color: #ddd;
+}
+.grid th {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: left;
+  background-color: #6b5b95;
+  color: white;
+  text-align: center;
+}

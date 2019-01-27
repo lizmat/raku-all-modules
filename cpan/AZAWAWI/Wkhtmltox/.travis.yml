@@ -1,0 +1,28 @@
+language: generic
+
+os:
+  - linux
+
+env:
+  global:
+    - export PATH="/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH"
+addons:
+  apt:
+    sources:
+      - sourceline: 'deb https://dl.bintray.com/nxadm/rakudo-pkg-debs $(lsb_release -cs) main'
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?search=0x379CE192D401AB61&op=get'
+    packages:
+      - rakudo-pkg
+
+before_install:
+    # Display travis OS name
+  - echo $TRAVIS_OS_NAME
+
+  # Debian-based libwkhtmltox installation
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then WKHTMLTOX_ARCHIVE=wkhtmltox_0.12.5-1.trusty_amd64.deb; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/$WKHTMLTOX_ARCHIVE; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -f -y ./$WKHTMLTOX_ARCHIVE; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then rm $WKHTMLTOX_ARCHIVE; fi
+
+install:
+  - zef install . && zef test .

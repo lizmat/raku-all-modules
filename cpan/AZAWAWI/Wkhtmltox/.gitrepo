@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-wkhtmltox.git
+	branch = master
+	commit = 4476c4455f7424ba5b4557a9863d21f9c98af546
+	parent = 6f70afbbc77ec90595d49354a01eb2e161248922
+	cmdver = 0.3.1
