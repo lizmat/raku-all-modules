@@ -1,0 +1,13 @@
+language: generic
+
+services:
+    - docker
+install:
+    - docker pull jjmerelo/alpine-perl6
+    - docker run -d -v "$(pwd)":/root/p6-StrictClass -w /root/p6-StrictClass --name p6-StrictClass --entrypoint '' jjmerelo/alpine-perl6 perl6 -e 'sleep'
+    - docker exec -it p6-StrictClass zef install TAP::Harness
+script:
+    - docker exec -it p6-StrictClass /root/.rakudobrew/moar-master/install/share/perl6/site/bin/prove6 -l t
+after_success:
+    - docker stop p6-StrictClass
+    - docker rm p6-StrictClass
