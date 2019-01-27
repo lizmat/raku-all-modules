@@ -166,11 +166,11 @@ sub decode-string ( Buf:D $b, Int:D $index is copy --> Str ) is export {
   my $size = decode-int32( $b, $index);
   my $end-string-at = $index + 4 + $size - 1;
 
-  # Check if there are enaugh letters left
+  # Check if there are enough letters left
   #
   die X::BSON.new(
     :operation<decode>, :type<string>,
-    :error('Not enaugh characters left')
+    :error('Not enough characters left')
   ) unless ($b.elems - $size) > $index;
 
   die X::BSON.new(
@@ -184,11 +184,11 @@ sub decode-string ( Buf:D $b, Int:D $index is copy --> Str ) is export {
 #------------------------------------------------------------------------------
 sub decode-int32 ( Buf:D $b, Int:D $index --> Int ) is export {
 
-  # Check if there are enaugh letters left
+  # Check if there are enough letters left
   #
   die X::BSON.new(
     :operation<decode>, :type<int32>,
-    :error('Not enaugh characters left')
+    :error('Not enough characters left')
   ) if $b.elems - $index < 4;
 
   my Int $ni = $b[$index]             +| $b[$index + 1] +< 0x08 +|
@@ -210,11 +210,11 @@ sub decode-int32 ( Buf:D $b, Int:D $index --> Int ) is export {
 #------------------------------------------------------------------------------
 sub decode-int64 ( Buf:D $b, Int:D $index --> Int ) is export {
 
-  # Check if there are enaugh letters left
+  # Check if there are enough letters left
   #
   die X::BSON.new(
     :operation<decode>, :type<int64>,
-    :error('Not enaugh characters left')
+    :error('Not enough characters left')
   ) if $b.elems - $index < 8;
 
   my Int $ni = $b[$index]             +| $b[$index + 1] +< 0x08 +|
@@ -229,7 +229,7 @@ sub decode-int64 ( Buf:D $b, Int:D $index --> Int ) is export {
 # decode unsigned 64 bit integer
 sub decode-uint64 ( Buf:D $b, Int:D $index --> UInt ) is export {
 
-  # Check if there are enaugh letters left
+  # Check if there are enough letters left
   die X::BSON.new(
     :operation<decode>, :type<int64>,
     :error('Not enough characters left')
@@ -249,10 +249,10 @@ sub decode-double ( Buf:D $b, Int:D $index --> Num ) is export {
 
   state $little-endian = little-endian();
 
-  # Check if there are enaugh letters left
+  # Check if there are enough letters left
   die X::BSON.new(
     :operation<decode>, :type<double>,
-    :error('Not enaugh characters left')
+    :error('Not enough characters left')
   ) if $b.elems - $index < 8;
 
   my Buf[uint8] $ble;

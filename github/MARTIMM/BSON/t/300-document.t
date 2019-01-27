@@ -272,7 +272,7 @@ subtest "Exception tests", {
       my BSON::Document $d2 .= new;
       $d2.decode(Buf.new($b[0 ..^ ($b.elems - 4)]));
     }, X::BSON, 'not enough',
-    :message(/:s Not enaugh characters left/);
+    :message(/:s Not enough characters left/);
 
   throws-like {
       my $b = Buf.new(
