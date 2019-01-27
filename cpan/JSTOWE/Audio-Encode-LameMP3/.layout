@@ -1,0 +1,107 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "purpose": "examples",
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "p6lame_encode"
+        },
+        {
+          "name": "synopsis",
+          "type": "file"
+        }
+      ],
+      "name": "examples"
+    },
+    {
+      "name": "t",
+      "children": [
+        {
+          "purpose": "test_data",
+          "type": "directory",
+          "children": [
+            {
+              "name": "cw_glitch_noise15.wav",
+              "type": "file"
+            }
+          ],
+          "name": "data"
+        },
+        {
+          "type": "file",
+          "name": "030-constructor.t"
+        },
+        {
+          "type": "file",
+          "name": "010-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "020-use.t"
+        },
+        {
+          "type": "file",
+          "name": "060-id3tag.t"
+        },
+        {
+          "type": "file",
+          "name": "050-encode.t"
+        },
+        {
+          "type": "file",
+          "name": "040-parameters.t"
+        }
+      ],
+      "purpose": "tests",
+      "type": "directory"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "name": "Build.pm",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "purpose": "lib",
+      "children": [
+        {
+          "purpose": null,
+          "type": "directory",
+          "children": [
+            {
+              "purpose": null,
+              "type": "directory",
+              "name": "Encode",
+              "children": [
+                {
+                  "name": "LameMP3.pm",
+                  "type": "file"
+                }
+              ]
+            }
+          ],
+          "name": "Audio"
+        }
+      ],
+      "name": "lib"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}
