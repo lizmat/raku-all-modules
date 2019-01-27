@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/AccessorFacade.git
+	branch = master
+	commit = 9227bb9ed71fe15494c06c5d3dd5203cdc5a14c2
+	parent = 092a066368258386a982d2b1a477019e2a68392f
+	cmdver = 0.3.1

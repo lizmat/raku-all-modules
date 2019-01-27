@@ -1,0 +1,55 @@
+{
+  "children": [
+    {
+      "purpose": null,
+      "type": "directory",
+      "name": "t",
+      "children": [
+        {
+          "name": "020-fail.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "002-basic.t"
+        },
+        {
+          "name": "010-compose.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "children": [
+        {
+          "name": "AccessorFacade.pm",
+          "type": "file"
+        }
+      ],
+      "name": "lib",
+      "type": "directory",
+      "purpose": null
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
