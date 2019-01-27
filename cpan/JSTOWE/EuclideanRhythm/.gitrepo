@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/EuclideanRhythm.git
+	branch = master
+	commit = 3db61056d8fc96130f1eb7bd4415f5ca38230b3a
+	parent = 90d90d64249682eb1192ae3828ecd595b302cf7d
+	cmdver = 0.3.1

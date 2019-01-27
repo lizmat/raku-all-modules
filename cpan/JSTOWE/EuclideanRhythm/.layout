@@ -1,0 +1,51 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "name": "010-use.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "020-basic.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        }
+      ],
+      "name": "t",
+      "purpose": null
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "name": "EuclideanRhythm.pm",
+          "type": "file"
+        }
+      ],
+      "purpose": null,
+      "name": "lib",
+      "type": "directory"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}
