@@ -1,0 +1,80 @@
+{
+  "children": [
+    {
+      "name": "t",
+      "type": "directory",
+      "purpose": null,
+      "children": [
+        {
+          "type": "directory",
+          "children": [
+            {
+              "name": "amen_brother.wav",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "1second_16le_48000_2ch.wav"
+            }
+          ],
+          "purpose": null,
+          "name": "data"
+        },
+        {
+          "name": "030-fingerprint.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "name": "020-use.t",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "type": "directory",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "Chromaprint.pm"
+                }
+              ],
+              "purpose": null,
+              "name": "Fingerprint"
+            }
+          ],
+          "purpose": null,
+          "type": "directory",
+          "name": "Audio"
+        }
+      ],
+      "purpose": null,
+      "type": "directory",
+      "name": "lib"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}

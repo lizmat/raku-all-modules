@@ -1,0 +1,11 @@
+branches:
+  except:
+    - gh-pages
+sudo: required
+language: perl6
+perl6:
+  - latest
+install:
+  - sudo apt-get install libchromaprint0
+  - rakudobrew build-zef
+  - zef --deps-only install .
