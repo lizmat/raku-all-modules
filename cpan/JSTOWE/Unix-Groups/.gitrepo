@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Unix-Groups.git
+	branch = master
+	commit = 70c354ab8549026fb5607ea2336c1d225cff776d
+	parent = ccf8c6b8bd653400394b32aaa1c42b68bc99c6a0
+	cmdver = 0.3.1
