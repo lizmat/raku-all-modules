@@ -1,0 +1,87 @@
+%PDF-1.4
+%¥±ë
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+>> endobj
+
+2 0 obj <<
+  /Type /Pages
+  /Count 0
+  /Kids [  ]
+  /Resources 3 0 R
+>> endobj
+
+3 0 obj <<
+  /ColorSpace <<
+    /CS1 4 0 R
+  >>
+>> endobj
+
+4 0 obj [ /DeviceN [ /Cyan /Magenta /Yellow /Black /PANTONE#20032CV ] /DeviceCMYK 5 0 R <<
+    /Colorants <<
+      /Black 6 0 R
+      /Cyan 8 0 R
+      /Magenta 9 0 R
+      /PANTONE#20032CV 10 0 R
+      /Yellow 11 0 R
+    >>
+  >> ] endobj
+
+5 0 obj <<
+  /BitsPerSample 8
+  /Domain [ 0 1 0 1 0 1 0 1 0 1 ]
+  /Filter /ASCIIHexDecode
+  /FunctionType 0
+  /Order 3
+  /Range [ 0 1 0 1 0 1 0 1 ]
+  /Size [ 2 2 2 2 2 ]
+  /Length 257
+>> stream
+00000000ff00000000ff0000ffff00000000ff00ff00ff0000ffff00ffffff00000000ffff0000ff00ff00ffffff00ff0000ffffff00ffff00ffffffffffffff00ffff00ffffff0000ffff00ffffff0000ffff00ffffff0000ffff00ffffff0000ffffffffffffff00ffffffffffffff00ffffffffffffff00ffffffffffffff>
+endstream endobj
+
+6 0 obj [ /Separation /Black /DeviceCMYK 7 0 R ] endobj
+
+7 0 obj <<
+  /BitsPerSample 8
+  /Domain [ 0 1 ]
+  /Filter /ASCIIHexDecode
+  /FunctionType 0
+  /Range [ 0 0 0 0 0 0 0 1 ]
+  /Size [ 2 ]
+  /Length 17
+>> stream
+00000000ffffffff>
+endstream endobj
+
+8 0 obj [ /Separation /Cyan /DeviceCMYK 7 0 R ] endobj
+
+9 0 obj [ /Separation /Magenta /DeviceCMYK 7 0 R ] endobj
+
+10 0 obj [ /Separation /PANTONE#20032CV /DeviceCMYK 7 0 R ] endobj
+
+11 0 obj [ /Separation /Yellow /DeviceCMYK 7 0 R ] endobj
+
+xref
+0 12
+0000000000 65535 f 
+0000000014 00000 n 
+0000000068 00000 n 
+0000000148 00000 n 
+0000000207 00000 n 
+0000000447 00000 n 
+0000000917 00000 n 
+0000000974 00000 n 
+0000001168 00000 n 
+0000001224 00000 n 
+0000001283 00000 n 
+0000001351 00000 n 
+trailer
+<<
+  /Root 1 0 R
+  /Size 12
+>>
+startxref
+1410
+%%EOF

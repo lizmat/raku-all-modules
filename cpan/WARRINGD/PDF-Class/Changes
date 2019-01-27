@@ -1,0 +1,166 @@
+Release 0.3.4
+- Remove questionable "use lib '.'" from test suite
+- Rename export subset PDF::Filespec :Filespec -> :File
+
+Release 0.3.3
+- Add coercements for Catalog EmbeddedFile name-tree/
+- Fix warning on load of EmbeddedFile objects
+- Filespec and Annotation adjustments for PDF::API6 0.1.3
+
+Release 0.3.2
+- Fix PDF::Border /S (border-style entry)
+
+Release 0.3.1
+- Fix StructElem coercement (broken in 0.3.0)
+- Fix PDF::Field .type() method to return 'Field', for
+  consistancy, and .subtype() to return the field type.
+
+Release 0.3.0
+- Fixed pdf-toc.p6
+- Feedback from trial integration PDF::ISO_32000 package
+  (work in progress)
+
+Release 0.2.9
+- Script fixes:
+  -- pdf-burst.p6 to work with inherited page resources. added
+     --batch-size option for multi-page bursts
+  -- fixed pdf-revert.p6, pdf-info.p6 to not be confused by
+     hybrid xrefs
+  -- minor improvements to: pdf-append.p6, pdf-content-dump.p6,
+     pdf-toc.p6
+
+Release 0.2.8
+- Added PDF::Outline(s) .kids iterator and .add-kid method
+
+Release 0.2.7
+- Created PDF::Class::Util - with support functions page numbering schemes and PDF page labels.
+  Including Roman and Decimal.
+- Added page-label printing to pdf-toc.p6
+- Added pdf-content-dump.p6
+
+Release 0.2.6
+- added pdf-toc.p6 (table-of-contents) utility
+- further pdf-checker.p6 improvements:
+  --trace option now displays encoded hex and text-strings as Perl strings
+
+Release 0.2.5
+- Added PDF::Filespec, PDF::Action::Launch
+- pdf-checker.p6 improvements
+
+Release 0.2.4
+- Added PDF::Annot::Markup, PDF::Annot::Popup,
+  PDF:::Annot::ThreeD, PDF::Markup::Markup3D
+
+Release 0.2.3
+- Fix PDF 1.6+ Cross Reference Streams, broken in 0.2.2
+
+Release 0.2.2
+- Fix PDF::Shading::Function
+- Added PDF::ICCProfile, PDF::Annot::Caret, PDF::Signature,
+  PDF::Action::JavaScript
+
+Release 0.2.1
+- Added PDF::Action::GoToR - goto remote
+- Added PDF::Action::Named - named action
+- Added PDF::Image. Use for PDF::Page.Thumb(thumbnail-image) attribute
+- Changed PDF::FontDescriptor from a class to a role
+- Removed subclass PDF::OutputIntent::GTS_PDFX
+- Fixed setup of Resources ProcSet array
+- Improved page navigation in pdf-checker.p6
+
+Release 0.2.0
+- Simplifications to PDF::Class::Loader. Made PDF::CIDSystemInfo a role.
+- Corrections, mostly based on pdf-checker --strict feedback, to:
+  PDF::Font::CIDFont, PDF::Metadata::XML, PDF::Pages,
+  PDF::ViewerPreferences, PDF::Field::Signature,
+  PDF::OutputIntent::GTS_PDFX, PDF::Catalog, PDF::Encoding,
+  PDF::Catalog
+  
+Release 0.1.9
+- Development of PDF::NameTree, PDF::NumberTree, PDF::StructElem and PDF::FontFile
+- Further development of PDF::Destination. Both explicit and named destinations.
+- Added PDF::Catalog.Dests coercements
+- Fixed PDF::Action coercements
+
+Release 0.1.8
+- Add classess:
+  -- PDF::OCG (Optional Content Groups)
+  -- PDF::OCMD (Optional Content Membership Dictionary)
+  -- PDF::MCR (Marked Content Reference)
+- Remove some trivial single-use subsets. Replace with 'where' clauses on
+  entry attributes.
+- Move t:Doc::* test classes from lib/ to t/
+
+Release 0.1.7
+- Adjust t/helloworld.t and t/pdf-xobject-form.t for PDF::Content 0.2.2
+
+Release 0.1.6
+- Added PDF::StructTreeRoot, PDF::NameTree
+- Altered composition of PDF::Mask
+- Fixed DeviceN Color load warnings
+
+Release 0.1.5
+Improvements from field testing of pdf-checker.p6:
+- PDF::Outline, PDF::Outlines:
+  -- fix coercements. Convert from classes to roles as /Type is optional.
+  -- Allow negative /Count values, as per spec
+- PDF::Destination: allow trailing optional array elements to be omitted
+- PDF::ColorSpace::Pattern: added as a new colorspace type
+- PDF::Font:
+  -- fix coercement of type1 & 3 Encoding entry
+  -- coerce type3 fonts CharProcs as a PDF::Content::Graphics content stream
+
+Release 0.1.4
+- Altered composition of some classes to avoid 'version skew' compilation
+  errors (Issue #11)
+- Fixed PDF::ExtGState.SMask accessor; new subclasses PDF::Mask::Alpha,
+  PDF::Mask::Luminosity
+- Improvements to pdf-checker.p6
+
+Release 0.1.3
+- Fix ToUnicode entry in type 0, 1 and 3 fonts.
+
+Release 0.1.2
+added:
+- PDF::Action::URI class
+- PDF::Destination.construct() method
+renamed:
+- PDF::Destination.type() method to .fit()
+
+Release 0.1.1
+- Renamed role PDF::OutlineItem -> PDF::Outline
+- Add PDF::Destination; removed destination handling from PDF::Action; includes:
+  -- `construct` method for creating new page destinations
+  -- `:Fit` enumeration export for destination fitting modes
+
+Release 0.1.0
+- Adjust to latest PDF. PDF::DAO classes have been renamed
+  to PDF::COS (Carousel Object System)
+
+Release 0.0.8
+- Revamped PDF::Function::Sampled::Calculator
+
+Release 0.0.7
+Add PDF::Function calculator and evaluate methods, classes:
+- PDF::Function::PostScript
+- PDF::Function::Sampled
+- PDF::Function::Exponential
+- PDF::Function::Stitching
+
+Release 0.0.6
+- Fix PDF::Page.Annots accessor. Now coerces fields to PDF::Field
+
+Release 0.0.5
+- Set up accessor aliases, e.g. D(dash) in PDF::Appearance
+
+Release 0.0.4
+- Add etc/make-quick-ref.pl use it to generate table of classes in README.md
+
+Release 0.0.3
+- Correct attribute name: Bound -> Bounds in PDF::Function::Stitching
+
+Release 0.0.2
+- Fix syntax of PDF::Content::XObject['PS'] and PDF::Font::Type3
+
+Release 0.0.1
+- initial release
