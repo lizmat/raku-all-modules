@@ -1,0 +1,111 @@
+=begin pod
+
+=head1 Assixt
+
+C<assixt> is a tool to help Perl 6 module developers along their journey of
+module inception, all the way through publishing it through
+L<CPAN|https://www.cpan.org/>.
+
+=head2 Installation
+
+C<assixt> itself is available on CPAN, from the module C<App::Assixt>. You can
+use C<zef> to get it installed on your machine:
+
+    zef install App::Assixt
+
+=head3 Installing the latest C<master> commit
+
+If you're feeling experimental, you can help out by running the latest
+I<passing> C<master> commit. This release may contain more bugs than the stable
+release available from CPAN. However, these releases are also all candidates
+for becoming a stable release, and can therefore do very well with some
+in-the-field testing.
+
+You can download the latest C<master> release from L<the GitLab
+repository|https://gitlab.com/tyil/perl6-app-assixt>, unpack it and install it
+with C<zef>:
+
+    cd "$(mktemp -d)"
+    curl -L -o assixt.zip https://gitlab.com/tyil/perl6-app-assixt/-/jobs/artifacts/master/download?job=App%3A%3AAssixt
+    unzip assixt.zip
+    zef install --force-install .
+
+If all went well, you can now use C<assixt> as you normally would.
+
+If you encounter any bugs or have any feedback of some kind, do not hesitate to
+L<submit an issue|https://gitlab.com/tyil/perl6-app-assixt/issues>!
+
+=head2 Basic usage
+
+The most basic commands you will want to use are C<new>, C<touch>, and C<push>.
+The first time you start using it, you are probably interested in C<bootstrap
+config> as well, but there's a high chance you'll only use it once, so you
+don't have to remember it. This document only lists the bare basic information
+required to get you started, and I would recommend you read the module
+documentation to get familiar with all the possibilities.
+
+=head3 bootstrap config
+
+This command will walk through the configuration options, and save the values
+you supply to the configuration file. Some of these will simply be default
+values used when making use of C<assixt>, so setting them to what you commonly
+would want can save you some time and effort later on in your life.
+
+    assixt bootstrap config
+
+=head3 new
+
+The C<new> command will ask you for some input, and then create the entire
+module skeleton for you.
+
+    assixt new Local::Test::Module
+
+=head3 touch
+
+Using C<touch> you can add new files to your module. While you could use the
+regular POSIX C<touch> command for this, you may want to consider using the
+C<assixt> version anyway. In addition to simply making the file, C<assixt> will
+also update your C<META6.json> to reference the newly created file. If
+directories need to be made to hold the file, these will also be made for you.
+And lastly, a small skeleton will be created in the file itself, so you don't
+need to bother yourself with the boilerplates.
+
+The C<touch> command requires two arguments: the type of thing you want to add,
+and the name it should get. The types you'll want to use most often are
+C<class> and C<unit>.
+
+    assixt touch class Foo::Bar
+    assixt touch unit Bar::Foo
+
+=head3 push
+
+C<push> is actually a shorthand for C<bump>, C<dist> and C<upload>. As such, it
+will bump the version number and update the version number throughout the files
+in your module, then create a distribution of it (as a C<.tar.gz> file) and
+finally try to upload that distribution to CPAN.
+
+    assixt push
+
+If you don't want the version to be altered, you can use the C<--no-bump>
+argument.
+
+    assixt --no-bump push
+
+=head2 Documentation
+
+This project contains documentation in the module itself. You can access this
+most easily using the C<p6man> utility. For instance, to get information on the
+C<new> command, use the following invocation:
+
+    p6man App::Assixt::Commands::New
+
+For general information of the module and all available subcommands, use
+C<p6man App::Assixt>. For general information about the C<assixt> script
+itself, use C<p6man assixt>. The documentation can probably be improved at many
+points at this point in time. If you find any issues, please report them L<on
+the repository|https://gitlab.com/tyil/perl6-app-assixt>, or send a merge
+request to fix it immediately as well.
+
+=end pod
+
+# vim: ft=perl6

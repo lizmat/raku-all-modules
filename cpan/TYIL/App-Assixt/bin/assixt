@@ -1,0 +1,91 @@
+#! /usr/bin/env perl6
+
+use v6.c;
+
+use App::Assixt::Main;
+
+=begin pod
+
+=NAME    assixt
+=AUTHOR  Patrick Spek <p.spek@tyil.work>
+=VERSION 1.0.0
+=LICENSE GNU General Public License, version 3
+
+=head1 Synopsis
+
+=item1 assixt [options] <command> [arguments]
+
+=item2 assixt bootstrap config [<option> [value]]
+=item2 assixt bump [ patch | minor | major ]
+=item2 assixt clean [path] [--no-files] [--no-meta]
+=item2 assixt depend <module>... [--no-install]
+=item2 assixt dist [path]...
+=item2 assixt new [name] [--no-git] [--no-travis]
+=item2 assixt push [path]... [--no-bump]
+=item2 assixt test
+=item2 assixt touch bin <name>
+=item2 assixt touch class <name>
+=item2 assixt touch resource <name>
+=item2 assixt touch test <name>
+=item2 assixt touch unit <name>
+=item2 assixt upload <dist>... [--pause-id=<id>] [--pause-password=<pass>]
+
+=head2 Options
+
+To disable an option, specify it with a C</> between the C<--> and the name of
+the option. For example, to enable the C<verbose> option and disable the
+C<user-config> option:
+
+    assixt --verbose --/user-config
+
+=defn --help
+Show help output.
+
+=defn --config-file=<file>
+Use the configuration specified in C<file>.
+
+=defn --[/]force
+Try to continue, no matter what. This will skip every confirmation dialogue, and
+assume you want to proceed with everything.
+
+=defn --[/]user-config
+Set whether to load the user's configuration overrides. Disable during testing
+or debugging.
+
+=defn --[/]verbose
+Add additional output. Useful for testing or debugging.
+
+=head1 Description
+
+Assixt is a Perl 6 program to assist Perl 6 module developers. It will take
+care of keeping your C<META6.json> in check as you extend your module, so you
+don't have to.
+
+=head1 Examples
+
+=head2 Create a new module
+
+=begin input
+assixt new
+=end input
+
+This will prompt for some information about the module, and then generate the
+basic structure for it.
+
+=head2 Bump the version
+
+=begin input
+assixt bump minor
+=end input
+
+C<assixt> assumes L<Semantic Versioning|https://semver.org/>, so you can either
+bump the I<major>, I<minor> or I<patch> level of the version. Bumping the
+version number will update the C<META6.json> file. Unless C<--no-bump-provides>
+is given, the C<=VERSION> pod blocks found in the files referenced in the
+C<provides> key of your C<META6.json> will also be updated.
+
+=head1 See also
+
+=item1 C<App::Assixt>
+
+=end pod

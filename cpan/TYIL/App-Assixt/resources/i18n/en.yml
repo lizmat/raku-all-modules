@@ -1,0 +1,90 @@
+---
+debug.require: >
+  Using `$(module)` to handle "$(intent)".
+
+error.bump-level: >
+  Bump level "$(level)" not recognized. Valid bump levels are "major", "minor"
+  and "patch", as specified by the Semantic Version specification. You can read
+  about which level to use when in the documentation on $(module).
+error.command.missing: >
+  The "$(command)" program is not available on this system. Please use your
+  operating system's package manager to install it.
+error.meta6: >
+  No META6.json in $(path). Are you sure you're in a Perl 6 module directory?
+  You can specify the path to a module to work with using `--module=<path>` if
+  needed.
+error.meta6.missing-key: >
+  The `$(key)` key is missing in the module's META6.json. Either set it using
+  `assixt meta source-url <url>`, or use `--force` to ignore this error.
+error.subcommand: >
+  Unknown subcommand "$(command)". Read the documentation on $(docs) for a list
+  of available subcommands.
+error.unknown.main: >
+  Unrecognized command "$(command)". You can get a quick synopsis of assixt by
+  running it with `--help`.  You can find a list of possible commands with a
+  small description in the documentation for App::Assixt, which you can read
+  with `p6man App::Assixt`.
+error.subcommand.missing: >
+  The "$(command)" command requires a specific subcommand to be given. For a
+  list of available subcommands for "$(command)", check the $(docs)
+  documentation.
+
+bump: >
+  $(module) bumped to v$(version).
+
+config.unknown: >
+  Invalid configuration key "$(option)". For a list of available configuration
+  keys used in assixt, read the documentation on App::Assixt::Config.
+config.updated: >
+  Configuration updated.
+
+depend: >
+  $(dependency) has been added as a dependency to $(module).
+depend.zef: >
+  Failed to install $(module) with Zef, not adding the dependency. You can skip
+  the local installation and just add the dependency to your module by adding
+  `--no-install` to the command.
+
+dist: >
+  Created the distribution tarball at $(path).
+dist.conflict: >
+  A distribution tarball already exists at $(path). Remove this file or run
+  this command again with `--force` to ignore this error.
+dist.readme: >
+  No usable README file found! Add a README.pod6 using `assixt touch meta
+  readme.pod6`, or use `--force` to skip this check.
+dist.readme.dependency: >
+  You need $(module) to use Pod 6 documents as README. You can install this
+  with zef, by running `zef install $(module)`. Alternatively, run this command
+  again with `--force` to ignore this error.
+
+new: >
+  Created module skeleton for $(module) in $(path).
+new.conflict: >
+  The target directory $(directory) is not empty. Please remove the file or
+  directory at this path or use `--force` to ignore this error and attempt
+  creating the module directory anyway. Alternatively, specify a different name
+  to use for the module.
+
+touch: >
+  Added $(type) $(file) to $(module).
+touch.conflict: >
+  A file already exists at $(path). Remove the file, or run this command again
+  with `--force` to ignore this error.
+touch.meta: >
+  Unrecognized template type "$(type)". Read the documentation on $(docs) to
+  see a list of available meta types.
+
+upload: >
+  Uploaded $(dist) to CPAN.
+upload.credentials: >
+  Your user credentials were incorrect, please re-try entering your
+  credentials. If you are sure your credentials are correct, hit the enter key
+  to retry those credentials.
+upload.conflict: >
+  The distribution you're trying to upload conflicts with an existing file on
+  CPAN. You should probably update the version of your module. You can do this
+  with `assixt bump`. Create a new distribution with `assixt dist` after that,
+  and try to upload the new dist.
+upload.gave-up: >
+  Uploading to CPAN failed, gave up after $(tries) unsuccesful tries.
