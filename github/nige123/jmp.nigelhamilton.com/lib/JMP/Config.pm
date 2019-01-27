@@ -1,5 +1,4 @@
 
-use JMP::System;
 use JMP::Template;
 
 # simple config file handling
@@ -86,7 +85,7 @@ class JMP::Config {
         
         # App::Ack - Perl-powered improvement to grep
         # find.command.template     = ack --nogroup '[-search-terms-]'
-        
+
         CONFIG
 
     }

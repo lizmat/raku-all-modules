@@ -1,4 +1,3 @@
-#!/usr/bin/env perl6
 
 #| simple Template engine
 class JMP::Template {
