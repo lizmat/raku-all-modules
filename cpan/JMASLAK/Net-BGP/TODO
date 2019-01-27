@@ -1,0 +1,20 @@
+Todo Items:
+
+  * OPEN:
+    * Notify upon invalid (too short) of message data
+  * Detect BGP identifier clashes
+  * Constraint violation in message classes shouldn't kill everything
+    (example: a capability with an invalid length to pass the from-raw
+    anonymous constraints)
+  * If listening port cannot be bound, something bad should happen - it
+    should not just silently fail.
+  * In messages, parameters, capabilities, and path attributes, we
+    should test for the message type in a uniform way.
+  * Allow specifying two next-hop addresses for IPv6 MP-NLRI
+  * MD5 socket option is specific to AF we're listening on.  If we
+    listen on ::, but have an IPv4 peer, we need to be able to set the socket
+    options.
+  * Allow specification of address families on a per-peer basis
+  * Pause recept of incoming TCP packets while waiting for
+    user/controller to process existing backlog
+  * Document from-hash method properly in Net::BGP::Message

@@ -1,0 +1,21 @@
+ff ff ff ff   ff ff ff ff   ff ff ff ff   ff ff ff ff   # Marker
+00 4D                                                   # Length
+02                                                      # Message Type (Open)
+00 00                                                   # Withdrawn Length
+00 36                                                   # Path Attribute Length
+40 01 01 02                                             # Origin: Unknown
+40 02 06 02 02 01 02 03 04                              # AS Path: 0x0102 0x0304
+80 0E                                                   # MP-NLRI
+1A                                                      #   Length of attribute
+00 02                                                   #   AFI: IPv6
+01                                                      #   Unicast
+10                                                      #   Length of Next Hop
+20 01 0D B8   00 00 00 00   00 00 00 00   00 00 00 01   #   NH: 2001:db8::1
+00                                                      #   Reserved
+20 20 01 0D B8                                          #   NLRI: 2001:db8::/32
+80 0F                                                   # MP-Unreachable
+09                                                      #   Length of attribute
+00 02                                                   #   AFI: IPv6
+01                                                      #   Unicast
+21 20 01 0D B8 00                                       #   NLRI: 2001:db8::/33
+

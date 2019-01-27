@@ -1,0 +1,19 @@
+RFC4271
+
+4.1 - Header Format
+4.1(a1) - Marker format t/03-messages.t (Marker-Format)
+4.1(a2) - Marker format t/04-basic-bgp.t (invalid-marker)
+4.1(b1) - Length too short t/04-messages.t (invalid-length-short)
+4.1(b2) - Length too long t/04-messages.t (invalid-length-long)
+4.1(d1) - Invalid Type (! [1,2,3,4]) XXX
+
+4.2 - Open Format
+4.2(a1) - Invalid Version t/04-basic-bgp.t (invalid-version)
+4.2(b1) - Invalid Hold-Time t/04-basic-bgp.t (hold-time-too-short)
+4.2(c1) - invalid Option Length t/04-basic-bgp.t (bad-option-length [1])
+4.2(c2) - invalid Option Length t/04-basic-bgp.t (bad-option-length [3])
+
+Skipping 4.3+
+
+
+

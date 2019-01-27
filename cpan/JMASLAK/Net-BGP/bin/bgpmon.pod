@@ -1,0 +1,132 @@
+=begin pod
+
+=head1 NAME
+
+bgpmon - BGP Monitoring Script
+
+=head1 SYNOPSIS
+
+  # bgpmon.pl6 --port=1179 -my-asn=65000 --my-bgp-id=192.0.2.9 \
+         192.168.150.252 65000
+
+=head1 DESCRIPTION
+
+This provides an interface to receive and send BGP update message from a
+command line script.
+
+=head1 EXAMPLES
+
+=head2 RECEIVE ROUTES FROM PEER
+
+To see real-time BGP announcements from a peer:
+
+  # bgpmon.pl6 --my-asn=65000 --my-bgp-id=192.0.2.9 192.168.150.252 65000
+
+=head2 ANNOUNCING TO A PEER
+
+To announce a prefix to a peer:
+
+  # bgpmon.pl6 --my-asn=65000 --my-bgp-id=192.0.2.9 \
+        --announce=192.0.2.0/24-192.0.2.9
+        192.168.150.252 65000
+
+This will connect to 192.168.150.252 and send prefix 192.0.2.0/24 with a
+next-hop of 192.0.2.9.
+
+=head1 REQUIRED PARAMETERS
+
+=head2 --my-asn=<asn>
+
+This is our ASN value.
+
+=head2 --my-bgp-id=<ip>
+
+This is our BGP identifier, expressed as an IPv4 address.  Typically this is an
+IP address assigned to this host.
+
+=head2 <peer-IP> <peer-ASN>
+
+The last items on the command line are the peers to which we connect and from
+which we accept connections.
+
+=head1 OPTIONAL PARAMETERS
+
+=head2 --passive
+
+If this is provided, the script will not attempt to connect to the BGP peers.
+Instead, it will simply await connections.
+
+=head2 --port=<port>
+
+This is the BGP port to listen on.  The default port, 179, requires elevated
+privileges, so this may be useful for user-level BGP code.
+
+=head2 --listen-host=<host>
+
+This is the BGP host to listen on.  The default host, 0.0.0.0, is equivilent
+to "all IPv4 addresses."  Use C<::> if you would like to listen to IPv6 too.
+
+=head2 --allow-unknown-peers
+
+If this is present, peers that aren't explictly defined will be allowed to
+connect.  We'll accept whatever ASN they provide on the initial connection
+(this initial ASN value will be remembered until this script exits).  This is
+useful to minimize configuration requirements.
+
+=head2 --cidr-filter <cidr-list>
+
+This is a comma seperated lists of CIDRS.  If an UPDATE message is received
+that has an NRLI or withdrawn/unreachable prefix from this list, the UPDATE
+will be printed.  Otherwise it will be silently ignored.  The default is to
+have no filtering.
+
+=head2 --announce <prefixs-and-nexthops>
+
+  --announce 192.0.2.0/24-192.0.2.1,10.0.0.0/8-192.0.2.1
+
+A comma seperated list of prefixes to announce along with the appropriate next
+hop.  The next hop is seperated from the prefix by a hypen, while multiple
+prefixes are seperated by a comma.
+
+=head2 --communities <community-list>
+
+A comma seperated list of communities to advertise with any C<--announce>
+routes provided.
+
+=head2 --af-ipv6
+
+If present, advertise address family IPv6 Unicast support to the remote peer.
+
+=head2 --short-format
+
+If present, use the short output format rather than the more human-readable
+format. The short format is pipe seperated and contains lines in the following
+format:
+
+For OPEN messages, a typical line looks like:
+
+  O|15466360000|192.0.2.2
+
+The fields are "O" (Open), followed by a Posix time stamp, followed by the
+peer that sent the Open message.
+
+For UPDATE messages, a typical line looks like:
+  
+  U|15466360000|192.0.2.2|192.0.2.0/24|192.0.2.2|65001 i|65001:123 65001:345
+
+The fields are "U" (Update), followed by a Posix time stamp, followed by the
+peer's IP address, followed by the CIDR announced, followed by the next hop,
+followed by the full AS path plus origin, and ending with a list of
+space-seperated communities in the BGP message.
+
+=head2 --max-log-messages=<num>
+
+This will cause the C<bgpmon> script to exit after a certain number of messages
+are output.
+
+=head2 --batch-size
+
+Decoding the BGP messages is done with a multi-threaded process.  This selects
+how many messages should be processed per thread. 
+
+=end pod

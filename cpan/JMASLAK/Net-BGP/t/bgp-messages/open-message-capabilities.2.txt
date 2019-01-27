@@ -1,0 +1,22 @@
+ff ff ff ff   ff ff ff ff   ff ff ff ff   ff ff ff ff   # Marker
+00 31                                                   # Length
+01                                                      # Message Type (Open)
+04                                                      # BGP Version
+10 20                                                   # Autonomous System
+00 03                                                   # Hold Time
+01 02 03 04                                             # BGP Identifier
+14                                                      # Opt Parameter Len
+02                                                      # Capability Option
+02                                                      # Capability Length
+02 00                                                   # Route Refresh Capability, 0 Length
+02                                                      # Capability Option
+06                                                      # Capability Length
+41                                                      # ASN32 Capability
+04                                                      # ASN32 Capability Length
+12 34 56 78                                             # ASN32 0x12345678
+02                                                      # Capability Option
+06                                                      # Capability Length
+01                                                      # MPBGP Capability
+04                                                      # MPBGP Capability Length
+00 01 00 01                                             # IPv4, Reserved, Unicast
+

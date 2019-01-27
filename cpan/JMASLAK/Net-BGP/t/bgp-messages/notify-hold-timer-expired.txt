@@ -1,0 +1,5 @@
+ff ff ff ff   ff ff ff ff   ff ff ff ff   ff ff ff ff   # Marker
+00 15                                                   # Length
+03                                                      # Message Type (Notify)
+04                                                      # Error Code (Hold-Time-Expired)
+00                                                      # Error Subcode

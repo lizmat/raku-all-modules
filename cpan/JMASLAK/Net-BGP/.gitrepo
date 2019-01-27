@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jmaslak/Perl6-Net-BGP.git
+	branch = master
+	commit = 469cc05192b8c456dcae54b1579cccc8ebc6fdb0
+	parent = 7f4f8677fedd6b6fc2d9943c6d6c7e6b06580916
+	cmdver = 0.3.1

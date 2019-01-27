@@ -1,0 +1,12 @@
+/blib/
+/src/*.o
+/src/Makefile
+/.panda-work
+/resources/*.so
+/resources/*.dylib
+.precomp/
+/Net-BGP-*
+profile-*.html
+test.sh
+test2.sh
+/*.log

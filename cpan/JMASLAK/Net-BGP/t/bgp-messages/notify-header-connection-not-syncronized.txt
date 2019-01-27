@@ -1,0 +1,5 @@
+ff ff ff ff   ff ff ff ff   ff ff ff ff   ff ff ff ff   # Marker
+00 15                                                   # Length
+03                                                      # Message Type (Notify)
+01                                                      # Error Code (Header)
+01                                                      # Error Subcode (Connection not Syncronized)

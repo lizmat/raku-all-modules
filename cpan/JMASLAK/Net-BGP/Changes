@@ -1,0 +1,42 @@
+Revision history for Perl6-Net-BGP
+
+{{$NEXT}}
+    - Added Aggregator attribute handling
+    - Was not properly validating Origin value
+
+0.0.8  2019-01-26T16:04:13-07:00
+    - Print Atomic Aggregate nicely when stringifying Update messages
+
+0.0.7  2019-01-10T21:01:06-07:00
+    - Remove bad NativeCall calls
+
+0.0.6  2019-01-10T18:53:09-07:00
+    - Allow bgpmon to send communities along with new prefix
+      advertisements
+    - Allow bgpmon to listen on IPv6 addresses
+    - Remove unnecessary debugging statements
+
+0.0.5  2019-01-09T21:28:32-07:00
+    - Add allow-unknown-peers
+    - Add undocumented option to bgpmon to announce the RIPE test
+      attribute - see https://docs.google.com/spreadsheets/d/1U42-HCi3RzXkqVxd8e2yLdK9okFZl77tWZv13EsEzO0/edit#gid=0
+    - Fix announcement of IPv6 prefixes by bgpmon.pl6
+
+0.0.4  2019-01-06T11:19:23-07:00
+    - Improve performance of IPv4 UPDATE messages
+    - Improve handling of closed connections (they should not kill the
+      process)
+
+0.0.3  2019-01-05T16:22:37-07:00
+    - Add announce() method to Net::BGP to announce prefixes easier
+    - Improve documentation
+    - Reformatting class modules (mostly whitespace and adding
+      StrictClass)
+
+0.0.2  2019-01-02T20:35:31-07:00
+    - Fix crash when receiving packet with no NLRI6 data
+    - Allow specification of IPv6 address family to bgpmon (--af-ipv6)
+    - Reduce bloat
+
+0.0.1  2018-12-31T19:42:45-07:00
+    - Initial version

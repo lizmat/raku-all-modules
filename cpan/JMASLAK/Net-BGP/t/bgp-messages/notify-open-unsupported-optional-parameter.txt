@@ -1,0 +1,5 @@
+ff ff ff ff   ff ff ff ff   ff ff ff ff   ff ff ff ff   # Marker
+00 15                                                   # Length
+03                                                      # Message Type (Notify)
+02                                                      # Error Code (Open)
+04                                                      # Error Subcode (Unsupported Optional Parameter)

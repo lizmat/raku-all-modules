@@ -1,0 +1,11 @@
+ff ff ff ff   ff ff ff ff   ff ff ff ff   ff ff ff ff   # Marker
+00 22                                                   # Length
+01                                                      # Message Type (Open)
+04                                                      # BGP Version
+10 20                                                   # Autonomous System
+00 03                                                   # Hold Time
+01 02 03 04                                             # BGP Identifier
+05                                                      # Opt Parameter Len
+F0 00                                                   # Empty Option (type 240)
+F1 01 FF                                                # Small Option (Type 255)
+
