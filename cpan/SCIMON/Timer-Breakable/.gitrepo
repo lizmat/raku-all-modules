@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Scimon/Timer-Breakable.git
+	branch = master
+	commit = ce000c6b79ab413ad05b5b0da08510d4747b24bc
+	parent = ca941e9574b7ae2650d01f0fe61d18f7ba6c918e
+	cmdver = 0.3.1
