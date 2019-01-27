@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jmaslak/Perl6-IP-Random.git
+	branch = master
+	commit = da19380fde5f373138ef671553cd2a57721ff95d
+	parent = c1a1ff4ca88b541162fcc002e85c0ec1a85fc9f2
+	cmdver = 0.3.1
