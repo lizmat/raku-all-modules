@@ -92,6 +92,8 @@ use Log::Any::Adapter::File;
 Log::Any.add( Log::Any::Adapter::File.new( path => '/path/to/file.log' ) );
 ```
 
+Starting with 0.9.5 version,, it's now possible to choose the buffering size to use, with _out-buffer_. This option can takes the same values as described in the perl6 documentation (https://docs.perl6.org/routine/out-buffer).
+
 ### Stdout
 
 ```perl6
