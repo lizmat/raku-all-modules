@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="{{ lang }}">
+  <head>
+    <title>{{ title }}</title>
+    <meta charset="UTF-8" />
+    <style>
+      kbd { font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
+      samp, code { font-family: "Terminus", "Courier", "Lucida Console", monospace }
+      
+      .nested {
+      margin-left: 3em;
+      }
+      aside, u { opacity: 0.7 }
+        a[id^="fn-"]:target { background: #ff0 }
+        </style>
+  </head>
+  <body class="pod">
+    <div id="___top"></div>
+    {{{ header }}}
+    {{# title }}<h1 class='title'>{{ title }}</h1>{{/ title }}
+    {{# subtitle }}<p class='subtitle'>{{ subtitle }}</p>{{/ subtitle }}
+      <div class="pod-body no-toc">
+    {{# body }}{{{ . }}}{{/ body }}
+      </div>
+    </body>
+</html>

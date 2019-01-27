@@ -18,7 +18,7 @@ plan 3;
 
 =head2 Heading 2.2
 
-=head2 <a href="/routine/message#class_Exception">(Exception) method message</a>
+=head2 L<(Exception) method message|/routine/message#class_Exception>
 
 =head3 Heading 2.2.1
 

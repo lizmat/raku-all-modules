@@ -6,7 +6,8 @@ Render Perl 6 Pod as HTML
 
 ## Install
 
-This module is in the [Perl 6 ecosystem](https://modules.perl6.org), so you install it in the usual way:
+This module is in the [Perl 6 ecosystem](https://modules.perl6.org),
+so you can install it in the usual way:
 
     zef install Pod::To::HTML
 
@@ -15,6 +16,10 @@ This module is in the [Perl 6 ecosystem](https://modules.perl6.org), so you inst
   the installation fails, please upgrade to Perl 6 >= 2018.06 or
   simply disregard the test and install with `--force` if that
   particular feature is of no use to you.
+
+**Note 2**: Perl6 2018.11 introduced handling of Definition blocks,
+`Defn`. Please upgrade if you are using that feature in the
+documentation.
 
 ## SYNOPSIS
 
@@ -55,21 +60,32 @@ say Pod::To::HTML.render($pod,
     lang => "document language (defaults to 'en')",
 	default-title => 'No =title was found so we use this');
 
-```
+# If you want to use a specific template 
+say pod2html $=pod[0], :templates("lib/templates");
+# main.mustache should be in that directory
 
+
+```
 ## DESCRIPTION
 
 `Pod::To::HTML` takes a Pod 6 tree and outputs correspondingly
-formatted HTML. Generally this is done via the command line,
-using`perl6 --doc=HTML`, which extracts the pod from the document and
-feeds it to `Pod::To::HTML`. The other route is with the `render`
-method (called by `--doc=HTML`), which creates a complete HTML
-document from the Pod tree it is called with.
+formatted HTML using default or provided templates. Generally this is
+done via the command line, using`perl6 --doc=HTML`, which extracts the
+Pod from the document and feeds it to `Pod::To::HTML`. The other
+route, used from your own program, is via the `render` method (called
+by `--doc=HTML`), which creates a complete HTML document from the Pod
+tree it is called with.
 
 Optionally, a custom header/fooder/head-fields can be
-provided. These can be used to link to custom CSS stylesheets and
+provided, or even a full template that uses Mustache as a
+language. These can be used to link to custom CSS stylesheets and 
 JavaScript libraries.
 
+## Examples
+
+Check the [`examples`](resources/examples/README.md) directory (which
+should have been installed with your distribution, or is right here if
+you download from source) for a few illustrative examples. 
 
 ## DEBUGGING
 

@@ -1,12 +1,21 @@
 {
     "perl"        : "6.*",
     "name"        : "Pod::To::HTML",
-    "version"     : "0.3.22",
+    "version"     : "0.6.1",
+    "author" : "Perl 6",
     "description" : "Convert Perl 6 Pod to HTML",
     "license"     : "Artistic-2.0",
-    "depends"     : ["URI"],
+    "depends"     : [
+	"URI",
+	"Template::Mustache",
+        "Pod::Load:ver<0.4.0+>"
+    ],
+    "test-depends" : ["Test::Output"],
     "provides"    : {
         "Pod::To::HTML" : "lib/Pod/To/HTML.pm"
     },
+    "resources": [
+        "templates/main.mustache"
+    ],
     "source-url"  : "git://github.com/perl6/Pod-To-HTML.git"
 }

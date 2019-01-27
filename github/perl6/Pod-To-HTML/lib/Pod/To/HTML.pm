@@ -1,5 +1,8 @@
 unit class Pod::To::HTML;
+
 use URI::Escape;
+use Template::Mustache;
+use Pod::Load;
 
 #try require Term::ANSIColor <&colored>;
 #if &colored.defined {
@@ -23,13 +26,13 @@ multi method render(Pod::Block $pod, Str :$header = '', Str :$footer = '', Str :
 }
 
 multi method render(IO::Path $file, Str :$header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '', :$lang = 'en') {
-    use MONKEY-SEE-NO-EVAL;
-    pod2html(EVAL($file.slurp ~ "\n\$=pod"), :$header, :$footer, :$head, :$default-title, :$lang);
+  Debug { note colored("Rendering with IO::Path ", "bold") ~ load($file).perl }
+
+  pod2html(load($file), :$header, :$footer, :$head, :$default-title, :$lang);
 }
 
 multi method render(Str $pod-string, Str :$header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '', :$lang = 'en') {
-    use MONKEY-SEE-NO-EVAL;
-    pod2html(EVAL($pod-string ~ "\n\$=pod"), :$header, :$footer, :$head, :$default-title, :$lang);
+    pod2html(load($pod-string), :$header, :$footer, :$head, :$default-title, :$lang);
 }
 
 # FIXME: this code's a horrible mess. It'd be really helpful to have a module providing a generic
@@ -71,6 +74,7 @@ sub escape_id ($id) {
 multi visit(Nil, |a) {
     Debug { note colored("visit called for Nil", "bold") }
 }
+
 multi visit($root, :&pre, :&post, :&assemble = -> *% { Nil }) {
     Debug { note colored("visit called for ", "bold") ~ $root.perl }
     my ($pre, $post);
@@ -85,7 +89,6 @@ multi visit($root, :&pre, :&post, :&assemble = -> *% { Nil }) {
 class Pod::List is Pod::Block { };
 class Pod::DefnList is Pod::Block { };
 BEGIN { if ::('Pod::Defn') ~~ Failure { CORE::Pod::<Defn> := class {} } }
-
 
 sub assemble-list-items(:@content, :$node, *% ) {
     my @newcont;
@@ -156,69 +159,55 @@ sub assemble-list-items(:@content, :$node, *% ) {
 }
 
 
-#| Converts a Pod tree to a HTML document.
-sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$footer = '', :$default-title,
-  :$css-url = '//design.perl6.org/perl.css', :$lang = 'en',
+#| Converts a Pod tree to a HTML document using templates
+sub pod2html(
+    $pod,
+    :&url = -> $url { $url },
+    :$head = '',
+    :$header = '',
+    :$footer = '',
+    :$default-title,
+    :$css-url = '//design.perl6.org/perl.css',
+    :$templates = Str,
+    :$lang = 'en'
     --> Str ) is export {
+
+    my $template-file = %?RESOURCES<templates/main.mustache>;
+    with $templates {
+         if  "$templates/main.mustache".IO ~~ :f {
+             $template-file = "$templates/main.mustache".IO
+         }
+         else {
+            note "$templates does not contain required templates. Using default.";
+        }
+    }
     ($title, $subtitle, @meta, @indexes, @body, @footnotes) = ();
     #| Keep count of how many footnotes we've output.
     my Int $*done-notes = 0;
     &OUTER::url = &url;
+    Debug { note colored("About to call node2html ", "bold") ~ $pod.perl };
     @body.push: node2html($pod.map: { visit $_, :assemble(&assemble-list-items) });
-
     my $title_html = $title // $default-title // '';
 
-    my $prelude = qq:to/END/;
-        <!doctype html>
-        <html lang="$lang">
-        <head>
-          <title>{ $title_html }</title>
-          <meta charset="UTF-8" />
-          <style>
-            /* code gets the browser-default font
-             * kbd gets a slightly less common monospace font
-             * samp gets the hard pixelly fonts
-             */
-            kbd \{ font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
-            samp \{ font-family: "Terminus", "Courier", "Lucida Console", monospace }
-            /* WHATWG HTML frowns on the use of <u> because it looks like a link,
-             * so we make it not look like one.
-             */
-            u \{ text-decoration: none }
-            .nested \{
-                margin-left: 3em;
-            }
-            // footnote things:
-            aside, u \{ opacity: 0.7 }
-            a[id^="fn-"]:target \{ background: #ff0 }
-          </style>
-          { qq|<link rel="stylesheet" href="$css-url">| if $css-url }
-          { do-metadata() // () }
-          $head
-        </head>
-        <body class="pod">
-        <div id="___top"></div>
-        $header
-        END
-
-    return join(qq{\n},
-        $prelude,
-        ( $title.defined ?? "<h1 class='title'>{$title_html}</h1>"
-                         !! () ),
-        ( $subtitle.defined  ?? "<p class='subtitle'>{$subtitle}</p>"
-                         !! () ),
-        ( my $ToC := do-toc($pod) // () ),
-        '<div class="pod-body', ($ToC ?? '' !! ' no-toc'), '">',@body,'</div>',
-        do-footnotes(),
-        $footer,
-        '</body>',
-        "</html>\n"
-    );
+    my Template::Mustache $main-tm .= new;
+    return $main-tm.render( $template-file.IO.slurp, :literal, (
+        :$lang,
+        :title($title_html),
+        :$subtitle,
+        :css($css-url),
+        :meta( do-metadata ),
+        :$head,
+        :toc( do-toc($pod) ),
+        :$header,
+        :@body,
+        :footnotes( do-footnotes ),
+        :$footer).hash
+    )
 }
 
 #| Returns accumulated metadata as a string of C«<meta>» tags
-sub do-metadata ( --> Str ) {
-    return @meta.map(-> $p {
+sub do-metadata(  --> Str ) {
+    return +@meta ?? '' !! @meta.map(-> $p {
         qq[<meta name="{escape_html($p.key)}" value="{node2text($p.value)}" />]
     }).join("\n");
 }
@@ -279,7 +268,7 @@ sub do-toc($pod --> Str ) {
 #| Flushes accumulated footnotes since last call. The idea here is that we can stick calls to this
 #| before each C«</section>» tag (once we have those per-header) and have notes that are visually
 #| and semantically attached to the section.
-sub do-footnotes ( --> Str ) {
+sub do-footnotes(  --> Str ) {
     return '' unless @footnotes;
 
     my Int $current-note = $*done-notes + 1;
@@ -491,7 +480,8 @@ multi sub node2html(Pod::Item $node) {
 }
 
 multi sub node2html(Positional $node) {
-    return $node.map({ node2html($_) }).join
+  Debug { note colored("Positional node2html called for ", "bold") ~ $node.gist };
+  return $node.map({ node2html($_) }).join
 }
 
 multi sub node2html(Str $node) {
