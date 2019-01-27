@@ -1,0 +1,66 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "type": "directory",
+      "purpose": null,
+      "children": [
+        {
+          "name": "060-associative.t",
+          "type": "file"
+        },
+        {
+          "name": "030-roundtrip.t",
+          "type": "file"
+        },
+        {
+          "name": "050-array.t",
+          "type": "file"
+        },
+        {
+          "name": "010-use.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "040-traits.t"
+        }
+      ],
+      "name": "t"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "purpose": null,
+      "name": "lib",
+      "children": [
+        {
+          "purpose": null,
+          "children": [
+            {
+              "name": "Class.pm",
+              "type": "file"
+            }
+          ],
+          "name": "JSON",
+          "type": "directory"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}

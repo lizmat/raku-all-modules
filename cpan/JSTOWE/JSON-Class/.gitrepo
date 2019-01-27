@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/JSON-Class.git
+	branch = master
+	commit = 353766378f6b4cdc6b1f00b495b8939706304374
+	parent = 1249c03fad8d6ba2676f11759c917d194820a7e8
+	cmdver = 0.3.1

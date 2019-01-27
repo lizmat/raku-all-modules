@@ -1,0 +1,39 @@
+{
+  "name": "JSON::Class",
+  "version": "0.0.11",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "role to provide simple serialisation/deserialisation of objects to/from JSON",
+  "source-url": "git://github.com/jonathanstowe/JSON-Class.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/JSON-Class.git",
+    "bugtracker": "https://github.com/jonathanstowe/JSON-Class/issues"
+  },
+  "perl": "6.*",
+  "resources": [
+  ],
+  "depends": [
+    "JSON::Marshal",
+    "JSON::Unmarshal"
+  ],
+  "test-depends": [
+    "JSON::Fast",
+    "Test"
+  ],
+  "build-depends": [
+  ],
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "tags": [
+    "object",
+    "serialisation",
+    "JSON"
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "JSON::Class": "lib/JSON/Class.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}
