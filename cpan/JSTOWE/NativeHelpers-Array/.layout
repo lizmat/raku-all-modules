@@ -1,0 +1,58 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "type": "file",
+          "name": "00100-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "00200-use.t"
+        },
+        {
+          "name": "00300-subs.t",
+          "type": "file"
+        }
+      ],
+      "name": "t",
+      "type": "directory",
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "type": "file",
+              "name": "Array.pm"
+            }
+          ],
+          "type": "directory",
+          "name": "NativeHelpers",
+          "purpose": null
+        }
+      ],
+      "purpose": null,
+      "name": "lib",
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}

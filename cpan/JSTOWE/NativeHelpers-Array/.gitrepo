@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/NativeHelpers-Array.git
+	branch = master
+	commit = c4492bbd87d2aa19fcbeda839104be1f9a7728a7
+	parent = 49d117d3b59e8191ca75d4933f037da73621f110
+	cmdver = 0.3.1

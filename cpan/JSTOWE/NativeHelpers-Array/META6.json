@@ -1,0 +1,35 @@
+{
+  "name": "NativeHelpers::Array",
+  "version": "0.0.3",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "Helper subroutines for working with Perl6 Native Arrays (CArray)",
+  "source-url": "git://github.com/jonathanstowe/NativeHelpers-Array.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/NativeHelpers-Array.git",
+    "bugtracker": "https://github.com/jonathanstowe/NativeHelpers-Array/issues"
+  },
+  "perl": "6.*",
+  "resources": [
+  ],
+  "build-depends": [
+  ],
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "depends": [
+  ],
+  "tags": [
+    "utils",
+    "native",
+    "array"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+  ],
+  "provides": {
+    "NativeHelpers::Array": "lib/NativeHelpers/Array.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}
