@@ -1,0 +1,19 @@
+{
+    "perl" : "6.c",
+    "name" : "Xmav::JSON",
+    "auth" : "github:shintakezou",
+    "api" : "1",
+    "version" : "0.0.1",
+    "description" : "Deserialize a JSON string",
+    "authors" : [ "Mauro Panigada" ],
+    "license" : "Artistic-2.0",
+    "provides" : {
+        "Xmav::JSON" : "lib/Xmav/JSON.pm6",
+	"Xmav::JSON::Grammar" : "lib/Xmav/JSON/Grammar.pm6",
+	"Xmav::JSON::Actions" : "lib/Xmav/JSON/Actions.pm6"
+    },
+    "tags": [
+        "JSON"
+    ],
+    "source-url" : "git://github.com/shintakezou/Xmav-JSON.git"
+}

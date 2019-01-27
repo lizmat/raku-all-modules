@@ -1,0 +1,6 @@
+*.moarvm
+lib/.precomp/
+.precomp/
+*~
+*.bk
+/blib/

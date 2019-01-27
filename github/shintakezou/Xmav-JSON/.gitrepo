@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:shintakezou/Xmav-JSON.git
+	branch = master
+	commit = 66f37ac42c3a64838c328c24388a8be6567d0f89
+	parent = 7e663029a189b2f8b08c45bd0f3135a6aa5a6ce2
+	cmdver = 0.3.1
