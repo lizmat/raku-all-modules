@@ -1,0 +1,1 @@
+${:Attributes(${:ForumName(${:S("Amazon DynamoDB")}), :LastPostDateTime(${:S("20130320010350")}), :LastPostedBy(${:S("alice\@example.com")}), :Message(${:S("I want to put 10 million data items to an Amazon DynamoDB table.  Is there an upper limit?")}), :Subject(${:S("Maximum number of items?")}), :Tags(${:SS($["Update", "Multiple Items", "HelpMe"])}), :Views(${:N("5")})})}

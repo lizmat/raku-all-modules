@@ -1,0 +1,1 @@
+${:ConditionExpression("LastPostedBy = :val2"), :ExpressionAttributeValues(${":val1" => ${:S("alice\@example.com")}, ":val2" => ${:S("fred\@example.com")}}), :Key(${:ForumName(${:S("Amazon DynamoDB")}), :Subject(${:S("Maximum number of items?")})}), :ReturnValues("ALL_NEW"), :TableName("Thread"), :UpdateExpression("set LastPostedBy = :val1")}

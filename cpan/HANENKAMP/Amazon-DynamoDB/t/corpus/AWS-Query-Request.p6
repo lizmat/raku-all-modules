@@ -1,0 +1,1 @@
+${:ConsistentRead, :ExpressionAttributeValues(${":v1" => ${:S("Amazon DynamoDB#DynamoDB Thread 1")}, ":v2a" => ${:S("User A")}, ":v2b" => ${:S("User C")}}), :IndexName("PostedBy-Index"), :KeyConditionExpression("Id = :v1 AND PostedBy BETWEEN :v2a AND :v2b"), :Limit(3), :ProjectionExpression("Id, PostedBy, ReplyDateTime"), :ReturnConsumedCapacity("TOTAL"), :TableName("Reply")}

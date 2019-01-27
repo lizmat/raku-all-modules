@@ -1,0 +1,1 @@
+${:ConsumedCapacity(${:CapacityUnits(1), :TableName("Thread")}), :Item(${:LastPostDateTime(${:S("201303190436")}), :Message(${:S("I want to update multiple items in a single call. What's the best way to do that?")}), :Tags(${:SS($["Update", "Multiple Items", "HelpMe"])})})}

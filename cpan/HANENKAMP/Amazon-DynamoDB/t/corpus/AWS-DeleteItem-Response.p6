@@ -1,0 +1,1 @@
+${:Attributes(${:ForumName(${:S("Amazon DynamoDB")}), :LastPostDateTime(${:S("201303201023")}), :LastPostedBy(${:S("fred\@example.com")}), :Message(${:S("I want to update multiple items in a single call. What's the best way to do that?")}), :Subject(${:S("How do I update multiple items?")}), :Tags(${:SS($["Update", "Multiple Items", "HelpMe"])})})}

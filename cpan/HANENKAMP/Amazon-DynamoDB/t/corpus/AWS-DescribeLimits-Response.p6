@@ -1,0 +1,1 @@
+${:AccountMaxReadCapacityUnits(20000), :AccountMaxWriteCapacityUnits(20000), :TableMaxReadCapacityUnits(10000), :TableMaxWriteCapacityUnits(10000)}

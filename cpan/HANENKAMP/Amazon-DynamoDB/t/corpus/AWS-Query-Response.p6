@@ -1,0 +1,1 @@
+${:ConsumedCapacity(${:CapacityUnits(1), :TableName("Reply")}), :Count(2), :Items($[{:Id(${:S("Amazon DynamoDB#DynamoDB Thread 1")}), :PostedBy(${:S("User A")}), :ReplyDateTime(${:S("2015-02-18T20:27:36.165Z")})}, {:Id(${:S("Amazon DynamoDB#DynamoDB Thread 1")}), :PostedBy(${:S("User B")}), :ReplyDateTime(${:S("2015-02-25T20:27:36.165Z")})}]), :ScannedCount(2)}

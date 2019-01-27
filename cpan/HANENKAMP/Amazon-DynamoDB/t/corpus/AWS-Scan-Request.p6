@@ -1,0 +1,1 @@
+${:ReturnConsumedCapacity("TOTAL"), :TableName("Reply")}

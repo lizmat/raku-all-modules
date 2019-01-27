@@ -1,0 +1,1 @@
+${:TableDescription(${:ItemCount(0), :ProvisionedThroughput(${:NumberOfDecreasesToday(0), :ReadCapacityUnits(5), :WriteCapacityUnits(5)}), :TableArn("arn:aws:dynamodb:us-west-2:123456789012:table/Reply"), :TableName("Reply"), :TableSizeBytes(0), :TableStatus("DELETING")})}

@@ -1,0 +1,1 @@
+${:RequestItems(${:Forum(${:Keys($[{:Name(${:S("Amazon DynamoDB")})}, {:Name(${:S("Amazon RDS")})}, {:Name(${:S("Amazon Redshift")})}]), :ProjectionExpression("Name, Threads, Messages, Views")}), :Thread(${:Keys($[{:ForumName(${:S("Amazon DynamoDB")}), :Subject(${:S("Concurrent reads")})},]), :ProjectionExpression("Tags, Message")})}), :ReturnConsumedCapacity("TOTAL")}
