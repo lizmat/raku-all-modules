@@ -1,0 +1,22 @@
+2018-12-18  Juan J. merelo  <jmerelo@penny>
+
+	* META6.json: Bumps up with examples and improving documentation.
+	nqp is not actually a dependency you can list...
+
+2018-12-17  Juan J. merelo  <jmerelo@penny>
+
+	* lib/Pod/Load.pm6 (Pod): Adds some more dependencies, and basically gets it ready for deployment in github. Thanks to Ashe Connor (@kivikakk) for the bug repors.
+	(Pod): Changes to return an array of all the pods available, not just the first one.
+
+2018-12-15  Juan J. merelo  <jmerelo@penny>
+
+	* lib/Pod/Load.pm6 (Pod): Adds the multi back, and also adds a way to reconfigure the precomp store. Might be better, though.
+
+2018-12-14  Juan J. merelo  <jmerelo@penny>
+
+	* lib/Pod/Load.pm6 (Pod): Eliminates one multi to avoid confusion with Str. Leaves just the one.
+
+Revision history for Pod-Load
+
+{{$NEXT}}
+    - Initial version

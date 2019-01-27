@@ -1,0 +1,8 @@
+services:
+  - docker
+
+install:
+  - docker pull jjmerelo/test-perl6
+  - docker images
+
+script: docker run -t -v  $TRAVIS_BUILD_DIR:/test jjmerelo/test-perl6

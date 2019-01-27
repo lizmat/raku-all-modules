@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/JJ/p6-pod-load.git
+	branch = master
+	commit = 3463914728fe7f2efd4be5a77ad86a79e2d043aa
+	parent = 74e405704cafc80a40773b7006964c7caa39e834
+	cmdver = 0.3.1
