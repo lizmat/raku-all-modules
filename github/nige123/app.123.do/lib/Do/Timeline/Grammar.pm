@@ -25,14 +25,14 @@ grammar Do::Timeline::Grammar {
     rule  entry             { <entry-icon> <move-to-offset>? <entry-id>? <entry-text>                                       }
     token entry-icon        { ^^ <[!+^-]>                                                                                   }
     token move-to-offset    { \d+                                                                                           }
-    token entry-id          { '[' <id> ']'                                                                                  }
-    token id                { \s*\d+\s*                                                                                     }
+    token entry-id          { '[' <id> ']'|| <error('timeline section failed to parse')>                                    }
+    token id                { \s*\d+\s*   || <error('timeline section failed to parse')>                                    }
     token entry-text        { .*? <?before [ <entry-icon> | <heading> | $]>                                                 }   
 
     method error ($message) { 
         my $parsed-so-far = self.target.substr(0, self.pos);
         my @lines = $parsed-so-far.lines;
-        note "123.do file doesn't look right: $message at line @lines.elems(), after '@lines[*-1]'. Please manually edit the file to fix.";
+        note "Your 123.do file doesn't look right: $message at line @lines.elems(), after '@lines[*-1]'. Please manually edit this line in your 123.do file to fix.";
         exit;
     }
 

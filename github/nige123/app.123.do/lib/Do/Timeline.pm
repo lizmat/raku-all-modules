@@ -2,7 +2,7 @@
 
 #---------------------------------------------------------------------------------------
 #
-# 123 - a timeline to help your work flow: do -> doing -> done
+# 123.do - a timeline to help your work flow: do -> doing -> done
 #
 # Author:               Nigel Hamilton (nige@123.do)
 # Copyright licence:    Artistic 2.0
@@ -13,8 +13,9 @@ use Do::Editor;
 use Do::Timeline::Entry;
 use Do::Timeline::Grammar;
 use Do::Timeline::Viewport;
+use Do::Timeline::UI;
 
-class Do::Timeline does Do::Timeline::Viewport {
+class Do::Timeline does Do::Timeline::Viewport does Do::Timeline::UI {
 
     has $.file;
     has %.entries;
@@ -84,6 +85,20 @@ class Do::Timeline does Do::Timeline::Viewport {
         my $entry-at-line = $.file.IO.slurp.match(/^ .*? '[' $entry-id ']'/).lines.elems // 1;    
         self.open-editor-at-line($entry-at-line);
     }
+
+    multi method edit-matching-line (Str $match-string, $offset = 0) {
+        my $line-number = 1;
+        for $.file.IO.slurp.lines -> $line {
+            last if $line.starts-with($match-string);
+            $line-number++;
+        }
+        
+        Do::Editor.new.open($!file, $line-number + $offset);
+
+        # reload the 123.do file and save any changes - this enables entries to move
+        self.load;
+        self.save;
+    }
     
     multi method edit {
         # which line is NOW on in the 123.do file?
@@ -91,7 +106,7 @@ class Do::Timeline does Do::Timeline::Viewport {
         self.open-editor-at-line(1 + $now-at-line);
     }
 
-    submethod estimate-tasks-per-day {
+    method estimate-tasks-per-day {
         my %past-entries = self.entries.values.map(*.Slip).grep(*.is-past).classify(*.daycount);
 
         # default to 6 tasks per day
@@ -99,7 +114,7 @@ class Do::Timeline does Do::Timeline::Viewport {
 
         my @past-day-entry-counts = %past-entries.values.map(*.elems);
 
-        # average daily velocity previously in the past    
+        # average daily velocity based on previously completed tasks in the past    
         return @past-day-entry-counts.sum div @past-day-entry-counts.elems; 
     }
 

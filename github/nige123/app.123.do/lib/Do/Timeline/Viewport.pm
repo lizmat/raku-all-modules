@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-# render parts of the timeline for display and storage
+# render parts of the timeline for display and file storage
 role Do::Timeline::Viewport {
 
     method render (%timeline-entries = %.entries) {
@@ -11,6 +11,25 @@ role Do::Timeline::Viewport {
     multi method render-day ('-', $past-offset) { self.render-day(Date.today.daycount - $past-offset) }
     multi method render-day ('!', $now-offset)  { self.render-day(Date.today.daycount)                }
     multi method render-day ('+', $next-offset) { self.render-day(Date.today.daycount + $next-offset) }
+
+    multi method render-day-with-padding (Int $daycount, $pad-to-width = 80) {
+
+        my ($space, $heading, @entry-lines) = self.render-day($daycount).lines;
+    
+        my $left-padding  = ' ' x ($pad-to-width - $heading.chars) div 2;
+        my $right-padding = ' ' x $pad-to-width - ($heading.chars + $left-padding);
+    
+        my @padded-lines;
+
+        @padded-lines.push($left-padding ~ $heading ~ $right-padding);        
+    
+        for @entry-lines -> $line {
+            @padded-lines.push($line ~ ' ' x ($pad-to-width - $line.chars));
+        }
+                
+        return @padded-lines.join("\n");
+
+    }
         
     multi method render-day (Int $daycount) {
 
