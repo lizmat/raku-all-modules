@@ -1,0 +1,22 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "add \"is predicate\" trait to Attributes",
+  "license" : "Artistic-2.0",
+  "name" : "Attribute::Predicate",
+  "perl" : "6.c",
+  "provides" : {
+    "Attribute::Predicate" : "lib/Attribute/Predicate.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Attribute-Predicate.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Attribute-Predicate.git
+	branch = master
+	commit = 6aab4ad1e78d172648a6116671ce1e994e7609ae
+	parent = bb5197545ba988e0fd429a7a6535191e0e3a3080
+	cmdver = 0.3.1
