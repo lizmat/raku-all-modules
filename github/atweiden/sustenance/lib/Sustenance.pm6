@@ -138,7 +138,7 @@ multi method gen-macros(
     my %macros = gen-macros(:@meal);
 }
 
-multi sub gen-macros(Pantry:D $pantry, Meal:D @m --> Array:D)
+multi sub gen-macros(Pantry:D $pantry, Meal:D @m --> Array[Hash:D])
 {
     my Hash:D @meal =
         @m.map(-> Meal:D $meal {
@@ -151,7 +151,7 @@ multi sub gen-macros(Pantry:D $pantry, Meal:D @m --> Array:D)
         });
 }
 
-multi sub gen-macros(Portion:D @p, Pantry:D $pantry --> Array:D)
+multi sub gen-macros(Portion:D @p, Pantry:D $pantry --> Array[Hash:D])
 {
     my Hash:D @portion =
         @p.map(-> Portion:D $portion {
@@ -214,12 +214,12 @@ multi sub gen-macros(Hash:D :@macros! --> Hash:D)
 # end method gen-macros }}}
 # method ls {{{
 
-multi method ls(::?CLASS:D: Bool:D :foods($)! where .so --> Array:D)
+multi method ls(::?CLASS:D: Bool:D :foods($)! where .so --> Array[Hash:D])
 {
     my Hash:D @ls = $.pantry.food.map({ .hash });
 }
 
-multi method ls(::?CLASS:D: Bool:D :meals($)! where .so --> Array:D)
+multi method ls(::?CLASS:D: Bool:D :meals($)! where .so --> Array[Hash:D])
 {
     my Hash:D @ls = @.meal.map({ .hash });
 }
