@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git@github.com:fayland/perl6-Lingua-Unihan.git
 	branch = master
-	commit = c5ad41b0735c4f1b68d2e0964fabc91473ac5bf7
-	parent = 841e7c86ea4bdb6bb310c520cdc5040df2ab1659
+	commit = 2b98c30c9a0bb25824922f2c7c20935a4afaf5ac
+	parent = 206415afaf767b0277b1b606916b846589803931
 	cmdver = 0.3.1

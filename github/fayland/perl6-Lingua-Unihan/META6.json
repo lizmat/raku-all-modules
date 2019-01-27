@@ -5,7 +5,7 @@
     "description"   : "Perl6 reader (SQLite) for unihan database",
     "depends"       : [ "DBIish", "Encode" ],
     "provides" : {
-        "Lingua::Unihan"    : "lib/Lingua/Unihan.pm"
+        "Lingua::Unihan"    : "lib/Lingua/Unihan.pm6"
     },
     "source-url"    : "git://github.com/fayland/perl6-Lingua-Unihan.git"
 }

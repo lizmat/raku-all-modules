@@ -1,6 +1,7 @@
+use v6;
+
 unit module Lingua::Unihan;
 
-use v6;
 use DBIish;
 use Encode;
 
