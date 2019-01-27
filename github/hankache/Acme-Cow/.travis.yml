@@ -1,3 +1,8 @@
 language: perl6
 perl6:
   - latest
+before_install:
+  - perl6 -v
+install:
+  - rakudobrew build zef
+  - zef --debug install .
