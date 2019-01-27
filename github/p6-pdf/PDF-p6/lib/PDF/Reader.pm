@@ -185,7 +185,7 @@ class PDF::Reader {
         }
     }
 
-    #| [PDF 1.7 Table 3.13] Entries in the file trailer dictionary
+    #| [PDF 32000 Table 15] Entries in the file trailer dictionary
     method !set-trailer (
         Hash $dict,
         Array :$keys = [ $dict.keys.grep: {
@@ -393,36 +393,27 @@ class PDF::Reader {
         my Hash $idx := %!ind-obj-idx{$obj-num * 1000 + $gen-num}
             // die "unable to find object: $obj-num $gen-num R";
 
+        my $ind-obj;
+        my Bool $have-ast = True;    
         with $idx<ind-obj> {
-            # already in cache but could be AST or an object
-            my $ind-obj := $_;
-            my Bool \is-ind-obj = $ind-obj.isa(PDF::IO::IndObj);
-
-            if $get-ast {
-                # AST requested
-                is-ind-obj
-                    ?? $ind-obj.ast
-                    !! :$ind-obj
-            }
-            else {
-                # object requested. made need to create from AST
-                is-ind-obj
-                    ?? $ind-obj
-                    !! ($_ = PDF::IO::IndObj.new: :$ind-obj, :reader(self) );
-            }
+            $ind-obj := $_;
+            $have-ast := False
+                if $ind-obj.isa(PDF::IO::IndObj);
         }
         else {
-            # object not yet loaded
-            if $eager {
-                # store in cache as an AST or object, as per requested type
-                given self!fetch-ind-obj($idx, :$obj-num, :$gen-num) -> $ind-obj {
-                    # only fully stantiate object when needed
-                    $_ = $get-ast ?? :$ind-obj !! PDF::IO::IndObj.new( :$ind-obj, :reader(self) );
-                }
-            }
-            else {
-                Nil;
-            }
+            return unless $eager;
+            $idx<ind-obj> = $ind-obj := self!fetch-ind-obj($idx, :$obj-num, :$gen-num);
+        }
+
+        if $get-ast {
+            # AST requested.
+            $have-ast ?? :$ind-obj !! $ind-obj.ast;
+        }
+        else {
+            # Object requested.
+            $have-ast
+                ?? ($idx<ind-obj> = PDF::IO::IndObj.new( :$ind-obj, :reader(self) ))
+                !! $ind-obj;
         }
     }
 
@@ -556,7 +547,7 @@ class PDF::Reader {
     }
 
     #| load PDF 1.4- xref table followed by trailer
-    #| experimental faster native C scanner
+    #| experimental use of PDF::Native::Reader
     method !load-xref-table-fast(Str $xref is copy, $dict is rw, :$offset) {
         state $fast-reader //= (require ::('PDF::Native::Reader')).new;
 
@@ -781,7 +772,7 @@ class PDF::Reader {
     #| - sift /XRef and /ObjStm objects,
     method get-objects(
         Bool :$incremental = False,     #| only return updated objects
-        Bool :$eager = ! $incremental,  #| don't fetch uncached objects
+        Bool :$eager = ! $incremental,  #| fetch uncached objects
         ) {
         my @object-refs;
 
@@ -908,10 +899,10 @@ class PDF::Reader {
     }
 
     #| write to PDF/FDF
-    multi method save-as( Str $output-path, |c ) is default {
+    multi method save-as(IO() $output-path, |c ) is default {
         my $ast = $.ast(:!eager, |c);
         my PDF::Writer $writer .= new: :$!input, :$ast;
-        $output-path.IO.spurt: $writer.Blob;
+        $output-path.spurt: $writer.Blob;
         $writer;
     }
 

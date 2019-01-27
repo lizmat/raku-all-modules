@@ -34,30 +34,33 @@ role PDF::COS {
 
     multi method coerce(PDF::COS $val!) { $val }
 
-    multi method coerce(Hash $dict!, |c) {
+    my subset AST-Node of Associative where {
 	use PDF::Grammar:ver(v0.1.6+) :AST-Types;
-        BEGIN my %ast-types = AST-Types.enums;
-	+$dict == 1 && (%ast-types{$dict.keys[0]}:exists)
-	    ?? $.coerce( |$dict, |c )    # JSON munged pair
-	    !! $.coerce( :$dict, |c );
+        my constant %AstTypes = AST-Types.enums;
+        # e.g. { :int(42) }
+        .elems == 1 && (%AstTypes{.keys[0]}:exists)
     }
-    multi method coerce(List $array!, |c) {
-        $.coerce( :$array, |c )
+    multi method coerce(%dict!, |c) {
+	%dict ~~ AST-Node
+	    ?? $.coerce( |%dict, |c )
+	    !! $.coerce( :%dict, |c );
+    }
+    multi method coerce(@array!, |c) {
+        $.coerce( :@array, |c )
     }
     multi method coerce(DateTime $dt, |c) {
 	self!coercer.coerce( $dt, DateTime, |c)
     }
-    multi method coerce(Pair %_!, |c) {
-	$.coerce( |%_, |c)
-    }
+
     #| work around rakudo performance regressions - issue #15
     method required(Str \mod-name) {
 	%required{mod-name}:exists
             ?? %required{mod-name}
             !! %required{mod-name} = (require ::(mod-name));
     }
-    method !add-role($obj is rw, Str $role-name) {
+    method !add-role($obj is rw, Str $role-name, Str $param?) {
 	my $role = $.required($role-name);
+        $role = $role.^parameterize($_) with $param;
 	$obj.does($role)
             ?? $obj
             !! $obj = $obj but $role
@@ -85,16 +88,12 @@ role PDF::COS {
     multi method coerce( Numeric :$real! is copy) { self.coerce: :$real }
 
     multi method coerce( Str :$hex-string! is rw) {
-        self!add-role($hex-string, 'PDF::COS::ByteString');
-        $hex-string.type = 'hex-string';
-        $hex-string;
+        self!add-role($hex-string, 'PDF::COS::ByteString', 'hex-string');
     }
     multi method coerce( Str :$hex-string! is copy) { self.coerce: :$hex-string }
 
     multi method coerce( Str :$literal! is rw) {
         self!add-role($literal, 'PDF::COS::ByteString');
-        $literal.type = 'literal';
-        $literal;
     }
     multi method coerce( Str :$literal! is copy) { self.coerce: :$literal }
 

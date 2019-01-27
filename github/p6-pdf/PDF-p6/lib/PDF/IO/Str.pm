@@ -9,11 +9,10 @@ class PDF::IO::Str
     has Blob[uint8] $!ords;
     method ords {
         $!ords //= self.encode("latin-1");
-        $!ords;
     }
 
     method subbuf(|c) { $.ords.subbuf(|c) }
-    method read(UInt $n is copy) {
+    method read(UInt $n = $.codes - $!pos) {
         my \n = min($n, $.codes - $!pos);
         my \buf := Buf[uint8].new: $.subbuf($!pos, n);
         $!pos += n;

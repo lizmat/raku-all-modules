@@ -38,11 +38,11 @@ use PDF::COS;
 use PDF::COS::Type::Info;
 use PDF::COS::Stream;
 
-sub prefix:</>($name){ PDF::COS.coerce(:$name) };
+sub prefix:</>($name) { PDF::COS.coerce(:$name) };
 
 # construct a simple PDF document from scratch
 my PDF $pdf .= new;
-my $root     = $pdf.Root       = { :Type(/'Catalog') };
+my $catalog     = $pdf.Root       = { :Type(/'Catalog') };
 
 my @MediaBox  = 0, 0, 250, 100;
 
@@ -57,7 +57,7 @@ my %Resources = :Procset[ /'PDF', /'Text'],
                     },
                 };
 
-my $pages    = $root<Pages>    = { :Type(/'Pages'), :@MediaBox, :%Resources, :Kids[], :Count(0) };
+my $pages    = $catalog<Pages>    = { :Type(/'Pages'), :@MediaBox, :%Resources, :Kids[], :Count(0) };
 # add some standard metadata
 my PDF::COS::Type::Info $info = $pdf.Info //= {};
 $info.CreationDate = DateTime.now;
@@ -81,6 +81,7 @@ Then to update the PDF, adding another page:
 ```
 use v6;
 use PDF;
+use PDF::COS::Type::Info;
 
 my PDF $pdf .= open: 'examples/helloworld.pdf';
 
@@ -96,7 +97,7 @@ $Parent<Kids>.push: { :Type( :name<Page> ), :$Parent, :$Contents };
 $Parent<Count>++;
 
 # update or create document metadata. set modification date
-my $info = $pdf.Info //= {};
+my PDF::COS::Type::Info $info = $pdf.Info //= {};
 $info.ModDate = DateTime.now;
 
 # incrementally update the existing PDF
@@ -108,9 +109,9 @@ $pdf.update;
 
 ## Description
 
-A PDF file consists of data structures, including dictionaries (hashes) arrays, numbers and strings, plus streams for holding data such as images, fonts and general content.
+A PDF file consists of data structures, including dictionaries (hashes) arrays, numbers and strings, plus streams for holding graphical data such as images, fonts and general content.
 
-PDF files are also indexed for random access and may also have filters for stream compression and encryption of streams and strings.
+PDF files are also indexed for random access and may also hae internal compression and/or encryption.
 
 They have a reasonably well specified structure. The document starts from the `Root` entry in the trailer dictionary, which is the main entry point into a PDF.
 

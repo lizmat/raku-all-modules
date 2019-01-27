@@ -4,7 +4,7 @@ use PDF::COS::Dict;
 
 #| this class represents the top level node in a PDF or FDF document,
 #| the trailer dictionary
-class PDF:ver<0.3.4>
+class PDF:ver<0.3.5>
     is PDF::COS::Dict {
 
     use PDF::IO::Serializer;
@@ -13,7 +13,9 @@ class PDF:ver<0.3.4>
     use PDF::COS::Tie;
     use JSON::Fast;
 
-    # See [PDF 1.7 TABLE 15 Entries in the file trailer dictionary]
+    # See [PDF 32000 TABLE 15 Entries in the file trailer dictionary]
+##    use ISO_32000::File_trailer;
+##    also does ISO_32000::File_trailer;
 
     has Int $.Size is entry;                              #| (Required; shall not be an indirect reference) greater than the highest object number defined in the file.
 
@@ -69,6 +71,11 @@ class PDF:ver<0.3.4>
         }
     }
 
+    method cb-finish {
+	self.?cb-init
+	    unless self<Root>:exists;
+	self<Root>.?cb-finish;
+    }
     #| perform an incremental save back to the opened input file, or write
     #| differences to the specified file
     method update(IO::Handle :$diffs, |c) {
@@ -79,9 +86,7 @@ class PDF:ver<0.3.4>
 	die "PDF has not been opened for indexed read."
 	    unless self!is-indexed;
 
-	self.?cb-init
-	    unless self<Root>:exists;
-	self<Root>.?cb-finish;
+        self.cb-finish;
 
 	my $type = $.reader.type;
 	self!generate-id( :$type );
@@ -142,14 +147,11 @@ class PDF:ver<0.3.4>
     }
 
     method ast(|c) {
-	my $type = $.reader.?type // self.?type;
-	with self<Root> {
-	    .?cb-finish;
-	    $type //= do with .<FDF> {'FDF'} else {'PDF'};
-        }
-        else {
-	    die "no top-level Root entry"
-        }
+        self.cb-finish;
+	my $type = $.reader.?type
+            // self.?type
+            // (self<Root><FDF>.defined ?? 'FDF' !! 'PDF');
+
 	self!generate-id( :$type );
 	my PDF::IO::Serializer $serializer .= new;
 	$serializer.ast( self, :$type, :$!crypt, |c);
@@ -215,7 +217,7 @@ class PDF:ver<0.3.4>
     #| Generate a new document ID.
     method !generate-id(Str :$type = 'PDF') {
 
-	# From [PDF 1.7 Section 14.4 File Identifiers:
+	# From [PDF 32000 Section 14.4 File Identifiers:
 	#   "File identifiers shall be defined by the optional ID entry in a PDF file’s trailer dictionary.
 	# The ID entry is optional but should be used. The value of this entry shall be an array of two
 	# byte strings. The first byte string shall be a permanent identifier based on the contents of the

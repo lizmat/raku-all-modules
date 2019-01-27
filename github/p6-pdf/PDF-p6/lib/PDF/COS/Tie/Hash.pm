@@ -42,8 +42,14 @@ role PDF::COS::Tie::Hash
     method tie-init {
        my \class = self.WHAT;
        for class.^attributes.grep(TiedEntry) -> \att {
-           my \key = att.tied.accessor-name;
-           %.entries{key} //= att;
+           given att.tied {
+               my \key  = .accessor-name;
+               %.entries{key} //= att;
+               with .alias -> \alias {
+                   self{key} //= $_
+                       with self{alias}:delete;
+               }
+           }
        }
     }
 
