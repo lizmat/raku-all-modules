@@ -1,0 +1,15 @@
+Revision history for Hash-Agnostic
+
+{{$NEXT}}
+
+0.0.4  2018-12-31T00:02:45+01:00
+    - Fix .Hash coercer, spotted by Fernando Santagata
+
+0.0.3  2018-10-06T13:42:51+02:00
+    - Make .STORE a multi, so that we can call it from clients
+
+0.0.2  2018-10-06T12:28:22+02:00
+    - Make sure .new also indicates initialization
+
+0.0.1  2018-09-19T12:36:45+02:00
+    - Initial version

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Hash-Agnostic.git
+	branch = master
+	commit = 3fc94178a6269730430af81ab87a2dbf87828f6d
+	parent = 092b9d383faeec6ed6c7c2880b785eeb15b57ac3
+	cmdver = 0.3.1
