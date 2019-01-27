@@ -2,6 +2,8 @@ language: perl6
 perl6:
   - latest
   - '2018.04'
+  - '2018.06'
+  - '2018.10'
 before_install:
   - echo 'America/Chicago' | sudo tee /etc/timezone
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
