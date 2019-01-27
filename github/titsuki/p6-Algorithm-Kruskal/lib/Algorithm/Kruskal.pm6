@@ -12,39 +12,39 @@ submethod BUILD(:$!vertex-size) {
     $!heap = Algorithm::MinMaxHeap[Algorithm::MinMaxHeap::Comparable].new;
 }
 
-method add-edge(Int $from, Int $to, Real $weight) {
+method add-edge(Int $from, Int $to, Num $weight) {
     my class State {
-	also does Algorithm::MinMaxHeap::Comparable[State];
-	
-	has ($.from, $.to);
-	has $.weight;
-	submethod BUILD (:$!from, :$!to, :$!weight) {}
-	method compare-to(State $s) {
-	    if (self.weight == $s.weight) {
-		return Order::Same;
-	    }
-	    if (self.weight > $s.weight) {
-		return Order::More;
-	    }
-	    if (self.weight < $s.weight) {
-		return Order::Less;
-	    }
-	}
+        also does Algorithm::MinMaxHeap::Comparable[State];
+
+        has ($.from, $.to);
+        has $.weight;
+        submethod BUILD (:$!from, :$!to, :$!weight) {}
+        method compare-to(State $s) {
+            if self.weight == $s.weight {
+                return Order::Same;
+            }
+            if self.weight > $s.weight {
+                return Order::More;
+            }
+            if self.weight < $s.weight {
+                return Order::Less;
+            }
+        }
     }
-    $!heap.insert(State.new(from => $from, to => $to, weight => $weight));
+    $!heap.insert: State.new(from => $from, to => $to, weight => $weight);
 }
 
-method compute-minimal-spanning-tree() returns List {
+method compute-minimal-spanning-tree(--> List) {
     my $weight = 0;
     my @edges;
     my $prev-heap = $!heap.clone;
-    my Algorithm::SetUnion $set-union = Algorithm::SetUnion.new(size => $!vertex-size);
-    while (not $!heap.is-empty()) {
-	my $state = $!heap.pop-min;
-	if ($set-union.union($state.from, $state.to)) {
-	    $weight += $state.weight;
-	    @edges.push([$state.from, $state.to]);
-	}
+    my Algorithm::SetUnion $set-union .= new(size => $!vertex-size);
+    until $!heap.is-empty {
+        my $state = $!heap.pop-min;
+        if $set-union.union($state.from, $state.to) {
+            $weight += $state.weight;
+            @edges.push: [$state.from, $state.to];
+        }
     }
     $!heap = $prev-heap;
     return :@edges, :$weight;
