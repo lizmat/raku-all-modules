@@ -1,0 +1,11 @@
+language: perl6
+perl6:
+  - latest
+  - '2018.10'
+before_install:
+  - sudo apt-get update && sudo apt-get install -y redis-server 
+install:
+  - rakudobrew build-zef
+  - zef --debug --depsonly install .
+script:
+  - PERL6LIB=lib prove -v -r --exec=perl6 t/

@@ -1,5 +1,7 @@
 # Redis - Perl6 binding for Redis
 
+[![Build Status](https://travis-ci.com/cofyc/perl6-redis.svg?branch=master)](https://travis-ci.com/cofyc/perl6-redis)
+
 Synopsis
 ========
 
@@ -11,23 +13,26 @@ Synopsis
 
 Build & Test & Install
 ======================
-    
-First, please get 'ufo' from <http://github.com/masak/ufo> , then run:
 
-    $ ufo
-    $ make
-    $ make test     # run `redis-server t/redis.conf` in another terminal first
-    $ make install
+Testing this will require redis-server to be installed on your machine.
+The tests will start their own version of the redis server on a different
+port so as not to interfere with a running server.  If no redis-server
+can be found on your machine the tests will be skipped so you will still
+be able to install this module.
 
-Install with Panda
-==================
+Assuming you have a working rakudo perl 6 installation then you should be
+able to install this with zef:
 
-    $ panda install --notests Redis # unit tests need Redis server
+    zef install Redis
+
+or if you have a local copy of the library:
+
+    zef install .
 
 Unit Tests
 ==========
 
-    Tested agaist Redis version 2.4.16 and 2.5.12.
+    Tested agaist Redis version 2.4.16, 2.5.12 and 4.0.9
 
 Docs
 ====

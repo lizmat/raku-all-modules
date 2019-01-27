@@ -7,10 +7,13 @@
   "depends": [
     
   ],
+  "test-depends" : [
+      "File::Which"
+  ],
   "license": "Artistic-2.0",
   "provides": {
     "Redis": "lib/Redis.pm"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Perl6 binding for Redis"
 }

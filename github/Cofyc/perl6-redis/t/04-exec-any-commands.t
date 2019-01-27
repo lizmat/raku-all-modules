@@ -4,9 +4,21 @@ use lib <t lib>;
 use Redis;
 use Test;
 
-my $r = Redis.new("127.0.0.1:63790", decode_response => True);
-$r.auth('20bdfc8e73365b2fde82d7b17c3e429a9a94c5c9');
+use Test::SpawnRedisServer;
 
 plan 1;
 
-is-deeply $r.exec_command("CONFIG GET", "timeout"), ["timeout", "1"];
+if SpawnRedis() -> $proc {
+    LEAVE {
+        $proc.kill('INT');
+    }
+
+    my $r = Redis.new("127.0.0.1:63790", decode_response => True);
+    $r.auth('20bdfc8e73365b2fde82d7b17c3e429a9a94c5c9');
+
+
+    is-deeply $r.exec_command("CONFIG GET", "timeout"), ["timeout", "1"];
+}
+else {
+    skip-rest "no redis-server";
+}
