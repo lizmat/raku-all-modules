@@ -1,0 +1,43 @@
+{
+  "name": "JSON::Infer",
+  "version": "0.0.16",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "Infer Perl 6 Classes from JSON input",
+  "source-url": "git://github.com/jonathanstowe/JSON-Infer.git",
+  "support": {
+    "irc": "irc:// irc.freenode.net/#perl6",
+    "email": "jns+git@gellyfish.co.uk",
+    "source": "git://github.com/jonathanstowe/JSON-Infer.git",
+    "bugtracker": "https://github.com/jonathanstowe/JSON-Infer/issues"
+  },
+  "perl": "6.*",
+  "resources": [
+  ],
+  "build-depends": [
+  ],
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "depends": [
+    "JSON::Fast",
+    "HTTP::UserAgent",
+    "JSON::Class",
+    "JSON::Name"
+  ],
+  "tags": [
+    "object",
+    "serialisation",
+    "JSON"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "JSON::Fast",
+    "Test"
+  ],
+  "provides": {
+    "JSON::Infer": "lib/JSON/Infer.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}

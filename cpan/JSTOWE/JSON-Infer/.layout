@@ -1,0 +1,88 @@
+{
+  "children": [
+    {
+      "purpose": null,
+      "type": "directory",
+      "children": [
+        {
+          "purpose": null,
+          "children": [
+            {
+              "name": "example.jspf",
+              "type": "file"
+            }
+          ],
+          "type": "directory",
+          "name": "data"
+        },
+        {
+          "name": "010-load.t",
+          "type": "file"
+        },
+        {
+          "name": "020-attribute.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "050-infer.t"
+        },
+        {
+          "name": "030-class.t",
+          "type": "file"
+        }
+      ],
+      "name": "t"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "purpose": null,
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "p6-json-infer"
+        }
+      ],
+      "name": "bin"
+    },
+    {
+      "purpose": null,
+      "name": "lib",
+      "type": "directory",
+      "children": [
+        {
+          "purpose": null,
+          "children": [
+            {
+              "name": "Infer.pm",
+              "type": "file"
+            }
+          ],
+          "type": "directory",
+          "name": "JSON"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}

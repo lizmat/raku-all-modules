@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/JSON-Infer.git
+	branch = master
+	commit = 26113382c059aceab2453f866b12713fca62d927
+	parent = f087f409c256e2ca8434644e141a2eb875f26f37
+	cmdver = 0.3.1
