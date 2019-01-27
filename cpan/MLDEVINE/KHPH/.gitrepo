@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/markldevine/perl6-KHPH.git
+	branch = master
+	commit = 8f7efa772787c2e8ab43e8384969379665d9d847
+	parent = 1ee13fcecf12df7c68f2c93e4c6fcacf33f00d58
+	cmdver = 0.3.1

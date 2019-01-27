@@ -1,0 +1,25 @@
+{
+  "auth": "github:markldevine",
+  "authors": [
+    "Mark Devine <mark@markdevine.com>"
+  ],
+  "depends": [
+    "Base64::Native", "Compress::Bzip2", "Terminal::Readsecret"
+  ],
+  "description": "Keep Honest People Honest - Unsecure Reversible Obfuscated Character Storage & Retrieval",
+  "license": "GPL-3.0",
+  "meta-version": 0,
+  "name": "KHPH",
+  "perl": "6.c",
+  "provides": {
+    "KHPH": "lib/KHPH.pm6"
+  },
+  "resources": [
+    
+  ],
+  "source-url": "https://github.com/markldevine/perl6-KHPH.git",
+  "tags": [
+    "SECURITY", "OBFUSCATE"
+  ],
+  "version": "0.0.4"
+}
