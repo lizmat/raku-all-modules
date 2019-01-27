@@ -1,0 +1,9 @@
+Revision history for Hash-with
+
+{{$NEXT}}
+
+0.0.2  2018-09-07T11:49:25+02:00
+    - Use more natural procedural mapper, rather than making it a method call
+
+0.0.1  2018-07-05T20:47:42+02:00
+    - Initial version

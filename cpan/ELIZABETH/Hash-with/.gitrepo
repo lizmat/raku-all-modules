@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Hash-with.git
+	branch = master
+	commit = 38db94fc9b56c20a6a7d297b00bf023b5af3bfb0
+	parent = 8b326530e6e2c6c7a7e32f5286fe2e014bf124c6
+	cmdver = 0.3.1
