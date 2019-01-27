@@ -1,6 +1,7 @@
+use v6;
+
 unit package t::Util;
 
-use v6;
 use Test;
 use JSON::WebToken;
 

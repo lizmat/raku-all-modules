@@ -1,6 +1,7 @@
+use v6;
+
 unit package JSON::WebToken;
 
-use v6;
 our $VERSION = '0.0.1';
 
 use JSON::Fast;
