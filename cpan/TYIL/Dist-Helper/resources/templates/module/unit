@@ -1,0 +1,7 @@
+#! /usr/bin/env false
+
+use v{{ perl }};
+
+unit module {{ provide }};
+
+{{ vim }}

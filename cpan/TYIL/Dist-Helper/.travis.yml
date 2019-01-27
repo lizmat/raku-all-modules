@@ -1,0 +1,29 @@
+language: generic
+
+env:
+  global:
+    - PATH=/opt/rakudo-pkg/bin:$PATH
+  matrix:
+    - VERSION=2018.03-01
+    - VERSION=2018.02.1-01 TAG=v2018.02.1
+    - VERSION=2017.12-01   TAG=v2017.12
+    - VERSION=2017.11-01   TAG=v2017.11
+    - VERSION=2017.10-02
+
+os:
+  - linux
+
+git:
+  depth: 3
+
+before_install:
+  - cd $(mktemp -d)
+  - wget "https://github.com/nxadm/rakudo-pkg/releases/download/${TAG:-v${VERSION}}/rakudo-pkg-Ubuntu14.04_${VERSION}_amd64.deb" && sudo dpkg -i *.deb
+  - cd -
+
+install:
+  - zef install --deps-only .
+
+script: AUTHOR_TESTING=1 prove -v -e "perl6 -Ilib" t/
+
+# vim: et ts=2 sw=2

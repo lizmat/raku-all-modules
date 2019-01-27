@@ -1,0 +1,11 @@
+#! /usr/bin/env perl6
+
+use v{{ perl }};
+
+use Test;
+
+ok True;
+
+done-testing;
+
+{{ vim }}

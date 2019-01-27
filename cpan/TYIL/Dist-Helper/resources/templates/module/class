@@ -1,0 +1,10 @@
+#! /usr/bin/env false
+
+use v{{ perl }};
+
+class {{ provide }}
+{
+	# TODO: Create class body
+}
+
+{{ vim }}

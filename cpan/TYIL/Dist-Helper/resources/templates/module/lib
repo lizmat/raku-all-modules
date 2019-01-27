@@ -1,0 +1,5 @@
+#! /usr/bin/env false
+
+use v{{ perl }};
+
+{{ vim }}

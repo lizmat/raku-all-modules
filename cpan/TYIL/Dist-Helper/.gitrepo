@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/scriptkitties/perl6-Dist-Helper.git
+	branch = master
+	commit = 7ef38be3f83956a13789147313447e823287dbd5
+	parent = f3d6ea915d34e8fd2b925085a5a551f9ab9fb540
+	cmdver = 0.3.1
