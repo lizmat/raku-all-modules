@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/leont/path-iterator.git
+	branch = master
+	commit = e3bae15d2830f0377a24b437bcd7acbffacd4937
+	parent = ada2d65fe0f47ad542c69bf106a33db2fe61c9f7
+	cmdver = 0.3.1
