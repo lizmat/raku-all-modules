@@ -413,7 +413,7 @@ multi sub from-hash(:ledger(%)! (:@entry!) --> Ledger:D)
 # --- end Ledger }}}
 # --- Entry {{{
 
-multi sub from-hash(:@entry! --> Array:D)
+multi sub from-hash(:@entry! --> Array[Entry:D])
 {
     my Entry:D @e = @entry.map(-> %entry { from-hash(:%entry) });
 }
@@ -497,7 +497,7 @@ multi sub from-hash(
 # --- end Entry::ID }}}
 # --- Entry::Posting {{{
 
-multi sub from-hash(:@posting! --> Array:D)
+multi sub from-hash(:@posting! --> Array[Entry::Posting:D])
 {
     my Entry::Posting:D @p = @posting.map(-> %posting { from-hash(:%posting) });
 }
@@ -562,10 +562,35 @@ multi sub from-hash(
     :amount(%)! (
         :$asset-code!,
         :$asset-quantity!,
+        :$unit-of-measure!,
+        :$plus-or-minus
+    )
+    --> Entry::Posting::Amount[COMMODITY]
+)
+{
+    my %amount;
+
+    my AssetCode:D $asset-codeʹ = $asset-code;
+    my Quantity:D $asset-quantityʹ = Rat($asset-quantity);
+    my UnitOfMeasure:D $unit-of-measureʹ = $unit-of-measure;
+    my PlusMinus:D $plus-or-minusʹ = $plus-or-minus if $plus-or-minus;
+
+    %amount<asset-code> = $asset-codeʹ;
+    %amount<asset-quantity> = $asset-quantityʹ;
+    %amount<unit-of-measure> = $unit-of-measureʹ;
+    %amount<plus-or-minus> = $plus-or-minusʹ if $plus-or-minusʹ;
+
+    my Entry::Posting::Amount[COMMODITY] $amount .= new(|%amount);
+}
+
+multi sub from-hash(
+    :amount(%)! (
+        :$asset-code!,
+        :$asset-quantity!,
         :$asset-symbol,
         :$plus-or-minus
     )
-    --> Entry::Posting::Amount:D
+    --> Entry::Posting::Amount[ASSET]
 )
 {
     my %amount;
@@ -580,7 +605,7 @@ multi sub from-hash(
     %amount<asset-symbol> = $asset-symbolʹ if $asset-symbolʹ;
     %amount<plus-or-minus> = $plus-or-minusʹ if $plus-or-minusʹ;
 
-    my Entry::Posting::Amount $amount .= new(|%amount);
+    my Entry::Posting::Amount[ASSET] $amount .= new(|%amount);
 }
 
 # --- end Entry::Posting::Amount }}}
