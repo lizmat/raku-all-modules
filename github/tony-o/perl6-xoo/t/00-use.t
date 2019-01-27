@@ -2,8 +2,8 @@
 
 use lib 'lib';
 use Test;
-use Xoo;
+use DB::Xoos;
 
 plan 1;
 
-ok True, 'Can use Xoo;';
+ok True, 'Can use DB::Xoos;';

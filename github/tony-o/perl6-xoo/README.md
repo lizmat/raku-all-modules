@@ -1,6 +1,6 @@
-# Xoo
+# Xoos
 
-Xoo is an ORM designed for convenience and ease of use, it is modeled after DBIx::\* if you're into that kind of thing already (note: some concepts and names have deviated).
+Xoos is an ORM designed for convenience and ease of use, it is modeled after DBIx::\* if you're into that kind of thing already (note: some concepts and names have deviated).
 
 (This module was originally named Koos until my friends in Israel let me know that that's a vulgar word in Arabic)
 
@@ -9,38 +9,31 @@ Xoo is an ORM designed for convenience and ease of use, it is modeled after DBIx
 ## what works
 
 * relationships
-* row object inflation (calling .first on a query returns a Xoo::Row)
+* row object inflation (calling .first on a query returns a Xoos::Row)
 * row objects inherit from the model::@columns
 * model level convenience methods
 * row level convenience methods
 * basic handling compounded primary keys
 * column validation hooks
 * YAML models (auto composed)
+* decouple SQL generation from Xoos::Searchable (this includes decoupling the SQL generation from the DB layer) - DB::Pg is intended to be used but epoll is not ported to OSX
 
 ## todo
 
-* decouple SQL generation from Xoo::Searchable (this includes decoupling the SQL generation from the DB layer)
 * soft validation of model/table/relationships when model loads
 * prefetch relationships option (currently everything is prefetched)
 
 # Usage
 
-Below is a minimum viable model setup for your app.  Xoo does _not_ create the table for you, that is up to you.
+Below is a minimum viable model setup for your app.  Xoos does _not_ create the table for you, that is up to you.
 
 ### lib/app.pm6
 ```perl6
-use Xoo;
+use DB::Xoos::SQLite;
 
-my Xoo $d .=new;
+my DB::Xoos::SQLite $d .=new;
 
-$d.connect(
-  driver => 'SQLite',
-  options => {
-    db => {
-      database => '/tmp/xyz.sqlite3',
-    },
-  },
-);
+$d.connect('sqlite://xyz.sqlite3');
 
 my $customer-model = $d.model('Customer');
 my $new-customer   = $customer-model.new-row;
@@ -57,8 +50,8 @@ my $xyz-orders = $xyz.orders.count;
 
 ### lib/Model/Customer.pm6
 ```perl6
-use Xoo::Model;
-unit class Model::Customer does Xoo::Model['customer'];
+use DB::Xoos::Model;
+unit class Model::Customer does DB::Xoos::Model['customer'];
 
 has @.columns = [
   id => {
@@ -80,18 +73,18 @@ has @.relations = [
 ];
 ```
 
-# role Xoo::Model
+# role DB::Xoos::Model
 
 What is a model?  A model is essentially a table in your database.  Your ::Model::X is pretty barebones, in this module you'll defined `@.columns` and `@.relations` (if there are any relations).
 
 ## Example
 
 ```perl6
-use Xoo::Model;
+use DB::Xoos::Model;
 # the second argument below is optional and also accepts a type.
 # if the arg is omitted then it attempts to auto load ::Row::Customer
 # if it fails to auto load then it uses an anonymous Row and adds convenience methods to that
-unit class X::Model::Customer does Xoo::Model['customer', 'X::Row::Customer']; 
+unit class X::Model::Customer does DB::Xoos::Model['customer', 'X::Row::Customer']; 
 
 has @.columns = [
   id => {
@@ -133,9 +126,9 @@ In this example we're creating a customer model with columns `id, name, contact,
 
 ### Breakdown
 
-`class :: does Xoo::Model['table-name', 'Optional String or Type'];`
+`class :: does DB::Xoos::Model['table-name', 'Optional String or Type'];`
 
-Here you can see the role accepts one or two parameters, the first is the DB table name, the latter is a String or Type of the row you'd like to use for this model.  If no row is found then Xoo will create a generic row and add helper methods for you using the model's column data.
+Here you can see the role accepts one or two parameters, the first is the DB table name, the latter is a String or Type of the row you'd like to use for this model.  If no row is found then Xoos will create a generic row and add helper methods for you using the model's column data.
 
 `@.columns`
 
@@ -143,7 +136,7 @@ A list of columns in the table.  It is highly recommended you have *one* `is-pri
 
 `@.relations`
 
-This accepts a list of key values, the key defining the accessor name, the later a hash describing the relationship.  `:has-one` and `:has-many` are both used to dictate whether a Xoo model returns an inflated object (:has-one) or a filterable object (:has-many).
+This accepts a list of key values, the key defining the accessor name, the later a hash describing the relationship.  `:has-one` and `:has-many` are both used to dictate whether a Xoos model returns an inflated object (:has-one) or a filterable object (:has-many).
 
 ## Methods
 
@@ -194,14 +187,14 @@ Creates a new row with %field-data.
 
 ## Convenience methods
 
-Xoo::Model inheritance allows you to have convenience methods, these methods can act on whatever the current set of filters is.
+Xoos::Model inheritance allows you to have convenience methods, these methods can act on whatever the current set of filters is.
 
 Consider the following:
 
 Convenience model definition:
 
 ```perl6
-class X::Model::Customer does Xoo::Model['customer'];
+class X::Model::Customer does Xoos::Model['customer'];
 
 # columns and relations
 
@@ -224,11 +217,11 @@ $single-customer.remove-closed-orders;
 # this removes all orders for customers with id = 5
 ```
 
-# role Xoo::Row
+# role Xoos::Row
 
 A role to apply to your `::Row::Customer`.  If there is no `::Row::Customer` a generic row is created using the column and relationship data specified in the corresponding `Model` and this file is only really necessary if you want to add convenience methods.
 
-When a `class :: does Xoo::Row`, it receives the info from the model and adds the methods for setting/getting field data.
+When a `class :: does Xoos::Row`, it receives the info from the model and adds the methods for setting/getting field data.
 
 With the model definition above:
 

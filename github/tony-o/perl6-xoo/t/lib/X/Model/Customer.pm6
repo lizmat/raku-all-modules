@@ -1,5 +1,5 @@
-use Xoo::Model;
-unit class X::Model::Customer does Xoo::Model['customer', 'X::Row::Customer'];
+use DB::Xoos::Model;
+unit class X::Model::Customer does DB::Xoos::Model['customer', 'X::Row::Customer'];
 
 has @.columns = [
   id => {

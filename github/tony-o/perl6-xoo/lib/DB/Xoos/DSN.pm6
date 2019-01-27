@@ -1,4 +1,4 @@
-unit module Xoo::DSN;
+unit module DB::Xoos::DSN;
 
 #use Grammar::Tracer;
 
@@ -26,7 +26,7 @@ grammar dsn {
   }
 
   regex host {
-    [ \w | \d | '.' ]+
+    [ \w | \d | '.' | '_' | '-' ]*
   }
 
   regex port {

@@ -1,21 +1,20 @@
-use Xoo::Searchable;
-use Xoo::Row;
-unit role Xoo::Model[Str $table-name, Str $row-class?] does Xoo::Searchable;
+use DB::Xoos::Searchable;
+use DB::Xoos::Row;
+unit role DB::Xoos::Model[Str $table-name, Str $row-class?] does DB::Xoos::Searchable;
 
 has $!table-name;
 has $!db;
-has $.quote;
 has $!model-class;
 has $!driver;
 has $!row-class;
 has $!dbo;
 
 sub anon-row {
-  my $cx = class :: does Xoo::Row {};
+  my $cx = class :: does DB::Xoos::Row {};
   $cx;
 }
 
-multi submethod BUILD (:$!driver, :$!db, :$!quote, :$!dbo, :@columns?, :@relations?) {
+multi submethod BUILD (:$!driver, :$!db, :$!dbo, :@columns?, :@relations?) {
   CATCH { default { .say; } }
   if @columns {
     try {
@@ -34,9 +33,6 @@ multi submethod BUILD (:$!driver, :$!db, :$!quote, :$!dbo, :@columns?, :@relatio
     };
   }
   $!table-name = $table-name;
-  $!quote      = $!driver eq 'mysql'
-    ?? { identifier => '`', value => '"' }
-    !! { identifier => '"', value => '\'' };
   $!model-class = $?OUTERS::CLASS;
   if $row-class.defined {
     my $row-class-loaded = (try require ::($row-class)) === Nil;
@@ -61,6 +57,9 @@ multi submethod BUILD (:$!driver, :$!db, :$!quote, :$!dbo, :@columns?, :@relatio
       $!row-class = ::("$r-str") // anon-row;
     }
   }
+
+  callsame;
+#  callwith(:driver($!driver));
 }
 
 method table-name { $!table-name; }

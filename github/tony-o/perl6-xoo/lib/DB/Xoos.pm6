@@ -1,8 +1,6 @@
-unit role Xoo;
+unit role DB::Xoos;
 
-use DBIish;
-use DBDish::Connection;
-use Xoo::Model;
+use DB::Xoos::Model;
 
 has $!db;
 has $!driver;
@@ -10,20 +8,9 @@ has %!cache;
 has $!connected;
 has $!prefix;
 
-multi method connect(Any:D: :$db, :%options) {
-  $!db     = $db;
-  $!driver = $!db.driver-name.split('::')[1];
-  $!prefix = %options<prefix> // '';
-  self.load-models(%options<model-dirs>//[]);
-}
+multi method connect(Any:D: :$db, :%options) { ... }
 
-multi method connect(Str:D :$driver, :%options) {
-  $!db        = DBIish.connect($driver, |%options<db>) or die $!;
-  $!driver    = $driver;
-  $!connected = True;
-  $!prefix    = %options<prefix> // '';
-  self.load-models(%options<model-dirs>//[]);
-}
+multi method connect(Str:D $dsn, :%options) { ... }
 
 method load-models(@model-dirs?) {
   my $base = $!prefix !~~ Nil ?? $!prefix !! ($?CALLERS::CLASS.^name//'');
@@ -47,7 +34,7 @@ method load-models(@model-dirs?) {
       %!cache{$mod-name.split('::')[*-1]} = $m.new(:$!driver, :$!db, :$!prefix, dbo => self);
       CATCH {
         default {
-          #warn $_.backtrace.full;
+          warn $_.backtrace.full;
         }
       }
     }
@@ -64,14 +51,14 @@ method load-models(@model-dirs?) {
           next if $fil !~~ :f || $fil.extension ne 'yaml';
           my $mod = $parser.($fil.relative);
           my $name = $mod<name>//$mod<table>;
-          my $new-model := Metamodel::ClassHOW.new_type(:name('Xoo::Model::'~$name));
+          my $new-model := Metamodel::ClassHOW.new_type(:name('DB::Xoos::Model::'~$name));
           $new-model.HOW.add_attribute($new-model, Attribute.new(
             :name<@.columns>, :has_accessor(1), :type(Array), :package($new-model.WHAT),
           ));
           $new-model.HOW.add_attribute($new-model, Attribute.new(
             :name<@.relations>, :has_accessor(1), :type(Array), :package($new-model.WHAT),
           ));
-          $new-model.^add_role(Xoo::Model[$mod<table>]);
+          $new-model.^add_role(DB::Xoos::Model[$mod<table>]);
           $new-model.HOW.compose($new-model);
           my @columns   = [ $mod<columns>.keys.map({ $_ => $mod<columns>{$_} }) ];
           my @relations = [ $mod<relations>.keys.map({ $_ => $mod<relations>{$_} }) ];
@@ -95,6 +82,7 @@ method model(Str $model-name, Str :$module?) {
   }
   try { 
     my $m = (require ::("$model"));
+    'here'.say;
     %!cache{$model-name} = $m.new(:$!db, :$prefix, :$model-name, dbo => self);
     CATCH { default {
       say "Failed to load $model-name ($model): {$_}";

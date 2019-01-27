@@ -2,9 +2,9 @@
 
 use lib 'lib';
 use lib 't/lib';
-use Xoo;
+use DB::Xoos::SQLite;
 use Test;
-use Xoo::Test;
+use DB::Xoos::Test;
 use DBIish;
 
 plan 6;
@@ -14,7 +14,7 @@ configure-sqlite;
 my $cwd = $*CWD;
 $*CWD = 't'.IO;
 
-my Xoo $d .=new;
+my DB::Xoos::SQLite $d .=new;
 my $db     = DBIish.connect('SQLite', database => 'test.sqlite3');
 
 $d.connect(:$db, :options({

@@ -1,2 +1,2 @@
-use Xoo::Row;
-unit class X::Row::Hello does Xoo::Row;
+use Xoos::Row;
+unit class X::Row::Hello does Xoos::Row;

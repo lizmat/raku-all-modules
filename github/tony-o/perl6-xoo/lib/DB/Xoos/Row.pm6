@@ -1,4 +1,4 @@
-unit role Xoo::Row;
+unit role DB::Xoos::Row;
 
 has $!table-name;
 has $!db;

@@ -1,5 +1,9 @@
-unit module Xoo::Test;
+unit module Xoos::Test;
 use DBIish;
+
+END {
+  try { 'test.sqlite3'.IO.unlink; };
+}
 
 sub configure-sqlite is export {
   #hello table + data:

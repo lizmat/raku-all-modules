@@ -1,14 +1,16 @@
 #!/usr/bin/env perl6
 
 use lib 'lib';
-use Xoo::Searchable;
+use DB::Xoos::SQLite::Searchable;
 use Test;
 
 plan 4;
 
-class A does Xoo::Searchable { submethod BUILD { $!inflate = False; }; };
+class A does DB::Xoos::Searchable {
+  method driver { 'SQLite'; }
+};
 
-my $s = A.new;
+my $s = A.new(:!inflate);
 my $f = {
   '-and' => [
     'w.x' => { '>' => 5 },

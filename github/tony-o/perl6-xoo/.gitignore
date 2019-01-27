@@ -1,5 +1,5 @@
 .precomp
-test.sqlite3
+*.sqlite3
 *.swp
 lib/Model
 test.pl6

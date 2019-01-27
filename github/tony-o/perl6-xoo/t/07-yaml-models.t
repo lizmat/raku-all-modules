@@ -2,9 +2,9 @@
 
 use lib 'lib';
 use lib 't/lib';
-use Xoo;
+use DB::Xoos::SQLite;
 use Test;
-use Xoo::Test;
+use DB::Xoos::Test;
 use DBIish;
 
 my $no-yaml = (try require ::('YAML::Parser::LibYAML')) === Nil;
@@ -21,7 +21,7 @@ configure-sqlite;
 my $cwd = $*CWD;
 $*CWD = 't'.IO;
 
-my Xoo $d .=new;
+my DB::Xoos::SQLite $d .=new;
 my $db     = DBIish.connect('SQLite', database => 'test.sqlite3');
 
 $d.connect(:$db, :options({
@@ -50,7 +50,7 @@ for 0..^5 {
 }
 
 ok $c.orders.count == 5, 'should have 5 orders after inserts';
-ok $c.orders.WHAT.^name ~~ m{'::Model::Order' $}, '.orders should return an ::Model::Order';
+ok $c.orders.WHAT.^name ~~ m{'::Model::Order' ($|'+')}, '.orders should return a ::Model::Order';
 
 ok $c.open_orders.count == 2, '2/5 orders for customer should be open';
 ok $c.completed_orders.count == 3, '3/5 orders for customer should be complete';
