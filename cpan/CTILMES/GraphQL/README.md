@@ -1,0 +1,171 @@
+Perl 6 GraphQL
+==============
+
+[![Build Status](https://travis-ci.org/CurtTilmes/Perl6-GraphQL.svg)](https://travis-ci.org/CurtTilmes/Perl6-GraphQL)
+
+A [Perl 6](https://perl6.org/) implementation of the
+[GraphQL](http://graphql.org/) standard.  GraphQL is a query language
+for APIs originally created by Facebook.
+
+## Intro
+
+Before we get into all the details, here's the Perl 6 GraphQL "Hello World"
+[hello.pl](https://github.com/CurtTilmes/Perl6-GraphQL/blob/master/eg/hello.pl)
+
+
+```
+use GraphQL;
+use GraphQL::Server;
+
+class Query
+{
+    method hello(--> Str) { 'Hello World' }
+}
+
+my $schema = GraphQL::Schema.new(Query);
+
+GraphQL-Server($schema);
+
+```
+
+You can run this with a GraphQL query on the command line:
+```
+$ perl6 hello.pl --help
+Usage:
+  hello.pl <query>
+  hello.pl [--filename=<Str>]
+  hello.pl [--port=<Int>]
+
+$ perl6 hello.pl '{hello}'
+{
+  "data": {
+    "hello": "Hello World"
+  }
+}
+```
+
+You can even ask for information about the schema and types:
+```
+$ perl6 hello.pl '{ __schema { queryType { name } } }'
+{
+  "data": {
+    "__schema": {
+      "queryType": {
+        "name": "Query"
+      }
+    }
+  }
+}
+
+$ perl6 hello.pl '{ __type(name: "Query") { fields { name type { name }}}}'
+{
+  "data": {
+    "__type": {
+      "fields": [
+        {
+          "name": "hello",
+          "type": {
+            "name": "String"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+## Running as a server
+
+That's fine for the command line, but you can also easily wrap GraphQL
+into a web server to expose that API to external clients.  GraphQL::Server
+uses the Perl 6 web framework
+[Bailador](https://github.com/ufobat/Bailador) to do that:
+
+```
+$ ./hello.pl
+Entering the development dance floor: http://0.0.0.0:3000
+[2016-12-21T13:02:38Z] Started HTTP server.
+
+```
+
+The server takes any GraphQL query sent with HTTP POST to /graphql,
+executes it against the GraphQL Schema, and returns the result in
+JSON.
+
+There is one additional feature.  If it receives a GET request to
+"/graphql", it sends back the
+[GraphiQL](https://github.com/graphql/graphiql) graphical interactive
+in-browser GraphQL IDE.
+
+![](eg/hello-graphiql.png)
+
+You can use that to explore the schema (though the Hello World schema
+is very simple, that won't take long), and interactively construct and
+execute GraphQL queries.
+
+## Embedding in a Cro server
+
+As an alternative to Bailador, you can use `Cro::HTTP::Router::GraphQL`
+to embed GraphQL into [Cro](http://mi.cro.services/) HTTP routes:
+
+```
+use GraphQL;
+use Cro::HTTP::Router::GraphQL;
+use Cro::HTTP::Router;
+use Cro::HTTP::Server;
+
+class Query
+{
+    method hello(--> Str) { 'Hello World' }
+}
+
+my $schema = GraphQL::Schema.new(Query);
+
+my Cro::Service $hello = Cro::HTTP::Server.new:
+    :host<localhost>, :port<10000>,
+    application => route
+    {
+        get -> { redirect '/graphql' }
+
+        get -> 'graphql' { graphiql }
+
+        post -> 'graphql' { graphql($schema) }
+    }
+
+$hello.start;
+
+react whenever signal(SIGINT) { $hello.stop; exit; }
+```
+
+You can mix/match with other routes you want your server to handle.
+
+There is also a `Cro::HTTP::Transform::GraphQL` you can easily delegate
+to from Cro routes:
+
+```
+route {
+    delegate graphql => Cro::HTTP::Transform::GraphQL.new(:$schema, :graphiql);
+}
+```
+
+Pass in your GraphQL schema, and optional `:graphiql` to enable
+GraphiQL support on an http GET.
+
+`Cro::HTTP::Transform::GraphQL` is a `Cro::HTTP::Transform` that
+consumes `Cro::HTTP::Request`s and produces `Cro::HTTP::Response`s.
+It is still pretty basic.  A planned enhancement is caching parsed
+GraphQL query documents.  (Patches or advice welcome!)
+
+## More documentation
+
+See [eg/usersexample.md](/eg/usersexample.md) for a more complicated example.
+
+See [slides](https://curttilmes.github.com/2017-GraphQL-PHLPM) from a
+presentation about Perl 6 GraphQL at the Philadelphia Perl Mongers.
+
+[GraphQL Documentation](/doc/GraphQL.md)
+
+Copyright © 2017 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+No copyright is claimed in the United States under Title 17,
+U.S.Code. All Other Rights Reserved.
