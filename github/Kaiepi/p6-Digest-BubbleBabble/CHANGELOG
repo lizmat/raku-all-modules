@@ -1,0 +1,9 @@
+v0.0.1:
+
+- Implemented encoding and decoding support
+
+v0.0.2:
+
+- Implemented validation support
+- Decoding now throws X::Digest::BubbleBabble::Decode if the fingerprint
+  doesn't match BubbleBabble encoding.
