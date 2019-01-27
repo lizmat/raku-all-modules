@@ -1,19 +1,7 @@
 use lib "lib";
 use Test;
 use Math::Matrix;
-plan 8;
-
-subtest {
-    my $matrixa = Math::Matrix.new([[1,2],[3,4]]);
-    my $matrixm = Math::Matrix.new([[Bool,2.3],[3-i, 4.1.FatRat]]);
-    my $matrixr = Math::Matrix.new([[4e-3,2.3],[12, 4.1.FatRat]]);
-    ok $matrixa.narrowest-cell-type ~~ Int, "got narrowest type of default example correct";
-    ok $matrixa.widest-cell-type ~~ Int, "got widest type of default example correct";
-    ok $matrixm.narrowest-cell-type ~~ Bool, "got narrowest type of mixed matrix correct";
-    ok $matrixm.widest-cell-type ~~ Complex, "got widest type of mixed matrix correct";
-    ok $matrixr.narrowest-cell-type ~~ Int, "got narrowest type of mostly rational matrix correct";
-    ok $matrixr.widest-cell-type ~~ FatRat, "got widest type of mostly rational typed matrix correct";
-}, 'Cell Type';
+plan 9;
 
 subtest {
     plan 4;
@@ -28,7 +16,52 @@ subtest {
 }, "Size";
 
 subtest {
-    plan 6;
+    plan 3;
+    my $zero = Math::Matrix.new-zero(3,4);
+    my $identity = Math::Matrix.new-identity(3);
+    my $matrix = Math::Matrix.new([[1,2,3],[2,4,6],[3,6,9]]);
+
+    ok $zero.density == 0         ,"Zero matrix has density of 0";
+    ok $identity.density == 1/3   ,"Identity matrix has density of 1/size";
+    ok $matrix.density == 1       ,"full matrix has density of 1";
+}, "Density";
+
+subtest {
+    plan 15;
+    my $zero = Math::Matrix.new-zero(3,4);
+    my $identity = Math::Matrix.new-identity(3);
+    my $matrix = Math::Matrix.new([[1,2,3],[2,4,6],[3,6,9]]);
+    my $matrixb = Math::Matrix.new([[1,0],[3,4],[5,6]]);
+    my $matrixc = Math::Matrix.new([[1,2,3],[0,4,5]]);
+
+    ok $zero.upper-bandwith == 0    ,"Zero matrix has upper bandwith of 0";
+    ok $zero.lower-bandwith == 0    ,"Zero matrix has lower bandwith of 0";
+    ok $zero.bandwith == 0          ,"Zero matrix has bandwith of 0";
+    ok $identity.upper-bandwith == 0,"Identity matrix has upper bandwith of 0";
+    ok $identity.lower-bandwith == 0,"Identity matrix has lower bandwith of 0";
+    ok $identity.bandwith == 0      ,"Identity matrix has bandwith of 0";
+    ok $matrix.upper-bandwith == 2,  "full matrix has upper bandwith of 2";
+    ok $matrix.lower-bandwith == 2,  "full matrix has lower bandwith of 2";
+    ok $matrix.bandwith == 2        ,"full matrix has bandwith of 2";
+    ok $matrixb.upper-bandwith == 0, "custom matrix has upper bandwith of 0";
+    ok $matrixb.lower-bandwith == 2, "custom matrix has lower bandwith of 2";
+    ok $matrixb.bandwith == 2     ,  "custom matrix has bandwith of 2";
+    ok $matrixc.upper-bandwith == 2, "custom mirror matrix has upper bandwith of 2";
+    ok $matrixc.lower-bandwith == 0, "custom mirror matrix has lower bandwith of 0";
+    ok $matrixc.bandwith == 2     ,  "custom mirror matrix has bandwith of 2";
+}, "Bandwith";
+
+
+subtest {
+    plan 2;
+    my $matrix = Math::Matrix.new([[1,2,5,4],[1,2,3,2],[9,8,4,1],[1,3,4,6]]);
+    ok $matrix.trace() == 13 , "Trace of a Matrix";
+    my $matrix2 = Math::Matrix.new([[1,2,5,4],[1,2,3,2],[9,8,4,1]]);
+    dies-ok { $matrix2.trace() } , "Non square matrix, no trace";
+}, "Trace";
+
+subtest {
+    plan 7;
     my $zero = Math::Matrix.new-zero(3,3);
     my $identity = Math::Matrix.new-identity(3);
     my $diagonal = Math::Matrix.new-diagonal([1,2,3]);
@@ -43,26 +76,9 @@ subtest {
 
     my $a = Math::Matrix.new([[7, 3, 7, 1, 1, 4], [9, 7, 6, 1, 9, 1], [9, 6, 2, 5, 5, 6], [6, 0, 3, 5, 1, 3], [0, 5, 0, 0, 5, 7], [4, 2, 7, 6, 1, 9]]);
     ok $a.det == -33618, "6x6 matrix determinant is correct (use Decomposition behind the scene)";
+    
+    ok( ( ｜ $matrix ｜  == -72), 'unicode determinant operator');
 }, "Determinant";
-
-subtest {
-    plan 2;
-    my $matrix = Math::Matrix.new([[1,2,5,4],[1,2,3,2],[9,8,4,1],[1,3,4,6]]);
-    ok $matrix.trace() == 13 , "Trace of a Matrix";
-    my $matrix2 = Math::Matrix.new([[1,2,5,4],[1,2,3,2],[9,8,4,1]]);
-    dies-ok { $matrix2.trace() } , "Non square matrix, no trace";
-}, "Trace";
-
-subtest {
-    plan 3;
-    my $zero = Math::Matrix.new-zero(3,4);
-    my $identity = Math::Matrix.new-identity(3);
-    my $matrix = Math::Matrix.new([[1,2,3],[2,4,6],[3,6,9]]);
-
-    ok $zero.density == 0         ,"Zero matrix has density of 0";
-    ok $identity.density == 1/3   ,"Identity matrix has density of 1/size";
-    ok $matrix.density == 1       ,"full matrix has density of 1";
-}, "Density";
 
 
 subtest {
@@ -92,11 +108,13 @@ subtest {
 }, "Nullity";
 
 subtest {
-    plan 27;
+    plan 29;
     my $zero = Math::Matrix.new-zero(3,4);
     my $identity = Math::Matrix.new-identity(3);
     my $diagonal = Math::Matrix.new-diagonal([1,2,3]);
     my $matrix = Math::Matrix.new([[1,2,3],[2,4,6],[3,6,9]]);
+    my $m1 = Math::Matrix.new([[1]]);
+    my $m2 = Math::Matrix.new([[1,2],[3,4]]);
 
     dies-ok { $zero.norm(0) }         ,"there is no 0 norm";
     dies-ok { $zero.norm(1,0) }       ,"there is no n,0 norm";
@@ -128,4 +146,21 @@ subtest {
     ok ($diagonal dot $matrix).norm('row-sum') <= $diagonal.norm('row-sum') * $matrix.norm('row-sum'),  "Cauchy-Schwarz inequality for rowsum norm";
     ok ($diagonal dot $matrix).norm('column-sum') <= $diagonal.norm('column-sum') * $matrix.norm('column-sum'),  "Cauchy-Schwarz inequality for columnsum norm";
 
+   ok ‖ $m1 ‖ == 1, 'norm op on simplest matrix';
+   ok ‖ $m2 ‖ == 5.477225575051661, 'norm op on default matrix';
+
+
 }, "Norm";
+
+
+subtest {
+    my $matrixa = Math::Matrix.new([[1,2],[3,4]]);
+    my $matrixm = Math::Matrix.new([[Bool,2.3],[3-i, 4.1.FatRat]]);
+    my $matrixr = Math::Matrix.new([[4e-3,2.3],[12, 4.1.FatRat]]);
+    ok $matrixa.narrowest-element-type ~~ Int, "got narrowest type of default example correct";
+    ok $matrixa.widest-element-type ~~ Int, "got widest type of default example correct";
+    ok $matrixm.narrowest-element-type ~~ Bool, "got narrowest type of mixed matrix correct";
+    ok $matrixm.widest-element-type ~~ Complex, "got widest type of mixed matrix correct";
+    ok $matrixr.narrowest-element-type ~~ Int, "got narrowest type of mostly rational matrix correct";
+    ok $matrixr.widest-element-type ~~ FatRat, "got widest type of mostly rational typed matrix correct";
+}, 'Element Type';

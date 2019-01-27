@@ -1,25 +1,25 @@
 use v6.c;
 need Math::Matrix::Util;
 
-unit class Math::Matrix:ver<0.3.6>:auth<github:pierre-vigier> does Math::Matrix::Util;
+unit class Math::Matrix:ver<0.3.8>:auth<github:pierre-vigier> does Math::Matrix::Util;
 use AttrX::Lazy;
 
 ################################################################################
 # attributes
 ################################################################################
 
-has @!rows is required;
-has $!diagonal is lazy;
+has @!rows is required; # primary content
 
 has Int $!row-count;
 has Int $!column-count;
 
+has Bool $!is-square is lazy;
 has Bool $!is-zero is lazy;
+has Bool $!is-main-diagonal-zero is lazy;
 has Bool $!is-identity is lazy;
 has Bool $!is-diagonal is lazy;
-has Bool $!is-lower-triangular is lazy;
-has Bool $!is-upper-triangular is lazy;
-has Bool $!is-square is lazy;
+has Bool $!is-diagonal-constant is lazy;
+has Bool $!is-catalecticant is lazy;
 has Bool $!is-symmetric is lazy;
 has Bool $!is-antisymmetric is lazy;
 has Bool $!is-self-adjoint is lazy;
@@ -29,13 +29,16 @@ has Bool $!is-invertible is lazy;
 has Bool $!is-positive-definite is lazy;
 has Bool $!is-positive-semidefinite is lazy;
 
+has Int     $!upper-bandwith is lazy;
+has Int     $!lower-bandwith is lazy;
 has Int     $!rank is lazy;
 has Int     $!nullity is lazy;
 has Rat     $!density is lazy;
 has Numeric $!trace is lazy;
 has Numeric $!determinant is lazy;
-has Numeric $!narrowest-cell-type is lazy;
-has Numeric $!widest-cell-type is lazy;
+has Numeric $!condition is lazy;
+has Numeric $!narrowest-element-type is lazy;
+has Numeric $!widest-element-type is lazy;
 
 has Str     $!gist;
 
@@ -52,15 +55,13 @@ subset NumArray of Array where { .all ~~ Numeric };
 ################################################################################
 
 method !rows       { @!rows }
-method !clone-rows  { self!AoA-clone(@!rows) }
+method !clone-cells  { self!AoA-clone(@!rows) }
 method !row-count    { $!row-count }
 method !column-count  { $!column-count }
 
 ################################################################################
 # public methods: constructors
 ################################################################################
-
-method clone { self.bless( rows => @!rows ) }
 
 multi method new( @m ) {
     self!check-matrix-data( @m );
@@ -72,29 +73,27 @@ multi method new (Str $m){
     self.bless( rows => @m );
 }
 
-submethod BUILD( :@rows!, :$diagonal, :$density, :$trace, :$determinant, :$rank, :$nullity,
-                 :$is-zero, :$is-identity, :$is-symmetric, :$is-upper-triangular, :$is-lower-triangular ) {
-    @!rows        = self!AoA-clone(@rows);
-    $!row-count   = @rows.elems;
+submethod BUILD( :@rows!, :$density, :$trace, :$determinant, :$rank, :$nullity, :$is-zero, :$is-identity, :$is-symmetric) {
+    @!rows         = self!AoA-clone(@rows);
+    $!row-count    = @rows.elems;
     $!column-count = @rows[0].elems;
-    $!diagonal    = $diagonal if $diagonal.defined;
-    $!density     = $density if $density.defined;
-    $!trace       = $trace if $trace.defined;
-    $!determinant = $determinant if $determinant.defined;
-    $!rank        = $rank if $rank.defined;
-    $!nullity     = $nullity if $nullity.defined;
-    $!is-zero     = $is-zero if $is-zero.defined;
-    $!is-identity = $is-identity if $is-identity.defined;
+    $!density      = $density if $density.defined;
+    $!trace        = $trace if $trace.defined;
+    $!determinant  = $determinant if $determinant.defined;
+    $!rank         = $rank if $rank.defined;
+    $!nullity      = $nullity if $nullity.defined;
+    $!is-zero      = $is-zero if $is-zero.defined;
+    $!is-identity  = $is-identity if $is-identity.defined;
     $!is-symmetric = $is-symmetric if $is-symmetric.defined;
-    $!is-upper-triangular = $is-upper-triangular if $is-upper-triangular.defined;
-    $!is-lower-triangular = $is-lower-triangular if $is-lower-triangular.defined;
 }
+
+method clone { self.bless( rows => @!rows ) }
 
 multi method new-zero(PosInt $size) {
     self.bless( rows => self!zero-array($size, $size),
             determinant => 0, rank => 0, nullity => $size, density => 0.0, trace => 0,
             is-zero => True, is-identity => False, is-diagonal => True, 
-            is-square => True, is-symmetric => True  );
+            is-square => True, is-symmetric => True );
 }
 multi method new-zero(Math::Matrix:U: PosInt $rows, PosInt $cols) {
     self.bless( rows => self!zero-array($rows, $cols),
@@ -103,7 +102,7 @@ multi method new-zero(Math::Matrix:U: PosInt $rows, PosInt $cols) {
 }
 
 method new-identity( Int $size where * > 0 ) {
-    self.bless( rows => self!identity-array($size), diagonal => (1) xx $size, 
+    self.bless( rows => self!identity-array($size),  
                 determinant => 1, rank => $size, nullity => 0, density => 1/$size, trace => $size,
                 is-zero => False, is-identity => True, 
                 is-square => True, is-diagonal => True, is-symmetric => True );
@@ -116,19 +115,18 @@ method new-diagonal( *@diag ){
     my @d = self!zero-array($size, $size);
     (^$size).map: { @d[$_][$_] = @diag[$_] };
 
-    self.bless( rows => @d, diagonal => @diag,
-                determinant => [*](@diag.flat), trace => [+] (@diag.flat),
+    self.bless( rows => @d, determinant => [*](@diag.flat), trace => [+] (@diag.flat),
                 is-square => True, is-diagonal => True, is-symmetric => True  );
 }
 
 method new-lower-triangular( @m ) {
     #don't want to trust outside of the class that a matrix is really triangular
-    self.bless( rows => @m, is-lower-triangular => True );
+    self.bless( rows => @m );
 }
 
 method new-upper-triangular( @m ) {
     #don't want to trust outside of the class that a matrix is really triangular
-    self.bless( rows => @m, is-upper-triangular => True );
+    self.bless( rows => @m );
 }
 
 method new-vector-product (@column_vector, @row_vector){
@@ -144,19 +142,19 @@ method new-vector-product (@column_vector, @row_vector){
 # end of constructor - start accessors
 ################################################################################
 
+method element(Math::Matrix:D: Int:D $row, Int:D $column --> Numeric ) {
+    self!check-index($row, $column);
+    @!rows[$row][$column];
+}
+
 multi method AT-POS (Math::Matrix:D: Int:D $row){
     self!check-row-index($row);
     @!rows[$row];
 }
 
-method cell(Math::Matrix:D: Int:D $row, Int:D $column --> Numeric ) {
-    self!check-index($row, $column);
-    @!rows[$row][$column];
-}
-
 method row(Math::Matrix:D: Int:D $row  --> List) {
     self!check-row-index($row);
-    |@!rows[$row];
+    @!rows[$row];
 }
 
 method column(Math::Matrix:D: Int:D $column --> List) {
@@ -164,9 +162,17 @@ method column(Math::Matrix:D: Int:D $column --> List) {
     (@!rows.keys.map:{ @!rows[$_;$column] }).list;
 }
 
-method !build_diagonal(Math::Matrix:D: --> List){
-    fail "Number of columns has to be same as number of rows" unless self.is-square;
-    ( gather for ^$!row-count -> $i { take @!rows[$i;$i] } ).list;
+method diagonal(Math::Matrix:D: $start? = 0 --> List){
+    fail "requested diagonal is outside of matrix boundaries" if $start >= $!row-count or $start <= -$!column-count;
+    ($start > 0 ?? map { @!rows[$^i+$start;$^i] }, ^min($!column-count, $!row-count - $start)
+                !! map { @!rows[$^i;$^i-$start] }, ^min($!row-count, $!column-count + $start) ).list;
+}
+
+method skew-diagonal(Math::Matrix:D: $start? = 0 --> List){
+    fail "skew diagonal is only defined for square matrices" unless $.is-square;
+    fail "requested skew diagonal is outside of matrix boundaries" if $start.abs >= $!row-count;
+    ($start > 0 ?? map { @!rows[$!row-count -1 -$^i; $start+$^i] }, ^($!row-count - $start)
+                !! map { @!rows[$!row-count -1 -$^i +$start;$^i] }, ^($!row-count + $start) ).list;
 }
 
 multi method submatrix(Math::Matrix:D: Int:D $row, Int:D $column --> Math::Matrix:D ){
@@ -185,21 +191,19 @@ multi method submatrix(Math::Matrix:D: :@rows    = (^$!row-count).list,
     Math::Matrix.new([ @r.map( { [ @!rows[$^row][|@c] ] } ) ]);
 }
 
-
-
 ################################################################################
 # end of accessors - start with type conversion and handy shortcuts
 ################################################################################
 
-method Bool(Math::Matrix:D: --> Bool)       { ! self.is-zero }
-method Numeric (Math::Matrix:D: --> Numeric){   self.norm   }
-method Str(Math::Matrix:D: --> Str)         {   join("\n", @!rows.map: *.Str) }
-method Array(Math::Matrix:D: --> Array)     {   self!clone-rows }
-method Hash(Math::Matrix:D: --> Hash)       {  ((^$!row-count).map: {$_ => @!rows[$_].kv.Hash}).Hash}
-method list(Math::Matrix:D: --> List)       {   self.list-rows.flat.list }
-method list-rows(Math::Matrix:D: --> List)  {  (@!rows.map: {.flat}).list }
-method list-columns(Math::Matrix:D: --> List){ ((^$!column-count).map: {self.column($_)}).list }
-method Range(Math::Matrix:D: --> Range)     {   self.list.minmax }
+method Bool(        Math::Matrix:D: --> Bool)   { ! self.is-zero }
+method Numeric (    Math::Matrix:D: --> Numeric){   self.norm   }
+method Str(         Math::Matrix:D: --> Str)    {   join("\n", @!rows.map: *.Str) }
+method Range(       Math::Matrix:D: --> Range)  {   self.list.minmax }
+method Array(       Math::Matrix:D: --> Array)  {   self!clone-cells }
+method list(        Math::Matrix:D: --> List)   {   self.list-rows.flat.list }
+method list-rows(   Math::Matrix:D: --> List)   {  (@!rows.map: {.flat}).list }
+method list-columns(Math::Matrix:D: --> List)   {  ((^$!column-count).map: {self.column($_)}).list }
+method Hash(        Math::Matrix:D: --> Hash)   {  ((^$!row-count).map: {$_ => @!rows[$_].kv.Hash}).Hash}
 
 multi method gist(Math::Matrix:U: --> Str) { "({self.^name})" }
 multi method gist(Math::Matrix:D: Int :$max-chars?, Int :$max-rows? --> Str) {
@@ -211,7 +215,7 @@ multi method gist(Math::Matrix:D: Int :$max-chars?, Int :$max-rows? --> Str) {
                     $_ ~~ Complex ?? %( re => $_.re.fmt("%g"),im => (($_.im >= 0 ??'+'!!'')~$_.im.fmt("%g")~'i') ) !!
                                      %( re => $_.fmt("%g"),   im => '' )
         }).Array};
-        my @col-width;                     # width of the formatted cell content in n column
+        my @col-width;                     # width of the formatted element content in n column
         @fmt-content.map: {
             for .kv -> $ci, $val {
                 @col-width[$ci]<re>.push: $val<re>.chars;
@@ -247,39 +251,33 @@ multi method perl(Math::Matrix:D: --> Str){ self.WHAT.perl ~ ".new(" ~ @!rows.pe
 # end of type conversion and handy shortcuts - start boolean matrix properties
 ################################################################################
 
-method !build_is-square(Math::Matrix:D: --> Bool) { $!column-count == $!row-count }
+method !build_is-square( Math::Matrix:D: --> Bool)        { $!column-count == $!row-count }
+method !build_is-zero(    Math::Matrix:D: --> Bool)        { self.density() == 0 }
+method !build_is-identity( Math::Matrix:D: --> Bool)        { $.is-diagonal and [==](($.diagonal.flat,1).flat)}
+method !build_is-main-diagonal-zero(Math::Matrix:D: --> Bool){ [==](($.diagonal.flat,0).flat) }
 
-method !build_is-zero(Math::Matrix:D: --> Bool)   { self.density() == 0 }
-
-method !build_is-identity(Math::Matrix:D: --> Bool) {
-    return False unless self.is-square;
-    for ^$!row-count X ^$!column-count -> ($r, $c) {
-        return False unless @!rows[$r][$c] == ($r == $c ?? 1 !! 0);
-    }
-    True;
+method is-triangular(Math::Matrix:D: --> Bool) {
+    $.is-square and ($.lower-bandwith == 0 or $.upper-bandwith == 0) 
+}
+method is-upper-triangular(Math::Matrix:D: Bool :$strict = False --> Bool) {
+    $.is-square and $.lower-bandwith == 0 and (!$strict or $.is-main-diagonal-zero)
+}
+method is-lower-triangular( Math::Matrix:D: Bool :$strict = False --> Bool) {
+    $.is-square and $.upper-bandwith == 0 and (!$strict or $.is-main-diagonal-zero)
 }
 
-method !build_is-upper-triangular(Math::Matrix:D: --> Bool) {
-    return False unless self.is-square;
-    for ^$!row-count X ^$!column-count -> ($r, $c) {
-        return False if @!rows[$r][$c] != 0 and $r > $c;
-    }
-    True;
+method !build_is-diagonal( Math::Matrix:D: --> Bool) {
+    self.is-square and $.lower-bandwith == 0 and $.upper-bandwith == 0;
 }
 
-method !build_is-lower-triangular(Math::Matrix:D: --> Bool) {
-    return False unless self.is-square;
-    for ^$!row-count X ^$!column-count -> ($r, $c) {
-        return False if @!rows[$r][$c] != 0 and $r < $c;
-    }
-    True;
+method !build_is-diagonal-constant( Math::Matrix:D: --> Bool) {
+    [&&](map { [==] $.diagonal($_).list }, -$!column-count+1 .. $!row-count-1);
+}
+method !build_is-catalecticant( Math::Matrix:D: --> Bool) {
+    $.is-square and [&&](map { [==] $.skew-diagonal($_).list }, -$!column-count+1 .. $!row-count-1);
 }
 
-method !build_is-diagonal(Math::Matrix:D: --> Bool) {
-    return $.is-upper-triangular && $.is-lower-triangular;
-}
-
-method is-diagonally-dominant(Math::Matrix:D: Bool :$strict = False, 
+method is-diagonally-dominant( Math::Matrix:D: Bool :$strict = False, 
                               Str :$along where {$^orient eq any <column row both>} = 'column' --> Bool) {
     return False unless self.is-square;
     my $greater = $strict ?? &[>] !! &[>=];
@@ -295,7 +293,7 @@ method is-diagonally-dominant(Math::Matrix:D: Bool :$strict = False,
     $colwise and $rowwise;
 }
 
-method !build_is-symmetric(Math::Matrix:D: --> Bool) {
+method !build_is-symmetric( Math::Matrix:D: --> Bool) {
     return False unless self.is-square;
     return True if $!row-count < 2;
     for ^($!row-count - 1) -> $r {
@@ -317,18 +315,15 @@ method !build_is-antisymmetric(Math::Matrix:D: --> Bool) {
 }
 
 method !build_is-self-adjoint(Math::Matrix:D: --> Bool) {
-    return False unless self.is-square;
-    self.T.conj ~~ self;
+    self.is-square and self.T.conj ~~ self
 }
 
 method !build_is-unitary(Math::Matrix:D: --> Bool) {
-    return False unless self.is-square;
-    self.dot-product( self.T.conj ) ~~ Math::Matrix.new-identity( $!row-count );
+    self.is-square and self.dot-product( self.T.conj ) ~~ Math::Matrix.new-identity( $!row-count );
 }
 
 method !build_is-orthogonal(Math::Matrix:D: --> Bool) {
-    return False unless self.is-square;
-    self.dot-product( self.T ) ~~ Math::Matrix.new-identity( $!row-count );
+    self.is-square and self.dot-product( self.T ) ~~ Math::Matrix.new-identity( $!row-count );
 }
 
 method !build_is-invertible(Math::Matrix:D: --> Bool) {
@@ -345,7 +340,6 @@ method !build_is-positive-definite (Math::Matrix:D: --> Bool) { # with Sylvester
     }
     True;
 }
-
 method !build_is-positive-semidefinite (Math::Matrix:D: --> Bool) { # with Sylvester's criterion
     return False unless self.is-square;
     return False unless self.determinant >= 0;
@@ -361,7 +355,7 @@ method !build_is-positive-semidefinite (Math::Matrix:D: --> Bool) { # with Sylve
 # end of boolean matrix properties - start numeric matrix properties
 ################################################################################
 
-method size(Math::Matrix:D: )          {  $!row-count, $!column-count }
+method size(Math::Matrix:D: --> List)          {  $!row-count, $!column-count }
 
 method !build_density(Math::Matrix:D: --> Rat) {
     my $valcount = 0;
@@ -369,13 +363,50 @@ method !build_density(Math::Matrix:D: --> Rat) {
     $valcount / self.elems;
 }
 
+method !build_upper-bandwith(Math::Matrix:D: --> Int) {
+    for $!column-count-1 ... 1  -> $i {
+        return $i unless [&&](map * == 0, $.diagonal(-$i).list)
+    }
+    0;
+}
+method !build_lower-bandwith(Math::Matrix:D: --> Int) {
+    for $!row-count-1 ... 1  -> $i {
+        return $i unless [&&](map * == 0, $.diagonal($i).list)
+    }   
+    0;
+}
+method bandwith(Math::Matrix:D: Str $which = '' --> Int) { max $.upper-bandwith, $.lower-bandwith }
+
 method !build_trace(Math::Matrix:D: --> Numeric) {
+    fail "trace is only defined for a square matrix" unless self.is-square;
     self.diagonal.sum;
+}
+
+method !build_rank(Math::Matrix:D: --> Int) {
+    my $rank = 0;
+    my @clone =  @!rows.clone();
+    for ^$!column-count -> $c {            # make upper triangle via gauss elimination
+        last if $rank == $!row-count;      # rank cant get bigger thean dim
+        my $swap_row_nr = $rank;
+        $swap_row_nr++ while $swap_row_nr < $!row-count and @clone[$swap_row_nr][$c] == 0;
+        next if $swap_row_nr == $!row-count;
+        (@clone[$rank], @clone[$swap_row_nr]) = (@clone[$swap_row_nr], @clone[$rank]);
+        for $rank + 1 ..^ $!row-count -> $r {
+            next if @clone[$r][$c] == 0;
+            my $q = @clone[$rank][$c] / @clone[$r][$c];
+            @clone[$r] = @clone[$rank] >>-<< $q <<*<< @clone[$r];
+        }
+        $rank++;
+    }
+    $rank;
+}
+method !build_nullity(Math::Matrix:D: --> Int) {
+    min(self.size) - self.rank;
 }
 
 method det(Math::Matrix:D: --> Numeric )        { self.determinant }  # the usual short name
 method !build_determinant(Math::Matrix:D: --> Numeric) {
-    fail "Number of columns has to be same as number of rows" unless self.is-square;
+    fail "number of columns has to be same as number of rows" unless self.is-square;
     return 1            if $!row-count == 0;
     return @!rows[0][0] if $!row-count == 1;
     if $!row-count > 4 {
@@ -416,29 +447,7 @@ multi sub σ_permutations ([$x, *@xs]) {
     σ_permutations(@xs).map({ |order($_.value, insert($x, $_.key)) }) Z=> |(1,-1) xx *
 }
 
-
-method !build_rank(Math::Matrix:D: --> Int) {
-    my $rank = 0;
-    my @clone =  @!rows.clone();
-    for ^$!column-count -> $c {            # make upper triangle via gauss elimination
-        last if $rank == $!row-count;      # rank cant get bigger thean dim
-        my $swap_row_nr = $rank;
-        $swap_row_nr++ while $swap_row_nr < $!row-count and @clone[$swap_row_nr][$c] == 0;
-        next if $swap_row_nr == $!row-count;
-        (@clone[$rank], @clone[$swap_row_nr]) = (@clone[$swap_row_nr], @clone[$rank]);
-        for $rank + 1 ..^ $!row-count -> $r {
-            next if @clone[$r][$c] == 0;
-            my $q = @clone[$rank][$c] / @clone[$r][$c];
-            @clone[$r] = @clone[$rank] >>-<< $q <<*<< @clone[$r];
-        }
-        $rank++;
-    }
-    $rank;
-}
-
-method !build_nullity(Math::Matrix:D: --> Int) {
-    min(self.size) - self.rank;
-}
+method minor(Math::Matrix:D: Int:D $row, Int:D $col --> Numeric) { $.submatrix($row, $col).determinant }
 
 multi method norm(Math::Matrix:D: PosInt :$p = 2, PosInt :$q = $p --> Numeric) {
     my $norm = 0;
@@ -457,11 +466,9 @@ multi method norm(Math::Matrix:D: 'max' --> Numeric)      { max            @!row
 multi method norm(Math::Matrix:D: 'row-sum' --> Numeric)  { max            @!rows.map: {[+] .map: *.abs} }
 multi method norm(Math::Matrix:D: 'column-sum'--> Numeric){ max (^$!column-count).map: {[+] self.column($_).map: *.abs} }
 
-method condition(Math::Matrix:D:                    --> Numeric) { self.norm() * self.inverted.norm       }
+method !build_condition(Math::Matrix:D:              --> Numeric) { $.norm() * $.inverted.norm       }
 
-method minor(Math::Matrix:D: Int:D $row, Int:D $col --> Numeric) { self.submatrix($row, $col).determinant }
-
-method !build_narrowest-cell-type(Math::Matrix:D: --> Numeric){
+method !build_narrowest-element-type(Math::Matrix:D: --> Numeric){
     return Bool if any( @!rows[*;*] ) ~~ Bool;
     return Int  if any( @!rows[*;*] ) ~~ Int;
     return Num  if any( @!rows[*;*] ) ~~ Num;
@@ -469,7 +476,7 @@ method !build_narrowest-cell-type(Math::Matrix:D: --> Numeric){
     return FatRat if any( @!rows[*;*] ) ~~ FatRat;
     Complex;
 }
-method !build_widest-cell-type(Math::Matrix:D: --> Numeric){
+method !build_widest-element-type(Math::Matrix:D: --> Numeric){
     return Complex if any( @!rows[*;*] ) ~~ Complex;
     return FatRat if any( @!rows[*;*] ) ~~ FatRat;
     return Rat   if any( @!rows[*;*] ) ~~ Rat;
@@ -503,7 +510,7 @@ method adjugated(Math::Matrix:D: --> Math::Matrix:D) {
 method inverted(Math::Matrix:D: --> Math::Matrix:D) {
     fail "Number of columns has to be same as number of rows" unless self.is-square;
     fail "Matrix is not invertible, or singular because defect (determinant = 0)" if self.determinant == 0;
-    my @clone = self!clone-rows();
+    my @clone = self!clone-cells();
     my @inverted = self!identity-array( $!row-count );
     for ^$!row-count -> $c {
         my $swap_row_nr = $c;       # make sure that diagonal element != 0, later == 1
@@ -526,8 +533,9 @@ method inverted(Math::Matrix:D: --> Math::Matrix:D) {
     Math::Matrix.new( @inverted );
 }
 
+method rref(                    Math::Matrix:D: --> Math::Matrix:D) { self.reduced-row-echelon-form }
 method reduced-row-echelon-form(Math::Matrix:D: --> Math::Matrix:D) {
-    my @ref = self!clone-rows();
+    my @ref = self!clone-cells();
     my $lead = 0;
     MAIN: for ^$!row-count -> $r {
         last MAIN if $lead >= $!column-count;
@@ -551,21 +559,18 @@ method reduced-row-echelon-form(Math::Matrix:D: --> Math::Matrix:D) {
     }
     return Math::Matrix.new( @ref );
 }
-method rref(Math::Matrix:D: --> Math::Matrix:D) {
-    self.reduced-row-echelon-form;
-}
 
 ################################################################################
 # end of derivative matrices - start decompositions
 ################################################################################
 
 # LU factorization with optional partial pivoting and optional diagonal matrix
-multi method decompositionLU(Math::Matrix:D: Bool :$pivot = True, :$diagonal = False) {
+method decompositionLU(Math::Matrix:D: Bool :$pivot = True, :$diagonal = False) {
     fail "Not an square matrix" unless self.is-square;
     fail "Has to be invertible when not using pivoting" if not $pivot and not self.is-invertible;
     my $size = $!row-count;
     my @L = self!identity-array( $size );
-    my @U = self!clone-rows( );
+    my @U = self!clone-cells( );
     my @P = self!identity-array( $size );
 
     for 0 .. $size-2 -> $c {
@@ -621,7 +626,7 @@ method decompositionLUCrout(Math::Matrix:D: ) {
 method decompositionCholesky(Math::Matrix:D: --> Math::Matrix:D) {
     fail "Not symmetric matrix" unless self.is-symmetric;
     fail "Not positive definite" unless self.is-positive-definite;
-    my @D = self!clone-rows();
+    my @D = self!clone-cells();
     for 0 ..^$!row-count -> $k {
         @D[$k][$k] -= @D[$k][$_]**2 for 0 .. $k-1;
         @D[$k][$k]  = sqrt @D[$k][$k];
@@ -642,67 +647,58 @@ method decompositionCholesky(Math::Matrix:D: --> Math::Matrix:D) {
 
 method equal(Math::Matrix:D: Math::Matrix $b --> Bool)           { @!rows ~~ $b!rows }
 multi method ACCEPTS(Math::Matrix:D: Math::Matrix:D $b --> Bool) { self.equal( $b )  }
-multi method add(Math::Matrix:D: Numeric $r --> Math::Matrix:D ) { self.map( * + $r )}
-multi method add(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-count and 
-                                                         $!column-count == $b!column-count } --> Math::Matrix:D ) {
+
+
+# add matrix
+multi method add(Math::Matrix:D: Str $b --> Math::Matrix:D ) { self.add( Math::Matrix.new( $b ) ) }
+multi method add(Math::Matrix:D:     @b --> Math::Matrix:D ) { self.add( Math::Matrix.new( @b ) ) }
+multi method add(Math::Matrix:D: Math::Matrix $b where {self.size eqv $b.size} --> Math::Matrix:D ) {
     my @sum;
     for ^$!row-count X ^$!column-count -> ($r, $c) {
         @sum[$r][$c] = @!rows[$r][$c] + $b!rows[$r][$c];
     }
     Math::Matrix.new( @sum );
 }
-
-multi method subtract(Math::Matrix:D: Numeric $r --> Math::Matrix:D ) {
-    self.map( * - $r );
-}
-
-multi method subtract(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-count and 
-                                                              $!column-count == $b!column-count } --> Math::Matrix:D ) {
-    my @subtract;
-    for ^$!row-count X ^$!column-count -> ($r, $c) {
-        @subtract[$r][$c] = @!rows[$r][$c] - $b!rows[$r][$c];
-    }
-    Math::Matrix.new( @subtract );
-}
-
-method add-row(Math::Matrix:D: Int $row, @row --> Math::Matrix:D ) {
+# add vector
+multi method add(Math::Matrix:D: @v where {@v.all ~~ Numeric}, Int :$row! --> Math::Matrix:D) {
+    fail "Matrix has $!column-count columns, but got "~ +@v ~ "element row." unless $!column-count == +@v;
     self!check-row-index($row);
-    fail "Expect Array of Number as second parameter" unless @row ~~ NumArray;
-    fail "Matrix has $!column-count columns, but got "~ +@row ~ "element row." unless $!column-count == +@row;
-    my @m = self!clone-rows;
-    @m[$row] = @m[$row] <<+>> @row;
+    my @m = self!clone-cells;
+    @m[$row] = @m[$row] <<+>> @v;
     Math::Matrix.new( @m );
 }
-
-method add-column(Math::Matrix:D: Int $col, @col --> Math::Matrix:D ) {
-    self!check-column-index($col);
-    fail "Expect Array of Number as second parameter" unless @col ~~ NumArray;
-    fail "Matrix has $!row-count rows, but got "~ +@col ~ "element column." unless $!row-count == +@col;
-    my @m = self!clone-rows;
-    @col.keys.map:{ @m[$_][$col] += @col[$_] };
+multi method add(Math::Matrix:D: @v where {@v.all ~~ Numeric}, Int :$column! --> Math::Matrix:D ) {
+    self!check-column-index($column);
+    fail "Matrix has $!row-count rows, but got "~ +@v ~ "element column." unless $!row-count == +@v;
+    my @m = self!clone-cells;
+    @v.keys.map:{ @m[$_][$column] += @v[$_] };
     Math::Matrix.new( @m );
 }
-
-multi method multiply(Math::Matrix:D: Numeric $r --> Math::Matrix:D ) {
-    self.map( * * $r );
+# add scalar
+multi method add(Math::Matrix:D: Numeric $s, --> Math::Matrix:D )                          { self.map( *  + $s  ) }
+multi method add(Math::Matrix:D: Numeric $s, Int :$row!, Int :$column --> Math::Matrix:D ) {
+    self!check-row-index($row)       if $row.defined;
+    self!check-column-index($column) if $column.defined;
+    self.map(rows  => $row.defined ?? ($row..$row) !! ^$!row-count, 
+             columns => $column.defined ?? ($column..$column) !! ^$!column-count, { $_ + $s } );
 }
 
-multi method multiply(Math::Matrix:D: Math::Matrix $b where { $!row-count == $b!row-count and 
-                                                              $!column-count == $b!column-count } --> Math::Matrix:D ) {
-    my @multiply;
+
+multi method multiply(Math::Matrix:D: Str $b --> Math::Matrix:D ) { self.multiply( Math::Matrix.new( $b ) ) }
+multi method multiply(Math::Matrix:D:     @b --> Math::Matrix:D ) { self.multiply( Math::Matrix.new( @b ) ) }
+multi method multiply(Math::Matrix:D: Math::Matrix $b where {self.size eqv $b.size} --> Math::Matrix:D ) {
+    my @product;
     for ^$!row-count X ^$!column-count -> ($r, $c) {
-        @multiply[$r][$c] = @!rows[$r][$c] * $b!rows[$r][$c];
+        @product[$r][$c] = @!rows[$r][$c] * $b!rows[$r][$c];
     }
-    Math::Matrix.new( @multiply );
+    Math::Matrix.new( @product );
 }
-
-method multiply-row(Math::Matrix:D: Int $row, Numeric $factor --> Math::Matrix:D ) {
-    self!check-row-index($row);
-    self.map-row($row,{$_ * $factor});
-}
-
-method multiply-column(Math::Matrix:D: Int $column, Numeric $factor --> Math::Matrix:D ) {
-    self.map-column($column,{$_ * $factor});
+multi method multiply(Math::Matrix:D: Numeric $f --> Math::Matrix:D )                          { self.map( *  * $f  ) }
+multi method multiply(Math::Matrix:D: Numeric $f, Int :$row, Int :$column --> Math::Matrix:D ) {
+    self!check-row-index($row)       if $row.defined;
+    self!check-column-index($column) if $column.defined;
+    self.map(rows  => $row.defined ?? ($row..$row) !! ^$!row-count,
+             columns => $column.defined ?? ($column..$column) !! ^$!column-count, { $_ * $f } );
 }
 
 method dot-product(Math::Matrix:D: Math::Matrix $b --> Math::Matrix:D ) {
@@ -729,66 +725,55 @@ method tensor-product(Math::Matrix:D: Math::Matrix $b  --> Math::Matrix:D) {
 # end of matrix math operations - start list like operations
 ################################################################################
 
-method elems (Math::Matrix:D: --> Int)               {  $!row-count * $!column-count }
+method elems (Math::Matrix:D: --> Int)           {  $!row-count * $!column-count }
 
-method elem (Math::Matrix:D: Range $r --> Bool) {  # is every cell value element in the set/range
+method elem (Math::Matrix:D: Range $r --> Bool)  {         # is every element value element in the set/range
     self.list.map: {return False unless $_ ~~ $r};
     True;
-
 }
+
 multi method cont (Math::Matrix:D: Numeric $e  --> Bool) { # matrix contains element ?
     self.list.map: {return True if $_ == $e};
     False;
 }
-multi method cont (Math::Matrix:D: Range $r  --> Bool) { # is any cell value in this set/range
+multi method cont (Math::Matrix:D: Range $r  --> Bool) {   # is any element value in this set/range
     self.list.map: {return True if $_ ~~ $r};
     False;
 }
 
-method map-index(Math::Matrix:D: &coderef --> Math::Matrix:D) {
-    my @aoa;
-    for ^$!row-count X ^$!column-count -> ($r, $c) { @aoa[$r][$c] = &coderef($r, $c) }
-    Math::Matrix.new( @aoa );
-}
-
-method map-with-index(Math::Matrix:D: &coderef --> Math::Matrix:D) {
-    my @aoa;
-    for ^$!row-count X ^$!column-count -> ($r, $c) { @aoa[$r][$c] = &coderef($r, $c, @!rows[$r][$c]) }
-    Math::Matrix.new( @aoa );
-}
-
-method map(Math::Matrix:D: &coderef --> Math::Matrix:D) {
-    Math::Matrix.new( [ 
-        @!rows.map: { [ .map: &coderef ] }
-    ] );
-}
-
-method map-row(Math::Matrix:D: Int $row, &coderef --> Math::Matrix:D ) {
-    self!check-row-index($row);
-    my @m = self!clone-rows;
-    @m[$row] = @m[$row].map(&coderef);
+method map(Math::Matrix:D: &coderef, Range :$rows = ^$!row-count,
+                                     Range :$columns = ^$!column-count --> Math::Matrix:D) {
+    self!check-index($rows.min, $columns.min);
+    self!check-row-index($rows.minmax[1]) unless $rows.max          == Inf;
+    self!check-column-index($columns.minmax[1]) unless $columns.max == Inf;
+    my @r = $rows.max    == Inf ?? ($rows.min    .. $!row-count-1).list    !! $rows.list;
+    my @c = $columns.max == Inf ?? ($columns.min .. $!column-count-1).list !! $columns.list;
+    my @m;
+    for @r X @c                        -> ($r, $c) { @m[$r][$c] = &coderef(@!rows[$r][$c])}
+    for ^$!row-count X ^$!column-count -> ($r, $c) { @m[$r][$c] //= @!rows[$r][$c] }
     Math::Matrix.new( @m );
 }
 
-method map-column(Math::Matrix:D: Int $col, &coderef --> Math::Matrix:D ) {
-    self!check-column-index($col);
-    my @m = self!clone-rows;
-    (^$!row-count).map:{ @m[$_;$col] = &coderef( @m[$_;$col] ) };
+method map-with-index(Math::Matrix:D: &coderef, Range :$rows = ^$!row-count,
+                                                Range :$columns = ^$!column-count --> Math::Matrix:D) {
+    fail "block has to receive between one and three arguments" unless &coderef.arity ~~ 1..3;
+    self!check-index($rows.min, $columns.min);
+    self!check-row-index($rows.minmax[1]) unless $rows.max          == Inf;
+    self!check-column-index($columns.minmax[1]) unless $columns.max == Inf;
+    my @r = $rows.max    == Inf ?? ($rows.min    .. $!row-count-1).list    !! $rows.list;
+    my @c = $columns.max == Inf ?? ($columns.min .. $!column-count-1).list !! $columns.list;
+    my @m;
+    if    &coderef.arity == 1 {for @r X @c -> ($r, $c) { @m[$r][$c] = &coderef($r) }}
+    elsif &coderef.arity == 2 {for @r X @c -> ($r, $c) { @m[$r][$c] = &coderef($r, $c) }}
+    elsif &coderef.arity == 3 {for @r X @c -> ($r, $c) { @m[$r][$c] = &coderef($r, $c, @!rows[$r][$c]) }}
+    for ^$!row-count X ^$!column-count     -> ($r, $c) { @m[$r][$c] //= @!rows[$r][$c] }
     Math::Matrix.new( @m );
 }
 
 
-method reduce(Math::Matrix:D: &coderef ) {
-    (@!rows.map: {$_.flat}).flat.reduce( &coderef )
-}
-
-method reduce-rows (Math::Matrix:D: &coderef){
-    @!rows.map: { $_.flat.reduce( &coderef ) }
-}
-
-method reduce-columns (Math::Matrix:D: &coderef){
-    (^$!column-count).map: { self.column($_).reduce( &coderef ) }
-}
+method reduce(        Math::Matrix:D: &coderef) {(@!rows.map: {$_.flat}).flat.reduce( &coderef )}
+method reduce-rows   (Math::Matrix:D: &coderef) { @!rows.map: { $_.flat.reduce( &coderef) }}
+method reduce-columns(Math::Matrix:D: &coderef) {(^$!column-count).map: { self.column($_).reduce( &coderef )}}
 
 ################################################################################
 # end of list like operations - start structural matrix operations
@@ -843,7 +828,7 @@ multi method splice-rows(Math::Matrix:D: Int $row, Int $elems = ($!row-count - $
         fail "Number of columns in and original matrix and replacement has to be same" unless $replacement[0].elems == $!column-count;
         self!check-matrix-data( @$replacement );
     }
-    my @m = self!clone-rows;
+    my @m = self!clone-cells;
     @m.splice($pos, $elems, $replacement.list);
     Math::Matrix.new(@m);
 }
@@ -858,7 +843,7 @@ multi method splice-columns(Math::Matrix:D: Int $col, Int $elems = ($!column-cou
     fail "Number of elements to delete (second parameter) has to be zero or more!)" if $elems < 0;
     fail "Number of rows in original matrix and replacement has to be same" unless $replacement.elems == $!row-count;
     self!check-matrix-data( @$replacement );
-    my @m = self!clone-rows;
+    my @m = self!clone-cells;
     @m.keys.map:{ @m[$_].splice($pos, $elems, $replacement[$_]) };
     Math::Matrix.new(@m);
 }
@@ -890,7 +875,7 @@ multi sub infix:<**>( Math::Matrix:D $a where { $a.is-square }, Int $e --> Math:
     return Math::Matrix.new-identity( $a!row-count ) if $e == 0;
     my $p = $a.clone;
     $p = $p.dot-product( $a ) for 2 .. abs $e;
-    $p = $p.inverted         if  $e < 0;
+    $p = $p.inverted          if  $e < 0;
     $p;
 }
 
@@ -902,4 +887,4 @@ multi sub infix:<⊗>( Math::Matrix:D $a, Math::Matrix:D $b --> Math::Matrix:D) 
 multi sub infix:<X*>( Math::Matrix:D $a, Math::Matrix:D $b --> Math::Matrix:D) is equiv(&infix:<x>) is export { $a.tensor-product( $b ) }
 
 multi sub prefix:<MM>(Str   $m --> Math::Matrix:D) is tighter(&postcircumfix:<[ ]>) is export(:MM) { Math::Matrix.new($m) }
-multi sub prefix:<MM>(Array $m --> Math::Matrix:D) is tighter(&postcircumfix:<[ ]>) is export(:MM) { Math::Matrix.new(@$m) }
+multi sub prefix:<MM>(List  $m --> Math::Matrix:D) is tighter(&postcircumfix:<[ ]>) is export(:MM) { Math::Matrix.new(@$m) }

@@ -1,5 +1,3 @@
-# Perl6-Math-Matrix
-
 [![Build Status](https://travis-ci.org/pierre-vigier/Perl6-Math-Matrix.svg?branch=master)](https://travis-ci.org/pierre-vigier/Perl6-Math-Matrix)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/pierre-vigier/Perl6-Math-Matrix?svg=true)](https://ci.appveyor.com/project/pierre-vigier/Perl6-Math-Matrix/branch/master)
 
@@ -11,7 +9,7 @@ Math::Matrix - create, compare, compute and measure 2D matrices
 VERSION
 =======
 
-0.3.6
+0.3.8
 
 !MOVING!
 ========
@@ -23,16 +21,16 @@ SYNOPSIS
 
 Matrices are tables with rows and columns (index counting from 0) of numbers (Numeric type - Bool or Int or Num or Rat or FatRat or Complex): 
 
-    transpose, invert, negate, add, multiply, dot product, tensor product, 22 ops, determinant, rank,
-    trace, norm, 15 boolean properties, 3 decompositions, submatrix, splice, map, reduce and more
+    transpose, invert, negate, add, multiply, dot product, tensor product, 22 ops, determinant, rank, norm
+    14 numerical properties, 23 boolean properties, 3 decompositions, submatrix, splice, map, reduce and more
 
 Table of Content:
 
   * [Methods](#methods)
 
-  * [Export Tags](#export-tags)
-
   * [Operators](#operators)
+
+  * [Export Tags](#export-tags)
 
   * [Authors](#authors)
 
@@ -45,34 +43,34 @@ Because the list based, functional toolbox of Perl 6 is not enough to calculate 
 
 Matrices are readonly - operations and functions do create new matrix objects. All methods return readonly data or deep clones - also the constructor does a deep clone of provided data. In that sense the library is thread safe.
 
-All computation heavy properties will be calculated lazily and will be cached.
+All computation heavy properties will be calculated lazily and cached.
 
 [METHODS](#synopsis)
 ====================
 
-  * [constructors](#constructors): [new []](#new--), [new ()](#new---1), [new ""](#new---2), [new-zero](#new-zero), [new-identity](#new-identity), [new-diagonal](#new-diagonal), [new-vector-product](#new-vector-product)
+  * **[constructors](#constructors)**: [new []](#new--), [new ()](#new---1), [new ""](#new---2), [new-zero](#new-zero), [new-identity](#new-identity), [new-diagonal](#new-diagonal), [new-vector-product](#new-vector-product)
 
-  * [accessors](#accessors): [cell](#cell), [AT-POS](#at-pos), [row](#row), [column](#column), [diagonal](#diagonal), [submatrix](#submatrix)
+  * **[accessors](#accessors)**: [element](#element), [AT-POS](#at-pos), [row](#row), [column](#column), [diagonal](#diagonal), [skew-diagonal](#skew-diagonal), [submatrix](#submatrix)
 
-  * [converter](#type-conversion-and-output-formats): [Bool](#bool), [Numeric](#numeric), [Str](#str), [Array](#array), [Hash](#hash), [Range](#range), [list](#list), [list-rows](#list-rows), [list-columns](#list-columns), [gist](#gist), [perl](#perl)
+  * **[converter](#converter)**: [Bool](#bool), [Str](#str), [Numeric](#numeric), [Range](#range), [Array](#array), [list](#list), [list-rows](#list-rows), [list-columns](#list-columns), [Hash](#hash), [gist](#gist), [perl](#perl)
 
-  * [boolean properties](#boolean-properties): [is-zero](#is-zero), [is-identity](#is-identity), [is-square](#is-square), [is-diagonal](#is-diagonal), [is-diagonally-dominant](#is-diagonally-dominant), [is-upper-triangular](#is-upper-triangular), [is-lower-triangular](#is-lower-triangular), [is-invertible](#is-invertible), [is-symmetric](#is-symmetric), [is-antisymmetric](#is-antisymmetric), [is-unitary](#is-unitary), [is-self-adjoint](#is-self-adjoint), [is-orthogonal](#is-orthogonal), [is-positive-definite](#is-positive-definite), [is-positive-semidefinite](#is-positive-semidefinite)
+  * **[boolean properties](#boolean-properties)**: [square](#is-square), [zero](#is-zero), [identity](#identity), [triangular](#is-triangular), [diagonal](#is-diagonal), [-dominant](#is-diagonally-dominant), [-constant](#is-diagonal-constant), [catalecticant](#is-catalecticant), [anti-](#is-antisymmetric), [symmetric](#is-symmetric), [unitary](#is-unitary), [self-adjoint](#is-self-adjoint), [invertible](#is-invertible), [orthogonal](#is-orthogonal), [positive-definite](#is-positive-definite), [positive-semidefinite](#is-positive-semidefinite)
 
-  * [numeric properties](#numeric-properties): [size](#size), [density](#density), [trace](#trace), [determinant](#determinant), [rank](#rank), [nullity](#nullity), [norm](#norm), [condition](#condition), [minor](#minor), [narrowest-cell-type](#narrowest-cell-type), [widest-cell-type](#widest-cell-type)
+  * **[numeric properties](#numeric-properties)**: [size](#size), [density](#density), [bandwith](#bandwith), [trace](#trace), [rank](#rank), [nullity](#nullity), [determinant](#determinant), [minor](#minor), [norm](#norm), [condition](#condition), [element-type](#element-type)
 
-  * [derived matrices](#derived-matrices): [transposed](#transposed), [negated](#negated), [conjugated](#conjugated), [adjugated](#adjugated), [inverted](#inverted), [reduced-row-echelon-form](#reduced-row-echelon-form)
+  * **[derived matrices](#derived-matrices)**: [transposed](#transposed), [negated](#negated), [conjugated](#conjugated), [adjugated](#adjugated), [inverted](#inverted), [reduced-row-echelon-form](#reduced-row-echelon-form)
 
-  * [decompositions](#decompositions): [decompositionLUCrout](#decompositionlucrout), [decompositionLU](#decompositionlu), [decompositionCholesky](#decompositioncholesky)
+  * **[decompositions](#decompositions)**: [LUCrout](#decompositionlucrout), [LU](#decompositionlu), [Cholesky](#decompositioncholesky)
 
-  * [matrix math ops](#matrix-math-operations): [equal](#equal), [add](#add), [subtract](#subtract), [add-row](#add-row), [add-column](#add-column), [multiply](#multiply), [multiply-row](#multiply-row), [multiply-column](#multiply-column), [dot-product](#dot-product), [tensor-product](#tensor-product)
+  * **[math ops](#mathematical-operations)**: [equal](#equal), [add](#add), [multiply](#multiply), [dot-product](#dot-product), [tensor-product](#tensor-product)
 
-  * [list like ops](#list-like-matrix-operations): [elems](#elems), [elem](#elem), [cont](#cont), [map-index](#map-index), [map-with-index](#map-with-index), [map](#map), [map-row](#map-row), [map-column](#map-column), [reduce](#reduce), [reduce-rows](#reduce-rows), [reduce-columns](#reduce-columns)
+  * **[list like ops](#list-like-operations)**: [elems](#elems), [elem](#elem), [cont](#cont), [map](#map), [map-with-index](#map-with-index), [reduce](#reduce), [reduce-rows](#reduce-rows), [reduce-columns](#reduce-columns)
 
-  * [structural ops](#structural-matrix-operations): [move-row](#move-row), [move-column](#move-column), [swap-rows](#swap-rows), [swap-columns](#swap-columns), [splice-rows](#splice-rows), [splice-columns](#splice-columns)
+  * **[structural ops](#structural-operations)**: [move-row](#move-row), [move-column](#move-column), [swap-rows](#swap-rows), [swap-columns](#swap-columns), [splice-rows](#splice-rows), [splice-columns](#splice-columns)
 
-  * [shortcuts](#shortcuts): [T](#transposed), [conj](#conjugated), [det](#determinant), [rref](#reduced-row-echelon-form)
+  * **[shortcuts](#shortcuts)**: [T](#transposed), [conj](#conjugated), [det](#determinant), [rref](#reduced-row-echelon-form)
 
-  * [operators](#operator-methods): MM, ?, ~, |, @, %, +, -, *, **, dot, ⋅, ÷, X*, ⊗, ==, ~~, ❘ ❘, ‖ ‖, [ ]
+  * **[operators](#operator-methods)**: MM, ?, ~, |, @, %, +, -, *, **, dot, ⋅, ÷, X*, ⊗, ==, ~~, ❘ ❘, ‖ ‖, [ ]
 
 [Constructors](#methods)
 ------------------------
@@ -89,7 +87,7 @@ The default constructor, takes arrays of arrays of numbers as the only required 
     3 4
 
     Math::Matrix.new([<1 2>,<3 4>]); # does the same, WARNING: doesn't work with complex numbers
-    Math::Matrix.new( [[1]] );       # one cell 1*1 matrix (exception where you don't have to mind comma)
+    Math::Matrix.new( [[1]] );       # one element 1*1 matrix (exception where you don't have to mind comma)
     Math::Matrix.new( [[1,2,3],] );  # one row 1*3 matrix, mind the trailing comma
     Math::Matrix.new( [$[1,2,3]] );  # does the same, if you don't like trailing comma
     Math::Matrix.new( [[1],[2]] );   # one column 2*1 matrix
@@ -101,7 +99,8 @@ The default constructor, takes arrays of arrays of numbers as the only required 
 
 Instead of square brackets you can use round ones too and use a list of lists as argument too.
 
-    say Math::Matrix.new( ((1,2),(3,4)) ) :
+    say Math::Matrix.new( ((1,2),(3,4)) );
+    say MM ((1,2),(3,4)) :
 
     1 2
     3 4
@@ -117,11 +116,11 @@ Alternatively you can define the matrix from a string, which makes most sense wh
       END
 
     use Math::Matrix :ALL;          # 
-    MM '1';                         # this case begs for a shortcut
+    MM '1';                         # 1 * 1 matrix, this case begs for a shortcut
 
 ### [new-zero](#constructors)
 
-This method is a constructor that returns an zero (sometimes called empty) matrix (as checked by is-zero) of the size given by parameter. If only one parameter is given, the matrix is quadratic. All the cells are set to 0.
+This method is a constructor, that returns a zero matrix (sometimes called empty), as checked by [is-zero](#is-zero). It has the [size](#size) as given by arguments. If only one argument is given, the matrix is [quadratic](#is-square). All the [element](#element)s are set to 0.
 
     say Math::Matrix.new-zero( 3, 4 ) :
 
@@ -136,7 +135,7 @@ This method is a constructor that returns an zero (sometimes called empty) matri
 
 ### [new-identity](#constructors)
 
-This method is a constructor that returns an identity matrix (as checked by is-identity) of the size given in the only and required parameter. All the cells are set to 0 except the top/left to bottom/right diagonale is set to 1.
+This method is a constructor that returns an identity matrix (as checked by [is-identity](#is-identity)) of the size given in the only and required parameter. All the [element](#element)s are set to 0 except the top/left to bottom/right diagonale is set to 1.
 
     say Math::Matrix.new-identity( 3 ) :
       
@@ -146,7 +145,7 @@ This method is a constructor that returns an identity matrix (as checked by is-i
 
 ### [new-diagonal](#constructors)
 
-This method is a constructor that returns an diagonal matrix (as checked by is-diagonal) of the size given by count of the parameter. All the cells are set to 0 except the top/left to bottom/right diagonal, set to given values.
+This method is a constructor that returns an diagonal matrix (as checked by [is-diagonal](#is-diagonal)) of the size given by count of the parameter. All the [element](#element)s are set to 0 except the top/left to bottom/right diagonal, set to given values.
 
     say Math::Matrix.new-diagonal( 2, 4, 5 ) :
 
@@ -156,25 +155,28 @@ This method is a constructor that returns an diagonal matrix (as checked by is-d
 
 ### [new-vector-product](#constructors)
 
-This method is a constructor that returns a matrix which is a result of the matrix product (method dotProduct, or operator dot) of a column vector (first argument) and a row vector (second argument). It can also be understood as a tensor product of row and column.
+This method is a constructor that returns a matrix which is a result of the matrix product (method [dot-product](#dot-product), or operator dot) of a column vector (first argument) and a row vector (second argument). It can also be understood as a tensor product of row and column.
 
     say Math::Matrix.new-vector-product([1,2,3],[2,3,4]) :
 
-    2  3  4     1*2  1*3  1*4
-    4  6  8  =  2*2  2*3  2*4
-    6  9 12     3*2  3*3  3*4
+    *    2    3    4
+    1  1*2  1*3  1*4     2  3  4
+    2  2*2  2*3  2*4  =  4  6  8
+    3  3*2  3*3  3*4     6  9 12
 
 [Accessors](#methods)
 ---------------------
 
-Methods that return the content of selected elements (cells).
+Methods that return the content of selected elements.
 
-### [cell](#accessors)
+[element](#element), [AT-POS](#at-pos), [row](#row), [column](#column), [diagonal](#diagonal), [skew-diagonal](#skew-diagonal), [submatrix](#submatrix)
 
-Gets value of element in row (first parameter) and column (second parameter). (counting always from 0)
+### [element](#accessors)
+
+Gets value of one element in row (first parameter) and column (second parameter - counting always from 0). Sometimes its called matrix cell, to distinct from other type of elements. See: [elems](#elems), [elem](#elem), [element-type](#element-type)
 
     my $matrix = Math::Matrix.new([[1,2],[3,4]]);
-    say $matrix.cell(0,1)               : 2
+    say $matrix.element(0,1)            : 2
     say $matrix[0][1]                   # array syntax alias
 
 ### [AT-POS](#accessors)
@@ -199,9 +201,20 @@ Gets values of specified column (first required parameter) as a list.
 
 ### [diagonal](#accessors)
 
-Gets values of diagonal elements as a list. 
+Without an argument it returns values of main diagonal elements as a list. Use the optional parameter to get any other parallel diagonal. Positive value for the ones above - negative below and 0 for the main diagonal. The matrix does not have to be a quadratic ([square](#is-square)).
 
-    say Math::Matrix.new([[1,2],[3,4]]).diagonal : (1, 4)
+    say Math::Matrix.new([[1,2],[3,4]]      ).diagonal    : (1, 4)
+    say Math::Matrix.new([[1,2],[3,4]]      ).diagonal(1) : (2)
+    say Math::Matrix.new([[1,2],[3,4],[5,6]]).diagonal(-1): (3, 6)
+
+### [skew-diagonal](#accessors)
+
+Unlike a *diagonal*, a skew diagonal is only defined for [square](#is-square) matrixes. It runs from $matrix[n][0] to $matrix[0][n], n being row or column size - 1. Use the optional parameter to get any other parallel skew diagonal. Positive value for the ones below - negative above.
+
+    say $matrix.skew-diagonal    : (2, 3)
+    say $matrix.skew-diagonal(0) : (2, 3)
+    say $matrix.skew-diagonal(-1) : (1)
+    say $matrix.skew-diagonal(1): (4)
 
 ### [submatrix](#accessors)
 
@@ -212,53 +225,55 @@ Returns a matrix that might miss certain rows and columns of the original. This 
                3 4 5 6
                4 5 6 7
 
+#### [leaving out one](#submatrix)
+
 In mathematics, a submatrix is built by leaving out one row and one column. In the two argument format you name these by their index ($row, $column).
 
     say $m.submatrix(1,2) :    1 2 4
                                3 4 6
                                4 5 7
 
-If you provide two ranges (row-min .. row-max, col-min .. col-max) to the appropriately named arguments, you get the two dimensional excerpt of the matrix that is defined by these ranges.
+#### [leaving out more](#submatrix)
 
-    say $m.submatrix( rows => 1..1, columns => 0..*) :    3 4 5
+If you provide two ranges (row-min .. row-max, col-min .. col-max - both optional) to the appropriately named arguments, you get the excerpt of the matrix, that contains only the requested rows and columns - still in the original order.
 
-When provided with two lists (or arrays) of values (to the arguments named "rows" and "columns") a new matrix will be created with that selection of rows and columns. Please note, that you can pick any row/column in any order and as many times you prefer. They will displayed in the order they are listed in the arguments.
+    say $m.submatrix( rows => 1..1, columns => 1..*) :      4 5        
+    say $m.submatrix( rows => 1..1 )                 :    3 4 5
+
+#### [reordering](#submatrix)
+
+Alternatively each (as previously) named argument can also take a list (or array) of values, as created my the sequence operator (...). The result will be a matrix with that selection of rows and columns. Please note, you may pick rows/columns in any order and as many times you prefer.
 
     $m.submatrix(rows => (1,2), columns => (3,2)):    5 4
                                                       6 5
                                                       
     $m.submatrix(rows => (1...2), columns => (3,2))  # same thing
 
-The named arguments of both types can be mixed and are in both cases optional. If you provide none of them, the result will be the original matrix.
+Arguments with ranges and lists can be mixed and are in both cases optional. If you provide none of them, the result will be the original matrix.
 
     say $m.submatrix( rows => (1,) )              :   3 4 5        
 
     $m.submatrix(rows => (1..*), columns => (3,2)):   5 4
                                                       6 5
 
-[Type Conversion And Output Formats](#methods)
-----------------------------------------------
+Even more powerful or explicit in syntax are the [structural ops](#structural-operations).
 
-Methods that convert a matrix into other types or allow different views on the overall content.
+[Converter](#methods)
+---------------------
 
-### [Bool](#type-conversion-and-output-formats)
+Methods that convert a matrix into other types: [Bool](#bool), [Str](#str), [Numeric](#numeric), [Range](#range), [Array](#array), [Hash](#hash), [list](#list), [list-rows](#list-rows), [list-columns](#list-columns) or allow different views on the overall content (output formats): [gist](#gist), [perl](#perl).
 
-Conversion into Bool context. Returns False if matrix is zero (all cells equal zero as in is-zero), otherwise True.
+### [Bool](#converter)
+
+Conversion into Bool context. Returns False if matrix is zero (all elements equal zero as in [is-zero](#is-zero)), otherwise True.
 
     $matrix.Bool
     ? $matrix           # alias op
     if $matrix          # matrix in Bool context too
 
-### [Numeric](#type-conversion-and-output-formats)
+### [Str](#converter)
 
-Conversion into Numeric context. Returns Euclidean [norm](#norm). Please note, only a prefix operator + (as in: + $matrix) will call this Method. An infix (as in $matrix + $number) calls $matrix.add($number).
-
-    $matrix.Numeric
-    + $matrix           # alias op
-
-### [Str](#type-conversion-and-output-formats)
-
-Returns all cell values separated by one whitespace, rows by new line. This is the same format as expected by [Math::Matrix.new("")](#new---2). Str is called implicitly by put and print. A shortened version is provided by [gist](#gist)
+Returns values of all [element](#element)s, separated by one whitespace, rows by new line. This is the same format as expected by [new("")](#new---2). Str is called implicitly by put and print. A shortened version is provided by [gist](#gist)
 
     say Math::Matrix.new([[1,2],[3,4]]).Str:
 
@@ -267,44 +282,16 @@ Returns all cell values separated by one whitespace, rows by new line. This is t
 
     ~$matrix            # alias op
 
-### [Array](#type-conversion-and-output-formats)
+### [Numeric](#converter)
 
-Content of all cells as an array of arrays (same format that was put into [Math::Matrix.new([...])](#new--)).
+Conversion into Numeric context. Returns Euclidean [norm](#norm). Please note, only a prefix operator + (as in: + $matrix) will call this Method. An infix (as in $matrix + $number) calls $matrix.add($number).
 
-    say Math::Matrix.new([[1,2],[3,4]]).Array : [[1 2] [3 4]]
-    say @ $matrix       # alias op, space between @ and $ needed
+    $matrix.Numeric
+    + $matrix           # alias op
 
-### [list](#type-conversion-and-output-formats)
+### [Range](#converter)
 
-Returns a flat list with all cells (same as .list-rows.flat.list).
-
-    say $matrix.list    : (1 2 3 4)
-    say |$matrix        # alias op
-
-### [list-rows](#type-conversion-and-output-formats)
-
-Returns a list of lists, reflecting the row-wise content of the matrix. Same format as [new ()](#new---1) takes in.
-
-    say Math::Matrix.new( [[1,2],[3,4]] ).list-rows      : ((1 2) (3 4))
-    say Math::Matrix.new( [[1,2],[3,4]] ).list-rows.flat : (1 2 3 4)
-
-### [list-columns](#type-conversion-and-output-formats)
-
-Returns a list of lists, reflecting the row-wise content of the matrix.
-
-    say Math::Matrix.new( [[1,2],[3,4]] ).list-columns : ((1 3) (2 4))
-    say Math::Matrix.new( [[1,2],[3,4]] ).list-columns.flat : (1 3 2 4)
-
-### [Hash](#type-conversion-and-output-formats)
-
-Gets you a nested key - value hash.
-
-    say $matrix.Hash : { 0 => { 0 => 1, 1 => 2}, 1 => {0 => 3, 1 => 4} } 
-    say % $matrix       # alias op, space between % and $ still needed
-
-### [Range](#type-conversion-and-output-formats)
-
-Returns an range object that reflects the content of all cells. Please note that complex number can not be endpoints of ranges.
+Returns an range object that reflects the content of all [element](#element)s. Please note that complex number can not be endpoints of ranges.
 
     say $matrix.Range: 1..4
 
@@ -313,11 +300,46 @@ To get single endpoints you could write:
     say $matrix.Range.min: 1
     say $matrix.list.max:  4
 
-### [gist](#type-conversion-and-output-formats)
+### [Array](#converter)
+
+Content of all [element](#element)s as an array of arrays (same format that was put into [new([...])](#new--)).
+
+    say Math::Matrix.new([[1,2],[3,4]]).Array : [[1 2] [3 4]]
+    say @ $matrix       # alias op, space between @ and $ needed
+
+### [list](#converter)
+
+Returns a flat list with all [element](#element)s (same as .list-rows.flat.list).
+
+    say $matrix.list    : (1 2 3 4)
+    say |$matrix        # alias op
+
+### [list-rows](#converter)
+
+Returns a list of lists, reflecting the row-wise content of the matrix. Same format as [new ()](#new---1) takes in.
+
+    say Math::Matrix.new( [[1,2],[3,4]] ).list-rows      : ((1 2) (3 4))
+    say Math::Matrix.new( [[1,2],[3,4]] ).list-rows.flat : (1 2 3 4)
+
+### [list-columns](#converter)
+
+Returns a list of lists, reflecting the row-wise content of the matrix.
+
+    say Math::Matrix.new( [[1,2],[3,4]] ).list-columns : ((1 3) (2 4))
+    say Math::Matrix.new( [[1,2],[3,4]] ).list-columns.flat : (1 3 2 4)
+
+### [Hash](#converter)
+
+Gets you a nested key - value hash.
+
+    say $matrix.Hash : { 0 => { 0 => 1, 1 => 2}, 1 => {0 => 3, 1 => 4} } 
+    say % $matrix       # alias op, space between % and $ still needed
+
+### [gist](#converter)
 
 Limited tabular view, optimized for shell output. Just cuts off excessive columns that do not fit into standard terminal and also stops after 20 rows. If you call it explicitly, you can add width and height (char count) as optional arguments. Might even not show all decimals. Several dots will hint that something is missing. It is implicitly called by say. For a full view use [Str](#str).
 
-    say $matrix;      # output when matrix has more than 100 cells
+    say $matrix;      # output of a matrix with more than 100 elements
 
     1 2 3 4 5 ..
     3 4 5 6 7 ..
@@ -331,7 +353,7 @@ max-chars is the maximum amount of characters in any row of output (default is 8
 
 You change the cache by calling gist with arguments again.
 
-### [perl](#type-conversion-and-output-formats)
+### [perl](#converter)
 
 Conversion into String that can reevaluated into the same object later using default constructor.
 
@@ -340,43 +362,67 @@ Conversion into String that can reevaluated into the same object later using def
 [Boolean Properties](#methods)
 ------------------------------
 
-These are mathematical properties a matrix can have or not.
+These are mathematical properties, a given matrix has or not. Thus, the return value is a always of boolean type. Arguments, like in case of [is-diagonally-dominant](#is-diagonally-dominant), are only necessary when a method can tell you about a group of closely related properties.
+
+[square](#is-square), [zero](#is-zero), [identity](#identity), [triangular](#is-triangular), [upper-triangular](#is-upper-triangular), [lower-triangular](#is-lower-triangular), [diagonal](#is-diagonal), [diagonally-dominant](#is-diagonally-dominant), [diagonal-constant](#is-diagonal-constant), [catalecticant](#is-catalecticant), [symmetric](#is-symmetric), [anti-symmetric](#is-antisymmetric), [unitary](#is-unitary), [self-adjoint](#is-self-adjoint), [invertible](#is-invertible), [orthogonal](#is-orthogonal), [positive-definite](#is-positive-definite), [positive-semidefinite](#is-positive-semidefinite)
 
 ### [is-square](#boolean-properties)
 
-True if number of rows and colums are the same.
+True if number of rows and colums are the same (see [size](#size)).
 
 ### [is-zero](#boolean-properties)
 
-True if every cell (element) has value of 0 (as created by new-zero).
+True if every [element](#element) has value of 0 (as created by [new-zero](#new-zero)).
 
 ### [is-identity](#boolean-properties)
 
-True if every cell on the diagonal (where row index equals column index) is 1 and any other cell is 0.
+True if every [element](#element) on the main [diagonal](#diagonal) (where row index equals column index) is 1 and any other element is 0.
 
     Example:    1 0 0
                 0 1 0
                 0 0 1
 
-### [is-upper-triangular](#boolean-properties)
+### [is-triangular](#boolean-properties)
 
-True if every cell below the diagonal (where row index is greater than column index) is 0.
+True if matrix *is-upper-triangular* or *is-lower-triangular* (none - strict).
+
+#### [is-upper-triangular](#boolean-properties)
+
+a.k.a *right triangular* matrix: every [element](#element) below the [diagonal](#diagonal) (where row index is greater than column index) is 0. In other words: the [lower-bandwith](#lower-bandwith) is zero.
 
     Example:    1 2 5
                 0 3 8
                 0 0 7
 
-### [is-lower-triangular](#boolean-properties)
+There is an optional, boolean argument named :strict.
 
-True if every cell above the diagonal (where row index is smaller than column index) is 0.
+    $matrix.is-upper-triangular(:!strict);   # asks for matrix is none strict triangular (default)
+    $matrix.is-upper-triangular(:strict);    # search for strictly triangular matrix
+
+    Example:    0 2 5
+                0 0 8
+                0 0 0
+
+#### [is-lower-triangular](#boolean-properties)
+
+a.k.a *left triangular* matrix: every [element](#element) above the [diagonal](#diagonal) (where row index is smaller than column index) is 0. In other words: the [upper-bandwith](#upper-bandwith) is zero.
 
     Example:    1 0 0
                 2 3 0
                 5 8 7
 
+Has also an optional, boolean argument named :strict.
+
+    $matrix.is-lower-triangular(:!strict);   # asks for matrix is none strict triangular (default)
+    $matrix.is-lower-triangular(:strict);    # search for strictly triangular matrix
+
+    Example:    0 0 0
+                2 0 0
+                5 8 0
+
 ### [is-diagonal](#boolean-properties)
 
-True if only cells on the diagonal differ from 0. .is-upper-triangular and .is-lower-triangular would also be True.
+True if matrix is [square](#is-square) and only elements on the [diagonal](#diagonal) differ from 0. In other words: if matrix is [upper-triangular](#is-upper-triangular) and [lower-triangular](#is-lower-triangular).
 
     Example:    1 0 0
                 0 3 0
@@ -384,18 +430,34 @@ True if only cells on the diagonal differ from 0. .is-upper-triangular and .is-l
 
 ### [is-diagonally-dominant](#boolean-properties)
 
-True if cells on the diagonal have a bigger (strict) or equal absolute value than the sum of the other absolute values in the column or row.
+True when [element](#element)s on the [diagonal](#diagonal) have a bigger (if strict) or at least equal (in none strict) absolute value than the sum of its row (sum of absolute values of the row except diagonal element).
 
     if $matrix.is-diagonally-dominant {
-    $matrix.is-diagonally-dominant(:!strict)   # same thing (default)
-    $matrix.is-diagonally-dominant(:strict)    # diagonal elements (DE) are stricly greater (>)
+    $matrix.is-diagonally-dominant(:!strict)      # same thing (default)
+    $matrix.is-diagonally-dominant(:strict)       # diagonal elements (DE) are stricly greater (>)
     $matrix.is-diagonally-dominant(:!strict, :along<column>) # default
     $matrix.is-diagonally-dominant(:strict,  :along<row>)    # DE > sum of rest row
     $matrix.is-diagonally-dominant(:!strict, :along<both>)   # DE >= sum of rest row and rest column
 
+### [is-diagonal-constant](#boolean-properties)
+
+Checks if caller is a *diagonal-constant* or *Töplitz matrix*. True if every [diagonal](#diagonal) is the a collection of [element](#element)s that hold the same value.
+
+    Example:     0  1  2
+                -1  0  1
+                -2 -1  0
+
+### [is-catalecticant](#boolean-properties)
+
+Checks if caller is a *catalecticant* or *Hankel matrix*. True if every [skew diagonal](#skew-diagonal) is the a collection of elements that hold the same value. Catalecticant matrices are [symmetric](#is-symmetric).
+
+    Example:     0  1  2
+                 1  2  3
+                 2  3  4
+
 ### [is-symmetric](#boolean-properties)
 
-True if every cell with coordinates x y has same value as the cell on y x. In other words: $matrix and $matrix.transposed (alias T) are the same.
+True if every [element](#element) with coordinates x y has same value as the element on y x. In other words: $matrix and $matrix.[transposed](#transposed) (alias T) are the same.
 
     Example:    1 2 3
                 2 5 4
@@ -403,7 +465,7 @@ True if every cell with coordinates x y has same value as the cell on y x. In ot
 
 ### [is-antisymmetric](#boolean-properties)
 
-Means the transposed and negated matrix are the same.
+Means the [transposed](#transposed) and [negated](#negated) matrix are the same.
 
     Example:    0  2  3
                -2  0  4
@@ -411,7 +473,7 @@ Means the transposed and negated matrix are the same.
 
 ### [is-self-adjoint](#boolean-properties)
 
-A Hermitian or self-adjoint matrix is equal to its [transposed](#transposed) and complex [conjugated](#conjugated).
+A Hermitian or self-adjoint matrix is [equal](#equal) to its [transposed](#transposed) and complex [conjugated](#conjugated).
 
     Example:    1   2   3+i
                 2   5   4
@@ -419,28 +481,30 @@ A Hermitian or self-adjoint matrix is equal to its [transposed](#transposed) and
 
 ### [is-invertible](#boolean-properties)
 
-Also called nonsingular or nondegenerate. Is True if number of rows and colums are the same ([is-square](#is-square)) and [determinant](#determinant) is not zero. All rows or colums have to be independent vectors. Please use this method before $matrix.inverted, or you will get an exception.
+Also called *nonsingular* or *nondegenerate*. (To ask if matrix is degenerate or singular - simply negate the result with ! or *not*). Is True if matrix ([is-square](#is-square)) and [determinant](#determinant) is not zero. All rows or colums have to be independent vectors. Please check this before using $matrix.[inverted](#inverted), or you will get an exception, in case it was degenerate.
 
 ### [is-orthogonal](#boolean-properties)
 
-An orthogonal matrix multiplied ([dot-product](#dot-product)) with its transposed derivative (T) is an identity matrix or in other words: [transposed](#transposed) and [inverted](#inverted) matrices are equal.
+An orthogonal matrix multiplied ([dot-product](#dot-product)) with its transposed derivative (T) is an [identity](#is-identity) matrix or in other words: [transposed](#transposed) and [inverted](#inverted) matrices are [equal](#equal).
 
 ### [is-unitary](#boolean-properties)
 
-An unitery matrix multiplied ([dot-product](#dot-product)) with its concjugate transposed derivative (.conj.T) is an identity matrix, or said differently: the concjugate transposed matrix equals the inverted matrix.
+An unitery matrix multiplied ([dot-product](#dot-product)) with its concjugate transposed derivative (.conj.T) is an [identity](#is-identity) matrix, or said differently: the concjugate transposed matrix equals the [inverted](#inverted) matrix.
 
 ### [is-positive-definite](#boolean-properties)
 
-True if all main minors or all Eigenvalues are strictly greater zero.
+True if all main [minors](#minor) or all Eigenvalues are strictly greater zero.
 
 ### [is-positive-semidefinite](#boolean-properties)
 
-True if all main minors or all Eigenvalues are greater equal zero.
+True if all main [minors](#minor) or all Eigenvalues are greater equal zero.
 
 [Numeric Properties](#methods)
 ------------------------------
 
-Matrix properties that are expressed with a single number.
+Matrix properties that are expressed with a single number, which will be calculated without further input.
+
+[size](#size), [density](#density), **[bandwith](#bandwith)**: ([lower-bandwith](#lower-bandwith), [upper-bandwith](#upper-bandwith)), [trace](#trace), [rank](#rank), [nullity](#nullity), [determinant](#determinant), [minor](#minor), [norm](#norm), [condition](#condition), **[element-type](#element-type)**: ([narrowest-element-type](#narrowest-element-type), [widest-element-type](#widest-element-type))
 
 ### [size](#numeric-properties)
 
@@ -451,23 +515,35 @@ List of two values: number of rows and number of columns.
 
 ### [density](#numeric-properties)
 
-Density is the percentage of cell which are not zero.
+*Density* is the percentage of [element](#element)s which are not zero. *sparsity* = 1 - *density*.
 
     my $d = $matrix.density;
 
+### [bandwith](#numeric-properties)
+
+Is roughly the greatest distance of a none zero value from the main [diagonal](#diagonal). A matrix that [is-diagonal](#is-diagonal) has a bandwith of 0. If there is a none zero value on an diagonal above or below the main diagonal, tha bandwith would be one.
+
+    my $bw = $matrix.bandwith;
+
+#### [lower-bandwith](#bandwith)
+
+In a matrix with the lower bandwith of k, every [element](#element) with row index m and column index n, for which holds m - k > n, the content has to be zero. Literally speaking: there are k [diagonal](#diagonal)s below the main diagonal, that contain none zero values.
+
+#### [upper-bandwith](#bandwith)
+
+Analogously, every [element](#element) with m + k < n is zero if matrix has an upper bandwith of k.
+
+    Example:    1  0  0
+                4  2  0
+                0  5  3
+
+The *bidiagonal* example matrix has an upper bandwith of zero and lower bandwith of one, so the overall bandwith is one.
+
 ### [trace](#numeric-properties)
 
-The trace of a square matrix is the sum of the cells on the main diagonal. In other words: sum of cells which row and column value is identical.
+The trace of a [square](#is-square) matrix is the sum of the [element](#element)s on the main diagonal. In other words: sum of elements which row and column value is identical.
 
     my $tr = $matrix.trace;
-
-### [determinant](#numeric-properties)
-
-If you see the columns as vectors, that describe the edges of a solid, the determinant of a square matrix tells you the volume of that solid. So if the solid is just in one dimension flat, the determinant is zero too.
-
-    my $det = $matrix.determinant;
-    my $d = $matrix.det;                # same thing
-    my $d = ❘ $matrix ❘;                # unicode operator shortcut
 
 ### [rank](#numeric-properties)
 
@@ -481,52 +557,64 @@ Nullity of a matrix is the number of dependent rows or columns (rank + nullity =
 
     my $n = $matrix.nullity;
 
+### [determinant](#numeric-properties)
+
+Only a [square](#is-square) matrice has a defined determinant, which tells the volume, spanned by the row or column vectors. So if the volume is just in one dimension flat, the determinant is zero, and has a kernel (not a full [rank](#rank) - thus is not [invertible](#is-invertable)).
+
+    my $det = $matrix.determinant;
+    my $d = $matrix.det;                # same thing
+    my $d = ❘ $matrix ❘;                # unicode operator shortcut
+
+### [minor](#numeric-properties)
+
+A Minor is the determinant of a [submatrix](#leaving-out-one) (first variant with same 2 scalar arguments a minor method). The two required positional arguments are row and column indices of an existing [element](#element).
+
+    my $m = $matrix.minor(1,2);
+
 ### [norm](#numeric-properties)
 
-A norm is a single positive number, which is an abstraction to the concept of size. Most common form for matrices is the p-norm, where in step 1 the absolute value of every cell is taken to the power of p. The sum of these results is taken to the power of 1/p. The p-q-Norm extents this process. In his step 2 every column-sum is taken to the power of (p/q). In step 3 the sum of these are taken to the power of (1/q).
+A norm is a single positive number, which is an abstraction to the concept of size. Most common form for matrices is the p-norm, where in step 1 the absolute value of every [element](#element) is taken to the power of p. The sum of these results is taken to the power of 1/p. The p-q-Norm extents this process. In his step 2 every column-sum is taken to the power of (p/q). In step 3 the sum of these are taken to the power of (1/q).
 
     my $norm = $matrix.norm( );           # euclidian norm aka L2 (p = 2, q = 2)
     my $norm = + $matrix;                 # context op shortcut
     my $norm = ‖ $matrix ‖;               # unicode op shortcut
-    my $norm = $matrix.norm(1);           # p-norm aka L1 = sum of all cells absolute values (p = 1, q = 1)
+    my $norm = $matrix.norm(1);           # p-norm aka L1 = sum of all elements absolute values (p = 1, q = 1)
     my $norm = $matrix.norm(p:<4>,q:<3>); # p,q - norm, p = 4, q = 3
     my $norm = $matrix.norm(p:<2>,q:<2>); # L2 aka Euclidean aka Frobenius norm
     my $norm = $matrix.norm('euclidean'); # same thing, more expressive to some
     my $norm = $matrix.norm('frobenius'); # same thing, more expressive to some
-    my $norm = $matrix.norm('max');       # maximum norm - biggest absolute value of a cell
+    my $norm = $matrix.norm('max');       # maximum norm - biggest absolute value of a element
     $matrix.norm('row-sum');              # row sum norm - biggest abs. value-sum of a row
     $matrix.norm('column-sum');           # column sum norm - same column wise
 
 ### [condition](#numeric-properties)
 
-Condition number of a matrix is L2 norm * L2 of inverted matrix.
+Condition number of a matrix is L2 norm * L2 of [inverted](#inverted) matrix.
 
     my $c = $matrix.condition( );
 
-### [minor](#numeric-properties)
+### [element-type](#numeric-properties)
 
-Arguments are row and column of an existing cell. A Minor is the determinant of a submatrix (2 argument variant).
+#### [narrowest-element-type](#numeric-properties)
 
-    my $m = $matrix.minor(1,2);
+#### [widest-element-type](#numeric-properties)
 
-### [narrowest-cell-type](#numeric-properties)
+Matrix [element](#element)s can be (from most narrow to widest), of type (Bool), (Int), (Num), (Rat), (FatRat) or (Complex). The widest type of any element will returned as type object.
 
-### [widest-cell-type](#numeric-properties)
+In the next example the smartmatch returns true, because no element of our default example matrix has wider type than (Int). After such a test all elements can be safely treated as Int or Bool.
 
-Matrix cells can be (from most narrow to widest), of type (Bool), (Int), (Num), (Rat), (FatRat) or (Complex). The widest type of any cell will returned as type object.
+    if $matrix.widest-element-type ~~ Int { ...
 
-In the next example the smartmatch returns true, because no cell of our default example matrix has wider type than (Int). After such a test all cells can be safely treated as Int or Bool.
+You can also check if all elements have the same type:
 
-    if $matrix.widest-cell-type ~~ Int { ...
-
-You can also check if all cells have the same type:
-
-    if $matrix.widest-cell-type eqv $matrix.narrowest-cell-type
+    if $matrix.widest-element-type eqv $matrix.narrowest-element-type
 
 [Derived Matrices](#methods)
 ----------------------------
 
-Single matrices that can be computed with only our original matrix as input.
+Single matrices, that can be computed with only our original matrix as input.
+
+[transposed](#transposed), [negated](#negated), [conjugated](#conjugated), [adjugated](#adjugated), [inverted](#inverted), [reduced-row-echelon-form](#reduced-row-echelon-form)
 
 ### [transposed](#derived-matrices)
 
@@ -538,11 +626,13 @@ Returns a new, transposed Matrix, where rows became colums and vice versa.
      [4 5 6]].T     [2 5]
                     [3 6]]
 
+    Math::Matrix.new([[1,2,3],[3,4,6]]).T # same but shorter
+
 ### [negated](#derived-matrices)
 
-Creates a matrix where every cell has the negated value of the original (invertion of sign).
+Creates a matrix where every [element](#element) has the negated value of the original (invertion of sign).
 
-    my $new = $matrix.negated();     # invert sign of all cells
+    my $new = $matrix.negated();     # invert sign of all elements
     my $neg = - $matrix;             # operator alias
 
     say $neg:  -1 -2
@@ -550,7 +640,7 @@ Creates a matrix where every cell has the negated value of the original (inverti
 
 ### [conjugated](#derived-matrices)
 
-Creates a matrix where every cell has the complex conjugated of the original.
+Creates a matrix where every [element](#element) is the complex conjugated of the original.
 
     my $c = $matrix.conjugated();    # change every value to its complex conjugated
     my $c = $matrix.conj();          # short alias (official Perl 6 name)
@@ -571,7 +661,7 @@ Creates a matrix out of the properly signed [minors](#minor) of the original. It
 
 ### [inverted](#derived-matrices)
 
-Matrices that have a square form and a full rank can be inverted (see [is-invertible](#is-invertible)). Inverse matrix regarding to matrix multiplication (see [dot-product](#dot-product)). The dot product of a matrix with its inverted results in a [identity](#is-identity) matrix (neutral element in this group).
+Matrices that have a [square](#is-square) form and a full [rank](#rank) can be [inverted](#inverted) (see [is-invertible](#is-invertible)). Inverse matrix regarding to matrix multiplication (see [dot-product](#dot-product)). The dot product of a matrix with it's inverted results in a [identity](#is-identity) matrix (neutral element in this group).
 
     my $i = $matrix.inverted();      # invert matrix
     my $i = $matrix ** -1;           # operator alias
@@ -591,7 +681,7 @@ Return the reduced row echelon form of a matrix, a.k.a. row canonical form
 [Decompositions](#methods)
 --------------------------
 
-Methods that return lists of matrices, which in their product or otherwise can be recombined to the original matrix. In case of cholesky only one matrix is returned, becasue the other one is its transposed.
+Methods that return lists of matrices, which in their product or otherwise can be recombined to the original matrix. In case of cholesky only one matrix is returned, because the other one is its transposed.
 
 ### [decompositionLU](#decompositions)
 
@@ -600,7 +690,7 @@ Methods that return lists of matrices, which in their product or otherwise can b
     my ($L, $U) = $matrix.decompositionLUC(:!pivot);
     $L dot $U eq $matrix;                # True
 
-$L is a left triangular matrix and $R is a right one Without pivotisation the marix has to be invertible (square and full ranked). In case you whant two unipotent triangular matrices and a diagonal (D): use the :diagonal option, which can be freely combined with :pivot.
+$L is a left triangular matrix and $R is a right one Without pivotisation the marix has to be invertible ([square](#is-square) and full [rank](#rank)ed). In case you whant two unipotent triangular matrices and a diagonal (D): use the :diagonal option, which can be freely combined with :pivot.
 
     my ($L, $D, $U, $P) = $matrix.decompositionLU( :diagonal );
     $L dot $D dot $U eq $matrix dot $P;  # True
@@ -610,7 +700,7 @@ $L is a left triangular matrix and $R is a right one Without pivotisation the ma
     my ($L, $U) = $matrix.decompositionLUCrout( );
     $L dot $U eq $matrix;                # True
 
-$L is a left triangular matrix and $R is a right one This decomposition works only on invertible matrices (square and full ranked).
+$L is a left triangular matrix and $R is a right one This decomposition works only on invertible matrices ([square](#is-square) and full [rank](#rank)ed).
 
 ### [decompositionCholesky](#decompositions)
 
@@ -619,20 +709,56 @@ This decomposition works only on symmetric and definite positive matrices.
     my $D = $matrix.decompositionCholesky( );  # $D is a left triangular matrix
     $D dot $D.T eq $matrix;                    # True
 
-[Matrix Math Operations](#methods)
-----------------------------------
+[Mathematical Operations](#methods)
+-----------------------------------
 
 Matrix math methods on full matrices and also parts (for gaussian table operations).
 
-### [equal](#matrix-math-operations)
+They are: [equal](#equal), [add](#add), [multiply](#multiply), [dot-product](#dot-product), [tensor-product](#tensor-product).
 
-Checks two matrices for equality. They have to be of same size and every element of the first matrix on a particular position has to be equal to the element (on the same position) of the second matrix.
+### [equal](#mathematical-operations)
 
-    if $matrixa.equal( $matrixb ) {
-    if $matrixa == $matrixb {
-    if $matrixa ~~ $matrixb {
+Checks two matrices for equality. They have to be of same [size](#size) and every [element](#element) of the first matrix on a particular position has to be numerically equal (as checked by *==*) to the element (on the same position) of the second matrix.
 
-### [add](#matrix-math-operations)
+    if $matrixa.equal( $matrixb ) {   # method variant
+    if $matrixa == $matrixb {         # operator alias
+    if $matrixa ~~ $matrixb {         # smart match redirects to ==
+
+### [add](#mathematical-operations)
+
+Adding a matrix, vector or scalar. Named arguments *:row* and *:column* have no fixed position.
+
+#### [add matrix](#add)
+
+When adding two matrices, they have to be of the same size. Instead of Math::matrix object you can also provide the element data as [new []](#new--), [new ()](#new---1) or [new ""](#new---2) would accept it.
+
+    $matrix.add( $matrix2 );
+    $matrix.add( [[2,3],[4,5]] ); # data alias
+    $matrix + $matrix2            # operator alias
+
+    Example:    1 2  +  2 3  =  3 5
+                3 4     4 5     7 9
+
+#### [add vector](#add)
+
+To add a vector you have to specify to which row or column it should be added and give a list or array (which have to fit the matrix size).
+
+    $matrix.add( row => 1, [2,3] );
+
+    Example:    1 2  +       =  1 2
+                3 4    2 3      5 7
+
+    $matrix.add( column => 1, (2,3) );
+
+    Example:    1 2  +   2   =  1 4
+                3 4      3      3 7
+
+#### [add scalar](#add)
+
+When adding a single number to the matrix, it will be added to every [element](#element). If you provide a row or column number it will be only added to that row or column. In case you provide both, only a single element gets a different value in the result matrix.
+
+    $matrix.add( $number );       # adds number from every element 
+    $matrix + $number;            # works too
 
     Example:    1 2  +  5    =  6 7 
                 3 4             8 9
@@ -640,84 +766,49 @@ Checks two matrices for equality. They have to be of same size and every element
                 1 2  +  2 3  =  3 5
                 3 4     4 5     7 9
 
-    my $sum = $matrix.add( $matrix2 );  # cell wise addition of 2 same sized matrices
-    my $s = $matrix + $matrix2;         # works too
+    $matrix.add( row => 1, 3 ):             [[1,2],[6,7]]
+    $matrix.add( row => 1, column=> 0, 2 ): [[1,2],[5,4]]
 
-    my $sum = $matrix.add( $number );   # adds number from every cell 
-    my $s = $matrix + $number;          # works too
+### [multiply](#mathematical-operations)
 
-### [add-row](#matrix-math-operations)
+Unlike the [dot-product](#dot-product) and [tensor-product](#tensor-product), this operation is the simple, scalar multiplication applied to [element](#element)s. That is why this method works analogous to the scalar variant of [add](#add-scalar). However, when a matrix of same size is given, the result will be a matrix of that size again. Each element will be the product of two the two elements of the operands with the same indices (position).
 
-Add a vector (row or col of some matrix) to a row of the matrix. In this example we add (2,3) to the second row. Instead of a matrix you can also give as parameter the raw data of a matrix as new would receive it.
-
-    Math::Matrix.new([[1,2],[3,4]]).add-row(1,[2,3]);
-
-    Example:    1 2  +       =  1 2
-                3 4    2 3      5 7
-
-### [add-column](#matrix-math-operations)
-
-    Math::Matrix.new([[1,2],[3,4]]).add-column(1,[2,3]);
-
-    Example:    1 2  +   2   =  1 4
-                3 4      3      3 7
-
-### [subtract](#matrix-math-operations)
-
-Works analogous to add - it's just for convenance.
-
-    my $diff = $matrix.subtract( $number );   # subtracts number from every cell (scalar subtraction)
-    my $sd = $matrix - $number;               # works too
-    my $sd = $number - $matrix ;              # works too
-
-    my $diff = $matrix.subtract( $matrix2 );  # cell wise subraction of 2 same sized matrices
-    my $d = $matrix - $matrix2;               # works too
-
-### [multiply](#matrix-math-operations)
-
-In scalar multiplication each cell of the matrix gets multiplied with the same number (scalar). In addition to that, this method can multiply two same sized matrices, by multipling the cells with the came coordinates from each operand.
+    my $product = $matrix.multiply( $number );   # multiply every element with number
+    my $p = $matrix * $number;                   # works too
 
     Example:    1 2  *  5    =   5 10 
                 3 4             15 20
 
-                1 2  *  2 3  =   2  6
-                3 4     4 5     12 20
-
-    my $product = $matrix.multiply( $number );   # multiply every cell with number
-    my $p = $matrix * $number;                   # works too
-
-    my $product = $matrix.multiply( $matrix2 );  # cell wise multiplication of same size matrices
+    my $product = $matrix.multiply( $matrix2 );  # element wise multiplication of same size matrices
     my $p = $matrix * $matrix2;                  # works too
 
-### [multiply-row](#matrix-math-operations)
+    Example:    1 2  *  2 3  =   2  6
+                3 4     4 5     12 20
 
-Multiply scalar number to each cell of a row.
 
-    Math::Matrix.new([[1,2],[3,4]]).multiply-row(0,2);
+    $matrix.multiply( row => 0, 2);
 
     Example:    1 2  * 2     =  2 4
                 3 4             3 4
 
-### [multiply-column](#matrix-math-operations)
-
-Multiply scalar number to each cell of a column.
-
-    Math::Matrix.new([[1,2],[3,4]]).multiply-row(0,2);
+    $matrix.multiply(2, column => 0 );
 
     Example:    1 2   =  2 2
                 3 4      6 4
             
                *2
 
-### [dot-product](#matrix-math-operations)
+    $matrix.multiply(row => 1, column => 1, 3) : [[1,2],[3,12]]
+
+### [dot-product](#mathematical-operations)
 
 Matrix multiplication of two fitting matrices (colums left == rows right).
 
     Math::Matrix.new( [[1,2],[3,4]] ).dot-product(  Math::Matrix.new([[2,3],[4,5]]) );
 
     Example:    2  3
-           *    4  5
-
+                4  5
+             *
          1 2   10 13  =  1*2+2*4  1*3+2*5
          3 4   22 29     3*2+4*4  3*3+4*5
 
@@ -730,40 +821,40 @@ Matrix multiplication of two fitting matrices (colums left == rows right).
     my $c = $a ** -3;               # same as ($a dot $a dot $a).inverted
     my $c = $a **  0;               # created an right sized identity matrix
 
-### [tensor-product](#matrix-math-operations)
+### [tensor-product](#mathematical-operations)
 
-The tensor product (a.k.a Kronecker product) between a matrix a of size (m,n) and a matrix b of size (p,q) is a matrix c of size (m*p,n*q). All matrices you get by multiplying an element (cell) of matrix a with matrix b (as in $a.multiply($b.cell(..,..)) concatinated result in matrix c. (Or replace in a each cell with its product with b.)
+The *tensor product* (a.k.a *Kronecker product*) between a matrix A of *size|#size* (m,n) and matrix B of size (p,q) is a matrix C of size (m*p,n*q). C is a concatination of matrices you get if you take every [element](#element) of A and do a [scalar multiplication](#multiply) with B as in $B.multiply($A.element(..,..)).
 
-    Example:    1 2  *  2 3   =  1*[2 3] 2*[2 3]  =  2  3  4  6
-                3 4     4 5        [4 5]   [4 5]     4  5  8 10
-                                 3*[2 3] 4*[2 3]     6  9  8 12
-                                   [4 5]   [4 5]     8 15 16 20
+    Example:    1 2  X*  2 3   =  1*[2 3] 2*[2 3]  =  2  3  4  6
+                3 4      4 5        [4 5]   [4 5]     4  5  8 10
+                                  3*[2 3] 4*[2 3]     6  9  8 12
+                                    [4 5]   [4 5]     8 15 16 20
 
     my $c = $matrixa.tensor-product( $matrixb );
     my $c = $a X* $b;               # works too as operator alias
     my $c = $a ⊗ $b;                # unicode operator alias
 
-[List Like Matrix Operations](#methods)
----------------------------------------
+[List Like Operations](#methods)
+--------------------------------
 
-Selection of methods that are also provided by Lists and Arrays and make also sense in context a 2D matrix. 
+Methods that usually are provided by Lists and Arrays, but make also sense in context of matrices.
 
-### [elems](#list-like-matrix-operations)
+### [elems](#list-like-operations)
 
-Number (count) of elements = rows * columns.
+Number (count) of [element](#element)s = rows * columns (see [size](#size)).
 
     say $matrix.elems();
 
-### [elem](#list-like-matrix-operations)
+### [elem](#list-like-operations)
 
-Asks if all cell values are part an element of the set/range provided.
+Asks if all [element](#element) of Matrix (cell) values are an element of the given set or range.
 
     Math::Matrix.new([[1,2],[3,4]]).elem(1..4) :   True
-    Math::Matrix.new([[1,2],[3,4]]).elem(2..5) :   False
+    Math::Matrix.new([[1,2],[3,4]]).elem(2..5) :   False, 1 is not in 2..5
 
-### [cont](#list-like-matrix-operations)
+### [cont](#list-like-operations)
 
-Asks if the matrix contains a value equal to the only argument of the method. If a range is provided as argument, at least one cell value has to be within this range to make the result true.
+Asks if the matrix contains a value equal to the only argument of the method. If a range is provided as argument, at least one value has to be within this range to make the result true.
 
     Math::Matrix.new([[1,2],[3,4]]).cont(1)   : True
     Math::Matrix.new([[1,2],[3,4]]).cont(5)   : False
@@ -771,72 +862,59 @@ Asks if the matrix contains a value equal to the only argument of the method. If
 
     MM [[1,2],[3,4]] (cont) 1                 # True too
 
-### [map-index](#list-like-matrix-operations)
+### [map](#list-like-operations)
 
-Runs a code block (only required argument) for every cell of the matrix. Arguments to the anonymous block are current row and column index. The results for a new matrix.
+Creates a new matrix of same size by iterating over all or some [element](#element)s. For every chosen element with the indices (m,n), a provided code block (required argument) will be run once. That block will be given the elements(m,n) value as an argument. The return value of the block will be the content of the element(m,n) of the resulting matrix.
 
-    say Math::Matrix.new([[1,2],[3,4]]).map-index: {$^m == $^n ?? 1 !! 0 } :
-
-    1 0
-    0 1
-
-### [map-with-index](#list-like-matrix-operations)
-
-Runs a code block (only required argument) for every cell of the matrix. Arguments to the anonymous block are current row and column index and the content of the cell. The results for a new matrix.
-
-    say Math::Matrix.new([[1,2],[3,4]]).map-with-index: {$^m == $^n ?? $^value !! 0 } :
-
-    1 0
-    0 4
-
-### [map](#list-like-matrix-operations)
-
-Like the built in map it iterates over all elements (cell values), running a code block (only required argument) that gets the cell value as argument. The results build a new matrix.
-
-    say Math::Matrix.new([[1,2],[3,4]]).map(* + 1) :
+    say $matrix.map(* + 1) :
 
     2 3
     4 5
 
-### [map-row](#list-like-matrix-operations)
+By provding values (Ranges) to the named arguments *rows* and *columns* (no special order required), only a subset of rows or columns will be mapped - the rest will be just copied.
 
-Map only specified row (row number is first parameter).
+    say $matrix.map( rows => (0..0), {$_ * 2}) :
 
-    say Math::Matrix.new([[1,2],[3,4]]).map-row(1, {$_ + 1}) :
+    2 4
+    3 4
 
-    1 2
-    4 5
+    say $matrix.map( rows => (1..*), columns => (1..1), {$_ ** 2}) :
 
-### [map-column](#list-like-matrix-operations)
+    1  2
+    3 16
 
-    say Math::Matrix.new([[1,2],[3,4]]).map-column(1, {0}) :
+### [map-with-index](#list-like-operations)
+
+Works just like [map](#map) with the only difference that the given block can recieve one to three arguments: (row index, column index and cell value).
+
+    say $matrix.map-with-index: {$^m == $^n ?? $^value !! 0 } :
 
     1 0
-    3 0
+    0 4
 
-### [reduce](#list-like-matrix-operations)
+### [reduce](#list-like-operations)
 
-Like the built in reduce method, it iterates over all elements and joins them into one value, by applying the given operator or method to the previous result and the next element. I starts with the cell [0][0] and moving from left to right in the first row and continue with the first cell of the next row.
+Like the built in reduce method, it iterates over all [element](#element)s and joins them into one value, by applying the given operator or method to the previous result and the next element. I starts with the element [0][0] and moving from left to right in the first row and continue with the first element of the next row.
 
-    Math::Matrix.new([[1,2],[3,4]]).reduce(&[+]): 10
-    Math::Matrix.new([[1,2],[3,4]]).reduce(&[*]): 10
+    Math::Matrix.new([[1,2],[3,4]]).reduce(&[+]): 10 = 1 + 2 + 3 + 4
+    Math::Matrix.new([[1,2],[3,4]]).reduce(&[*]): 10 = 1 * 2 * 3 * 4
 
-### [reduce-rows](#list-like-matrix-operations)
+### [reduce-rows](#list-like-operations)
 
-Reduces (as described above) every row into one value, so the overall result will be a list. In this example we calculate the sum of all cells in a row:
+Reduces (as described above) every row into one value, so the overall result will be a list. In this example we calculate the sum of all elements in a row:
 
     say Math::Matrix.new([[1,2],[3,4]]).reduce-rows(&[+]): (3, 7)
 
-### [reduce-columns](#list-like-matrix-operations)
+### [reduce-columns](#list-like-operations)
 
 Similar to reduce-rows, this method reduces each column to one value in the resulting list:
 
     say Math::Matrix.new([[1,2],[3,4]]).reduce-columns(&[*]): (3, 8)
 
-[Structural Matrix Operations](#methods)
-----------------------------------------
+[Structural Operations](#methods)
+---------------------------------
 
-Methods that reorder the rows and columns, delete some or even add new. The accessor .submatrix is also useful for that purpose.
+Methods that reorder rows and columns, delete some or even add new. The accessor [submatrix](#submatrix) is also useful for that purpose.
 
 ### [move-row](#structural-matrix-operations)
 
@@ -922,7 +1000,7 @@ Same as splice-rows, just horizontally.
 [Shortcuts](#methods)
 ---------------------
 
-Summary of all shortcut aliases (first) and their long form (second). 
+Summary of all shortcut aliases (left) and their long form (right). 
 
   * T --> [transposed](#transposed)
 
@@ -935,7 +1013,7 @@ Summary of all shortcut aliases (first) and their long form (second).
 [Operator Methods](#methods)
 ----------------------------
 
-Operators with method aliases, for more explanations loo into [ops chapter](#operators):
+Operators (left) with the methods they refer to (right). (Most ops are just aliases.) For more explanations of the ops (with examples) see the [next chapter](#operators):
 
   * prefix ? --> [Bool](#bool)
 
@@ -959,7 +1037,7 @@ Operators with method aliases, for more explanations loo into [ops chapter](#ope
 
   * infix + --> [add](#add)
 
-  * infix - --> [subtract](#subtract)
+  * infix - --> [add](#add)
 
   * infix * --> [multiply](#multiply)
 
@@ -977,6 +1055,54 @@ Operators with method aliases, for more explanations loo into [ops chapter](#ope
 
   * postcircumfix [..] --> [AT-POS](#at-pos)
 
+[Operators](#synopsis)
+======================
+
+The Module overloads or introduces a range of well and lesser known ops, which are almost all [aliases](#operator-methods).
+
+==, +, * are commutative, -, ⋅, dot, ÷, x, ⊗ and ** are not. All ops have same precedence as its multi method siblings - unless stated otherwise.
+
+They are exported when using no flag (same as :DEFAULT) or :ALL, but not under :MANDATORY or :MM). The only exception is MM operator, a shortcut to create a matrix. That has to be importet explicitly with the tag :MM or :ALL. The postcircumfix [] - op will always work.
+
+    my $a   = +$matrix               # Num context, Euclidean norm
+    my $b   = ?$matrix               # Bool context, True if any element has a none zero value
+    my $str = ~$matrix               # String context, matrix content, space and new line separated as table
+    my $l   = |$matrix               # list context, list of all elements, row-wise
+    my $a   = @ $matrix              # same thing, but as Array
+    my $h   = % $matrix              # hash context, similar to .kv, so that %$matrix{0}{0} is first element
+
+    $matrixa == $matrixb             # check if both have same size and they are element wise equal
+    $matrixa ~~ $matrixb             # same thing
+
+    my $sum =  $matrixa + $matrixb;  # element wise sum of two same sized matrices
+    my $sum =  $matrix  + $number;   # add number to every element
+
+    my $dif =  $matrixa - $matrixb;  # element wise difference of two same sized matrices
+    my $dif =  $matrix  - $number;   # subtract number from every element
+    my $neg = -$matrix               # negate value of every element
+
+    my $p   =  $matrixa * $matrixb;  # element wise product of two same sized matrices
+    my $sp  =  $matrix  * $number;   # multiply number to every element
+
+    my $dp  =  $a dot $b;            # dot product of two fitting matrices (cols a = rows b)
+    my $dp  =  $a ⋅ $b;              # dot product, unicode (U+022C5)
+    my $dp  =  $a ÷ $b;              # alias to $a dot $b.inverted, (U+000F7) 
+
+    my $c   =  $a **  3;             # $a to the power of 3, same as $a dot $a dot $a
+    my $c   =  $a ** -3;             # alias to ($a dot $a dot $a).inverted
+    my $c   =  $a **  0;             # creats an right sized identity matrix
+
+    my $tp  =  $a X* $b;             # tensor product, same precedence as infix: x (category Replication)
+    my $tp  =  $a ⊗ $b;              # tensor product, unicode (U+02297)
+
+     ｜$matrix ｜                     # determinant, unicode (U+0FF5C)
+     ‖ $matrix ‖                     # L2 norm (euclidean p=2 to the square), (U+02016)
+
+       $matrix[1][2]                 # 2nd row, 3rd column element - works even under :MANDATORY tag
+
+    MM [[1]]                         # a new matrix, has higher precedence than postcircumfix:[]
+    MM '1'                           # string alias
+
 [Export Tags](#synopsis)
 ========================
 
@@ -987,52 +1113,6 @@ Operators with method aliases, for more explanations loo into [ops chapter](#ope
   * :MM (only [MM](#new--) op exported)
 
   * :ALL
-
-[Operators](#synopsis)
-======================
-
-The Module overloads or introduces a range of well and lesser known ops. ==, +, * are commutative, -, ⋅, dot, ÷, x, ⊗ and ** are not.
-
-They are exported when using no flag or under the export flags :DEFAULT or :ALL, but not under :MANDATORY or :MM). The only exception is MM-operator, a shortcut to create a matrix. That has to be importet explicitly with the tag :MM or :ALL. The postcircumfix [] - op will always work.
-
-    my $a   = +$matrix               # Num context, Euclidean norm
-    my $b   = ?$matrix               # Bool context, True if any cell has a none zero value
-    my $str = ~$matrix               # String context, matrix content, space and new line separated as table
-    my $l   = |$matrix               # list context, list of all cells, row-wise
-    my $a   = @ $matrix              # same thing, but as Array
-    my $h   = % $matrix              # hash context, similar to .kv, so that %$matrix{0}{0} is first cell
-
-    $matrixa == $matrixb             # check if both have same size and they are cell wise equal
-    $matrixa ~~ $matrixb             # same thing
-
-    my $sum =  $matrixa + $matrixb;  # cell wise sum of two same sized matrices
-    my $sum =  $matrix  + $number;   # add number to every cell
-
-    my $dif =  $matrixa - $matrixb;  # cell wise difference of two same sized matrices
-    my $dif =  $matrix  - $number;   # subtract number from every cell
-    my $neg = -$matrix               # negate value of every cell
-
-    my $p   =  $matrixa * $matrixb;  # cell wise product of two same sized matrices
-    my $sp  =  $matrix  * $number;   # multiply number to every cell
-
-    my $dp  =  $a dot $b;            # dot product of two fitting matrices (cols a = rows b)
-    my $dp  =  $a ⋅ $b;              # dot product, unicode (U+022C5)
-    my $dp  =  $a ÷ $b;              # alias to $a dot $b.inverted, (U+000F7) 
-
-    my $c   =  $a **  3;             # $a to the power of 3, same as $a dot $a dot $a
-    my $c   =  $a ** -3;             # alias to ($a dot $a dot $a).inverted
-    my $c   =  $a **  0;             # creats an right sized identity matrix
-
-    my $tp  =  $a X* $b;             # tensor product 
-    my $tp  =  $a ⊗ $b;              # tensor product, unicode (U+02297)
-
-     ｜ $matrix ｜                     # determinant, unicode (U+0FF5C)
-     ‖ $matrix ‖                     # L2 norm (euclidean p=2 to the square), (U+02016)
-
-       $matrix[1][2]                 # cell in second row and third column, works even when used :MANDATORY tag
-
-    MM [[1]]                         # a new matrix
-    MM '1'                           # string alias
 
 [Authors](#synopsis)
 ====================
@@ -1049,5 +1129,5 @@ They are exported when using no flag or under the export flags :DEFAULT or :ALL,
 [License](#synopsis)
 ====================
 
-Artistic License 2.0
+Artistic License 2.0 (GPL and BSD at the same time)
 

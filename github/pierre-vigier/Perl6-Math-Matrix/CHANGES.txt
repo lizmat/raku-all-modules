@@ -1,7 +1,30 @@
+ 0.3.9:
+    § 2018.12.
+    + bool property triangular
+
+
+ 0.3.8:
+    § 2018.11.26
+    ! reworked all map methods
+    ! renamed cell to element
+    * map, map-with-index enhanced
+    - map-row, map-column, map-index
+    + accessor skew-diagonal
+    + bool property catalecticant
+    + numeric property bandwith, lower-bandwith, upper-bandwith
+    x MM list of lists works now
+    = streamlined TOC
+    = reordered some chapter
+    = rewrote some docs, more links
 
  0.3.7:
-    § 2018.11.
-    
+    § 2018.11.15
+    + added bool property is-diagonal-constant
+    * get more than main diagonal (emulated mathematica API)
+    * question for strict diagonal matrix (upper and lower)
+    ! condense API of add and multiply
+    ! remove subtract
+    = streamlined TOC
 
  0.3.6:
     § 2018.10.18
@@ -91,12 +114,12 @@
     = added and clarified docs
 
 Legend:
-
+  § release info
   + new (added) feature
   - removed feature
   * enhanced feature
   / reduced feature 
-  x bug fiX
   ! API change
-  & project infrastructure
+  x bug fiX
   = documentation
+  & project infrastructure
