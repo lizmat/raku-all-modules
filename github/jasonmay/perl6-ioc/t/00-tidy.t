@@ -13,7 +13,6 @@ if AUTHOR {
     for Path::Iterator.skip-vcs.skip-dir('.precomp').ext(rx/ ^ ( 'p' <[lm]> 6? | t ) $ /).in(@dirs) -> $file {
         check_tidy($file);
     }
-    check_tidy('README.pod');
     done-testing;
 }
 else {

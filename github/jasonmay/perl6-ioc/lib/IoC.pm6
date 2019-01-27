@@ -1,4 +1,4 @@
-unit module IoC:ver<0.0.1>:auth<github:jasonmay>;
+unit module IoC:ver<0.0.3>:auth<github:jasonmay>;
 
 use IoC::Container;
 use IoC::ConstructorInjection;
@@ -46,7 +46,7 @@ sub service($pair) is export {
         $service = IoC::Literal.new(|%params);
     }
     else {
-        warn "Service {$pair.key} needs more parameters";
+        die "Service '{$pair.key}' needs more parameters";
         return;
     }
 

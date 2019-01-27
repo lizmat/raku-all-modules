@@ -1,13 +1,15 @@
 {
+  "auth" : "github:jasonmay",
   "authors" : [
-    "Jason May"
+    "Jason May",
+    "Martin Barth"
   ],
   "build-depends" : [ ],
   "depends" : [ ],
   "description" : "Wire your application components together using inversion of control",
   "license" : "NOASSERTION",
   "name" : "IoC",
-  "perl" : "6.*",
+  "perl" : "6.c",
   "provides" : {
     "IoC" : "lib/IoC.pm6",
     "IoC::BlockInjection" : "lib/IoC/BlockInjection.pm6",
@@ -20,11 +22,13 @@
   "source-type" : "git",
   "source-url" : "git://github.com/jasonmay/perl6-ioc.git",
   "tags" : [
-    "Dependency Injection"
+    "Dependency Injection",
+    "Dependency",
+    "Inversion of Control"
   ],
   "test-depends" : [
     "Path::Iterator",
     "Test::META"
   ],
-  "version" : "0.0.1"
+  "version" : "0.0.3"
 }

@@ -1,7 +1,7 @@
 class IoC::Container {
     has %!services;
 
-    method add-service($name, $service) {
+    method add-service(Cool:D $name, Any:D $service) {
         if $service.^can('container') {
             $service.container = self;
         }
@@ -9,14 +9,15 @@ class IoC::Container {
         %!services{$name} = $service;
     }
 
-    method fetch($service-name) {
+    method fetch(Cool:D $service-name --> Any:D) {
+        unless %!services{$service-name}:exists {
+            die "Service '$service-name' is not known. Available services are { %!services.keys }";
+        }
         return %!services{$service-name};
     }
 
-    multi method resolve($service) {
-        my $ioc-service = self.fetch($service);
-        return $ioc-service.get if $ioc-service.defined;
-        die "Service $service is not known";
+    multi method resolve(Cool:D $service --> Any:D) {
+        return self.fetch($service).get;
     }
     multi method resolve(:$service) {
         return self.resolve($service);

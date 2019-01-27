@@ -2,11 +2,10 @@ use IoC::Service;
 class IoC::ConstructorInjection does IoC::Service {
     has     $.type;
     has     %.dependencies;
-    has     %.parameters;
     has     $.container is rw;
 
     method get {
-        if $.lifecycle eq 'Singleton' {
+        if $.lifecycle ~~ 'Singleton' {
             return (
                 $.instance || self.initialize(self.build-instance());
             );
