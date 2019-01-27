@@ -108,10 +108,27 @@ GeoIP2.new( path => './GeoIP2-City.mmdb' ).locate( ip => '78.31.153.58' );
             'fr' => 'Europe',
             'en' => 'Europe'
         },
+    }
+    'subdivisions' => [
+        {
+            'geoname_id' => 3337496,
+            'iso_code' => 'PM',
+            'names' => {
+                'de' => 'Woiwodschaft Pommern',
+                'en' => 'Pomerania',
+                'es' => 'Pomerania',
+                'fr' => 'Voïvodie de Poméranie',
+                'ja' => 'ポモージェ県',
+                'ru' => 'Поморское воеводство'
+            }
+        }
+    ],
     ...
 }
 ```
+
 In such case list of available languages can be also checked through [languages](#languages) attribute.
+If your language is not provided out-of-the-box please check [TRANSLATIONS](#translations) section.
 
 ## ATTRIBUTES
 
@@ -126,6 +143,7 @@ Version object representing largest supported IP type, for example `v6`.
 ### languages
 
 Set object representing languages that location names are translated to.
+Check [TRANSLATIONS](#translations) section if language that you need is not on the list.
 
 ### description / description( 'RU' )
 
@@ -203,6 +221,82 @@ say $geo.locate( ip => '8.8.8.8' );
 Note that `geoipupdate` tool method is also possible,
 but because Arch is a rolling release distro installing prepackaged databases
 provides the same frequency of database updates as fetching direcltly from MaxMind.
+
+## TRANSLATIONS
+
+Some databases have built-in translations, however set of supported languages is rather limited.
+Fortunately MaxMind provides additional translation data.
+
+Download [this file](http://www.maxmind.com/GeoIPLocationCSV-localized.zip).
+Inside ZIP there are few CSV files and README file with their description.
+
+Now all you have to do is to find `geoname_id` field
+returned by [locate()](#locate-ip--1111-) method in correspoding CSV file,
+for example:
+
+Country, second column is language code.
+```
+$ grep 798544 iso-3166-localized.csv
+PL,ne,"पोल्याण्ड",798544
+PL,ki,Polandi,798544
+PL,tr,Polonya,798544
+PL,da,Polen,798544
+PL,my,"ပိုလန်",798544
+PL,ug,"پولشا",798544
+PL,gl,Polonia,798544
+PL,ro,Polonia,798544
+...
+```
+
+City, second column is language code.
+```
+$ grep 3099434 GeoIPCity-localized.csv
+35601,ascii,Gdansk,3099434
+35601,tr,Gdansk,3099434
+35601,da,"Gdańsk",3099434
+35601,gl,Gdansk,3099434
+35601,ru,"Гданьск",3099434
+35601,ro,"Gdańsk",3099434
+35601,az,Qdansk,3099434
+35601,co,Gdansk,3099434
+...
+```
+
+Region (subdivision), third column is language code.
+```
+$ grep 3337496 region-code-localized.csv
+PL,82,af,Pommere,3337496
+PL,82,es,Pomerania,3337496
+PL,82,da,Pomorskie,3337496
+PL,82,ru,"Поморское воеводство",3337496
+PL,82,csb,"Pòmòrsczé wòjewództwò",3337496
+PL,82,fr,"Voïvodie de Poméranie",3337496
+PL,82,ro,"Voievodatul Pomerania",3337496
+PL,82,ja,"ポモージェ県",3337496
+...
+```
+
+If you want to preload those translations into some database for easier access
+you can use single database because geoname IDs are mutually exclusive between files.
+
+For example to feed translations into Redis:
+```
+> HSET 798544 tr "Polonya"
+> HSET 798544 ki "Polandi"
+..
+> HSET 3099434 tr "Gdansk"
+> HSET 3099434 ru "Гданьск"
+...
+> HSET 3337496 ru "Поморское воеводство"
+> HSET 3337496 csb "Pòmòrsczé wòjewództwò"
+...
+```
+
+And to find translation of geoname ID to specific language:
+```
+> HGET 3099434 ru
+"Гданьск"
+```
 
 ## COPYRIGHTS
 
