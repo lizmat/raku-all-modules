@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/JSON-Marshal.git
+	branch = master
+	commit = 615467854024a9c9e2a520f03a3ededac727c0b9
+	parent = cc53e6d0753b94065666fcee8f5db5aa2256e677
+	cmdver = 0.3.1

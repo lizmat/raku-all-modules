@@ -1,0 +1,82 @@
+{
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "080-issue-8.t"
+        },
+        {
+          "name": "050-skip-null.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        },
+        {
+          "name": "020-marshal.t",
+          "type": "file"
+        },
+        {
+          "name": "060-array.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "030-trait.t"
+        },
+        {
+          "type": "file",
+          "name": "040-json-name.t"
+        },
+        {
+          "type": "file",
+          "name": "070-inheritance.t"
+        },
+        {
+          "name": "090-skip.t",
+          "type": "file"
+        }
+      ],
+      "name": "t"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "purpose": null,
+      "children": [
+        {
+          "name": "JSON",
+          "type": "directory",
+          "purpose": null,
+          "children": [
+            {
+              "name": "Marshal.pm",
+              "type": "file"
+            }
+          ]
+        }
+      ],
+      "name": "lib"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}

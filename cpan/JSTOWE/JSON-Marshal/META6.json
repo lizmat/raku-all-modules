@@ -1,0 +1,40 @@
+{
+  "name": "JSON::Marshal",
+  "version": "0.0.16",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "Simple serialisation of objects to JSON",
+  "source-url": "git://github.com/jonathanstowe/JSON-Marshal.git",
+  "support": {
+    "email": "jns+git@gellyfish.co.uk",
+    "source": "git://github.com/jonathanstowe/JSON-Marshal.git",
+    "bugtracker": "https://github.com/jonathanstowe/JSON-Marshal/issues"
+  },
+  "perl": "6.*",
+  "resources": [
+  ],
+  "depends": [
+    "JSON::Fast",
+    "JSON::Name"
+  ],
+  "build-depends": [
+  ],
+  "test-depends": [
+    "Test",
+    "JSON::Fast"
+  ],
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "tags": [
+    "object",
+    "serialisation",
+    "JSON"
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "JSON::Marshal": "lib/JSON/Marshal.pm"
+  },
+  "meta-version": "0"
+}
