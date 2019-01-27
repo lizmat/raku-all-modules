@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Garland-g/Cro-H.git
+	branch = master
+	commit = 4e50230494d4385eac384417058e0643d7b4fd01
+	parent = 118ba2ef8991643dd724a182f043554bc530cb48
+	cmdver = 0.3.1
