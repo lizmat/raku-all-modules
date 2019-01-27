@@ -18,7 +18,7 @@ my Str $best_match = "";
 my Int $best_distance;
 
 for @names -> Str $name {
-	my Int $distance = edistance($fuzzy_name,$name);
+	my Int $distance = dld($fuzzy_name,$name);
 	say "*$name - $distance";
 
 	if ( !$best_distance || ( $distance >= 0 && $distance < $best_distance ) ) {

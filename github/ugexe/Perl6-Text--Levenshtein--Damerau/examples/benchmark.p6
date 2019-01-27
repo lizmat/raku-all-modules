@@ -20,7 +20,7 @@ sub MAIN(Int $runs = 10) {
         });
 
         my @headers = ['func','start','end','diff','avg'];
-        my @rows    = %results.map({ [.key,.value.list] });
+        my @rows    = %results.map({ [.key,.value.Slip] });
 
         my @table = lol2table(@headers,@rows);
 

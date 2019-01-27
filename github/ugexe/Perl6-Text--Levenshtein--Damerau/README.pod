@@ -23,36 +23,6 @@ Levenshtein and Damerau Levenshtein edit distances
 
 Returns the true Levenshtein or Damerau Levenshtein edit distance of strings with adjacent transpositions. 
 
-    use Text::Levenshtein::Damerau;
-
-    my @names = 'John','Jonathan','Jose','Juan','Jimmy';
-    my $name_mispelling = 'Jonh';
-
-    my $dl = Text::Levenshtein::Damerau.new(
-        max             => 0,       # default 
-        targets         => @names,  # required
-        sources         => [$name_mispelling]
-    );
-
-    say "Lets search for a 'John' but mistyped...";
-    my %results =  $dl.get_results;
-
-    # Display each source, target, and the distance
-    for %results.kv -> $source, $targets {
-        for $targets.kv -> $target, $dld {
-            say "source:$source\ttarget:$target\tdld:" ~ ($dld // "<max exceeded>");
-        }
-    }
-
-    # More info
-    say "----------------------------";
-    say "\$dl.best_distance:        {$dl.best_distance}";
-    say "-";
-    say "\$dl.targets:              {~$dl.targets}";
-    say "\$dl.best_target:          {$dl.best_target}";
-    say "-";
-    say "\@names:                   {~@names}";
-
 =head3 Routines
 
 =over 8
@@ -94,34 +64,6 @@ Returns: Int that represents edit distance between the two argument. Stops calcu
     # Uses regular Levenshtein distance (no transpositions)
     say ld('AABBCC','AABCBCD',1); # distance is 3
     # prints Int
-
-=back
-
-=head3 Methods
-
-=over 8
-
-=item * C<new>
-
-Damerau Levenshtein Distance (Levenshtein Distance including transpositions)
-
-Arguments: \@sources, \@targets, $max?
-
-I<$max distance. 0 = unlimited. Default = 0>
-
-Create a new object. For now, this is so you may call C<get_results> on it.
-
-=item * C<get_results>
-
-Generates %results and sets the following attributes:
-
-    $.best_distance
-    $.best_target
-    $.best_source if @.sources.elems > 1
-    %.results
-    # %results{$source}{$target} = $distance_result
-
-Returns: %.results
 
 =back
 
