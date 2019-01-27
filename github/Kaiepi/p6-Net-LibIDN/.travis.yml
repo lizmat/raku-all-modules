@@ -1,0 +1,19 @@
+language: perl6
+perl6:
+  - latest
+os:
+  - linux
+  - osx
+addons:
+  apt:
+    packages:
+      - libidn11
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libidn; fi
+install:
+  - rakudobrew build zef
+  - zef install --deps-only --/test .
+script:
+  - PERL6LIB=$PWD/lib prove -e perl6 -vr t/
+sudo: false

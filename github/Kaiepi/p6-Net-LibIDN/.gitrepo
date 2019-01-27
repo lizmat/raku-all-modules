@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:Kaiepi/p6-Net-LibIDN.git
+	branch = master
+	commit = 3251401c16ea5d623b7d8c1b663026476de29a33
+	parent = 5227810a15107ffc0e337b5dc86227495aa1a1c3
+	cmdver = 0.3.1
