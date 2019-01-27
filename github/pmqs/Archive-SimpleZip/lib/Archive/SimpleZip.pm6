@@ -1,8 +1,6 @@
 
 unit module Archive::SimpleZip;
 
-use v6;
-
 need Compress::Zlib;
 need Compress::Bzip2;
 

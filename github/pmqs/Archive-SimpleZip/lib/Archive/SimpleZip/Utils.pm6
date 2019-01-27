@@ -1,8 +1,6 @@
 
 unit module Archive::SimpleZip::Utils;
 
-use v6;
-
 need Compress::Zlib::Raw;
 use NativeCall;
 

@@ -1,7 +1,6 @@
 
 unit module Archive::SimpleZip::Headers;
 
-use v6;
 use experimental :pack;
 
 # Compression types supported
