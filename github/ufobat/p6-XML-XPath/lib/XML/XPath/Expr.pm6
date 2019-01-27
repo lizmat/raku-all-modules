@@ -3,15 +3,19 @@ use XML::XPath::Evaluable;
 use XML::XPath::Predicates;
 use XML::XPath::Types;
 use XML::XPath::ExprOperator::Equal;
+use XML::XPath::ExprOperator::NotEqual;
 use XML::XPath::ExprOperator::Mod;
 use XML::XPath::ExprOperator::Or;
 use XML::XPath::ExprOperator::And;
 use XML::XPath::ExprOperator::Pipe;
 use XML::XPath::ExprOperator::Plus;
 use XML::XPath::ExprOperator::Minus;
+use XML::XPath::ExprOperator::Multiply;
 use XML::XPath::ExprOperator::Div;
 use XML::XPath::ExprOperator::SmallerThan;
+use XML::XPath::ExprOperator::SmallerEqual;
 use XML::XPath::ExprOperator::GreaterThan;
+use XML::XPath::ExprOperator::GreaterEqual;
 use XML::XPath::ExprOperator::UnaryMinus;
 
 class XML::XPath::Expr does XML::XPath::Evaluable {

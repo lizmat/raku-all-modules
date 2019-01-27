@@ -3,7 +3,7 @@ use v6.c;
 use Test;
 use XML::XPath;
 
-plan 3;
+plan 7;
 
 my $x = XML::XPath.new(xml => q:to/ENDXML/);
 <AAA>
@@ -30,6 +30,18 @@ is $set.elems, 2, 'found 2 nodes';
 
 $set = $x.find('//CCC[position()=floor(last()div2+0.5)orposition()=ceiling(last()div2+0.5)]');
 is $set.elems, 1, 'found 1 nodes';
+
+$set = $x.find('//BBB[position()>=3]');
+is $set.elems, 6, 'found 6 nodes';
+
+$set = $x.find('//BBB[position()<=3]');
+is $set.elems, 3, 'found 3 nodes';
+
+$set = $x.find('//BBB[position()!=1 and position()!=3 and position()!=99]');
+is $set.elems, 6, 'found 6 nodes';
+
+$set = $x.find('//BBB[position()*2 mod 3=0]');
+is $set.elems, 2, 'found 2 nodes';
 
 
 done-testing;
