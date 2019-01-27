@@ -1,0 +1,26 @@
+{
+  "name"                   : "SAT::Solver::MiniSAT",
+  "version"                : "0.0.1",
+  "perl"                   : "6.c",
+  "authors"                : "Tobias Boege",
+  "description"            : "SAT solver MiniSAT",
+  "tags"                   : [ ],
+  "license"                : "Artistic-2.0",
+  "depends"                : [
+    "SAT"
+  ],
+  "build-depends"          : [
+    "make:from<bin>",
+    "g++:from<bin>"
+  ],
+  "test-depends"           : [
+    "Test::META"
+  ],
+  "resources"              : [
+    "minisat"
+  ],
+  "provides"               : {
+    "SAT::Solver::MiniSAT" : "lib/SAT/Solver/MiniSAT.pm6"
+  },
+  "source-url"             : "git://github.com/taboege/p6-SAT-Solver-MiniSAT.git"
+}

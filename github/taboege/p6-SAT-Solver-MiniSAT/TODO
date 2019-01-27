@@ -1,0 +1,11 @@
+  + Determine how to keep the execute bit on the program when zef is
+    installing it. Then remove the BEGIN hack we're currently doing.
+
+  + Error handling. MiniSAT and some other solvers print predictable
+    messages in common error scenarios, like invalid DIMACS file.
+
+  + Configurability. Offer command-line options to callers.
+
+  + lingeling is another SAT solver which does produce a witness.
+    That is another module though. I wonder if MiniSAT just throws
+    its witness away and we can hack it not to.

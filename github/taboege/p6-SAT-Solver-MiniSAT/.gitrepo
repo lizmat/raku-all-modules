@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:taboege/p6-SAT-Solver-MiniSAT.git
+	branch = master
+	commit = 350f7c2c07de64201f8266623e893d4f246b1f6f
+	parent = 4995db26a035f51b050532699b50ad7f2fc0a6c6
+	cmdver = 0.3.1
