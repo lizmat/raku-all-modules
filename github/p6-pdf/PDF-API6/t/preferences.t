@@ -1,7 +1,7 @@
 use v6;
 use Test;
 use PDF::Grammar::Test :is-json-equiv;
-plan 15;
+plan 16;
 use PDF::API6;
 use PDF::Catalog;
 use PDF::Destination :Fit;
@@ -24,6 +24,9 @@ is $catalog.PageMode, 'UseNone', 'PageMode';
 my $viewer-prefs = $catalog.ViewerPreferences;
 is $viewer-prefs.HideToolbar, True, 'viewer HideToolbar';
 is $viewer-prefs.NonFullScreenPageMode, 'UseNone', 'viewer non-full page-mode';
+todo "need PDF::Class >= v0.3.1"
+   unless PDF::Class.^ver >= v0.3.1;
+is do {try $viewer-prefs.after-fullscreen}, 'UseNone', 'viewer non-full page-mode';
 
 my $open-action = $catalog<OpenAction>;
 
@@ -36,7 +39,7 @@ my @page-labels = 0 => 'i',
                   3 =>  1,
                   6 =>  'A-1',
                   8 =>  'B-1',
-                 10 =>  { :style(PageLabel::RomanUpper), :start(1), :prefix<B-> };
+                 10 =>  { :numbering-style(PageLabel::RomanUpper), :start(1), :prefix<B-> };
 
 $pdf.page-labels = @page-labels;
 

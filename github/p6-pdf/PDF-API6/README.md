@@ -11,7 +11,7 @@ PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
    - [PDF::API6](#pdfapi6)
    - [TODO](#todo)
 - [SYNOPSIS](#synopsis)
-- [SECTION I: Low Level Methods (inherited from PDF)](#section-i-low-level-methods-inherited-from-pdf)
+- [SECTION I: Input/Output Methods (inherited from PDF)](#section-i-inputoutput-methods-inherited-from-pdf)
    - [Input/Output](#inputoutput)
        - [new](#new)
        - [open](#open)
@@ -31,7 +31,7 @@ PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
    - [Page Methods](#page-methods)
        - [to-xobject](#to-xobject)
        - [images](#images)
-       - [media-box, crop-box, trim-box, bleed-box, art-box](#media-box-crop-box-trim-box-bleed-box-art-box)
+       - [media-box, crop-box, trim-box, bleed-box, art-box, bleed](#media-box-crop-box-trim-box-bleed-box-art-box-bleed)
        - [Rotate](#rotate)
    - [Introduction to Graphics](#introduction-to-graphics)
    - [Text Methods](#text-methods)
@@ -39,6 +39,7 @@ PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
        - [font, core-font](#font-core-font)
        - [text-position](#text-position)
        - [text-transform](#text-transform)
+       - [base-coords](#base-coords)
        - [print](#print)
        - [say](#say)
    - [Graphics Methods](#graphics-methods)
@@ -54,7 +55,7 @@ PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
        - [tiling-pattern](#tiling-pattern)
        - [use-pattern](#use-pattern)
    - [Low Level Graphics](#low-level-graphics)
-       - [Colors](#colors)
+       - [Basic Colors](#basic-colors)
    - [Rendering Methods](#rendering-methods)
        - [render](#render)
    - [AcroForm Fields](#acroform-fields)
@@ -65,10 +66,13 @@ PDF::API6 - A Perl 6 PDF Tool-chain (experimental)
    - [Settings Methods](#settings-methods)
        - [preferences](#preferences)
        - [version](#version)
-       - [page-labels](#page-labels)
    - [Color Management](#color-management)
        - [color-separation](#color-separation)
        - [color-devicen](#color-devicen)
+   - [Interactive Features](#interactive-features)
+       - [Outlines](#outlines)
+       - [Page Labels](#page-labels)
+       - [Annotations](#annotations)
 - [APPENDIX](#appendix)
    - [Appendix I: Graphics](#appendix-i-graphics)
        - [Graphics Variables](#graphics-variables)
@@ -145,8 +149,6 @@ PDF::API2 features that are not yet available in PDF::API6 include:
    - Font sub-setting (to reduce PDF file sizes) is not yet implemented (wanted: module PDF::Font::Subset)
    - Synthetic fonts are nyi (wanted: module PDF::Font::Synthetic)
 
-- Annotations - nyi
-
 
 # SYNOPSIS
 
@@ -159,7 +161,8 @@ PDF::API2 features that are not yet available in PDF::API6 include:
     my PDF::API6 $pdf .= open('some.pdf');
 
     # Add a blank page
-    my $page = $pdf.add-page();
+    use PDF::Page;
+    my PDF::Page $page = $pdf.add-page();
 
     # Retrieve an existing page
     use PDF::Page;
@@ -196,7 +199,7 @@ PDF::API2 features that are not yet available in PDF::API6 include:
     # Save the PDF
     $pdf.save-as('/path/to/new.pdf');
 
-# SECTION I: Low Level Methods (inherited from PDF)
+# SECTION I: Input/Output Methods (inherited from PDF)
 
 ## Input/Output
 
@@ -251,21 +254,19 @@ Save a new or updated PDF document to a file
     #...
     $pdf.save-as: 'our/new.pdf';
 
-- The `:preserve` option (default True) keeps the original PDF structure,then applies incremental updates. This is generally faster and also ensures that digital signatures are not invalidated.
+The `:preserve` option (default True) keeps the original PDF structure, then applies incremental updates. This is generally faster and also ensures that digital signatures are not invalidated.
 
     PDF::API6 $pdf .= open("our/original.pdf");
-    #...
     $pdf.save-as: 'our/updated.pdf', :!preserve;
 
-- The `:rebuild` option (default False)) rewrites the PDF. This may be useful, if there have been a substantial number of updates.
+The `:rebuild` option (default False) rewrites the PDF. This may be useful, if there have been a substantial number of updates.
 
-- The `:compress` option is used to ensure stream objects (which generally make up the bulk of a PDF) are compressed. This is useful when maximum compaction is needed.
+The `:compress` option is used to ensure stream objects (which generally make up the bulk of a PDF) are compressed. This is useful when maximum compaction is needed.
 
     PDF::API6 $pdf .= open("our/original.pdf");
-    # optimise for PDF compaction
     $pdf.save-as: 'our/updated.pdf', :rebuild, :compress;
 
-- The reverse flag, `:!compress` is useful when you want to optimise for human-readability of the output PDF. It will unpack `Flate`, `LZW`, `ASCIIHex` and `ASCII85` encoded streams.
+The reverse flag, `:!compress` is useful when you want to optimise for human-readability of the output PDF. It will unpack `Flate`, `LZW`, `ASCIIHex` and `ASCII85` encoded streams.
 
 A PDF file can also be saved as, and opened from an intermediate JSON representation, by saving to, or reading from, files with a `.json` extension
 
@@ -293,17 +294,17 @@ Check if document is encrypted
 
 Return a binary representation of a PDF as a latin-1 string, or binary Blob
 
-    my Str $pdf-byte-string = $pdf.Str; # returns a latin1 encoded string
+    my Str $pdf-byte-string = $pdf.Str; # returns a latin-1 encoded string
     my Blob $bytes = $pdf.Blob;         # returns a Blob[uint8]
 
 ### ast
 
 Return an AST tree representation of a PDF.
 
+    use PDF::Writer;
     my %cos = $pdf.ast;   # returns a nested Hash representation of the PDF
     # write it to a file
-    use PDF::Writer;
-    my $pdf-byte-string = PDF::Writer.new.write: :%cos;
+    my $pdf-byte-string = PDF::Writer.new.write: |%cos;
     "/tmp/out.pdf".IO.spurt(:bin, $pdf-byte-string);
 
 
@@ -378,24 +379,37 @@ This method extracts image objects for a given page, or other graphical element:
 
 The `:inline` flag will check for any image objects in the graphical content stream.
 
-### media-box, crop-box, trim-box, bleed-box, art-box
+### media-box, crop-box, trim-box, bleed-box, art-box, bleed
 
 A page has several different bounding boxes:
 
-- media-box -- width and height of the printed page
 - crop-box -- the region of the PDF that is displayed or printed
+- media-box -- width and height of the printed page
 - trim-box -- the intended dimensions of the finished page
 - bleed-box -- the region to which the page contents needs to be clipped when output in a production environment.
 - art-box -- for general use
 
-Example:
+`bleed` is a convenience method for setting up or showing a bleed gutter area surrounding the trim-box. It should usually be set up after the trim box.
 
+Example:
+```
+    use PDF::API6;
+    use PDF::Page;
     use PDF::Content::Page :PageSizes;
-    sub postfix:<mm>(Numeric $v)( $v * 2.83 );
-    $page.media-box = Letter;
-    # set-up symmetrical 3mm bleed
-    $page-bleed-box = .[0] - 3mm, .[1] - 3mm, .[2] + 3mm, [.3] + 3mm
-        given $page.media-box;
+    sub postfix:<mm>(Numeric $v){ ($v * 2.83).round(1) };
+
+    my PDF::API6 $pdf .= new;
+    my PDF::Page $page = $pdf.add-page;
+
+    # set-up Letter-size trim-box with symmetrical 3mm bleed
+
+    $page.trim-box = Letter;
+    $page.bleed = 3mm;
+##  $page.bleed = 3mm, 3mm, 3mm, 3mm; # same as above
+    say $page.bleed;     # (8 8 8 8)
+    say $page.trim-box;  # [0 0 612 792]
+    say $page.bleed-box; # [-8 -8 620 800]
+```
 
 ### Rotate
 
@@ -489,6 +503,19 @@ Applies text transforms, such as translation, rotation, scaling, etc.
 
 - This replaces any existing text positioning or transforms.
 
+### base-coords
+
+Synopsis, my ($x-o, $y-o, ...) = $gfx.base-coords(
+                                        $x-t, $y-t, ...,
+                                        :$user=True,    # map to user default coordinates
+                                        :$text=False);  # unmap text matrix
+
+This method maps transformed coordinates back to original coordinates.
+
+    $gfx.transform: :translate($x,$y), :scale(.8);
+    my @image-region = $gfx.do($my-image, :align<middle>, 20, 30);
+    my @position-on-page = $gfx.base-coords(|@image-region);
+
 ### print
 
     need PDF::Content::Text::Block;
@@ -498,17 +525,18 @@ Applies text transforms, such as translation, rotation, scaling, etc.
     my $font-size = 16;
     my $text = "Hello.  Ting, ting-ting. Attention! … ATTENTION! ";
     
-     my PDF::Content::Text::Block $text-block = $gfx.print: $text, :$font, :$font-size, :width(120);
+    my PDF::Content::Text::Block $text-block = $gfx.print: $text, :$font, :$font-size, :width(120);
     
     note "text block has size {.width} X {.height}"
         with $text-block;
 
-Synopsis: `my $text-block = print($text-str-or-chunks-or-block,
+Synopsis: `my PDF::Content::Text::Block $text-block = print(
+                 $text-str-or-chunks-or-block,
                  :align<left|center|right>, :valign<top|center|bottom>,
                  :$font, :$font-size,
                  :$.WordSpacing, :$.CharSpacing, :$.HorizScaling, :$.TextRise
                  :baseline-shift<top|middle|bottom|alphabetic|ideographic|hanging>
-                 :kern, :$leading, :$width, :$height)`
+                 :kern, :$leading, :$width, :$height, :nl)`
 
 Outputs a text string, or [Text Block](https://github.com/p6-pdf/PDF-Content-p6/blob/master/lib/PDF/Content/Text/Block.pm)
 
@@ -575,10 +603,11 @@ Loads an image in a supported format (currently PNG, GIF and JPEG).
 
      $gfx.do($img, 10, 20)
 
-Synopsis: `$gfx.do($image-or-form, $x = 0, $y = 0,
-                   :$width, :$height, :inline,
-                   :align<left center right> = 'left',
-                   :valign<top center bottom> = 'bottom')`
+Synopsis: `my Numeric @region[4] = $gfx.do(
+                       $xobject, $x = 0, $y = 0,
+                       :$width, :$height, :inline,
+                       :align<left center right> = 'left',
+                       :valign<top center bottom> = 'bottom')`
 
 Displays an image or form.
 
@@ -698,7 +727,7 @@ The `graphics` method simply adds `Save` and `Restore` operators
 
 ### Basic Colors
 
-The PDF Model maintains two separate colors; for filling and stroking:
+The PDF Model maintains two separate color states; for filling and stroking:
 
 #### FillColor, FillAlpha
 
@@ -835,7 +864,8 @@ More work needs to be done in PDF::Class to fully support all possible field typ
 
 ### info
 
-    $info := $pdf.info;
+    use PDF::INFO;
+    my PDF::INFO $info := $pdf.info;
 
 Gets/sets the info for the document
 
@@ -1049,7 +1079,37 @@ see also [examples/pdf-preferences.p6](examples/pdf-preferences.p6)
 
 Get or set the PDF Version
 
-### outlines
+## Color Management
+
+### color-separation
+
+    use PDF::Content::Color :color;
+    use PDF::ColorSpace::Separation;
+    constant CS = PDF::ColorSpace::Separation;
+
+    my CS $c = $pdf.color-separation('Cyan',    color '%f000');
+    my CS $m = $pdf.color-separation('Magenta', color '%0f00');
+    my CS $y = $pdf.color-separation('Yellow',  color '%00f0');
+    my CS $k = $pdf.color-separation('Black',   color '%000f');
+
+    # use a separation color directly
+    my CS $pms023 = $pdf.color-separation('PANTONE 032CV', color '%0ff0');
+    $gfx.FillColor = $pms023 => .75;
+
+### color-devicen
+
+    # create a DeviceN color-space for color mixing
+    use PDF::ColorSpace::DeviceN;
+    my PDF::ColorSpace::DeviceN $color-mix = $pdf.color-devicen( [ $c, $m, $y, $k, $pms023 ] );
+    # apply it
+    $gfx.FillColor = $color-mix => [0, 0, 0, .25, .75];
+
+The current version of PDF::API6 only supports CMYK separations as DeviceN
+components.
+
+## Interactive Features
+
+### Outlines
 
 Outlines (or bookmarks) are commonly used by viewers for navigation of PDF documents.
 
@@ -1062,7 +1122,7 @@ my PDF::API6 $pdf .= new;
 $pdf.add-page for 1 .. 7;
 use PDF::Destination :Fit;
 
-sub dest(|c) { :Dest($pdf.destination(|c)) }
+sub dest(|c) { :destination($pdf.destination(|c)) }
 
 $pdf.outlines.kids = [
           %( :Title('1. Purpose of this Document'), dest(:page(1))),
@@ -1085,11 +1145,11 @@ $pdf.outlines.kids = [
 
 See also: `pdf-toc.p6`, installed with PDF::Class. This can be used to view the outlines for a PDF.
 
-### page-labels
+### Page Labels
 
 Get or sets page numbers to identify each page number, for display or printing:
 
-page-labels is an array of ascending ascending integer indexes. Each is followed by a page numbering scheme. For example
+page-labels is an array of ascending integer indexes. Each is followed by a page numbering scheme. For example
 
     constant PageLabel = PDF::API6::PageLabel;
     $pdf.page-labels = 0  => 'i',   # Roman lowercase: i, ii, iii, ...
@@ -1097,33 +1157,130 @@ page-labels is an array of ascending ascending integer indexes. Each is followed
                       32  => 'A-1', # Decimal: A-1, A-2, ...
                       36  => 'B-1', # Decimal: B-1, B-2, ...
                       # equivalent to 'C-1'
-                      40  => { :style(PageLabel::RomanUpper), :start(1), :prefix<C-> };
+                      40  => { :numbering-style(PageLabel::RomanUpper), :start(1), :prefix<C-> };
 
-## Color Management
+### Annotations
 
-### color-separation
+An annotation associates a 'clickable' region on a page with an object such as a text note, destination page or URI. PDF::API6 supports a small number of commonly used annotations:
 
-    use PDF::Content::Color :color;
+- Links
+  - pages within the PDF
+  - pages from another other PDF files
+  - external URIs
+- File Attachments
+- Text Annotations (or "sticky notes")
 
-    my $c = $pdf.color-separation('Cyan',    color '%f000');
-    my $m = $pdf.color-separation('Magenta', color '%0f00');
-    my $y = $pdf.color-separation('Yellow',  color '%00f0');
-    my $k = $pdf.color-separation('Black',   color '%000f');
+Synopsis:
 
-    # use a separation color directly
-    my $pms023 = $pdf.color-separation('PANTONE 032CV', color '%0ff0');
-    $gfx.FillColor = $pms023 => .75;
+    use PDF::Annot::Link;
+    use PDF::Annot::FileAttachment;
+    use PDF::Annot::Text;
+    my PDF::Annot::Link $page-link = $pdf.annotation: :$page, :$link, |%props);
+    my PDF::Annot::Link $dest-link = $pdf.annotation: :$page, :$action, |%props);
+    my PDF::Annot::FileAttachment $attachment = $pdf.annotation: :$page, :$attachment, :icon-name<Paperclip|GraphPushPin>, :$text-label, |%props);
+    my PDF::Annot::Text $sticky-note = $pdf.annotation: :$page, :$content, :$Open, |%props);
 
-### color-devicen
+Where:
 
-    # create a DeviceN color-space for color mixing
-    my $color-mix = $pdf.color-devicen( [ $c, $m, $y, $k, $pms023 ] );
-    # apply it
-    $gfx.FillColor = $color-mix => [0, 0, 0, .25, .75];
+    %props {              # common annotation options
+        :@color,          # color for the annotation 3 values
+                          # (rgb), 1 value (gray) or 4 values (cmyk)
+        :@rect, :$text,   # rectangle or text to print and highlight
+        :$border-style,   # style the annotation border
+    }
 
-The current version of PDF::API6 only supports CMYK separations as DeviceN
-components.
+Examples:
 
+```
+use v6;
+use PDF::API6;
+use PDF::Destination :Fit;
+use PDF::Annot::Link;
+use PDF::Content::Color :ColorName;
+use PDF::Border :BorderStyle;
+use PDF::Annot::Text;
+use PDF::Filespec;
+
+my PDF::API6 $pdf .= new;
+
+$pdf.add-page for 1 .. 2;
+
+sub dest(|c) { :destination($pdf.destination(|c)) }
+sub action(|c) { :action($pdf.action(|c)) }
+
+my $gfx = $pdf.page(1).gfx;
+$gfx.text: {
+    .font = .core-font: 'Times-Roman';
+
+    #-- create a link from a region on Page 1 to Page 2 --
+    .text-position = 377, 545;
+    my PDF::Annot::Link $link = $pdf.annotation(
+                     :page(1),
+                     :text("see page 2"),
+                     |dest(:page(2)),
+                     :color(Blue),
+                 );
+
+    #-- Link to an URI --
+    .text-position = 377, 515;
+    $link = $pdf.annotation(
+                     :page(1),
+                     :text("Perl 6"),
+                     |action(:uri<https://perl6.org>),
+                     :color(Orange),
+                 );
+
+    #-- Link to a Page in another PDF --
+
+    # display the annotation with a 2pt dashed border
+    my $border-style = {
+        :width(2),  # 2 point width
+        # 3 point dashes, alternating with 2-point gaps
+        :style(BorderStyle::Dashed),
+        :dash-pattern[3, 2],
+    };
+
+    .text-position = 377, 485;
+    $link = $pdf.annotation(
+                     :page(1),
+                     :text("Example PDF Form"),
+                     |action(
+                         :file<../t/pdf/OoPdfFormExample.pdf>,
+                         :page(1), :fit(FitXYZoom), :top(400),
+                     ),
+                     :color(Green),
+                     :$border-style,
+                 );
+}
+
+#-- Create a Text annotation --
+my Str $content = q:to<END-QUOTE>;
+    To be, or not to be: that is the question: Whether 'tis
+    nobler in the mind to suffer the slings and arrows of
+    outrageous fortune, or to take arms against a sea of
+    troubles, and by opposing end them?
+END-QUOTE
+
+my PDF::Annot::Text $note = $pdf.annotation(
+             :page(1),
+             :$content,
+             :rect[ 377, 455, 455, 467 ],
+             :color[0, 0, 1],
+         );
+
+#--  Add a File Attachment annotation
+my PDF::Filespec $attachment = $pdf.attachment("t/images/lightbulb.gif");
+$content = 'Click on the paperclip to see an image as an example image attachment';
+$pdf.annotation(
+             :page(1),
+             :$attachment,
+             :text-label("Light Bulb"),
+             :$content,
+             :icon-name<Paperclip>,
+             :rect[ 377, 395, 425, 412 ],
+         );
+
+```
 
 # APPENDIX
 

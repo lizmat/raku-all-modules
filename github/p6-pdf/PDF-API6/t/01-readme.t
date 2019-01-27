@@ -1,5 +1,5 @@
 use Test;
-plan 5;
+plan 7;
 
 my $read-me = "README.md".IO.slurp;
 
@@ -15,7 +15,7 @@ for @<code> {
 
 	    # assume anything else is code.
 	    $snippet = $snippet.subst('DateTime.now;', 'DateTime.new( :year(2015), :month(12), :day(25) );' );
-	    # disable say
+	    # disable say, etc
 	    sub say(|c) { }
 	    sub dd(|c) { }
 	    sub note(|c) { }
