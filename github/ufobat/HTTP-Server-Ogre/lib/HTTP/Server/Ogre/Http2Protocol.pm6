@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 use HTTP::Server::Ogre::HTTP2::FrameParser;
 use HTTP::Server::Ogre::HTTP2::RequestParser;

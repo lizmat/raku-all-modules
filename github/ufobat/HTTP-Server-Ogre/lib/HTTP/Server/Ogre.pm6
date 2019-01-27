@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -37,7 +37,7 @@ This library is free software; you can redistribute it and/or modify it under th
 use HTTP::Server::Ogre::Http1Protocol;
 use HTTP::Server::Ogre::Http2Protocol;
 
-class HTTP::Server::Ogre:ver<0.0.3> {
+class HTTP::Server::Ogre:ver<0.0.4> {
     has Str  $.host is required;
     has Int  $.port is required;
     has      $.app  is required;
