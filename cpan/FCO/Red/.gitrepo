@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/FCO/Red.git
+	branch = master
+	commit = 8ff77d02f0bc2107453fae50a10066984048d09a
+	parent = e0b7d4de5a64f122be23c1ae569d9cc9c30763a7
+	cmdver = 0.3.1
