@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/DirHandle.git
+	branch = master
+	commit = 1ab0c1a89e05c1989a72057ca23cee5499f575fc
+	parent = 9edd86c0b7a520dfb630ad1c98dd3262a15bffeb
+	cmdver = 0.3.1
