@@ -1,0 +1,36 @@
+{
+  "name": "GDBM",
+  "version": "0.0.4",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "GNU dbm binding for Perl 6",
+  "source-url": "https://github.com/jonathanstowe/p6-GDBM.git",
+  "support": {
+    "source": "https://github.com/jonathanstowe/p6-GDBM.git",
+    "bugtracker" : "https://github.com/jonathanstowe/p6-GDBM/issues",
+    "email" : "jns+gh@gellyfish.co.uk"
+  },
+  "perl": "6.*",
+  "resources": [
+	"libraries/gdbmhelper"
+  ],
+  "build-depends": [
+      "LibraryMake",
+      "Shell::Command"
+  ],
+  "depends": [
+  ],
+  "tags": [
+      "gdbm", "dbm", "hash"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+  ],
+  "provides": {
+    "GDBM": "lib/GDBM.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}
