@@ -1,0 +1,44 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+use App::Uni;
+
+# -c : interpret as characters
+# -u : interpret as hex codepoints
+# -w : search codepoint names, using input as whole words
+# -n : search codepoint names using input
+# -s : interpret as single character
+
+sub MAIN(*@input, :$c=False, :$u=False, :$w=False, :$s=False, :$n=False) {
+    if $n or $w {
+        uni-search(@input, :$w);
+        exit 0;
+    }
+    if $s {
+        say uni-gist(@input[0]);
+        exit 0;
+    }
+    if $u {
+        for @input -> $code {
+            say uni-gist($code.parse-base(16));
+        }
+        exit 0;
+    }
+    if $c {
+        for @input.kv -> $pos, $word {
+            for $word.comb -> $char {
+                say uni-gist($char);
+            }
+            say "" unless $pos == @input.elems-1
+        }
+        exit 0;
+    } 
+
+    if +@input == 1 and @input.chars == 1 {
+        say uni-gist(@input[0]);
+    } else {
+        # TODO "with the exception that search terms comprised entirely of hex digits are allowed to match against the codepoint's numeric value"
+        uni-search(@input);
+    }
+}
