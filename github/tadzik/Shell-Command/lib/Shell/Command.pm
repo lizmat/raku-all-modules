@@ -47,18 +47,19 @@ sub mv(*@args) is export {
     ???
 }
 
-sub cp(Str() $from,Str() $to is copy, :$r) is export {
+sub cp(Str() $from,Str() $to is copy, :$r, :$v) is export {
     if ($from.IO ~~ :d and $r) {
         mkdir("$to") if $to.IO !~~ :d;
         for dir($from)».basename -> $item {
             mkdir("$to/$item") if "$from/$item".IO ~~ :d;
-            cp("$from/$item", "$to/$item", :r);
+            cp("$from/$item", "$to/$item", :r, :$v);
         }
     } else {
         if $to.IO.d {
             $to = "$to/" ~ $from.IO.basename;
         }
         $from.IO.copy($to);
+        say "$from -> $to" if $v;
     }
 }
 

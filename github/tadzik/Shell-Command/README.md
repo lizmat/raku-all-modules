@@ -1,6 +1,6 @@
 # Shell::Command
 
-Provides cross-platform routines emulating common \*NIX shell commands
+Provides **cross-platform** routines emulating common \*NIX shell commands
 
 ## Build Status
 
