@@ -1,7 +1,8 @@
 use v6;
+unit package SQL;
 use SQL::Lexer;
 
-grammar SQL::Basic:ver<0.2.1> is SQL::Lexer:ver<0.2.1..*> {
+grammar Basic:ver<0.2.2> is Lexer:ver<0.2.1..*> {
     rule TOP {
         \s*
         [   <comment>

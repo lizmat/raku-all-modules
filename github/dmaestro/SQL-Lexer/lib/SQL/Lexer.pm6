@@ -1,5 +1,5 @@
-unit module SQL;
 use v6;
+unit package SQL;
 
 # largely based on https://ronsavage.github.io/SQL/sql-2003-2.bnf
 
@@ -512,7 +512,7 @@ grammar Keyword:ver<0.1.1> {
     }
 }
 
-grammar Lexer:ver<0.2.1> is Keyword {
+grammar Lexer:ver<0.2.2> is Keyword {
     my Str $oq;
 
     regex ascii-digit           { <:N> & <:Block(｢Basic Latin｣)> }
