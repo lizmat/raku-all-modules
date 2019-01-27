@@ -1,0 +1,69 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "t",
+      "purpose": null,
+      "children": [
+        {
+          "name": "020-dispatcher.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        }
+      ],
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "name": "lib",
+      "children": [
+        {
+          "children": [
+            {
+              "name": "Dispatcher",
+              "type": "directory",
+              "purpose": null,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "Syslog.pm"
+                }
+              ]
+            }
+          ],
+          "purpose": null,
+          "type": "directory",
+          "name": "Lumberjack"
+        }
+      ],
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "Documentation.md"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}
