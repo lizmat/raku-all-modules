@@ -1,0 +1,10 @@
+Revision history for unprint
+
+{{$NEXT}}
+
+0.0.2  2018-07-08T16:01:47+02:00
+    - Added support for multiple parameters to print / say /put
+    - Removed emphasis on being unbuffered
+
+0.0.1  2018-07-08T15:08:08+02:00
+    - Initial version

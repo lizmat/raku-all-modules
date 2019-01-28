@@ -1,0 +1,22 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "provide fast print / say / put",
+  "license" : "Artistic-2.0",
+  "name" : "unprint",
+  "perl" : "6.c",
+  "provides" : {
+    "unprint" : "lib/unprint.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/unprint.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
