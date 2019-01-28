@@ -1,0 +1,13 @@
+Revision history for P5opendir
+
+{{$NEXT}}
+
+0.0.3  2018-05-21T20:41:52+02:00
+    - Add original Perl 5 documentation
+
+0.0.2  2018-04-29T12:28:10+02:00
+    - Make sure DIRHANDLE stringifies to its path, so it can be used with
+      the chdir() of P5chdir.  Also add 'path' attribute to support this.
+
+0.0.1  2018-04-29T00:37:31+02:00
+    - Initial version
