@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/p6-ModelDB.git
+	branch = master
+	commit = 0e9398510d54dd5e85387dc5df5dd13f8663049b
+	parent = 6350516a17c339b69c2ab08b96e134e320259f14
+	cmdver = 0.3.1
