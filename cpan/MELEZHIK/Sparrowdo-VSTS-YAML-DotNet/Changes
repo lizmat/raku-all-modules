@@ -1,0 +1,11 @@
+{{$NEXT}}
+
+0.0.2  2018-07-26T20:45:41Z
+
+    - Add display-name
+    - Fix build.artifactstagingdirectory error
+
+0.0.1  2018-07-26T13:33:28Z
+
+    - First release
+

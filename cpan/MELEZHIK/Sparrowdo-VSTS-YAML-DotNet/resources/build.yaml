@@ -1,0 +1,6 @@
+- task: DotNetCoreCLI@2
+  displayName: [% display_name %]
+  inputs:
+    projects: '[% project %]'
+    arguments: /p:configuration="[% configuration %]" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageLocation="\$(build.artifactstagingdirectory)\\[% configuration %]\\"  
+

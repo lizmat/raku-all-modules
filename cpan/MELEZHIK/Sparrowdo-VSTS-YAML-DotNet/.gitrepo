@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-vsts-dotnet.git
+	branch = master
+	commit = 9a67dfcfdf1b4f21767f10defd1d8c40b0536f79
+	parent = e1e97c67de0d594abf3f242a949d3d1f1b5038bc
+	cmdver = 0.3.1

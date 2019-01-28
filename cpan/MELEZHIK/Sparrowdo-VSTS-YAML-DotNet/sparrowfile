@@ -1,0 +1,12 @@
+#!perl6
+
+file-delete "build.yaml";
+
+module_run "VSTS::YAML::Solution", %(
+  build-dir => ".build",
+  solution => "app.sln", # path to solution file, default is "**\*.sln"
+  platform => "x86",
+  configuration => "release",
+  restore-solution => "app.sln", # path to NugetRestore solution file
+);
+

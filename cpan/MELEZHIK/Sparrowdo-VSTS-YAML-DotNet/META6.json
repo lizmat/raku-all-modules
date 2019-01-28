@@ -1,0 +1,26 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to generate VSTS yaml steps to build dotnet application",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::VSTS::YAML::DotNet",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::VSTS::YAML::DotNet" : "lib/Sparrowdo/VSTS/YAML/DotNet.pm6"
+  },
+  "resources" : [
+    "build.yaml"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-vsts-dotnet.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
