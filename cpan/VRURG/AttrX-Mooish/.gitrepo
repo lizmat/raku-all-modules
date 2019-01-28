@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/vrurg/Perl6-AttrX-Mooish.git
+	branch = master
+	commit = 282b9ea32d3beff619146ebe5b961bb1d22a1291
+	parent = 91680fe75ceba4a875736c9611cd38eb67069de3
+	cmdver = 0.3.1
