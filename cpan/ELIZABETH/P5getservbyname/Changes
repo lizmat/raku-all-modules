@@ -1,0 +1,12 @@
+Revision history for P5getservbyname
+
+{{$NEXT}}
+
+0.0.3  2018-05-21T12:53:11+02:00
+    - Adapt test for darwin weirdness
+
+0.0.2  2018-05-20T22:17:48+02:00
+    - Added original Perl 5 documentation
+
+0.0.1  2018-05-02T23:45:31+02:00
+    - Initial version
