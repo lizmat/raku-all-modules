@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8" />
+        <style>
+        kbd { font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
+        samp { font-family: "Terminus", "Courier", "Lucida Console", monospace }
+        u { text-decoration: none }
+        .nested {
+            margin-left: 3em;
+        }
+        aside, u { opacity: 0.7 }
+        a[id^="fn-"]:target { background: #ff0 }
+        </style>
+        <link rel="stylesheet" href="//design.perl6.org/perl.css">
+        
+        
+    </head>
+    <body class="pod">
+    <div id="___top"></div>
+    
+    
+    
+    <nav class="indexgroup">
+<table id="TOC">
+<caption><h2 id="TOC_Title">Table of Contents</h2></caption>
+<tr class="toc-level-1"><td class="toc-number">1</td><td class="toc-text"><a href="#Name">Name</a></td></tr>
+  <tr class="toc-level-1"><td class="toc-number">2</td><td class="toc-text"><a href="#SYNOPSIS">SYNOPSIS</a></td></tr>
+  <tr class="toc-level-1"><td class="toc-number">3</td><td class="toc-text"><a href="#DESCRIPTION">DESCRIPTION</a></td></tr>
+          <tr class="toc-level-1"><td class="toc-number">4</td><td class="toc-text"><a href="#EXPORTS">EXPORTS</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-number">4.1</td><td class="toc-text"><a href="#class_Plugin::Registry">class Plugin::Registry</a></td></tr>
+  <tr class="toc-level-3"><td class="toc-number">4.1.1</td><td class="toc-text"><a href="#submethod_instance">submethod instance</a></td></tr>
+  <tr class="toc-level-3"><td class="toc-number">4.1.2</td><td class="toc-text"><a href="#method_register-plugin">method register-plugin</a></td></tr>
+  <tr class="toc-level-3"><td class="toc-number">4.1.3</td><td class="toc-text"><a href="#method_plugin-names">method plugin-names</a></td></tr>
+  <tr class="toc-level-3"><td class="toc-number">4.1.4</td><td class="toc-text"><a href="#method_plugin-types">method plugin-types</a></td></tr>
+  <tr class="toc-level-3"><td class="toc-number">4.1.5</td><td class="toc-text"><a href="#method_plugin-type">method plugin-type</a></td></tr>
+     <tr class="toc-level-3"><td class="toc-number">4.1.6</td><td class="toc-text"><a href="#method_plugin-meta">method plugin-meta</a></td></tr>
+                             <tr class="toc-level-3"><td class="toc-number">4.1.7</td><td class="toc-text"><a href="#method_pluggable-classes">method pluggable-classes</a></td></tr>
+        <tr class="toc-level-3"><td class="toc-number">4.1.8</td><td class="toc-text"><a href="#method_is-pluggable">method is-pluggable</a></td></tr>
+         <tr class="toc-level-3"><td class="toc-number">4.1.9</td><td class="toc-text"><a href="#method_type">method type</a></td></tr>
+   <tr class="toc-level-3"><td class="toc-number">4.1.10</td><td class="toc-text"><a href="#method_short2fqn">method short2fqn</a></td></tr>
+            <tr class="toc-level-3"><td class="toc-number">4.1.11</td><td class="toc-text"><a href="#method_fqn2short">method fqn2short</a></td></tr>
+          <tr class="toc-level-3"><td class="toc-number">4.1.12</td><td class="toc-text"><a href="#method_fqn-class-name">method fqn-class-name</a></td></tr>
+    <tr class="toc-level-3"><td class="toc-number">4.1.13</td><td class="toc-text"><a href="#method_fqn-plugin-name">method fqn-plugin-name</a></td></tr>
+    <tr class="toc-level-3"><td class="toc-number">4.1.14</td><td class="toc-text"><a href="#method_has-autogen-class">method has-autogen-class</a></td></tr>
+       <tr class="toc-level-3"><td class="toc-number">4.1.15</td><td class="toc-text"><a href="#method_registry">method registry</a></td></tr>
+    <tr class="toc-level-3"><td class="toc-number">4.1.16</td><td class="toc-text"><a href="#method_plugs">method plugs</a></td></tr>
+  <tr class="toc-level-3"><td class="toc-number">4.1.17</td><td class="toc-text"><a href="#method_methods">method methods</a></td></tr>
+              <tr class="toc-level-3"><td class="toc-number">4.1.18</td><td class="toc-text"><a href="#method_pluggables">method pluggables</a></td></tr>
+    <tr class="toc-level-3"><td class="toc-number">4.1.19</td><td class="toc-text"><a href="#method_extended_classes">method extended classes</a></td></tr>
+           <tr class="toc-level-3"><td class="toc-number">4.1.20</td><td class="toc-text"><a href="#method_plug-classes">method plug-classes</a></td></tr>
+                <tr class="toc-level-3"><td class="toc-number">4.1.21</td><td class="toc-text"><a href="#method_inventory">method inventory</a></td></tr>
+    <tr class="toc-level-1"><td class="toc-number">5</td><td class="toc-text"><a href="#SEE_ALSO">SEE ALSO</a></td></tr>
+        
+</table>
+</nav>
+
+    <div class="pod-body">
+    <h1 id="Name"><a class="u" href="#___top" title="go to top of document">Name</a></h1>
+<p>OO::Plugin::Registry - to register &#39;em all!</p>
+<h1 id="SYNOPSIS"><a class="u" href="#___top" title="go to top of document">SYNOPSIS</a></h1>
+<pre class="pod-block-code">Plugin::Registry.instance.plugin-names;     # list of all registered plugins</pre>
+<h1 id="DESCRIPTION"><a class="u" href="#___top" title="go to top of document">DESCRIPTION</a></h1>
+<p>This module provides process-wide registration functionality for keeping track of various objects related to <code>OO::Plugin</code> framework. Most of the needed functionality is provided via higher-level means by <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin.md">OO::Plugin</a> and <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a> modules and described in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>.</p>
+<h1 id="EXPORTS"><a class="u" href="#___top" title="go to top of document">EXPORTS</a></h1>
+<h2 id="class_Plugin::Registry"><a class="u" href="#___top" title="go to top of document">class Plugin::Registry</a></h2>
+<p>This class is a singleton and it provides the complete API of this module.</p>
+<h3 id="submethod_instance"><a class="u" href="#___top" title="go to top of document">submethod instance</a></h3>
+<p>Returns the instance of this class.</p>
+<h3 id="method_register-plugin"><a class="u" href="#___top" title="go to top of document">method register-plugin</a></h3>
+<p>Creates a record mapping plugin FQN (fully qualified name) into its type.</p>
+<h3 id="method_plugin-names"><a class="u" href="#___top" title="go to top of document">method plugin-names</a></h3>
+<p>Returns all FQNs of registered plugins.</p>
+<h3 id="method_plugin-types"><a class="u" href="#___top" title="go to top of document">method plugin-types</a></h3>
+<p>Returns all types of registered plugins.</p>
+<h3 id="method_plugin-type"><a class="u" href="#___top" title="go to top of document">method plugin-type</a></h3>
+<p><code>plugin-type( Str:D $plugin-FQN )</code></p>
+<p>Returns type for a given plugin FQN. Fails with <code>X::OO::Plugin::NotFound</code> exception if no such plugin found.</p>
+<h3 id="method_plugin-meta"><a class="u" href="#___top" title="go to top of document">method plugin-meta</a></h3>
+<p>Registers or returns plugin&#39;s meta.</p>
+<ul><li><p><code>plugin-meta( %meta, Mu:U \plugin-type )</code></p>
+<p>Registers meta for <code>plugin-type</code>.</p>
+<p>Note that only new keys from <code>%meta</code> will be registerd. I.e. if we do:</p>
+<pre class="pod-block-code">my $r = Plugin::Registry.instance;
+$r.plugin-meta( {key1 =&gt; &quot;a&quot;}, Plugin1 );
+$r.plugin-meta( {key1 =&gt; &quot;a2&quot;, key2 =&gt; &quot;b2&quot;}, Plugin1 );</pre>
+<p>The final version of meta hash will be:</p>
+<pre class="pod-block-code">key1 =&gt; &quot;a&quot;, key2 =&gt; &quot;b2&quot;</pre>
+<p>Another special case is handling of <em>before</em>, <em>around</em>, <em>after</em> keys. While they conform to the above restriction, ther values from the <code>%meta</code> parameter will be converted to a list and stored as a <code>Set</code>.</p>
+</li>
+<li><p><code>plugin-meta( Str:D $plugin )</code> <code>plugin-meta( Str:D :$fqn )</code> <code>plugin-meta( Plugin:U \plugin-type )</code></p>
+<p>These variants return registered plugin meta. Note that the first one attempts to convert short name to FQN whlie two other don&#39;t and thus they&#39;re a little bit faster.</p>
+</li>
+</ul>
+<h3 id="method_pluggable-classes"><a class="u" href="#___top" title="go to top of document">method pluggable-classes</a></h3>
+<p>Returns all classes registered as pluggable. Consider the <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md#pluggables">OO::Plugin::Manual</a> with regard to <em>strict</em> or <em>loose</em> modes of operation of the plugin manger class.</p>
+<h3 id="method_is-pluggable"><a class="u" href="#___top" title="go to top of document">method is-pluggable</a></h3>
+<ul><li><p><code>is-pluggable( Mu:U \class )</code> <code>is-pluggable( Str:D $class-fqn )</code></p>
+<p><em>True</em> if class is pluggable.</p>
+</li>
+<li><p><code>is-pluggable( Str:D $class-fqn, Str:D $method )</code></p>
+<p><em>True</em> if method of a class is pluggable.</p>
+</li>
+</ul>
+<h3 id="method_type"><a class="u" href="#___top" title="go to top of document">method type</a></h3>
+<p><code>type( Str:D $class-fqn )</code></p>
+<p>Returns type object for a pluggable class FQN.</p>
+<h3 id="method_short2fqn"><a class="u" href="#___top" title="go to top of document">method short2fqn</a></h3>
+<ul><li><p><code>short2fqn( Str:D $what, Str:D $name )</code></p>
+</li>
+<li><p><code>short2fqn( $what =&gt; $name )</code></p>
+</li>
+</ul>
+<p>Converts short name of a pluggable class or a plugin into its FQN. <code>$what</code> is either string <em>&#39;classes&#39;</em> or <em>&#39;plugins&#39;</em>. Returns the <code>$name</code> parameter if the name is not found.</p>
+<h3 id="method_fqn2short"><a class="u" href="#___top" title="go to top of document">method fqn2short</a></h3>
+<ul><li><p><code>fqn2short( Str:D $what, Str:D $name )</code></p>
+</li>
+<li><p><code>fqn2short( $what =&gt; $name )</code></p>
+</li>
+</ul>
+<p>Converts FQN of a pluggable class or a plugin into its short name. <code>$what</code> is either string <em>&#39;classes&#39;</em> or <em>&#39;plugins&#39;</em>.</p>
+<h3 id="method_fqn-class-name"><a class="u" href="#___top" title="go to top of document">method fqn-class-name</a></h3>
+<ul><li><p><code>fqn-class-name( Str:D $name )</code></p>
+</li>
+</ul>
+<p>Shortcut for <code>short2fqn( &#39;classes&#39;, $name )</code></p>
+<h3 id="method_fqn-plugin-name"><a class="u" href="#___top" title="go to top of document">method fqn-plugin-name</a></h3>
+<ul><li><p><code>fqn-plugin-name( Str:D $name )</code></p>
+</li>
+</ul>
+<p>Shortcut for <code>short2fqn( &#39;plugins, $name )</code></p>
+<h3 id="method_has-autogen-class"><a class="u" href="#___top" title="go to top of document">method has-autogen-class</a></h3>
+<p><code>has-autogen-class( Str:D $class-fqn )</code></p>
+<p>Returns <em>True</em> if <code>$class-fqn</code> is already in the registry of auto-generated classes. Helps in avoiding generation of duplicate class names.</p>
+<h3 id="method_registry"><a class="u" href="#___top" title="go to top of document">method registry</a></h3>
+<p>Returns a deep copy of the registry <code>Hash</code>, excluding plugins and classes.</p>
+<h3 id="method_plugs"><a class="u" href="#___top" title="go to top of document">method plugs</a></h3>
+<p>Returns a deep copy of registered plugs. This branch of registry is currently contains only method handlers but other types of plugs might be invented in the future.</p>
+<h3 id="method_methods"><a class="u" href="#___top" title="go to top of document">method methods</a></h3>
+<p>Returns a copy of registered method handlers <code>Hash</code>. It&#39;s keys are (by nesting level):</p>
+<ul><li><p>pluggable class FQN</p>
+</li>
+<li><p>method of the class</p>
+</li>
+<li><p>plugin FQN</p>
+</li>
+<li><p>method call stage: <em>before</em>, <em>around</em>, <em>after</em></p>
+</li>
+</ul>
+<p>Leafs are handler methods.</p>
+<h3 id="method_pluggables"><a class="u" href="#___top" title="go to top of document">method pluggables</a></h3>
+<p>Returns a copy of pluggables registry. Currently only contains <em>methods</em> key.</p>
+<h3 id="method_extended_classes"><a class="u" href="#___top" title="go to top of document">method extended classes</a></h3>
+<p>Returns a copy of the hash of all classes listed in <code>for</code> trait of <code>plug-class</code> declarations. The keys are:</p>
+<ul><li><p>class FQN</p>
+</li>
+<li><p>plugin FQN</p>
+</li>
+</ul>
+<p>The leafs are list of <code>plug-class</code> type objects.</p>
+<h3 id="method_plug-classes"><a class="u" href="#___top" title="go to top of document">method plug-classes</a></h3>
+<p>Returns a copy of the hash of all registered <code>plug-classes</code>. The keys are:</p>
+<ul><li><p>plugin FQN</p>
+</li>
+<li><p><code>plug-class</code> FQN</p>
+</li>
+</ul>
+<p>The leafs are hashes of two keys:</p>
+<ul><li><p><em>type</em> - <code>plug-class</code> type object</p>
+</li>
+<li><p><em>extends</em> - <code>Set</code> of class names</p>
+</li>
+</ul>
+<h3 id="method_inventory"><a class="u" href="#___top" title="go to top of document">method inventory</a></h3>
+<p>Returns a copy of inventory hash. It currently only has one key: <em>autogen-classs</em> which is a set of framework-generated class names.</p>
+<h1 id="SEE_ALSO"><a class="u" href="#___top" title="go to top of document">SEE ALSO</a></h1>
+<p><a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin.md">OO::Plugin</a> <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a></p>
+<section><h1>AUTHOR</h1>
+<p>Vadim Belman &lt;vrurg@cpan.org&gt;</p>
+</section>
+
+    </div>
+    
+    
+    </body>
+</html>
+

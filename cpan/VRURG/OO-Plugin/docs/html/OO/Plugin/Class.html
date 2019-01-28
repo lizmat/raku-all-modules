@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8" />
+        <style>
+        kbd { font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
+        samp { font-family: "Terminus", "Courier", "Lucida Console", monospace }
+        u { text-decoration: none }
+        .nested {
+            margin-left: 3em;
+        }
+        aside, u { opacity: 0.7 }
+        a[id^="fn-"]:target { background: #ff0 }
+        </style>
+        <link rel="stylesheet" href="//design.perl6.org/perl.css">
+        
+        
+    </head>
+    <body class="pod">
+    <div id="___top"></div>
+    
+    
+    
+    <nav class="indexgroup">
+<table id="TOC">
+<caption><h2 id="TOC_Title">Table of Contents</h2></caption>
+<tr class="toc-level-1"><td class="toc-number">1</td><td class="toc-text"><a href="#NAME">NAME</a></td></tr>
+  <tr class="toc-level-1"><td class="toc-number">2</td><td class="toc-text"><a href="#EXPORTS">EXPORTS</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-number">2.1</td><td class="toc-text"><a href="#Classes">Classes</a></td></tr>
+ <tr class="toc-level-3"><td class="toc-number">2.1.1</td><td class="toc-text"><a href="#class_PluginMessage">class <code class="pod-code-inline">PluginMessage</code></a></td></tr>
+         <tr class="toc-level-3"><td class="toc-number">2.1.2</td><td class="toc-text"><a href="#class_MethodHandlerMsg">class <code class="pod-code-inline">MethodHandlerMsg</code></a></td></tr>
+       <tr class="toc-level-3"><td class="toc-number">2.1.3</td><td class="toc-text"><a href="#class_&lt;Plugin&gt;">class &lt;Plugin&gt;</a></td></tr>
+       <tr class="toc-level-1"><td class="toc-number">3</td><td class="toc-text"><a href="#SEE_Also">SEE Also</a></td></tr>
+      
+</table>
+</nav>
+
+    <div class="pod-body">
+    <h1 id="NAME"><a class="u" href="#___top" title="go to top of document">NAME</a></h1>
+<p>OO::Plugin::Class - collection for service classes.</p>
+<h1 id="EXPORTS"><a class="u" href="#___top" title="go to top of document">EXPORTS</a></h1>
+<h2 id="Classes"><a class="u" href="#___top" title="go to top of document">Classes</a></h2>
+<h3 id="class_PluginMessage"><a class="u" href="#___top" title="go to top of document">class <code>PluginMessage</code></a></h3>
+<p>This class is used to provide a plugin with information about the current call. In its pure form the plugin manager is using objects of this class to communicate with callbacks.</p>
+<h1>Attribute.new: Parameters the method has been called with</h1><h1>Attribute.new: Data only available to a single plugin. This data would exists strictly within one execution chain and won&#39;t be exposed to the code from other plugins.</h1><h1>Attribute.new: Data shared among all the plugins. This attribute is similar to .private except this data is shared; i.e. what is set by one plugin can be read or changed by others.</h1><article>
+<code class="pod-code-inline">set-rc:(OO::Plugin::Class::PluginMessage: $!rc is copy, *%_ --&gt; Nil)</code>:
+This method sets the suggested return value for the current execution chain.
+</article>
+<article>
+<code class="pod-code-inline">reset-rc:(OO::Plugin::Class::PluginMessage: *%_ --&gt; Nil)</code>:
+Reset the suggested return value.
+</article>
+<article>
+<code class="pod-code-inline">has-rc:(OO::Plugin::Class::PluginMessage: *%_ --&gt; Bool)</code>:
+Returns _True_ if the suggested return value has been set.
+</article>
+<article>
+<code class="pod-code-inline">rc:(OO::Plugin::Class::PluginMessage: *%_)</code>:
+Suggested return value
+</article>
+<h3 id="class_MethodHandlerMsg"><a class="u" href="#___top" title="go to top of document">class <code>MethodHandlerMsg</code></a></h3>
+<p>Inherits from <code>PluginMessage</code>. Used to provide information for method handlers.</p>
+<h1>Attribute.new: Instance of the object the original method has been called upon.</h1><h1>Attribute.new: Name of the method being called.</h1><h1>Attribute.new: Stage of method call. Can be one of three strings: _before_, _around_, _after_.</h1><h3 id="class_<Plugin>"><a class="u" href="#___top" title="go to top of document">class &lt;Plugin&gt;</a></h3>
+<p>The base class of all plugins.</p>
+<h1>Attribute.new: The plugin manager object which created this plugin instance.</h1><h1>Attribute.new: Plugin&#39;s fully qualified name.</h1><h1>Attribute.new: Plugin&#39;s short name.</h1><article>
+<code class="pod-code-inline">on-event:(OO::Plugin::Class::Plugin: Str:D $name, |)</code>:
+Event handler.
+</article>
+<article>
+<code class="pod-code-inline">on-callback:(OO::Plugin::Class::Plugin: Str:D $cb-name, OO::Plugin::Class::PluginMessage:D $msg, |)</code>:
+Callback handler.
+</article>
+<h1 id="SEE_Also"><a class="u" href="#___top" title="go to top of document">SEE Also</a></h1>
+<p><a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin.md">OO::Plugin::Class</a></p>
+<section><h1>AUTHOR</h1>
+<p>Vadim Belman &lt;vrurg@cpan.org&gt;</p>
+</section>
+
+    </div>
+    
+    
+    </body>
+</html>
+

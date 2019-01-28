@@ -1,0 +1,25 @@
+{
+  "production": false,
+  "meta-version": "0",
+  "description": "Plugin module for testing",
+  "source-url": "git://github.com/vrurg/Perl6-OO-Plugin.git",
+  "perl": "6.c",
+  "tags": [
+    "Foo",
+    "Plugin"
+  ],
+  "authors": [
+    "Vadim Belman <vrurg@cpan.org>"
+  ],
+  "name": "Foo::Plugin::Test",
+  "provides": {
+    "Foo::Plugin::Test": "lib/Foo/Plugin/Test.pm6"
+  },
+  "auth": "github:vrurg",
+  "license": "Artistic-2.0",
+  "support": {
+    "source": "https://github.com/vrurg/Perl6-OO-Plugin.git"
+  },
+  "version": "0.0.1",
+  "resources": [ ]
+}

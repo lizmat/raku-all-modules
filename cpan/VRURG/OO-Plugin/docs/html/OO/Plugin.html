@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8" />
+        <style>
+        kbd { font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
+        samp { font-family: "Terminus", "Courier", "Lucida Console", monospace }
+        u { text-decoration: none }
+        .nested {
+            margin-left: 3em;
+        }
+        aside, u { opacity: 0.7 }
+        a[id^="fn-"]:target { background: #ff0 }
+        </style>
+        <link rel="stylesheet" href="//design.perl6.org/perl.css">
+        
+        
+    </head>
+    <body class="pod">
+    <div id="___top"></div>
+    
+    
+    
+    <nav class="indexgroup">
+<table id="TOC">
+<caption><h2 id="TOC_Title">Table of Contents</h2></caption>
+<tr class="toc-level-1"><td class="toc-number">1</td><td class="toc-text"><a href="#NAME">NAME</a></td></tr>
+  <tr class="toc-level-1"><td class="toc-number">2</td><td class="toc-text"><a href="#SYNOPSIS">SYNOPSIS</a></td></tr>
+  <tr class="toc-level-1"><td class="toc-number">3</td><td class="toc-text"><a href="#DESCRIPTION">DESCRIPTION</a></td></tr>
+             <tr class="toc-level-1"><td class="toc-number">4</td><td class="toc-text"><a href="#EXPORTS">EXPORTS</a></td></tr>
+ <tr class="toc-level-2"><td class="toc-number">4.1</td><td class="toc-text"><a href="#Routines">Routines</a></td></tr>
+        <tr class="toc-level-2"><td class="toc-number">4.2</td><td class="toc-text"><a href="#Classes">Classes</a></td></tr>
+     <tr class="toc-level-1"><td class="toc-number">5</td><td class="toc-text"><a href="#SEE_ALSO">SEE ALSO</a></td></tr>
+        
+</table>
+</nav>
+
+    <div class="pod-body">
+    <h1 id="NAME"><a class="u" href="#___top" title="go to top of document">NAME</a></h1>
+<p>OO::Plugin – framework for working with OO plugins.</p>
+<h1 id="SYNOPSIS"><a class="u" href="#___top" title="go to top of document">SYNOPSIS</a></h1>
+<pre class="pod-block-code">use OO::Plugin;
+use OO::Plugin::Manager;
+
+class Foo is pluggable {
+    has $.attr;
+    method bar is pluggable {
+        return 42;
+    }
+}
+
+plugin Fubar {
+    method a-bar ( $msg ) is plug-around( Foo =&gt; &#39;bar&#39; ) {
+        $msg.set-rc( pi ); # Will override &amp;Foo::bar return value and prevent its execution.
+    }
+}
+
+my $manager = OO::Plugin::Manager.new.initialize;
+my $instance = $manager.create( Foo, attr =&gt; &#39;some value&#39; );
+say $instance.bar;  # 3.141592653589793</pre>
+<h1 id="DESCRIPTION"><a class="u" href="#___top" title="go to top of document">DESCRIPTION</a></h1>
+<p>With this framework any application can have highly flexible and extensible plugin subsystem with which plugins would be capable of:</p>
+<ul><li><p>method overriding</p>
+</li>
+<li><p>class overriding (inheriting)</p>
+</li>
+<li><p>callbacks</p>
+</li>
+<li><p>asynchronous event handling</p>
+</li>
+</ul>
+<p>The framework also supports:</p>
+<ul><li><p>automatic loading of plugins with a predefined namespace</p>
+</li>
+<li><p>managing plugin ordering and dependencies</p>
+</li>
+</ul>
+<p>Not yet supported but planned for the future is plugin compatibility management.</p>
+<p>Read more in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>.</p>
+<h1 id="EXPORTS"><a class="u" href="#___top" title="go to top of document">EXPORTS</a></h1>
+<h2 id="Routines"><a class="u" href="#___top" title="go to top of document">Routines</a></h2>
+<ul><li><p><code>plugin-meta [key =</code> value, ...]&gt;</p>
+<p>Registers plugin meta. Can only be used within plugin body block.</p>
+</li>
+<li><p><code>plug-last [return-value]</code></p>
+<p>Cancels current execution chain and optionally sets return value.</p>
+</li>
+<li><p><code>plug-redo</code></p>
+<p>Restarts current execution chain.</p>
+</li>
+</ul>
+<h2 id="Classes"><a class="u" href="#___top" title="go to top of document">Classes</a></h2>
+<p><code>PluginMessage</code> and &lt;MethodHandlerMsg&gt; are re-exported from <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a>.</p>
+<h1 id="SEE_ALSO"><a class="u" href="#___top" title="go to top of document">SEE ALSO</a></h1>
+<p><a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a> <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Registry.md">OO::Plugin::Registry</a></p>
+<section><h1>AUTHOR</h1>
+<p>Vadim Belman &lt;vrurg@cpan.org&gt;</p>
+</section>
+
+    </div>
+    
+    
+    </body>
+</html>
+
