@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/drforr/perl6-vroom2reveal.git
+	branch = master
+	commit = 0be59bcc5a416d73d5ef602339dd42e8d87c41fb
+	parent = 29f750e95bc7b48cb16d0c8a8b4f9b8537f794cb
+	cmdver = 0.3.1

@@ -1,0 +1,38 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Vroom::Reveal;
+
+=begin pod
+
+=begin NAME
+
+vroom2reveal - Convert vroom-format slides to reveal.js format
+
+=end NAME
+
+=begin SYNOPSIS
+
+    $ vroom2reveal talk/slides.vroom
+
+=end SYNOPSIS
+
+=begin DESCRIPTION
+
+Capture slide-deck title
+Break slides on '-----' into <section/>s
+Reformat header into <h2/>
+Wrap remainder in <pre><code></code></pre>
+Wrap entire file in reveal.js boilerplate
+
+=end DESCRIPTION
+
+=end pod
+
+sub MAIN( Str $vroom-filename,
+	  Str :$reveal-filename = $vroom-filename ~ '.html',
+	  Str :$author = 'Jeff Goff' ) {
+
+	my $vroom-string = $vroom-filename.IO.slurp;
+	say Vroom::Reveal.to-reveal( $vroom-string );
+}
