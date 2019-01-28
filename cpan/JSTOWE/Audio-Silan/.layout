@@ -1,0 +1,73 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "type": "directory",
+      "purpose": null,
+      "children": [
+        {
+          "type": "directory",
+          "purpose": null,
+          "name": "data",
+          "children": [
+            {
+              "type": "file",
+              "name": "test.wav"
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "020-detect.t"
+        },
+        {
+          "name": "010-constructor.t",
+          "type": "file"
+        },
+        {
+          "name": "001-use.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        }
+      ],
+      "name": "t"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "type": "directory",
+          "name": "Audio",
+          "children": [
+            {
+              "type": "file",
+              "name": "Silan.pm"
+            }
+          ],
+          "purpose": null
+        }
+      ],
+      "name": "lib",
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}
