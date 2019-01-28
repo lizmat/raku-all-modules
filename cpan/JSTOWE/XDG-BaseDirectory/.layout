@@ -1,0 +1,58 @@
+{
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "003-basedirectory.t"
+        },
+        {
+          "type": "file",
+          "name": "002-basic.t"
+        }
+      ],
+      "type": "directory",
+      "purpose": null,
+      "name": "t"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "name": "XDG",
+          "purpose": null,
+          "type": "directory",
+          "children": [
+            {
+              "type": "file",
+              "name": "BaseDirectory.pm"
+            }
+          ]
+        }
+      ],
+      "name": "lib",
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}

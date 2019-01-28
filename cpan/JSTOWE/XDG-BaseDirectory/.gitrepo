@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/XDG-BaseDirectory.git
+	branch = master
+	commit = ea39f9dab101ad5eee174587a6d4256fc707c73c
+	parent = df097aa93d0453b3d693e3483f182ee116b690ac
+	cmdver = 0.3.1
