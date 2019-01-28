@@ -1,0 +1,34 @@
+{
+    "name" : "DB",
+
+    "version" : "0.1",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-db.git",
+
+    "perl" : "6.*",
+
+    "tags" : [ "DATABASE" ],
+
+    "provides" : {
+        "DB"             : "lib/DB.pm6",
+        "DB::Connection" : "lib/DB/Connection.pm6",
+        "DB::Statement"  : "lib/DB/Statement.pm6",
+        "DB::Result"     : "lib/DB/Result.pm6",
+        "DB::Mock"       : "lib/DB/Mock.pm6"
+    },
+
+    "depends" : [ "Concurrent::Stack" ],
+
+    "description" : "Base roles for DB::* family of SQL Database modules",
+
+    "test-depends" : [ "Test", "Test::META" ],
+
+    "license" : "BSD-2-Clause",
+
+    "authors" : [ "Curt Tilmes <ctilmes@cpan.org>" ],
+
+    "support" : {
+      "source" : "https://github.com/CurtTilmes/perl6-db.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-db/issues"
+    }
+}
