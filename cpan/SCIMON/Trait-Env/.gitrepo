@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Scimon/p6-Trait-Env.git
+	branch = master
+	commit = f330b8f4a2934cd975df0c427e35de9ccbb354ea
+	parent = bebef9492ae669f6965df2c8b6e4cf38fc9d934b
+	cmdver = 0.3.1

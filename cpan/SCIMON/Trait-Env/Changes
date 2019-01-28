@@ -1,0 +1,48 @@
+Revision history for Trait-Env
+
+{{$NEXT}}
+
+0.5.1  2018-09-05T08:57:20+01:00
+    - Returned Trait::Env::Shared to provides as it's breaking builds
+
+0.5.0  2018-09-04T19:53:02+01:00
+    - Variables, Positional and Associative.
+
+0.4.1  2018-09-04T17:30:25+01:00
+    - $*DISTRO.path-sep seperation for arrays.
+
+0.4.0  2018-09-03T19:34:26+01:00
+    - Splitting out the Attributes and new Variables modules.
+    - Basic Variable interpolation with types.
+
+0.3.3  2018-08-30T09:26:43+01:00
+    - Typed Hashes
+
+0.3.2  2018-08-29T11:30:11+01:00
+    - Turn off precomplication to work around trait bug.
+
+0.3.1  2018-08-27T12:46:37+01:00
+    - Documented the post_match and pre_match values
+
+0.3.0  2018-08-27T12:42:09+01:00
+    - Minor refactoring
+    - Fixed issue with defaults and seperated arrays
+    - String seperated hashes
+
+0.2.1  2018-08-23T16:53:44+01:00
+    - Added :sep key to allow single value seperated lists
+    
+0.2.0  2018-08-23T14:32:10+01:00
+    - Added Arrays.
+    - Did a bunch of refactoring.
+
+0.1.1  2018-08-22T07:48:03+01:00
+    - Fixed undefined variable failure for typed variables.
+    - Updated tests to not clobber the environment.
+
+0.1.0  2018-08-21T17:21:47+01:00
+    - Boolean vlues update to allow True/False in environment vars
+    - Added a named exception
+
+0.0.1  2018-08-20T17:14:51+01:00
+    - Initial version
