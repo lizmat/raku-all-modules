@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/vrurg/Perl6-Cro-RPC-JSON.git
+	branch = master
+	commit = 86089c48b341d7ceaea659cd9d08bd08ea123559
+	parent = 73faaf2f0450ead29cbd40519bd05fbc9541c73f
+	cmdver = 0.3.1
