@@ -1,0 +1,100 @@
+{
+  "children": [
+    {
+      "children": [
+        {
+          "name": "list-clients",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "update-metadata"
+        }
+      ],
+      "purpose": null,
+      "type": "directory",
+      "name": "examples"
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "children": [
+            {
+              "name": "admin_listeners.xml",
+              "type": "file"
+            },
+            {
+              "name": "admin_stats.xml",
+              "type": "file"
+            }
+          ],
+          "purpose": null,
+          "type": "directory",
+          "name": "data"
+        },
+        {
+          "type": "file",
+          "name": "025-status-online.t"
+        },
+        {
+          "type": "file",
+          "name": "020-stats-basic.t"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "name": "010-use.t",
+          "type": "file"
+        },
+        {
+          "name": "030-listeners-basic.t",
+          "type": "file"
+        }
+      ],
+      "name": "t",
+      "type": "directory"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "name": "Documentation.md",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "type": "directory",
+          "name": "Audio",
+          "children": [
+            {
+              "name": "Icecast.pm",
+              "type": "file"
+            }
+          ],
+          "purpose": null
+        }
+      ],
+      "name": "lib",
+      "type": "directory"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}

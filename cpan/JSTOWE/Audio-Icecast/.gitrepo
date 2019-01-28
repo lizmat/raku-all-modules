@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Audio-Icecast.git
+	branch = master
+	commit = 0beb80419798408eefd6c5c6c9a5a1e5882522ce
+	parent = cee5fe7407b1f18d68036228d1c4423add7a6b84
+	cmdver = 0.3.1
