@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Igo.git
+	branch = master
+	commit = f4e6766a013ce61a71e91b8221151d77fbb0cf40
+	parent = b802ac5ce8b853ea509f186e7d04c9bb7d61136b
+	cmdver = 0.3.1

@@ -1,0 +1,40 @@
+{
+  "name": "Igo",
+  "source-url": "git://github.com/jonathanstowe/Igo.git",
+  "support": {
+    "email": "jns+gh@gellyfish.co.uk",
+    "source": "git://github.com/jonathanstowe/Igo.git",
+    "bugtracker": "https://github.com/jonathanstowe/Igo/issues"
+  },
+  "perl": "6.*",
+  "resources": [
+  ],
+  "build-depends": [
+  ],
+  "auth": "github:jonathanstowe",
+  "depends": [
+	"Archive::Libarchive",
+	"CPAN::Uploader::Tiny",
+	"META6",
+	"Oyatul",
+	"XDG::BaseDirectory"
+  ],
+  "tags": [
+	"cpan6",
+	"packager",
+	"uploader"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+  ],
+  "provides": {
+	"Igo" :  "lib/Igo.pm"
+  },
+  "version": "0.0.5",
+  "meta-version": "0",
+  "api" : "1.0",
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ],
+  "description": "Expedient CPAN6 distribution packager and uploader"
+}

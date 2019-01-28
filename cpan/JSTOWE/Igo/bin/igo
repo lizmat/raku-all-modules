@@ -1,0 +1,35 @@
+#!/usr/bin/env perl6
+
+use Igo;
+
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
+subset ExistingDirectory of IO where *.IO.d;
+
+#| Create a .layout for further editing
+multi sub MAIN('create-layout', IO() :$directory where *.IO.d = '.' ) {
+    Igo.new(:$directory).create-layout
+}
+
+#| Create the archive file
+multi sub MAIN('create-archive', IO() :$directory where *.IO.d = '.' ) {
+    Igo.new(:$directory).create-archive
+}
+
+#| Create archive and upload to PAUSE
+multi sub MAIN('upload', Str :$username, Str :$password, Bool :$keep = False, IO() :$directory where *.IO.d = '.' ) {
+    Igo.new(:$username, :$password, :$directory).upload(:$keep);
+    CATCH {
+        when X::NoPauseCredentials {
+            .message.say;
+            exit(1);
+        }
+    }
+}
+
+#| Clean up any artefacts that may have been created
+multi sub MAIN('clean', IO() :$directory where *.IO.d = '.' ) {
+    Igo.new(:$directory).cleanup;
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
