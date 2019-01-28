@@ -1,0 +1,72 @@
+{
+  "children": [
+    {
+      "name": "t",
+      "purpose": null,
+      "children": [
+        {
+          "name": "010-basic.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        }
+      ],
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "type": "directory",
+      "purpose": null,
+      "name": "resources",
+      "children": [
+        {
+          "type": "file",
+          "name": "lala.txt"
+        }
+      ]
+    },
+    {
+      "children": [
+        {
+          "type": "directory",
+          "children": [
+            {
+              "name": "Insult",
+              "purpose": null,
+              "children": [
+                {
+                  "name": "Lala.pm",
+                  "type": "file"
+                }
+              ],
+              "type": "directory"
+            }
+          ],
+          "name": "Acme",
+          "purpose": null
+        }
+      ],
+      "name": "lib",
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}

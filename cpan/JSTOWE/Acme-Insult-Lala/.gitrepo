@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Acme-Insult-Lala.git
+	branch = master
+	commit = 94c5d4296701bd1b94b3b2910686f50f44646e32
+	parent = 89f62f749b47d7091d6e87077b299b3a0adc9565
+	cmdver = 0.3.1
