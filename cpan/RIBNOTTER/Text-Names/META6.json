@@ -1,0 +1,18 @@
+    {
+        "perl" : "6.c",
+        "name" : "Text::Names",
+        "auth" : "github:ribbon-otter",
+        "api" : "1",
+        "version" : "0.0.1",
+        "description" : "A module that can generate full American English names of either gender, as well as single first names and last names if that is desired. It generates names in roughly the same popularity as they were in 1990 USA",
+        "authors" : [ "ribbon-otter" ],
+        "license" : "MIT",
+        "provides" : {
+            "Text::Names": "lib/Text/Names.pm6"
+        },
+        "tags": [
+          "NPL", "Natural Language", "Names", "Dummy Data"
+        ],
+	"resources":["dist.all.last" , "dist.female.first" , "dist.male.first" ],
+        "source-url" :"https://github.com/ribbon-otter/names.git" 
+    }

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ribbon-otter/names.git
+	branch = master
+	commit = daaf83d5c97cf72c3b9c4bf692aba01fb815eea9
+	parent = 521d3e5610411fe67b170a8a24cc306409162f32
+	cmdver = 0.3.1
