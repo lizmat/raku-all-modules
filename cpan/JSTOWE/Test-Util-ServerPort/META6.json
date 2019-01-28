@@ -1,0 +1,35 @@
+{
+  "name": "Test::Util::ServerPort",
+  "version": "0.0.2",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "description": "Get a free server port for testing with",
+  "source-url": "git://github.com/jonathanstowe/Test-Util-ServerPort.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/Test-Util-ServerPort.git"
+  },
+  "perl": "6.*",
+  "resources": [
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+  ],
+  "tags": [
+    "network",
+    "server",
+    "test",
+    "util"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "Test"
+  ],
+  "provides": {
+    "Test::Util::ServerPort": "lib/Test/Util/ServerPort.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],  
+  "meta-version": "0"
+}

@@ -1,0 +1,61 @@
+{
+  "children": [
+    {
+      "purpose": null,
+      "name": "t",
+      "children": [
+        {
+          "type": "file",
+          "name": "010-basic.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        }
+      ],
+      "type": "directory"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "purpose": null,
+      "name": "lib",
+      "children": [
+        {
+          "type": "directory",
+          "children": [
+            {
+              "type": "directory",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "ServerPort.pm"
+                }
+              ],
+              "name": "Util",
+              "purpose": null
+            }
+          ],
+          "name": "Test",
+          "purpose": null
+        }
+      ]
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}

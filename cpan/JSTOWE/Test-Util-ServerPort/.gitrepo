@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Test-Util-ServerPort.git
+	branch = master
+	commit = 184ed7e575b48c4a1db50dae9bfb606a7de59ad3
+	parent = 9b183ac6ccafcd6fcc395c9def5738eee30c045b
+	cmdver = 0.3.1
