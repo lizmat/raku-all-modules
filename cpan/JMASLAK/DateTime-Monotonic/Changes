@@ -1,0 +1,15 @@
+Revision history for DateTime-Monotonic
+
+{{$NEXT}}
+
+0.0.4  2018-12-04T23:56:01-07:00
+    - Allow procedural interface to be used without requiring exports.
+
+0.0.3  2018-12-04T23:38:10-07:00
+    - Add procedural interface
+
+0.0.2  2018-12-04T22:19:55-07:00
+    - seconds() is now thread-safe
+
+0.0.1  2018-12-03T18:29:25-07:00
+    - Initial version

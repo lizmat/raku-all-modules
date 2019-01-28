@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jmaslak/Perl6-DateTime-Monotonic.git
+	branch = master
+	commit = 52d758e5be14a8aa6f032dcc8c58f2cc76551013
+	parent = 0fbd9c70446ca3876c58a2f6a820224900f1d966
+	cmdver = 0.3.1

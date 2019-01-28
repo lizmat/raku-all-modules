@@ -1,0 +1,6 @@
+FUTURE IMPROVEMENTS:
+
+ - Support more OSes than Linux
+ - Clock sanity checks for changes into the future (maybe treat as a
+   smaller change?)
+

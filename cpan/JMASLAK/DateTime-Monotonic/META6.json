@@ -1,0 +1,20 @@
+{
+  "auth" : "cpan:JMASLAK",
+  "authors" : [
+    "Joelle Maslak"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "is a Never-Decreasing Time-Elapsed Counter",
+  "license" : "Artistic-2.0",
+  "name" : "DateTime::Monotonic",
+  "perl" : "6.c",
+  "provides" : {
+    "DateTime::Monotonic" : "lib/DateTime/Monotonic.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/jmaslak/Perl6-DateTime-Monotonic.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.4"
+}
