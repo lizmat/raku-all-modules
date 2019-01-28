@@ -1,0 +1,22 @@
+Revision history for P5rand
+
+{{$NEXT}}
+
+0.0.5  2018-06-01T12:33:04+02:00
+    - Argh, forgot to do the actual deprecation
+
+0.0.4  2018-06-01T12:30:19+02:00
+    - Deprecated module: please use P5math instead
+    - Removed original Perl 5 documentation
+
+0.0.3  2018-05-21T21:13:52+02:00
+    - Added original Perl 5 documentation
+
+0.0.2  2018-05-08T09:41:27+02:00
+    - Removed support for srand().
+      As Grinzz has pointed out on #perl, I got the semantics of srand()
+      wrong.  The correct semantics are the same with Perl 6 except for the
+      srand() version, which would be a bad idea to mimic in Perl 6.
+
+0.0.1  2018-05-06T23:53:04+02:00
+    - Initial version

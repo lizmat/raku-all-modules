@@ -1,0 +1,26 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "P5math"
+  ],
+  "description" : "Implement Perl 5's rand() built-ins [DEPRECATED]",
+  "license" : "Artistic-2.0",
+  "name" : "P5rand",
+  "perl" : "6.c",
+  "provides" : {
+    "P5rand" : "lib/P5rand.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5rand.git",
+  "tags" : [
+    "DEPRECATED",
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.5"
+}
