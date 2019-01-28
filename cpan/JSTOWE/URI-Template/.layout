@@ -1,0 +1,127 @@
+{
+  "children": [
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "name": "t",
+      "type": "directory",
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "020-grammar.t"
+        },
+        {
+          "type": "file",
+          "name": "040-spec-examples-by-section.t"
+        },
+        {
+          "type": "file",
+          "name": "050-extended-tests.t"
+        },
+        {
+          "name": "030-spec-examples.t",
+          "type": "file"
+        },
+        {
+          "name": "010-use.t",
+          "type": "file"
+        },
+        {
+          "name": "data",
+          "type": "directory",
+          "purpose": null,
+          "children": [
+            {
+              "name": "README.md",
+              "type": "file"
+            },
+            {
+              "type": "directory",
+              "name": "uritemplate-test",
+              "children": [
+                {
+                  "name": "spec-examples-by-section.json",
+                  "type": "file"
+                },
+                {
+                  "name": "README.md",
+                  "type": "file"
+                },
+                {
+                  "name": "extended-tests.json",
+                  "type": "file"
+                },
+                {
+                  "name": "negative-tests.json",
+                  "type": "file"
+                },
+                {
+                  "type": "file",
+                  "name": "spec-examples.json"
+                }
+              ],
+              "purpose": null
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "060-synopsis.t"
+        },
+        {
+          "name": "070-exceptions.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        }
+      ]
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "type": "directory",
+      "name": "lib",
+      "children": [
+        {
+          "children": [
+            {
+              "type": "file",
+              "name": "Template.pm"
+            }
+          ],
+          "purpose": null,
+          "type": "directory",
+          "name": "URI"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "name": "rfc6570.txt",
+          "type": "file"
+        }
+      ],
+      "name": "doc",
+      "type": "directory"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}

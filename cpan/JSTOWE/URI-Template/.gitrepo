@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/URI-Template.git
+	branch = master
+	commit = 95f887d947c90b8c1c2fa0b8121e0e3b56ec139d
+	parent = 0298468ad38551170897c4763159fe6616066f61
+	cmdver = 0.3.1
