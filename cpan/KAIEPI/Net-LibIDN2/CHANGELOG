@@ -1,0 +1,23 @@
+0.0.1:
+
+- Initial commit
+
+0.0.2:
+
+- Implemented idn2_to_ascii_8z and idn2_to_unicode_8z8z
+
+0.0.3:
+
+- Fixed tests
+
+0.0.4:
+
+- Introduced IDN2_IDN_COMPAT to allow users to tell whether or not the version
+of LibIDN2 installed includes idn2_to_ascii_8z and idn2_to_ascii_8z8z functions
+or not
+
+0.1.0:
+
+- Removed IDN2_IDN_COMPAT since it was breaking builds on Ubuntu
+- Made IDN2_VERSION a Version instead of a Str
+- Made Net::LibIDN2.check_version return a Version or Nil instead of a Str:D

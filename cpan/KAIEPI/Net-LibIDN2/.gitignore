@@ -1,0 +1,11 @@
+.DS_store
+*.DS_store
+
+*~
+*swp
+*swo
+
+*.lock
+
+*.core
+.precomp/
