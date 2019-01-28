@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Net-protoent.git
+	branch = master
+	commit = 82b84e69918be9f31f13e4e7b5991c63342377b8
+	parent = 3f904a512c11e90638d4c0396a4bd583164b0c19
+	cmdver = 0.3.1
