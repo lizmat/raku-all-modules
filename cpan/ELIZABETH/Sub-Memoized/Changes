@@ -1,0 +1,13 @@
+Revision history for Sub-Memoized
+
+{{$NEXT}}
+
+0.0.3  2018-08-01T15:53:59+02:00
+    - Fixed tagline that was a copy-pasto
+
+0.0.2  2018-07-26T12:39:45+02:00
+    - Removed nqp hack to prevent optimization (done in Rakudo now)
+    - Added some more tests
+
+0.0.1  2018-07-25T22:18:24+02:00
+    - Initial version

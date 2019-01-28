@@ -1,0 +1,22 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "trait for memoizing calls to subroutines",
+  "license" : "Artistic-2.0",
+  "name" : "Sub::Memoized",
+  "perl" : "6.c",
+  "provides" : {
+    "Sub::Memoized" : "lib/Sub/Memoized.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Sub-Memoized.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.3"
+}
