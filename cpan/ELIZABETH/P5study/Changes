@@ -1,0 +1,13 @@
+Revision history for P5study
+
+{{$NEXT}}
+
+0.0.3  2018-05-21T21:49:04+02:00
+    - Added original Perl 5 documentation
+    - Added authority information
+
+0.0.2  2018-04-11T21:10:00+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.1  2018-01-29T20:31:01+01:00
+    - Initial implementation.
