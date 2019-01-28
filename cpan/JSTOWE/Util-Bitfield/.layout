@@ -1,0 +1,58 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "type": "file",
+          "name": "020-fields.t"
+        },
+        {
+          "name": "010-use.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        }
+      ],
+      "purpose": null,
+      "name": "t",
+      "type": "directory"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "name": "lib",
+      "purpose": null,
+      "children": [
+        {
+          "name": "Util",
+          "type": "directory",
+          "purpose": null,
+          "children": [
+            {
+              "name": "Bitfield.pm",
+              "type": "file"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}
