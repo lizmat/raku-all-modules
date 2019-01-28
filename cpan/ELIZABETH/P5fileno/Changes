@@ -1,0 +1,12 @@
+Revision history for P5fileno
+
+{{$NEXT}}
+
+0.0.3  2018-06-14T19:56:58+02:00
+    - Added IDIOMATIC PERL 6 WAY section to documentation
+
+0.0.2  2018-05-20T13:00:31+02:00
+    - Added original Perl 5 documentation
+
+0.0.1  2018-04-26T23:36:25+02:00
+    - Initial version
