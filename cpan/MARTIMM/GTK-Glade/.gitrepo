@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MARTIMM/gtk-glade.git
+	branch = master
+	commit = 754ecb9d38dac97e6a0a447f8cdcec27e4cfebb7
+	parent = 653fab3647bb5ba90624c6ec955a11ed487fe389
+	cmdver = 0.3.1

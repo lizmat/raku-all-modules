@@ -1,0 +1,55 @@
+{
+  "description": "Interfacing Glade XML to Perl6",
+  "name": "GTK::Glade",
+  "version": "0.7.0",
+  "authors": [ "Marcel Timmerman"],
+  "tags": [ "XML", "Glade", "Gtk"],
+
+  "perl": "6",
+  "license": "Artistic-2.0",
+
+  "provides": {
+    "GTK::Glade": "lib/GTK/Glade.pm6",
+    "GTK::Glade::Engine": "lib/GTK/Glade/Engine.pm6",
+    "GTK::Glade::Engine::PreProcess": "lib/GTK/Glade/Engine/PreProcess.pm6",
+    "GTK::Glade::Engine::Test": "lib/GTK/Glade/Engine/Test.pm6",
+    "GTK::Glade::Engine::Work": "lib/GTK/Glade/Engine/Work.pm6",
+
+    "GTK::Glade::NativeLib": "lib/GTK/Glade/NativeLib.pm6",
+    "GTK::Glade::NativeGtk": "lib/GTK/Glade/NativeGtk.pm6",
+
+    "GTK::Glade::Native::Gdk": "lib/GTK/Glade/Native/Gdk.pm6",
+    "GTK::Glade::Native::Gtk": "lib/GTK/Glade/Native/Gtk.pm6",
+
+    "GTK::Glade::Native::Gtk::Actionbar": "lib/GTK/Glade/Native/Gtk/Actionbar.pm6",
+    "GTK::Glade::Native::Gtk::Box": "lib/GTK/Glade/Native/Gtk/Box.pm6",
+    "GTK::Glade::Native::Gtk::Builder": "lib/GTK/Glade/Native/Gtk/Builder.pm6",
+    "GTK::Glade::Native::Gtk::Button": "lib/GTK/Glade/Native/Gtk/Button.pm6",
+    "GTK::Glade::Native::Gtk::Checkbutton": "lib/GTK/Glade/Native/Gtk/Checkbutton.pm6",
+    "GTK::Glade::Native::Gtk::Comboboxtext": "lib/GTK/Glade/Native/Gtk/Comboboxtext.pm6",
+    "GTK::Glade::Native::Gtk::Container": "lib/GTK/Glade/Native/Gtk/Container.pm6",
+    "GTK::Glade::Native::Gtk::Dialog": "lib/GTK/Glade/Native/Gtk/Dialog.pm6",
+    "GTK::Glade::Native::Gtk::Entry": "lib/GTK/Glade/Native/Gtk/Entry.pm6",
+    "GTK::Glade::Native::Gtk::Enums": "lib/GTK/Glade/Native/Gtk/Enums.pm6",
+    "GTK::Glade::Native::Gtk::Frame": "lib/GTK/Glade/Native/Gtk/Frame.pm6",
+    "GTK::Glade::Native::Gtk::Grid": "lib/GTK/Glade/Native/Gtk/Grid.pm6",
+    "GTK::Glade::Native::Gtk::Label": "lib/GTK/Glade/Native/Gtk/Label.pm6",
+    "GTK::Glade::Native::Gtk::Listbox": "lib/GTK/Glade/Native/Gtk/Listbox.pm6",
+    "GTK::Glade::Native::Gtk::Main": "lib/GTK/Glade/Native/Gtk/Main.pm6",
+    "GTK::Glade::Native::Gtk::Range": "lib/GTK/Glade/Native/Gtk/Range.pm6",
+    "GTK::Glade::Native::Gtk::Scale": "lib/GTK/Glade/Native/Gtk/Scale.pm6",
+    "GTK::Glade::Native::Gtk::Separator": "lib/GTK/Glade/Native/Gtk/Separator.pm6",
+    "GTK::Glade::Native::Gtk::Togglebutton": "lib/GTK/Glade/Native/Gtk/Togglebutton.pm6",
+    "GTK::Glade::Native::Gtk::Widget": "lib/GTK/Glade/Native/Gtk/Widget.pm6",
+    "GTK::Glade::Native::Gtk::Window": "lib/GTK/Glade/Native/Gtk/Window.pm6"
+  },
+
+  "source-url": "git://github.com/MARTIMM/gtk-glade.git",
+
+  "depends": [ "XML::Actions"],
+  "X-test-depends": [ "Test::META"],
+  "build-depends": [ ],
+  "resources": [
+    "library-logo.png", "library.glade", "mimetypes"
+  ]
+}
