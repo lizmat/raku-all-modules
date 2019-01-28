@@ -1,0 +1,18 @@
+Revision history for P5ref
+
+{{$NEXT}}
+
+0.0.4  2018-05-18T14:36:17+02:00
+    - Add authority information
+    - Make checking much stricter: instead of smartmatching, use identity
+      of the .WHAT of the value.
+    - Add original Perl 5 documentation and expand on the CAVEATS section
+
+0.0.3  2018-04-11T15:44:38+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.2  2018-01-29T20:48:02+01:00
+    - Remove superfluous "is export"
+
+0.0.1  2018-01-24T15:18:01+01:00
+    - Initial implementation.

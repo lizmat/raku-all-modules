@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/P5ref.git
+	branch = master
+	commit = c15e3f7a585d091377fa49e0430d949fb5604d1f
+	parent = 8deeedad73ebdf63a455c18075e12d429fac07c3
+	cmdver = 0.3.1
