@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Time-localtime.git
+	branch = master
+	commit = b86144220b253dc041c02075fba6fdf8350d5dff
+	parent = 0fee642025ca513c580478c28096127c62bbdca5
+	cmdver = 0.3.1

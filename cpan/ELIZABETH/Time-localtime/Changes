@@ -1,0 +1,13 @@
+Revision history for Time-localtime
+
+{{$NEXT}}
+
+0.0.3  2018-08-04T13:42:50+02:00
+    - Fixed test that would fail if day < 10
+
+0.0.2  2018-05-26T22:24:15+02:00
+    - Removed off-by-one errors in tests
+    - Fixed some minor pod issues
+
+0.0.1  2018-05-26T21:41:40+02:00
+    - Initial version

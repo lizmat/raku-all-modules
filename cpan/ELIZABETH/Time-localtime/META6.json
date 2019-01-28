@@ -1,0 +1,25 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "P5localtime"
+  ],
+  "description" : "Port of Perl 5's Time::localtime",
+  "license" : "Artistic-2.0",
+  "name" : "Time::localtime",
+  "perl" : "6.c",
+  "provides" : {
+    "Time::localtime" : "lib/Time/localtime.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Time-localtime.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.3"
+}
