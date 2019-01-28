@@ -1,0 +1,21 @@
+{
+    "perl" : "6.*",
+    "name" : "Config::Parser::json",
+    "version" : "0.1.0",
+    "description" : "A JSON parser for Config",
+    "authors" : [
+        "Robert Lemmen"
+    ],
+    "depends" : [
+        "JSON::Tiny"
+    ],
+    "test-depends" : [
+        "Test::META",
+        "Config"
+    ],
+    "provides" : {
+        "Config::Parser::json" : "lib/Config/Parser/json.pm6"
+    },
+    "license" : "Artistic-2.0",
+    "source-url" : "https://github.com/robertlemmen/perl6-config-json.git"
+}
