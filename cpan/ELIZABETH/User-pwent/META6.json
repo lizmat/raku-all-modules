@@ -1,0 +1,25 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "P5getpwnam"
+  ],
+  "description" : "Port of Perl 5's User::pwent",
+  "license" : "Artistic-2.0",
+  "name" : "User::pwent",
+  "perl" : "6.c",
+  "provides" : {
+    "User::pwent" : "lib/User/pwent.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/User-pwent.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
