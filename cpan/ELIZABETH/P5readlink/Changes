@@ -1,0 +1,15 @@
+Revision history for P5readlink
+
+{{$NEXT}}
+
+0.0.4  2018-08-04T15:08:33+02:00
+    - Create the symlink for testing during testing
+
+0.0.3  2018-08-04T14:20:36+02:00
+    - Don't fail test if somehow the symlink needed for testing is gone
+
+0.0.2  2018-05-21T21:24:21+02:00
+    - Added original Perl 5 documentation
+
+0.0.1  2018-04-27T23:42:48+02:00
+    - Initial version
