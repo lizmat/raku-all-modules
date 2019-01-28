@@ -1,0 +1,8 @@
+- task: NuGetCommand@2
+  displayName: NuGet pack
+  inputs:
+    command: pack
+    packagesToPack: '"\$(Build.SourcesDirectory)/[% project_folder %]/[% project_file %]"'
+    configuration: [% configuration %]
+    packDestination: '"\$(Build.ArtifactStagingDirectory)/[% output_directory %]"'
+
