@@ -1,0 +1,15 @@
+Revision history for Time-gmtime
+
+{{$NEXT}}
+
+0.0.4  2018-08-04T13:44:27+02:00
+    - Fixed test that would fail if day < 10
+
+0.0.3  2018-07-24T10:43:54+02:00
+    - Fix typo in source-url, Zoffix++
+
+0.0.2  2018-05-26T22:21:19+02:00
+    - Removed off-by-one errors in tests
+
+0.0.1  2018-05-26T22:12:37+02:00
+    - Initial version
