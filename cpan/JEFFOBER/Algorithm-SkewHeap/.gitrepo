@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sysread/p6-algorithm-skewheap.git
+	branch = master
+	commit = 7c2e7db1be1568b62ffdfcb61fd57f362b75f543
+	parent = 38c362351c4627d7d5c0998701bfeb33b91ef246
+	cmdver = 0.3.1

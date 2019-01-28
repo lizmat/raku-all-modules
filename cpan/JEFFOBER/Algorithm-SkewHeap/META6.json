@@ -1,0 +1,15 @@
+{
+  "perl":          "6.c",
+  "name":          "Algorithm::SkewHeap",
+  "auth":          "github:sysread",
+  "version":       "0.0.1",
+  "description":   "A fast, flexible min heap",
+  "authors":       ["Jeff Ober"],
+  "license":       "Artistic-2.0",
+  "provides":      {"Algorithm::SkewHeap" : "lib/Algorithm/SkewHeap.pm6"},
+  "depends":       [],
+  "build-depends": [],
+  "test-depends":  [],
+  "tags":          [],
+  "source-url":    "git://github.com/sysread/p6-algorithm-skewheap.git"
+}
