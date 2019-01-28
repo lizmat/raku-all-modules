@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/p6-CroX-HTTP-FallbackPassthru.git
+	branch = master
+	commit = f144eaf98398018ec2c583db7c3b98ec4d053a17
+	parent = caf1222a6676a45f7afc434b09166827ee2d198e
+	cmdver = 0.3.1

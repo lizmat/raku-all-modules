@@ -1,0 +1,37 @@
+{
+  "auth": "github:zostay",
+  "license": "Artistic-2.0",
+  "tags": [
+    
+  ],
+  "test-depends": [
+    "Test",
+    "Test::META",
+    "Cro::HTTP::Middleware",
+    "Cro::Uri"
+  ],
+  "version": "0.1",
+  "meta-version": "0",
+  "build-depends": [
+    
+  ],
+  "source-url": "git://github.com/zostay/p6-CroX-HTTP-FallbackPassthru.git",
+  "depends": [
+    
+  ],
+  "resources": [
+    
+  ],
+  "description": "dumb passthrue proxy middleware for Cro",
+  "support": {
+    "source": "git://github.com/zostay/p6-CroX-HTTP-FallbackPassthru.git"
+  },
+  "provides": {
+    "CroX::HTTP::FallbackPassthru": "lib/CroX/HTTP/FallbackPassthru.pm6"
+  },
+  "authors": [
+    "Sterling Hanenkamp <hanenkamp@cpan.org>"
+  ],
+  "name": "CroX::HTTP::FallbackPassthru",
+  "perl": "6.c"
+}
