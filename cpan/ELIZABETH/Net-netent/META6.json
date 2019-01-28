@@ -1,0 +1,25 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "P5getnetbyname"
+  ],
+  "description" : "Port of Perl 5's Net::netent",
+  "license" : "Artistic-2.0",
+  "name" : "Net::netent",
+  "perl" : "6.c",
+  "provides" : {
+    "Net::netent" : "lib/Net/netent.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Net-netent.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}

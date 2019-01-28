@@ -1,0 +1,9 @@
+Revision history for Net-netent
+
+{{$NEXT}}
+
+0.0.2  2018-05-23T19:15:44+02:00
+    - Fixed source-url in META, raschipi++
+
+0.0.1  2018-05-23T16:13:43+02:00
+    - Initial version
