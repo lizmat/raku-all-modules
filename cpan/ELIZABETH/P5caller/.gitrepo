@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/P5caller.git
+	branch = master
+	commit = 5b19acfbf0624b692acf2a525a985e182d6ade9d
+	parent = b964e861513a632f2a51c23a3a3da5047ff235b5
+	cmdver = 0.3.1
