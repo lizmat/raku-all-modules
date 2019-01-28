@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Kaiepi/p6-Hastebin.git
+	branch = master
+	commit = 08a75f07e77ca947b317efc5553e98e85aa05b57
+	parent = c605c99a5e7e31fa2ff8eda485c90991f80e07ba
+	cmdver = 0.3.1
