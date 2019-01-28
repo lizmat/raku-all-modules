@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sysread/p6-math-vector3d.git
+	branch = master
+	commit = 5327893ea2fa1d1dc7adbd891f610ffca6ee3920
+	parent = 8deb13cf34b464599a636dc440b8ecf47923b8b0
+	cmdver = 0.3.1

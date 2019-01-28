@@ -1,0 +1,15 @@
+{
+  "perl":          "6.c",
+  "name":          "Math::Vector3D",
+  "auth":          "github:sysread",
+  "version":       "0.0.1",
+  "description":   "3-dimensional vector math",
+  "authors":       ["Jeff Ober"],
+  "license":       "Artistic-2.0",
+  "provides":      {"Math::Vector3D" : "lib/Math/Vector3D.pm6"},
+  "depends":       [],
+  "build-depends": [],
+  "test-depends":  [],
+  "tags":          ["math", "vector", "3d"],
+  "source-url":    "git://github.com/sysread/p6-math-vector3d.git"
+}
