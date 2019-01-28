@@ -1,0 +1,17 @@
+#!/usr/bin/env perl6
+
+use FastCGI::NativeCall::PSGI;
+use Crust::Builder;
+
+my &app = builder {
+    mount "/" , sub (%env) {
+        start { 200, [Content-Type => "text/html"], ["Hello world"] };
+    }
+};
+
+
+my $psgi = FastCGI::NativeCall::PSGI.new(path => "/tmp/fastcgi.sock", backlog => 32);
+$psgi.run(&app);
+
+
+# vim: expandtab shiftwidth=4 ft=perl6

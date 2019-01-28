@@ -1,0 +1,6 @@
+v0.0.4		Sun 27 Jan 16:24:00 GMT 2019
+	* Spring clean and upload to CPAN
+v0.0.3		Tue Oct 10 11:53:20 2017 +0100 
+	* Better support for mod_fcgid
+v0.0.2		Mon Aug 28 08:41:14 2017 +0100 
+	* A bit of a spruce up

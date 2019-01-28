@@ -1,0 +1,88 @@
+{
+  "children": [
+    {
+      "name": "examples",
+      "purpose": null,
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "synopsis-crust"
+        },
+        {
+          "name": "apache.conf",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "ngingx.conf"
+        },
+        {
+          "name": "synopsis-basic",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "synopsis-bailador"
+        }
+      ]
+    },
+    {
+      "purpose": null,
+      "name": "t",
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "010-basic.t"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": "LICENSE",
+      "type": "file"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "name": "FastCGI",
+          "purpose": null,
+          "children": [
+            {
+              "children": [
+                {
+                  "type": "file",
+                  "name": "PSGI.pm6"
+                }
+              ],
+              "type": "directory",
+              "name": "NativeCall",
+              "purpose": null
+            }
+          ],
+          "type": "directory"
+        }
+      ],
+      "type": "directory",
+      "purpose": null,
+      "name": "lib"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
