@@ -1,0 +1,26 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to generate VSTS yaml steps for msbuild tool",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::VSTS::YAML::MsBuild",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::VSTS::YAML::MsBuild" : "lib/Sparrowdo/VSTS/YAML/MsBuild.pm6"
+  },
+  "resources" : [
+    "build.yaml"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-vsts-msbuild.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-vsts-msbuild.git
+	branch = master
+	commit = 23895ab9cb108607c5a72a9accbcb583296fb5f1
+	parent = 44ef4f67858ea417472759d52d9a7485e372723b
+	cmdver = 0.3.1
