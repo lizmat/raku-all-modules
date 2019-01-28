@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-dbsqlite.git
+	branch = master
+	commit = 476417287003f210f9a6097f0504f181e459d6ed
+	parent = b334dde0bb1bd15ae3b60ba04cf17c8cb2db9a65
+	cmdver = 0.3.1
