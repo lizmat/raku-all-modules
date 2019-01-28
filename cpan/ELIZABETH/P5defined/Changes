@@ -1,0 +1,11 @@
+Revision history for P5defined
+
+{{$NEXT}}
+
+0.0.2  2018-05-18T23:20:03+02:00
+    - make defined/undef semantics closer to Perl 5
+    - add more tests
+    - add original Perl 5 documentation
+
+0.0.1  2018-05-07T14:11:22+02:00
+    - Initial version
