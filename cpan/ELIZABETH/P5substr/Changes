@@ -1,0 +1,16 @@
+Revision history for P5substr
+
+{{$NEXT}}
+
+0.0.4  2018-07-13T23:23:53+02:00
+    - "is rw" fix supplied by Aleks-Daniel Jakimenko-Aleksejev
+
+0.0.3  2018-05-21T21:52:29+02:00
+    - Added original Perl 5 documentation
+    - Added authority information
+
+0.0.2  2018-04-11T21:12:24+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.1  2018-01-26T21:06:01+01:00
+    - Initial implementation.
