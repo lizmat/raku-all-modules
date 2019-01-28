@@ -1,0 +1,22 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "be a Hash in which each key can only be set once",
+  "license" : "Artistic-2.0",
+  "name" : "WriteOnceHash",
+  "perl" : "6.c",
+  "provides" : {
+    "WriteOnceHash" : "lib/WriteOnceHash.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/WriteOnceHash.git",
+  "tags" : [
+    "UTILS"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.3"
+}

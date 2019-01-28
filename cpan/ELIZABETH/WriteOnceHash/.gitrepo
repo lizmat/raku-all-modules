@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/WriteOnceHash.git
+	branch = master
+	commit = 993dd69bb34d7940ad73c198aab7dbcbdb47da4a
+	parent = 9b41325c5140be242fb39de85ba3c77150807903
+	cmdver = 0.3.1

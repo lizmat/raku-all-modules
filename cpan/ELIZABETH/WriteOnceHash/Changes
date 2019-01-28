@@ -1,0 +1,17 @@
+Revision history for WriteOnceHash
+
+{{$NEXT}}
+
+0.0.3  2018-10-02T14:59:07+02:00
+    - Simplify: since we're already storing values de-containerized, and
+      we also override ASSIGN-KEY, we don't actually need to override
+      AT-KEY at all.  Should one bind to the output of AT-KEY and then
+      try to assign, that will die anyway because of being an immutable
+      value.  This removes the need for the proxy and should remove any
+      performance penalty from just accessing keys in the hash.
+
+0.0.2  2018-10-02T14:44:07+02:00
+    - Also disallow removal of keys
+
+0.0.1  2018-10-02T14:24:24+02:00
+    - Initial version
