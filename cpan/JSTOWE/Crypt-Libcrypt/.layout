@@ -1,0 +1,62 @@
+{
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "t",
+      "children": [
+        {
+          "type": "file",
+          "name": "010-basic.t"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "020-crypt.t"
+        }
+      ],
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Build.pm"
+    },
+    {
+      "type": "directory",
+      "name": "lib",
+      "children": [
+        {
+          "purpose": null,
+          "children": [
+            {
+              "name": "Libcrypt.pm",
+              "type": "file"
+            }
+          ],
+          "name": "Crypt",
+          "type": "directory"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}
