@@ -1,0 +1,16 @@
+Revision history for P5shift
+
+{{$NEXT}}
+
+0.0.4  2018-05-21T21:41:00+02:00
+    - Added original Perl 5 documentation
+
+0.0.3  2018-04-28T15:10:22+02:00
+    - Added support for changed semantics of callframe() of the GH #1781 fix
+
+0.0.2  2018-04-28T12:49:57+02:00
+    - Added workaround for Rakudo GH #1781
+    - Make sure we have the flattening semantics of Perl 5
+
+0.0.1  2018-04-28T12:04:26+02:00
+    - Initial version
