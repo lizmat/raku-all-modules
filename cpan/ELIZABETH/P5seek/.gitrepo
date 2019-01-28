@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/P5seek.git
+	branch = master
+	commit = ee68ef61aa3089bbc9d877aa538b9f6e450e3cf0
+	parent = 5cd0420c80fea2d87006baf3f310b4c00de83524
+	cmdver = 0.3.1
