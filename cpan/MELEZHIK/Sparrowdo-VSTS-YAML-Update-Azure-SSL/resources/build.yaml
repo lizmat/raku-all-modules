@@ -1,0 +1,26 @@
+- task: AzureCLI@1
+  displayName: 'Fetch ssl cert - [% domain %]'
+  inputs:
+    azureSubscription: '[% subscription %]'
+    scriptLocation: inlineScript
+    inlineScript: 'az keyvault certificate show  --vault-name [% keyvault_name %] -n [% cert_name %] -o json > [% base_dir %]/[% cert_name %]/cert.json'
+
+- script: 'perl [% base_dir %]/inject-thumbprint.pl [% base_dir %]/[% cert_name %]' 
+  displayName: 'Inject thumbprint into ARM templates for [% cert_name %] cert'
+
+- task: AzureCLI@1
+  displayName: 'ARM - create [% cert_name %] ssl cert'
+  inputs:
+    azureSubscription: '[% subscription %]'
+    scriptLocation: inlineScript
+    inlineScript: 'az group deployment create -g [% resource_group %]  --template-file [% base_dir %]/[% cert_name %]/create-cert.json -o table'
+
+- task: AzureCLI@1
+  displayName: 'ARM - assign [% cert_name %] ssl cert to [% app_service %]'
+  inputs:
+    azureSubscription: '[% subscription %]'
+    scriptLocation: inlineScript
+    inlineScript: 'az group deployment create -g [% resource_group %]  --template-file [% base_dir %]/[% cert_name %]/update-cert.json -o table'
+
+
+

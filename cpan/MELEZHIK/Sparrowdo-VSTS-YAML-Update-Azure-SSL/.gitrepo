@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-vsts-update-azure-ssl.git
+	branch = master
+	commit = 85a4e9ded3666378c03a7d483b5d89b8cb5a2683
+	parent = a7c51b02df6bb0e32e22b640bd1527b67b33db9f
+	cmdver = 0.3.1
