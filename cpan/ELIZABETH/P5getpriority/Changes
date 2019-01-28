@@ -1,0 +1,18 @@
+Revision history for P5getpriority
+
+{{$NEXT}}
+
+0.0.5  2018-10-02T18:54:02+02:00
+    - Replace nqp::getppid by native call to support older Rakudo's
+
+0.0.4  2018-05-20T13:24:03+02:00
+    - Added original Perl 5 documentation
+
+0.0.3  2018-05-11T09:47:30+02:00
+    - We actually have an nqp::getppid, so don't use NativeCall for that
+
+0.0.2  2018-05-06T21:09:39+02:00
+    - Added setpgrp, which makes sense here
+
+0.0.1  2018-05-06T20:24:34+02:00
+    - Initial version

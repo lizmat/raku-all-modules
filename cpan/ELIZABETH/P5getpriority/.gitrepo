@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/P5getpriority.git
+	branch = master
+	commit = c650e8018f6b1c64ff8e3d9a51e375261eb9247e
+	parent = 1a421a5991a227a24a5659823442bcd4a845d7e4
+	cmdver = 0.3.1
