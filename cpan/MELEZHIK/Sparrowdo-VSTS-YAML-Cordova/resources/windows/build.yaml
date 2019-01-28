@@ -1,0 +1,70 @@
+- task: BatchScript@1
+  displayName: Run npm install
+  inputs:
+    filename: '[% base_dir %]/npm-install.cmd'
+- task: BatchScript@1
+  displayName: Run npm install ionic
+  inputs:
+    filename: '[% base_dir %]/npm-install-ionic.cmd'
+- task: CmdLine@1
+  displayName: Create www dir
+  inputs:
+    filename: perl
+    arguments: -e "mkdir www"
+    workingDirectory: "\$(Build.SourcesDirectory)"
+[%- IF prepare_only %]
+- task: BatchScript@1
+  displayName:  Create VS project
+  inputs:
+    filename: '[% base_dir %]/prepare.cmd'
+[%- ELSE %]
+- task: CmdLine@1
+  displayName: Generate build script
+  inputs:
+    filename: perl
+    arguments: [% base_dir %]/gene-build-cmd.pl [% build_configuration %] [% build_arch %]
+    workingDirectory: "\$(Build.SourcesDirectory)"
+- task: BatchScript@1
+  displayName: Run npm install cordova-set-version
+  inputs:
+    filename: '[% base_dir %]/npm-install-cordova-set-version.cmd'
+- task: CmdLine@1
+  displayName: Remove build directory
+  inputs:
+    filename: perl
+    arguments: [% base_dir %]/remove-old-packages.pl platforms\windows\AppPackages\
+    workingDirectory: "\$(Build.SourcesDirectory)"
+- task: CmdLine@1
+  displayName: Set package version
+  inputs:
+    filename: perl
+    arguments: [% base_dir %]/set-version.pl "\$(Build.BuildId)"
+    workingDirectory: "\$(Build.SourcesDirectory)"
+- task: CmdLine@1
+  displayName: Configure
+  inputs:
+    filename: perl
+    arguments: [% base_dir %]/configure.pl "\$(Build.SourcesDirectory)" "\$(Build.SourceBranchName)"
+    workingDirectory: "\$(Build.SourcesDirectory)"
+
+[%- IF remote_run -%]
+- task: CmdLine@1
+  displayName: Copy build.cmd
+  inputs:
+    filename: perl
+    arguments: -MFile::Copy -e "copy(qq{[% base_dir %]/build.cmd},qq{build.cmd})"
+    workingDirectory: "\$(Build.SourcesDirectory)"
+- task: CmdLine@1
+  displayName: Build package remotely
+  inputs:
+    filename: perl
+    arguments: -MMojo::UserAgent -e "\$r = Mojo::UserAgent->new(inactivity_timeout => 2000 )->post(qq{127.0.0.1:4444/run-cmd} => { Accept => qq{*/*} } => form => { dir => shift(), cmd => qq[ build.cmd ] } )->result->body; print \$r;" "\$(Build.SourcesDirectory)"
+[%- ELSE -%]
+- task: BatchScript@1
+  displayName:  Build package
+  inputs:
+    filename: '[% base_dir %]/build.cmd'
+[%- END -%]
+[%- END %]
+
+

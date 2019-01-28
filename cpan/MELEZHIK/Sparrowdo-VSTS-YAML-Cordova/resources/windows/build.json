@@ -1,0 +1,16 @@
+{
+    "windows": {
+      "debug": {
+        "buildFlag": [
+            "/clp:Verbosity=normal",
+            "/p:UapAppxPackageBuildMode=StoreUpload"
+        ]
+      },
+      "release": {
+        "buildFlag": [
+            "/clp:Verbosity=normal",
+            "/p:UapAppxPackageBuildMode=StoreUpload"
+        ]
+      }
+    }
+  }

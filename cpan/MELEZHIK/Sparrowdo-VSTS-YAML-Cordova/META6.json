@@ -1,0 +1,35 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to generate VSTS yaml build definition steps for Cordova build",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::VSTS::YAML::Cordova",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::VSTS::YAML::Cordova" : "lib/Sparrowdo/VSTS/YAML/Cordova.pm6"
+  },
+  "resources" : [
+    "windows/npm-install.cmd",
+    "windows/npm-install-ionic.cmd",
+    "windows/npm-install-cordova-set-version.cmd",
+    "windows/set-version.pl",
+    "windows/configure.pl",
+    "windows/remove-old-packages.pl",
+    "windows/gene-build-cmd.pl",
+    "windows/build.cmd.tmpl",
+    "windows/prepare.cmd",
+    "windows/build.yaml"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-vsts-cordova.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.17"
+}

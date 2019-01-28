@@ -1,0 +1,72 @@
+{{$NEXT}}
+
+0.0.17  2018-10-18T15:06:01Z
+
+    - Fix for BUILD_NOPATCHREVISION feature
+
+0.0.16  2018-10-17T20:30:32Z
+
+    - Disable revision version patch feature
+
+0.0.15  2018-10-10T16:55:26Z
+
+    - VSTS variables support
+
+0.0.14  2018-10-09T22:08:46Z
+
+    - Don't use  ionic wrapper anymore
+
+0.0.13  2018-10-08T18:22:29Z
+
+    - Configure command scripts - Powershell and Perl scripts support
+
+0.0.12  2018-10-05T20:07:28Z
+
+    - Many small improvements
+
+    - Per environment configurations
+
+0.0.11  2018-10-02T19:02:55Z
+
+    - deal with large revision numbers - https://stackoverflow.com/questions/1188284/net-large-revision-numbers-in-assemblyversionattribute
+  
+    - use perl to remove build directory
+
+    - rely on cordova generated appxupload, rater than generating one
+
+0.0.9  2018-08-27T22:07:54Z
+
+    - Add appxupload generation
+
+0.0.8  2018-08-21T20:05:58Z
+
+    - Install cordova, cordova-set-version, ionic implicitly so that not rely on package.json file
+
+0.0.7  2018-08-16T15:49:42-05:00
+
+    - Remove OSx/iOS support
+
+0.0.6  2018-08-14T16:02:19Z
+
+    - Prepare only bug fix
+
+0.0.5  2018-08-13T19:36:27Z
+
+    - Insert build number into package version
+
+0.0.4  2018-08-13T18:02:40Z
+
+    - Visual Studio and MsBuild settings
+
+0.0.3  2018-08-13T16:23:07Z
+
+    - Rewrite windows build to use ionic
+
+0.0.2  2018-08-02T18:21:00Z
+
+    - Remove OSx related code
+
+0.0.1  2018-07-27T20:10:01Z
+
+    - First release
+

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-vsts-cordova.git
+	branch = master
+	commit = 78d2661e2770be9c96636e92b3782d2f40f7880b
+	parent = 18dbc110578085487f3a33d4336b84bbb25157d5
+	cmdver = 0.3.1
