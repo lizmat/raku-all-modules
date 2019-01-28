@@ -1,0 +1,26 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to generate VSTS yaml steps for nuget package manager",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::VSTS::YAML::Nuget",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::VSTS::YAML::Nuget" : "lib/Sparrowdo/VSTS/YAML/Nuget.pm6"
+  },
+  "resources" : [
+    "build.yaml"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-vsts-nuget.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}
