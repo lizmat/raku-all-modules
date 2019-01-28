@@ -1,0 +1,37 @@
+{
+  "name": "MessagePack::Class",
+  "version": "0.0.2",
+  "auth": "github:jonathanstowe",
+  "api": "1.9",
+  "description": "Serialize/Deserialize Perl 6 classes to/from MessagePack blobs",
+  "source-url": "https://github.com/jonathanstowe/MessagePack-Class.git",
+  "support": {
+    "email": "jns+gh@gellyfish.co.uk",
+    "source": "https://github.com/jonathanstowe/MessagePack-Class.git",
+    "bugtracker": "https://github.com/jonathanstowe/MessagePack-Class/issues"
+  },
+  "perl": "6.*",
+  "resources": [
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+    "Data::MessagePack"
+  ],
+  "test-depends": [
+  ],
+  "tags": [
+    "messagepack",
+    "message",
+    "serialization",
+    "data"
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "MessagePack::Class": "lib/MessagePack/Class.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}
