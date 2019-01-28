@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-cordova-osx-fortify.git
+	branch = master
+	commit = 2eaf694182b3b39ebac3fe6dccd6b7b34e5aa1b5
+	parent = f121c90c8c311b636e47557c035d0a69c49b4e67
+	cmdver = 0.3.1

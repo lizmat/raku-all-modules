@@ -1,0 +1,26 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to run HP Fortify scan against Cordova/OSx project",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::Cordova::OSx::Fortify",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::Cordova::OSx::Fortify" : "lib/Sparrowdo/Cordova/OSx/Fortify.pm6"
+  },
+  "resources" : [
+    "excludes.txt"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-cordova-osx-fortify.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
