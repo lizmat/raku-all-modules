@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/P5getgrnam.git
+	branch = master
+	commit = 64d0f24d2b2b0f74234db852d2292ae5542c1dea
+	parent = be663aa2c8e6f77dfb6e2a33a4dd4eda19447903
+	cmdver = 0.3.1
