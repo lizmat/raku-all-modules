@@ -1,0 +1,31 @@
+- task: Npm@1
+  displayName: npm install
+  inputs:
+    verbose: true
+
+- task: CmdLine@1
+  displayName: Set package version
+  inputs:
+    filename: perl
+    arguments: [% base_dir %]/set-version.pl
+    workingDirectory: "\$(Build.SourcesDirectory)"
+
+- task: CmdLine@1
+  displayName: Build
+  inputs:
+    filename: perl
+    arguments: [% base_dir %]/build.pl "\$(Build.SourcesDirectory)" "\$(Build.SourceBranchName)"
+    workingDirectory: "\$(Build.SourcesDirectory)"
+
+- task: ArchiveFiles@2
+  displayName: Archive dist
+  inputs:
+    rootFolderOrFile: dist
+    includeRootFolder: false
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact
+  inputs:
+    PathtoPublish: "\$(Build.ArtifactStagingDirectory)/\$(Build.BuildId).zip"
+
+

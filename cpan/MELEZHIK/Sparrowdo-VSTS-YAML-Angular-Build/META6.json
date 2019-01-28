@@ -1,0 +1,28 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to generate VSTS yaml steps to build angular project",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::VSTS::YAML::Angular::Build",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::VSTS::YAML::Angular::Build" : "lib/Sparrowdo/VSTS/YAML/Angular/Build.pm6"
+  },
+  "resources" : [
+    "build.yaml",
+    "build.pl",
+    "set-version.pl"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-vsts-angular-build.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.6"
+}

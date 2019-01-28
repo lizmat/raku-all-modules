@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-vsts-angular-build.git
+	branch = master
+	commit = 1ccb385142de9029884b68965ecfef432ec9d107
+	parent = af58e2394f51f602d8a9096c5ab33b53e8bc1bee
+	cmdver = 0.3.1
