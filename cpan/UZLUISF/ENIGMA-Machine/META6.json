@@ -1,0 +1,33 @@
+{
+  "auth" : "gitlab:uzluisf",
+  "authors" : [
+    "Luis F. Uceta"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "A Perl 6 Implementation of an Enigma Machine",
+  "license" : "MIT",
+  "name" : "ENIGMA::Machine",
+  "perl" : "6.c",
+  "provides" : {
+    "ENIGMA::Machine" : "lib/ENIGMA/Machine.pm6",
+    "ENIGMA::Machine::Data" : "lib/ENIGMA/Machine/Data.pm6",
+    "ENIGMA::Machine::Error" : "lib/ENIGMA/Machine/Error.pm6",
+    "ENIGMA::Machine::Factory" : "lib/ENIGMA/Machine/Factory.pm6",
+    "ENIGMA::Machine::Keyfile" : "lib/ENIGMA/Machine/Keyfile.pm6",
+    "ENIGMA::Machine::PlugGrammar" : "lib/ENIGMA/Machine/PlugGrammar.pm6",
+    "ENIGMA::Machine::Plugboard" : "lib/ENIGMA/Machine/Plugboard.pm6",
+    "ENIGMA::Machine::Rotor" : "lib/ENIGMA/Machine/Rotor.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://gitlab.com/uzluisf/ENIGMA-Machine.git",
+  "tags" : [
+    "Enigma",
+    "Machine",
+    "Cryptography"
+  ],
+  "test-depends" : [
+    "Test"
+  ],
+  "version" : "0.0.2"
+}

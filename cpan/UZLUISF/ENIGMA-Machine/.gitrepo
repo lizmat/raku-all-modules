@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://gitlab.com/uzluisf/ENIGMA-Machine.git
+	branch = master
+	commit = 80dd1ca87ce3d4d0c0c2393a7d28e614c05dbfd3
+	parent = a94cb79dab35d298f6e33aae5c50ffad4f49e236
+	cmdver = 0.3.1

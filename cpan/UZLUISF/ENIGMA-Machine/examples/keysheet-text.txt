@@ -1,0 +1,34 @@
+#----------------------------------------------------------------------------------------
+#Tag |   Walzenlage    |  Ringstellung  |     Steckerverbindungen      |   Umkehrwalze   |
+#----------------------------------------------------------------------------------------
+31    I      II     III     09 05 17      DC OM GI HB RN KJ LV XS YU WZ      B
+30    Gamma  III    VI      U  L  O       AE CM DX GV HO IP KQ LW NY RT      B-Thin
+29    V      VI     III     V  R  F       BH CS DF EO GW IK JN LX TU YZ      C-Thin
+28    IV     V      II      D  N  B       CH DX EO IT JK LN MU PQ RS VW      C
+27    III    VIII   IV      U  W  X       AH BS CI DZ FU JP KX MR OQ TW      B-Thin
+26    V      III    VI      J  V  Z       AH BS DG IR LY MT NW OV PZ QX      C-Thin
+25    Beta   Gamma  VII     P  M  L       AF CY DH EZ GU IS JL KT OP QR      C-Thin
+24    II     V      VII     K  H  I       AG BZ DO EH FQ MR PW SX TU VY      B
+23    IV     III    Gamma   Q  K  J       AX BS CH DO EK JT LN MQ RY VZ      C-Thin
+22    V      VI     I       W  X  J       AS BD ET FW GY IO JM QV RZ UX      B-Thin
+21    II     VIII   IV      T  L  E       AW BK EQ GO HX IT JP LR NS UV      B-Thin
+20    Beta   VII    I       C  I  A       CV DU EN FY GZ IJ LQ OW PT SX      B-Thin
+19    Gamm   V      I       V  S  Z       BL CQ DO ET FR GX HZ IV KS UW      C-Thin
+18    I      VI     III     W  Y  B       CO DQ FR GN HV IM JS KU PZ XY      C-Thin
+17    I      VI     IV      D  O  A       AN BF DE GY IK JM LU PS QX TW      C
+16    Beta   IV     VII     Y  W  D       AG BT DX EQ FY HI KL PV RS WZ      B-Thin
+15    III    Beta   VII     W  L  T       BJ CN ES FH GV IY KO LX PZ TW      C
+14    VI     Gamma  III     O  Q  T       AH BM CS DZ FR GN IL JY OT PW      B
+13    VIII   IV     VI      Z  Y  N       AL BJ DZ ES FT GU HN IX QV RW      B
+12    VII    III    II      H  V  C       AL BQ CD EG FZ HN IY JW OX RT      B-Thin
+11    VIII   IV     VI      N  T  B       AQ BR DG EW HT IK LN MZ PY SX      C-Thin
+10    Beta   VIII   II      B  E  G       AK BL CJ DP ER FS HI NY QX TW      B-Thin
+ 9    Gamma  II     Beta    F  Q  D       BX CN DK EJ FQ IY LP RZ TW UV      C-Thin
+ 8    V      II     III     D  V  W       AR BE CZ FU GW HX IJ KS LT OV      C
+ 7    VI     V      II      E  X  L       AY CH DR EP FK GQ MT NW SX UV      B
+ 6    VIII   I      II      M  O  I       AI CV DQ GL JW MP NZ OX RS TY      B
+ 5    VII    III    I       B  M  H       AV CP DQ FK GS HI JO MX NW RU      B
+ 4    III    I      VI      J  W  N       AP BS CR DK EN FW HM JT QY UX      B
+ 3    II     IV     I       M  U  G       AL CG EU HK IM OX PY QT RV SW      C
+ 2    Gamma  VII    Gamma   Q  V  N       AZ BI CJ DS EQ FM GV HK LX TU      B-Thin
+ 1    VII    VI     Beta    F  D  P       AS BP DR EU FV GQ KT MN WZ XY      B

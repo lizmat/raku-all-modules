@@ -1,0 +1,15 @@
+**/.precomp
+perl6-modules/*
+*.p6
+*.pl6
+*.html
+*.md
+!README.md
+!emachine.p6
+!examples/*
+lib/ENIGMA/Machine/*.html
+lib/ENIGMA/Machine/*.md
+lib/ENIGMA/Machine/*.p6
+lib/ENIGMA/Machine/*.pl6
+ENIGMA-Machine*
+
