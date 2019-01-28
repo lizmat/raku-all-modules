@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MARTIMM/XmlActions.git
+	branch = master
+	commit = 66aba734a59c1b61eadde602c48170a73bd035e2
+	parent = 32281410a05b313c5d3448ab92892b639d305587
+	cmdver = 0.3.1

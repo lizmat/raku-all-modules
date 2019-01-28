@@ -1,0 +1,8 @@
+.directory
+Old/*
+*.log
+.precomp
+*/.precomp
+*.zargo~
+~*
+.pause

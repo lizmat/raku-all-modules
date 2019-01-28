@@ -1,0 +1,18 @@
+{
+  "name": "XML::Actions",
+  "description": "Perform actions on all XML nodes",
+  "version": "0.3.2",
+  "license": "Artistic-2.0",
+  "tags": [ "XML", "actions"],
+  "perl": "6",
+  "authors": [ "Marcel Timmerman"],
+  "depends": [
+    "XML"
+  ],
+  "test-depends": [ "Test::META" ],
+  "build-depends": [ ],
+  "provides": {
+    "XML::Actions": "lib/XML/Actions.pm6"
+  },
+  "source-url": "git://github.com/MARTIMM/XmlActions.git"
+}
