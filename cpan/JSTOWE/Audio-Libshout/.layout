@@ -1,0 +1,108 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "children": [
+        {
+          "type": "file",
+          "name": "streamfile"
+        },
+        {
+          "type": "file",
+          "name": "streamfile-encode"
+        },
+        {
+          "name": "synopsis",
+          "type": "file"
+        }
+      ],
+      "name": "examples",
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "children": [
+        {
+          "name": "data",
+          "purpose": null,
+          "children": [
+            {
+              "name": "cw_glitch_noise15.mp3",
+              "type": "file"
+            },
+            {
+              "name": "cw_glitch_noise15.ogg",
+              "type": "file"
+            }
+          ],
+          "type": "directory"
+        },
+        {
+          "type": "file",
+          "name": "010-parameters.t"
+        },
+        {
+          "name": "001-use.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "name": "005-constructor.t",
+          "type": "file"
+        },
+        {
+          "name": "020-open.t",
+          "type": "file"
+        }
+      ],
+      "purpose": null,
+      "name": "t",
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "type": "file",
+      "name": "Build.pm"
+    },
+    {
+      "type": "file",
+      "name": "Documentation.md"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "type": "directory",
+          "purpose": null,
+          "name": "Audio",
+          "children": [
+            {
+              "type": "file",
+              "name": "Libshout.pm"
+            }
+          ]
+        }
+      ],
+      "purpose": null,
+      "name": "lib"
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}

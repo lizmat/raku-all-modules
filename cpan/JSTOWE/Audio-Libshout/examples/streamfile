@@ -1,0 +1,46 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+use Audio::Libshout;
+
+multi sub MAIN(Str :$host = 'localhost', Int :$port = 8000, Str :$user = 'source', Str :$password!, Str :$mount = '/stream', Str :$file!, *%extra) {
+    my $file-io = $file.IO;
+
+    if $file-io.f {
+        my $format = do given $file-io.extension {
+            when 'ogg' {
+                Audio::Libshout::Format::Ogg;
+            }
+            when 'mp3' {
+                Audio::Libshout::Format::MP3
+            }
+            default {
+                die "$file is not supported - only mp3 or ogg currently";
+            }
+        }
+
+        my $fh = $file-io.open(:bin);
+
+        my $shout = Audio::Libshout.new(:$host, :$port, :$user, :$password, :$mount, :$format, |%extra);
+
+        my $channel = $shout.send-channel;
+
+        my $last = False;
+
+        while not $last {
+            my $tmp_buf = $fh.read(4096);
+            $last = $tmp_buf.elems < 4096;
+            $channel.send($tmp_buf);
+        }
+
+        $channel.close;
+        $fh.close;
+        $shout.close;
+    }
+    else {
+        die "$file does not exist";
+    }
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
