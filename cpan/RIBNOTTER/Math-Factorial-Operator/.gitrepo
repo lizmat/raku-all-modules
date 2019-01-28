@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ribbon-otter/Math-Factorial-Operator.git
+	branch = master
+	commit = e08d930c661def9d8b060073960208cbcba4baf5
+	parent = cd76f232eea67cb553b5f6745d1d3b309e353ec5
+	cmdver = 0.3.1

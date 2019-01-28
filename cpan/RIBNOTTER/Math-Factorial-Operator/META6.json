@@ -1,0 +1,24 @@
+{
+  "authors": [
+    "ribbon-otter"
+  ],
+  "depends": [
+    
+  ],
+  "description": "Supplies a factorial post-fix operator. Then 5!=120",
+  "license": "Unlicense",
+  "meta-version": 0,
+  "name": "Math::Factorial::Operator",
+  "perl": "6.c",
+  "provides": {
+    "Math::Factorial::Operator": "lib/Factorial.pm6"
+  },
+  "resources": [
+    
+  ],
+  "source-url": "https://github.com/ribbon-otter/Math-Factorial-Operator.git",
+  "tags": [
+    
+  ],
+  "version": "0.1.1"
+}
