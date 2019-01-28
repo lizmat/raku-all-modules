@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-vsts-build-assembly-patch.git
+	branch = master
+	commit = 68db49cff722381710e5fd77ec040c22acb778e1
+	parent = 4afc5327b8b7cf1ce1f29f3a2700972375d71c40
+	cmdver = 0.3.1

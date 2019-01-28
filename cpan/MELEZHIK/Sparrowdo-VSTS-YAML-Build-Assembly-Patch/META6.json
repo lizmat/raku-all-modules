@@ -1,0 +1,27 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to generate VSTS yaml build definition steps to patch revision part of AssemblyFileVersion",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::VSTS::YAML::Build::Assembly::Patch",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::VSTS::YAML::Build::Assembly::Patch" : "lib/Sparrowdo/VSTS/YAML/Build/Assembly/Patch.pm6"
+  },
+  "resources" : [
+    "build.yaml",
+    "AssemblyInfoPatchVersion.pl"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-vsts-build-assembly-patch.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "1.0.0"
+}
