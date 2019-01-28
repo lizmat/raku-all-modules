@@ -1,0 +1,80 @@
+{
+  "children": [
+    {
+      "type": "directory",
+      "name": "t",
+      "purpose": null,
+      "children": [
+        {
+          "children": [
+            {
+              "type": "file",
+              "name": "example.jspf"
+            }
+          ],
+          "purpose": null,
+          "type": "directory",
+          "name": "data"
+        },
+        {
+          "name": "030-constructor.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "name": "040-from-json.t",
+          "type": "file"
+        },
+        {
+          "name": "020-use.t",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "name": "lib",
+      "children": [
+        {
+          "purpose": null,
+          "children": [
+            {
+              "type": "directory",
+              "name": "Playlist",
+              "purpose": null,
+              "children": [
+                {
+                  "name": "JSPF.pm",
+                  "type": "file"
+                }
+              ]
+            }
+          ],
+          "name": "Audio",
+          "type": "directory"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}
