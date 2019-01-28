@@ -1,0 +1,36 @@
+{
+  "name": "Pg::Notify",
+  "version": "0.0.3",
+  "auth": "github:jonathanstowe",
+  "api" : "1.0",
+  "description": "Reactive interface to PostgreSQL notifies",
+  "source-url": "https://github.com/jonathanstowe/Pg-Notify.git",
+  "support": {
+    "email": "jns+gh@gellyfish.co.uk",
+    "source": "https://github.com/jonathanstowe/Pg-Notify.git",
+    "bugtracker": "https://github.com/jonathanstowe/Pg-Notify/issues"
+  },
+  "perl": "6.*",
+  "resources": [ ],
+  "build-depends": [ ],
+  "depends": [
+    "DBIish",
+    "NativeHelpers::CStruct"
+  ],
+  "tags": [
+    "database",
+    "postgres",
+    "notification"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "DBIish"
+  ],
+  "provides": {
+    "Pg::Notify": "lib/Pg/Notify.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}
