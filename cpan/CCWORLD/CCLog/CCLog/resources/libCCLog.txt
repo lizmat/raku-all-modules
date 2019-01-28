@@ -1,0 +1,2 @@
+libCCLog.dylib
+libCCLog.so
