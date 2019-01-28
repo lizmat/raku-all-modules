@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/edumentab/p6-pofile.git
+	branch = master
+	commit = 2a6628f6434e43cd02aaa5d447db55ea1178a0d4
+	parent = c32bad7818bbeeb90996a64a9786029209829e88
+	cmdver = 0.3.1

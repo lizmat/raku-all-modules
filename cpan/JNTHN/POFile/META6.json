@@ -1,0 +1,20 @@
+{
+    "name" : "POFile",
+    "description" : "Module for interacting with gettext PO files",
+    "perl" : "6.c",
+    "version" : "0.7.1",
+    "meta-version" : "0",
+    "license" : "Artistic-2.0",
+    "authors" : [
+        "Alexander Kiryuhin <alexander.kiryuhin@gmail.com>",
+        "Jonathan Worthington <jonathan@edument.se>"
+    ],
+    "provides" : {
+        "POFile" : "lib/POFile.pm6"
+    },
+    "source-url" : "https://github.com/edumentab/p6-pofile.git",
+    "support" : {
+        "source" : "https://github.com/edumentab/p6-pofile.git"
+    },
+    "tags": ["gettext", "i18n"]
+}
