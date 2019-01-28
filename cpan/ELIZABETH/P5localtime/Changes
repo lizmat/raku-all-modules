@@ -1,0 +1,19 @@
+Revision history for P5localtime
+
+{{$NEXT}}
+
+0.0.5  2018-08-03T13:34:21+02:00
+    - Fixed test that would fail if day < 10
+
+0.0.4  2018-05-26T22:19:06+02:00
+    - Removed off-by-one errors in tests
+
+0.0.3  2018-05-21T15:34:47+02:00
+    - Added original Perl 5 documentation
+
+0.0.2  2018-04-30T00:23:18+02:00
+    - Fixed gmtime() returning localtime()
+    - Added support for :scalar named parameter
+
+0.0.1  2018-04-29T23:10:31+02:00
+    - Initial version
