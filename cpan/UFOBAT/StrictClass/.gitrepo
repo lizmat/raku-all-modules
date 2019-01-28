@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ufobat/p6-StrictClass.git
+	branch = master
+	commit = d9f8197ac2fc3527fcc05ea3f0f938b9e5feddaa
+	parent = 98028721c79ae8aa01073fa48008ef7eebd8d809
+	cmdver = 0.3.1
