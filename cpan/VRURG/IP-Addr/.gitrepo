@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/vrurg/perl6-IP-Addr.git
+	branch = master
+	commit = 6b55617a1c23ecde7a6908fbcca78aed302d6dbc
+	parent = bcf62381f6b3b4a695003f1812b96cf02d5e5b76
+	cmdver = 0.3.1
