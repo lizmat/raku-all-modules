@@ -1,0 +1,114 @@
+#!/usr/bin/env perl6
+
+use Tinky;
+use Tinky::JSON;
+use File::Which;
+
+=begin pod
+
+=head1 NAME
+
+encode-files - watch a directory of files and encode WAV to FLAC
+
+=head1 SYNOPSIS
+
+=begin code
+
+    encode-files [--out-dir=/tmp/flac ] <DIRECTORY>
+
+=end code
+
+=head1 DESCRIPTION
+
+This watches the directory supplied as an argument and when a new WAV file
+shows up it will be copied to the output directory (default "/tmp/flac"
+but can be specified with the C<--out-dir> parameter, ) and then encoded
+as FLAC.
+
+It notifies of state changes to STDERR.
+
+You will of course need the 'flac' program for this to work.
+
+=end pod
+
+
+class ProcessFile does Tinky::Object {
+    has Str $.path      is required;
+    has Str $.out-dir   is required;
+    has Str $.new-path;
+    has Str $.flac-file;
+    has     @.errors;
+    method new-path() returns Str {
+        $!new-path //= $!out-dir.IO.child($!path.IO.basename).Str;
+    }
+    method flac-file() returns Str {
+        $!flac-file //= self.new-path.subst(/\.wav$/, '.flac');
+        $!flac-file;
+    }
+
+    method run-then(@args, Tinky::State $ok, Tinky::State $fail) {
+        my $proc = Proc::Async.new(|@args, :r);
+        $proc.stderr.tap( -> $error {
+            self.errors.append: $error.chomp;
+        });
+        $proc.start.then( -> $proc {
+            if $proc.result.exitcode {
+                self.state = $fail;
+            }
+            else {
+                self.state = $ok;
+            }
+        });
+    }
+}
+
+
+multi sub MAIN($dir, Str :$out-dir = '/tmp/flac') {
+
+    my $cp   = which('cp');
+    my $flac = which('flac') or die "Can't find flac";
+
+    my $json     = $*PROGRAM.parent.child('encoder.json').slurp;
+    my $workflow = Tinky::JSON::Workflow.from-json($json);
+
+    my ProcessFile @process-files;
+
+    my $watch-supply = IO::Notification.watch-path($dir).grep({ $_.path ~~ /\.wav$/ }).unique(as => { $_.path }, expires => 5);
+
+    say "Watching '$dir'";
+
+    react {
+        whenever $watch-supply -> $change {
+            my $pf = ProcessFile.new(path => $change.path, :$out-dir);
+            say "Processing '{ $pf.path }'";
+            $pf.apply-workflow($workflow);
+        }
+        whenever $workflow.applied-supply() -> $pf {
+            if @process-files.grep({ $_.path eq $pf.path }) {
+                $*ERR.say: "** Already processing '", $pf.path, "' **";
+                $pf.reject;
+            }
+            else {
+                @process-files.append: $pf;
+                $pf.ready;
+            }
+        }
+        whenever $workflow.enter-supply('ready') -> $pf {
+            $pf.run-then(($cp, $pf.path, $pf.new-path), $workflow.state('copied'), $workflow.state('failed'));
+        }
+        whenever $workflow.enter-supply('copied') -> $pf {
+            $pf.run-then(($flac, '-s', $pf.new-path), $workflow.state('done'), $workflow.state('failed'));
+        }
+        whenever $workflow.enter-supply('done') -> $pf {
+            say "File '{ $pf.path }' has been processed to '{ $pf.flac-file }'";
+        }
+        whenever $workflow.enter-supply('failed') -> $pf {
+            say "Processing of file '{ $pf.path }' failed with '{ $pf.errors }'";
+        }
+        whenever $workflow.transition-supply -> ($trans, $pf ) {
+            $*ERR.say("File '{ $pf.path }' went from '{ $trans.from.name }' to '{ $trans.to.name }'");
+        }
+    }
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6

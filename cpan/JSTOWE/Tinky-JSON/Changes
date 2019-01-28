@@ -1,0 +1,10 @@
+v0.0.5		Sun 27 Jan 19:24:35 GMT 2019
+	* Spring clean and upload to CPAN
+v0.0.4      Mon 26 Nov 13:56:37 GMT 2018
+    * Change in exception in Tinky too
+v0.0.3      Mon 26 Nov 13:06:37 GMT 2018
+    * Fully qualify Exception name
+v0.0.2		Wed Mar 8 22:00:11 2017 +0000 
+	* Fix symbol merge error
+v0.0.1		Fri Dec 16 15:36:47 2016 +0000 
+	* Initial release

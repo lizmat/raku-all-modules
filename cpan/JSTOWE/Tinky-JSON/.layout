@@ -1,0 +1,100 @@
+{
+  "children": [
+    {
+      "children": [
+        {
+          "name": "ticket.json",
+          "type": "file"
+        },
+        {
+          "name": "encode-files",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "encoder.json"
+        },
+        {
+          "name": "synopsis",
+          "type": "file"
+        }
+      ],
+      "purpose": null,
+      "type": "directory",
+      "name": "examples"
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "name": "ticket.json",
+              "type": "file"
+            }
+          ],
+          "purpose": null,
+          "name": "data",
+          "type": "directory"
+        },
+        {
+          "name": "020-construction.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "100-synopsis.t"
+        },
+        {
+          "type": "file",
+          "name": "030-methods.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        }
+      ],
+      "type": "directory",
+      "purpose": null,
+      "name": "t"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "type": "directory",
+      "name": "lib",
+      "children": [
+        {
+          "purpose": null,
+          "type": "directory",
+          "name": "Tinky",
+          "children": [
+            {
+              "name": "JSON.pm",
+              "type": "file"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}

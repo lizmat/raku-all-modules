@@ -1,0 +1,39 @@
+#!perl6
+
+use Tinky;
+use Tinky::JSON;
+
+my $json = $*PROGRAM.parent.child('ticket.json').slurp;
+
+my $workflow = Tinky::JSON::Workflow.from-json($json);
+
+class Ticket does Tinky::Object {
+    has Str $.ticket-number = (^100000).pick.fmt("%08d");
+    has Str $.owner;
+}
+
+$workflow.enter-supply('rejected').act( -> $object { say "** sending rejected e-mail for Ticket '{ $object.ticket-number }' **" });
+
+$workflow.find-transition('in-progress', 'stalled').supply.act( -> $object { say "** rescheduling tickets for '{ $object.owner }' on ticket stall **"});
+
+
+$workflow.transition-supply.act(-> ($trans, $object) { say "Ticket '{ $object.ticket-number }' went from { $trans.from.name }' to '{ $trans.to.name }'" });
+
+$workflow.final-supply.act(-> ( $state, $object) { say "** updating performance stats with Ticket '{ $object.ticket-number }' entered State '{ $state.name }'" });
+
+my $ticket-a = Ticket.new(owner => "Operator A");
+
+$ticket-a.apply-workflow($workflow);
+
+$ticket-a.open;
+
+$ticket-a.take;
+
+$ticket-a.next-states>>.name.say;
+
+$ticket-a.state = $workflow.state('stalled');
+
+
+$ticket-a.reject;
+
+# vim: expandtab shiftwidth=4 ft=perl6
