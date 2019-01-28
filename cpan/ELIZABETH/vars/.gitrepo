@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/vars.git
+	branch = master
+	commit = e6f39da122e2065e288ea05105e7b29c15b77c6a
+	parent = 2697fb35a160557412ad0b605f13f39ce1f5679a
+	cmdver = 0.3.1

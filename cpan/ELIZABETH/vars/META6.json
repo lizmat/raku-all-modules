@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Port of Perl 5's pragma to predeclare variables to Perl 6",
+  "license" : "Artistic-2.0",
+  "name" : "vars",
+  "perl" : "6.c",
+  "provides" : {
+    "vars" : "lib/vars.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/vars.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.3"
+}

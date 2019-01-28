@@ -1,0 +1,13 @@
+Revision history for vars
+
+{{$NEXT}}
+
+0.0.3  2018-06-04T15:50:48+02:00
+    - Fixed title of module (copy-pasto from 'subs')
+    - Removed pod about assigning to OUR:: at compile time: it doesn't work
+
+0.0.2  2018-06-03T14:50:57+02:00
+    - Made sure we show problematic imports correctly
+
+0.0.1  2018-06-03T14:36:32+02:00
+    - Initial version
