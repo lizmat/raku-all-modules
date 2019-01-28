@@ -1,0 +1,22 @@
+{
+  "perl" : "6",
+  "tags" : [ "math", "fft", "nativecall" ],
+  "name" : "Math::FFT::Libfftw3",
+  "version" : "0.1.2",
+  "api" : "2",
+  "description" : "Interface to libfftw3",
+  "test-depends" : [ "Test" ],
+  "provides" : {
+    "Math::FFT::Libfftw3::C2C" : "lib/Math/FFT/Libfftw3/C2C.pm6",
+    "Math::FFT::Libfftw3::Common" : "lib/Math/FFT/Libfftw3/Common.pm6",
+    "Math::FFT::Libfftw3::Constants" : "lib/Math/FFT/Libfftw3/Constants.pm6",
+    "Math::FFT::Libfftw3::Exception" : "lib/Math/FFT/Libfftw3/Exception.pm6",
+    "Math::FFT::Libfftw3::R2C" : "lib/Math/FFT/Libfftw3/R2C.pm6",
+    "Math::FFT::Libfftw3::R2R" : "lib/Math/FFT/Libfftw3/R2R.pm6",
+    "Math::FFT::Libfftw3::Raw" : "lib/Math/FFT/Libfftw3/Raw.pm6"
+  },
+  "auth" : "github:frithnanth",
+  "authors" : [ "Fernando Santagata" ],
+  "license": "Artistic-2.0",
+  "source-url" : "git://github.com/frithnanth/perl6-Math-FFT-Libfftw3.git"
+}

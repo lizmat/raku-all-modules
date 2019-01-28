@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/frithnanth/perl6-Math-FFT-Libfftw3.git
+	branch = master
+	commit = 5aed43d1f29a3757e4007fc300554ae00f5306c3
+	parent = 0bb74b7b2c3b7721931ff4dd6789f6f3f984f57a
+	cmdver = 0.3.1
