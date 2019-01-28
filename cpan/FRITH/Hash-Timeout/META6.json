@@ -1,0 +1,25 @@
+{
+  "auth" : "cpan:FRITH",
+  "authors" : [
+    "Fernando Santagata"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Hash::Agnostic"
+  ],
+  "description" : "Role for hashes whose elements timeout and disappear",
+  "license" : "Artistic-2.0",
+  "name" : "Hash::Timeout",
+  "perl" : "6.c",
+  "provides" : {
+    "Hash::Timeout" : "lib/Hash/Timeout.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/frithnanth/perl6-Hash-Timeout.git",
+  "tags" : [
+    "hash",
+    "timeout"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}

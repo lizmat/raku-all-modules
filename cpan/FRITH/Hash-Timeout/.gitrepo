@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/frithnanth/perl6-Hash-Timeout.git
+	branch = master
+	commit = b141c4ecb0ba5e486986fe150c7163422097f1fe
+	parent = b7e14be3a9853d55baba68d896f728f149894b9c
+	cmdver = 0.3.1
