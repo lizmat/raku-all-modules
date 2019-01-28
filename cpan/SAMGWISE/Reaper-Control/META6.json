@@ -1,0 +1,27 @@
+{
+  "authors" : [
+    "Sam Gillespie"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Net::OSC"
+  ],
+  "description" : "An OSC controller interface for Reaper",
+  "license" : "Artistic-2.0",
+  "name" : "Reaper::Control",
+  "perl" : "6.c",
+  "provides" : {
+    "Reaper::Control" : "lib/Reaper/Control.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/samgwise/Reaper-control.git",
+  "tags" : [
+    "Music",
+    "Audio",
+    "Reaper",
+    "DAW",
+    "OSC"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}

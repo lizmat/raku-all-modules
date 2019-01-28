@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/samgwise/Reaper-control.git
+	branch = master
+	commit = f0c347784267394877aa8c2423534aeef4b48cb4
+	parent = 0dfc4379b04ab75d53bc2c17793b43be229a9c59
+	cmdver = 0.3.1
