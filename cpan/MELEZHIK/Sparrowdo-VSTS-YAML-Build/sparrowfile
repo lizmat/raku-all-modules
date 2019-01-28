@@ -1,0 +1,8 @@
+#!perl6
+
+module_run "VSTS::YAML::Build", %( 
+  build-dir => ".vsts",
+  agent-name => "James Bond",
+  queue => "build-lane"
+);
+

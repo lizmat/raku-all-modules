@@ -1,0 +1,30 @@
+{{$NEXT}}
+
+0.0.7  2018-10-09T22:08:15Z
+
+    - Deal with empty demands
+
+0.0.6  2018-07-19T15:56:10Z
+
+    - increase default timeout to 20 minutes  
+
+0.0.5  2018-07-19T13:59:21Z
+
+    - demands parameter
+
+0.0.4  2018-07-18T16:31:03Z
+
+    - describing timeout  parameter
+
+0.0.3  2018-07-13T21:29:53Z
+
+    - agent name is no longer has default value
+
+0.0.2  2018-06-13T15:43:35Z
+
+    - Recover readme
+
+0.0.1  2018-06-13T15:40:44Z
+
+    - First release
+

@@ -1,0 +1,26 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to generate VSTS yaml build definition header",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::VSTS::YAML::Build",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::VSTS::YAML::Build" : "lib/Sparrowdo/VSTS/YAML/Build.pm6"
+  },
+  "resources" : [
+    "build.yaml"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-vsts-build.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.7"
+}
