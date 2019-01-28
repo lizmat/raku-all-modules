@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 24 – Public-Key security handler user access permissions",
+    "head": [
+      "Bit position",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "2",
+        "When set permits change of encryption and enables all other permissions."
+      ],
+      [
+        "3",
+        "Print the document (possibly not at the highest quality level, depending on whether bit 12 is also set)."
+      ],
+      [
+        "4",
+        "Modify the contents of the document by operations other than those controlled by bits 6, 9, and 11."
+      ],
+      [
+        "5",
+        "Copy or otherwise extract text and graphics from the document by operations other than that controlled by bit 10."
+      ],
+      [
+        "6",
+        "Add or modify text annotations, fill in interactive form fields, and, if bit 4 is also set, create or modify interactive form fields (including signature fields)."
+      ],
+      [
+        "9",
+        "Fill in existing interactive form fields (including signature fields), even if bit 6 is clear."
+      ],
+      [
+        "10",
+        "Extract text and graphics (in support of accessibility to users with disabilities or for other purposes)."
+      ],
+      [
+        "11",
+        "Assemble the document (insert, rotate, or delete pages and create bookmarks or thumbnail images), even if bit 4 is clear."
+      ],
+      [
+        "12",
+        "Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this bit is clear (and bit 3 is set), printing is limited to a low-level representation of the appearance, possibly of degraded quality."
+      ]
+    ]
+  }
+}

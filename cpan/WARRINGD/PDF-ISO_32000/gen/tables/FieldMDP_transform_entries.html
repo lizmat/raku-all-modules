@@ -1,0 +1,119 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        256
+        –  Entries in the FieldMDP transform parameters dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be TransformParams for a transform parameters dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Action
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A name that, along with the Fields array, describes which form fields do not permit changes after the signature is applied.
+          </P>
+          <P>
+            Valid values shall be:
+          </P>
+          <P>
+            All All form fields.
+          </P>
+          <P>
+            Include Only those form fields that specified in Fields.
+          </P>
+          <P>
+            Exclude Only those form fields not specified in Fields.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Fields
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if Action is Include or Exclude) An array of text strings containing field names.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional: PDF 1.5 required) The transform parameters dictionary version. The value for PDF 1.5 and later shall be 1.2. 
+          </P>
+          <P>
+            NOTE This value is a name object, not a number.
+          </P>
+          <P>
+            Default value: 1.2. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

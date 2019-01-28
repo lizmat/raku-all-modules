@@ -1,0 +1,113 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        200
+        –  Additional entries specific to a remote go-to action 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of action that this dictionary describes; shall be GoToR for a remote go-to action. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            file specification
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The file in which the destination shall be located. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            D
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name,
+            byte string, or array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The destination to jump to (see 
+            <Link>
+              12.3.2, “Destinations”
+            </Link>
+            ). If 
+            the value is an array defining an explicit destination (as described under 
+            <Link>
+              12.3.2.2, “Explicit Destinations”
+            </Link>
+            ), its first element shall be a page 
+            number within the remote document rather than an indirect reference to a page object in the current document. The first page shall benumbered 0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            NewWindow
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2) A flag specifying whether to open the destination document in a new window. If this flag is false, the destination document replaces the current document in the same window. If this entry is absent, the conforming reader should behave in accordance with its preference. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

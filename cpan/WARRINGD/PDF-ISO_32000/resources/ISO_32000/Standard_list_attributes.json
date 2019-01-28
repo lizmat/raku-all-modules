@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 347 – Standard list attribute",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "ListNumbering",
+        "name",
+        "(Optional; inheritable) The numbering system used to generate the content of the Lbl (Label) elements in an autonumbered list, or the symbol used to identify each item in an unnumbered list. The value of the ListNumbering is one of the following, and is applied as described here.\nNone No autonumbering; Lbl elements (if present) contain arbitrary text not subject to any numbering scheme\nDisc Solid circular bullet\nCircle Open circular bullet\nSquare Solid square bullet\nDecimal Decimal arabic numerals (1–9, 10–99, …)\nUpperRoman Uppercase roman numerals (I, II, III, IV, …)\nLowerRoman Lowercase roman numerals (i, ii, iii, iv, …)\nUpperAlpha Uppercase letters (A, B, C, …)\nLowerAlpha Lowercase letters (a, b, c, …)\nDefault value: None.\nThe alphabet used for UpperAlpha and LowerAlpha is determined by the prevailing Lang entry (see 14.9.2, “Natural Language Specification”).\nThe set of possible values may be expanded as Unicode identifies additional numbering systems. A conforming reader shall ignore any value not listed in this table; it behaves as though the value were None."
+      ]
+    ]
+  }
+}

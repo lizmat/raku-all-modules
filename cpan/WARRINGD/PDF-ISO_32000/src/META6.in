@@ -1,0 +1,21 @@
+{
+  "api" : "PDF-1.7",
+  "auth" : "github:p6-pdf",
+  "authors" : [
+    "David Warring"
+  ],
+  "build-depends" : [ "JSON::Fast", "XML::Parser::Tiny" ],
+  "depends" : [
+  ],
+  "description" : "Tables and roles, mined from the PDF ISO-32000 specification",
+  "license" : "Artistic-2.0",
+  "name" : "PDF::ISO_32000",
+  "perl" : "6.*",
+  "provides" : {
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/p6-pdf/PDF-ISO_32000-p6.git",
+  "tags" : [ "pdf" ],
+  "test-depends" : [ ],
+  "version" : "0.0.5"
+}

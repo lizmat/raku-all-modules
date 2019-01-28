@@ -1,0 +1,264 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        338
+        –  Standard structure types for inline-level structure elements 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Structure Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Span
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Span) A generic inline portion of text having no particular inherent characteristics. It can be used, for example, to delimit a range of text with a given set of styling attributes. 
+          </P>
+          <P>
+            NOTE 1 Not all inline style changes need to be identified as a span. Text colour and font changes (including modifiers such as bold, italic, and small caps) need not be so marked, since these can be derived from the PDF content (see 
+            <Link>
+              “Font Characteristics”
+            </Link>
+             in 
+            <Link>
+              14.8.2.4, “Extraction of 
+              Character Properties”
+            </Link>
+            ). However, it is necessary to use a span to 
+            apply explicit layout attributes such as LineHeight, BaselineShift, or TextDecorationType (see 
+            <Link>
+              “Layout Attributes for ILSEs”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, 
+              “Layout Attributes”
+            </Link>
+            ).
+          </P>
+          <P>
+            NOTE 2 Marked-content sequences having the tag Span are also used to carry certain accessibility properties (Alt, ActualText, Lang, and E; see 
+            <Link>
+              14.9, “Accessibility Support”
+            </Link>
+            ). Such sequences lack an MCID
+            property and are not associated with any structure element. This use of the Span marked-content tag is distinct from its use as a structure type. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Quote
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Quotation) An inline portion of text attributed to someone other than the author of the surrounding text. 
+          </P>
+          <P>
+            The quoted text should be contained inline within a single paragraph. This differs from the block-level element BlockQuote (see 
+            <Link>
+              14.8.4.2, “Grouping Elements”
+            </Link>
+            ), 
+            which consists of one or more complete paragraphs (or other elements presented as if they were complete paragraphs). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Note
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Note) An item of explanatory text, such as a footnote or an endnote, that is referred to from within the body of the document. It may have a label (structure type Lbl; see 
+            <Link>
+              “List Elements”
+            </Link>
+             in 
+            <Link>
+              14.8.4.3, “Block-Level Structure Elements”
+            </Link>
+            ) as a child. 
+            The note may be included as a child of the structure element in the body text that refers to it, or it may be included elsewhere (such as in an endnotes section) and accessed by means of a reference (structure type Reference). 
+          </P>
+          <P>
+            Tagged PDF does not prescribe the placement of footnotes in the page content order. They may be either inline or at the end of the page, at the discretion of theconforming writer. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Reference
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Reference) A citation to content elsewhere in the document. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BibEntry
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Bibliography entry) A reference identifying the external source of some cited content. It may contain a label (structure type Lbl; see 
+            <Link>
+              “List Elements”
+            </Link>
+             in 
+            <Link>
+              14.8.4.3, 
+              “Block-Level Structure Elements”
+            </Link>
+            ) as a child. 
+          </P>
+          <P>
+            Although a bibliography entry is likely to include component parts identifying the cited content’s author, work, publisher, and so forth, no standard structure types are defined at this level of detail. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Code
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Code) A fragment of computer program text. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Link
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Link) An association between a portion of the ILSE’s content and a corresponding link annotation or annotations (see 
+            <Link>
+              12.5.6.5, “Link Annotations”
+            </Link>
+            ). Its children should 
+            be one or more content items or child ILSEs and one or more object references (see 
+            <Link>
+              14.7.4.3, “PDF Objects as Content Items”
+            </Link>
+            ) identifying the associated link 
+            annotations. See 
+            <Link>
+              “Link Elements”
+            </Link>
+             in 
+            <Link>
+              14.8.4.3, “Block-Level Structure Elements,”
+            </Link>
+             for 
+            further discussion. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Annot
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Annotation; PDF 1.5) An association between a portion of the ILSE’s content and a corresponding PDF annotation (see 
+            <Link>
+              12.5, “Annotations”
+            </Link>
+            ). Annot shall be used for 
+            all PDF annotations except link annotations (see the Link element) and widget annotations (see the Form element in 
+            <Link>
+              Table
+              340
+            </Link>
+            ). See 
+            <Link>
+              “Annotation Elements”
+            </Link>
+            <Link>
+              14.8.4.4, “Inline-Level Structure Elements,”
+            </Link>
+             for further discussion.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Ruby
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Ruby; PDF 1.5) A side-note (annotation) written in a smaller text size and placed adjacent to the base text to which it refers. A Ruby element may also contain the RB, RT, and RP elements. See 
+            <Link>
+              “Ruby and Warichu Elements”
+            </Link>
+             in
+            <Link>
+              14.8.4.4, “Inline-
+              Level Structure Elements,”
+            </Link>
+             for more details.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Warichu
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Warichu; PDF 1.5) A comment or annotation in a smaller text size and formatted onto two smaller lines within the height of the containing text line and placed following (inline) the base text to which it refers. A Warichu element may also contain the WT and WP elements. See 
+            <Link>
+              “Ruby and Warichu Elements”
+            </Link>
+             in
+            <Link>
+              14.8.4.4, 
+              “Inline-Level Structure Elements,”
+            </Link>
+             for more details.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

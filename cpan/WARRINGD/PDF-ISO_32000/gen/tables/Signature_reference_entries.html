@@ -1,0 +1,144 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        253
+        –  Entries in a signature reference dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be SigRef for a signature reference dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TransformMethod
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The name of the transform method (see 
+            <Link>
+              Section 
+              12.8.2, “Transform Methods
+            </Link>
+            ”) that shall guide the 
+            modification analysis that takes place when the signature is validated. Valid values shall be:
+          </P>
+          <P>
+            DocMDP Used to detect modifications to a document relative to a signature field that is signed by the originator of a document; see 
+            <Link>
+              12.8.2.2, 
+              “DocMDP.”
+            </Link>
+          </P>
+          <P>
+            UR Used to detect modifications to a document that would invalidate a signature in a rights-enabled document; see 
+            <Link>
+              12.8.2.3, “UR.”
+            </Link>
+          </P>
+          <P>
+            FieldMDPUsed to detect modifications to a list of form fields specified in TransformParams; see 
+            <Link>
+              12.8.2.4, “FieldMDP.”
+            </Link>
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TransformParams
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary specifying transform parameters (variable data) for the transform method specified by TransformMethod. Each method takes its own set of parameters. See each of the sub-clauses specified previously for details on the individual transform parameter dictionaries
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Data
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required when TransformMethod is FieldMDP) An indirect reference to the object in the document upon which the object modification analysis should be performed. For transform methods other than FieldMDP, this object is implicitly defined. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DigestMethod
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5 required) A name identifying the algorithm that shall be used when computing the digest. Valid values are MD5 and SHA1. Default value: MD5. For security reasons, MD5 should not be used. It is mentioned for backwards compatibility, since it remains the default value.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

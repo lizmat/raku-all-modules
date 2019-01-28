@@ -1,0 +1,55 @@
+{
+  "table": {
+    "caption": "Table 90 – Default Decode Arrays",
+    "head": [
+      "Colour Space",
+      "Decode Array"
+    ],
+    "rows": [
+      [
+        "DeviceGray",
+        "[ 0.0 1.0 ]"
+      ],
+      [
+        "DeviceRGB",
+        "[ 0.0 1.0 0.0 1.0 0.0 1.0 ]"
+      ],
+      [
+        "DeviceCMYK",
+        "[ 0.0 1.0 0.0 1.0 0.0 1.0 0.0 1.0 ]"
+      ],
+      [
+        "CalGray",
+        "[ 0.0 1.0 ]"
+      ],
+      [
+        "CalRGB",
+        "[ 0.0 1.0 0.0 1.0 0.0 1.0 ]"
+      ],
+      [
+        "Lab",
+        "[ 0 100 a min a max b min b max ] where a min , a max , b min , and b max correspond to the values in the Range array of the image’s colour space"
+      ],
+      [
+        "ICCBased",
+        "Same as the value of Range in the ICC profile of the image’s colour space"
+      ],
+      [
+        "Indexed",
+        "[ 0 N ], where N = 2 n − 1"
+      ],
+      [
+        "Pattern",
+        "(Not permitted with images)"
+      ],
+      [
+        "Separation",
+        "[ 0.0 1.0 ]"
+      ],
+      [
+        "DeviceN",
+        "[ 0.0 1.0 0.0 1.0 … 0.0 1.0 ] (one pair of elements for each colour component)"
+      ]
+    ]
+  }
+}

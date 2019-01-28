@@ -1,0 +1,70 @@
+{
+  "table": {
+    "caption": "Table 149 – Overprinting behavior in the transparent imaging model",
+    "head": [
+      "Source color space",
+      "Affected colour component of group colour space",
+      "Value of blend function B\n            (c\n            b\n            ,\n            c\n            s\n            ) expressed as tint"
+    ],
+    "rows": [
+      [
+        "DeviceCMYK, specified directly, not in a sampled image",
+        "C, M, Y, or K",
+        "c s",
+        "c s\n",
+        "c s if c s 0.0c b if c s 0.0"
+      ],
+      [
+        "Process colour component other than CMYK",
+        "c s\n",
+        "c s\n",
+        "c s"
+      ],
+      [
+        "Spot colorant",
+        "c s (0.0)",
+        "c b\n",
+        "c b"
+      ],
+      [
+        "Any process colour space (including other cases of DeviceCMYK)",
+        "Process colour component",
+        "c s\n",
+        "c s",
+        "c s"
+      ],
+      [
+        "Spot colorant",
+        "c s (0.0)",
+        "c b\n",
+        "c b"
+      ],
+      [
+        "Separation or DeviceN",
+        "Process colour component",
+        "c s (0.0)",
+        "c b\n",
+        "c b"
+      ],
+      [
+        "Spot colorant named in source space",
+        "c s\n",
+        "c s\n",
+        "c s"
+      ],
+      [
+        "Spot colorant not named in source space",
+        "c s (0.0)",
+        "c b\n",
+        "c b\n"
+      ],
+      [
+        "A group (not an elementary object)",
+        "All colour components",
+        "c s\n",
+        "c s\n",
+        "c s"
+      ]
+    ]
+  }
+}

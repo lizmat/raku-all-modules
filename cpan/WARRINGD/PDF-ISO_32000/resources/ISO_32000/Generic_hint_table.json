@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table F. 9 – Generic hint table",
+    "head": [
+      "item",
+      "Size (bits)",
+      "Description"
+    ],
+    "rows": [
+      [
+        "1",
+        "32",
+        "The object number of the first object in the group."
+      ],
+      [
+        "2",
+        "32",
+        "The location of the first object in the group."
+      ],
+      [
+        "3",
+        "32",
+        "The number of objects in the group."
+      ],
+      [
+        "4",
+        "32",
+        "The length of the object group in bytes."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "table": {
+    "caption": "Table 161 – Entries in a bead dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is Bead for a bead dictionary."
+      ],
+      [
+        "T",
+        "dictionary",
+        "(Required for the first bead of a thread; optional for all others; is an indirect reference) The thread to which this bead belongs.\n(PDF 1.1) This entry is permitted only for the first bead of a thread.\n(PDF 1.2) It is permitted for any bead but required only for the first."
+      ],
+      [
+        "N",
+        "dictionary",
+        "(Required; is an indirect reference) The next bead in the thread. In the last bead, this entry refers to the first bead."
+      ],
+      [
+        "V",
+        "dictionary",
+        "(Required; is an indirect reference) The previous bead in the thread. In the first bead, this entry refers to the last bead."
+      ],
+      [
+        "P",
+        "dictionary",
+        "(Required; is an indirect reference) The page object representing the page on which this bead appears."
+      ],
+      [
+        "R",
+        "rectangle",
+        "(Required) A rectangle specifying the location of this bead on the page."
+      ]
+    ]
+  }
+}

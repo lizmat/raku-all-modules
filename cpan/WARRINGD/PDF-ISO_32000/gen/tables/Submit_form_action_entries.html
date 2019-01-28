@@ -1,0 +1,133 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        236
+        –  Additional entries specific to a submit-form action 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of action that this dictionary describes; shall be SubmitForm for a submit-form action. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            file
+            specification
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A URL file specification (see 
+            <Link>
+              7.11.5, “URL 
+              Specifications”
+            </Link>
+            ) giving the uniform resource locator (URL) of 
+            the script at the Web server that will process the submission. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Fields
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array identifying which fields to include in the submission or which to exclude, depending on the setting of the Include/Exclude flag in the Flags entry (see 
+            <Link>
+              Ta b l e
+              237
+            </Link>
+            ). 
+            Each element of the array shall be either an indirect reference to a field dictionary or (PDF 1.3) a text string representing the fully qualified name of a field. Elements of both kinds may be mixed in the same array. 
+          </P>
+          <P>
+            If this entry is omitted, the Include/Exclude flag shall beignored, and all fields in the document’s interactive form shall be submitted except those whose NoExport flag (see 
+            <Link>
+              Ta b l e
+              221
+            </Link>
+            ) is set. Fields with no values may also be 
+            excluded, as dictated by the value of the IncludeNoValueFields flag; see 
+            <Link>
+              Ta b l e
+              237
+            </Link>
+            .
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Flags
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable) A set of flags specifying various characteristics of the action (see 
+            <Link>
+              Table
+              237
+            </Link>
+            ). Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

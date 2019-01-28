@@ -1,0 +1,138 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        205
+        –  Additional entries specific to a thread action 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of action that this dictionary describes; shall be Thread for a thread action. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            file specification
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The file containing the thread. If this entry is absent, the thread is in the current file. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            D
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary, integer, or text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The destination thread, specified in one of the following forms: 
+          </P>
+          <P>
+            An indirect reference to a thread dictionary (see 
+            <Link>
+              12.4.3, “Articles”
+            </Link>
+            ). In 
+            this case, the thread shall be in the current file. 
+          </P>
+          <P>
+            The index of the thread within the Threads array of its document’s Catalog (see 
+            <Link>
+              7.7.2, “Document Catalog”
+            </Link>
+            ). The first thread in the array 
+            has index 0. 
+          </P>
+          <P>
+            The title of the thread as specified in its thread information dictionary (see 
+            <Link>
+              Ta b l e
+              160
+            </Link>
+            ). If two or more threads have the same title, the one 
+            appearing first in the document Catalog’s Threads array shall beused. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            B
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary or integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The bead in the destination thread, specified in one of the following forms: 
+          </P>
+          <P>
+            An indirect reference to a bead dictionary (see 
+            <Link>
+              12.4.3, “Articles”
+            </Link>
+            ). In 
+            this case, the thread shall be in the current file. 
+          </P>
+          <P>
+            The index of the bead within its thread. The first bead in a thread has index
+            0. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

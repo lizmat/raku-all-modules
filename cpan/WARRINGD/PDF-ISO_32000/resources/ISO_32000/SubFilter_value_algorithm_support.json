@@ -1,0 +1,34 @@
+{
+  "table": {
+    "caption": "Table 257 – SubFilter value algorithm support",
+    "head": [
+      [
+        
+      ],
+      "SubFilter value"
+    ],
+    "rows": [
+      [
+        "Message Digest",
+        "SHA1 (PDF 1.3)\nSHA256 (PDF 1.6)\nSHA384 (PDF 1.7)\nSHA512 (PDF 1.7)\nRIPEMD160 (PDF 1.7)",
+        "SHA1 (PDF 1.3) b",
+        "SHA1 (PDF 1.3)\nSHA256 (PDF 1.6)\nSHA384 (PDF 1.7)\nSHA512 (PDF 1.7)\nRIPEMD160 (PDF 1.7)"
+      ],
+      [
+        "RSA Algorithm Support",
+        "Up to 1024-bit (PDF 1.3)\nUp to 2048-bit (PDF 1.5)\nUp to 4096-bit (PDF 1.5)",
+        "See adbe.pkcs7.detached",
+        "See adbe.pkcs7.detached"
+      ],
+      [
+        "DSA Algorithm Support",
+        "Up to 4096-bits (PDF 1.6)",
+        "See adbe.pkcs7.detached",
+        "No"
+      ],
+      [
+        "a Despite the appearance of sha1 in the name of this SubFilter value, supported encodings is not limited to the SHA1 algorithm. The PKCS1 object contains an identifier that indicates which al ­ gorithm is used.\nb Other digest algorithms may be used to digest the signed-data field; however, SHA1 is used to digest the data that is being signed."
+      ]
+    ]
+  }
+}

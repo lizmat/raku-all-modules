@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 156 – Entries in a collection schema dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is CollectionSchema for a collection schema dictionary."
+      ],
+      [
+        "Other keys",
+        "dictionary",
+        "(Optional) A collection field dictionary. Each key name is chosen at the discretion of the conforming writer. The key name is used to identify a corresponding collection item dictionary referenced from the file specification dictionary's CI entry (see CI key in Table 44)."
+      ]
+    ]
+  }
+}

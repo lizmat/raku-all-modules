@@ -1,0 +1,237 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        60
+        –  Path-Painting Operators 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Operands
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Operator
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Stroke the path. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            s
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Close and stroke the path. This operator shall have the same effect as the sequence h S. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            f
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Fill the path, using the nonzero winding number rule to determine the region to fill (see 
+            <Link>
+              8.5.3.3.2, "Nonzero Winding Number Rule"
+            </Link>
+            ). Any subpaths that 
+            are open shall be implicitly closed before being filled.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Equivalent to f; included only for compatibility. Although PDF readerapplications shall be able to accept this operator, PDF writer applications should use f instead. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            f*
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Fill the path, using the even-odd rule to determine the region to fill (see 
+            <Link>
+              8.5.3.3.3, "Even-Odd Rule"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            B
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Fill and then stroke the path, using the nonzero winding number rule to determine the region to fill. This operator shall produce the same result as constructing two identical path objects, painting the first with f and the second with S. 
+          </P>
+          <P>
+            NOTE The filling and stroking portions of the operation consult different values of several graphics state parameters, such as the current colour. See also 
+            <Link>
+              11.7.4.4, "Special Path-Painting 
+              Considerations"
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            B*
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Fill and then stroke the path, using the even-odd rule to determine the region to fill. This operator shall produce the same result as B, except that the path is filled as if with f* instead of f. See also 
+            <Link>
+              11.7.4.4, "Special Path-Painting 
+              Considerations"
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            b
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Close, fill, and then stroke the path, using the nonzero winding number rule to determine the region to fill. This operator shall have the same effect as the sequence h B. See also 
+            <Link>
+              11.7.4.4, "Special Path-Painting Considerations"
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            b*
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Close, fill, and then stroke the path, using the even-odd rule to determine the region to fill. This operator shall have the same effect as the sequence h B*. See also 
+            <Link>
+              11.7.4.4, "Special Path-Painting Considerations"
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            n
+          </P>
+        </TD>
+        <TD>
+          <P>
+            End the path object without filling or stroking it. This operator shall be a path-painting no-op, used primarily for the side effect of changing the current clipping path (see 
+            <Link>
+              8.5.4, "Clipping Path Operators"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

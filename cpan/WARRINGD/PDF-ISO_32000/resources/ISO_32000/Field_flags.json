@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 221 – Field flags common to all field types",
+    "head": [
+      "Bit position",
+      "Name",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "1",
+        "ReadOnly",
+        "If set, the user may not change the value of the field. Any associated widget annotations will not interact with the user; that is, they will not respond to mouse clicks or change their appearance in response to mouse motions. This flag is useful for fields whose values are computed or imported from a database."
+      ],
+      [
+        "2",
+        "Required",
+        "If set, the field has a value at the time it is exported by a submit-form action (see 12.7.5.2, “Submit-Form Action”)."
+      ],
+      [
+        "3",
+        "NoExport",
+        "If set, the field is not exported by a submit-form action (see 12.7.5.2, “Submit-Form Action”)."
+      ]
+    ]
+  }
+}

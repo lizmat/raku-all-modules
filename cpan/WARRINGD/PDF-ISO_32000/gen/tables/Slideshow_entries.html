@@ -1,0 +1,104 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        297
+        –  Entries in a slideshow dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required; PDF 1.4) The type of PDF object that this dictionary describes; shall be SlideShow for a slideshow dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required; PDF 1.4) The subtype of the PDF object that this dictionary describes; shall be Embedded for a slideshow dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Resources
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name tree
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required; PDF 1.4) A name tree that maps name strings to objects referenced by the alternate presentation.
+          </P>
+          <P>
+            NOTE Even though PDF treats the strings in the name tree as strings without a specified encoding, the slideshow shall interpret them as UTF-8 encoded Unicode.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            StartResource
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required; PDF 1.4) A byte string that shall match one of the strings in the Resources entry. It shall define the root object for the slideshow presentation. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

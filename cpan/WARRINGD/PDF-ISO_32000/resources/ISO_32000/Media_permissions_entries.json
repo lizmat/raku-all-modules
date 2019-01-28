@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 275 – Entries in a media permissions dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is MediaPermissions for a media permissions dictionary."
+      ],
+      [
+        "TF",
+        "ASCII string",
+        "(Optional) An ASCII string indicating the circumstances under which it is acceptable to write a temporary file in order to play a media clip. Valid values are:\n(TEMPNEVER) Never allowed.\n(TEMPEXTRACT) Allowed only if the document permissions allow content extraction; when bit 5 of the user access permissions (see Table 22) is set.\n(TEMPACCESS) Allowed only if the document permissions allow content extraction, including for accessibility purposes; when bits 5 or 10 of the user access permissions (see Table 22) are set, or both.\n(TEMPALWAYS) Always allowed.\nDefault value: (TEMPNEVER).\nAn unrecognized value is treated as (TEMPNEVER)."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 19 – Additional entries in a hybrid-reference file’s trailer dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "XRefStm",
+        "integer",
+        "(Optional) The byte offset in the decoded stream from the beginning of the file of a cross-reference stream."
+      ]
+    ]
+  }
+}

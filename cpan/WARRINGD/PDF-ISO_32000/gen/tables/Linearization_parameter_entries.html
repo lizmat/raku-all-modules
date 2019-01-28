@@ -1,0 +1,231 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        F. 1
+        –  Entries in the linearization parameter dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Parameter
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Linearized
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A version identification for the linearized format. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            L
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The length of the entire file in bytes. It shall be exactly equal to the actual length of the PDF file. A mismatch indicates that the file is not linearized and shall be treated as ordinary PDF, ignoring linearization information. (If the mismatch resulted from appending an update, the linearization information may still be correct but requires validation; see 
+            <Link>
+              G.7, "Accessing an Updated File"
+            </Link>
+             for details.) 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            H
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of two or four integers, [
+            offset
+            1
+            length
+            1
+            ] or [
+            offset
+            1
+            length
+            1
+            offset
+            2
+            length
+            2
+            ]. offset
+            1
+             shall be the offset of the primary hint stream from the beginning of the file. (This is the beginning of the stream object, not the beginning of the stream data.) length
+            1
+             shall be the length of this stream, including stream object overhead. 
+          </P>
+          <P>
+            If the value of the primary hint stream dictionary’s Length entry is an indirect reference, the object it refers to shall immediately follow the stream object, and length
+            1
+             also shall include the length of the indirect length object, including object overhead. 
+          </P>
+          <P>
+            If there is an overflow hint stream, offset
+            2
+             and length
+            2
+             shall specify its offset and length. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            O
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The object number of the first page’s page object. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            E
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The offset of the end of the first page (the end of 
+            <Link>
+              EXAMPLE 
+              6
+            </Link>
+             in 
+            <Link>
+              F.3.1, "General"
+            </Link>
+            ), relative to the beginning of the file. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            N
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The number of pages in the document. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            T
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) In documents that use standard main cross-reference tables (including hybrid-reference files; see 
+            <Link>
+              7.5.8.4, "Compatibility with 
+              Applications That Do Not Support Compressed Reference Streams"
+            </Link>
+            ), 
+            this entry shall represent the offset of the white-space character preceding the first entry of the main cross-reference table (the entry for object number 0), relative to the beginning of the file. Note that this differs from the Prev entry in the first-page trailer, which gives the location of the xref line that precedes the table. 
+          </P>
+          <P>
+            (PDF 1.5) Documents that use cross-reference streams exclusively (see 
+            <Link>
+              7.5.8, "Cross-Reference Streams"
+            </Link>
+            ), this entry shall represent the 
+            offset of the main cross-reference stream object. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            P
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The page number of the first page; see 
+            <Link>
+              F.3.4, "First-Page 
+              Cross-Reference Table and Trailer (Part 3)"
+            </Link>
+            . Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

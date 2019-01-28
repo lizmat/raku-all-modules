@@ -1,0 +1,98 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        364
+        –  Entries in a separation dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Pages
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of indirect references to page objects representing separations of the same document page. One of the page objects in the array shall be the one with which this separation dictionary is associated, and all of them shall have separation dictionaries (SeparationInfoentries) containing Pages arrays identical to this one. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DeviceColorant
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+            or string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The name of the device colorant to be used in rendering this separation, such as Cyan or PANTONE 35 CV. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ColorSpace
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array defining a Separation or DeviceN colour space (see 
+            <Link>
+              8.6.6.4, “Separation Colour Spaces”
+            </Link>
+             and 
+            <Link>
+              8.6.6.5, “DeviceN Colour 
+              Spaces”
+            </Link>
+            ). It provides additional information about the colour specified by 
+            DeviceColorant—in particular, the alternate colour space and tint transformation function that shall be used to represent the colorant as a process colour. This information enables a conforming reader to preview the separation in a colour that approximates the device colorant. 
+          </P>
+          <P>
+            The value of DeviceColorant shall match the space’s colorant name (if it is a Separation space) or be one of the space’s colorant names (if it is a DeviceN space). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

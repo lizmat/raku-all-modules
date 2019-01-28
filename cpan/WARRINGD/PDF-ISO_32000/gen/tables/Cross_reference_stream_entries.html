@@ -1,0 +1,153 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        17
+        –  Additional entries specific to a cross-reference stream dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of PDF object that this dictionary describes; shall be XRef for a cross-reference stream.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Size
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The number one greater than the highest object number used in this section or in any section for which this shall be an update. It shall be equivalent to the Size entry in a trailer dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Index
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array containing a pair of integers for each subsection in this section. The first integer shall be the first object number in the subsection; the second integer shall be the number of entries in the subsection
+          </P>
+          <P>
+            The array shall be sorted in ascending order by object number. Subsections cannot overlap; an object number may have at most one entry in a section.
+          </P>
+          <P>
+            Default value: [0 Size].
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Prev
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Present only if the file has more than one cross-reference stream; not meaningful in hybrid-reference files; see 
+            <Link>
+              7.5.8.4, "Compatibility with 
+              Applications That Do Not Support Compressed Reference Streams"
+            </Link>
+            ) The 
+            byte offset in the decoded stream from the beginning of the file to the beginning of the previous cross-reference stream. This entry has the same function as the Prev entry in the trailer dictionary (
+            <Link>
+              Ta b l e
+              15
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            W
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of integers representing the size of the fields in a single cross-reference entry. 
+            <Link>
+              Ta b l e
+              18
+            </Link>
+             describes the types of entries and their 
+            fields. For PDF 1.5, W always contains three integers; the value of each integer shall be the number of bytes (in the decoded stream) of the corresponding field. 
+          </P>
+          <P>
+            EXAMPLE [1 2 1] means that the fields are one byte, two bytes, and one byte, respectively.
+            <P>
+              A value of zero for an element in the W array indicates that the corresponding field shall not be present in the stream, and the default value shall be used, if there is one. If the first element is zero, the type field shall not be present, and shall default to type 1.
+            </P>
+            <P>
+              The sum of the items shall be the total length of each entry; it can be used with the Index array to determine the starting position of each subsection. 
+            </P>
+            <P>
+              Different cross-reference streams in a PDF file may use different values for W. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

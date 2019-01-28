@@ -1,0 +1,119 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        260
+        –  Entries in a viewport dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; shall be Viewport for a viewport dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BBox
+          </P>
+        </TD>
+        <TD>
+          <P>
+            rectangle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A rectangle in default user space coordinates specifying the location of the viewport on the page. 
+          </P>
+          <P>
+            The two coordinate pairs of the rectangle shall be specified in normalized form; that is, lower-left followed by upper-right, relative to the measuring coordinate system. This ordering shall determine the orientation of the measuring coordinate system (that is, the direction of the positive x and yaxes) in this viewport, which may have a different rotation from the page.
+          </P>
+          <P>
+            The coordinates of this rectangle are independent of the origin of the measuring coordinate system, specified in the O entry (see 
+            <Link>
+              Ta b l e
+              262
+            </Link>
+            ) of the 
+            measurement dictionary specified by Measure. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A descriptive text string or title of the viewport, intended for use in a user interface. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Measure
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A measure dictionary (see 
+            <Link>
+              Table
+              261
+            </Link>
+            ) that specifies the scale and 
+            units that shall apply to measurements taken on the contents within the viewport. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

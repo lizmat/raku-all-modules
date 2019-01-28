@@ -1,0 +1,493 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        150
+        –  Entries in a viewer preferences dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            HideToolbar
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag specifying whether to hide the conforming reader’s tool bars when the document is active. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            HideMenubar
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag specifying whether to hide the conforming reader’s menu bar when the document is active. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            HideWindowUI
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag specifying whether to hide user interface elements in the document’s window (such as scroll bars and navigation controls), leaving only the document’s contents displayed. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FitWindow
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag specifying whether to resize the document’s window to fit the size of the first displayed page. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CenterWindow
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag specifying whether to position the document’s window in the center of the screen. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DisplayDocTitle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) A flag specifying whether the window’s title bar should display the document title taken from the Title entry of the document information dictionary (see 
+            <Link>
+              14.3.3, “Document 
+              Information Dictionary”
+            </Link>
+            ). If false, the title bar should instead 
+            display the name of the PDF file containing the document. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            NonFullScreenPageMode
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The document’s page mode, specifying how to display the document on exiting full-screen mode: 
+          </P>
+          <P>
+            UseNone Neither document outline nor thumbnail images visible 
+          </P>
+          <P>
+            UseOutlines Document outline visible 
+          </P>
+          <P>
+            UseThumbs Thumbnail images visible 
+          </P>
+          <P>
+            UseOC Optional content group panel visible 
+          </P>
+          <P>
+            This entry is meaningful only if the value of the PageMode entry in the Catalog dictionary (see 
+            <Link>
+              7.7.2, “Document Catalog”
+            </Link>
+            ) is 
+            FullScreen; it shall be ignored otherwise. Default value: UseNone. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Direction
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3) The predominant reading order for text: 
+          </P>
+          <P>
+            L2R Left to right 
+          </P>
+          <P>
+            R2L Right to left (including vertical writing systems, such as Chinese, Japanese, and Korean) 
+          </P>
+          <P>
+            This entry has no direct effect on the document’s contents or page numbering but may be used to determine the relative positioning of pages when displayed side by side or printed n-up. Default value: L2R. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ViewArea
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) The name of the page boundary representing the area of a page that shall be displayed when viewing the document on the screen. The value is the key designating the relevant page boundary in the page object (see 
+            <Link>
+              7.7.3, “Page Tree”
+            </Link>
+            and 
+            <Link>
+              14.11.2, “Page Boundaries”
+            </Link>
+            ). If the specified page boundary 
+            is not defined in the page object, its default value shall be used, as specified in 
+            <Link>
+              Ta b l e
+              30
+            </Link>
+            . Default value: CropBox. 
+          </P>
+          <P>
+            This entry is intended primarily for use by prepress applications that interpret or manipulate the page boundaries as described in 
+            <Link>
+              14.11.2, “Page Boundaries.”
+            </Link>
+             
+          </P>
+          <P>
+            NOTE 1 Most conforming readers disregard it. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ViewClip
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) The name of the page boundary to which the contents of a page shall be clipped when viewing the document on the screen. The value is the key designating the relevant page boundary in the page object (see 
+            <Link>
+              7.7.3, “Page Tree”
+            </Link>
+             and 
+            <Link>
+              14.11.2, 
+              “Page Boundaries”
+            </Link>
+            ). If the specified page boundary is not defined 
+            in the page object, its default value shall be used, as specified in 
+            <Link>
+              Ta b l e
+              30
+            </Link>
+            . Default value: CropBox. 
+          </P>
+          <P>
+            This entry is intended primarily for use by prepress applications that interpret or manipulate the page boundaries as described in 
+            <Link>
+              14.11.2, “Page Boundaries.”
+            </Link>
+             
+          </P>
+          <P>
+            NOTE 2 Most conforming readers disregard it. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PrintArea
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) The name of the page boundary representing the area of a page that shall be rendered when printing the document. The value is the key designating the relevant page boundary in the page object (see 
+            <Link>
+              7.7.3, “Page Tree”
+            </Link>
+             and 
+            <Link>
+              14.11.2, 
+              “Page Boundaries”
+            </Link>
+            ). If the specified page boundary is not defined 
+            in the page object, its default value shall be used, as specified in 
+            <Link>
+              Ta b l e
+              30
+            </Link>
+            . Default value: CropBox. 
+          </P>
+          <P>
+            This entry is intended primarily for use by prepress applications that interpret or manipulate the page boundaries as described in 
+            <Link>
+              14.11.2, “Page Boundaries.”
+            </Link>
+             
+          </P>
+          <P>
+            NOTE 3 Most conforming readers disregard it. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PrintClip
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) The name of the page boundary to which the contents of a page shall be clipped when printing the document. The value is the key designating the relevant page boundary in the page object (see 
+            <Link>
+              7.7.3, “Page Tree”
+            </Link>
+             and 
+            <Link>
+              14.11.2, “Page 
+              Boundaries”
+            </Link>
+            ). If the specified page boundary is not defined in the 
+            page object, its default value shall be used, as specified in 
+            <Link>
+              Ta b l e
+              30
+            </Link>
+            . Default value: CropBox. 
+          </P>
+          <P>
+            This entry is intended primarily for use by prepress applications that interpret or manipulate the page boundaries as described in 
+            <Link>
+              14.11.2, “Page Boundaries.”
+            </Link>
+             
+          </P>
+          <P>
+            NOTE 4 Most conforming readers disregard it. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PrintScaling
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.6) The page scaling option that shall be selected when a print dialog is displayed for this document. Valid values are None, which indicates no page scaling, and AppDefault, which indicates the conforming reader’s default print scaling. If this entry has an unrecognized value, AppDefault shall be used. Default value: AppDefault. 
+          </P>
+          <P>
+            If the print dialog is suppressed and its parameters are provided from some other source, this entry nevertheless shall be honored.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Duplex
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) The paper handling option that shall be used when printing the file from the print dialog. The following values are valid:
+          </P>
+          <P>
+            Simplex
+             
+            Print single-sided
+          </P>
+          <P>
+            DuplexFlipShortEdge
+             
+            Duplex and flip on the short edge of the sheet
+          </P>
+          <P>
+            DuplexFlipLongEdge
+             
+            Duplex and flip on the long edge of the sheet
+          </P>
+          <P>
+            Default value: none
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PickTrayByPDFSize
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) A flag specifying whether the PDF page size shall be used to select the input paper tray. This setting influences only the preset values used to populate the print dialog presented by a conforming reader. If PickTrayByPDFSize is true, the check box in the print dialog associated with input paper tray shall bechecked. 
+          </P>
+          <P>
+            This setting has no effect on operating systems that do not provide the ability to pick the input tray by size.
+          </P>
+          <P>
+            Default value: as defined by the conforming reader
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PrintPageRange
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) The page numbers used to initialize the print dialog box when the file is printed. The array shall contain an even number of integers to be interpreted in pairs, with each pair specifying the first and last pages in a sub-range of pages to be printed.The first page of the PDF file shall be denoted by 1. Default value: as defined by the conforming reader 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            NumCopies
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) The number of copies that shall be printed when the print dialog is opened for this file. Values outside this range shall be ignored. 
+          </P>
+          <P>
+            Default value: as defined by the conforming reader, but typically 1
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

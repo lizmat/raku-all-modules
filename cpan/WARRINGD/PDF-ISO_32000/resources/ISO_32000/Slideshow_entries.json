@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 297 – Entries in a slideshow dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Required; PDF 1.4) The type of PDF object that this dictionary describes; is SlideShow for a slideshow dictionary."
+      ],
+      [
+        "Subtype",
+        "name",
+        "(Required; PDF 1.4) The subtype of the PDF object that this dictionary describes; is Embedded for a slideshow dictionary."
+      ],
+      [
+        "Resources",
+        "name tree",
+        "(Required; PDF 1.4) A name tree that maps name strings to objects referenced by the alternate presentation.\nNOTE Even though PDF treats the strings in the name tree as strings without a specified encoding, the slideshow shall interpret them as UTF-8 encoded Unicode."
+      ],
+      [
+        "StartResource",
+        "byte string",
+        "(Required; PDF 1.4) A byte string that shall match one of the strings in the Resources entry. It shall define the root object for the slideshow presentation."
+      ]
+    ]
+  }
+}

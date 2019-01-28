@@ -1,0 +1,69 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        77
+        –  Shading Operator 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Operands
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Operator
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            sh
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.3) Paint the shape and colour shading described by a shading dictionary, subject to the current clipping path. The current colour in the graphics state is neither used nor altered. The effect is different from that of painting a path using a shading pattern as the current colour. 
+          </P>
+          <P>
+            name is the name of a shading dictionary resource in the Shadingsubdictionary of the current resource dictionary (see 
+            <Link>
+              7.8.3, "Resource 
+              Dictionaries"
+            </Link>
+            ). All coordinates in the shading dictionary are interpreted 
+            relative to the current user space. (By contrast, when a shading dictionary is used in a type 2 pattern, the coordinates are expressed in pattern space.) All colours are interpreted in the colour space identified by the shading dictionary’s ColorSpace entry (see 
+            <Link>
+              Ta b l e
+              78
+            </Link>
+            ). The Background entry, if 
+            present, is ignored. 
+          </P>
+          <P>
+            This operator should be applied only to bounded or geometrically defined shadings. If applied to an unbounded shading, it paints the shading’s gradient fill across the entire clipping region, which may be time-consuming. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

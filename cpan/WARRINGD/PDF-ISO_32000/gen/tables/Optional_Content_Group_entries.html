@@ -1,0 +1,113 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        98
+        –  Entries in an Optional Content Group Dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of PDF object that this dictionary describes; shall beOCG for an optional content group dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The name of the optional content group, suitable for presentation in a reader’s user interface.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Intent
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name or array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A single intent name or an array containing any combination of names. PDF defines two names, View and Design, that may indicate the intended use of the graphics in the group. A conforming reader may choose to use only groups that have a specific intent and ignore others. 
+          </P>
+          <P>
+            Default value: View. See 
+            <Link>
+              8.11.2.3, "Intent"
+            </Link>
+             for more information.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Usage
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A usage dictionary describing the nature of the content controlled by the group. It may be used by features that automatically control the state of the group based on outside factors. See 
+            <Link>
+              8.11.4.4, 
+              "Usage and Usage Application Dictionaries"
+            </Link>
+             for more information.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

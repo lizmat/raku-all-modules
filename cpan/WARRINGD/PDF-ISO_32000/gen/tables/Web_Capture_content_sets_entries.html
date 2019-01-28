@@ -1,0 +1,182 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        352
+        –  Entries common to all Web Capture content sets 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be SpiderContentSet for a Web Capture content set. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The subtype of content set that this dictionary describes. The value shall be one of: 
+          </P>
+          <P>
+            SPS(“Spider page set”) A page set 
+          </P>
+          <P>
+            SIS(“Spider image set”) An image set 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ID
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The digital identifier of the content set (see 
+            <Link>
+              14.10.3.3, “Digital 
+              Identifiers”
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            O
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of indirect references to the objects belonging to the content set. The order of objects in the array is restricted when the content set subtype (S entry) is SPS (see 
+            <Link>
+              14.10.4.2, “Page Sets”
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            SI
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary or
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A source information dictionary (see 
+            <Link>
+              14.10.5, “Source Information”
+            </Link>
+            ) 
+            or an array of such dictionaries, describing the sources from which the objects belonging to the content set were created. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ASCII string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The content type, an ASCII string characterizing the source from which the objects belonging to the content set were created. The string shall conform to the content type specification described in Internet RFC 2045, Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies (see the 
+            <Link>
+              Bibliography
+            </Link>
+            ). 
+          </P>
+          <P>
+            EXAMPLE for a page set consisting of a group of PDF pages created from an HTML file, the content type would be text
+            /
+            html. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            date
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A time stamp giving the date and time at which the content set was created.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

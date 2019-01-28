@@ -1,0 +1,59 @@
+{
+  "table": {
+    "caption": "Table 310 – 3D lighting scheme styles",
+    "head": [
+      "Scheme",
+      "Description"
+    ],
+    "rows": [
+      [
+        "Artwork",
+        "Lights as specified in the 3D artwork. This has the same effect as if the 3D lighting scheme dictionary were omitted."
+      ],
+      [
+        "None",
+        "No lights is used. That is, lighting specified in the 3D artwork is ignored."
+      ],
+      [
+        "White",
+        "Three blue-grey infinite lights, no ambient term\nLight 1 Colour: < 0.38, 0.38, 0.45 >Direction: < -2.0, -1.5, -0.5 >\nLight 2 Colour: < 0.6, 0.6, 0.67 >Direction: < 2.0, 1.1, -2.5 >\nLight 3 Colour: < 0.5, 0.5, 0.57 >Direction: < -0.5, 0.0, 2.0 >"
+      ],
+      [
+        "Day",
+        "Three light-grey infinite lights, no ambient term\nLight 1 Colour: < 0.5, 0.5, 0.5 > Direction: < -2.0, -1.5, -.5 >\nLight 2 Colour: < 0.8, 0.8, 0.9 >Direction: < 2.0, 1.1, -2.5 >\nLight 3 Colour: < 0.9, 0.9, 0.9 > Direction: < 0.02, 0.01, 2.0 >"
+      ],
+      [
+        "Night",
+        "One yellow, one aqua, and one blue infinite light, no ambient term\nLight 1 Colour: < 1, .75, .39 >Direction: < -2.0, -1.5, -0.5 >\nLight 2 Colour: < 0.31, 0.47, 0.55 > Direction: < 2.0, 1.1, -2.5 >\nLight 3 Colour: < .5, .5, 1.0 > Direction: < 0.0, 0.0, 2.0 >"
+      ],
+      [
+        "Hard",
+        "Three grey infinite lights, moderate ambient term\nLight Colour: < 0.5, 0.5, 0.5 > Direction: < -1.5, -1.5, -1.5 >\nLight 2 Colour: < 0.8, 0.8, 0.9 >Direction: < 1.5, 1.5, -1.5 >\nLight 3 Colour: < 0.9, 0.9, 0.9 > Direction: < -0.5, 0, 2.0 >\nAmbient Colour: < 0.5, 0.5, 0.5 >"
+      ],
+      [
+        "Primary",
+        "One red, one green, and one blue infinite light, no ambient term\nLight 1 Colour: < 1, 0.2, 0.5 > Direction: < -2, -1.5, -0.5 >\nLight 2 Colour: < 0.2, 1.0, 0.5 >Direction: < 2.0, 1.1, -2.5 >\nLight 3 Colour: < 0, 0, 1 > Direction: < 0.0, 0.0, 2.0 >"
+      ],
+      [
+        "Blue",
+        "Three blue infinite lights, no ambient term\nLight 1 Colour: < 0.4, 0.4, 0.7 > Direction: < -2.0, -1.5, -0.5 >\nLight 2 Colour: < 0.75, 0.75, 0.95 > Direction: < 2.0, 1.1, -2.5 >\nLight 3 Colour: < 0.7, 0.7, 0.95 >Direction: < 0.0, 0.0, 2.0 >"
+      ],
+      [
+        "Red",
+        "Three red infinite lights, no ambient term\nLight 1 Colour: < 0.8, 0.3, 0.4 > Direction: < -2.0, -1.5, -0.5 >\nLight 2 Colour: < 0.95, 0.5, 0.7 >Direction: < 2.0, 1.1, -2.5 >\nLight 3 Colour: < 0.95, 0.4, 0.5 > Direction: < 0.0, 0.0, 2.0 >"
+      ],
+      [
+        "Cube",
+        "Six grey infinite lights aligned with the major axes, no ambient term\nLight 1 Colour: < .4, .4, .4 > Direction: < 1.0, 0.01, 0.01 >\nLight 2 Colour: < .4, .4, .4 > Direction: < 0.01, 1.0, 0.01 >\nLight 3 Colour: < .4, .4, .4 > Direction: < 0.01, 0.01, 1.0 >\nLight 4 Colour: < .4, .4, .4 > Direction: < -1.0, 0.01, 0.01 >\nLight 5 Colour: < .4, .4, .4 >Direction: < 0.01, -1.0, 0.01 >\nLight 6 Colour: < .4, .4, .4 > Direction: < 0.01, 0.01, -1.0 >"
+      ],
+      [
+        "CAD",
+        "Three grey infinite lights and one light attached to the camera, no ambient term\nLight 1 Colour: < 0.72, 0.72, 0.81 > Direction: < 0.0, 0.0, 0.0 >\nLight 2 Colour: < 0.2, 0.2, 0.2 > Direction: < -2.0, -1.5, -0.5 >\nLight 3 Colour: < 0.32, 0.32, 0.32 > Direction: < 2.0, 1.1, -2.5 >\nLight 4 Colour: < 0.36, 0.36, 0.36 > Direction: < 0.04, 0.01, 2.0 >"
+      ],
+      [
+        "Headlamp",
+        "Single infinite light attached to the camera, low ambient term\nLight 1 Colour: < 0.8, 0.8, 0.9 >Direction: < 0.0, 0.0, 0.0 >\nAmbient Colour: < 0.1, 0.1, 0.1 >"
+      ]
+    ]
+  }
+}

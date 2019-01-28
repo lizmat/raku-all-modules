@@ -1,0 +1,84 @@
+{
+  "table": {
+    "caption": "Table 2 – Delimiter characters",
+    "head": [
+      "Glyph",
+      "Decimal",
+      "Hexadecimal",
+      "Octal",
+      "Name"
+    ],
+    "rows": [
+      [
+        "(",
+        "40",
+        "28",
+        "50",
+        "LEFT PARENTHESIS"
+      ],
+      [
+        ")",
+        "41",
+        "29",
+        "51",
+        "RIGHT PARENTHESIS"
+      ],
+      [
+        "<",
+        "60",
+        "3C",
+        "60",
+        "LESS-THAN SIGN"
+      ],
+      [
+        ">",
+        "62",
+        "3E",
+        "62",
+        "GREATER-THAN SIGN"
+      ],
+      [
+        "[",
+        "91",
+        "5B",
+        "133",
+        "LEFT SQUARE BRACKET"
+      ],
+      [
+        "]",
+        "93",
+        "5D",
+        "135",
+        "RIGHT SQUARE BRACKET"
+      ],
+      [
+        "{",
+        "123",
+        "7B",
+        "173",
+        "LEFT CURLY BRACKET"
+      ],
+      [
+        "}",
+        "125",
+        "7D",
+        "175",
+        "RIGHT CURLY BRACKET"
+      ],
+      [
+        "/",
+        "47",
+        "2F",
+        "57",
+        "SOLIDUS"
+      ],
+      [
+        "%",
+        "37",
+        "25",
+        "45",
+        "PERCENT SIGN"
+      ]
+    ]
+  }
+}

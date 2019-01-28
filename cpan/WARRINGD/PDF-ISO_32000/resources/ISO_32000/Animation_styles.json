@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 302 – Animation styles",
+    "head": [
+      null
+    ],
+    "rows": [
+      [
+        "None",
+        "Keyframe animations is not driven directly by the conforming reader. This value is used by documents that are intended to drive animations through an alternate means, such as JavaScript.\nThe remaining entries in the animation style dictionary is ignored."
+      ],
+      [
+        "Linear",
+        "Keyframe animations is driven linearly from beginning to end. This animation style results in a repetitive playthrough of the animation, such as in a walking motion.\nt = (m(t a - t 0) + r 0 ) % (r 1 - r 0)\np = (r 1 - r 0) / m\nThe “%” symbol indicates the modulus operator."
+      ],
+      [
+        "Oscillating",
+        "Keyframe animations shall oscillate along their time range. This animation style results in a back-and-forth playing of the animation, such as exploding or collapsing parts.\nt = (0.5)(r 1 - r 0)(1 - cos(m(t a - t 0))) + r 0\np = 2 * pi / m"
+      ]
+    ]
+  }
+}

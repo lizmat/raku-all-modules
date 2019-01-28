@@ -1,0 +1,57 @@
+{
+  "table": {
+    "caption": "Table 255 – Entries in the UR transform parameters dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is TransformParams for a transform parameters dictionary."
+      ],
+      [
+        "Document",
+        "array",
+        "(Optional) An array of names specifying additional document-wide usage rights for the document. The only defined value is FullSave, which permits a user to save the document along with modified form and/or annotation data. (PDF 1.5) Any usage right that permits the document to be modified implicitly shall enable the FullSave right.\nIf the PDF document contains a UR3 dictionary, only rights specified by the Annots entry that permit the document to be modified shall implicitly enable the FullSave right. For all other rights, FullSave is explicitly enabled in order to save the document. (Signature rights shall permit saving as part of the signing process but not otherwise).\nIf the P entry in the UR transform parameters dictionary is true (PDF 1.6) and greater conforming readers shall permit only those rights that are enabled by the entries in the dictionary. However, conforming readers shall permit saving the document as long as any rights that permit modifying the document are enabled."
+      ],
+      [
+        "Msg",
+        "text string",
+        "(Optional) A text string that may be used to specify any arbitrary information, such as the reason for adding usage rights to the document."
+      ],
+      [
+        "V",
+        "name",
+        "(Optional) The UR transform parameters dictionary version. The value shall be2.2. If an unknown version is present, no rights is enabled.\nNOTE This value is a name object, not a number.\nDefault value: 2.2."
+      ],
+      [
+        "Annots",
+        "array",
+        "(Optional) An array of names specifying additional annotation-related usage rights for the document. Valid names (PDF 1.5) are Create, Delete, Modify, Copy, Import, and Export, which shall permit the user to perform the named operation on annotations.\nThe following names (PDF 1.6) is permitted only when the signature dictionary is referenced from the UR3 entry of the permissions dictionary (see Table 258):\nOnlinePermits online commenting; that is, the ability to upload or download markup annotations from a server.\nSummaryView Permits a user interface to be shown that summarizes the comments (markup annotations) in a document."
+      ],
+      [
+        "Form",
+        "array",
+        "(Optional) An array of names specifying additional form-field-related usage rights for the document. Valid names (PDF 1.5) are:\nAddPermits the user to add form fields to the document.\nDeletePermits the user to delete form fields to the document.\nFillInPermits the user to save a document on which form fill-in has been done.\nImportPermits the user to import form data files in FDF, XFDF and text (CSV/TSV) formats.\nExportPermits the user to export form data files as FDF or XFDF.\nSubmitStandalone Permits the user to submit form data when the document is not open in a Web browser.\nSpawnTemplate Permits new pages to be instantiated from named page templates.\nThe following names (PDF 1.6) is permitted only when the signature dictionary is referenced from the UR3 entry of the permissions dictionary; see\nTable 258\n:\nBarcodePlaintext Permits (PDF 1.6) text form field data to be encoded as a plaintext two-dimensional barcode.\nOnlinePermits (PDF 1.6) the use of forms-specific online mechanisms such as SOAP or Active Data Object."
+      ],
+      [
+        "Signature",
+        "array",
+        "(Optional) An array of names specifying additional signature-related usage rights for the document. The only defined value is Modify, which permits a user to apply a digital signature to an existing signature form field or clear a signed signature form field."
+      ],
+      [
+        "EF",
+        "array",
+        "(Optional; PDF 1.6) An array of names specifying additional usage rights for named embedded files in the document. Valid names is Create, Delete, Modify, and Import, which shall permit the user to perform the named operation on named embedded files."
+      ],
+      [
+        "P",
+        "boolean",
+        "(Optional; PDF 1.6) If true, permissions for the document is restricted in all consumer applications to those permissions granted by a conforming reader, while allowing permissions for rights enabled by other entries in this dictionary. Default value: false."
+      ]
+    ]
+  }
+}

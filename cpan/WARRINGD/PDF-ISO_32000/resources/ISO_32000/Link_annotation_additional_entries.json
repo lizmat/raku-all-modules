@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 173 – Additional entries specific to a link annotation",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of annotation that this dictionary describes; is Link for a link annotation."
+      ],
+      [
+        "A",
+        "dictionary",
+        "(Optional; PDF 1.1) An action that is performed when the link annotation is activated (see 12.6, “Actions”)."
+      ],
+      [
+        "Dest",
+        "array, name or byte string",
+        "(Optional; not permitted if an A entry is present) A destination that is displayed when the annotation is activated (see 12.3.2, “Destinations”)."
+      ],
+      [
+        "H",
+        "name",
+        "(Optional; PDF 1.2) The annotation’s highlighting mode, the visual effect that is used when the mouse button is pressed or held down inside its active area:\nN (None) No highlighting.\nI(Invert) Invert the contents of the annotation rectangle.\nO I(Outline) Invert the annotation’s border.\nP(Push) Display the annotation as if it were being pushed below the surface of the page.\nDefault value: I."
+      ],
+      [
+        "PA",
+        "dictionary",
+        "(Optional; PDF 1.3) A URI action (see 12.6.4.7, “URI Actions”) formerly associated with this annotation. When Web Capture (14.10, “ Web Capture”) changes an annotation from a URI to a go-to action (12.6.4.2, “Go-To Actions”), it uses this entry to save the data from the original URI action so that it can be changed back in case the target page for the go-to action is subsequently deleted."
+      ],
+      [
+        "QuadPoints",
+        "array",
+        "(Optional; PDF 1.6) An array of 8 × n numbers specifying the coordinates of n quadrilaterals in default user space that comprise the region in which the link is activated. The coordinates for each quadrilateral are given in the order\nx 1 y 1 x 2 y 2 x 3 y 3 x 4 y 4\nspecifying the four vertices of the quadrilateral in counterclockwise order. For orientation purposes, such as when applying an underline border style, the bottom of a quadrilateral is the line formed by (x 1 , y 1)and (x 2 , y 2).\nIf this entry is not present or the conforming reader does not recognize it, the region specified by the Rect entry is used. QuadPointsshall be ignored if any coordinate in the array lies outside the region specified by Rect."
+      ],
+      [
+        "BS",
+        "dictionary",
+        "(Optional; PDF 1.6) A border style dictionary (see Table 166) specifying the line width and dash pattern to be used in drawing the annotation’s border.\nThe annotation dictionary’s AP entry, if present, takes precedence over the BS entry; see\nTable 164\nand\n12.5.5, “Appearance Streams”\n."
+      ]
+    ]
+  }
+}

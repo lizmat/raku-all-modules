@@ -1,0 +1,55 @@
+{
+  "table": {
+    "caption": "Table 4 – Examples of literal names",
+    "head": [
+      "Syntax for Literal name",
+      "Resulting Name"
+    ],
+    "rows": [
+      [
+        "/Name1",
+        "Name1"
+      ],
+      [
+        "/ASomewhatLongerName",
+        "ASomewhatLongerName"
+      ],
+      [
+        "/A;Name_With-Various***Characters?",
+        "A;Name_With-Various***Characters?"
+      ],
+      [
+        "/1 . 2",
+        "1 . 2"
+      ],
+      [
+        "/$$",
+        "$$"
+      ],
+      [
+        "/@pattern",
+        "@pattern"
+      ],
+      [
+        "/. notdef",
+        ". notdef"
+      ],
+      [
+        "/lime20Green",
+        "Lime Green"
+      ],
+      [
+        "/paired2829parentheses",
+        "paired()parentheses"
+      ],
+      [
+        "/The_Key_of_F23_Minor",
+        "The_Key_of_F_Minor"
+      ],
+      [
+        "/A42",
+        "AB"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 65 – Entries in a Lab Colour Space Dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "WhitePoint",
+        "array",
+        "(Required) An array of three numbers [ X W Y W Z W ] that shall specify the tristimulus value, in the CIE 1931 XYZ space, of the diffuse white point; see\n8.6.5.3, \"CalRGB Colour Spaces\"\nfor further discussion. The numbers X W and Z W is positive, and Y W is 1.0."
+      ],
+      [
+        "BlackPoint",
+        "array",
+        "(Optional) An array of three numbers [ X B Y B Z B ] that shall specify the tristimulus value, in the CIE 1931 XYZ space, of the diffuse black point; see\n8.6.5.3, \"CalRGB Colour Spaces\"\nfor further discussion. All three of these numbers is non-negative. Default value: [ 0.0 0.0 0.0 ]."
+      ],
+      [
+        "Range",
+        "array",
+        "(Optional) An array of four numbers [ a min a max b min b max ] that shall specify the range of valid values for the a* and b* (B and C) components of the colour space—that is,\namina* amax≤≤\nand\nbminb* bmax≤≤\nComponent values falling outside the specified range is adjusted to the nearest valid value without error indication.\nDefault value: [−100 100 −100 100 ]."
+      ]
+    ]
+  }
+}

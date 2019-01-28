@@ -1,0 +1,134 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        247
+        –  Entries in an icon fit dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            SW
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The circumstances under which the icon shall be scaled inside the annotation rectangle: 
+          </P>
+          <P>
+            A Always scale. 
+          </P>
+          <P>
+            B Scale only when the icon is bigger than the annotation rectangle. 
+          </P>
+          <P>
+            S Scale only when the icon is smaller than the annotation rectangle. 
+          </P>
+          <P>
+            N Never scale. 
+          </P>
+          <P>
+            Default value: A. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of scaling that shall be used: 
+          </P>
+          <P>
+            A Anamorphic scaling: Scale the icon to fill the annotation rectangle exactly, without regard to its original aspect ratio (ratio of width to height). 
+          </P>
+          <P>
+            P Proportional scaling: Scale the icon to fit the width or height of the annotation rectangle while maintaining the icon’s original aspect ratio. If the required horizontal and vertical scaling factors are different, use the smaller of the two, centering the icon within the annotation rectangle in the other dimension. 
+          </P>
+          <P>
+            Default value: P. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            A
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of two numbers that shall be between 0.0 and 1.0 indicating the fraction of leftover space to allocate at the left and bottom of the icon. A value of [
+            0.0
+            0.0
+            ] shall position the icon at the bottom-left corner of the annotation rectangle. A value of [
+            0.5
+            0.5
+            ] shall center it within the rectangle. This entry shall be used only if the icon is scaled proportionally. Default value: [
+            0.5
+            0.5
+            ]. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FB
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5) If true, indicates that the button appearance shall be scaled to fit fully within the bounds of the annotation without taking into consideration the line width of the border. Default value: false.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

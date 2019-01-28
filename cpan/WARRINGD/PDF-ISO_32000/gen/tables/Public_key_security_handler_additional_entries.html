@@ -1,0 +1,86 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        23
+        –  Additional encryption dictionary entries for public-key security handlers 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Recipients
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required when SubFilter is adbe.pkcs7.s3 or adbe.pkcs7.s4; PDF 1.3)An array of byte-strings, where each string is a PKCS7 object listing recipients who have been granted equal access rights to the document. The data contained in the PKCS7 object shall include both a cryptographic key that shall be used to decrypt the encrypted data and the access permissions (see 
+            <Link>
+              Table
+              24
+            </Link>
+            ) that apply to the recipient list. There shall be only one 
+            PKCS7 object per unique set of access permissions; if a recipient appears in more than one list, the permissions used shall be those in the first matching list. 
+          </P>
+          <P>
+            When SubFilter is adbe.pkcs7.s5, recipient lists shall be specified in the crypt filter dictionary; see 
+            <Link>
+              Ta b l e
+              27
+            </Link>
+            .
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            P
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A set of flags specifying which operations shall be permitted when the document is opened with user access. If bit 2 is set to 1, all other bits are ignored and all operations are permitted. If bit 2 is set to 0, permission for operations are based on the values of the remaining flags defined in 
+            <Link>
+              Ta b l e
+              24
+            </Link>
+            .
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

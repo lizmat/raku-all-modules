@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 85 – Data Values in a Coons Patch Mesh",
+    "head": [
+      "Edge Flag",
+      "Next Set of Data Values"
+    ],
+    "rows": [
+      [
+        "f = 0",
+        "x 1 y 1 x 2 y 2 x 3 y 3 x 4 y 4 x 5 y 5 x 6 y 6 x 7 y 7 x 8 y 8 x 9 y 9 x 10 y 10 x 11 y 11 x 12 y 12 c 1 c 2 c 3 c 4\nNew patch; no implicit values"
+      ],
+      [
+        "f = 1",
+        "x 5 y 5 x 6 y 6 x 7 y 7 x 8 y 8 x 9 y 9 x 10 y 10 x 11 y 11 x 12 y 12 c 3 c 4\nImplicit values:\n(x 1 , y 1) = (x 4 , y 4) previousc 1 = c 2 previous (x 2 , y 2) = (x 5 , y 5) previousc 2 = c 3 previous (x 3 , y 3) = (x 6 , y 6) previous (x 4 , y 4) = (x 7 , y 7) previous"
+      ],
+      [
+        "f = 2",
+        "x 5 y 5 x 6 y 6 x 7 y 7 x 8 y 8 x 9 y 9 x 10 y 10 x 11 y 11 x 12 y 12 c 3 c 4\nImplicit values:\n(x 1 , y 1) = (x 7 , y 7) previousc 1 = c 3 previous (x 2 , y 2) = (x 8 , y 8) previousc 2 = c 4 previous (x 3 , y 3) = (x 9 , y 9) previous (x 4 , y 4) = (x 10 , y 10) previous"
+      ],
+      [
+        "f = 3",
+        "x 5 y 5 x 6 y 6 x 7 y 7 x 8 y 8 x 9 y 9 x 10 y 10 x 11 y 11 x 12 y 12 c 3 c 4\nImplicit values:\n(x 1 , y 1) = (x 10 , y 10) previousc 1 = c 4 previous (x 2 , y 2) = (x 11 , y 11) previousc 2 = c 1 previous (x 3 , y 3) = (x 12 , y 12) previous (x 4 , y 4) = (x 1 , y 1) previous"
+      ]
+    ]
+  }
+}

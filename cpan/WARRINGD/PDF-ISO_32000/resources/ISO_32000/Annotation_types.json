@@ -1,0 +1,169 @@
+{
+  "table": {
+    "caption": "Table 169 – Annotation types",
+    "head": [
+      "Annotation type",
+      "Description",
+      "Markup",
+      "Discussed in sub-clause"
+    ],
+    "rows": [
+      [
+        "Text",
+        "Text annotation",
+        "Yes",
+        "12.5.6.4, “Text Annotations”\n"
+      ],
+      [
+        "Link",
+        "Link annotation",
+        "No",
+        "12.5.6.5, “Link Annotations”\n"
+      ],
+      [
+        "FreeText",
+        "(PDF 1.3) Free text annotation",
+        "Yes",
+        "12.5.6.6, “Free Text Annotations”\n"
+      ],
+      [
+        "Line",
+        "(PDF 1.3) Line annotation",
+        "Yes",
+        "12.5.6.7, “Line Annotations”\n"
+      ],
+      [
+        "Square",
+        "(PDF 1.3) Square annotation",
+        "Yes",
+        "12.5.6.8, “Square and Circle Annotations”\n"
+      ],
+      [
+        "Circle",
+        "(PDF 1.3) Circle annotation",
+        "Yes",
+        "12.5.6.8, “Square and Circle Annotations”\n"
+      ],
+      [
+        "Polygon",
+        "(PDF 1.5) Polygon annotation",
+        "Yes",
+        "12.5.6.9, “Polygon and Polyline Annotations”\n"
+      ],
+      [
+        "PolyLine",
+        "(PDF 1.5) Polyline annotation",
+        "Yes",
+        "12.5.6.9, “Polygon and Polyline Annotations”\n"
+      ],
+      [
+        "Highlight",
+        "(PDF 1.3) Highlight annotation",
+        "Yes",
+        "12.5.6.10, “Text Markup Annotations”\n"
+      ],
+      [
+        "Underline",
+        "(PDF 1.3) Underline annotation",
+        "Yes",
+        "12.5.6.10, “Text Markup Annotations”\n"
+      ],
+      [
+        "Squiggly",
+        "(PDF 1.4) Squiggly-underline annotation",
+        "Yes",
+        "12.5.6.10, “Text Markup Annotations”\n"
+      ],
+      [
+        "StrikeOut",
+        "(PDF 1.3) Strikeout annotation",
+        "Yes",
+        "12.5.6.10, “Text Markup Annotations”\n"
+      ],
+      [
+        "Stamp",
+        "(PDF 1.3) Rubber stamp annotation",
+        "Yes",
+        "12.5.6.12, “Rubber Stamp Annotations”\n"
+      ],
+      [
+        "Caret",
+        "(PDF 1.5) Caret annotation",
+        "Yes",
+        "12.5.6.11, “Caret Annotations”\n"
+      ],
+      [
+        "Ink",
+        "(PDF 1.3) Ink annotation",
+        "Yes",
+        "12.5.6.13, “Ink Annotations”\n"
+      ],
+      [
+        "Popup",
+        "(PDF 1.3) Pop-up annotation",
+        "No",
+        "12.5.6.14, “Pop-up Annotations”\n"
+      ],
+      [
+        "FileAttachment",
+        "(PDF 1.3) File attachment annotation",
+        "Yes",
+        "12.5.6.15, “File Attachment Annotations”\n"
+      ],
+      [
+        "Sound",
+        "(PDF 1.2) Sound annotation",
+        "Yes",
+        "12.5.6.16, “Sound Annotations”\n"
+      ],
+      [
+        "Movie",
+        "(PDF 1.2) Movie annotation",
+        "No",
+        "12.5.6.17, “Movie Annotations”\n"
+      ],
+      [
+        "Widget",
+        "(PDF 1.2) Widget annotation",
+        "No",
+        "12.5.6.19, “Widget Annotations”\n"
+      ],
+      [
+        "Screen",
+        "(PDF 1.5) Screen annotation",
+        "No",
+        "12.5.6.18, “Screen Annotations”\n"
+      ],
+      [
+        "PrinterMark",
+        "(PDF 1.4) Printer’s mark annotation",
+        "No",
+        "12.5.6.20, “Printer’s Mark Annotations”\n"
+      ],
+      [
+        "TrapNet",
+        "(PDF 1.3) Trap network annotation",
+        "No",
+        "12.5.6.21, “Trap Network Annotations”\n"
+      ],
+      [
+        "Watermark",
+        "(PDF 1.6) Watermark annotation",
+        "No",
+        "12.5.6.22, “Watermark Annotations”\n"
+      ],
+      [
+        "3D",
+        "(PDF 1.6) 3D annotation",
+        "No",
+        "13.6.2, “3D Annotations”\n"
+      ],
+      [
+        "Redact",
+        "(PDF 1.7) Redact annotation",
+        "Yes",
+        "12.5.6.23, “Redaction Annotations”\n"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 214 – Additional entries specific to a rendition action",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; is Renditionfor a rendition action."
+      ],
+      [
+        "R",
+        "dictionary",
+        "(Required when OP is present with a value of 0 or 4; otherwise optional) A rendition object (see 13.2.3, “Renditions”)."
+      ],
+      [
+        "AN",
+        "dictionary",
+        "(Required if OP is present with a value of 0, 1, 2, 3 or 4; otherwise optional) An indirect reference to a screen annotation (see 12.5.6.18, “Screen Annotations”)."
+      ],
+      [
+        "OP",
+        "integer",
+        "(Required if JS is not present; otherwise optional) The operation to perform when the action is triggered. Valid values is:\n0 If no rendition is associated with the annotation specified by AN, play the rendition specified by R, associating it with the annotation. If a rendition is already associated with the annotation, it is stopped, and the new rendition is associated with the annotation.\n1 Stop any rendition being played in association with the annotation specified by AN, and remove the association. If no rendition is being played, there is no effect.\n2 Pause any rendition being played in association with the annotation specified b y AN. If no rendition is being played, there is no effect.\n3 Resume any rendition being played in association with the annotation specified by AN. If no rendition is being played or the rendition is not paused, there is no effect.\n4 Play the rendition specified by R, associating it with the annotation specified by AN. If a rendition is already associated with the annotation, resume the rendition if it is paused; otherwise, do nothing."
+      ],
+      [
+        "JS",
+        "text string or stream",
+        "(Required if OP is not present; otherwise optional) A text string or stream containing a JavaScript script that is executed when the action is triggered."
+      ]
+    ]
+  }
+}

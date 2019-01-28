@@ -1,0 +1,122 @@
+{
+  "table": {
+    "caption": "Table 259 – Entries in a legal attestation dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "JavaScriptActions",
+        "integer",
+        "(Optional) The number of JavaScript actions found in the document (see 12.6.4.16, “JavaScript Actions”)."
+      ],
+      [
+        "LaunchActions",
+        "integer",
+        "(Optional) The number of launch actions found in the document (see 12.6.4.5, “Launch Actions”)."
+      ],
+      [
+        "URIActions",
+        "integer",
+        "(Optional) The number of URI actions found in the document (see 12.6.4.7, “URI Actions”)."
+      ],
+      [
+        "MovieActions",
+        "integer",
+        "(Optional) The number of movie actions found in the document (see 12.6.4.9, “Movie Actions”)."
+      ],
+      [
+        "SoundActions",
+        "integer",
+        "(Optional) The number of sound actions found in the document (see 12.6.4.8, “Sound Actions”)."
+      ],
+      [
+        "HideAnnotationActions",
+        "integer",
+        "(Optional) The number of hide actions found in the document (see 12.6.4.10, “Hide Actions”)."
+      ],
+      [
+        "GoToRemoteActions",
+        "integer",
+        "(Optional) The number of remote go-to actions found in the document (see 12.6.4.3, “Remote Go-To Actions”)."
+      ],
+      [
+        "AlternateImages",
+        "integer",
+        "(Optional) The number of alternate images found in the document (see 8.9.5.4, “Alternate Images”)"
+      ],
+      [
+        "ExternalStreams",
+        "integer",
+        "(Optional) The number of external streams found in the document."
+      ],
+      [
+        "TrueTypeFonts",
+        "integer",
+        "(Optional) The number of TrueType fonts found in the document (see 9.6.3, “TrueType Fonts”)."
+      ],
+      [
+        "ExternalRefXobjects",
+        "integer",
+        "(Optional) The number of reference XObjects found in the document (see 8.10.4, “Reference XObjects”)."
+      ],
+      [
+        "ExternalOPIdicts",
+        "integer",
+        "(Optional) The number of OPI dictionaries found in the document (see 14.11.7, “Open Prepress Interface (OPI)”\n)."
+      ],
+      [
+        "NonEmbeddedFonts",
+        "integer",
+        "(Optional) The number of non-embedded fonts found in the document (see 9.9, “Embedded Font Programs” ”)"
+      ],
+      [
+        "DevDepGS_OP",
+        "integer",
+        "(Optional) The number of references to the graphics state parameter OP found in the document (see Table 58)."
+      ],
+      [
+        "DevDepGS_HT",
+        "integer",
+        "(Optional) The number of references to the graphics state parameter HT found in the document (see Table 58)."
+      ],
+      [
+        "DevDepGS_TR",
+        "integer",
+        "(Optional) The number of references to the graphics state parameter TR found in the document (see Table 58)."
+      ],
+      [
+        "DevDepGS_UCR",
+        "integer",
+        "(Optional) The number of references to the graphics state parameter UCR found in the document (see Table 58)."
+      ],
+      [
+        "DevDepGS_BG",
+        "integer",
+        "(Optional) The number of references to the graphics state parameter BG found in the document (see Table 58)."
+      ],
+      [
+        "DevDepGS_FL",
+        "integer",
+        "(Optional) The number of references to the graphics state parameter FL found in the document (see Table 58)."
+      ],
+      [
+        "Annotations",
+        "integer",
+        "(Optional) The number of annotations found in the document (see 12.5, “Annotations”)."
+      ],
+      [
+        "OptionalContent",
+        "boolean",
+        "(Optional) true if optional content is found in the document (see 8.11, “Optional Content”)."
+      ],
+      [
+        "Attestation",
+        "text string",
+        "(Optional) An attestation, created by the author of the document, explaining the presence of any of the other entries in this dictionary or the presence of any other content affecting the legal integrity of the document."
+      ]
+    ]
+  }
+}

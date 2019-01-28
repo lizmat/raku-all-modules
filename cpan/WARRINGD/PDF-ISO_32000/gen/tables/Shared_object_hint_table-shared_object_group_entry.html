@@ -1,0 +1,145 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        F. 6
+        –  Shared object hint table, shared object group entry 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Item
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Size (bits)
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            1
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Table
+              F. 5
+            </Link>
+            ,
+            item
+            7
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A number that, when added to the least shared object group length (
+            <Link>
+              Table
+              F. 5
+            </Link>
+            , item 6), gives the length of the object group in bytes. The 
+            location of the first object of the first page shall be given in the page offset hint table, header section (
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            , item 4). The locations of 
+            subsequent object groups can be determined by accumulating the lengths of all previous object groups until all shared objects in the first page have been enumerated. Following that, the location of the first object in the shared objects section can be obtained from the header section of the shared object hint table (
+            <Link>
+              Table
+              F. 5
+            </Link>
+            , item 2). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            2
+          </P>
+        </TD>
+        <TD>
+          <P>
+            1
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A flag indicating whether the shared object signature (item 3) is present; its value shall be 1 if the signature is present and 0 if it is absent. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            128
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Only if item 2 is 1) The shared object signature, a 16-byte MD5 hash that uniquely identifies the resource that the group of objects represents. 
+          </P>
+          <P>
+            NOTE It enables the conforming reader to substitute a locally cached copy of the resource instead of reading it from the PDF file. Note that this signature is unrelated to signature fields in interactive forms, as defined in 
+            <Link>
+              12.7.4.5, 
+              "Signature Fields"
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            4
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Table
+              F. 5
+            </Link>
+            ,
+            item
+            5
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A number equal to 1 less than the number of objects in the group. The first object of the first page shall be the one whose object number is given by the O entry in the linearization parameter dictionary at the beginning of the file. Object numbers for subsequent entries can be determined by accumulating the number of objects in all previous entries until all shared objects in the first page have been enumerated. Following that, the first object in the shared objects section has a number that can be obtained from the header section of the shared object hint table (
+            <Link>
+              Ta b l e
+              F. 5
+            </Link>
+            , item 1). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

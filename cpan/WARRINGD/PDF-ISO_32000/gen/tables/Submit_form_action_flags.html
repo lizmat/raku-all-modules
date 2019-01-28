@@ -1,0 +1,349 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        237
+        –  Flags for submit-form actions 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Bit position
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Name
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Meaning
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            1
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Include/Exclude
+          </P>
+        </TD>
+        <TD>
+          <P>
+            If clear, the Fields array (see 
+            <Link>
+              Table
+              236
+            </Link>
+            ) specifies which 
+            fields to include in the submission. (All descendants of the specified fields in the field hierarchy shall be submitted as well.) 
+          </P>
+          <P>
+            If set, the Fields array tells which fields to exclude. All fields in the document’s interactive form shall be submitted exceptthose listed in the Fields array and those whose NoExport flag (see 
+            <Link>
+              Ta b l e
+              221
+            </Link>
+            ) is set and fields with no values if the 
+            IncludeNoValueFields flag is clear. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            2
+          </P>
+        </TD>
+        <TD>
+          <P>
+            IncludeNoValueFields
+          </P>
+        </TD>
+        <TD>
+          <P>
+            If set, all fields designated by the Fields array and the Include/Exclude flag shall be submitted, regardless of whether they have a value (V entry in the field dictionary). For fields without a value, only the field name shall betransmitted. 
+          </P>
+          <P>
+            If clear, fields without a value shall not be submitted. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ExportFormat
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Meaningful only if the SubmitPDF and XFDF flags are clear. If set, field names and values shall be submitted in HTML Form format. If clear, they shall be submitted in Forms Data Format (FDF); see 
+            <Link>
+              12.7.7, “Forms Data Format.”
+            </Link>
+             
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            4
+          </P>
+        </TD>
+        <TD>
+          <P>
+            GetMethod
+          </P>
+        </TD>
+        <TD>
+          <P>
+            If set, field names and values shall be submitted using an HTTP GET request. If clear, they shall be submitted using a POST request. This flag is meaningful only when the ExportFormat flag is set; if ExportFormat is clear, this flag shall also be clear. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            5
+          </P>
+        </TD>
+        <TD>
+          <P>
+            SubmitCoordinates
+          </P>
+        </TD>
+        <TD>
+          <P>
+            If set, the coordinates of the mouse click that caused the submit-form action shall be transmitted as part of the form data. The coordinate values are relative to the upper-left corner of the field’s widget annotation rectangle. They shall be represented in the data in the format 
+          </P>
+          <P>
+            name
+            .
+            x
+            =
+            xval
+            &amp;
+            name
+            .
+            y
+            =
+            yval
+          </P>
+          <P>
+            where name is the field’s mapping name (TM in the field dictionary) if present; otherwise, name is the field name. If the value of the TM entry is a single ASCII SPACE (20h) character, both the name and the ASCII PERIOD (2Eh)following it shall be suppressed, resulting in the format 
+          </P>
+          <P>
+            x
+            =
+            xval
+            &amp;
+            y
+            =
+            yval
+          </P>
+          <P>
+            This flag shall be used only when the ExportFormat flag is set. If ExportFormat is clear, this flag shall also be clear. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            6
+          </P>
+        </TD>
+        <TD>
+          <P>
+            XFDF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) shall be used only if the SubmitPDF flags are clear. If set, field names and values shall be submitted as XFDF. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            7
+          </P>
+        </TD>
+        <TD>
+          <P>
+            IncludeAppendSaves
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) shall be used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear). If set, the submitted FDF file shall include the contents of all incremental updates to the underlying PDF document, as contained in the Differences entry in the FDF dictionary (see 
+            <Link>
+              Table
+              243
+            </Link>
+            ). If 
+            clear, the incremental updates shall not be included. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            8
+          </P>
+        </TD>
+        <TD>
+          <P>
+            IncludeAnnotations
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) shall be used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear). If set, the submitted FDF file shall include includes all markup annotations in the underlying PDF document (see 
+            <Link>
+              12.5.6.2, “Markup 
+              Annotations”
+            </Link>
+            ). If clear, markup annotations shall not be
+            included. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            9
+          </P>
+        </TD>
+        <TD>
+          <P>
+            SubmitPDF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) If set, the document shall be submitted as PDF, using the MIME content type application
+            /
+            pdf (described in Internet RFC 2045, Multipurpose Internet Mail Extensions (MIME), Part One: Format of Internet Message Bodies; see the 
+            <Link>
+              Bibliography
+            </Link>
+            ). If set, all other flags shall be ignored except 
+            GetMethod. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            10
+          </P>
+        </TD>
+        <TD>
+          <P>
+            CanonicalFormat
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) If set, any submitted field values representing dates shall be converted to the standard format described in 
+            <Link>
+              7.9.4, “Dates.”
+            </Link>
+             
+          </P>
+          <P>
+            NOTE 1 The interpretation of a form field as a date is not specified explicitly in the field itself but only in the JavaScript code that processes it.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            11
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ExclNonUserAnnots
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) shall be used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear) and the IncludeAnnotations flag is set. If set, it shall include only those markup annotations whose T entry (see 
+            <Link>
+              Table
+              170
+            </Link>
+            ) 
+            matches the name of the current user, as determined by the remote server to which the form is being submitted. 
+          </P>
+          <P>
+            NOTE 2 The T entry for markup annotations specifies the text label that is displayed in the title bar of the annotation’s pop-up window and is assumed to represent the name of the user authoring the annotation.
+          </P>
+          <P>
+            NOTE 3 This allows multiple users to collaborate in annotating a single remote PDF document without affecting one another’s annotations. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            12
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ExclFKey
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) shall be used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear). If set, the submitted FDF shall exclude the F entry. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            14
+          </P>
+        </TD>
+        <TD>
+          <P>
+            EmbedForm
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF 1.5) shall be used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear). If set, the F entry of the submitted FDF shall be a file specification containing an embedded file stream representing the PDF file from which the FDF is being submitted.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

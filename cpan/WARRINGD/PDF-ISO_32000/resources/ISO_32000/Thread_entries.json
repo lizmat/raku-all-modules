@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 160 – Entries in a thread dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is Thread for a thread dictionary."
+      ],
+      [
+        "F",
+        "dictionary",
+        "(Required; is an indirect reference) The first bead in the thread."
+      ],
+      [
+        "I",
+        "dictionary",
+        "(Optional) A thread information dictionary containing information about the thread, such as its title, author, and creation date. The contents of this dictionary shall conform to the syntax for the document information dictionary (see 14.3.3, “Document Information Dictionary”)."
+      ]
+    ]
+  }
+}

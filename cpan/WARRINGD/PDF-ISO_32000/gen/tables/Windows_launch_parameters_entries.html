@@ -1,0 +1,113 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        204
+        –  Entries in a Windows launch parameter dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The file name of the application that shall be launched or the document that shall be opened or printed, in standard Windows pathname format. If the name string includes a backslash character (\), the backslash shall itself be preceded by a backslash. 
+          </P>
+          <P>
+            This value shall be a simple string; it is not a file specification. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            D
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A bye string specifying the default directory in standard DOS syntax. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            O
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ASCII string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An ASCII string specifying the operation to perform: 
+          </P>
+          <P>
+            open Open a document. 
+          </P>
+          <P>
+            print Print a document. 
+          </P>
+          <P>
+            If the F entry designates an application instead of a document, this entry shall be ignored and the application shall be launched. Default value: open. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            P
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A parameter string that shall be passed to the application designated by the F entry. This entry shall be omitted if F designates a document. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

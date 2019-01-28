@@ -1,0 +1,179 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        311
+        –  Entries in a 3D cross section dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be 3DCrossSection for a 3D cross section dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            C
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A three element array specifying the center of rotation on the cutting plane in world space coordinates (see 
+            <Link>
+              13.6.5, “Coordinate Systems for 3D”
+            </Link>
+            ).
+          </P>
+          <P>
+            Default value: [0 0 0] specifying a cutting plane rotating about the origin of the world space.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            O
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A three-element array specifying the orientation of the cutting plane in world space, where each value represents the orientation in relation to the X, Y, and Z axes, respectively (see 
+            <Link>
+              13.6.5, “Coordinate Systems for 3D”
+            </Link>
+            ). Exactly 
+            one of the values shall be null, indicating an initial state of the cutting plane that is perpendicular to the corresponding axis and clipping all geometry on the positive side of that axis. The other two values shall be numbers indicating the rotation of the plane, in degrees, around their corresponding axes. The order in which these rotations are applied shall match the order in which the values appear in the array.
+          </P>
+          <P>
+            Default value: [null 0 0] specifying a cutting plane that is perpendicular to the X axis and coplanar with the Y and Z axes.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PO
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A number in the range [0, 1] indicating the opacity of the cutting plane using a standard additive blend mode.
+          </P>
+          <P>
+            Default value: 0.5
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array that specifies the colour for the cutting plane. The first entry in the array is a colour space, and the remaining entries are values in that colour space. The only valid colour space is DeviceRGB. If a colour space other than DeviceRGB is specified, this entry shall be ignored and the default value shall be used.
+          </P>
+          <P>
+            Default value: [/DeviceRGB 1 1 1] representing the colour white.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IV
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag indicating the visibility of the intersection of the cutting plane with any 3D geometry. If true, then the intersection shall be visible. If false, then the intersection shall not be visible.
+          </P>
+          <P>
+            Default value: false
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array that specifies the colour for the cutting plane’s intersection with the 3D artwork. The first entry in the array is a colour space, and the remaining entries are values in that colour space. The only valid colour space is DeviceRGB. If a colour space other than DeviceRGB is specified, this entry shall be ignored and the default value shall be used. This entry is meaningful only if IV is true. 
+          </P>
+          <P>
+            Default value: [/DeviceRGB 0 1 0] representing the colour green.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

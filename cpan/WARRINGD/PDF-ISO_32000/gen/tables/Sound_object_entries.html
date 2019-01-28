@@ -1,0 +1,182 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        294
+        –  Additional entries specific to a sound object 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be Sound for a sound object. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            R
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The sampling rate, in samples per second. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            C
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The number of sound channels. Default value: 1. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            B
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The number of bits per sample value per channel. Default value: 8. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            E
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The encoding format for the sample data: 
+          </P>
+          <P>
+            Raw Unspecified or unsigned values in the range 0 to 2B
+            −
+            1 
+          </P>
+          <P>
+            Signed Twos-complement values 
+          </P>
+          <P>
+            muLaw m-law–encoded samples 
+          </P>
+          <P>
+            ALaw A-law–encoded samples 
+          </P>
+          <P>
+            Default value: Raw. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CO
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The sound compression format used on the sample data. (This is separate from any stream compression specified by the sound object’s Filterentry; see 
+            <Link>
+              Table
+              5
+            </Link>
+             and 
+            <Link>
+              7.4, “Filters.”
+            </Link>
+            ) If this entry is absent, sound 
+            compression shall not be used; the data contains sampled waveforms that shall be played at R samples per second per channel. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) Optional parameters specific to the sound compression format used. 
+          </P>
+          <P>
+            No standard values have been defined for the CO and CP entries. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

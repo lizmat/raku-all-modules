@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 103 – Entries in a Usage Application Dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Event",
+        "name",
+        "(Required) A name defining the situation in which this usage application dictionary is used. Shall be one of View, Print, or Export."
+      ],
+      [
+        "OCGs",
+        "array",
+        "(Optional) An array listing the optional content groups that has their states automatically managed based on information in their usage dictionary (see 8.11.4.4, \"Usage and Usage Application Dictionaries\"). Default value: an empty array, indicating that no groups is affected."
+      ],
+      [
+        "Category",
+        "array",
+        "(Required) An array of names, each of which corresponds to a usage dictionary entry (see Table 102). When managing the states of the optional content groups in the OCGs array, each of the corresponding categories in the group’s usage dictionary is considered."
+      ]
+    ]
+  }
+}

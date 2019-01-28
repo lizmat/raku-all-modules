@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 171 – Annotation states",
+    "head": [
+      "State model",
+      "State",
+      "Description"
+    ],
+    "rows": [
+      [
+        "Marked",
+        "Marked",
+        "The annotation has been marked by the user."
+      ],
+      [
+        "",
+        "Unmarked",
+        "The annotation has not been marked by the user (the default)."
+      ],
+      [
+        "Review",
+        "Accepted",
+        "The user agrees with the change."
+      ],
+      [
+        "",
+        "Rejected",
+        "The user disagrees with the change."
+      ],
+      [
+        "",
+        "Cancelled",
+        "The change has been cancelled."
+      ],
+      [
+        "",
+        "Completed",
+        "The change has been completed."
+      ],
+      [
+        "",
+        "None",
+        "The user has indicated nothing about the change (the default)."
+      ]
+    ]
+  }
+}

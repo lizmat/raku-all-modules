@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 54 – Line Cap Styles",
+    "head": [
+      "Style",
+      "Appearance",
+      "Description"
+    ],
+    "rows": [
+      [
+        "0",
+        "\n",
+        "Butt cap. The stroke is squared off at the endpoint of the path. There is no projection beyond the end of the path."
+      ],
+      [
+        "1",
+        "\n",
+        "Round cap. A semicircular arc with a diameter equal to the line width is drawn around the endpoint and is filled in."
+      ],
+      [
+        "2",
+        "\n",
+        "Projecting square cap. The stroke shall continue beyond the endpoint of the path for a distance equal to half the line width and shall besquared off."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "table": {
+    "caption": "Table 34 – PDF data types",
+    "head": [
+      "Type",
+      "Description",
+      "Sub-Clause"
+    ],
+    "rows": [
+      [
+        "ASCII string",
+        "Bytes containing ASCII characters",
+        "7.9.2\n7.9.2.4\n"
+      ],
+      [
+        "array",
+        "Array object",
+        "7.3.6\n"
+      ],
+      [
+        "boolean",
+        "Boolean value",
+        "7.3.2\n"
+      ],
+      [
+        "byte string",
+        "A series of bytes that shall represent characters or other binary data. If such a type represents characters, the encoding is determined by the context.",
+        "7.9.2\n"
+      ],
+      [
+        "date",
+        "Date (ASCII string)",
+        "7.9.4\n"
+      ],
+      [
+        "dictionary",
+        "Dictionary object",
+        "7.3.7\n"
+      ],
+      [
+        "file specification",
+        "File specification (string or dictionary)",
+        "7.11\n"
+      ],
+      [
+        "function",
+        "Function (dictionary or stream)",
+        "7.10\n"
+      ],
+      [
+        "integer",
+        "Integer number",
+        "Link\n"
+      ],
+      [
+        "name",
+        "Name object",
+        "7.3.5\n"
+      ],
+      [
+        "name tree",
+        "Name tree (dictionary)",
+        "7.9.6\n"
+      ],
+      [
+        "null",
+        "Null object",
+        "7.3.9\n"
+      ],
+      [
+        "number",
+        "Number (integer or real)",
+        "Link\n"
+      ],
+      [
+        "number tree",
+        "Number tree (dictionary)",
+        "7.9.7\n"
+      ],
+      [
+        "PDFDocEncoded string",
+        "Bytes containing a string that is encoded using PDFDocEncoding",
+        "7.9.2\n"
+      ],
+      [
+        "rectangle",
+        "Rectangle (array)",
+        "7.9.5\n"
+      ],
+      [
+        "stream",
+        "Stream object",
+        "7.3.8\n"
+      ],
+      [
+        "string",
+        "Any string that is not a text string.\nBeginning with PDF 1.7, this type is further qualified as the types: PDFDocEncoded string, ASCII string, and byte string.",
+        "7.9.2\n"
+      ],
+      [
+        "text string",
+        "Bytes that represent characters that is encoded using either PDFDocEncoding or UTF-16BE with a leading byte-order marker (as defined in Link “Text String Type” on Link page 86 .)",
+        "7.9.2.2\n7.9.2\n"
+      ],
+      [
+        "text stream",
+        "Text stream",
+        "7.9.3\n"
+      ]
+    ]
+  }
+}

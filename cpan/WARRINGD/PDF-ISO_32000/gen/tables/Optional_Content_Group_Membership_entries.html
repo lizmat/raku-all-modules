@@ -1,0 +1,123 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        99
+        –  Entries in an Optional Content Membership Dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of PDF object that this dictionary describes; is OCMD for an optional content membership dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            OCGs
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary or array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary or array of dictionaries specifying the optional content groups whose states shall determine the visibility of content controlled by this membership dictionary. 
+          </P>
+          <P>
+            Null values or references to deleted objects shall be ignored. If this entry is not present, is an empty array, or contains references only to null or deleted objects, the membership dictionary shall have no effect on the visibility of any content.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            P
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A name specifying the visibility policy for content belonging to this membership dictionary. Valid values shall be:
+          </P>
+          <P>
+            AllOn
+            visible only if all of the entries in OCGs are ON
+          </P>
+          <P>
+            AnyOn
+            visible if any of the entries in OCGs are ON
+          </P>
+          <P>
+            AnyOff
+            visible if any of the entries in OCGs are OFF
+          </P>
+          <P>
+            AllOff
+            visible only if all of the entries in OCGs are OFF
+          </P>
+          <P>
+            Default value: AnyOn
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            VE
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) An array specifying a visibility expression, used to compute visibility of content based on a set of optional content groups; see discussion below.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,67 @@
+{
+  "table": {
+    "caption": "Table 57 – Graphics State Operators",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "—",
+        "q",
+        "Save the current graphics state on the graphics state stack (see 8.4.2, \"Graphics State Stack\")."
+      ],
+      [
+        "—",
+        "Q",
+        "Restore the graphics state by removing the most recently saved state from the stack and making it the current state (see 8.4.2, \"Graphics State Stack\")."
+      ],
+      [
+        "a b c d e f",
+        "cm",
+        "Modify the current transformation matrix (CTM) by concatenating the specified matrix (see 8.3.2, \"Coordinate Spaces\"). Although the operands specify a matrix, they is written as six separate numbers, not as an array."
+      ],
+      [
+        "lineWidth",
+        "w",
+        "Set the line width in the graphics state (see 8.4.3.2, \"Line Width\")."
+      ],
+      [
+        "lineCap",
+        "J",
+        "Set the line cap style in the graphics state (see 8.4.3.3, \"Line Cap Style\")."
+      ],
+      [
+        "lineJoin",
+        "j",
+        "Set the line join style in the graphics state (see 8.4.3.4, \"Line Join Style\")."
+      ],
+      [
+        "miterLimit",
+        "M",
+        "Set the miter limit in the graphics state (see 8.4.3.5, \"Miter Limit\")."
+      ],
+      [
+        "dashArray dashPhase",
+        "d",
+        "Set the line dash pattern in the graphics state (see 8.4.3.6, \"Line Dash Pattern\")."
+      ],
+      [
+        "intent",
+        "ri",
+        "(PDF 1.1) Set the colour rendering intent in the graphics state (see 8.6.5.8, \"Rendering Intents\")."
+      ],
+      [
+        "flatness",
+        "i",
+        "Set the flatness tolerance in the graphics state (see 10.6.2, \"Flatness Tolerance\"). flatness is a number in the range 0 to 100; a value of 0 shall specify the output device’s default flatness tolerance."
+      ],
+      [
+        "dictName",
+        "gs",
+        "(PDF 1.2) Set the specified parameters in the graphics state. dictName is the name of a graphics state parameter dictionary in the ExtGState subdictionary of the current resource dictionary (see the next sub-clause)."
+      ]
+    ]
+  }
+}

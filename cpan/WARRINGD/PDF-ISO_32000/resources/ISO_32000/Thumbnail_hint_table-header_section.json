@@ -1,0 +1,72 @@
+{
+  "table": {
+    "caption": "Table F. 7 – Thumbnail hint table, header section",
+    "head": [
+      "Item",
+      "Size (bits)",
+      "Description"
+    ],
+    "rows": [
+      [
+        "1",
+        "32",
+        "The object number of the first thumbnail image (that is, the thumbnail image that is described by the first entry in the thumbnails section)."
+      ],
+      [
+        "2",
+        "32",
+        "The location of the first thumbnail image."
+      ],
+      [
+        "3",
+        "32",
+        "The number of pages that have thumbnail images."
+      ],
+      [
+        "4",
+        "16",
+        "The number of bits needed to represent the greatest number of consecutive pages that do not have a thumbnail image."
+      ],
+      [
+        "5",
+        "32",
+        "The least length of a thumbnail image in bytes."
+      ],
+      [
+        "6",
+        "16",
+        "The number of bits needed to represent the difference between the greatest and least length of a thumbnail image."
+      ],
+      [
+        "7",
+        "32",
+        "The least number of objects in a thumbnail image."
+      ],
+      [
+        "8",
+        "16",
+        "The number of bits needed to represent the difference between the greatest and least number of objects in a thumbnail image."
+      ],
+      [
+        "9",
+        "32",
+        "The object number of the first object in the thumbnail shared objects section (a subsection of Link part 9). This section includes objects (colour spaces, for example) that is referenced from some or all thumbnail objects and are not referenced from any other objects. The thumbnail shared objects is undifferentiated; there is no indication of which shared objects is referenced from any given page’s thumbnail image."
+      ],
+      [
+        "10",
+        "32",
+        "The location of the first object in the thumbnail shared objects section."
+      ],
+      [
+        "11",
+        "32",
+        "The number of thumbnail shared objects."
+      ],
+      [
+        "12",
+        "32",
+        "The length of the thumbnail shared objects section in bytes."
+      ]
+    ]
+  }
+}

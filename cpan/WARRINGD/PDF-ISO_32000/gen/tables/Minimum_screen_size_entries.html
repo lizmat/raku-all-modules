@@ -1,0 +1,93 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        270
+        –  Entries in a minimum screen size dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be MinScreenSize for a rendition object.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array containing two non-negative integers. The width and height (in pixels) of the monitor specified by M shall be greater than or equal to the values of the first and second integers in the array, respectively, in order for this object to be viable.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            M
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A monitor specifier (see 
+            <Link>
+              Ta b l e
+              293
+            </Link>
+            ) that specifies which monitor 
+            the value of V should be tested against. If the value is unrecognized, the object shall be not viable. 
+          </P>
+          <P>
+            Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

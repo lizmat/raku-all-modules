@@ -1,0 +1,62 @@
+{
+  "table": {
+    "caption": "Table 194 – Entries in an annotation’s additional-actions dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "E",
+        "dictionary",
+        "(Optional; PDF 1.2) An action that is performed when the cursor enters the annotation’s active area."
+      ],
+      [
+        "X",
+        "dictionary",
+        "(Optional; PDF 1.2) An action that is performed when the cursor exits the annotation’s active area."
+      ],
+      [
+        "D",
+        "dictionary",
+        "(Optional; PDF 1.2) An action that is performed when the mouse button is pressed inside the annotation’s active area."
+      ],
+      [
+        "U",
+        "dictionary",
+        "(Optional; PDF 1.2) An action that is performed when the mouse button is released inside the annotation’s active area.\nFor backward compatibility, the A entry in an annotation dictionary, if present, takes precedence over this entry (see Table 168)."
+      ],
+      [
+        "Fo",
+        "dictionary",
+        "(Optional; PDF 1.2; widget annotations only) An action that is performed when the annotation receives the input focus."
+      ],
+      [
+        "Bl",
+        "dictionary",
+        "(Optional; PDF 1.2; widget annotations only) (Uppercase B, lowercase L) An action that is performed when the annotation loses the input focus."
+      ],
+      [
+        "PO",
+        "dictionary",
+        "(Optional; PDF 1.5) An action that is performed when the page containing the annotation is opened.\nEXAMPLE 1 When the user navigates to it from the next or previous page or by means of a link annotation or outline item.\nThe action is executed after the O action in the page’s additional-actions dictionary (see"
+      ],
+      [
+        "PC",
+        "dictionary",
+        "(Optional; PDF 1.5) An action that is performed when the page containing the annotation is closed.\nEXAMPLE 2 When the user navigates to the next or previous page, or follows a link annotation or outline item.\nThe action is executed before the C action in the page’s additional-actions dictionary (see"
+      ],
+      [
+        "PV",
+        "dictionary",
+        "(Optional; PDF 1.5) An action that is performed when the page containing the annotation becomes visible."
+      ],
+      [
+        "PI",
+        "dictionary",
+        "(Optional; PDF 1.5) An action that is performed when the page containing the annotation is no longer visible in the conforming reader’s user interface."
+      ]
+    ]
+  }
+}

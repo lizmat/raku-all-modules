@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 35 – String Object Types",
+    "head": [
+      "Type",
+      "Description"
+    ],
+    "rows": [
+      [
+        "text string",
+        "Shall be used for human-readable text, such as text annotations, bookmark names, article names, and document information. These strings is encoded using either PDFDocEncoding or UTF-16BE with a leading byte-order marker.\nThis type is described in\n7.9.2.2, \"Text String Type.\""
+      ],
+      [
+        "PDFDocEncoded string",
+        "Shall be used for characters and glyphs that are represented in a single byte, using PDFDocEncoding. This type is described in\n7.9.2.3, \"PDFDocEncoded String Type.\""
+      ],
+      [
+        "ASCII string",
+        "Shall be used for characters that are represented in a single byte using ASCII encoding."
+      ],
+      [
+        "byte string",
+        "Shall be used for binary data represented as a series of bytes, where each byte can be any value representable in 8 bits. The string may represent characters but the encoding is not known. The bytes of the string need not represent characters. This type is used for data such as MD5 hash values, signature certificates, and Web Capture identification values.\nThis type is described in\n7.9.2.4, \"Byte String Type.\""
+      ]
+    ]
+  }
+}

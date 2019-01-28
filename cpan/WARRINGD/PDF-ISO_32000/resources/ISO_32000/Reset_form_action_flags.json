@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 239 – Flag for reset-form actions",
+    "head": [
+      "Bit position",
+      "Name",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "1",
+        "Include/Exclude",
+        "If clear, the Fields array (see Table 238) specifies which fields to reset. (All descendants of the specified fields in the field hierarchy are reset as well.) If set, the Fields array indicates which fields to exclude from resetting; that is, all fields in the document’s interactive form is reset except those listed in the Fieldsarray."
+      ]
+    ]
+  }
+}

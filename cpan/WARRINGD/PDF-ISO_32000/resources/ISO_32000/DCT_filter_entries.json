@@ -1,0 +1,20 @@
+{
+  "table": {
+    "caption": "Table 13 – Optional parameter for the DCTDecode filter",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "ColorTransform",
+        "integer",
+        "(Optional) A code specifying the transformation that is performed on the sample values:\n0 No transformation.\n1 If the image has three colour components, RGB values is transformed to YUV before encoding and from YUV to RGB after decoding. If the image has four components, CMYK values is transformed to YUVK before encoding and from YUVK to CMYK after decoding. This option is ignored if the image has one or two colour components.\nIf the encoding algorithm has inserted the Adobe-defined marker a code in the encoded data indicating the ColorTransform value, then the colours is transformed, or not, after the DCT decoding has been performed according to the value provided in the encoded data and the value of this dictionary entry is ignored. If the Adobe-defined marker code in the encoded data indicating the ColorTransform value is not present then the value specified in this dictionary entry will be used. If the Adobe-defined marker code in the encoded data indicating the ColorTransform value is not present and this dictionary entry is not present in the filter dictionary then the default value of ColorTransform is 1 if the image has three components and 0 otherwise."
+      ],
+      [
+        "a Parameters that control the decoding process as well as other metadata is embedded within the encoded data stream using a notation referred to as “markers”. When it defined the use of JPEG images within PostScript data streams, Adobe System Incorporated defined a particular set of rules pertaining to which markers are to be recognized, which are to be ignored and which are considered errors. A specific Adobe-defined marker was also introduced. The exact rules for producing and consuming DCT encoded data within PostScript are provide in Adobe Technical Note 5116 (reference). PDF DCT Encoding shall exactly follow those rules established by Adobe for PostScript."
+      ]
+    ]
+  }
+}

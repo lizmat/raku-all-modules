@@ -1,0 +1,413 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        344
+        –  Additional standard layout attributes specific to block-level structure elements 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            SpaceBefore
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable) The amount of extra space preceding the before edge of the BLSE, measured in default user space units in the block-progression direction. This value shall be added to any adjustments induced by the LineHeight attributes of ILSEs within the first line of the BLSE (see 
+            <Link>
+              “Layout Attributes for ILSEs”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, 
+              “Layout Attributes”
+            </Link>
+            ). If the preceding BLSE has a SpaceAfter attribute, 
+            the greater of the two attribute values shall be used. Default value: 0. 
+          </P>
+          <P>
+            This attribute shall be disregarded for the first BLSE placed in a given reference area. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            SpaceAfter
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable) The amount of extra space following the after edge of the BLSE, measured in default user space units in the block-progression direction. This value shall be added to any adjustments induced by the LineHeight attributes of ILSEs within the last line of the BLSE (see 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ). If the following 
+            BLSE has a SpaceBefore attribute, the greater of the two attribute values shall be used. Default value: 0. 
+          </P>
+          <P>
+            This attribute shall be disregarded for the last BLSE placed in a given reference area. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            StartIndent
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable) The distance from the start edge of the reference area to that of the BLSE, measured in default user space units in the inline-progression direction. This attribute shall apply only to structure elements with a Placement attribute of Block or Start (see 
+            <Link>
+              “General Layout Attributes”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ). The 
+            attribute shall be disregarded for elements with other Placementvalues. Default value: 0. 
+          </P>
+          <P>
+            A negative value for this attribute places the start edge of the BLSE outside that of the reference area. The results are implementation-dependent and may not be supported by all conforming products that process Tagged PDF or by particular export formats. 
+          </P>
+          <P>
+            If a structure element with a StartIndent attribute is placed adjacent to a floating element with a Placement attribute of Start, the actual value used for the element’s starting indent shall be its own StartIndentattribute or the inline extent of the adjacent floating element, whichever is greater. This value may be further adjusted by the element’s TextIndent attribute, if any. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            EndIndent
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable) The distance from the end edge of the BLSE to that of the reference area, measured in default user space units in the inline-progression direction. This attribute shall apply only to structure elements with a Placement attribute of Block or End (see 
+            <Link>
+              “General 
+              Layout Attributes”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ). The attribute shall 
+            be disregarded for elements with other Placement values. Default value: 0. 
+          </P>
+          <P>
+            A negative value for this attribute places the end edge of the BLSE outside that of the reference area. The results are implementation-dependent and may not be supported by all conforming products that process Tagged PDF or by particular export formats. 
+          </P>
+          <P>
+            If a structure element with an EndIndent attribute is placed adjacent to a floating element with a Placement attribute of End, the actual value used for the element’s ending indent shall be its own EndIndentattribute or the inline extent of the adjacent floating element, whichever is greater. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TextIndent 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; applies only to some BLSEs) The additional distance, measured in default user space units in the inline-progression direction, from the start edge of the BLSE, as specified by StartIndent, to that of the first line of text. A negative value shall indicate a hanging indent. Default value: 0. 
+          </P>
+          <P>
+            This attribute shall apply only to paragraphlike BLSEs and those of structure types Lbl (Label), LBody (List body), TH (Table header), and TD (Table data), provided that they contain content other than nested BLSEs. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TextAlign
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; applies only to BLSEs containing text) The alignment, in the inline-progression direction, of text and other content within lines of the BLSE: 
+          </P>
+          <P>
+            Start Aligned with the start edge. 
+          </P>
+          <P>
+            Center Centered between the start and end edges. 
+          </P>
+          <P>
+            End Aligned with the end edge. 
+          </P>
+          <P>
+            Justify Aligned with both the start and end edges, with internal spacing within each line expanded, if necessary, to achieve such alignment. The last (or only) line shall be aligned with the start edge only. 
+          </P>
+          <P>
+            Default value: Start. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BBox
+          </P>
+        </TD>
+        <TD>
+          <P>
+            rectangle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional for Annot; required for any figure or table appearing in its entirety on a single page; not inheritable) An array of four numbers in default user space units that shall give the coordinates of the left, bottom, right, and top edges, respectively, of the element’s bounding box (the rectangle that completely encloses its visible content). This attribute shall apply to any element that lies on a single page and occupies a single rectangle. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Width
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number or
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable; illustrations, tables, table headers, and table cells only; should be used for table cells) The width of the element’s content rectangle (see 
+            <Link>
+              “Content and Allocation Rectangles”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ), measured in default user space units in 
+            the inline-progression direction. This attribute shall apply only to elements of structure type Figure, Formula, Form, Table, TH (Table header), or TD (Table data).
+          </P>
+          <P>
+            The name Auto in place of a numeric value shall indicate that no specific width constraint is to be imposed; the element’s width shall be determined by the intrinsic width of its content. Default value: Auto. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Height
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number or
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable; illustrations, tables, table headers, and table cells only) The height of the element’s content rectangle (see 
+            <Link>
+              “Content 
+              and Allocation Rectangles”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ), measured 
+            in default user space units in the block-progression direction. This attribute shall apply only to elements of structure type Figure, Formula, Form, Table, TH (Table header), or TD (Table data).
+          </P>
+          <P>
+            The name Auto in place of a numeric value shall indicate that no specific height constraint is to be imposed; the element’s height shall be determined by the intrinsic height of its content. Default value: Auto. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BlockAlign
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; table cells only) The alignment, in the block-progression direction, of content within the table cell: 
+          </P>
+          <P>
+            Before Before edge of the first child’s allocation rectangle aligned with that of the table cell’s content rectangle. 
+          </P>
+          <P>
+            Middle Children centered within the table cell. The distance between the before edge of the first child’s allocation rectangle and that of the table cell’s content rectangle shall be the same as the distance between the after edge of the last child’s allocation rectangle and that of the table cell’s content rectangle. 
+          </P>
+          <P>
+            After After edge of the last child’s allocation rectangle aligned with that of the table cell’s content rectangle. 
+          </P>
+          <P>
+            Justify Children aligned with both the before and after edges of the table cell’s content rectangle. The first child shall be placed as described for Before and the last child as described for After, with equal spacing between the children. If there is only one child, it shall be aligned with the before edge only, as for Before. 
+          </P>
+          <P>
+            This attribute shall apply only to elements of structure type TH (Table header) or TD (Table data) and shall control the placement of all BLSEs that are children of the given element. The table cell’s content rectangle (see 
+            <Link>
+              “Content and Allocation Rectangles”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, 
+              “Layout Attributes”
+            </Link>
+            ) shall become the reference area for all of its 
+            descendants. Default value: Before. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            InlineAlign
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; table cells only) The alignment, in the inline-progression direction, of content within the table cell: 
+          </P>
+          <P>
+            Start Start edge of each child’s allocation rectangle aligned with that of the table cell’s content rectangle.
+          </P>
+          <P>
+            Center Each child centered within the table cell. The distance between the start edges of the child’s allocation rectangle and the table cell’s content rectangle shall be the same as the distance between their end edges. 
+          </P>
+          <P>
+            End End edge of each child’s allocation rectangle aligned with that of the table cell’s content rectangle. 
+          </P>
+          <P>
+            This attribute shall apply only to elements of structure type TH (Table header) or TD (Table data) and controls the placement of all BLSEs that are children of the given element. The table cell’s content rectangle (see 
+            <Link>
+              “Content and Allocation Rectangles”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, 
+              “Layout Attributes”
+            </Link>
+            ) shall become the reference area for all of its 
+            descendants. Default value: Start. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TBorderStyle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name or array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) The style of the border drawn on each edge of a table cell. Allowed values shall be the same as those specified for BorderStyle (see 
+            <Link>
+              Ta b l e
+              343
+            </Link>
+            ). If both TBorderStyle and 
+            BorderStyle apply to a given table cell, BorderStyle shall supersede TBorderStyle. Default value: None. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TPadding
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer or array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) Specifies an offset to account for the separation between the table cell’s content rectangle and the surrounding border (see 
+            <Link>
+              “Content and Allocation Rectangles”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ). If both TPadding and Padding apply to 
+            a given table cell, Padding shall supersede TPadding. A positive value shall enlarge the background area; a negative value shall trim it, and the border may overlap the element’s text or graphic. The value shall be either a single number representing the width of the padding, in default user space units, that applies to all four edges of the table cell or a 4-entry array representing the padding width for the before edge, after edge, start edge, and end edge, respectively, of the content rectangle. Default value: 0.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

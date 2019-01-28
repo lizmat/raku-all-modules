@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 228 – Field flags specific to text fields",
+    "head": [
+      "Bit position",
+      "Name",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "13",
+        "Multiline",
+        "If set, the field may contain multiple lines of text; if clear, the field’s text is restricted to a single line."
+      ],
+      [
+        "14",
+        "Password",
+        "If set, the field is intended for entering a secure password that is not echoed visibly to the screen. Characters typed from the keyboard shall instead be echoed in some unreadable form, such as asterisks or bullet characters.\nNOTE To protect password confidentiality, readers should never store the value of the text field in the PDF file if this flag is set."
+      ],
+      [
+        "21",
+        "FileSelect",
+        "(PDF 1.4) If set, the text entered in the field represents the pathname of a file whose contents is submitted as the value of the field."
+      ],
+      [
+        "23",
+        "DoNotSpellCheck",
+        "(PDF 1.4) If set, text entered in the field is not spell-checked."
+      ],
+      [
+        "24",
+        "DoNotScroll",
+        "(PDF 1.4) If set, the field shall not scroll (horizontally for single-line fields, vertically for multiple-line fields) to accommodate more text than fits within its annotation rectangle. Once the field is full, no further text is accepted for interactive form filling; for non-interactive form filling, the filler should take care not to add more character than will visibly fit in the defined area."
+      ],
+      [
+        "25",
+        "Comb",
+        "(PDF 1.5) May be set only if the MaxLen entry is present in the text field dictionary (see Table 229) and if the Multiline, Password, and FileSelect flags are clear. If set, the field is automatically divided into as many equally spaced positions, or combs, as the value of MaxLen, and the text is laid out into those combs."
+      ],
+      [
+        "26",
+        "RichText",
+        "(PDF 1.5) If set, the value of this field is a rich text string (see 12.7.3.4, “Rich Text Strings”). If the field has a value, the RV entry of the field dictionary (Table 222) shall specify the rich text string."
+      ]
+    ]
+  }
+}

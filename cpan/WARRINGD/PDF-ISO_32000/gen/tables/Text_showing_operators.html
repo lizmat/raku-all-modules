@@ -1,0 +1,141 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        109
+        –  Text-showing operators 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Operands
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Operator
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            string 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Tj
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Show a text string. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            '
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Move to the next line and show a text string. This operator shall have the same effect as the code 
+          </P>
+          <P>
+            T*
+            string
+            Tj
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            a
+            w
+            a
+            c
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            "
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Move to the next line and show a text string, using a
+            w
+             as the word spacing and a
+            c
+             as the character spacing (setting the corresponding parameters in the text state). a
+            w
+             and a
+            c
+             shall be numbers expressed in unscaled text space units. This operator shall have the same effect as this code:
+          </P>
+          <P>
+            a
+            w
+            Tw
+            a
+            c
+            Tc
+            string
+            '
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            TJ
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Show one or more text strings, allowing individual glyph positioning. Each element of array shall be either a string or a number. If the element is a string, this operator shall show the string. If it is a number, the operator shall adjust the text position by that amount; that is, it shall translate the text matrix, 
+            T
+            m
+            . The number shall be expressed in thousandths of a unit of text space (see 
+            <Link>
+              9.4.4, "Text Space Details"
+            </Link>
+            ). This amount shall be 
+            subtracted from the current horizontal or vertical coordinate, depending on the writing mode. In the default coordinate system, a positive adjustment has the effect of moving the next glyph painted either to the left or down by the given amount. 
+            <Link>
+              Figure 46
+            </Link>
+             shows an example of the 
+            effect of passing offsets to TJ. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 29 – Required entries in a page tree node",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Required) The type of PDF object that this dictionary describes; is Pages for a page tree node."
+      ],
+      [
+        "Parent",
+        "dictionary",
+        "(Required except in root node; prohibited in the root node; is an indirect reference) The page tree node that is the immediate parent of this one."
+      ],
+      [
+        "Kids",
+        "array",
+        "(Required) An array of indirect references to the immediate children of this node. The children shall only be page objects or other page tree nodes."
+      ],
+      [
+        "Count",
+        "integer",
+        "(Required) The number of leaf nodes (page objects) that are descendants of this node within the page tree."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "table": {
+    "caption": "Table 163 – Entries in a navigation node dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; is NavNode for a navigation node dictionary."
+      ],
+      [
+        "NA",
+        "dictionary",
+        "(Optional) An action (which may be the first in a sequence of actions) that is executed when a user navigates forward."
+      ],
+      [
+        "PA",
+        "dictionary",
+        "(Optional) An action (which may be the first in a sequence of actions) that is executed when a user navigates backward."
+      ],
+      [
+        "Next",
+        "dictionary",
+        "(Optional) The next navigation node, if any."
+      ],
+      [
+        "Prev",
+        "dictionary",
+        "(Optional) The previous navigation node, if any."
+      ],
+      [
+        "Dur",
+        "number",
+        "(Optional) The maximum number of seconds before the conforming readershall automatically advance forward to the next navigation node. If this entry is not specified, no automatic advance shall occur."
+      ]
+    ]
+  }
+}

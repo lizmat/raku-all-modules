@@ -1,0 +1,72 @@
+{
+  "table": {
+    "caption": "Table 74 – Colour Operators",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "name",
+        "CS",
+        "(PDF 1.1) Set the current colour space to use for stroking operations. The operand name is a name object. If the colour space is one that can be specified by a name and no additional parameters (DeviceGray, DeviceRGB, DeviceCMYK, and certain cases of Pattern), the name may be specified directly. Otherwise, it is a name defined in the ColorSpace subdictionary of the current resource dictionary (see 7.8.3, \"Resource Dictionaries\"); the associated value is an array describing the colour space (see 8.6.3, \"Colour Space Families\").\nThe names DeviceGray, DeviceRGB, DeviceCMYK, and Patternalways identify the corresponding colour spaces directly; they never refer to resources in the ColorSpace subdictionary.\nThe CS operator shall also set the current stroking colour to its initial value, which depends on the colour space:\nIn a DeviceGray, DeviceRGB, CalGray, or CalRGB colour space, the initial colour has all components equal to 0.0.\nIn a DeviceCMYK colour space, the initial colour is [ 0.0 0.0 0.0 1.0 ].\nIn a Lab or ICCBased colour space, the initial colour has all components equal to 0.0 unless that falls outside the intervals specified by the space’s Range entry, in which case the nearest valid value is substituted.\nIn an Indexed colour space, the initial colour value is 0.\nIn a Separation or DeviceN colour space, the initial tint value is 1.0 for all colorants.\nIn a Pattern colour space, the initial colour is a pattern object that causes nothing to be painted."
+      ],
+      [
+        "name",
+        "cs",
+        "(PDF 1.1) Same as CS but used for nonstroking operations."
+      ],
+      [
+        "c 1 … c n",
+        "SC",
+        "(PDF 1.1) Set the colour to use for stroking operations in a device, CIE-based (other than ICCBased), or Indexed colour space. The number of operands required and their interpretation depends on the current stroking colour space:\nFor DeviceGray, CalGray, and Indexed colour spaces, one operand is required (n = 1).\nFor DeviceRGB, CalRGB, and Lab colour spaces, three operands is required (n = 3).\nFor DeviceCMYK, four operands is required (n = 4)."
+      ],
+      [
+        "c 1 … c n c 1 … c n name",
+        "SCN SCN",
+        "(PDF 1.2) Same as SC but also supports Pattern, Separation, DeviceN and ICCBased colour spaces.\nIf the current stroking colour space is a Separation, DeviceN, or ICCBased colour space, the operands c 1 … c n is numbers. The number of operands and their interpretation depends on the colour space.\nIf the current stroking colour space is a Pattern colour space, name is the name of an entry in the Pattern subdictionary of the current resource dictionary (see 7.8.3, \"Resource Dictionaries\"). For an uncoloured tiling pattern (PatternType = 1 and PaintType = 2), c 1 … c n is component values specifying a colour in the pattern’s underlying colour space. For other types of patterns, these operands is not specified."
+      ],
+      [
+        "c 1 … c n",
+        "sc",
+        "(PDF 1.1) Same as SC but used for nonstroking operations."
+      ],
+      [
+        "c 1 … c n c 1 … c n name",
+        "scn scn",
+        "(PDF 1.2) Same as SCN but used for nonstroking operations."
+      ],
+      [
+        "gray",
+        "G",
+        "Set the stroking colour space to DeviceGray (or the DefaultGray colour space; see 8.6.5.6, \"Default Colour Spaces\") and set the gray level to use for stroking operations. gray is a number between 0.0 (black) and 1.0 (white)."
+      ],
+      [
+        "gray",
+        "g",
+        "Same as G but used for nonstroking operations."
+      ],
+      [
+        "r g b",
+        "RG",
+        "Set the stroking colour space to DeviceRGB (or the DefaultRGB colour space; see 8.6.5.6, \"Default Colour Spaces\") and set the colour to use for stroking operations. Each operand is a number between 0.0 (minimum intensity) and 1.0 (maximum intensity)."
+      ],
+      [
+        "r g b",
+        "rg",
+        "Same as RG but used for nonstroking operations."
+      ],
+      [
+        "c m y k",
+        "K",
+        "Set the stroking colour space to DeviceCMYK (or the DefaultCMYKcolour space; see 8.6.5.6, \"Default Colour Spaces\") and set the colour to use for stroking operations. Each operand is a number between 0.0 (zero concentration) and 1.0 (maximum concentration). The behaviour of this operator is affected by the overprint mode (see 8.6.7, \"Overprint Control\")."
+      ],
+      [
+        "c m y k",
+        "k",
+        "Same as K but used for nonstroking operations."
+      ]
+    ]
+  }
+}

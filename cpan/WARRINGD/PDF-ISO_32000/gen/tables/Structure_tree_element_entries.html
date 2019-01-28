@@ -1,0 +1,364 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        323
+        –  Entries in a structure element dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be StructElem for a structure element. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The structure type, a name object identifying the nature of the structure element and its role within the document, such as a chapter, paragraph, or footnote (see 
+            <Link>
+              14.7.3, “Structure 
+              Types”
+            </Link>
+            ). Names of structure types shall conform to the guidelines 
+            described in 
+            <Link>
+              Annex E
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            P
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required; shall be an indirect reference) The structure element that is the immediate parent of this one in the structure hierarchy. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ID
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The element identifier, a byte string designating this structure element. The string shall be unique among all elements in the document’s structure hierarchy. The IDTree entry in the structure tree root (see 
+            <Link>
+              Ta b l e
+              322
+            </Link>
+            ) defines the correspondence 
+            between element identifiers and the structure elements they denote. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Pg
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; shall be an indirect reference) A page object representing a page on which some or all of the content items designated by the K entry shall be rendered. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            K
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The children of this structure element. The value of this entry may be one of the following objects or an array consisting of one or more of the following objects: 
+          </P>
+          <P>
+            • A structure element dictionary denoting another structure element
+          </P>
+          <P>
+            • An integer marked-content identifier denoting a marked-content sequence 
+          </P>
+          <P>
+            • A marked-content reference dictionary denoting a marked-content sequence 
+          </P>
+          <P>
+            •
+            An object reference dictionary denoting a PDF object
+             
+            <P>
+              Each of these objects other than the first (structure element dictionary) shall be considered to be a content item; see 
+              <Link>
+                <Span/> <!-- see 46454 0 R -->
+                <Span/> <!-- see 46455 0 R -->
+              </Link>
+               for further discussion of each of these forms of 
+              representation. 
+            </P>
+            <P>
+              If the value of K is a dictionary containing no Type entry, it shall be assumed to be a structure element dictionary. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            A
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A single attribute object or array of attribute objects associated with this structure element. Each attribute object shall be either a dictionary or a stream. If the value of this entry is an array, each attribute object in the array may be followed by an integer representing its revision number (see 
+            <Link>
+              14.7.5, “Structure 
+              Attributes,”
+            </Link>
+             and 
+            <Link>
+              14.7.5.3, “Attribute Revision Numbers”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            C
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+            or
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An attribute class name or array of class names associated with this structure element. If the value of this entry is an array, each class name in the array may be followed by an integer representing its revision number (see 
+            <Link>
+              14.7.5.2, “Attribute 
+              Classes,”
+            </Link>
+             and 
+            <Link>
+              14.7.5.3, “Attribute Revision Numbers”
+            </Link>
+            ). 
+          </P>
+          <P>
+            If both the A and C entries are present and a given attribute is specified by both, the one specified by the A entry shall take precedence. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            R
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The current revision number of this structure element (see 
+            <Link>
+              14.7.5.3, “Attribute Revision Numbers”
+            </Link>
+            ). The value shall be a 
+            non-negative integer. Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            T
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The title of the structure element, a text string representing it in human-readable form. The title should characterize the specific structure element, such as Chapter 1, rather than merely a generic element type, such as Chapter. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Lang
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) A language identifier specifying the natural language for all text in the structure element except where overridden by language specifications for nested structure elements or marked content (see 
+            <Link>
+              14.9.2, “Natural Language 
+              Specification”
+            </Link>
+            ). If this entry is absent, the language (if any) 
+            specified in the document catalogue applies. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Alt
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An alternate description of the structure element and its children in human-readable form, which is useful when extracting the document’s contents in support of accessibility to users with disabilities or for other purposes (see 
+            <Link>
+              14.9.3, “Alternate 
+              Descriptions”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            E
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.5) The expanded form of an abbreviation.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ActualText
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) Text that is an exact replacement for the structure element and its children. This replacement text (which should apply to as small a piece of content as possible) is useful when extracting the document’s contents in support of accessibility to users with disabilities or for other purposes (see 
+            <Link>
+              14.9.4, “Replacement Text”
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

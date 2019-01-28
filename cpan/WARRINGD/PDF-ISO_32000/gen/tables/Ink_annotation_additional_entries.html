@@ -1,0 +1,103 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        182
+        –  Additional entries specific to an ink annotation 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of annotation that this dictionary describes; shall be Ink for an ink annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            InkList
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of n arrays, each representing a stroked path. Each array shall be a series of alternating horizontal and vertical coordinates in default user space, specifying points along the path. When drawn, the points shall be connected by straight lines or curves in an implementation-dependent way. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A border style dictionary (see 
+            <Link>
+              Ta b l e
+              166
+            </Link>
+            ) specifying the line 
+            width and dash pattern that shall be used in drawing the paths. 
+          </P>
+          <P>
+            The annotation dictionary’s AP entry, if present, shall take precedence over the InkList and BS entries; see 
+            <Link>
+              Ta b l e
+              168
+            </Link>
+             and 
+            <Link>
+              12.5.5, “Appearance 
+              Streams.”
+            </Link>
+             
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

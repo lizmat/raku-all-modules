@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 190 – Additional entries specific to a watermark annotation",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of annotation that this dictionary describes; is Watermark for a watermark annotation."
+      ],
+      [
+        "FixedPrint",
+        "dictionary",
+        "(Optional) A fixed print dictionary (see Table 191) that specifies how this annotation is drawn relative to the dimensions of the target media. If this entry is not present, the annotation is drawn without any special consideration for the dimensions of the target media.\nIf the dimensions of the target media are not known at the time of drawing, drawing is done relative to the dimensions specified by the page’s MediaBox entry (see Table 30)."
+      ]
+    ]
+  }
+}

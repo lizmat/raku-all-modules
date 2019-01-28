@@ -1,0 +1,87 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        47
+        –  Entries in a Mac OS file information dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The embedded file’s file type. It shall be encoded as an integer according to Mac OS conventions: a 4-character ASCII text literal, that shall be a 32-bit integer, with the high-order byte first. 
+          </P>
+          <P>
+            EXAMPLE The file type “CARO” is represented as the hexadecimal integer 4341524F, which is expressed in decimal as 1128354383.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Creator
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The embedded file’s creator signature shall be encoded in the same way as Subtype.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ResFork
+          </P>
+        </TD>
+        <TD>
+          <P>
+            stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The binary contents of the embedded file’s resource fork. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

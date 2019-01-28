@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 327 – Entry common to all attribute object dictionaries",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "O",
+        "name",
+        "(Required) The name of the conforming product owning the attribute data. The name shall conform to the guidelines described in\nAnnex E\n."
+      ]
+    ]
+  }
+}

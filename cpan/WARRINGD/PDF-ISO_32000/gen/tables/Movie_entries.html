@@ -1,0 +1,115 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        295
+        –  Entries in a movie dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            file
+            specification
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A file specification identifying a self-describing movie file. 
+          </P>
+          <P>
+            NOTE The format of a self-describing movie file shall be left unspecified, and there is no guarantee of portability. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Aspect
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The width and height of the movie’s bounding box, in pixels, and shall be specified as [
+            width
+            height
+            ]. This entry should be omitted for a movie consisting entirely of sound with no visible images. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Rotate
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The number of degrees by which the movie shall be rotated clockwise relative to the page. The value shall be a multiple of 90. Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Poster
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+            or
+            stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag or stream specifying whether and how a poster imagerepresenting the movie shall be displayed. If this value is a stream, it shall contain an image XObject (see 
+            <Link>
+              8.9, “Images”
+            </Link>
+            ) to be displayed as 
+            the poster. If it is the boolean value true, the poster image shall be retrieved from the movie file; if it is false, no poster shall be displayed. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

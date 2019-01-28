@@ -1,0 +1,92 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        221
+        –  Field flags common to all field types 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Bit position
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Name
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Meaning
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            1
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ReadOnly
+          </P>
+        </TD>
+        <TD>
+          <P>
+            If set, the user may not change the value of the field. Any associated widget annotations will not interact with the user; that is, they will not respond to mouse clicks or change their appearance in response to mouse motions. This flag is useful for fields whose values are computed or imported from a database. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            2
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Required
+          </P>
+        </TD>
+        <TD>
+          <P>
+            If set, the field shall have a value at the time it is exported by a submit-form action (see 
+            <Link>
+              12.7.5.2, “Submit-Form Action”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            NoExport
+          </P>
+        </TD>
+        <TD>
+          <P>
+            If set, the field shall not be exported by a submit-form action (see 
+            <Link>
+              12.7.5.2, “Submit-Form Action”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

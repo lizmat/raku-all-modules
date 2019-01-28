@@ -1,0 +1,35 @@
+{
+  "table": {
+    "caption": "Table 141 – Arguments and results of the group compositing function",
+    "head": [
+      "Variable",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "G\n",
+        "The transparency group: a compound object consisting of all elements E 1 , … , E n of the group—the n constituent objects’ colours, shapes, opacities, and blend modes"
+      ],
+      [
+        "C0\n",
+        "Colour of the group’s backdrop"
+      ],
+      [
+        "C\n",
+        "Computed colour of the group, which is used as the source colour when the group is treated as an object"
+      ],
+      [
+        "f\n",
+        "Computed shape of the group, which is used as the object shape when the group is treated as an object"
+      ],
+      [
+        "0\n",
+        "Alpha of the group’s backdrop"
+      ],
+      [
+        "\n",
+        "Computed alpha of the group, which is used as the object alpha when the group is treated as an object"
+      ]
+    ]
+  }
+}

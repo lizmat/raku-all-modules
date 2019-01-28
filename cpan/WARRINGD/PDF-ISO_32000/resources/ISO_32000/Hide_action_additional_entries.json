@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 210 – Additional entries specific to a hide action",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; is Hide for a hide action."
+      ],
+      [
+        "T",
+        "dictionary, text string, or array",
+        "(Required) The annotation or annotations to be hidden or shown, shall bespecified in any of the following forms:\nAn indirect reference to an annotation dictionary\nA text string giving the fully qualified field name of an interactive form field whose associated widget annotation or annotations are to be affected (see 12.7.3.2, “Field Names”)\nAn array of such dictionaries or text strings"
+      ],
+      [
+        "H",
+        "boolean",
+        "(Optional) A flag indicating whether to hide the annotation (true) or show it (false). Default value: true."
+      ]
+    ]
+  }
+}

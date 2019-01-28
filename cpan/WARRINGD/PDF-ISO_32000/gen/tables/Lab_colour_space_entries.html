@@ -1,0 +1,149 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        65
+        –  Entries in a Lab Colour Space Dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            WhitePoint
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of three numbers [
+            X
+            W
+            Y
+            W
+            Z
+            W
+            ] that shall specify the tristimulus value, in the CIE 1931 XYZ space, of the diffuse white point; see 
+            <Link>
+              8.6.5.3, "CalRGB Colour Spaces"
+            </Link>
+             for further discussion. The numbers X
+            W
+             and 
+            Z
+            W
+             shall be positive, and Y
+            W
+             shall be 1.0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BlackPoint
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of three numbers [
+            X
+            B
+            Y
+            B
+            Z
+            B
+            ] that shall specify the tristimulus value, in the CIE 1931 XYZ space, of the diffuse black point; see 
+            <Link>
+              8.6.5.3, "CalRGB Colour Spaces"
+            </Link>
+             for further discussion. All three of these 
+            numbers shall be non-negative. Default value: [
+            0.0
+            0.0
+            0.0
+            ]. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Range
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of four numbers [
+            a
+            min
+            a
+            max
+            b
+            min
+            b
+            max
+            ] that shall specify the range of valid values for the a* and b* (B and C) components of the colour space—that is, 
+          </P>
+          <P>
+              <P>
+              amina* amax≤≤
+              </P>
+          </P>
+          <P>
+            and 
+          </P>
+          <P>
+              <P>
+              bminb* bmax≤≤
+              </P>
+          </P>
+          <P>
+            Component values falling outside the specified range shall be adjusted to the nearest valid value without error indication. 
+          </P>
+          <P>
+            Default value: [−100
+            100 −100
+            100
+            ]. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

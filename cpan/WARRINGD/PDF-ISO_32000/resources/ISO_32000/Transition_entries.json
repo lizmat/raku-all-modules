@@ -1,0 +1,57 @@
+{
+  "table": {
+    "caption": "Table 162 – Entries in a transition dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, shallbe Trans for a transition dictionary."
+      ],
+      [
+        "S",
+        "name",
+        "(Optional) The transition style that is used when moving to this page from another during a presentation. Default value: R.\nSplit Two lines sweep across the screen, revealing the new page. The lines may be either horizontal or vertical and may move inward from the edges of the page or outward from the center, as specified by the Dmand M entries, respectively.\nBlinds Multiple lines, evenly spaced across the screen, synchronously sweep in the same direction to reveal the new page. The lines may be either horizontal or vertical, as specified by the Dm entry. Horizontal lines move downward; vertical lines move to the right.\nBox A rectangular box sweeps inward from the edges of the page or outward from the center, as specified by the M entry, revealing the new page.\nWipe A single line sweeps across the screen from one edge to the other in the direction specified by the Di entry, revealing the new page.\nDissolve The old page dissolves gradually to reveal the new one.\nGlitter Similar to Dissolve, except that the effect sweeps across the page in a wide band moving from one side of the screen to the other in the direction specified by the Di entry.\nR The new page simply replaces the old one with no special transition effect; the D entry is ignored.\nFly(PDF 1.5) Changes are flown out or in (as specified by M), in the direction specified by Di, to or from a location that is offscreen except when Di is None."
+      ],
+      [
+        "",
+        "",
+        "Push(PDF 1.5) The old page slides off the screen while the new page slides in, pushing the old page out in the direction specified by Di.\nCover(PDF 1.5) The new page slides on to the screen in the direction specified by Di, covering the old page.\nUncover(PDF 1.5) The old page slides off the screen in the direction specified by Di, uncovering the new page in the direction specified by Di.\nFade(PDF 1.5) The new page gradually becomes visible through the old one."
+      ],
+      [
+        "D",
+        "number",
+        "(Optional) The duration of the transition effect, in seconds. Default value: 1."
+      ],
+      [
+        "Dm",
+        "name",
+        "(Optional; Split and Blinds transition styles only) The dimension in which the specified transition effect shall occur:\nHHorizontal\nVVertical\nDefault value: H."
+      ],
+      [
+        "M",
+        "name",
+        "(Optional; Split, Box and Fly transition styles only) The direction of motion for the specified transition effect:\nI Inward from the edges of the page\nO Outward from the center of the page\nDefault value: I."
+      ],
+      [
+        "Di",
+        "number or name",
+        "(Optional; Wipe, Glitter, Fly, Cover, Uncover and Push transition styles only)The direction in which the specified transition effect shall moves, expressed in degrees counterclockwise starting from a left-to-right direction. (This differs from the page object’s Rotate entry, which is measured clockwise from the top.)\nIf the value is a number, it is one of:\n0 Left to right\n90 Bottom to top (Wipe only)\n180 Right to left (Wipe only)\n270 Top to bottom\n315 Top-left to bottom-right (Glitter only)\nIf the value is a name, it is None, which is relevant only for the Fly transition when the value of SS is not 1.0.\nDefault value: 0."
+      ],
+      [
+        "SS",
+        "number",
+        "(Optional; PDF 1.5; Fly transition style only) The starting or ending scale at which the changes is drawn. If M specifies an inward transition, the scale of the changes drawn shall progress from SS to 1.0 over the course of the transition. If M specifies an outward transition, the scale of the changes drawn shall progress from 1.0 to SS over the course of the transition\nDefault: 1.0."
+      ],
+      [
+        "B",
+        "boolean",
+        "(Optional; PDF 1.5; Fly transition style only) If true, the area that is flown in is rectangular and opaque. Default: false."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,196 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        305
+        –  Entries in a projection dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of projection. Valid values shall be O (orthographic) or P(perspective). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The clipping style. Valid values shall be XNF (explicit near/far) or ANF(automatic near/far). Default value: ANF.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if the value of CS is XNF) The far clipping distance, expressed in the camera coordinate system. No parts of objects whose zcoordinates are greater than the value of this entry are drawn. If this entry is absent, no far clipping occurs.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            N
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Meaningful only if the value of CS is XNF; required if the value of Subtype is P) The near clipping distance, expressed in the camera coordinate system. No parts of objects whose z coordinates are less than the value of this entry are drawn. If Subtype is P, the value shall be positive; if Subtype is O, the value shall be non-negative, and the default value is 0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FOV
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if Subtype is P, ignored otherwise) A number between 0 and 180, inclusive, specifying the field of view of the virtual camera, in degrees. It defines a cone in 3D space centered around the z axis and a circle where the cone intersects the near clipping plane. The circle, along with the value of PS, specify the scaling of the projected artwork when rendered in the 2D plane of the annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number or name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if Subtype is P) An object that specifies the scaling used when projecting the 3D artwork onto the annotation’s target coordinate system. It defines the diameter of the circle formed by the intersection of the near plane and the cone specified by FOV. The value may be one of the following:
+          </P>
+          <P>
+            • A positive number that explicitly specifies the diameter as a distance in the annotation’s target coordinate system.
+          </P>
+          <P>
+            • A name specifying that the diameter shall be set to the width (W), height (H), minimum of width and height (Min), or maximum of width and height (Max) of the annotation’s 3D view box.
+            <P>
+              Default value: W.
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            OS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if Subtype is O) A positive number that specifies the scale factor to be applied to both the x and y coordinates when projecting onto the annotation’s target coordinate system (the z coordinate is discarded). Default value: 1.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            OB
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7; meaningful only if Subtype is O) A name that specifies a strategy for binding (scaling to fit) the near plane’s x and y coordinates onto the annotation’s target coordinate system. The scaling specified in this entry shall be applied in addition to the scaling factor specified by the OS entry. The value may be one of the following:
+          </P>
+          <P>
+            W Scale to fit the width of the annotation
+          </P>
+          <P>
+            HScale to fit the height of the annotation
+          </P>
+          <P>
+            MinScale to fit the lesser of width or height of the annotation
+          </P>
+          <P>
+            MaxScale to fit the greater of width or height of the annotation
+          </P>
+          <P>
+            Absolute No scaling should occur due to binding. 
+          </P>
+          <P>
+            Default value: Absolute.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

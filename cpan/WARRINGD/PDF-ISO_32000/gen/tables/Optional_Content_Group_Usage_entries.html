@@ -1,0 +1,235 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        102
+        –  Entries in an Optional Content Usage Dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            CreatorInfo
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary used by the creating application to store application-specific data associated with this optional content group. It shall contain two required entries:
+          </P>
+          <P>
+            Creator
+             
+            A text string specifying the application that created the group.
+          </P>
+          <P>
+            Subtype
+             
+            A name defining the type of content controlled by the group. Suggested values include but shall not be limited to Artwork, for graphic-design or publishing applications, and Technical, for technical designs such as building plans or schematics.
+          </P>
+          <P>
+            Additional entries may be included to present information relevant to the creating application or related applications.
+          </P>
+          <P>
+            Groups whose Intent entry contains Design typically include a CreatorInfo entry.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Language
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary specifying the language of the content controlled by this optional content group. It may contain the following two entries:
+          </P>
+          <P>
+            Lang
+             
+            (required) A text string that specifies a language and possibly a locale (see 
+            <Link>
+              14.9.2, "Natural Language Specification"
+            </Link>
+            ). For 
+            example, es-MX represents Mexican Spanish.
+          </P>
+          <P>
+            Preferred
+             
+            (optional) A name whose values shall be either ON or OFF. Default value: OFF. it shall be used by conforming readers when there is a partial match but no exact match between the system language and the language strings in all usage dictionaries. See 
+            <Link>
+              8.11.4.4, "Usage and Usage Application 
+              Dictionaries"
+            </Link>
+             for more information.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Export
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary containing one entry, ExportState, a name whose value shall be either ON or OFF. This value shall indicate the recommended state for content in this group when the document (or part of it) is saved by a conforming reader to a format that does not support optional content (for example, a raster image format). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Zoom
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary specifying a range of magnifications at which the content in this optional content group is best viewed. It shall contain one or both of the following entries:
+          </P>
+          <P>
+            min
+             
+            The minimum recommended magnification factor at which the group shall be ON. Default value: 0.
+          </P>
+          <P>
+            max
+             
+            The magnification factor below which the group shall be ON. Default value: infinity.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Print
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary specifying that the content in this group is shall be used when printing. It may contain the following optional entries:
+          </P>
+          <P>
+            Subtype
+             
+            A name object specifying the kind of content controlled by the group; for example, Trapping, PrintersMarks and Watermark.
+          </P>
+          <P>
+            PrintState
+             
+            A name that shall be either ON or OFF, indicating that the group shall be set to that state when the document is printed from a conforming reader.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            View
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary that shall have a single entry, ViewState, a name that shall have a value of either ON or OFF, indicating that the group shall be set to that state when the document is opened in a conforming reader.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            User
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary specifying one or more users for whom this optional content group is primarily intended. Each dictionary shall have two required entries:
+          </P>
+          <P>
+            Type
+             
+            A name object that shall be either Ind (individual), Ttl (title), or Org (organization). 
+          </P>
+          <P>
+            Name
+             
+            A text string or array of text strings representing the name(s) of the individual, position or organization.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PageElement
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary declaring that the group contains a pagination artifact. It shall contain one entry, Subtype, whose value shall be a name that is either HF (header/footer), FG (foreground image or graphic), BG(background image or graphic), or L (logo). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

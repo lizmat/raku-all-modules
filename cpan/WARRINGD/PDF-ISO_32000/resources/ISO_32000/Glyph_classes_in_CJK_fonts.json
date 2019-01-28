@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 125 – Glyph classes in CJK fonts",
+    "head": [
+      "Character Collection",
+      "Class",
+      "Glyphs in Class"
+    ],
+    "rows": [
+      [
+        "Adobe-GB1",
+        "Alphabetic\nDingbats\nGeneric\nHanzi\nHRoman\nHRomanRot\nKana\nProportional\nProportionalRot",
+        "Full-width Latin, Greek, and Cyrillic glyphs\nSpecial symbols\nTypeface-independent glyphs, such as line-drawing\nFull-width hanzi (Chinese) glyphs\nHalf-width Latin glyphs\nSame as HRoman but rotated for use in vertical writing\nJapanese kana (katakana and hiragana) glyphs\nProportional Latin glyphs\nSame as Proportional but rotated for use in vertical writing"
+      ],
+      [
+        "Adobe-CNS1",
+        "Alphabetic\nDingbats\nGeneric\nHanzi\nHRoman\nHRomanRot\nKana\nProportional\nProportionalRot",
+        "Full-width Latin, Greek, and Cyrillic glyphs\nSpecial symbols\nTypeface-independent glyphs, such as line-drawing\nFull-width hanzi (Chinese) glyphs\nHalf-width Latin glyphs\nSame as HRoman but rotated for use in vertical writing\nJapanese kana (katakana and hiragana) glyphs\nProportional Latin glyphs\nSame as Proportional but rotated for use in vertical writing"
+      ],
+      [
+        "Adobe-Japan1",
+        "Alphabetic\nAlphaNum\nDingbats\nDingbatsRot\nGeneric\nGenericRot\nHKana\nHKanaRot\nHRoman\nHRomanRot\nKana\nKanji\nProportional\nProportionalRot\nRuby",
+        "Full-width Latin, Greek, and Cyrillic glyphs\nNumeric glyphs\nSpecial symbols\nSame as Dingbats but rotated for use in vertical writing\nTypeface-independent glyphs, such as line-drawing\nSame as Generic but rotated for use in vertical writing\nHalf-width kana (katakana and hiragana) glyphs\nSame as HKana but rotated for use in vertical writing\nHalf-width Latin glyphs\nSame as HRoman but rotated for use in vertical writing\nFull-width kana (katakana and hiragana) glyphs\nFull-width kanji (Chinese) glyphs\nProportional Latin glyphs\nSame as Proportional but rotated for use in vertical writing\nGlyphs used for setting ruby (small glyphs that serve to annotate other glyphs with meanings or readings)"
+      ],
+      [
+        "Adobe-Japan2",
+        "Alphabetic\nDingbats\nHojoKanji",
+        "Full-width Latin, Greek, and Cyrillic glyphs\nSpecial symbols\nFull-width kanji glyphs"
+      ],
+      [
+        "Adobe-Korea1",
+        "Alphabetic\nDingbats\nGeneric\nHangul\nHanja\nHRoman\nHRomanRot\nKana\nProportional\nProportionalRot",
+        "Full-width Latin, Greek, and Cyrillic glyphs\nSpecial symbols\nTypeface-independent glyphs, such as line-drawing\nHangul and jamo glyphs\nFull-width hanja (Chinese) glyphs\nHalf-width Latin glyphs\nSame as HRoman but rotated for use in vertical writing\nJapanese kana (katakana and hiragana) glyphs\nProportional Latin glyphs\nSame as Proportional but rotated for use in vertical writing"
+      ]
+    ]
+  }
+}

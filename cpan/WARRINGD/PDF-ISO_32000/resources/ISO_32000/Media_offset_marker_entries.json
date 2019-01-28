@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 288 – Additional entries in a media offset marker dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "M",
+        "text string",
+        "(Required) A text string that identifies a named offset within a media object."
+      ]
+    ]
+  }
+}

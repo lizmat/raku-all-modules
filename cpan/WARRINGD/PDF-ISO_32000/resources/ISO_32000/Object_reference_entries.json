@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 325 – Entries in an object reference dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Required) The type of PDF object that this dictionary describes; is OBJRfor an object reference."
+      ],
+      [
+        "Pg",
+        "dictionary",
+        "(Optional; is an indirect reference) The page object of the page on which the object is rendered. This entry overrides any Pg entry in the structure element containing the object reference; it is used if the structure element has no such entry."
+      ],
+      [
+        "Obj",
+        "(any)",
+        "(Required; is an indirect reference) The referenced object."
+      ]
+    ]
+  }
+}

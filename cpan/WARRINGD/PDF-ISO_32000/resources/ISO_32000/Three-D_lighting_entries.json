@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 309 – Entries in a 3D lighting scheme dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is 3DLightingScheme."
+      ],
+      [
+        "Subtype",
+        "name",
+        "(Required) The style of lighting scheme described by this dictionary (see Table 310)."
+      ]
+    ]
+  }
+}

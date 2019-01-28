@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 107 – Text object operators",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "—",
+        "BT",
+        "Begin a text object, initializing the text matrix, T m , and the text line matrix, T lm , to the identity matrix. Text objects is not nested; a second BT shall not appear before an ET."
+      ],
+      [
+        "—",
+        "ET",
+        "End a text object, discarding the text matrix."
+      ]
+    ]
+  }
+}

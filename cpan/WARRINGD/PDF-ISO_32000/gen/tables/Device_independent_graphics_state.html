@@ -1,0 +1,452 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        52
+        –  Device-Independent Graphics State Parameters 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Parameter
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            CTM
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The current transformation matrix, which maps positions from user coordinates to device coordinates (see 
+            <Link>
+              8.3, "Coordinate 
+              Systems"
+            </Link>
+            ). This matrix is modified by each application of the 
+            coordinate transformation operator, cm. Initial value: a matrix that transforms default user coordinates to device coordinates. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            clipping
+            path
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (internal)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The current clipping path, which defines the boundary against which all output shall be cropped (see 
+            <Link>
+              8.5.4, "Clipping Path 
+              Operators"
+            </Link>
+            ). Initial value: the boundary of the entire 
+            imageable portion of the output page. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            color
+            space
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+            or
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The current colour space in which colour values shall beinterpreted (see 
+            <Link>
+              8.6, "Colour Spaces"
+            </Link>
+            ). There are two 
+            separate colour space parameters: one for stroking and one for all other painting operations. Initial value: DeviceGray. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            color
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The current colour to be used during painting operations (see 
+            <Link>
+              8.6, "Colour Spaces"
+            </Link>
+            ). The type and interpretation of this 
+            parameter depend on the current colour space; for most colour spaces, a colour value consists of one to four numbers. There are two separate colour parameters: one for stroking and one for all other painting operations. Initial value: black. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            text
+            state
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A set of nine graphics state parameters that pertain only to the painting of text. These include parameters that select the font, scale the glyphs to an appropriate size, and accomplish other effects. The text state parameters are described in 
+            <Link>
+              9.3, 
+              "Text State Parameters and Operators"
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            line
+            width
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The thickness, in user space units, of paths to be stroked (see 
+            <Link>
+              8.4.3.2, "Line Width"
+            </Link>
+            ). Initial value: 1.0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            line
+            cap
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A code specifying the shape of the endpoints for any open path that is stroked (see 
+            <Link>
+              8.4.3.3, "Line Cap Style"
+            </Link>
+            ). Initial 
+            value: 0, for square butt caps. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            line
+            join
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A code specifying the shape of joints between connected segments of a stroked path (see 
+            <Link>
+              8.4.3.4, "Line Join Style"
+            </Link>
+            ). 
+            Initial value: 0, for mitered joins. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            miter
+            limit
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The maximum length of mitered line joins for stroked paths (see 
+            <Link>
+              8.4.3.5, "Miter Limit"
+            </Link>
+            ). This parameter limits the length of 
+            “spikes” produced when line segments join at sharp angles. Initial value: 10.0, for a miter cutoff below approximately 11.5 degrees. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            dash
+            pattern
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+            and number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A description of the dash pattern to be used when paths are stroked (see 
+            <Link>
+              8.4.3.6, "Line Dash Pattern"
+            </Link>
+            ). Initial value: a 
+            solid line. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            rendering
+            intent
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The rendering intent to be used when converting CIE-based colours to device colours (see 
+            <Link>
+              8.6.5.8, "Rendering Intents"
+            </Link>
+            ). 
+            Initial value: RelativeColorimetric. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            stroke
+            adjustment
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.2) A flag specifying whether to compensate for possible rasterization effects when stroking a path with a line width that is small relative to the pixel resolution of the output device (see 
+            <Link>
+              10.6.5, "Automatic Stroke Adjustment"
+            </Link>
+            ). 
+          </P>
+          <P>
+            NOTE This is considered a device-independent parameter, even though the details of its effects are device-dependent. 
+            <P>
+              Initial value: false. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            blend
+            mode
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+            or
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) The current blend mode to be used in the transparent imaging model (see 
+            <Link>
+              11.3.5, "Blend Mode"
+            </Link>
+             and 
+            <Link>
+              11.6.3, "Specifying Blending Colour Space and Blend Mode"
+            </Link>
+            ). 
+            A conforming reader shall implicitly reset this parameter to its initial value at the beginning of execution of a transparency group XObject (see 
+            <Link>
+              11.6.6, "Transparency Group XObjects"
+            </Link>
+            ). 
+            Initial value: Normal. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            soft
+            mask
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary or
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) A soft-mask dictionary (see 
+            <Link>
+              11.6.5.2, "Soft-Mask 
+              Dictionaries"
+            </Link>
+            ) specifying the mask shape or mask opacity 
+            values to be used in the transparent imaging model (see 
+            <Link>
+              11.3.7.2, "Source Shape and Opacity"
+            </Link>
+             and 
+            <Link>
+              11.6.4.3, "Mask 
+              Shape and Opacity"
+            </Link>
+            ), or the name None if no such mask is 
+            specified. A conforming reader shall implicitly reset this parameter implicitly reset to its initial value at the beginning of execution of a transparency group XObject (see 
+            <Link>
+              11.6.6, 
+              "Transparency Group XObjects"
+            </Link>
+            ). Initial value: None. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            alpha
+            constant
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) The constant shape or constant opacity value to be used in the transparent imaging model (see 
+            <Link>
+              11.3.7.2, "Source 
+              Shape and Opacity"
+            </Link>
+             and 
+            <Link>
+              11.6.4.4, "Constant Shape and 
+              Opacity"
+            </Link>
+            ). There are two separate alpha constant 
+            parameters: one for stroking and one for all other painting operations. A conforming reader shall implicitly reset this parameter to its initial value at the beginning of execution of a transparency group XObject (see 
+            <Link>
+              11.6.6, "Transparency 
+              Group XObjects"
+            </Link>
+            ). Initial value: 1.0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            alpha
+            source
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.4) A flag specifying whether the current soft mask and alpha constant parameters shall be interpreted as shape values (true) or opacity values (false). This flag also governs the interpretation of the SMask entry, if any, in an image dictionary (see 
+            <Link>
+              8.9.5, "Image Dictionaries"
+            </Link>
+            ). Initial value: 
+            false. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

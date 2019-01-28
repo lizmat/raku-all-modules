@@ -1,0 +1,263 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        284
+        –  Entries in a floating window parameters dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be FWParams for a floating window parameters dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            D
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array containing two non-negative integers that shall represent the floating window’s width and height, in pixels, respectively. These values shall correspond to the dimensions of the rectangle in which the media shall play, not including such items as title bar and resizing handles.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The window relative to which the floating window shall be positioned:
+          </P>
+          <P>
+            0 The document window
+          </P>
+          <P>
+            1 The application window
+          </P>
+          <P>
+            2 The full virtual desktop
+          </P>
+          <P>
+            3 The monitor specified by M in the media screen parameters MH or BEdictionary (see 9.22)
+          </P>
+          <P>
+            Default value: 0.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            P
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The location where the floating window (including such items as title bar and resizing handles) shall be positioned relative to the window specified by RT:
+          </P>
+          <P>
+            0 Upper-left corner
+          </P>
+          <P>
+            1 Upper center
+          </P>
+          <P>
+            2 Upper-right corner
+          </P>
+          <P>
+            3Center left
+          </P>
+          <P>
+            4Center
+          </P>
+          <P>
+            5Center right
+          </P>
+          <P>
+            6 Lower-left corner
+          </P>
+          <P>
+            7 Lower center
+          </P>
+          <P>
+            8 Lower-right corner
+          </P>
+          <P>
+            Default value: 4.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            O
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) Specifies what shall occur if the floating window is positioned totally or partially offscreen (that is, not visible on any physical monitor):
+          </P>
+          <P>
+            0 Take no special action
+          </P>
+          <P>
+            1 Move and/or resize the window so that it is on-screen
+          </P>
+          <P>
+            2 Consider the object to be non-viable
+          </P>
+          <P>
+            Default value: 1
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            T
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) If true, the floating window shall have a title bar. Default value: true.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            UC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if T is true) If true, the floating window shall include user interface elements that allow a user to close a floating window.
+          </P>
+          <P>
+            Default value: true
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            R
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) Specifies whether the floating window may be resized by a user:
+          </P>
+          <P>
+            0 May not be resized
+          </P>
+          <P>
+            1 May be resized only if aspect ratio is preserved
+          </P>
+          <P>
+            2 May be resized without preserving aspect ratio
+          </P>
+          <P>
+            Default value: 0.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if T is true) An array providing text to display on the floating window’s title bar. See 
+            <Link>
+              14.9.2.4, “Multi-language Text Arrays.”
+            </Link>
+             If 
+            this entry is not present, the conforming reader may provide default text.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

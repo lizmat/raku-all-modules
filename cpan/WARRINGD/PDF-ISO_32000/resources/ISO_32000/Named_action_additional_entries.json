@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 212 – Additional entries specific to named actions",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; is Named for a named action."
+      ],
+      [
+        "N",
+        "name",
+        "(Required) The name of the action that is performed (see Table 211)."
+      ]
+    ]
+  }
+}

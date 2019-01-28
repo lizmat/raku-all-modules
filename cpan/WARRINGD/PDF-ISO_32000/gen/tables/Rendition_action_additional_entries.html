@@ -1,0 +1,142 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        214
+        –  Additional entries specific to a rendition action 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of action that this dictionary describes; shall be Renditionfor a rendition action.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            R
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required when OP is present with a value of 0 or 4; otherwise optional) A rendition object (see 
+            <Link>
+              13.2.3, “Renditions”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AN
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if OP is present with a value of 0, 1, 2, 3 or 4; otherwise optional) An indirect reference to a screen annotation (see 
+            <Link>
+              12.5.6.18, “Screen 
+              Annotations”
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            OP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if JS is not present; otherwise optional) The operation to perform when the action is triggered. Valid values shall be:
+          </P>
+          <P>
+            0 If no rendition is associated with the annotation specified by AN, play the rendition specified by R, associating it with the annotation. If a rendition is already associated with the annotation, it shall be stopped, and the new rendition shall be associated with the annotation. 
+          </P>
+          <P>
+            1 Stop any rendition being played in association with the annotation specified by AN, and remove the association. If no rendition is being played, there is no effect. 
+          </P>
+          <P>
+            2 Pause any rendition being played in association with the annotation specified b y AN. If no rendition is being played, there is no effect.
+          </P>
+          <P>
+            3 Resume any rendition being played in association with the annotation specified by AN. If no rendition is being played or the rendition is not paused, there is no effect.
+          </P>
+          <P>
+            4 Play the rendition specified by R, associating it with the annotation specified by AN. If a rendition is already associated with the annotation, resume the rendition if it is paused; otherwise, do nothing.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            JS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string or stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if OP is not present; otherwise optional) A text string or stream containing a JavaScript script that shall be executed when the action is triggered.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

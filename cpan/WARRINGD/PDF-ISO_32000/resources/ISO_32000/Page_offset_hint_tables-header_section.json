@@ -1,0 +1,77 @@
+{
+  "table": {
+    "caption": "Table F. 3 – Page offset hint table, header section",
+    "head": [
+      "Item",
+      "Size (bits)",
+      "Description"
+    ],
+    "rows": [
+      [
+        "1",
+        "32",
+        "The least number of objects in a page (including the page object itself)."
+      ],
+      [
+        "2",
+        "32",
+        "The location of the first page’s page object."
+      ],
+      [
+        "3",
+        "16",
+        "The number of bits needed to represent the difference between the greatest and least number of objects in a page."
+      ],
+      [
+        "4",
+        "32",
+        "The least length of a page in bytes. This is the least length from the beginning of a page object to the last byte of the last object used by that page."
+      ],
+      [
+        "5",
+        "16",
+        "The number of bits needed to represent the difference between the greatest and least length of a page, in bytes."
+      ],
+      [
+        "6",
+        "32",
+        "The least offset of the start of any content stream, relative to the beginning of its page."
+      ],
+      [
+        "7",
+        "16",
+        "The number of bits needed to represent the difference between the greatest and least offset to the start of the content stream."
+      ],
+      [
+        "8",
+        "32",
+        "The least content stream length."
+      ],
+      [
+        "9",
+        "16",
+        "The number of bits needed to represent the difference between the greatest and least content stream length."
+      ],
+      [
+        "10",
+        "16",
+        "The number of bits needed to represent the greatest number of shared object references."
+      ],
+      [
+        "11",
+        "16",
+        "The number of bits needed to represent the numerically greatest shared object identifier used by the pages (discussed further in Table F. 4 , item 4)."
+      ],
+      [
+        "12",
+        "16",
+        "The number of bits needed to represent the numerator of the fractional position for each shared object reference. For each shared object referenced from a page, there is an indication of where in the page’s content stream the object is first referenced. That position is given as the numerator of a fraction, whose denominator is specified once for the entire document (in the next item in this table). The fraction is explained in more detail in\nTable F. 4\n, item 5."
+      ],
+      [
+        "13",
+        "16",
+        "The denominator of the fractional position for each shared object reference."
+      ]
+    ]
+  }
+}

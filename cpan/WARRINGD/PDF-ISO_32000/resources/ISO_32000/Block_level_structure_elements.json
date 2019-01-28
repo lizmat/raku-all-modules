@@ -1,0 +1,23 @@
+{
+  "table": {
+    "caption": "Table 334 – Block-level structure elements",
+    "head": [
+      "Category",
+      "Structure types"
+    ],
+    "rows": [
+      [
+        "Paragraphlike elements",
+        "PH1H4 HH2H5 H3H6"
+      ],
+      [
+        "List elements",
+        "LLbl LILBody"
+      ],
+      [
+        "Table element",
+        "Table"
+      ]
+    ]
+  }
+}

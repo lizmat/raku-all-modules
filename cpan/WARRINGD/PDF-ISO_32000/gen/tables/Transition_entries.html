@@ -1,0 +1,264 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        162
+        –  Entries in a transition dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shallbe Trans for a transition dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The transition style that shall be used when moving to this page from another during a presentation. Default value: R.
+          </P>
+          <P>
+            Split Two lines sweep across the screen, revealing the new page. The lines may be either horizontal or vertical and may move inward from the edges of the page or outward from the center, as specified by the Dmand M entries, respectively. 
+          </P>
+          <P>
+            Blinds Multiple lines, evenly spaced across the screen, synchronously sweep in the same direction to reveal the new page. The lines may be either horizontal or vertical, as specified by the Dm entry. Horizontal lines move downward; vertical lines move to the right. 
+          </P>
+          <P>
+            Box A rectangular box sweeps inward from the edges of the page or outward from the center, as specified by the M entry, revealing the new page. 
+          </P>
+          <P>
+            Wipe A single line sweeps across the screen from one edge to the other in the direction specified by the Di entry, revealing the new page. 
+          </P>
+          <P>
+            Dissolve The old page dissolves gradually to reveal the new one. 
+          </P>
+          <P>
+            Glitter Similar to Dissolve, except that the effect sweeps across the page in a wide band moving from one side of the screen to the other in the direction specified by the Di entry. 
+          </P>
+          <P>
+            R The new page simply replaces the old one with no special transition effect; the D entry shall be ignored. 
+          </P>
+          <P>
+            Fly(PDF 1.5) Changes are flown out or in (as specified by M), in the direction specified by Di, to or from a location that is offscreen except when Di is None. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Push(PDF 1.5) The old page slides off the screen while the new page slides in, pushing the old page out in the direction specified by Di. 
+          </P>
+          <P>
+            Cover(PDF 1.5) The new page slides on to the screen in the direction specified by Di, covering the old page. 
+          </P>
+          <P>
+            Uncover(PDF 1.5) The old page slides off the screen in the direction specified by Di, uncovering the new page in the direction specified by Di. 
+          </P>
+          <P>
+            Fade(PDF 1.5) The new page gradually becomes visible through the old one.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            D
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The duration of the transition effect, in seconds. Default value: 1. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Dm
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; Split and Blinds transition styles only) The dimension in which the specified transition effect shall occur: 
+          </P>
+          <P>
+            HHorizontal 
+          </P>
+          <P>
+            VVertical 
+          </P>
+          <P>
+            Default value: H. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            M
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; Split, Box and Fly transition styles only) The direction of motion for the specified transition effect: 
+          </P>
+          <P>
+            I Inward from the edges of the page 
+          </P>
+          <P>
+            O Outward from the center of the page 
+          </P>
+          <P>
+            Default value: I. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Di
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number or name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; Wipe, Glitter, Fly, Cover, Uncover and Push transition styles only)The direction in which the specified transition effect shall moves, expressed in degrees counterclockwise starting from a left-to-right direction. (This differs from the page object’s Rotate entry, which is measured clockwise from the top.) 
+          </P>
+          <P>
+            If the value is a number, it shall be one of: 
+          </P>
+          <P>
+              0 Left to right 
+          </P>
+          <P>
+             90 Bottom to top (Wipe only) 
+          </P>
+          <P>
+            180 Right to left (Wipe only) 
+          </P>
+          <P>
+            270 Top to bottom 
+          </P>
+          <P>
+            315 Top-left to bottom-right (Glitter only) 
+          </P>
+          <P>
+            If the value is a name, it shall be None, which is relevant only for the Fly transition when the value of SS is not 1.0. 
+          </P>
+          <P>
+            Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            SS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5; Fly transition style only) The starting or ending scale at which the changes shall be drawn. If M specifies an inward transition, the scale of the changes drawn shall progress from SS to 1.0 over the course of the transition. If M specifies an outward transition, the scale of the changes drawn shall progress from 1.0 to SS over the course of the transition
+          </P>
+          <P>
+            Default: 1.0.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            B
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5; Fly transition style only) If true, the area that shall be flown in is rectangular and opaque. Default: false.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

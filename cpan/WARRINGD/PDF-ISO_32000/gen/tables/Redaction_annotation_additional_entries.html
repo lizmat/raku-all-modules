@@ -1,0 +1,195 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        192
+        –  Additional entries specific to a redaction annotation 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of annotation that this dictionary describes; shallbe Redact for a redaction annotation.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            QuadPoints
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of 8 x n numbers specifying the coordinates of n quadrilaterals in default user space, as described in 
+            <Link>
+              Table
+              175
+            </Link>
+             for text 
+            markup annotations. If present, these quadrilaterals denote the content region that is intended to be removed. If this entry is not present, the Rect entry denotes the content region that is intended to be removed.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of three numbers in the range 0.0 to 1.0 specifying the components, in the DeviceRGB colour space, of the interior colour with which to fill the redacted region after the affected content has been removed. If this entry is absent, the interior of the redaction region is left transparent. This entry is ignored if the ROentry is present.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RO
+          </P>
+        </TD>
+        <TD>
+          <P>
+            stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A form XObject specifying the overlay appearance for this redaction annotation. After this redaction is applied and the affected content has been removed, the overlay appearance should be drawn such that its origin lines up with the lower-left corner of the annotation rectangle. This form XObject is not necessarily related to other annotation appearances, and may or may not be present in the APdictionary. This entry takes precedence over the IC, OverlayText, DA, and Q entries.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            OverlayText
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A text string specifying the overlay text that should be drawn over the redacted region after the affected content has been removed. This entry is ignored if the RO entry is present.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Repeat
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) If true, then the text specified by OverlayText should be repeated to fill the redacted region after the affected content has been removed. This entry is ignored if the RO entry is present. Default value: false.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if OverlayText is present, ignored otherwise) The appearance string to be used in formatting the overlay text when it is drawn after the affected content has been removed (see 
+            <Link>
+              12.7.3.3, 
+              “Variable Text”
+            </Link>
+            ). This entry is ignored if the RO entry is present.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Q
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A code specifying the form of quadding (justification) to be used in laying out the overlay text:
+          </P>
+          <P>
+            0
+            Left-justified
+          </P>
+          <P>
+            1
+            Centered
+          </P>
+          <P>
+            2
+            Right-justified
+          </P>
+          <P>
+            This entry is ignored if the RO entry is present. Default value: 0 (left-justified).
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

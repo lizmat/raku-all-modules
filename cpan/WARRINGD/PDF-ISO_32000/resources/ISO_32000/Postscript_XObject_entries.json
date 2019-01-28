@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 88 – Additional Entries Specific to a PostScript XObject Dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is XObject for a PostScript XObject."
+      ],
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of XObject that this dictionary describes; is PS for a PostScript XObject.\nAlternatively, the value of this entry may be Form, with an additional Subtype2 entry whose value is PS."
+      ],
+      [
+        "Level1",
+        "stream",
+        "(Optional) A stream whose contents is used in place of the PostScript XObject’s stream when the target PostScript interpreter is known to support only LanguageLevel 1."
+      ]
+    ]
+  }
+}

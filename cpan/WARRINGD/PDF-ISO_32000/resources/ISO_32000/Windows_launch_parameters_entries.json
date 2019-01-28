@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 204 – Entries in a Windows launch parameter dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "F",
+        "byte string",
+        "(Required) The file name of the application that is launched or the document that is opened or printed, in standard Windows pathname format. If the name string includes a backslash character (\\), the backslash shall itself be preceded by a backslash.\nThis value is a simple string; it is not a file specification."
+      ],
+      [
+        "D",
+        "byte string",
+        "(Optional) A bye string specifying the default directory in standard DOS syntax."
+      ],
+      [
+        "O",
+        "ASCII string",
+        "(Optional) An ASCII string specifying the operation to perform:\nopen Open a document.\nprint Print a document.\nIf the F entry designates an application instead of a document, this entry is ignored and the application is launched. Default value: open."
+      ],
+      [
+        "P",
+        "byte string",
+        "(Optional) A parameter string that is passed to the application designated by the F entry. This entry is omitted if F designates a document."
+      ]
+    ]
+  }
+}

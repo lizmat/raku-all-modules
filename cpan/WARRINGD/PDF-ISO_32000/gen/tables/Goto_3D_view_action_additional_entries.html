@@ -1,0 +1,110 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        216
+        –  Additional entries specific to a go-to-3D-view action 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of action that this dictionary describes; shall be GoTo3DView for a transition action. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The target annotation for which to set the view.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The view to use. It may be one of the following types:
+          </P>
+          <P>
+            A 3D view dictionary (see 
+            <Link>
+              13.6.4, “3D Views”
+            </Link>
+            ).
+          </P>
+          <P>
+            An integer specifying an index into the VA array in the 3D stream (see 
+            <Link>
+              Table
+              300
+            </Link>
+            ).
+          </P>
+          <P>
+            A text string matching the IN entry in one of the views in the VA array (see 
+            <Link>
+              Table
+              304
+            </Link>
+            ).
+          </P>
+          <P>
+            A name that indicates the first (F), last (L), next (N), previous (P), or default (D) entries in the VA array; see discussion following this Table.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

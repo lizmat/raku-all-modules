@@ -1,0 +1,94 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        D.1
+        –  Latin-text encodings 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Encoding
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            StandardEncoding
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Adobe standard Latin-text encoding. This is the built-in encoding defined in Type 1 Latin-text font programs (but generally not in TrueType font programs). Conforming readers shall not have a predefined encoding named StandardEncoding. However, it is necessary to describe this encoding, since a font’s built-in encoding can be used as the base encoding from which differences may be specified in an encoding dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            MacRomanEncoding
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Mac OS standard encoding for Latin text in Western writing systems. Conforming readers shall have a predefined encoding named MacRomanEncoding that may be used with both Type 1 and TrueType fonts. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            WinAnsiEncoding
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Windows Code Page 1252, often called the “Windows ANSI” encoding. This is the standard Windows encoding for Latin text in Western writing systems. Conforming readers shall have a predefined encoding named WinAnsiEncoding that may be used with both Type 1 and TrueType fonts. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PDFDocEncoding
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Encoding for text strings in a PDF document outside the document’s content streams. This is one of two encodings (the other being Unicode) that may be used to represent text strings; see 
+            <Link>
+              7.9.2.2, "Text String 
+              Type"
+            </Link>
+            . PDF does not have a predefined encoding named 
+            PDFDocEncoding; it is not customary to use this encoding to show text from fonts. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            MacExpertEncoding
+          </P>
+        </TD>
+        <TD>
+          <P>
+            An encoding for use with expert fonts—ones containing the expert character set. Conforming readers shall have a predefined encoding named MacExpertEncoding. Despite its name, it is not a platform-specific encoding; however, only certain fonts have the appropriate character set for use with this encoding. No such fonts are among the standard 14 predefined fonts. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

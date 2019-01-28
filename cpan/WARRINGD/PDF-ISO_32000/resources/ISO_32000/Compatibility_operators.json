@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 32 – Compatibility operators",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "—",
+        "BX",
+        "(PDF 1.1) Begin a compatibility section. Unrecognized operators (along with their operands) is ignored without error until the balancing EX operator is encountered."
+      ],
+      [
+        "—",
+        "EX",
+        "(PDF 1.1) End a compatibility section begun by a balancing BX operator. Ignore any unrecognized operands and operators from previous matching BX onward."
+      ]
+    ]
+  }
+}

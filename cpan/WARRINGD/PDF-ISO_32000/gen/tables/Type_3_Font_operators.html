@@ -1,0 +1,133 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        113
+        –  Type 3 font operators 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Operands
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Operator
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            w
+            x
+            w
+            y
+          </P>
+        </TD>
+        <TD>
+          <P>
+            d0
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set width information for the glyph and declare that the glyph description specifies both its shape and its colour. 
+          </P>
+          <P>
+            NOTE This operator name ends in the digit 0.
+            <P>
+              w
+              x
+               denotes the horizontal displacement in the glyph coordinate system; it shall be consistent with the corresponding width in the font’s Widths array. w
+              y
+               shall be 0 (see 
+              <Link>
+                <Span/> <!-- see 23988 0 R -->
+                <Span/> <!-- see 23989 0 R -->
+              </Link>
+              ). 
+            </P>
+            <P>
+              This operator shall only be permitted in a content stream appearing in a Type
+              3 font’s CharProcs dictionary. It is typically used only if the glyph description executes operators to set the colour explicitly. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            w
+            x
+            w
+            y
+            ll
+            x
+            ll
+            y
+            ur
+            x
+            ur
+            y
+          </P>
+        </TD>
+        <TD>
+          <P>
+            d1
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set width and bounding box information for the glyph and declare that the glyph description specifies only shape, not colour. 
+          </P>
+          <P>
+            NOTE This operator name ends in the digit 1. 
+            <P>
+              w
+              x
+               denotes the horizontal displacement in the glyph coordinate system; it shall be consistent with the corresponding width in the font’s Widths array. w
+              y
+               shall be 0 (see 
+              <Link>
+                <Span/> <!-- see 24037 0 R -->
+                <Span/> <!-- see 24038 0 R -->
+              </Link>
+              ). 
+            </P>
+            <P>
+              ll
+              x
+               and ll
+              y
+               denote the coordinates of the lower-left corner, and ur
+              x
+              and ur
+              y
+               denote the upper-right corner, of the glyph bounding box. The glyph bounding box is the smallest rectangle, oriented with the axes of the glyph coordinate system, that completely encloses all marks placed on the page as a result of executing the glyph’s description. The declared bounding box shall be correct—in other words, sufficiently large to enclose the entire glyph. If any marks fall outside this bounding box, the result is unpredictable. 
+            </P>
+            <P>
+              A glyph description that begins with the d1 operator should not execute any operators that set the colour (or other colour-related parameters) in the graphics state; any use of such operators shall be ignored. The glyph description is executed solely to determine the glyph’s shape. Its colour shall be determined by the graphics state in effect each time this glyph is painted by a text-showing operator. For the same reason, the glyph description shall not include an image; however, an image mask is acceptable, since it merely defines a region of the page to be painted with the current colour. 
+            </P>
+            <P>
+              This operator shall be used only in a content stream appearing in a Type
+              3 font’s CharProcs dictionary. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

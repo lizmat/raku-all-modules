@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table F. 11 – Embedded file stream hint table, header section",
+    "head": [
+      "Item",
+      "Size (bits)",
+      "Description"
+    ],
+    "rows": [
+      [
+        "1",
+        "32",
+        "The object number of the first object in the first embedded file stream group."
+      ],
+      [
+        "2",
+        "32",
+        "The location of the first object in the first embedded file stream group."
+      ],
+      [
+        "3",
+        "32",
+        "The number of embedded file stream groups referenced by this hint table."
+      ],
+      [
+        "4",
+        "16",
+        "The number of bits needed to represent the highest object number corresponding to an embedded file stream object."
+      ],
+      [
+        "5",
+        "16",
+        "The number of bits needed to represent the greatest number of objects in an embedded file stream group."
+      ],
+      [
+        "6",
+        "16",
+        "The number of bits needed to represent the greatest length of an embedded file stream group, in bytes."
+      ],
+      [
+        "7",
+        "16",
+        "The number of bits needed to represent the greatest number of shared object references in any embedded file stream group."
+      ]
+    ]
+  }
+}

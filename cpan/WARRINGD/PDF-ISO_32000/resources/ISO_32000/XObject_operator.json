@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 87 – XObject Operator",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "name",
+        "Do",
+        "Paint the specified XObject. The operand name shall appear as a key in the XObject subdictionary of the current resource dictionary (see 7.8.3, \"Resource Dictionaries\"). The associated value is a stream whose Type entry, if present, is XObject. The effect of Do depends on the value of the XObject’s Subtype entry, which may be Image (see 8.9.5, \"Image Dictionaries\"), Form (see 8.10, \"Form XObjects\"), or PS (see 8.8.2, \"PostScript XObjects\")."
+      ]
+    ]
+  }
+}

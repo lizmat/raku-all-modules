@@ -1,0 +1,67 @@
+{
+  "table": {
+    "caption": "Table 189 – Entries in an appearance characteristics dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "R",
+        "integer",
+        "(Optional) The number of degrees by which the widget annotation is rotated counterclockwise relative to the page. The value is a multiple of 90. Default value: 0."
+      ],
+      [
+        "BC",
+        "array",
+        "(Optional) An array of numbers that is in the range 0.0 to 1.0 specifying the colour of the widget annotation’s border. The number of array elements determines the colour space in which the colour shall bedefined:\n0 No colour; transparent\n1DeviceGray\n3DeviceRGB\n4DeviceCMYK"
+      ],
+      [
+        "BG",
+        "array",
+        "(Optional) An array of numbers that is in the range 0.0 to 1.0 specifying the colour of the widget annotation’s background. The number of array elements shall determine the colour space, as described for BC."
+      ],
+      [
+        "CA",
+        "text string",
+        "(Optional; button fields only) The widget annotation’s normal caption, which is displayed when it is not interacting with the user.\nUnlike the remaining entries listed in this Table, which apply only to widget annotations associated with pushbutton fields (see Link Pushbuttons in 12.7.4.2, “Button Fields”), the CA entry may be used with any type of button field, including check boxes (see Link Check Boxes in 12.7.4.2, “Button Fields”) and radio buttons (Link Radio Buttons in 12.7.4.2, “Button Fields”)."
+      ],
+      [
+        "RC",
+        "text string",
+        "(Optional; pushbutton fields only) The widget annotation’s rollover caption, which is displayed when the user rolls the cursor into its active area without pressing the mouse button."
+      ],
+      [
+        "AC",
+        "text string",
+        "(Optional; pushbutton fields only) The widget annotation’s alternate (down) caption, which is displayed when the mouse button is pressed within its active area."
+      ],
+      [
+        "I",
+        "stream",
+        "(Optional; pushbutton fields only; is an indirect reference) A form XObject defining the widget annotation’s normal icon, which is displayed when it is not interacting with the user."
+      ],
+      [
+        "RI",
+        "stream",
+        "(Optional; pushbutton fields only; is an indirect reference) A form XObject defining the widget annotation’s rollover icon, which is displayed when the user rolls the cursor into its active area without pressing the mouse button."
+      ],
+      [
+        "IX",
+        "stream",
+        "(Optional; pushbutton fields only; is an indirect reference) A form XObject defining the widget annotation’s alternate (down) icon, which is displayed when the mouse button is pressed within its active area."
+      ],
+      [
+        "IF",
+        "dictionary",
+        "(Optional; pushbutton fields only) An icon fit dictionary (see Table 247) specifying how the widget annotation’s icon is displayed within its annotation rectangle. If present, the icon fit dictionary applies to all of the annotation’s icons (normal, rollover, and alternate)."
+      ],
+      [
+        "TP",
+        "integer",
+        "(Optional; pushbutton fields only) A code indicating where to position the text of the widget annotation’s caption relative to its icon:\n0 No icon; caption only\n1 No caption; icon only\n2 Caption below the icon\n3 Caption above the icon\n4 Caption to the right of the icon\n5 Caption to the left of the icon\n6 Caption overlaid directly on the icon\nDefault value: 0."
+      ]
+    ]
+  }
+}

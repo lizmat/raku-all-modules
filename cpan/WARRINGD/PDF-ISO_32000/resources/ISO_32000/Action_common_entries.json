@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 193 – Entries common to all action dictionaries",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is Action for an action dictionary."
+      ],
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; see\nTable 194\nfor specific values."
+      ],
+      [
+        "Next",
+        "dictionary or array",
+        "(Optional; PDF 1.2) The next action or sequence of actions that is performed after the action represented by this dictionary. The value is either a single action dictionary or an array of action dictionaries that is performed in order; see the Note for further discussion."
+      ]
+    ]
+  }
+}

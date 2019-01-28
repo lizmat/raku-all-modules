@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 120 – Additional entries in a CMap stream dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Required) The type of PDF object that this dictionary describes; is CMap for a CMap dictionary."
+      ],
+      [
+        "CMapName",
+        "name",
+        "(Required) The name of the CMap. It is the same as the value of CMapName in the CMap file."
+      ],
+      [
+        "CIDSystemInfo",
+        "dictionary",
+        "(Required) A dictionary (see 9.7.3, \"CIDSystemInfo Dictionaries\") containing entries that define the character collection for the CIDFont or CIDFonts associated with the CMap.\nThe value of this entry is the same as the value of CIDSystemInfo in the CMap file. (However, it does not need to match the values of CIDSystemInfo for the Identity-H or Identity-V CMaps.)"
+      ],
+      [
+        "WMode",
+        "integer",
+        "(Optional) A code that specifies the writing mode for any CIDFont with which this CMap is combined. The value is 0 for horizontal or 1 for vertical. Default value: 0.\nThe value of this entry is the same as the value of WMode in the CMap file."
+      ],
+      [
+        "UseCMap",
+        "name or stream",
+        "(Optional) The name of a predefined CMap, or a stream containing a CMap. If this entry is present, the referencing CMap shall specify only the character mappings that differ from the referenced CMap."
+      ]
+    ]
+  }
+}

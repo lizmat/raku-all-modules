@@ -1,0 +1,171 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        283
+        –  Entries in a media screen parameters MH/BE dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            W
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of window that the media object shall play in:
+          </P>
+          <P>
+            0 A floating window
+          </P>
+          <P>
+            1 A full-screen window that obscures all other windows
+          </P>
+          <P>
+            2 A hidden window
+          </P>
+          <P>
+            3 The rectangle occupied by the screen annotation (see 
+            <Link>
+              12.5.6.18, 
+              “Screen Annotations”
+            </Link>
+            ) associated with the media rendition 
+          </P>
+          <P>
+            Default value: 3. Unrecognized value in MH: object is non-viable; in BE: treat as default value.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            B
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of three numbers in the range 0.0 to 1.0 that shall specify the components in the DeviceRGB colour space of the background colour for the rectangle in which the media is being played. This colour shall be used if the media object does not entirely cover the rectangle or if it has transparent sections. It shall be ignored for hidden windows.
+          </P>
+          <P>
+            Default value: implementation-defined. The conforming reader should choose a reasonable value based on the value of W. 
+          </P>
+          <P>
+            EXAMPLE 1 A system default background colour for floating windows or a user-preferred background colour for full-screen windows.
+            <P>
+              If a media format has an intrinsic background colour, B shall not override it. However, the B colour shall be visible if the media has transparent areas or otherwise does not cover the entire window.
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            O
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A number in the range 0.0 to 1.0 specifying the constant opacity value that shall be used in painting the background colour specified by B. A value below 1.0 means the window shall be transparent. 
+          </P>
+          <P>
+            EXAMPLE 2 Windows behind a floating window show through if the media does not cover the entire floating window. 
+            <P>
+              A value of 0.0 shall indicate full transparency and shall make B irrelevant. It shall be ignored for full-screen and hidden windows.
+            </P>
+            <P>
+              Default value: 1.0 (fully opaque).
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            M
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A monitor specifier (see 
+            <Link>
+              Ta b l e
+              293
+            </Link>
+            ) that shall specify which 
+            monitor in a multi-monitor system, a floating or full-screen window shall appear on. Ignored for other types.
+          </P>
+          <P>
+            Default value: 0 (document monitor). Unrecognized value in MH: object is non-viable; in BE: treat as default value.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if the value of W is 0; otherwise ignored) A floating window parameters dictionary (see 
+            <Link>
+              Ta b l e
+              284
+            </Link>
+            ) that shall specify the size, position, 
+            and options used in displaying floating windows.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

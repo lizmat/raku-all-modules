@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 357 – Entries in a Web Capture command dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "URL",
+        "ASCII string",
+        "(Required) The initial URL from which source data was requested."
+      ],
+      [
+        "L",
+        "integer",
+        "(Optional) The number of levels of pages retrieved from the initial URL. Default value: 1."
+      ],
+      [
+        "F",
+        "integer",
+        "(Optional) A set of flags specifying various characteristics of the command (see Table 357). Defaut value: 0."
+      ],
+      [
+        "P",
+        "string or stream",
+        "(Optional) Data that was posted to the URL."
+      ],
+      [
+        "CT",
+        "ASCII string",
+        "(Optional) A content type describing the data posted to the URL. Default value: application / x-www-form-urlencoded."
+      ],
+      [
+        "H",
+        "string",
+        "(Optional) Additional HTTP request headers sent to the URL."
+      ],
+      [
+        "S",
+        "dictionary",
+        "(Optional) A command settings dictionary containing settings used in the conversion process (see 14.10.5.4, “Command Settings”)."
+      ]
+    ]
+  }
+}

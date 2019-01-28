@@ -1,0 +1,125 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        290
+        –  Entries in a media players dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be MediaPlayers for a media players dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            MU
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of media player info dictionaries (see 
+            <Link>
+              Ta b l e
+              291
+            </Link>
+            ) that 
+            shall specify a set of players, one of which shall be used in playing the associated media object. 
+          </P>
+          <P>
+            Any players specified in NU are effectively removed from MU. 
+          </P>
+          <P>
+            EXAMPLE If MU specifies versions 1 through 5 of a player and NUspecifies versions 1 and 2 of the same player, MU is effectively versions 3 through 5.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            A
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of media player info dictionaries (see 
+            <Link>
+              Ta b l e
+              291
+            </Link>
+            ) that 
+            shall specify a set of players, any of which may be used in playing the associated media object. If MU is also present and non-empty, A shall be ignored.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            NU
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of media player info dictionaries (see 
+            <Link>
+              Ta b l e
+              291
+            </Link>
+            ) that 
+            shall specify a set of players that shall not be used in playing the associated media object (even if they are also specified in MU).
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

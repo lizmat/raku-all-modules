@@ -1,0 +1,92 @@
+{
+  "table": {
+    "caption": "Table 115 – Differences between MacRomanEncoding and Mac OS Roman encoding",
+    "head": [
+      "Name",
+      "Code (Octal)",
+      "Code (DEcimal)"
+    ],
+    "rows": [
+      [
+        "notequal",
+        "255",
+        "173"
+      ],
+      [
+        "infinity",
+        "260",
+        "176"
+      ],
+      [
+        "lessequal",
+        "262",
+        "178"
+      ],
+      [
+        "greaterequal",
+        "263",
+        "179"
+      ],
+      [
+        "partialdiff",
+        "266",
+        "182"
+      ],
+      [
+        "summation",
+        "267",
+        "183"
+      ],
+      [
+        "product",
+        "270",
+        "184"
+      ],
+      [
+        "pi",
+        "271",
+        "185"
+      ],
+      [
+        "integral",
+        "272",
+        "186"
+      ],
+      [
+        "Omega",
+        "275",
+        "189"
+      ],
+      [
+        "radical",
+        "303",
+        "195"
+      ],
+      [
+        "approxequal",
+        "305",
+        "197"
+      ],
+      [
+        "Delta",
+        "306",
+        "198"
+      ],
+      [
+        "lozenge",
+        "327",
+        "215"
+      ],
+      [
+        "Euro",
+        "333",
+        "219"
+      ],
+      [
+        "apple",
+        "360",
+        "240"
+      ]
+    ]
+  }
+}

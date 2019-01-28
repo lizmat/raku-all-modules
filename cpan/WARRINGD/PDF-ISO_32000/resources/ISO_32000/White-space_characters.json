@@ -1,0 +1,49 @@
+{
+  "table": {
+    "caption": "Table 1 – White-space characters",
+    "head": [
+      "Decimal",
+      "Hexadecimal",
+      "Octal",
+      "Name"
+    ],
+    "rows": [
+      [
+        "0",
+        "00",
+        "000",
+        "Null (NUL)"
+      ],
+      [
+        "9",
+        "09",
+        "011",
+        "HORIZONTAL TAB (HT)"
+      ],
+      [
+        "10",
+        "0A",
+        "012",
+        "LINE FEED (LF)"
+      ],
+      [
+        "12",
+        "0C",
+        "014",
+        "FORM FEED (FF)"
+      ],
+      [
+        "13",
+        "0D",
+        "015",
+        "CARRIAGE RETURN (CR)"
+      ],
+      [
+        "32",
+        "20",
+        "040",
+        "SPACE (SP)"
+      ]
+    ]
+  }
+}

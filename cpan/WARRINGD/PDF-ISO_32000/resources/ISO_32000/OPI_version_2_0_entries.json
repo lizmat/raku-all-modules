@@ -1,0 +1,89 @@
+{
+  "table": {
+    "caption": "Table 370 – Entries in a version 2.0 OPI dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "OPI Comment",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is OPIfor an OPI dictionary."
+      ],
+      [
+        "Version",
+        "number",
+        "",
+        "(Required) The version of OPI to which this dictionary refers; is the number 2 or 2.0 (not the name 2.0, as in an OPI version dictionary)."
+      ],
+      [
+        "F",
+        "file specification",
+        "%%ImageFilename",
+        "(Required) The external file containing the low- resolution proxy image."
+      ],
+      [
+        "MainImage",
+        "byte string",
+        "%%MainImage",
+        "(Optional) The pathname of the file containing the full-resolution image corresponding to this proxy, or any other identifying string that uniquely identifies the full-resolution image."
+      ],
+      [
+        "Tags",
+        "array",
+        "%%TIFFASCIITag",
+        "(Optional) An array of pairs of the form\n[ tagNum1 tagText1 … tagNumn tagTextn ]\nwhere each tagNum is an integer representing a TIFF tag number and each tagText is an ASCII string or an array of ASCII strings representing the corresponding ASCII tag value."
+      ],
+      [
+        "Size",
+        "array",
+        "%%ImageDimensions",
+        "(Optional) An array of two numbers of the form\n[ width height ]\nspecifying the dimensions of the image in pixels."
+      ],
+      [
+        "CropRect",
+        "rectangle",
+        "%%ImageCropRect",
+        "(Optional) An array of four numbers of the form\n[ left top right bottom ]\nspecifying the portion of the image to be used.\nThe Size and CropRect entries shall either both be present or both be absent. If present, they shall satisfy the conditions\n0 left right width\nand\n0 top bottom height\nIn this coordinate space, the positive y axis extends vertically downward; hence, the requirement that top bottom."
+      ],
+      [
+        "Overprint",
+        "boolean",
+        "%%ImageOverprint",
+        "(Optional) A flag specifying whether the image is to overprint (true) or knock out (false) underlying marks on other separations. Default value: false."
+      ],
+      [
+        "Inks",
+        "name or array",
+        "%%ImageInks",
+        "(Optional) A name object or array specifying the colorants to be applied to the image. The value may be the name full_color or registration or an array of the form\n[ /monochrome name1 tint1 … namen tintn ]\nwhere each name is a string representing the name of a colorant and each tint is a real number in the range 0.0 to 1.0 specifying the concentration of that colorant to be applied."
+      ],
+      [
+        "IncludedImageDimensions",
+        "",
+        ""
+      ],
+      [
+        "",
+        "array",
+        "%%IncludedImageDimensions",
+        "(Optional) An array of two integers of the form\n[ pixelsWide pixelsHigh ]\nspecifying the dimensions of the included image in pixels."
+      ],
+      [
+        "IncludedImageQuality",
+        "",
+        ""
+      ],
+      [
+        "",
+        "number",
+        "%%IncludedImageQuality",
+        "(Optional) A number indicating the quality of the included image. Valid values are 1, 2, and 3."
+      ]
+    ]
+  }
+}

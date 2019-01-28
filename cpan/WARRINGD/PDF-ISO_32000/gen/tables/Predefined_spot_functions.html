@@ -1,0 +1,941 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        128
+        –  Predefined spot functions 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Name
+          </P>
+        </TH>
+        <TH>
+          <P>
+             Appearance
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Definition
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            SimpleDot
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            1
+            
+            (x
+            2
+            
+            y
+            2
+            )
+          </P>
+          <P>
+            {
+            dup mul
+            exch dup mul
+            add
+            1 exch sub
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            InvertedSimpleDot
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            x
+            2
+            
+            y
+            2
+            
+            1
+          </P>
+          <P>
+            {
+            dup mul
+            exch dup mul
+            add
+            1 sub
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DoubleDot
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              360xsin2------------------------------360ysin2------------------------------+
+              </P>
+          </P>
+          <P>
+            {
+            360 mul sin
+            2 div
+            exch 360 mul sin
+            2 div
+            add
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            InvertedDoubleDot
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              360xsin2------------------------------360ysin2------------------------------+–
+              </P>
+          </P>
+          <P>
+            {
+            360 mul sin
+            2 div
+            exch 360 mul sin
+            2 div
+            add
+            neg
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CosineDot
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              180xcos2-------------------------------180ycos2-------------------------------+
+              </P>
+          </P>
+          <P>
+            {
+            180 mul cos
+            exch 180 mul cos
+            add
+            2 div
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Double
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              360x2---sin2-------------------------------360ysin2------------------------------+
+              </P>
+          </P>
+          <P>
+            {
+            360 mul sin
+            2 div
+            exch 2 div
+            360 mul sin
+            2 div
+            add
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            InvertedDouble
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              360x2---sin2-------------------------------360ysin2------------------------------+–
+              </P>
+          </P>
+          <P>
+            {
+            360 mul sin
+            2 div
+            exch 2 div
+            360 mul sin
+            2 div
+            add
+            neg
+            }
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Line
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            
+            
+            y
+            
+          </P>
+          <P>
+            {
+            exch pop
+            abs
+            neg
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LineX
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            x
+          </P>
+          <P>
+            {
+            pop
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LineY
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            y
+          </P>
+          <P>
+            {
+            exch pop
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Round
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            if 
+            x
+            
+            
+            
+            y
+            
+            
+            1 then 1
+            
+            (x
+            2
+            
+            y
+            2
+            )
+            else (
+            
+            x
+            
+            
+            1)
+            2
+            
+            (
+            
+            y
+            
+            
+            1)
+            2
+            
+            1
+          </P>
+          <P>
+            {
+            abs
+            exch abs
+             2 copy add
+            1 le
+            {
+            dup mul
+            exch dup mul
+            add
+            1 exch sub
+            }
+            {
+            1 sub dup mul
+            exch 1 sub dup mul
+            add
+            1
+            sub
+            }
+          </P>
+          <P>
+            ifelse
+            }
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Ellipse
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            let w
+            
+            (3
+            
+            
+            x
+            
+            )
+            
+            (4
+            
+            
+            y
+            )
+            
+            3
+          </P>
+          <P>
+            if w
+            
+            0 then
+              <P>
+              1x2y0.75----------2+4------------------------------–
+              </P>
+          </P>
+          <P>
+            else if w
+            
+            1 then
+              <P>
+              1x–21y–0.75---------------2+4------------------------------------------------------1–
+              </P>
+            else 0.5
+            
+            w
+          </P>
+          <P>
+            {
+            abs
+            exch abs
+            2 copy 3 mul
+            exch 4 mul
+            add
+            3 sub
+            dup 0 lt
+          </P>
+          <P>
+            {
+            pop
+            dup mul
+            exch 0.75 div
+            dup mul
+            add
+             4 div
+            1 exch sub
+            }
+            {
+            dup 1 gt
+          </P>
+          <P>
+            {
+            pop
+            1 exch sub
+            dup mul
+             exch 1 exch sub
+            0.75 div
+            dup
+            mul
+            add
+             4 div
+            1 sub
+            }
+            {
+            0.5 exch sub
+            exch pop
+            exch pop
+            }
+          </P>
+          <P>
+            ifelse
+            }
+          </P>
+          <P>
+            ifelse
+            }
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            EllipseA
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            1
+            
+            (x
+            2
+            
+            0.9
+            
+            y
+            2
+            )
+          </P>
+          <P>
+            {
+            dup mul
+            0.9 mul
+            exch dup mul
+            add
+            1 exch sub
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            InvertedEllipseA
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            x
+            2
+            
+            0.9
+            
+            y
+            2
+            
+            1
+          </P>
+          <P>
+            {
+            dup mul
+            0.9 mul
+            exch dup mul
+            add
+            1 sub
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            EllipseB
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              1x258---y2+–
+              </P>
+          </P>
+          <P>
+            {
+            dup 5 mul
+            8 div
+            mul
+            exch dup mul
+            exch add
+            sqrt
+             1 exch sub
+            }
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            EllipseC
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            1
+            
+            (0.9
+            
+            x
+            2
+            
+            y
+            2
+            )
+          </P>
+          <P>
+            {
+            dup mul
+            exch dup mul
+            0.9 mul
+            add
+            1 exch sub
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            InvertedEllipseC
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            0.9
+            
+            x
+            2
+            
+            y
+            2
+            
+            1
+          </P>
+          <P>
+            {
+            dup mul
+            exch dup mul
+            0.9 mul
+            add
+            1 sub
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Square
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            max
+            (
+            
+            x
+            
+            ,
+            
+            y
+            
+            )
+          </P>
+          <P>
+            {
+            abs
+            exch abs
+            2 copy lt
+            {
+            exch
+            }
+            if
+             pop neg
+            }
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Cross
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            min
+            (
+            
+            x
+            
+            ,
+            
+            y
+            
+            )
+          </P>
+          <P>
+            {
+            abs
+            exch abs
+            2 copy gt
+            {
+            exch
+            }
+            if
+             pop neg
+            }
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Rhomboid
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              0.9xy+2---------------------------------
+              </P>
+          </P>
+          <P>
+            {
+            abs
+            exch abs
+            0.9 mul
+            add
+            2 div
+            }
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Diamond
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              
+              </P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            if 
+            x
+            
+            
+            
+            y
+            
+            
+            0.75 then 1
+            
+            (x
+            2
+            
+            y
+            2
+            )
+            else if 
+            x
+            
+            
+            
+            y
+            
+            
+            1.23 then 1
+            
+            (0.85
+            
+            |
+            x
+            |
+            +
+            |
+            y
+            |
+            )
+            else (
+            |
+            x
+            |
+            
+            1)
+            2
+            
+            (
+            |
+            y
+            |
+            
+            1)
+            2
+            
+            1
+          </P>
+          <P>
+            {
+            abs
+            exch abs
+            2 copy add
+            0.75 le
+          </P>
+          <P>
+            {
+            dup mul
+            exch dup mul
+            add
+            1 exch sub
+            }
+            {
+            2 copy add
+            1.23 le
+          </P>
+          <P>
+            {
+            0.85 mul
+            add
+            1 exch sub
+            }
+            {
+            1 sub dup mul
+            exch 1 sub du
+            mul
+            add
+            1 sub }
+          </P>
+          <P>
+            ifelse
+            }
+          </P>
+          <P>
+            ifelse
+            }
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 12 – Optional parameter for the JBIG2Decode filter",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "JBIG2Globals",
+        "stream",
+        "A stream containing the JBIG2 global (page 0) segments. Global segments is placed in this stream even if only a single JBIG2 image XObject refers to it."
+      ]
+    ]
+  }
+}

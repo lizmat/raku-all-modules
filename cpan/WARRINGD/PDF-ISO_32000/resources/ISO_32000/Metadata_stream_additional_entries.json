@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 315 – Additional entries in a metadata stream dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Required) The type of PDF object that this dictionary describes; is Metadata for a metadata stream."
+      ],
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of metadata stream that this dictionary describes; is XML."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 43 – Examples of file specifications",
+    "head": [
+      "System",
+      "System-dependent paths",
+      "Written form"
+    ],
+    "rows": [
+      [
+        "DOS",
+        "\\ pdfdocs \\ spec . pdf (no drive) r : \\ pdfdocs \\ spec . pdf pclib / eng : \\ pdfdocs \\ spec . pdf",
+        "(/ / pdfdocs / spec . pdf) (/ r / pdfdocs / spec . pdf) (/ pclib / eng / pdfdocs / spec . pdf)"
+      ],
+      [
+        "Mac OS",
+        "Mac HD : PDFDocs : spec . pdf",
+        "(/Mac HD/ PDFDocs/ spec . pdf)"
+      ],
+      [
+        "UNIX",
+        "/ user / fred / pdfdocs / spec . pdf pdfdocs / spec . pdf (relative)",
+        "(/ user / fred / pdfdocs / spec . pdf) (pdfdocs / spec . pdf)"
+      ]
+    ]
+  }
+}

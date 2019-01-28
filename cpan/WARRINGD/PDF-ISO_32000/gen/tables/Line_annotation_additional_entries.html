@@ -1,0 +1,377 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        175
+        –  Additional entries specific to a line annotation 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of annotation that this dictionary describes; shall be Line for a line annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            L
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of four numbers, [
+            x
+            1
+            y
+            1
+            x
+            2
+            y
+            2
+            ], specifying the starting and ending coordinates of the line in default user space. 
+          </P>
+          <P>
+            If the LL entry is present, this value shall represent the endpoints of the leader lines rather than the endpoints of the line itself; see 
+            <Link>
+              Figure 60
+            </Link>
+            .
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A border style dictionary (see 
+            <Link>
+              Table
+              166
+            </Link>
+            ) specifying the width 
+            and dash pattern that shall be used in drawing the line. 
+          </P>
+          <P>
+            The annotation dictionary’s AP entry, if present, shall take precedence over the L and BS entries; see 
+            <Link>
+              Ta b l e
+              168
+            </Link>
+             and 
+            <Link>
+              12.5.5, “Appearance 
+              Streams.”
+            </Link>
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LE
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) An array of two names specifying the line ending styles that shall be used in drawing the line. The first and second elements of the array shall specify the line ending styles for the endpoints defined, respectively, by the first and second pairs of coordinates, (x
+            1
+            ,
+            y
+            1
+            )and (x
+            2
+            ,
+            y
+            2
+            ), in the L array. 
+            <Link>
+              Table
+              176
+            </Link>
+             shows the possible values. Default 
+            value: [
+            /None
+            /None
+            ]. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) An array of numbers in the range 0.0 to 1.0 specifying the interior color that shall be used to fill the annotation’s line endings (see 
+            <Link>
+              Ta b l e
+              176
+            </Link>
+            ). The number of array elements shall determine the colour 
+            space in which the colour is defined: 
+          </P>
+          <P>
+            0
+            No colour; transparent 
+          </P>
+          <P>
+            1DeviceGray 
+          </P>
+          <P>
+            3DeviceRGB 
+          </P>
+          <P>
+            4DeviceCMYK 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LL
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if LLE is present, otherwise optional; PDF
+            1.6) The length of leader lines in default user space that extend from each endpoint of the line perpendicular to the line itself, as shown in 
+            <Link>
+              Figure 60
+            </Link>
+            . A positive value 
+            shall mean that the leader lines appear in the direction that is clockwise when traversing the line from its starting point to its ending point (as specified by L); a negative value shall indicate the opposite direction. 
+          </P>
+          <P>
+            Default value: 0 (no leader lines).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LLE 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.6) A non-negative number that shall represents the length of leader line extensions that extend from the line proper 180 degrees from the leader lines, as shown in 
+            <Link>
+              Figure 60
+            </Link>
+            . 
+          </P>
+          <P>
+            Default value: 0 (no leader line extensions).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Cap
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.6) If true, the text specified by the Contents or RCentries shall be replicated as a caption in the appearance of the line, as shown in 
+            <Link>
+              Figure 61
+            </Link>
+             and 
+            <Link>
+              Figure 62
+            </Link>
+            . The text shall be rendered in a manner 
+            appropriate to the content, taking into account factors such as writing direction. 
+          </P>
+          <P>
+            Default value: false.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A name describing the intent of the line annotation (see also 
+            <Link>
+              Ta b l e
+              170
+            </Link>
+            ). Valid values shall be LineArrow, which means that 
+            the annotation is intended to function as an arrow, and LineDimension, which means that the annotation is intended to function as a dimension line.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LLO
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) A non-negative number that shall represent the length of the leader line offset, which is the amount of empty space between the endpoints of the annotation and the beginning of the leader lines. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if Cap is true; PDF 1.7) A name describing the annotation’s caption positioning. Valid values are Inline, meaning the caption shall be centered inside the line, and Top, meaning the caption shall be on top of the line.
+          </P>
+          <P>
+            Default value: Inline
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Measure
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) A measure dictionary (see 
+            <Link>
+              Table
+              261
+            </Link>
+            ) that shall 
+            specify the scale and units that apply to the line annotation.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CO
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if Cap is true; PDF 1.7) An array of two numbers that shall specify the offset of the caption text from its normal position. The first value shall be the horizontal offset along the annotation line from its midpoint, with a positive value indicating offset to the right and a negative value indicating offset to the left. The second value shall be the vertical offset perpendicular to the annotation line, with a positive value indicating a shift up and a negative value indicating a shift down.
+          </P>
+          <P>
+            Default value: [0, 0] (no offset from normal positioning)
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

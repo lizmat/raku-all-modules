@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 256 – Entries in the FieldMDP transform parameters dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is TransformParams for a transform parameters dictionary."
+      ],
+      [
+        "Action",
+        "name",
+        "(Required) A name that, along with the Fields array, describes which form fields do not permit changes after the signature is applied.\nValid values is:\nAll All form fields.\nInclude Only those form fields that specified in Fields.\nExclude Only those form fields not specified in Fields."
+      ],
+      [
+        "Fields",
+        "array",
+        "(Required if Action is Include or Exclude) An array of text strings containing field names."
+      ],
+      [
+        "V",
+        "name",
+        "(Optional: PDF 1.5 required) The transform parameters dictionary version. The value for PDF 1.5 and later is 1.2.\nNOTE This value is a name object, not a number.\nDefault value: 1.2."
+      ]
+    ]
+  }
+}

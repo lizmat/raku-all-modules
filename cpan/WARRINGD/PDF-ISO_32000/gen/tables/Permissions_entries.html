@@ -1,0 +1,97 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        258
+        –  Entries in a permissions dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            DocMDP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An indirect reference to a signature dictionary (see 
+            <Link>
+              Ta b l e
+              252
+            </Link>
+            ). 
+            This dictionary shall contain a Reference entry that shall be a signature reference dictionary (see 
+            <Link>
+              Table
+              252
+            </Link>
+            ) that has a DocMDP transform method 
+            (see 
+            <Link>
+              12.8.2.2, “DocMDP”
+            </Link>
+            ) and corresponding transform parameters. 
+          </P>
+          <P>
+            If this entry is present, consumer applications shall enforce the permissions specified by the P attribute in the DocMDP transform parameters dictionary and shall also validate the corresponding signature based on whether any of these permissions have been violated.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            UR3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A signature dictionary that shall be used to specify and validate additional capabilities (usage rights) granted for this document; that is, the enabling of interactive features of the conforming reader that are not available by default. 
+          </P>
+          <P>
+            For example, A conforming reader does not permit saving documents by default, but an agent may grant permissions that enable saving specific documents. The signature shall be used to validate that the permissions have been granted by the agent that did the signing. 
+          </P>
+          <P>
+            The signature dictionary shall contain a Reference entry that shall be a signature reference dictionary that has a UR transform method (see 
+            <Link>
+              12.8.2.3, “UR”
+            </Link>
+            ). The transform parameter dictionary for this method indicates 
+            which additional permissions shall be granted for the document. If the signature is valid, the conforming reader shall allow the specified permissions for the document, in addition to the application’s default permissions.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,15 @@
+{
+  "table": {
+    "caption": "Table 26 – Standard crypt filter names",
+    "head": [
+      "Name",
+      "Description"
+    ],
+    "rows": [
+      [
+        "Identity",
+        "Input data is passed through without any processing."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,252 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        173
+        –  Additional entries specific to a link annotation 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of annotation that this dictionary describes; shall be Link for a link annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            A
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.1) An action that shall be performed when the link annotation is activated (see 
+            <Link>
+              12.6, “Actions”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Dest
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array, name or 
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not permitted if an A entry is present) A destination that shall be displayed when the annotation is activated (see 
+            <Link>
+              12.3.2, 
+              “Destinations”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            H
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2) The annotation’s highlighting mode, the visual effect that shall be used when the mouse button is pressed or held down inside its active area: 
+          </P>
+          <P>
+            N (None) No highlighting. 
+          </P>
+          <P>
+            I(Invert) Invert the contents of the annotation rectangle. 
+          </P>
+          <P>
+            O I(Outline) Invert the annotation’s border. 
+          </P>
+          <P>
+            P(Push) Display the annotation as if it were being pushed below the surface of the page.
+          </P>
+          <P>
+            Default value: I. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3) A URI action (see 
+            <Link>
+              12.6.4.7, “URI Actions”
+            </Link>
+            ) formerly 
+            associated with this annotation. When Web Capture (
+            <Link>
+              14.10, “
+              Web 
+              Capture”
+            </Link>
+            ) changes an annotation from a URI to a go-to action (
+            <Link>
+              12.6.4.2, 
+              “Go-To Actions”
+            </Link>
+            ), it uses this entry to save the data from the original URI 
+            action so that it can be changed back in case the target page for the go-to action is subsequently deleted. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            QuadPoints
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.6) An array of 8
+            ×
+            n numbers specifying the coordinates of n quadrilaterals in default user space that comprise the region in which the link should be activated. The coordinates for each quadrilateral are given in the order 
+          </P>
+          <P>
+            x
+            1
+            y
+            1
+            x
+            2
+            y
+            2
+            x
+            3
+            y
+            3
+            x
+            4
+            y
+            4
+          </P>
+          <P>
+            specifying the four vertices of the quadrilateral in counterclockwise order. For orientation purposes, such as when applying an underline border style, the bottom of a quadrilateral is the line formed by (x
+            1
+            ,
+            y
+            1
+            )and (x
+            2
+            ,
+            y
+            2
+            ). 
+          </P>
+          <P>
+            If this entry is not present or the conforming reader does not recognize it, the region specified by the Rect entry should be used. QuadPointsshall be ignored if any coordinate in the array lies outside the region specified by Rect.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A border style dictionary (see 
+            <Link>
+              Table
+              166
+            </Link>
+            ) specifying 
+            the line width and dash pattern to be used in drawing the annotation’s border. 
+          </P>
+          <P>
+            The annotation dictionary’s AP entry, if present, takes precedence over the BS entry; see 
+            <Link>
+              Table
+              164
+            </Link>
+             and 
+            <Link>
+              12.5.5, “Appearance Streams”
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

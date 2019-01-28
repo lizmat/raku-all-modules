@@ -1,0 +1,322 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        234
+        –  Entries in a signature field seed value dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be SV for a seed value dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Ff
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A set of bit flags specifying the interpretation of specific entries in this dictionary. A value of 1 for the flag indicates that the associated entry is a required constraint. A value of 0 indicates that the associated entry is an optional constraint. Bit positions are 1 (Filter); 2 (SubFilter); 3 (V); 4 (Reasons); 5 (LegalAttestation); 6 (AddRevInfo); and 7 (DigestMethod). Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Filter
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The signature handler that shall be used to sign the signature field. Beginning with PDF 1.7, if Filter is specified and the Ff entry indicates this entry is a required constraint, then the signature handler specified by this entry shall be used when signing; otherwise, signing shall not take place. If Ff indicates that this is an optional constraint, this handler may be used if it is available. If it is not available, a different handler may be used instead. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            SubFilter
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of names indicating encodings to use when signing. The first name in the array that matches an encoding supported by the signature handler shall be the encoding that is actually used for signing. If SubFilter is specified and the Ff entry indicates that this entry is a required constraint, then the first matching encodings shall be used when signing; otherwise, signing shall not take place. If Ff indicates that this is an optional constraint, then the first matching encoding shall be used if it is available. If none is available, a different encoding may be used. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DigestMethod
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) An array of names indicating acceptable digest algorithms to use while signing. The value shall be one of SHA1, SHA256, SHA384, SHA512 and RIPEMD160. The default value is implementation-specific.
+          </P>
+          <P>
+            This property is only applicable if the digital credential signing contains RSA public/private keys. If it contains DSA public/ private keys, thedigest algorithm is always SHA1 and this attribute shall be ignored. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            real
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The minimum required capability of the signature field seed value dictionary parser. A value of 1 specifies that the parser shall be able to recognize all seed value dictionary entries in a PDF 1.5 file. A value of 2 specifies that it shall be able to recognize all seed value dictionary entries specified. 
+          </P>
+          <P>
+            The Ff entry indicates whether this shall be treated as a required constraint. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Cert
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A certificate seed value dictionary (see 
+            <Link>
+              Table
+              235
+            </Link>
+            ) containing 
+            information about the characteristics of the certificate that shall be used when signing.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Reasons
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of text strings that specifying possible reasons for signing a document. If specified, the reasons supplied in this entry replace those used by conforming products. 
+          </P>
+          <P>
+            If the Reasons array is provided and the Ff entry indicates that Reasons is a required constraint, one of the reasons in the array shall be used for the signature dictionary; otherwise, signing shall not take place. If the Ff entry indicates Reasons is an optional constraint, one of the reasons in the array may be chosen or a custom reason can be provided. 
+          </P>
+          <P>
+            If the Reasons array is omitted or contains a single entry with the value PERIOD (2Eh) and the Ff entry indicates that Reasons is a required constraint, the Reason entry shall be omitted from the signature dictionary (see 
+            <Link>
+              Ta b l e
+              252
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            MDP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A dictionary containing a single entry whose key is P and whose value is an integer between 0 and 3. A value of 0 defines the signature as an author signature (see 
+            <Link>
+              12.8, “Digital Signatures”
+            </Link>
+            ). 
+            The values 1 through 3 shall be used for certification signatures and correspond to the value of P in a DocMDP transform parameters dictionary (see 
+            <Link>
+              Ta b l e
+              254
+            </Link>
+            ).
+          </P>
+          <P>
+            If this MDP key is not present or the MDP dictionary does not contain a P entry, no rules shall be defined regarding the type of signature or its permissions.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TimeStamp
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A time stamp dictionary containing two entries:
+          </P>
+          <P>
+            URL An ASCII string specifying the URL of a time-stamping server, providing a time stamp that is compliant with RFC 3161, Internet X.509 Public Key Infrastructure Time-Stamp Protocol (see the 
+            <Link>
+              Bibliography
+            </Link>
+            ). 
+          </P>
+          <P>
+            Ff An integer whose value is 1 (the signature shall have a time stamp) or 0 (the signature need not have a time stamp). Default value: 0.
+          </P>
+          <P>
+            NOTE Please see 
+            <Link>
+              12.8.3.3, "PKCS7 Signatures as used in ISO 
+              32000"
+            </Link>
+             for more details about hashing.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LegalAttestation
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) An array of text strings specifying possible legal attestations (see 
+            <Link>
+              12.8.5, “Legal Content Attestations”
+            </Link>
+            ). The value of the 
+            corresponding flag in the Ff entry indicates whether this is a required constraint. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AddRevInfo
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) A flag indicating whether revocation checking shall be carried out. If AddRevInfo is true, the conforming processor shall perform the following additional tasks when signing the signature field: 
+          </P>
+          <P>
+            Perform revocation checking of the certificate (and the corresponding issuing certificates) used to sign.
+          </P>
+          <P>
+            Include the revocation information within the signature value. 
+          </P>
+          <P>
+            Three SubFilter values have been defined for ISO 32000. For those values the AddRevInfo value shall be true only if SubFilter is adbe.pkcs7.detached or adbe.pkcs7.sha1. If SubFilter is x509.rsa_sha1, this entry shall be omitted or set to false. Additional SubFilters may be defined that also use AddRevInfo values.
+          </P>
+          <P>
+            If AddRevInfo is true and the Ff entry indicates this is a required constraint, then the preceding tasks shall be performed. If they cannot be performed, then signing shall fail. 
+          </P>
+          <P>
+            Default value: false 
+          </P>
+          <P>
+            NOTE 1 Revocation information is carried in the signature data as specified by PCKS7. See 
+            <Link>
+              12.8.3.3, "PKCS7 Signatures 
+              as used in ISO 32000"
+            </Link>
+            .
+          </P>
+          <P>
+            NOTE 2 The trust anchors used are determined by the signature handlers for both creation and validation.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 92 – Inline Image Operators",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "—",
+        "BI",
+        "Begin an inline image object."
+      ],
+      [
+        "—",
+        "ID",
+        "Begin the image data for an inline image object."
+      ],
+      [
+        "—",
+        "EI",
+        "End an inline image object."
+      ]
+    ]
+  }
+}

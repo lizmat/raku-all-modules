@@ -1,0 +1,114 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        330
+        –  Property list entries for artifacts 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of artifact that this property list describes; if present, shall be one of the names Pagination, Layout, Page, or (PDF 1.7)Background. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BBox
+          </P>
+        </TD>
+        <TD>
+          <P>
+            rectangle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; required for background artifacts) An array of four numbers in default user space units giving the coordinates of the left, bottom, right, and top edges, respectively, of the artifact’s bounding box (the rectangle that completely encloses its visible extent). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Attached
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; pagination and full-page background artifacts only) An array of name objects containing one to four of the names Top, Bottom, Left, and Right, specifying the edges of the page, if any, to which the artifact is logically attached. Page edges shall be defined by the page’s crop box (see 
+            <Link>
+              14.11.2, “Page Boundaries”
+            </Link>
+            ). The ordering of names within the array 
+            is immaterial. Including both Left and Right or both Top and Bottom indicates a full-width or full-height artifact, respectively.
+          </P>
+          <P>
+            Use of this entry for background artifacts shall be limited to full-page artifacts. Background artifacts that are not full-page take their dimensions from their parent structural element. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) The subtype of the artifact. This entry should appear only when the Type entry has a value of Pagination. Standard values are Header, Footer, and 
+            Watermark. Additional values may be specified for this entry, provided they comply with the naming conventions described in 
+            <Link>
+              Annex E
+            </Link>
+            .
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

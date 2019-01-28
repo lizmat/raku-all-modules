@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 361 – Entries in a box style dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "C",
+        "array",
+        "(Optional) An array of three numbers in the range 0.0 to 1.0, representing the components in the DeviceRGB colour space of the colour to be used for displaying the guidelines. Default value: [ 0.0 0.0 0.0 ]."
+      ],
+      [
+        "W",
+        "number",
+        "(Optional) The guideline width in default user space units. Default value: 1."
+      ],
+      [
+        "S",
+        "name",
+        "(Optional) The guideline style:\nS (Solid) A solid rectangle.\nD (Dashed) A dashed rectangle. The dash pattern is specified by the D entry.\nOther guideline styles may be defined in the future. Default value: S."
+      ],
+      [
+        "D",
+        "array",
+        "(Optional) A dash array defining a pattern of dashes and gaps to be used in drawing dashed guidelines (guideline style D). The dash array is specified in default user space units, in the same format as in the line dash pattern parameter of the graphics state (see 8.4.3.6, “Line Dash Pattern”). The dash phase is not specified and is assumed to be 0.\nEXAMPLE A D entry of [ 3 2 ] specifies guidelines drawn with 3-point dashes alternating with 2-point gaps.\nDefault value: [ 3 ]."
+      ]
+    ]
+  }
+}

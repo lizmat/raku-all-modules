@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 172 – Additional entries specific to a text annotation",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of annotation that this dictionary describes; is Text for a text annotation."
+      ],
+      [
+        "Open",
+        "boolean",
+        "(Optional) A flag specifying whether the annotation shall initially be displayed open. Default value: false (closed)."
+      ],
+      [
+        "Name",
+        "name",
+        "(Optional) The name of an icon that is used in displaying the annotation. Conforming readers shall provide predefined icon appearances for at least the following standard names:\nComment, Key, Note, Help, NewParagraph, Paragraph, Insert\nAdditional names may be supported as well. Default value: Note.\nThe annotation dictionary’s AP entry, if present, shall take precedence over the Name entry; see\nTable 168\nand\n12.5.5, “Appearance Streams.”\n"
+      ],
+      [
+        "State",
+        "text string",
+        "(Optional; PDF 1.5) The state to which the original annotation is set; see\n12.5.6.3, “Annotation States.”\nDefault: “Unmarked” if StateModel is “Marked”; “None” if StateModel is “Review”."
+      ],
+      [
+        "StateModel",
+        "text string",
+        "(Required if State is present, otherwise optional; PDF 1.5) The state model corresponding to State; see\n12.5.6.3, “Annotation States.”\n"
+      ]
+    ]
+  }
+}

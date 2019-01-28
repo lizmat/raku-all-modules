@@ -1,0 +1,117 @@
+{
+  "table": {
+    "caption": "Table 128 – Predefined spot functions",
+    "head": [
+      "Name",
+      "Appearance",
+      "Definition"
+    ],
+    "rows": [
+      [
+        "SimpleDot",
+        "\n",
+        "1 (x 2 y 2)\n{ dup mul exch dup mul add 1 exch sub }\n"
+      ],
+      [
+        "InvertedSimpleDot",
+        "\n",
+        "x 2 y 2 1\n{ dup mul exch dup mul add 1 sub }\n"
+      ],
+      [
+        "DoubleDot",
+        "\n",
+        "360xsin2------------------------------360ysin2------------------------------+\n{ 360 mul sin 2 div exch 360 mul sin 2 div add }\n"
+      ],
+      [
+        "InvertedDoubleDot",
+        "\n",
+        "360xsin2------------------------------360ysin2------------------------------+–\n{ 360 mul sin 2 div exch 360 mul sin 2 div add neg }\n"
+      ],
+      [
+        "CosineDot",
+        "\n",
+        "180xcos2-------------------------------180ycos2-------------------------------+\n{ 180 mul cos exch 180 mul cos add 2 div }\n"
+      ],
+      [
+        "Double",
+        "\n",
+        "360x2---sin2-------------------------------360ysin2------------------------------+\n{ 360 mul sin 2 div exch 2 div 360 mul sin 2 div add }\n"
+      ],
+      [
+        "InvertedDouble",
+        "\n",
+        "360x2---sin2-------------------------------360ysin2------------------------------+–\n{ 360 mul sin 2 div exch 2 div 360 mul sin 2 div add neg }"
+      ],
+      [
+        "Line",
+        "\n",
+        "y\n{ exch pop abs neg }\n"
+      ],
+      [
+        "LineX",
+        "\n",
+        "x\n{ pop }\n"
+      ],
+      [
+        "LineY",
+        "\n",
+        "y\n{ exch pop }\n"
+      ],
+      [
+        "Round",
+        "\n",
+        "if x y 1 then 1 (x 2 y 2) else (x 1) 2 (y 1) 2 1\n{ abs exch abs 2 copy add 1 le { dup mul exch dup mul add 1 exch sub } { 1 sub dup mul exch 1 sub dup mul add 1 sub }\nifelse }"
+      ],
+      [
+        "Ellipse",
+        "\n",
+        "let w (3 x) (4 y) 3\nif w 0 then\n1x2y0.75----------2+4------------------------------–\nelse if w 1 then\n1x–21y–0.75---------------2+4------------------------------------------------------1–\nelse 0.5 w\n{ abs exch abs 2 copy 3 mul exch 4 mul add 3 sub dup 0 lt\n{ pop dup mul exch 0.75 div dup mul add 4 div 1 exch sub } { dup 1 gt\n{ pop 1 exch sub dup mul exch 1 exch sub 0.75 div dup mul add 4 div 1 sub } { 0.5 exch sub exch pop exch pop }\nifelse }\nifelse }"
+      ],
+      [
+        "EllipseA",
+        "\n",
+        "1 (x 2 0.9 y 2)\n{ dup mul 0.9 mul exch dup mul add 1 exch sub }\n"
+      ],
+      [
+        "InvertedEllipseA",
+        "\n",
+        "x 2 0.9 y 2 1\n{ dup mul 0.9 mul exch dup mul add 1 sub }\n"
+      ],
+      [
+        "EllipseB",
+        "\n",
+        "1x258---y2+–\n{ dup 5 mul 8 div mul exch dup mul exch add sqrt 1 exch sub }"
+      ],
+      [
+        "EllipseC",
+        "\n",
+        "1 (0.9 x 2 y 2)\n{ dup mul exch dup mul 0.9 mul add 1 exch sub }\n"
+      ],
+      [
+        "InvertedEllipseC",
+        "\n",
+        "0.9 x 2 y 2 1\n{ dup mul exch dup mul 0.9 mul add 1 sub }\n"
+      ],
+      [
+        "Square",
+        "\n",
+        "max (x , y)\n{ abs exch abs 2 copy lt { exch } if pop neg }"
+      ],
+      [
+        "Cross",
+        "\n",
+        "min (x , y)\n{ abs exch abs 2 copy gt { exch } if pop neg }"
+      ],
+      [
+        "Rhomboid",
+        "\n",
+        "0.9xy+2---------------------------------\n{ abs exch abs 0.9 mul add 2 div }\n"
+      ],
+      [
+        "Diamond",
+        "\n",
+        "if x y 0.75 then 1 (x 2 y 2) else if x y 1.23 then 1 (0.85 | x | + | y |) else (| x | 1) 2 (| y | 1) 2 1\n{ abs exch abs 2 copy add 0.75 le\n{ dup mul exch dup mul add 1 exch sub } { 2 copy add 1.23 le\n{ 0.85 mul add 1 exch sub } { 1 sub dup mul exch 1 sub du mul add 1 sub }\nifelse }\nifelse }"
+      ]
+    ]
+  }
+}

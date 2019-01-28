@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 113 – Type 3 font operators",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "w x w y",
+        "d0",
+        "Set width information for the glyph and declare that the glyph description specifies both its shape and its colour.\nNOTE This operator name ends in the digit 0.\nw x denotes the horizontal displacement in the glyph coordinate system; it is consistent with the corresponding width in the font’s Widths array. w y is 0 (see\nThis operator shall only be permitted in a content stream appearing in a Type 3 font’s CharProcs dictionary. It is typically used only if the glyph description executes operators to set the colour explicitly."
+      ],
+      [
+        "w x w y ll x ll y ur x ur y",
+        "d1",
+        "Set width and bounding box information for the glyph and declare that the glyph description specifies only shape, not colour.\nNOTE This operator name ends in the digit 1.\nw x denotes the horizontal displacement in the glyph coordinate system; it is consistent with the corresponding width in the font’s Widths array. w y is 0 (see ll x and ll y denote the coordinates of the lower-left corner, and ur x and ur y denote the upper-right corner, of the glyph bounding box. The glyph bounding box is the smallest rectangle, oriented with the axes of the glyph coordinate system, that completely encloses all marks placed on the page as a result of executing the glyph’s description. The declared bounding box is correct—in other words, sufficiently large to enclose the entire glyph. If any marks fall outside this bounding box, the result is unpredictable. A glyph description that begins with the d1 operator should not execute any operators that set the colour (or other colour-related parameters) in the graphics state; any use of such operators is ignored. The glyph description is executed solely to determine the glyph’s shape. Its colour is determined by the graphics state in effect each time this glyph is painted by a text-showing operator. For the same reason, the glyph description shall not include an image; however, an image mask is acceptable, since it merely defines a region of the page to be painted with the current colour.\nThis operator is used only in a content stream appearing in a Type 3 font’s CharProcs dictionary."
+      ]
+    ]
+  }
+}

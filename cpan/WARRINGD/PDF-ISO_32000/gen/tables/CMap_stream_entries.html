@@ -1,0 +1,130 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        120
+        –  Additional entries in a CMap stream dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of PDF object that this dictionary describes; shall be CMap for a CMap dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CMapName
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The name of the CMap. It shall be the same as the value of CMapName in the CMap file. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CIDSystemInfo
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A dictionary (see 
+            <Link>
+              9.7.3, "CIDSystemInfo Dictionaries"
+            </Link>
+            ) 
+            containing entries that define the character collection for the CIDFont or CIDFonts associated with the CMap. 
+          </P>
+          <P>
+            The value of this entry shall be the same as the value of CIDSystemInfo in the CMap file. (However, it does not need to match the values of CIDSystemInfo for the Identity-H or Identity-V CMaps.) 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            WMode
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A code that specifies the writing mode for any CIDFont with which this CMap is combined. The value shall be 0 for horizontal or 1 for vertical. Default value: 0. 
+          </P>
+          <P>
+            The value of this entry shall be the same as the value of WMode in the CMap file. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            UseCMap
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+            or stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The name of a predefined CMap, or a stream containing a CMap. If this entry is present, the referencing CMap shall specify only the character mappings that differ from the referenced CMap. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

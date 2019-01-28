@@ -1,0 +1,167 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        307
+        –  Entries in a render mode dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be 3DRenderMode.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of render mode described by this dictionary; see 
+            <Link>
+              Ta b l e
+              308
+            </Link>
+             for specific values. If an 
+            unrecognized value is encountered, then this render mode dictionary shall be ignored. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array that specifies the auxiliary colour that shall be used when rendering the 3D image. The first entry in the array shall be a colour space; the subsequent entries shall be values specifying colour values in that colour space. The interpretation of this entry depends on the render mode specified by the Subtype entry, but it is often used to specify a colour for drawing points or edges.
+          </P>
+          <P>
+            The only valid colour space shall be DeviceRGB. If a colour space other than DeviceRGB is specified, this entry shall be ignored and the default value shall be used. 
+          </P>
+          <P>
+            Default value: [/DeviceRGB 0 0 0] representing the colour black.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name or array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A name or array that specifies the face color to be used when rendering the 3D image. This entry shall be relevant only when Subtype has a value of Illustration. 
+          </P>
+          <P>
+            If the value of FC is an array, the first entry in the array shall be a colour space and the subsequent entries shall be values specifying values in that colour space. The only valid colour space is DeviceRGB. Any colour space other than DeviceRGB shall be ignored and the default value shall be used. 
+          </P>
+          <P>
+            If the value of FC is a name, it shall describe a colour. The only valid name value shall BG, specifying the current background colour in use for displaying the artwork. If a name other than BG is encountered, this entry shall be ignored and the background colour for the host annotation shall be used (see 
+            <Link>
+              Ta b l e
+              189
+            </Link>
+            ). 
+          </P>
+          <P>
+            Default value: BG
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            O
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A number specifying the opacity of the added transparency applied by some render modes, using a standard additive blend.
+          </P>
+          <P>
+            Default value: 0.5
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CV
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A number specifying the angle, in degrees, that shall be used as the crease value when determining silhouette edges. If two front-facing faces share an edge and the angle between the normals of those faces is greater than or equal to the crease value, then that shared edge shall be considered a silhouette edge.
+          </P>
+          <P>
+            Default value: 45
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,55 @@
+{
+  "table": {
+    "caption": "Table 94 – Additional Abbreviations in an Inline Image Object",
+    "head": [
+      "Full Name",
+      "Abbreviation"
+    ],
+    "rows": [
+      [
+        "DeviceGray",
+        "G"
+      ],
+      [
+        "DeviceRGB",
+        "RGB"
+      ],
+      [
+        "DeviceCMYK",
+        "CMYK"
+      ],
+      [
+        "Indexed",
+        "I (uppercase I)"
+      ],
+      [
+        "ASCIIHexDecode",
+        "AHx"
+      ],
+      [
+        "ASCII85Decode",
+        "A85"
+      ],
+      [
+        "LZWDecode",
+        "LZW"
+      ],
+      [
+        "FlateDecode (PDF 1.2)",
+        "Fl (uppercase F, lowercase L)"
+      ],
+      [
+        "RunLengthDecode",
+        "RL"
+      ],
+      [
+        "CCITTFaxDecode",
+        "CCF"
+      ],
+      [
+        "DCTDecode",
+        "DCT"
+      ]
+    ]
+  }
+}

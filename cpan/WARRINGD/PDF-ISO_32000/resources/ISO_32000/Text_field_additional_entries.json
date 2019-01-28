@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 229 – Additional entry specific to a text field",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "MaxLen",
+        "integer",
+        "(Optional; inheritable) The maximum length of the field’s text, in characters."
+      ]
+    ]
+  }
+}

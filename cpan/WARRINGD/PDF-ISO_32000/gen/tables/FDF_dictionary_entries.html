@@ -1,0 +1,325 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        243
+        –  Entries in the FDF dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            file specification
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The source file or target file: the PDF document file that this FDF file was exported from or is intended to be imported into. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ID
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of two byte strings constituting a file identifier (see 
+            <Link>
+              14.4, “File Identifiers”
+            </Link>
+            ) for the source or target 
+            file designated by F, taken from the ID entry in the file’s trailer dictionary (see 
+            <Link>
+              7.5.5, “File Trailer”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Fields
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of FDF field dictionaries (see 
+            <Link>
+              FDF Fields
+            </Link>
+            in 
+            <Link>
+              12.7.7.3, “FDF Catalog”
+            </Link>
+            ) describing the root fields (those 
+            with no ancestors in the field hierarchy) that shall be exported or imported. This entry and the Pages entry shall not both be present. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Status
+          </P>
+        </TD>
+        <TD>
+          <P>
+            PDFDocEncoded string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A status string that shall be displayed indicating the result of an action, typically a submit-form action (see 
+            <Link>
+              12.7.5.2, “Submit-Form Action”
+            </Link>
+            ). The string shall be encoded 
+            with PDFDocEncoding. This entry and the Pages entry shallnot both be present. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Pages
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3) An array of FDF page dictionaries (see 
+            <Link>
+              FDF Pages
+            </Link>
+             in 
+            <Link>
+              12.7.7.3, “FDF Catalog”
+            </Link>
+            ) describing pages that 
+            shall be added to a PDF target document. The Fields and Status entries shall not be present together with this entry. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Encoding
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3) The encoding that shall be used for any FDF field value or option (V or Opt in the field dictionary; see 
+            <Link>
+              Ta b l e
+              246
+            </Link>
+            ) or field name that is a string and does not begin 
+            with the Unicode prefix U+FEFF.
+          </P>
+          <P>
+            Default value: PDFDocEncoding. 
+          </P>
+          <P>
+            Other allowed values include Shift_JIS, BigFive, GBK, UHC, utf_8, utf_16
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Annots
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3) An array of FDF annotation dictionaries (see 
+            <Link>
+              FDF Annotation Dictionaries
+            </Link>
+             in 
+            <Link>
+              12.7.7.3, “FDF Catalog”
+            </Link>
+            ). 
+            The array may include annotations of any of the standard types listed in 
+            <Link>
+              Table
+              169
+            </Link>
+             except Link, Movie, Widget, 
+            PrinterMark, Screen, and TrapNet. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Differences
+          </P>
+        </TD>
+        <TD>
+          <P>
+            stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) A stream containing all the bytes in all incremental updates made to the underlying PDF document since it was opened (see 
+            <Link>
+              7.5.6, “Incremental Updates”
+            </Link>
+            ). If a 
+            submit-form action submitting the document to a remote server as FDF has its IncludeAppendSaves flag set (see 
+            <Link>
+              12.7.5.2, “Submit-Form Action”
+            </Link>
+            ), the contents of this stream 
+            shall be included in the submission. This allows any digital signatures (see 
+            <Link>
+              12.8, “Digital Signatures”
+            </Link>
+            ) to be transmitted 
+            to the server. An incremental update shall be automatically performed just before the submission takes place, in order to capture all changes made to the document. 
+          </P>
+          <P>
+            The submission shall include the full set of incremental updates back to the time the document was first opened, even if some of them may already have been included in intervening submissions. 
+            <P>
+              Although a Fields or Annots entry (or both) may be present along with Differences, there is no requirement that their contents will be consistent with each other. In particular, if Differences contains a digital signature, only the values of the form fields given in the Differences stream shall be considered trustworthy under that signature. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Target
+          </P>
+        </TD>
+        <TD>
+          <P>
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) The name of a browser frame in which the underlying PDF document shall be opened. This mimics the behaviour of the target attribute in HTML &lt;
+            href
+            &gt; tags. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            EmbeddedFDFs
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) An array of file specifications (see 
+            <Link>
+              7.11, 
+              “File Specifications”
+            </Link>
+            ) representing other FDF files embedded 
+            within this one (
+            <Link>
+              7.11.4, “Embedded File Streams”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            JavaScript
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) A JavaScript dictionary (see 
+            <Link>
+              Ta b l e
+              245
+            </Link>
+            ) 
+            defining document-level JavaScript scripts. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

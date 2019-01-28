@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 359 – Entries in a Web Capture command settings dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "G",
+        "dictionary",
+        "(Optional) A dictionary containing global conversion engine settings relevant to all conversion engines. If this entry is absent, default settings is used."
+      ],
+      [
+        "C",
+        "dictionary",
+        "(Optional) Settings for specific conversion engines. Each key in this dictionary is the internal name of a conversion engine. The associated value is a dictionary containing the settings associated with that conversion engine. If the settings for a particular conversion engine are not found in the dictionary, default settings is used."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 300 – Entries in a 3D stream dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is 3D for a 3D stream."
+      ],
+      [
+        "Subtype",
+        "name",
+        "(Required) A name specifying the format of the 3D data contained in the stream. The only valid value is U3D."
+      ],
+      [
+        "VA",
+        "array",
+        "(Optional) An array of 3D view dictionaries, each of which specifies a named preset view of this 3D artwork (see Link Section 13.6.4, “3D Views ”)."
+      ],
+      [
+        "DV",
+        "(various)",
+        "(Optional) An object that specifies the default (initial) view of the 3D artwork. It may be a 3D view dictionary (see Link Section 13.6.4, “3D Views ”) or one of the following types:\n• An integer specifying an index into the VA array.\n• A text string matching the IN entry in one of the views in the VAarray.\n• A name that indicates the first (F) or last (L) entries in the VAarray.\nDefault value: 0 (the first entry in the VA array) if VA is present; if VA is not present, the default view is specified within the 3D stream itself."
+      ],
+      [
+        "Resources",
+        "name tree",
+        "(Optional) A name tree that maps name strings to objects that may be used by applications or scripts to modify the default view of the 3D artwork.\nThe names in this name tree is text strings so as to be encoded in a way that will be accessible from JavaScript."
+      ],
+      [
+        "OnInstantiate",
+        "stream",
+        "(Optional) A JavaScript script that is executed when the 3D stream is instantiated."
+      ],
+      [
+        "AN",
+        "dictionary",
+        "(Optional; PDF 1.7) An animation style dictionary indicating the method that conforming readers should use to drive keyframe animations present in this artwork (see 13.6.3.2, \"3D Animation Style Dictionaries\").\nDefault value: an animation style dictionary whose Subtype entry has a value of None."
+      ]
+    ]
+  }
+}

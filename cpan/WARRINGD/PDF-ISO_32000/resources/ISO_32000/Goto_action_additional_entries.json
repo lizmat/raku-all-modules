@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 199 – Additional entries specific to a go-to action",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; is GoTofor a go-to action."
+      ],
+      [
+        "D",
+        "name, byte string, or array",
+        "(Required) The destination to jump to (see 12.3.2, “Destinations”)."
+      ]
+    ]
+  }
+}

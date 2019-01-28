@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 159 – Entries in a page label dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is PageLabel for a page label dictionary."
+      ],
+      [
+        "S",
+        "name",
+        "(Optional) The numbering style that is used for the numeric portion of each page label:\nD Decimal arabic numerals\nR Uppercase roman numerals\nr Lowercase roman numerals\nA Uppercase letters (A to Z for the first 26 pages, AA to ZZ for the next 26, and so on)\na Lowercase letters (a to z for the first 26 pages, aa to zz for the next 26, and so on)\nThere is no default numbering style; if no S entry is present, page labels shall consist solely of a label prefix with no numeric portion.\nNOTE If the P entry (next) specifies the label prefix Contents, each page is simply labeled Contents with no page number. (If the P entry is also missing or empty, the page label is an empty string.)"
+      ],
+      [
+        "P",
+        "text string",
+        "(Optional) The label prefix for page labels in this range."
+      ],
+      [
+        "St",
+        "integer",
+        "(Optional) The value of the numeric portion for the first page label in the range. Subsequent pages is numbered sequentially from this value, which is greater than or equal to 1. Default value: 1."
+      ]
+    ]
+  }
+}

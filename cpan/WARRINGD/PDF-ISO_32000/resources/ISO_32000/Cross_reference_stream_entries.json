@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 17 – Additional entries specific to a cross-reference stream dictionary",
+    "head": [
+      "key",
+      "type",
+      "description"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Required) The type of PDF object that this dictionary describes; is XRef for a cross-reference stream."
+      ],
+      [
+        "Size",
+        "integer",
+        "(Required) The number one greater than the highest object number used in this section or in any section for which this is an update. It is equivalent to the Size entry in a trailer dictionary."
+      ],
+      [
+        "Index",
+        "array",
+        "(Optional) An array containing a pair of integers for each subsection in this section. The first integer is the first object number in the subsection; the second integer is the number of entries in the subsection\nThe array is sorted in ascending order by object number. Subsections cannot overlap; an object number may have at most one entry in a section.\nDefault value: [0 Size]."
+      ],
+      [
+        "Prev",
+        "integer",
+        "(Present only if the file has more than one cross-reference stream; not meaningful in hybrid-reference files; see 7.5.8.4, \"Compatibility with Applications That Do Not Support Compressed Reference Streams\") The byte offset in the decoded stream from the beginning of the file to the beginning of the previous cross-reference stream. This entry has the same function as the Prev entry in the trailer dictionary (Table 15)."
+      ],
+      [
+        "W",
+        "array",
+        "(Required) An array of integers representing the size of the fields in a single cross-reference entry.\nTable 18\ndescribes the types of entries and their fields. For PDF 1.5, W always contains three integers; the value of each integer is the number of bytes (in the decoded stream) of the corresponding field.\nEXAMPLE [1 2 1] means that the fields are one byte, two bytes, and one byte, respectively.\nA value of zero for an element in the W array indicates that the corresponding field is not present in the stream, and the default value is used, if there is one. If the first element is zero, the type field is not present, and shall default to type 1.\nThe sum of the items is the total length of each entry; it can be used with the Index array to determine the starting position of each subsection.\nDifferent cross-reference streams in a PDF file may use different values for W."
+      ]
+    ]
+  }
+}

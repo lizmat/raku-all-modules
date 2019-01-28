@@ -1,0 +1,240 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        75
+        –  Additional Entries Specific to a Type 1 Pattern Dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be Pattern for a pattern dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PatternType
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A code identifying the type of pattern that this dictionary describes; shall be 1 for a tiling pattern. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PaintType
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A code that determines how the colour of the pattern cell shall be specified: 
+          </P>
+          <P>
+            a)
+            Coloured
+             tiling pattern. The pattern’s content stream shall specifythe colours used to paint the pattern cell. When the content stream begins execution, the current colour is the one that was initially in effect in the pattern’s parent content stream. This is similar to the definition of the pattern matrix; see 
+            <Link>
+              8.7.2, "General 
+              Properties of Patterns"
+            </Link>
+            . 
+            <P>
+              b)Uncoloured tiling pattern. The pattern’s content stream shall not specify any colour information. Instead, the entire pattern cell is painted with a separately specified colour each time the pattern is used. Essentially, the content stream describes a stencil through which the current colour shall be poured. The content stream shall not invoke operators that specify colours or other colour-related parameters in the graphics state; otherwise, an error occurs (see 
+              <Link>
+                <Span/> <!-- see 13945 0 R -->
+              </Link>
+              ). The content stream may 
+              paint an image mask, however, since it does not specify any colour information (see 
+              <Link>
+                <Span/> <!-- see 13948 0 R -->
+              </Link>
+              ). 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TilingType
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A code that controls adjustments to the spacing of tiles relative to the device pixel grid: 
+          </P>
+          <P>
+            a)Constant spacing. Pattern cells shall be spaced consistently—that is, by a multiple of a device pixel. To achieve this, the conforming reader may need to distort the pattern cell slightly by making small adjustments to XStep, YStep, and the transformation matrix. The amount of distortion shall not exceed 1 device pixel. 
+            <P>
+              b)No distortion. The pattern cell shall not be distorted, but the spacing between pattern cells may vary by as much as 1 device pixel, both horizontally and vertically, when the pattern is painted. This achieves the spacing requested by XStep and YStep on average but not necessarily for each individual pattern cell. 
+            </P>
+            <P>
+              c)Constant spacing and faster tiling. Pattern cells shall be spaced consistently as in tiling type 1 but with additional distortion permitted to enable a more efficient implementation. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BBox
+          </P>
+        </TD>
+        <TD>
+          <P>
+            rectangle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of four numbers in the pattern coordinate system giving the coordinates of the left, bottom, right, and top edges, respectively, of the pattern cell’s bounding box. These boundaries shall be used to clip the pattern cell. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            XStep
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The desired horizontal spacing between pattern cells, measured in the pattern coordinate system. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            YStep
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The desired vertical spacing between pattern cells, measured in the pattern coordinate system. 
+          </P>
+          <P>
+            NOTEXStep and YStep may differ from the dimensions of the pattern cell implied by the BBox entry. This allows tiling with irregularly shaped figures.
+            <P>
+              XStep and YStep may be either positive or negative but shall not bezero. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Resources
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A resource dictionary that shall contain all of the named resources required by the pattern’s content stream (see 
+            <Link>
+              7.8.3, 
+              "Resource Dictionaries"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Matrix
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of six numbers specifying the pattern matrix (see 
+            <Link>
+              8.7.2, "General Properties of Patterns"
+            </Link>
+            ). Default value: the identity 
+            matrix [
+            1
+            0
+            0
+            1
+            0
+            0
+            ]. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

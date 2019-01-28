@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 358 – Web Capture command flags",
+    "head": [
+      "Bit position",
+      "Name",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "1",
+        "SameSite",
+        "If set, pages were retrieved only from the host specified in the initial URL."
+      ],
+      [
+        "2",
+        "SamePath",
+        "If set, pages were retrieved only from the path specified in the initial URL."
+      ],
+      [
+        "3",
+        "Submit",
+        "If set, the command represents a form submission."
+      ]
+    ]
+  }
+}

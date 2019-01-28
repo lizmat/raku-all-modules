@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 45 – Additional entries in an embedded file stream dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is EmbeddedFile for an embedded file stream."
+      ],
+      [
+        "Subtype",
+        "name",
+        "(Optional) The subtype of the embedded file. The value of this entry is a first-class name, as defined in\nAnnex E\n. Names without a registered prefix shall conform to the MIME media type names defined in Internet RFC 2046, Multipurpose Internet Mail Extensions (MIME), Part Two: Media Types (see the Bibliography), with the provision that characters not allowed in names shall use the 2-character hexadecimal code format described in\n7.3.5, \"Name Objects.\""
+      ],
+      [
+        "Params",
+        "dictionary",
+        "(Optional) An embedded file parameter dictionary that shall contain additional file-specific information (see Table 46)."
+      ]
+    ]
+  }
+}

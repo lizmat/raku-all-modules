@@ -1,0 +1,79 @@
+{
+  "table": {
+    "caption": "Table 145 – Restrictions on the entries in a soft-mask image dictionary",
+    "head": [
+      "Key",
+      "Restriction"
+    ],
+    "rows": [
+      [
+        "Type",
+        "If present, is XObject."
+      ],
+      [
+        "Subtype",
+        "Shall be Image."
+      ],
+      [
+        "Width",
+        "If a Matte entry (see Table 146) is present, is the same as the Width value of the parent image; otherwise independent of it. Both images is mapped to the unit square in user space (as are all images), regardless of whether the samples coincide individually."
+      ],
+      [
+        "Height",
+        "Same considerations as for Width."
+      ],
+      [
+        "ColorSpace",
+        "Required; is DeviceGray."
+      ],
+      [
+        "BitsPerComponent",
+        "Required."
+      ],
+      [
+        "Intent",
+        "Ignored."
+      ],
+      [
+        "ImageMask",
+        "Shall be false or absent."
+      ],
+      [
+        "Mask",
+        "Shall be absent."
+      ],
+      [
+        "SMask",
+        "Shall be absent."
+      ],
+      [
+        "Decode",
+        "Default value: [ 0 1 ]."
+      ],
+      [
+        "Interpolate",
+        "Optional."
+      ],
+      [
+        "Alternates",
+        "Ignored."
+      ],
+      [
+        "Name",
+        "Ignored."
+      ],
+      [
+        "StructParent",
+        "Ignored."
+      ],
+      [
+        "ID",
+        "Ignored."
+      ],
+      [
+        "OPI",
+        "Ignored."
+      ]
+    ]
+  }
+}

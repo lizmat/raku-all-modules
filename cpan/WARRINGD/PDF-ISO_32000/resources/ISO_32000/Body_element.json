@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 224 – Attributes of the <body> element",
+    "head": [
+      "Attribute",
+      "Description"
+    ],
+    "rows": [
+      [
+        "xmlns",
+        "The default namespaces for elements within the rich text string. Shall be xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:xfa=\"http://www.xfa.org/schema/xfa-data/1.0\"."
+      ],
+      [
+        "xfa:contentType",
+        "Shall be \"text/html\"."
+      ],
+      [
+        "xfa:APIVersion",
+        "A string that identifies the software used to generate the rich text string. It is of the form software_name:software_version, where\nsoftware_name identifies the software by name. It shall not contain spaces.\nsoftware_version identifies the version of the software. It consists of a series of integers separated by decimal points. Each integer is a version number, the leftmost value being a major version number, with values to the right increasingly minor. When comparing strings, the versions is compared in order.\nNOTE “5.2” is less than “5.13” because 2 is less than 13; the string is not treated as a decimal number. When comparing strings with different numbers of sections, the string with fewer sections is implicitly padded on the right with sections containing “0” to make the number of sections equivalent."
+      ],
+      [
+        "xfa:spec",
+        "The version of the XML Forms Architecture (XFA) specification to which the rich text string complies. If the file being written conforms to PDF 1.5, then the rich text string shall conform to XFA 2.0, and this attribute is XFA 2.0; if the file being written conforms to PDF 1.6, then the rich text string shall conform to XFA 2.2, and this attribute is XFA 2.2; and if the file being written conforms to PDF 1.7, then the rich text string shall conform to XFA 2.4, and this attribute is XFA 2.4."
+      ]
+    ]
+  }
+}

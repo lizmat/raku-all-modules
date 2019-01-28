@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 3 – Escape sequences in literal strings",
+    "head": [
+      "Sequence",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "\\n",
+        "LINE FEED (0Ah) (LF)"
+      ],
+      [
+        "\\r",
+        "CARRIAGE RETURN (0Dh) (CR)"
+      ],
+      [
+        "\\t",
+        "HORIZONTAL TAB (09h) (HT)"
+      ],
+      [
+        "\\b",
+        "BACKSPACE (08h) (BS)"
+      ],
+      [
+        "\\f",
+        "FORM FEED (FF)"
+      ],
+      [
+        "\\(",
+        "LEFT PARENTHESIS (28h)"
+      ],
+      [
+        "\\)",
+        "RIGHT PARENTHESIS (29h)"
+      ],
+      [
+        "\\\\",
+        "REVERSE SOLIDUS (5Ch) (Backslash)"
+      ],
+      [
+        "\\ddd",
+        "Character code ddd (octal)"
+      ]
+    ]
+  }
+}

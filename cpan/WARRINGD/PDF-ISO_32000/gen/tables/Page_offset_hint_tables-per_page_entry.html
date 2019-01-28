@@ -1,0 +1,257 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        F. 4
+        –  Page offset hint table, per-page entry 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Item
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Size (bits)
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            1
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            ,
+            item
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A number that, when added to the least number of objects in a page (
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            , item 1), shall give the number of objects in the page. The 
+            first object of the first page shall have an object number that is the value of the O entry in the linearization parameter dictionary at the beginning of the file. The first object of the second page shall have an object number of 1. Object numbers for subsequent pages shall be determined by accumulating the number of objects in all previous pages. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            2
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            ,
+            item
+            5
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A number that, when added to the least page length (
+            <Link>
+              Table
+              F. 3
+            </Link>
+            , item 
+            4), shall give the length of the page in bytes. The location of the first object of the first page may be determined from its object number (the O entry in the linearization parameter dictionary) and the cross-reference table entry for that object; see 
+            <Link>
+              F.3.4, "First-Page Cross-
+              Reference Table and Trailer (Part 3)"
+            </Link>
+            . The locations of subsequent 
+            pages shall be determined by accumulating the lengths of all previous pages. A conforming product shall skip over the primary hint stream, wherever it is located. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            ,
+            item
+            10
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The number of shared objects referenced from the page. For the first page, this number shall be 0; the next two items start with the second page. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            4
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            ,
+            item
+            11
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (One item for each shared object referenced from the page) A shared object identifier—that is, an index into the shared object hint table (described in 
+            <Link>
+              F.4.2, “Shared Object Hint Table
+            </Link>
+            ”). A single entry in the 
+            shared object hint table may designate a group of shared objects, but only one of which shall be referenced from outside the group. That is, shared object identifiers shall not be directly related to object numbers. 
+          </P>
+          <P>
+            This identifier combines with the numerators provided in item 5 to form a shared object reference. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            5
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            ,
+            item
+            12
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (One item for each shared object referenced from the page) The numerator of the fractional position for each shared object reference, which shall be in the same order as the preceding item. The fraction shall indicate where in the page’s content stream the shared object is first referenced. This item shall be interpreted as the numerator of a fraction whose denominator is specified once for the entire document (
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            , item 13). 
+          </P>
+          <P>
+            EXAMPLE If the denominator is d, a numerator ranging from 0 to d
+            -
+            1 indicates the corresponding portion of the page’s content stream. For example, if the denominator is 4, a numerator of 0, 1, 2, or 3 indicates that the first reference lies in the first, second, third, or fourth quarter of the content stream, respectively. 
+            <P>
+              There are two (or more) other possible values for the numerator, which shall indicate that the shared object is not referenced from the content stream but instead is needed by annotations or other objects that are drawn after the contents. The value d shall indicate that the shared object is needed before image XObjects and other nonshared objects that are at the end of the page. A value of d
+              
+              1 or greater shall indicate that the shared object is needed after those objects. 
+            </P>
+          </P>
+          <P>
+            NOTE This method of dividing the page into fractions is only approximate. Determining the first reference to a shared object entails inspecting the unencoded content stream. The relationship between positions in the unencoded and encoded streams is not necessarily linear. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            6
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            ,
+            item
+            7
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A number that, when added to the least offset to the start of the content stream (
+            <Link>
+              Table
+              F. 3
+            </Link>
+            , item 6), shall give the offset in bytes of the 
+            start of the page’s content stream (the stream object, not the stream data), relative to the beginning of the page. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            7
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            ,
+            item
+            9
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A number that, when added to the least content stream length (
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            , item 8), shall give the length of the page’s content stream in 
+            bytes. This length shall include object overhead preceding and following the stream data. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

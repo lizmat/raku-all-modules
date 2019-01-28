@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 187 – Additional entries specific to a screen annotation",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of annotation that this dictionary describes; is Screen for a screen annotation."
+      ],
+      [
+        "T",
+        "text string",
+        "(Optional) The title of the screen annotation."
+      ],
+      [
+        "MK",
+        "dictionary",
+        "(Optional) An appearance characteristics dictionary (see Table 189). The I entry of this dictionary provides the icon used in generating the appearance referred to by the screen annotation’s AP entry."
+      ],
+      [
+        "A",
+        "dictionary",
+        "(Optional; PDF 1.1) An action that is performed when the annotation is activated (see 12.6, “Actions”)."
+      ],
+      [
+        "AA",
+        "dictionary",
+        "(Optional; PDF 1.2) An additional-actions dictionary defining the screen annotation’s behaviour in response to various trigger events (see 12.6.3, “Trigger Events”)."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "table": {
+    "caption": "Table 176 – Line ending styles",
+    "head": [
+      "Name",
+      "Appearance",
+      "Description"
+    ],
+    "rows": [
+      [
+        "Square",
+        "\n",
+        "A square filled with the annotation’s interior color, if any"
+      ],
+      [
+        "Circle",
+        "\n",
+        "A circle filled with the annotation’s interior color, if any"
+      ],
+      [
+        "Diamond",
+        "\n",
+        "A diamond shape filled with the annotation’s interior color, if any"
+      ],
+      [
+        "OpenArrow",
+        "\n",
+        "Two short lines meeting in an acute angle to form an open arrowhead"
+      ],
+      [
+        "ClosedArrow",
+        "\n",
+        "Two short lines meeting in an acute angle as in the OpenArrow style and connected by a third line to form a triangular closed arrowhead filled with the annotation’s interior color, if any"
+      ],
+      [
+        "None",
+        "\n",
+        "No line ending"
+      ],
+      [
+        "Butt",
+        "\n",
+        "(PDF 1.5) A short line at the endpoint perpendicular to the line itself"
+      ],
+      [
+        "ROpenArrow",
+        "\n",
+        "(PDF 1.5) Two short lines in the reverse direction from OpenArrow"
+      ],
+      [
+        "RClosedArrow",
+        "\n",
+        "(PDF 1.5) A triangular closed arrowhead in the reverse direction from ClosedArrow"
+      ],
+      [
+        "Slash",
+        "\n",
+        "(PDF 1.6) A short line at the endpoint approximately 30 degrees clockwise from perpendicular to the line itself"
+      ]
+    ]
+  }
+}

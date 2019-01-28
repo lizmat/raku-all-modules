@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 282 – Entries in a media screen parameters dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is MediaScreenParams for a media screen parameters dictionary."
+      ],
+      [
+        "MH",
+        "dictionary",
+        "(Optional) A dictionary whose entries (see Table 283) is honoured for the media screen parameters to be considered viable."
+      ],
+      [
+        "BE",
+        "dictionary",
+        "(Optional) A dictionary whose entries (see Table 283) is honoured."
+      ]
+    ]
+  }
+}

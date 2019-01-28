@@ -1,0 +1,158 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        F. 1 2
+        –  Embedded file stream hint table, per-embedded file stream group entries 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Item
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Size (bits)
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            1
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 11
+            </Link>
+            ,
+            item
+            4
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The object number of the embedded file stream that this entry is associated with. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            2
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 11
+            </Link>
+            ,
+            item
+            5
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The number of objects in this embedded file streams group. This item may be 0, meaning that there are only shared object references. In this case, item 4 for this group shall be greater than zero and item 3 shall be zero.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 11
+            </Link>
+            ,
+            item
+            6
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The length of this embedded file stream group, in bytes. This item may be 0, which shall mean that there are only shared object references. In this case, item 4 for this group shall be greater than zero and item 2 shall be zero.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            4
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 11
+            </Link>
+            ,
+            item
+            7
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The number of shared objects referenced by this embedded file stream group.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            5
+          </P>
+        </TD>
+        <TD>
+          <P>
+            See
+            <Link>
+              Ta b l e
+              F. 3
+            </Link>
+            ,
+            item
+            11
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A bit-packed list of shared object identifiers; that is, indices into the shared object hint table (see 
+            <Link>
+              F.4.2, “Shared Object Hint Table
+            </Link>
+            ”). Item 4 
+            for this group shall specify how many shared object identifiers shall be associated with the group.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

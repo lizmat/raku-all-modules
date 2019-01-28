@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 100 – Entries in the Optional Content Properties Dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "OCGs",
+        "array",
+        "(Required) An array of indirect references to all the optional content groups in the document (see 8.11.2, \"Optional Content Groups\"), in any order. Every optional content group is included in this array."
+      ],
+      [
+        "D",
+        "dictionary",
+        "(Required) The default viewing optional content configuration dictionary (see 8.11.4.3, \"Optional Content Configuration Dictionaries\")."
+      ],
+      [
+        "Configs",
+        "array",
+        "(Optional) An array of alternate optional content configuration dictionaries (see 8.11.4.3, \"Optional Content Configuration Dictionaries\")."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "table": {
+    "caption": "Table 335 – Standard structure types for paragraphlike elements",
+    "head": [
+      "Structure Type",
+      "Description"
+    ],
+    "rows": [
+      [
+        "H",
+        "(Heading) A label for a subdivision of a document’s content. It is the first child of the division that it heads."
+      ],
+      [
+        "H1–H6",
+        "Headings with specific levels, for use in conforming writers that cannot hierarchically nest their sections and thus cannot determine the level of a heading from its level of nesting."
+      ],
+      [
+        "P",
+        "(Paragraph) A low-level division of text."
+      ]
+    ]
+  }
+}

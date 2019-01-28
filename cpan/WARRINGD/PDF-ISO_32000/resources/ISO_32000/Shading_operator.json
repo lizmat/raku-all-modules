@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 77 – Shading Operator",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "name",
+        "sh",
+        "(PDF 1.3) Paint the shape and colour shading described by a shading dictionary, subject to the current clipping path. The current colour in the graphics state is neither used nor altered. The effect is different from that of painting a path using a shading pattern as the current colour.\nname is the name of a shading dictionary resource in the Shadingsubdictionary of the current resource dictionary (see 7.8.3, \"Resource Dictionaries\"). All coordinates in the shading dictionary are interpreted relative to the current user space. (By contrast, when a shading dictionary is used in a type 2 pattern, the coordinates are expressed in pattern space.) All colours are interpreted in the colour space identified by the shading dictionary’s ColorSpace entry (see Table 78). The Background entry, if present, is ignored.\nThis operator is applied only to bounded or geometrically defined shadings. If applied to an unbounded shading, it paints the shading’s gradient fill across the entire clipping region, which may be time-consuming."
+      ]
+    ]
+  }
+}

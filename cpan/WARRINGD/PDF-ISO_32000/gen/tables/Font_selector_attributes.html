@@ -1,0 +1,145 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        332
+        –  Font selector attributes 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Attribute
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description 
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            FontFamily
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A string specifying the preferred font family name. Derived from the FontFamilyentry in the font descriptor (see 
+            <Link>
+              Ta b l e
+              122
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            GenericFontFamily
+          </P>
+        </TD>
+        <TD>
+          <P>
+            A general font classification, used if FontFamily is not found. Derived from the font descriptor’s Flags entry as follows:
+          </P>
+          <P>
+            Serif Chosen if the Serif flag is set and the FixedPitch and Script flags are not set
+          </P>
+          <P>
+            SansSerif Chosen if the FixedPitch, Script and Serif flags are all not set
+          </P>
+          <P>
+            Cursive Chosen if the Script flag is set and the FixedPitch flag is not set
+          </P>
+          <P>
+            Monospace Chosen if the FixedPitch flag is set
+          </P>
+          <P>
+            NOTE The values Decorative and Symbol cannot be derived
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FontSize
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The size of the font: a positive number specifying the height of the typeface in points. Derived from the a, b, c, and d fields of the current text matrix.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FontStretch
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The stretch value of the font. Derived from FontStretch in the font descriptor (see 
+            <Link>
+              Ta b l e
+              122
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FontStyle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The italicization value of the font. It shall be Italic if the Italic flag is set in the Flags field of the font descriptor; otherwise, it shall be Normal.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FontVariant
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The small-caps value of the font. It shall be SmallCaps if the SmallCap flag is set in the Flags field of the font descriptor; otherwise, it shall be Normal.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FontWeight
+          </P>
+        </TD>
+        <TD>
+          <P>
+            The weight (thickness) value of the font. Derived from FontWeight in the font descriptor (see 
+            <Link>
+              Ta b l e
+              122
+            </Link>
+            ).
+          </P>
+          <P>
+            The ForceBold flag and the StemV field should not be used to set this attribute.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

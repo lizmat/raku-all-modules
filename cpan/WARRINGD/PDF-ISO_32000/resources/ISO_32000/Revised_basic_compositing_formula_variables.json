@@ -1,0 +1,71 @@
+{
+  "table": {
+    "caption": "Table 140 – Revised variables for the basic compositing formulas",
+    "head": [
+      "Variable",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "fsi\n",
+        "Source shape for object i"
+      ],
+      [
+        "fji\n",
+        "Object shape for object i"
+      ],
+      [
+        "fmi\n",
+        "Mask shape for object i"
+      ],
+      [
+        "fki\n",
+        "Constant shape for object i"
+      ],
+      [
+        "fi\n",
+        "Result shape after compositing object i"
+      ],
+      [
+        "qsi\n",
+        "Source opacity for object i"
+      ],
+      [
+        "qji\n",
+        "Object opacity for object i"
+      ],
+      [
+        "qmi\n",
+        "Mask opacity for object i"
+      ],
+      [
+        "qki\n",
+        "Constant opacity for object i"
+      ],
+      [
+        "qi\n",
+        "Result opacity after compositing object i"
+      ],
+      [
+        "si\n",
+        "Source alpha for object i"
+      ],
+      [
+        "i\n",
+        "Result alpha after compositing object i"
+      ],
+      [
+        "Csi\n",
+        "Source colour for object i"
+      ],
+      [
+        "Ci\n",
+        "Result colour after compositing object i"
+      ],
+      [
+        "BiCi1–Csi()\n",
+        "Blend function for object i"
+      ]
+    ]
+  }
+}

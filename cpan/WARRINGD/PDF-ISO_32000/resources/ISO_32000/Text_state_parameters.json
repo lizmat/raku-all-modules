@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 104 – Text state parameters",
+    "head": [
+      "Parameter",
+      "Description"
+    ],
+    "rows": [
+      [
+        "T c",
+        "Character spacing"
+      ],
+      [
+        "T w\n",
+        "Word spacing"
+      ],
+      [
+        "T h\n",
+        "Horizontal scaling"
+      ],
+      [
+        "T l\n",
+        "Leading"
+      ],
+      [
+        "T f\n",
+        "Te x t f o n t"
+      ],
+      [
+        "T fs",
+        "Text font size"
+      ],
+      [
+        "T mode",
+        "Text rendering mode"
+      ],
+      [
+        "T rise",
+        "Te x t r i s e"
+      ],
+      [
+        "T k",
+        "Text knockout"
+      ]
+    ]
+  }
+}

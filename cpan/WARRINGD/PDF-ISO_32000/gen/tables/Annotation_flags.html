@@ -1,0 +1,237 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        165
+        –  Annotation flags 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Bit position
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Name
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Meaning
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            1
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Invisible
+          </P>
+        </TD>
+        <TD>
+          <P>
+            If set, do not display the annotation if it does not belong to one of the standard annotation types and no annotation handler is available. If clear, display such an unknown annotation using an appearance stream specified by its appearance dictionary, if any (see 
+            <Link>
+              12.5.5, 
+              “Appearance Streams”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            2
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Hidden
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.2) If set, do not display or print the annotation or allow it to interact with the user, regardless of its annotation type or whether an annotation handler is available. 
+          </P>
+          <P>
+            NOTE 1 In cases where screen space is limited, the ability to hide and show annotations selectively can be used in combination with appearance streams (see 
+            <Link>
+              12.5.5, 
+              “Appearance Streams”
+            </Link>
+            ) to display auxiliary pop-up 
+            information similar in function to online help systems. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Print
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.2) If set, print the annotation when the page is printed. If clear, never print the annotation, regardless of whether it is displayed on the screen. 
+          </P>
+          <P>
+            NOTE 2 This can be useful for annotations representing interactive pushbuttons, which would serve no meaningful purpose on the printed page. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            4
+          </P>
+        </TD>
+        <TD>
+          <P>
+            NoZoom
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.3) If set, do not scale the annotation’s appearance to match the magnification of the page. The location of the annotation on the page (defined by the upper-left corner of its annotation rectangle) shall remain fixed, regardless of the page magnification. See further discussion following this Table. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            5
+          </P>
+        </TD>
+        <TD>
+          <P>
+            NoRotate
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.3) If set, do not rotate the annotation’s appearance to match the rotation of the page. The upper-left corner of the annotation rectangle shall remain in a fixed location on the page, regardless of the page rotation. See further discussion following this Table. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            6
+          </P>
+        </TD>
+        <TD>
+          <P>
+            NoView
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.3) If set, do not display the annotation on the screen or allow it to interact with the user. The annotation may be printed (depending on the setting of the Print flag) but should be considered hidden for purposes of on-screen display and user interaction. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            7
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ReadOnly
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.3) If set, do not allow the annotation to interact with the user. The annotation may be displayed or printed (depending on the settings of the NoView and Print flags) but should not respond to mouse clicks or change its appearance in response to mouse motions. 
+          </P>
+          <P>
+            This flag shall be ignored for widget annotations; its function is subsumed by the ReadOnly flag of the associated form field (see 
+            <Link>
+              Ta b l e
+              221
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            8
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Locked
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF 1.4) If set, do not allow the annotation to be deleted or its properties (including position and size) to be modified by the user. However, this flag does not restrict changes to the annotation’s contents, such as the value of a form field. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            9
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ToggleNoView
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF 1.5) If set, invert the interpretation of the NoView flag for certain events. 
+          </P>
+          <P>
+            NOTE 3 A typical use is to have an annotation that appears only when a mouse cursor is held over it.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            10
+          </P>
+        </TD>
+        <TD>
+          <P>
+            LockedContents
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF 1.7) If set, do not allow the contents of the annotation to be modified by the user. This flag does not restrict deletion of the annotation or changes to other annotation properties, such as position and size. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

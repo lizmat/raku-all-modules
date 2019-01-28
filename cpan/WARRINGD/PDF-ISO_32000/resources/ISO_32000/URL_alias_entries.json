@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 356 – Entries in a URL alias dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "U",
+        "ASCII string",
+        "(Required) The destination URL to which all of the chains specified by the C entry lead."
+      ],
+      [
+        "C",
+        "array",
+        "(Optional) An array of one or more arrays of strings, each representing a chain of URLs leading to the common destination specified by U."
+      ]
+    ]
+  }
+}

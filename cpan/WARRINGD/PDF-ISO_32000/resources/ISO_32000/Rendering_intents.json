@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 70 – Rendering Intents",
+    "head": [
+      "Name",
+      "Description"
+    ],
+    "rows": [
+      [
+        "AbsoluteColorimetric",
+        "Colours is represented solely with respect to the light source; no correction is made for the output medium’s white point (such as the colour of unprinted paper). Thus, for example, a monitor’s white point, which is bluish compared to that of a printer’s paper, would be reproduced with a blue cast. In-gamut colours shall bereproduced exactly; out-of-gamut colours is mapped to the nearest value within the reproducible gamut.\nNOTE 1 This style of reproduction has the advantage of providing exact colour matches from one output medium to another. It has the disadvantage of causing colours with Yvalues between the medium’s white point and 1.0 to be out of gamut. A typical use might be for logos and solid colours that require exact reproduction across different media."
+      ],
+      [
+        "RelativeColorimetric",
+        "Colours is represented with respect to the combination of the light source and the output medium’s white point (such as the colour of unprinted paper). Thus, a monitor’s white point can be reproduced on a printer by simply leaving the paper unmarked, ignoring colour differences between the two media. In-gamut colours is reproduced exactly; out-of-gamut colours shall bemapped to the nearest value within the reproducible gamut.\nNOTE 2 This style of reproduction has the advantage of adapting for the varying white points of different output media. It has the disadvantage of not providing exact colour matches from one medium to another. A typical use might be for vector graphics."
+      ],
+      [
+        "Saturation",
+        "Colours is represented in a manner that preserves or emphasizes saturation. Reproduction of in-gamut colours may or may not be colourimetrically accurate.\nNOTE 3 A typical use might be for business graphics, where saturation is the most important attribute of the colour."
+      ],
+      [
+        "Perceptual",
+        "Colours is represented in a manner that provides a pleasing perceptual appearance. To preserve colour relationships, both in-gamut and out-of-gamut colours is generally modified from their precise colourimetric values.\nNOTE 4 A typical use might be for scanned images."
+      ]
+    ]
+  }
+}

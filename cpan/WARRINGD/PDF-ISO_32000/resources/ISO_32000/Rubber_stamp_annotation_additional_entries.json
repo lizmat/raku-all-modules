@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 181 – Additional entries specific to a rubber stamp annotation",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of annotation that this dictionary describes; is Stamp for a rubber stamp annotation."
+      ],
+      [
+        "Name",
+        "name",
+        "(Optional) The name of an icon that is used in displaying the annotation. Conforming readers shall provide predefined icon appearances for at least the following standard names:\nApproved, Experimental, NotApproved, AsIs, Expired , NotForPublicRelease, Confidential, Final, Sold, Departmental, ForComment, TopSecret, Draft, ForPublicRelease\nAdditional names may be supported as well. Default value: Draft.\nThe annotation dictionary’s AP entry, if present, shall take precedence over the Name entry; see\nTable 168\nand\n12.5.5, “Appearance Streams.”"
+      ]
+    ]
+  }
+}

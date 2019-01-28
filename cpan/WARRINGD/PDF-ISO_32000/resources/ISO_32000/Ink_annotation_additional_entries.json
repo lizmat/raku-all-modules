@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 182 – Additional entries specific to an ink annotation",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of annotation that this dictionary describes; is Ink for an ink annotation."
+      ],
+      [
+        "InkList",
+        "array",
+        "(Required) An array of n arrays, each representing a stroked path. Each array is a series of alternating horizontal and vertical coordinates in default user space, specifying points along the path. When drawn, the points is connected by straight lines or curves in an implementation-dependent way."
+      ],
+      [
+        "BS",
+        "dictionary",
+        "(Optional) A border style dictionary (see Table 166) specifying the line width and dash pattern that is used in drawing the paths.\nThe annotation dictionary’s AP entry, if present, shall take precedence over the InkList and BS entries; see\nTable 168\nand\n12.5.5, “Appearance Streams.”"
+      ]
+    ]
+  }
+}

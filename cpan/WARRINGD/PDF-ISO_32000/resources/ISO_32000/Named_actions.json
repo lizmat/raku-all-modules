@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 211 – Named actions",
+    "head": [
+      "Name",
+      "Action"
+    ],
+    "rows": [
+      [
+        "NextPage",
+        "Go to the next page of the document."
+      ],
+      [
+        "PrevPage",
+        "Go to the previous page of the document."
+      ],
+      [
+        "FirstPage",
+        "Go to the first page of the document."
+      ],
+      [
+        "LastPage",
+        "Go to the last page of the document."
+      ]
+    ]
+  }
+}

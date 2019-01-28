@@ -1,0 +1,43 @@
+{
+  "table": {
+    "caption": "Table 42 – Operators in type 4 functions",
+    "head": [
+      "Operator Type",
+      "Operators"
+    ],
+    "rows": [
+      [
+        "Arithmetic operators",
+        "abs\nadd\natan\nceiling\ncos",
+        "cvi\ncvr\ndiv\nexp",
+        "floor\nidiv\nln\nlog",
+        "mod\nmul\nneg\nround",
+        "sin\nsqrt\nsub\ntruncate"
+      ],
+      [
+        "Relational, boolean, and bitwise operators",
+        "and\nbitshift\neq",
+        "false\nge\ngt",
+        "le\nlt\nne",
+        "not\nor",
+        "true\nxor"
+      ],
+      [
+        "Conditional operators",
+        "if",
+        "ifelse",
+        "",
+        "",
+        ""
+      ],
+      [
+        "Stack operators",
+        "copy\ndup",
+        "exch\nindex",
+        "pop\nroll",
+        "",
+        ""
+      ]
+    ]
+  }
+}

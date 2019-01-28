@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table F. 1 0 – Extended generic hint table",
+    "head": [
+      "Item",
+      "Size (bits)",
+      "Description"
+    ],
+    "rows": [
+      [
+        "1",
+        "32",
+        "The object number of the first object in the group."
+      ],
+      [
+        "2",
+        "32",
+        "The location of the first object in the group."
+      ],
+      [
+        "3",
+        "32",
+        "The number of objects in the group."
+      ],
+      [
+        "4",
+        "32",
+        "The length of the object group in bytes."
+      ],
+      [
+        "5",
+        "32",
+        "The number of shared object references."
+      ],
+      [
+        "6",
+        "16",
+        "The number of bits needed to represent the numerically greatest shared object identifier used by the objects in the group."
+      ],
+      [
+        "7 …",
+        "See\nTable F. 3\n, item 11",
+        "Starting with item 7, each of the remaining items in this table is a shared object identifier—that is, an index into the shared object hint table (described in Link F.4.2, “Shared Object Hint Table ”)."
+      ]
+    ]
+  }
+}

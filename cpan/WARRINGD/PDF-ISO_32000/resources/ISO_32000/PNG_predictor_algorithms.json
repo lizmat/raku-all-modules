@@ -1,0 +1,31 @@
+{
+  "table": {
+    "caption": "Table 9 – PNG predictor algorithms",
+    "head": [
+      "PNG Predictor Algorithms",
+      "Description"
+    ],
+    "rows": [
+      [
+        "None",
+        "No prediction"
+      ],
+      [
+        "Sub",
+        "Predicts the same as the sample to the left"
+      ],
+      [
+        "Up",
+        "Predicts the same as the sample above"
+      ],
+      [
+        "Average",
+        "Predicts the average of the sample to the left and the sample above"
+      ],
+      [
+        "Paeth",
+        "A nonlinear function of the sample above, the sample to the left, and the sample to the upper left"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 351 – Characters with special meaning in destinations and fields and their byte values",
+    "head": [
+      "Character",
+      "Byte value",
+      "Escape sequence"
+    ],
+    "rows": [
+      [
+        "(nul)",
+        "0x00",
+        "\\0 (0x5c 0x30)"
+      ],
+      [
+        ". (PERIOD)",
+        "0x2e",
+        "\\p (0x5c 0x70)"
+      ],
+      [
+        "\\ (backslash)",
+        "0x5c",
+        "\\\\ (0x5c 0x5c)"
+      ]
+    ]
+  }
+}

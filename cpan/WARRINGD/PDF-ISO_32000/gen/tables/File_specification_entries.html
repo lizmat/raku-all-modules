@@ -1,0 +1,347 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        44
+        –  Entries in a file specification dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if an EF or RF entry is present; recommended always) The type of PDF object that this dictionary describes; shall be Filespec for a file specification dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The name of the file system that shall be used to interpret this file specification. If this entry is present, all other entries in the dictionary shall be interpreted by the designated file system. PDF shall define only one standard file system name, URL (see 
+            <Link>
+              7.11.5, "URL Specifications"
+            </Link>
+            ); an application can 
+            register other names (see 
+            <Link>
+              Annex E
+            </Link>
+            ). This entry shall be independent of the F, 
+            UF, DOS, Mac, and Unix entries. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if the DOS, Mac, and Unix entries are all absent; amended with the UF entry for PDF 1.7) A file specification string of the form described in 
+            <Link>
+              7.11.2, 
+              "File Specification Strings,"
+            </Link>
+             or (if the file system is URL) a uniform resource 
+            locator, as described in 
+            <Link>
+              7.11.5, "URL Specifications."
+            </Link>
+             
+          </P>
+          <P>
+            The UF entry should be used in addition to the F entry. The UF entry provides cross-platform and cross-language compatibility and the F entry provides backwards compatibility. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            UF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional, but recommended if the F entry exists in the dictionary; PDF 1.7) A Unicode text string that provides file specification of the form described in 
+            <Link>
+              7.11.2, "File Specification Strings."
+            </Link>
+             This is a text string encoded using 
+            PDFDocEncoding or UTF-16BE with a leading byte-order marker (as defined in 
+            <Link>
+              7.9.2.2, "Text String Type"
+            </Link>
+            ). The F entry should be included along with this 
+            entry for backwards compatibility reasons.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DOS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A file specification string (see 
+            <Link>
+              7.11.2, "File Specification Strings"
+            </Link>
+            ) 
+            representing a DOS file name. 
+          </P>
+          <P>
+            This entry is obsolescent and should not be used by conforming writers.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Mac
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A file specification string (see 
+            <Link>
+              7.11.2, "File Specification Strings"
+            </Link>
+            ) 
+            representing a Mac OS file name. 
+          </P>
+          <P>
+            This entry is obsolescent and should not be used by conforming writers.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Unix
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A file specification string (see 
+            <Link>
+              7.11.2, "File Specification Strings"
+            </Link>
+            ) 
+            representing a UNIX file name. 
+          </P>
+          <P>
+            This entry is obsolescent and should not be used by conforming writers.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ID
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of two byte strings constituting a file identifier (see 
+            <Link>
+              14.4, 
+              "File Identifiers"
+            </Link>
+            ) that should be included in the referenced file. 
+          </P>
+          <P>
+            NOTE The use of this entry improves an application’s chances of finding the intended file and allows it to warn the user if the file has changed since the link was made. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2) A flag indicating whether the file referenced by the file specification is volatile (changes frequently with time). If the value is true, applications shall not cache a copy of the file. For example, a movie annotation referencing a URL to a live video camera could set this flag to trueto notify the conforming reader that it should re-acquire the movie each time it is played. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            EF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if RF is present; PDF
+            1.3; amended to include the UF key in PDF 1.7) A dictionary containing a subset of the keys F, UF, DOS, Mac, and Unix, corresponding to the entries by those names in the file specification dictionary. The value of each such key shall be an embedded file stream (see 
+            <Link>
+              7.11.4, 
+              "Embedded File Streams"
+            </Link>
+            ) containing the corresponding file. If this entry is 
+            present, the Type entry is required and the file specification dictionary shall be indirectly referenced.
+          </P>
+          <P>
+            The F and UF entries should be used in place of the DOS, Mac, or Unixentries.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3) A dictionary with the same structure as the EF dictionary, which shall be present. Each key in the RF dictionary shall also be present in the EF dictionary. Each value shall be a related files array (see 
+            <Link>
+              7.11.4.2, 
+              "Related Files Arrays"
+            </Link>
+            ) identifying files that are related to the corresponding 
+            file in the EF dictionary. If this entry is present, the Type entry is required and the file specification dictionary shall be indirectly referenced. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Desc
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.6) Descriptive text associated with the file specification. It shall be used for files in the EmbeddedFiles name tree (see 
+            <Link>
+              7.7.4, "Name 
+              Dictionary"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CI
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; shall be indirect reference; PDF 1.7) A collection item dictionary, which shall be used to create the user interface for portable collections (see 
+            <Link>
+              7.11.6, "Collection Items"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,126 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        209
+        –  Additional entries specific to a movie action 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of action that this dictionary describes; shall be Moviefor a movie action. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Annotation
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An indirect reference to a movie annotation identifying the movie that shall be played. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            T
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The title of a movie annotation identifying the movie that shall beplayed. 
+          </P>
+          <P>
+            The dictionary shall include either an Annotation or a T entry but not both. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Operation
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The operation that shall be performed on the movie: 
+          </P>
+          <P>
+            PlayStart playing the movie, using the play mode specified by the dictionary’s Mode entry (see 
+            <Link>
+              Table
+              296
+            </Link>
+            ). If the movie is currently paused, it 
+            shall be repositioned to the beginning before playing (or to the starting point specified by the dictionary’s Start entry, if present). 
+          </P>
+          <P>
+            Stop Stop playing the movie. 
+          </P>
+          <P>
+            Pause  Pause a playing movie. 
+          </P>
+          <P>
+            Resume  Resume a paused movie. 
+          </P>
+          <P>
+            Default value: Play. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

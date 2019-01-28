@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 233 – Entries in a signature field lock dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is SigFieldLock for a signature field lock dictionary."
+      ],
+      [
+        "Action",
+        "name",
+        "(Required) A name which, in conjunction with Fields, indicates the set of fields that is locked. The value is one of the following:\nAll All fields in the document\nInclude All fields specified in Fields\nExclude All fields except those specified in Fields"
+      ],
+      [
+        "Fields",
+        "array",
+        "(Required if the value of Action is Include or Exclude) An array of text strings containing field names."
+      ]
+    ]
+  }
+}

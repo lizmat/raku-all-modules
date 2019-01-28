@@ -1,0 +1,62 @@
+{
+  "table": {
+    "caption": "Table 6 – Standard filters",
+    "head": [
+      "FILTER name",
+      "Parameters",
+      "Description"
+    ],
+    "rows": [
+      [
+        "ASCIIHexDecode",
+        "no",
+        "Decodes data encoded in an ASCII hexadecimal representation, reproducing the original binary data."
+      ],
+      [
+        "ASCII85Decode",
+        "no",
+        "Decodes data encoded in an ASCII base-85 representation, reproducing the original binary data."
+      ],
+      [
+        "LZWDecode",
+        "yes",
+        "Decompresses data encoded using the LZW (Lempel-Ziv-Welch) adaptive compression method, reproducing the original text or binary data."
+      ],
+      [
+        "FlateDecode",
+        "yes",
+        "(PDF 1.2) Decompresses data encoded using the zlib/deflate compression method, reproducing the original text or binary data."
+      ],
+      [
+        "RunLengthDecode",
+        "no",
+        "Decompresses data encoded using a byte-oriented run-length encoding algorithm, reproducing the original text or binary data (typically monochrome image data, or any data that contains frequent long runs of a single byte value)."
+      ],
+      [
+        "CCITTFaxDecode",
+        "yes",
+        "Decompresses data encoded using the CCITT facsimile standard, reproducing the original data (typically monochrome image data at 1 bit per pixel)."
+      ],
+      [
+        "JBIG2Decode",
+        "yes",
+        "(PDF 1.4) Decompresses data encoded using the JBIG2 standard, reproducing the original monochrome (1 bit per pixel) image data (or an approximation of that data)."
+      ],
+      [
+        "DCTDecode",
+        "yes",
+        "Decompresses data encoded using a DCT (discrete cosine transform) technique based on the JPEG standard, reproducing image sample data that approximates the original data."
+      ],
+      [
+        "JPXDecode",
+        "no",
+        "(PDF 1.5) Decompresses data encoded using the wavelet-based JPEG2000 standard, reproducing the original image data."
+      ],
+      [
+        "Crypt",
+        "yes",
+        "(PDF 1.5) Decrypts data encrypted by a security handler, reproducing the data as it was before encryption."
+      ]
+    ]
+  }
+}

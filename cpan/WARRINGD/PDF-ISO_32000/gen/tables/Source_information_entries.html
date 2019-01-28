@@ -1,0 +1,147 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        355
+        –  Entries in a source information dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            AU
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ASCII string or dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An ASCII string or URL alias dictionary (see 
+            <Link>
+              14.10.5.2, “URL Alias 
+              Dictionaries”
+            </Link>
+            ) which shall identify the URLs from which the source data was 
+            retrieved. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            date
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A time stamp which, if present, shall contain the most recent date and time at which the content set’s contents were known to be up to date with the source data. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            E
+          </P>
+        </TD>
+        <TD>
+          <P>
+            date
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An expiration stamp which, if present, shall contain the date and time at which the content set’s contents shall be considered out of date with the source data. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A code which, if present, shall indicate the type of form submission, if any, by which the source data was accessed (see 
+            <Link>
+              12.7.5.2, “Submit-Form 
+              Action”
+            </Link>
+            ). If present, the value of the S entry shall be 0, 1, or 2, in accordance 
+            with the following meanings: 
+          </P>
+          <P>
+            0 Not accessed by means of a form submission 
+          </P>
+          <P>
+            1 Accessed by means of an HTTP GET request 
+          </P>
+          <P>
+            2 Accessed by means of an HTTP POST request 
+          </P>
+          <P>
+            This entry may be present only in source information dictionaries associated with page sets. Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            C
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; if present, shall be an indirect reference) A command dictionary (see 
+            <Link>
+              14.10.5.3, “Command Dictionaries”
+            </Link>
+            ) describing the command that caused the 
+            source data to be retrieved. This entry may be present only in source information dictionaries associated with page sets. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

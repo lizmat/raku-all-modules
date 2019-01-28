@@ -1,0 +1,63 @@
+{
+  "table": {
+    "caption": "Table 136 – Standard separable blend modes",
+    "head": [
+      "Name",
+      "Result"
+    ],
+    "rows": [
+      [
+        "Normal",
+        "Bcbcs()cs=\nNOTE Selects the source colour, ignoring the backdrop."
+      ],
+      [
+        "Compatible",
+        "Same as Normal. This mode exists only for compatibility and is not used."
+      ],
+      [
+        "Multiply",
+        "Bcbcs()cbcs=\nNOTE 1 Multiplies the backdrop and source colour values.\nNOTE 2 The result colour is always at least as dark as either of the two constituent colours. Multiplying any colour with black produces black; multiplying with white leaves the original colour unchanged. Painting successive overlapping objects with a colour other than black or white produces progressively darker colours."
+      ],
+      [
+        "Screen",
+        "Bcbcs()11cb–1cs––=cbcscbcs–+=\nNOTE 3 Multiplies the complements of the backdrop and source colour values, then complements the result.\nNOTE 4 The result colour is always at least as light as either of the two constituent colours. Screening any colour with white produces white; screening with black leaves the original colour unchanged. The effect is similar to projecting multiple photographic slides simultaneously onto a single screen."
+      ],
+      [
+        "Overlay",
+        "Bcbcs()HardLight cscb()=\nNOTE 5 Multiplies or screens the colours, depending on the backdrop colour value. Source colours overlay the backdrop while preserving its highlights and shadows. The backdrop colour is not replaced but is mixed with the source colour to reflect the lightness or darkness of the backdrop."
+      ],
+      [
+        "Darken",
+        "Bcbcs()min cbcs()=\nNOTE 6 Selects the darker of the backdrop and source colours.\nNOTE 7 The backdrop is replaced with the source where the source is darker; otherwise, it is left unchanged."
+      ],
+      [
+        "Lighten",
+        "Bcbcs()max cbcs()=\nNOTE 8 Selects the lighter of the backdrop and source colours.\nNOTE 9 The backdrop is replaced with the source where the source is lighter; otherwise, it is left unchanged."
+      ],
+      [
+        "ColorDodge",
+        "Bcbcsmin 1 cb1cs–()if cs11 if cs==\nNOTE 10 Brightens the backdrop colour to reflect the source colour. Painting with black produces no changes."
+      ],
+      [
+        "ColorBurn",
+        "Bcbcs1min11cb–cs()–if cs00 if cs==\nNOTE 11 Darkens the backdrop colour to reflect the source colour. Painting with white produces no change."
+      ],
+      [
+        "HardLight",
+        "BcbcsMultiply cb2cs()if cs0.5Screen cb2cs1–()if cs0.5=\nNOTE 12 Multiplies or screens the colours, depending on the source colour value. The effect is similar to shining a harsh spotlight on the backdrop."
+      ],
+      [
+        "SoftLight",
+        "Bcbcs()cb12cs–cb1cb––if cs0.5cb2cs1–Dcb()cb–+if cs0.5=\nwhere\nDx()16 x 12–x4+xif x 0.25xif x0.25=\nNOTE 13 Darkens or lightens the colours, depending on the source colour value. The effect is similar to shining a diffused spotlight on the backdrop."
+      ],
+      [
+        "Difference",
+        "Bcbcs()cbcs–=\nNOTE 14 Subtracts the darker of the two constituent colours from the lighter colour:\nNOTE 15 Painting with white inverts the backdrop colour; painting with black produces no change."
+      ],
+      [
+        "Exclusion",
+        "Bcbcs()cbcs2cbcs–+=\nNOTE 16 Produces an effect similar to that of the Difference mode but lower in contrast. Painting with white inverts the backdrop colour; painting with black produces no change."
+      ]
+    ]
+  }
+}

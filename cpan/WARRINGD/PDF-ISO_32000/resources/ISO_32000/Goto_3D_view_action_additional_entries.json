@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 216 – Additional entries specific to a go-to-3D-view action",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; is GoTo3DView for a transition action."
+      ],
+      [
+        "TA",
+        "dictionary",
+        "(Required) The target annotation for which to set the view."
+      ],
+      [
+        "V",
+        "(various)",
+        "(Required) The view to use. It may be one of the following types:\nA 3D view dictionary (see 13.6.4, “3D Views”).\nAn integer specifying an index into the VA array in the 3D stream (see Table 300).\nA text string matching the IN entry in one of the views in the VA array (see Table 304).\nA name that indicates the first (F), last (L), next (N), previous (P), or default (D) entries in the VA array; see discussion following this Table."
+      ]
+    ]
+  }
+}

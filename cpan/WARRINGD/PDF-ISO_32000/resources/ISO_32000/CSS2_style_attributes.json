@@ -1,0 +1,62 @@
+{
+  "table": {
+    "caption": "Table 225 – CSS2 style attributes used in rich text strings",
+    "head": [
+      "Attribute",
+      "Value",
+      "Description"
+    ],
+    "rows": [
+      [
+        "text-align",
+        "keyword",
+        "Horizontal alignment. Possible values: left, right, and center."
+      ],
+      [
+        "vertical-align",
+        "decimal",
+        "An amount by which to adjust the baseline of the enclosed text. A positive value indicates a superscript; a negative value indicates a subscript. The value is of the form <decimal number>pt, optionally preceded by a sign, and followed by “pt”.\nEXAMPLE -3pt, 4pt."
+      ],
+      [
+        "font-size",
+        "decimal",
+        "The font size of the enclosed text. The value is of the form <decimal number>pt."
+      ],
+      [
+        "font-style",
+        "keyword",
+        "Specifies the font style of the enclosed text. Possible values: normal, italic."
+      ],
+      [
+        "font-weight",
+        "keyword",
+        "The weight of the font for the enclosed text. Possible values: normal, bold, 100, 200, 300, 400, 500, 600, 700, 800, 900.\nnormal is equivalent to 400, and bold is equivalent to 700."
+      ],
+      [
+        "font-family",
+        "list",
+        "A font name or list of font names that is used to display the enclosed text. (If a list is provided, the first one containing glyphs for the specified text is used.)"
+      ],
+      [
+        "font",
+        "list",
+        "A shorthand CSS font property of the form\nfont:<font-style> <font-weight> <font-size> <font-family>"
+      ],
+      [
+        "color",
+        "RGB value",
+        "The colour of the enclosed text. It can be in one of two forms:\nrrggbb with a 2-digit hexadecimal value for each component\nrgb(rrr,ggg,bbb) with a decimal value for each component.\nAlthough the values specified by the color property are interpreted as sRGB values, they is transformed into values in a non-ICC based colour space when used to generate the annotation’s appearance."
+      ],
+      [
+        "text-decoration",
+        "keyword",
+        "One of the following keywords:\nunderline: The enclosed text is underlined.\nline-through: The enclosed text has a line drawn through it."
+      ],
+      [
+        "font-stretch",
+        "keyword",
+        "Specifies a normal, condensed or extended face from a font family. Supported values from narrowest to widest are ultra-condensed, extra-condensed, condensed, semi-condensed, normal, semi-expanded, expanded, extra-expanded, and ultra-expanded."
+      ]
+    ]
+  }
+}

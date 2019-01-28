@@ -1,0 +1,39 @@
+{
+  "table": {
+    "caption": "Table 135 – Variables used in the basic compositing formula",
+    "head": [
+      "Variable",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "Cb\n",
+        "Backdrop colour"
+      ],
+      [
+        "Cs\n",
+        "Source colour"
+      ],
+      [
+        "Cr\n",
+        "Result colour"
+      ],
+      [
+        "b\n",
+        "Backdrop alpha"
+      ],
+      [
+        "s\n",
+        "Source alpha"
+      ],
+      [
+        "r\n",
+        "Result alpha"
+      ],
+      [
+        "BCbCs()\n",
+        "Blend function"
+      ]
+    ]
+  }
+}

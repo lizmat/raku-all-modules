@@ -1,0 +1,42 @@
+{
+  "table": {
+    "caption": "Table 157 – Entries in a collection field dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is CollectionField for a collection field dictionary."
+      ],
+      [
+        "Subtype",
+        "name",
+        "(Required) The subtype of collection field or file-related field that this dictionary describes. This entry identifies the type of data that is stored in the field.\nThe following values identify the types of fields in the collection item or collection subitem dictionary:\nSA text field. The field data is stored as a PDF text string.\nD A date field. The field data is stored as a PDF date string.\nN A number field. The field data is stored as a PDF number.\nThe following values identify the types of file-related fields:\nF The field data is the file name of the embedded file stream, as identified by the UF entry of the file specification, if present; otherwise by the Fentry of the file specification (see Table 44).\nDesc The field data is the description of the embedded file stream, as identified by the Descentry in the file specification dictionary (see Table 44).\nModDate The field data is the modification date of the embedded file stream, as identified by the ModDateentry in the embedded file parameter dictionary (see Table 46).\nCreationDateThe field data is the creation date of the embedded file stream, as identified by the CreationDate entry in the embedded file parameter dictionary (see Table 46).\nSize The field data is the size of the embedded file, as identified by the Size entry in the embedded file parameter dictionary (see Table 46)."
+      ],
+      [
+        "N",
+        "text string",
+        "(Required) The textual field name that is presented to the user by the conforming reader."
+      ],
+      [
+        "O",
+        "integer",
+        "(Optional) The relative order of the field name in the user interface. Fields is sorted by the conforming reader in ascending order."
+      ],
+      [
+        "V",
+        "boolean",
+        "(Optional) The initial visibility of the field in the user interface. Default value: true."
+      ],
+      [
+        "E",
+        "boolean",
+        "(Optional) A flag indicating whether the conforming reader should provide support for editing the field value. Default value: false."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,274 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        57
+        –  Graphics State Operators 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Operands
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Operator
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            q
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Save the current graphics state on the graphics state stack (see 
+            <Link>
+              8.4.2, "Graphics State Stack"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Q
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Restore the graphics state by removing the most recently saved state from the stack and making it the current state (see 
+            <Link>
+              8.4.2, 
+              "Graphics State Stack"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            a
+            b
+            c
+            d
+            e
+            f
+          </P>
+        </TD>
+        <TD>
+          <P>
+            cm
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Modify the current transformation matrix (CTM) by concatenating the specified matrix (see 
+            <Link>
+              8.3.2, "Coordinate Spaces"
+            </Link>
+            ). Although the 
+            operands specify a matrix, they shall be written as six separate numbers, not as an array. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            lineWidth
+          </P>
+        </TD>
+        <TD>
+          <P>
+            w
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the line width in the graphics state (see 
+            <Link>
+              8.4.3.2, "Line Width"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            lineCap
+          </P>
+        </TD>
+        <TD>
+          <P>
+            J
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the line cap style in the graphics state (see 
+            <Link>
+              8.4.3.3, "Line Cap 
+              Style"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            lineJoin
+          </P>
+        </TD>
+        <TD>
+          <P>
+            j
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the line join style in the graphics state (see 
+            <Link>
+              8.4.3.4, "Line Join 
+              Style"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            miterLimit
+          </P>
+        </TD>
+        <TD>
+          <P>
+            M
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the miter limit in the graphics state (see 
+            <Link>
+              8.4.3.5, "Miter Limit"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            dashArray
+            dashPhase
+          </P>
+        </TD>
+        <TD>
+          <P>
+            d
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the line dash pattern in the graphics state (see 
+            <Link>
+              8.4.3.6, "Line 
+              Dash Pattern"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            intent
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ri
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF 1.1) Set the colour rendering intent in the graphics state (see 
+            <Link>
+              8.6.5.8, "Rendering Intents"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            flatness
+          </P>
+        </TD>
+        <TD>
+          <P>
+            i
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the flatness tolerance in the graphics state (see 
+            <Link>
+              10.6.2, 
+              "Flatness Tolerance"
+            </Link>
+            ). flatness is a number in the range 0 to 100; a 
+            value of 0 shall specify the output device’s default flatness tolerance. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            dictName
+          </P>
+        </TD>
+        <TD>
+          <P>
+            gs
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.2) Set the specified parameters in the graphics state. dictName shall be the name of a graphics state parameter dictionary in the ExtGState subdictionary of the current resource dictionary (see the next sub-clause). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

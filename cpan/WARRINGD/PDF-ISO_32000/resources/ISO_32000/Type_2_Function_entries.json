@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 40 – Additional entries specific to a type 2 function dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "C0",
+        "array",
+        "(Optional) An array of n numbers that shall define the function result when x 0.0. Default value: [ 0.0 ]."
+      ],
+      [
+        "C1",
+        "array",
+        "(Optional) An array of n numbers that shall define the function result when x 1.0. Default value: [ 1.0 ]."
+      ],
+      [
+        "N",
+        "number",
+        "(Required) The interpolation exponent. Each input value x shall return n values, given by y j C0 j x N (C1 j C0 j), for 0 j n."
+      ]
+    ]
+  }
+}

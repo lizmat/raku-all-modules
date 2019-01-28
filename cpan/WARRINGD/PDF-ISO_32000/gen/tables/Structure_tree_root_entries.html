@@ -1,0 +1,194 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        322
+        –  Entries in the structure tree root 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of PDF object that this dictionary describes; shall be StructTreeRoot for a structure tree root. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            K
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary or
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The immediate child or children of the structure tree root in the structure hierarchy. The value may be either a dictionary representing a single structure element or an array of such dictionaries. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IDTree
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+            tree
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if any structure elements have element identifiers) A name tree that maps element identifiers (see 
+            <Link>
+              Table
+              323
+            </Link>
+            ) to the structure 
+            elements they denote. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ParentTree
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+            tree
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if any structure element contains content items) A number tree (see 
+            <Link>
+              7.9.7, “Number Trees”
+            </Link>
+            ) used in finding the structure 
+            elements to which content items belong. Each integer key in the number tree shall correspond to a single page of the document or to an individual object (such as an annotation or an XObject) that is a content item in its own right. The integer key shall be the value of the StructParent or StructParents entry in that object (see 
+            <Link>
+              14.7.4.4, 
+              “Finding Structure Elements from Content Items”
+            </Link>
+            ). The form of the 
+            associated value shall depend on the nature of the object: 
+          </P>
+          <P>
+            For an object that is a content item in its own right, the value shall be an indirect reference to the object’s parent element (the structure element that contains it as a content item). 
+          </P>
+          <P>
+            For a page object or content stream containing marked-content sequences that are content items, the value shall be an array of references to the parent elements of those marked-content sequences. 
+          </P>
+          <P>
+            See 
+            <Link>
+              14.7.4.4, “Finding Structure Elements from Content Items”
+            </Link>
+             for 
+            further discussion. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ParentTreeNextKey
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An integer greater than any key in the parent tree, shall be used as a key for the next entry added to the tree. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RoleMap
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary that shall map the names of structure types used in the document to their approximate equivalents in the set of standard structure types (see 
+            <Link>
+              14.8.4, “Standard Structure Types”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ClassMap
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dictionary that shall map name objects designating attribute classes to the corresponding attribute objects or arrays of attribute objects (see 
+            <Link>
+              14.7.5.2, “Attribute Classes”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,96 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        137
+        –  Standard nonseparable blend modes 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Name
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Result
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Hue
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              BCbCsSetLum SetSat CsSat Cb()()Lum Cb()()=
+              </P>
+          </P>
+          <P>
+            NOTE 1 Creates a colour with the hue of the source colour and the saturation and luminosity of the backdrop colour. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Saturation
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              BCbCsSetLum SetSat CbSat Cs()()Lum Cb()()=
+              </P>
+          </P>
+          <P>
+            NOTE 2 Creates a colour with the saturation of the source colour and the hue and luminosity of the backdrop colour. Painting with this mode in an area of the backdrop that is a pure gray (no saturation) produces no change. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Color
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              BCbCsSetLum CsLum Cb()()=
+              </P>
+          </P>
+          <P>
+            NOTE 3 Creates a colour with the hue and saturation of the source colour and the luminosity of the backdrop colour. This preserves the gray levels of the backdrop and is useful for colouring monochrome images or tinting colour images. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Luminosity
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              BCbCsSetLum CbLum Cs()()=
+              </P>
+          </P>
+          <P>
+            NOTE 4 Creates a colour with the luminosity of the source colour and the hue and saturation of the backdrop colour. This produces an inverse effect to that of the Color mode. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

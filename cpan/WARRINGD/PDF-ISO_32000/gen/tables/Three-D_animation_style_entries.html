@@ -1,0 +1,126 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        301
+        –  Entries in an 3D animation style dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional). The type of PDF object that this dictionary describes; if present, shall be 3DAnimationStyle.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The animation style described by this dictionary; see 
+            <Link>
+              Table
+              302
+            </Link>
+            for valid values. If an animation style is encountered other than those described in 
+            <Link>
+              Ta b l e
+              302
+            </Link>
+            , an animation style of None shall be used. 
+          </P>
+          <P>
+            Default value: None
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An integer specifying the play count for this animation style. A non-negative integer represents the number of times the animation shall be played. A negative integer indicates that the animation shall be infinitely repeated. This value shall be ignored for animation styles of type None.
+          </P>
+          <P>
+            Default value: 0
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TM
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A positive number specifying the time multiplier to be used when running the animation. A value greater than one shortens the time it takes to play the animation, or effectively speeds up the animation. 
+          </P>
+          <P>
+            NOTE This allows authors to adjust the desired speed of animations, without having to re-author the 3D artwork.
+            <P>
+              This value shall be ignored for animation styles of type None.
+            </P>
+            <P>
+              Default value: 1
+            </P>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

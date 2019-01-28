@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 188 – Additional entries specific to a widget annotation",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of annotation that this dictionary describes; is Widget for a widget annotation."
+      ],
+      [
+        "H",
+        "name",
+        "(Optional) The annotation’s highlighting mode, the visual effect that is used when the mouse button is pressed or held down inside its active area:\nN (None) No highlighting.\nI (Invert) Invert the contents of the annotation rectangle.\nO (Outline) Invert the annotation’s border.\nP (Push) Display the annotation’s down appearance, if any (see 12.5.5, “Appearance Streams”). If no down appearance is defined, the contents of the annotation rectangle is offset to appear as if it were being pushed below the surface of the page.\nT (Toggle) Same as P (which is preferred).\nA highlighting mode other than P shall override any down appearance defined for the annotation. Default value: I."
+      ],
+      [
+        "MK",
+        "dictionary",
+        "(Optional) An appearance characteristics dictionary (see Table 189) that is used in constructing a dynamic appearance stream specifying the annotation’s visual presentation on the page.\nThe name MK for this entry is of historical significance only and has no direct meaning."
+      ],
+      [
+        "A",
+        "dictionary",
+        "(Optional; PDF 1.1) An action that is performed when the annotation is activated (see 12.6, “Actions”)."
+      ],
+      [
+        "AA",
+        "dictionary",
+        "(Optional; PDF 1.2) An additional-actions dictionary defining the annotation’s behaviour in response to various trigger events (see 12.6.3, “Trigger Events”)."
+      ],
+      [
+        "BS",
+        "dictionary",
+        "(Optional; PDF 1.2) A border style dictionary (see Table 166) specifying the width and dash pattern that is used in drawing the annotation’s border.\nThe annotation dictionary’s AP entry, if present, shall take precedence over the L and BS entries; see\nTable 168\nand\n12.5.5, “Appearance Streams.”\n"
+      ],
+      [
+        "Parent",
+        "dictionary",
+        "(Required if this widget annotation is one of multiple children in a field; absent otherwise) An indirect reference to the widget annotation’s parent field. A widget annotation may have at most one parent; that is, it can be included in the Kids array of at most one field"
+      ]
+    ]
+  }
+}

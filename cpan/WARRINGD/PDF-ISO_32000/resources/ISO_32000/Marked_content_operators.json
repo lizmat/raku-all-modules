@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 320 – Marked-content operators",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "tag",
+        "MP",
+        "Designate a marked-content point. tag is a name object indicating the role or significance of the point."
+      ],
+      [
+        "tag properties",
+        "DP",
+        "Designate a marked-content point with an associated property list. tagshall be a name object indicating the role or significance of the point. properties is either an inline dictionary containing the property list or a name object associated with it in the Properties subdictionary of the current resource dictionary (see 14.6.2, “Property Lists”)."
+      ],
+      [
+        "tag",
+        "BMC",
+        "Begin a marked-content sequence terminated by a balancing EMCoperator. tag is a name object indicating the role or significance of the sequence."
+      ],
+      [
+        "tag properties",
+        "BDC",
+        "Begin a marked-content sequence with an associated property list, terminated by a balancing EMC operator. tag is a name object indicating the role or significance of the sequence. properties is either an inline dictionary containing the property list or a name object associated with it in the Properties subdictionary of the current resource dictionary (see 14.6.2, “Property Lists”)."
+      ],
+      [
+        "—",
+        "EMC",
+        "End a marked-content sequence begun by a BMC or BDC operator."
+      ]
+    ]
+  }
+}

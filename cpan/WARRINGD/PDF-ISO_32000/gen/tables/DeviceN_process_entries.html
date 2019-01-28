@@ -1,0 +1,67 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        72
+        –  Entries in a DeviceN Process Dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            KEY
+          </P>
+        </TH>
+        <TH>
+          <P>
+            TYPE
+          </P>
+        </TH>
+        <TH>
+          <P>
+            VALUE
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            ColorSpace
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name or array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A name or array identifying the process colour space, which may be any device or CIE-based colour space. If an ICCBased colour space is specified, it shall provide calibration information appropriate for the process colour components specified in the names array of the DeviceN colour space. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Components
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of component names that correspond, in order, to the components of the process colour space specified in ColorSpace. For example, an RGB colour space shall have three names corresponding to red, green, and blue. The names may be arbitrary (that is, not the same as the standard names for the colour space components) and shall match those specified in the names array of the DeviceN colour space, even if all components are not present in the names array.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,100 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        48
+        –  Entries in a collection item dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be CollectionItem for a collection item dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Other keys 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string, date, number or dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) Provides the data corresponding to the related fields in the collection dictionary. If the entry is a dictionary, then it shall be a collection subitem dictionary (see 
+            <Link>
+              Ta b l e
+              49
+            </Link>
+            ). 
+          </P>
+          <P>
+            The type of each entry shall match the type of data identified by the collection field dictionary (see 
+            <Link>
+              Table
+              157
+            </Link>
+            ) referenced by the same key in the collection 
+            schema dictionary (see 
+            <Link>
+              Ta b l e
+              156
+            </Link>
+            ). 
+          </P>
+          <P>
+            EXAMPLE If the corresponding collection field has a Subtype entry of S, then the entry is a text string. 
+            <P>
+              A single collection item dictionary may contain multiple entries, with one entry representing each key (see 
+              <Link>
+                <Span/> <!-- see 6861 0 R -->
+              </Link>
+               in 
+              <Link>
+                <Span/> <!-- see 6863 0 R -->
+              </Link>
+              ).
+            </P>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

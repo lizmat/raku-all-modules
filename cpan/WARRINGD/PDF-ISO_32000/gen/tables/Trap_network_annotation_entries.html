@@ -1,0 +1,158 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        366
+        –  Additional entries specific to a trap network annotation 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key 
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type 
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of annotation that this dictionary describes; shall be TrapNet for a trap network annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LastModified
+          </P>
+        </TD>
+        <TD>
+          <P>
+            date
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if Version and AnnotStates are absent; shall be absent if Version and AnnotStates are present; PDF
+            1.4) The date and time (see 
+            <Link>
+              7.9.4, “Dates”
+            </Link>
+            ) when the trap network was most recently 
+            modified. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Version
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if AnnotStates is present; shall be absent if LastModifiedis present) An unordered array of all objects present in the page description at the time the trap networks were generated and that, if changed, could affect the appearance of the page. If present, the array shall include the following objects: 
+          </P>
+          <P>
+            • All content streams identified in the page object’s Contents entry (see 
+            <Link>
+              7.7.3.3, “Page Objects”
+            </Link>
+            ) 
+          </P>
+          <P>
+            • All resource objects (other than procedure sets) in the page’s resource dictionary (see 
+            <Link>
+              7.8.3, “Resource Dictionaries”
+            </Link>
+            ) 
+          </P>
+          <P>
+            • All resource objects (other than procedure sets) in the resource dictionaries of any form XObjects on the page (see 
+            <Link>
+              8.10, “Form 
+              XObjects”
+            </Link>
+            ) 
+          </P>
+          <P>
+            • All OPI dictionaries associated with XObjects on the page (see 
+            <Link>
+              14.11.7, “Open Prepress Interface (OPI)”
+            </Link>
+            ) 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AnnotStates
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if Version is present; shall be absent if LastModified is present) An array of name objects representing the appearance states (value of the AS entry) for annotations associated with the page. The appearance states shall be listed in the same order as the annotations in the page’s Annots array (see 
+            <Link>
+              7.7.3.3, “Page Objects”
+            </Link>
+            ). For an 
+            annotation with no AS entry, the corresponding array element should be null. No appearance state shall be included for the trap network annotation itself. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FontFauxing
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of font dictionaries representing fonts that were fauxed (replaced by substitute fonts) during the generation of trap networks for the page. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

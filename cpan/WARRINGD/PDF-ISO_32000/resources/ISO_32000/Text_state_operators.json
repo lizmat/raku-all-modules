@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 105 – Text state operators",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "charSpace",
+        "Tc",
+        "Set the character spacing, T c , to charSpace, which is a number expressed in unscaled text space units. Character spacing is used by the Tj, TJ, and ' operators. Initial value: 0."
+      ],
+      [
+        "wordSpace",
+        "Tw",
+        "Set the word spacing, T w , to wordSpace, which is a number expressed in unscaled text space units. Word spacing is used by the Tj, TJ, and ' operators. Initial value: 0."
+      ],
+      [
+        "scale",
+        "Tz",
+        "Set the horizontal scaling, T h , to (scale ÷ 100). scale is a number specifying the percentage of the normal width. Initial value: 100 (normal width)."
+      ],
+      [
+        "leading",
+        "TL",
+        "Set the text leading, T l , to leading, which is a number expressed in unscaled text space units. Text leading is used only by the T*, ', and \" operators. Initial value: 0."
+      ],
+      [
+        "font size",
+        "Tf",
+        "Set the text font, T f , to font and the text font size, T fs , to size. font is the name of a font resource in the Font subdictionary of the current resource dictionary; size is a number representing a scale factor. There is no initial value for either font or size; they is specified explicitly by using Tf before any text is shown."
+      ],
+      [
+        "render",
+        "Tr",
+        "Set the text rendering mode, T mode , to render, which is an integer. Initial value: 0."
+      ],
+      [
+        "rise",
+        "Ts",
+        "Set the text rise, T rise , to rise, which is a number expressed in unscaled text space units. Initial value: 0."
+      ]
+    ]
+  }
+}

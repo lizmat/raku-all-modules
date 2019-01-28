@@ -1,0 +1,31 @@
+{
+  "table": {
+    "caption": "Table 223 – XHTML elements used in rich text strings",
+    "head": [
+      "element",
+      "Description"
+    ],
+    "rows": [
+      [
+        "<body>",
+        "The element at the root of the XML document.\nTable 224\nlists the required attributes for this element."
+      ],
+      [
+        "<p>",
+        "Encloses text that is interpreted as a paragraph. It may take the style attributes listed in\nTable 225\n."
+      ],
+      [
+        "<i>",
+        "Encloses text that is displayed in an italic font."
+      ],
+      [
+        "<b>",
+        "Encloses text that is displayed in a bold font."
+      ],
+      [
+        "<span>",
+        "Groups text solely for the purpose of applying styles (using the attributes in Table 225)."
+      ]
+    ]
+  }
+}

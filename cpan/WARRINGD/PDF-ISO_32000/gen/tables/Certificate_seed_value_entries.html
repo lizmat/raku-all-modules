@@ -1,0 +1,263 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        235
+        –  Entries in a certificate seed value dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be SVCert for a certificate seed value dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Ff
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A set of bit flags specifying the interpretation of specific entries in this dictionary. A value of 1 for the flag means that a signer shall be required to use only the specified values for the entry. A value of 0 means that other values are permissible. Bit positions are 1 (Subject); 2 (Issuer); 3 (OID); 4 (SubjectDN); 5
+            (Reserved); 6 (KeyUsage); 7 (URL).
+          </P>
+          <P>
+            Default value: 0.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subject
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of byte strings containing DER-encoded X.509v3 certificates that are acceptable for signing. X.509v3 certificates are described in RFC 3280, Internet X.509 Public Key Infrastructure, Certificate and Certificate Revocation List (CRL) Profile (see the 
+            <Link>
+              Bibliography
+            </Link>
+            ). The value of the corresponding flag in the Ff entry 
+            indicates whether this is a required constraint. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            SubjectDN
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array of dictionaries
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) An array of dictionaries, each specifying a Subject Distinguished Name (DN) that shall be present within the certificate for it to be acceptable for signing. The certificate ultimately used for the digital signature shall contain all the attributes specified in each of the dictionaries in this array. (PDF keys and values are mapped to certificate attributes and values.) The certificate is not constrained to use only attribute entries from these dictionaries but may contain additional attributes.The Subject Distinguished Name is described in RFC 3280 (see the 
+            <Link>
+              Bibliography
+            </Link>
+            ). The key can be any legal attribute 
+            identifier (OID). Attribute names shall contain characters in the set a-z A-Z 0-9 and PERIOD.
+          </P>
+          <P>
+            Certificate attribute names are used as key names in the dictionaries in this array. Values of the attributes are used as values of the keys. Values shall be text strings.
+          </P>
+          <P>
+            The value of the corresponding flag in the Ff entry indicates whether this entry is a required constraint.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            KeyUsage
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array of ASCII strings
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) An array of ASCII strings, where each string specifies an acceptable key-usage extension that shall be present in the signing certificate. Multiple strings specify a range of acceptable key-usage extensions. The key-usage extension is described in RFC 3280. 
+          </P>
+          <P>
+            Each character in a string represents a key-usage type, where the order of the characters indicates the key-usage extension it represents. The first through ninth characters in the string, from left to right, represent the required value for the following key-usage extensions: 
+          </P>
+          <P>
+            1  digitalSignature 4 dataEncipherment 7 cRLSign
+          </P>
+          <P>
+            2  non-Repudiation 5  keyAgreement 8 encipherOnly
+          </P>
+          <P>
+            3  keyEncipherment 6 keyCertSign 9 decipherOnly
+          </P>
+          <P>
+            Any additional characters shall be ignored. Any missing characters or characters that are not one of the following values, shall be treated as ‘X’. The following character values shall be supported:
+          </P>
+          <P>
+            0  Corresponding key-usage shall not be set.
+          </P>
+          <P>
+            1  Corresponding key-usage shall be set.
+          </P>
+          <P>
+            X  State of the corresponding key-usage does not matter.
+          </P>
+          <P>
+            EXAMPLE 1 The string values ‘1’ and ‘1XXXXXXXX’ represent settings where the key-usage type digitalSignature is set and the state of all other key-usage types do not matter.
+            <P>
+              The value of the corresponding flag in the Ff entry indicates whether this is a required constraint. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Issuer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of byte strings containing DER-encoded X.509v3 certificates of acceptable issuers. If the signer’s certificate refers to any of the specified issuers (either directly or indirectly), the certificate shall be considered acceptable for signing. The value of the corresponding flag in the Ff entry indicates whether this is a required constraint.
+          </P>
+          <P>
+            This array may contain self-signed certificates.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            OID
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of byte strings that contain Object Identifiers (OIDs) of the certificate policies that shall be present in the signing certificate. 
+          </P>
+          <P>
+            EXAMPLE 2 An example of such a string is: (2.16.840.1.113733.1.7.1.1). 
+            <P>
+              This field shall only be used if the value of Issuer is not empty. The certificate policies extension is described in RFC 3280 (see the 
+              <Link>
+                <Span/> <!-- see 39478 0 R -->
+              </Link>
+              ). The value of the corresponding flag in the Ff entry 
+              indicates whether this is a required constraint. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            URL
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ASCII string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A URL, the use for which shall be defined by the URLTypeentry.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            URLType
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) A name indicating the usage of the URL entry. There are standard uses and there can be implementation-specific uses for this URL. The following value specifies a valid standard usage:
+          </P>
+          <P>
+            Browser – The URL references content that shall be displayed in a web browser to allow enrolling for a new credential if a matching credential is not found. The Ff attribute’s URL bit shall be ignored for this usage.
+          </P>
+          <P>
+            Third parties may extend the use of this attribute with their own attribute values, which shall conform to the guidelines described in 
+            <Link>
+              Annex E
+            </Link>
+            .
+          </P>
+          <P>
+            The default value is Browser. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

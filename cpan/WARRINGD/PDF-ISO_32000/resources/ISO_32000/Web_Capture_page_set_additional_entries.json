@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 353 – Additional entries specific to a Web Capture page set",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The subtype of content set that this dictionary describes; is SPS."
+      ],
+      [
+        "T",
+        "text string",
+        "(Optional) The title of the page set, a human-readable text string."
+      ],
+      [
+        "TID",
+        "byte string",
+        "(Optional) A text identifier generated from the text of the page set, as described in\n14.10.3.3, “Digital Identifiers.”"
+      ]
+    ]
+  }
+}

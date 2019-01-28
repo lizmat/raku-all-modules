@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 222 – Additional entries common to all fields containing variable text",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "DA",
+        "string",
+        "(Required; inheritable) The default appearance string containing a sequence of valid page-content graphics or text state operators that define such properties as the field’s text size and colour."
+      ],
+      [
+        "Q",
+        "integer",
+        "(Optional; inheritable) A code specifying the form of quadding (justification) that is used in displaying the text:\n0 Left-justified\n1 Centered\n2 Right-justified\nDefault value: 0 (left-justified)."
+      ],
+      [
+        "DS",
+        "text string",
+        "(Optional; PDF 1.5) A default style string, as described in\n12.7.3.4, “Rich Text Strings.”\n"
+      ],
+      [
+        "RV",
+        "text string or text stream",
+        "(Optional; PDF 1.5) A rich text string, as described in\n12.7.3.4, “Rich Text Strings.”\n"
+      ]
+    ]
+  }
+}

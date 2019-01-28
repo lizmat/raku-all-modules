@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 55 – Line Join Styles",
+    "head": [
+      "Style",
+      "Appearance",
+      "Description"
+    ],
+    "rows": [
+      [
+        "0",
+        "\n",
+        "Miter join. The outer edges of the strokes for the two segments shall beextended until they meet at an angle, as in a picture frame. If the segments meet at too sharp an angle (as defined by the miter limit parameter—see 8.4.3.5, \"Miter Limit\"), a bevel join is used instead."
+      ],
+      [
+        "1",
+        "\n",
+        "Round join. An arc of a circle with a diameter equal to the line width is drawn around the point where the two segments meet, connecting the outer edges of the strokes for the two segments. This pieslice-shaped figure is filled in, producing a rounded corner."
+      ],
+      [
+        "2",
+        "\n",
+        "Bevel join. The two segments is finished with butt caps (see 8.4.3.3, \"Line Cap Style\") and the resulting notch beyond the ends of the segments is filled with a triangle."
+      ]
+    ]
+  }
+}

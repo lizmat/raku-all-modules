@@ -1,0 +1,130 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        361
+        –  Entries in a box style dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            C
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of three numbers in the range 0.0 to 1.0, representing the components in the DeviceRGB colour space of the colour to be used for displaying the guidelines. Default value: [
+            0.0
+            0.0
+            0.0
+            ]. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            W
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The guideline width in default user space units. Default value: 1. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            S
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The guideline style: 
+          </P>
+          <P>
+            S (Solid) A solid rectangle. 
+          </P>
+          <P>
+            D (Dashed) A dashed rectangle. The dash pattern shall be specified by the D entry. 
+          </P>
+          <P>
+            Other guideline styles may be defined in the future. Default value: S. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            D
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A dash array defining a pattern of dashes and gaps to be used in drawing dashed guidelines (guideline style D). The dash array shall be specified in default user space units, in the same format as in the line dash pattern parameter of the graphics state (see 
+            <Link>
+              8.4.3.6, “Line Dash Pattern”
+            </Link>
+            ). 
+            The dash phase shall not be specified and shall be assumed to be 0. 
+          </P>
+          <P>
+            EXAMPLE A D entry of [
+            3
+            2
+            ] specifies guidelines drawn with 3-point dashes alternating with 2-point gaps. 
+            <P>
+              Default value: [
+              3
+              ]. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,97 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        97
+        –  Entries in a Reference Dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            file
+            specification
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The file containing the target document. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Page
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+            or text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A page index or page label (see 
+            <Link>
+              12.4.2, "Page Labels"
+            </Link>
+            ) 
+            identifying the page of the target document containing the content to be imported. This reference is a weak one and may be inadvertently invalidated if the referenced page is changed or replaced in the target document after the reference is created. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ID
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of two byte strings constituting a file identifier (see 
+            <Link>
+              14.4, "File Identifiers"
+            </Link>
+            ) for the file containing the target document. The 
+            use of this entry improves an reader’s chances of finding the intended file and allows it to warn the user if the file has changed since the reference was created. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

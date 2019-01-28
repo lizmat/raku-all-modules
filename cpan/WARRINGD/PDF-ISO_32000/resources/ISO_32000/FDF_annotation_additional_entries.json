@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 251 – Additional entry for annotation dictionaries in an FDF file",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Page",
+        "integer",
+        "(Required for annotations in FDF files) The ordinal page number on which this annotation shall appear, where page 0 is the first page."
+      ]
+    ]
+  }
+}

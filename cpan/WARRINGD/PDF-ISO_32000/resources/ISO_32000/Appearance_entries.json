@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 168 – Entries in an appearance dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "N",
+        "stream or dictionary",
+        "(Required) The annotation’s normal appearance."
+      ],
+      [
+        "R",
+        "stream or dictionary",
+        "(Optional) The annotation’s rollover appearance. Default value: the value of the N entry."
+      ],
+      [
+        "D",
+        "stream or dictionary",
+        "(Optional) The annotation’s down appearance. Default value: the value of the N entry."
+      ]
+    ]
+  }
+}

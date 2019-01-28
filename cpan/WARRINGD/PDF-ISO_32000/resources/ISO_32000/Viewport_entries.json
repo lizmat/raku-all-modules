@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 260 – Entries in a viewport dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; is Viewport for a viewport dictionary."
+      ],
+      [
+        "BBox",
+        "rectangle",
+        "(Required) A rectangle in default user space coordinates specifying the location of the viewport on the page.\nThe two coordinate pairs of the rectangle is specified in normalized form; that is, lower-left followed by upper-right, relative to the measuring coordinate system. This ordering shall determine the orientation of the measuring coordinate system (that is, the direction of the positive x and yaxes) in this viewport, which may have a different rotation from the page.\nThe coordinates of this rectangle are independent of the origin of the measuring coordinate system, specified in the O entry (see Table 262) of the measurement dictionary specified by Measure."
+      ],
+      [
+        "Name",
+        "text string",
+        "(Optional) A descriptive text string or title of the viewport, intended for use in a user interface."
+      ],
+      [
+        "Measure",
+        "dictionary",
+        "(Optional) A measure dictionary (see Table 261) that specifies the scale and units that applies to measurements taken on the contents within the viewport."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,126 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        306
+        –  Entries in a 3D background dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be 3DBG for a 3D background dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of background. The only valid value shall be SC (solid colour), which indicates a single opaque colour. Default value: SC.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name or array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The colour space of the background. The only valid value shall be the name DeviceRGB. Default value: DeviceRGB. 
+          </P>
+          <P>
+            PDF consumers shall be prepared to encounter other values that may be supported in future versions of PDF. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            C
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The colour of the background, in the colour space defined by CS. Default value: an array [1 1 1] representing the colour white when the value of CS is DeviceRGB.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            EA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) If true, the background shall apply to the entire annotation; if false, the background shall apply only to the rectangle specified by the annotation’s 3D view box (the 3DB entry in 
+            <Link>
+              Ta b l e
+              298
+            </Link>
+            ). Default value: false. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

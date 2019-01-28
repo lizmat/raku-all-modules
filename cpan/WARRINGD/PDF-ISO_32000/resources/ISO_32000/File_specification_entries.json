@@ -1,0 +1,77 @@
+{
+  "table": {
+    "caption": "Table 44 – Entries in a file specification dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Required if an EF or RF entry is present; recommended always) The type of PDF object that this dictionary describes; is Filespec for a file specification dictionary."
+      ],
+      [
+        "FS",
+        "name",
+        "(Optional) The name of the file system that is used to interpret this file specification. If this entry is present, all other entries in the dictionary is interpreted by the designated file system. PDF shall define only one standard file system name, URL (see 7.11.5, \"URL Specifications\"); an application can register other names (see Annex E). This entry is independent of the F, UF, DOS, Mac, and Unix entries."
+      ],
+      [
+        "F",
+        "string",
+        "(Required if the DOS, Mac, and Unix entries are all absent; amended with the UF entry for PDF 1.7) A file specification string of the form described in\n7.11.2, \"File Specification Strings,\"\nor (if the file system is URL) a uniform resource locator, as described in\n7.11.5, \"URL Specifications.\"\nThe UF entry is used in addition to the F entry. The UF entry provides cross-platform and cross-language compatibility and the F entry provides backwards compatibility."
+      ],
+      [
+        "UF",
+        "text string",
+        "(Optional, but recommended if the F entry exists in the dictionary; PDF 1.7) A Unicode text string that provides file specification of the form described in\n7.11.2, \"File Specification Strings.\"\nThis is a text string encoded using PDFDocEncoding or UTF-16BE with a leading byte-order marker (as defined in 7.9.2.2, \"Text String Type\"). The F entry is included along with this entry for backwards compatibility reasons."
+      ],
+      [
+        "DOS",
+        "byte string",
+        "(Optional) A file specification string (see 7.11.2, \"File Specification Strings\") representing a DOS file name.\nThis entry is obsolescent and is not used by conforming writers."
+      ],
+      [
+        "Mac",
+        "byte string",
+        "(Optional) A file specification string (see 7.11.2, \"File Specification Strings\") representing a Mac OS file name.\nThis entry is obsolescent and is not used by conforming writers."
+      ],
+      [
+        "Unix",
+        "byte string",
+        "(Optional) A file specification string (see 7.11.2, \"File Specification Strings\") representing a UNIX file name.\nThis entry is obsolescent and is not used by conforming writers."
+      ],
+      [
+        "ID",
+        "array",
+        "(Optional) An array of two byte strings constituting a file identifier (see 14.4, \"File Identifiers\") that is included in the referenced file.\nNOTE The use of this entry improves an application’s chances of finding the intended file and allows it to warn the user if the file has changed since the link was made."
+      ],
+      [
+        "V",
+        "boolean",
+        "(Optional; PDF 1.2) A flag indicating whether the file referenced by the file specification is volatile (changes frequently with time). If the value is true, applications shall not cache a copy of the file. For example, a movie annotation referencing a URL to a live video camera could set this flag to trueto notify the conforming reader that it should re-acquire the movie each time it is played. Default value: false."
+      ],
+      [
+        "EF",
+        "dictionary",
+        "(Required if RF is present; PDF 1.3; amended to include the UF key in PDF 1.7) A dictionary containing a subset of the keys F, UF, DOS, Mac, and Unix, corresponding to the entries by those names in the file specification dictionary. The value of each such key is an embedded file stream (see 7.11.4, \"Embedded File Streams\") containing the corresponding file. If this entry is present, the Type entry is required and the file specification dictionary is indirectly referenced.\nThe F and UF entries is used in place of the DOS, Mac, or Unixentries."
+      ],
+      [
+        "RF",
+        "dictionary",
+        "(Optional; PDF 1.3) A dictionary with the same structure as the EF dictionary, which is present. Each key in the RF dictionary shall also be present in the EF dictionary. Each value is a related files array (see 7.11.4.2, \"Related Files Arrays\") identifying files that are related to the corresponding file in the EF dictionary. If this entry is present, the Type entry is required and the file specification dictionary is indirectly referenced."
+      ],
+      [
+        "Desc",
+        "text string",
+        "(Optional; PDF 1.6) Descriptive text associated with the file specification. It is used for files in the EmbeddedFiles name tree (see 7.7.4, \"Name Dictionary\")."
+      ],
+      [
+        "CI",
+        "dictionary",
+        "(Optional; is indirect reference; PDF 1.7) A collection item dictionary, which is used to create the user interface for portable collections (see 7.11.6, \"Collection Items\")."
+      ]
+    ]
+  }
+}

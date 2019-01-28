@@ -1,0 +1,63 @@
+{
+  "table": {
+    "caption": "Table 148 – Overprinting behavior in the opaque imaging model",
+    "head": [
+      "Source colour space",
+      "Affected colour component",
+      "Effect on colour component"
+    ],
+    "rows": [
+      [
+        "DeviceCMYK, specified directly, not in a sampled image",
+        "C, M, Y, or K",
+        "Paint source",
+        "Paint source",
+        "Paint source if 0.0Do not paint if 0.0"
+      ],
+      [
+        "Process colorant other than CMYK",
+        "Paint source",
+        "Paint source",
+        "Paint source"
+      ],
+      [
+        "Spot colorant",
+        "Paint 0.0",
+        "Do not paint",
+        "Do not paint"
+      ],
+      [
+        "Any process colour space (including other cases of DeviceCMYK)",
+        "Process colorant",
+        "Paint source",
+        "Paint source",
+        "Paint source"
+      ],
+      [
+        "Spot colorant",
+        "Paint 0.0",
+        "Do not paint",
+        "Do not paint"
+      ],
+      [
+        "Separation or DeviceN",
+        "Process colorant",
+        "Paint 0.0",
+        "Do not paint",
+        "Do not paint"
+      ],
+      [
+        "Spot colorant named in source space",
+        "Paint source",
+        "Paint source",
+        "Paint source"
+      ],
+      [
+        "Spot colorant not named in source space",
+        "Paint 0.0",
+        "Do not paint",
+        "Do not paint"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,237 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        333
+        –  Standard structure types for grouping elements 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Structure type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Document
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Document) A complete document. This is the root element of any structure tree containing multiple parts or multiple articles. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Part
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Part) A large-scale division of a document. This type of element is appropriate for grouping articles or sections. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Art
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Article) A relatively self-contained body of text constituting a single narrative or exposition. Articles should be disjoint; that is, they should not contain other articles as constituent elements. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Sect
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Section) A container for grouping related content elements. 
+          </P>
+          <P>
+            NOTE 1 For example, a section might contain a heading, several introductory paragraphs, and two or more other sections nested within it as subsections. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Div
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Division) A generic block-level element or group of elements. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BlockQuote
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Block quotation) A portion of text consisting of one or more paragraphs attributed to someone other than the author of the surrounding text. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Caption
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Caption) A brief portion of text describing a table or figure. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TOC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Table of contents) A list made up of table of contents item entries (structure type TOCI) and/or other nested table of contents entries (TOC). 
+          </P>
+          <P>
+            A TOC entry that includes only TOCI entries represents a flat hierarchy. A TOC entry that includes other nested TOC entries (and possibly TOCI entries) represents a more complex hierarchy. Ideally, the hierarchy of a top level TOC entry reflects the structure of the main body of the document. 
+          </P>
+          <P>
+            NOTE 2 Lists of figures and tables, as well as bibliographies, can be treated as tables of contents for purposes of the standard structure types. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TOCI
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Table of contents item) An individual member of a table of contents. This entry’s children may be any of the following structure types:
+          </P>
+          <P>
+            LblA label (see 
+            <Link>
+              “List Elements”
+            </Link>
+             in 
+            <Link>
+              14.8.4.3, “Block-Level Structure 
+              Elements”
+            </Link>
+            )
+          </P>
+          <P>
+            Reference A reference to the title and the page number (see 
+            <Link>
+              “Inline-Level 
+              Structure Elements”
+            </Link>
+             in 
+            <Link>
+              14.8.4.4, “Inline-Level Structure Elements”
+            </Link>
+            )
+          </P>
+          <P>
+            NonStruct Non-structure elements for wrapping a leader artifact (see 
+            <Link>
+              “Grouping 
+              Elements”
+            </Link>
+             in 
+            <Link>
+              14.8.4.2, “Grouping Elements”
+            </Link>
+            ).
+          </P>
+          <P>
+            PDescriptive text (see 
+            <Link>
+              “Paragraphlike Elements”
+            </Link>
+             
+            <Link>
+              14.8.4.3, “Block-Level 
+              Structure Elements”
+            </Link>
+            )
+          </P>
+          <P>
+            TOC Table of content elements for hierarchical tables of content, as described for the TOC entry
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Index
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Index) A sequence of entries containing identifying text accompanied by reference elements (structure type Reference; see 
+            <Link>
+              14.8.4.4, “Inline-Level Structure Elements”
+            </Link>
+            ) 
+            that point out occurrences of the specified text in the main body of a document. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            NonStruct
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Nonstructural element) A grouping element having no inherent structural significance; it serves solely for grouping purposes. This type of element differs from a division (structure type Div) in that it shall not be interpreted or exported to other document formats; however, its descendants shall be processed normally. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Private
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Private element) A grouping element containing private content belonging to the application producing it. The structural significance of this type of element is unspecified and shall be determined entirely by the conforming writer. Neither the Private element nor any of its descendants shall be interpreted or exported to other document formats. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

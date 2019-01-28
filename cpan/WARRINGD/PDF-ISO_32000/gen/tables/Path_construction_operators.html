@@ -1,0 +1,304 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        59
+        –  Path Construction Operators 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Operands
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Operator
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            x
+            y
+          </P>
+        </TD>
+        <TD>
+          <P>
+            m
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Begin a new subpath by moving the current point to coordinates (x,
+            y), omitting any connecting line segment. If the previous path construction operator in the current path was also m, the new m overrides it; no vestige of the previous m operation remains in the path. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            x
+            y
+          </P>
+        </TD>
+        <TD>
+          <P>
+            l
+            (lowercase
+            L)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Append a straight line segment from the current point to the point (x,
+            y). The new current point shall be (x,
+            y). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            x
+            1
+            y
+            1
+            x
+            2
+            y
+            2
+            x
+            3
+            y
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            c
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Append a cubic Bézier curve to the current path. The curve shall extend from the current point to the point (x
+            3
+            ,
+            y
+            3
+            ), using (x
+            1
+            ,
+            y
+            1
+            ) and (x
+            2
+            ,
+            y
+            2
+            ) as the Bézier control points (see 
+            <Link>
+              8.5.2.2, 
+              "Cubic Bézier Curves"
+            </Link>
+            ). The new current point shall be 
+            (x
+            3
+            ,
+            y
+            3
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            x
+            2
+            y
+            2
+            x
+            3
+            y
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            v
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Append a cubic Bézier curve to the current path. The curve shall extend from the current point to the point (x
+            3
+            ,
+            y
+            3
+            ), using the current point and (x
+            2
+            ,
+            y
+            2
+            ) as the Bézier control points (see 
+            <Link>
+              8.5.2.2, "Cubic Bézier Curves"
+            </Link>
+            ). The new current point shall 
+            be (x
+            3
+            ,
+            y
+            3
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            x
+            1
+            y
+            1
+            x
+            3
+            y
+            3
+          </P>
+        </TD>
+        <TD>
+          <P>
+            y
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Append a cubic Bézier curve to the current path. The curve shall extend from the current point to the point (x
+            3
+            ,
+            y
+            3
+            ), using (x
+            1
+            ,
+            y
+            1
+            ) and (x
+            3
+            ,
+            y
+            3
+            ) as the Bézier control points (see 
+            <Link>
+              8.5.2.2, 
+              "Cubic Bézier Curves"
+            </Link>
+            ). The new current point shall be 
+            (x
+            3
+            ,
+            y
+            3
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            h
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Close the current subpath by appending a straight line segment from the current point to the starting point of the subpath. If the current subpath is already closed, h shall donothing. 
+          </P>
+          <P>
+            This operator terminates the current subpath. Appending another segment to the current path shall begin a new subpath, even if the new segment begins at the endpoint reached by the h operation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            x
+            y
+            width
+            height
+          </P>
+        </TD>
+        <TD>
+          <P>
+            re
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Append a rectangle to the current path as a complete subpath, with lower-left corner (x,
+            y) and dimensions widthand height in user space. The operation 
+          </P>
+          <P>
+            x
+            y
+            width
+            height
+            re
+          </P>
+          <P>
+            is equivalent to 
+          </P>
+          <P>
+            x
+            y
+            m
+            (
+            x
+            +
+            width
+            )
+            y
+            l
+            (
+            x
+            +
+            width
+            )
+            (
+            y
+            +
+            height
+            )
+            l
+            x
+            (
+            y
+            +
+            height
+            )
+            l
+            h
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 274 – Additional entries in a media clip data dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "D",
+        "file specification or stream",
+        "(Required) A full file specification or form XObject that specifies the actual media data."
+      ],
+      [
+        "CT",
+        "ASCII string",
+        "(Optional; not allowed for form XObjects) An ASCII string identifying the type of data in D. The string should conform to the content type specification described in Internet RFC 2045, Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies (see the Bibliography)."
+      ],
+      [
+        "P",
+        "dictionary",
+        "(Optional) A media permissions dictionary (see Table 275) containing permissions that control the use of the media data. Default value: a media permissions dictionary containing default values."
+      ],
+      [
+        "Alt",
+        "array",
+        "(Optional) An array that provides alternate text descriptions for the media clip data in case it cannot be played; see\n14.9.2.4, “Multi-language Text Arrays.”\n"
+      ],
+      [
+        "PL",
+        "dictionary",
+        "(Optional) A media players dictionary (see 13.2.7.2, “Media Players Dictionary”) that identifies, among other things, players that are legal and not legal for playing the media.\nIf the media players dictionary is non-viable, the media clip data is non-viable."
+      ],
+      [
+        "MH",
+        "dictionary",
+        "(Optional) A dictionary whose entries (see Table 276) is honoured for the media clip data to be considered viable."
+      ],
+      [
+        "BE",
+        "dictionary",
+        "(Optional) A dictionary whose entries (see Table 276) should only be honoured in a “best effort” sense."
+      ]
+    ]
+  }
+}

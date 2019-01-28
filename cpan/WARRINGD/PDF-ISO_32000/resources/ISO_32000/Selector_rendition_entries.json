@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 272 – Additional entries specific to a selector rendition dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "R",
+        "array",
+        "(Required) An array of rendition objects. The first viable media rendition object found in the array, or nested within a selector rendition in the array, is used. An empty array is legal."
+      ]
+    ]
+  }
+}

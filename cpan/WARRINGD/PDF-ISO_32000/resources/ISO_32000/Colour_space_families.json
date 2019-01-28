@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 62 – Colour Space Families",
+    "head": [
+      "Device",
+      "CIE-based",
+      "Special"
+    ],
+    "rows": [
+      [
+        "DeviceGray (PDF 1.1)",
+        "CalGray (PDF 1.1)",
+        "Indexed (PDF 1.1)"
+      ],
+      [
+        "DeviceRGB (PDF 1.1)",
+        "CalRGB (PDF 1.1)",
+        "Pattern (PDF 1.2)"
+      ],
+      [
+        "DeviceCMYK (PDF 1.1)",
+        "Lab (PDF 1.1)",
+        "Separation (PDF 1.2)"
+      ],
+      [
+        "",
+        "ICCBased (PDF 1.3)",
+        "DeviceN (PDF 1.3)"
+      ]
+    ]
+  }
+}

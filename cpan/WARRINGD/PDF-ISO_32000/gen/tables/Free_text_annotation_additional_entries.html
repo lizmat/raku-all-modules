@@ -1,0 +1,337 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        174
+        –  Additional entries specific to a free text annotation 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of annotation that this dictionary describes; shall be FreeText for a free text annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The default appearance string that shall be used in formatting the text (see 
+            <Link>
+              12.7.3.3, “Variable Text”
+            </Link>
+            ). 
+          </P>
+          <P>
+            The annotation dictionary’s AP entry, if present, shall take precedence over the DA entry; see 
+            <Link>
+              Ta b l e
+              168
+            </Link>
+             and 
+            <Link>
+              12.5.5, “Appearance Streams.”
+            </Link>
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Q
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) A code specifying the form of quadding (justification) that shall be used in displaying the annotation’s text: 
+          </P>
+          <P>
+            0 Left-justified 
+          </P>
+          <P>
+            1 Centered 
+          </P>
+          <P>
+            2 Right-justified 
+          </P>
+          <P>
+            Default value: 0 (left-justified). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string or text stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5) A rich text string (see 
+            <Link>
+              12.7.3.4, “Rich Text Strings”
+            </Link>
+            ) 
+            that shall be used to generate the appearance of the annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5) A default style string, as described in 
+            <Link>
+              12.7.3.4, “Rich 
+              Text Strings.”
+            </Link>
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CL
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if IT is FreeTextCallout; PDF 1.6) An array of four or six numbers specifying a callout line attached to the free text annotation. Six numbers [ x
+            1
+            y
+            1
+            x
+            2
+            y
+            2
+             x
+            3
+            y
+            3
+             ] represent the starting, knee point, and ending coordinates of the line in default user space, as shown in Figure 8.4. Four numbers [ x
+            1
+            y
+            1
+            x
+            2
+            y
+            2
+             ] represent the starting and ending coordinates of the line. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A name describing the intent of the free text annotation (see also the IT entry in 
+            <Link>
+              Ta b l e
+              170
+            </Link>
+            ). The following values shall 
+            be valid:
+          </P>
+          <P>
+            FreeTextThe annotation is intended to function as a plain free-text annotation. A plain free-text annotation is also known as a text box comment.
+          </P>
+          <P>
+            FreeTextCalloutThe annotation is intended to function as a callout. The callout is associated with an area on the page through the callout line specified in CL. 
+          </P>
+          <P>
+            FreeTextTypeWriterThe annotation is intended to function as a click-to-type or typewriter object and no callout line is drawn. 
+          </P>
+          <P>
+            Default value: FreeText
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BE
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A border effect dictionary (see 
+            <Link>
+              Ta b l e
+              167
+            </Link>
+            ) used in 
+            conjunction with the border style dictionary specified by the BS entry. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RD
+          </P>
+        </TD>
+        <TD>
+          <P>
+            rectangle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A set of four numbers describing the numerical differences between two rectangles: the Rect entry of the annotation and a rectangle contained within that rectangle. The inner rectangle is where the annotation’s text should be displayed. Any border styles and/or border effects specified by BS and BE entries, respectively, shall be applied to the border of the inner rectangle.
+          </P>
+          <P>
+            The four numbers correspond to the differences in default user space between the left, top, right, and bottom coordinates of Rect and those of the inner rectangle, respectively. Each value shall be greater than or equal to 0. The sum of the top and bottom differences shall be less than the height of Rect, and the sum of the left and right differences shall be less than the width of Rect. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A border style dictionary (see 
+            <Link>
+              Table
+              166
+            </Link>
+            ) specifying 
+            the line width and dash pattern that shall be used in drawing the annotation’s border. 
+          </P>
+          <P>
+            The annotation dictionary’s AP entry, if present, takes precedence over the BS entry; see 
+            <Link>
+              Table
+              164
+            </Link>
+             and 
+            <Link>
+              12.5.5, “Appearance Streams”
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LE
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if CL is present; PDF 1.6) A name specifying the line ending style that shall be used in drawing the callout line specified in CL. The name shall specify the line ending style for the endpoint defined by the pairs of coordinates (x
+            1
+            , y
+            1
+            ). 
+            <Link>
+              Ta b l e
+              176
+            </Link>
+             shows the possible 
+            line ending styles. 
+          </P>
+          <P>
+            Default value: None.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

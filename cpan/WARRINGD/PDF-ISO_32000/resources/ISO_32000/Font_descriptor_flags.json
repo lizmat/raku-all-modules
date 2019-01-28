@@ -1,0 +1,57 @@
+{
+  "table": {
+    "caption": "Table 123 – Font flags",
+    "head": [
+      "Bit position",
+      "Name",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "1",
+        "FixedPitch",
+        "All glyphs have the same width (as opposed to proportional or variable-pitch fonts, which have different widths)."
+      ],
+      [
+        "2",
+        "Serif",
+        "Glyphs have serifs, which are short strokes drawn at an angle on the top and bottom of glyph stems. (Sans serif fonts do not have serifs.)"
+      ],
+      [
+        "3",
+        "Symbolic",
+        "Font contains glyphs outside the Adobe standard Latin character set. This flag and the Nonsymbolic flag shall not both be set or both be clear."
+      ],
+      [
+        "4",
+        "Script",
+        "Glyphs resemble cursive handwriting."
+      ],
+      [
+        "6",
+        "Nonsymbolic",
+        "Font uses the Adobe standard Latin character set or a subset of it."
+      ],
+      [
+        "7",
+        "Italic",
+        "Glyphs have dominant vertical strokes that are slanted."
+      ],
+      [
+        "17",
+        "AllCap",
+        "Font contains no lowercase letters; typically used for display purposes, such as for titles or headlines."
+      ],
+      [
+        "18",
+        "SmallCap",
+        "Font contains both uppercase and lowercase letters. The uppercase letters are similar to those in the regular version of the same typeface family. The glyphs for the lowercase letters have the same shapes as the corresponding uppercase letters, but they are sized and their proportions adjusted so that they have the same size and stroke weight as lowercase glyphs in the same typeface family."
+      ],
+      [
+        "19",
+        "ForceBold",
+        "See description after Note 1 in this sub-clause."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,236 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        C.1
+        –  Architectural limits 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Quantity
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Limit
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            2,147,483,647
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Largest integer value; equal to 2
+            31
+            
+            1. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            -2,147,483,648
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Smallest integer value; equal to 2
+            31
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            real
+          </P>
+        </TD>
+        <TD>
+          <P>
+             
+            3.403  10
+            38
+             
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Largest and smallest real values (approximate). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+             
+            1.175  10
+            -38 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Nonzero real values closest to 0 (approximate). Values closer than these are automatically converted to 0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            <Span/>
+          </P>
+        </TD>
+        <TD>
+          <P>
+            5 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Number of significant decimal digits of precision in fractional part (approximate). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            string (in content stream)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            32,767
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Maximum length of a string, in bytes. 
+          </P>
+          <P>
+            This restriction applies only to strings in content streams. There is no effective restriction on other strings in PDF files.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            127
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Maximum length of a name, in bytes. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            indirect
+            object
+          </P>
+        </TD>
+        <TD>
+          <P>
+            8,388,607
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Maximum number of indirect objects in a PDF file. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            q/Q
+            nesting
+          </P>
+        </TD>
+        <TD>
+          <P>
+            28
+          </P>
+        </TD>
+        <TD>
+          <P>
+            NOTE Maximum depth of graphics state nesting by q and Q operators. This is not a limit as such, but arises from the fact that q and Q are implemented by the PostScript gsave and grestore operators when generating PostScript output. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DeviceN
+            components
+          </P>
+        </TD>
+        <TD>
+          <P>
+            32
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Maximum number of colorants or tint components in a DeviceNcolour space. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CID
+          </P>
+        </TD>
+        <TD>
+          <P>
+            65,535
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Maximum value of a CID (character identifier). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

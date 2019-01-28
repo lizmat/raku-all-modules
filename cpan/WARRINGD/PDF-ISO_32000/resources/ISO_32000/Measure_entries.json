@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 261 – Entries in a measure dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; is Measure for a measure dictionary."
+      ],
+      [
+        "Subtype",
+        "name",
+        "(Optional) A name specifying the type of coordinate system to use for measuring.\nDefault value: RL, which specifies a rectilinear coordinate system"
+      ]
+    ]
+  }
+}

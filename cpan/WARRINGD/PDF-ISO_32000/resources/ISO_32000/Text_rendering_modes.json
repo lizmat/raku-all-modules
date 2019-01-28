@@ -1,0 +1,52 @@
+{
+  "table": {
+    "caption": "Table 106 – Text rendering modes",
+    "head": [
+      "Mode",
+      "Example",
+      "Description"
+    ],
+    "rows": [
+      [
+        "0",
+        "\n",
+        "Fill text."
+      ],
+      [
+        "1",
+        "\n",
+        "Stroke text."
+      ],
+      [
+        "2",
+        "\n",
+        "Fill, then stroke text."
+      ],
+      [
+        "3",
+        "\n",
+        "Neither fill nor stroke text (invisible)."
+      ],
+      [
+        "4",
+        "\n",
+        "Fill text and add to path for clipping (see 9.3.6, \"Text Rendering Mode,\")."
+      ],
+      [
+        "5",
+        "\n",
+        "Stroke text and add to path for clipping."
+      ],
+      [
+        "6",
+        "\n",
+        "Fill, then stroke text and add to path for clipping."
+      ],
+      [
+        "7",
+        "\n",
+        "Add text to path for clipping."
+      ]
+    ]
+  }
+}

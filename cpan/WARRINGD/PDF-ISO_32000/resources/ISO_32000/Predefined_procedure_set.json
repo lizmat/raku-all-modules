@@ -1,0 +1,31 @@
+{
+  "table": {
+    "caption": "Table 314 – Predefined procedure set",
+    "head": [
+      "Name",
+      "Category of operators"
+    ],
+    "rows": [
+      [
+        "PDF",
+        "Painting and graphics state"
+      ],
+      [
+        "Text",
+        "Text"
+      ],
+      [
+        "ImageB",
+        "Grayscale images or image masks"
+      ],
+      [
+        "ImageC",
+        "Colour images"
+      ],
+      [
+        "ImageI",
+        "Indexed (colour-table) images"
+      ]
+    ]
+  }
+}

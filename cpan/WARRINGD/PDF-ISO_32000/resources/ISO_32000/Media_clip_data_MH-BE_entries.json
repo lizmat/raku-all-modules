@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 276 – Entries in a media clip data MH/BE dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "BU",
+        "ASCII string",
+        "(Optional) An absolute URL that is used as the base URL in resolving any relative URLs found within the media data."
+      ]
+    ]
+  }
+}

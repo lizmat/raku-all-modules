@@ -1,0 +1,67 @@
+{
+  "table": {
+    "caption": "Table C.1 – Architectural limits",
+    "head": [
+      "Quantity",
+      "Limit",
+      "Description"
+    ],
+    "rows": [
+      [
+        "integer",
+        "2,147,483,647",
+        "Largest integer value; equal to 2 31 1."
+      ],
+      [
+        "",
+        "-2,147,483,648",
+        "Smallest integer value; equal to 2 31 ."
+      ],
+      [
+        "real",
+        "3.403 10 38",
+        "Largest and smallest real values (approximate)."
+      ],
+      [
+        "",
+        "1.175 10 -38",
+        "Nonzero real values closest to 0 (approximate). Values closer than these are automatically converted to 0."
+      ],
+      [
+        "",
+        "5",
+        "Number of significant decimal digits of precision in fractional part (approximate)."
+      ],
+      [
+        "string (in content stream)",
+        "32,767",
+        "Maximum length of a string, in bytes.\nThis restriction applies only to strings in content streams. There is no effective restriction on other strings in PDF files."
+      ],
+      [
+        "name",
+        "127",
+        "Maximum length of a name, in bytes."
+      ],
+      [
+        "indirect object",
+        "8,388,607",
+        "Maximum number of indirect objects in a PDF file."
+      ],
+      [
+        "q/Q nesting",
+        "28",
+        "NOTE Maximum depth of graphics state nesting by q and Q operators. This is not a limit as such, but arises from the fact that q and Q are implemented by the PostScript gsave and grestore operators when generating PostScript output."
+      ],
+      [
+        "DeviceN components",
+        "32",
+        "Maximum number of colorants or tint components in a DeviceNcolour space."
+      ],
+      [
+        "CID",
+        "65,535",
+        "Maximum value of a CID (character identifier)."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 294 – Additional entries specific to a sound object",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is Sound for a sound object."
+      ],
+      [
+        "R",
+        "number",
+        "(Required) The sampling rate, in samples per second."
+      ],
+      [
+        "C",
+        "integer",
+        "(Optional) The number of sound channels. Default value: 1."
+      ],
+      [
+        "B",
+        "integer",
+        "(Optional) The number of bits per sample value per channel. Default value: 8."
+      ],
+      [
+        "E",
+        "name",
+        "(Optional) The encoding format for the sample data:\nRaw Unspecified or unsigned values in the range 0 to 2B − 1\nSigned Twos-complement values\nmuLaw m-law–encoded samples\nALaw A-law–encoded samples\nDefault value: Raw."
+      ],
+      [
+        "CO",
+        "name",
+        "(Optional) The sound compression format used on the sample data. (This is separate from any stream compression specified by the sound object’s Filterentry; see Table 5 and 7.4, “Filters.”) If this entry is absent, sound compression is not used; the data contains sampled waveforms that is played at R samples per second per channel."
+      ],
+      [
+        "CP",
+        "(various)",
+        "(Optional) Optional parameters specific to the sound compression format used.\nNo standard values have been defined for the CO and CP entries."
+      ]
+    ]
+  }
+}

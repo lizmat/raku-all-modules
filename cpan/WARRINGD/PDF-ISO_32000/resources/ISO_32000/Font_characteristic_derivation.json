@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 331 – Derivation of font characteristics",
+    "head": [
+      "Characteristic",
+      "Type",
+      "Derivation"
+    ],
+    "rows": [
+      [
+        "Serifed",
+        "boolean",
+        "The value of the Serif flag in the font descriptor’s Flags entry"
+      ],
+      [
+        "Proportional",
+        "boolean",
+        "The complement of the FixedPitch flag in the font descriptor’s Flagsentry"
+      ],
+      [
+        "Italic",
+        "boolean",
+        "The value of the Italic flag in the font descriptor’s Flags entry"
+      ],
+      [
+        "Smallcap",
+        "boolean",
+        "The value of the SmallCap flag in the font descriptor’s Flags entry"
+      ]
+    ]
+  }
+}

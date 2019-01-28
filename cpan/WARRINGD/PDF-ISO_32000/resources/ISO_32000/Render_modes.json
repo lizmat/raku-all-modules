@@ -1,0 +1,71 @@
+{
+  "table": {
+    "caption": "Table 308 – Render modes",
+    "head": [
+      "Mode",
+      "Description"
+    ],
+    "rows": [
+      [
+        "Solid",
+        "Displays textured and lit geometric shapes. In the case of artwork that conforms to the Universal 3D File Format specification, these shapes are triangles. The AC entry is ignored."
+      ],
+      [
+        "SolidWireframe",
+        "Displays textured and lit geometric shapes (triangles) with single colour edges on top of them. The colour of these edges is determined by the AC entry."
+      ],
+      [
+        "Transparent",
+        "Displays textured and lit geometric shapes (triangles) with an added level of transparency. The AC entry is ignored."
+      ],
+      [
+        "TransparentWireframe",
+        "Displays textured and lit geometric shapes (triangles) with an added level of transparency, with single colour opaque edges on top of it. The colour of these edges is determined by the ACentry."
+      ],
+      [
+        "BoundingBox",
+        "Displays the bounding box edges of each node, aligned with the axes of the local coordinate space for that node. The colour of the bounding box edges is determined by the AC entry."
+      ],
+      [
+        "TransparentBoundingBox",
+        "Displays bounding boxes faces of each node, aligned with the axes of the local coordinate space for that node, with an added level of transparency. The colour of the bounding box faces is determined by the FC entry."
+      ],
+      [
+        "TransparentBoundingBoxOutline",
+        "Displays bounding boxes edges and faces of each node, aligned with the axes of the local coordinate space for that node, with an added level of transparency. The colour of the bounding box edges is determined by the AC entry. The colour of the bounding boxes faces is determined by the FC entry."
+      ],
+      [
+        "Wireframe",
+        "Displays only edges in a single colour. The colour of these edges is determined by the AC entry."
+      ],
+      [
+        "ShadedWireframe",
+        "Displays only edges, though interpolates their colour between their two vertices and applies lighting. The AC entry is ignored."
+      ],
+      [
+        "HiddenWireframe",
+        "Displays edges in a single colour, though removes back-facing and obscured edges. The colour of these edges is determined by the AC entry."
+      ],
+      [
+        "Vertices",
+        "Displays only vertices in a single colour. The colour of these points is determined by the AC entry."
+      ],
+      [
+        "ShadedVertices",
+        "Displays only vertices, though uses their vertex colour and applies lighting. The AC entry is ignored."
+      ],
+      [
+        "Illustration",
+        "Displays silhouette edges with surfaces, removes obscured lines. The colour of these edges is determined by the AC entry, and the colour of the surfaces is determined by the FCentry."
+      ],
+      [
+        "SolidOutline",
+        "Displays silhouette edges with lit and textured surfaces, removes obscured lines. The colour of these edges is determined by the AC entry."
+      ],
+      [
+        "ShadedIllustration",
+        "Displays silhouette edges with lit and textured surfaces and an additional emissive term to remove poorly lit areas of the artwork. The colour of these edges is determined by the AC entry."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "table": {
+    "caption": "Table 138 – Variables used in the source shape and opacity formulas",
+    "head": [
+      "Variable",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "fs\n",
+        "Source shape"
+      ],
+      [
+        "fj\n",
+        "Object shape"
+      ],
+      [
+        "fm\n",
+        "Mask shape"
+      ],
+      [
+        "fk\n",
+        "Constant shape"
+      ],
+      [
+        "qs\n",
+        "Source opacity"
+      ],
+      [
+        "qj\n",
+        "Object opacity"
+      ],
+      [
+        "qm\n",
+        "Mask opacity"
+      ],
+      [
+        "qk\n",
+        "Constant opacity"
+      ]
+    ]
+  }
+}

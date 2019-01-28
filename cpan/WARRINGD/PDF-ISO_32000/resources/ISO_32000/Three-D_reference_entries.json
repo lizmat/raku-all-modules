@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 303 – Entries in a 3D reference dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is 3DRef for a 3D reference dictionary."
+      ],
+      [
+        "3DD",
+        "stream",
+        "(Required) The 3D stream (see 13.6.3, “3D Streams”) containing the specification of the 3D artwork."
+      ]
+    ]
+  }
+}

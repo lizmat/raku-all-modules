@@ -1,0 +1,98 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        340
+        –  Standard structure types for illustration elements 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Structure Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Figure
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Figure) An item of graphical content. Its placement may be specified with the Placement layout attribute (see 
+            <Link>
+              “General Layout Attributes”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout 
+              Attributes”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Formula
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Formula) A mathematical formula. 
+          </P>
+          <P>
+            This structure type is useful only for identifying an entire content element as a formula. No standard structure types are defined for identifying individual components within the formula. From a formatting standpoint, the formula shall be treated similarly to a figure (structure type Figure). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Form
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Form) A widget annotation representing an interactive form field (see 
+            <Link>
+              12.7, 
+              “Interactive Forms”
+            </Link>
+            ). If the element contains a Role attribute, it may contain content 
+            items that represent the value of the (non-interactive) form field. If the element omits a Role attribute (see 
+            <Link>
+              Ta b l e
+              348
+            </Link>
+            ), it shall have only one child: an object 
+            reference (see 
+            <Link>
+              14.7.4.3, “PDF Objects as Content Items”
+            </Link>
+            ) identifying the widget 
+            annotation. The annotations’ appearance stream (see 
+            <Link>
+              12.5.5, “Appearance 
+              Streams”
+            </Link>
+            ) shall describe the appearance of the form element. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

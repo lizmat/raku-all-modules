@@ -1,0 +1,104 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        329
+        –  Entries in a user property dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            N
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The name of the user property.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            any
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The value of the user property.
+          </P>
+          <P>
+            While the value of this entry shall be any type of PDF object, conforming writers should use only text string, number, and boolean values. Conforming readers should display text, number and boolean values to users but need not display values of other types; however, they should not treat other values as errors. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A formatted representation of the value of V, that shall be used for special formatting; for example “($123.45)” for the number -123.45. If this entry is absent, conforming readers should use a default format.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            H
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) If true, the attribute shall be hidden; that is, it shall not be shown in any user interface element that presents the attributes of an object. Default value: false.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

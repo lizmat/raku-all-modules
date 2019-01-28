@@ -1,0 +1,92 @@
+{
+  "table": {
+    "caption": "Table 51 – Operator Categories",
+    "head": [
+      "Category",
+      "Operators",
+      "Table"
+    ],
+    "rows": [
+      [
+        "General graphics state",
+        "w, J, j, M, d, ri, i, gs",
+        "57\n"
+      ],
+      [
+        "Special graphics state",
+        "q, Q, cm",
+        "57\n"
+      ],
+      [
+        "Path construction",
+        "m, l, c, v, y, h, re",
+        "59\n"
+      ],
+      [
+        "Path painting",
+        "S, s, f, F, f*, B, B*, b, b*, n",
+        "60\n"
+      ],
+      [
+        "Clipping paths",
+        "W, W*",
+        "61\n"
+      ],
+      [
+        "Text objects",
+        "BT, ET",
+        "107\n"
+      ],
+      [
+        "Text state",
+        "Tc, Tw, Tz, TL, Tf, Tr, Ts",
+        "Link\n"
+      ],
+      [
+        "Text positioning",
+        "Td, TD, Tm, T*",
+        "108\n"
+      ],
+      [
+        "Text showing",
+        "Tj, TJ, ', \"",
+        "109\n"
+      ],
+      [
+        "Type 3 fonts",
+        "d0, d1",
+        "113\n"
+      ],
+      [
+        "Color",
+        "CS, cs, SC, SCN, sc, scn, G, g, RG, rg, K, k",
+        "74\n"
+      ],
+      [
+        "Shading patterns",
+        "sh",
+        "77\n"
+      ],
+      [
+        "Inline images",
+        "BI, ID, EI",
+        "92\n"
+      ],
+      [
+        "XObjects",
+        "Do",
+        "87\n"
+      ],
+      [
+        "Marked content",
+        "MP, DP, BMC, BDC, EMC",
+        "320\n"
+      ],
+      [
+        "Compatibility",
+        "BX, EX",
+        "32\n"
+      ]
+    ]
+  }
+}

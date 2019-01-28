@@ -1,0 +1,95 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        35
+        –  String Object Types 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Shall be used for human-readable text, such as text annotations, bookmark names, article names, and document information. These strings shall be encoded using either PDFDocEncoding or UTF-16BE with a leading byte-order marker. 
+          </P>
+          <P>
+            This type is described in 
+            <Link>
+              7.9.2.2, "Text String Type."
+            </Link>
+             
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PDFDocEncoded string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Shall be used for characters and glyphs that are represented in a single byte, using PDFDocEncoding. This type is described in 
+            <Link>
+              7.9.2.3, "PDFDocEncoded String 
+              Type."
+            </Link>
+             
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ASCII string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Shall be used for characters that are represented in a single byte using ASCII encoding. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            byte string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Shall be used for binary data represented as a series of bytes, where each byte can be any value representable in 8 bits. The string may represent characters but the encoding is not known. The bytes of the string need not represent characters. This type shall be used for data such as MD5 hash values, signature certificates, and Web Capture identification values. 
+          </P>
+          <P>
+            This type is described in 
+            <Link>
+              7.9.2.4, "Byte String Type."
+            </Link>
+             
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

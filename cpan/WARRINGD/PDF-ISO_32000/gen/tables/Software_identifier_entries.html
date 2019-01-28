@@ -1,0 +1,196 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        292
+        –  Entries in a software identifier dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be SoftwareIdentifier for a software identifier dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            U
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ASCII string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A URI that identifies a piece of software (see 
+            <Link>
+              “Software URIs”
+            </Link>
+             in 
+            <Link>
+              13.2.7.4, “Software Identifier Dictionary”
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            L
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The lower bound of the range of software versions that this software identifier dictionary specifies (see 
+            <Link>
+              “Version arrays”
+            </Link>
+             in 
+            <Link>
+              13.2.7.4, 
+              “Software Identifier Dictionary”
+            </Link>
+            ). Default value: the array [0]. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LI
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) If true, the lower bound of the interval defined by L and H is inclusive; that is, the software version shall be greater than or equal to L (see 
+            <Link>
+              “Version arrays”
+            </Link>
+             in 
+            <Link>
+              13.2.7.4, “Software Identifier Dictionary”
+            </Link>
+            ). If false, it shall 
+            not be inclusive. Default value: true.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            H
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The upper bound of the range of software versions that this software identifier dictionary specifies (see 
+            <Link>
+              “Version arrays”
+            </Link>
+             in 
+            <Link>
+              13.2.7.4, 
+              “Software Identifier Dictionary”
+            </Link>
+            ). Default value: an empty array []. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            HI
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) If true, the upper bound of the interval defined by L and H is inclusive; that is, the software version shall be less than or equal to H (see 
+            <Link>
+              “Version arrays”
+            </Link>
+             in 
+            <Link>
+              13.2.7.4, “Software Identifier Dictionary”
+            </Link>
+            ). If false, it shall 
+            not be inclusive. Default value: true.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            OS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of byte strings representing operating system identifiers that shall indicate to which operating systems this object applies. The defined values are the same as those defined for SMIL 2.0’s systemOperatingSystem attribute. There may not be multiple copies of the same identifier in the array. An empty array shall be considered to represent all operating systems. Default value: an empty array. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

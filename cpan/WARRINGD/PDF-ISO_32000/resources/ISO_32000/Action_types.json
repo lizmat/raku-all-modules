@@ -1,0 +1,102 @@
+{
+  "table": {
+    "caption": "Table 198 – Action types",
+    "head": [
+      "Action type",
+      "Description",
+      "Discussed in sub-clause"
+    ],
+    "rows": [
+      [
+        "GoTo",
+        "Go to a destination in the current document.",
+        "12.6.4.2, “Go-To Actions”\n"
+      ],
+      [
+        "GoToR",
+        "(“Go-to remote”) Go to a destination in another document.",
+        "12.6.4.3, “Remote Go-To Actions”\n"
+      ],
+      [
+        "GoToE",
+        "(“Go-to embedded”; PDF 1.6) Go to a destination in an embedded file.",
+        "12.6.4.4, “Embedded Go-To Actions”\n"
+      ],
+      [
+        "Launch",
+        "Launch an application, usually to open a file.",
+        "12.6.4.5, “Launch Actions”\n"
+      ],
+      [
+        "Thread",
+        "Begin reading an article thread.",
+        "12.6.4.6, “Thread Actions”\n"
+      ],
+      [
+        "URI",
+        "Resolve a uniform resource identifier.",
+        "12.6.4.7, “URI Actions”\n"
+      ],
+      [
+        "Sound",
+        "(PDF 1.2) Play a sound.",
+        "12.6.4.8, “Sound Actions”\n"
+      ],
+      [
+        "Movie",
+        "(PDF 1.2) Play a movie.",
+        "12.6.4.9, “Movie Actions”\n"
+      ],
+      [
+        "Hide",
+        "(PDF 1.2) Set an annotation’s Hidden flag.",
+        "12.6.4.10, “Hide Actions”\n"
+      ],
+      [
+        "Named",
+        "(PDF 1.2) Execute an action predefined by the conforming reader.",
+        "12.6.4.11, “Named Actions”\n"
+      ],
+      [
+        "SubmitForm",
+        "(PDF 1.2) Send data to a uniform resource locator.",
+        "12.7.5.2, “Submit-Form Action”\n"
+      ],
+      [
+        "ResetForm",
+        "(PDF 1.2) Set fields to their default values.",
+        "12.7.5.3, “Reset-Form Action”\n"
+      ],
+      [
+        "ImportData",
+        "(PDF 1.2) Import field values from a file.",
+        "12.7.5.4, “Import-Data Action”\n"
+      ],
+      [
+        "JavaScript",
+        "(PDF 1.3) Execute a JavaScript script.",
+        "12.6.4.16, “JavaScript Actions”\n"
+      ],
+      [
+        "SetOCGState",
+        "(PDF 1.5) Set the states of optional content groups.",
+        "12.6.4.12, “Set-OCG-State Actions”\n"
+      ],
+      [
+        "Rendition",
+        "(PDF 1.5) Controls the playing of multimedia content.",
+        "12.6.4.13, “Rendition Actions”\n"
+      ],
+      [
+        "Trans",
+        "(PDF 1.5) Updates the display of a document, using a transition dictionary.",
+        "12.6.4.14, “Transition Actions”\n"
+      ],
+      [
+        "GoTo3DView",
+        "(PDF 1.6) Set the current view of a 3D annotation",
+        "12.6.4.15, “Go-To-3D-View Actions,”\n"
+      ]
+    ]
+  }
+}

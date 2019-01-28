@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 328 – Additional entries in an attribute object dictionary for user properties",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "O",
+        "name",
+        "(Required) The attribute owner. Shall be UserProperties."
+      ],
+      [
+        "P",
+        "array",
+        "(Required) An array of dictionaries, each of which represents a user property (see Table 329)."
+      ]
+    ]
+  }
+}

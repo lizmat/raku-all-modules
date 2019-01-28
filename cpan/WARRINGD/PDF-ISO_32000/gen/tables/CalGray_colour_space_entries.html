@@ -1,0 +1,118 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        63
+        –  Entries in a CalGray Colour Space Dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            WhitePoint
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of three numbers [
+            X
+            W
+            Y
+            W
+            Z
+            W
+            ] specifying the tristimulus value, in the CIE 1931 XYZ space, of the diffuse white point; see 
+            <Link>
+              8.6.5.3, "CalRGB Colour Spaces"
+            </Link>
+            , for further discussion. The 
+            numbers X
+            W
+             and Z
+            W
+             shall be positive, and Y
+            W
+             shall be equal to 1.0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BlackPoint
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of three numbers [
+            X
+            B
+            Y
+            B
+            Z
+            B
+            ] specifying the tristimulus value, in the CIE 1931 XYZ space, of the diffuse black point; see 
+            <Link>
+              8.6.5.3, "CalRGB Colour Spaces"
+            </Link>
+            , for further discussion. All three 
+            of these numbers shall be non-negative. Default value: [
+            0.0
+            0.0
+            0.0
+            ]. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Gamma
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A number G defining the gamma for the gray (A)component. G shall be positive and is generally greater than or equal to 1. Default value: 1. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

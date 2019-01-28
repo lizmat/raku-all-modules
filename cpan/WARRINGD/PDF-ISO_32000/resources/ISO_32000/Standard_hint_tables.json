@@ -1,0 +1,55 @@
+{
+  "table": {
+    "caption": "Table F. 2 – Standard hint tables",
+    "head": [
+      "Key",
+      "Hint table"
+    ],
+    "rows": [
+      [
+        "S",
+        "(Required) Shared object hint table (see Link F.4.2, “Shared Object Hint Table ”)"
+      ],
+      [
+        "T",
+        "(Present only if thumbnail images exist) Thumbnail hint table (see Link F.4.3, \"Thumbnail Hint Table\")"
+      ],
+      [
+        "O",
+        "(Present only if a document outline exists) Outline hint table (see Link F.4.4, “Generic Hint Tables ”)"
+      ],
+      [
+        "A",
+        "(Present only if article threads exist) Thread information hint table (see Link F.4.4, “Generic Hint Tables ”)"
+      ],
+      [
+        "E",
+        "(Present only if named destinations exist) Named destination hint table (see Link F.4.4, “Generic Hint Tables ”)"
+      ],
+      [
+        "V",
+        "(Present only if an interactive form dictionary exists) Interactive form hint table (see Link F.4.5, “Extended Generic Hint Tables ”)"
+      ],
+      [
+        "I",
+        "(Present only if a document information dictionary exists) Information dictionary hint table (see Link F.4.4, “Generic Hint Tables ”)"
+      ],
+      [
+        "C",
+        "(Present only if a logical structure hierarchy exists; PDF 1.3) Logical structure hint table (see Link F.4.5, “Extended Generic Hint Tables ”)"
+      ],
+      [
+        "L",
+        "(PDF 1.3) Page label hint table (see Link F.4.4, “Generic Hint Tables ”)"
+      ],
+      [
+        "R",
+        "(Present only if a renditions name tree exists; PDF 1.5) Renditions name tree hint table (see Link F.4.5, “Extended Generic Hint Tables ”)"
+      ],
+      [
+        "B",
+        "(Present only if embedded file streams exist; PDF 1.5) Embedded file stream hint table (see Link F.4.6, “Embedded File Stream Hint Tables ”)"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,260 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        296
+        –  Entries in a movie activation dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Start
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The starting time of the movie segment to be played. Movie time values shall be expressed in units of time based on a time scale, which defines the number of units per second. The default time scale shall be defined in the movie data. The starting time shall be nominally a non-negative 64-bit integer, specified as follows: 
+          </P>
+          <P>
+            • If it is representable as an integer (subject to the implementation limit for integers, as described in 
+            <Link>
+              Annex C
+            </Link>
+            ), it shall be specified as 
+            such. 
+          </P>
+          <P>
+            • If it is not representable as an integer, it shall be specified as an 8-byte string representing a 64-bit twos-complement integer, most significant byte first. 
+          </P>
+          <P>
+            • If it is expressed in a time scale different from that of the movie itself, it shall be represented as an array of two values: an integer or byte string denoting the starting time, followed by an integer specifying the time scale in units per second. 
+            <P>
+              If this entry is omitted, the movie shall be played from the beginning. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Duration
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The duration of the movie segment to be played, that shall be specified in the same form as Start. If this entry is omitted, the movie shall be played to the end. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Rate
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The initial speed at which to play the movie. If the value of this entry is negative, the movie shall be played backward with respect to Start and Duration. Default value: 1.0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Volume
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The initial sound volume at which to play the movie, in the range −1.0 to 1.0. Higher values shall denote greater volume; negative values shall mute the sound. Default value: 1.0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ShowControls
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag specifying whether to display a movie controller bar while playing the movie. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Mode
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The play mode for playing the movie: 
+          </P>
+          <P>
+            Once Play once and stop. 
+          </P>
+          <P>
+            Open Play and leave the movie controller bar open. 
+          </P>
+          <P>
+            Repeat Play repeatedly from beginning to end until stopped. 
+          </P>
+          <P>
+            Palindrome Play continuously forward and backward until stopped. 
+          </P>
+          <P>
+            Default value: Once. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Synchronous
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag specifying whether to play the movie synchronously or asynchronously. If this value is true, the movie player shall retain control until the movie is completed or dismissed by the user. If the value is false, the player shall return control to the conforming reader immediately after starting the movie. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FWScale
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The magnification (zoom) factor at which the movie shall be played. The presence of this entry implies that the movie shall be played in a floating window. If the entry is absent, the movie shall be played in the annotation rectangle. 
+          </P>
+          <P>
+            The value of the entry shall be an array of two positive integers, [
+            numerator
+            denominator
+            ], denoting a rational magnification factor for the movie. The final window size, in pixels, shall be 
+          </P>
+          <P>
+            (numerator
+            ÷
+            denominator)
+            ×
+            Aspect
+          </P>
+          <P>
+            where the value of Aspect shall be taken from the movie dictionary (see 
+            <Link>
+              Table
+              295
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            FWPosition
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) For floating play windows, the relative position of the window on the screen. The value shall be an array of two numbers 
+          </P>
+          <P>
+            [
+            horiz
+            vert
+            ]
+          </P>
+          <P>
+            each in the range 0.0 to 1.0, denoting the relative horizontal and vertical position of the movie window with respect to the screen. 
+          </P>
+          <P>
+            EXAMPLE The value [
+            0.5
+            0.5
+            ] centers the window on the screen. 
+            <P>
+              Default value: [
+              0.5
+              0.5
+              ]. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

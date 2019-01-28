@@ -1,0 +1,71 @@
+{
+  "table": {
+    "caption": "Table 142 – Variables used in the group compositing formulas",
+    "head": [
+      "Variable",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "Ei\n",
+        "Element i of the group: a compound variable representing the element’s colour, shape, opacity, and blend mode"
+      ],
+      [
+        "fsi\n",
+        "Source shape for element E i"
+      ],
+      [
+        "fji\n",
+        "Object shape for element E i"
+      ],
+      [
+        "fmi\n",
+        "Mask shape for element E i"
+      ],
+      [
+        "fki\n",
+        "Constant shape for element E i"
+      ],
+      [
+        "fgi\n",
+        "Group shape: the accumulated source shapes of group elements E 1 to E i , excluding the initial backdrop"
+      ],
+      [
+        "qmi\n",
+        "Mask opacity for element E i"
+      ],
+      [
+        "qki\n",
+        "Constant opacity for element E i"
+      ],
+      [
+        "si\n",
+        "Source alpha for element E i"
+      ],
+      [
+        "ji\n",
+        "Object alpha for element E i : the product of its object shape and object opacity"
+      ],
+      [
+        "gi\n",
+        "Group alpha: the accumulated source alphas of group elements E 1 to E i , excluding the initial backdrop"
+      ],
+      [
+        "i\n",
+        "Accumulated alpha after compositing element E i , including the initial backdrop"
+      ],
+      [
+        "Csi\n",
+        "Source colour for element E i"
+      ],
+      [
+        "Ci\n",
+        "Accumulated colour after compositing element E i , including the initial backdrop"
+      ],
+      [
+        "BiCi1–Csi()\n",
+        "Blend function for element E i"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,267 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        136
+        –  Standard separable blend modes 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Name
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Result
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Normal
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs()cs=
+              </P>
+          </P>
+          <P>
+            NOTE Selects the source colour, ignoring the backdrop.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Compatible
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Same as Normal. This mode exists only for compatibility and should not be used.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Multiply
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs()cbcs=
+              </P>
+          </P>
+          <P>
+            NOTE 1 Multiplies the backdrop and source colour values.
+          </P>
+          <P>
+            NOTE 2 The result colour is always at least as dark as either of the two constituent colours. Multiplying any colour with black produces black; multiplying with white leaves the original colour unchanged. Painting successive overlapping objects with a colour other than black or white produces progressively darker colours. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Screen
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs()11cb–1cs––=cbcscbcs–+=
+              </P>
+          </P>
+          <P>
+            NOTE 3 Multiplies the complements of the backdrop and source colour values, then complements the result.
+          </P>
+          <P>
+            NOTE 4 The result colour is always at least as light as either of the two constituent colours. Screening any colour with white produces white; screening with black leaves the original colour unchanged. The effect is similar to projecting multiple photographic slides simultaneously onto a single screen. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Overlay
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs()HardLight cscb()=
+              </P>
+          </P>
+          <P>
+            NOTE 5 Multiplies or screens the colours, depending on the backdrop colour value. Source colours overlay the backdrop while preserving its highlights and shadows. The backdrop colour is not replaced but is mixed with the source colour to reflect the lightness or darkness of the backdrop.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Darken
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs()min cbcs()=
+              </P>
+          </P>
+          <P>
+            NOTE 6 Selects the darker of the backdrop and source colours.
+          </P>
+          <P>
+            NOTE 7 The backdrop is replaced with the source where the source is darker; otherwise, it is left unchanged. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Lighten
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs()max cbcs()=
+              </P>
+          </P>
+          <P>
+            NOTE 8 Selects the lighter of the backdrop and source colours.
+          </P>
+          <P>
+            NOTE 9 The backdrop is replaced with the source where the source is lighter; otherwise, it is left unchanged. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ColorDodge
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcsmin 1 cb1cs–()if cs11                                if cs==
+              </P>
+          </P>
+          <P>
+            NOTE 10 Brightens the backdrop colour to reflect the source colour. Painting with black produces no changes. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ColorBurn
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs1min11cb–cs()–if cs00                                     if cs==
+              </P>
+          </P>
+          <P>
+            NOTE 11 Darkens the backdrop colour to reflect the source colour. Painting with white produces no change.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            HardLight
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              BcbcsMultiply cb2cs()if cs0.5Screen cb2cs1–()if cs0.5=
+              </P>
+          </P>
+          <P>
+            NOTE 12 Multiplies or screens the colours, depending on the source colour value. The effect is similar to shining a harsh spotlight on the backdrop.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            SoftLight
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs()cb12cs–cb1cb––if cs0.5cb2cs1–Dcb()cb–+if cs0.5=
+              </P>
+          </P>
+          <P>
+            where
+          </P>
+          <P>
+              <P>
+              Dx()16 x 12–x4+xif x 0.25xif x0.25=
+              </P>
+          </P>
+          <P>
+            NOTE 13 Darkens or lightens the colours, depending on the source colour value. The effect is similar to shining a diffused spotlight on the backdrop.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Difference
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs()cbcs–=
+              </P>
+          </P>
+          <P>
+            NOTE 14 Subtracts the darker of the two constituent colours from the lighter colour:
+          </P>
+          <P>
+            NOTE 15 Painting with white inverts the backdrop colour; painting with black produces no change. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Exclusion
+          </P>
+        </TD>
+        <TD>
+          <P>
+              <P>
+              Bcbcs()cbcs2cbcs–+=
+              </P>
+          </P>
+          <P>
+            NOTE 16 Produces an effect similar to that of the Difference mode but lower in contrast. Painting with white inverts the backdrop colour; painting with black produces no change.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

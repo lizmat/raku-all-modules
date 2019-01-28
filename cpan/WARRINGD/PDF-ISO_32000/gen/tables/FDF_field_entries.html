@@ -1,0 +1,401 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        246
+        –  Entries in an FDF field dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Kids
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array containing the immediate children of this field. 
+          </P>
+          <P>
+            Unlike the children of fields in a PDF file, which shall be specified as indirect object references, those of an FDF field may be either direct or indirect objects. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            T
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The partial field name (see 
+            <Link>
+              12.7.3.2, “Field Names”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The field’s value, whose format varies depending on the field type; see the descriptions of individual field types in 
+            <Link>
+              12.7.4, “Field Types”
+            </Link>
+             for further 
+            information. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Ff
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A set of flags specifying various characteristics of the field (see 
+            <Link>
+              Ta b l e
+              221
+            </Link>
+            , 
+            <Link>
+              Ta b l e
+              226
+            </Link>
+            , 
+            <Link>
+              Ta b l e
+              228
+            </Link>
+            , and 
+            <Link>
+              Table
+              230
+            </Link>
+            ). When imported into an 
+            interactive form, the value of this entry shall replace that of the Ff entry in the form’s corresponding field dictionary. If this field is present, the SetFf and ClrFfentries, if any, shall be ignored. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            SetFf
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A set of flags to be set (turned on) in the Ff entry of the form’s corresponding field dictionary. Bits equal to 1 in SetFf shall cause the corresponding bits in Ff to be set to 1. This entry shall be ignored if an Ff entry is present in the FDF field dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ClrFf
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A set of flags to be cleared (turned off) in the Ff entry of the form’s corresponding field dictionary. Bits equal to 1 in ClrFf shall cause the corresponding bits in Ff to be set to 0. If a SetFf entry is also present in the FDF field dictionary, it shall be applied before this entry. This entry shall beignored if an Ff entry is present in the FDF field dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A set of flags specifying various characteristics of the field’s widget annotation (see 
+            <Link>
+              12.5.3, “Annotation Flags”
+            </Link>
+            ). When imported into an interactive 
+            form, the value of this entry shall replace that of the F entry in the form’s corresponding annotation dictionary. If this field is present, the SetF and ClrFentries, if any, shall be ignored. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            SetF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A set of flags to be set (turned on) in the F entry of the form’s corresponding widget annotation dictionary. Bits equal to 1 in SetF shall cause the corresponding bits in F to be set to 1. This entry shall be ignored if an Fentry is present in the FDF field dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ClrF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A set of flags to be cleared (turned off) in the F entry of the form’s corresponding widget annotation dictionary. Bits equal to 1 in ClrF shall cause the corresponding bits in F to be set to 0. If a SetF entry is also present in the FDF field dictionary, it shall be applied before this entry. This entry shall beignored if an F entry is present in the FDF field dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An appearance dictionary specifying the appearance of a pushbutton field (see 
+            <Link>
+              Pushbuttons
+            </Link>
+             in 
+            <Link>
+              12.7.4.2, “Button Fields”
+            </Link>
+            ). The 
+            appearance dictionary’s contents are as shown in 
+            <Link>
+              Ta b l e
+              168
+            </Link>
+            , except that the 
+            values of the N, R, and D entries shall all be streams. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            APRef
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3) A dictionary holding references to external PDF files containing the pages to use for the appearances of a pushbutton field. This dictionary is similar to an appearance dictionary (see 
+            <Link>
+              Ta b l e
+              168
+            </Link>
+            ), except that 
+            the values of the N, R, and D entries shall all be named page reference dictionaries (
+            <Link>
+              Table
+              250
+            </Link>
+            ). This entry shall be ignored if an AP entry is present. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3; button fields only) An icon fit dictionary (see 
+            <Link>
+              Table
+              247
+            </Link>
+            ) 
+            specifying how to display a button field’s icon within the annotation rectangle of its widget annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Opt
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required; choice fields only) An array of options that shall be presented to the user. Each element of the array shall take one of two forms: 
+          </P>
+          <P>
+            A text string representing one of the available options 
+          </P>
+          <P>
+            A two-element array consisting of a text string representing one of the available options and a default appearance string for constructing the item’s appearance dynamically at viewing time (see 
+            <Link>
+              12.7.3.3, “Variable Text”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            A
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An action that shall be performed when this field’s widget annotation is activated (see 
+            <Link>
+              12.6, “Actions”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An additional-actions dictionary defining the field’s behaviour in response to various trigger events (see 
+            <Link>
+              12.6.3, “Trigger Events”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RV
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string or text stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5) A rich text string, as described in 
+            <Link>
+              12.7.3.4, “Rich Text 
+              Strings.”
+            </Link>
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

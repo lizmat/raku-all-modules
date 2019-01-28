@@ -1,0 +1,252 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        194
+        –  Entries in an annotation’s additional-actions dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            E
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2) An action that shall be performed when the cursor enters the annotation’s active area. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            X
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2) An action that shall be performed when the cursor exits the annotation’s active area. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            D
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2) An action that shall be performed when the mouse button is pressed inside the annotation’s active area.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            U
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2) An action that shall be performed when the mouse button is released inside the annotation’s active area. 
+          </P>
+          <P>
+            For backward compatibility, the A entry in an annotation dictionary, if present, takes precedence over this entry (see 
+            <Link>
+              Ta b l e
+              168
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Fo
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2; widget annotations only) An action that shall be performed when the annotation receives the input focus. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Bl
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2; widget annotations only) (Uppercase B, lowercase L) An action that shall be performed when the annotation loses the input focus. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PO
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.5) An action that shall be performed when the page containing the annotation is opened. 
+          </P>
+          <P>
+            EXAMPLE 1 When the user navigates to it from the next or previous page or by means of a link annotation or outline item. 
+            <P>
+              The action shall be executed after the O action in the page’s additional-actions dictionary (see 
+              <Link>
+                <Span/> <!-- see 36129 0 R -->
+                <Span/> <!-- see 36130 0 R -->
+                <Span/> <!-- see 36131 0 R -->
+              </Link>
+              ) and the OpenAction entry in the document Catalog
+              (see 
+              <Link>
+                <Span/> <!-- see 36134 0 R -->
+                <Span/> <!-- see 36135 0 R -->
+                <Span/> <!-- see 36136 0 R -->
+              </Link>
+              ), if such actions are present.
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.5) An action that shall be performed when the page containing the annotation is closed.
+          </P>
+          <P>
+            EXAMPLE 2 When the user navigates to the next or previous page, or follows a link annotation or outline item. 
+            <P>
+              The action shall be executed before the C action in the page’s additional-actions dictionary (see 
+              <Link>
+                <Span/> <!-- see 36153 0 R -->
+                <Span/> <!-- see 36154 0 R -->
+                <Span/> <!-- see 36155 0 R -->
+              </Link>
+              ), if present.
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PV
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.5) An action that shall be performed when the page containing the annotation becomes visible. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PI
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.5) An action that shall be performed when the page containing the annotation is no longer visible in the conforming reader’s user interface. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

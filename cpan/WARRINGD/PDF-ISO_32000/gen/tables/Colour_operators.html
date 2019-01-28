@@ -1,0 +1,379 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        74
+        –  Colour Operators 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Operands
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Operator
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            CS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF 1.1) Set the current colour space to use for stroking operations. The operand name shall be a name object. If the colour space is one that can be specified by a name and no additional parameters (DeviceGray, DeviceRGB, DeviceCMYK, and certain cases of Pattern), the name may be specified directly. Otherwise, it shall be a name defined in the ColorSpace subdictionary of the current resource dictionary (see 
+            <Link>
+              7.8.3, 
+              "Resource Dictionaries"
+            </Link>
+            ); the associated value shall be an array 
+            describing the colour space (see 
+            <Link>
+              8.6.3, "Colour Space Families"
+            </Link>
+            ). 
+          </P>
+          <P>
+            The names DeviceGray, DeviceRGB, DeviceCMYK, and Patternalways identify the corresponding colour spaces directly; they never refer to resources in the ColorSpace subdictionary. 
+          </P>
+          <P>
+            The CS operator shall also set the current stroking colour to its initial value, which depends on the colour space: 
+          </P>
+          <P>
+            In a DeviceGray, DeviceRGB, CalGray, or CalRGB colour space, the initial colour shall have all components equal to 0.0. 
+          </P>
+          <P>
+            In a DeviceCMYK colour space, the initial colour shall be [
+            0.0
+            0.0
+            0.0
+            1.0
+            ]. 
+          </P>
+          <P>
+            In a Lab or ICCBased colour space, the initial colour shall have all components equal to 0.0 unless that falls outside the intervals specified by the space’s Range entry, in which case the nearest valid value shall be substituted. 
+          </P>
+          <P>
+            In an Indexed colour space, the initial colour value shall be 0. 
+          </P>
+          <P>
+            In a Separation or DeviceN colour space, the initial tint value shall be 1.0 for all colorants. 
+          </P>
+          <P>
+            In a Pattern colour space, the initial colour shall be a pattern object that causes nothing to be painted. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            cs
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF 1.1) Same as CS but used for nonstroking operations. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            c
+            1
+            …
+            c
+            n
+          </P>
+        </TD>
+        <TD>
+          <P>
+            SC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF 1.1) Set the colour to use for stroking operations in a device, CIE-based (other than ICCBased), or Indexed colour space. The number of operands required and their interpretation depends on the current stroking colour space: 
+          </P>
+          <P>
+            For DeviceGray, CalGray, and Indexed colour spaces, one operand shall be required (n
+            =
+            1). 
+          </P>
+          <P>
+            For DeviceRGB, CalRGB, and Lab colour spaces, three operands shall be required (n
+            =
+            3). 
+          </P>
+          <P>
+            For DeviceCMYK, four operands shall be required (n
+            =
+            4). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            c
+            1
+            …
+            c
+            n
+            c
+            1
+            …
+            c
+            n
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            SCN 
+            SCN
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.2) Same as SC but also supports Pattern, Separation, DeviceN and ICCBased colour spaces. 
+          </P>
+          <P>
+            If the current stroking colour space is a Separation, DeviceN, or ICCBased colour space, the operands c
+            1
+            …
+            c
+            n
+             shall be numbers. The number of operands and their interpretation depends on the colour space. 
+          </P>
+          <P>
+            If the current stroking colour space is a Pattern colour space, name shall be the name of an entry in the Pattern subdictionary of the current resource dictionary (see 
+            <Link>
+              7.8.3, "Resource Dictionaries"
+            </Link>
+            ). For an 
+            uncoloured tiling pattern (PatternType
+            =
+            1 and PaintType
+            =
+            2), c
+            1
+            …
+            c
+            n
+            shall be component values specifying a colour in the pattern’s underlying colour space. For other types of patterns, these operands shall not be specified. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            c
+            1
+            …
+            c
+            n
+          </P>
+        </TD>
+        <TD>
+          <P>
+            sc
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.1) Same as SC but used for nonstroking operations. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            c
+            1
+            …
+            c
+            n
+            c
+            1
+            …
+            c
+            n
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            scn
+            scn
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (PDF
+            1.2) Same as SCN but used for nonstroking operations. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            gray
+          </P>
+        </TD>
+        <TD>
+          <P>
+            G
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the stroking colour space to DeviceGray (or the DefaultGray colour space; see 
+            <Link>
+              8.6.5.6, "Default Colour Spaces"
+            </Link>
+            ) and set the gray level to use 
+            for stroking operations. gray shall be a number between 0.0 (black) and 1.0 (white). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            gray
+          </P>
+        </TD>
+        <TD>
+          <P>
+            g
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Same as G but used for nonstroking operations. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            r
+            g
+            b
+          </P>
+        </TD>
+        <TD>
+          <P>
+            RG
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the stroking colour space to DeviceRGB (or the DefaultRGB colour space; see 
+            <Link>
+              8.6.5.6, "Default Colour Spaces"
+            </Link>
+            ) and set the colour to use for 
+            stroking operations. Each operand shall be a number between 0.0 (minimum intensity) and 1.0 (maximum intensity). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            r
+            g
+            b
+          </P>
+        </TD>
+        <TD>
+          <P>
+            rg
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Same as RG but used for nonstroking operations. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            c
+            m
+            y
+            k
+          </P>
+        </TD>
+        <TD>
+          <P>
+            K
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the stroking colour space to DeviceCMYK (or the DefaultCMYKcolour space; see 
+            <Link>
+              8.6.5.6, "Default Colour Spaces"
+            </Link>
+            ) and set the colour to 
+            use for stroking operations. Each operand shall be a number between 0.0 (zero concentration) and 1.0 (maximum concentration). The behaviour of this operator is affected by the overprint mode (see 
+            <Link>
+              8.6.7, "Overprint 
+              Control"
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            c
+            m
+            y
+            k
+          </P>
+        </TD>
+        <TD>
+          <P>
+            k
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Same as K but used for nonstroking operations. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

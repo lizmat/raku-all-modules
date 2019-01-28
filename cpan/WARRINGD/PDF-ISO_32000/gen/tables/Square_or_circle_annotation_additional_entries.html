@@ -1,0 +1,158 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        177
+        –  Additional entries specific to a square or circle annotation 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of annotation that this dictionary describes; shall be Square or Circle for a square or circle annotation, respectively. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A border style dictionary (see 
+            <Link>
+              Ta b l e
+              166
+            </Link>
+            ) specifying the line 
+            width and dash pattern that shall be used in drawing the rectangle or ellipse. 
+          </P>
+          <P>
+            The annotation dictionary’s AP entry, if present, shall take precedence over the Rect and BS entries; see 
+            <Link>
+              Table
+              168
+            </Link>
+             and 
+            <Link>
+              12.5.5, “Appearance 
+              Streams.”
+            </Link>
+             
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) An array of numbers that shall be in the range 0.0 to 1.0 and shall specify the interior color with which to fill the annotation’s rectangle or ellipse. The number of array elements determines the colour space in which the colour shall be defined: 
+          </P>
+          <P>
+            0 No colour; transparent 
+          </P>
+          <P>
+            1DeviceGray 
+          </P>
+          <P>
+            3DeviceRGB 
+          </P>
+          <P>
+            4DeviceCMYK 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BE
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5) A border effect dictionary describing an effect applied to the border described by the BS entry (see 
+            <Link>
+              Ta b l e
+              167
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RD
+          </P>
+        </TD>
+        <TD>
+          <P>
+            rectangle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5) A set of four numbers that shall describe the numerical differences between two rectangles: the Rect entry of the annotation and the actual boundaries of the underlying square or circle. Such a difference may occur in situations where a border effect (described by BE) causes the size of the Rect to increase beyond that of the square or circle.
+          </P>
+          <P>
+            The four numbers shall correspond to the differences in default user space between the left, top, right, and bottom coordinates of Rect and those of the square or circle, respectively. Each value shall be greater than or equal to 0. The sum of the top and bottom differences shall be less than the height of Rect, and the sum of the left and right differences shall be less than the width of Rect.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

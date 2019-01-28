@@ -1,0 +1,247 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        255
+        –  Entries in the UR transform parameters dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be TransformParams for a transform parameters dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Document
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of names specifying additional document-wide usage rights for the document. The only defined value shall be FullSave, which permits a user to save the document along with modified form and/or annotation data. (PDF 1.5) Any usage right that permits the document to be modified implicitly shall enable the FullSave right. 
+          </P>
+          <P>
+            If the PDF document contains a UR3 dictionary, only rights specified by the Annots entry that permit the document to be modified shall implicitly enable the FullSave right. For all other rights, FullSave shall be explicitly enabled in order to save the document. (Signature rights shall permit saving as part of the signing process but not otherwise). 
+          </P>
+          <P>
+            If the P entry in the UR transform parameters dictionary is true (PDF 1.6) and greater conforming readers shall permit only those rights that are enabled by the entries in the dictionary. However, conforming readers shall permit saving the document as long as any rights that permit modifying the document are enabled.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Msg
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A text string that may be used to specify any arbitrary information, such as the reason for adding usage rights to the document.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The UR transform parameters dictionary version. The value shall be2.2. If an unknown version is present, no rights shall be enabled. 
+          </P>
+          <P>
+            NOTE This value is a name object, not a number. 
+            <P>
+              Default value: 2.2. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Annots
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of names specifying additional annotation-related usage rights for the document. Valid names (PDF 1.5) are Create, Delete, Modify, Copy, Import, and Export, which shall permit the user to perform the named operation on annotations.
+          </P>
+          <P>
+            The following names (PDF 1.6) shall be permitted only when the signature dictionary is referenced from the UR3 entry of the permissions dictionary (see 
+            <Link>
+              Ta b l e
+              258
+            </Link>
+            ):
+          </P>
+          <P>
+            OnlinePermits online commenting; that is, the ability to upload or download markup annotations from a server.
+          </P>
+          <P>
+            SummaryView Permits a user interface to be shown that summarizes the comments (markup annotations) in a document.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Form
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of names specifying additional form-field-related usage rights for the document. Valid names (PDF 1.5) are:
+          </P>
+          <P>
+            AddPermits the user to add form fields to the document.
+          </P>
+          <P>
+            DeletePermits the user to delete form fields to the document.
+          </P>
+          <P>
+            FillInPermits the user to save a document on which form fill-in has been done.
+          </P>
+          <P>
+            ImportPermits the user to import form data files in FDF, XFDF and text (CSV/TSV) formats.
+          </P>
+          <P>
+            ExportPermits the user to export form data files as FDF or XFDF.
+          </P>
+          <P>
+            SubmitStandalone Permits the user to submit form data when the document is not open in a Web browser.
+          </P>
+          <P>
+            SpawnTemplate Permits new pages to be instantiated from named page templates.
+          </P>
+          <P>
+            The following names (PDF 1.6) shall be permitted only when the signature dictionary is referenced from the UR3 entry of the permissions dictionary; see 
+            <Link>
+              Ta b l e
+              258
+            </Link>
+            :
+          </P>
+          <P>
+            BarcodePlaintext Permits (PDF 1.6) text form field data to be encoded as a plaintext two-dimensional barcode. 
+          </P>
+          <P>
+            OnlinePermits (PDF 1.6) the use of forms-specific online mechanisms such as SOAP or Active Data Object.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Signature
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of names specifying additional signature-related usage rights for the document. The only defined value shall be Modify, which permits a user to apply a digital signature to an existing signature form field or clear a signed signature form field. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            EF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) An array of names specifying additional usage rights for named embedded files in the document. Valid names shall be Create, Delete, Modify, and Import, which shall permit the user to perform the named operation on named embedded files.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            P
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) If true, permissions for the document shall be restricted in all consumer applications to those permissions granted by a conforming reader, while allowing permissions for rights enabled by other entries in this dictionary. Default value: false. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

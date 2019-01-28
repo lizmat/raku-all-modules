@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 240 – Additional entries specific to an import-data action",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; is ImportData for an import-data action."
+      ],
+      [
+        "F",
+        "file specification",
+        "(Required) The FDF file from which to import the data."
+      ]
+    ]
+  }
+}

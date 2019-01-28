@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 232 – Additional entries specific to a signature field",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Lock",
+        "dictionary",
+        "(Optional; is an indirect reference; PDF 1.5) A signature field lock dictionary that specifies a set of form fields that is locked when this signature field is signed.\nTable 233\nlists the entries in this dictionary."
+      ],
+      [
+        "SV",
+        "dictionary",
+        "(Optional; is an indirect reference; PDF 1.5) A seed value dictionary (see Table 234) containing information that constrains the properties of a signature that is applied to this field."
+      ]
+    ]
+  }
+}

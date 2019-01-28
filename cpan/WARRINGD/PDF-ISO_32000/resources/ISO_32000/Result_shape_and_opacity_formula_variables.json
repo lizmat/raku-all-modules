@@ -1,0 +1,35 @@
+{
+  "table": {
+    "caption": "Table 139 – Variables used in the result shape and opacity formulas",
+    "head": [
+      "Variable",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "fr\n",
+        "Result shape"
+      ],
+      [
+        "fb\n",
+        "Backdrop shape"
+      ],
+      [
+        "fs\n",
+        "Source shape"
+      ],
+      [
+        "qr\n",
+        "Result opacity"
+      ],
+      [
+        "qb\n",
+        "Backdrop opacity"
+      ],
+      [
+        "qs\n",
+        "Source opacity"
+      ]
+    ]
+  }
+}

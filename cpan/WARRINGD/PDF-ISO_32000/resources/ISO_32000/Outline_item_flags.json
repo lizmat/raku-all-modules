@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 154 – Outline item flags",
+    "head": [
+      "Bit position",
+      "Name",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "1",
+        "Italic",
+        "If set to 1, display the item in italic."
+      ],
+      [
+        "2",
+        "Bold",
+        "If set to 1, display the item in bold."
+      ]
+    ]
+  }
+}

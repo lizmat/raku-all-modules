@@ -1,0 +1,288 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        345
+        –  Standard layout attributes specific to inline-level structure elements 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            BaselineShift
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable) The distance, in default user space units, by which the element’s baseline shall be shifted relative to that of its parent element. The shift direction shall be the opposite of the block-progression direction specified by the prevailing WritingMode attribute (see 
+            <Link>
+              “General Layout Attributes”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, 
+              “Layout Attributes”
+            </Link>
+            ). Thus, positive values shall shift the baseline 
+            toward the before edge and negative values toward the after edge of the reference area (upward and downward, respectively, in Western writing systems). Default value: 0.
+          </P>
+          <P>
+            The shifted element may be a superscript, a subscript, or an inline graphic. The shift shall apply to the element, its content, and all of its descendants. Any further baseline shift applied to a child of this element shall be measured relative to the shifted baseline of this (parent) element. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            LineHeight
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number or name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable) The element’s preferred height, measured in default user space units in the block-progression direction. The height of a line shall be determined by the largest LineHeight value for any complete or partial ILSE that it contains. 
+          </P>
+          <P>
+            The name Normal or Auto in place of a numeric value shall indicate that no specific height constraint is to be imposed. The element’s height shall be set to a reasonable value based on the content’s font size: 
+          </P>
+          <P>
+            Normal Adjust the line height to include any nonzero value specified for BaselineShift.
+          </P>
+          <P>
+            Auto Adjustment for the value of BaselineShift shall not be made.
+          </P>
+          <P>
+            Default value: Normal. 
+          </P>
+          <P>
+            This attribute applies to all ILSEs (including implicit ones) that are children of this element or of its nested ILSEs, if any. It shall not apply to nested BLSEs.
+          </P>
+          <P>
+            When translating to a specific export format, the values Normal and Auto, if specified, shall be used directly if they are available in the target format. The meaning of the term “reasonable value” is left to the conforming reader to determine. It should be approximately 1.2 times the font size, but this value can vary depending on the export format. 
+          </P>
+          <P>
+            NOTE 1 In the absence of a numeric value for LineHeight or an explicit value for the font size, a reasonable method of calculating the line height from the information in a Tagged PDF file is to find the difference between the associated font’s Ascent and Descent values (see 
+            <Link>
+              9.8, “Font Descriptors”
+            </Link>
+            ), map it from glyph space to 
+            default user space (see 
+            <Link>
+              9.4.4, “Text Space Details”
+            </Link>
+            ), 
+            and use the maximum resulting value for any character in the line. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TextDecorationColor
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) The colour to be used for drawing text decorations. The value shall be an array of three numbers in the range 0.0 to 1.0, representing the red, green, and blue values, respectively, of an RGB colour space. If this attribute is not specified, the border colour for this element shall be the current fill colour in effect at the start of its associated content.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TextDecorationThickness
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) The thickness of each line drawn as part of the text decoration. The value shall be a non-negative number in default user space units representing the thickness (0 is interpreted as the thinnest possible line). If this attribute is not specified, it shall be derived from the current stroke thickness in effect at the start of the element’s associated content, transformed into default user space units.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TextDecorationType
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable) The text decoration, if any, to be applied to the element’s text. 
+          </P>
+          <P>
+            None No text decoration
+          </P>
+          <P>
+            Underline A line below the text
+          </P>
+          <P>
+            Overline A line above the text
+          </P>
+          <P>
+            LineThrough A line through the middle of the text
+          </P>
+          <P>
+            Default value: None. 
+          </P>
+          <P>
+            This attribute shall apply to all text content items that are children of this element or of its nested ILSEs, if any. The attribute shall not apply to nested BLSEs or to content items other than text.
+          </P>
+          <P>
+            The colour, position, and thickness of the decoration shall be uniform across all children, regardless of changes in colour, font size, or other variations in the content’s text characteristics.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RubyAlign
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) The justification of the lines within a ruby assembly:
+          </P>
+          <P>
+            Start The content shall be aligned on the start edge in the inline-progression direction.
+          </P>
+          <P>
+            Center The content shall be centered in the inline-progression direction.
+          </P>
+          <P>
+            End The content shall be aligned on the end edge in the inline-progression direction.
+          </P>
+          <P>
+            Justify The content shall be expanded to fill the available width in the inline-progression direction.
+          </P>
+          <P>
+            Distribute The content shall be expanded to fill the available width in the inline-progression direction. However, space shall also be inserted at the start edge and end edge of the text. The spacing shall be distributed using a 1:2:1 (start:infix:end) ratio. It shall be changed to a 0:1:1 ratio if the ruby appears at the start of a text line or to a 1:1:0 ratio if the ruby appears at the end of the text line.
+          </P>
+          <P>
+            Default value: Distribute. 
+          </P>
+          <P>
+            This attribute may be specified on the RB and RT elements. When a ruby is formatted, the attribute shall be applied to the shorter line of these two elements. (If the RT element has a shorter width than the RB element, the RT element shall be aligned as specified in its RubyAlign attribute.)
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RubyPosition
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) The placement of the RT structure element relative to the RB element in a ruby assembly:
+          </P>
+          <P>
+            Before The RT content shall be aligned along the before edge of the element.
+          </P>
+          <P>
+            After The RT content shall be aligned along the after edge of the element.
+          </P>
+          <P>
+            Warichu The RT and associated RP elements shall be formatted as a warichu, following the RB element.
+          </P>
+          <P>
+            Inline The RT and associated RP elements shall be formatted as a parenthesis comment, following the RB element.
+          </P>
+          <P>
+            Default value: Before. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            GlyphOrientationVertical
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) Specifies the orientation of glyphs when the inline-progression direction is top to bottom or bottom to top.
+          </P>
+          <P>
+            This attribute may take one of the following values:
+          </P>
+          <P>
+            angle A number representing the clockwise rotation in degrees of the top of the glyphs relative to the top of the reference area. Shall be a multiple of 90 degrees between -180 and +360.
+          </P>
+          <P>
+            AutoSpecifies a default orientation for text, depending on whether it is fullwidth (as wide as it is high). Fullwidth Latin and fullwidth ideographic text (excluding ideographic punctuation) shall be set with an angle of 0. Ideographic punctuation and other ideographic characters having alternate horizontal and vertical forms shall use the vertical form of the glyph. Non-fullwidth text shall be set with an angle of 90.
+          </P>
+          <P>
+            Default value: Auto. 
+          </P>
+          <P>
+            NOTE 2 This attribute is used most commonly to differentiate between the preferred orientation of alphabetic (non-ideographic) text in vertically written Japanese documents (Auto or 90) and the orientation of the ideographic characters and/or alphabetic (non-ideographic) text in western signage and advertising (90).
+            <P>
+              This attribute shall affect both the alignment and width of the glyphs. If a glyph is perpendicular to the vertical baseline, its horizontal alignment point shall be aligned with the alignment baseline for the script to which the glyph belongs. The width of the glyph area shall be determined from the horizontal width font characteristic for the glyph.
+            </P>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

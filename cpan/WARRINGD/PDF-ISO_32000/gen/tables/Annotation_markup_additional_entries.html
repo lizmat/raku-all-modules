@@ -1,0 +1,303 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        170
+        –  Additional entries specific to markup annotations 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            T
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.1) The text label that shall be displayed in the title bar of the annotation’s pop-up window when open and active. This entry shall identify the user who added the annotation.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Popup
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3) An indirect reference to a pop-up annotation for entering or editing the text associated with this annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) The constant opacity value that shall be used in painting the annotation (see Sections 
+            <Link>
+              11.2, “Overview of Transparency,”
+            </Link>
+            and 
+            <Link>
+              11.3.7, “Shape and Opacity Computations”
+            </Link>
+            ). This value shall apply to 
+            all visible elements of the annotation in its closed state (including its background and border) but not to the pop-up window that appears when the annotation is opened. 
+          </P>
+          <P>
+            The specified value shall not used if the annotation has an appearance stream (see 
+            <Link>
+              12.5.5, “Appearance Streams”
+            </Link>
+            ); in that case, the appearance 
+            stream shall specify any transparency. (However, if the compliant viewer regenerates the annotation’s appearance stream, it may incorporate the CA value into the stream’s content.)
+          </P>
+          <P>
+            The implicit blend mode (see 
+            <Link>
+              11.3.5, “Blend Mode”
+            </Link>
+            ”) is Normal. Default 
+            value: 1.0. 
+          </P>
+          <P>
+            If no explicit appearance stream is defined for the annotation, it may bepainted by implementation-dependent means that do not necessarily conform to the PDF imaging model; in this case, the effect of this entry is implementation-dependent as well. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string or text stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5) A rich text string (see 
+            <Link>
+              12.7.3.4, “Rich Text Strings”
+            </Link>
+            ) 
+            that shall be displayed in the pop-up window when the annotation is opened.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CreationDate
+          </P>
+        </TD>
+        <TD>
+          <P>
+            date
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5) The date and time (
+            <Link>
+              7.9.4, “Dates”
+            </Link>
+            ) when the 
+            annotation was created.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IRT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if an RT entry is present, otherwise optional; PDF 1.5) A reference to the annotation that this annotation is “in reply to.” Both annotations shall be on the same page of the document. The relationship between the two annotations shall be specified by the RT entry.
+          </P>
+          <P>
+            If this entry is present in an FDF file (see 
+            <Link>
+              12.7.7, “Forms Data Format”
+            </Link>
+            ), its 
+            type shall not be a dictionary but a text string containing the contents of the NM entry of the annotation being replied to, to allow for a situation where the annotation being replied to is not in the same FDF file. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subj
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.5) Text representing a short description of the subject being addressed by the annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; meaningful only if IRT is present; PDF 1.6) A name specifying the relationship (the “reply type”) between this annotation and one specified by IRT. Valid values are:
+          </P>
+          <P>
+            RThe annotation shall be considered a reply to the annotation specified by IRT. Conforming readers shall not display replies to an annotation individually but together in the form of threaded comments.
+          </P>
+          <P>
+            GroupThe annotation shall be grouped with the annotation specified by IRT; see the discussion following this Table.
+          </P>
+          <P>
+            Default value: R.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A name describing the intent of the markup annotation. Intents allow conforming readers to distinguish between different uses and behaviors of a single markup annotation type. If this entry is not present or its value is the same as the annotation type, the annotation shall have no explicit intent and should behave in a generic manner in a conforming reader.
+          </P>
+          <P>
+            Free text annotations (
+            <Link>
+              Ta b l e
+              174
+            </Link>
+            ), line annotations (
+            <Link>
+              Ta b l e
+              175
+            </Link>
+            ), polygon 
+            annotations (
+            <Link>
+              Ta b l e
+              178
+            </Link>
+            ), and (PDF 1.7) polyline annotations (
+            <Link>
+              Table
+              178
+            </Link>
+            ) 
+            have defined intents, whose values are enumerated in the corresponding tables.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ExData
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) An external data dictionary specifying data that shall be associated with the annotation. This dictionary contains the following entries:
+          </P>
+          <P>
+            Type
+             
+            (optional) If present, shall be ExData.
+          </P>
+          <P>
+            Subtype
+             
+            (required) a name specifying the type of data that the markup annotation shall be associated with. The only defined value is Markup3D. 
+            <Link>
+              Ta b l e
+              298
+            </Link>
+             lists the values that correspond to a 
+            subtype of Markup3D. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

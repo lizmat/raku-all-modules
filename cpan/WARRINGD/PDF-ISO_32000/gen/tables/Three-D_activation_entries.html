@@ -1,0 +1,192 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        299
+        –  Entries in a 3D activation dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            A
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A name specifying the circumstances under which the annotation shall be activated. Valid values are:
+          </P>
+          <P>
+            PO The annotation shall be activated as soon as the page containing the annotation is opened. 
+          </P>
+          <P>
+            PV The annotation shall be activated as soon as any part of the page containing the annotation becomes visible. 
+          </P>
+          <P>
+            XA The annotation shall remain inactive until explicitly activated by a script or user action.
+          </P>
+          <P>
+            NOTE 1 At any one time, only a single page shall be considered open in a conforming reader, even though more than one page may be visible, depending on the page layout.
+            <P>
+              Default value: XA.
+            </P>
+          </P>
+          <P>
+            NOTE 2 For performance reasons, documents intended for viewing in a web browser should use explicit activation (XA). In non-interactive applications, such as printing systems or aggregating conforming reader, PO and PV indicate that the annotation shall be activated when the page is printed or placed; XA indicates that the annotation shall never be activated and the normal appearance shall be used. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AIS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A name specifying the state of the artwork instance upon activation of the annotation. Valid values are:
+          </P>
+          <P>
+            IThe artwork shall be instantiated, but real-time script-driven animations shall be disabled.
+          </P>
+          <P>
+            L Real-time script-driven animations shall be enabled if present; if not, the artwork shall be instantiated.
+          </P>
+          <P>
+            Default value: L.
+          </P>
+          <P>
+            NOTE 3 In non-interactive conforming readers, the artwork shall be instantiated and scripts shall be disabled. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            D
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A name specifying the circumstances under which the annotation shall be deactivated. Valid values are:
+          </P>
+          <P>
+            PC The annotation shall be deactivated as soon as the page is closed. 
+          </P>
+          <P>
+            PI The annotation shall be deactivated as soon as the page containing the annotation becomes invisible. 
+          </P>
+          <P>
+            XD The annotation shall remain active until explicitly deactivated by a script or user action.
+          </P>
+          <P>
+            NOTE 4 At any one time, only a single page shall be considered open in the conforming reader, even though more than one page may be visible, depending on the page layout.
+            <P>
+              Default value: PI.
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DIS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A name specifying the state of the artwork instance upon deactivation of the annotation. Valid values are U (uninstantiated), I(instantiated), and L (live). Default value: U.
+          </P>
+          <P>
+            NOTE 5 If the value of this entry is L, uninstantiation of instantiated artwork is necessary unless it has been modified. Uninstantiation is never required in non-interactive conforming readers.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TB
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) A flag indicating the default behavior of an interactive toolbar associated with this annotation. If true, a toolbar shall be displayed by default when the annotation is activated and given focus. If false, a toolbar shall not be displayed by default. 
+          </P>
+          <P>
+            NOTE 6 Typically, a toolbar is positioned in proximity to the 3D annotation. 
+            <P>
+              Default value: true.
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            NP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) A flag indicating the default behavior of the user interface for viewing or managing information about the 3D artwork. Such user interfaces can enable navigation to different views or can depict the hierarchy of the objects in the artwork (the model tree). If true, the user interface should be made visible when the annotation is activated. If false, the user interface should not be made visible by default. 
+          </P>
+          <P>
+            Default value: false
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

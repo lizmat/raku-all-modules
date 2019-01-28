@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 318 – Entries in a page-piece dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "any conformingproduct name or well-known data type",
+        "dictionary",
+        "A data dictionary (see Table 319)."
+      ]
+    ]
+  }
+}

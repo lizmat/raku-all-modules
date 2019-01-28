@@ -1,0 +1,186 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        108
+        –  Text-positioning operators 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Operands
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Operator
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            t
+            x
+            t
+            y
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Td
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Move to the start of the next line, offset from the start of the current line by (t
+            x
+            ,
+            t
+            y
+            ). t
+            x
+             and t
+            y
+             shall denote numbers expressed in unscaled text space units. More precisely, this operator shall perform these assignments: 
+          </P>
+          <P>
+              <P>
+              TmTlm100010txty1Tlm×==
+              </P>
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            t
+            x
+            t
+            y 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            TD
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Move to the start of the next line, offset from the start of the current line by (t
+            x
+            ,
+            t
+            y
+            ). As a side effect, this operator shall set the leading parameter in the text state. This operator shall have the same effect as this code: 
+          </P>
+          <P>
+            −t
+            y
+            TL
+            t
+            x
+            t
+            y
+            Td
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            a
+            b
+            c
+            d
+            e
+            f 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Tm
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Set the text matrix, T
+            m
+            , and the text line matrix, T
+            lm
+            : 
+          </P>
+          <P>
+              <P>
+              TmTlmab0cd0ef1==
+              </P>
+          </P>
+          <P>
+            The operands shall all be numbers, and the initial value for T
+            m
+             and T
+            lm
+            shall be the identity matrix, [
+            1
+            0
+            0
+            1
+            0
+            0
+            ]. Although the operands specify a matrix, they shall be passed to Tm as six separate numbers, not as an array. 
+          </P>
+          <P>
+            The matrix specified by the operands shall not be concatenated onto the current text matrix, but shall replace it. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            —
+          </P>
+        </TD>
+        <TD>
+          <P>
+            T*
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Move to the start of the next line. This operator has the same effect as the code 
+          </P>
+          <P>
+            0 -T
+            l 
+            Td
+          </P>
+          <P>
+            where T
+            l
+             denotes the current leading parameter in the text state. The negative of T
+            l
+             is used here because T
+            l
+             is the text leading expressed as a positive number. Going to the next line entails decreasing the y
+            coordinate.
+          </P>
+          <P>
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

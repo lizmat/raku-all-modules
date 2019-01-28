@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 96 – Entries Common to all Group Attributes Dictionaries",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is Group for a group attributes dictionary."
+      ],
+      [
+        "S",
+        "name",
+        "(Required) The group subtype, which identifies the type of group whose attributes this dictionary describes and determines the format and meaning of the dictionary’s remaining entries. The only group subtype defined is Transparency; see\n11.6.6, \"Transparency Group XObjects\"\n, for the remaining contents of this type of dictionary."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 197 – Entries in the document catalog’s additional-actions dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "WC",
+        "dictionary",
+        "(Optional; PDF 1.4) A JavaScript action that is performed before closing a document. (The name WC stands for “will close.”)"
+      ],
+      [
+        "WS",
+        "dictionary",
+        "(Optional; PDF 1.4) A JavaScript action that is performed before saving a document. (The name WS stands for “will save.”)"
+      ],
+      [
+        "DS",
+        "dictionary",
+        "(Optional; PDF 1.4) A JavaScript action that is performed after saving a document. (The name DS stands for “did save.”)"
+      ],
+      [
+        "WP",
+        "dictionary",
+        "(Optional; PDF 1.4) A JavaScript action that is performed before printing a document. (The name WP stands for “will print.”)"
+      ],
+      [
+        "DP",
+        "dictionary",
+        "(Optional; PDF 1.4) A JavaScript action that is performed after printing a document. (The name DP stands for “did print.”)"
+      ]
+    ]
+  }
+}

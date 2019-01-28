@@ -1,0 +1,57 @@
+{
+  "table": {
+    "caption": "Table 18 – Entries in a cross-reference stream",
+    "head": [
+      "Type",
+      "Field",
+      "Description"
+    ],
+    "rows": [
+      [
+        "0",
+        "1",
+        "The type of this entry, which is 0. Type 0 entries define the linked list of free objects (corresponding to f entries in a cross-reference table)."
+      ],
+      [
+        "",
+        "2",
+        "The object number of the next free object."
+      ],
+      [
+        "",
+        "3",
+        "The generation number to use if this object number is used again."
+      ],
+      [
+        "1",
+        "1",
+        "The type of this entry, which is 1. Type 1 entries define objects that are in use but are not compressed (corresponding to n entries in a cross-reference table)."
+      ],
+      [
+        "",
+        "2",
+        "The byte offset of the object, starting from the beginning of the file."
+      ],
+      [
+        "",
+        "3",
+        "The generation number of the object. Default value: 0."
+      ],
+      [
+        "2",
+        "1",
+        "The type of this entry, which is 2. Type 2 entries define compressed objects."
+      ],
+      [
+        "",
+        "2",
+        "The object number of the object stream in which this object is stored. (The generation number of the object stream is implicitly 0.)"
+      ],
+      [
+        "",
+        "3",
+        "The index of this object within the object stream."
+      ]
+    ]
+  }
+}

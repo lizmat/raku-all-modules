@@ -1,0 +1,57 @@
+{
+  "table": {
+    "caption": "Table 342 – Standard layout attributes",
+    "head": [
+      "Structure Elements",
+      "Attributes",
+      "Inheritable"
+    ],
+    "rows": [
+      [
+        "Any structure element",
+        "Placement\nWritingMode\nBackgroundColor\nBorderColor\nBorderStyle\nBorderThickness\nColor\nPadding",
+        "No\nYes\nNo\nYes\nNo\nYes\nYes\nNo"
+      ],
+      [
+        "Any BLSE\nILSEs with Placement other than Inline",
+        "SpaceBefore\nSpaceAfter\nStartIndent\nEndIndent",
+        "No\nNo\nYes\nYes"
+      ],
+      [
+        "BLSEs containing text",
+        "TextIndent\nTextAlign",
+        "Yes\nYes"
+      ],
+      [
+        "Illustration elements (Figure, Formula, Form)\nTable",
+        "BBox\nWidth\nHeight",
+        "No\nNo\nNo"
+      ],
+      [
+        "TH (Table header)\nTD (Table data)",
+        "Width\nHeight\nBlockAlign\nInlineAlign\nTBorderStyle\nTPadding",
+        "No\nNo\nYes\nYes\nYes\nYes"
+      ],
+      [
+        "Any ILSE\nBLSEs containing ILSEs or containing direct or nested content items",
+        "LineHeight\nBaselineShift\nTextDecorationType\nTextDecorationColor\nTextDecorationThickness",
+        "Yes\nNo\nNo\nYes\nYes"
+      ],
+      [
+        "Grouping elements Art, Sect, and Div",
+        "ColumnCount\nColumnWidths\nColumnGap",
+        "No\nNo\nNo"
+      ],
+      [
+        "Vertical text",
+        "GlyphOrientationVertical",
+        "Yes"
+      ],
+      [
+        "Ruby text",
+        "RubyAlign\nRubyPosition",
+        "Yes\nYes"
+      ]
+    ]
+  }
+}

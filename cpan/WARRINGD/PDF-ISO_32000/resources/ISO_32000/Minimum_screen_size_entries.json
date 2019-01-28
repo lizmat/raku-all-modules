@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 270 – Entries in a minimum screen size dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is MinScreenSize for a rendition object."
+      ],
+      [
+        "V",
+        "array",
+        "(Required) An array containing two non-negative integers. The width and height (in pixels) of the monitor specified by M is greater than or equal to the values of the first and second integers in the array, respectively, in order for this object to be viable."
+      ],
+      [
+        "M",
+        "integer",
+        "(Optional) A monitor specifier (see Table 293) that specifies which monitor the value of V is tested against. If the value is unrecognized, the object is not viable.\nDefault value: 0."
+      ]
+    ]
+  }
+}

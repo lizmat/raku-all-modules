@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 253 – Entries in a signature reference dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is SigRef for a signature reference dictionary."
+      ],
+      [
+        "TransformMethod",
+        "name",
+        "(Required) The name of the transform method (see Link Section 12.8.2, “Transform Methods ”) that shall guide the modification analysis that takes place when the signature is validated. Valid values is:\nDocMDP Used to detect modifications to a document relative to a signature field that is signed by the originator of a document; see\n12.8.2.2, “DocMDP.”\nUR Used to detect modifications to a document that would invalidate a signature in a rights-enabled document; see\n12.8.2.3, “UR.”\nFieldMDPUsed to detect modifications to a list of form fields specified in TransformParams; see\n12.8.2.4, “FieldMDP.”\n"
+      ],
+      [
+        "TransformParams",
+        "dictionary",
+        "(Optional) A dictionary specifying transform parameters (variable data) for the transform method specified by TransformMethod. Each method takes its own set of parameters. See each of the sub-clauses specified previously for details on the individual transform parameter dictionaries"
+      ],
+      [
+        "Data",
+        "(various)",
+        "(Required when TransformMethod is FieldMDP) An indirect reference to the object in the document upon which the object modification analysis is performed. For transform methods other than FieldMDP, this object is implicitly defined."
+      ],
+      [
+        "DigestMethod",
+        "name",
+        "(Optional; PDF 1.5 required) A name identifying the algorithm that is used when computing the digest. Valid values are MD5 and SHA1. Default value: MD5. For security reasons, MD5 is not used. It is mentioned for backwards compatibility, since it remains the default value."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "table": {
+    "caption": "Table 237 – Flags for submit-form actions",
+    "head": [
+      "Bit position",
+      "Name",
+      "Meaning"
+    ],
+    "rows": [
+      [
+        "1",
+        "Include/Exclude",
+        "If clear, the Fields array (see Table 236) specifies which fields to include in the submission. (All descendants of the specified fields in the field hierarchy is submitted as well.)\nIf set, the Fields array tells which fields to exclude. All fields in the document’s interactive form is submitted exceptthose listed in the Fields array and those whose NoExport flag (see Table 221) is set and fields with no values if the IncludeNoValueFields flag is clear."
+      ],
+      [
+        "2",
+        "IncludeNoValueFields",
+        "If set, all fields designated by the Fields array and the Include/Exclude flag is submitted, regardless of whether they have a value (V entry in the field dictionary). For fields without a value, only the field name shall betransmitted.\nIf clear, fields without a value is not submitted."
+      ],
+      [
+        "3",
+        "ExportFormat",
+        "Meaningful only if the SubmitPDF and XFDF flags are clear. If set, field names and values is submitted in HTML Form format. If clear, they is submitted in Forms Data Format (FDF); see\n12.7.7, “Forms Data Format.”"
+      ],
+      [
+        "4",
+        "GetMethod",
+        "If set, field names and values is submitted using an HTTP GET request. If clear, they is submitted using a POST request. This flag is meaningful only when the ExportFormat flag is set; if ExportFormat is clear, this flag shall also be clear."
+      ],
+      [
+        "5",
+        "SubmitCoordinates",
+        "If set, the coordinates of the mouse click that caused the submit-form action is transmitted as part of the form data. The coordinate values are relative to the upper-left corner of the field’s widget annotation rectangle. They is represented in the data in the format\nname . x = xval & name . y = yval\nwhere name is the field’s mapping name (TM in the field dictionary) if present; otherwise, name is the field name. If the value of the TM entry is a single ASCII SPACE (20h) character, both the name and the ASCII PERIOD (2Eh)following it is suppressed, resulting in the format\nx = xval & y = yval\nThis flag is used only when the ExportFormat flag is set. If ExportFormat is clear, this flag shall also be clear."
+      ],
+      [
+        "6",
+        "XFDF",
+        "(PDF 1.4) is used only if the SubmitPDF flags are clear. If set, field names and values is submitted as XFDF."
+      ],
+      [
+        "7",
+        "IncludeAppendSaves",
+        "(PDF 1.4) is used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear). If set, the submitted FDF file shall include the contents of all incremental updates to the underlying PDF document, as contained in the Differences entry in the FDF dictionary (see Table 243). If clear, the incremental updates is not included."
+      ],
+      [
+        "8",
+        "IncludeAnnotations",
+        "(PDF 1.4) is used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear). If set, the submitted FDF file shall include includes all markup annotations in the underlying PDF document (see 12.5.6.2, “Markup Annotations”). If clear, markup annotations is not included."
+      ],
+      [
+        "9",
+        "SubmitPDF",
+        "(PDF 1.4) If set, the document is submitted as PDF, using the MIME content type application / pdf (described in Internet RFC 2045, Multipurpose Internet Mail Extensions (MIME), Part One: Format of Internet Message Bodies; see the\nBibliography\n). If set, all other flags is ignored except GetMethod."
+      ],
+      [
+        "10",
+        "CanonicalFormat",
+        "(PDF 1.4) If set, any submitted field values representing dates is converted to the standard format described in\n7.9.4, “Dates.”\nNOTE 1 The interpretation of a form field as a date is not specified explicitly in the field itself but only in the JavaScript code that processes it."
+      ],
+      [
+        "11",
+        "ExclNonUserAnnots",
+        "(PDF 1.4) is used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear) and the IncludeAnnotations flag is set. If set, it shall include only those markup annotations whose T entry (see Table 170) matches the name of the current user, as determined by the remote server to which the form is being submitted.\nNOTE 2 The T entry for markup annotations specifies the text label that is displayed in the title bar of the annotation’s pop-up window and is assumed to represent the name of the user authoring the annotation.\nNOTE 3 This allows multiple users to collaborate in annotating a single remote PDF document without affecting one another’s annotations."
+      ],
+      [
+        "12",
+        "ExclFKey",
+        "(PDF 1.4) is used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear). If set, the submitted FDF shall exclude the F entry."
+      ],
+      [
+        "14",
+        "EmbedForm",
+        "(PDF 1.5) is used only when the form is being submitted in Forms Data Format (that is, when both the XFDF and ExportFormat flags are clear). If set, the F entry of the submitted FDF is a file specification containing an embedded file stream representing the PDF file from which the FDF is being submitted."
+      ]
+    ]
+  }
+}

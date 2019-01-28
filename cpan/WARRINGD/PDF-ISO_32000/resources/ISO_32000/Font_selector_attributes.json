@@ -1,0 +1,39 @@
+{
+  "table": {
+    "caption": "Table 332 – Font selector attributes",
+    "head": [
+      "Attribute",
+      "Description"
+    ],
+    "rows": [
+      [
+        "FontFamily",
+        "A string specifying the preferred font family name. Derived from the FontFamilyentry in the font descriptor (see Table 122)."
+      ],
+      [
+        "GenericFontFamily",
+        "A general font classification, used if FontFamily is not found. Derived from the font descriptor’s Flags entry as follows:\nSerif Chosen if the Serif flag is set and the FixedPitch and Script flags are not set\nSansSerif Chosen if the FixedPitch, Script and Serif flags are all not set\nCursive Chosen if the Script flag is set and the FixedPitch flag is not set\nMonospace Chosen if the FixedPitch flag is set\nNOTE The values Decorative and Symbol cannot be derived"
+      ],
+      [
+        "FontSize",
+        "The size of the font: a positive number specifying the height of the typeface in points. Derived from the a, b, c, and d fields of the current text matrix."
+      ],
+      [
+        "FontStretch",
+        "The stretch value of the font. Derived from FontStretch in the font descriptor (see Table 122)."
+      ],
+      [
+        "FontStyle",
+        "The italicization value of the font. It is Italic if the Italic flag is set in the Flags field of the font descriptor; otherwise, it is Normal."
+      ],
+      [
+        "FontVariant",
+        "The small-caps value of the font. It is SmallCaps if the SmallCap flag is set in the Flags field of the font descriptor; otherwise, it is Normal."
+      ],
+      [
+        "FontWeight",
+        "The weight (thickness) value of the font. Derived from FontWeight in the font descriptor (see Table 122).\nThe ForceBold flag and the StemV field is not used to set this attribute."
+      ]
+    ]
+  }
+}

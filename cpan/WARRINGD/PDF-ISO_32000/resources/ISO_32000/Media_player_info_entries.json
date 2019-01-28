@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 291 – Entries in a media player info dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is MediaPlayerInfo for a media player info dictionary."
+      ],
+      [
+        "PID",
+        "dictionary",
+        "(Required) A software identifier dictionary (see 13.2.7.4, “Software Identifier Dictionary”) that shall specify the player name, versions, and operating systems to which this media player info dictionary applies."
+      ],
+      [
+        "MH",
+        "dictionary",
+        "(Optional) A dictionary containing entries that is honored for this dictionary to be considered viable\nCurrently, there are no defined entries for this dictionary"
+      ],
+      [
+        "BE",
+        "dictionary",
+        "(Optional) A dictionary containing entries that need only be honored in a “best effort” sense.\nCurrently, there are no defined entries for this dictionary"
+      ]
+    ]
+  }
+}

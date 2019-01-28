@@ -1,0 +1,132 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        38
+        –  Entries common to all function dictionaries 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            FunctionType
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The function type: 
+          </P>
+          <P>
+            0  Sampled function 
+          </P>
+          <P>
+            2  Exponential interpolation function 
+          </P>
+          <P>
+            3  Stitching function 
+          </P>
+          <P>
+            4  PostScript calculator function 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Domain
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) An array of 2
+            
+            m numbers, where m shall be the number of input values. For each i from 0 to m
+            
+            1, Domain
+            2i
+             shall be less than or equal to Domain
+            2i1
+            , and the ith input value, x
+            i
+            , shall lie in the interval Domain
+            2i
+            
+            x
+            i
+            
+            Domain
+            2i1
+            . Input values outside the declared domain shall be clipped to the nearest boundary value. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Range
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required for type 0 and type 4 functions, optional otherwise; see below) An array of 2
+            
+            n numbers, where n shall be the number of output values. For each j from 0 to n
+            
+            1, Range
+            2j 
+            shall be less than or equal to Range
+            2j+1
+            , and the jth output value, y
+            j
+            , shall lie in the interval Range
+            2j
+             
+            y
+            j
+            
+            Range
+            2j+1
+            . Output values outside the declared range shall be clipped to the nearest boundary value. If this entry is absent, no clipping shall be done. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

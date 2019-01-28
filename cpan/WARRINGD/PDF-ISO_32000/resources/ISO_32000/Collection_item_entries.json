@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 48 – Entries in a collection item dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is CollectionItem for a collection item dictionary."
+      ],
+      [
+        "Other keys",
+        "text string, date, number or dictionary",
+        "(Optional) Provides the data corresponding to the related fields in the collection dictionary. If the entry is a dictionary, then it is a collection subitem dictionary (see Table 49).\nThe type of each entry shall match the type of data identified by the collection field dictionary (see Table 157) referenced by the same key in the collection schema dictionary (see Table 156).\nEXAMPLE If the corresponding collection field has a Subtype entry of S, then the entry is a text string.\nA single collection item dictionary may contain multiple entries, with one entry representing each key (see"
+      ]
+    ]
+  }
+}

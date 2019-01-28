@@ -1,0 +1,100 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        27
+        –  Additional crypt filter dictionary entries for public-key security handlers 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Recipients
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array or string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) If the crypt filter is referenced from StmF or StrF in the encryption dictionary, this entry shall be an array of byte strings, where each string shall be a binary-encoded PKCS7 object that shall list recipients that have been granted equal access rights to the document. The enveloped data contained in the PKCS7 object shall include both a 20-byte seed value that shall be used to compute the encryption key (see 
+            <Link>
+              7.6.4.3, "Public-Key Encryption Algorithms"
+            </Link>
+            ) 
+            followed by 4 bytes of permissions settings (see 
+            <Link>
+              Ta b l e
+              22
+            </Link>
+            ) that shall 
+            apply to the recipient list. There shall be only one object per unique set of access permissions. If a recipient appears in more than one list, the permissions used shall be those in the first matching list. 
+          </P>
+          <P>
+            If the crypt filter is referenced from a Crypt filter decode parameter dictionary (see 
+            <Link>
+              Table
+              14
+            </Link>
+            ), this entry shall be a string that shall be a 
+            binary-encoded PKCS7 object shall contain a list of all recipients who are permitted to access the corresponding encrypted stream. The enveloped data contained in the PKCS7 object shall be a 20-byte seed value that shall be used to create the encryption key that shall be used by the algorithm in 
+            <Link>
+              "Algorithm 1: Encryption of data using the 
+              RC4 or AES algorithms"
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            EncryptMetadata
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; used only by crypt filters that are referenced from StmF in an encryption dictionary) Indicates whether the document-level metadata stream (see 
+            <Link>
+              14.3.2, "Metadata Streams"
+            </Link>
+            ) shall be encrypted. 
+            Conforming readers shall respect this value when determining whether metadata shall be encrypted. The value of the EncryptMetadata entry is set by the security handler rather than the conforming reader. 
+          </P>
+          <P>
+            Default value: true. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

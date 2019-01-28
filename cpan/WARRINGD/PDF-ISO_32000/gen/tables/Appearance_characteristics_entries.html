@@ -1,0 +1,294 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        189
+        –  Entries in an appearance characteristics dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            R
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The number of degrees by which the widget annotation shall be rotated counterclockwise relative to the page. The value shall be a multiple of 90. Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of numbers that shall be in the range 0.0 to 1.0 specifying the colour of the widget annotation’s border. The number of array elements determines the colour space in which the colour shall bedefined: 
+          </P>
+          <P>
+            0 No colour; transparent 
+          </P>
+          <P>
+            1DeviceGray 
+          </P>
+          <P>
+            3DeviceRGB 
+          </P>
+          <P>
+            4DeviceCMYK 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BG
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of numbers that shall be in the range 0.0 to 1.0 specifying the colour of the widget annotation’s background. The number of array elements shall determine the colour space, as described for BC. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            CA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; button fields only) The widget annotation’s normal caption, which shall be displayed when it is not interacting with the user. 
+          </P>
+          <P>
+            Unlike the remaining entries listed in this Table, which apply only to widget annotations associated with pushbutton fields (see 
+            <Link>
+              Pushbuttons
+            </Link>
+             in 
+            <Link>
+              12.7.4.2, “Button Fields”
+            </Link>
+            ), the CA entry may be used with any type of 
+            button field, including check boxes (see 
+            <Link>
+              Check Boxes
+            </Link>
+             in 
+            <Link>
+              12.7.4.2, “Button 
+              Fields”
+            </Link>
+            ) and radio buttons (
+            <Link>
+              Radio Buttons
+            </Link>
+             in 
+            <Link>
+              12.7.4.2, “Button Fields”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; pushbutton fields only) The widget annotation’s rollover caption, which shall be displayed when the user rolls the cursor into its active area without pressing the mouse button. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; pushbutton fields only) The widget annotation’s alternate (down) caption, which shall be displayed when the mouse button is pressed within its active area. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            I
+          </P>
+        </TD>
+        <TD>
+          <P>
+            stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; pushbutton fields only; shall be an indirect reference) A form XObject defining the widget annotation’s normal icon, which shall be displayed when it is not interacting with the user. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RI
+          </P>
+        </TD>
+        <TD>
+          <P>
+            stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; pushbutton fields only; shall be an indirect reference) A form XObject defining the widget annotation’s rollover icon, which shall be displayed when the user rolls the cursor into its active area without pressing the mouse button. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IX
+          </P>
+        </TD>
+        <TD>
+          <P>
+            stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; pushbutton fields only; shall be an indirect reference) A form XObject defining the widget annotation’s alternate (down) icon, which shall be displayed when the mouse button is pressed within its active area. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            IF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; pushbutton fields only) An icon fit dictionary (see 
+            <Link>
+              Table
+              247
+            </Link>
+            ) 
+            specifying how the widget annotation’s icon shall be displayed within its annotation rectangle. If present, the icon fit dictionary shall apply to all of the annotation’s icons (normal, rollover, and alternate). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; pushbutton fields only) A code indicating where to position the text of the widget annotation’s caption relative to its icon: 
+          </P>
+          <P>
+            0 No icon; caption only 
+          </P>
+          <P>
+            1 No caption; icon only 
+          </P>
+          <P>
+            2 Caption below the icon 
+          </P>
+          <P>
+            3 Caption above the icon 
+          </P>
+          <P>
+            4 Caption to the right of the icon 
+          </P>
+          <P>
+            5 Caption to the left of the icon 
+          </P>
+          <P>
+            6 Caption overlaid directly on the icon 
+          </P>
+          <P>
+            Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

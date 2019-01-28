@@ -1,0 +1,57 @@
+{
+  "table": {
+    "caption": "Table 284 – Entries in a floating window parameters dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is FWParams for a floating window parameters dictionary."
+      ],
+      [
+        "D",
+        "array",
+        "(Required) An array containing two non-negative integers that shall represent the floating window’s width and height, in pixels, respectively. These values shall correspond to the dimensions of the rectangle in which the media shall play, not including such items as title bar and resizing handles."
+      ],
+      [
+        "RT",
+        "integer",
+        "(Optional) The window relative to which the floating window is positioned:\n0 The document window\n1 The application window\n2 The full virtual desktop\n3 The monitor specified by M in the media screen parameters MH or BEdictionary (see 9.22)\nDefault value: 0."
+      ],
+      [
+        "P",
+        "integer",
+        "(Optional) The location where the floating window (including such items as title bar and resizing handles) is positioned relative to the window specified by RT:\n0 Upper-left corner\n1 Upper center\n2 Upper-right corner\n3Center left\n4Center\n5Center right\n6 Lower-left corner\n7 Lower center\n8 Lower-right corner\nDefault value: 4."
+      ],
+      [
+        "O",
+        "integer",
+        "(Optional) Specifies what shall occur if the floating window is positioned totally or partially offscreen (that is, not visible on any physical monitor):\n0 Take no special action\n1 Move and/or resize the window so that it is on-screen\n2 Consider the object to be non-viable\nDefault value: 1"
+      ],
+      [
+        "T",
+        "boolean",
+        "(Optional) If true, the floating window has a title bar. Default value: true."
+      ],
+      [
+        "UC",
+        "boolean",
+        "(Optional; meaningful only if T is true) If true, the floating window shall include user interface elements that allow a user to close a floating window.\nDefault value: true"
+      ],
+      [
+        "R",
+        "integer",
+        "(Optional) Specifies whether the floating window may be resized by a user:\n0 May not be resized\n1 May be resized only if aspect ratio is preserved\n2 May be resized without preserving aspect ratio\nDefault value: 0."
+      ],
+      [
+        "TT",
+        "array",
+        "(Optional; meaningful only if T is true) An array providing text to display on the floating window’s title bar. See\n14.9.2.4, “Multi-language Text Arrays.”\nIf this entry is not present, the conforming reader may provide default text."
+      ]
+    ]
+  }
+}

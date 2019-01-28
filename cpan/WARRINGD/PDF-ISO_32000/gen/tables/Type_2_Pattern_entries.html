@@ -1,0 +1,150 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        76
+        –  Entries in a Type 2 Pattern Dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be Pattern for a pattern dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            PatternType
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A code identifying the type of pattern that this dictionary describes; shall be 2 for a shading pattern. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Shading
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary or
+            stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A shading object (see below) defining the shading pattern’s gradient fill. The contents of the dictionary shall consist of the entries in 
+            <Link>
+              Table
+              78
+            </Link>
+             and those in one of Tables 
+            <Link>
+              79
+            </Link>
+             to 
+            <Link>
+              84
+            </Link>
+            . 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Matrix
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of six numbers specifying the pattern matrix (see 
+            <Link>
+              8.7.2, "General Properties of Patterns"
+            </Link>
+            ). Default value: the identity 
+            matrix [
+            1
+            0
+            0
+            1
+            0
+            0
+            ]. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ExtGState
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A graphics state parameter dictionary (see 
+            <Link>
+              8.4.5, "Graphics 
+              State Parameter Dictionaries"
+            </Link>
+            ) containing graphics state parameters to 
+            be put into effect temporarily while the shading pattern is painted. Any parameters that are so specified shall be inherited from the graphics state that was in effect at the beginning of the content stream in which the pattern is defined as a resource. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

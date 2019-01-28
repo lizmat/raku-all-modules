@@ -1,0 +1,78 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        350
+        –  Entries in the Web Capture information dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The Web Capture version number. The version number shall be 1.0 in a conforming file. 
+          </P>
+          <P>
+            This value shall be a single real number, not a major and minor version number. 
+          </P>
+          <P>
+            EXAMPLE A version number of 1.2 would be considered greater than 1.15. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            C
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of indirect references to Web Capture command dictionaries (see 
+            <Link>
+              14.10.5.3, “Command Dictionaries”
+            </Link>
+            ) describing commands that were used in 
+            building the PDF file. The commands shall appear in the array in the order in which they were executed in building the file. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

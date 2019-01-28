@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 205 – Additional entries specific to a thread action",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; is Thread for a thread action."
+      ],
+      [
+        "F",
+        "file specification",
+        "(Optional) The file containing the thread. If this entry is absent, the thread is in the current file."
+      ],
+      [
+        "D",
+        "dictionary, integer, or text string",
+        "(Required) The destination thread, specified in one of the following forms:\nAn indirect reference to a thread dictionary (see 12.4.3, “Articles”). In this case, the thread is in the current file.\nThe index of the thread within the Threads array of its document’s Catalog (see 7.7.2, “Document Catalog”). The first thread in the array has index 0.\nThe title of the thread as specified in its thread information dictionary (see Table 160). If two or more threads have the same title, the one appearing first in the document Catalog’s Threads array shall beused."
+      ],
+      [
+        "B",
+        "dictionary or integer",
+        "(Optional) The bead in the destination thread, specified in one of the following forms:\nAn indirect reference to a bead dictionary (see 12.4.3, “Articles”). In this case, the thread is in the current file.\nThe index of the bead within its thread. The first bead in a thread has index 0."
+      ]
+    ]
+  }
+}

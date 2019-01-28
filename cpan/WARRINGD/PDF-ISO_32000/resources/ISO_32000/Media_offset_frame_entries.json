@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 287 – Additional entries in a media offset frame dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "F",
+        "integer",
+        "(Required) Shall specify a frame within a media object. Frame numbers begin at 0; negative frame numbers are not allowed."
+      ]
+    ]
+  }
+}

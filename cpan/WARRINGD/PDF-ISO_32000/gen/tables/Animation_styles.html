@@ -1,0 +1,93 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        302
+        –  Animation styles 
+        <Span/>
+      </P>
+    </Caption>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            None
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Keyframe animations shall not be driven directly by the conforming reader. This value shall be used by documents that are intended to drive animations through an alternate means, such as JavaScript. 
+          </P>
+          <P>
+            The remaining entries in the animation style dictionary shall be ignored.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Linear
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Keyframe animations shall be driven linearly from beginning to end. This animation style results in a repetitive playthrough of the animation, such as in a walking motion.
+          </P>
+          <P/>
+          <P>
+            t = (m(t
+            a
+             - t
+            0
+            ) + r
+            0
+            ) % (r
+            1
+             - r
+            0
+            )
+          </P>
+          <P>
+            p = (r
+            1
+             - r
+            0
+            ) / m
+          </P>
+          <P>
+            The “%” symbol indicates the modulus operator. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Oscillating
+          </P>
+        </TD>
+        <TD>
+          <P>
+            Keyframe animations shall oscillate along their time range. This animation style results in a back-and-forth playing of the animation, such as exploding or collapsing parts.
+          </P>
+          <P/>
+          <P>
+            t = (0.5)(r
+            1
+             - r
+            0
+            )(1 - cos(m(t
+            a
+             - t
+            0
+            ))) + r
+            0
+          </P>
+          <P>
+            p = 2 * pi / m 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

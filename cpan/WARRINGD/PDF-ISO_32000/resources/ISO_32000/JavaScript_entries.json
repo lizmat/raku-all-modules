@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 245 – Entries in the JavaScript dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Before",
+        "text string or text stream",
+        "(Optional) A text string or text stream containing a JavaScript script that is executed just before the FDF file is imported."
+      ],
+      [
+        "After",
+        "text string or text stream",
+        "(Optional) A text string or text stream containing a JavaScript script that is executed just after the FDF file is imported."
+      ],
+      [
+        "AfterPermsReady",
+        "text string or text stream",
+        "(Optional; PDF 1.6) A text string or text stream containing a JavaScript script that is executed after the FDF file is imported and the usage rights in the PDF document have been determined (see 12.8.2.3, “UR”).\nVerification of usage rights requires the entire file to be present, in which case execution of this script is deferred until that requirement is met."
+      ],
+      [
+        "Doc",
+        "array",
+        "(Optional) An array defining additional JavaScript scripts that is added to those defined in the JavaScript entry of the document’s name dictionary (see 7.7.4, “Name Dictionary”). The array shall contain an even number of elements, organized in pairs. The first element of each pair is a name and the second is a text string or text stream defining the script corresponding to that name. Each of the defined scripts is added to those already defined in the name dictionary and shall then be executed before the script defined in the Before entry is executed.\nNOTE As described in\n12.6.4.16, “JavaScript Actions,”\nthese scripts are used to define JavaScript functions for use by other scripts in the document."
+      ]
+    ]
+  }
+}

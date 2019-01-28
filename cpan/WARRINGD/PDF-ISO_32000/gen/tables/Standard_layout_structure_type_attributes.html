@@ -1,0 +1,311 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        343
+        –  Standard layout attributes common to all standard structure types 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Placement
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable) The positioning of the element with respect to the enclosing reference area and other content: 
+          </P>
+          <P>
+            Block Stacked in the block-progression direction within an enclosing reference area or parent BLSE. 
+          </P>
+          <P>
+            Inline Packed in the inline-progression direction within an enclosing BLSE. 
+          </P>
+          <P>
+            Before Placed so that the before edge of the element’s allocation rectangle (see 
+            <Link>
+              “Content and Allocation Rectangles”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ) coincides with that of the 
+            nearest enclosing reference area. The element may float, if necessary, to achieve the specified placement. The element shall be treated as a block occupying the full extent of the enclosing reference area in the inline direction. Other content shall be stacked so as to begin at the after edge of the element’s allocation rectangle. 
+          </P>
+          <P>
+            Start Placed so that the start edge of the element’s allocation rectangle (see 
+            <Link>
+              “Content and Allocation Rectangles”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ) coincides with that of the 
+            nearest enclosing reference area. The element may float, if necessary, to achieve the specified placement. Other content that would intrude into the element’s allocation rectangle shall be laid out as a runaround. 
+          </P>
+          <P>
+            End Placed so that the end edge of the element’s allocation rectangle (see 
+            <Link>
+              “Content and Allocation Rectangles”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ) coincides with that of the 
+            nearest enclosing reference area. The element may float, if necessary, to achieve the specified placement. Other content that would intrude into the element’s allocation rectangle shall be laid out as a runaround. 
+          </P>
+          <P>
+            When applied to an ILSE, any value except Inline shall cause the element to be treated as a BLSE instead. Default value: Inline. 
+          </P>
+          <P>
+            Elements with Placement values of Before, Start, or End shall be removed from the normal stacking or packing process and allowed to float to the specified edge of the enclosing reference area or parent BLSE. Multiple such floating elements may be positioned adjacent to one another against the specified edge of the reference area or placed serially against the edge, in the order encountered. Complex cases such as floating elements that interfere with each other or do not fit on the same page may be handled differently by different conforming readers. Tagged PDF merely identifies the elements as floating and indicates their desired placement. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            WritingMode
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable) The directions of layout progression for packing of ILSEs (inline progression) and stacking of BLSEs (block progression): 
+          </P>
+          <P>
+            LrTb Inline progression from left to right; block progression from top to bottom. This is the typical writing mode for Western writing systems. 
+          </P>
+          <P>
+            RlTb Inline progression from right to left; block progression from top to bottom. This is the typical writing mode for Arabic and Hebrew writing systems. 
+          </P>
+          <P>
+            TbRl Inline progression from top to bottom; block progression from right to left. This is the typical writing mode for Chinese and Japanese writing systems. 
+          </P>
+          <P>
+            The specified layout directions shall apply to the given structure element and all of its descendants to any level of nesting. Default value: LrTb. 
+          </P>
+          <P>
+            For elements that produce multiple columns, the writing mode defines the direction of column progression within the reference area: the inline direction determines the stacking direction for columns and the default flow order of text from column to column. For tables, the writing mode controls the layout of rows and columns: table rows (structure type TR) shall be stacked in the block direction, cells within a row (structure type TD) in the inline direction. 
+          </P>
+          <P>
+            The inline-progression direction specified by the writing mode is subject to local override within the text being laid out, as described in Unicode Standard Annex 9, The Bidirectional Algorithm, available from the Unicode Consortium (see the 
+            <Link>
+              Bibliography
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BackgroundColor
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable; PDF 1.5) The colour to be used to fill the background of a table cell or any element’s content rectangle (possibly adjusted by the Padding attribute). The value shall be an array of three numbers in the range 0.0 to 1.0, representing the red, green, and blue values, respectively, of an RGB colour space. If this attribute is not specified, the element shall be treated as if it were transparent.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BorderColor
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) The colour of the border drawn on the edges of a table cell or any element’s content rectangle (possibly adjusted by the Padding attribute). The value of each edge shall be an array of three numbers in the range 0.0 to 1.0, representing the red, green, and blue values, respectively, of an RGB colour space. There are two forms:
+          </P>
+          <P>
+            A single array of three numbers representing the RGB values to apply to all four edges.
+          </P>
+          <P>
+            An array of four arrays, each specifying the RGB values for one edge of the border, in the order of the before, after, start, and end edges. A value of null for any of the edges means that it shall not be drawn.
+          </P>
+          <P>
+            If this attribute is not specified, the border colour for this element shall be the current text fill colour in effect at the start of its associated content.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BorderStyle
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array or name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable; PDF 1.5) The style of an element’s border. Specifies the stroke pattern of each edge of a table cell or any element’s content rectangle (possibly adjusted by the Paddingattribute). There are two forms:
+          </P>
+          <P>
+            • A name from the list below representing the border style to apply to all four edges.
+          </P>
+          <P>
+            • An array of four entries, each entry specifying the style for one edge of the border in the order of the before, after, start, and end edges. A value of null for any of the edges means that it shall not be drawn.
+            <P>
+              None No border. Forces the computed value of BorderThicknessto be 0.
+            </P>
+            <P>
+              Hidden Same as None, except in terms of border conflict resolution for table elements.
+            </P>
+            <P>
+              Dotted The border is a series of dots.
+            </P>
+            <P>
+              Dashed The border is a series of short line segments.
+            </P>
+            <P>
+              Solid The border is a single line segment.
+            </P>
+            <P>
+              Double The border is two solid lines. The sum of the two lines and the space between them equals the value of BorderThickness.
+            </P>
+            <P>
+              Groove The border looks as though it were carved into the canvas.
+            </P>
+            <P>
+              Ridge The border looks as though it were coming out of the canvas (the opposite of Groove).
+            </P>
+            <P>
+              Inset The border makes the entire box look as though it were embedded in the canvas.
+            </P>
+            <P>
+              Outset The border makes the entire box look as though it were coming out of the canvas (the opposite of Inset).
+            </P>
+            <P>
+              Default value: None
+            </P>
+            <P>
+              All borders shall be drawn on top of the box’s background. The colour of borders drawn for values of Groove, Ridge, Inset, and Outset shall depend on the structure element’s BorderColor attribute and the colour of the background over which the border is being drawn.
+            </P>
+          </P>
+          <P>
+            NOTE Conforming HTML applications may interpret Dotted, Dashed, Double, Groove, Ridge, Inset, and Outset to be Solid.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BorderThickness
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number or array 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) The thickness of the border drawn on the edges of a table cell or any element’s content rectangle (possibly adjusted by the Padding attribute). The value of each edge shall be a positive number in default user space units representing the border’s thickness (a value of 0 indicates that the border shall not be drawn). There are two forms:
+          </P>
+          <P>
+            A number representing the border thickness for all four edges.
+          </P>
+          <P>
+            An array of four entries, each entry specifying the thickness for one edge of the border, in the order of the before, after, start, and end edges. A value of null for any of the edges means that it shall not be drawn.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Padding
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number or array 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable; PDF 1.5) Specifies an offset to account for the separation between the element’s content rectangle and the surrounding border (see 
+            <Link>
+              “Content and Allocation Rectangles”
+            </Link>
+             in 
+            <Link>
+              14.8.5.4, “Layout Attributes”
+            </Link>
+            ). A positive value enlarges the 
+            background area; a negative value trims it, possibly allowing the border to overlap the element’s text or graphic.
+          </P>
+          <P>
+            The value shall be either a single number representing the width of the padding, in default user space units, that applies to all four sides or a 4-element array of numbers representing the padding width for the before, after, start, and end edge, respectively, of the content rectangle. Default value: 0.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Color
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; inheritable; PDF 1.5) The colour to be used for drawing text and the default value for the colour of table borders and text decorations. The value shall be an array of three numbers in the range 0.0 to 1.0, representing the red, green, and blue values, respectively, of an RGB colour space. If this attribute is not specified, the border colour for this element shall be the current text fill colour in effect at the start of its associated content.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

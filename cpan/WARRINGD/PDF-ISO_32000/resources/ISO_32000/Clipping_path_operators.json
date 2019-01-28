@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 61 – Clipping Path Operators",
+    "head": [
+      "Operands",
+      "Operator",
+      "Description"
+    ],
+    "rows": [
+      [
+        "—",
+        "W",
+        "Modify the current clipping path by intersecting it with the current path, using the nonzero winding number rule to determine which regions lie inside the clipping path."
+      ],
+      [
+        "—",
+        "W*",
+        "Modify the current clipping path by intersecting it with the current path, using the even-odd rule to determine which regions lie inside the clipping path."
+      ]
+    ]
+  }
+}

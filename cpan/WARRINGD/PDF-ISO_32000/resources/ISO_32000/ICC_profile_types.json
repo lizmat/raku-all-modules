@@ -1,0 +1,19 @@
+{
+  "table": {
+    "caption": "Table 68 – ICC Profile Types",
+    "head": [
+      "Header Field",
+      "Required Value"
+    ],
+    "rows": [
+      [
+        "deviceClass",
+        "icSigInputClass ('scnr') icSigDisplayClass ('mntr') icSigOutputClass ('prtr') icSigColorSpaceClass ('spac')"
+      ],
+      [
+        "colorSpace",
+        "icSigGrayData ('GRAY') icSigRgbData ('RGB ') icSigCmykData ('CMYK') icSigLabData ('Lab ')"
+      ]
+    ]
+  }
+}

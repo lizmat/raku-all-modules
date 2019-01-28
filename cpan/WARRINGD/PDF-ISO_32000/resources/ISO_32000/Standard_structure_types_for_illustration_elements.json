@@ -1,0 +1,23 @@
+{
+  "table": {
+    "caption": "Table 340 – Standard structure types for illustration elements",
+    "head": [
+      "Structure Type",
+      "Description"
+    ],
+    "rows": [
+      [
+        "Figure",
+        "(Figure) An item of graphical content. Its placement may be specified with the Placement layout attribute (see Link “General Layout Attributes” in 14.8.5.4, “Layout Attributes”)."
+      ],
+      [
+        "Formula",
+        "(Formula) A mathematical formula.\nThis structure type is useful only for identifying an entire content element as a formula. No standard structure types are defined for identifying individual components within the formula. From a formatting standpoint, the formula is treated similarly to a figure (structure type Figure)."
+      ],
+      [
+        "Form",
+        "(Form) A widget annotation representing an interactive form field (see 12.7, “Interactive Forms”). If the element contains a Role attribute, it may contain content items that represent the value of the (non-interactive) form field. If the element omits a Role attribute (see Table 348), it has only one child: an object reference (see 14.7.4.3, “PDF Objects as Content Items”) identifying the widget annotation. The annotations’ appearance stream (see 12.5.5, “Appearance Streams”) shall describe the appearance of the form element."
+      ]
+    ]
+  }
+}

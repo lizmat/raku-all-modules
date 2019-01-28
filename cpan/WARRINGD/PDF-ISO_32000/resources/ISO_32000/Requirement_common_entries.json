@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 264 – Entries common to all requirement dictionaries",
+    "head": [
+      "Key",
+      "Type",
+      "Description"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes. If present, is Requirement for a requirement dictionary."
+      ],
+      [
+        "S",
+        "name",
+        "(Required) The type of requirement that this dictionary describes. The value is EnableJavaScripts."
+      ],
+      [
+        "RH",
+        "array",
+        "(Optional) An array of requirement handler dictionaries (see Table 265). This array lists the requirement handlers that is disabled (not executed) if the conforming reader can check the requirement specified in the S entry."
+      ]
+    ]
+  }
+}

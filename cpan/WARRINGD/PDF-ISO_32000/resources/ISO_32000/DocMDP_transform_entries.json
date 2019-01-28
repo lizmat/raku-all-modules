@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 254 – Entries in the DocMDP transform parameters dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is TransformParams for a transform parameters dictionary."
+      ],
+      [
+        "P",
+        "number",
+        "(Optional) The access permissions granted for this document. Valid values is:\n1 No changes to the document is permitted; any change to the document shall invalidate the signature.\n2 Permitted changes is filling in forms, instantiating page templates, and signing; other changes shall invalidate the signature.\n3 Permitted changes is the same as for 2, as well as annotation creation, deletion, and modification; other changes shall invalidate the signature.\nDefault value: 2."
+      ],
+      [
+        "V",
+        "name",
+        "(Optional) The DocMDP transform parameters dictionary version. The only valid value is 1.2.\nNOTE this value is a name object, not a number.\nDefault value: 1.2."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "table": {
+    "caption": "Table 341 – Standard attribute owners",
+    "head": [
+      "Owner",
+      "Description"
+    ],
+    "rows": [
+      [
+        "Layout",
+        "Attributes governing the layout of content"
+      ],
+      [
+        "List",
+        "Attributes governing the numbering of lists"
+      ],
+      [
+        "PrintField",
+        "(PDF 1.7) Attributes governing Form structure elements for non-interactive form fields"
+      ],
+      [
+        "Table",
+        "Attributes governing the organization of cells in tables"
+      ],
+      [
+        "XML-1.00",
+        "Additional attributes governing translation to XML, version 1.00"
+      ],
+      [
+        "HTML-3.20",
+        "Additional attributes governing translation to HTML, version 3.20"
+      ],
+      [
+        "HTML-4.01",
+        "Additional attributes governing translation to HTML, version 4.01"
+      ],
+      [
+        "OEB-1.00",
+        "Additional attributes governing translation to OEB, version 1.0"
+      ],
+      [
+        "RTF-1.05",
+        "Additional attributes governing translation to Microsoft Rich Text Format, version 1.05"
+      ],
+      [
+        "CSS-1.00",
+        "Additional attributes governing translation to a format using CSS, version 1.00"
+      ],
+      [
+        "CSS-2.00",
+        "Additional attributes governing translation to a format using CSS, version 2.00"
+      ]
+    ]
+  }
+}

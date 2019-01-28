@@ -1,0 +1,52 @@
+{
+  "table": {
+    "caption": "Table 33 – Entries in a resource dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "ExtGState",
+        "dictionary",
+        "(Optional) A dictionary that maps resource names to graphics state parameter dictionaries (see 8.4.5, \"Graphics State Parameter Dictionaries\")."
+      ],
+      [
+        "ColorSpace",
+        "dictionary",
+        "(Optional) A dictionary that maps each resource name to either the name of a device-dependent colour space or an array describing a colour space (see 8.6, \"Colour Spaces\")."
+      ],
+      [
+        "Pattern",
+        "dictionary",
+        "(Optional) A dictionary that maps resource names to pattern objects (see 8.7, \"Patterns\")."
+      ],
+      [
+        "Shading",
+        "dictionary",
+        "(Optional; PDF 1.3) A dictionary that maps resource names to shading dictionaries (see 8.7.4.3, \"Shading Dictionaries\")."
+      ],
+      [
+        "XObject",
+        "dictionary",
+        "(Optional) A dictionary that maps resource names to external objects (see 8.8, \"External Objects\")."
+      ],
+      [
+        "Font",
+        "dictionary",
+        "(Optional) A dictionary that maps resource names to font dictionaries (see clause 9, \"Text\")."
+      ],
+      [
+        "ProcSet",
+        "array",
+        "(Optional) An array of predefined procedure set names (see 14.2, \"Procedure Sets\")."
+      ],
+      [
+        "Properties",
+        "dictionary",
+        "(Optional; PDF 1.2) A dictionary that maps resource names to property list dictionaries for marked content (see 14.6.2, \"Property Lists\")."
+      ]
+    ]
+  }
+}

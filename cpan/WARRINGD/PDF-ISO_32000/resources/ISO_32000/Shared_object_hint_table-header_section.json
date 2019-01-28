@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table F. 5 – Shared object hint table, header section",
+    "head": [
+      "item",
+      "Size (bits)",
+      "Description"
+    ],
+    "rows": [
+      [
+        "1",
+        "32",
+        "The object number of the first object in the shared objects section (Link part 8)."
+      ],
+      [
+        "2",
+        "32",
+        "The location of the first object in the shared objects section."
+      ],
+      [
+        "3",
+        "32",
+        "The number of shared object entries for the first page (including nonshared objects, as noted above)."
+      ],
+      [
+        "4",
+        "32",
+        "The number of shared object entries for the shared objects section, including the number of shared object entries for the first page (that is, the value of item 3)."
+      ],
+      [
+        "5",
+        "16",
+        "The number of bits needed to represent the greatest number of objects in a shared object group."
+      ],
+      [
+        "6",
+        "32",
+        "The least length of a shared object group in bytes."
+      ],
+      [
+        "7",
+        "16",
+        "The number of bits needed to represent the difference between the greatest and least length of a shared object group, in bytes."
+      ]
+    ]
+  }
+}

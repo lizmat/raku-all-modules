@@ -1,0 +1,282 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        153
+        –  Entries in an outline item dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Title
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text
+            string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The text that shall be displayed on the screen for this item. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Parent
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required; shall be an indirect reference) The parent of this item in the outline hierarchy. The parent of a top-level item shall be the outline dictionary itself. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Prev
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required for all but the first item at each level; shall be an indirect reference) The previous item at this outline level. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Next
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required for all but the last item at each level; shall be an indirect reference) The next item at this outline level. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            First
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if the item has any descendants; shall be an indirect reference) The first of this item’s immediate children in the outline hierarchy. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Last
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if the item has any descendants; shall be an indirect reference) The last of this item’s immediate children in the outline hierarchy. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Count
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if the item has any descendants) If the outline item is open, Count is the sum of the number of visible descendent outline items at all levels. The number of visible descendent outline items shall bedetermined by the following recursive process:
+          </P>
+          <P>
+            Step 1. Initialize Count to zero.
+          </P>
+          <P>
+            Step 2. Add to Count the number of immediate children. During repetitions of this step, update only the Count of the original outline item.
+          </P>
+          <P>
+            Step 3. For each of those immediate children whose Count is positive and non-zero, repeat steps 2 and 3. 
+          </P>
+          <P>
+            If the outline item is closed, Count is negative and its absolute value is the number of descendants that would be visible if the outline item were opened.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Dest
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name, 
+            byte string, or array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; shall not be present if an A entry is present) The destination that shall be displayed when this item is activated (see 
+            <Link>
+              12.3.2, 
+              “Destinations”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            A
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.1; shall not be present if a Dest entry is present) The action that shall be performed when this item is activated (see 
+            <Link>
+              12.6, 
+              “Actions”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            SE
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.3; shall be an indirect reference) The structure element to which the item refers (see 
+            <Link>
+              14.7.2, “Structure Hierarchy”
+            </Link>
+            ). 
+          </P>
+          <P>
+            (PDF
+            1.0) An item may also specify a destination (Dest) corresponding to an area of a page where the contents of the designated structure element are displayed. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            C
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) An array of three numbers in the range 0.0 to 1.0, representing the components in the DeviceRGB colour space of the colour that shall be used for the outline entry’s text. Default value: [
+            0.0
+            0.0
+            0.0
+            ]. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.4) A set of flags specifying style characteristics for displaying the outline item’s text (see 
+            <Link>
+              Table
+              154
+            </Link>
+            ). Default value: 0. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,102 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        254
+        –  Entries in the DocMDP transform parameters dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be TransformParams for a transform parameters dictionary. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            P
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The access permissions granted for this document. Valid values shall be:
+          </P>
+          <P>
+            1 No changes to the document shall be permitted; any change to the document shall invalidate the signature. 
+          </P>
+          <P>
+            2 Permitted changes shall be filling in forms, instantiating page templates, and signing; other changes shall invalidate the signature. 
+          </P>
+          <P>
+            3 Permitted changes shall be the same as for 2, as well as annotation creation, deletion, and modification; other changes shall invalidate the signature.
+          </P>
+          <P>
+            Default value: 2. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The DocMDP transform parameters dictionary version. The only valid value shall be 1.2. 
+          </P>
+          <P>
+            NOTE this value is a name object, not a number. 
+            <P>
+              Default value: 1.2. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

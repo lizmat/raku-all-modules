@@ -1,0 +1,121 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        245
+        –  Entries in the JavaScript dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Before
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string or text stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A text string or text stream containing a JavaScript script that shall be executed just before the FDF file is imported. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            After
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string or text stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A text string or text stream containing a JavaScript script that shall be executed just after the FDF file is imported. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AfterPermsReady
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string or text stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.6) A text string or text stream containing a JavaScript script that shall be executed after the FDF file is imported and the usage rights in the PDF document have been determined (see 
+            <Link>
+              12.8.2.3, “UR”
+            </Link>
+            ). 
+          </P>
+          <P>
+            Verification of usage rights requires the entire file to be present, in which case execution of this script shall be deferred until that requirement is met. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Doc
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array defining additional JavaScript scripts that shall be added to those defined in the JavaScript entry of the document’s name dictionary (see 
+            <Link>
+              7.7.4, “Name Dictionary”
+            </Link>
+            ). The 
+            array shall contain an even number of elements, organized in pairs. The first element of each pair shall be a name and the second shall be a text string or text stream defining the script corresponding to that name. Each of the defined scripts shall be added to those already defined in the name dictionary and shall then be executed before the script defined in the Before entry is executed. 
+          </P>
+          <P>
+            NOTE As described in 
+            <Link>
+              12.6.4.16, “JavaScript Actions,”
+            </Link>
+             these 
+            scripts are used to define JavaScript functions for use by other scripts in the document. 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

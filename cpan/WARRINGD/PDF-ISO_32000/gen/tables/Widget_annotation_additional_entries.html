@@ -1,0 +1,214 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        188
+        –  Additional entries specific to a widget annotation 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of annotation that this dictionary describes; shall be Widget for a widget annotation. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            H
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The annotation’s highlighting mode, the visual effect that shall be used when the mouse button is pressed or held down inside its active area: 
+          </P>
+          <P>
+            N (None) No highlighting. 
+          </P>
+          <P>
+            I (Invert) Invert the contents of the annotation rectangle. 
+          </P>
+          <P>
+            O (Outline) Invert the annotation’s border. 
+          </P>
+          <P>
+            P (Push) Display the annotation’s down appearance, if any (see 
+            <Link>
+              12.5.5, “Appearance Streams”
+            </Link>
+            ). If no down appearance is defined, 
+            the contents of the annotation rectangle shall be offset to appear as if it were being pushed below the surface of the page. 
+          </P>
+          <P>
+            T (Toggle) Same as P (which is preferred). 
+          </P>
+          <P>
+            A highlighting mode other than P shall override any down appearance defined for the annotation. Default value: I. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            MK
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An appearance characteristics dictionary (see 
+            <Link>
+              Table
+              189
+            </Link>
+            ) that 
+            shall be used in constructing a dynamic appearance stream specifying the annotation’s visual presentation on the page. 
+          </P>
+          <P>
+            The name MK for this entry is of historical significance only and has no direct meaning. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            A
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.1) An action that shall be performed when the annotation is activated (see 
+            <Link>
+              12.6, “Actions”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF
+            1.2) An additional-actions dictionary defining the annotation’s behaviour in response to various trigger events (see 
+            <Link>
+              12.6.3, 
+              “Trigger Events”
+            </Link>
+            ). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            BS
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.2) A border style dictionary (see 
+            <Link>
+              Table
+              166
+            </Link>
+            ) specifying 
+            the width and dash pattern that shall be used in drawing the annotation’s border. 
+          </P>
+          <P>
+            The annotation dictionary’s AP entry, if present, shall take precedence over the L and BS entries; see 
+            <Link>
+              Ta b l e
+              168
+            </Link>
+             and 
+            <Link>
+              12.5.5, “Appearance 
+              Streams.”
+            </Link>
+            <Span/>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Parent
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required if this widget annotation is one of multiple children in a field; absent otherwise) An indirect reference to the widget annotation’s parent field. A widget annotation may have at most one parent; that is, it can be included in the Kids array of at most one field
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

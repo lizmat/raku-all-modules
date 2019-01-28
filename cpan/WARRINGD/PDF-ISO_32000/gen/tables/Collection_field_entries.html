@@ -1,0 +1,190 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        157
+        –  Entries in a collection field dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be CollectionField for a collection field dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The subtype of collection field or file-related field that this dictionary describes. This entry identifies the type of data that shall be stored in the field. 
+          </P>
+          <P>
+            The following values identify the types of fields in the collection item or collection subitem dictionary:
+          </P>
+          <P>
+            SA text field. The field data shall be stored as a PDF text string.
+          </P>
+          <P>
+            D A date field. The field data shall be stored as a PDF date string.
+          </P>
+          <P>
+            N A number field. The field data shall be stored as a PDF number.
+          </P>
+          <P>
+            The following values identify the types of file-related fields:
+          </P>
+          <P>
+            F The field data shall be the file name of the embedded file stream, as identified by the UF entry of the file specification, if present; otherwise by the Fentry of the file specification (see 
+            <Link>
+              Table
+              44
+            </Link>
+            ). 
+          </P>
+          <P>
+            Desc The field data shall be the description of the embedded file stream, as identified by the Descentry in the file specification dictionary (see 
+            <Link>
+              Table
+              44
+            </Link>
+            ).
+          </P>
+          <P>
+            ModDate The field data shall be the modification date of the embedded file stream, as identified by the ModDateentry in the embedded file parameter dictionary (see 
+            <Link>
+              Table
+              46
+            </Link>
+            ).
+          </P>
+          <P>
+            CreationDateThe field data shall be the creation date of the embedded file stream, as identified by the CreationDate entry in the embedded file parameter dictionary (see 
+            <Link>
+              Ta b l e
+              46
+            </Link>
+            ).
+          </P>
+          <P>
+            Size The field data shall be the size of the embedded file, as identified by the Size entry in the embedded file parameter dictionary (see 
+            <Link>
+              Ta b l e
+              46
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            N
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The textual field name that shall be presented to the user by the conforming reader. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            O
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The relative order of the field name in the user interface. Fields shall be sorted by the conforming reader in ascending order.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The initial visibility of the field in the user interface. Default value: true. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            E
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag indicating whether the conforming reader should provide support for editing the field value. Default value: false.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

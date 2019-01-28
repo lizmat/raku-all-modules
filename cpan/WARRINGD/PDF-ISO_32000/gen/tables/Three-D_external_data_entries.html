@@ -1,0 +1,123 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        313
+        –  Entries in an external data dictionary used to markup 3D annotations 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of PDF object that this dictionary describes; if present, shall be ExData for an external data dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The type of external data that this dictionary describes; shall be Markup3D for a 3D comment. The only defined value is Markup3D. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            3DA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary or text string 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The 3D annotation to which this markup annotation applies. The 3D annotation may be specified as a child dictionary or as the name of a 3D annotation, as specified by its NM entry. In the latter case, the 3D annotation and the markup annotation shall be on the same page of the document.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            3DV
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) The 3D view that this markup annotation is associated with. The annotation will be hidden unless this view is currently being used for the 3D annotation specified by 3DA.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            MD5
+          </P>
+        </TD>
+        <TD>
+          <P>
+            byte string 
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A 16-byte string that contains the checksum of the bytes of the 3D stream data that this 3D comment shall be associated with. The checksum shall be calculated by applying the standard MD5 message-digest algorithm (described in Internet RFC 1321, The MD5 Message-Digest Algorithm; see the 
+            <Link>
+              Bibliography
+            </Link>
+            ) to the bytes of the stream data. This value shall be used to 
+            determine if artwork data has changed since this 3D comment was created.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

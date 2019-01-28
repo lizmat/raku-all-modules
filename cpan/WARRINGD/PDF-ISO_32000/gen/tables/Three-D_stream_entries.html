@@ -1,0 +1,185 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        300
+        –  Entries in a 3D stream dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be 3D for a 3D stream. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Subtype
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Required) A name specifying the format of the 3D data contained in the stream. The only valid value is U3D. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            VA
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An array of 3D view dictionaries, each of which specifies a named preset view of this 3D artwork (see 
+            <Link>
+              Section 13.6.4, “3D 
+              Views
+            </Link>
+            ”). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            DV
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (various)
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An object that specifies the default (initial) view of the 3D artwork. It may be a 3D view dictionary (see 
+            <Link>
+              Section 13.6.4, “3D 
+              Views
+            </Link>
+            ”) or one of the following types:
+          </P>
+          <P>
+            • An integer specifying an index into the VA array.
+          </P>
+          <P>
+            • A text string matching the IN entry in one of the views in the VAarray.
+          </P>
+          <P>
+            • A name that indicates the first (F) or last (L) entries in the VAarray.
+            <P>
+              Default value: 0 (the first entry in the VA array) if VA is present; if VA is not present, the default view shall be specified within the 3D stream itself. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Resources
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name tree
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A name tree that maps name strings to objects that may be used by applications or scripts to modify the default view of the 3D artwork. 
+          </P>
+          <P>
+            The names in this name tree shall be text strings so as to be encoded in a way that will be accessible from JavaScript. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            OnInstantiate
+          </P>
+        </TD>
+        <TD>
+          <P>
+            stream
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A JavaScript script that shall be executed when the 3D stream is instantiated. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            AN
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; PDF 1.7) An animation style dictionary indicating the method that conforming readers should use to drive keyframe animations present in this artwork (see 
+            <Link>
+              13.6.3.2, "3D Animation Style 
+              Dictionaries"
+            </Link>
+            ).
+          </P>
+          <P>
+            Default value: an animation style dictionary whose Subtype entry has a value of None.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

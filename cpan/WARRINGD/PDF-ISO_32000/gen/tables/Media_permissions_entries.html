@@ -1,0 +1,96 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        275
+        –  Entries in a media permissions dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Type
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The type of PDF object that this dictionary describes; if present, shall be MediaPermissions for a media permissions dictionary.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            TF
+          </P>
+        </TD>
+        <TD>
+          <P>
+            ASCII string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An ASCII string indicating the circumstances under which it is acceptable to write a temporary file in order to play a media clip. Valid values are:
+          </P>
+          <P>
+            (TEMPNEVER) Never allowed. 
+          </P>
+          <P>
+            (TEMPEXTRACT) Allowed only if the document permissions allow content extraction; when bit 5 of the user access permissions (see 
+            <Link>
+              Table
+              22
+            </Link>
+            ) is set.
+          </P>
+          <P>
+            (TEMPACCESS) Allowed only if the document permissions allow content extraction, including for accessibility purposes; when bits 5 or 10 of the user access permissions (see 
+            <Link>
+              Table
+              22
+            </Link>
+            ) are 
+            set, or both.
+          </P>
+          <P>
+            (TEMPALWAYS) Always allowed.
+          </P>
+          <P>
+            Default value: (TEMPNEVER). 
+          </P>
+          <P>
+            An unrecognized value shall be treated as (TEMPNEVER). 
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

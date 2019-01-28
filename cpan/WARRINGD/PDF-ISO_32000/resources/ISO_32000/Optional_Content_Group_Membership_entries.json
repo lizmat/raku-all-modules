@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 99 – Entries in an Optional Content Membership Dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Required) The type of PDF object that this dictionary describes; is OCMD for an optional content membership dictionary."
+      ],
+      [
+        "OCGs",
+        "dictionary or array",
+        "(Optional) A dictionary or array of dictionaries specifying the optional content groups whose states shall determine the visibility of content controlled by this membership dictionary.\nNull values or references to deleted objects is ignored. If this entry is not present, is an empty array, or contains references only to null or deleted objects, the membership dictionary has no effect on the visibility of any content."
+      ],
+      [
+        "P",
+        "name",
+        "(Optional) A name specifying the visibility policy for content belonging to this membership dictionary. Valid values is:\nAllOn visible only if all of the entries in OCGs are ON\nAnyOn visible if any of the entries in OCGs are ON\nAnyOff visible if any of the entries in OCGs are OFF\nAllOff visible only if all of the entries in OCGs are OFF\nDefault value: AnyOn"
+      ],
+      [
+        "VE",
+        "array",
+        "(Optional; PDF 1.6) An array specifying a visibility expression, used to compute visibility of content based on a set of optional content groups; see discussion below."
+      ]
+    ]
+  }
+}

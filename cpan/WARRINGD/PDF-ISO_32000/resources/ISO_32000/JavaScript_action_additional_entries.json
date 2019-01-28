@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 217 – Additional entries specific to a JavaScript action",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; is JavaScript for a JavaScript action."
+      ],
+      [
+        "JS",
+        "text string or text stream",
+        "(Required) A text string or text stream containing the JavaScript script to be executed.\nPDFDocEncoding or Unicode encoding (the latter identified by the Unicode prefix U+ FEFF) is used to encode the contents of the string or stream."
+      ]
+    ]
+  }
+}

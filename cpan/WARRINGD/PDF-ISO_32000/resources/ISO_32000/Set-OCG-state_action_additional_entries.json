@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 213 – Additional entries specific to a set-OCG-state action",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "S",
+        "name",
+        "(Required) The type of action that this dictionary describes; is SetOCGState for a set-OCG-state action."
+      ],
+      [
+        "State",
+        "array",
+        "(Required) An array consisting of any number of sequences beginning with a name object (ON, OFF, or Toggle) followed by one or more optional content group dictionaries. The array elements is processed from left to right; each name is applied to the subsequent groups until the next name is encountered:\nON sets the state of subsequent groups to ON\nOFF sets the state of subsequent groups to OFF\nToggle reverses the state of subsequent groups."
+      ],
+      [
+        "PreserveRB",
+        "boolean",
+        "(Optional) If true, indicates that radio-button state relationships between optional content groups (as specified by the RBGroups entry in the current configuration dictionary; see Table 101) is preserved when the states in the State array are applied. That is, if a group is set to ON (either by ON or Toggle) during processing of the State array, any other groups belonging to the same radio-button group is turned OFF. If a group is set to OFF, there is no effect on other groups.\nIf PreserveRB is false, radio-button state relationships, if any, shall beignored.\nDefault value: true."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "table": {
+    "caption": "Table 25 – Entries common to all crypt filter dictionaries",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) If present, is CryptFilter for a crypt filter dictionary."
+      ],
+      [
+        "CFM",
+        "name",
+        "(Optional) The method used, if any, by the conforming reader to decrypt data. The following values is supported:\nNoneThe application shall not decrypt data but shall direct the input stream to the security handler for decryption.\nV2The application shall ask the security handler for the encryption key and shall implicitly decrypt data with\nLink \"Algorithm 1: Encryption of data using the RC4 or AES algorithms\"\n, using the RC4 algorithm.\nAESV2(PDF 1.6) The application shall ask the security handler for the encryption key and shall implicitly decrypt data with\nLink \"Algorithm 1: Encryption of data using the RC4 or AES algorithms\"\n, using the AES algorithm in Cipher Block Chaining (CBC) mode with a 16-byte block size and an initialization vector that is randomly generated and placed as the first 16 bytes in the stream or string.\nWhen the value is V2 or AESV2, the application may ask once for this encryption key and cache the key for subsequent use for streams that use the same crypt filter. Therefore, there is a one-to-one relationship between a crypt filter name and the corresponding encryption key.\nOnly the values listed here is supported. Applications that encounter other values shall report that the file is encrypted with an unsupported algorithm.\nDefault value: None."
+      ],
+      [
+        "AuthEvent",
+        "name",
+        "(Optional) The event to be used to trigger the authorization that is required to access encryption keys used by this filter. If authorization fails, the event shall fail. Valid values is:\nDocOpen: Authorization is required when a document is opened.\nEFOpen:Authorization is required when accessing embedded files.\nDefault value: DocOpen.\nIf this filter is used as the value of StrF or StmF in the encryption dictionary (see Table 20), the conforming reader shall ignore this key and behave as if the value is DocOpen."
+      ],
+      [
+        "Length",
+        "integer",
+        "(Optional) The bit length of the encryption key. It is a multiple of 8 in the range of 40 to 128.\nSecurity handlers may define their own use of the Length entry and should use it to define the bit length of the encryption key. Standard security handler expresses the length in multiples of 8 (16 means 128) and public-key security handler expresses it as is (128 means 128)."
+      ]
+    ]
+  }
+}

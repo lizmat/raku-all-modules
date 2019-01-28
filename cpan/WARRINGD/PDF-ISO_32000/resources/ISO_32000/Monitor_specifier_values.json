@@ -1,0 +1,39 @@
+{
+  "table": {
+    "caption": "Table 293 – Monitor specifier values",
+    "head": [
+      "Value",
+      "Description"
+    ],
+    "rows": [
+      [
+        "0",
+        "The monitor containing the largest section of the document window"
+      ],
+      [
+        "1",
+        "The monitor containing the smallest section of the document window"
+      ],
+      [
+        "2",
+        "Primary monitor. If no monitor is considered primary, shall treat as case 0"
+      ],
+      [
+        "3",
+        "Monitor with the greatest colour depth"
+      ],
+      [
+        "4",
+        "Monitor with the greatest area (in pixels squared)"
+      ],
+      [
+        "5",
+        "Monitor with the greatest height (in pixels)"
+      ],
+      [
+        "6",
+        "Monitor with the greatest width (in pixels)"
+      ]
+    ]
+  }
+}

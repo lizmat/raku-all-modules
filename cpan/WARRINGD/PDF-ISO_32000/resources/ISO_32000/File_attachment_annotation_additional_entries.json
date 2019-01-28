@@ -1,0 +1,27 @@
+{
+  "table": {
+    "caption": "Table 184 – Additional entries specific to a file attachment annotation",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Subtype",
+        "name",
+        "(Required) The type of annotation that this dictionary describes; shallbe FileAttachment for a file attachment annotation."
+      ],
+      [
+        "FS",
+        "file specification",
+        "(Required) The file associated with this annotation."
+      ],
+      [
+        "Name",
+        "name",
+        "(Optional) The name of an icon that is used in displaying the annotation. Conforming readers shall provide predefined icon appearances for at least the following standard names:\nGraphPushPin\nPaperclipTag\nAdditional names may be supported as well. Default value: PushPin.\nThe annotation dictionary’s AP entry, if present, shall take precedence over the Name entry; see\nTable 168\nand\n12.5.5, “Appearance Streams.”\n"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,198 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        280
+        –  Entries in a media play parameters MH/BE dictionary 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            V
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) An integer that specifies the desired volume level as a percentage of recorded volume level. A zero value shall be equivalent to mute; negative values shall be illegal. Default value: 100.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            C
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A flag specifying whether to display a player-specific controller user interface when playing. 
+          </P>
+          <P>
+            EXAMPLE play/pause/stop controls.
+            <P>
+              Default value: false
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            F
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer‘
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) The manner in which the player shall treat a visual media type that does not exactly fit the rectangle in which it plays.
+          </P>
+          <P>
+            0The media’s width and height shall be scaled while preserving the aspect ratio so that the media and play rectangles have the greatest possible intersection while still displaying all media content. 
+          </P>
+          <P>
+            NOTE 1 Same as “meet” value of SMIL’s fit attribute. 
+            <P>
+              1 The media’s width and height shall be scaled while preserving the aspect ratio so that the play rectangle is entirely filled, and the amount of media content that does not fit within the play rectangle shall be minimized. 
+            </P>
+          </P>
+          <P>
+            NOTE 2 Same as “slice” value of SMIL’s fit attribute.
+            <P>
+              2 The media’s width and height shall be scaled independently so that the media and play rectangles are the same; the aspect ratio shall not be preserved. 
+            </P>
+          </P>
+          <P>
+            NOTE 3 Same as “fill” value of SMIL’s fit attribute.
+            <P>
+              3 The media shall not be scaled. A scrolling user interface shall be provided if the media rectangle is wider or taller than the play rectangle. 
+            </P>
+          </P>
+          <P>
+            NOTE 4 Same as “scroll” value of SMIL’s fit attribute.
+            <P>
+              4 The media shall not be scaled. Only the portions of the media rectangle that intersect the play rectangle shall be displayed. 
+            </P>
+          </P>
+          <P>
+            NOTE 5 Same as “hidden” value of SMIL’s fit attribute.
+            <P>
+              5 Use the player’s default setting (author has no preference).
+            </P>
+            <P>
+              Default value: 5.
+            </P>
+            <P>
+              An unrecognized value shall be treated as the default value if the entry is in a BE dictionary. If the entry is in an MH dictionary and it has an unrecognized value, the object shall be considered non-viable. 
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            D
+          </P>
+        </TD>
+        <TD>
+          <P>
+            dictionary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) A media duration dictionary (see 
+            <Link>
+              Ta b l e
+              281
+            </Link>
+            ). Default value: a 
+            dictionary specifying the intrinsic duration (see RC). 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            A
+          </P>
+        </TD>
+        <TD>
+          <P>
+            boolean
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) If true, the media shall automatically play when activated. If false, the media shall be initially paused when activated. 
+          </P>
+          <P>
+            EXAMPLE The first frame is displayed. 
+            <P>
+              Relevant only for media that may be paused. Default value: true.
+            </P>
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RC
+          </P>
+        </TD>
+        <TD>
+          <P>
+            number
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional) Specifies the number of iterations of the duration D to repeat. 
+          </P>
+          <P>
+            NOTE 6 Similar to SMIL’s repeatCount attribute. Zero means repeat forever. Negative values shall be illegal; non-integral values shall be legal. 
+            <P>
+              Default value: 1.0.
+            </P>
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

@@ -1,0 +1,47 @@
+{
+  "table": {
+    "caption": "Table 352 – Entries common to all Web Capture content sets",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is SpiderContentSet for a Web Capture content set."
+      ],
+      [
+        "S",
+        "name",
+        "(Required) The subtype of content set that this dictionary describes. The value is one of:\nSPS(“Spider page set”) A page set\nSIS(“Spider image set”) An image set"
+      ],
+      [
+        "ID",
+        "byte string",
+        "(Required) The digital identifier of the content set (see 14.10.3.3, “Digital Identifiers”)."
+      ],
+      [
+        "O",
+        "array",
+        "(Required) An array of indirect references to the objects belonging to the content set. The order of objects in the array is restricted when the content set subtype (S entry) is SPS (see 14.10.4.2, “Page Sets”)."
+      ],
+      [
+        "SI",
+        "dictionary or array",
+        "(Required) A source information dictionary (see 14.10.5, “Source Information”) or an array of such dictionaries, describing the sources from which the objects belonging to the content set were created."
+      ],
+      [
+        "CT",
+        "ASCII string",
+        "(Optional) The content type, an ASCII string characterizing the source from which the objects belonging to the content set were created. The string shall conform to the content type specification described in Internet RFC 2045, Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies (see the Bibliography).\nEXAMPLE for a page set consisting of a group of PDF pages created from an HTML file, the content type would be text / html."
+      ],
+      [
+        "TS",
+        "date",
+        "(Optional) A time stamp giving the date and time at which the content set was created."
+      ]
+    ]
+  }
+}

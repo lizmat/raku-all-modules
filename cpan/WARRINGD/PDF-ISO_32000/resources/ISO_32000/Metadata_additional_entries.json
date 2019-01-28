@@ -1,0 +1,17 @@
+{
+  "table": {
+    "caption": "Table 316 – Additional entry for components having metadata",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Metadata",
+        "stream",
+        "(Optional; PDF 1.4) A metadata stream containing metadata for the component."
+      ]
+    ]
+  }
+}

@@ -1,0 +1,163 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        349
+        –  Standard table attributes 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Key
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Value
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            RowSpan
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable) The number of rows in the enclosing table that shall be spanned by the cell. The cell shall expand by adding rows in the block-progression direction specified by the table’s WritingModeattribute. If this entry is absent, a conforming reader shall assume a value of 1.
+          </P>
+          <P>
+            This entry shall only be used when the table cell has a structure type of TH or TD or one that is role mapped to structure type TH or TD (see 
+            <Link>
+              Ta b l e
+              337
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            ColSpan
+          </P>
+        </TD>
+        <TD>
+          <P>
+            integer
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable) The number of columns in the enclosing table that shall be spanned by the cell. The cell shall expand by adding columns in the inline-progression direction specified by the table’s WritingMode attribute. If this entry is absent, a conforming reader shall assume a value of 1
+          </P>
+          <P>
+            This entry shall only be used when the table cell has a structure type of TH or TD or one that is role mapped to structure types TH or TD (see 
+            <Link>
+              Ta b l e
+              337
+            </Link>
+            ).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Headers
+          </P>
+        </TD>
+        <TD>
+          <P>
+            array
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable; PDF 1.5) An array of byte strings, where each string shall be the element identifier (see the ID entry in 
+            <Link>
+              Ta b l e
+              323
+            </Link>
+            ) for a 
+            TH structure element that shall be used as a header associated with this cell. 
+          </P>
+          <P>
+            This attribute may apply to header cells (TH) as well as data cells (TD) (see 
+            <Link>
+              Table
+              337
+            </Link>
+            ). Therefore, the headers associated with any cell shall be 
+            those in its Headers array plus those in the Headers array of any THcells in that array, and so on recursively.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Scope
+          </P>
+        </TD>
+        <TD>
+          <P>
+            name
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable; PDF 1.5) A name whose value shall be one of the following: Row, Column, or Both. This attribute shall only be used when the structure type of the element is TH. (see 
+            <Link>
+              Ta b l e
+              337
+            </Link>
+            ). It shall 
+            reflect whether the header cell applies to the rest of the cells in the row that contains it, the column that contains it, or both the row and the column that contain it.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Summary
+          </P>
+        </TD>
+        <TD>
+          <P>
+            text string
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Optional; not inheritable; PDF 1.7) A summary of the table’s purpose and structure. This entry shall only be used within Table structure elements (see 
+            <Link>
+              Ta b l e
+              337
+            </Link>
+            ). 
+          </P>
+          <P>
+            NOTE For use in non-visual rendering such as speech or braille
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

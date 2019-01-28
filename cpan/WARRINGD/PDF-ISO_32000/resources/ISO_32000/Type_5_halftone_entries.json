@@ -1,0 +1,37 @@
+{
+  "table": {
+    "caption": "Table 134 – Entries in a type 5 halftone dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Type",
+        "name",
+        "(Optional) The type of PDF object that this dictionary describes; if present, is Halftone for a halftone dictionary."
+      ],
+      [
+        "HalftoneType",
+        "number",
+        "(Required) A code identifying the halftone type that this dictionary describes; is 5 for this type of halftone."
+      ],
+      [
+        "HalftoneName",
+        "byte string",
+        "(Optional) The name of the halftone dictionary."
+      ],
+      [
+        "any colorantname",
+        "dictionary or stream",
+        "(Required, one per colorant) The halftone corresponding to the colorant or colour component named by the key. The halftone may be of any type other than 5."
+      ],
+      [
+        "Default",
+        "dictionary or stream",
+        "(Required) A halftone to be used for any colorant or colour component that does not have an entry of its own. The value is not 5. If there are any nonprimary colorants, the default halftone has a transfer function."
+      ]
+    ]
+  }
+}

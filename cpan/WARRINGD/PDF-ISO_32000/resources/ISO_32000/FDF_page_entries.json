@@ -1,0 +1,22 @@
+{
+  "table": {
+    "caption": "Table 248 – Entries in an FDF page dictionary",
+    "head": [
+      "Key",
+      "Type",
+      "Value"
+    ],
+    "rows": [
+      [
+        "Templates",
+        "array",
+        "(Required) An array of FDF template dictionaries (see Table 249) that shall describe the named pages that serve as templates on the page."
+      ],
+      [
+        "Info",
+        "dictionary",
+        "(Optional) An FDF page information dictionary that shall containadditional information about the page."
+      ]
+    ]
+  }
+}

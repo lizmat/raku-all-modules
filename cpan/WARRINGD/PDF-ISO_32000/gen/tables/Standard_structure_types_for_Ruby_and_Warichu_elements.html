@@ -1,0 +1,112 @@
+<Html><Head/><Body>
+  <Table>
+    <Caption>
+      <P>
+        Table
+        339
+        –  Standard structure types for Ruby and Warichu elements (PDF 1.5) 
+        <Span/>
+      </P>
+    </Caption>
+    <THead>
+      <TR>
+        <TH>
+          <P>
+            Structure Type
+          </P>
+        </TH>
+        <TH>
+          <P>
+            Description
+          </P>
+        </TH>
+      </TR>
+    </THead>
+    <TBody>
+      <TR>
+        <TD>
+          <P>
+            Ruby
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Ruby) The wrapper around the entire ruby assembly. It shall contain one RB element followed by either an RT element or a three-element group consisting of RP, RT, and RP. Ruby elements and their content elements shall not break across multiple lines.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RB
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Ruby base text) The full-size text to which the ruby annotation is applied. RB may contain text, other inline elements, or a mixture of both. It may have the RubyAlignattribute.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Ruby annotation text) The smaller-size text that shall be placed adjacent to the ruby base text. It may contain text, other inline elements, or a mixture of both. It may have the RubyAlign and RubyPosition attributes.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            RP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Ruby punctuation) Punctuation surrounding the ruby annotation text. It is used only when a ruby annotation cannot be properly formatted in a ruby style and instead is formatted as a normal comment, or when it is formatted as a warichu. It contains text (usually a single LEFT or RIGHT PARENTHESIS or similar bracketing character).
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            Warichu
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Warichu) The wrapper around the entire warichu assembly. It may contain a three-element group consisting of WP, WT, and WP. Warichu elements (and their content elements) may wrap across multiple lines, according to the warichu breaking rules described in the Japanese Industrial Standard (JIS) X 4051-1995.
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            WT
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Warichu text) The smaller-size text of a warichu comment that is formatted into two lines and placed between surrounding WP elements. 
+          </P>
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          <P>
+            WP
+          </P>
+        </TD>
+        <TD>
+          <P>
+            (Warichu punctuation) The punctuation that surrounds the WT text. It contains text (usually a single LEFT or RIGHT PARENTHESIS or similar bracketing character). According to JIS X 4051-1995, the parentheses surrounding a warichu may be converted to a SPACE (nominally 1/4 EM in width) at the discretion of the formatter.
+          </P>
+        </TD>
+      </TR>
+    </TBody>
+  </Table>
+</Body></Html>

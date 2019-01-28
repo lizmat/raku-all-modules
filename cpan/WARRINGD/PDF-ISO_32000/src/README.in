@@ -1,0 +1,90 @@
+# PDF-ISO_32000-p6
+
+This library contains:
+
+- XHTML tables that have been mined from the PDF-32000 1.7 specification.
+- JSON data for the tables
+- Perl 6 Roles for tables that represent PDF objects:
+
+The roles are named ISO_32000::Xxxx and contain method stubs and documentation for each entry in the role
+
+
+## Tables
+
+Data is available for all of the tables in the PDF-32000 1.7 specification:
+```
+use PDF::ISO_32000;
+# Load data about the Document Information dictionary
+my %info = PDF::ISO_32000.table: "Info_entries";
+say %info<caption>;             # Table 317 – Entries in the document information dictionary
+say %info<head>.join(" | ");    # Key | Type | Value
+say %info<rows>[0].join(" | "); # Title | text string | (Optional; PDF 1.1) The document’s title.
+```
+
+The `table-index` method returns a list that maps table numbers to table names:
+
+```
+say PDF::ISO_32000.table-index[317] # Info_entries
+```
+
+The `appendix` method returns a hash index into the Appendix:
+
+```
+my $stream-ops = PDF::ISO_32000.appendix<A.1>;
+say $stream-ops, # PDF_content_stream_operators
+say PDF::ISO_32000.table($stream-ops)<caption>; #  Table A.1 – PDF content stream operators
+```
+
+## Roles
+
+Roles are available for tables named `*_entries`, or `*_attributes`.
+
+```
+% p6doc ISO_320000:Info
+% p6doc ISO_320000:Catalog
+```
+
+The roles also contain [method stubs](https://docs.perl6.org/language/objects#Stubs) for the entries that need to be implemented for the role. For example:
+
+```
+% cat << EOF > lib/Catalog.pm6
+use ISO_32000::Catalog;
+class Catalog does ISO_32000::Catalog {
+}
+EOF
+% perl6 -I lib -M Catalog
+===SORRY!=== Error while compiling /tmp/lib/Catalog.pm6 (Catalog)
+Method 'SpiderInfo' must be implemented by Catalog because it is required by roles: ISO_32000::Catalog.
+at lib/Catalog.pm6 (Catalog):1
+```
+This module contains:
+
+- a copy of the [PDF-32000 specification](src/PDF32000_2008.pdf)
+- [JSON Table](resources) extracted from the above
+- [generated interface roles](gen/lib/ISO_32000) for building and validating PDF objects
+- scripts and Makefiles for regenerating the XML tables and roles
+
+todo: run-time introspection of resources and generated artefacts, e.g.:
+
+```
+use PDF::ISO_32000;
+PDF::ISO_32000.table[28].xhtml;          # ?? access extracted xhtml by table number ??
+PDF::ISO_32000.table[28].json;           # ?? access converted json by table number ??
+PDF::ISO_32000.table<Catalog>.interface; # ?? access generated role by table name ??
+```
+
+## Scripts in this Distribution
+
+##### `pdf-struct-dump.p6 --password=Xxxx --page=i --max-depth=j --search-tag=Ttt --select=k --obj-num=l --gen-num=m --render --atts --debug src/PDF32000_2008.pdf`
+
+Dumps tagged PDF content as XML.
+
+At the moment just does enough to semi-reliably extract content from the PDF ISO-32000 specification documents. Could evolve into a general purpose tool for mining elements from tagged PDF's. 
+
+
+## ISO 3200 Roles
+
+The following interface roles have been mined from the ISO-32000 specification
+
+### Roles and Entries
+
