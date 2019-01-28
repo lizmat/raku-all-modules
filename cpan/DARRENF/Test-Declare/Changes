@@ -1,0 +1,13 @@
+Revision history for Test-Declare
+
+{{$NEXT}}
+
+0.0.2  2018-05-25T10:38:29+01:00
+    - Added "Testing" tag
+    - Fixed numerous pod formatting issues
+    - Changed author ID to github rather than email
+    - Linked to similar projects
+    - Other miscellaneous pod changes
+
+0.0.1  2018-05-17T16:57:14+01:00
+    - Initial version

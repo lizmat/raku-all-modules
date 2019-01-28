@@ -1,0 +1,9 @@
+/blib/
+*.swp
+/src/*.o
+/src/Makefile
+/.panda-work
+/resources/*.so
+/resources/*.dylib
+.precomp/
+/Test-Declare-*
