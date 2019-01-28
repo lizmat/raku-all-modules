@@ -1,0 +1,12 @@
+Revision history for P5reset
+
+{{$NEXT}}
+
+0.0.3  2018-05-21T21:28:12+02:00
+    - Added original Perl 5 documentation
+
+0.0.2  2018-05-09T23:35:17+02:00
+    - Use .contains instead if .index, doesn't need 'with'
+
+0.0.1  2018-05-07T12:15:23+02:00
+    - Initial version
