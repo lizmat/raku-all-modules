@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-cordova-osx-build.git
+	branch = feature/par-agents
+	commit = b9f7ee27748435ac7e6ec3b7d1510e0e59cda305
+	parent = 071c7a4abc38f4bf90438c61e7fa8d1eca608bd0
+	cmdver = 0.3.1

@@ -1,0 +1,36 @@
+{{$NEXT}}
+
+0.0.7  2018-10-16T14:19:02Z
+
+    - Add per branch configuration support
+
+    - Remove ionic dependency 
+
+0.0.6  2018-10-02T19:06:05Z
+
+    - Make platform add ios command idempotent
+
+    - Configure command
+
+0.0.5  2018-09-19T16:07:47Z
+
+    - Small changes in Readme
+
+0.0.4  2018-09-17T20:41:11Z
+
+    - Manual signing support
+
+0.0.3  2018-08-21T20:07:47Z
+
+    - Make install less noisy
+
+    - Keychain access unlock optionally
+ 
+0.0.2  2018-08-16T21:27:20Z
+
+    - Minor changes
+
+0.0.1  2018-08-16T14:36:50-05:00
+
+    - First release
+

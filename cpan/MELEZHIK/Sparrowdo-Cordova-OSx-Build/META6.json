@@ -1,0 +1,27 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to build cordova project for OSx",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::Cordova::OSx::Build",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::Cordova::OSx::Build" : "lib/Sparrowdo/Cordova/OSx/Build.pm6"
+  },
+  "resources" : [
+    "configure.pl",
+    "manual-signing.json"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-cordova-osx-build.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.7"
+}
