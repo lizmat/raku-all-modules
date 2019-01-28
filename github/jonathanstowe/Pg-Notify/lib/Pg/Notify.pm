@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 use NativeCall;
 use NativeHelpers::CStruct;
@@ -114,9 +114,9 @@ class Pg::Notify {
         has int16 $.revents;
     }
 
-    sub poll(PollFD $fds, int64 $nfds, int32 $timeout) returns int32 is native { * }
+    sub poll(PollFD $fds, int64 $nfds, int32 $timeout --> int32 ) is native { * }
 
-    method supplier() returns Supplier handles <Supply> {
+    method supplier( --> Supplier ) handles <Supply> {
         $!supplier //= do {
             my $supplier = Supplier.new;
             self.listen;
@@ -137,7 +137,7 @@ class Pg::Notify {
         }
     }
 
-    method poll-once() returns Int {
+    method poll-once( --> Int ) {
         my $fds = LinearArray[PollFD].new(1);
         $fds[0] = PollFD.new(fd => $!db.pg-socket,  events => 1, revents => 0);
         poll($fds.base, 1, -1);

@@ -1,0 +1,69 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "name": "example",
+      "children": [
+        {
+          "name": "synopsis",
+          "type": "file"
+        }
+      ],
+      "type": "directory",
+      "purpose": null
+    },
+    {
+      "children": [
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "name": "005-use.t",
+          "type": "file"
+        },
+        {
+          "name": "010-notify.t",
+          "type": "file"
+        }
+      ],
+      "type": "directory",
+      "name": "t",
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "name": "lib",
+      "children": [
+        {
+          "purpose": null,
+          "children": [
+            {
+              "name": "Notify.pm",
+              "type": "file"
+            }
+          ],
+          "type": "directory",
+          "name": "Pg"
+        }
+      ],
+      "type": "directory",
+      "purpose": null
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}

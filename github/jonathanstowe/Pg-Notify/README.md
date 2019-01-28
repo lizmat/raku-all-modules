@@ -74,5 +74,5 @@ If you have any other suggestions or problems please report at https://github.co
 
 This is free software, please see the [LICENCE](LICENCE) file in the distribution.
 
-© Jonathan Stowe 2017
+© Jonathan Stowe 2017 - 2019
 
