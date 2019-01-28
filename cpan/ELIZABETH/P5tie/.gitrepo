@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/P5tie.git
+	branch = master
+	commit = 88393a6f3049e17f6cf92b7fed09ed307ed9de3c
+	parent = 58f9ffaff9a59a835366db71efc52d655451fa93
+	cmdver = 0.3.1

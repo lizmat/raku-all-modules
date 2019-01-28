@@ -1,0 +1,43 @@
+Revision history for P5tie
+
+{{$NEXT}}
+
+0.0.11  2018-09-15T10:18:42+02:00
+    - Don't use an anoymous class for iterating for better optimizability
+
+0.0.10  2018-08-03T17:38:12+02:00
+    - New version because of accidental .meta file removal on CPAN
+
+0.0.9  2018-05-21T21:59:15+02:00
+    - Added original Perl 5 documentation
+    - Added authority information
+
+0.0.8  2018-04-11T21:42:29+02:00
+    - Follow App:Mi6's default Changes format
+
+0.0.7  2018-01-21T14:36:07+01:00
+    - .push and .unshift should return number of elements.
+
+0.0.6  2018-01-17T13:47:06+01:00
+    - Fixed various issues with tied hashes, spotted when working on Tie::Hash
+
+0.0.5  2018-01-16T21:53:05+01:00
+    - Fixed .perl for tied arrays, added .gist method
+    - Added .Str, .perl, .gist, .join for tied hashes
+
+0.0.4  2018-01-16T19:55:04+01:00
+    - Apparently we also need a Numeric method, to handle +@a and +%h.
+    - .STORE is supposed to return self
+    - Added some stringification methods: .Str, .perl and .join.
+
+0.0.3  2018-01-15T23:48:03+01:00
+    - No longer accept strings for class names.  For some reason the
+      ::() lookup cannot find imported precompiled classes inside a
+      precomped module.
+    - Removed some more now redundant code.
+
+0.0.2  2018-01-15T20:15:02+01:00
+    - Add support for DESTROY (tied arrays and hashes only)
+
+0.0.1  2018-01-15T17:12:01+01:00
+    - Initial implementation.
