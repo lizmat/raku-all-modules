@@ -1,0 +1,5 @@
+#! perl6
+
+use App::Prove6 :MAIN;
+
+use Getopt::Long;

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Leont/app-prove6.git
+	branch = master
+	commit = cce39955019897b12f5d09132a92d2df9f2052dd
+	parent = 3653be9e1f2f1c13dc79ee8ee6e691b449bcc249
+	cmdver = 0.3.1

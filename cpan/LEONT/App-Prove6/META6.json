@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:LEONT",
+  "authors" : [
+    "Leon Timmermans"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "TAP:ver<0.0.8>",
+    "Getopt::Long"
+  ],
+  "description" : "Run tests through a TAP harness.",
+  "license" : "Artistic-2.0",
+  "name" : "App::Prove6",
+  "perl" : "6.*",
+  "provides" : {
+    "App::Prove6" : "lib/App/Prove6.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/Leont/app-prove6.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.8"
+}

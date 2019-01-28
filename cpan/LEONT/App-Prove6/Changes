@@ -1,0 +1,9 @@
+Revision history for App-Prove6
+
+{{$NEXT}}
+
+0.0.8  2019-01-26T21:28:44+01:00
+    - Import of prove6 from TAP::Harness
+    - Move the implementation to App::Prove6
+    - Switch to using Getopt::Long
+    - Add long options for all short options
