@@ -1,0 +1,10 @@
+os:
+    - linux
+language: perl6
+sudo: false
+perl6: latest
+install:
+    - rakudobrew build zef
+    - zef install --deps-only --/test .
+script:
+    - PERL6LIB=$PWD/lib prove -e perl6 -vr t/

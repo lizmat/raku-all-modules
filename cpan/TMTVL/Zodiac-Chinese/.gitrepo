@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/tmtvl/Zodiac-Chinese.git
+	branch = master
+	commit = 655a8f0199555d2482c3c6e7e90e0d569336dee7
+	parent = 5b9345684c93edaed8896bfa3961b57ae94387f5
+	cmdver = 0.3.1
