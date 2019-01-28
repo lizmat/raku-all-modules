@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/samgwise/Net-NNG.git
+	branch = master
+	commit = 67d41b6c679aa651cb602f598711cf7914ec8e45
+	parent = a17bafe3e856bff7f571963b50480469145dd9e4
+	cmdver = 0.3.1
