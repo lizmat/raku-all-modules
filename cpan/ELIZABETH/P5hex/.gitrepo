@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/P5hex.git
+	branch = master
+	commit = 3a6c0e4e42e87e8c82ec48b6ca5c3167be51aa83
+	parent = 1a62f1d9773d91688f2a638bf9bc51a432b6eb96
+	cmdver = 0.3.1
