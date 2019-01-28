@@ -1,0 +1,62 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "purpose": null,
+      "type": "directory",
+      "name": "t",
+      "children": [
+        {
+          "type": "file",
+          "name": "010-load.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "030-get.t"
+        },
+        {
+          "type": "file",
+          "name": "040-credentials.t"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "name": "lib",
+      "children": [
+        {
+          "name": "WebService",
+          "children": [
+            {
+              "name": "Soundcloud.pm",
+              "type": "file"
+            }
+          ],
+          "purpose": null,
+          "type": "directory"
+        }
+      ],
+      "type": "directory",
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}

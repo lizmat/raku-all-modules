@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/WebService-Soundcloud.git
+	branch = master
+	commit = 903a196a5b376d4a4512cacccc07d8514765a0c1
+	parent = afb4244103ae33d1c1727c40b2070dadd3986115
+	cmdver = 0.3.1
