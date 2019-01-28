@@ -10,7 +10,7 @@ use v6;
 #
 
 use StrictClass;
-unit class Net::BGP::Socket-Linux:ver<0.0.8>:auth<cpan:JMASLAK>
+unit class Net::BGP::Socket-Linux:ver<0.0.9>:auth<cpan:JMASLAK>
     does StrictClass;
 
 use NativeCall;

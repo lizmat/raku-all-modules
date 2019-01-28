@@ -129,4 +129,10 @@ are output.
 Decoding the BGP messages is done with a multi-threaded process.  This selects
 how many messages should be processed per thread. 
 
+=head2 --lint-mode
+
+Only output messages that trigger some "lint" checks (and match any filters in
+place).  For example, private ASNs in the Aggregator path attribute of an
+UPDATE message.
+
 =end pod

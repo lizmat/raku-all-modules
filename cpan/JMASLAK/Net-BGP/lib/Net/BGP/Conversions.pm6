@@ -7,7 +7,7 @@ use v6.d;
 
 use Net::BGP::IP;
 
-unit module Net::BGP::Conversions:ver<0.0.8>:auth<cpan:JMASLAK>;
+unit module Net::BGP::Conversions:ver<0.0.9>:auth<cpan:JMASLAK>;
 
 use if;
 

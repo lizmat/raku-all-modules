@@ -28,6 +28,7 @@ sub MAIN(
     Bool:D               :$allow-unknown-peers = False,
     Bool:D               :$send-experimental-path-attribute = False,
     Str:D                :$communities = '',
+    Bool:D               :$lint-mode = False,
     *@args is copy
 ) {
     $*OUT.out-buffer = False;
@@ -137,12 +138,12 @@ sub MAIN(
                 @str = @stack.hyper(
                     :degree(8), :batch((@stack.elems / 8).ceiling)
                 ).grep(
-                    { is-filter-match($^a, :@cidr-filter) }
+                    { is-filter-match($^a, :@cidr-filter, :$lint-mode) }
                 ).map({ $short-format ?? short-lines($^a) !! $^a.Str }).flat;
             } else {
                 @str = @stack.map: { $^a.Str }
                 @str = @stack.grep(
-                    { is-filter-match($^a, :@cidr-filter) }
+                    { is-filter-match($^a, :@cidr-filter, :$lint-mode) }
                 ).map({ $short-format ?? short-lines($^a) !! $^a.Str }).flat;
             }
 
@@ -196,8 +197,30 @@ sub announce(
     }
 }
 
-multi is-filter-match(Net::BGP::Event::BGP-Message:D $event, :@cidr-filter -->Bool:D ) {
+multi is-filter-match(
+    Net::BGP::Event::BGP-Message:D $event,
+    :@cidr-filter,
+    :$lint-mode
+    -->Bool:D
+) {
     if $event.message ~~ Net::BGP::Message::Update {
+        if $lint-mode {
+            my @errors;
+            if $event.message.aggregator-asn.defined {
+                if 64512 ≤ $event.message.aggregator-asn ≤ 65534 {
+                    @errors.push: "Private ASN";
+                } elsif 4_200_000_000 ≤ $event.message.aggregator-asn ≤ 4_294_967_294 {
+                    @errors.push: "Private ASN";
+                }
+            }
+            # Is it ASN32?  If so, is there an AS4-Aggregate? Shouldn't
+            # be. Shouldn't be an AS4-Path either.
+            #
+            # ASN 23456 shouldn't be present on ASN32 sessions
+
+            if @errors.elems == 0 { return False }
+        }
+
         if ! @cidr-filter.elems { return True }
 
         my @nlri = @( $event.message.nlri );
@@ -222,10 +245,10 @@ multi is-filter-match(Net::BGP::Event::BGP-Message:D $event, :@cidr-filter -->Bo
 
         return False;
     } else {
-        return True;
+        return !$lint-mode;
     }
 }
-multi is-filter-match($event, :@cidr-filter -->Bool:D) { True }
+multi is-filter-match($event, :@cidr-filter, :$lint-mode -->Bool:D) { !$lint-mode; }
 
 multi get-str($event, :@cidr-filter -->Str) { $event.Str }
 

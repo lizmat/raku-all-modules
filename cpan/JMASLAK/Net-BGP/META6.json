@@ -72,7 +72,9 @@
     "Net::BGP::Parameter::Generic" : "lib/Net/BGP/Parameter/Generic.pm6",
     "Net::BGP::Path-Attribute" : "lib/Net/BGP/Path-Attribute.pm6",
     "Net::BGP::Path-Attribute::AS-Path" : "lib/Net/BGP/Path-Attribute/AS-Path.pm6",
+    "Net::BGP::Path-Attribute::AS4-Aggregator" : "lib/Net/BGP/Path-Attribute/AS4-Aggregator.pm6",
     "Net::BGP::Path-Attribute::AS4-Path" : "lib/Net/BGP/Path-Attribute/AS4-Path.pm6",
+    "Net::BGP::Path-Attribute::Aggregator" : "lib/Net/BGP/Path-Attribute/Aggregator.pm6",
     "Net::BGP::Path-Attribute::Atomic-Aggregate" : "lib/Net/BGP/Path-Attribute/Atomic-Aggregate.pm6",
     "Net::BGP::Path-Attribute::Cluster-List" : "lib/Net/BGP/Path-Attribute/Cluster-List.pm6",
     "Net::BGP::Path-Attribute::Community" : "lib/Net/BGP/Path-Attribute/Community.pm6",
@@ -96,5 +98,5 @@
   "source-url" : "https://github.com/jmaslak/Perl6-Net-BGP.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.0.8"
+  "version" : "0.0.9"
 }

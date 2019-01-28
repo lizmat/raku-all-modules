@@ -102,7 +102,7 @@ subtest 'Update Message (ASN16)', {
     is $bgp.withdrawn[1], '192.168.150.0/24', "Withdrawn 2 correct";
     is $bgp.withdrawn[2], '192.168.150.1/32', "Withdrawn 3 correct";
 
-    is $bgp.path-attributes.elems, 10, "Proper number of path elements";
+    is $bgp.path-attributes.elems, 11, "Proper number of path elements";
     ok $bgp.path-attributes[0] ~~ Net::BGP::Path-Attribute::Origin,
         "Path Attribute 1 Proper Type";
     is $bgp.path-attributes[0].origin, '?', "Path Attribute 1 Proper Value";
@@ -133,7 +133,7 @@ subtest 'Update Message (ASN16)', {
 
     ok $bgp.path-attributes[6] ~~ Net::BGP::Path-Attribute::Aggregator,
         "Path Attribute 7 Proper Type";
-    is $bgp.path-attributes[6].asn, 258, 'Aggregator ASN correct';
+    is $bgp.path-attributes[6].asn, 23456, 'Aggregator ASN correct';
     is $bgp.path-attributes[6].ip, '192.0.2.6', "Aggregator IP correct";
 
     ok $bgp.path-attributes[7] ~~ Net::BGP::Path-Attribute::Community,
@@ -149,6 +149,11 @@ subtest 'Update Message (ASN16)', {
         "Path Attribute 10 Proper Type";
     is $bgp.path-attributes[9].cluster-list, "10.0.0.10 10.0.0.11",
         "Path Attribute 10 Proper Value";
+
+    ok $bgp.path-attributes[10] ~~ Net::BGP::Path-Attribute::AS4-Aggregator,
+        "Path Attribute 11 Proper Type";
+    is $bgp.path-attributes[10].asn, 65536, 'AS4-Aggregator ASN correct';
+    is $bgp.path-attributes[10].ip, '192.0.2.6', "AS4-Aggregator IP correct";
 
     is $bgp.nlri.elems, 3, "Proper number of NLRI prefixes";
     is $bgp.nlri[0], '10.0.0.0/8',       "NLRI 1 correct";

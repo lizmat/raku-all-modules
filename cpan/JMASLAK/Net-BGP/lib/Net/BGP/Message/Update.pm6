@@ -13,6 +13,7 @@ use Net::BGP::Parameter;
 use Net::BGP::Path-Attribute;
 use Net::BGP::Path-Attribute::Aggregator;
 use Net::BGP::Path-Attribute::AS-Path;
+use Net::BGP::Path-Attribute::AS4-Aggregator;
 use Net::BGP::Path-Attribute::AS4-Path;
 use Net::BGP::Path-Attribute::Atomic-Aggregate;
 use Net::BGP::Path-Attribute::Cluster-List;
@@ -27,7 +28,7 @@ use Net::BGP::Path-Attribute::Origin;
 use Net::BGP::Path-Attribute::Originator-ID;
 
 use StrictClass;
-unit class Net::BGP::Message::Update:ver<0.0.8>:auth<cpan:JMASLAK>
+unit class Net::BGP::Message::Update:ver<0.0.9>:auth<cpan:JMASLAK>
     is Net::BGP::Message
     does StrictClass;
 
@@ -41,6 +42,8 @@ has Str:D @.cached-community-list;
 has Bool  $.cached-atomic-aggregate;
 has Int   $.cached-aggregator-asn;
 has Str   $.cached-aggregator-ip;
+has Int   $.cached-as4-aggregator-asn;
+has Str   $.cached-as4-aggregator-ip;
 
 method new() {
     die("Must use from-raw or from-hash to construct a new object");
@@ -74,26 +77,30 @@ method path-attributes(-->Array[Net::BGP::Path-Attribute:D]) {
     for @!cached-path-attributes -> $attr {
         given $attr {
             when Net::BGP::Path-Attribute::Next-Hop {
-                $!cached-next-hop         = $attr.ip;
+                $!cached-next-hop           = $attr.ip;
             }
             when Net::BGP::Path-Attribute::AS-Path {
-                $!cached-as16-path        = $attr.as-path;
+                $!cached-as16-path          = $attr.as-path;
             }
             when Net::BGP::Path-Attribute::AS4-Path {
-                $!cached-as32-path        = $attr.as4-path;
+                $!cached-as32-path          = $attr.as4-path;
             }
             when Net::BGP::Path-Attribute::Origin {
-                $!cached-origin           = $attr.origin;
+                $!cached-origin             = $attr.origin;
             }
             when Net::BGP::Path-Attribute::Community {
-                @!cached-community-list   = $attr.community-list;
+                @!cached-community-list     = $attr.community-list;
             }
             when Net::BGP::Path-Attribute::Atomic-Aggregate {
-                $!cached-atomic-aggregate = True;
+                $!cached-atomic-aggregate   = True;
             }
             when Net::BGP::Path-Attribute::Aggregator {
-                $!cached-aggregator-asn   = $attr.asn;
-                $!cached-aggregator-ip    = $attr.ip;
+                $!cached-aggregator-asn     = $attr.asn;
+                $!cached-aggregator-ip      = $attr.ip;
+            }
+            when Net::BGP::Path-Attribute::AS4-Aggregator {
+                $!cached-as4-aggregator-asn = $attr.asn;
+                $!cached-as4-aggregator-ip  = $attr.ip;
             }
         }
     }
@@ -125,8 +132,9 @@ method Str(-->Str) {
 
     push @lines, "Atomic-Aggregate" if self.atomic-aggregate;
 
-    if $!cached-aggregator-asn.defined {
-        push @lines, "Aggregator: ASN {$!cached-aggregator-asn} by {$!cached-aggregator-ip}"
+    if self.aggregator-asn.defined {
+        push @lines, "Aggregator: ASN {self.aggregator-asn} by " ~
+            self.aggregator-ip;
     }
 
     my $path-attributes = self.path-attributes;
@@ -138,6 +146,7 @@ method Str(-->Str) {
         next if $attr ~~ Net::BGP::Path-Attribute::Next-Hop;
         next if $attr ~~ Net::BGP::Path-Attribute::Atomic-Aggregate;
         next if $attr ~~ Net::BGP::Path-Attribute::Aggregator;
+        next if $attr ~~ Net::BGP::Path-Attribute::AS4-Aggregator;
 
         push @lines, "  ATTRIBUTE: " ~ $attr.Str;
     }
@@ -274,10 +283,15 @@ method from-hash(%params is copy, Bool:D :$asn32) {
 
     if %params<aggregator-ip> ne '' {
         die("Must define aggregator ASN") if ! %params<aggregator-asn>.defined;
+
+        # We write 23456 for 32 bit ASNs
+        my $aggregate-asn = %params<aggregator-asn>;
+        if $aggregate-asn ≥ 2¹⁶ and ! $asn32 { $aggregate-asn = 23456 }
+
         $path-attr.append: Net::BGP::Path-Attribute.from-hash(
             {
                 path-attribute-name => 'Aggregator',
-                asn                 => %params<aggregator-asn>,
+                asn                 => $aggregate-asn,
                 ip                  => %params<aggregator-ip>,
             },
             :$asn32
@@ -356,6 +370,21 @@ method from-hash(%params is copy, Bool:D :$asn32) {
                 as4-path            => %params<as4-path>,
             },
             :asn32
+        ).raw;
+    }
+
+    if (!$asn32) && (%params<aggregator-ip> ne '')
+        && ( %params<aggregator-asn> ≥ 2¹⁶ )
+    {
+        die("Must define aggregator ASN") if ! %params<aggregator-asn>.defined;
+
+        $path-attr.append: Net::BGP::Path-Attribute.from-hash(
+            {
+                path-attribute-name => 'AS4-Aggregator',
+                asn                 => %params<aggregator-asn>,
+                ip                  => %params<aggregator-ip>,
+            },
+            :$asn32
         ).raw;
     }
 
@@ -485,12 +514,22 @@ method atomic-aggregate(-->Bool:D) {
 
 method aggregator-asn(-->Int) {
     self.path-attributes.sink;
-    return $!cached-aggregator-asn;
+
+    if (! $!asn32) && $!cached-as4-aggregator-asn.defined {
+        return $!cached-as4-aggregator-asn;
+    } else {
+        return $!cached-aggregator-asn;
+    }
 }
 
 method aggregator-ip(-->Str) {
     self.path-attributes.sink;
-    return $!cached-aggregator-ip;
+
+    if (! $!asn32) && $!cached-as4-aggregator-ip.defined {
+        return $!cached-as4-aggregator-ip;
+    } else {
+        return $!cached-aggregator-ip;
+    }
 }
 
 method next-hop(-->Str) {

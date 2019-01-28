@@ -11,7 +11,7 @@ use Net::BGP::Capability;
 use Net::BGP::Conversions;
 
 use StrictClass;
-unit class Net::BGP::Capability::MPBGP:ver<0.0.8>:auth<cpan:JMASLAK>
+unit class Net::BGP::Capability::MPBGP:ver<0.0.9>:auth<cpan:JMASLAK>
     is Net::BGP::Capability
     does StrictClass;
 

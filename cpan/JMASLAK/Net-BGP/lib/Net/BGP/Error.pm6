@@ -7,7 +7,7 @@ use v6;
 
 use Net::BGP::Event;
 
-unit class Net::BGP::Error:ver<0.0.8>:auth<cpan:JMASLAK>
+unit class Net::BGP::Error:ver<0.0.9>:auth<cpan:JMASLAK>
     is Net::BGP::Event
     is Exception;
 

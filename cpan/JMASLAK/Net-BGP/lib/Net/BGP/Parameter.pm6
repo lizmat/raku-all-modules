@@ -6,7 +6,7 @@ use v6;
 #
 
 use StrictClass;
-unit class Net::BGP::Parameter:ver<0.0.8>:auth<cpan:JMASLAK> does StrictClass;
+unit class Net::BGP::Parameter:ver<0.0.9>:auth<cpan:JMASLAK> does StrictClass;
 
 my %registrations;
 my %parameter-codes;

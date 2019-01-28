@@ -1,58 +1,57 @@
 use v6;
 
 #
-# Copyright © 2018-2019 Joelle Maslak
+# Copyright © 2019 Joelle Maslak
 # All Rights Reserved - See License
 #
 
 use Net::BGP::Path-Attribute;
 
 use StrictClass;
-unit class Net::BGP::Path-Attribute::Local-Pref:ver<0.0.9>:auth<cpan:JMASLAK>
+unit class Net::BGP::Path-Attribute::AS4-Aggregator:ver<0.0.9>:auth<cpan:JMASLAK>
     is Net::BGP::Path-Attribute
     does StrictClass;
 
 use Net::BGP::Conversions;
 use Net::BGP::IP;
 
-# Local-Pref Types
-method implemented-path-attribute-code(-->Int) { 5 }
-method implemented-path-attribute-name(-->Str) { "Local-Pref" }
+# AS4-Aggregator Types
+method implemented-path-attribute-code(-->Int) { 18 }
+method implemented-path-attribute-name(-->Str) { "AS4-Aggregator" }
 
-method path-attribute-name(-->Str:D) { "Local-Pref" }
+method path-attribute-name(-->Str:D) { "AS4-Aggregator" }
 
 method new() {
     die("Must use from-raw or from-hash to construct a new object");
 }
 
-method from-raw(buf8:D $raw where $raw.bytes == 7, Bool:D :$asn32) {
-    if   $raw[0] +& 0x80 { die("Optional flag not valid on Local-Pref attribute") }
-    if ! $raw[0] +& 0x40 { die("Transitive flag must be set on Local-Pref attribute") }
-    if   $raw[0] +& 0x20 { die("Partial flag not valid on Local-Pref attribute") }
-    if   $raw[0] +& 0x10 { die("Extended length flag not valid on Local-Pref attribute") }
+method from-raw(buf8:D $raw where $raw.bytes == 9|11, Bool:D :$asn32) {
+    if ! $raw[0] +& 0x80 { die("Optional flag must be set on Origin attribute") }
+    if ! $raw[0] +& 0x40 { die("Transitive flag must be set on Origin attribute") }
+    if   $raw[0] +& 0x10 { die("Extended length flag not valid on Origin attribute") }
 
-    if   $raw[1] ≠ 5     { die("Can only create a Local-Pref attribute") }
+    if   $raw[1] ≠ 18    { die("Can only create an Origin attribute") }
 
     if ($raw.bytes - 3) ≠ $raw[2] { die("Invalid path-attribute payload length") }
-    if $raw[2] ≠ 4                { die("Invalid path-attribute payload length") }
+    if  $raw[2] ≠ 8               { die("Invalid path-attribute payload length") }
 
     my $obj = self.bless(:$raw, :$asn32);
     return $obj;
 };
 
 method from-hash(%params is copy, Bool:D :$asn32)  {
-    my @REQUIRED = «local-pref»;
+    my @REQUIRED = «asn ip»;
 
     # Remove path attributes
     if %params<path-attribute-code>:exists {
-        if %params<path-attribute-code> ≠ 5 {
-            die("Can only create an Local-Pref attribute");
+        if %params<path-attribute-code> ≠ 18 {
+            die("Can only create an AS4-Aggregator attribute");
         }
         %params<path-attribute-code>:delete;
     }
     if %params<path-attribute-name>:exists {
-        if %params<path-attribute-name> ≠ 'Local-Pref' {
-            die("Can only create an Local-Pref attribute");
+        if %params<path-attribute-name> ≠ 'AS4-Aggregator' {
+            die("Can only create an AS4-Aggregator attribute");
         }
         %params<path-attribute-name>:delete;
     }
@@ -62,47 +61,48 @@ method from-hash(%params is copy, Bool:D :$asn32)  {
         die("Did not provide proper options");
     }
 
-    my $local-pref = nuint32-buf8( %params<local-pref> );
-
-    my $flag = 0x40;  # Well-Known (not optional, transitive)
+    my $flag = 0x40;  # Transitive
 
     my buf8 $path-attribute = buf8.new();
     $path-attribute.append( $flag );
-    $path-attribute.append( 5 );
-    $path-attribute.append( 4 );        # Length
-    $path-attribute.append( $local-pref );
+    $path-attribute.append( 18 );       # AS4-Aggregator
+
+    if %params<asn> !~~ ^(2³²) { die("Invalid ASN provided") }
+
+    $path-attribute.append( 8 );
+    $path-attribute.append( nuint32-buf8(%params<asn>) );
+    $path-attribute.append( nuint32-buf8(%params<ip>) );
 
     return self.bless(:raw( $path-attribute ), :$asn32);
 };
 
-method local-pref(-->Int:D) {
-    return nuint32( buf8.new( $.raw.subbuf( 3, 4 ) ) );
-}
+method asn(-->Int:D) { return nuint32($.raw[3..6]); }
+method ip(-->Str:D) { return buf8-to-ipv4($.raw.subbuf(7,10).list); }
 
-method Str(-->Str:D) { "Local-Pref=" ~ self.local-pref }
+method Str(-->Str:D) { "AS4-Aggregator: ASN={ self.asn } ID={ self.ip }" };
 
 # Register path-attribute
-INIT { Net::BGP::Path-Attribute.register(Net::BGP::Path-Attribute::Local-Pref) }
+INIT { Net::BGP::Path-Attribute.register(Net::BGP::Path-Attribute::AS4-Aggregator) }
 
 =begin pod
 
 =head1 NAME
 
-Net::BGP::Message::Path-Attribute::Local-Pref - BGP Local-Pref Path-Attribute Object
+Net::BGP::Message::Path-Attribute::AS4-Aggregator - BGP AS4-Aggregator Path-Attribute Object
 
 =head1 SYNOPSIS
 
-  use Net::BGP::Path-Attribute::Local-Pref;
+  use Net::BGP::Path-Attribute::AS4-Aggregator;
 
-  my $local-pref = Net::BGP::Path-Attribute::Local-Pref.from-raw( $raw );
+  my $cap = Net::BGP::Path-Attribute::AS4-Aggregator.from-raw( $raw );
   # or …
-  my $cap = Net::BGP::Path-Attribute::Local-Pref.from-hash(
-    %{ Local-Pref => 100 }
+  my $cap = Net::BGP::Path-Attribute::AS4-Aggregator.from-hash(
+    %{ asn => 65000, ip => '192.0.2.1' }
   );
 
 =head1 DESCRIPTION
 
-BGP Path-Attribute Object
+BGP Path-Attribute AS4-Aggregator Object
 
 =head1 Constructors
 
@@ -113,13 +113,8 @@ Constructs a new object for a given raw binary buffer.
 =head2 from-hash
 
 Constructs a new object for a given hash.  This requires elements with keys of
-C<path-attribute-code> and C<value>.  Path-Attribute code should represent the
-desired path-attribute code.  Value should be a C<buf8> containing the payload
-data (C<value> in RFC standards).
-
-It also accepts values for C<optional>, C<transitive>, and C<partial>, which
-are used to populate the C<flags> field in the attribute.  These all default to
-C<False> if they are not provided by the caller.
+C<asn> and C<ip>, which represent the aggregating ASN and aggregating BGP ID
+in this path attribute.
 
 =head1 Methods
 
@@ -157,6 +152,14 @@ True if the attribute uses a two digit length
 The four flags not defined in RFC4271, represented as a packed integer (values
 will be 0 through 15).
 
+=head2 asn
+
+Returns the aggregator's ASN.
+
+=head2 ip
+
+Returns the aggregator's IP.
+
 =head2 data-length
 
 The length of the attribute's data.
@@ -169,17 +172,13 @@ This returns a C<buf8> containing the data in the attribute.
 
 Returns the raw (wire format) data for this path-attribute.
 
-=head2 local-pref
-
-The Local Preference being sent by the peer.
-
 =head1 AUTHOR
 
 Joelle Maslak <jmaslak@antelope.net>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright © 2018-2019 Joelle Maslak
+Copyright © 2019 Joelle Maslak
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
