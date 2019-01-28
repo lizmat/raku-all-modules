@@ -1,0 +1,45 @@
+[% UNLESS skip_nuget_install %]
+- task: NuGetToolInstaller@0
+  displayName: Use NuGet
+  inputs:
+    checkLatest: true
+[% END %]
+
+[%- UNLESS skip_nuget_restore %]
+- task: NuGetCommand@2
+  displayName: NuGet restore
+  inputs:
+    restoreSolution: '[% restore_solution %]'
+    feedsToUse: config
+[%- END %]
+
+- task: VSBuild@1
+  displayName: [% display_name %]
+  inputs:
+    vsVersion: [% vs_version %]
+    solution: '[% solution %]'
+    platform: '[% platform %]'
+    configuration: '[% configuration %]'
+    msbuildArgs: '/p:PrecompileBeforePublish=true /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="\$(build.artifactstagingdirectory)\\[% configuration %]\\"'
+
+[%- IF test_assemblies %]
+- task: VSTest@2
+  displayName: Test Assemblies
+  inputs:
+    testAssemblyVer2: |
+     **\*tests*.dll
+     !**\obj\**
+    codeCoverageEnabled: true
+    platform: '[% platform %]'
+    configuration: '[% configuration %]'
+[%- END %]
+
+[%- IF publish_symbols %]
+- task: PublishSymbols@1
+  displayName: Publish symbols path
+  inputs:
+    SearchPattern: '**\bin\**\*.pdb'
+  continueOnError: true
+  condition: succeededOrFailed()
+[%- END %]
+

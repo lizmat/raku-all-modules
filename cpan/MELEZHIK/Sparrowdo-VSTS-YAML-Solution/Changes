@@ -1,0 +1,22 @@
+{{$NEXT}}
+
+0.0.4  2018-07-26T21:22:44Z
+
+    - Null parameter interpolation fix
+
+0.0.3  2018-07-26T20:45:11Z
+
+    - Display name parameter
+
+0.0.2  2018-07-25T18:03:43Z
+
+    - Add skip-nuget-restore command
+
+    - Update documentation
+
+    - Add /p:PrecompileBeforePublish=true to build options
+
+0.0.1  2018-06-14T17:20:47Z
+
+    - First release
+
