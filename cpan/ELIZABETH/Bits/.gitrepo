@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Bits.git
+	branch = master
+	commit = 2a3c5f01c601b50a77b83e782062dcbb6acbc5e8
+	parent = 4d53d44b9f5b3907d50aa3d7dfe14022f64b930a
+	cmdver = 0.3.1
