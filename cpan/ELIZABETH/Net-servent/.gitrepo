@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/Net-servent.git
+	branch = master
+	commit = f93d0bc5d4ae52be1b351c00dfd97e79f4ece75d
+	parent = dc0b2c2cebe6949be5d8572d67412ea6790f2370
+	cmdver = 0.3.1

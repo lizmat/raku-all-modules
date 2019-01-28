@@ -1,0 +1,25 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "P5getservbyname"
+  ],
+  "description" : "Port of Perl 5's Net::servent",
+  "license" : "Artistic-2.0",
+  "name" : "Net::servent",
+  "perl" : "6.c",
+  "provides" : {
+    "Net::servent" : "lib/Net/servent.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/Net-servent.git",
+  "tags" : [
+    "UTILS",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
