@@ -1,0 +1,99 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "children": [
+        {
+          "name": "p6samplerate",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "synopsis"
+        }
+      ],
+      "purpose": null,
+      "type": "directory",
+      "name": "examples"
+    },
+    {
+      "type": "directory",
+      "name": "t",
+      "purpose": null,
+      "children": [
+        {
+          "children": [
+            {
+              "type": "file",
+              "name": "1sec-chirp-22050.wav"
+            }
+          ],
+          "purpose": null,
+          "type": "directory",
+          "name": "data"
+        },
+        {
+          "type": "file",
+          "name": "020-process.t"
+        },
+        {
+          "type": "file",
+          "name": "010-constructor.t"
+        },
+        {
+          "name": "001-use.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "name": "Documentation.md",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "children": [
+            {
+              "type": "directory",
+              "name": "Convert",
+              "purpose": null,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "Samplerate.pm"
+                }
+              ]
+            }
+          ],
+          "purpose": null,
+          "name": "Audio",
+          "type": "directory"
+        }
+      ],
+      "type": "directory",
+      "name": "lib"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}

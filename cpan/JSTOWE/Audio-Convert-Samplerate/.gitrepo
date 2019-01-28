@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Audio-Convert-Samplerate.git
+	branch = master
+	commit = 19c4e5fdcfd1ebd98a4b067f6244866d1dcd78fb
+	parent = 9b7f2f7583b04cc206c5efacf46a04dab2e35410
+	cmdver = 0.3.1
