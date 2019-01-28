@@ -1,0 +1,298 @@
+use v6;
+
+unit module File::Metadata::Libextractor::Constants:ver<0.0.1>:auth<cpan:FRITH>;
+
+enum EXTRACTOR_Options is export <EXTRACTOR_OPTION_DEFAULT_POLICY EXTRACTOR_OPTION_OUT_OF_PROCESS_NO_RESTART
+                                  EXTRACTOR_OPTION_IN_PROCESS  EXTRACTOR_OPTION_DISABLED>;
+enum EXTRACTOR_MetaFormat is export <EXTRACTOR_METAFORMAT_UNKNOWN EXTRACTOR_METAFORMAT_UTF8 EXTRACTOR_METAFORMAT_BINARY
+                                     EXTRACTOR_METAFORMAT_C_STRING>;
+enum EXTRACTOR_MetaType is export (
+    EXTRACTOR_METATYPE_RESERVED                    => 0,
+    EXTRACTOR_METATYPE_MIMETYPE                    => 1,
+    EXTRACTOR_METATYPE_FILENAME                    => 2,
+    EXTRACTOR_METATYPE_COMMENT                     => 3,
+    EXTRACTOR_METATYPE_TITLE                       => 4,
+    EXTRACTOR_METATYPE_BOOK_TITLE                  => 5,
+    EXTRACTOR_METATYPE_BOOK_EDITION                => 6,
+    EXTRACTOR_METATYPE_BOOK_CHAPTER_NUMBER         => 7,
+    EXTRACTOR_METATYPE_JOURNAL_NAME                => 8,
+    EXTRACTOR_METATYPE_JOURNAL_VOLUME              => 9,
+    EXTRACTOR_METATYPE_JOURNAL_NUMBER              => 10,
+    EXTRACTOR_METATYPE_PAGE_COUNT                  => 11,
+    EXTRACTOR_METATYPE_PAGE_RANGE                  => 12,
+    EXTRACTOR_METATYPE_AUTHOR_NAME                 => 13,
+    EXTRACTOR_METATYPE_AUTHOR_EMAIL                => 14,
+    EXTRACTOR_METATYPE_AUTHOR_INSTITUTION          => 15,
+    EXTRACTOR_METATYPE_PUBLISHER                   => 16,
+    EXTRACTOR_METATYPE_PUBLISHER_ADDRESS           => 17,
+    EXTRACTOR_METATYPE_PUBLISHER_INSTITUTION       => 18,
+    EXTRACTOR_METATYPE_PUBLISHER_SERIES            => 19,
+    EXTRACTOR_METATYPE_PUBLICATION_TYPE            => 20,
+    EXTRACTOR_METATYPE_PUBLICATION_YEAR            => 21,
+    EXTRACTOR_METATYPE_PUBLICATION_MONTH           => 22,
+    EXTRACTOR_METATYPE_PUBLICATION_DAY             => 23,
+    EXTRACTOR_METATYPE_PUBLICATION_DATE            => 24,
+    EXTRACTOR_METATYPE_BIBTEX_EPRINT               => 25,
+    EXTRACTOR_METATYPE_BIBTEX_ENTRY_TYPE           => 26,
+    EXTRACTOR_METATYPE_LANGUAGE                    => 27,
+    EXTRACTOR_METATYPE_CREATION_TIME               => 28,
+    EXTRACTOR_METATYPE_URL                         => 29,
+    EXTRACTOR_METATYPE_URI                         => 30,
+    EXTRACTOR_METATYPE_ISRC                        => 31,
+    EXTRACTOR_METATYPE_HASH_MD4                    => 32,
+    EXTRACTOR_METATYPE_HASH_MD5                    => 33,
+    EXTRACTOR_METATYPE_HASH_SHA0                   => 34,
+    EXTRACTOR_METATYPE_HASH_SHA1                   => 35,
+    EXTRACTOR_METATYPE_HASH_RMD160                 => 36,
+    EXTRACTOR_METATYPE_GPS_LATITUDE_REF            => 37,
+    EXTRACTOR_METATYPE_GPS_LATITUDE                => 38,
+    EXTRACTOR_METATYPE_GPS_LONGITUDE_REF           => 39,
+    EXTRACTOR_METATYPE_GPS_LONGITUDE               => 40,
+    EXTRACTOR_METATYPE_LOCATION_CITY               => 41,
+    EXTRACTOR_METATYPE_LOCATION_SUBLOCATION        => 42,
+    EXTRACTOR_METATYPE_LOCATION_COUNTRY            => 43,
+    EXTRACTOR_METATYPE_LOCATION_COUNTRY_CODE       => 44,
+    EXTRACTOR_METATYPE_UNKNOWN                     => 45,
+    EXTRACTOR_METATYPE_DESCRIPTION                 => 46,
+    EXTRACTOR_METATYPE_COPYRIGHT                   => 47,
+    EXTRACTOR_METATYPE_RIGHTS                      => 48,
+    EXTRACTOR_METATYPE_KEYWORDS                    => 49,
+    EXTRACTOR_METATYPE_ABSTRACT                    => 50,
+    EXTRACTOR_METATYPE_SUMMARY                     => 51,
+    EXTRACTOR_METATYPE_SUBJECT                     => 52,
+    EXTRACTOR_METATYPE_CREATOR                     => 53,
+    EXTRACTOR_METATYPE_FORMAT                      => 54,
+    EXTRACTOR_METATYPE_FORMAT_VERSION              => 55,
+    EXTRACTOR_METATYPE_CREATED_BY_SOFTWARE         => 56,
+    EXTRACTOR_METATYPE_UNKNOWN_DATE                => 57,
+    EXTRACTOR_METATYPE_CREATION_DATE               => 58,
+    EXTRACTOR_METATYPE_MODIFICATION_DATE           => 59,
+    EXTRACTOR_METATYPE_LAST_PRINTED                => 60,
+    EXTRACTOR_METATYPE_LAST_SAVED_BY               => 61,
+    EXTRACTOR_METATYPE_TOTAL_EDITING_TIME          => 62,
+    EXTRACTOR_METATYPE_EDITING_CYCLES              => 63,
+    EXTRACTOR_METATYPE_MODIFIED_BY_SOFTWARE        => 64,
+    EXTRACTOR_METATYPE_REVISION_HISTORY            => 65,
+    EXTRACTOR_METATYPE_EMBEDDED_FILE_SIZE          => 66,
+    EXTRACTOR_METATYPE_FINDER_FILE_TYPE            => 67,
+    EXTRACTOR_METATYPE_FINDER_FILE_CREATOR         => 68,
+    EXTRACTOR_METATYPE_PACKAGE_NAME                => 69,
+    EXTRACTOR_METATYPE_PACKAGE_VERSION             => 70,
+    EXTRACTOR_METATYPE_SECTION                     => 71,
+    EXTRACTOR_METATYPE_UPLOAD_PRIORITY             => 72,
+    EXTRACTOR_METATYPE_PACKAGE_DEPENDENCY          => 73,
+    EXTRACTOR_METATYPE_PACKAGE_CONFLICTS           => 74,
+    EXTRACTOR_METATYPE_PACKAGE_REPLACES            => 75,
+    EXTRACTOR_METATYPE_PACKAGE_PROVIDES            => 76,
+    EXTRACTOR_METATYPE_PACKAGE_RECOMMENDS          => 77,
+    EXTRACTOR_METATYPE_PACKAGE_SUGGESTS            => 78,
+    EXTRACTOR_METATYPE_PACKAGE_MAINTAINER          => 79,
+    EXTRACTOR_METATYPE_PACKAGE_INSTALLED_SIZE      => 80,
+    EXTRACTOR_METATYPE_PACKAGE_SOURCE              => 81,
+    EXTRACTOR_METATYPE_PACKAGE_ESSENTIAL           => 82,
+    EXTRACTOR_METATYPE_TARGET_ARCHITECTURE         => 83,
+    EXTRACTOR_METATYPE_PACKAGE_PRE_DEPENDENCY      => 84,
+    EXTRACTOR_METATYPE_LICENSE                     => 85,
+    EXTRACTOR_METATYPE_PACKAGE_DISTRIBUTION        => 86,
+    EXTRACTOR_METATYPE_BUILDHOST                   => 87,
+    EXTRACTOR_METATYPE_VENDOR                      => 88,
+    EXTRACTOR_METATYPE_TARGET_OS                   => 89,
+    EXTRACTOR_METATYPE_SOFTWARE_VERSION            => 90,
+    EXTRACTOR_METATYPE_TARGET_PLATFORM             => 91,
+    EXTRACTOR_METATYPE_RESOURCE_TYPE               => 92,
+    EXTRACTOR_METATYPE_LIBRARY_SEARCH_PATH         => 93,
+    EXTRACTOR_METATYPE_LIBRARY_DEPENDENCY          => 94,
+    EXTRACTOR_METATYPE_CAMERA_MAKE                 => 95,
+    EXTRACTOR_METATYPE_CAMERA_MODEL                => 96,
+    EXTRACTOR_METATYPE_EXPOSURE                    => 97,
+    EXTRACTOR_METATYPE_APERTURE                    => 98,
+    EXTRACTOR_METATYPE_EXPOSURE_BIAS               => 99,
+    EXTRACTOR_METATYPE_FLASH                       => 100,
+    EXTRACTOR_METATYPE_FLASH_BIAS                  => 101,
+    EXTRACTOR_METATYPE_FOCAL_LENGTH                => 102,
+    EXTRACTOR_METATYPE_FOCAL_LENGTH_35MM           => 103,
+    EXTRACTOR_METATYPE_ISO_SPEED                   => 104,
+    EXTRACTOR_METATYPE_EXPOSURE_MODE               => 105,
+    EXTRACTOR_METATYPE_METERING_MODE               => 106,
+    EXTRACTOR_METATYPE_MACRO_MODE                  => 107,
+    EXTRACTOR_METATYPE_IMAGE_QUALITY               => 108,
+    EXTRACTOR_METATYPE_WHITE_BALANCE               => 109,
+    EXTRACTOR_METATYPE_ORIENTATION                 => 110,
+    EXTRACTOR_METATYPE_MAGNIFICATION               => 111,
+    EXTRACTOR_METATYPE_IMAGE_DIMENSIONS            => 112,
+    EXTRACTOR_METATYPE_PRODUCED_BY_SOFTWARE        => 113,
+    EXTRACTOR_METATYPE_THUMBNAIL                   => 114,
+    EXTRACTOR_METATYPE_IMAGE_RESOLUTION            => 115,
+    EXTRACTOR_METATYPE_SOURCE                      => 116,
+    EXTRACTOR_METATYPE_CHARACTER_SET               => 117,
+    EXTRACTOR_METATYPE_LINE_COUNT                  => 118,
+    EXTRACTOR_METATYPE_PARAGRAPH_COUNT             => 119,
+    EXTRACTOR_METATYPE_WORD_COUNT                  => 120,
+    EXTRACTOR_METATYPE_CHARACTER_COUNT             => 121,
+    EXTRACTOR_METATYPE_PAGE_ORIENTATION            => 122,
+    EXTRACTOR_METATYPE_PAPER_SIZE                  => 123,
+    EXTRACTOR_METATYPE_TEMPLATE                    => 124,
+    EXTRACTOR_METATYPE_COMPANY                     => 125,
+    EXTRACTOR_METATYPE_MANAGER                     => 126,
+    EXTRACTOR_METATYPE_REVISION_NUMBER             => 127,
+    EXTRACTOR_METATYPE_DURATION                    => 128,
+    EXTRACTOR_METATYPE_ALBUM                       => 129,
+    EXTRACTOR_METATYPE_ARTIST                      => 130,
+    EXTRACTOR_METATYPE_GENRE                       => 131,
+    EXTRACTOR_METATYPE_TRACK_NUMBER                => 132,
+    EXTRACTOR_METATYPE_DISC_NUMBER                 => 133,
+    EXTRACTOR_METATYPE_PERFORMER                   => 134,
+    EXTRACTOR_METATYPE_CONTACT_INFORMATION         => 135,
+    EXTRACTOR_METATYPE_SONG_VERSION                => 136,
+    EXTRACTOR_METATYPE_PICTURE                     => 137,
+    EXTRACTOR_METATYPE_COVER_PICTURE               => 138,
+    EXTRACTOR_METATYPE_CONTRIBUTOR_PICTURE         => 139,
+    EXTRACTOR_METATYPE_EVENT_PICTURE               => 140,
+    EXTRACTOR_METATYPE_LOGO                        => 141,
+    EXTRACTOR_METATYPE_BROADCAST_TELEVISION_SYSTEM => 142,
+    EXTRACTOR_METATYPE_SOURCE_DEVICE               => 143,
+    EXTRACTOR_METATYPE_DISCLAIMER                  => 144,
+    EXTRACTOR_METATYPE_WARNING                     => 145,
+    EXTRACTOR_METATYPE_PAGE_ORDER                  => 146,
+    EXTRACTOR_METATYPE_WRITER                      => 147,
+    EXTRACTOR_METATYPE_PRODUCT_VERSION             => 148,
+    EXTRACTOR_METATYPE_CONTRIBUTOR_NAME            => 149,
+    EXTRACTOR_METATYPE_MOVIE_DIRECTOR              => 150,
+    EXTRACTOR_METATYPE_NETWORK_NAME                => 151,
+    EXTRACTOR_METATYPE_SHOW_NAME                   => 152,
+    EXTRACTOR_METATYPE_CHAPTER_NAME                => 153,
+    EXTRACTOR_METATYPE_SONG_COUNT                  => 154,
+    EXTRACTOR_METATYPE_STARTING_SONG               => 155,
+    EXTRACTOR_METATYPE_PLAY_COUNTER                => 156,
+    EXTRACTOR_METATYPE_CONDUCTOR                   => 157,
+    EXTRACTOR_METATYPE_INTERPRETATION              => 158,
+    EXTRACTOR_METATYPE_COMPOSER                    => 159,
+    EXTRACTOR_METATYPE_BEATS_PER_MINUTE            => 160,
+    EXTRACTOR_METATYPE_ENCODED_BY                  => 161,
+    EXTRACTOR_METATYPE_ORIGINAL_TITLE              => 162,
+    EXTRACTOR_METATYPE_ORIGINAL_ARTIST             => 163,
+    EXTRACTOR_METATYPE_ORIGINAL_WRITER             => 164,
+    EXTRACTOR_METATYPE_ORIGINAL_RELEASE_YEAR       => 165,
+    EXTRACTOR_METATYPE_ORIGINAL_PERFORMER          => 166,
+    EXTRACTOR_METATYPE_LYRICS                      => 167,
+    EXTRACTOR_METATYPE_POPULARITY_METER            => 168,
+    EXTRACTOR_METATYPE_LICENSEE                    => 169,
+    EXTRACTOR_METATYPE_MUSICIAN_CREDITS_LIST       => 170,
+    EXTRACTOR_METATYPE_MOOD                        => 171,
+    EXTRACTOR_METATYPE_SUBTITLE                    => 172,
+    EXTRACTOR_METATYPE_GNUNET_DISPLAY_TYPE         => 173,
+    EXTRACTOR_METATYPE_GNUNET_FULL_DATA            => 174,
+    EXTRACTOR_METATYPE_RATING                      => 175,
+    EXTRACTOR_METATYPE_ORGANIZATION                => 176,
+    EXTRACTOR_METATYPE_RIPPER                      => 177,
+    EXTRACTOR_METATYPE_PRODUCER                    => 178,
+    EXTRACTOR_METATYPE_GROUP                       => 179,
+    EXTRACTOR_METATYPE_GNUNET_ORIGINAL_FILENAME    => 180,
+    EXTRACTOR_METATYPE_DISC_COUNT                  => 181,
+    EXTRACTOR_METATYPE_CODEC                       => 182,
+    EXTRACTOR_METATYPE_VIDEO_CODEC                 => 183,
+    EXTRACTOR_METATYPE_AUDIO_CODEC                 => 184,
+    EXTRACTOR_METATYPE_SUBTITLE_CODEC              => 185,
+    EXTRACTOR_METATYPE_CONTAINER_FORMAT            => 186,
+    EXTRACTOR_METATYPE_BITRATE                     => 187,
+    EXTRACTOR_METATYPE_NOMINAL_BITRATE             => 188,
+    EXTRACTOR_METATYPE_MINIMUM_BITRATE             => 189,
+    EXTRACTOR_METATYPE_MAXIMUM_BITRATE             => 190,
+    EXTRACTOR_METATYPE_SERIAL                      => 191,
+    EXTRACTOR_METATYPE_ENCODER                     => 192,
+    EXTRACTOR_METATYPE_ENCODER_VERSION             => 193,
+    EXTRACTOR_METATYPE_TRACK_GAIN                  => 194,
+    EXTRACTOR_METATYPE_TRACK_PEAK                  => 195,
+    EXTRACTOR_METATYPE_ALBUM_GAIN                  => 196,
+    EXTRACTOR_METATYPE_ALBUM_PEAK                  => 197,
+    EXTRACTOR_METATYPE_REFERENCE_LEVEL             => 198,
+    EXTRACTOR_METATYPE_LOCATION_NAME               => 199,
+    EXTRACTOR_METATYPE_LOCATION_ELEVATION          => 200,
+    EXTRACTOR_METATYPE_LOCATION_HORIZONTAL_ERROR   => 201,
+    EXTRACTOR_METATYPE_LOCATION_MOVEMENT_SPEED     => 202,
+    EXTRACTOR_METATYPE_LOCATION_MOVEMENT_DIRECTION => 203,
+    EXTRACTOR_METATYPE_LOCATION_CAPTURE_DIRECTION  => 204,
+    EXTRACTOR_METATYPE_SHOW_EPISODE_NUMBER         => 205,
+    EXTRACTOR_METATYPE_SHOW_SEASON_NUMBER          => 206,
+    EXTRACTOR_METATYPE_GROUPING                    => 207,
+    EXTRACTOR_METATYPE_DEVICE_MANUFACTURER         => 208,
+    EXTRACTOR_METATYPE_DEVICE_MODEL                => 209,
+    EXTRACTOR_METATYPE_AUDIO_LANGUAGE              => 210,
+    EXTRACTOR_METATYPE_CHANNELS                    => 211,
+    EXTRACTOR_METATYPE_SAMPLE_RATE                 => 212,
+    EXTRACTOR_METATYPE_AUDIO_DEPTH                 => 213,
+    EXTRACTOR_METATYPE_AUDIO_BITRATE               => 214,
+    EXTRACTOR_METATYPE_MAXIMUM_AUDIO_BITRATE       => 215,
+    EXTRACTOR_METATYPE_VIDEO_DIMENSIONS            => 216,
+    EXTRACTOR_METATYPE_VIDEO_DEPTH                 => 217,
+    EXTRACTOR_METATYPE_FRAME_RATE                  => 218,
+    EXTRACTOR_METATYPE_PIXEL_ASPECT_RATIO          => 219,
+    EXTRACTOR_METATYPE_VIDEO_BITRATE               => 220,
+    EXTRACTOR_METATYPE_MAXIMUM_VIDEO_BITRATE       => 221,
+    EXTRACTOR_METATYPE_SUBTITLE_LANGUAGE           => 222,
+    EXTRACTOR_METATYPE_VIDEO_LANGUAGE              => 223,
+    EXTRACTOR_METATYPE_TOC                         => 224,
+    EXTRACTOR_METATYPE_VIDEO_DURATION              => 225,
+    EXTRACTOR_METATYPE_AUDIO_DURATION              => 226,
+    EXTRACTOR_METATYPE_SUBTITLE_DURATION           => 227,
+    EXTRACTOR_METATYPE_AUDIO_PREVIEW               => 228,
+    EXTRACTOR_METATYPE_NARINFO                     => 229,
+    EXTRACTOR_METATYPE_NAR                         => 230,
+    EXTRACTOR_METATYPE_LAST                        => 231
+);
+
+=begin pod
+
+=head1 NAME
+
+File::Metadata::Libextractor::Constants - Libextractor-related constants
+
+=head1 SYNOPSIS
+=begin code
+
+use v6;
+
+use File::Metadata::Libextractor::Constants;
+
+=end code
+
+=head1 DESCRIPTION
+
+For more details on libextractor see L<https://www.gnu.org/software/libextractor/manual/libextractor.html>.
+
+=head1 Prerequisites
+
+This module requires the libextractor library to be installed. Please follow the
+instructions below based on your platform:
+
+=head2 Debian Linux
+
+=begin code
+sudo apt-get install libextractor3
+=end code
+
+=head1 Installation
+
+To install it using zef (a module management tool):
+
+=begin code
+$ zef install File::Metadata::Libextractor
+=end code
+
+=head1 Testing
+
+To run the tests:
+
+=begin code
+$ prove -e "perl6 -Ilib"
+=end code
+
+=head1 Author
+
+Fernando Santagata
+
+=head1 License
+
+The Artistic License 2.0
+
+=end pod

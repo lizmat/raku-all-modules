@@ -1,0 +1,9 @@
+Revision history for File-Metadata-Libextractor
+
+{{$NEXT}}
+
+0.0.2  2019-01-09T15:50:23+01:00
+    - Add a parameter to .new to manage locks
+
+0.0.1  2019-01-06T09:56:41+01:00
+    - Initial version

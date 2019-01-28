@@ -1,0 +1,26 @@
+{
+  "auth" : "cpan:FRITH",
+  "authors" : [
+    "Fernando Santagata"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Use libextractor to read file metadata",
+  "license" : "Artistic-2.0",
+  "name" : "File::Metadata::Libextractor",
+  "perl" : "6.c",
+  "provides" : {
+    "File::Metadata::Libextractor" : "lib/File/Metadata/Libextractor.pm6",
+    "File::Metadata::Libextractor::Constants" : "lib/File/Metadata/Libextractor/Constants.pm6",
+    "File::Metadata::Libextractor::Raw" : "lib/File/Metadata/Libextractor/Raw.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/frithnanth/perl6-File-Metadata-Libextractor.git",
+  "tags" : [
+    "filesystem",
+    "metadata",
+    "nativecall"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}

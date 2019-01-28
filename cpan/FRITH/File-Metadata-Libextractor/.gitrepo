@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/frithnanth/perl6-File-Metadata-Libextractor.git
+	branch = master
+	commit = 3001b837a814c306c42529231c249b2f85d7b6fc
+	parent = 2ce5a23e9780d032973cf64b8bd8f267e6397697
+	cmdver = 0.3.1
