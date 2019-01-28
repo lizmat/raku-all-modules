@@ -1,0 +1,6 @@
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact: drop
+  inputs:
+    PathtoPublish: foo/bar
+    ArtifactName: drop
+    publishLocation: Container

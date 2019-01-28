@@ -1,0 +1,26 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Sparrowdo module to generate VSTS yaml steps to publish artifacts",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::VSTS::YAML::Artifact",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::VSTS::YAML::Artifact" : "lib/Sparrowdo/VSTS/YAML/Artifact.pm6"
+  },
+  "resources" : [
+    "build.yaml"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-vsts-artifact.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}

@@ -1,0 +1,10 @@
+#!perl6
+
+file-delete "build.yaml";
+
+module_run "VSTS::YAML::Artifact", %(
+  build-dir => ".vsts",
+  artifact-name => "drop",
+  path => "foo/bar",
+  publish-location => "Container" # default value
+);

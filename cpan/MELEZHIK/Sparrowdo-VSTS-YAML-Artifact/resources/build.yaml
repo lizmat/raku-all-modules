@@ -1,0 +1,6 @@
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact
+  inputs:
+    PathtoPublish: [% path %]
+    ArtifactName: [% artifact_name %]
+    publishLocation: [% publish_location %]

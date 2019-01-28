@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-vsts-artifact.git
+	branch = master
+	commit = 63c88ef012596907ce771ab32e71e29e0384f1f0
+	parent = 0b1a206f5497b4d2f69bf33ecbb6ec91943e9cd2
+	cmdver = 0.3.1
