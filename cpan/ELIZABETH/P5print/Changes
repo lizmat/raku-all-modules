@@ -1,0 +1,12 @@
+Revision history for P5print
+
+{{$NEXT}}
+
+0.0.3  2018-05-21T20:58:27+02:00
+    - Added original Perl 5 documentation
+
+0.0.2  2018-05-05T16:46:57+02:00
+    - Added support for P5 semantics of print() and say()
+
+0.0.1  2018-05-05T16:13:45+02:00
+    - Initial version
