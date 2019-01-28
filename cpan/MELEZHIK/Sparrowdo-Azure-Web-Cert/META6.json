@@ -1,0 +1,27 @@
+{
+  "authors" : [
+    "Alexey Melezhik"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Sparrowdo"
+  ],
+  "description" : "Create SSL certificate  and bind domain for Azure web application",
+  "license" : "NOASSERTION",
+  "name" : "Sparrowdo::Azure::Web::Cert",
+  "perl" : "6.*",
+  "provides" : {
+    "Sparrowdo::Azure::Web::Cert" : "lib/Sparrowdo/Azure/Web/Cert.pm6"
+  },
+  "resources" : [
+    "create-cert.json",
+    "update-cert.json"
+  ],
+  "source-type" : "git",
+  "source-url" : "https://github.com/melezhik/sparrowdo-azure-web-cert-module.git",
+  "support" : {
+  },
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.0.3"
+}

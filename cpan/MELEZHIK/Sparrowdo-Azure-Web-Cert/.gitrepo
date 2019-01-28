@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-azure-web-cert-module.git
+	branch = master
+	commit = d81f3417e0e84ef1b24ccd607e4a256460f8a88f
+	parent = 96881d4eaff330f9cf934626318160ac2a43d13d
+	cmdver = 0.3.1
