@@ -1,0 +1,23 @@
+{
+  "auth" : "cpan:ELIZABETH",
+  "authors" : [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Port of Perl 5's math built-ins to Perl 6",
+  "license" : "Artistic-2.0",
+  "name" : "P5math",
+  "perl" : "6.c",
+  "provides" : {
+    "P5math" : "lib/P5math.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/lizmat/P5math.git",
+  "tags" : [
+    "PERL5",
+    "CPAN5"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.2"
+}

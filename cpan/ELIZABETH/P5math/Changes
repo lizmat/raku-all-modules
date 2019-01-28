@@ -1,0 +1,10 @@
+Revision history for P5math
+
+{{$NEXT}}
+    - Mention that crypt will return Nil if not supported
+
+0.0.2  2018-05-31T22:54:28+02:00
+    - Make sure we handle absence of 'crypt' on some OS's correctly
+
+0.0.1  2018-05-31T21:05:31+02:00
+    - Initial version
