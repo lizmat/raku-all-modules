@@ -1,0 +1,5 @@
+v0.0.3      Thu 17 Jan 09:51:26 GMT 2019
+    * Spring Clean and up to CPAN
+v0.0.2		Fri Mar 11 23:35:52 2016 +0000 
+	* Remove the version literal
+	* Add the POD

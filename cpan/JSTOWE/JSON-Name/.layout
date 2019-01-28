@@ -1,0 +1,54 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "010-use.t"
+        },
+        {
+          "name": "020-trait.t",
+          "type": "file"
+        }
+      ],
+      "name": "t",
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "name": "lib",
+      "children": [
+        {
+          "children": [
+            {
+              "type": "file",
+              "name": "Name.pm"
+            }
+          ],
+          "purpose": null,
+          "name": "JSON",
+          "type": "directory"
+        }
+      ],
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}
