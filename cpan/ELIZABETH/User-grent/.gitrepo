@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/User-grent.git
+	branch = master
+	commit = 9c90703af299c4de17b0bb5edd58d3dd0b4acb00
+	parent = 960f5ea27639e6bd61260cc5d809e320173b5675
+	cmdver = 0.3.1
