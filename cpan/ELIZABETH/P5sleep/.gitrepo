@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/lizmat/P5sleep.git
+	branch = master
+	commit = 615d116bb5bc42891413223a750c523101da0c97
+	parent = 9ef886f5abc0dd346adcea8e53c2da3f6ab23901
+	cmdver = 0.3.1
