@@ -1,0 +1,3 @@
+[submodule "TinyTIFF"]
+	path = TinyTIFF
+	url = https://github.com/ryn1x/TinyTIFF

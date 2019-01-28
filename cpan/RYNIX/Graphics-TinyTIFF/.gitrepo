@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ryn1x/Graphics-TinyTIFF.git
+	branch = master
+	commit = 4b0dce520f00e99dbdfd87b3db335db679bb152f
+	parent = af24ae47590a5a567092bf85cf50e1d024fe2108
+	cmdver = 0.3.1

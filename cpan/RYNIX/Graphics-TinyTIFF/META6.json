@@ -1,0 +1,23 @@
+{
+  "authors" : [
+    "github:ryn1x"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Perl6 bindings to TinyTIFF",
+  "license" : "Artistic-2.0",
+  "name" : "Graphics::TinyTIFF",
+  "perl" : "6.c",
+  "provides" : {
+    "Graphics::TinyTIFF" : "lib/Graphics/TinyTIFF.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/ryn1x/Graphics-TinyTIFF.git",
+  "tags" : [
+      "Graphics",
+      "Image",
+      "Tiff"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.6"
+}
