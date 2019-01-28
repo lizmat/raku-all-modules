@@ -1,0 +1,92 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "children": [
+        {
+          "type": "file",
+          "name": "010-basic.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "020-utmp.t"
+        }
+      ],
+      "purpose": null,
+      "type": "directory",
+      "name": "t"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "type": "file",
+      "name": "Build.pm"
+    },
+    {
+      "name": "bin",
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "p6who"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "name": "Utmp.pm",
+              "type": "file"
+            }
+          ],
+          "purpose": null,
+          "type": "directory",
+          "name": "Sys"
+        }
+      ],
+      "purpose": null,
+      "name": "lib",
+      "type": "directory"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "name": "src",
+      "children": [
+        {
+          "type": "file",
+          "name": "Configure.pl6"
+        },
+        {
+          "type": "file",
+          "name": "utmphelper.c"
+        },
+        {
+          "type": "file",
+          "name": "Makefile.in"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}
