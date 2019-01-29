@@ -1,0 +1,29 @@
+ff ff ff ff   ff ff ff ff   ff ff ff ff   ff ff ff ff   # Marker
+00 87                                                   # Length
+02                                                      # Message Type (Update)
+00 0A                                                   # Withdrawn Length
+00                                                      #   0.0.0.0/0
+18 C0 A8 96                                             #   192.168.150.0/24
+20 C0 A8 96 01                                          #   192.168.150.1/32
+00 5D                                                   # Path Attribute Length
+40 01 01 02                                             # Origin: Unknown
+40 02 06 02 02 01 02 03 04                              # AS Path: 0x0102 0x0304
+40 03 04 0A 00 00 01                                    # Next Hop: 10.0.0.1
+80 04 04 00 00 13 88                                    # MED: 5000
+40 05 04 00 00 00 64                                    # Local Pref: 100
+40 06 00                                                # Atomic-Aggregate
+40 07 06 5B A0 C0 00 02 06                              # Aggregator 23456/192.0.2.6
+C0 08 04 0A 0B 01 02                                    # Community: 2571:258
+80 0E                                                   # MP-NLRI
+1A                                                      #   Length of attribute
+00 02                                                   #   AFI: IPv6
+01                                                      #   Unicast
+10                                                      #   Length of Next Hop
+20 01 0D B8   00 00 00 00   00 00 00 00   00 00 00 01   #   NH: 2001:db8::1
+00                                                      #   Reserved
+20 20 01 0D B8                                          #   NLRI: 2001:db8::/32
+40 12 08 00 01 00 00 C0 00 02 06                        # Aggregator 65536/192.0.2.6
+08 0A                                                   # NLRI 1 10.0.0.0/8
+18 C0 A8 97                                             #      2 192.168.151.0/24
+20 C0 A8 97 01                                          #      3 192.168.151.1/32
+

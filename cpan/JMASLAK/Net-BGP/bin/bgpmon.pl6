@@ -9,6 +9,7 @@ use v6.d;
 use Net::BGP;
 use Net::BGP::IP;
 use Net::BGP::Time;
+use Net::BGP::Validation;
 
 my subset Port of UInt where ^2¹⁶;
 my subset Asn  of UInt where ^2¹⁶;
@@ -69,7 +70,7 @@ sub MAIN(
     # Start the TCP socket
     $bgp.listen();
     lognote("Listening") unless $short-format;
-    short-format-output(short-line-header) if $short-format;
+    short-format-output(short-line-header, Array.new) if $short-format;
 
     my $channel = $bgp.user-channel;
 
@@ -139,19 +140,29 @@ sub MAIN(
                     :degree(8), :batch((@stack.elems / 8).ceiling)
                 ).grep(
                     { is-filter-match($^a, :@cidr-filter, :$lint-mode) }
-                ).map({ $short-format ?? short-lines($^a) !! $^a.Str }).flat;
+                ).map({ $^a => $short-format ?? short-lines($^a) !! $^a.Str }).flat;
             } else {
                 @str = @stack.map: { $^a.Str }
                 @str = @stack.grep(
                     { is-filter-match($^a, :@cidr-filter, :$lint-mode) }
-                ).map({ $short-format ?? short-lines($^a) !! $^a.Str }).flat;
+                ).map({ $^a => $short-format ?? short-lines($^a) !! $^a.Str }).flat;
             }
 
             for @str -> $event {
+                my @errors;
+                if $event.key ~~ Net::BGP::Event::BGP-Message {
+                    @errors = Net::BGP::Validation::errors($event.key.message);
+                    if $lint-mode {
+                        next unless @errors.elems;  # In lint mode, we only show errors
+                    }
+                }
+
                 if $short-format {
-                    short-format-output($event);
+                    for $event.value -> $entry {
+                        short-format-output($entry, @errors);
+                    }
                 } else {
-                    logevent($event);
+                    long-format-output($event.value, @errors);
                 }
 
                 $messages-logged++;
@@ -204,23 +215,6 @@ multi is-filter-match(
     -->Bool:D
 ) {
     if $event.message ~~ Net::BGP::Message::Update {
-        if $lint-mode {
-            my @errors;
-            if $event.message.aggregator-asn.defined {
-                if 64512 ≤ $event.message.aggregator-asn ≤ 65534 {
-                    @errors.push: "Private ASN";
-                } elsif 4_200_000_000 ≤ $event.message.aggregator-asn ≤ 4_294_967_294 {
-                    @errors.push: "Private ASN";
-                }
-            }
-            # Is it ASN32?  If so, is there an AS4-Aggregate? Shouldn't
-            # be. Shouldn't be an AS4-Path either.
-            #
-            # ASN 23456 shouldn't be present on ASN32 sessions
-
-            if @errors.elems == 0 { return False }
-        }
-
         if ! @cidr-filter.elems { return True }
 
         my @nlri = @( $event.message.nlri );
@@ -265,8 +259,21 @@ sub log(Str:D $type, Str:D $msg) {
     say "{DateTime.now.Str} [$type] $msg";
 }
 
-sub short-format-output(Str:D $line -->Nil) {
-    say $line;
+sub long-format-output(Str:D $event is copy, @errors -->Nil) {
+    if @errors.elems {
+        for @errors -> $err {
+            $event ~= "\n      ERROR: {$err.key} ({$err.value})";
+        }
+    }
+    logevent($event);
+}
+
+sub short-format-output(Str:D $line, @errors -->Nil) {
+    if @errors.elems {
+        say $line ~ @errors».key.join(' ');
+    } else {
+        say $line;
+    }
 }
 
 multi short-lines(Net::BGP::Event::BGP-Message:D $event -->Array[Str:D]) {
@@ -329,6 +336,7 @@ sub short-line-header(-->Str:D) {
         "Next-Hop",
         "Path",
         "Communities",
+        "Errors",
     );
 }
 
@@ -347,6 +355,7 @@ sub short-line-announce(
         $bgp.next-hop,
         $bgp.path,
         $bgp.community-list.join(" "),
+        '',
     );
 }
 
@@ -365,6 +374,7 @@ sub short-line-announce6(
         $bgp.next-hop6,
         $bgp.path,
         $bgp.community-list.join(" "),
+        '',
     );
 }
 
@@ -379,6 +389,7 @@ sub short-line-withdrawn(
         $message-date,
         $peer,
         $prefix,
+        '',
     );
 }
 
@@ -390,7 +401,8 @@ sub short-line-open(
     return join("|",
         "O",
         $message-date,
-        $peer
+        $peer,
+        '',
     );
 }
 

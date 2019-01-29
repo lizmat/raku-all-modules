@@ -6,7 +6,7 @@ use v6;
 #
 
 use StrictClass;
-unit class Net::BGP::CIDR:ver<0.0.9>:auth<cpan:JMASLAK> does StrictClass;
+unit class Net::BGP::CIDR:ver<0.1.0>:auth<cpan:JMASLAK> does StrictClass;
 
 use Net::BGP::IP;
 
@@ -35,7 +35,7 @@ method from-int(
 
 method from-str(Str:D $ip) {
     my @parts = $ip.split('/');
-    if @parts.elems ≠ 2 { die("Invalid CIDR"); }
+    if @parts.elems ≠ 2 { die("Invalid CIDR - $ip"); }
 
     if $ip.contains(':') {
         # IPv6

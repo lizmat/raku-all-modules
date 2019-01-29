@@ -43,7 +43,7 @@ use Net::BGP::Message::Notify::Hold-Timer-Expired;
 use Net::BGP::Message::Update;
 
 use StrictClass;
-unit class Net::BGP:ver<0.0.9>:auth<cpan:JMASLAK> does StrictClass;
+unit class Net::BGP:ver<0.1.0>:auth<cpan:JMASLAK> does StrictClass;
 
 our subset PortNum of Int where ^65536;
 

@@ -6,7 +6,7 @@ use v6;
 #
 
 use StrictClass;
-unit class Net::BGP::Message:ver<0.0.9>:auth<cpan:JMASLAK> does StrictClass;
+unit class Net::BGP::Message:ver<0.1.0>:auth<cpan:JMASLAK> does StrictClass;
 
 my %registrations := Hash[Net::BGP::Message:U,Int].new;
 my %message-names := Hash[Net::BGP::Message:U,Str].new;

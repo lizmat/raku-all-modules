@@ -5,7 +5,7 @@ use v6;
 # All Rights Reserved - See License
 #
 
-unit module Net::BGP::IP:ver<0.0.9>:auth<cpan:JMASLAK>;
+unit module Net::BGP::IP:ver<0.1.0>:auth<cpan:JMASLAK>;
 
 # IPv4
 #

@@ -92,11 +92,12 @@
     "Net::BGP::Socket" : "lib/Net/BGP/Socket.pm6",
     "Net::BGP::Socket-Connection-Linux" : "lib/Net/BGP/Socket-Connection-Linux.pm6",
     "Net::BGP::Socket-Linux" : "lib/Net/BGP/Socket-Linux.pm6",
-    "Net::BGP::Time" : "lib/Net/BGP/Time.pm6"
+    "Net::BGP::Time" : "lib/Net/BGP/Time.pm6",
+    "Net::BGP::Validation" : "lib/Net/BGP/Validation.pm6"
   },
   "resources" : [ ],
   "source-url" : "https://github.com/jmaslak/Perl6-Net-BGP.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.0.9"
+  "version" : "0.1.0"
 }

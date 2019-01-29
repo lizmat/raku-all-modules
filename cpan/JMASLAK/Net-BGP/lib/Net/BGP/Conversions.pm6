@@ -5,15 +5,15 @@ use v6.d;
 # All Rights Reserved - See License
 #
 
-use Net::BGP::IP;
-
-unit module Net::BGP::Conversions:ver<0.0.9>:auth<cpan:JMASLAK>;
+unit module Net::BGP::Conversions:ver<0.1.0>:auth<cpan:JMASLAK>;
 
 use if;
 
 # Select right helper library based on compiler version
 use Net::BGP::Conversions-Pre201812:if( $*PERL.compiler.version ≤ v2018.11);
 use Net::BGP::Conversions-Post201812:if($*PERL.compiler.version > v2018.11);
+
+use Net::BGP::IP;
 
 multi sub nuint16(@a where @a.elems == 2 --> Int) is export {
     return nuint16(@a[0], @a[1]);
