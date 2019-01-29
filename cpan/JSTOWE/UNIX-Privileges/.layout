@@ -1,0 +1,89 @@
+{
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "type": "directory",
+      "name": "t",
+      "children": [
+        {
+          "name": "01-noroot.t",
+          "type": "file"
+        },
+        {
+          "name": "04-chroot.t",
+          "type": "file"
+        },
+        {
+          "name": "05-clean.t",
+          "type": "file"
+        },
+        {
+          "name": "02-root.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "03-drop-str.t"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "name": "Build.pm",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "name": "lib",
+      "type": "directory",
+      "children": [
+        {
+          "purpose": null,
+          "type": "directory",
+          "name": "UNIX",
+          "children": [
+            {
+              "name": "Privileges.pm6",
+              "type": "file"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "purpose": null,
+      "name": "src",
+      "type": "directory",
+      "children": [
+        {
+          "name": "unix_privileges.c",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "Makefile.in"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ],
+  "type": "layout"
+}
