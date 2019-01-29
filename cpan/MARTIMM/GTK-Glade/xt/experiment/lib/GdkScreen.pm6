@@ -4,7 +4,7 @@ use NativeCall;
 use N::NativeLib;
 
 #-------------------------------------------------------------------------------
-class N-GdkScreen
+class N-GdkScreen:auth<github:MARTIMM>
   is repr('CPointer')
   is export
   { }

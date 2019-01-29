@@ -16,40 +16,40 @@ sub gtk_init ( CArray[int32] $argc, CArray[CArray[Str]] $argv )
 sub gtk_init_check ( CArray[int32] $argc, CArray[CArray[Str]] $argv )
     returns int32
     is native(&gtk-lib)
-    is export
+    #is export
     { * }
 
 sub gtk_main ( )
     is native(&gtk-lib)
-    is export
+    #is export
     { * }
 
 sub gtk_main_quit ( )
     is native(&gtk-lib)
-    is export
+    #is export
     { * }
 
 sub gtk_main_iteration ( )
     is native(&gtk-lib)
-    is export
+    #is export
     { * }
 
 sub gtk_main_iteration_do ( Bool $blocking )
     returns Bool
     is native(&gtk-lib)
-    is export
+    #is export
     { * }
 
 sub gtk_main_level ( )
     returns uint32
     is native(&gtk-lib)
-    is export
+    #is export
     { * }
 
 sub gtk_events_pending ( )
     returns Bool
     is native(&gtk-lib)
-    is export
+    #is export
     { * }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -64,5 +64,27 @@ submethod BUILD ( ) {
   $arg_arr[0] = $*PROGRAM.Str;
   $argv[0] = $arg_arr;
 
+  #self.gtk_init( $argc, $argv);
   gtk_init( $argc, $argv);
+}
+
+#-------------------------------------------------------------------------------
+method FALLBACK ( $native-sub is copy, |c ) {
+
+  CATCH {
+    default {
+      .rethrow;
+      #die X::GUI.new(
+      #  :message("Could not find native sub '$native-sub\(...\)'")
+      #);
+    }
+  }
+
+  $native-sub ~~ s:g/ '-' /_/ if $native-sub.index('-');
+
+  my Callable $s;
+  try { $s = &::($native-sub); }
+
+#note "l call sub: ", $s.perl, ', ', $!gtk-widget.perl;
+  &$s(|c)
 }
