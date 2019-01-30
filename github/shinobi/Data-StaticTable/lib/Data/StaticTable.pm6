@@ -317,12 +317,12 @@ class StaticTable::Query {
         X::Data::StaticTable.new("Method grep only accepts one adverb at a time").throw unless one($n, $r, $default, $nr, $nh) == True;
         my Data::StaticTable::Position @rownums;
         if (%!indexes{$heading}:exists) { #-- Search in the index if it is available. Should be faster.
-            my @keysearch = grep {.defined and $matcher}, %!indexes{$heading}.keys;
+            my @keysearch = grep {.defined and $_ ~~ $matcher}, %!indexes{$heading}.keys;
             for (@keysearch) -> $k {
                 @rownums.push(|%!indexes{$heading}{$k});
             }
         } else {;
-            @rownums = 1 <<+>> ( grep {.defined and $matcher}, :k, $!T.column($heading) );
+            @rownums = 1 <<+>> ( grep {.defined and $_ ~~ $matcher}, :k, $!T.column($heading) );
         }
         if ($n) { # Returning rowlist
             return @rownums.sort.list                           #-- :n
