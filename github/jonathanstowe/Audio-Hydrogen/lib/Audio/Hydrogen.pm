@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 =begin pod
 
@@ -44,7 +44,7 @@ path to the C<data-paths> attribute before search for the drumkits.
 use Audio::Hydrogen::Drumkit;
 use Audio::Hydrogen::Song;
 
-class Audio::Hydrogen:ver<0.0.3>:auth<github:jonathanstowe> {
+class Audio::Hydrogen:ver<0.0.4>:auth<github:jonathanstowe>:api<1.0> {
 
     class DrumkitInfo {
         has Str $.name;

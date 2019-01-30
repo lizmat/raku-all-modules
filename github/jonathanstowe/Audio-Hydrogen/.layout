@@ -1,0 +1,119 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "children": [
+        {
+          "name": "euclid",
+          "type": "file"
+        },
+        {
+          "name": "make-drumkit",
+          "type": "file"
+        }
+      ],
+      "type": "directory",
+      "name": "examples",
+      "purpose": null
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "name": "030-song.t",
+          "type": "file"
+        },
+        {
+          "name": "data",
+          "children": [
+            {
+              "type": "file",
+              "name": "test.h2song"
+            },
+            {
+              "type": "file",
+              "name": "drumkit.xml"
+            },
+            {
+              "name": "Lifetime.h2song",
+              "type": "file"
+            }
+          ],
+          "type": "directory",
+          "purpose": null
+        },
+        {
+          "name": "020-drumkit.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        }
+      ],
+      "type": "directory",
+      "name": "t"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "name": "Audio",
+          "children": [
+            {
+              "type": "file",
+              "name": "Hydrogen.pm"
+            },
+            {
+              "purpose": null,
+              "name": "Hydrogen",
+              "children": [
+                {
+                  "name": "Instrument.pm",
+                  "type": "file"
+                },
+                {
+                  "name": "Pattern.pm",
+                  "type": "file"
+                },
+                {
+                  "name": "Drumkit.pm",
+                  "type": "file"
+                },
+                {
+                  "name": "Song.pm",
+                  "type": "file"
+                }
+              ],
+              "type": "directory"
+            }
+          ],
+          "type": "directory",
+          "purpose": null
+        }
+      ],
+      "name": "lib",
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ]
+}

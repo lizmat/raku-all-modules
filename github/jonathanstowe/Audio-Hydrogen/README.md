@@ -50,9 +50,7 @@ and am quite open to any ideas that could make it more useful.
 I'd also be delighted to hear about anything interesting you
 do with it.
 
-Suggestions/patches are welcomed via github at
-
-https://github.com/jonathanstowe/Audio-Hydrogen/issues
+Suggestions/patches are welcomed via github at https://github.com/jonathanstowe/Audio-Hydrogen/issues
 
 ## Licence
 
@@ -60,5 +58,5 @@ This is free software.
 
 Please see the [LICENCE](LICENCE) file in the distribution
 
-© Jonathan Stowe 2016, 2017
+© Jonathan Stowe 2016 - 2019
 
