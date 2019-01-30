@@ -1,0 +1,124 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "children": [
+        {
+          "purpose": null,
+          "type": "directory",
+          "children": [
+            {
+              "type": "file",
+              "name": "country.xml"
+            }
+          ],
+          "name": "data"
+        },
+        {
+          "type": "file",
+          "name": "020-basic-out.t"
+        },
+        {
+          "name": "030-namespace-out.t",
+          "type": "file"
+        },
+        {
+          "name": "040-basic-in.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "120-any.t"
+        },
+        {
+          "name": "090-types.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "name": "065-country.t",
+          "type": "file"
+        },
+        {
+          "children": [
+            {
+              "name": "Country.pm",
+              "type": "file"
+            }
+          ],
+          "name": "lib",
+          "purpose": null,
+          "type": "directory"
+        },
+        {
+          "type": "file",
+          "name": "110-custom.t"
+        },
+        {
+          "type": "file",
+          "name": "060-simple-content.t"
+        },
+        {
+          "name": "010-use.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "050-class-in.t"
+        },
+        {
+          "type": "file",
+          "name": "100-skip-null.t"
+        },
+        {
+          "name": "070-namespace-in.t",
+          "type": "file"
+        },
+        {
+          "name": "080-failures.t",
+          "type": "file"
+        }
+      ],
+      "name": "t",
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "name": "Documentation.md",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "type": "directory",
+      "children": [
+        {
+          "name": "XML",
+          "children": [
+            {
+              "type": "file",
+              "name": "Class.pm"
+            }
+          ],
+          "type": "directory",
+          "purpose": null
+        }
+      ],
+      "name": "lib"
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    }
+  ]
+}
