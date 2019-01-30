@@ -146,12 +146,13 @@ terms have a role `Temp::Path::AutoDel` role mixed in that will
 object the path points to.
 
 Note that deletion will happen only if the
-path was created by this module. Doing `make-temp-dir.sibling: 'foo'` will
+path was created by this module. For example doing `make-temp-dir.sibling: 'foo'` will
 still give you an `IO::Path` with `Temp::Path::AutoDel` mixed in due to how
-`IO::Path` methods create new objects, but *that* new object created by
-'.sibling' won't be deleted, when the object gets garbage collected, because
-*you* created it and not the module. Of course, when the parent directory, that
-was crated by this module gets deleted, all the `.siblings` on disk get removed.
+`IO::Path` methods create new objects. But new objects created by `.sibling`, `.add`,
+`.child`, `.parent`, etc won't be deleted, when the object gets garbage collected, because
+*you* created it and not the module. Of course, when a parent directory, that 
+was created by this module gets deleted, all its contents that you created with `.child`
+gets removed from the disk. Siblings need to be removed manually.
 
 ----
 
