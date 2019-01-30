@@ -2,7 +2,7 @@
     "perl"         : "6.c",
     "name"         : "Subsets::IO",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001002",
+    "version"      : "1.001003",
     "description"  : "Subsets for various types of IO::Path instances",
     "tags"         : [ "IO" ],
     "depends"      : [
