@@ -1,14 +1,14 @@
 use v6;
 use NativeCall;
 
-use N::NativeLib;
-use GUI;
-use GdkScreen;
-use GdkDisplay;
-use GdkWindow;
+use GTK::Glade::Gui;
+use GTK::V3::N::NativeLib;
+use GTK::V3::Gdk::GdkScreen;
+use GTK::V3::Gdk::GdkDisplay;
+use GTK::V3::Gdk::GdkWindow;
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-class GtkWidget:auth<github:MARTIMM> {
+class GTK::V3::Gtk::GtkWidget:auth<github:MARTIMM> {
 
   #-----------------------------------------------------------------------------
   sub gtk_widget_get_display ( N-GtkWidget $widget )
@@ -139,13 +139,6 @@ class GtkWidget:auth<github:MARTIMM> {
 #note "w s1: gtk_widget_$native-sub, ", $s unless ?$s;
     try { $s = &::("gtk_widget_$native-sub"); } unless ?$s;
 
-    CATCH {
-      default {
-        .note;
-      }
-    }
-
-#note "w return sub: ", $s.perl;
     $s
   }
 }

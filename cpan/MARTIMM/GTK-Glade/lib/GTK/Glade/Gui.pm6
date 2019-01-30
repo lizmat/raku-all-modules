@@ -1,7 +1,10 @@
 use v6;
 
+use GTK::Glade::X;
+
 # Role to capture tools and other thingies needed by widgets. This
 # means that it cannot be used by GtkMain, GdkScreen etc
+
 #-------------------------------------------------------------------------------
 class N-GtkWidget
   is repr('CPointer')
@@ -9,15 +12,9 @@ class N-GtkWidget
   { }
 
 #-------------------------------------------------------------------------------
-class X::GUI is Exception {
-  has $.message;
+role GTK::Glade::Gui:auth<github:MARTIMM> {
 
-  submethod BUILD ( Str:D :$!message ) { }
-}
-
-#-------------------------------------------------------------------------------
-role GUI:auth<github:MARTIMM> {
-
+  #-----------------------------------------------------------------------------
   has N-GtkWidget $!gtk-widget;
 #  has Str $!native-sub-name = '';
 
@@ -47,13 +44,13 @@ role GUI:auth<github:MARTIMM> {
 
     CATCH {
       default {
-        die X::GUI.new(
+        die X::Gui.new(
           :message("Could not find native sub '$native-sub\(...\)'")
         );
       }
     }
 
-    my Callable $s = self.fallback($native-sub) unless ?$s;
+    my Callable $s = self.fallback($native-sub);
     &$s( $!gtk-widget, |c)
   }
 }

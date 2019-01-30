@@ -6,7 +6,7 @@
 
 use v6;
 
-unit module NativeLib;
+unit module GTK::V3::N::NativeLib;
 
 use NativeCall;
 

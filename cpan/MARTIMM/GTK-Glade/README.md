@@ -1,9 +1,10 @@
-# GTK::Glade - Accessing Gtk UI using Glade IDE
+![gtk logo][logo]
 
+# GTK::Glade - Accessing Gtk using Glade
 <!--
 [![Build Status](https://travis-ci.org/MARTIMM/gtk-glade.svg?branch=master)](https://travis-ci.org/MARTIMM/gtk-glade) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/6yaqqq9lgbq6nqot?svg=true&branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending)](https://ci.appveyor.com/project/MARTIMM/gtk-glade/branch/master)
-[![License](http://martimm.github.io/label/License-label.svg)](http://www.perlfoundation.org/artistic_license_2_0)
 -->
+[![License](http://martimm.github.io/label/License-label.svg)](http://www.perlfoundation.org/artistic_license_2_0)
 
 # Description
 With the modules from package `GTK::Simple` you can build a user interface and interact with it. This package however, is meant to load a user interface description saved by an external designer program. The program used is glade which saves an XML description of the made design.
@@ -13,6 +14,7 @@ The user must provide a class which holds the methods needed to receive signals 
 Then only two lines of code (besides the loading of modules) to let the user interface appear and enter the main loop.
 
 # Synopsis
+(Many things shown below will be changed shortly!!)
 
 #### User interface file
 The first thing to do is designing a ui and save it. A part of the saved result is shown below. It shows the part of an exit button. Assume that this file is saved in **example.glade**.
@@ -77,9 +79,9 @@ my GTK::Glade $a .= new( :ui-file("example.glade"), :$engine);
 ```
 
 # Motivation
-I perhaps should have used parts of `GTK::Simple` but I wanted to study the native call interface which I am now encountering more seriously. Therefore I started a new project with likewise objects as can be found `GTK::Simple`.
+I perhaps should have used parts of `GTK::Simple` but I wanted to study the native call interface which I am now encountering more seriously. Therefore I started a new project with likewise objects as can be found in `GTK::Simple`.
 
-The other reason I want to start a new project is that after some time working with the native call interface. I came to the conclusion that Perl6 is not yet capable to return a proper message when mistakes are made by me e.g. spelling errors or using wrong types. Most of them end up in **MoarVM panic: Internal error: Unwound entire stack and missed handler**. Other times it ends in just a plain crash. I am very confident that this will be improved later but for the time being I had to improve the maintainability of this project.
+The other reason I want to start a new project is that after some time working with the native call interface. I came to the conclusion that Perl6 is not yet capable to return a proper message when mistakes are made by me e.g. spelling errors or using wrong types. Most of them end up in **MoarVM panic: Internal error: Unwound entire stack and missed handler**. Other times it ends in just a plain crash. I am very confident that this will be improved later but for the time being I had to improve the maintainability of this project by hiding the native stuff as much as possible.
 
 There are some points I noticed in the `GTK::Simple` modules.
 * The `GTK::Simple::Raw` module where all the native subs are defined is quite large. Only a few subs can be found elsewhere. That makes the file large and is growing with each addition. Using that module is always a parsing impact despite the several import selection switches one can use.
@@ -88,12 +90,35 @@ There are some points I noticed in the `GTK::Simple` modules.
 * I want the native subs out of reach of the user. So the `is export` trait is removed. This is important to prevent LTA messages mentioned above.
 
 This will present some problems
-* How to store the native widget. This is a central object almost used everywhere. Because it is just a pointer to a C object we do not need to build inheritance around these. Like in `GTK::Simple` I used a role for that, only not named after a GTK like class.
-* Do I have to write a method for each native sub introduced? That is, fortunately, not necessary. I used the **FALLBACK** mechanism for that. When not found the search is handed over to the parent. In this process it is possible to accept other names as well which end up finding the same native sub. To let this mechanism work the `FALLBACK` method is defined in the role module. This method will then call the method `fallback` in the modules using the role. When nothing found, `fallback` must call the parents fallback with `callsame`. The subs in some classes all start with some prefix which can be left out too, provided that the fallback functions also test with an added prefix. So e.g. a sub `gtk_label_get_text` defined in class `GtkLabel` can be called like `$label.gtk_label_get_text()` or `$label.get_text()`. As an extra feature dashes can be used instead of underscores, so `$label.get-text()` works too.
-* Is the sub acessable when removing the `is export` trait? Yes because the `fallback` method will search in there own namespace and get hold of the sub reference which is returned to the caller `FALLBACK`. The call is made with the given arguments prefixed with the native widgets address.
+* How to store the native widget. This is a central object representing the widget for the class wherein it is created. It is used where widgets like labels, dialogs, frames, listboxes etc are used. Because it is just a pointer to a C object we do not need to build inheritance around this. Like in `GTK::Simple` I used a role for that, only not named after a GTK like class.
+* Do I have to write a method for each native sub introduced? Fortunately, that is not necessary. I used the **FALLBACK** mechanism for that. When not found, the search is handed over to the parent. In this process it is possible to accept other names as well which end up finding the same native sub. To let this mechanism work the `FALLBACK` method is defined in the role module. This method will then call the method `fallback` in the modules using the role. When nothing found, `fallback` must call the parents fallback with `callsame`. The subs in some classes all start with some prefix which can be left out too, provided that the fallback functions also test with an added prefix. So e.g. a sub `gtk_label_get_text` defined in class `GtkLabel` can be called like `$label.gtk_label_get_text()` or `$label.get_text()`. As an extra feature dashes can be used instead of underscores, so `$label.gtk-label-get-text()` or `$label.get-text()` works too.
+* Is the sub accessible when removing the `is export` trait? No, not directly but because the `fallback` method will search in there own name space they can get hold of the sub reference which is returned to the callers `FALLBACK`. The call then is made with the given arguments prefixed with the native widgets address stored in the role.
+
+Not all of the GTK, GDK or Glib libraries will be covered because not everything is needed, partly because a lot can be designed by the `Glade` user interface designer tool which is the base point of this package. Other reasons are that classes and many subs are deprecated. This package will support the 3.* version of GTK. There is already a 4.* version out but that is food for later thoughts. The root of the library will be GTK::V3 and can be separated later into a another package.
 
 # Documentation
 
+## Glade engine
+
+* GTK::Glade
+* GTK::Glade::Engine
+
+## Gtk library
+
+* GTK::V3::Gtk::GtkMain
+* GTK::V3::Gtk::GtkLabel is GTK::V3::Gtk::GtkWidget
+* GTK::V3::Gtk::GtkWidget
+
+## Gdk library
+
+* GTK::V3::Gdk::GdkDisplay
+* GTK::V3::Gdk::GdkScreen
+* GTK::V3::Gdk::GdkWindow
+
+## Glib library
+
+
+## Miscellaneous
 * [Release notes][release]
 
 # TODO
@@ -127,7 +152,7 @@ Github account name: Github account MARTIMM
 
 <!---- [refs] ----------------------------------------------------------------->
 [release]: https://github.com/MARTIMM/gtk-glade/blob/master/doc/CHANGES.md
-
+[logo]: doc/gtk-logo-100.png
 <!--
 [todo]: https://github.com/MARTIMM/Library/blob/master/doc/TODO.md
 [man]: https://github.com/MARTIMM/Library/blob/master/doc/manual.pdf
