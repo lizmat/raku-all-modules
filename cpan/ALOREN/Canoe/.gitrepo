@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/perl6-song/canoe.git
+	branch = master
+	commit = 0ed8e09fee5b5bc07ee75383793dfc93202abeae
+	parent = 29e0d8d64b97b33e2e302c500a3606211e641c96
+	cmdver = 0.3.1

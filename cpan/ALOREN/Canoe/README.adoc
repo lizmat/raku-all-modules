@@ -1,0 +1,18 @@
+
+= Canoe
+
+An simple thread-safe plug-in framework for Perl 6
+
+== Description
+
+Canoe is an simple plug-in framework for Perl 6.
+It is thread-safe and process-safe.
+The configuration file is base on the JSON format.
+
+== License
+
+    The MIT License (MIT)
+
+== Author
+
+    araraloren

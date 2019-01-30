@@ -1,0 +1,24 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Canoe",
+    "version"     : "0.0.1",
+    "license"     : "MIT",
+    "description" : "An simple thread-safe plug-in framework for Perl 6",
+    "depends"     : [ ],
+    "test-depends": [ ],
+    "tags": [
+        "plug",
+        "plug-in",
+        "pluggable"
+    ],
+    "provides" : {
+        "Canoe" : "lib/Canoe.pm6"
+    },
+	"auth" : "github:araraloren",
+    "authors" : "Loren",
+    "source-url"  : "https://github.com/perl6-song/canoe.git",
+    "support" : {
+        "bugtracker" : "https://github.com/perl6-song/canoe/issues",
+        "source" : "https://github.com/perl6-song/canoe.git"
+    }
+}

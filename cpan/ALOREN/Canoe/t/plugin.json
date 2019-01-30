@@ -1,0 +1,8 @@
+{
+  "plugins" : [
+    {
+      "name" : "Test::Plugin1",
+      "enable" : true
+    }
+  ]
+}
