@@ -1,0 +1,90 @@
+{
+  "children": [
+    {
+      "type": "directory",
+      "purpose": null,
+      "name": "examples",
+      "children": [
+        {
+          "name": "encode-files",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "synopsis"
+        }
+      ]
+    },
+    {
+      "purpose": null,
+      "name": "t",
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "020-matches.t"
+        },
+        {
+          "name": "100-synopsis.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "060-callbacks.t"
+        },
+        {
+          "name": "030-apply-simple.t",
+          "type": "file"
+        },
+        {
+          "name": "050-supplies.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "040-workflow-object.t"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        }
+      ]
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Documentation.md"
+    },
+    {
+      "purpose": null,
+      "name": "lib",
+      "type": "directory",
+      "children": [
+        {
+          "name": "Tinky.pm",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
