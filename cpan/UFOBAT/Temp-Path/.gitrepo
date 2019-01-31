@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ufobat/perl6-Temp-Path.git
+	branch = master
+	commit = 5a6acee907d65fc5b681a6ea022aa18217f6e99b
+	parent = 29b39ff847552dd918d8bed3a0c8e51f9fa3c80d
+	cmdver = 0.3.1
