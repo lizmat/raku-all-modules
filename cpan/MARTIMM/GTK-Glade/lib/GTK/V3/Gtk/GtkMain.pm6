@@ -64,6 +64,14 @@ submethod BUILD ( ) {
 method FALLBACK ( $native-sub is copy, |c ) {
 
   CATCH {
+    when X::AdHoc {
+      die X::Gui.new(:message(.message));
+    }
+
+    when X::TypeCheck::Argument {
+      die X::Gui.new(:message(.message));
+    }
+
     default {
       .rethrow;
       #die X::GUI.new(

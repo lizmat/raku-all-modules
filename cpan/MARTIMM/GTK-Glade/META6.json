@@ -41,7 +41,20 @@
     "GTK::Glade::Native::Gtk::Separator": "lib/GTK/Glade/Native/Gtk/Separator.pm6",
     "GTK::Glade::Native::Gtk::Togglebutton": "lib/GTK/Glade/Native/Gtk/Togglebutton.pm6",
     "GTK::Glade::Native::Gtk::Widget": "lib/GTK/Glade/Native/Gtk/Widget.pm6",
-    "GTK::Glade::Native::Gtk::Window": "lib/GTK/Glade/Native/Gtk/Window.pm6"
+    "GTK::Glade::Native::Gtk::Window": "lib/GTK/Glade/Native/Gtk/Window.pm6",
+
+    "GTK::Glade::Gui": "lib/GTK/Glade/Gui.pm6",
+    "GTK::Glade::X": "lib/GTK/Glade/X.pm6",
+
+    "GTK::V3::Gdk::GdkDisplay": "lib/GTK/V3/Gdk/GdkDisplay.pm6",
+    "GTK::V3::Gdk::GdkScreen": "lib/GTK/V3/Gdk/GdkScreen.pm6",
+    "GTK::V3::Gdk::GdkWindow": "lib/GTK/V3/Gdk/GdkWindow.pm6",
+
+    "GTK::V3::Glib::GMain": "lib/GTK/V3/Glib/GMain.pm6",
+
+    "GTK::V3::Gtk::GtkLabel": "lib/GTK/V3/Gtk/GtkLabel.pm6",
+    "GTK::V3::Gtk::GtkMain": "lib/GTK/V3/Gtk/GtkMain.pm6",
+    "GTK::V3::Gtk::GtkWidget": "lib/GTK/V3/Gtk/GtkWidget.pm6"
   },
 
   "source-url": "git://github.com/MARTIMM/gtk-glade.git",

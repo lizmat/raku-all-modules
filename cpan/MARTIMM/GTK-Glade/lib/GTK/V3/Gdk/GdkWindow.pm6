@@ -74,6 +74,14 @@ method FALLBACK ( $native-sub is copy, |c ) {
   try { $s = &::($native-sub); }
 
   CATCH {
+    when X::AdHoc {
+      die X::Gui.new(:message(.message));
+    }
+
+    when X::TypeCheck::Argument {
+      die X::Gui.new(:message(.message));
+    }
+
     default {
       die X::Gui.new(
         :message("Could not find native sub '$native-sub\(...\)'")

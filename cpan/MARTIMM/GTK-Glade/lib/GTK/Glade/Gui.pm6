@@ -43,6 +43,14 @@ role GTK::Glade::Gui:auth<github:MARTIMM> {
   method FALLBACK ( $native-sub, |c ) {
 
     CATCH {
+      when X::AdHoc {
+        die X::Gui.new(:message(.message));
+      }
+
+      when X::TypeCheck::Argument {
+        die X::Gui.new(:message(.message));
+      }
+
       default {
         die X::Gui.new(
           :message("Could not find native sub '$native-sub\(...\)'")
