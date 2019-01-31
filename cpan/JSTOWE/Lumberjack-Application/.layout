@@ -1,0 +1,174 @@
+{
+  "children": [
+    {
+      "type": "directory",
+      "name": "examples",
+      "children": [
+        {
+          "name": "tester",
+          "type": "file"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "020-template.t"
+        },
+        {
+          "type": "file",
+          "name": "040-supply.t"
+        },
+        {
+          "name": "030-message.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "050-proxy.t"
+        },
+        {
+          "type": "file",
+          "name": "010-use-all.t"
+        }
+      ],
+      "name": "t",
+      "type": "directory"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "name": "lumberjack-application",
+          "type": "file"
+        }
+      ],
+      "name": "bin",
+      "type": "directory"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "type": "directory",
+          "name": "templates",
+          "children": [
+            {
+              "name": "index.tt",
+              "type": "file"
+            }
+          ],
+          "purpose": null
+        },
+        {
+          "children": [
+            
+          ],
+          "name": "htdocs",
+          "type": "directory",
+          "purpose": null
+        }
+      ],
+      "name": "resources",
+      "purpose": null
+    },
+    {
+      "type": "directory",
+      "name": "lib",
+      "children": [
+        {
+          "purpose": null,
+          "children": [
+            {
+              "type": "directory",
+              "children": [
+                {
+                  "name": "Provider.pm",
+                  "type": "file"
+                }
+              ],
+              "name": "Template",
+              "purpose": null
+            },
+            {
+              "type": "directory",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "Proxy.pm"
+                },
+                {
+                  "type": "file",
+                  "name": "Supply.pm"
+                }
+              ],
+              "name": "Dispatcher",
+              "purpose": null
+            },
+            {
+              "type": "file",
+              "name": "Application.pm"
+            },
+            {
+              "purpose": null,
+              "children": [
+                {
+                  "type": "file",
+                  "name": "Index.pm"
+                },
+                {
+                  "name": "WebSocket.pm",
+                  "type": "file"
+                },
+                {
+                  "type": "file",
+                  "name": "PSGI.pm"
+                }
+              ],
+              "name": "Application",
+              "type": "directory"
+            },
+            {
+              "purpose": null,
+              "type": "directory",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "JSON.pm"
+                }
+              ],
+              "name": "Message"
+            }
+          ],
+          "name": "Lumberjack",
+          "type": "directory"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}

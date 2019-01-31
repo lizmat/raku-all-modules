@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Lumberjack-Application.git
+	branch = master
+	commit = 6e79cb41c4a4b52345de29854979ac4c58e91b8e
+	parent = d534c227bd5065571f207862d5a0799fff35d73a
+	cmdver = 0.3.1

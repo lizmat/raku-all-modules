@@ -1,0 +1,104 @@
+<!doctype html>
+<html ng-app="Lumberjack">
+    <head>
+       <meta charset="utf-8">
+        <title>Lumberjack!</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/gdi2290/angular-websocket/v1.0.9/angular-websocket.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <style type = "text/css">
+           .Trace {
+              background-color: grey;
+           }
+           .Debug {
+              background-color: blue;
+           }
+           .Info {
+              background-color: green;
+           }
+           .Warn {
+              background-color: yellow;
+           }
+           .Error {
+              background-color: orange;
+           }
+           .Fatal {
+              background-color: red;
+           }
+        </style>
+    </head>
+    <body ng-controller="LumberjackController">
+       <div class="container">
+         <header><h1>Logs</h1></header>
+         <table class="table table-bordered">
+             <thead>
+                <tr>
+                   <th>Time</th>
+                  <th>Level</th>
+                  <th>Class</th>
+                  <th>Method</th>
+                  <th>Message</th>
+               </tr>
+            </thead>
+            <tbody id="detail">
+                <tr ng-repeat="msg in Logs.entries track by $index" class="{{ msg.level }}">
+                  <td style="white-space: nowrap">{{ msg.when.toLocaleString() }}</td>
+                  <td style="white-space: nowrap">{{ msg.level }}</td>
+                  <td style="white-space: nowrap">{{ msg.class }}</td>
+                  <td style="white-space: nowrap">{{ msg.method }}</td>
+                  <td>{{ msg.message }}</td>
+               </tr>
+            </tbody>
+         </table>
+         <footer>Powered by <a href="http://perl6.org/">Perl6</a></footer>
+        </div>
+        <script type="text/javascript">
+        var levels = [ 
+                    { "name" : "Off" }, 
+                    { "name" : "Fatal", "style" : "lj-fatal" }, 
+                    { "name" : "Error", "style" : "lj-error" }, 
+                    { "name" : "Warn",  "style" : "lj-warn"  }, 
+                    { "name" : "Info",  "style" : "lj-info"  }, 
+                    { "name" : "Debug", "style" : "lj-debug" }, 
+                    { "name" : "Trace", "style" : "lj-trace" }, 
+                    { "name" :  "All" } 
+            ];
+    var LJ = angular.module('Lumberjack', [ 'angular-websocket' ]);
+    LJ.factory('Logs', function($websocket) {
+      var wsurl = 'ws://' + window.location.host + '/[% ws-url %]';
+      var dataStream = $websocket(wsurl);
+
+      var entries = [];
+
+      dataStream.onMessage(function(message) {
+          var entry = JSON.parse(message.data);
+          var m = entry.backtrace[4].subname;
+          var msg = {
+              when    :  new Date(entry.when),
+              level   :  levels[entry.level].name,
+              "class" :  entry.class.name,
+              method  :  m,
+              message :  entry.message
+          };
+
+          if (entries.length >= 20) {
+              entries.pop();
+          }
+        
+          entries.unshift(msg);
+      });
+
+      var methods = {
+        entries: entries
+      };
+
+      return methods;
+    });
+    LJ.controller('LumberjackController', function ($scope, Logs) {
+      $scope.Logs = Logs;
+    });
+       </script>
+    </body>
+</html>
