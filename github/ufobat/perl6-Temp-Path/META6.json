@@ -1,0 +1,31 @@
+{
+  "authors" : [
+    "Zoffix Znet",
+    "Martin Barth (ufobat)"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Digest::SHA",
+    "File::Directory::Tree"
+  ],
+  "description" : "Make a temporary path, file, or directory",
+  "license" : "Artistic-2.0",
+  "name" : "Temp::Path",
+  "perl" : "6.c",
+  "provides" : {
+    "Temp::Path" : "lib/Temp/Path.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/ufobat/perl6-Temp-Path.git",
+  "support" : {
+    "source" : "https://github.com/ufobat/perl6-Temp-Path.git"
+  },
+  "tags" : [
+    "filesystem"
+  ],
+  "test-depends" : [
+    "Testo",
+    "Test::META"
+  ],
+  "version" : "1.001007"
+}
