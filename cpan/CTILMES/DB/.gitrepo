@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/CurtTilmes/perl6-db.git
 	branch = master
-	commit = c535388227aa9b5757d0b8b652c8b489bdf9c61c
-	parent = c736c9416614418b98bb515164d1cf7c7e779375
+	commit = 2c9319286cfe2f191412a537068904e2fba2ca74
+	parent = 7564c406fb34f485def91ce4276e2ab4e68ae152
 	cmdver = 0.3.1
