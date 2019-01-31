@@ -1,0 +1,28 @@
+services:
+    - mysql
+
+language: perl6
+
+perl6:
+  - latest
+
+sudo: false
+
+env:
+  - ALL_TESTING=1
+
+before_install:
+  - mysql -e "create database perltest" -uroot
+  - mysql -e "create user 'perltest'@'localhost' identified by 'testpass'" -uroot
+  - mysql -e "grant all privileges on perltest.* to 'perltest'@'localhost'" -uroot
+  - cp t/.my.cnf ~
+
+after_install:
+  - rm ~/.my.cnf
+
+install:
+  - rakudobrew build-zef
+  - zef -v install --deps-only .
+  - prove6 t/*.t6
+  - zef install TAP::Harness
+  - PERL6LIB=lib perl6 -MTAP -e 'exit(TAP::Harness.new.run(@*ARGS).result.has-errors)' t/*.t6
