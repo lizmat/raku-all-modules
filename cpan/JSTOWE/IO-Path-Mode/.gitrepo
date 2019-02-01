@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/IO-Path-Mode.git
+	branch = master
+	commit = 97cea064650c2df1cf7c361ff82f072448f86ebb
+	parent = 83e3327ae9daae2947c2f53aec6f6bd437921ac8
+	cmdver = 0.3.1
