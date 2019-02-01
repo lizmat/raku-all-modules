@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/CurtTilmes/perl6-dbmysql.git
 	branch = master
-	commit = 73f2b5535bb7fc239f7fe9bee34f0b8fabd4113b
-	parent = 95f5ea39cc0f81902d7d8f2fffbe7ec6cf0db253
+	commit = e91252a32f5d365aeed48871bc87d5101a95ce6d
+	parent = 6c9a0da2d3bb19cb65daad57a3ff3292d962cd9b
 	cmdver = 0.3.1
