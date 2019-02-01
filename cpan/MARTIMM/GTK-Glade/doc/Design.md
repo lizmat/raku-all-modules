@@ -1,4 +1,6 @@
-# State diagram design ui and run
+[toc]
+
+# Design and run phase
 
 ```plantuml
 'title Design and use of code
@@ -100,3 +102,44 @@ So to get all tested one can perform the steps
 * Add text into large window
 * Get text and compare with original
 * Emit clearBttn:clicked signal and check that text in large window is empty.
+
+# Classes and relations
+* All classes which work with GtkWidget e.g. return them on xyz_new(), are inheriting the GtkWidget class.
+
+```plantuml
+
+hide members
+hide circle
+
+class GtkWidget
+
+class GtkBin
+class GtkContainer
+
+class GtkLabel
+
+class GtkButton
+class GtkToggleButton
+class GtkCheckButton
+class GtkRadioButton
+
+class GtkWindow
+class GtkDialog
+class GtkAboutDialog
+
+GtkWidget <|-- GtkButton
+GtkButton <|-- GtkToggleButton
+GtkToggleButton <|-- GtkCheckButton
+GtkCheckButton <|-- GtkRadioButton
+
+GtkWidget <|-- GtkWindow
+GtkWindow <|-- GtkDialog
+GtkDialog <|-- GtkAboutDialog
+
+GtkWidget <|-- GtkLabel
+
+GtkContainer <|-- GtkBin
+GtkWidget "*" -* GtkContainer
+'GtkBin --* GtkButton
+
+```

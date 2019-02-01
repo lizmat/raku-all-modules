@@ -52,6 +52,9 @@
 
     "GTK::V3::Glib::GMain": "lib/GTK/V3/Glib/GMain.pm6",
 
+    "GTK::V3::Gtk::GtkBin": "lib/GTK/V3/Gtk/GtkBin.pm6",
+    "GTK::V3::Gtk::GtkButton": "lib/GTK/V3/Gtk/GtkButton.pm6",
+    "GTK::V3::Gtk::GtkContainer": "lib/GTK/V3/Gtk/GtkContainer.pm6",
     "GTK::V3::Gtk::GtkLabel": "lib/GTK/V3/Gtk/GtkLabel.pm6",
     "GTK::V3::Gtk::GtkMain": "lib/GTK/V3/Gtk/GtkMain.pm6",
     "GTK::V3::Gtk::GtkWidget": "lib/GTK/V3/Gtk/GtkWidget.pm6"

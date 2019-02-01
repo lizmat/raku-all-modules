@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/gtk-glade.git
 	branch = master
-	commit = 5b07ac97cccb5b671a467d22e6bee4690fb3cc40
-	parent = b234626870861bdae8e3a85b55117e5b88cae609
+	commit = 22a839a49d432378112446f058d2d0a081dffd8a
+	parent = 0340e737892e1d34e2a127ee9be74ed834525aa1
 	cmdver = 0.3.1

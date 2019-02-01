@@ -65,6 +65,10 @@ sub g_main_context_new ( )
   is native(&gtk-lib)
   { * }
 
+sub g_main_context_pop_thread_default ( OpaquePointer $context )
+  is native(&gtk-lib)
+  { * }
+
 sub g_main_context_push_thread_default ( OpaquePointer $context )
   is native(&gtk-lib)
   { * }
@@ -100,8 +104,8 @@ sub g_source_remove ( uint32 $tag )
   { * }
 
 sub g_timeout_add (
-  int32 $interval, &Handler ( OpaquePointer $h_data, --> int32 ),
-  OpaquePointer $data
+  int32 $interval, &Handler ( CArray[Str] $h_data, --> int32 ),
+  CArray[Str] $data
   ) returns int32
     is native(&gtk-lib)
     { * }
@@ -113,6 +117,7 @@ method FALLBACK ( $native-sub is copy, |c ) {
 
   my Callable $s;
   try { $s = &::($native-sub); }
+  try { $s = &::("g_main_$native-sub"); } unless ?$s;
 
   CATCH {
     when X::AdHoc {

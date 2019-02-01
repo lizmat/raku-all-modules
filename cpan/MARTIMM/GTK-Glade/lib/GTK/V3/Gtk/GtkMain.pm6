@@ -8,6 +8,11 @@ use GTK::V3::N::NativeLib;
 unit class GTK::V3::Gtk::GtkMain:auth<github:MARTIMM>;
 
 #-------------------------------------------------------------------------------
+sub gtk_events_pending ( )
+    returns Bool
+    is native(&gtk-lib)
+    { * }
+
 sub gtk_init ( CArray[int32] $argc, CArray[CArray[Str]] $argv )
     is native(&gtk-lib)
     { * }
@@ -18,10 +23,6 @@ sub gtk_init_check ( CArray[int32] $argc, CArray[CArray[Str]] $argv )
     { * }
 
 sub gtk_main ( )
-    is native(&gtk-lib)
-    { * }
-
-sub gtk_main_quit ( )
     is native(&gtk-lib)
     { * }
 
@@ -39,25 +40,35 @@ sub gtk_main_level ( )
     is native(&gtk-lib)
     { * }
 
-sub gtk_events_pending ( )
-    returns Bool
+sub gtk_main_quit ( )
     is native(&gtk-lib)
     { * }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-submethod BUILD ( ) {
+submethod BUILD ( Bool :$check = False ) {
 
   # Must setup gtk otherwise perl6 will crash
   my $argc = CArray[int32].new;
-  $argc[0] = 1;
+  $argc[0] = 1 + +@*ARGS;
+
+  my $arg_arr = CArray[Str].new;
+  my Int $arg-count = 0;
+  $arg_arr[$arg-count] = $*PROGRAM.Str;
+  for @*ARGS -> $arg {
+    $arg_arr[$arg-count] = $arg;
+  }
 
   my $argv = CArray[CArray[Str]].new;
-  my $arg_arr = CArray[Str].new;
-  $arg_arr[0] = $*PROGRAM.Str;
   $argv[0] = $arg_arr;
 
-  #self.gtk_init( $argc, $argv);
-  gtk_init( $argc, $argv);
+  # here, we don't need fancy calling with self.gtk-init( $argc, $argv);
+  if $check {
+    gtk_init_check( $argc, $argv);
+  }
+
+  else {
+    gtk_init( $argc, $argv);
+  }
 }
 
 #-------------------------------------------------------------------------------

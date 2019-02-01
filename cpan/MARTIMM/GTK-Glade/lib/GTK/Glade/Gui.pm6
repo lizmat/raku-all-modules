@@ -43,8 +43,29 @@ role GTK::Glade::Gui:auth<github:MARTIMM> {
   method FALLBACK ( $native-sub, |c ) {
 
     CATCH {
-      when X::AdHoc {
-        die X::Gui.new(:message(.message));
+note "Error type: ", $_.WHAT;
+note "Error message: ", .message;
+#.note;
+#TODO will never work
+      # X::AdHoc
+      when .message ~~ m:s/Cannot invoke this object/ {
+        die X::Gui.new(
+          :message("Could not find native sub '$native-sub\(...\)'")
+        );
+      }
+
+      # X::AdHoc
+      when .message ~~ m:s/Native call expected return type/ {
+        die X::Gui.new(
+          :message("Wrong return type of native sub '$native-sub\(...\)'")
+        );
+      }
+
+      # X::AdHoc
+      when .message ~~ m:s/will never work with declared signature/ {
+        die X::Gui.new(
+          :message("Wrong call arguments to native sub '$native-sub\(...\)'")
+        );
       }
 
       when X::TypeCheck::Argument {

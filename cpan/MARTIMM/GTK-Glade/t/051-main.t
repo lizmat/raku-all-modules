@@ -22,18 +22,17 @@ diag "$*THREAD.id(), Start thread";
 my Promise $p = start {
   # wait for loop to start
   sleep(1.1);
+  is $main.gtk-main-level, 1, "loop level now 1";
 
   diag "$*THREAD.id(), Create context to invoke handler on thread";
 
   # This part is important that it happens in the thread where the
-  # function is invoked in that context! The context must be
-  # different than the one above to create the loop
-  my $main-context = $gmain.g-main-context-new;
-  $gmain.g-main-context-push-thread-default($main-context);
+  # function is invoked in that context!
+  my $main-context = $gmain.context-get-thread-default;
 
   diag "$*THREAD.id(), Use g-main-context-invoke to invoke sub on thread";
 
-  $gmain.g-main-context-invoke(
+  $gmain.context-invoke(
     $main-context,
     -> $h-data {
 
@@ -52,9 +51,11 @@ my Promise $p = start {
   'test done'
 }
 
+is $main.gtk-main-level, 0, "loop level 0";
 diag "$*THREAD.id(), start loop with gtk-main()";
 $main.gtk-main;
 diag "$*THREAD.id(), loop stopped";
+is $main.gtk-main-level, 0, "loop level is 0 again";
 
 await $p;
 is $p.result, 'test done', 'result promise ok';

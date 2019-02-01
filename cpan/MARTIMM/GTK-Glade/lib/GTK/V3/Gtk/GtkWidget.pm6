@@ -139,6 +139,9 @@ class GTK::V3::Gtk::GtkWidget:auth<github:MARTIMM> {
 #note "w s1: gtk_widget_$native-sub, ", $s unless ?$s;
     try { $s = &::("gtk_widget_$native-sub"); } unless ?$s;
 
+    # Stop here and do not go further up
+    #$s = callsame unless ?$s;
+
     $s
   }
 }

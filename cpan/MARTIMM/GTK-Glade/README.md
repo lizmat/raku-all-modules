@@ -93,7 +93,7 @@ There are some points I noticed in the `GTK::Simple` modules.
 This will present some problems
 * How to store the native widget. This is a central object representing the widget for the class wherein it is created. It is used where widgets like labels, dialogs, frames, listboxes etc are used. Because it is just a pointer to a C object we do not need to build inheritance around this. Like in `GTK::Simple` I used a role for that, only not named after a GTK like class.
 * Do I have to write a method for each native sub introduced? Fortunately, that is not necessary. I used the **FALLBACK** mechanism for that. When not found, the search is handed over to the parent. In this process it is possible to accept other names as well which end up finding the same native sub. To let this mechanism work the `FALLBACK` method is defined in the role module. This method will then call the method `fallback` in the modules using the role. When nothing found, `fallback` must call the parents fallback with `callsame`. The subs in some classes all start with some prefix which can be left out too, provided that the fallback functions also test with an added prefix. So e.g. a sub `gtk_label_get_text` defined in class `GtkLabel` can be called like `$label.gtk_label_get_text()` or `$label.get_text()`. As an extra feature dashes can be used instead of underscores, so `$label.gtk-label-get-text()` or `$label.get-text()` works too.
-* Is the sub accessible when removing the `is export` trait? No, not directly but because the `fallback` method will search in there own name space they can get hold of the sub reference which is returned to the callers `FALLBACK`. The call then is made with the given arguments prefixed with the native widgets address stored in the role.
+* Is the sub accessible when removing the `is export` trait? No, not directly but because the `fallback` method will search in their own name space, they can get hold of the sub reference which is returned to the callers `FALLBACK`. The call then is made with the given arguments prefixed with the native widgets address stored in the role.
 
 Not all of the GTK, GDK or Glib libraries will be covered because not everything is needed, partly because a lot can be designed by the `Glade` user interface designer tool which is the base point of this package. Other reasons are that classes and many subs are deprecated. This package will support the 3.* version of GTK. There is already a 4.* version out but that is food for later thoughts. The root of the library will be GTK::V3 and can be separated later into a another package.
 
@@ -106,8 +106,11 @@ Not all of the GTK, GDK or Glib libraries will be covered because not everything
 
 ## Gtk library
 
-* GTK::V3::Gtk::GtkMain
+* GTK::V3::Gtk::GtkBin is GTK::V3::Gtk::GtkContainer
+* GTK::V3::Gtk::GtkButton is GTK::V3::Gtk::GtkBin
+* GTK::V3::Gtk::GtkContainer is GTK::V3::Gtk::GtkWidget
 * GTK::V3::Gtk::GtkLabel is GTK::V3::Gtk::GtkWidget
+* GTK::V3::Gtk::GtkMain
 * GTK::V3::Gtk::GtkWidget
 
 ## Gdk library
@@ -117,7 +120,7 @@ Not all of the GTK, GDK or Glib libraries will be covered because not everything
 * GTK::V3::Gdk::GdkWindow
 
 ## Glib library
-
+* GTK::V3::Glib::GMain
 
 ## Miscellaneous
 * [Release notes][release]
