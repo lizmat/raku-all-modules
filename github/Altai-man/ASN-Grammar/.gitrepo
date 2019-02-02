@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Altai-man/ASN-Grammar.git
+	branch = master
+	commit = a5371fae539fa2bdde51b34f4a1b38e615a2e0c0
+	parent = f40d7a442927cdbd61bb89f254ea937da7876827
+	cmdver = 0.3.1
