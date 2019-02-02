@@ -68,7 +68,7 @@ class ASN::Serializer {
             %params<default> = $attr.default-value if $attr ~~ DefaultValue;
             %params<tag> = $attr.tag if $attr ~~ CustomTagged;
 
-            my $value = $attr.get_value($sequence);
+            my $value = $attr.get_value($sequence)<>;
             next if $attr ~~ Optional && (!$value.defined || $value ~~ Positional && !$value.elems);
             %params<value> = $value;
 

@@ -90,7 +90,9 @@ class ASN::Parser {
 
     multi method parse(Buf $input is rw, ASNSequenceOf $type, :$debug, :$mode) {
         say "Parsing ASNSequenceOf of $type.type().perl()" if $debug;
-        my Array $values .= new;
+        my $of = $type.type;
+        $of = Str if $of ~~ ASN::StringWrapper;
+        my Positional[$of] $values = Array[$of].new;
         self!parse-sequence($input, $type.type, $values);
         $values;
     }
