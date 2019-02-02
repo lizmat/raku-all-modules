@@ -18,7 +18,7 @@
         "DB::MySQL::Converter"  : "lib/DB/MySQL/Converter.pm6"
     },
 
-    "depends" : [ "DB", "NativeLibs", "NativeCall" ],
+    "depends" : [ "DB:ver<0.3>", "NativeLibs", "NativeCall" ],
 
     "description" : "MySQL access for Perl6",
 

@@ -23,6 +23,5 @@ after_install:
 install:
   - rakudobrew build-zef
   - zef -v install --deps-only .
-  - prove6 t/*.t6
   - zef install TAP::Harness
   - PERL6LIB=lib perl6 -MTAP -e 'exit(TAP::Harness.new.run(@*ARGS).result.has-errors)' t/*.t6
