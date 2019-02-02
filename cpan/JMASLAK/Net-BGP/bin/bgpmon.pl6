@@ -151,7 +151,11 @@ sub MAIN(
             for @str -> $event {
                 my @errors;
                 if $event.key ~~ Net::BGP::Event::BGP-Message {
-                    @errors = Net::BGP::Validation::errors($event.key.message);
+                    @errors = Net::BGP::Validation::errors(
+                        :message($event.key.message),
+                        :my-asn($my-asn),
+                        :peer-asn($event.key.peer-asn),
+                    );
                     if $lint-mode {
                         next unless @errors.elems;  # In lint mode, we only show errors
                     }

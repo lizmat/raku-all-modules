@@ -29,6 +29,7 @@ has Supplier:D          $.user-supplier    is required; # To communicate with us
 has buf8:D              $.buffer = buf8.new;
 has Bool:D              $.closed           is rw = False;
 has Bool:D              $.asn32            is rw = False;
+has Int                 $.peer-asn         is rw;
 has IO::Handle          $.debug            is rw;
 
 has Net::BGP::Controller-Handle-BGP:D $.bgp-handler is required;

@@ -35,41 +35,71 @@ my Net::BGP::CIDR:D @BOGONS =
 ;
 my Net::BGP::CIDR:D $ZERO = Net::BGP::CIDR.from-str('0.0.0.0/32');
 
-our sub errors(Net::BGP::Message:D $bgp -->Array[Pair:D]) {
-    return error_dispatch($bgp);
+our sub errors(
+    Net::BGP::Message:D :$message,
+    UInt:D :$my-asn,
+    UInt:D :$peer-asn,
+    -->Array[Pair:D]
+) {
+    return error_dispatch(:$message, :$my-asn, :$peer-asn);
 }
 
-multi sub error_dispatch(Net::BGP::Message::Update:D $bgp -->Array[Pair:D]) {
+multi sub error_dispatch(
+    Net::BGP::Message::Update:D :$message,
+    UInt:D :$my-asn,
+    UInt:D :$peer-asn,
+    -->Array[Pair:D]
+) {
     my Pair:D @errors;
 
-    if ($bgp.nlri.elems or $bgp.withdrawn.elems)
-        && ($bgp.nlri6.elems or $bgp.withdrawn6.elems)
+    # Check address families
+    if ($message.nlri.elems or $message.withdrawn.elems)
+        && ($message.nlri6.elems or $message.withdrawn6.elems)
     {
         @errors.push: error('AFMIX');
     }
 
-    if $bgp.aggregator-asn.defined {
-        if $bgp.aggregator-asn == 0 {
+    # Check aggregator
+    my $agg = update_check_aggregator(:$message, :$my-asn, :$peer-asn);
+    if $agg.elems { @errors.append: @$agg }
+
+    return @errors;
+}
+
+sub update_check_aggregator(
+    Net::BGP::Message::Update:D :$message,
+    UInt:D :$my-asn,
+    UInt:D :$peer-asn,
+    -->Array[Pair:D]
+) {
+    my Pair:D @errors;
+
+    if $message.aggregator-asn.defined {
+        if $message.aggregator-asn == $my-asn {
+            # Not an error
+        } elsif $message.aggregator-asn == $peer-asn {
+            # Not an error
+        } elsif $message.aggregator-asn == 0 {
             @errors.push: error('AGGR_ASN_RESERVED');
-        } elsif $bgp.aggregator-asn == 23456 {
+        } elsif $message.aggregator-asn == 23456 {
             @errors.push: error('AGGR_ASN_TRANS');
-        } elsif 64496 ≤ $bgp.aggregator-asn ≤ 64511 {
+        } elsif 64496 ≤ $message.aggregator-asn ≤ 64511 {
             @errors.push: error('AGGR_ASN_DOC');
-        } elsif 64512 ≤ $bgp.aggregator-asn ≤ 65534 {
+        } elsif 64512 ≤ $message.aggregator-asn ≤ 65534 {
             @errors.push: error('AGGR_ASN_PRIVATE');
-        } elsif $bgp.aggregator-asn == 65535 {
+        } elsif $message.aggregator-asn == 65535 {
             @errors.push: error('AGGR_ASN_RESERVED');
-        } elsif 65536 ≤ $bgp.aggregator-asn ≤ 65551 {
+        } elsif 65536 ≤ $message.aggregator-asn ≤ 65551 {
             @errors.push: error('AGGR_ASN_DOC');
-        } elsif 65552 ≤ $bgp.aggregator-asn ≤ 131071 {
+        } elsif 65552 ≤ $message.aggregator-asn ≤ 131071 {
             @errors.push: error('AGGR_ASN_RESERVED');
-        } elsif 4_200_000_000 ≤ $bgp.aggregator-asn ≤ 4_294_967_294 {
+        } elsif 4_200_000_000 ≤ $message.aggregator-asn ≤ 4_294_967_294 {
             @errors.push: error('AGGR_ASN_PRIVATE');
-        } elsif $bgp.aggregator-asn == 4_294_967_295 {
+        } elsif $message.aggregator-asn == 4_294_967_295 {
             @errors.push: error('AGGR_ASN_RESERVED');
         }
 
-        my $id-cidr = Net::BGP::CIDR.from-str($bgp.aggregator-ip ~ '/32');
+        my $id-cidr = Net::BGP::CIDR.from-str($message.aggregator-ip ~ '/32');
         if $id-cidr.contains($ZERO) {
             # Not an issue, this is legitimate.
         } elsif @BOGONS.first({ $^a.contains($id-cidr) }).defined {
@@ -80,7 +110,12 @@ multi sub error_dispatch(Net::BGP::Message::Update:D $bgp -->Array[Pair:D]) {
     return @errors;
 }
 
-multi sub error_dispatch(Net::BGP::Message:D $bgp -->Array[Pair:D]) {
+multi sub error_dispatch(
+    Net::BGP::Message:D :$message,
+    UInt:D :$my-asn,
+    UInt:D :$peer-asn,
+    -->Array[Pair:D]
+) {
     my Pair:D @errors;
     # Currently we don't do any checking.
     return @errors;

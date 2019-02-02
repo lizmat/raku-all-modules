@@ -13,6 +13,8 @@ unit class Net::BGP::Event::BGP-Message:ver<0.1.0>:auth<cpan:JMASLAK>
     is Net::BGP::Event
     does StrictClass;
 
+has Int $.peer-asn is rw;
+
 has Net::BGP::Message $.message;
 
 method message-name(-->Str) { 'BGP-Message' };
@@ -45,6 +47,10 @@ code.  This event is triggered when a BGP message is received from the peer.
 =head2 message
 
 Contains the Net::BGP::Message object.
+
+=head2 peer-asn
+
+Contains the peer's ASN (as configured)
 
 =head1 AUTHOR
 

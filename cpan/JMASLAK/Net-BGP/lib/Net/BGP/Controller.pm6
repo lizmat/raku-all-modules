@@ -77,6 +77,7 @@ multi method receive-bgp(
             $p = self.peers.get($connection.remote-ip);
         }
     }
+    $connection.peer-asn = $p.peer-asn;  # Set Peer ASN in connection
 
     # Process Parmaters
     my @capabilities;
@@ -180,6 +181,7 @@ multi method receive-bgp(
         :message( $open ),
         :connection-id( $connection.id ),
         :peer( $peer ),
+        :peer-asn( $connection.peer-asn ),
     );
 
     # Add the connection to the connection table
@@ -222,6 +224,7 @@ multi method receive-bgp(
         :message( $update ),
         :connection-id( $connection.id ),
         :peer( $peer-ip ),
+        :peer-asn( $connection.peer-asn ),
     );
 }
 

@@ -60,7 +60,11 @@ subtest 'Event' => {
 
     subtest 'BGP-Message-No-Opt' => {
         my $bgp = Net::BGP::Message.from-raw( read-message-nohead('t/bgp-messages/open-message-no-opt.msg'), :asn32(False) );
-        my $msg = Net::BGP::Event::BGP-Message.new(:message($bgp), :connection-id(22));
+        my $msg = Net::BGP::Event::BGP-Message.new(
+            :message($bgp),
+            :connection-id(22),
+            :peer-asn(123)
+        );
         ok $msg, "Created Event Class";
         is $msg.message-name, 'BGP-Message', 'Message type has proper value';
         is $msg.connection-id, 22, 'Connection ID is proper';
@@ -69,6 +73,7 @@ subtest 'Event' => {
         is $msg.message.message-name, 'OPEN', 'BGP message code is correct';
         is $msg.message.parameters.elems, 0, "Proper number of parameter elements";
         is-approx $msg.creation-date, DateTime.now.posix, 30, "Date time appears correct";
+        is $msg.peer-asn, 123, "Peer ASN is proper";
 
         done-testing;
     };

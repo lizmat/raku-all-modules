@@ -231,6 +231,7 @@ subtest 'OPEN', {
     is $cr-bgp.message.message-code, 1, 'BGP Message is proper type';
     is $cr-bgp.message.option-len, 0, 'Option length is zero';
     is $cr-bgp.message.option-len, $cr-bgp.message.option.bytes, 'Option bytes = len';
+    is $cr-bgp.peer-asn, 0x1020, "Peer ASN is proper";
 
     $bgp.peer-get(:peer-ip('127.0.0.1')).lock.protect: {
         my $peer = $bgp.peer-get(:peer-ip<127.0.0.1>);

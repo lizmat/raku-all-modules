@@ -1,6 +1,7 @@
 Revision history for Perl6-Net-BGP
 
 {{$NEXT}}
+    - Exclude own and peer ASN from alerting as an aggregator
 
 0.1.0  2019-01-28T22:02:15-07:00
     - Improve lint mode (added new lint checks and refactored)

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jmaslak/Perl6-Net-BGP.git
 	branch = master
-	commit = 0a358458a948f0b90cf57a1d0f6a9306b8b6b006
-	parent = bd122ecc097e51410e39ea10fb2fabe941e1435b
+	commit = da637e6274d17cba28732076020a452784d1e763
+	parent = 1e6c6cdafc1b957ab56e51404a825d3db6ab2773
 	cmdver = 0.3.1
