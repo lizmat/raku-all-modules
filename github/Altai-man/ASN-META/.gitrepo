@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Altai-man/ASN-META.git
+	branch = master
+	commit = 6cd21a2ba9151eb43e97ebbf486e709738ad33c4
+	parent = 0e7ab462068f0d72dd882f497136bd687af1d6aa
+	cmdver = 0.3.1

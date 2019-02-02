@@ -1,0 +1,20 @@
+WorldSchema
+
+DEFINITIONS IMPLICIT TAGS ::= BEGIN
+Rocket ::= SEQUENCE
+{
+   name      UTF8String,
+   message   UTF8String DEFAULT "Hello World",
+   fuel      ENUMERATED {
+       solid(0),
+       liquid(1),
+       gas(2)
+   },
+   speed     CHOICE
+   {
+      mph    [0] INTEGER,
+      kmph   [1] INTEGER
+   }  OPTIONAL,
+   payload   SEQUENCE OF UTF8String
+}
+END
