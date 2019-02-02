@@ -16,16 +16,16 @@ unit class GTK::V3::Gtk::GtkLabel:auth<github:MARTIMM>
 sub gtk_label_new ( Str $text )
   returns N-GtkWidget
   is native(&gtk-lib)
-  #  is export
   { * }
 
-#-------------------------------------------------------------------------------
 sub gtk_label_get_text ( N-GtkWidget $label )
   returns Str
   is native(&gtk-lib)
-  #  is export
   { * }
 
+sub gtk_label_set_text ( N-GtkWidget $label, Str $str )
+  is native(&gtk-lib)
+  { * }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 submethod BUILD ( Str:D :$text ) {

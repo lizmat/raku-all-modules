@@ -111,7 +111,19 @@ So to get all tested one can perform the steps
 hide members
 hide circle
 
+class GMain
+class GSignal
+
+class GdkScreen
+class GdkDisplay
+class GdkWindow
+
+
+class GtkMain
 class GtkWidget
+GdkScreen <-o GtkWidget
+GdkDisplay <--o GtkWidget
+GtkWidget o-> GdkWindow
 
 class GtkBin
 class GtkContainer
@@ -127,19 +139,19 @@ class GtkWindow
 class GtkDialog
 class GtkAboutDialog
 
-GtkWidget <|-- GtkButton
+GtkBin <|-- GtkButton
 GtkButton <|-- GtkToggleButton
 GtkToggleButton <|-- GtkCheckButton
 GtkCheckButton <|-- GtkRadioButton
 
-GtkWidget <|-- GtkWindow
+GtkBin <|-- GtkWindow
 GtkWindow <|-- GtkDialog
 GtkDialog <|-- GtkAboutDialog
 
 GtkWidget <|-- GtkLabel
 
 GtkContainer <|-- GtkBin
-GtkWidget "*" -* GtkContainer
+GtkWidget <|-- GtkContainer
 'GtkBin --* GtkButton
 
 ```

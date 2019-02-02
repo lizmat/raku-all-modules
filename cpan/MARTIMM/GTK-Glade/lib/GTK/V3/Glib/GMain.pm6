@@ -51,6 +51,7 @@ sub g_main_context_invoke (
   ) is native(&gtk-lib)
     { * }
 
+# User data is set to CArray[Str] type
 sub g_main_context_invoke_full (
   OpaquePointer $context,
   int32 $priority,
@@ -103,6 +104,7 @@ sub g_source_remove ( uint32 $tag )
   is native(&gtk-lib)
   { * }
 
+# User data is set to CArray[Str] type
 sub g_timeout_add (
   int32 $interval, &Handler ( CArray[Str] $h_data, --> int32 ),
   CArray[Str] $data

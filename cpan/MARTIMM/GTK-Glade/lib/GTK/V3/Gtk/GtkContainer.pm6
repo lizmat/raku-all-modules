@@ -39,7 +39,7 @@ method fallback ( $native-sub is copy --> Callable ) {
 
   my Callable $s;
   try { $s = &::($native-sub); }
-  #try { $s = &::("gtk_container_$native-sub"); } unless ?$s;
+  try { $s = &::("gtk_container_$native-sub"); } unless ?$s;
 
   $s = callsame unless ?$s;
 

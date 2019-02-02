@@ -180,7 +180,11 @@ method object ( Array:D $parent-path, Str :$id is copy, Str :$class) {
 
 }
 }}
+
 #-------------------------------------------------------------------------------
+# signal element, e.g.
+#   <signal name="clicked" handler="clear-text" swapped="no"/>
+# possible attributes are: name, handler, object, after and swapped
 method signal (
   Array:D $parent-path, Str:D :name($signal-name),
   Str:D :handler($handler-name),
