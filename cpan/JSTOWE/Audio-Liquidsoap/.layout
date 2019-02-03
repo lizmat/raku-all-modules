@@ -1,0 +1,133 @@
+{
+  "children": [
+    {
+      "purpose": null,
+      "type": "directory",
+      "name": "examples",
+      "children": [
+        {
+          "name": "simple",
+          "children": [
+            {
+              "type": "file",
+              "name": "amen.mp3"
+            },
+            {
+              "name": "README.md",
+              "type": "file"
+            },
+            {
+              "type": "file",
+              "name": "simple.liq"
+            },
+            {
+              "name": "simple.pl",
+              "type": "file"
+            }
+          ],
+          "type": "directory",
+          "purpose": null
+        },
+        {
+          "name": "request.liq",
+          "type": "file"
+        },
+        {
+          "name": "README.md",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "children": [
+        {
+          "name": "data",
+          "children": [
+            {
+              "purpose": null,
+              "type": "directory",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "when_the_levee_breaks.mp3"
+                },
+                {
+                  "name": "machines.mp3",
+                  "type": "file"
+                }
+              ],
+              "name": "play"
+            },
+            {
+              "name": "test-resources.liq",
+              "type": "file"
+            }
+          ],
+          "purpose": null,
+          "type": "directory"
+        },
+        {
+          "name": "050-list.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "purpose": null,
+          "type": "directory",
+          "children": [
+            {
+              "type": "file",
+              "name": "RunServer.pm"
+            }
+          ],
+          "name": "lib"
+        },
+        {
+          "name": "030-builtins.t",
+          "type": "file"
+        },
+        {
+          "name": "010-use.t",
+          "type": "file"
+        }
+      ],
+      "name": "t",
+      "type": "directory",
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "name": "lib",
+      "children": [
+        {
+          "name": "Audio",
+          "children": [
+            {
+              "name": "Liquidsoap.pm",
+              "type": "file"
+            }
+          ],
+          "purpose": null,
+          "type": "directory"
+        }
+      ],
+      "type": "directory",
+      "purpose": null
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
