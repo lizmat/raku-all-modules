@@ -18,6 +18,19 @@ dependency on an external network service.  For example:
          exit;
      }
 
+	# or
+
+	use Test;
+	use CheckSocket;
+
+	# Start some socket server concurrently
+	if wait-socket(80, "localhost") {
+		# do some tests
+	}
+	else {
+		skip-all "server didn't start in time";
+	}
+
 ## Installation
 
 You can install directly with "zef":
