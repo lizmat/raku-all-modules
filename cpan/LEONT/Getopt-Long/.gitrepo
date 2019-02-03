@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Leont/getopt-long6.git
 	branch = master
-	commit = b1704746bb764ad7579094af63393333a919fd4e
-	parent = cd2f2403aca797cb08d3c9aa1ddb0282326efabc
+	commit = 6f6fb5e83916038ba36483c69fa0fc23bf6c43f4
+	parent = e995d4dec7377851894fefbccff3e12d67e8d6a7
 	cmdver = 0.3.1

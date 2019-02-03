@@ -1,6 +1,6 @@
 use v6;
 
-unit class Getopt::Long:ver<0.0.3>;
+unit class Getopt::Long:ver<0.1.0>;
 
 my sub null-converter(Str:D $value --> Str) {
 	return $value;
@@ -392,9 +392,18 @@ our sub get-options-from(@args, *@elements, :$overwrite, *%config) is export(:DE
 			@options.push: $element;
 		}
 		when $element ~~ Pair {
-			@options.push: $element.key;
-			my ($key) = $element.key ~~ / ^ (\w+) /[0];
-			%hash{$key} := $element.value[0];
+			my $key = $element.key;
+			my ($name) = $element.key ~~ / ^ (\w+) /[0];
+			%hash{$name} := $element.value;
+			given $element.value {
+				when Positional {
+					$key ~= '@' unless $key.ends-with('@'|'}');
+				}
+				when Associative {
+					$key ~= '%' unless $key.ends-with('%');
+				}
+			}
+			@options.push: $key;
 		}
 	}
 	my $getopt = Getopt::Long.new-from-patterns(@options);
@@ -445,9 +454,9 @@ Getopt::Long
 =head1 SYNOPSIS
 
   use Getopt::Long;
-  get-options("length=i" => \my $length, # numeric
-              "file=s"   => \my $file    # string
-              "verbose"  => \my $verbose); # flag
+  get-options("length=i" => my $length, # numeric
+              "file=s"   => my $file    # string
+              "verbose"  => my $verbose); # flag
 
 or
 
@@ -528,7 +537,7 @@ Handling simple options is straightforward:
 
 or:
 
-    get-options('verbose' => \my $verbose, 'all' => \my $all);
+    get-options('verbose' => my $verbose, 'all' => my $all);
 
 The call to C<get-options()> parses the command line arguments that are
 present in C<@*ARGS> and sets the option variable to the value C<True>
@@ -556,7 +565,7 @@ option name or a default value for C<MAIN> argument:
 
 or:
 
-    get-options('verbose!' => \my $verbose);
+    get-options('verbose!' => my $verbose);
 
 or:
 
@@ -574,7 +583,7 @@ option name:
 
 or:
 
-   get-options('verbose+' => \my $verbose);
+   get-options('verbose+' => my $verbose);
 
 or
 
@@ -618,7 +627,7 @@ valid command line option itself.
 
 or
 
-    get-options('tag=s' => \my $tag);
+    get-options('tag=s' => my $tag);
 
 or
     my %options = get-options('tag=s');
@@ -646,7 +655,7 @@ You can specify that the option can have multiple values by adding a
 
 or
 
-    get-options('library=s@' => \my @libraries);
+    get-options('library=s@' => my @libraries);
 
 or
 
@@ -676,8 +685,8 @@ or
       Int :@rgbcolor is getopt('i{3}'))
 
 
-    get-options('coordinates=f{2}' => \my @coordinates,
-      'rgbcolor=i{3}' => \my @rgbcolor);
+    get-options('coordinates=f{2}' => my @coordinates,
+      'rgbcolor=i{3}' => my @rgbcolor);
 
 It is also possible to specify the minimal and maximal number of
 arguments an option takes. C<foo=s{2,4}> indicates an option that
@@ -693,7 +702,7 @@ adding a "%":
 
 or
 
-    get-options("define=s%" => \my %define);
+    get-options("define=s%" => my %define);
 
 or
 
@@ -720,7 +729,7 @@ the above example:
 
 or
 
-    get-options('length|height=f' => \my $length);
+    get-options('length|height=f' => my $length);
 
 or
 
@@ -924,19 +933,6 @@ will set C<vax>.
 
 C<get-options> and C<get-options-from> take the following named options
 to configure.
-
-=begin item
-gnu_compat
-
-C<gnu_compat> controls whether C<--opt=> is allowed, and what it should
-do. Without C<gnu_compat>, C<--opt=> gives an error. With C<gnu_compat>,
-C<--opt=> will give option C<opt> and empty value.
-This is the way GNU getopt_long() does it.
-
-Note that C<--opt value> is still accepted, even though GNU
-getopt_long() doesn't.
-
-=end item
 
 =begin item
 permute (default:disabled)
