@@ -9,7 +9,7 @@ use Net::BGP::Capability;
 use Net::BGP::Conversions;
 
 use StrictClass;
-unit class Net::BGP::Capability::ASN32:ver<0.1.0>:auth<cpan:JMASLAK>
+unit class Net::BGP::Capability::ASN32:ver<0.1.1>:auth<cpan:JMASLAK>
     is Net::BGP::Capability
     does StrictClass;
 

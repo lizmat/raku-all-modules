@@ -5,7 +5,7 @@ use v6;
 # All Rights Reserved - See License
 #
 
-unit class Net::BGP::Command:ver<0.1.0>:auth<cpan:JMASLAK>;
+unit class Net::BGP::Command:ver<0.1.1>:auth<cpan:JMASLAK>;
 
 has Int $.connection-id;
 

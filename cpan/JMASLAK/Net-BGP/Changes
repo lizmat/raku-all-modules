@@ -1,7 +1,12 @@
 Revision history for Perl6-Net-BGP
 
 {{$NEXT}}
-    - Exclude own and peer ASN from alerting as an aggregator
+
+0.1.1  2019-02-02T19:43:36-07:00
+    - Lint: Exclude own and peer ASN from alerting as an aggregator
+    - Lint: Alert on AS4-Path found across an AS4 peer session
+    - Lint: Alert on reserved/doc/private/AS_TRANS in AS path
+    - Lint: Performance improvement
 
 0.1.0  2019-01-28T22:02:15-07:00
     - Improve lint mode (added new lint checks and refactored)

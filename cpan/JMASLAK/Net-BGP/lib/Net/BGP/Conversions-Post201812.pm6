@@ -9,7 +9,7 @@ use v6.d;
 # Helper subs for Rakudo 2018.12+
 #
 
-unit module Net::BGP::Conversions-Post201812:ver<0.1.0>:auth<cpan:JMASLAK>;
+unit module Net::BGP::Conversions-Post201812:ver<0.1.1>:auth<cpan:JMASLAK>;
 
 sub _nuint16(buf8 $b where $b.bytes == 2 --> Int) is export {
     return $b.read-uint16(0, BigEndian);

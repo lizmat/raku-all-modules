@@ -9,7 +9,7 @@ use Net::BGP::Conversions;
 use Net::BGP::Message::Notify;
 
 use StrictClass;
-unit class Net::BGP::Message::Notify::Hold-Timer-Expired:ver<0.1.0>:auth<cpan:JMASLAK>
+unit class Net::BGP::Message::Notify::Hold-Timer-Expired:ver<0.1.1>:auth<cpan:JMASLAK>
     is Net::BGP::Message::Notify
     does StrictClass;
 

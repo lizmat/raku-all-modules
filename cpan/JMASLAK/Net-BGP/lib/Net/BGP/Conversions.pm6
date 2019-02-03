@@ -5,7 +5,7 @@ use v6.d;
 # All Rights Reserved - See License
 #
 
-unit module Net::BGP::Conversions:ver<0.1.0>:auth<cpan:JMASLAK>;
+unit module Net::BGP::Conversions:ver<0.1.1>:auth<cpan:JMASLAK>;
 
 use if;
 

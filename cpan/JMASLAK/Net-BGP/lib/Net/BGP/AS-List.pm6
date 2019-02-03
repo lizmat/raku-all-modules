@@ -6,7 +6,7 @@ use v6;
 #
 
 use StrictClass;
-unit class Net::BGP::AS-List:ver<0.1.0>:auth<cpan:JMASLAK> does StrictClass;
+unit class Net::BGP::AS-List:ver<0.1.1>:auth<cpan:JMASLAK> does StrictClass;
 
 use Net::BGP::Conversions;
 
@@ -30,12 +30,14 @@ method asn-count(-->Int:D)   { return $.raw[1] }
 # Per RFC4271 9.1.2.2.a
 method path-length(-->Int:D) { return self.ordered ?? self.asn-count !! 1 }
 
-method asns(-->Array[Int:D]) {
+multi method asns(UInt :$elems -->Array[Int:D]) {
     if self.asn-size * self.asn-count + 2 ≠ $!raw.bytes {
         die("AS Path List too short");
     }
 
-    my Int:D @result = (^(self.asn-count)).map: -> $i {
+    my $cnt = $elems // self.asn-count;
+
+    my Int:D @result = (^($cnt)).map: -> $i {
         if $!asn32 {
             nuint32( buf8.new($!raw.subbuf(2+$i*4, 4)) );
         } else {
@@ -196,7 +198,9 @@ is, the path length is 1 if this is an AS-SET (rather than an AS-SEQUENCE).
 
 =head2 asns
 
-Returns a list of the ASNs in this AS list.
+Returns a list of the ASNs in this AS list.  Takes an optional paraemter,
+C<:elems>, which is the number of ASNs to return.  If this is not supplied,
+returns all ASNs in the list.
 
 =head2 Str
 

@@ -39,6 +39,7 @@ subtest "Both AS4 and AS", {
     );
     ok defined($from-hash), "FH BGP message is defined";
     is $from-hash.as-path, '258 772 100000 {1,2} 3', "AS Path is correct";
+    is $from-hash.as-array, (258,772,100000,1,2,3), "AS Path members are correct";
 
     done-testing;
 }

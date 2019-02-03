@@ -5,7 +5,7 @@ use v6;
 # All Rights Reserved - See License
 #
 
-unit class Net::BGP::Event:ver<0.1.0>:auth<cpan:JMASLAK>;
+unit class Net::BGP::Event:ver<0.1.1>:auth<cpan:JMASLAK>;
 
 has Int $.connection-id;
 has Str $.peer;

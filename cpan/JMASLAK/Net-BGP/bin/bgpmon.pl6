@@ -134,39 +134,34 @@ sub MAIN(
 
             if @stack.elems == 0 { next; }
 
-            my @str;
+            my @events;
+            my @errlist;
             if (@stack.elems > $batch-size) {
-                @str = @stack.hyper(
+                @events = @stack.hyper(
                     :degree(8), :batch((@stack.elems / 8).ceiling)
                 ).grep(
                     { is-filter-match($^a, :@cidr-filter, :$lint-mode) }
-                ).map({ $^a => $short-format ?? short-lines($^a) !! $^a.Str }).flat;
+                ).map( { map-event($^a, $my-asn, $lint-mode, $short-format) } );
+
             } else {
-                @str = @stack.map: { $^a.Str }
-                @str = @stack.grep(
+                @events = @stack.grep(
                     { is-filter-match($^a, :@cidr-filter, :$lint-mode) }
-                ).map({ $^a => $short-format ?? short-lines($^a) !! $^a.Str }).flat;
+                ).map( { map-event($^a, $my-asn, $lint-mode, $short-format) } );
             }
 
-            for @str -> $event {
-                my @errors;
-                if $event.key ~~ Net::BGP::Event::BGP-Message {
-                    @errors = Net::BGP::Validation::errors(
-                        :message($event.key.message),
-                        :my-asn($my-asn),
-                        :peer-asn($event.key.peer-asn),
-                    );
+            for @events -> $event {
+                if $event<event> ~~ Net::BGP::Event::BGP-Message {
                     if $lint-mode {
-                        next unless @errors.elems;  # In lint mode, we only show errors
+                        next unless $event<errors>.elems;  # In lint mode, we only show errors
                     }
                 }
 
                 if $short-format {
-                    for $event.value -> $entry {
-                        short-format-output($entry, @errors);
+                    for @($event<str>) -> $entry {
+                        short-format-output($entry, $event<errors>);
                     }
                 } else {
-                    long-format-output($event.value, @errors);
+                    long-format-output($event<str>, $event<errors>);
                 }
 
                 $messages-logged++;
@@ -177,7 +172,7 @@ sub MAIN(
                     exit;
                 }
             }
-            @str.list.sink;
+            @events.list.sink;
         }
     }
 }
@@ -408,5 +403,23 @@ sub short-line-open(
         $peer,
         '',
     );
+}
+
+sub map-event($event, $my-asn, $lint-mode, $short-format) {
+    my $ret = Hash.new;
+    $ret<event> = $event;
+    $ret<str>   = $short-format ?? short-lines($event) !! $event.Str;
+
+    if $lint-mode and $event ~~ Net::BGP::Event::BGP-Message {
+        $ret<errors> = Net::BGP::Validation::errors(
+            :message($event.message),
+            :my-asn($my-asn),
+            :peer-asn($event.peer-asn),
+        );
+    } else {
+        $ret<errors> = Array.new;
+    }
+
+    return $ret;
 }
 

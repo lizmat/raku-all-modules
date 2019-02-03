@@ -8,7 +8,7 @@ use v6;
 use Net::BGP::Path-Attribute;
 
 use StrictClass;
-unit class Net::BGP::Path-Attribute::AS-Path:ver<0.1.0>:auth<cpan:JMASLAK>
+unit class Net::BGP::Path-Attribute::AS-Path:ver<0.1.1>:auth<cpan:JMASLAK>
     is Net::BGP::Path-Attribute
     does StrictClass;
 
@@ -128,6 +128,38 @@ method as-path-first(UInt:D $len is copy -->Str:D) {
     return @array.join(" ");
 }
 
+method as-array(-->Array[Int:D]) {
+    my @array = flat self.as-lists».asns;
+
+    my Int:D @ret;
+    for @array -> $list {
+        @ret.append: @$list;
+    }
+    return @ret;
+}
+
+method as-array-first(UInt:D $len is copy -->Array[Int:D]) {
+    my Net::BGP::AS-List:D @all = self.as-lists;
+
+    my Int:D @array = flat gather {
+        while $len {
+            if ! @all.elems {
+                die("No elements left in AS-Path array");
+            }
+            my $top = @all.shift;
+            if $top.path-length ≤ $len {
+                $len -= $top.path-length;
+                take $top.asns;
+            } else {
+                take $top.asns(:elems($len));
+                $len = 0;
+            }
+        }
+    }
+
+    return @array;
+}
+
 method Str(-->Str:D) { "AS-Path=" ~ self.as-path }
 
 # Register path-attribute
@@ -218,9 +250,27 @@ This returns a C<buf8> containing the data in the attribute.
 
 Returns the raw (wire format) data for this path-attribute.
 
+=head2 as-lists
+
+Returns the AS-Lists present in the attribute as an array of AS-Lists.
+
 =head2 as-path
 
 Returns a string representation of the AS path.
+
+=head2 as-array
+
+Returns an array of AS path members.
+
+=head2 as-path-first
+
+Returns the first N AS path elements, as calculated according to RFC4271 section
+9.1.1.2.
+
+=head2 as-array-first
+
+Returns the first N AS path elements as an array, as calcluated according to
+RFC4271 section 9.1.1.2.
 
 =head2 path-length
 

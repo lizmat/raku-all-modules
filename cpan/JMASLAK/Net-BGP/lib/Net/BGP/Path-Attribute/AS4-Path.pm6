@@ -8,7 +8,7 @@ use v6;
 use Net::BGP::Path-Attribute;
 
 use StrictClass;
-unit class Net::BGP::Path-Attribute::AS4-Path:ver<0.1.0>:auth<cpan:JMASLAK>
+unit class Net::BGP::Path-Attribute::AS4-Path:ver<0.1.1>:auth<cpan:JMASLAK>
     is Net::BGP::Path-Attribute
     does StrictClass;
 
@@ -106,6 +106,16 @@ method path-length(-->Int:D) {
 
 method as4-path(-->Str:D) { (join " ", self.as-lists».Str) }
 
+method as4-array(-->Array[Int:D]) {
+    my @array = self.as-lists».asns;
+
+    my Int:D @ret;
+    for @array -> $list {
+        @ret.append: @$list;
+    }
+    return @ret;
+}
+
 method Str(-->Str:D) { "AS4-Path=" ~ self.as4-path }
 
 # Register path-attribute
@@ -194,11 +204,19 @@ This returns a C<buf8> containing the data in the attribute.
 
 =head2 raw
 
- Returns the raw (wire format) data for this path-attribute.
+Returns the raw (wire format) data for this path-attribute.
+
+=head2 as-lists
+
+Returns an array of AS-List containing all the AS lists in the message.
 
 =head2 as4-path
 
 Returns a string representation of the AS path.
+
+=head2 as4-array
+
+Returns an array of AS path members.
 
 =head2 path-length
 

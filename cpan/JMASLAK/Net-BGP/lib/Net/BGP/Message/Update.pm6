@@ -28,7 +28,7 @@ use Net::BGP::Path-Attribute::Origin;
 use Net::BGP::Path-Attribute::Originator-ID;
 
 use StrictClass;
-unit class Net::BGP::Message::Update:ver<0.1.0>:auth<cpan:JMASLAK>
+unit class Net::BGP::Message::Update:ver<0.1.1>:auth<cpan:JMASLAK>
     is Net::BGP::Message
     does StrictClass;
 
@@ -469,12 +469,11 @@ method as-path(-->Str) {
         # Do we have an AS4-Path?
         return $!cached-as16-path if ! $!cached-as32-path;
 
-        my $as4  = self.path-attributes.first( * ~~ Net::BGP::Path-Attribute::AS4-Path );
-        my $as   = self.path-attributes.first( * ~~ Net::BGP::Path-Attribute::AS-Path );
+        my $as4 = self.path-attributes.first( * ~~ Net::BGP::Path-Attribute::AS4-Path );
+        my $as  = self.path-attributes.first( * ~~ Net::BGP::Path-Attribute::AS-Path );
 
-        # XXX We need to look for AS4_Aggregator and check that
-        # Aggregator, if found, is 23456.
-        
+        if ! $as.defined { return ''; }
+
         if $as.path-length < $as4.path-length {
             return $as.as-path;
         } elsif $as.path-length == $as4.path-length {
@@ -484,7 +483,36 @@ method as-path(-->Str) {
             return "$prefix " ~ $as4.as4-path;
         }
     }
+}
 
+method as-array(-->Array[Int:D]) {
+    self.path-attributes.sink;
+
+    my $as  = self.path-attributes.first( * ~~ Net::BGP::Path-Attribute::AS-Path );
+    if ! $as.defined { return Array[Int:D].new };
+
+    return $as.as-array if self.asn32;
+
+    # So we're a 16 bit ASN BGP speaker.  Let's look at AS4.
+    
+    # Do we have an AS4-Path?
+    return $as.as-array if ! $!cached-as32-path;
+
+    my $as4 = self.path-attributes.first( * ~~ Net::BGP::Path-Attribute::AS4-Path );
+
+    if $as.path-length < $as4.path-length {
+        return $as.as-array;
+    } elsif $as.path-length == $as4.path-length {
+        return $as4.as4-array;
+    } else {
+        my $prefix = $as.as-array-first($as.path-length - $as4.path-length);
+        my $suffix = $as4.as4-array;
+
+        my Int:D @ret = @$prefix;
+        @ret.append: @$suffix;
+
+        return @ret;
+    }
 }
 
 method origin(-->Str) {
