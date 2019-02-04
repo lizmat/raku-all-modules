@@ -1,7 +1,7 @@
 {
     "name": "ASN::META",
     "description": "A MOP-based compile-time ASN.1 spec evaluator",
-    "version": "0.1",
+    "version": "0.2",
     "perl": "6.c",
     "depends": ["ASN::Grammar", "ASN::BER"],
     "license": "Artistic-2.0",
