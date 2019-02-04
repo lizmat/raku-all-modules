@@ -71,6 +71,10 @@ It takes as arguments a list of directories to search and named arguments as con
 
   * `sorted` - Whether entries in a directory are sorted before processing. Default is `True`.
 
+  * `keep-going` - Whether or not the search should continue when an error is encountered (typically and unreadable directory). Defaults to `True`.
+
+  * `quiet` - Whether printing non-fatal errors to `$*ERR` is repressed. Defaults to `False`.
+
   * `as` - The type of values that will be returned. Valid values are `IO::Path` (the default) and `Str`.
 
 Filesystem loops might exist from either hard or soft links. The `loop-safe` option prevents infinite loops, but adds some overhead by making `stat` calls. Because directories are visited only once when `loop-safe` is true, matches could come from a symlinked directory before the real directory depending on the search order.
@@ -198,21 +202,41 @@ File test rules
 
 Most of the `:X` style filetest are available as boolean rules:
 
-  * readable
+### readable
 
-  * writable
+This checks if the entry is readable
 
-  * executable
+### writable
 
-  * file
+This checks if the entry is writable
 
-  * directory
+### executable
 
-  * symlink
+This checks if the entry is executable
 
-  * exists
+### file
 
-  * empty
+This checks if the entry is a file
+
+### directory
+
+This checks if the entry is a directory
+
+### symlink
+
+This checks if the entry is a symlink
+
+### special
+
+This checks if the entry is anything but a file, directory or symlink.
+
+### exists
+
+This checks if the entry exists
+
+### empty
+
+This checks if the entry is empty
 
 For example:
 
@@ -220,17 +244,35 @@ For example:
 
 Two composites are also available:
 
-  * read-writable
+### read-writable
 
-  * read-write-executable
+This checks if the entry is readable and writable
 
-The timestamps methods take a single argument in a form that can smartmatch against an `Instant`.
+### read-write-executable
 
-  * accessed
+This checks if the entry is readable, writable and executable
 
-  * modified
+### `dangling`
 
-  * changed
+    $finder.dangling;
+
+The `dangling` rule method matches dangling symlinks. It's equivalent to
+
+    $finder.symlink.exists(False)
+
+The timestamps methods take a single argument in a form that can smartmatch an `Instant`.
+
+### accessed
+
+Compares the access time
+
+### modified
+
+Compares the modification time
+
+### changed
+
+Compares the (inode) change time
 
 For example:
 
@@ -239,29 +281,45 @@ For example:
 
 It also supports the following integer based matching rules:
 
-  * size
+### size
 
-  * mode
+This compares the size of the entry
 
-  * device
+### mode
 
-  * inode
+This compares the mode of the entry
 
-  * nlinks
+### device
 
-  * uid
+This compares the device of the entry. This may not be available everywhere.
 
-  * gid
+### inode
+
+This compares the inode of the entry. This may not be available everywhere.
+
+### nlinks
+
+This compares the link count of the entry. This may not be available everywhere.
+
+### uid
+
+This compares the user identifier of the entry.
+
+### gid
+
+This compares the group identifier of the entry.
+
+### blocks
+
+This compares the number of blocks in the entry.
+
+### blocksize
+
+This compares the blocksize of the entry.
 
 For example:
 
     $finder.size(* > 10240)
-
-### `dangling`
-
-    $finder.dangling;
-
-The `dangling` rule method matches dangling symlinks.
 
 Depth rules
 -----------
@@ -332,31 +390,13 @@ The named arguments contain more information for such a check For example, the `
 
 The custom rule subroutine must return one of four values:
 
-over
-====
+  * `True` -- indicates the constraint is satisfied
 
-4
+  * `False` -- indicates the constraint is not satisfied
 
-  * *
+  * `PruneExclusive` -- indicate the constraint is satisfied, and prune if it's a directory
 
-`True` -- indicates the constraint is satisfied
-
-  * *
-
-`False` -- indicates the constraint is not satisfied
-
-  * *
-
-`PruneExclusive` -- indicate the constraint is satisfied, and prune if it's a directory
-
-  * *
-
-`PruneInclusive` -- indicate the constraint is not satisfied, and prune if it's a directory
-
-back
-====
-
-
+  * `PruneInclusive` -- indicate the constraint is not satisfied, and prune if it's a directory
 
 Here is an example. This is equivalent to the "depth" rule method with a depth of `0..3`:
 

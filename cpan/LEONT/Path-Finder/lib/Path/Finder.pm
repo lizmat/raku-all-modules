@@ -1,6 +1,6 @@
 use v6;
 
-unit class Path::Finder:ver<0.1.0>;
+unit class Path::Finder:ver<0.2.0>;
 
 use IO::Glob;
 
@@ -141,57 +141,70 @@ method io(Mu $path) is constraint(Name) {
 }
 
 method dangling(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { ($item.l && !$item.e) == $value };
+	self.and: sub ($item, *%) { ($item.l && !$item.e) === $value };
 }
 
 method readable(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.r == $value };
+	self.and: sub ($item, *%) { $item.r === $value };
 }
 method writable(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.w == $value };
+	self.and: sub ($item, *%) { $item.w === $value };
 }
 method executable(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.x == $value };
+	self.and: sub ($item, *%) { $item.x === $value };
 }
 method read-writable(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.rw == $value };
+	self.and: sub ($item, *%) { $item.rw === $value };
 }
 method read-write-executable(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.rwx == $value };
+	self.and: sub ($item, *%) { $item.rwx === $value };
 }
 method exists(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.e == $value };
+	self.and: sub ($item, *%) { $item.e === $value };
 }
 method file(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.f == $value };
+	self.and: sub ($item, *%) { $item.f === $value };
 }
 method directory(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.d == $value };
+	self.and: sub ($item, *%) { $item.d === $value };
 }
 method symlink(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.l == $value }
+	self.and: sub ($item, *%) { $item.l === $value }
 }
 method empty(Bool $value = True) is constraint(Stat) {
-	self.and: sub ($item, *%) { $item.z == $value };
+	self.and: sub ($item, *%) { $item.z === $value };
 }
 
-{
-	use nqp;
-	method inode(Mu $inode) is constraint(Stat) {
-		self.and: sub ($item, *%) { nqp::stat(nqp::unbox_s(~$item), nqp::const::STAT_PLATFORM_INODE) ~~ $inode};
+my sub stat-check($field, $matcher) {
+	return sub ($item, *%) {
+		use nqp;
+		return nqp::stat(nqp::unbox_s($item.absolute), $field) ~~ $matcher;
 	}
-	method device(Mu $device) is constraint(Stat) {
-		self.and: sub ($item, *%) { nqp::stat(nqp::unbox_s(~$item), nqp::const::STAT_PLATFORM_DEV) ~~ $device };
-	}
-	method nlinks(Mu $nlinks) is constraint(Stat) {
-		self.and: sub ($item, *%) { nqp::stat(nqp::unbox_s(~$item), nqp::const::STAT_PLATFORM_NLINKS) ~~ $nlinks };
-	}
-	method uid(Mu $uid) is constraint(Stat) {
-		self.and: sub ($item, *%) { nqp::stat(nqp::unbox_s(~$item), nqp::const::STAT_UID) ~~ $uid };
-	}
-	method gid(Mu $gid) is constraint(Stat) {
-		self.and: sub ($item, *%) { nqp::stat(nqp::unbox_s(~$item), nqp::const::STAT_GID) ~~ $gid };
-	}
+}
+
+method inode(Mu $inode) is constraint(Stat) {
+	self.and: stat-check(nqp::const::STAT_PLATFORM_INODE, $inode);
+}
+method device(Mu $device) is constraint(Stat) {
+	self.and: stat-check(nqp::const::STAT_PLATFORM_DEV, $device);
+}
+method nlinks(Mu $nlinks) is constraint(Stat) {
+	self.and: stat-check(nqp::const::STAT_PLATFORM_NLINKS, $nlinks);
+}
+method uid(Mu $uid) is constraint(Stat) {
+	self.and: stat-check(nqp::const::STAT_UID, $uid);
+}
+method gid(Mu $gid) is constraint(Stat) {
+	self.and: stat-check(nqp::const::STAT_GID, $gid);
+}
+method special(Bool $value = True) is constraint(Stat) {
+	self.and: stat-check(nqp::const::STAT_ISDEV, +$value);
+}
+method blocks(Mu $blocks) is constraint(Stat) {
+	self.and: stat-check(nqp::const::STAT_PLATFORM_BLOCKS, $blocks);
+}
+method blocksize(Mu $blocksize) is constraint(Stat) {
+	self.and: stat-check(nqp::const::STAT_PLATFORM_BLOCKSIZE, $blocksize);
 }
 
 method accessed(Mu $accessed) is constraint(Stat) {
@@ -272,17 +285,21 @@ method skip-vcs(Bool $hide = True) is constraint(Skip) {
 	self.skip-dir($vcs-dirs).name($vcs-files) if $hide;
 }
 
+subset FailedToOpen of Exception where .message.contains('Failed to open file');
+
 proto method shebang(Mu $pattern, *%opts) is constraint(Content) { * }
 multi method shebang(Mu $pattern, *%opts) {
 	self.and: sub ($item, *%) {
 		return False unless $item.f;
 		return $item.lines(|%opts)[0] ~~ $pattern;
+		CATCH { when FailedToOpen { return False } }
 	};
 }
 multi method shebang(Bool $value = True, *%opts) {
 	self.and: sub ($item, *%) {
 		return !$value unless $item.f;
 		return ?($item.lines(|%opts)[0] ~~ rx/ ^ '#!' /) === $value;
+		CATCH { when FailedToOpen { return False } }
 	};
 }
 
@@ -290,6 +307,7 @@ method contents(Mu $pattern, *%opts) is constraint(Content) {
 	self.and: sub ($item, *%) {
 		return False unless $item.f;
 		return $item.slurp(|%opts) ~~ $pattern;
+		CATCH { when FailedToOpen { return False } }
 	};
 }
 
@@ -300,6 +318,7 @@ method lines(Mu $pattern, *%opts) is constraint(Content) {
 			return True if $line ~~ $pattern;
 		}
 		return False;
+		CATCH { when FailedToOpen { return False } }
 	}
 }
 
@@ -310,20 +329,9 @@ method no-lines(Mu $pattern, *%opts) is constraint(Content) {
 			return False if $line ~~ $pattern;
 		}
 		return True;
+		CATCH { when FailedToOpen { return True } }
 	}
 }
-
-my &is-unique = $*DISTRO.name ne any(<MSWin32 os2 dos NetWare symbian>)
-	?? sub (Bool %seen, IO::Path $item) {
-		use nqp;
-		my $inode = nqp::stat(nqp::unbox_s(~$item), nqp::const::STAT_PLATFORM_INODE);
-		my $device = nqp::stat(nqp::unbox_s(~$item), nqp::const::STAT_PLATFORM_DEV);
-		my $key = "$inode\-$device";
-		return False if %seen{$key};
-		return %seen{$key} = True;
-		CATCH { default { return True } }
-	}
-	!! sub (Bool %seen, IO::Path $item) { return True };
 
 enum Order is export(:DEFAULT :order) < BreadthFirst PreOrder PostOrder >;
 
@@ -334,16 +342,27 @@ multi method in(Path::Finder:D:
 	Bool:D :$report-symlinks = $follow-symlinks,
 	Order:D :$order = BreadthFirst,
 	Bool:D :$sorted = True,
-	Bool:D :$loop-safe = True,
+	Bool:D :$loop-safe = $*DISTRO.name ne any(<MSWin32 os2 dos NetWare symbian>),
 	Bool:D :$relative = False,
+	Bool:D :$keep-going = True,
+	Bool:D :$quiet = False,
 	Any:U :$as = IO::Path,
 	:&map = %as{$as},
 	--> Seq:D
 ) {
 	my @queue = (@dirs || '.').map(*.IO).map: { ($^path, 0, $^path, Bool) };
 
-	my Bool $check-symlinks = !$follow-symlinks || !$report-symlinks;
 	my Bool %seen;
+	sub is-unique (IO::Path $item) {
+		use nqp;
+		my $inode = nqp::stat(nqp::unbox_s($item.absolute), nqp::const::STAT_PLATFORM_INODE);
+		my $device = nqp::stat(nqp::unbox_s($item.absolute), nqp::const::STAT_PLATFORM_DEV);
+		my $key = "$inode\-$device";
+		return False if %seen{$key};
+		return %seen{$key} = True;
+	}
+
+	my Bool $check-symlinks = !$follow-symlinks || !$report-symlinks;
 	my $seq := gather while @queue {
 		my ($item, $depth, $base, $result) = @( @queue.shift );
 
@@ -354,8 +373,8 @@ multi method in(Path::Finder:D:
 			$result = self!test($item, :$depth, :$base);
 			my $prune = $result ~~ Prune || $is-link && !$follow-symlinks;
 
-			if !$prune && $item.d && (!$loop-safe || is-unique(%seen, $item)) {
-				my @next = $item.dir.map: { ($^child, $depth + 1, $base, Bool) };
+			if !$prune && $item.d && (!$loop-safe || is-unique($item)) {
+				my @next = $item.dir.self.map: { ($^child, $depth + 1, $base, Bool) };
 				@next .= sort if $sorted;
 				given $order {
 					when BreadthFirst {
@@ -368,6 +387,13 @@ multi method in(Path::Finder:D:
 					}
 					when PreOrder {
 						@queue.prepend: @next;
+					}
+				}
+
+				CATCH {
+					when X::IO::Dir {
+						.rethrow unless $keep-going;
+						.message.note unless $quiet;
 					}
 				}
 			}
@@ -412,7 +438,7 @@ our sub finder(Path::Finder :$base = Path::Finder, *%options --> Path::Finder) i
 }
 
 our sub find(*@dirs, *%options --> Seq:D) is export(:DEFAULT :find) {
-	my %in-options = %options<follow-symlinks order sorted loop-safe relative as map>:delete:p;
+	my %in-options = %options<follow-symlinks order sorted loop-safe relative keep-going quiet as map>:delete:p;
 	return finder(|%options).in(|@dirs, |%in-options);
 }
 
@@ -493,6 +519,10 @@ current directory is used (C<".">). Valid options include:
 =item C<relative> - Return matching items relative to the search directory. Default is C<False>.
 
 =item C<sorted> - Whether entries in a directory are sorted before processing. Default is C<True>.
+
+=item C<keep-going> - Whether or not the search should continue when an error is encountered (typically and unreadable directory). Defaults to C<True>.
+
+=item C<quiet> - Whether printing non-fatal errors to C<$*ERR> is repressed. Defaults to C<False>.
 
 =item C<as> - The type of values that will be returned. Valid values are C<IO::Path> (the default) and C<Str>.
 
@@ -669,14 +699,42 @@ unless excluded by other rules.
 
 Most of the C<:X> style filetest are available as boolean rules:
 
-=item readable
-=item writable
-=item executable
-=item file
-=item directory
-=item symlink
-=item exists
-=item empty
+=head3 readable
+
+This checks if the entry is readable
+
+=head3 writable
+
+This checks if the entry is writable
+
+=head3 executable
+
+This checks if the entry is executable
+
+=head3 file
+
+This checks if the entry is a file
+
+=head3 directory
+
+This checks if the entry is a directory
+
+=head3 symlink
+
+This checks if the entry is a symlink
+
+=head3 special
+
+This checks if the entry is anything but a file, directory or symlink.
+
+=head3 exists
+
+This checks if the entry exists
+
+=head3 empty
+
+This checks if the entry is empty
+
 
 For example:
 
@@ -684,40 +742,85 @@ For example:
 
 Two composites are also available:
 
-=item read-writable
-=item read-write-executable
+=head3 read-writable
+
+This checks if the entry is readable and writable
+
+=head3 read-write-executable
+
+This checks if the entry is readable, writable and executable
+
+=head3 C<dangling>
+
+ $finder.dangling;
+
+The C<dangling> rule method matches dangling symlinks. It's equivalent to
+
+ $finder.symlink.exists(False)
+
 
 The timestamps methods take a single argument in a form that
-can smartmatch against an C<Instant>.
+can smartmatch an C<Instant>.
 
-=item accessed
-=item modified
-=item changed
+=head3 accessed
+
+Compares the access time
+
+=head3 modified
+
+Compares the modification time
+
+=head3 changed
+
+Compares the (inode) change time
 
 For example:
 
  # hour old
  $finder.modified(* < now - 60 * 60);
 
+
 It also supports the following integer based matching rules:
 
-=item size
-=item mode
-=item device
-=item inode
-=item nlinks
-=item uid
-=item gid
+=head3 size
+
+This compares the size of the entry
+
+=head3 mode
+
+This compares the mode of the entry
+
+=head3 device
+
+This compares the device of the entry. This may not be available everywhere.
+
+=head3 inode
+
+This compares the inode of the entry. This may not be available everywhere.
+
+=head3 nlinks
+
+This compares the link count of the entry. This may not be available everywhere.
+
+=head3 uid
+
+This compares the user identifier of the entry.
+
+=head3 gid
+
+This compares the group identifier of the entry.
+
+=head3 blocks
+
+This compares the number of blocks in the entry.
+
+=head3 blocksize
+
+This compares the blocksize of the entry.
 
 For example:
 
  $finder.size(* > 10240)
-
-=head3 C<dangling>
-
- $finder.dangling;
-
-The C<dangling> rule method matches dangling symlinks.
 
 =head2 Depth rules
 
@@ -800,25 +903,13 @@ depth checks.
 
 The custom rule subroutine must return one of four values:
 
-=over 4
+=item C<True> -- indicates the constraint is satisfied
 
-=item *
+=item C<False> -- indicates the constraint is not satisfied
 
-C<True> -- indicates the constraint is satisfied
+=item C<PruneExclusive> -- indicate the constraint is satisfied, and prune if it's a directory
 
-=item *
-
-C<False> -- indicates the constraint is not satisfied
-
-=item *
-
-C<PruneExclusive> -- indicate the constraint is satisfied, and prune if it's a directory
-
-=item *
-
-C<PruneInclusive> -- indicate the constraint is not satisfied, and prune if it's a directory
-
-=back
+=item C<PruneInclusive> -- indicate the constraint is not satisfied, and prune if it's a directory
 
 Here is an example. This is equivalent to the "depth" rule method with
 a depth of C<0..3>:
