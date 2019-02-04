@@ -7,4 +7,6 @@ install:
     - sudo sed -i -e 's/ENABLE=false/ENABLE=true/' /etc/default/icecast2
     - sudo service icecast2 start
     - rakudobrew build-zef
+    - zef update
     - zef --deps-only install .
+    - zef list --installed
