@@ -1,17 +1,18 @@
 use v6.c;
-unit class App::Prove6:ver<0.0.8>:auth<cpan:LEONT>;
+unit class App::Prove6:ver<0.0.9>:auth<cpan:LEONT>;
 
 use TAP;
 
-my multi sub listall(IO::Path $path where .d) {
-    for $path.dir(:test(!*.starts-with('.'))) -> $entry {
-        listall($entry);
-    }
+my multi listall(IO::Path $path where .d) {
+	for $path.dir(:test(!*.starts-with('.'))).self -> $entry {
+		listall($entry);
+	}
+}
+my multi listall(IO::Path $path where .f) {
+	take ~$path if $path.extension eq 't'|'t6';
 }
 my multi listall(IO::Path $path) {
-    if $path.f && $path.extension eq 't'|'t6' {
-        take ~$path;
-    }
+	die "Invalid input '$path'";
 }
 
 my sub load(Str $classname) {

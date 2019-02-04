@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Leont/app-prove6.git
 	branch = master
-	commit = cce39955019897b12f5d09132a92d2df9f2052dd
-	parent = 3653be9e1f2f1c13dc79ee8ee6e691b449bcc249
+	commit = 2700168051d422af1109aecb17b45be9a4bb7b55
+	parent = e28687a82207ee09a1c279b899d60e5c2d9ac6c3
 	cmdver = 0.3.1
