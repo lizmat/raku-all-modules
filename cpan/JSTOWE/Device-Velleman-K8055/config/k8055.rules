@@ -1,0 +1,8 @@
+# This file contains rules to access the Velleman K8055 USB Experiment Interface Board.
+# The device is listed for all of it's possible addresses (0, 1, 2, 3).
+# See udev(7) for syntax.
+#
+SUBSYSTEM=="usb", ATTRS{idVendor}=="10cf", ATTRS{idProduct}=="5500", GROUP="k8055", MODE="0660"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="10cf", ATTRS{idProduct}=="5501", GROUP="k8055", MODE="0660"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="10cf", ATTRS{idProduct}=="5502", GROUP="k8055", MODE="0660"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="10cf", ATTRS{idProduct}=="5503", GROUP="k8055", MODE="0660"
