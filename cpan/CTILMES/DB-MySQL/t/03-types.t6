@@ -27,9 +27,7 @@ create table foo
     o enum('a','b','c'),
     p set('a', 'b', 'c'),
     q date,
-    r datetime,
-    s json,
-    t json
+    r datetime
 )
 END
 
@@ -37,7 +35,7 @@ END
 my $blob = buf8.new(do for ^3 { $_ % 256 });
 
 is $m.query('insert into foo values
-                    (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                    (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
     3,                                                          # a
     True,                                                       # b
     1234,                                                       # c
@@ -56,8 +54,6 @@ is $m.query('insert into foo values
     (set <b c b>),                                              # p
     Date.new('2000-01-01'),                                     # q
     '2000-01-01T12:34:56',                                      # r
-    %( a => 12, b => 'this' ),                                  # s
-    ( 1,2,3 ),                                                  # t
     ), 1, 'insert row';
 
 is-deeply $m.execute('select * from foo').hash,
@@ -80,8 +76,6 @@ is-deeply $m.execute('select * from foo').hash,
     p => 'b,c',
     q => Date.new(2000,1,1),
     r => DateTime.new('2000-01-01T12:34:56', :timezone($*TZ)),
-    s => %( a => 12, b => 'this'),
-    t => [ 1,2,3 ],
     ), 'verify values';
 
 is $m.execute('drop table foo'), 0, 'drop table';
