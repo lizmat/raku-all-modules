@@ -1,6 +1,9 @@
 DB - Base roles for DB::* family of SQL Database Access Modules
 ===============================================================
 
+[![Build Status](https://travis-ci.org/CurtTilmes/perl6-db.svg)](https://travis-ci.org/CurtTilmes/perl6-db)
+
+
 This module abstracts out some shared functionality from a set of
 concrete modules for performing database access.
 

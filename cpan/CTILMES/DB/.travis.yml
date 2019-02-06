@@ -6,9 +6,9 @@ os:
 perl6:
   - latest
 
+env:
+  - ALL_TESTING=1
+
 install:
   - rakudobrew build zef
   - zef -v install --deps-only .
-  - zef install TAP::Harness
-  - PERL6LIB=lib perl6 -MTAP -e 'exit(TAP::Harness.new.run(@*ARGS).result.has-errors)' t/*.t6
-
