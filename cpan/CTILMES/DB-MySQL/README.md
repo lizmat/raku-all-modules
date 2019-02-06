@@ -1,6 +1,8 @@
 DB::MySQL - MySQL access for Perl 6
 ===================================
 
+[![Build Status](https://travis-ci.org/CurtTilmes/perl6-dbmysql.svg)](https://travis-ci.org/CurtTilmes/perl6-dbmysql)
+
 This is a reimplementation of Perl 6 bindings for MySQL.
 
 Basic usage
