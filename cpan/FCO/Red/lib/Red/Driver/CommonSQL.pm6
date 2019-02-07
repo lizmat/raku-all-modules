@@ -15,6 +15,8 @@ use Red::AST::IsDefined;
 use Red::AST::CreateTable;
 use Red::AST::LastInsertedRow;
 use Red::Driver;
+
+use UUID;
 unit role Red::Driver::CommonSQL does Red::Driver;
 
 method reserved-words {<
@@ -218,7 +220,7 @@ multi method translate(Red::Column $col, "select") {
         } else {
             "{ $col.class.^as }.{ $col.name }"
         }
-    } {qq<as "{$col.attr-name}"> if $col.computation || $col.name ne $col.attr-name}]
+    } {qq<as "{$col.attr-name}"> if $col.computation or $col.name ne $col.attr-name}]
 }
 
 multi method translate(Red::AST::Mul $_ where .left.?value == -1, "order") {
@@ -260,7 +262,7 @@ multi method translate(Red::AST::Value $_ where .type ~~ Instant, $context?) {
 
 multi method translate(Red::AST::Value $_ where .type !~~ Str, $context?) {
     return self.translate: ast-value(.get-value), $context if .column.DEFINITE;
-    quietly qq|{ .get-value }|
+    ~.get-value
 }
 
 multi method translate(Red::Column $_, "create-table") {
@@ -360,6 +362,7 @@ multi method default-type-for(Red::Column $ where .attr.type ~~ Mu          --> 
 multi method default-type-for(Red::Column $ where .attr.type ~~ Str         --> Str:D) {"varchar(255)"}
 multi method default-type-for(Red::Column $ where .attr.type ~~ Int         --> Str:D) {"integer"}
 multi method default-type-for(Red::Column $ where .attr.type ~~ Bool        --> Str:D) {"boolean"}
+multi method default-type-for(Red::Column $ where .attr.type ~~ UUID        --> Str:D) {"varchar(36)"}
 multi method default-type-for(Red::Column                                   --> Str:D) {"varchar(255)"}
 
 

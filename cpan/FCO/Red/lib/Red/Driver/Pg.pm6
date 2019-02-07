@@ -4,6 +4,8 @@ use Red::Driver::CommonSQL;
 use Red::Statement;
 use Red::AST::Infixes;
 use X::Red::Exceptions;
+need UUID;
+
 unit class Red::Driver::Pg does Red::Driver::CommonSQL;
 
 has Str $!user;
@@ -34,6 +36,10 @@ multi method translate(Red::AST::Mod $_, $context?) {
 
 multi method translate(Red::AST::Value $_ where .type ~~ Bool, $context?) {
     .value ?? "'t'" !! "'f'"
+}
+
+multi method translate(Red::AST::Value $_ where .type ~~ UUID, $context?) {
+    "'{ .value.Str }'"
 }
 
 class Statement does Red::Statement {
@@ -68,6 +74,7 @@ multi method default-type-for(Red::Column $ where .attr.type ~~ DateTime        
 multi method default-type-for(Red::Column $ where { .attr.type ~~ Int and .auto-increment } --> Str:D) {"serial"}
 multi method default-type-for(Red::Column $ where .attr.type ~~ one(Int, Bool)              --> Str:D) {"integer"}
 multi method default-type-for(Red::Column $ where .attr.type ~~ Bool                        --> Str:D) {"boolean"}
+multi method default-type-for(Red::Column $ where .attr.type ~~ UUID                        --> Str:D) {"uuid"}
 multi method default-type-for(Red::Column $                                                 --> Str:D) {"varchar(255)"}
 
 multi method inflate(Str $value, DateTime :$to!) { DateTime.new: $value }
