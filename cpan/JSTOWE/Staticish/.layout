@@ -1,0 +1,66 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "name": "010-basic.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "030-ext.t"
+        },
+        {
+          "name": "020-test.t",
+          "type": "file"
+        },
+        {
+          "purpose": null,
+          "type": "directory",
+          "children": [
+            {
+              "name": "StaticFoo.pm",
+              "type": "file"
+            }
+          ],
+          "name": "lib"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        }
+      ],
+      "name": "t",
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "purpose": null,
+      "type": "directory",
+      "name": "lib",
+      "children": [
+        {
+          "type": "file",
+          "name": "Staticish.pm"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    }
+  ]
+}
