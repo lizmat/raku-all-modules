@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/vrurg/Perl6-OO-Plugin.git
 	branch = master
-	commit = 14c27645aff0ea8008595ceb80fbb8fb65016959
-	parent = 8348ddd467dca29ef706f9e6f0951d9da55c8f84
+	commit = 9ac4e83c5d8738e390c0ba4392992fd95d3648dd
+	parent = c3c1382518e50d9b99f27e1aae4707d792b4b07e
 	cmdver = 0.3.1

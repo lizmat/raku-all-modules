@@ -747,7 +747,7 @@ functionality through delegating to the plugins is only possible after calling t
 L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md#basics>.
 =end pod
 
-method class ( Any:U \type --> Any:U ) {
+method class ( Any:U \type --> Any:U ) is raw {
 
     return %!cached<types>{ type.^name } if %!cached<types>{ type.^name }:exists;
 
@@ -1027,7 +1027,7 @@ method !autogen-class-name ( Str:D $base ) {
 }
 
 # Parameters: wrapped-type, original type
-method !build-class-chain ( Mu:U \wtype, Mu:U \type --> Mu:U ) {
+method !build-class-chain ( Mu:U \wtype, Mu:U \type --> Mu:U ) is raw {
 
     # Build list of plug-classes for this type
     my $type-name = type.^name;
@@ -1073,7 +1073,7 @@ method !build-class-chain ( Mu:U \wtype, Mu:U \type --> Mu:U ) {
 }
 
 # build-class is supposed to be called for unprocessed classes only.
-method !build-class ( Mu:U \type --> Mu:U ) {
+method !build-class ( Mu:U \type --> Mu:U ) is raw {
 
     my $type-name = type.^name;
     my %methods = $!registry.methods{ $type-name } // {};
