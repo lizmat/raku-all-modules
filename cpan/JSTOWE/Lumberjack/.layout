@@ -1,0 +1,75 @@
+{
+  "children": [
+    {
+      "name": "t",
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "070-dispatcher-file.t"
+        },
+        {
+          "type": "file",
+          "name": "010-basic.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "type": "file",
+          "name": "020-class.t"
+        },
+        {
+          "type": "file",
+          "name": "060-dispatcher-console.t"
+        },
+        {
+          "type": "file",
+          "name": "050-formatter.t"
+        },
+        {
+          "type": "file",
+          "name": "040-dispatcher-basic.t"
+        },
+        {
+          "name": "030-simple.t",
+          "type": "file"
+        }
+      ],
+      "purpose": null
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "file",
+      "name": "Documentation.md"
+    },
+    {
+      "purpose": null,
+      "children": [
+        {
+          "name": "Lumberjack.pm",
+          "type": "file"
+        }
+      ],
+      "type": "directory",
+      "name": "lib"
+    },
+    {
+      "type": "file",
+      "name": "META6.json"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
