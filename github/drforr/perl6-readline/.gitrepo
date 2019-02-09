@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/drforr/perl6-readline.git
+	remote = https://github.com/drforr/perl6-readline.git
 	branch = master
-	commit = c0d2b0e82bc9c856d36c263da720266f105c6e28
-	parent = ed8c361a0ddf69e6d836cd27452cba57e45e3d3f
-	cmdver = 0.4.0
+	commit = 9709c49423cc5931399f40a28f4bda29df88f129
+	parent = c90b17879d696b7e5d10b3b9a1d5026556f22e5f
+	cmdver = 0.3.1
