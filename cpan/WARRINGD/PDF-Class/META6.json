@@ -126,7 +126,7 @@
     "PDF::XObject::PS" : "lib/PDF/XObject/PS.pm"
   },
   "resources" : [ ],
-  "source-url" : "git://github.com/p6-pdf/PDF-Class-p6.git",
+  "source-url" : "https://github.com/p6-pdf/PDF-Class-p6.git",
   "tags" : [
     "pdf"
   ],
