@@ -2,14 +2,14 @@ use v6.c;
 
 use Hash::Agnostic:ver<0.0.3>:auth<cpan:ELIZABETH>;
 
-role Map::Agnostic:ver<0.0.1>:auth<cpan:ELIZABETH>
+role Map::Agnostic:ver<0.0.2>:auth<cpan:ELIZABETH>
   does Hash::Agnostic
 {
-    has int $initialized;
+    has int $!initialized;
 
 #---- Methods supplied by Map::Agnostic needed by Hash::Agnostic ---------------
     method ASSIGN-KEY(\key, \value) {
-        $initialized
+        $!initialized
           ?? (die "Cannot change key '{key}' in an immutable {self.^name}")
           !! self.INIT-KEY(key, value)
     }
@@ -22,8 +22,8 @@ role Map::Agnostic:ver<0.0.1>:auth<cpan:ELIZABETH>
         die "Can not remove values from a {self.^name}";
     }
 
-    multi method STORE(::?ROLE:D: \iterable, :$initialize!) {
-        nextsame;
+    multi method STORE(::?ROLE:D: \iterable, :$INITIALIZE!) {
+        callsame;
         $!initialized = 1;
         self
     }

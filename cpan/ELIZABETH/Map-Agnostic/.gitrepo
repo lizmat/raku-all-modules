@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/Map-Agnostic.git
 	branch = master
-	commit = 81ef05aec0cd96a470cb80bdc18c94be8c545800
-	parent = c0911b359918399bdacd99d9c809d9fa974a0f12
+	commit = aa1e6e8af3a4448163f548db7f4dd85e7911ba8b
+	parent = 9e372a6b784869398cf79c7fc917a5d99924b1f5
 	cmdver = 0.3.1
