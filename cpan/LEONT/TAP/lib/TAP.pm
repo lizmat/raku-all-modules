@@ -805,16 +805,20 @@ class Async {
     multi get_runner(Source::Proc $proc) {
         my $async = Proc::Async.new($proc.path, $proc.args);
         my $events = parser($async.stdout);
+        state $devnull;
+        END { $devnull.close with $devnull }
         given $proc.err {
             my $err = $_;
             when 'stderr' { #default is correct
             }
             when 'merge' {
                 warn "Merging isn't supported yet on Asynchronous streams";
-                $async.bind-stderr(open($*SPEC.devnull, :w))
+                $devnull //= open($*SPEC.devnull, :w);
+                $async.bind-stderr($devnull);
             }
             when 'ignore' {
-                $async.bind-stderr(open($*SPEC.devnull, :w))
+                $devnull //= open($*SPEC.devnull, :w);
+                $async.bind-stderr($devnull);
             }
             when IO::Handle:D {
                 $async.stderr.lines(:close).act({ $err.say($_) });
