@@ -1,8 +1,8 @@
 use v6.c;
 
-use Map::Agnostic:ver<0.0.1>:auth<cpan:ELIZABETH>;
+use Map::Agnostic:ver<0.0.2>:auth<cpan:ELIZABETH>;
 
-role Map::Ordered:ver<0.0.1>:auth<cpan:ELIZABETH>
+role Map::Ordered:ver<0.0.2>:auth<cpan:ELIZABETH>
   does Map::Agnostic
 {
     has %!indices;  # handles <EXISTS-KEY>   # alas, not supported for role yet
@@ -82,7 +82,7 @@ Comments and Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018, 2019 Elizabeth Mattijsen
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

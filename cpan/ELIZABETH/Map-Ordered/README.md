@@ -29,7 +29,7 @@ Source can be located at: https://github.com/lizmat/Map-Ordered . Comments and P
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018, 2019 Elizabeth Mattijsen
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

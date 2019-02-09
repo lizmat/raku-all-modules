@@ -2,5 +2,9 @@ Revision history for Map-Ordered
 
 {{$NEXT}}
 
+0.0.2  2019-02-08T18:51:13+01:00
+    - Upped dependency on Map::Agnostic to 0.0.2
+    - Updated copyright year
+
 0.0.1  2018-10-06T20:31:59+02:00
     - Initial version

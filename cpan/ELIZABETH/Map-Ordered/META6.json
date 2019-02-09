@@ -5,7 +5,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [
-    "Map::Agnostic:ver<0.0.1>:auth<cpan:ELIZABETH>"
+    "Map::Agnostic:ver<0.0.2>:auth<cpan:ELIZABETH>"
   ],
   "description" : "role for ordered Maps",
   "license" : "Artistic-2.0",
@@ -20,5 +20,5 @@
     "UTILS"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.2"
 }

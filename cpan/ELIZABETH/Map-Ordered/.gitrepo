@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/Map-Ordered.git
 	branch = master
-	commit = 7c8807dd5209ed845765dffb42287c47235258c8
-	parent = aedd1e0df2f0e8ed6fc7044053a95a2ea6676cf8
+	commit = 0b552fa2199e78e0a98e8dee681d1fd78bb8c362
+	parent = 2e5f33973afd5f44237d3fc935617b9241d67b6b
 	cmdver = 0.3.1
