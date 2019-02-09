@@ -38,7 +38,7 @@ Any chapter references in the documentation refer to the GNU Readline or GNU His
 
 By default the Perl 6 module searches for libreadline.so.* and takes the most recent match it can find.
 
-If you're on OS X, it searches for libreadline.dynlib.*.
+If you're on OS X, it searches for libreadline.*.dylib.
 On OpenBSD it searches for libereadline.so.*.
 
 While I'd prefer to use L<LibraryCheck>'s technique of just attempting to link to a library, it doesn't seem to work inside of the C<is native(&func)> attribute. So instead, it defaults to v7 (the current version as of 2018-07-14) and searches for other versions along a fixed set of library paths, taken from bug reports.
@@ -693,14 +693,14 @@ class Readline:ver<0.1.4> {
         tgetnum('');
       }
       when 'darwin' {
-        $library-match = rx/:i libreadline\.dynlib\.\d+ $/;
+        $library-match = rx/:i libreadline\.(\d+)\.dylib $/;
       }
     }
 
     # Search each of the LIBRARY-PATHS paths for libreadline.
     #
     for @library-path -> $path {
-      # Filter out everything but libreadline.{so,dynlib}.*
+      # Filter out everything but libreadline.{so,dylib}
       # Sort it so the last entry is the latest
       #
       my @dir = sort dir( $path, :test( $library-match ) );
@@ -709,6 +709,15 @@ class Readline:ver<0.1.4> {
       @dir[*-1] ~~ $library-match;
       $version = Version.new( ( $0 ) );
       last;
+    }
+
+    given $*DISTRO.name {
+      when 'slackware' {
+        if $version ~~ v6 {
+          my sub tgetnum(Str --> int32) is native('ncurses') { * }
+          tgetnum('');
+        }
+      }
     }
 
     ( $library, $version )
