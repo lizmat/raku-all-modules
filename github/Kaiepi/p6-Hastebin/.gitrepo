@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Kaiepi/p6-Hastebin.git
 	branch = master
-	commit = 08a75f07e77ca947b317efc5553e98e85aa05b57
-	parent = b2497509a5a2176cf5b4397012575d51362de445
+	commit = cfa801201dee4aa0a40e945a829be432ce686bcb
+	parent = 8b84ea53194ea36e5c25178bf101d5fc066874fa
 	cmdver = 0.3.1

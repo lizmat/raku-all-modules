@@ -3,7 +3,7 @@
     "Ben Davies"
   ],
   "build-depends" : [ ],
-  "depends" : [ ],
+  "depends" : [ "Cro::HTTP" ],
   "description" : "Hastebin client API",
   "license" : "Artistic-2.0",
   "name" : "Hastebin",
@@ -15,5 +15,5 @@
   "source-url" : "https://github.com/Kaiepi/p6-Hastebin.git",
   "tags" : [ "API" ],
   "test-depends" : [ ],
-  "version" : "0.0.3"
+  "version" : "0.0.4"
 }
