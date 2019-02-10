@@ -62,10 +62,10 @@ sub fails_with($input, $ex_type, $message = explain $ex_type.^name) {
 
     my $root = parse($input);
 
-    isa_ok $root, Text::Indented::Suite;
+    isa-ok $root, Text::Indented::Suite;
     is +$root, 2, 'two things were parsed:';
-    isa_ok $root[0], Str, 'a string';
-    isa_ok $root[1], Text::Indented::Suite, 'and a suite';
+    isa-ok $root[0], Str, 'a string';
+    isa-ok $root[1], Text::Indented::Suite, 'and a suite';
 }
 
 {
@@ -78,9 +78,9 @@ sub fails_with($input, $ex_type, $message = explain $ex_type.^name) {
     my $root = parse($input);
 
     is +$root, 3, 'three things were parsed:';
-    isa_ok $root[0], Str, 'a string';
-    isa_ok $root[1], Text::Indented::Suite, 'a suite';
-    isa_ok $root[2], Str, 'and a string';
+    isa-ok $root[0], Str, 'a string';
+    isa-ok $root[1], Text::Indented::Suite, 'a suite';
+    isa-ok $root[2], Str, 'and a string';
 }
 
 {

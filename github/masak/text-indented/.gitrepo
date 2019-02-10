@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/masak/text-indented.git
 	branch = master
-	commit = 498480710aba212997cbc654a7be68853b3100b2
-	parent = cc8a93f835e28c008de186f8f7d3303fb77124a5
-	cmdver = 0.1.0
+	commit = b122996f662f90e27946f54a382b650c61ce2fb0
+	parent = e7cffce8210337dbbaca9d58668d4f63968b09a4
+	cmdver = 0.3.1

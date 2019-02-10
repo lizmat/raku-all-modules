@@ -1,4 +1,4 @@
-grammar Text::Indented;
+unit grammar Text::Indented;
 
 class Suite {
     my subset Item where Str | Suite;
