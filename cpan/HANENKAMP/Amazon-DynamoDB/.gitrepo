@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/Amazon-DynamoDB.git
 	branch = master
-	commit = 8cb5b029ec171dfd2b07d7ce47a43312b8ce1ae7
-	parent = 05337c03c905cad86e54d5c7289a3931128916d3
+	commit = 0c6934de7228a67f22fabf3f650fddcb5a4201c0
+	parent = 18c100a023d12037d64adcc81699c37d4ad9a5e3
 	cmdver = 0.3.1

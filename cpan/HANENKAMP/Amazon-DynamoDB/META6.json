@@ -1,17 +1,18 @@
 {
-  "name": "Amazon::DynamoDB",
-  "source-url": "git://github.com/zostay/Amazon-DynamoDB.git",
-  "support": {
-    "source": "git://github.com/zostay/Amazon-DynamoDB.git"
-  },
-  "perl": "6.c",
-  "resources": [
-    
-  ],
+  "license": "Artistic-2.0",
   "build-depends": [
     
   ],
-  "auth": "github:zostay",
+  "resources": [
+    
+  ],
+  "test-depends": [
+    "Test",
+    "Test::META"
+  ],
+  "support": {
+    "source": "git://github.com/zostay/Amazon-DynamoDB.git"
+  },
   "depends": [
     "AWS::Session",
     "Cro::HTTP",
@@ -20,25 +21,24 @@
     "WebService::AWS::Auth::V4",
     "String::CRC32"
   ],
-  "tags": [
-    
-  ],
-  "license": "Artistic-2.0",
-  "test-depends": [
-    "Test",
-    "Test::META"
-  ],
   "provides": {
-    "Amazon::DynamoDB": "lib/Amazon/DynamoDB.pm6",
     "Amazon::DynamoDB::UA::HTTP::UserAgent": "lib/Amazon/DynamoDB/UA/HTTP/UserAgent.pm6",
+    "Amazon::DynamoDB": "lib/Amazon/DynamoDB.pm6",
     "Amazon::DynamoDB::UA": "lib/Amazon/DynamoDB/UA.pm6",
-    "Amazon::DynamoDB::UA::Cro": "lib/Amazon/DynamoDB/UA/Cro.pm6",
-    "Amazon::DynamoDB::UA::AutoUA": "lib/Amazon/DynamoDB/UA.pm6"
+    "Amazon::DynamoDB::UA::AutoUA": "lib/Amazon/DynamoDB/UA.pm6",
+    "Amazon::DynamoDB::UA::Cro": "lib/Amazon/DynamoDB/UA/Cro.pm6"
   },
-  "version": "0.3",
-  "meta-version": "0",
+  "description": "Low-level access to the DynamoDB API",
+  "version": "0.4.0",
+  "name": "Amazon::DynamoDB",
+  "auth": "github:zostay",
+  "source-url": "git://github.com/zostay/Amazon-DynamoDB.git",
   "authors": [
     "Sterling Hanenkamp <hanenkamp@cpan.org>"
   ],
-  "description": "Low-level access to the DynamoDB API"
+  "tags": [
+    
+  ],
+  "perl": "6.c",
+  "meta-version": "0"
 }

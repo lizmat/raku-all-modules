@@ -1,6 +1,11 @@
 {{$NEXT}}
 
-    * Fix location of use v6 for v6.d. :(
+v0.4.0	2019-02-09
+
+    * Fix a bug where error responses when using the Cro UA would not be handled
+      properly.
+    * Fix a bug which failed to set the request ID correctly on API errors.
+    * Fix location of use v6.
 
 v0.3	2018-08-06
 

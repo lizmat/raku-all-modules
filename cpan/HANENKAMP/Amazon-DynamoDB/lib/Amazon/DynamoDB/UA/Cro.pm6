@@ -15,8 +15,20 @@ class Amazon::DynamoDB::UA::Cro does Amazon::DynamoDB::UA {
     }
 
     method request(:$method, :$uri, :%headers, :$content --> Promise) {
-        $!client.request($method, $uri, :%headers, body => $content).then({
-            with .result {
+        start {
+            my $result;
+
+            try {
+                $result = await $!client.request($method, $uri, :%headers, body => $content);
+
+                CATCH {
+                    when X::Cro::HTTP::Error::Client {
+                        $result = .response;
+                    }
+                }
+            }
+
+            given $result {
                 my $raw = .body-blob;
                 my $txt = $raw.then({ .result.decode('UTF-8') });
 
@@ -29,6 +41,6 @@ class Amazon::DynamoDB::UA::Cro does Amazon::DynamoDB::UA {
                     DecodedContent => $txt,
                 );
             }
-        });
+        }
     }
 }
