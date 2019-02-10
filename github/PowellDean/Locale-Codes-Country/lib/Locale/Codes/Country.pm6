@@ -1,5 +1,5 @@
-unit module Locale::Codes::Country;
 use v6;
+unit module Locale::Codes::Country;
 
 constant LOCALE_CODE_ALPHA_2 is export = 'alpha-2';
 constant LOCALE_CODE_ALPHA_3 is export = 'alpha-3';
