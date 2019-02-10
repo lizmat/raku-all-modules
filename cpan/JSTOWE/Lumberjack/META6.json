@@ -1,6 +1,6 @@
 {
   "name": "Lumberjack",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "auth": "github:jonathanstowe",
   "api": "1.0",
   "description": "A simple logging framework.",
@@ -16,8 +16,7 @@
   "build-depends": [
   ],
   "depends": [
-    "DateTime::Format",
-    "Staticish"
+    "DateTime::Format"
   ],
   "tags": [
     "logger",

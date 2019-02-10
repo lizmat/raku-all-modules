@@ -1,3 +1,5 @@
+v0.0.8		Sat  9 Feb 08:58:36 GMT 2019
+	* Re-remove Staticish
 v0.0.7		Thu  7 Feb 20:04:14 GMT 2019
 	* Put back the Staticish dependency
     * Spring clean and add to CPAN
