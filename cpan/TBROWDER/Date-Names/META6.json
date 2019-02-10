@@ -1,0 +1,31 @@
+{
+  "auth" : "github:tbrowder",
+  "author" : "github:tbrowder",
+  "authors" : [
+    "Tom Browder <tom.browder@gmail.com>"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Provides names for month and day-o-week numbers (multilingual).",
+  "license" : "Artistic-2.0",
+  "name" : "Date::Names",
+  "perl" : "6.c",
+  "provides" : {
+    "Date::Names" : "lib/Date/Names.pm6"
+  },
+  "resources" : [ ],
+  "source-type" : "git",
+  "source-url" : "git://github.com/tbrowder/Date-Names-Perl6.git",
+  "support" : {
+    "bugtracker" : "https://github.com/tbrowder/Date-Names-Perl6/issues"
+  },
+  "tags" : [
+    "date",
+    "names",
+    "dow"
+  ],
+  "test-depends" : [
+    "Test::META"
+  ],
+  "version" : "1.0.0"
+}

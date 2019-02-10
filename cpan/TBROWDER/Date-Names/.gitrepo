@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tbrowder/Date-Names-Perl6.git
+	branch = master
+	commit = 792b5522a47843e473bc8f49a971c05a39c8076f
+	parent = f82ba3d15b247e86be227b7e20244c4787b7caf5
+	cmdver = 0.3.1
