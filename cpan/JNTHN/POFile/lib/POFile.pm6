@@ -31,7 +31,7 @@ grammar POFile::Parser {
         [<PO-rule> | <obsolete-message>]* %% "\n"*
         [ $ || <.error('unrecognied syntax')> ]
     }
-    token obsolete-message { '#~ ' <comment-text> "\n" }
+    token obsolete-message { '#~ ' <comment-text> "\n"? }
     token PO-rule-or-error {
         <PO-rule> \n* [ $ || <.error('unrecognied syntax')> ]
     }
@@ -40,7 +40,7 @@ grammar POFile::Parser {
         [ \n <.error('comment must not be seperated from block by an empty line')> ]?
         <block>
     }
-    token block { <msgctxt>? <msgid> <msgid-plural>? <msgstr>+ }
+    token block { <msgctxt>? <msgid> <msgid-plural>? [<msgstr>+ %% "\n"+] }
     proto token comment                        { * }
           token comment:sym<source-ref>        { '#: ' <comment-text> "\n" }
           token comment:sym<extracted>         { '#. ' <comment-text> "\n" }
@@ -52,7 +52,7 @@ grammar POFile::Parser {
     token msgctxt { 'msgctxt ' <item-text> "\n"  }
     token msgid { 'msgid ' <item-text> "\n"  }
     token msgid-plural { 'msgid_plural ' <item-text> "\n"  }
-    token msgstr { 'msgstr' <pluralizer>? ' ' <item-text> "\n" }
+    token msgstr { 'msgstr' <pluralizer>? ' ' <item-text> }
     token pluralizer { '[' \d+ ']' }
     token comment-text { <-[\n]>* }
     token item-text { <long-form> | <-[\n]>+ }

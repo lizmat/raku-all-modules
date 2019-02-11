@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/edumentab/p6-pofile.git
 	branch = master
-	commit = 2a6628f6434e43cd02aaa5d447db55ea1178a0d4
-	parent = c32bad7818bbeeb90996a64a9786029209829e88
+	commit = 614420238ed0a1c8b4d22e12a2d24497fb8a3e8f
+	parent = 68d8a113dd44acf2ae1f0d17513dd6894dde1ec0
 	cmdver = 0.3.1
