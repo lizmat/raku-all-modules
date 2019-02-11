@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/drforr/perl6-Perl6-Parser.git
+	remote = https://github.com/drforr/perl6-Perl6-Parser.git
 	branch = master
-	commit = 51711e2daf08db1fe0749713733ed3336892dc1b
-	parent = 442b2a13297bbc67c44306adb055f69eaba302b2
-	cmdver = 0.4.0
+	commit = c9be0aaff68f012732fc7f0f12704fe216f896e1
+	parent = 4f97fbc7d07da9d2e3ca82a8593e542b2aa57547
+	cmdver = 0.3.1
