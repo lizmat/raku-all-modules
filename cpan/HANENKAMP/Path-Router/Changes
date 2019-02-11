@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+    * Added a new path-for candidate which accepts a single hash value.
+    * Bugfix: path-for was broken when mapping values were set to Nil. This has
+      been corrected.
+
 v0.4.0	2019-01-21
 
     * Added conditions to routes, which can be used to only allow routes to be

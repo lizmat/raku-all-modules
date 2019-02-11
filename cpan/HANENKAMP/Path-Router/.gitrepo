@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/p6-Path-Router.git
 	branch = master
-	commit = 06e81cd99be7599f7333a5bacdd54a6a099664ec
-	parent = b0bd5ca80ed93817bb26580911604fc43d24db34
+	commit = 5862f2f198450db5569c30ad41fb1125857ef597
+	parent = 5e98ea7df26eb4755e731f425da5c0660b3c31e6
 	cmdver = 0.3.1
