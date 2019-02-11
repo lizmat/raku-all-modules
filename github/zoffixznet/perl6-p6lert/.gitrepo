@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-p6lert.git
 	branch = master
-	commit = d93b4bd891802d2de88123dd3fb2b29d7a463245
-	parent = 7a4097b26ecfe7aa75450dbbe57175d2fa1fab67
-	cmdver = 0.4.0
+	commit = 253f324d1d00b8b5374767d39212f4a643136abd
+	parent = 3e18cb13b138d43ab3d3e3be3ebf1d35b31b28f5
+	cmdver = 0.3.1

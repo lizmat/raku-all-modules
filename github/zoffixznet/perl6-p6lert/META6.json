@@ -1,5 +1,5 @@
 {
-    "perl"         : "6.c",
+    "perl"         : "6.*",
     "name"         : "p6lert",
     "license"      : "Artistic-2.0",
     "version"      : "1.002001",

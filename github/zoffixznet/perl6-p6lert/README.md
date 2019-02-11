@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/zoffixznet/perl6-p6lert.svg)](https://travis-ci.org/zoffixznet/perl6-p6lert)
+[![Build Status](https://travis-ci.org/perl6-community-modules/perl6-p6lert.svg)](https://travis-ci.org/perl6-community-modules/perl6-p6lert)
 
 # NAME
 
