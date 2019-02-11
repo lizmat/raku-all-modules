@@ -6,7 +6,7 @@ my %producer-count;
 
 my $cache = Cache::Async.new(producer => sub ($k) { my $i = %producer-count{$k}++; return "$k/$i"; });
 
-plan 11;
+plan 12;
 
 ok(sum(%producer-count.values) == 0, "no initial producer state");
 

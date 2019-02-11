@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/robertlemmen/perl6-cache-async.git
 	branch = master
-	commit = a4096012f62cbba7da7ef3fa977ba17784ffb43a
-	parent = 799fb635af0329b5300e67f6b3f0e8724482cae7
+	commit = cb84e77115de77e1b66c0d322c3a45e4bad58ac5
+	parent = 4a210be6f30a5e302352d3530518e49f3200efef
 	cmdver = 0.3.1
