@@ -1,63 +1,50 @@
 use v6;
 use Test;
 
-plan 84+84+49+49+49;
+plan 405;
 
 use Date::Names :ALL;
 
 # Have values
 for 1..12 -> $mon {
     ok %mon{$mon};
-    ok %mon<de>{$mon};
-    ok %mon<en>{$mon};
-    ok %mon<es>{$mon};
-    ok %mon<fr>{$mon};
-    ok %mon<it>{$mon};
-    ok %mon<nl>{$mon};
-}
+    for @lang -> $L {
+        ok %mon{$L}{$mon};
+    }
 
-for 1..12 -> $mon {
-    ok %mon-abbrev3{$mon};
-    ok %mon-abbrev3<en>{$mon};
+    ok %mon3{$mon};
+    ok %mon3<en>{$mon};
+    ok %mon3<de>{$mon};
+    ok %mon3<ru>{$mon};
 
     # the following don't yet have values
-    nok %mon-abbrev3<de>{$mon};
-    nok %mon-abbrev3<es>{$mon};
-    nok %mon-abbrev3<fr>{$mon};
-    nok %mon-abbrev3<it>{$mon};
-    nok %mon-abbrev3<nl>{$mon};
+    for <es fr it nb nl> -> $L {
+        nok %mon3{$L}{$mon}, "no value yet";
+    }
 }
 
 for 1..7 -> $day {
     ok %dow{$day};
-    ok %dow<de>{$day};
-    ok %dow<en>{$day};
-    ok %dow<es>{$day};
-    ok %dow<fr>{$day};
-    ok %dow<it>{$day};
-    ok %dow<nl>{$day};
-}
+    for @lang -> $L {
+        ok %dow{$L}{$day};
+    }
 
-for 1..7 -> $day {
-    ok %dow-abbrev3{$day};
-    ok %dow-abbrev3<en>{$day};
+    ok %dow3{$day};
+    ok %dow3<en>{$day};
+    ok %dow3<ru>{$day};
 
     # the following don't yet have values
-    nok %dow-abbrev3<de>{$day};
-    nok %dow-abbrev3<es>{$day};
-    nok %dow-abbrev3<fr>{$day};
-    nok %dow-abbrev3<it>{$day};
-    nok %dow-abbrev3<nl>{$day};
-}
+    for <de es fr it nb nl> -> $L {
+        nok %dow3{$L}{$day}, "no value yet";
+    }
 
-for 1..7 -> $day {
-    ok %dow-abbrev2{$day};
-    ok %dow-abbrev2<en>{$day};
-    ok %dow-abbrev2<de>{$day};
+    ok %dow2{$day};
+    ok %dow2<en>{$day};
+    ok %dow2<de>{$day};
+    ok %dow2<ru>{$day};
 
     # the following don't yet have values
-    nok %dow-abbrev2<es>{$day};
-    nok %dow-abbrev2<fr>{$day};
-    nok %dow-abbrev2<it>{$day};
-    nok %dow-abbrev2<nl>{$day};
+    for <es fr it nb nl> -> $L {
+        nok %dow2{$L}{$day}, "no value yet";
+    }
 }

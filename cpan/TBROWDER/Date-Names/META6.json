@@ -1,4 +1,5 @@
 {
+  "version" : "1.0.4",
   "auth" : "github:tbrowder",
   "author" : "github:tbrowder",
   "authors" : [
@@ -6,7 +7,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [ ],
-  "description" : "Provides names for month and day-o-week numbers (multilingual).",
+  "description" : "Provides names for month and weekday numbers (multilingual).",
   "license" : "Artistic-2.0",
   "name" : "Date::Names",
   "perl" : "6.c",
@@ -26,6 +27,5 @@
   ],
   "test-depends" : [
     "Test::META"
-  ],
-  "version" : "1.0.0"
+  ]
 }
