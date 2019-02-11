@@ -1,4 +1,4 @@
-Perl6 LWP::Simple
+LWP::Simple for Perl 6
 =================
 
 [![Build Status](https://travis-ci.org/perl6/perl6-lwp-simple.svg?branch=master)](https://travis-ci.org/perl6/perl6-lwp-simple)
@@ -22,6 +22,17 @@ install [IO::Socket::SSL](https://github.com/sergot/io-socket-ssl) via
     zef install IO::Socket::SSL
     
 if you want to work with `https` too.
+
+Synopsis
+========
+
+```perl6
+use LWP::Simple;
+
+my $content = get("https://perl6.org");
+
+my $response = post("https://somewhere.topo.st", { so => True }
+```
 
 
 Current status
