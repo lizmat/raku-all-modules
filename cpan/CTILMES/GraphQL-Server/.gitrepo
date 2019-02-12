@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-graphql-server.git
+	branch = master
+	commit = 0957a11a49ad8aa87c5de2bc75b0d4ababc6be1a
+	parent = 41f32135d939769a0eb2f836781562fa92172b1b
+	cmdver = 0.3.1

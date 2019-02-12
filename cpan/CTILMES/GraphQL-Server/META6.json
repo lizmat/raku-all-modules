@@ -1,0 +1,30 @@
+{
+    "name" : "GraphQL::Server",
+
+    "version" : "0.1",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-graphql-server.git",
+
+    "perl" : "6.*",
+
+    "tags" : [ "GraphQL" ],
+
+    "provides" : {
+        "GraphQL::Server" : "lib/GraphQL/Server.pm6"
+    },
+
+    "depends" : [ "GraphQL", "JSON::Fast", "Bailador" ],
+
+    "description" : "Perl6 Server for GraphQL on top of Bailador",
+
+    "test-depends" : [ "Test::META", "Test::When" ],
+
+    "license" : "NASA-1.3",
+
+    "authors" : [ "Curt Tilmes <Curt.Tilmes@nasa.gov>" ],
+
+    "support" : {
+      "source" : "https://github.com/CurtTilmes/perl6-graphql-server.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-graphql-server/issues"
+    }
+}
