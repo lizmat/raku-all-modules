@@ -19,10 +19,10 @@
     "Algorithm::LBFGS::Status" : "lib/Algorithm/LBFGS/Status.pm6"
   },
   "resources" : [
-    "libraries/liblbfgs"
+    "libraries/lbfgs"
   ],
   "source-url" : "git://github.com/titsuki/p6-Algorithm-LBFGS.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.0.3"
+  "version" : "0.0.4"
 }
