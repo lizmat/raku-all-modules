@@ -1,8 +1,13 @@
-## [v1.0.4]
+## [v1.1.0]
 - Change description in META6.json file.
-- Merged PRs () from @moritz (German three-letter abbreviaitons, Norwegian).
-- Merged PR () from @sena_kun (AKA @Altai-man) (Russian).
-- French data from @luc.
+- Merged PRs from @moritz (German three-letter abbreviaitons, Norwegian).
+- Merged PR from @sena_kun (AKA @Altai-man) (Russian).
+- French data from @lucs.
+- Merged PR from @lizmat (Dutch)
+- Started a class (Date::Names) to handle the names, with a lited set
+  of working tests for now.
+- Updated README.
+- Split hashes into separate modules to facilitate the new class.
 
 ## [v1.0.3] - 2019-02-10
 - Move version number to top of META6.json file.

@@ -13,14 +13,105 @@ unit module Date::Names;
 #   nl - Dutch
 #   ru - Russian
 
-# From @luc, an authoritative link for French terms:
-#   http://bdl.oqlf.gouv.qc.ca/bdl/gabarit_bdl.asp?id=3619
-
 # a list of the language two-letter codes currently considered
 # in this module
 constant @lang is export = 'de', 'en', 'es', 'fr', 'it', 'nb', 'nl', 'ru';
 
-constant %mon is export = %(
+use Date::Names::de;
+use Date::Names::en;
+use Date::Names::es;
+use Date::Names::fr;
+use Date::Names::it;
+use Date::Names::nb;
+use Date::Names::nl;
+use Date::Names::ru;
+
+# the class (beta)
+enum Case <tc uc lc keep-c>;
+enum Period <yes no keep-p>;
+class Date::Names {
+    has $.lang     is required;
+    has $.day-hash is required; # name of hash to use
+    has $.mon-hash is required; # name of hash to use
+
+    has %.d;
+    has %.m;
+
+    has Period $.period = keep-p; # add, remove, or keep a period to end abbreviations
+                                  # (True or False; default -1 means use the
+                                  # native value as is)
+    has UInt $.trunc    = 0;      # truncate to N chars if N > 0
+    has Case $.case     = keep-c; # use native case (or choose: tc, lc, uc)
+    has $.pad           = False;  # used with trunc to fill short values with
+                                  # spaces on the right
+
+    submethod TWEAK() {
+        # this sets the class var to the desired
+        # dow and mon hashes (lang and value width)
+        %!d = $::("Date::Names::{$!lang}::{$!day-hash}");
+        %!m = $::("Date::Names::{$!lang}::{$!mon-hash}");
+    }
+
+    method !handle-val-attrs($val, :$is-abbrev!) {
+        # check for any changes that are to be made
+        my $has-period = 0;
+        my $nchars = $val.chars; # includes an ending period
+        if $val ~~ /^(\s+) '.'$/ {
+            die "FATAL: found ending period in val $val (not an abbreviation)"
+                if !$is-abbrev;
+
+            # remove the period and return it later if required
+            $val = ~$0;
+            $has-period = 1;
+        }
+        elsif $val ~~ /'.'/ {
+            die "FATAL: found INTERIOR period in val $val";
+        }
+
+        if $.trunc && $val.chars > $.trunc {
+            $val .= substr(0, self.trunc);
+        }
+        elsif $.trunc && $.pad && $val.chars < $.trunc {
+            $val .= substr(0, $.trunc);
+        }
+
+        if $.case !~~ /keep/ {
+            # more checks needed
+        }
+
+        if $.trunc && $val.chars > self.trunc {
+            $val .= substr(0, $.trunc);
+        }
+        elsif $.trunc && $.pad && $val.chars < $.truncx {
+            $val .= substr(0, $.trunc);
+        }
+        if $.case !~~ /keep/ {
+            # more checks needed
+        }
+
+        # treat the period carefully, it may or may not
+        # have been removed by now
+
+        return $val;
+
+    }
+
+    method dow(UInt $n where { $n > 0 && $n < 8 }) {
+        my $val = %.d{$n};
+        my $is-abbrev = $.day-hash eq 'dow' ?? False !! True;
+        $val = self!handle-val-attrs($val, :$is-abbrev);
+        return $val;
+    }
+
+    method mon(UInt $n where { $n > 0 && $n < 13 }) {
+        my $val = %.m{$n};
+        my $is-abbrev = $.mon-hash eq 'mon' ?? False !! True;
+        $val = self!handle-val-attrs($val, :$is-abbrev);
+        return $val;
+    }
+}
+
+constant %mon = %(
     # English is the default
     1, 'January',    2, 'February',  3, 'March',     4, 'April',
     5, 'May',        6, 'June',      7, 'July',      8, 'August',
@@ -81,9 +172,16 @@ constant %mon is export = %(
         5, 'май',       6, 'июнь',     7, 'июль',    8, 'август',
         9, 'сентябрь', 10, 'октябрь', 11, 'ноябрь', 12, 'декабрь'
     ),
+
+    # Dutch
+    nl => %(
+        1, 'januari',    2, 'februari', 3, 'maart',     4, 'april',
+        5, 'mei',        6, 'juni',     7, 'juli',      8, 'augustus',
+        9, 'september', 10, 'oktober', 11, 'november', 12, 'december'
+    ),
 );
 
-constant %dow is export = %(
+constant %dow  = %(
     # English is the default
     1, 'Monday', 2, 'Tuesday',  3, 'Wednesday', 4, 'Thursday',
     5, 'Friday', 6, 'Saturday', 7, 'Sunday',
@@ -108,19 +206,19 @@ constant %dow is export = %(
 
     # French
     fr => %(
-        1, 'lundi',    2, 'mardi',  3, 'mercredi', 4,  'jeudi',
+        1, 'lundi',    2, 'mardi',  3, 'mercredi', 4, 'jeudi',
         5, 'vendredi', 6, 'samedi', 7, 'dimanche'
     ),
 
     # Italian
     it => %(
-        1, 'lunedì',  2, 'martedì', 3, 'mercoledì', 4,  'giovedì',
+        1, 'lunedì',  2, 'martedì', 3, 'mercoledì', 4, 'giovedì',
         5, 'venerdì', 6, 'sabato',  7, 'domenica'
     ),
 
     # Dutch
     nl => %(
-        1, 'maandag', 2, 'dinsdag',  3, 'woensdag', 4,  'donderdag',
+        1, 'maandag', 2, 'dinsdag',  3, 'woensdag', 4, 'donderdag',
         5, 'vrijdag', 6, 'zaterdag', 7, 'zondag'
     ),
 
@@ -139,7 +237,7 @@ constant %dow is export = %(
 );
 
 # three-letter abbreviations
-constant %mon3 is export = %(
+constant %mon3  = %(
     # English is the default
     1, 'Jan', 2, 'Feb', 3, 'Mar',  4, 'Apr',  5, 'May',  6, 'Jun',
     7, 'Jul', 8, 'Aug', 9, 'Sep', 10, 'Oct', 11, 'Nov', 12, 'Dec',
@@ -152,44 +250,44 @@ constant %mon3 is export = %(
 
     # German
     de => %(
-        1, 'Jan',    2, 'Feb',  3, 'Mär',     4, 'Apr',
-        5, 'Mai',    6, 'Jun',  7, 'Jul',     8, 'Aug',
-        9, 'Sep',   10, 'Okt',  11, 'Nov',   12, 'Dez'
+        1, 'Jan',  2, 'Feb',  3, 'Mär',  4, 'Apr',
+        5, 'Mai',  6, 'Jun',  7, 'Jul',  8, 'Aug',
+        9, 'Sep', 10, 'Okt', 11, 'Nov', 12, 'Dez'
     ),
 
     # Spanish
     es => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, '',      8,  '',
-        9, '', 10, '',  11, '', 12, ''
+        1, 'ene',  2, 'feb',  3, 'mar',  4, 'abr',
+        5, 'may',  6, 'jun',  7, 'jul',  8, 'ago',
+        9, 'sep', 10, 'oct', 11, 'nov', 12, 'dic'
     ),
 
     # French
     fr => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, '',      8,  '',
-        9, '', 10, '',  11, '', 12, ''
+        1, '',  2, '',  3, '',  4, '',
+        5, '',  6, '',  7, '',  8, '',
+        9, '', 10, '', 11, '', 12, ''
     ),
 
     # Italian
     it => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, '',      8,  '',
-        9, '', 10, '',  11, '', 12, ''
+        1, '',  2, '',  3, '',  4, '',
+        5, '',  6, '',  7, '',  8, '',
+        9, '', 10, '', 11, '', 12, ''
     ),
 
     # Dutch
     nl => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, '',      8,  '',
-        9, '', 10, '',  11, '', 12, ''
+        1, 'jan',   2, 'feb',  3, 'maa',   4, 'apr',
+        5, 'mei',   6, 'jun',  7, 'jul',   8, 'aug',
+        9, 'sep',  10, 'okt', 11, 'nov',  12, 'dec'
     ),
 
     # Norwegian (Bokmål)
     nb => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, '',      8,  '',
-        9, '', 10, '',  11, '', 12, ''
+        1, '',  2, '',  3, '',  4, '',
+        5, '',  6, '',  7, '',  8, '',
+        9, '', 10, '', 11, '', 12, ''
     ),
 
     # Russian
@@ -201,7 +299,7 @@ constant %mon3 is export = %(
 );
 
 # two-letter abbreviations
-constant %mon2 is export = %(
+constant %mon2  = %(
     # French
     fr => %(
         1, 'JR',  2, 'FR',  3, 'MS',  4, 'AL',
@@ -211,7 +309,7 @@ constant %mon2 is export = %(
 );
 
 # two-letter abbreviations
-constant %dow2 is export = %(
+constant %dow2  = %(
     # English is the default
     1, 'Mo', 2, 'Tu', 3, 'We', 4, 'Th',
     5, 'Fr', 6, 'Sa', 7, 'Su',
@@ -230,33 +328,33 @@ constant %dow2 is export = %(
 
     # Spanish
     es => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, ''
+        1, 'lu', 2, 'ma', 3, 'mi', 4, 'ju',
+        5, 'vi', 6, 'sá', 7, 'do'
     ),
 
     # French
     fr => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, ''
+        1, '', 2, '', 3, '', 4, '',
+        5, '', 6, '', 7, ''
     ),
 
     # Italian
     it => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, ''
+        1, '', 2, '', 3, '', 4, '',
+        5, '', 6, '', 7, ''
     ),
 
     # Dutch
     nl => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, ''
+        1, 'ma',  2, 'di',  3, 'wo', 4, 'do',
+        5, 'vr',  6, 'za',  7, 'zo'
     ),
 
 
     # Norwegian (Bokmål)
     nb => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, ''
+        1, '', 2, '', 3, '', 4, '',
+        5, '', 6, '', 7, ''
     ),
 
     # Russian
@@ -267,7 +365,7 @@ constant %dow2 is export = %(
     ),
 );
 
-constant %dow3 is export = %(
+constant %dow3  = %(
     1, 'Mon', 2, 'Tue', 3, 'Wed', 4, 'Thu',
     5, 'Fri', 6, 'Sat', 7, 'Sun',
 
@@ -285,8 +383,8 @@ constant %dow3 is export = %(
 
     # Spanish
     es => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, ''
+        1, 'lun',  2, 'mar',  3, 'mié',  4, 'jue',
+        5, 'vie',  6, 'sáb',  7, 'dom'
     ),
 
     # French
@@ -297,20 +395,20 @@ constant %dow3 is export = %(
 
     # Italian
     it => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, ''
+        1, '', 2, '', 3, '', 4, '',
+        5, '', 6, '', 7, ''
     ),
 
     # Dutch
     nl => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, ''
+        1, 'maa', 2, 'din', 3, 'woe', 4, 'don',
+        5, 'vri', 6, 'zat', 7, 'zon'
     ),
 
     # Norwegian (Bokmål)
     nb => %(
-        1, '',    2, '',  3, '',     4,  '',
-        5, '',        6, '',      7, ''
+        1, '', 2, '', 3, '', 4, '',
+        5, '', 6, '', 7, ''
     ),
 
     # Russian
@@ -322,8 +420,7 @@ constant %dow3 is export = %(
 
 # some languages don't have a complete set of two- or three-letter
 # abbreviations so we use another hash
-constant %mona is export = %(
-    # Russian and French
+constant %mona  = %(
     # French (abbreviations "courante")
     fr => %(
         1, 'janv',  2, 'févr',  3, 'mars',   4, 'avr',
@@ -332,7 +429,7 @@ constant %mona is export = %(
     ),
 );
 
-constant %dowa is export = %(
+constant %dowa  = %(
     # French (abbreviations "courante")
     fr => %(
         1, 'lundi', 2, 'mardi', 3, 'mercr', 4, 'jeudi',

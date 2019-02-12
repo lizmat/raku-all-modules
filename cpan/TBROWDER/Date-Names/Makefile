@@ -4,10 +4,10 @@ LIBPATH   := ./lib
 TESTS  := t/*.t
 GTESTS := good/*.t
 BTESTS := bad/*.t
-
+EG     := examples/*.p6
 .PHONY: test good bad
 
-default: test
+default: test eg
 
 # the original test suite (i.e., 'make test')
 test:
@@ -23,4 +23,9 @@ good:
 bad:
 	for f in $(BTESTS) ; do \
 	    PERL6LIB=$(LIBPATH) prove -v --exec=$(PERL6) $$f ; \
+	done
+
+eg:
+	for f in $(EG) ; do \
+	    PERL6LIB=$(LIBPATH) $$f ; \
 	done

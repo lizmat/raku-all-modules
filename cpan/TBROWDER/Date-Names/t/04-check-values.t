@@ -3,23 +3,22 @@ use Test;
 
 plan 10;
 
-use Date::Names :ALL;
+use Date::Names;
 
 # Check correct values
 my $mon = 1;
-is %mon{$mon}, "January";
-is %mon<en>{$mon}, "January";
+is %Date::Names::mon{$mon}, "January";
+is %Date::Names::mon<en>{$mon}, "January";
 
-is %mon3{$mon}, "Jan";
-is %mon3<en>{$mon}, "Jan";
+is %Date::Names::mon3{$mon}, "Jan";
+is %Date::Names::mon3<en>{$mon}, "Jan";
 
 my $day = 1;
-is %dow{$day}, "Monday";
-is %dow<en>{$day}, "Monday";
+is %Date::Names::dow{$day}, "Monday";
+is %Date::Names::dow<en>{$day}, "Monday";
 
-is %dow3{$day}, "Mon";
-is %dow3<en>{$day}, "Mon";
+is %Date::Names::dow3{$day}, "Mon";
+is %Date::Names::dow3<en>{$day}, "Mon";
 
-is %dow2{$day}, "Mo";
-is %dow2<en>{$day}, "Mo";
-
+is %Date::Names::dow2{$day}, "Mo";
+is %Date::Names::dow2<en>{$day}, "Mo";
