@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/CurtTilmes/Perl6-GraphQL.git
+	remote = https://github.com/CurtTilmes/Perl6-GraphQL.git
 	branch = master
-	commit = 85e94396fa6b3bad37043c4f90044a67777f8e62
-	parent = f83732c0fa398b0b69c68375c8b313442bef242f
-	cmdver = 0.4.0
+	commit = ad213b6bab7a8542b0d0b41dd31cbe576ce120e5
+	parent = bc30e57f1e30e1683650ec489d481f861a34b2ec
+	cmdver = 0.3.1
