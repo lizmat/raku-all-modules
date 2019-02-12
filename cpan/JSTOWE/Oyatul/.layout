@@ -1,0 +1,81 @@
+{
+  "children": [
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "purpose": null,
+      "name": "t",
+      "type": "directory",
+      "children": [
+        {
+          "type": "file",
+          "name": "030-detail.t"
+        },
+        {
+          "type": "file",
+          "name": "010-use.t"
+        },
+        {
+          "purpose": null,
+          "name": "data",
+          "type": "directory",
+          "children": [
+            {
+              "type": "file",
+              "name": "couchapp.layout"
+            }
+          ]
+        },
+        {
+          "purpose": null,
+          "name": "lib",
+          "type": "directory",
+          "children": [
+            {
+              "name": "IDRole.pm",
+              "type": "file"
+            }
+          ]
+        },
+        {
+          "name": "040-synopsis.t",
+          "type": "file"
+        },
+        {
+          "name": "020-basic.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "name": "lib",
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "Oyatul.pm"
+        }
+      ],
+      "type": "directory"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}
