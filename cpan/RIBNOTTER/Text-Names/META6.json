@@ -10,6 +10,9 @@
         "provides" : {
             "Text::Names": "lib/Text/Names.pm6"
         },
+        "depends" : [ ],
+        "build-depends" : [ ],
+        "test-depends" : [ "Test::META" ],
         "tags": [
           "NPL", "Natural Language", "Names", "Dummy Data"
         ],
