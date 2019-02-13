@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/ribbon-otter/Math-Factorial-Operator.git
 	branch = master
-	commit = e08d930c661def9d8b060073960208cbcba4baf5
-	parent = cd76f232eea67cb553b5f6745d1d3b309e353ec5
+	commit = a15d9ac6fc1180b24ab9cb02a95525c9087a416a
+	parent = d4692c472a23378c401798cd222bc482443ae43b
 	cmdver = 0.3.1

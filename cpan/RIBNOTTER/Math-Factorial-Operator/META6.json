@@ -2,9 +2,6 @@
   "authors": [
     "ribbon-otter"
   ],
-  "depends": [
-    
-  ],
   "description": "Supplies a factorial post-fix operator. Then 5!=120",
   "license": "Unlicense",
   "meta-version": 0,
@@ -13,6 +10,9 @@
   "provides": {
     "Math::Factorial::Operator": "lib/Factorial.pm6"
   },
+  "depends" : [ ],
+  "build-depends" : [ ],
+  "test-depends" : [ "Test::META" ],
   "resources": [
     
   ],
@@ -20,5 +20,5 @@
   "tags": [
     
   ],
-  "version": "0.1.1"
+  "version": "0.1.2"
 }
