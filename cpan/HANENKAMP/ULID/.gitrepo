@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/p6-ULID.git
+	branch = master
+	commit = 43552d84c53b0c9591dc5a9e1091c4d72e670366
+	parent = 30d5c511bd49cc55e11a54b7f4e879daa2eadf07
+	cmdver = 0.3.1
