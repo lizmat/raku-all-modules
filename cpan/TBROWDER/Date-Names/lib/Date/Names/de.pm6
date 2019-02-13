@@ -1,5 +1,6 @@
 unit module Date::Names::de;
 
+# note all possible hashes and keys exist but they may have missing values
 constant $mon = %(
     # German
     1, 'Januar',     2, 'Februar',   3, 'März',      4, 'April',
