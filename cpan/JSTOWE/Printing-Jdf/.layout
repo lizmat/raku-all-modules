@@ -1,0 +1,89 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "purpose": null,
+      "children": [
+        {
+          "type": "file",
+          "name": "imposition.pl6"
+        }
+      ],
+      "type": "directory",
+      "name": "examples"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "name": "01-jdf.t",
+          "type": "file"
+        },
+        {
+          "name": "BlankPageTest.jdf",
+          "type": "file"
+        },
+        {
+          "name": "04-blank.t",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "TestJobFile.jdf"
+        },
+        {
+          "type": "file",
+          "name": "03-centered.t"
+        },
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "name": "02-multisig.t",
+          "type": "file"
+        },
+        {
+          "name": "MultiSigTest.jdf",
+          "type": "file"
+        }
+      ],
+      "name": "t",
+      "purpose": null
+    },
+    {
+      "type": "file",
+      "name": "LICENSE"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "children": [
+        {
+          "type": "directory",
+          "children": [
+            {
+              "type": "file",
+              "name": "Jdf.pm6"
+            }
+          ],
+          "name": "Printing",
+          "purpose": null
+        }
+      ],
+      "type": "directory",
+      "name": "lib",
+      "purpose": null
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    }
+  ]
+}

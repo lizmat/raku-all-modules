@@ -1,0 +1,31 @@
+{
+  "name": "Printing::Jdf",
+  "version": "0.1.1",
+  "auth": "github:carbin",
+  "api" : "1.0",
+  "authors": [
+	"carbin",
+    "Jonathan Stowe"
+  ],
+  "meta-version": "0",
+  "tags": [
+	"printing",
+    "jdf"
+  ],
+  "test-depends": [ ],
+  "description": "Parse JDF files",
+  "license": "ISC",
+  "provides": {
+    "Printing::Jdf": "lib/Printing/Jdf.pm6"
+  },
+  "depends": [
+    "XML"
+  ],
+  "source-url": "git://github.com/jonathanstowe/p6-jdf.git",
+  "build-depends": [ ],
+  "support": {
+    "source": "git://github.com/jonathanstowe/p6-jdf.git"
+  },
+  "resources": [ ],
+  "perl": "6.*"
+}
