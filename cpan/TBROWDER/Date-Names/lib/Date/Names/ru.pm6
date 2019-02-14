@@ -1,12 +1,16 @@
 unit module Date::Names::ru;
 
 #********
+# <name of your language in its native script>
 # Russian
 #********
 
 # Note all possible hashes and keys should exist in the file (see
 # Table 2 in the README for the correct names). They may have missing
 # values, but there should be eight (8) total hashes:
+
+# Names of sets with all non-empty values for this language:
+our $sets = set <mon dow mon3 dow2>;
 
 #=== FULL NAMES ======================================================
 # 1

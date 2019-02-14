@@ -18,6 +18,9 @@
 - Standardized format of the basic eight hashes for each
   language and created a template file, xx.pm6, in the new
   resources directory.
+- Testing all filled hash values for module en (to be used 
+  as a template for other language models).
+
 
 ## [v1.1.0] - 2019-02-11
 - Change description in META6.json file.

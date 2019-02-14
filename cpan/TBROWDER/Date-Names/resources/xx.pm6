@@ -11,6 +11,9 @@ unit module Date::Names::xx;
 # Table 2 in the README for the correct names). They may have missing
 # values, but there should be eight (8) total hashes:
 
+# Names of sets with all non-empty values for this language:
+our $sets = set <mon dow>;
+
 #=== FULL NAMES ======================================================
 # 1
 constant $mon = %(

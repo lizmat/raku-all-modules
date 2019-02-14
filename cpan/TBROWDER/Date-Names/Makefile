@@ -5,9 +5,10 @@ TESTS  := t/*.t
 GTESTS := good/*.t
 BTESTS := bad/*.t
 EG     := examples/*.p6
-.PHONY: test good bad
 
-default: test eg
+.PHONY: test good bad eg all
+
+default: test
 
 # the original test suite (i.e., 'make test')
 test:
@@ -29,3 +30,5 @@ eg:
 	for f in $(EG) ; do \
 	    PERL6LIB=$(LIBPATH) $$f ; \
 	done
+
+all: test eg

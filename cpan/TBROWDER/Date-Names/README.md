@@ -3,10 +3,13 @@
 Date::Names
 ===========
 
-Module **Date::Names** - Provides month and day-of-the-week names for numbers (multilingual)
+Module **Date::Names** - Provides month and weekday names for numbers (multilingual)
 
 This is Version 2. A new Date::Names class is available and
 direct hash access has changed from Version 1.
+Direct hash access is not recommended since the storage
+object may be an array soon, so use a class instance
+to extract data.
 
 Version 2:
 
@@ -115,11 +118,11 @@ Language / Hash  |  mon  | dow   | mon3  | dow3  | mon2  | dow2  | mona  | dowa
 Dutch            |   Y   |   Y   |   Y   |   Y   |       |   Y   |       |
 English          |   Y   |   Y   |   Y   |   Y   |       |   Y   |       |
 French           |   Y   |   Y   |       |   Y   |   Y*  |       |   Y   |   Y
-German           |   Y   |   Y   |   Y   |       |       |   Y   |       |
+German           |   Y   |   Y   |   Y   |   Y   |       |   Y   |       |
 Italian          |   Y   |   Y   |       |       |       |       |       |
 Norwegian        |   Y   |   Y   |       |       |       |       |       |
-Russian          |   Y   |   Y   |   Y   |       |       |   Y   |       |   Y
-Spanish          |   Y   |   Y   |   Y*  |   Y*  |       |   Y   |       |
+Russian          |   Y   |   Y   |   Y   |       |       |   Y   |       |
+Spanish          |   Y   |   Y   |   Y*  |   Y*  |   Y   |   Y   |       |
 
 ### Table 3. Name hash cell codes and meaning
 
@@ -175,8 +178,8 @@ enum Period <yes no keep-p>;
 enum Case <uc lc tc p keep-c>;
 my $dn = Date::Names.new(
     lang     => 'nl',   # default: 'en'
-    day-hash => 'dow3', # default: 'dow' # VAR NAME SUBJECT TO CHANGE
-    mon-hash => 'mon',  # default: 'mon' # VAR NAME SUBJECT TO CHANGE
+    dset     => 'dow3', # default: 'dow'
+    mset     => 'mon',  # default: 'mon'
     period   => yes,    # default: keep-p (use native)
     case     => uc,     # default: keep-c (use native)
     truncate => 0,      # default

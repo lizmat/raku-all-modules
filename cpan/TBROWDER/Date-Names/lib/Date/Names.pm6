@@ -14,8 +14,9 @@ unit module Date::Names;
 # in this module:
 constant @lang is export = <de en es fr it nb nl ru>;
 
-# a list of the eight standard hash names fot each language:
-constant @hnames is export = <mon doy mon2 mon3 mona dow2 dow3 dowa>;
+#  lists of the eight standard hash names for each language:
+constant @mnames is export = <mon mon2 mon3 mona>;
+constant @dnames is export = <dow dow2 dow3 dowa>;
 
 use Date::Names::de;
 use Date::Names::en;
@@ -30,13 +31,14 @@ use Date::Names::ru;
 enum Period <yes no keep-p>;
 enum Case <tc uc lc keep-c>;
 class Date::Names {
-    has Str $.lang     = 'en';  # default: English
-    has Str $.day-hash = 'dow'; # default: full names
-    has Str $.mon-hash = 'mon'; # default: full names
+    has Str $.lang = 'en';  # default: English
+    has Str $.dset = 'dow'; # default: full names
+    has Str $.mset = 'mon'; # default: full names
 
-    # these take the value of the chosen hash
-    has %.d;
-    has %.m;
+    # these take the value of the chosen name set
+    has $.d;
+    has $.m;
+    has $.s;
 
     has Period $.period = keep-p; # add, remove, or keep a period to end abbreviations
                                   # (True or False; default -1 means use the
@@ -49,8 +51,12 @@ class Date::Names {
     submethod TWEAK() {
         # this sets the class var to the desired
         # dow and mon hashes (lang and value width)
-        %!d = $::("Date::Names::{$!lang}::{$!day-hash}");
-        %!m = $::("Date::Names::{$!lang}::{$!mon-hash}");
+        $!d = $::("Date::Names::{$!lang}::{$!dset}");
+        $!m = $::("Date::Names::{$!lang}::{$!mset}");
+        # list of non-empty sets:
+        $!s = $::("Date::Names::{$!lang}::sets");
+
+        die "no \$sets set for this lang" if !$!.s.elems;
     }
 
     method !handle-val-attrs($val, :$is-abbrev!) {
@@ -98,8 +104,8 @@ class Date::Names {
     }
 
     method dow(UInt $n where { $n > 0 && $n < 8 }, $trunc = 0) {
-        my $val = %.d{$n};
-        my $is-abbrev = $.day-hash eq 'dow' ?? False !! True;
+        my $val = $.d{$n};
+        my $is-abbrev = $.dset eq 'dow' ?? False !! True;
         if $trunc && !$is-abbrev {
             return $val.substr(0, $trunc);
         }
@@ -109,8 +115,8 @@ class Date::Names {
     }
 
     method mon(UInt $n where { $n > 0 && $n < 13 }, $trunc = 0) {
-        my $val = %.m{$n};
-        my $is-abbrev = $.mon-hash eq 'mon' ?? False !! True;
+        my $val = $.m{$n};
+        my $is-abbrev = $.mset eq 'mon' ?? False !! True;
         if $trunc && !$is-abbrev {
             return $val.substr(0, $trunc);
         }
@@ -118,5 +124,24 @@ class Date::Names {
         $val = self!handle-val-attrs($val, :$is-abbrev);
         return $val;
     }
-}
 
+    # allow changing attributes on an instance
+    method set-dset() {
+    }
+    method set-mset() {
+    }
+    method set-lang() {
+    }
+
+    # save changing others for later
+
+    # utility methods
+    method sets {
+        say "name sets with values:";
+        say "  $_" for $.s.keys.sort;
+    }
+    method nsets {
+        return $.s.elems;
+    }
+
+}
