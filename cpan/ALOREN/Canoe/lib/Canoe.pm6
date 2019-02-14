@@ -16,8 +16,12 @@ submethod TWEAK() {
 
 class PlugInfo { ... }
 
-method e() {
-    $!file.e;
+method e(--> Bool) {
+    await start {
+        self!lock();
+        LEAVE { self!unlock() }
+        $!file.e;
+    }
 }
 
 method create(--> Promise) {
@@ -51,7 +55,6 @@ method Supply(--> Supply) {
     }
 }
 
-# need .lock
 method register(Str $name, Bool $enable --> Promise) {
     start {
         my %config = self!read-config();
@@ -69,6 +72,27 @@ method unregister(Str $name --> Promise) {
         for ^+@(%config<plugins>) -> $index {
             if %config<plugins>[$index]<name> eq $name {
                 %config<plugins>.splice($index, 1);
+                last;
+            }
+        }
+        self!write-config(%config);
+    }
+}
+
+method disable(Str $name --> Promise) {
+    self!set-attribute($name, :!enable);
+}
+
+method enable(Str $name --> Promise) {
+    self!set-attribute($name, :enable);
+}
+
+method !set-attribute(Str $name, :$enable --> Promise) {
+    start {
+        my %config = self!read-config();
+        for ^+@(%config<plugins>) -> $index {
+            if %config<plugins>[$index]<name> eq $name {
+                %config<plugins>[$index]<enable> = $enable;
                 last;
             }
         }

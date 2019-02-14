@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Canoe",
-    "version"     : "0.0.1",
+    "version"     : "0.0.3",
     "license"     : "MIT",
     "description" : "An simple thread-safe plug-in framework for Perl 6",
     "depends"     : [ ],

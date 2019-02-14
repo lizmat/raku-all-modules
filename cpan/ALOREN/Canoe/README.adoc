@@ -9,6 +9,67 @@ Canoe is an simple plug-in framework for Perl 6.
 It is thread-safe and process-safe.
 The configuration file is base on the JSON format.
 
+== Reference
+
+=== Canoe
+
+* e(-\-> Bool)
++
+Return True if the configuration file is existed.
+
+* create(-\-> Promise)
++
+Create the configuration file with default configuration `{ "plugins": [ ]}`.
+The `Promise` will kept with True when the file created successfully.
+
+* load(-\-> Promise)
++
+Return an `Promise` which will kept with all the plug-in.
+
+* Supply(-\-> Supply)
++
+Return an `Supply` which will emit every plug-in.
+
+* register(Str $name, Bool $enable -\-> Promise)
++
+Register the module `$name` to the current configuration file.
+The `Promise` will kept with True if successfully.
+
+* unregister(Str $name -\-> Promise)
++
+Remove the module `$name` from the current configuration file.
+The `Promise` will kept with True if successfully.
+
+* enable(Str $name, -\-> Promise)
++
+Enable the plug-in.
+
+* disable(Str $name, -\-> Promise)
++
+Disable the plug-in.
+
+=== PlugInfo
+
+* has $.enable
++
+Is True if the plug-in is enabled.
+
+* has $.plugin;
++
+The type object of current plug-in.
+
+* has $.installed
++
+Is True if perl6 can find the plug-in in the repository.
+
+* has $.name;
++
+The name of current plug-in.
+
+* get-instance(*%_)
++
+Create an instance of current plug-in.
+
 == License
 
     The MIT License (MIT)

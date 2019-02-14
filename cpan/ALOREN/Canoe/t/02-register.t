@@ -1,24 +1,29 @@
 
 use Test;
 use Canoe;
-use lib 'lib';
+use lib './t/lib';
 
-plan 16;
+plan 19;
 
 my @config;
 
-given Canoe.new(file => 'plugin.json') {
-    .create unless .e;
+given Canoe.new(file => './t/plugin.json') {
+    unless .e {
+        await .create;
+    }
     @config = await .load();
 
     is +@config, 1, 'Load plugin configuration file ok!';
     is @config[0].name, 'Test::Plugin1', 'Check plugin name ok!';
     is @config[0].enable, True, 'Plugin 1 is enabled!';
     is @config[0].installed, True, 'Load Plugin 1 ok!';
-
+    is (await .disable(@config[0].name)), True, 'disable Plugin 1';
     is (await .register('Test::Plugin2', True)), True, 'Register plugin ok!';
     is (await .register('Test::Plugin3', True)), True, 'Register plugin ok!';
     @config = await .load();
+
+    is @config[0].enable, False, 'Plugin 1 is not enabled!';
+    is (await .enable(@config[0].name)), True, 'enable Plugin 1';
 
     is +@config, 3, 'Load plugin configuration file ok!';
     is @config[1].name, 'Test::Plugin2', 'Check plugin name ok!';
