@@ -1,13 +1,13 @@
 {
   "name": "META6",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "auth": "github:jonathanstowe",
   "api": "1.0",
   "description": "Work with Perl 6 META files",
-  "source-url": "git://github.com/jonathanstowe/META6.git",
+  "source-url": "https://github.com/jonathanstowe/META6.git",
   "support": {
 	"email" : "jns+git@gellyfish.co.uk",
-    "source": "git://github.com/jonathanstowe/META6.git",
+    "source": "https://github.com/jonathanstowe/META6.git",
     "bugtracker": "https://github.com/jonathanstowe/META6/issues"
   },
   "perl": "6.*",

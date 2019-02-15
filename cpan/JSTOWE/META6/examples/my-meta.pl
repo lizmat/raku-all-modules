@@ -1,7 +1,5 @@
 #!/usr/bin/env perl6 
 
-use lib 'lib';
-
 use META6;
 
 my $m = META6.new(   name        => 'META6',

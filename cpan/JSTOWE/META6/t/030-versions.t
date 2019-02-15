@@ -7,9 +7,9 @@ use META6;
 
 my $warnings = 0;
 
-my IO::Path $data-dir = $*PROGRAM.parent.child("data");
+my IO::Path $data-dir = $*PROGRAM.parent.add("data");
 
-my IO::Path $meta-path = $data-dir.child('META-V.info');
+my IO::Path $meta-path = $data-dir.add('META-V.info');
 
 my $obj;
 

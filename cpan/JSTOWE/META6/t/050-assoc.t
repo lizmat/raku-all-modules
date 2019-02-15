@@ -7,9 +7,9 @@ use JSON::Fast;
 
 use META6;
 
-my IO::Path $data-dir = $*PROGRAM.parent.child("data");
+my IO::Path $data-dir = $*PROGRAM.parent.add("data");
 
-my IO::Path $meta-path = $data-dir.child('META6.json');
+my IO::Path $meta-path = $data-dir.add('META6.json');
 
 my $obj;
 

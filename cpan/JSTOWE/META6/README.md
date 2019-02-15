@@ -69,9 +69,7 @@ install this with *zef* :
 
 ## Support
 
-Suggestions/patches are welcomed via github at
-
-https://github.com/jonathanstowe/META6
+Suggestions/patches are welcomed via github at https://github.com/jonathanstowe/META6
 
 I'm particulary interested in knowing about "customary" (i.e. non-spec)
 fields that are being used in the wild and in what software so I can
@@ -81,5 +79,5 @@ add them if necessary.
 
 Please see the [LICENCE](LICENCE) file in the distribution
 
-© Jonathan Stowe 2015, 2016, 2017
+© Jonathan Stowe 2015 - 2019
 

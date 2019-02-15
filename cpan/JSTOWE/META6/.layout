@@ -91,10 +91,6 @@
     {
       "name": "LICENCE",
       "type": "file"
-    },
-    {
-      "type": "file",
-      "name": "Makefile"
     }
   ],
   "type": "layout"

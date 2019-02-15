@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/jonathanstowe/META6.git
+	remote = https://github.com/jonathanstowe/META6.git
 	branch = master
-	commit = 4ab82c0c705b4ac472eda25015c2ab293de279bd
-	parent = ccc2949586e0c24246a512057e7154fa8a5c8c5b
+	commit = 68ee0681d869b3f80ea9c677b55cd6b355089597
+	parent = 8bf21042c134aedf45099d9d577ef01f9f4ef7a0
 	cmdver = 0.3.1
