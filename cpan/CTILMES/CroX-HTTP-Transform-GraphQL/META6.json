@@ -1,7 +1,7 @@
 {
     "name" : "CroX::HTTP::Transform::GraphQL",
 
-    "version" : "0.1",
+    "version" : "0.2",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-graphql-cro.git",
 
@@ -10,7 +10,8 @@
     "tags" : [ "GraphQL" ],
 
     "provides" : {
-        "CroX::HTTP::Transform::GraphQL" : "lib/CroX/HTTP/Transform/GraphQL.pm6"
+        "CroX::HTTP::Transform::GraphQL" : "lib/CroX/HTTP/Transform/GraphQL.pm6",
+        "CroX::HTTP::Router::GraphQL" : "lib/CroX/HTTP/Router/GraphQL.pm6"
     },
 
     "depends" : [ "GraphQL", "Cro::HTTP::Router", "Cro::Transform",
