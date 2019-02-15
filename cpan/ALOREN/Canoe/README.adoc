@@ -13,6 +13,10 @@ The configuration file is base on the JSON format.
 
 === Canoe
 
+* new(:$file)
++
+Create an instance of `Canoe`, `$file` is path of configuration file.
+
 * e(-\-> Bool)
 +
 Return True if the configuration file is existed.

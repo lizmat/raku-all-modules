@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/perl6-song/canoe.git
 	branch = master
-	commit = 754cbd397dbfed35d20b9aa9dc7ce0b5fd87b25c
-	parent = 4bd70b4f66486b7515a12e2683faf426f1eb3d00
+	commit = af28728b2ad9cd02e7c6644cfd967b51c565806d
+	parent = 860033c756796367ced110523e05054afade1a00
 	cmdver = 0.3.1
