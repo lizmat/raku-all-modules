@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-App-AizuOnlineJudge.git
 	branch = master
-	commit = c2ab2f455d081f76fd0975e90f89aacaaa3a41f7
-	parent = a5a46e9e15a9e5a7588f6b726962c1d30b976bbc
+	commit = 865818e147480f3be0efc590efa6c174ef781cc1
+	parent = 46ee1972fff41e5beba137b15ba37293942ec62f
 	cmdver = 0.3.1

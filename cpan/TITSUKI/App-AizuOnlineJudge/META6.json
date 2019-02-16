@@ -1,6 +1,7 @@
 {
+  "auth" : "cpan:TITSUKI",
   "authors" : [
-    "titsuki"
+    "Itsuki Toyota"
   ],
   "build-depends" : [ ],
   "depends" : [
@@ -21,5 +22,5 @@
   "source-url" : "git://github.com/titsuki/p6-App-AizuOnlineJudge.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.2"
 }
