@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jasonmay/perl6-ioc.git
 	branch = master
-	commit = bb735ec076b58ff2d4253befdf949ffbe3de85f5
-	parent = 5cf237fc078b14a5d83c750c23c6d0d525540331
+	commit = 3c550a3c05f9dca3b5c9f973b5bef50ca865b383
+	parent = 3c182c101e7e07f338c29f085ea69dd0a6a60909
 	cmdver = 0.3.1

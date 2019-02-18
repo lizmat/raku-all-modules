@@ -2,6 +2,9 @@ Revision history for IoC
 
 {{$NEXT}}
 
+0.0.4  2019-02-10T11:01:18+01:00
+    - Path::Iterator is now Path::Finder 
+
 0.0.3  2018-12-19T11:14:01+01:00
     - Tried to impove error handling
     - Fixed a runtime issue causing a warning when you're not using a singleton
