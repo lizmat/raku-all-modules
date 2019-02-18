@@ -2,7 +2,7 @@ use META6;
 use JSON::Fast;
 use Ddt::JSON;
 use File::Find;
-use License::Software;
+use License::Software:ver<0.2.0>;
 use Ddt::Template;
 use File::Ignore;
 unit class Ddt::Distribution;
@@ -146,6 +146,10 @@ method generate-README {
 
 method render-markdown( $file )
 {
+    if False {
+        # Hack for ddt deps command
+        use Pod::To::Markdown;
+    }
     my @cmd = $*EXECUTABLE, "--doc=Markdown", "-I$.lib-dir", $file;
     my $p = run(|@cmd, :out);
     die "Failed @cmd[]" if $p.exitcode != 0;
@@ -197,7 +201,7 @@ method !init-vcs-repo {
 
 
 method license of License::Software::Abstract {
-    License::Software::get($.META6.license).new: author() ~ " " ~ email();
+    license($.META6.license).new: author() ~ " " ~ email();
 }
 
 method find-provides {
