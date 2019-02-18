@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/drclaw1394/nearestp6.git
+	branch = master
+	commit = fef7831b724bc5b6fdf752f0b7a09872e0c5c527
+	parent = bf84701a7a16f44f0136106aad532478d152cfaa
+	cmdver = 0.3.1
