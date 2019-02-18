@@ -5,62 +5,63 @@ unit module Date::Names::ru;
 # Russian
 #********
 
-# Note all possible hashes and keys should exist in the file (see
-# Table 2 in the README for the correct names). They may have missing
-# values, but there should be eight (8) total hashes:
+# IMPORTANT:
+#
+# All valid month and weekday name and abbreviation arrays must have
+# either twelve (12) or seven (7) elements, respectively.  Arrays
+# without month or day values MUST be completely empty as are the ones
+# shown below.
 
-# Names of sets with all non-empty values for this language:
-our $sets = set <mon dow mon3 dow2>;
+# Note the standard eight arrays should exist in the file (see Table 2
+# in the README for the correct names). They may be empty, but there
+# should be eight (8) total arrays.
+
+# To be an acceptable language for Date::Names, there must be defined completely
+# at least one of the standard abbreviation sets for both months and weekdays
+# in order to provide a default abbreviation set for the user in the
+# event another abbreviation set is desired but not available.
 
 #=== FULL NAMES ======================================================
 # 1
-constant $mon = %(
-    1, 'январь',    2, 'февраль',  3, 'март',    4, 'апрель',
-    5, 'май',       6, 'июнь',     7, 'июль',    8, 'август',
-    9, 'сентябрь', 10, 'октябрь', 11, 'ноябрь', 12, 'декабрь'
-);
+constant $mon = <
+    январь    февраль  март    апрель
+    май       июнь     июль    август
+    сентябрь  октябрь  ноябрь  декабрь
+>;
 
 # 2
-constant $dow = %(
-    1, 'понедельник', 2, 'вторник', 3, 'среда',      4, 'четверг',
-    5, 'пятница',     6, 'суббота', 7, 'воскресенье'
-);
+constant $dow = <
+    понедельник вторник среда       четверг
+    пятница     суббота воскресенье
+>;
 
 #=== THREE-LETTER ABBREVIATIONS ======================================
 # 3
-constant $mon3 = %(
-    1, 'янв', 2, 'фев', 3, 'мар',  4, 'апр',  5, 'май',  6, 'июн',
-    7, 'июл', 8, 'авг', 9, 'сен', 10, 'окт', 11, 'ноя', 12, 'дек'
-);
+constant $mon3 = <
+    янв фев мар  апр май июн
+    июл авг сен  окт ноя дек
+>;
 
 # 4
-constant $dow3 = %(
-    1, '', 2, '', 3, '', 4, '',
-    5, '', 6, '', 7, ''
-);
+constant $dow3 = <
+>;
 
 #=== TWO-LETTER ABBREVIATIONS ========================================
 # 5
-constant $mon2 = %(
-    1, '', 2, '', 3, '',  4, '',  5, '',  6, '',
-    7, '', 8, '', 9, '', 10, '', 11, '', 12, ''
-);
+constant $mon2 = <
+>;
 
 # 6
-constant $dow2 = %(
-    1, 'Пн', 2, 'Вт', 3, 'Ср', 4, 'Чт',
-    5, 'Пт', 6, 'Сб', 7, 'Вс'
-);
+constant $dow2 = <
+    Пн Вт Ср Чт
+    Пт Сб Вс
+>;
 
 #=== MIXED-LENGTH ABBREVIATIONS ======================================
 # 7
-constant $mona = %(
-    1, '', 2, '', 3, '',  4, '',  5, '',  6, '',
-    7, '', 8, '', 9, '', 10, '', 11, '', 12, ''
-);
+constant $mona = <
+>;
 
 # 8
-constant $dowa = %(
-    1, '', 2, '', 3, '', 4, '',
-    5, '', 6, '', 7, ''
-);
+constant $dowa = <
+>;

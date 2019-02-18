@@ -5,28 +5,33 @@ Date::Names
 
 Module **Date::Names** - Provides month and weekday names for numbers (multilingual)
 
-This is Version 2. A new Date::Names class is available and
-direct hash access has changed from Version 1.
-Direct hash access is not recommended since the storage
-object may be an array soon, so use a class instance
-to extract data.
+This is Version 2 with significant differences and more
+features compred to Version 1:
+
++ Changes:
+
+  - language-specific data set hashes have changed to arrays
+
+  - no symbols are exported, but direct access is available, but not recommended--use the new class instead
+
+  - @lang renamed to @langs
+
++ New:
+
+  class Date::Names
 
 Version 2:
 
 ```perl6
-# Three syntaxes to use, in all the hash name is now listed
-# last in the identifier following the language code:
+# Note the array name is now listed last in the identifier
+# following the language code:
+my @dow = $Date::Names::nl::dow;
 
-my %dow = $Date::Names::nl::dow; # <== the author's preference
-say "key $_" for %dow.keys.sort; # 1..7
-my $dow = $Date::Names::nl::dow;
-say "key $_" for $dow.keys.sort; # 1..7
-my %dow = %($Date::Names::nl::dow);
-say "key $_" for %dow.keys.sort; # 1..7
-
+# indexing internally is from zero, but the class user will enter 1..N
+say "index {$_ + 1}" for %dow.keys.sort; # 1..7
 ```
 
-Version 1 for comparison (deprecated):
+Version 1 for comparison (not available in Version 2):
 
 ``` perl6
 my %dow = %Date::Names::dow<nl>;
@@ -39,18 +44,14 @@ SYNOPSIS
 ~~~perl6
 use Date::Names;
 
-# For one-off use
-say "Month 3, Dutch: '{$Date::Names::nl::mon<3>}'";
-say "Weekday 3, Italian: '{$Date::Names::it::dow<3>}'";
-say "Two-letter abbrev., weekday 3, German is '{$Date::Names::de::dow2<3>}'";
-say "Three-letter abbrev., weekday 3, English is '{$Date::Names::en::dow3<3>}'";
-
-# For more intense cases, one can use this syntax:
-my %dow = $Date::Names::nl::dow; # a convenience hash
-say "Weekdays in Dutch:";
-for 1..7 -> $n {
-    say "  day $n: {%dow{$n}}";
-}
+my $d = Date::Names.new: :lang<nl>;
+say "Month 3, Dutch: '{$d.mon(3)}'"; # output: 'maart'
+$d.set-lang<it>;
+say "Weekday 3, Italian: '{$d.dow(3)}'"; # output: ''
+$d.set-lang<de>;
+say "Two-letter abbrev., weekday 3, German is '{$d.dow2(3)}'";
+$d.set-lang<en>;
+say "Three-letter abbrev., weekday 3, English is '{$d.dow2(3)}'";
 ~~~
 
 DESCRIPTION

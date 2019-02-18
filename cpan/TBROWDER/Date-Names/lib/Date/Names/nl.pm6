@@ -5,60 +5,67 @@ unit module Date::Names::nl;
 # Dutch
 #********
 
-# Note all possible hashes and keys should exist in the file (see
-# Table 2 in the README for the correct names). They may have missing
-# values, but there should be eight (8) total hashes:
+# IMPORTANT:
+#
+# All valid month and weekday name and abbreviation arrays must have
+# either twelve (12) or seven (7) elements, respectively.  Arrays
+# without month or day values MUST be completely empty as are the ones
+# shown below.
 
-# Names of sets with all non-empty values for this language:
-our $sets = set <mon dow mon3 dow3 dow2>;
+# Note the standard eight arrays should exist in the file (see Table 2
+# in the README for the correct names). They may be empty, but there
+# should be eight (8) total arrays.
 
-# note all possible hashes and keys exist but they may have missing values
-constant $mon = %(
-    # Dutch
-    1, 'januari',    2, 'februari',  3, 'maart',     4, 'april',
-    5, 'mei',        6, 'juni',      7, 'juli',      8, 'augustus',
-    9, 'september', 10, 'oktober',  11, 'november', 12, 'december'
-);
+# To be an acceptable language for Date::Names, there must be defined completely
+# at least one of the standard abbreviation sets for both months and weekdays
+# in order to provide a default abbreviation set for the user in the
+# event another abbreviation set is desired but not available.
 
-constant $dow = %(
-    # Dutch
-    1, 'maandag', 2, 'dinsdag',  3, 'woensdag', 4, 'donderdag',
-    5, 'vrijdag', 6, 'zaterdag', 7, 'zondag'
-);
+#=== FULL NAMES ======================================================
+# 1
+constant $mon = <
+    januari    februari  maart     april
+    mei        juni      juli      augustus
+    september  oktober   november  december
+>;
 
-# three-letter abbreviations
-constant $mon3 = %(
-    1, 'jan',   2, 'feb',  3, 'maa',   4, 'apr',
-    5, 'mei',   6, 'jun',  7, 'jul',   8, 'aug',
-    9, 'sep',  10, 'okt', 11, 'nov',  12, 'dec'
-);
+# 2
+constant $dow = <
+    maandag  dinsdag   woensdag  donderdag
+    vrijdag  zaterdag  zondag
+>;
 
-constant $dow3 = %(
-    1, 'maa', 2, 'din', 3, 'woe', 4, 'don',
-    5, 'vri', 6, 'zat', 7, 'zon'
-);
+#=== THREE-LETTER ABBREVIATIONS ======================================
+# 3
+constant $mon3 = <
+    jan  feb  maa  apr
+    mei  jun  jul  aug
+    sep  okt  nov  dec
+>;
 
-# two-letter abbreviations
-constant $mon2  = %(
-    1, '',  2, '',  3, '',  4, '',
-    5, '',  6, '',  7, '',  8, '',
-    9, '', 10, '', 11, '', 12, ''
-);
+# 4
+constant $dow3 = <
+    maa  din  woe  don
+    vri  zat  zon
+>;
 
-constant $dow2 = %(
-    # Dutch
-    1, 'ma',  2, 'di',  3, 'wo', 4, 'do',
-    5, 'vr',  6, 'za',  7, 'zo'
-);
+#=== TWO-LETTER ABBREVIATIONS ========================================
+# 5
+constant $mon2  = <
+>;
 
-# mixed
-constant $mona  = %(
-    1, '',  2, '',  3, '',  4, '',
-    5, '',  6, '',  7, '',  8, '',
-    9, '', 10, '', 11, '', 12, ''
-);
+# 6
+constant $dow2 = <
+    ma  di  wo  do
+    vr  za  zo
+>;
 
-constant $dowa  = %(
-    1, '', 2, '', 3, '', 4, '',
-    5, '', 6, '', 7, ''
-);
+
+#=== MIXED-LENGTH ABBREVIATIONS ======================================
+# 7
+constant $mona  = <
+>;
+
+# 8
+constant $dowa  = <
+>;

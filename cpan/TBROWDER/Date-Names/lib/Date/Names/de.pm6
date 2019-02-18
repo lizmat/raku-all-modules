@@ -5,65 +5,64 @@ unit module Date::Names::de;
 # German
 #********
 
-# Note all possible hashes and keys should exist in the file (see
-# Table 2 in the README for the correct names). They may have missing
-# values, but there should be eight (8) total hashes:
+# IMPORTANT:
+#
+# All valid month and weekday name and abbreviation arrays must have
+# either twelve (12) or seven (7) elements, respectively.  Arrays
+# without month or day values MUST be completely empty as are the ones
+# shown below.
 
-# Names of sets with all non-empty values for this language:
-our $sets = set <mon dow mon3 dow3 dow2>;
+# Note the standard eight arrays should exist in the file (see Table 2
+# in the README for the correct names). They may be empty, but there
+# should be eight (8) total arrays.
+
+# To be an acceptable language for Date::Names, there must be defined completely
+# at least one of the standard abbreviation sets for both months and weekdays
+# in order to provide a default abbreviation set for the user in the
+# event another abbreviation set is desired but not available.
 
 #=== FULL NAMES ======================================================
 # 1
-constant $mon = %(
-    1, 'Januar',     2, 'Februar',   3, 'März',      4, 'April',
-    5, 'Mai',        6, 'Juni',      7, 'Juli',      8, 'August',
-    9, 'September', 10, 'Oktober',  11, 'November', 12, 'Dezember'
-);
+constant $mon = <
+    Januar    Februar  März     April
+    Mai       Juni     Juli     August
+    September Oktober  November Dezember
+>;
 
 # 2
-constant $dow  = %(
-    1, 'Montag',  2, 'Dienstag', 3, 'Mittwoch', 4,  'Donnerstag',
-    5, 'Freitag', 6, 'Samstag',  7, 'Sonntag'
-);
+constant $dow  = <
+     Montag   Dienstag  Mittwoch   Donnerstag
+     Freitag  Samstag   Sonntag
+>;
 
 #=== THREE-LETTER ABBREVIATIONS ======================================
 # 3
-constant $mon3  = %(
-    1, 'Jan',  2, 'Feb',  3, 'Mär',  4, 'Apr',
-    5, 'Mai',  6, 'Jun',  7, 'Jul',  8, 'Aug',
-    9, 'Sep', 10, 'Okt', 11, 'Nov', 12, 'Dez'
-);
+constant $mon3  = <
+     Jan   Feb   Mär   Apr
+     Mai   Jun   Jul   Aug
+     Sep   Okt   Nov   Dez
+>;
 
 # 4
-constant $dow3 = %(
-    1, '', 2, '', 3, '', 4, '',
-    5, '', 6, '', 7, ''
-);
+constant $dow3 = <
+>;
 
 #=== TWO-LETTER ABBREVIATIONS ========================================
 # 5
-constant $mon2  = %(
-    1, '',  2, '',  3, '',  4, '',
-    5, '',  6, '',  7, '',  8, '',
-    9, '', 10, '', 11, '', 12, ''
-);
+constant $mon2  = <
+>;
 
 # 6
-constant $dow2  = %(
-    1, 'Mo', 2, 'Di', 3, 'Mi', 4, 'Do',
-    5, 'Fr', 6, 'Sa', 7, 'So'
-);
+constant $dow2 = <
+     Mo  Di  Mi  Do
+     Fr  Sa  So
+>;
 
 #=== MIXED-LENGTH ABBREVIATIONS ======================================
 # 7
-constant $mona  = %(
-    1, '',  2, '',  3, '',  4, '',
-    5, '',  6, '',  7, '',  8, '',
-    9, '', 10, '', 11, '', 12, ''
-);
+constant $mona = <
+>;
 
 # 8
-constant $dowa  = %(
-    1, '', 2, '', 3, '', 4, '',
-    5, '', 6, '', 7, ''
-);
+constant $dowa = <
+>;

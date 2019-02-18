@@ -1,4 +1,4 @@
-unit module Date::Names;
+unit class Date::Names;
 
 # Languages currently available:
 #
@@ -12,12 +12,13 @@ unit module Date::Names;
 
 # a list of the language two-letter codes currently considered
 # in this module:
-constant @lang is export = <de en es fr it nb nl ru>;
+our @langs = <de en es fr it nb nl ru>;
 
-#  lists of the eight standard hash names for each language:
-constant @mnames is export = <mon mon2 mon3 mona>;
-constant @dnames is export = <dow dow2 dow3 dowa>;
+# lists of the eight standard data set names for each language:
+our @msets = <mon mon2 mon3 mona>;
+our @dsets = <dow dow2 dow3 dowa>;
 
+# the language-specfic data
 use Date::Names::de;
 use Date::Names::en;
 use Date::Names::es;
@@ -30,15 +31,17 @@ use Date::Names::ru;
 # the class (beta)
 enum Period <yes no keep-p>;
 enum Case <tc uc lc keep-c>;
-class Date::Names {
-    has Str $.lang = 'en';  # default: English
-    has Str $.dset = 'dow'; # default: full names
-    has Str $.mset = 'mon'; # default: full names
 
-    # these take the value of the chosen name set
-    has $.d;
-    has $.m;
-    has $.s;
+#class Date::Names {
+
+    has Str $.lang is rw = 'en';  # default: English
+    has Str $.mset is rw = 'mon'; # default: full names
+    has Str $.dset is rw = 'dow'; # default: full names
+
+    # these take the value of the chosen name of each type of data  set
+    has $.d is rw;
+    has $.m is rw;
+    has %.s is rw; # this an auto-generated hash of the names of all non-empty data sets and values of that array
 
     has Period $.period = keep-p; # add, remove, or keep a period to end abbreviations
                                   # (True or False; default -1 means use the
@@ -50,16 +53,92 @@ class Date::Names {
 
     submethod TWEAK() {
         # this sets the class var to the desired
-        # dow and mon hashes (lang and value width)
-        $!d = $::("Date::Names::{$!lang}::{$!dset}");
+        # dow and mon name sets (lang and value width)
+        =begin comment
         $!m = $::("Date::Names::{$!lang}::{$!mset}");
-        # list of non-empty sets:
-        $!s = $::("Date::Names::{$!lang}::sets");
+        $!d = $::("Date::Names::{$!lang}::{$!dset}");
+        =end comment
+        # convenience string vars
+        my $L = $!lang;
+        my $M = $!mset;
+        my $D = $!dset;
 
-        die "no \$sets set for this lang" if !$!.s.elems;
+        =begin comment
+        my $mm = "{$L}::{$M}";
+        my $dd = "{$L}::{$D}";
+        =end comment
+        my $mm = "Date::Names::{$L}::{$M}";
+        my $dd = "Date::Names::{$L}::{$D}";
+        $!m = $::($mm);
+        $!d = $::($dd);
+
+        # create hash of non-empty sets:
+        for @msets, @dsets -> $n {
+            =begin comment
+            my $nn = "{$L}::{$n}";
+            =end comment
+
+            my $nn = "Date::Name::{$L}::{$n}";
+            my $s = $::($nn);
+            note "DEBUG: lang $L, set $n, elems {$s.elems}";
+            next if !$s.elems;
+            %!s{$n} = $s;
+        }
+
+        =begin comment
+        die "no \$sets set for this lang {$!lang}" if !%!s.elems;
+
+        # other requirements for a valid lang class
+        # must have at least four total data sets:
+        #   mon
+        #   dow
+        #   mowX - one month abbreviation data set
+        #   dowX - one weekday abbreviation data set
+        my $mo = 0;
+        my $do = 0;
+        for <mon dow> -> $n  {
+            my $nhas = %!s{$n}.elems;
+            my $nreq = $n eq 'mon' ?? 12 !! 7;
+            if $nhas != $nreq {
+                note "WARNING: lang {$!lang}, data set '$n' has $nhas elements, but it should have $nreq";
+            }
+            else {
+                ++$mo if $n eq 'mon';
+                ++$do if $n eq 'dow';
+            }
+        }
+
+        my $ma = 0;
+        my $da = 0;
+        for @msets, @dsets -> $n  {
+            # already checked mon and dow
+            next if $n ~~ /^mon|dow$/;
+
+            my $nhas = %!s{$n}.elems;
+            my $nreq = $n eq 'mon' ?? 12 !! 7;
+            if $nhas != $nreq {
+                note "WARNING: lang {$!lang}, data set '$n' has $nhas elements, but it should have $nreq";
+            }
+            else {
+                my $c = $n.comb[0];
+                ++$ma if $c eq 'm';
+                ++$da if $c eq 'd';
+            }
+        }
+        my $totreq = $mo + $do + $ma + $da;
+        
+        if $totreq != 4 {
+            note "FATAL: Minimum data requirements not satisfied.";
+            note "TODO: be specific";
+            exit;
+        }
+        =end comment
     }
 
-    method !handle-val-attrs($val, :$is-abbrev!) {
+    method !handle-val-attrs(Str $val, :$is-abbrev!) {
+        if !defined $val {
+            die "FATAL: undefined \$val '{$val.^name}'";
+        }
         # check for any changes that are to be made
         my $has-period = 0;
         my $nchars = $val.chars; # includes an ending period
@@ -103,8 +182,11 @@ class Date::Names {
 
     }
 
-    method dow(UInt $n where { $n > 0 && $n < 8 }, $trunc = 0) {
-        my $val = $.d{$n};
+    method dow(UInt $n is copy where { $n > 0 && $n < 8 }, $trunc = 0) {
+        # CRITICAL for proper array indexing internally:
+        --$n;
+
+        my $val = $.d[$n];
         my $is-abbrev = $.dset eq 'dow' ?? False !! True;
         if $trunc && !$is-abbrev {
             return $val.substr(0, $trunc);
@@ -114,8 +196,11 @@ class Date::Names {
         return $val;
     }
 
-    method mon(UInt $n where { $n > 0 && $n < 13 }, $trunc = 0) {
-        my $val = $.m{$n};
+    method mon(UInt $n is copy where { $n > 0 && $n < 13 }, $trunc = 0) {
+        # CRITICAL for proper array indexing internally:
+        --$n;
+
+        my $val = $.m[$n];
         my $is-abbrev = $.mset eq 'mon' ?? False !! True;
         if $trunc && !$is-abbrev {
             return $val.substr(0, $trunc);
@@ -125,23 +210,46 @@ class Date::Names {
         return $val;
     }
 
-    # allow changing attributes on an instance
-    method set-dset() {
-    }
-    method set-mset() {
-    }
-    method set-lang() {
-    }
-
-    # save changing others for later
-
     # utility methods
     method sets {
         say "name sets with values:";
-        say "  $_" for $.s.keys.sort;
-    }
-    method nsets {
-        return $.s.elems;
+        say "  $_" for %.s.keys.sort;
     }
 
-}
+    method nsets {
+        return %.s.elems;
+    }
+
+    # a class method
+    method show {
+        # loop over all langs and show all available sets:
+        for @langs -> $L {
+            say "DEBUG, method show, lang $L";
+            # loop over the non-empty sets 
+            #die "tom fix this";
+            #my $s = $::("Date::Names::{$L}
+        }
+    }
+        
+    method dump(:$fh) {
+        my $L = $!lang;
+        my $M = $!mset;
+        my $D = $!dset;
+
+        if $fh {
+        }
+        else {
+            say "============================================";
+            say qq:to/HERE/;
+            Dumping Date::Names instance:
+              lang '{$L}'
+              mset '{$M}'
+              dset '{$D}'
+            HERE
+
+            say "  non-empty sets (%.s.elems} total):";
+            say "    $_" for %.s.keys.sort;
+            say "============================================";
+        }
+    }
+#}

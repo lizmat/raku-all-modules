@@ -3,22 +3,36 @@
 use lib <../lib>;
 use Date::Names;
 
-=finish
+# VERSION 2
 
-# VERSION 1
-say "The example from the README:";
-say "Month 3 in Dutch is '{%Date::Names::mon<nl><3>}'";
-say "Month 3 in English is '{%Date::Names::mon<3>}' or '{%Date::Names::mon<en><3>}'";
-say "Month 3 in French is '{%Date::Names::mon<fr><3>}'";
-say "Weekday 3 in Italian is '{%Date::Names::dow<it><3>}'";
-say "Weekday 3 in Spanish is '{%Date::Names::dow<es><3>}'";
-say "Two-letter abbrev. of weekday 3 in German is '{%Date::Names::dow2<de><3>}'";
-say "Three-letter abbrev. of weekday 3 in English is '{%Date::Names::dow3<en><3>}'";
+my @dow = $Date::Names::nl::dow;
+say "index {$_ + 1}" for @dow.keys.sort; # 1..7
+say "******************************************";
 
-say "";
+my $d = Date::Names.new: :lang<nl>;
+$d.dump;
+say "Month 3, Dutch: '{$d.mon(3)}'"; # output: ''
+say "******************************************";
 
-my %dow = %Date::Names::dow<nl>;
-say "Weekdays in Dutch:";
-for 1..7 -> $n {
-    say "  day $n: {%dow{$n}}";
-}
+$d .= clone: :lang('it');
+$d.dump;
+say "Weekday 3, Italian: '{$d.dow(3)}'"; # output: ''
+say "******************************************";
+
+$d .= clone: :lang('de');
+$d.dump;
+say "******************************************";
+
+$d .= clone: :dset('dow2');
+$d.dump;
+say "Two-letter abbrev., weekday 6, German: '{$d.dow(6)}'";
+say "******************************************";
+
+$d .= clone: :lang('fr');
+$d.dump;
+say "******************************************";
+
+$d .= clone: :mset('mon2');
+$d.dump;
+say "Two-letter abbrev., month 7, French: '{$d.mon(7)}'";
+say "******************************************";

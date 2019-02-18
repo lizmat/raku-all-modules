@@ -5,65 +5,59 @@ unit module Date::Names::it;
 # Italian
 #********
 
-# Note all possible hashes and keys should exist in the file (see
-# Table 2 in the README for the correct names). They may have missing
-# values, but there should be eight (8) total hashes:
+# IMPORTANT:
+#
+# All valid month and weekday name and abbreviation arrays must have
+# either twelve (12) or seven (7) elements, respectively.  Arrays
+# without month or day values MUST be completely empty as are the ones
+# shown below.
 
-# Names of sets with all non-empty values for this language:
-our $sets = set <mon dow>;
+# Note the standard eight arrays should exist in the file (see Table 2
+# in the README for the correct names). They may be empty, but there
+# should be eight (8) total arrays.
+
+# To be an acceptable language for Date::Names, there must be defined completely
+# at least one of the standard abbreviation sets for both months and weekdays
+# in order to provide a default abbreviation set for the user in the
+# event another abbreviation set is desired but not available.
 
 #=== FULL NAMES ======================================================
 # 1
-constant $mon = %(
-    1, 'Gennaio',    2, 'Febbraio',  3, 'Marzo',     4, 'Aprile',
-    5, 'Maggio',     6, 'Giugno',    7, 'Luglio',    8, 'Agosto',
-    9, 'Settembre', 10, 'Ottobre',  11, 'Novembre', 12, 'Dicembre'
-);
+constant $mon = <
+    Gennaio    Febbraio  Marzo     Aprile
+    Maggio     Giugno    Luglio    Agosto
+    Settembre  Ottobre   Novembre  Dicembre
+>;
 
 # 2
-constant $dow = %(
-    1, 'lunedì',  2, 'martedì', 3, 'mercoledì', 4, 'giovedì',
-    5, 'venerdì', 6, 'sabato',  7, 'domenica'
-);
+constant $dow = <
+    lunedì  martedì mercoledì giovedì
+    venerdì sabato  domenica
+>;
 
 #=== THREE-LETTER ABBREVIATIONS ======================================
 # 3
-constant $mon3 = %(
-    1, '',  2, '',  3, '',  4, '',
-    5, '',  6, '',  7, '',  8, '',
-    9, '', 10, '', 11, '', 12, ''
-);
+constant $mon3 = <
+>;
 
 # 4
-constant $dow3 = %(
-    1, '', 2, '', 3, '', 4, '',
-    5, '', 6, '', 7, ''
-);
+constant $dow3 = <
+>;
 
 #=== TWO-LETTER ABBREVIATIONS ========================================
 # 5
-constant $mon2  = %(
-    1, '',  2, '',  3, '',  4, '',
-    5, '',  6, '',  7, '',  8, '',
-    9, '', 10, '', 11, '', 12, ''
-);
+constant $mon2 = <
+>;
 
 # 6
-constant $dow2 = %(
-    1, '', 2, '', 3, '', 4, '',
-    5, '', 6, '', 7, ''
-);
+constant $dow2 = <
+>;
 
 #=== MIXED-LENGTH ABBREVIATIONS ======================================
 # 7
-constant $mona  = %(
-    1, '',  2, '',  3, '',  4, '',
-    5, '',  6, '',  7, '',  8, '',
-    9, '', 10, '', 11, '', 12, ''
-);
+constant $mona = <
+>;
 
 # 8
-constant $dowa  = %(
-    1, '', 2, '', 3, '', 4, '',
-    5, '', 6, '', 7, ''
-);
+constant $dowa = <
+>;
