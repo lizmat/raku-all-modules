@@ -22,7 +22,7 @@ OO::Plugin::Manager - the conductor for a plugin orchestra.
 
 =head1 DESCRIPTION
 
-Most of the description for the functionality of this module can be found in L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md>. Here we just cover
+Most of the description for the functionality of this module can be found in L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md>. Here we just cover
 the technical details and attributes/methods.
 
 =head1 TYPES
@@ -35,8 +35,8 @@ Constants defining where the user whants to have a particular plugin:
 =item C<plugNormal> – in the middle of the list
 =item C<plugLast> – in the end of the list
 
-Read about L<sorting|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md#sorting> in
-L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md>.
+Read about L<sorting|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#sorting> in
+L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md>.
 
 =end pod
 
@@ -597,7 +597,7 @@ Initiate a callback named C<$callback-name>. Passes C<callback-params> to plugin
 Method returns what callback handler requested to return.
 
 Read more in
-L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md#callbacks>.
+L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#callbacks>.
 =end pod
 
 method callback( Str:D $cb-name where ? *, |params ) {
@@ -665,7 +665,7 @@ Returns a C<Promise> which will be kept upon this particular event is completely
 are completed. The promise is resolved to an array of C<Promise>s, one per each event handler been called.
 
 Read more in
-L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md#events>.
+L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#events>.
 
 See also L<C<finish>|#routine-finish>.
 =end pod
@@ -744,7 +744,7 @@ C<class( MyClass )>
 One of the two key methods of this class. For a given class it creates a newly generated one with all C<plug-class>es
 and method handlers applied. All the magic this framework provides with regard to extending application classes
 functionality through delegating to the plugins is only possible after calling this method. Read more in
-L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md#basics>.
+L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#basics>.
 =end pod
 
 method class ( Any:U \type --> Any:U ) is raw {
@@ -771,7 +771,7 @@ method class ( Any:U \type --> Any:U ) is raw {
 C<create( MyClass, |constructor-params )>
 
 Creates a new instance for class C<MyClass> with all the magic applied, as described for L<method C<class>|#class> and
-in L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md#basics>. This
+in L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#basics>. This
 method is what must be used in place of the standard C<new>.
 =end pod
 
@@ -1394,10 +1394,10 @@ method !dbg (*@msg) {
 
 =head1 SEE ALSO
 
-L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md>,
-L<OO::Plugin|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin.md>,
-L<OO::Plugin::Class|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Class.md>
-L<OO::Plugin::Registry|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Registry.md>,
+L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md>,
+L<OO::Plugin|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md>,
+L<OO::Plugin::Class|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md>
+L<OO::Plugin::Registry|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Registry.md>,
 
 =AUTHOR  Vadim Belman <vrurg@cpan.org>
 

@@ -177,7 +177,7 @@ D, C, B, A</pre>
 <h3 id="How_Ordering_Is_Used?"><a class="u" href="#___top" title="go to top of document">How Ordering Is Used?</a></h3>
 <p>This will be covered in the section below.</p>
 <h2 id="Writing_A_Plugin"><a class="u" href="#___top" title="go to top of document">Writing A Plugin</a></h2>
-<p>A plugin is an instance of a class inheriting from a <code>Plugin</code> class defined in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a> module. To reduce the boilerplate and provide better readability of the code special class declarator <code>plugin</code> is provided:</p>
+<p>A plugin is an instance of a class inheriting from a <code>Plugin</code> class defined in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a> module. To reduce the boilerplate and provide better readability of the code special class declarator <code>plugin</code> is provided:</p>
 <pre class="pod-block-code">plugin MyPlugin {
     ...
 }</pre>
@@ -417,8 +417,8 @@ class Bar {
         ...
     }
 }</pre>
-<p>The outcome of applying the trait differs depending on wether the plugin manager is in <em>strict</em> or <em>loose</em> mode. In the former case it will raise an error for any attempt to override an unpluggable class or attach a handler to an unpluggable method. In the latter case (which is the default) any class or method is considered pluggable and gets registed as such with <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Registry.md">OO::Plugin::Registry</a>.</p>
-<p>A user can request a registry of pluggables from <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Registry.md#method-pluggable-classes">OO::Plugin::Registry</a>. This information can be used, for example, to provide a plugin developer with the information about what objects are opened for &quot;suggestions&quot;.</p>
+<p>The outcome of applying the trait differs depending on wether the plugin manager is in <em>strict</em> or <em>loose</em> mode. In the former case it will raise an error for any attempt to override an unpluggable class or attach a handler to an unpluggable method. In the latter case (which is the default) any class or method is considered pluggable and gets registed as such with <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Registry.md">OO::Plugin::Registry</a>.</p>
+<p>A user can request a registry of pluggables from <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Registry.md#method-pluggable-classes">OO::Plugin::Registry</a>. This information can be used, for example, to provide a plugin developer with the information about what objects are opened for &quot;suggestions&quot;.</p>
 <p>Note though that in <em>loose</em> mode the manager will register any class or method requested by a plugin as pluggable. This functionality is considered experimental and might be a subject for change in the future.</p>
 <h2 id="Traits"><a class="u" href="#___top" title="go to top of document">Traits</a></h2>
 <p>The framework provides a couple of traits. They were mostly noted in this manual, but it worth listing them all together in this section.</p>
@@ -453,7 +453,7 @@ class Bar {
 <p>This one is also a pseudo-trait in the same meaning, as the previously noted ordering traits. It can only be applied to a <code>plug-class</code>. Another similarity to the ordering traits is that <code>for</code> accepts list of unquoted names. Though this time it&#39;s a list of classes the related <code>plug-class</code> plans to extend. Short class names are allowed too but with the same precaution about possible duplicates.</p>
 <p><strong>NOTE</strong> Be very careful about mistypes in <code>for</code> declaration. There is no way to make sure that a missing class name is because it is wrongly spelled or because it wasn&#39;t requested by application code.</p>
 <h1 id="SEE_ALSO"><a class="u" href="#___top" title="go to top of document">SEE ALSO</a></h1>
-<p><a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin.md">OO::Plugin</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a> <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Registry.md">OO::Plugin::Registry</a></p>
+<p><a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md">OO::Plugin</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a> <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Registry.md">OO::Plugin::Registry</a></p>
 <section><h1>AUTHOR</h1>
 <p>Vadim Belman &lt;vrurg@cpan.org&gt;</p>
 </section>

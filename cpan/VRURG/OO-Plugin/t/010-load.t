@@ -2,9 +2,11 @@ use v6;
 use Test::When <release>;
 BEGIN {
     use Test;
-    my $proc = run "./build-tools/pre-install-mod.p6", "./t/p6-Foo-Plugin-Test";
-    unless $proc.exitcode == 0 {
-        bail-out "Can't install package Foo::Plugin::Test";
+    if %*ENV<RELEASE_TESTING> {
+        my $proc = run "./build-tools/pre-install-mod.p6", "./t/p6-Foo-Plugin-Test";
+        unless $proc.exitcode == 0 {
+            bail-out "Can't install package Foo::Plugin::Test";
+        }
     }
 }
 use lib <t/lib build-tools/lib inst#.test-repo>;

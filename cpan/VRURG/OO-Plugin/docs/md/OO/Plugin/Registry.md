@@ -11,7 +11,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-This module provides process-wide registration functionality for keeping track of various objects related to `OO::Plugin` framework. Most of the needed functionality is provided via higher-level means by [OO::Plugin](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin.md) and [OO::Plugin::Manager](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manager.md) modules and described in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md).
+This module provides process-wide registration functionality for keeping track of various objects related to `OO::Plugin` framework. Most of the needed functionality is provided via higher-level means by [OO::Plugin](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md) and [OO::Plugin::Manager](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manager.md) modules and described in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md).
 
 EXPORTS
 =======
@@ -69,7 +69,7 @@ Registers or returns plugin's meta.
 
 ### method pluggable-classes
 
-Returns all classes registered as pluggable. Consider the [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md#pluggables) with regard to *strict* or *loose* modes of operation of the plugin manger class.
+Returns all classes registered as pluggable. Consider the [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#pluggables) with regard to *strict* or *loose* modes of operation of the plugin manger class.
 
 ### method is-pluggable
 
@@ -178,7 +178,7 @@ Returns a copy of inventory hash. It currently only has one key: *autogen-classs
 SEE ALSO
 ========
 
-[OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manual.md), [OO::Plugin](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin.md) [OO::Plugin::Manager](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Manager.md), [OO::Plugin::Class](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.904/docs/md/OO/Plugin/Class.md)
+[OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md), [OO::Plugin](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md) [OO::Plugin::Manager](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manager.md), [OO::Plugin::Class](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md)
 
 AUTHOR
 ======

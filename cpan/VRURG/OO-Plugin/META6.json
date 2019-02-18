@@ -1,51 +1,50 @@
 {
-  "version": "0.0.904",
-  "auth": "github:vrurg",
-  "production": false,
-  "perl": "6.d",
-  "provides": {
-    "OO::Plugin::Class": "lib/OO/Plugin/Class.pm6",
-    "OO::Plugin::Metamodel::PlugRoleHOW": "lib/OO/Plugin/Metamodel/PlugRoleHOW.pm6",
-    "OO::Plugin": "lib/OO/Plugin.pm6",
-    "OO::Plugin::Manager": "lib/OO/Plugin/Manager.pm6",
-    "OO::Plugin::Metamodel::PluginHOW": "lib/OO/Plugin/Metamodel/PluginHOW.pm6",
-    "OO::Plugin::Declarations": "lib/OO/Plugin/Declarations.pm6",
-    "OO::Plugin::Exception": "lib/OO/Plugin/Exception.pm6",
-    "OO::Plugin::Registry": "lib/OO/Plugin/Registry.pm6"
-  },
-  "tags": [
-    "OO",
-    "Plugin",
-    "Plugins"
-  ],
-  "support": {
-    "source": "https://github.com/vrurg/Perl6-OO-Plugin.git"
-  },
-  "description": "Framework for working with OO application plugins",
-  "authors": [
-    "Vadim Belman <vrurg@cpan.org>"
-  ],
-  "meta-version": "0",
-  "resources": [
-    
-  ],
+  "license": "Artistic-2.0",
   "test-depends": [
     "Test",
     "Test::META",
-    "Test::When",
-    "App::Prove6"
+    "Test::When"
   ],
-  "build-depends": [
-    "META6",
-    "p6doc",
-    "Pod::To::Markdown"
+  "version": "0.0.905",
+  "production": false,
+  "resources": [
+    
   ],
-  "source-url": "git://github.com/vrurg/Perl6-OO-Plugin.git",
+  "meta-version": "0",
+  "provides": {
+    "OO::Plugin::Metamodel::PlugRoleHOW": "lib/OO/Plugin/Metamodel/PlugRoleHOW.pm6",
+    "OO::Plugin": "lib/OO/Plugin.pm6",
+    "OO::Plugin::Metamodel::PluginHOW": "lib/OO/Plugin/Metamodel/PluginHOW.pm6",
+    "OO::Plugin::Declarations": "lib/OO/Plugin/Declarations.pm6",
+    "OO::Plugin::Manager": "lib/OO/Plugin/Manager.pm6",
+    "OO::Plugin::Registry": "lib/OO/Plugin/Registry.pm6",
+    "OO::Plugin::Exception": "lib/OO/Plugin/Exception.pm6",
+    "OO::Plugin::Class": "lib/OO/Plugin/Class.pm6"
+  },
+  "auth": "github:vrurg",
+  "perl": "6.d",
+  "description": "Framework for working with OO application plugins",
+  "support": {
+    "source": "https://github.com/vrurg/Perl6-OO-Plugin.git"
+  },
   "depends": [
     "WhereList",
     "File::Find",
     "WhereList"
   ],
-  "license": "Artistic-2.0",
-  "name": "OO::Plugin"
+  "source-url": "git://github.com/vrurg/Perl6-OO-Plugin.git",
+  "tags": [
+    "OO",
+    "Plugin",
+    "Plugins"
+  ],
+  "authors": [
+    "Vadim Belman <vrurg@cpan.org>"
+  ],
+  "name": "OO::Plugin",
+  "build-depends": [
+    "META6",
+    "p6doc",
+    "Pod::To::Markdown"
+  ]
 }

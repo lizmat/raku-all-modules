@@ -9,9 +9,8 @@ MOD_ARCH=$(MOD_DISTRO).tar.gz
 META=META6.json
 META_BUILDER=./build-tools/gen-META.p6
 
-PROVE_CMD=PERL6LIB=./build-toold/lib prove6
-#PROVE_FLAGS=-l -I=./build-tools/lib
-PROVE_FLAGS=-l 
+PROVE_CMD=prove6
+PROVE_FLAGS=-l -I ./build-tools/lib
 TEST_DIRS=t
 PROVE=$(PROVE_CMD) $(PROVE_FLAGS) $(TEST_DIRS)
 
@@ -44,7 +43,7 @@ vpath %.pod6 $(dir $(POD_SRC))
 #vpath %.md $(MD_SUBDIRS)
 #vpath %.html $(HTML_SUBDIRS)
 
-.PHONY: all html test author-test release-test is-repo-clean build depends release meta6_mod meta \
+.PHONY: all html test author-test release-test is-repo-clean build depends depends-install release meta6_mod meta \
 		archive upload clean install doc md html docs_dirs doc_ver_patch version
 
 %.md $(addsuffix /%.md,$(MD_SUBDIRS)):: %.pm6
@@ -97,11 +96,12 @@ is-repo-clean:
 
 build: depends doc
 
-depends: meta
+depends: meta depends-install
+
+depends-install:
 	@echo "===> Installing dependencies"
 	@zef --deps-only install .
 
-# doc is duplicated on purpose
 version: doc meta clean
 	@git add . && git commit -m 'Minor: version bump'
 
