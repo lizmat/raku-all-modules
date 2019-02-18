@@ -1,12 +1,25 @@
 # PDF-ISO_32000-p6
 
-This library contains:
+The [PDF 32000-1:2008 1.7 Specification](http://www.adobe.com/content/dam/Adobe/en/devnet/acrobat/pdfs/PDF32000_2008.pdf) contains around 380 tables, of which about 280 can be considered data or object definitions.
 
-- XHTML tables that have been mined from the PDF-32000 1.7 specification.
-- JSON data for the tables
-- Perl 6 Roles for tables that represent PDF objects:
+The shear number of tables presents difficulties with cross referencing data against the specification and/or using the specification as a data dictionary for implementing classes and/or reading and validating PDF files.
 
-The roles are named ISO_32000::Xxxx and contain method stubs and documentation for each entry in the role
+Perusing the specification with a standard PDF reader isn't much fun. Visually, there's a table of contents, but that's it. Not even an index. There's a lot to wade through, which can make the analysis real-world PDF files a slog.
+
+Fortunately at least the PDF specification file is itself a tagged PDF, so we have some ability to automatically extract content, which is exactly what this module has done. Extraction has been limited to tables. These are considered the most important and easily extracted from PDF files.
+
+This repo contains resources that have been extracted from the specification, along with the scripts and make-files used to drive the extraction.
+
+Resources include:
+
+- a copy of the source [PDF-32000 specification](src/PDF32000_2008.pdf)
+- A list of [tables and entries](#tables-and-entries)
+- A reverse list mapping [entries to tables](#entry-to-table-mappings)
+- [JSON Tables](resources) extracted from the above
+- [generated Perl 6 interface roles](gen/lib/ISO_32000) for building and validating PDF objects
+ XHTML tables that have been mined from the PDF-32000 1.7 specification.
+
+The Perl 6 roles are named ISO_32000::Xxxx and contain method stubs and documentation for each entry in the role
 
 
 ## Tables
@@ -57,21 +70,6 @@ EOF
 Method 'SpiderInfo' must be implemented by Catalog because it is required by roles: ISO_32000::Catalog.
 at lib/Catalog.pm6 (Catalog):1
 ```
-This module contains:
-
-- a copy of the [PDF-32000 specification](src/PDF32000_2008.pdf)
-- [JSON Table](resources) extracted from the above
-- [generated interface roles](gen/lib/ISO_32000) for building and validating PDF objects
-- scripts and Makefiles for regenerating the XML tables and roles
-
-todo: run-time introspection of resources and generated artefacts, e.g.:
-
-```
-use PDF::ISO_32000;
-PDF::ISO_32000.table[28].xhtml;          # ?? access extracted xhtml by table number ??
-PDF::ISO_32000.table[28].json;           # ?? access converted json by table number ??
-PDF::ISO_32000.table<Catalog>.interface; # ?? access generated role by table name ??
-```
 
 ## Scripts in this Distribution
 
@@ -82,11 +80,11 @@ Dumps tagged PDF content as XML.
 At the moment just does enough to semi-reliably extract content from the PDF ISO-32000 specification documents. Could evolve into a general purpose tool for mining elements from tagged PDF's. 
 
 
-## ISO 3200 Roles
+## ISO 3200 Tables
 
 The following interface roles have been mined from the ISO-32000 specification
 
-### Roles and Entries
+### Tables and Entries
 
 
 ISO_32000 Reference|Role|Entries
@@ -356,7 +354,7 @@ Table 359 – Entries in a Web Capture command settings dictionary|[Web_capture_
 Table 188 – Additional entries specific to a widget annotation|[Widget_annotation_additional](gen/lib/ISO_32000/Widget_annotation_additional.pm6)|/Subtype /H /MK /A /AA /BS /Parent
 Table 204 – Entries in a Windows launch parameter dictionary|[Windows_launch_parameters](gen/lib/ISO_32000/Windows_launch_parameters.pm6)|/F /D /O /P
 
-## Entry to role mappings
+## Entry to table mappings
 
 Entry|ISO_32000 Roles
 ----|-----
