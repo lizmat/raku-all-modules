@@ -66,7 +66,7 @@ params are passed as positionals. For example:
 
     params => { a => 1, b => "aa" }
 
-will match to 
+will match to
 
     method foo ( Int :$a, Str :$b ) { ... }
 
@@ -100,6 +100,7 @@ package Cro::RPC::JSON {
     multi json-rpc ( Code $block ) {
         #note "Creating pipeline with handler ", $block;
 
+        # note "JSON-RPC CRO-ROUTER-RESPONSE: ", $*CRO-ROUTER-RESPONSE // "*not defined*";
         my $request = request;
         my $response = response;
 
@@ -113,23 +114,24 @@ package Cro::RPC::JSON {
         );
         #note "GEN RESPONSE";
         CATCH {
-            #note "PROCESSING EXCEPTION ", $_.WHO, " ", ~$_, $_.backtrace;
+            # note "PROCESSING EXCEPTION ", $_.WHO, " ", ~$_, $_.backtrace;
             when X::Cro::RPC::JSON {
                 #note "STATUS CODE FROM EXCEPTION: ", $_.http-code;
                 $response.status = $_.http-code;
             }
-            default { 
-                #note "CAUGHT EXCEPTION: ", $_.WHO;
-                response.status = 500;
+            default {
+                # note "CAUGHT EXCEPTION: ", $_.WHO;
+                $response.status = 500;
                 content 'text/plain', '500 ' ~ $_;
             }
         };
         react {
-            whenever $pipeline.transformer(
-                supply { emit $request }
-            ) -> $msg {
-                #note "MSG: ", $msg.perl;
-                content 'application/json', $msg.json-body;
+            whenever $pipeline.transformer( supply { emit $request } ) -> $msg {
+                # note "MSG: ", $msg.perl;
+                # note "REACT IN JSON-RPC CRO-ROUTER-RESPONSE: ", $*CRO-ROUTER-RESPONSE // "*not defined*";
+                $response.append-header('Content-type', qq[application/json; charset=utf-8]);
+                $response.set-body($msg.json-body);
+                $response.status = 200;
             }
         }
     }
@@ -159,7 +161,7 @@ package Cro::RPC::JSON {
             if $method.candidates[0].multi or (
                 $signature.arity != 2 # 2 because method's arity includes self
                     or $signature.count != 2
-                    or $signature.params[1].type !~~ Cro::RPC::JSON::Request 
+                    or $signature.params[1].type !~~ Cro::RPC::JSON::Request
             ) {
                 $params = $req.params;
             }
@@ -185,9 +187,9 @@ package Cro::RPC::JSON {
                     }
                     default {
                         #note "INTERNAL FAIL [{$_.WHO}]: ", ~$_, ~$_.backtrace;
-                        X::Cro::RPC::JSON::InternalError.new( 
+                        X::Cro::RPC::JSON::InternalError.new(
                             msg  => ~$_,
-                            data => %( 
+                            data => %(
                                 exception => $_.^name,
                                 backtrace => ~$_.backtrace,
                             ),
@@ -293,4 +295,3 @@ See the LICENSE file in this distribution.
 =end pod
 
 # Copyright (c) 2018, Vadim Belman <vrurg@cpan.org>
-

@@ -35,14 +35,14 @@ subtest "Basics", {
             json => [
                 { jsonrpc => "2.0", id => 321, result => { a=>1, b=>2 } },
                 { jsonrpc => "2.0", id => 322, result => { a=>1, b=>2 } },
-                { 
+                {
                     jsonrpc => "2.0",
                     error   => {
                         code    => JRPCInvalidRequest,
                         message => "Missing required 'jsonrpc' key",
                     },
                 },
-                { 
+                {
                     jsonrpc => "2.0",
                     id      => 324,
                     error   => {
@@ -50,7 +50,7 @@ subtest "Basics", {
                         message => "Invalid jsonrpc version: 1.0",
                     },
                 },
-                { 
+                {
                     jsonrpc => "2.0",
                     id      => 325,
                     error   => {
@@ -100,13 +100,13 @@ subtest "Actor Class" => {
 
         $id++;
 
-        test post( 
-                'api', 
+        test post(
+                'api',
                 json => {
                     jsonrpc => "2.0",
-                    id      => $id, 
-                    method  => "bar", 
-                    params  => { :t("Їхав до бабусі один сірий гусик"), :p("π"), :e(e) } 
+                    id      => $id,
+                    method  => "bar",
+                    params  => { :t("Їхав до бабусі один сірий гусик"), :p("π"), :e(e) }
                 },
                 content-type => "application/json; charset=UTF-8",
             ),
@@ -114,8 +114,8 @@ subtest "Actor Class" => {
             json => {
                 jsonrpc => "2.0",
                 id      => $id,
-                result  => [ 
-                    "slurpy hash:", 
+                result  => [
+                    "slurpy hash:",
                     { :t("Їхав до бабусі один сірий гусик"), :p("π"), :e(e) }
                 ],
             };
@@ -135,7 +135,7 @@ subtest "Actor Class" => {
             };
 
         $id++;
- 
+
         test post('api', json => { jsonrpc=>"2.0", id => $id, method => "no-method" }),
             status => 200,
             json   => {
@@ -160,14 +160,14 @@ subtest "Actor Class" => {
             test post('api', json => { jsonrpc=>"2.0", id => $id, method => "mortal", params => { a => 2, b => "two" } }),
                 status => 200,
                 json   => {
-                    jsonrpc => "2.0", 
-                    id      => $id, 
-                    error   => { 
-                        code    => JRPCInternalError, 
+                    jsonrpc => "2.0",
+                    id      => $id,
+                    error   => {
+                        code    => JRPCInternalError,
                         message => "Simulate... well... something",
                         data    => {
                             exception => 'X::AdHoc',
-                            backtrace => / .* /,
+                            backtrace => rx/ .* /,
                         },
                     }
                 };

@@ -60,7 +60,7 @@ If the only parameter of a JSON-RPC method has `Cro::RPC::JSON::Request` type th
 
     params => { a => 1, b => "aa" }
 
-will match to 
+will match to
 
     method foo ( Int :$a, Str :$b ) { ... }
 

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/vrurg/Perl6-Cro-RPC-JSON.git
 	branch = master
-	commit = 86089c48b341d7ceaea659cd9d08bd08ea123559
-	parent = 73faaf2f0450ead29cbd40519bd05fbc9541c73f
+	commit = 4d78d4601bdeb71b66997a45d0b57a0ef22aadf9
+	parent = 87e23600f0456d36bf0e4435496f190e6c7f3be4
 	cmdver = 0.3.1

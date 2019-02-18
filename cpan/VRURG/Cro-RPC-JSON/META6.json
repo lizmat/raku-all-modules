@@ -1,45 +1,45 @@
 {
-  "auth": "github:vrurg",
-  "provides": {
-    "Cro::RPC::JSON::Exception": "lib/Cro/RPC/JSON/Exception.pm6",
-    "Cro::RPC::JSON::RequestParser": "lib/Cro/RPC/JSON/RequestParser.pm6",
-    "Cro::RPC::JSON::ResponseSerializer": "lib/Cro/RPC/JSON/ResponseSerializer.pm6",
-    "Cro::RPC::JSON::Message": "lib/Cro/RPC/JSON/Message.pm6",
-    "Cro::RPC::JSON::Handler": "lib/Cro/RPC/JSON/Handler.pm6",
-    "Cro::RPC::JSON": "lib/Cro/RPC/JSON.pm6"
-  },
-  "perl": "6.*",
-  "production": false,
-  "test-depends": [
-    "Test",
-    "Test::META",
-    "Test::When",
-    "Cro::HTTP::Test"
-  ],
-  "source-url": "git://github.com/vrurg/Perl6-Cro-RPC-JSON.git",
-  "tags": [
-    "Cro",
-    "JSON-RPC"
-  ],
+  "license": "Artistic-2.0",
   "support": {
     "source": "https://github.com/vrurg/Perl6-Cro-RPC-JSON.git"
   },
-  "version": "0.0.900",
   "resources": [
     
   ],
   "build-depends": [
     
   ],
-  "description": "Cro JSON-RPC implementation",
-  "name": "Cro::RPC::JSON",
-  "license": "Artistic-2.0",
+  "test-depends": [
+    "Test",
+    "Test::META",
+    "Test::When",
+    "Cro::HTTP::Test"
+  ],
   "depends": [
     "Cro::HTTP",
     "JSON::Fast"
   ],
+  "provides": {
+    "Cro::RPC::JSON": "lib/Cro/RPC/JSON.pm6",
+    "Cro::RPC::JSON::Message": "lib/Cro/RPC/JSON/Message.pm6",
+    "Cro::RPC::JSON::ResponseSerializer": "lib/Cro/RPC/JSON/ResponseSerializer.pm6",
+    "Cro::RPC::JSON::RequestParser": "lib/Cro/RPC/JSON/RequestParser.pm6",
+    "Cro::RPC::JSON::Exception": "lib/Cro/RPC/JSON/Exception.pm6",
+    "Cro::RPC::JSON::Handler": "lib/Cro/RPC/JSON/Handler.pm6"
+  },
+  "tags": [
+    "Cro",
+    "JSON-RPC"
+  ],
   "authors": [
     "Vadim Belman <vrurg@cpan.org>"
   ],
-  "meta-version": "0"
+  "auth": "github:vrurg",
+  "perl": "6.*",
+  "description": "Cro JSON-RPC implementation",
+  "version": "0.0.906",
+  "production": false,
+  "source-url": "git://github.com/vrurg/Perl6-Cro-RPC-JSON.git",
+  "meta-version": "0",
+  "name": "Cro::RPC::JSON"
 }
