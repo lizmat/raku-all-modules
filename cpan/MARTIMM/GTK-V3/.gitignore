@@ -1,0 +1,13 @@
+.precomp
+*/.precomp
+.directory
+Sandbox/*
+*.html
+*.xml
+*.xsl
+*.log
+spellTmp*
+Old/*
+~*
+t/Travis-ci/*.tgz
+tests/Pencil*
