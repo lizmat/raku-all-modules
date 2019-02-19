@@ -1,0 +1,14 @@
+{
+    "perl"        : "6.c",
+    "name"        : "HTML::Canvas::To::PDF",
+    "version"     : "0.0.2",
+    "auth"        : "github:p6-pdf",
+    "description" : "PDF Rendering backend for the HTML Canvas (2D) API",
+    "depends"     : [ "HTML::Canvas", "JSON::Fast", "PDF::Lite", "PDF::Content", "Color", "PDF::Font::Loader", "CSS::Properties" ],
+    "license"     : "Artistic-2.0",
+    "tags"        : [ "html", "javascript", "pdf" ],
+    "source-url"  : "git://github.com/p6-pdf/HTML-Canvas-To-PDF-p6.git",
+    "provides"    : {
+        "HTML::Canvas::To::PDF"  : "lib/HTML/Canvas/To/PDF.pm6"
+     }
+}

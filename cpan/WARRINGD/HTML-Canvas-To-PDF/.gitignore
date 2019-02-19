@@ -1,0 +1,9 @@
+*~
+.*
+*#*
+Makefile
+blib/
+tmp/
+*.pdf
+*.html
+HTML-Canvas-To-PDF-*
