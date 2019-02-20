@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/RPi-Device-PiGlow.git
+	branch = master
+	commit = d93fdfb12b4c1f6a8fa566df6f5a5891c704b852
+	parent = 2363ebe532d9763b00b4790ce4c1ddcf6e055cb9
+	cmdver = 0.3.1

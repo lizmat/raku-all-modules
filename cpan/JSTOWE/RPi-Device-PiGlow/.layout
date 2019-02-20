@@ -1,0 +1,88 @@
+{
+  "type": "layout",
+  "children": [
+    {
+      "type": "file",
+      "name": "Changes"
+    },
+    {
+      "name": "t",
+      "purpose": null,
+      "type": "directory",
+      "children": [
+        {
+          "name": "010-use.t",
+          "type": "file"
+        },
+        {
+          "name": "001-meta.t",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "README.md"
+    },
+    {
+      "children": [
+        {
+          "type": "file",
+          "name": "piglow-ring.pl"
+        },
+        {
+          "type": "file",
+          "name": "piglow-pulse.pl"
+        },
+        {
+          "name": "piglow-colours.pl",
+          "type": "file"
+        },
+        {
+          "type": "file",
+          "name": "piglow-party.pl"
+        },
+        {
+          "type": "file",
+          "name": "piglow-rotate.pl"
+        }
+      ],
+      "name": "examples",
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "name": "lib",
+      "purpose": null,
+      "type": "directory",
+      "children": [
+        {
+          "children": [
+            {
+              "name": "Device",
+              "purpose": null,
+              "type": "directory",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "PiGlow.pm"
+                }
+              ]
+            }
+          ],
+          "type": "directory",
+          "purpose": null,
+          "name": "RPi"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "LICENCE"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    }
+  ]
+}
