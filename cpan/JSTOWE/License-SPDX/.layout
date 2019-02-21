@@ -1,0 +1,76 @@
+{
+  "children": [
+    {
+      "name": "t",
+      "children": [
+        {
+          "type": "file",
+          "name": "001-meta.t"
+        },
+        {
+          "name": "020-methods.t",
+          "type": "file"
+        },
+        {
+          "name": "010-use.t",
+          "type": "file"
+        }
+      ],
+      "purpose": null,
+      "type": "directory"
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "type": "directory",
+      "purpose": null,
+      "children": [
+        {
+          "type": "directory",
+          "children": [
+            {
+              "name": "licenses.json",
+              "type": "file"
+            }
+          ],
+          "purpose": null,
+          "name": "data"
+        }
+      ],
+      "name": "resources"
+    },
+    {
+      "type": "directory",
+      "children": [
+        {
+          "purpose": null,
+          "children": [
+            {
+              "name": "SPDX.pm",
+              "type": "file"
+            }
+          ],
+          "name": "License",
+          "type": "directory"
+        }
+      ],
+      "purpose": null,
+      "name": "lib"
+    },
+    {
+      "name": "META6.json",
+      "type": "file"
+    },
+    {
+      "name": "Changes",
+      "type": "file"
+    },
+    {
+      "name": "LICENCE",
+      "type": "file"
+    }
+  ],
+  "type": "layout"
+}

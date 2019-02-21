@@ -1,0 +1,34 @@
+{
+  "name": "License::SPDX",
+  "description": "The SPDX licence list",
+  "version": "3.4.0",
+  "auth": "github:jonathanstowe",
+  "api": "1.0",
+  "support": {
+    "email": "jns+gh@gellyfish.co.uk",
+    "source": "https://github.com/jonathanstowe/License-SPDX.git"
+  },
+  "perl": "6.d",
+  "test-depends": [ ],
+  "license": "Artistic-2.0",
+  "tags": [
+     "licence",
+     "license",
+     "SPDX"
+  ],
+  "resources": [
+	"data/licenses.json"
+  ],
+  "build-depends": [ ],
+  "source-url": "https://github.com/jonathanstowe/License-SPDX.git",
+  "depends": [
+	"JSON::Class"
+  ],
+  "provides": {
+	"License::SPDX" : "lib/License/SPDX.pm"
+  },
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ],
+  "meta-version": "0"
+}
