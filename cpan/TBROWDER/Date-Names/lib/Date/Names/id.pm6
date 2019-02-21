@@ -1,9 +1,9 @@
-unit module Date::Names::it;
+unit module Date::Names::id;
 
-#********
-# <name of your language in its native script>
-# Italian
-#********
+#******************
+# Bahasa Indonesia
+# Indonesian
+#******************
 
 # IMPORTANT:
 #
@@ -24,24 +24,28 @@ unit module Date::Names::it;
 #=== FULL NAMES ======================================================
 # 1
 our $mon = <
-    Gennaio    Febbraio  Marzo     Aprile
-    Maggio     Giugno    Luglio    Agosto
-    Settembre  Ottobre   Novembre  Dicembre
+    Januari    Februari	 Maret     April
+    Mei        Juni      Juli      Agustus
+    September  Oktober   November  Desember
 >;
 
 # 2
 our $dow = <
-    lunedì  martedì mercoledì giovedì
-    venerdì sabato  domenica
+    Senin  Selasa  Rabu    Kamis
+    Jumat  Sabtu   Minggu
 >;
 
 #=== THREE-LETTER ABBREVIATIONS ======================================
 # 3
 our $mon3 = <
+    Jan  Feb  Mar  Apr  Mei  Jun
+    Jul  Agu  Sep  Okt  Nov  Des
 >;
 
 # 4
 our $dow3 = <
+    Sen  Sel  Rab  Kam
+    Jum  Sab  Min
 >;
 
 #=== TWO-LETTER ABBREVIATIONS ========================================

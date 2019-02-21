@@ -1,6 +1,6 @@
 unit module T::F::en;
 
-constant $dow = <
+our $dow = <
 mon
 tue
 wed

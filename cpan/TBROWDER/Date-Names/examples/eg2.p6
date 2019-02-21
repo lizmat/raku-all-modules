@@ -18,6 +18,6 @@ for 1..7 -> $n {
 say "";
 say "Russian month names:";
 for 1..12  -> $n {
-    my $v = $mon[$n];
+    my $v = $mon[$n-1];
     say "  month $n: $v";
 }

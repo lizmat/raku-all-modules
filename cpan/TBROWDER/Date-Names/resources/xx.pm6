@@ -25,36 +25,36 @@ unit module Date::Names::xx;
 
 #=== FULL NAMES ======================================================
 # 1
-constant $mon = <
+our $mon = <
 >;
 
 # 2
-constant $dow = <
+our $dow = <
 >;
 
 #=== THREE-LETTER ABBREVIATIONS ======================================
 # 3
-constant $mon3 = <
+our $mon3 = <
 >;
 
 # 4
-constant $dow3 = <
+our $dow3 = <
 >;
 
 #=== TWO-LETTER ABBREVIATIONS ========================================
 # 5
-constant $mon2 = <
+our $mon2 = <
 >;
 
 # 6
-constant $dow2 = <
+our $dow2 = <
 >;
 
 #=== MIXED-LENGTH ABBREVIATIONS ======================================
 # 7
-constant $mona = <
+our $mona = <
 >;
 
 # 8
-constant $dowa = <
+our $dowa = <
 >;

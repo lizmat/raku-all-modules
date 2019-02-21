@@ -1,10 +1,10 @@
 add @other ss an array of names of other data sets
 
-Now: hash to array
+Now:
      class must have basic features
      possibility of individual class attributes such as must have periods
      code vs. abbreviation attr on an array
-     separate class for setssarrays?
+     separate class for sets arrays?
      better intro
 
 Planned improvements:

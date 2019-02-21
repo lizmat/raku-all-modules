@@ -23,39 +23,39 @@ unit module Date::Names::nl;
 
 #=== FULL NAMES ======================================================
 # 1
-constant $mon = <
+our $mon = <
     januari    februari  maart     april
     mei        juni      juli      augustus
     september  oktober   november  december
 >;
 
 # 2
-constant $dow = <
+our $dow = <
     maandag  dinsdag   woensdag  donderdag
     vrijdag  zaterdag  zondag
 >;
 
 #=== THREE-LETTER ABBREVIATIONS ======================================
 # 3
-constant $mon3 = <
+our $mon3 = <
     jan  feb  maa  apr
     mei  jun  jul  aug
     sep  okt  nov  dec
 >;
 
 # 4
-constant $dow3 = <
+our $dow3 = <
     maa  din  woe  don
     vri  zat  zon
 >;
 
 #=== TWO-LETTER ABBREVIATIONS ========================================
 # 5
-constant $mon2  = <
+our $mon2  = <
 >;
 
 # 6
-constant $dow2 = <
+our $dow2 = <
     ma  di  wo  do
     vr  za  zo
 >;
@@ -63,9 +63,9 @@ constant $dow2 = <
 
 #=== MIXED-LENGTH ABBREVIATIONS ======================================
 # 7
-constant $mona  = <
+our $mona  = <
 >;
 
 # 8
-constant $dowa  = <
+our $dowa  = <
 >;
