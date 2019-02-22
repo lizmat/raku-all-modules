@@ -47,7 +47,7 @@ the numbers 1..12 and 1..7, respectively, primarily for use with
 Full names of the months and weekdays are currently available in the
 following nine languages:
 
-### Table 1. Language two-letter ISO codes (lower-case)
+### Table 1. Language ISO codes (lower-case)
 
 Language           | ISO code
 :---               | :---:
@@ -131,7 +131,7 @@ PULL REQUESTS
 
 Native language speakers please submit PRs to (1) complete the
 existing language abbreviations, (2), correct errors, and (3) provide
-more languages. See the [CONTRIBUTING](./CONTRIBUTING.md) file for
+more languages. See the [docs/CONTRIBUTING](./docs/CONTRIBUTING.md) file for
 details.
 
 CORRECTIONS & SUGGESTIONS
@@ -174,20 +174,32 @@ my $dn = Date::Names.new(
 
 ```
 
+Some helper methods:
+
+``` perl6
+my $dn = Date::Names.new;
+# how many non-empty data sets?
+$dn.nsets;
+# show the sets:
+$dn.sets
+# show all sets in all available languages
+$dn.show-all
+```
+
 ### Planned features:
 
 1. English language default [complete]
 2. Default month and weekday array choices [complete]
-3. User chooses truncation or padding [API complete]
-4. User chooses which month and weekday array to use [complete, var names may change]
-5. User chooses case of the output names [API complete]
+3. User chooses truncation or padding [API complete, needs tests]
+4. User chooses which month and weekday array to use [complete]
+5. User chooses case of the output names [API complete, needs tests]
 6. User can choose raw truncation on a full name, if permitted by the language [API partially complete]
-7. User can choose to have a period or not for abbreviations [API complete]
+7. User can choose to have a period or not for abbreviations [API complete, needs tests]
 
 ### Future features
 
 1. Language-specific attributes to affect class behavior (e.g., allow raw truncation or not)
-2. Add additional array names and types on a language basis
+2. Add additional array names and types on a language basis (automatically via a separate CLDR date module)
 3. Graceful messages if a desired array is empty [version 2+]
 4. Features desired by users
 
@@ -200,9 +212,16 @@ abbreviations, and truncation or padding as desired.
 VERSION 3
 =========
 
-The Date::Names class API will be fixed and all currently planned
-features will be implemented.
++ A CLDR module which can produce compatible language data for this module will be available.
 
++ Additionally, the CLDR date data set names will be mapped to the
+  current names where possible, and some short set names added if
+  necessary.
+
++ All CLDR data set names will also be available as aliases or native arrays.
+
++ The Date::Names class API will be fixed and all currently planned
+  features will be fully implemented and tested.
 
 ACKNOWLEDGEMENTS
 ================

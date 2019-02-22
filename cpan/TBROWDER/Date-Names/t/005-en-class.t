@@ -1,10 +1,9 @@
 use v6;
 use Test;
 
-plan 80;
+plan 49;
 
 use Date::Names;
-
 
 my $dn;
 
@@ -15,13 +14,16 @@ is $dn.dow(1), "Monday";
 is $dn.mon(1), "January";
 
 # special cases
-$dn = Date::Names.new: :lang<en>, :dset<dow2>, :mset<mon3>;
+$dn = Date::Names.new: :lang('en'), :dset('dow2'), :mset('mon3');
 is $dn.dow(1), "Mo";
 is $dn.mon(1), "Jan";
 
 # more
 for 1..12 -> $m {
-    for @mnames -> $n {
+    for @Date::Names::msets -> $n {
+        my $mm = $::Date::Names::en::($n);
+        next if !$mm.elems;
+
         my $d = Date::Names.new: :mset($n);
         my $v = $d.mon($m);
         if $v {
@@ -33,7 +35,10 @@ for 1..12 -> $m {
     }
 }
 for 1..7 -> $w {
-    for @dnames -> $n {
+    for @Date::Names::dsets -> $n {
+        my $dd = $::Date::Names::en::($n);
+        next if !$dd.elems;
+
         my $d = Date::Names.new: :dset($n);
         my $v = $d.dow($w);
         if $v {

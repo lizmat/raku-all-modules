@@ -3,8 +3,10 @@ unit class Date::Names;
 # Languages currently available:
 #
 #   de - German
+#   en - English
 #   es - Spanish
 #   fr - French
+#   id - Indonesian
 #   it - Italian
 #   nb - Norwegian
 #   nl - Dutch
@@ -177,14 +179,14 @@ method !define-attr-sets($L) {
     return %h;
 }
 
-method !handle-val-attrs(Str $val, :$is-abbrev!) {
+method !handle-val-attrs(Str $val is copy, :$is-abbrev!) {
     if !defined $val {
         die "FATAL: undefined \$val '{$val.^name}'";
     }
     # check for any changes that are to be made
     my $has-period = 0;
     my $nchars = $val.chars; # includes an ending period
-    if $val ~~ /^(\s+) '.'$/ {
+    if $val ~~ /^(\S+) '.'$/ {
         die "FATAL: found ending period in val $val (not an abbreviation)"
             if !$is-abbrev;
 
@@ -219,6 +221,9 @@ method !handle-val-attrs(Str $val, :$is-abbrev!) {
 
     # treat the period carefully, it may or may not
     # have been removed by now
+    if $val !~~ /'.'$/ && $has-period {
+        $val ~= '.';
+    }
 
     return $val;
 
@@ -301,37 +306,3 @@ method show-all {
         $d.show;
     }
 }
-
-=begin comment
-method make-test(:$dir, :$test-num, :$force)  {
-    if !$dir.IO.d {
-        die "FATAL: No dir '$dir' found.";
-    }
-
-    if $!debug {
-        say "Language {$!lang}:";
-        say "  non-empty sets ({%.s.elems} total):";
-    }
-
-    # create a file name
-    my $f = sprintf "%03d-{$!lang}-class.t";
-    if $f.IO.f {
-        note "NOTE: file '$f' exists";
-        if $force {
-            note "      overwriting'...";
-        }
-        else {
-            note "      NOT overwriting'...";
-            return;
-        }
-    }
-    my $fh = open $f, :w;
-    write-test $fh;
-    for %.s.keys.sort -> $k {
-        printf "  %-4s:", $k;
-        my $arr = %.s{$k};
-        print " '$_'" for @($arr);
-        say "";
-    }
-}
-=end comment

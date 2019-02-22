@@ -5,4 +5,4 @@ plan 1;
 
 use Date::Names;
 
-use-ok('Date::Names');
+use-ok 'Date::Names';

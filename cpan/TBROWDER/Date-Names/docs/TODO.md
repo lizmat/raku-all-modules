@@ -1,4 +1,4 @@
-add @other ss an array of names of other data sets
+add @others an array of names of other data sets
 
 Now:
      class must have basic features
@@ -14,3 +14,5 @@ Planned improvements:
 + Add more tests
 
 + Add usage examples
+
++ Add CLDR data use capability

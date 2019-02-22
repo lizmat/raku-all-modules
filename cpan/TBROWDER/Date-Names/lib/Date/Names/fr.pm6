@@ -60,16 +60,16 @@ our $dow2 = <
 
 #=== MIXED-LENGTH ABBREVIATIONS ======================================
 # 7
+# abbreviations "courante"
 our $mona = <
-    # abbreviations "courante"
     janv févr mars  avr
     mai  juin juill août
     sept oct  nov   déc
 >;
 
 # 8
+# abbreviations "courante"
 our $dowa = <
-    # abbreviations "courante"
     lundi mardi mercr jeudi
     vendr sam   dim
 >;

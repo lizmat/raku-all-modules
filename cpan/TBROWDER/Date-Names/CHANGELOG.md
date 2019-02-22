@@ -1,4 +1,4 @@
-## [v2.0.0] - 2019-02-13
+## [v2.0.0] - 2019-02-21
 - Permanently removed the hashes from lib/Date/Names.pm6
   so the original direct hash access syntax has changed
   (for the better IMHO).
@@ -14,13 +14,14 @@
 - Added full-name hash names to Table 2.
 - Added two example files, mainly to check correctness of
   code used in the README file.
-- Added exported list of standard hash names @hnames.
 - Standardized format of the basic eight hashes for each
   language and created a template file, xx.pm6, in the new
   resources directory.
-- Testing all filled hash values for module en (to be used 
-  as a template for other language models).
-
+- Added Indonesian language.
+- Added an automated test generator for new languages.
+- Removed 'export' from all symbols.
+- Added directories 'resources', 'sandbox', and 'docs'.
+- Moved all docs but README to docs directory.
 
 ## [v1.1.0] - 2019-02-11
 - Change description in META6.json file.

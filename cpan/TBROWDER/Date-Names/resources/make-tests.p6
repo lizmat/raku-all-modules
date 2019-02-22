@@ -7,7 +7,7 @@ my @langs = @Date::Names::langs;
 
 if !@*ARGS {
     say qq:to/HERE/;
-    Usage: $*PROGRAM go | debug [force]
+    Usage: $*PROGRAM go | -lang=L | debug [force]
 
     Writes test files for languages:
     HERE
@@ -17,12 +17,24 @@ if !@*ARGS {
     exit;
 }
 
-my $debug = @*ARGS ~~ /d/ ?? 1 !! 0;
-my $force = @*ARGS ~~ /f/ ?? 1 !! 0;
+my $debug = 0;
+my $force = 0;
+for @*ARGS {
+    when / '-'? 'lang=' (\S+) $/ {
+        @langs = ~$0;
+    }
+    when /^d/ {
+        $debug = 1;
+    }
+    when /^f/ {
+        $force = 1;
+    }
+}
+
 
 my @ofils;
-# number prefix for the test series:
-my $N = 5;
+# number prefix for the test series (00N):
+my $N = 7;
 for @langs -> $L {
 
     my %parts;
@@ -86,14 +98,14 @@ sub write-test-file($fh, :%data!, :%parts!, :$debug, :$lang!) {
 
     # data part 1
     write-test-file-data $fh, :%data, :data-part(1), :$debug,
-                         :$lang, :$N;
+                         :$lang;
 
     # part 2
     write-test-file-part $fh, :%parts, :part(2), :$debug, :$lang;
 
     # data part 2
     write-test-file-data $fh, :%data, :data-part(2), :$debug,
-                         :$lang, :$N;
+                         :$lang;
 
     # part 3 (FINAL)
     write-test-file-part $fh, :%parts, :part(3), :$debug, :$lang;
@@ -170,12 +182,19 @@ sub get-raw-lang-data(:$lang, :%data) {
     my $base  = "Date::Names";
     my $baseL = "Date::Names::{$lang}";
 
+    # If we know numbers of non-empty data sets of each
+    # type we can count numbers of tests for the plan.
+    my $ndsets = 0;
+    my $nmsets = 0;
+
     my $ds    = "{$base}::dsets";
     my @dsets = @::($ds);
     %data<dsets> = @dsets;
     for @dsets -> $n {
         my $set = "{$baseL}::{$n}";
+        next if !@($::($set)).elems;
         %data{$n} = @($::($set));
+        ++$ndsets;
     }
 
     my $ms    = "{$base}::msets";
@@ -183,8 +202,12 @@ sub get-raw-lang-data(:$lang, :%data) {
     %data<msets> = @msets;
     for @msets -> $n {
         my $set = "{$baseL}::{$n}";
+        next if !@($::($set)).elems;
         %data{$n} = @($::($set));
+        ++$nmsets;
     }
+    %data<ndsets> = $ndsets;
+    %data<nmsets> = $nmsets;
 }
 
 sub write-test-file-part($fh, :%parts, :$part!, :$lang, :$debug) {
@@ -194,11 +217,24 @@ sub write-test-file-part($fh, :%parts, :$part!, :$lang, :$debug) {
 }
 
 sub write-test-file-data($fh, :%data, :$data-part!, :$debug,
-                        :$lang, :$N = 0) {
+                        :$lang) {
 
     if $data-part == 1 {
+        # calculate num tests
+        my $nd = %data<ndsets>; # isa-ok
+        my $nm = %data<nmsets>; # isa-ok
+
+        my $nt = $nd + $nm;
+        $nt += $nd *  7; # dow
+        $nt += $nm * 12; # mon
+
+        # add number of other method tests (can-ok) of the class instances
+        # (see the language test template file for the current number)
+        my $ut = 7;
+        $nt += $ut * ($nd + $nm);
+
         $fh.say: "# Language '{$lang}' class";
-        $fh.say: "plan {$N};";
+        $fh.say: "plan {$nt};";
         $fh.say: "";
         $fh.say: "my \$lang = '{$lang}';";
         $fh.say: "";
@@ -212,7 +248,10 @@ sub write-test-file-data($fh, :%data, :$data-part!, :$debug,
 
     for %data.keys.sort -> $n {
         note "DEBUG: \$n = '$n'" if 0;
+        # skip aux data
         next if $n ~~ /^ [d|m] sets/;
+        next if $n ~~ /^ [nd|nm] sets/;
+
         my @arr = @(%data{$n});
         # skip empty data sets
         next if !@arr;
