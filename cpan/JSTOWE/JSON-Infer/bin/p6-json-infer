@@ -2,7 +2,21 @@
 
 use JSON::Infer;
 
-multi sub MAIN(Str :$file, Str :$uri, Str :$out-dir = "lib", Str :$class-name!, Bool :$kebab = False) {
+#| Retrieve JSON from a URL
+multi sub MAIN(Str :$uri!, Str :$out-dir = "lib", Str :$class-name!, Bool :$kebab ) {
+    CATCH {
+        when X::Infer {
+            note $_.message;
+            exit 5;
+        }
+    }
+    my $infer = JSON::Infer.new;
+    my JSON::Infer::Class $class = $infer.infer(:$uri, :$class-name, :$kebab);
+    save-class($class, $out-dir);
+}
+
+#| Infer JSON from a file
+multi sub MAIN(Str :$file!, Str :$out-dir = "lib", Str :$class-name!, Bool :$kebab ) {
 
     CATCH {
         when X::Infer {
@@ -10,26 +24,24 @@ multi sub MAIN(Str :$file, Str :$uri, Str :$out-dir = "lib", Str :$class-name!, 
             exit 5;
         }
     }
+
+
+    my $infer = JSON::Infer.new;
+
+    my JSON::Infer::Class $class = $infer.infer(:$file, :$class-name, :$kebab);
+
+    save-class($class, $out-dir);
+}
+
+my sub save-class(JSON::Infer::Class $class, Str $out-dir = 'lib' ) {
     my IO::Path $base-dir = do if $out-dir.IO.is-relative {
-        $*CWD.child($out-dir);
+        $*CWD.add($out-dir);
     }
     else {
         $out-dir.IO;
     }
 
-    my $infer = JSON::Infer.new;
-
-    my $class = do if $uri.defined {
-        $infer.infer(:$uri, :$class-name, :$kebab);
-    }
-    elsif $file.defined {
-        $infer.infer(:$file, :$class-name, :$kebab);
-    }
-    else {
-        X::Infer.new(message => "one of file or uri must be supplied").throw;
-    }
-
-    my $out-file = $base-dir.child($class.file-path);
+    my $out-file = $base-dir.add($class.file-path);
 
     my $parent = $out-file.parent;
 

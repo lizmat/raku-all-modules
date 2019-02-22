@@ -48,7 +48,7 @@ consistency of the data.
     multi method infer(Str:D :$uri!, Str :$class-name = 'My::JSON', Bool :$kebab = False) returns Class
     multi method infer(Str:D :$file!, :$class-name = 'My::JSON', Bool :$kebab = False) returns Class
     multi method infer(IO::Path:D :$file!, :$class-name = 'My::JSON', Bool :$kebab = False) returns Class
-    multi method infer(Str:D :$json!, Str :$class-name = 'My::JSON', Bool :$kebab = False) returns Class 
+    multi method infer(Str:D :$json!, Str :$class-name = 'My::JSON', Bool :$kebab = False) returns Class
 
 
 This accepts a single path and returns a L<JSON::Infer::Class>
@@ -77,7 +77,7 @@ more popular Perl 6 style with underscores replaced with hyphens.
 
 =head3 ua
 
-The L<HTTP::UserAgent> that will be used. 
+The L<HTTP::UserAgent> that will be used.
 
 =head3 headers
 
@@ -130,7 +130,7 @@ This performs the actual inference from a single record.
 
 =head3 method new-attribute
 
-    method new-attribute(Str $name, $value) returns JSON::Infer::Attribute 
+    method new-attribute(Str $name, $value) returns JSON::Infer::Attribute
 
 This creates a new attribute with the supplied name and its type infered
 from the supplied C<$value> and adds it to the class, returning the
@@ -156,7 +156,7 @@ nested structure and controls the indentation.
     method file-path() returns Str
 
 This creates the suggested file path that can be used to save the output
-of C<make-class>.  
+of C<make-class>.
 
 
 =head2 JSON::Infer::Attribute
@@ -197,7 +197,7 @@ Perl code.
 
 =head3 has-alternate-name
 
-This is a L<Bool> to indicate whether C<name> and C<perl-name> differ.  
+This is a L<Bool> to indicate whether C<name> and C<perl-name> differ.
 This is used internally when generating a string repreesentation of the
 attribute to determine whether the C<json-name> trait is required.
 
@@ -232,9 +232,9 @@ This returns a suitable string representation of the attribute for Perl.
 use JSON::Fast;
 use HTTP::UserAgent;
 
-class JSON::Infer:ver<0.0.16>:auth<github:jonathanstowe>:api<1.0> {
+class JSON::Infer:ver<0.0.17>:auth<github:jonathanstowe>:api<1.0> {
 
-    
+
     role Classes        { ... }
     role Types          { ... }
     class Attribute     { ... }
@@ -257,7 +257,7 @@ class JSON::Infer:ver<0.0.16>:auth<github:jonathanstowe>:api<1.0> {
         has Bool    $.array is rw = False;
         has Class   $.of-class is rw;
     }
-    
+
     role Classes {
         has @.classes is rw;
 
@@ -437,7 +437,8 @@ class JSON::Infer:ver<0.0.16>:auth<github:jonathanstowe>:api<1.0> {
 
         method !kebab(Str $name --> Str ) {
             if $!kebab {
-                $name.subst(/_/, '-', :g);
+                my $no_underscore = $name.subst(/_/, '-', :g);
+                $no_underscore.subst(/<!after ( ^^ || '-' ) >$<up>=<upper>+/, {  "-{ $/<up>.lc }" }, :g).lc
             }
             else {
                 $name;
@@ -465,7 +466,7 @@ class JSON::Infer:ver<0.0.16>:auth<github:jonathanstowe>:api<1.0> {
 
         has Str $.child-class-name is rw;
 
-        method child-class-name( --> Str ) is rw { 
+        method child-class-name( --> Str ) is rw {
             $!child-class-name //= do {
                 my Str $name = $!name;
                 $name ~~ s:g/_(.)/{ $0.uc }/;
@@ -518,6 +519,7 @@ class JSON::Infer:ver<0.0.16>:auth<github:jonathanstowe>:api<1.0> {
     }
 
     multi method infer(Str:D :$json!, Str :$class-name = 'My::JSON', Bool :$kebab = False --> Class ) {
+        say "KEBAB: $kebab";
         my $content = self.decode-json($json);
         my $ret = Class.new-from-data(:$class-name, :$content, :$kebab);
         $ret.top-level = True;

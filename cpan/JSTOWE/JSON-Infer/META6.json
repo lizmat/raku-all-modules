@@ -1,6 +1,6 @@
 {
   "name": "JSON::Infer",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "auth": "github:jonathanstowe",
   "api": "1.0",
   "description": "Infer Perl 6 Classes from JSON input",
