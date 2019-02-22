@@ -2,23 +2,22 @@ use v6;
 #===============================================================================
 =begin pod
 
-=TITLE class GTK::V3::Gtk::GtkAboutDialog
+=TITLE class GTK::V3::Gtk::GtkFileChooserDialog
 
 =SUBTITLE
 
-  unit class GTK::V3::Gtk::GtkAboutDialog;
+  unit class GTK::V3::Gtk::GtkFileChooserDialog;
   also is GTK::V3::Gtk::GtkDialog;
 
 =head1 Synopsis
 
-  use GTK::V3::Gtk::GtkAboutDialog $about .= new(:empty);
-  $about.set-program-name('My-First-GTK-Program');
+  use GTK::V3::Gtk::GtkFileChooserDialog $fchoose .= new(:empty);
 
   # show the dialog
-  $about.gtk-dialog-run;
+  $fchoose.run;
 
   # when dialog buttons are pressed hide it again
-  $about.gtk-widget-hide
+  $fchoose.hide
 
 =head1 Methods
 
@@ -34,9 +33,9 @@ use GTK::V3::Glib::GObject;
 use GTK::V3::Gtk::GtkDialog;
 
 #-------------------------------------------------------------------------------
-# See /usr/include/gtk-3.0/gtk/gtkaboutdialog.h
-# https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html
-unit class GTK::V3::Gtk::GtkAboutDialog:auth<github:MARTIMM>
+# See /usr/include/gtk-3.0/gtk/gtkfilechooserdialog.h
+# https://developer.gnome.org/gtk3/stable/GtkFileChooserDialog.html
+unit class GTK::V3::Gtk::GtkFileChooserDialog:auth<github:MARTIMM>
   is GTK::V3::Gtk::GtkDialog;
 
 #-------------------------------------------------------------------------------
@@ -45,70 +44,14 @@ unit class GTK::V3::Gtk::GtkAboutDialog:auth<github:MARTIMM>
 
   method gtk_about_dialog_new ( --> N-GObject )
 
-Creates a new empty about dialog widget. It returns a native object which must be stored in another object. Better, shorter and easier is to use C<.new(:empty)>. See info below.
+Creates a new filechooser dialog widget. It returns a native object which must be stored in another object. Better, shorter and easier is to use C<.new(....)>. See info below.
 =end pod
-sub gtk_about_dialog_new ( )
-  returns N-GObject       # GtkAboutDialog
+sub gtk_file_chooser_dialog_new_fc (
+  Str $title, N-GObject $parent-window, int32 $file-chooser-action,
+  Str $first_button_text
+) returns N-GObject       # GtkFileChooserDialog
   is native(&gtk-lib)
-  { * }
-
-=begin pod
-=head2 [gtk_about_dialog_] get_program_name
-
-  method gtk_about_dialog_get_program_name ( --> Str )
-
-Get the program name from the dialog.
-=end pod
-sub gtk_about_dialog_get_program_name ( N-GObject $dialog )
-  returns Str
-  is native(&gtk-lib)
-  { * }
-
-=begin pod
-=head2 [gtk_about_dialog_] set_program_name
-
-  method gtk_about_dialog_set_program_name ( Str $pname )
-
-Set the program name in the about dialog.
-=end pod
-sub gtk_about_dialog_set_program_name ( N-GObject $dialog, Str $pname )
-  is native(&gtk-lib)
-  { * }
-
-=begin pod
-=head2 [gtk_about_dialog_] get_version
-
-  method gtk_about_dialog_get_version ( --> Str )
-
-Get the version
-=end pod
-sub gtk_about_dialog_get_version ( N-GObject $dialog )
-  returns Str
-  is native(&gtk-lib)
-  { * }
-
-=begin pod
-=head2 [gtk_about_dialog_] set_version
-
-  method gtk_about_dialog_set_version ( Str $version )
-
-Set version
-=end pod
-sub gtk_about_dialog_set_version ( N-GObject $dialog, Str $version )
-  is native(&gtk-lib)
-  { * }
-
-#TODO some more subs
-
-=begin pod
-=head2 [gtk_about_dialog_] set_logo
-
-  method gtk_about_dialog_set_logo ( OpaquePointer $logo-pixbuf )
-
-Set the logo from a pixel buffer.
-=end pod
-sub gtk_about_dialog_set_logo ( N-GObject $dialog, OpaquePointer $logo-pixbuf )
-  is native(&gtk-lib)
+  is symbol("gtk_file_chooser_dialog_new")
   { * }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -132,12 +75,18 @@ submethod BUILD ( *%options ) {
 
   # prevent creating wrong widgets
   return unless self.^name eq 'GTK::V3::Gtk::GtkAboutDialog';
-
-  if ? %options<empty> {
-    self.native-gobject(gtk_about_dialog_new());
+#`{{
+  if ? %options<title> {
+    self.native-gobject(
+      gtk_file_chooser_dialog_new_fc(
+        %options<title>, Any,
+      )
+    );
   }
 
   elsif ? %options<widget> || %options<build-id> {
+}}
+  if ? %options<widget> || %options<build-id> {
     # provided in GObject
   }
 
@@ -155,7 +104,7 @@ method fallback ( $native-sub is copy --> Callable ) {
 
   my Callable $s;
   try { $s = &::($native-sub); }
-  try { $s = &::("gtk_about_dialog_$native-sub"); } unless ?$s;
+#  try { $s = &::("gtk_file_chooser_dialog_$native-sub"); } unless ?$s;
 
 note "ad $native-sub: ", $s;
   $s = callsame unless ?$s;

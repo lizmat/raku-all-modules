@@ -1,7 +1,7 @@
 [toc]
 
 # Classes and relations
-* All classes which work with GtkWidget e.g. return them on xyz_new(), are inheriting the GtkWidget class.
+* Taken from [object hierarchy in GTK docs](https://developer.gnome.org/gtk3/stable/ch02.html) Here is described what is implemented.
 
 ```plantuml
 scale 0.7
@@ -14,39 +14,6 @@ hide circle
 'X <-* Gui
 
 
-class X
-
-class GMain
-class GList
-
-'class GdkScreen
-'class GdkDisplay
-'class GdkWindow
-
-class GtkMain
-'class GtkCssProvider
-'class GtkTextBuffer
-'class GtkBuilder
-
-class GObject
-
-class GtkWidget
-
-class GtkBin
-class GtkContainer
-class GtkTextView
-
-class GtkLabel
-
-class GtkButton
-class GtkToggleButton
-class GtkCheckButton
-class GtkRadioButton
-
-class GtkWindow
-class GtkDialog
-class GtkAboutDialog
-
 GtkBin <|-- GtkButton
 GtkButton <|-- GtkToggleButton
 GtkToggleButton <|-- GtkCheckButton
@@ -55,6 +22,7 @@ GtkCheckButton <|-- GtkRadioButton
 GtkBin <|-- GtkWindow
 GtkWindow <|-- GtkDialog
 GtkDialog <|-- GtkAboutDialog
+GtkDialog <|-- GtkFileChooserDialog
 
 GtkWidget <|-- GtkLabel
 GtkWidget <|-- GtkEntry
@@ -62,23 +30,14 @@ GtkWidget <|-- GtkEntry
 GtkContainer <|-- GtkBin
 GtkContainer <|-- GtkTextView
 GtkWidget <|-- GtkContainer
-'GtkBin --* GtkButton
 
-'GdkScreen <---o GtkWidget
-'GdkDisplay <---o GtkWidget
-'GdkWindow <---o GtkWidget
-
-GObject <|--- GtkWidget
-'GObject <|--- GtkBuilder
-'GObject <|--- GtkTextBuffer
-'GObject <|--- GtkCssProvider
-
-'GObject <|--- GdkScreen
-'GObject <|--- GdkWindow
-'GObject <|--- GdkDisplay
+GInitiallyUnowned <|-- GtkWidget
+GObject <|-- GInitiallyUnowned
 
 GtkBin <|-- GtkMenuItem
 GtkMenuItem <|-- GtkImageMenuItem
+
+GInitiallyUnowned <|-- GtkFileFilter
 
 ```
 
@@ -86,6 +45,13 @@ GtkMenuItem <|-- GtkImageMenuItem
 scale 0.7
 hide members
 hide circle
+
+class X
+
+class GMain
+class GList
+class GSList
+class GtkMain
 
 class GObject
 
@@ -100,4 +66,15 @@ GObject <|-- GdkDisplay
 GObject <|--- GtkBuilder
 GObject <|--- GtkTextBuffer
 GObject <|-- GtkCssProvider
+```
+
+
+```plantuml
+scale 0.7
+hide members
+hide circle
+
+GInterface <|-- GtkFileChooser
+GInterface <|-- GFile
+
 ```

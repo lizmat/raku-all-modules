@@ -28,10 +28,14 @@ enum GtkResponseType is export (
 );
 
 #-------------------------------------------------------------------------------
+# do not shorten
+
 sub gtk_dialog_new ( )
   returns N-GObject
   is native(&gtk-lib)
   { * }
+
+# do not shorten
 
 # gint gtk_dialog_run (GtkDialog *dialog);
 # GtkResponseType is an int32

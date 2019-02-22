@@ -150,9 +150,14 @@ sub g_signal_handler_disconnect( N-GObject $widget, int32 $handler_id)
   is native(&gobject-lib)
   { * }
 
+#-------------------------------------------------------------------------------
+sub g_object_unref ( N-GObject $object )
+  is native(&gobject-lib)
+  { * }
+
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 has N-GObject $!g-object;
-has GTK::V3::Gtk::GtkMain $!main;
+#has GTK::V3::Gtk::GtkMain $!main;
 
 # type is GTK::V3::Gtk::GtkBuilder. Cannot load module because of circular dep.
 # attribute is set by GtkBuilder via set-builder(). There might be more than one
@@ -220,11 +225,8 @@ method FALLBACK ( $native-sub is copy, |c ) {
 method fallback ( $native-sub is copy --> Callable ) {
 
   my Callable $s;
-#note "w s0: $native-sub, ", $s;
+
   try { $s = &::($native-sub); }
-#note "w s1: gtk_widget_$native-sub, ", $s unless ?$s;
-#  try { $s = &::("gtk_widget_$native-sub"); } unless ?$s;
-#note "w s2: g_signal_$native-sub, ", $s unless ?$s;
   try { $s = &::("g_signal_$native-sub"); } unless ?$s;
 
   $s = callsame unless ?$s;
@@ -235,10 +237,11 @@ method fallback ( $native-sub is copy --> Callable ) {
 #-------------------------------------------------------------------------------
 submethod BUILD ( *%options ) {
 
-  # Test if GTK is initialized
-  $!main .= new unless $GTK::V3::Gtk::GtkMain::gui-initialized;
-
 #note "GO: {self}, ", %options;
+
+  # Test if GTK is initialized
+  my GTK::V3::Gtk::GtkMain $main .= new
+     unless $GTK::V3::Gtk::GtkMain::gui-initialized;
 
   if ? %options<widget> {
     if %options<widget> ~~ N-GObject {
@@ -282,8 +285,6 @@ submethod BUILD ( *%options ) {
       );
     }
   }
-
-#note "done";
 }
 
 #-------------------------------------------------------------------------------
@@ -313,6 +314,7 @@ method register-signal (
 
 #TODO use a hash to set all handler attributes in one go
 #note $handler-object.^methods;
+#note "register $handler-object $handler-name ($handler-type), options: ", %user-options;
 
   if ?$handler-object and $handler-object.^can($handler-name) {
 
@@ -320,7 +322,7 @@ method register-signal (
     %options<target-widget-name> = $target-widget-name if $target-widget-name;
 
     if $handler-type eq 'wd' {
-#note "set $handler-name ($handler-type), options: %user-options";
+#note "set $handler-name ($handler-type), options: ", %user-options;
       self.g-signal-connect-object-wd(
         $signal-name,
         -> $w, $d {

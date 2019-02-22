@@ -48,7 +48,7 @@ Not all of the GTK, GDK or Glib subroutines from the libraries will be covered b
   * `[gtk_about_dialog_]set_program_name ( Str $pname )`
   * `[gtk_about_dialog_]get_version ( --> Str )`
   * `[gtk_about_dialog_]set_version ( Str $version )`
-<!--TODO some more subs-->
+  <!--TODO some more subs-->
   * `gtk_about_dialog_set_logo ( N-GObject $dialog, OpaquePointer $logo-pixbuf )`
 
 * [GTK::V3::Gtk::GtkBin][gtkbin] is **GTK::V3::Gtk::GtkContainer**
@@ -128,6 +128,8 @@ Not all of the GTK, GDK or Glib subroutines from the libraries will be covered b
 
 * [GTK::V3::Gtk::GtkMenuItem][gtkmenuitem] is **GTK::V3::Gtk::GtkBin**
 
+* [GTK::V3::Gtk::GtkRadioButton][gtkradiobutton] is **GTK::V3::Gtk::GtkCheckbutton**
+
 * [GTK::V3::Gtk::GtkTextBuffer][gtktextbuffer] is **GTK::V3::Glib::GObject**
 
 * [GTK::V3::Gtk::GtkTextTagTable][gtktexttagtable] is **GTK::V3::Glib::GObject**
@@ -136,7 +138,7 @@ Not all of the GTK, GDK or Glib subroutines from the libraries will be covered b
 
 * [GTK::V3::Gtk::GtkToggleButton][gtktogglebutton] is **GTK::V3::Gtk::GtkButton**
 
-* [GTK::V3::Gtk::GtkWidget][gtkwidget] is **GTK::V3::Glib::GObject**
+* [GTK::V3::Gtk::GtkWidget][gtkwidget] is **GTK::V3::Glib::GInitiallyUnowned**
 
 * [GTK::V3::Gtk::GtkWindow][gtkwindow] is **GTK::V3::Gtk::GtkBin**
 
@@ -152,7 +154,11 @@ Not all of the GTK, GDK or Glib subroutines from the libraries will be covered b
 
 <!-- * [GTK::V3::Glib::GError][gerror] -->
 
+* GTK::V3::Glib::GInitiallyUnowned is **GTK::V3::Glib::GObject**
+
 * [GTK::V3::Glib::GList][glist]
+
+* [GTK::V3::Glib::GSList][gslist]
 
 * [GTK::V3::Glib::GMain][gmain]
 
@@ -189,7 +195,7 @@ Not all of the GTK, GDK or Glib subroutines from the libraries will be covered b
   4) Each method can at least be called with perl6 like dashes in the method name. E.g. `gtk_container_add` can be written as `gtk-container-add`.
   5) In some cases the calls can be shortened too. E.g. `gtk_button_get_label` can also be called like `get_label` or `get-label`. Sometimes, when shortened, calls can end up with a call using the wrong native widget. When in doubt use the complete method call.
   6) Also a sub like `gtk_button_new` cannot be shortened because it will call the perl6 init method `new()`. In most cases, these calls are used when initializing classes, in this case to initialize a `GTK::V3::Gtk::GtkButton` class. Above brackets '[]' show which part can be chopped.
-  7) Most classes know about the `:widget` named attribute when instantiating a widget class. This is used when the result of another native sub returns a N-GObject. This option works for all child classes too. E.g. cleaning a list box;
+  7) All classes deriving from GtkObject know about the `:widget` named attribute when instantiating a widget class. This is used when the result of another native sub returns a N-GObject. This option works for all child classes too. E.g. cleaning a list box;
     ```
     my GTK::V3::Gtk::GtkListBox $list-box .= new(:build-id<someListBox>);
     loop {
@@ -264,11 +270,14 @@ Github account name: Github account MARTIMM
 [gtkwindow]: https://developer.gnome.org/gtk3/stable/GtkWindow.html
 [gtkaboutdialog]: https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html
 
+[gtkradiobutton]: https://developer.gnome.org/gtk3/stable/GtkRadioButton.html
+
 [gerror]:
-[glist]:
 [gmain]:
 [gobject]:
 [gtype]:
+[glist]:
+[gslist]:
 
 <!--
 [todo]: https://github.com/MARTIMM/Library/blob/master/doc/TODO.md

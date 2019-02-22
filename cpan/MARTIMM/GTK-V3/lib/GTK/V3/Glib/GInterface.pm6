@@ -4,31 +4,22 @@ use NativeCall;
 use GTK::V3::X;
 use GTK::V3::N::NativeLib;
 use GTK::V3::Glib::GObject;
-use GTK::V3::Gtk::GtkBin;
 
 #-------------------------------------------------------------------------------
-# See /usr/include/gtk-3.0/gtk/gtkmenuitem.h
-# https://developer.gnome.org/gtk3/stable/GtkMenuItem.html
-unit class GTK::V3::Gtk::GtkMenuItem:auth<github:MARTIMM>
-  is GTK::V3::Gtk::GtkBin;
+# See /usr/include/glib-2.0/gobject/gtypemodule.h
+# https://developer.gnome.org/gobject/stable/GTypeModule.html
+unit class GTK::V3::Glib::GInterface:auth<github:MARTIMM>
+  is GTK::V3::Glib::GObject;
 
 #-------------------------------------------------------------------------------
-sub gtk_menu_item_new ( )
-  returns N-GObject
-  is native(&gtk-lib)
-  { * }
-
+# No subs implemented. Just setup for hierargy.
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 submethod BUILD ( *%options ) {
 
   # prevent creating wrong widgets
-  return unless self.^name eq 'GTK::V3::Gtk::GtkMenuItem';
+  return unless self.^name eq 'GTK::V3::Glib::GInterface';
 
-  if ? %options<empty> {
-    self.native-gobject(gtk_menu_item_new());
-  }
-
-  elsif ? %options<widget> || %options<build-id> {
+  if ? %options<widget> || %options<build-id> {
     # provided in GObject
   }
 
@@ -44,11 +35,12 @@ submethod BUILD ( *%options ) {
 #-------------------------------------------------------------------------------
 method fallback ( $native-sub is copy --> Callable ) {
 
-  my Callable $s;
-  try { $s = &::($native-sub); }
-  try { $s = &::("gtk_menu_item_$native-sub"); } unless ?$s;
+#  my Callable $s;
+#  try { $s = &::($native-sub); }
+#  try { $s = &::("g_type_module_$native-sub"); } unless ?$s;
 
-  $s = callsame unless ?$s;
+#  $s = callsame unless ?$s;
 
+  my Callable $s = callsame;
   $s;
 }

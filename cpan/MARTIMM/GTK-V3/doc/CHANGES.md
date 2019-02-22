@@ -1,5 +1,14 @@
 ## Release notes
 
+* 2019-02-21 0.6.0
+  * Added GInitiallyUnowned to make hierarchy better.
+  * Added GtkFileChooserDialog, GtkFileChooser, GtkFileFilter and GFile.
+  * Added GInterface to hook GtkFileChooser.
+
+* 2019-02-20 0.5.0
+  * Added GSList and GtkRadioButton
+  * Documented GtkAboutDialog
+
 * 2019-02-18 0.4.3
   * Bugfixes
 

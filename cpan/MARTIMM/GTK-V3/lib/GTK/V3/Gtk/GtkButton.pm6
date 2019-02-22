@@ -3,7 +3,6 @@ use NativeCall;
 
 use GTK::V3::N::NativeLib;
 use GTK::V3::Glib::GObject;
-#use GTK::V3::Gtk::GtkWidget;
 use GTK::V3::Gtk::GtkBin;
 
 #-------------------------------------------------------------------------------
