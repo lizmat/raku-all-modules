@@ -26,8 +26,18 @@ sub g_slist_nth ( N-GSList $list, uint32 $n --> N-GSList )
   is native(&gtk-lib)
   { * }
 
-sub g_slist_nth_data ( N-GSList $list, uint32 $n --> N-GObject )
+#sub g_slist_nth_data ( N-GSList $list, uint32 $n --> Any )
+#  is native(&gtk-lib)
+#  { * }
+
+sub g_slist_nth_data_str ( N-GSList $list, uint32 $n --> Str )
   is native(&gtk-lib)
+  is symbol('g_slist_nth_data')
+  { * }
+
+sub g_slist_nth_data_gobject ( N-GSList $list, uint32 $n --> N-GObject )
+  is native(&gtk-lib)
+  is symbol('g_slist_nth_data')
   { * }
 
 #TODO free $!gslist too?

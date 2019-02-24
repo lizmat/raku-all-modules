@@ -1,5 +1,5 @@
 use v6;
-#===============================================================================
+# ==============================================================================
 =begin pod
 
 =TITLE class GTK::V3::Gtk::GtkAboutDialog
@@ -24,7 +24,7 @@ use v6;
 
 All methods can be written with dashes or shortened by cutting the C<gtk_about_dialog_> part. This cannot be done when e.g. C<new> is left after the shortening. That would become an entirely other method. See the synopsis above for an example. Below, this is shown with brackets in the headers.
 =end pod
-#===============================================================================
+# ==============================================================================
 
 use NativeCall;
 
@@ -40,6 +40,31 @@ unit class GTK::V3::Gtk::GtkAboutDialog:auth<github:MARTIMM>
   is GTK::V3::Gtk::GtkDialog;
 
 #-------------------------------------------------------------------------------
+enum GtkLicense is export <
+  GTK_LICENSE_UNKNOWN
+  GTK_LICENSE_CUSTOM
+
+  GTK_LICENSE_GPL_2_0
+  GTK_LICENSE_GPL_3_0
+
+  GTK_LICENSE_LGPL_2_1
+  GTK_LICENSE_LGPL_3_0
+
+  GTK_LICENSE_BSD
+  GTK_LICENSE_MIT_X11
+
+  GTK_LICENSE_ARTISTIC
+
+  GTK_LICENSE_GPL_2_0_ONLY
+  GTK_LICENSE_GPL_3_0_ONLY
+  GTK_LICENSE_LGPL_2_1_ONLY
+  GTK_LICENSE_LGPL_3_0_ONLY
+
+  GTK_LICENSE_AGPL_3_0
+  GTK_LICENSE_AGPL_3_0_ONLY
+>;
+
+# ==============================================================================
 =begin pod
 =head2 gtk_about_dialog_new
 
@@ -52,6 +77,7 @@ sub gtk_about_dialog_new ( )
   is native(&gtk-lib)
   { * }
 
+# ==============================================================================
 =begin pod
 =head2 [gtk_about_dialog_] get_program_name
 
@@ -64,6 +90,7 @@ sub gtk_about_dialog_get_program_name ( N-GObject $dialog )
   is native(&gtk-lib)
   { * }
 
+# ==============================================================================
 =begin pod
 =head2 [gtk_about_dialog_] set_program_name
 
@@ -75,6 +102,7 @@ sub gtk_about_dialog_set_program_name ( N-GObject $dialog, Str $pname )
   is native(&gtk-lib)
   { * }
 
+# ==============================================================================
 =begin pod
 =head2 [gtk_about_dialog_] get_version
 
@@ -87,6 +115,7 @@ sub gtk_about_dialog_get_version ( N-GObject $dialog )
   is native(&gtk-lib)
   { * }
 
+# ==============================================================================
 =begin pod
 =head2 [gtk_about_dialog_] set_version
 
@@ -98,8 +127,274 @@ sub gtk_about_dialog_set_version ( N-GObject $dialog, Str $version )
   is native(&gtk-lib)
   { * }
 
-#TODO some more subs
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_copyright
 
+  method gtk_about_dialog_get_copyright
+
+=end pod
+sub gtk_about_dialog_get_copyright ( N-GObject $dialog )
+  returns Str
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_copyright
+
+  method gtk_about_dialog_set_copyright
+
+=end pod
+sub gtk_about_dialog_set_copyright ( N-GObject $dialog, Str $copyright )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_comments
+
+  method gtk_about_dialog_get_comments
+
+=end pod
+sub gtk_about_dialog_get_comments ( N-GObject $dialog )
+  returns Str
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_comments
+
+  method gtk_about_dialog_set_comments
+
+=end pod
+sub gtk_about_dialog_set_comments ( N-GObject $dialog, Str $comments )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_license
+
+  method gtk_about_dialog_get_license
+
+=end pod
+sub gtk_about_dialog_get_license ( N-GObject $dialog )
+  returns Str
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_license
+
+  method gtk_about_dialog_set_license
+
+=end pod
+sub gtk_about_dialog_set_license ( N-GObject $dialog, Str $license )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_wrap_license
+
+  method gtk_about_dialog_get_wrap_license
+
+=end pod
+sub gtk_about_dialog_get_wrap_license ( N-GObject $dialog )
+  returns Bool
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_wrap_license
+
+  method gtk_about_dialog_set_wrap_license
+
+=end pod
+sub gtk_about_dialog_set_wrap_license ( N-GObject $dialog, Bool $wrap_license )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_license_type
+
+  method gtk_about_dialog_get_license_type
+
+=end pod
+sub gtk_about_dialog_get_license_type ( N-GObject $dialog )
+  returns int32 # GtkLicense
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_license_type
+
+  method gtk_about_dialog_set_license_type
+
+=end pod
+sub gtk_about_dialog_set_license_type ( N-GObject $dialog, int32 $license_type )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_website
+
+  method gtk_about_dialog_get_website
+
+=end pod
+sub gtk_about_dialog_get_website ( N-GObject $dialog )
+  returns Str
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_website
+
+  method gtk_about_dialog_set_website
+
+=end pod
+sub gtk_about_dialog_set_website ( N-GObject $dialog, Str $website )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_website_label
+
+  method gtk_about_dialog_get_website_label
+
+=end pod
+sub gtk_about_dialog_get_website_label ( N-GObject $dialog )
+  returns Str
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_website_label
+
+  method gtk_about_dialog_set_website_label
+
+=end pod
+sub gtk_about_dialog_set_website_label ( N-GObject $dialog, Str $website_label )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_authors
+
+  method gtk_about_dialog_get_authors
+
+=end pod
+sub gtk_about_dialog_get_authors ( N-GObject $dialog )
+  returns CArray[Str]
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_authors
+
+  method gtk_about_dialog_set_authors
+
+=end pod
+sub gtk_about_dialog_set_authors ( N-GObject $dialog, CArray[Str] $authors )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_artists
+
+  method gtk_about_dialog_get_artists
+
+=end pod
+sub gtk_about_dialog_get_artists ( N-GObject $dialog )
+  returns CArray[Str]
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_artists
+
+  method gtk_about_dialog_set_artists
+
+=end pod
+sub gtk_about_dialog_set_artists ( N-GObject $dialog, CArray[Str] $artists )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_documenters
+
+  method gtk_about_dialog_get_documenters
+
+=end pod
+sub gtk_about_dialog_get_documenters ( N-GObject $dialog )
+  returns CArray[Str]
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_documenters
+
+  method gtk_about_dialog_set_documenters
+
+=end pod
+sub gtk_about_dialog_set_documenters (
+  N-GObject $dialog, CArray[Str] $documenters
+) is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_translator_credits
+
+  method gtk_about_dialog_get_translator_credits
+
+=end pod
+sub gtk_about_dialog_get_translator_credits ( N-GObject $dialog )
+  returns Str
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_translator_credits
+
+  method gtk_about_dialog_set_translator_credits
+
+=end pod
+sub gtk_about_dialog_set_translator_credits (
+  N-GObject $dialog , Str $translator_credits
+) is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_logo
+
+  method gtk_about_dialog_get_logo
+
+=end pod
+sub gtk_about_dialog_get_logo ( N-GObject $dialog )
+  returns OpaquePointer # GdkPixbuf
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
 =begin pod
 =head2 [gtk_about_dialog_] set_logo
 
@@ -110,6 +405,42 @@ Set the logo from a pixel buffer.
 sub gtk_about_dialog_set_logo ( N-GObject $dialog, OpaquePointer $logo-pixbuf )
   is native(&gtk-lib)
   { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] get_logo_icon_name
+
+  method gtk_about_dialog_get_logo_icon_name
+
+=end pod
+sub gtk_about_dialog_get_logo_icon_name ( N-GObject $dialog )
+  returns Str
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] set_logo_icon_name
+
+  method gtk_about_dialog_set_logo_icon_name
+
+=end pod
+sub gtk_about_dialog_set_logo_icon_name ( N-GObject $dialo, Str $icon_name )
+  is native(&gtk-lib)
+  { * }
+
+# ==============================================================================
+=begin pod
+=head2 [gtk_about_dialog_] add_credit_section
+
+  method gtk_about_dialog_add_credit_section
+
+=end pod
+sub gtk_about_dialog_add_credit_section (
+  N-GObject $dialo, Str $section_name, CArray[Str] $people
+) is native(&gtk-lib)
+  { * }
+
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 =begin pod

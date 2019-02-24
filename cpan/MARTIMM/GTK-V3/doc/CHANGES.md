@@ -1,9 +1,14 @@
 ## Release notes
 
+* 2019-02-23 0.6.1
+  * Modified `g_slist_nth_data` into `g_slist_nth_data_str`and `g_slist_nth_data_gobject` because the list can hold several types of data.
+  * TODO do same for GList and also more for other types if needed.
+
 * 2019-02-21 0.6.0
   * Added GInitiallyUnowned to make hierarchy better.
   * Added GtkFileChooserDialog, GtkFileChooser, GtkFileFilter and GFile.
   * Added GInterface to hook GtkFileChooser.
+  * Added more subs to GtkAboutDialog
 
 * 2019-02-20 0.5.0
   * Added GSList and GtkRadioButton

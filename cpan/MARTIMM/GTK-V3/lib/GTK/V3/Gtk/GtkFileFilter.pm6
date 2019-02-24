@@ -13,14 +13,14 @@ unit class GTK::V3::Gtk::GtkFileFilter:auth<github:MARTIMM>
   is GTK::V3::Glib::GInitiallyUnowned;
 
 #-------------------------------------------------------------------------------
-enum GtkFileFilterFlags {
-  GTK_FILE_FILTER_FILENAME     => 1 +< 0,
-  GTK_FILE_FILTER_URI          => 1 +< 1,
-  GTK_FILE_FILTER_DISPLAY_NAME => 1 +< 2,
-  GTK_FILE_FILTER_MIME_TYPE    => 1 +< 3
-};
+enum GtkFileFilterFlags is export (
+  GTK_FILE_FILTER_FILENAME     => 0x01,
+  GTK_FILE_FILTER_URI          => 0x02,
+  GTK_FILE_FILTER_DISPLAY_NAME => 0x04,
+  GTK_FILE_FILTER_MIME_TYPE    => 0x08,
+);
 
-class GtkFileFilterInfo is repr('CStruct') {
+class GtkFileFilterInfo is repr('CStruct') is export {
   # contains: flags indicating which of the following fields need are filled
   has int32 $.contains;          # bits from GtkFileFilterFlags
   has Str $.filename;

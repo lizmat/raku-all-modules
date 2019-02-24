@@ -156,6 +156,8 @@ sub g_object_unref ( N-GObject $object )
   { * }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+our $gobject-debug = False;
+
 has N-GObject $!g-object;
 #has GTK::V3::Gtk::GtkMain $!main;
 
@@ -244,32 +246,37 @@ submethod BUILD ( *%options ) {
      unless $GTK::V3::Gtk::GtkMain::gui-initialized;
 
   if ? %options<widget> {
-    if %options<widget> ~~ N-GObject {
-      $!g-object = %options<widget>;
+    note "go widget: ", %options<widget> if $gobject-debug;
+    my $w = %options<widget>;
+    $w = $w() if $w ~~ GTK::V3::Glib::GObject;
+    note "go widget converted: ", $w if $gobject-debug;
+    if $w ~~ N-GObject {
+      note "go widget stored" if $gobject-debug;
+      $!g-object = $w;
     }
 
     else {
-      die X::GTK::V3.new(
-        :message('Wrong type or undefined widget, must be type N-GObject')
-      );
+      note "Wrong type or undefined widget" if $gobject-debug;
+      die X::GTK::V3.new(:message('Wrong type or undefined widget'));
     }
   }
 
   elsif ? %options<build-id> {
     my N-GObject $widget;
-#note "Builders: ", $builders;
+    note "Builders: ", $builders if $gobject-debug;
     for @$builders -> $builder {
       $widget = $builder.get-object(%options<build-id>);
       last if ?$widget;
     }
 
     if ? $widget {
-#note "store widget: ", $widget;
+      note "store widget: ", $widget if $gobject-debug;
       $!g-object = $widget;
     }
 
     else {
-      #note "Builder id '%options<build-id>' not found in any of the builders";
+      note "Builder id '%options<build-id>' not found in any of the builders"
+        if $gobject-debug;
       die X::GTK::V3.new(
         :message(
           "Builder id '%options<build-id>' not found in any of the builders"
@@ -280,11 +287,18 @@ submethod BUILD ( *%options ) {
 
   else {
     if %options.keys.elems == 0 {
+      note 'No options used to create or set the native widget'
+        if $gobject-debug;
       die X::GTK::V3.new(
         :message('No options used to create or set the native widget')
       );
     }
   }
+}
+
+#-------------------------------------------------------------------------------
+method debug ( Bool :$on ) {
+  $gobject-debug = $on;
 }
 
 #-------------------------------------------------------------------------------

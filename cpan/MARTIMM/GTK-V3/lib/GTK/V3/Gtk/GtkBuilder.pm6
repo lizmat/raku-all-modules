@@ -6,7 +6,7 @@ use GTK::V3::N::NativeLib;
 use GTK::V3::Glib::GObject;
 use GTK::V3::Gdk::GdkScreen;
 use GTK::V3::Gtk::GtkMain;
-use GTK::V3::Glib::GError;
+#use GTK::V3::Glib::GError;
 
 #-------------------------------------------------------------------------------
 # See /usr/include/gtk-3.0/gtk/gtkbuilder.h
@@ -34,13 +34,15 @@ sub gtk_builder_new_from_string ( Str $glade-ui, uint32 $length)
   { * }
 
 sub gtk_builder_add_from_file (
-  N-GObject $builder, Str $glade-ui, N-GError $error is rw
+  N-GObject $builder, Str $glade-ui, OpaquePointer
+#  N-GObject $builder, Str $glade-ui, N-GError $error is rw
 ) returns int32         # 0 or 1, 1 = ok, 0 look into GError
   is native(&gtk-lib)
     { * }
 
 sub gtk_builder_add_from_string (
-  N-GObject $builder, Str $glade-ui, uint32 $size, N-GError $error is rw
+  N-GObject $builder, Str $glade-ui, uint32 $size, OpaquePointer
+#  N-GObject $builder, Str $glade-ui, uint32 $size, N-GError $error is rw
 ) returns int32         # 0 or 1, 1 = ok, 0 look into GError
   is native(&gtk-lib)
   { * }

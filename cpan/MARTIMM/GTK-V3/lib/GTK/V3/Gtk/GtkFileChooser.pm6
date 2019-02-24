@@ -49,51 +49,51 @@ sub gtk_file_chooser_get_action ( N-GObject $chooser )
   { * }
 
 sub gtk_file_chooser_set_local_only (
-  N-GObject $chooser, Bool $local_only
+  N-GObject $chooser, int32 $local_only
 ) is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_get_local_only ( N-GObject $chooser )
-  returns Bool
+  returns int32 # Bool
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_set_select_multiple (
-  N-GObject $chooser, Bool $select_multiple
+  N-GObject $chooser, int32 $select_multiple
 ) is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_get_select_multiple ( N-GObject $chooser )
-  returns Bool
+  returns int32 # Bool
   is native(&gtk-lib)
   { * }
 
-sub gtk_file_chooser_set_show_hidden ( N-GObject $chooser, Bool $show_hidden )
+sub gtk_file_chooser_set_show_hidden ( N-GObject $chooser, int32 $show_hidden )
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_get_show_hidden ( N-GObject $chooser )
-  returns Bool
+  returns int32 # Bool
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_set_do_overwrite_confirmation (
-  N-GObject $chooser, Bool $do_overwrite_confirmation
+  N-GObject $chooser, int32 $do_overwrite_confirmation
 ) is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_get_do_overwrite_confirmation ( N-GObject $chooser )
-  returns Bool
+  returns int32 # Bool
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_set_create_folders (
-  N-GObject $chooser, Bool $create_folders
+  N-GObject $chooser, int32 $create_folders
 ) is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_get_create_folders ( N-GObject $chooser )
-  returns Bool
+  returns int32 # Bool
   is native(&gtk-lib)
   { * }
 
@@ -112,12 +112,12 @@ sub gtk_file_chooser_get_filename ( N-GObject $chooser )
   { * }
 
 sub gtk_file_chooser_set_filename ( N-GObject $chooser, Str $filename )
-  returns Bool # not useful
+  returns int32 # not useful
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_select_filename ( N-GObject $chooser, Str $filename )
-  returns Bool # not useful
+  returns int32 # not useful
   is native(&gtk-lib)
   { * }
 
@@ -133,13 +133,14 @@ sub gtk_file_chooser_unselect_all ( N-GObject $chooser )
   is native(&gtk-lib)
   { * }
 
+# g_free and g_slist_free
 sub gtk_file_chooser_get_filenames ( N-GObject $chooser )
   returns N-GSList
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_set_current_folder ( N-GObject $chooser, Str $filename )
-  returns Bool # not useful
+  returns int32 # not useful
   is native(&gtk-lib)
   { * }
 
@@ -154,12 +155,12 @@ sub gtk_file_chooser_get_uri ( N-GObject $chooser )
   { * }
 
 sub gtk_file_chooser_set_uri ( N-GObject $chooser, Str $uri )
-  returns Bool # not useful
+  returns int32 # not useful
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_select_uri ( N-GObject $chooser, Str $uri )
-  returns Bool # not useful
+  returns int32 # not useful
   is native(&gtk-lib)
   { * }
 
@@ -173,7 +174,7 @@ sub gtk_file_chooser_get_uris ( N-GObject $chooser )
   { * }
 
 sub gtk_file_chooser_set_current_folder_uri ( N-GObject $chooser, Str $uri )
-  returns Bool
+  returns int32
   is native(&gtk-lib)
   { * }
 
@@ -193,22 +194,22 @@ sub gtk_file_chooser_get_preview_widget ( N-GObject $chooser )
   { * }
 
 sub gtk_file_chooser_set_preview_widget_active (
-  N-GObject $chooser, Bool $active
+  N-GObject $chooser, int32 $active
 ) is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_get_preview_widget_active ( N-GObject $chooser )
-  returns Bool
+  returns int32
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_set_use_preview_label (
-  N-GObject $chooser, Bool $use_label
+  N-GObject $chooser, int32 $use_label
 ) is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_get_use_preview_label ( N-GObject $chooser )
-  returns Bool
+  returns int32
   is native(&gtk-lib)
   { * }
 
@@ -256,13 +257,13 @@ sub gtk_file_chooser_get_filter ( N-GObject $chooser )
 
 sub gtk_file_chooser_add_shortcut_folder (
   N-GObject $chooser, Str $folder, OpaquePointer
-) returns Bool
+) returns int32
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_remove_shortcut_folder (
   N-GObject $chooser, Str $folder, OpaquePointer
-) returns Bool
+) returns int32
   is native(&gtk-lib)
   { * }
 
@@ -273,13 +274,13 @@ sub gtk_file_chooser_list_shortcut_folders ( N-GObject $chooser )
 
 sub gtk_file_chooser_add_shortcut_folder_uri (
    N-GObject $chooser, Str $uri, OpaquePointer
-) returns Bool
+) returns int32
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_remove_shortcut_folder_uri (
   N-GObject $chooser, Str $uri, OpaquePointer
-) returns Bool
+) returns int32
   is native(&gtk-lib)
   { * }
 
@@ -312,19 +313,19 @@ sub gtk_file_chooser_get_preview_file ( N-GObject $chooser )
 
 sub gtk_file_chooser_select_file (
   N-GObject $chooser, N-GObject $file, OpaquePointer
-) returns Bool
+) returns int32
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_set_current_folder_file (
   N-GObject $chooser, N-GObject $file, OpaquePointer
-) returns Bool
+) returns int32
   is native(&gtk-lib)
   { * }
 
 sub gtk_file_chooser_set_file (
   N-GObject $chooser, N-GObject $file, OpaquePointer
-) returns Bool
+) returns int32
   is native(&gtk-lib)
   { * }
 

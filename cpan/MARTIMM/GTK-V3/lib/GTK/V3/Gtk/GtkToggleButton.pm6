@@ -23,6 +23,11 @@ sub gtk_toggle_button_new_with_label ( Str $label )
   is native(&gtk-lib)
   { * }
 
+sub gtk_toggle_button_new_with_mnemonic ( Str $label )
+  returns N-GObject # GtkWidget
+  is native(&gtk-lib)
+  { * }
+
 sub gtk_toggle_button_get_active ( N-GObject $w )
   returns int32
   is native(&gtk-lib)

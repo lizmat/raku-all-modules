@@ -44,9 +44,9 @@ subtest 'RadioButton group list', {
   is $l.length, 2, 'group has two members';
 
   diag "test button labels";
-  my GTK::V3::Gtk::GtkRadioButton $b .= new(:widget($l.nth_data(1)));
+  my GTK::V3::Gtk::GtkRadioButton $b .= new(:widget($l.nth-data-gobject(1)));
   is $b.get-label, 'rb1', 'found label from 1st radio button';
-  $b .= new(:widget($l.nth_data(0)));
+  $b .= new(:widget($l.nth-data-gobject(0)));
   is $b.get-label, 'rb2', 'found label from 2nd radio button';
 }
 
