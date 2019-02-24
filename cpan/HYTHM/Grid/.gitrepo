@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/hythm7/Grid.git
+	branch = development
+	commit = a0a0b79131f0721f6fbecd548d5ca4b0043fa707
+	parent = fa0cdcf812baa0dd5057ac7e12abbd2d9b0b1e31
+	cmdver = 0.3.1

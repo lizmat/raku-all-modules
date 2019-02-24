@@ -1,0 +1,23 @@
+{
+  "authors" : [
+    "Haytham Elganiny"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Grid Role for Arrays",
+  "license" : "Artistic-2.0",
+  "name" : "Grid",
+  "perl" : "6.c",
+  "provides" : {
+    "Grid" :       "lib/Grid.pm",
+    "Grid::Util" : "lib/Grid/Util.pm"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/hythm7/Grid.git",
+  "tags" : [
+    "Grid",
+    "Array"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
