@@ -1,0 +1,38 @@
+{
+   "meta6" : "0",
+   "tags" : [
+		"Grammar",
+		"Utilities",
+		"Utils"
+   ],
+   "provides" : {
+      "Grammar::Common::Expression::Infix::Actions" : "lib//Grammar/Common/Expression/Infix/Actions.pm6",
+      "Grammar::Common::Expression::Infix" : "lib//Grammar/Common/Expression/Infix.pm6",
+      "Grammar::Common::Expression::Prefix::Actions" : "lib//Grammar/Common/Expression/Prefix/Actions.pm6",
+      "Grammar::Common::Expression::Prefix" : "lib//Grammar/Common/Expression/Prefix.pm6",
+      "Grammar::Common" : "lib//Grammar/Common.pm6"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "https://github.com/drforr/perl6-Grammar-Common"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "test-depends" : [
+       "JSON::Tiny"
+   ],
+   "auth" : "github:drforr",
+   "source-url" : "https://github.com/drforr/perl6-Grammar-Common.git",
+   "depends" : [
+       "Test::META"
+   ],
+   "name" : "Grammar-Common",
+   "authors" : [
+      "Jeffrey Goff <drforr@pobox.com>"
+   ],
+   "version" : "0.0.5",
+   "license" : "Artistic-2.0",
+   "description" : "Common grammar patterns codified for ease of use"
+}
