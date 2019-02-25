@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/frithnanth/perl6-Desktop-Notify-Progress.git
+	branch = master
+	commit = 27b4bee053a3f6e2643d60acc6cef08cd6f82620
+	parent = 504f98504036aa651a46c59ead35ec31a38debf7
+	cmdver = 0.3.1

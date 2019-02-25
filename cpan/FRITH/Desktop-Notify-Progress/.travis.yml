@@ -1,0 +1,13 @@
+dist: xenial
+os: linux
+language: C
+env:
+  global:
+    - PATH=/opt/rakudo-pkg/bin:/opt/rakudo-pkg/share/perl6/site/bin:$PATH
+before_install:
+  - wget https://github.com/nxadm/rakudo-pkg/releases/download/v2018.11/rakudo-pkg-Ubuntu16.04_2018.11-01_amd64.deb
+  - sudo dpkg -i rakudo-pkg-Ubuntu16.04_2018.11-01_amd64.deb
+install:
+  - zef install --deps-only --/test .
+script:
+  - PERL6LIB=$PWD/lib prove -e perl6 -vr t/
