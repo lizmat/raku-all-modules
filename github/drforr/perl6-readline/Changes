@@ -2,6 +2,10 @@ Revision history for Readline
 
 {{$NEXT}}
 
+0.1.5  2019-02-25T09:49:54+09:00
+
+    - Pull request from the 'net
+
 0.1.4  2018-07-15T08:02:22-06:00
     - Fix for Darwin, refactor code, update documentation to reflect reality
 
