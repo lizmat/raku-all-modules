@@ -1,0 +1,23 @@
+=begin pod
+
+=begin NAME
+
+Perl6::Element - Root of the token hierarchy
+
+=end NAME
+
+=begin DESCRIPTION
+
+=end DESCRIPTION
+
+=begin METHODS
+
+=item C<_dump>
+
+Returns the content of the element itself, B<with> all internal pointers pointed at itself, to cut down on debugging noise.
+
+=cut
+
+=end
+
+=end pod

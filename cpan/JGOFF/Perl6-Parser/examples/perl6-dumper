@@ -1,0 +1,16 @@
+#!/usr/bin/env perl6
+
+use lib '../lib';
+use Perl6::Parser;
+
+sub MAIN(Str $filename, Bool :$ruler = False) {
+	my $text = $filename.IO.slurp;
+	my $pt = Perl6::Parser.new;
+	if $ruler {
+	    say $pt.ruler( $text );
+	    return;
+	}
+	my $p = $pt.parse( $text );
+	my $tree = $pt.build-tree( $p );
+	say $pt.dump-tree( $tree );
+}
