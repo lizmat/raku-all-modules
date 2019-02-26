@@ -33,128 +33,10 @@ It is also possible to apply methods to a subgrid of `Grid`, provided a valid su
 LIMITATIONS
 ===========
 
-Direct modification of `Grid` with methods like `push`, `unshift`, `append` or `prepend` may lead to unexpected behavior, Please use `Grid`'s methods (e.g. `append-row`, `append-column`, ...).
+Direct modification of `Grid` via  `Array`'s methods like `push`, `unshift`, `append` or `prepend` may lead to unexpected behavior, Please use `Grid`'s methods (e.g. `append: :@row`, `append: :@column`, ...).
 
 
-Methods
-=======
-
-### grid
-
-    method grid () { ... }
-
-Prints a `:$!columns` `Grid`.
-
-
-### flip
-
-    multi method flip ( Grid:D: Int:D :$horizontal! --> Grid:D ) { ... }
-Horizontal Flip.
-
-    multi method flip ( Grid:D: Int:D :$vertical! --> Grid:D ) { ... }
-Verical Flip.
-
-    multi method flip ( Grid:D: Int:D :$diagonal! --> Grid:D ) { ... }
-Diagonal Flip.
-
-    multi method flip ( Grid:D: Int:D :$antidiagonal! --> Grid:D ) { ... }
-Anti-Diagonal Flip.
-
-    multi method flip ( Grid:D: :@horizontal! --> Grid:D ) { ... }
-Horizontal Flip (Subgrid).
-
-    multi method flip ( Grid:D: :@vertical! --> Grid:D ) { ... }
-Vertical Flip (Subgrid).
-
-    multi method flip ( Grid:D: :@diagonal! --> Grid:D ) { ... }
-Diagonal Flip (Subgrid).
-
-    multi method flip ( Grid:D: :@antidiagonal! --> Grid:D ) { ... }
-Anti-Diagonal Flip (Subgrid).
-
-
-### rotate
-
-    multi method rotate ( Grid:D:  Int:D :$left! --> Grid:D ) { ... }
-Left Rotate. (Columns)
-
-    multi method rotate ( Grid:D:  Int:D :$right! --> Grid:D ) { ... }
-Right Rotate. (Columns)
-
-    multi method rotate ( Grid:D:  Int:D :$up! --> Grid:D ) { ... }
-Up Rotate. (Rows)
-
-    multi method rotate ( Grid:D:  Int:D :$down! --> Grid:D ) { ... }
-Up Rotate. (Rows)
-
-    multi method rotate ( Grid:D: Int:D :$clockwise! --> Grid:D ) { ... }
-Clockwise Rotate.
-
-    multi method rotate ( Grid:D: Int:D :$anticlockwise! --> Grid:D ) { ... }
-Anti-Clockwise Rotate.
-
-    multi method rotate ( Grid:D: :@clockwise! --> Grid:D ) { ... }
-Clockwise Rotate (Subgrid)
-
-    multi method rotate ( Grid:D: :@anticlockwise! --> Grid:D ) { ... }
-Clockwise Rotate (Subgrid)
-
-
-### transpose
-
-    multi method transpose ( Grid:D: --> Grid:D ) { ... }
-Transpose.
-
-    multi method transpose ( Grid:D: :@indices! --> Grid:D ) { ... }
-Transpose (Subgrid)
-
-
-### append
-
-    multi method append ( Grid:D: :@row! --> Grid:D ) { ... }
-Append Row.
-
-    multi method append ( Grid:D: :@column! --> Grid:D ) { ... }
-Append Column.
-
-    multi method prepend ( Grid:D: :@row! --> Grid:D ) {
-Prepend Row.
-
-    multi method prepend ( Grid:D: :@column! --> Grid:D ) { ... }
-Prepend Column.
-
-
-### pop
-
-    multi method pop ( Grid:D:  Int :$rows! --> Grid:D ) { ... }
-Pop Rows.
-
-    multi method pop ( Grid:D:  Int :$columns! --> Grid:D ) { ... }
-Pop Columns.
-
-
-### shift
-
-    multi method shift ( Grid:D:  Int :$rows! --> Grid:D ) { ... }
-Shift Rows.
-
-    multi method shift ( Grid:D:  Int :$columns! --> Grid:D ) { ... }
-Shift Columns.
-
-
-### has-subgrid
-
-    method has-subgrid( :@indices!, :$square = False --> Bool:D ) { ... }
-Returns `True` if `:@indices` is a subgrid of `Grid`, `False` otherwise.
-
-
-### is-subgrid
-
-    method is-square ( --> Bool:D ) { ... }
-Returns `True` if `Grid` is a square, `False` otherwise.
-
-
-Examples
+EXAMPLES
 ========
 
 ### grid
@@ -210,7 +92,7 @@ Examples
     e f g h                          <b>e i m q</b>
     i j k l       :@diagonal         <b>f j n r</b>
     m n o p    ----------------->    <b>g k o s</b>
-    q r s t        4 ... 19          <b>h l p t</b>
+    q r s t      [ 4 ... 19 ]        <b>h l p t</b>
     u v w x                          u v w x
 
 
@@ -409,6 +291,127 @@ Examples
 
 </code>
 </pre>
+
+
+METHODS
+=======
+
+### grid
+
+    method grid () { ... }
+
+Prints a `:$!columns` `Grid`.
+
+
+### flip
+
+    multi method flip ( Grid:D: Int:D :$horizontal! --> Grid:D ) { ... }
+Horizontal Flip.
+
+    multi method flip ( Grid:D: Int:D :$vertical! --> Grid:D ) { ... }
+Verical Flip.
+
+    multi method flip ( Grid:D: Int:D :$diagonal! --> Grid:D ) { ... }
+Diagonal Flip.
+
+    multi method flip ( Grid:D: Int:D :$antidiagonal! --> Grid:D ) { ... }
+Anti-Diagonal Flip.
+
+    multi method flip ( Grid:D: :@horizontal! --> Grid:D ) { ... }
+Horizontal Flip (Subgrid).
+
+    multi method flip ( Grid:D: :@vertical! --> Grid:D ) { ... }
+Vertical Flip (Subgrid).
+
+    multi method flip ( Grid:D: :@diagonal! --> Grid:D ) { ... }
+Diagonal Flip (Subgrid).
+
+    multi method flip ( Grid:D: :@antidiagonal! --> Grid:D ) { ... }
+Anti-Diagonal Flip (Subgrid).
+
+
+### rotate
+
+    multi method rotate ( Grid:D:  Int:D :$left! --> Grid:D ) { ... }
+Left Rotate. (Columns)
+
+    multi method rotate ( Grid:D:  Int:D :$right! --> Grid:D ) { ... }
+Right Rotate. (Columns)
+
+    multi method rotate ( Grid:D:  Int:D :$up! --> Grid:D ) { ... }
+Up Rotate. (Rows)
+
+    multi method rotate ( Grid:D:  Int:D :$down! --> Grid:D ) { ... }
+Up Rotate. (Rows)
+
+    multi method rotate ( Grid:D: Int:D :$clockwise! --> Grid:D ) { ... }
+Clockwise Rotate.
+
+    multi method rotate ( Grid:D: Int:D :$anticlockwise! --> Grid:D ) { ... }
+Anti-Clockwise Rotate.
+
+    multi method rotate ( Grid:D: :@clockwise! --> Grid:D ) { ... }
+Clockwise Rotate (Subgrid)
+
+    multi method rotate ( Grid:D: :@anticlockwise! --> Grid:D ) { ... }
+Clockwise Rotate (Subgrid)
+
+
+### transpose
+
+    multi method transpose ( Grid:D: --> Grid:D ) { ... }
+Transpose.
+
+    multi method transpose ( Grid:D: :@indices! --> Grid:D ) { ... }
+Transpose (Subgrid)
+
+
+### append
+
+    multi method append ( Grid:D: :@row! --> Grid:D ) { ... }
+Append Row.
+
+    multi method append ( Grid:D: :@column! --> Grid:D ) { ... }
+Append Column.
+
+
+### Prepend
+
+    multi method prepend ( Grid:D: :@row! --> Grid:D ) {
+Prepend Row.
+
+    multi method prepend ( Grid:D: :@column! --> Grid:D ) { ... }
+Prepend Column.
+
+
+### pop
+
+    multi method pop ( Grid:D:  Int :$rows! --> Grid:D ) { ... }
+Pop Rows.
+
+    multi method pop ( Grid:D:  Int :$columns! --> Grid:D ) { ... }
+Pop Columns.
+
+
+### shift
+
+    multi method shift ( Grid:D:  Int :$rows! --> Grid:D ) { ... }
+Shift Rows.
+
+    multi method shift ( Grid:D:  Int :$columns! --> Grid:D ) { ... }
+Shift Columns.
+
+
+### has-subgrid
+
+    method has-subgrid( :@indices!, :$square = False --> Bool:D ) { ... }
+Returns `True` if `:@indices` is a subgrid of `Grid`, `False` otherwise.
+
+
+### is-square
+
+    method is-square ( --> Bool:D ) { ... }
+Returns `True` if `Grid` is a square, `False` otherwise.
 
 
 AUTHOR
