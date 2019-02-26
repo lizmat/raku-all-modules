@@ -1,4 +1,4 @@
-unit module AttrX::Mooish:ver<0.6.900>:auth<github:vrurg>;
+unit module AttrX::Mooish:ver<0.6.901>:auth<github:vrurg>;
 #use Data::Dump;
 use nqp;
 
@@ -668,7 +668,7 @@ role AttrXMooishAttributeHOW {
 
         # note "++++ BINDING PROXY TO ", $.name;
 
-        nqp::bindattr(nqp::decont(instance),$.package,$.name,
+        nqp::bindattr(nqp::decont(instance), $.package, $.name,
             Proxy.new(
                 FETCH => -> $ {
                     #note "FETCHING";
@@ -684,8 +684,8 @@ role AttrXMooishAttributeHOW {
                     # note "IS MOOISHED? ", ? %attr-data{$obj-id}{$attr.name}<mooished>;
                     if %attr-data{$obj-id}{$attr.name}<mooished> {
                         # note "FETCH of {$attr.name} for ", $obj-id, ~Backtrace.new.full;
-                        self.build-attr( instance ) if ? $!lazy;
-                        $val := %attr-data{$obj-id}{$attr.name}<value> if self.is-set( $obj-id );
+                        self.build-attr( instance ) if ?$!lazy and %attr-data{$obj-id}{$attr.name}<value>:!exists;
+                        $val := %attr-data{$obj-id}{$attr.name}<value> if %attr-data{$obj-id}{$attr.name}<value>:exists;
                         # note "Fetched value for {$.name}: ", $val.VAR.^name, " // ", $val.perl;
                         # Once read and built, mooishing is not needed unless filter or trigger are set; and until
                         # clearer is called.
@@ -723,7 +723,24 @@ role AttrXMooishAttributeHOW {
     method store-value ( Mu \instance, $obj-id, $value is copy ) is hidden-from-backtrace {
         # note ". storing into {$.name} // ";
         # note "store-value for ", $obj-id;
-        %attr-data{$obj-id}{$.name}<value> := typecheck-attr-value( self, $value );
+
+        if %attr-data{$obj-id}{$.name}<value>:exists {
+            given $!sigil {
+                when '$' | '&' {
+                    nqp::p6assign(%attr-data{$obj-id}{$.name}<value>, $value);
+                }
+                when '@' | '%' {
+                    %attr-data{$obj-id}{$.name}<value>.STORE(nqp::decont($value));
+                }
+                default {
+                    die "AttrX::Mooish can't handle «$_» sigil";
+                }
+            }
+        }
+        else {
+            %attr-data{$obj-id}{$.name}<value> := typecheck-attr-value( self, $value );
+        }
+
         # note "=== VALUE IN THE HASH: ",
         #             %attr-data{$obj-id}{$.name}<value>.VAR.^name,
         #             " // ",

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/vrurg/Perl6-AttrX-Mooish.git
 	branch = master
-	commit = 282b9ea32d3beff619146ebe5b961bb1d22a1291
-	parent = 91680fe75ceba4a875736c9611cd38eb67069de3
+	commit = 1037f1f50478be0abfab1f2b8e37a167cb06f641
+	parent = 113c1ddb202eeebcba51f193bed6825b354641dd
 	cmdver = 0.3.1
