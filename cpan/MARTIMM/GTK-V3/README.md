@@ -41,15 +41,7 @@ Not all of the GTK, GDK or Glib subroutines from the libraries will be covered b
 
 ## Gtk library
 
-* [GTK::V3::Gtk::GtkAboutDialog][gtkaboutdialog] is **GTK::V3::Gtk::GtkDialog**
-  * `new ( Bool :$empty )`
-  * `gtk_about_dialog_new ( --> N-GObject )` [3] [4]
-  * `[gtk_about_dialog_]get_program_name ( --> Str )` [5]
-  * `[gtk_about_dialog_]set_program_name ( Str $pname )`
-  * `[gtk_about_dialog_]get_version ( --> Str )`
-  * `[gtk_about_dialog_]set_version ( Str $version )`
-  <!--TODO some more subs-->
-  * `gtk_about_dialog_set_logo ( N-GObject $dialog, OpaquePointer $logo-pixbuf )`
+* GTK::V3::Gtk::GtkAboutDialog at [Gnome developer][gtkaboutdialog] and [V3 pod doc](doc/GtkAboutDialog.html)
 
 * [GTK::V3::Gtk::GtkBin][gtkbin] is **GTK::V3::Gtk::GtkContainer**
   * `[gtk_bin_]get_child ( --> N-GObject )`

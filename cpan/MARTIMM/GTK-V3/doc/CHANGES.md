@@ -1,5 +1,9 @@
 ## Release notes
 
+* 2019-02-25 0.6.2
+  * Bugfixes
+  * Added documentation to GtkAboutDialog
+  
 * 2019-02-23 0.6.1
   * Modified `g_slist_nth_data` into `g_slist_nth_data_str`and `g_slist_nth_data_gobject` because the list can hold several types of data.
   * TODO do same for GList and also more for other types if needed.
