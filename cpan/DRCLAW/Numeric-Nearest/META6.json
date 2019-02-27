@@ -5,7 +5,8 @@
     "provides" : {
         "Numeric::Nearest" : "lib/Numeric/Nearest.pm6"
     },
-    "version" : "0.5.0",
+    "test-depends":["Test::META"],
+    "version" : "0.5.1",
     "authors" : [ "Ruben Westerberg <drclaw@mac.com>" ],
     "license" : "Artistic-2.0",
     "source-url":"git://github.com/drclaw1394/nearestp6.git"

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/drclaw1394/nearestp6.git
 	branch = master
-	commit = fef7831b724bc5b6fdf752f0b7a09872e0c5c527
-	parent = bf84701a7a16f44f0136106aad532478d152cfaa
+	commit = e50a947e7ec9f3d5b30152020e9af1f398e3613d
+	parent = fd4006d95f59c2fefe25f89cbd7ff388a0028cda
 	cmdver = 0.3.1
