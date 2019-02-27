@@ -298,9 +298,23 @@ METHODS
 
 ### grid
 
-    method grid () { ... }
+    method grid { ... }
 
 Prints a `:$!columns` `Grid`.
+
+
+### columns
+
+    method columns { ... }
+
+Returns `Grid`'s  columns count.
+
+
+### rows
+
+    method columns { ... }
+
+Returns `Grid`'s  rows count.
 
 
 ### flip

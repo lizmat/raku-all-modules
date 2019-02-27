@@ -9,8 +9,7 @@
   "name" : "Grid",
   "perl" : "6.c",
   "provides" : {
-    "Grid" :       "lib/Grid.pm",
-    "Grid::Util" : "lib/Grid/Util.pm"
+    "Grid" :       "lib/Grid.pm"
   },
   "resources" : [ ],
   "source-url" : "https://github.com/hythm7/Grid.git",
@@ -19,5 +18,5 @@
     "Array"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.1"
+  "version" : "0.0.2"
 }

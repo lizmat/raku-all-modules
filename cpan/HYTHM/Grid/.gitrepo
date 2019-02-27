@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/hythm7/Grid.git
 	branch = development
-	commit = e03db5b6f8b1398aba46b33667fab9d9f4711150
-	parent = 302ac1eca80ed247827587f59609c694efe770e6
+	commit = bacb1303b493fd3466ffb57cfe45ca2883b43342
+	parent = f8b36e3df471fa3722f833efc8d954a037a44ee9
 	cmdver = 0.3.1

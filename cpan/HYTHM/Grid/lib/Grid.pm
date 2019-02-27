@@ -1,5 +1,3 @@
-use Grid::Util;
-
 unit role Grid[:$columns];
   
 has Int $!columns;
@@ -16,6 +14,14 @@ submethod BUILD( ) is hidden-from-backtrace {
   die "Can't have grid of {self.elems} elements with {$!columns} columns"
     unless self.elems == $!columns * $!rows;
 
+}
+
+method columns {
+  $!columns;
+}
+
+method rows {
+  $!rows;
 }
 
 
@@ -180,12 +186,13 @@ multi method transpose ( Grid:D: :@indices! --> Grid:D ) {
 
 }
 
+proto method append ( Grid:D: | --> Grid:D ) { * }
 
 multi method append ( Grid:D: :@row! --> Grid:D ) {
 
   return self unless self!check-row( :@row );
 
-  self = self.append(@row);
+  self = flat self, @row;
 
   $!rows += 1;
 
@@ -206,11 +213,40 @@ multi method append ( Grid:D: :@column! --> Grid:D ) {
 }
 
 
+proto method push ( Grid:D: | --> Grid:D ) { * }
+
+multi method push ( Grid:D: :@row! --> Grid:D ) {
+
+  return self unless self!check-row( :@row );
+
+  self = flat self, @row;
+
+  $!rows += 1;
+
+  self;
+  
+}
+
+multi method push ( Grid:D: :@column! --> Grid:D ) {
+
+  return self unless self!check-column( :@column );
+  
+  self = flat self.rotor($!columns) Z @column;
+
+  $!columns += 1;
+
+  self;
+
+}
+
+
+proto method prepend ( Grid:D: | --> Grid:D ) { * }
+
 multi method prepend ( Grid:D: :@row! --> Grid:D ) {
 
   return self unless self!check-row( :@row );
 
-  self = self.prepend(@row);
+  self = flat @row, self;
   
   $!rows += 1;
 
@@ -230,13 +266,34 @@ multi method prepend ( Grid:D: :@column! --> Grid:D ) {
 
 }
 
-multi method pop ( Grid:D: --> Grid:D ) {
+proto method unshift ( Grid:D: | --> Grid:D ) { * }
 
-  note 'Please provide `:$rows` or `:$columns`';
+multi method unshift ( Grid:D: :@row! --> Grid:D ) {
+
+  return self unless self!check-row( :@row );
+
+  self = flat @row, self;
+  
+  $!rows += 1;
 
   self;
 
 }
+
+multi method unshift ( Grid:D: :@column! --> Grid:D ) {
+
+  return self unless self!check-column( :@column );
+  
+  self = flat @column Z self.rotor($!columns);
+
+  $!columns += 1;
+
+  self;
+
+}
+
+
+proto method pop ( Grid:D: | --> Grid:D ) { * }
 
 multi method pop ( Grid:D:  Int :$rows! --> Grid:D ) {
 
@@ -258,13 +315,8 @@ multi method pop ( Grid:D:  Int :$columns! --> Grid:D ) {
   
 }
 
-multi method shift ( Grid:D: --> Grid:D ) {
 
-  note 'Please provide `:$rows` or `:$columns`';
-
-  self;
-
-}
+proto method shift ( Grid:D: | --> Grid:D ) { * }
 
 multi method shift ( Grid:D:  Int :$rows! --> Grid:D ) {
 
@@ -286,6 +338,7 @@ multi method shift ( Grid:D:  Int :$columns! --> Grid:D ) {
 
 }
 
+proto method splice ( Grid:D: | --> Grid:D ) { * }
 
 method grid () {
 
@@ -368,6 +421,48 @@ submethod !subgrid( @indices, :$square = False ) {
     return Array;
 
   }
+
+}
+
+
+sub diagonal ( @perfect --> Array ) is export {
+  #TODO: check if not perfect square
+
+  my $root = @perfect.sqrt.Int;
+
+  sub diagonaled-index ( Int $index ) { 
+    return $index when $index == @perfect.end;
+    return $index * $root mod @perfect.end;
+  }
+
+  my @diagonaled = @perfect[ @perfect.keys.map: *.&diagonaled-index ];
+
+  @diagonaled;
+
+}
+
+
+
+sub antidiagonal ( @perfect --> Array) is export {
+  my $root = @perfect.sqrt.Int;
+
+  multi antidiagonal-index ( Int $index ) {
+    my $newindex = @perfect.end - $index * $root;
+
+    return $newindex unless $newindex < 0;
+    samewith $newindex;
+  }
+
+  multi antidiagonal-index (Int $index where * < 0) {
+    my $newindex = $index + @perfect.end;
+    return $newindex unless $newindex < 0;
+    samewith $newindex;
+  }
+
+
+  my @antidiagonaled = @perfect[ @perfect.keys.map: *.&antidiagonal-index ];
+  
+  @antidiagonaled;
 
 }
 

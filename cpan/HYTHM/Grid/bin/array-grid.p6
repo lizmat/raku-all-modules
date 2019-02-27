@@ -17,9 +17,10 @@ my @column = < 0 1 2 3 4 5 >;
 my @row = < 0 1 2 3 >;
 my @rows = < 0 1 2 3 >;
 
-@array.grid;
+#@array.grid;
 
-my @antidiagonal = 4 ... 19;
-say @array.shift: :3columns;
+#my @antidiagonal = 4 ... 19;
+@array.unshift: :@row;
+#@array.prepend: :@row;
 
 @array.grid;
