@@ -1,5 +1,5 @@
 {
-  "version" : "2.0.0",
+  "version" : "2.0.1",
   "auth" : "github:tbrowder",
   "author" : "github:tbrowder",
   "authors" : [
@@ -12,7 +12,16 @@
   "name" : "Date::Names",
   "perl" : "6.c",
   "provides" : {
-    "Date::Names" : "lib/Date/Names.pm6"
+      "Date::Names"     : "lib/Date/Names.pm6",
+      "Date::Names::de" : "lib/Date/Names/de.pm6",
+      "Date::Names::en" : "lib/Date/Names/en.pm6",
+      "Date::Names::es" : "lib/Date/Names/es.pm6",
+      "Date::Names::fr" : "lib/Date/Names/fr.pm6",
+      "Date::Names::id" : "lib/Date/Names/id.pm6",
+      "Date::Names::it" : "lib/Date/Names/it.pm6",
+      "Date::Names::nb" : "lib/Date/Names/nb.pm6",
+      "Date::Names::nl" : "lib/Date/Names/nl.pm6",
+      "Date::Names::ru" : "lib/Date/Names/ru.pm6"
   },
   "resources" : [ ],
   "source-type" : "git",

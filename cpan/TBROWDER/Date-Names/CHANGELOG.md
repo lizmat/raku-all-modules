@@ -1,3 +1,6 @@
+## [v2.0.1] - 2019-02-27
+- added missing names to META6.json
+
 ## [v2.0.0] - 2019-02-21
 - Permanently removed the hashes from lib/Date/Names.pm6
   so the original direct hash access syntax has changed
