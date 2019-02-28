@@ -13,14 +13,10 @@ my @array = < a b c d e f g h i j k l m n o p q r s t u v w x >;
 my @anticlockwise = 9, 10, 13, 14;
 my @indices = 9, 10, 13, 14;
 
-my @column = < 0 1 2 3 4 5 >;
+my @columns = < 0 1 2 3 4 5 >;
 my @row = < 0 1 2 3 >;
 my @rows = < 0 1 2 3 >;
 
-#@array.grid;
-
 #my @antidiagonal = 4 ... 19;
-@array.unshift: :@row;
-#@array.prepend: :@row;
-
+@array.splice: :0start, :2remove, :columns;
 @array.grid;

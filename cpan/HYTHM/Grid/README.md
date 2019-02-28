@@ -12,6 +12,7 @@ SYNOPSIS
 
     @grid does Grid[:4columns];
 
+
 DESCRIPTION
 ===========
 
@@ -28,12 +29,6 @@ It is also possible to apply methods to a subgrid of `Grid`, provided a valid su
     my @vertical = 9, 10, 13, 14; @grid.flip: :@vertical;`
 
 `Grid` preserves the overall shape, So some operations require `is-square` to be `True`  for `Grid` (or Subgrid), otherwise fails and returns `self`.
-
-
-LIMITATIONS
-===========
-
-Direct modification of `Grid` via  `Array`'s methods like `push`, `unshift`, `append` or `prepend` may lead to unexpected behavior, Please use `Grid`'s methods (e.g. `append: :@row`, `append: :@column`, ...).
 
 
 EXAMPLES

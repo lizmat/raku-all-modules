@@ -3,7 +3,7 @@ unit role Grid[:$columns];
 has Int $!columns;
 has Int $!rows;
 
-submethod BUILD( ) is hidden-from-backtrace {
+submethod BUILD is hidden-from-backtrace {
 
   $!columns = $columns // self.elems;
   
@@ -24,6 +24,18 @@ method rows {
   $!rows;
 }
 
+multi method reshape ( Grid:D:  Int :$columns! where * > 0 --> Grid:D ) {
+   
+  my $rows = self.elems div $columns;
+
+  return self unless self.elems == $columns * $rows;
+
+  $!rows    = $rows;
+  $!columns = $columns;
+
+  self;
+
+}
 
 multi method flip ( Grid:D: Int:D :$horizontal! --> Grid:D ) {
 
@@ -338,7 +350,28 @@ multi method shift ( Grid:D:  Int :$columns! --> Grid:D ) {
 
 }
 
-proto method splice ( Grid:D: | --> Grid:D ) { * }
+
+proto method splice ( Grid:D: :$rows, :$columns --> Grid:D ) { * }
+
+multi method splice ( Grid:D: Int :$start = 0, Int :$remove,  Bool :$columns! --> Grid:D ) {
+  say 'starting ', $start;
+  say 'removing ', $remove;
+  say $columns;
+
+  self;
+
+}
+
+multi method splice ( Grid:D: Int :$start = 0, Int :$remove,  :@columns! --> Grid:D ) {
+  say 'starting ', $start;
+  say 'removing ', $remove;
+  say @columns;
+
+  self;
+
+}
+
+
 
 method grid () {
 
@@ -425,7 +458,7 @@ submethod !subgrid( @indices, :$square = False ) {
 }
 
 
-sub diagonal ( @perfect --> Array ) is export {
+sub diagonal ( @perfect --> Array ) {
   #TODO: check if not perfect square
 
   my $root = @perfect.sqrt.Int;
@@ -443,7 +476,7 @@ sub diagonal ( @perfect --> Array ) is export {
 
 
 
-sub antidiagonal ( @perfect --> Array) is export {
+sub antidiagonal ( @perfect --> Array) {
   my $root = @perfect.sqrt.Int;
 
   multi antidiagonal-index ( Int $index ) {
