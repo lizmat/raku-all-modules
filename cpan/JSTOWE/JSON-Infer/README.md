@@ -19,7 +19,7 @@ Or do it in your own code:
 
 use JSON::Infer;
 
-my $obj = JSON::Infer.new()
+my $obj = JSON::Infer.new();
 my $ret = $obj.infer(uri => 'http://api.mixcloud.com/spartacus/party-time/', class-name => 'Mixcloud::Show');
 
 say $ret.make-class; # Print the class definition
