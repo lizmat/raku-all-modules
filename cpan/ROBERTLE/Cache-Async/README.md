@@ -19,6 +19,7 @@
 
 ## Upcoming Features
 
+* Get entry from cache if present, without loading/refreshing
 * Optimizations of the async producer case
 * Object lifetimes can be restricted by producer function
 
