@@ -108,7 +108,7 @@ choose-a-file
 
 Browse the directory tree like with `choose-a-dir`. Select "`E<gt>F`" to get the files of the current directory. To return the chosen file select "`= `".
 
-See [#choose-a-dir](#choose-a-dir) for the different options.
+See [choose-a-dir](#choose-a-dir) for the different options.
 
 choose-dirs
 -----------
@@ -237,7 +237,7 @@ Thanks to the people from [Perl-Community.de](http://www.perl-community.de), fro
 LICENSE AND COPYRIGHT
 =====================
 
-Copyright 2016-2018 Matthäus Kiem.
+Copyright 2016-2019 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
