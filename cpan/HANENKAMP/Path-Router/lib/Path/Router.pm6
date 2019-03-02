@@ -1,5 +1,5 @@
 use v6;
-unit class Path::Router:ver<0.4.0>:auth<github:zostay>;
+unit class Path::Router:ver<0.5.0>:auth<github:zostay>;
 
 use Path::Router::Route;
 use X::Path::Router;

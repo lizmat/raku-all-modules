@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+v0.5.0	2019-03-01
+
     * Added a new path-for candidate which accepts a single hash value.
     * Bugfix: path-for was broken when mapping values were set to Nil. This has
       been corrected.

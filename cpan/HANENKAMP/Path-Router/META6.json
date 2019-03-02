@@ -1,47 +1,47 @@
 {
+  "name": "Path::Router",
+  "auth": null,
+  "tags": [
+    
+  ],
   "provides": {
-    "Path::Router::Route": "lib/Path/Router/Route.pm6",
-    "X::Path::Router::BadInclusion": "lib/X/Path/Router.pm6",
-    "X::Path::Router::AmbiguousMatch::PathMatch": "lib/X/Path/Router.pm6",
-    "X::Path::Router::AmbiguousMatch::ReverseMatch": "lib/X/Path/Router.pm6",
-    "Path::Router": "lib/Path/Router.pm6",
     "Path::Router::Shell": "lib/Path/Router/Shell.pm6",
-    "X::Path::Router": "lib/X/Path/Router.pm6",
-    "X::Path::Router::AmbiguousMatch": "lib/X/Path/Router.pm6",
     "Test::Path::Router": "lib/Test/Path/Router.pm6",
+    "Path::Router": "lib/Path/Router.pm6",
+    "X::Path::Router::BadInclusion": "lib/X/Path/Router.pm6",
+    "X::Path::Router::AmbiguousMatch": "lib/X/Path/Router.pm6",
     "X::Path::Router::BadSlurpy": "lib/X/Path/Router.pm6",
-    "X::Path::Router::BadValidation": "lib/X/Path/Router.pm6",
+    "X::Path::Router::BadRoute": "lib/X/Path/Router.pm6",
     "Path::Router::Route::Match": "lib/Path/Router/Route.pm6",
-    "X::Path::Router::BadRoute": "lib/X/Path/Router.pm6"
+    "Path::Router::Route": "lib/Path/Router/Route.pm6",
+    "X::Path::Router::AmbiguousMatch::PathMatch": "lib/X/Path/Router.pm6",
+    "X::Path::Router::BadValidation": "lib/X/Path/Router.pm6",
+    "X::Path::Router": "lib/X/Path/Router.pm6",
+    "X::Path::Router::AmbiguousMatch::ReverseMatch": "lib/X/Path/Router.pm6"
   },
-  "version": "0.4.0",
+  "authors": [
+    "Sterling Hanenkamp (hanenkamp@cpan.org)"
+  ],
+  "version": "0.5.0",
+  "source-url": "git://github.com/zostay/p6-Path-Router.git",
+  "perl": "6.c",
+  "support": {
+    "source": null
+  },
+  "license": "Artistic-2.0",
   "resources": [
     
   ],
-  "auth": null,
   "depends": [
     "IO::String",
     "Linenoise"
   ],
-  "source-url": "git://github.com/zostay/p6-Path-Router.git",
-  "license": "Artistic-2.0",
-  "authors": [
-    "Sterling Hanenkamp (hanenkamp@cpan.org)"
-  ],
-  "perl": "6.c",
-  "meta-version": "0",
-  "tags": [
-    
-  ],
   "description": "A tool for routing paths",
-  "support": {
-    "source": null
-  },
+  "meta-version": "0",
   "test-depends": [
     
   ],
   "build-depends": [
     
-  ],
-  "name": "Path::Router"
+  ]
 }
