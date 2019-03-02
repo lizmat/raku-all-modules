@@ -1,0 +1,9 @@
+#!smackup
+
+use v6;
+sub app(%env) {
+    start {
+        my @letters = "Hello World".comb;
+        200, [ Content-Type => 'text/plain' ], Supply.from-list(@letters);
+    }
+}

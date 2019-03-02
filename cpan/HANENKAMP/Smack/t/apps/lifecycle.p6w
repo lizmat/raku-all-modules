@@ -1,0 +1,26 @@
+#!smackup
+
+use v6;
+
+my $test = 0;
+sub plan { "1..$test" }
+sub nt { ++$test }
+
+sub app(%env) {
+    start {
+        %env<p6w.errors>.emit: "ok {nt} # app run";
+
+        my $not = %env<p6w.protocol> eq 'request-response' ?? '' !! 'not ';
+        %env<p6w.errors>.emit: "{$not}ok {nt} # p6w.protocol is set to request-response";
+
+        %env<p6w.errors>.emit: plan;
+
+        # the rest of the env is tested by t/env.t
+        200, [ Content-Type => 'text/plain' ], [ 'ok' ];
+    }
+}
+
+sub config(%env) returns Callable {
+    %env<p6w.errors>.emit: "ok {nt} # config run";
+    &app;
+}

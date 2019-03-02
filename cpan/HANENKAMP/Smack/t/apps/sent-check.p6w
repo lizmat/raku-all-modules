@@ -1,0 +1,27 @@
+#!smackup
+
+use v6;
+sub app(%env) {
+    state $sent-n-times = 0;
+
+    start {
+        die "this application server does not support p6wx.body.done"
+            unless %env<p6wx.body.done> ~~ Promise:D;
+
+        if %env<PATH_INFO> eq '/check' {
+            %env<p6w.errors>.emit: $sent-n-times;
+            200, [ Content-Type => 'text/plain' ], [ $sent-n-times ];
+        }
+        else {
+            %env<p6w.errors>.emit: 'Hello World';
+            200, [ Content-Type => 'text/plain' ], supply {
+                %env<p6wx.body.done>.then({;
+                    $sent-n-times++;
+                });
+
+                emit 'Hello World';
+                done;
+            }
+        }
+    }
+}

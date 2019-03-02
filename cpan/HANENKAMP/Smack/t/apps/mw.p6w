@@ -1,0 +1,24 @@
+#!smackup
+
+use v6;
+
+sub app(%env) {
+    start {
+        200, [ Content-Type => 'text/plain' ], [ 'Hello World' ]
+    }
+}
+
+sub mw(&wrappee is copy, %config) returns Callable {
+    &wrappee = wrappee(%config) if &wrappee.returns ~~ Callable;
+    sub (%env) {
+        wrappee(%env).then(
+            -> $p {
+                my @r = $p.result;
+                @r[1].push: 'P6W-Used' => 'True';
+                @r
+            }
+        );
+    }
+}
+
+&mw.assuming(&app);

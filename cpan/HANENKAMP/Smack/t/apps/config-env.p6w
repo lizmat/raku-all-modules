@@ -1,0 +1,70 @@
+#!smackup
+
+use v6;
+
+my $i = 0;
+
+sub check-type(%env, $got, $expected) {
+    my $err = %env<p6w.errors>;
+
+    # fake TAP
+
+    # First check if the env is missing
+    if %env{ $got } :!exists {
+        $err.emit("not ok {++$i} # checking type of $got");
+        $err.emit("# value for $got does not exist");
+    }
+
+    # Verify that the env is as expected
+    if %env{ $got } ~~ $expected {
+        $err.emit("ok {++$i} # checking type of $got");
+    }
+
+    # Give a nice report if not
+    else {
+        $err.emit("not ok {++$i} # checking type of $got");
+        $err.emit("#\texpected: $expected.perl()");
+        $err.emit("#\t     got: %env{ $got }.WHAT.perl()");
+    }
+}
+
+sub check-config(%env) {
+    check-type %env, 'p6w.version', Version:D;
+    check-type %env, 'p6w.errors', Supplier:D;
+    check-type %env, 'p6w.multithread', Bool:D;
+    check-type %env, 'p6w.multiprocess', Bool:D;
+    check-type %env, 'p6w.run-once', Bool:D;
+    check-type %env, 'p6w.protocol.support', Set:D;
+    check-type %env, 'p6w.protocol.enabled', Set:D;
+}
+
+sub app(%env) {
+    start {
+        check-config(%env);
+        check-type %env, 'REQUEST_METHOD', { $_ ~~ all(Str:D, *.chars > 0) };
+        check-type %env, 'SCRIPT_NAME', { $_ ~~ all(Str:D, any('', m{^ "/"})) };
+        check-type %env, 'PATH_INFO', { $_ ~~ all(Str:D, any('', m{^ "/"})) };
+        check-type %env, 'REQUEST_URI', Str:D;
+        check-type %env, 'QUERY_STRING', Str:D;
+        check-type %env, 'SERVER_NAME', { $_ ~~ all(Str:D, *.chars > 0) };
+        check-type %env, 'SERVER_PORT', { $_ ~~ all(Int:D, * > 0) };
+        check-type %env, 'SERVER_PROTOCOL', { $_ ~~ all(Str:D, *.chars > 0) };
+        check-type %env, 'CONTENT_LENGTH', Int;
+        check-type %env, 'CONTENT_TYPE', Str;
+        check-type %env, 'p6w.url-scheme', Str:D;
+        check-type %env, 'p6w.input', Supply:D;
+        check-type %env, 'p6w.ready', Promise:D;
+        check-type %env, 'p6w.body.encoding', Str:D;
+        check-type %env, 'p6w.protocol', Str:D;
+
+        my $err = %env<p6w.errors>;
+        $err.emit: "1..$i";
+
+        200, [ Content-Type => 'text/plain' ], [ 'OK' ]
+    }
+}
+
+sub config(%env) returns Callable {
+    check-config(%env);
+    &app;
+}

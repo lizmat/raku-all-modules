@@ -1,0 +1,8 @@
+#!smackup
+
+use v6;
+sub app(%env) {
+    start {
+        200, [ Content-Type => 'text/plain' ], [ "Hello World" ]
+    }
+}

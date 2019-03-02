@@ -1,0 +1,9 @@
+#!smackup
+
+use v6;
+
+sub app(%env) {
+    start {
+        my $input = %env<p6w.input>;
+    }
+}

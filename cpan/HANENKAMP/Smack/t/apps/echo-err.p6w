@@ -1,0 +1,16 @@
+#!smackup
+
+use v6;
+
+sub app(%env) {
+    start {
+        my $input = %env<p6w.input>;
+        react {
+            whenever $input -> $buf {
+                %env<p6w.errors>.emit: $buf.decode('utf8');
+                LAST done;
+            }
+        }
+        200, [ Content-Type => 'text/plain' ], 'ok';
+    }
+}
