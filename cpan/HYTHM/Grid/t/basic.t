@@ -6,11 +6,15 @@ use Grid;
 
 
 my @grid = < a b c d e f g h i j k l m n o p q r s t u v w x >;
+
 @grid does Grid[:4columns];
 
 
 plan 42;
 
+use-ok 'Grid';
+does-ok @grid, Grid;
+can-ok @grid, 'transpose';
 
 # Subgrid test
 my @subgrid-test = (
@@ -73,15 +77,18 @@ for @grid-test -> [ $method, $pkey, $pvalue , @expected ] {
 }
 
 # Other tests
-my @column = 0, 1, 2, 3, 4, 5;
-my @row = 0, 1, 2, 3;
+my @columns = 0, 1, 2, 3, 4, 5;
+my @rows = 0, 1, 2, 3;
 
 
-is @grid.append(:@column), < a b c d 0 e f g h 1 i j k l 2 m n o p 3 q r s t 4 u v w x 5 >, 'append-column';
-is @grid.pop(:columns),    < a b c d e f g h i j k l m n o p q r s t u v w x >,         'pop-column';
-is @grid.append(:@row),    < a b c d e f g h i j k l m n o p q r s t u v w x 0 1 2 3 >, 'append-row';
-is @grid.pop(:rows),       < a b c d e f g h i j k l m n o p q r s t u v w x >,         'pop-row';
+ok @grid.check(:@columns), 'check-columns';
+is @grid.append(:@columns), < a b c d 0 e f g h 1 i j k l 2 m n o p 3 q r s t 4 u v w x 5 >, 'append-columns';
+is @grid.pop(:columns),    < a b c d e f g h i j k l m n o p q r s t u v w x >,         'pop-columns';
+is @grid.append(:@rows),    < a b c d e f g h i j k l m n o p q r s t u v w x 0 1 2 3 >, 'append-rows';
+is @grid.pop(:rows),       < a b c d e f g h i j k l m n o p q r s t u v w x >,         'pop-rows';
 
+
+pass 'everything';
 
 done-testing;
 

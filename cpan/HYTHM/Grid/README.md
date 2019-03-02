@@ -74,20 +74,10 @@ EXAMPLES
 
 
     a b c d                          a b c d
-    e f g h                          e f g h
-    i j k l        :diagonal         i j k l
-    m n o p    ----------------->    m n o p
-    q r s t                          q r s t
-    u v w x                          u v w x
-    
-    # fails becuase Grid.is-square === `False`
-
-
-    a b c d                          a b c d
     e f g h                          <b>e i m q</b>
     i j k l       :@diagonal         <b>f j n r</b>
     m n o p    ----------------->    <b>g k o s</b>
-    q r s t      [ 4 ... 19 ]        <b>h l p t</b>
+    q r s t    subgrid [ 4 ... 19 ]  <b>h l p t</b>
     u v w x                          u v w x
 
 
@@ -98,6 +88,17 @@ EXAMPLES
     q r s t      [ 4 ... 19 ]        <b>q m i e</b>
     u v w x                          u v w x
 
+
+    a b c d                          a b c d
+    e f g h                          e f g h
+    i j k l        :diagonal         i j k l
+    m n o p    ----------------->    m n o p
+    q r s t                          q r s t
+    u v w x                          u v w x
+    
+    # fails becuase Grid.is-square === False
+
+
 </code>
 </pre>
 
@@ -106,6 +107,22 @@ EXAMPLES
 
 <pre>
 <code>
+
+    a b c d
+    e f g h                          <b>u q m i e a</b>
+    i j k l       :clockwise         <b>v r n j f b</b>
+    m n o p    ----------------->    <b>w s o k g c</b>
+    q r s t                          <b>x t p l h d</b>
+    u v w x
+
+
+    a b c d                          a b c d
+    e f g h                          e f g h
+    i j k l     :@anticlockwise      i <b>k o</b> l
+    m n o p    ----------------->    m <b>j n</b> p
+    q r s t    [ 9, 10, 13, 14 ]     q r s t
+    u v w x                          u v w x
+
 
     a b c d                          <b>d a b c</b> 
     e f g h                          <b>h e f g</b>
@@ -137,22 +154,6 @@ EXAMPLES
     m n o p    ----------------->    <b>q r s t</b>
     q r s t                          <b>u v w x</b>
     u v w x                          <b>a b c d</b>
-
-
-    a b c d
-    e f g h                          <b>u q m i e a</b>
-    i j k l       :clockwise         <b>v r n j f b</b>
-    m n o p    ----------------->    <b>w s o k g c</b>
-    q r s t                          <b>x t p l h d</b>
-    u v w x
-
-
-    a b c d                          a b c d
-    e f g h                          e f g h
-    i j k l     :@anticlockwise      i <b>k o</b> l
-    m n o p    ----------------->    m <b>j n</b> p
-    q r s t    [ 9, 10, 13, 14 ]     q r s t
-    u v w x                          u v w x
 
 
 </code>
@@ -199,7 +200,7 @@ EXAMPLES
 
     a b c d                          a b c d
     e f g h                          e f g h
-    i j k l       :@row              i j k l
+    i j k l       :@rows             i j k l
     m n o p    ----------------->    m n o p
     q r s t    [ 0, 1, 2, 3 ]        q r s t
     u v w x                          u v w x
@@ -207,7 +208,7 @@ EXAMPLES
 
     a b c d                          a b c d <b>0</b>
     e f g h                          e f g h <b>1</b>
-    i j k l       :@column           i j k l <b>2</b>
+    i j k l       :@columns          i j k l <b>2</b>
     m n o p    ----------------->    m n o p <b>3</b>
     q r s t   [ 0, 1, 2, 3, 4, 5 ]   q r s t <b>4</b>
     u v w x                          u v w x <b>5</b>
@@ -223,7 +224,7 @@ EXAMPLES
 
     a b c d                          <b>0 1 2 3</b>
     e f g h                          a b c d
-    i j k l         :@row            e f g h
+    i j k l         :@rows           e f g h
     m n o p    ----------------->    i j k l
     q r s t      [ 0, 1, 2, 3 ]      m n o p
     u v w x                          q r s t
@@ -231,7 +232,7 @@ EXAMPLES
 
     a b c d                          <b>0</b> a b c d
     e f g h                          <b>1</b> e f g h
-    i j k l       :@column           <b>2</b> i j k l
+    i j k l       :@columns          <b>2</b> i j k l
     m n o p    ----------------->    <b>3</b> m n o p
     q r s t   [ 0, 1, 2, 3, 4, 5 ]   <b>4</b> q r s t
     u v w x                          <b>5</b> u v w x
@@ -312,6 +313,20 @@ Returns `Grid`'s  columns count.
 Returns `Grid`'s  rows count.
 
 
+### check
+
+    multi method check ( :@rows! --> Bool:D ) { ... }
+Check if Rows can fit in `Grid`.
+
+    multi method check ( :@columns! --> Bool:D ) { ... }
+Check if Columns can fit in `Grid`.
+
+
+### reshape
+
+    method reshape ( Grid:D:  Int :$columns! where * > 0 --> Grid:D ) { ... }
+
+
 ### flip
 
     multi method flip ( Grid:D: Int:D :$horizontal! --> Grid:D ) { ... }
@@ -377,20 +392,29 @@ Transpose (Subgrid)
 
 ### append
 
-    multi method append ( Grid:D: :@row! --> Grid:D ) { ... }
-Append Row.
+    multi method append ( Grid:D: :@rows! --> Grid:D ) { ... }
+Append Rows.
 
-    multi method append ( Grid:D: :@column! --> Grid:D ) { ... }
-Append Column.
+    multi method append ( Grid:D: :@columns! --> Grid:D ) { ... }
+Append Columns.
 
 
 ### Prepend
 
-    multi method prepend ( Grid:D: :@row! --> Grid:D ) {
-Prepend Row.
+    multi method prepend ( Grid:D: :@rows! --> Grid:D ) {
+Prepend Rows.
 
-    multi method prepend ( Grid:D: :@column! --> Grid:D ) { ... }
-Prepend Column.
+    multi method prepend ( Grid:D: :@columns! --> Grid:D ) { ... }
+Prepend Columns.
+
+
+### push
+
+    multi method push ( Grid:D: :@rows! --> Grid:D ) { ... }
+Push Rows.
+
+    multi method push ( Grid:D: :@columns! --> Grid:D ) {
+Push Columns.
 
 
 ### pop
@@ -411,6 +435,15 @@ Shift Rows.
 Shift Columns.
 
 
+### unshift
+
+    multi method unshift ( Grid:D: :@rows! --> Grid:D ) { ... }
+Unshift Rows.
+
+    multi method unshift ( Grid:D: :@columns! --> Grid:D ) {
+Unshift Columns.
+
+
 ### has-subgrid
 
     method has-subgrid( :@indices!, :$square = False --> Bool:D ) { ... }
@@ -420,7 +453,7 @@ Returns `True` if `:@indices` is a subgrid of `Grid`, `False` otherwise.
 ### is-square
 
     method is-square ( --> Bool:D ) { ... }
-Returns `True` if `Grid` is a square, `False` otherwise.
+Returns `True` if `Grid` is a square, False otherwise.
 
 
 AUTHOR
