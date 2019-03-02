@@ -64,12 +64,17 @@ method FALLBACK ( $native-sub is copy, |c ) {
   CATCH { test-catch-exception( $_, $native-sub); }
 
   $native-sub ~~ s:g/ '-' /_/ if $native-sub.index('-');
+  die X::GTK::V3.new(:message(
+      "Native sub name '$native-sub' made too short. Keep at least one '-' or '_'."
+    )
+  ) unless $native-sub.index('_');
 
   my Callable $s;
   try { $s = &::($native-sub); }
   try { $s = &::("g_slist_$native-sub"); }
 
-  test-call( $s, $!gslist, |c)
+  #test-call( $s, $!gslist, |c)
+  $s( $!gslist, |c)
 }
 
 #`{{

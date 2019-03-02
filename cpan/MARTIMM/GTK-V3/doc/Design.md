@@ -50,6 +50,8 @@ class X
 
 class GMain
 class GList
+class GType
+class GValue
 class GSList
 class GtkMain
 

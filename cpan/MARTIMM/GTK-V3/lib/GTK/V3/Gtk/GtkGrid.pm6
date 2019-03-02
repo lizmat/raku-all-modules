@@ -41,6 +41,14 @@ sub gtk_grid_set_row_spacing ( N-GObject $grid, uint32 $spacing)
   is native(&gtk-lib)
   { * }
 
+sub gtk_grid_remove_row ( N-GObject $grid, int32 $position )
+  is native(&gtk-lib)
+  { * }
+
+sub gtk_grid_remove_column ( N-GObject $grid, int32 $position )
+  is native(&gtk-lib)
+  { * }
+
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 submethod BUILD ( *%options ) {
 

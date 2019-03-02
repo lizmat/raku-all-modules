@@ -32,8 +32,8 @@ use GTK::V3::Gtk::GtkDialog;
 #-------------------------------------------------------------------------------
 # See /usr/include/gtk-3.0/gtk/gtkaboutdialog.h
 # https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html
-unit class GTK::V3::Gtk::GtkAboutDialog:auth<github:MARTIMM>
-  is GTK::V3::Gtk::GtkDialog;
+unit class GTK::V3::Gtk::GtkAboutDialog:auth<github:MARTIMM>;
+also is GTK::V3::Gtk::GtkDialog;
 
 #-------------------------------------------------------------------------------
 =begin pod
@@ -43,14 +43,21 @@ unit class GTK::V3::Gtk::GtkAboutDialog:auth<github:MARTIMM>
 =head2 enum GtkLicense
 
 A series of names to set the license type. The following are defined;
-C<GTK_LICENSE_UNKNOWN>, C<GTK_LICENSE_CUSTOM>, C<GTK_LICENSE_GPL_2_0>,
-C<GTK_LICENSE_GPL_3_0>, C<GTK_LICENSE_LGPL_2_1>,
-C<GTK_LICENSE_LGPL_3_0>, C<GTK_LICENSE_BSD>,
-C<GTK_LICENSE_MIT_X11>, C<GTK_LICENSE_ARTISTIC>,
+
+C<GTK_LICENSE_UNKNOWN>, C<GTK_LICENSE_CUSTOM>
+
+C<GTK_LICENSE_GPL_2_0>, C<GTK_LICENSE_GPL_3_0>, C<GTK_LICENSE_LGPL_2_1>, C<GTK_LICENSE_LGPL_3_0>
+
+C<GTK_LICENSE_BSD>
+
+C<GTK_LICENSE_MIT_X11>
+
+C<GTK_LICENSE_ARTISTIC>
+
 C<GTK_LICENSE_GPL_2_0_ONLY>, C<GTK_LICENSE_GPL_2_0_ONLY>,
-C<GTK_LICENSE_GPL_3_0_ONLY>, C<GTK_LICENSE_LGPL_2_1_ONLY>,
-C<GTK_LICENSE_LGPL_3_0_ONLY>, C<GTK_LICENSE_AGPL_3_0>, and
-C<GTK_LICENSE_AGPL_3_0_ONLY>
+C<GTK_LICENSE_GPL_3_0_ONLY>,
+
+C<GTK_LICENSE_LGPL_2_1_ONLY>, C<GTK_LICENSE_LGPL_3_0_ONLY>, C<GTK_LICENSE_AGPL_3_0>, C<GTK_LICENSE_AGPL_3_0_ONLY>
 
 See C<gtk_about_dialog_get_license_type> for an example.
 =end pod
@@ -61,7 +68,6 @@ enum GtkLicense is export <
 
   GTK_LICENSE_GPL_2_0
   GTK_LICENSE_GPL_3_0
-
   GTK_LICENSE_LGPL_2_1
   GTK_LICENSE_LGPL_3_0
 
@@ -84,7 +90,7 @@ enum GtkLicense is export <
 
 =head1 Methods
 
-All methods can be written with dashes or shortened by cutting the C<gtk_about_dialog_> part. This cannot be done when e.g. C<new> is left after the shortening. That would become an entirely other method. See the synopsis above for an example. Below, this is shown with brackets in the headers.
+All methods can be written with dashes or shortened by cutting the C<gtk_about_dialog_> part. After shortening, at least one dash or underscore must be left. See the synopsis above for an example. Below, this is shown with brackets in the headers.
 
 =head2 gtk_about_dialog_new
 

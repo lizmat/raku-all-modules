@@ -12,9 +12,6 @@ use GTK::V3::Gtk::GtkButton;
 use GTK::V3::Gtk::GtkContainer;
 use GTK::V3::Gtk::GtkLabel;
 
-diag "\n";
-
-
 #-------------------------------------------------------------------------------
 subtest 'Button create', {
 
@@ -54,13 +51,12 @@ subtest 'Button as container', {
   my GTK::V3::Gtk::GtkLabel $l .= new(:label(''));
 
   my GTK::V3::Glib::GList $gl .= new(:glist($button1.get-children));
-  $l($gl.nth-data(0));
+  $l($gl.nth-data-gobject(0));
   is $l.get-text, 'xyz', 'text label from button 1';
 
-#`{{}}
   my GTK::V3::Gtk::GtkLabel $label .= new(:label('pqr'));
   my GTK::V3::Gtk::GtkButton $button2 .= new(:empty);
-  $button2.add($label());
+  $button2.gtk-container-add($label);
 
   $l($button2.get-child);
   is $l.get-text, 'pqr', 'text label from button 2';
@@ -69,7 +65,7 @@ subtest 'Button as container', {
   # when gtk-container-add is used.
   is $button2.get-label, Str, 'text cannot be returned like this anymore';
 
-  $gl.free;
+  $gl.g-list-free;
   $gl = GTK::V3::Glib::GList;
 }
 
@@ -95,7 +91,6 @@ subtest 'Button connect and emit signal', {
   my X $x .= new(:empty);
   $button.register-signal( $x, 'click-handler', 'clicked', :user-data($data));
 
-  my GTK::V3::Gtk::GtkMain $main .= new(:check);
   my Promise $p = start {
     # wait for loop to start
     sleep(1.1);

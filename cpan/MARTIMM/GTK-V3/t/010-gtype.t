@@ -8,8 +8,6 @@ use GTK::V3::Glib::GList;
 use GTK::V3::Gtk::GtkButton;
 use GTK::V3::Gtk::GtkBuilder;
 
-diag "\n";
-
 #-------------------------------------------------------------------------------
 my $dir = 't/ui';
 mkdir $dir unless $dir.IO ~~ :e;
@@ -42,12 +40,14 @@ $ui-file.IO.spurt(Q:q:to/EOXML/);
 subtest 'button type', {
   my GTK::V3::Gtk::GtkBuilder $builder .= new(:filename($ui-file));
 
-  my Int $gtype = $builder.get_type_from_name('GtkButton');
+  my Int $gtype = $builder.get-type-from-name('GtkButton');
   my GTK::V3::Glib::GType $t .= new;
-  is $t.g_type_name($gtype), 'GtkButton', "gtype code $gtype is GtkButton";
-  is $t.g_type_from_name('GtkButton'), $gtype, 'gtype codes are the same';
-  is $t.g_type_name($t.parent($gtype)), 'GtkBin', 'parent class is GtkBin';
-  is $t.depth($gtype), 6, "Depth = 6: Button, Bin, Container, Widget, GInitiallyUnowned, GObject";
+  is $t.g-type-name($gtype), 'GtkButton', "gtype code $gtype is GtkButton";
+  is $t.from-name('GtkButton'), $gtype, 'gtype codes are the same';
+  is $t.g-type-name($t.g-type-parent($gtype)), 'GtkBin',
+     'parent class is GtkBin';
+  is $t.g-type-depth($gtype), 6,
+     "Depth = 6: Button, Bin, Container, Widget, GInitiallyUnowned, GObject";
 }
 
 #-------------------------------------------------------------------------------

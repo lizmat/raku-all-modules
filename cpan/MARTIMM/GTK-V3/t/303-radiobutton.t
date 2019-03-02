@@ -41,7 +41,7 @@ subtest 'RadioButton group list', {
 
   diag "get group list";
   my GTK::V3::Glib::GSList $l .= new(:gslist($rb2.get-group));
-  is $l.length, 2, 'group has two members';
+  is $l.g-slist-length, 2, 'group has two members';
 
   diag "test button labels";
   my GTK::V3::Gtk::GtkRadioButton $b .= new(:widget($l.nth-data-gobject(1)));

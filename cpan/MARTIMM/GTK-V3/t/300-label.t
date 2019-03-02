@@ -2,13 +2,11 @@ use v6;
 use NativeCall;
 use Test;
 
-use GTK::V3::Glib::GObject;
 use GTK::V3::X;
+use GTK::V3::Glib::GObject;
 use GTK::V3::Gtk::GtkWidget;
 use GTK::V3::Gtk::GtkBuilder;
 use GTK::V3::Gtk::GtkLabel;
-
-diag "\n";
 
 #-------------------------------------------------------------------------------
 subtest 'Label create', {
@@ -32,7 +30,7 @@ subtest 'Label create', {
 
   my GTK::V3::Gtk::GtkLabel $label2 .= new(:label('pqr'));
   is $label2.gtk-label-get-text, 'pqr',
-     'label 2 text o, read with $label1.gtk-label-get-text';
+     'label 2 text ok, read with $label1.gtk-label-get-text';
   $label1($label2());
   is $label1.get-text, 'pqr',
      'label 1 text replaced, read with $label1.get-text';
@@ -60,5 +58,6 @@ subtest 'Builder config', {
   my GTK::V3::Gtk::GtkLabel $label .= new(:build-id<copyLabel>);
   is $label.get-text, "Text to copy", 'label text found from config';
 }
+
 #-------------------------------------------------------------------------------
 done-testing;

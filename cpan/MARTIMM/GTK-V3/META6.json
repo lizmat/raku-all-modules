@@ -1,7 +1,7 @@
 {
   "description": "Interfacing Glade XML to Perl6",
   "name": "GTK::V3",
-  "version": "0.6.2",
+  "version": "0.7.2",
   "authors": [ "Marcel Timmerman"],
   "tags": [ "Gui", "Gtk"],
 
@@ -23,6 +23,7 @@
     "GTK::V3::Glib::GObject": "lib/GTK/V3/Glib/GObject.pm6",
     "GTK::V3::Glib::GSList": "lib/GTK/V3/Glib/GSList.pm6",
     "GTK::V3::Glib::GType": "lib/GTK/V3/Glib/GType.pm6",
+    "GTK::V3::Glib::GValue": "lib/GTK/V3/Glib/GValue.pm6",
 
     "GTK::V3::Gtk::GtkAboutDialog": "lib/GTK/V3/Gtk/GtkAboutDialog.pm6",
     "GTK::V3::Gtk::GtkBin": "lib/GTK/V3/Gtk/GtkBin.pm6",

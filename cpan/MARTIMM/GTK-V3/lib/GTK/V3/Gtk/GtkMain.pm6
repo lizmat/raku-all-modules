@@ -47,10 +47,10 @@ sub gtk_main_quit ( )
     { * }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-our $gui-initialized = False;
+my Bool $gui-initialized = False;
 
 #-------------------------------------------------------------------------------
-submethod BUILD ( Bool :$check = False ) {
+submethod BUILD ( ) {
 
   if not $gui-initialized {
     # Must setup gtk otherwise perl6 will crash
@@ -67,15 +67,8 @@ submethod BUILD ( Bool :$check = False ) {
     my $argv = CArray[CArray[Str]].new;
     $argv[0] = $arg_arr;
 
-    if $check {
-      gtk_init_check( $argc, $argv);
-      $gui-initialized = True;
-    }
-
-    else {
-      gtk_init( $argc, $argv);
-      $gui-initialized = True;
-    }
+    gtk_init( $argc, $argv);
+    $gui-initialized = True;
   }
 }
 
@@ -85,10 +78,15 @@ method FALLBACK ( $native-sub is copy, |c ) {
   CATCH { test-catch-exception( $_, $native-sub); }
 
   $native-sub ~~ s:g/ '-' /_/ if $native-sub.index('-');
+  die X::GTK::V3.new(:message(
+      "Native sub name '$native-sub' made too short. Keep atleast one '-' or '_'."
+    )
+  ) unless $native-sub.index('_');
 
   my Callable $s;
   try { $s = &::($native-sub); }
   try { $s = &::("gtk_main_$native-sub"); }
 
-  test-call( &$s, Any, |c)
+  #test-call( &$s, Any, |c)
+  $s(|c)
 }

@@ -4,6 +4,7 @@ use NativeCall;
 use GTK::V3::X;
 use GTK::V3::N::NativeLib;
 use GTK::V3::Gtk::GtkMain;
+use GTK::V3::Glib::GValue;
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 unit class GTK::V3::Glib::GObject:auth<github:MARTIMM>;
@@ -155,6 +156,16 @@ sub g_object_unref ( N-GObject $object )
   is native(&gobject-lib)
   { * }
 
+sub g_object_set_property (
+  N-GObject $object, Str $property_name, N-GValue $value
+) is native(&gobject-lib)
+  { * }
+
+sub g_object_get_property (
+  N-GObject $object, Str $property_name, N-GValue $gvalue is rw
+) is native(&gobject-lib)
+  { * }
+
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 our $gobject-debug = False;
 
@@ -190,8 +201,13 @@ method FALLBACK ( $native-sub is copy, |c ) {
 
   CATCH { test-catch-exception( $_, $native-sub); }
 
-  # convert all dashes to underscores if there are any
+  # convert all dashes to underscores if there are any. then check if
+  # name is not too short.
   $native-sub ~~ s:g/ '-' /_/ if $native-sub.index('-');
+  die X::GTK::V3.new(:message(
+      "Native sub name '$native-sub' made too short. Keep atleast one '-' or '_'."
+    )
+  ) unless $native-sub.index('_');
 
   # check if there are underscores in the name. then the name is not too short.
   my Callable $s;
@@ -214,6 +230,10 @@ method FALLBACK ( $native-sub is copy, |c ) {
       $params.push($p.native-gobject());
     }
 
+    elsif $p ~~ GTK::V3::Glib::GValue {
+      $params.push($p());
+    }
+
     else {
       $params.push($p);
     }
@@ -230,6 +250,7 @@ method fallback ( $native-sub is copy --> Callable ) {
 
   try { $s = &::($native-sub); }
   try { $s = &::("g_signal_$native-sub"); } unless ?$s;
+  try { $s = &::("g_object_$native-sub"); } unless ?$s;
 
   $s = callsame unless ?$s;
 
@@ -239,14 +260,13 @@ method fallback ( $native-sub is copy --> Callable ) {
 #-------------------------------------------------------------------------------
 submethod BUILD ( *%options ) {
 
-#note "GO: {self}, ", %options;
+  note "GObject: {self}, ", %options if $gobject-debug;
 
   # Test if GTK is initialized
-  my GTK::V3::Gtk::GtkMain $main .= new
-     unless $GTK::V3::Gtk::GtkMain::gui-initialized;
+  my GTK::V3::Gtk::GtkMain $main .= new;
 
   if ? %options<widget> {
-    note "go widget: ", %options<widget> if $gobject-debug;
+    note "GObject widget: ", %options<widget> if $gobject-debug;
     my $w = %options<widget>;
     $w = $w() if $w ~~ GTK::V3::Glib::GObject;
     note "go widget converted: ", $w if $gobject-debug;
@@ -263,14 +283,14 @@ submethod BUILD ( *%options ) {
 
   elsif ? %options<build-id> {
     my N-GObject $widget;
-    note "Builders: ", $builders if $gobject-debug;
+    note "GObject build-id: %options<build-id>" if $gobject-debug;
     for @$builders -> $builder {
       $widget = $builder.get-object(%options<build-id>);
       last if ?$widget;
     }
 
     if ? $widget {
-      note "store widget: ", $widget if $gobject-debug;
+      note "store widget: ", self.^name, ', ', $widget if $gobject-debug;
       $!g-object = $widget;
     }
 

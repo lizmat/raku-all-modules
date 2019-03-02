@@ -1,9 +1,14 @@
 ## Release notes
 
+* 2019-02-28 0.7.0
+  * Added GValue and some subs to GObject to handle objects properties.
+  * Changes caused by 'at least one underscore' policy. E.g. `gtk-grid-attach()` cannot be shortened to `attach()`. This is done because a class inherits always from `Any` and `Mu` and there are many methods defined there which might clash with a shortened one. A good example is `gtk-button-new()`. A shortened version would be `new()` of which we all know what the purpose is in perl6. The only thing where I'm thinking about is chopping the `g-`, `gdk-` or `gtk-` prefixes. So the last example would become `button-new()`.
+  * Added documentation to GtkBin
+
 * 2019-02-25 0.6.2
   * Bugfixes
   * Added documentation to GtkAboutDialog
-  
+
 * 2019-02-23 0.6.1
   * Modified `g_slist_nth_data` into `g_slist_nth_data_str`and `g_slist_nth_data_gobject` because the list can hold several types of data.
   * TODO do same for GList and also more for other types if needed.
@@ -16,7 +21,7 @@
 
 * 2019-02-20 0.5.0
   * Added GSList and GtkRadioButton
-  * Documented GtkAboutDialog
+  * Documented GtkAboutDialog. Docs are available as pdf in the doc directory.
 
 * 2019-02-18 0.4.3
   * Bugfixes

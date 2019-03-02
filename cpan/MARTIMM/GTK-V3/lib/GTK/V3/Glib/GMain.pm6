@@ -110,6 +110,10 @@ sub g_timeout_add (
 method FALLBACK ( $native-sub is copy, |c ) {
 
   $native-sub ~~ s:g/ '-' /_/ if $native-sub.index('-');
+  die X::GTK::V3.new(:message(
+      "Native sub name '$native-sub' made too short. Keep atleast one '-' or '_'."
+    )
+  ) unless $native-sub.index('_');
 
   my Callable $s;
   try { $s = &::($native-sub); }

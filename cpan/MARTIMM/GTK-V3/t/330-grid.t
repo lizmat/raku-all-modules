@@ -17,8 +17,8 @@ subtest 'Grid create', {
   my GTK::V3::Gtk::GtkLabel $label .= new(:label('note'));
 
   my GTK::V3::Gtk::GtkGrid $grid .= new(:empty);
-  $grid.attach( $button, 0, 0, 1, 1);
-  $grid.attach( $label, 0, 1, 1, 1);
+  $grid.gtk-grid-attach( $button, 0, 0, 1, 1);
+  $grid.gtk-grid-attach( $label, 0, 1, 1, 1);
 
   my GTK::V3::Gtk::GtkLabel $label-widget .= new(
     :widget($grid.get-child-at( 0, 1))
@@ -26,13 +26,13 @@ subtest 'Grid create', {
   is $label-widget.get-text, 'note', 'text from label';
 
   my GTK::V3::Glib::GList $gl .= new(:glist($grid.get-children));
-  is $gl.length, 2, 'two list items';
+  is $gl.g-list-length, 2, 'two list items';
 
 #note $gl.nth-data(1);
-  $label-widget($gl.nth-data(0));
+  $label-widget($gl.nth-data-gobject(0));
   is $label-widget.get-text, 'note', 'text from label';
 
-  $gl.free;
+  $gl.g-list-free;
   $gl = GTK::V3::Glib::GList;
 
 #  $grid(@widgets[0]);
