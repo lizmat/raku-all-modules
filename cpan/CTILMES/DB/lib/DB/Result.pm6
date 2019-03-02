@@ -31,6 +31,7 @@ role DB::Result
 {
     has $.sth;
     has Bool $.finish;
+    has $.keys-cache;
 
     method free() {}
 
@@ -46,8 +47,7 @@ role DB::Result
 
     method keys()
     {
-        state $keys;
-        $keys // ($keys = $.names)
+        $!keys-cache // ($!keys-cache = $.names)
     }
 
     method value()
