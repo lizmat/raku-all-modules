@@ -1,5 +1,10 @@
 ## Release notes
 
+* 2019-03-02 0.7.2
+  * Documentation added and README changed
+  * Native subs added
+* 2019-03-01 0.7.1
+  * Bugfixes.
 * 2019-02-28 0.7.0
   * Added GValue and some subs to GObject to handle objects properties.
   * Changes caused by 'at least one underscore' policy. E.g. `gtk-grid-attach()` cannot be shortened to `attach()`. This is done because a class inherits always from `Any` and `Mu` and there are many methods defined there which might clash with a shortened one. A good example is `gtk-button-new()`. A shortened version would be `new()` of which we all know what the purpose is in perl6. The only thing where I'm thinking about is chopping the `g-`, `gdk-` or `gtk-` prefixes. So the last example would become `button-new()`.

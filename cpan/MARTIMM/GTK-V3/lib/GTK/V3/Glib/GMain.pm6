@@ -9,8 +9,8 @@ use GTK::V3::N::NativeLib;
 unit class GTK::V3::Glib::GMain:auth<github:MARTIMM>;
 
 #-------------------------------------------------------------------------------
-
 # /usr/include/glib-2.0/glib/gmain.h
+# https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html
 constant G_PRIORITY_HIGH is export          = -100;
 constant G_PRIORITY_DEFAULT is export       = 0;
 constant G_PRIORITY_HIGH_IDLE is export     = 100;

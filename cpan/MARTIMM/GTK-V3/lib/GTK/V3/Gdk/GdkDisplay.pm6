@@ -8,6 +8,7 @@ use GTK::V3::Gdk::GdkScreen;
 
 #-------------------------------------------------------------------------------
 # See /usr/include/gtk-3.0/gdk/gdkscreen.h
+# https://developer.gnome.org/gdk3/stable/GdkDisplay.html
 unit class GTK::V3::Gdk::GdkDisplay:auth<github:MARTIMM>
   is GTK::V3::Glib::GObject;
 

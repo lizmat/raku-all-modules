@@ -17,7 +17,7 @@ use v6;
   # show the dialog
   $about.gtk-dialog-run;
 
-  # when dialog buttons are pressed hide it again
+  # when dialog buttons are pressed control returns here. Hide the dialog again
   $about.gtk-widget-hide
 =end pod
 # ==============================================================================

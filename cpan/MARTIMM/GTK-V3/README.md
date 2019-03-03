@@ -51,14 +51,17 @@ I want to follow the interface of Gtk, Gdk and Glib as closely as possible by ke
     { * }
   ```
 
-* Not all native subs or even classes will be implemented caused by the following reasons;
-  * Many subs and some classes  are obsolete.
-  * The original idea was to have the interface build by the glade interface designer. This lib was in the GTK::Glade project before refactoring. So e.g. a GtkButton does not have to have all subs to create a button. On the other hand a GtkListBox is a widget which is changed dynamically and therefore need more subs to manipulate the widget and its contents.
+* Not all native subs or even classes will be implemented or implemented much later because of the following reasons;
+  * Many subs and some classes are obsolete.
+  * The original idea was to have the interface build by the glade interface designer. This lib was in the GTK::Glade project before re-factoring. Therefor a GtkButton does not have to have all subs to create a button. On the other hand a GtkListBox is a widget which is changed dynamically and therefore need more subs to manipulate the widget and its contents.
+  * The need to implement classes like GtkAssistant, GtkAlignment or GtkScrolledWindow is on a low priority because these can all be instantiated by `GtkBuilder` using your Glade design.
 
 # Motivation
 I perhaps should have used parts of `GTK::Simple` but I wanted to study the native call interface which I am now encountering more seriously. Therefore I started a new project with likewise objects as can be found in `GTK::Simple`.
 
-The other reason I want to start a new project is that after some time working with the native call interface. I came to the conclusion that Perl6 is not yet capable to return a proper message when mistakes are made by me e.g. spelling errors or using wrong types. Most of them end up in **MoarVM panic: Internal error: Unwound entire stack and missed handler**. Other times it ends in just a plain crash. I am very confident that this will be improved later but for the time being I had to improve the maintainability of this project by hiding the native stuff as much as possible. Although the error messages may be improved, some of the crashes are happening within GTK and cannot be captured by Perl6. One of those moments are the use of GTK calls without initializing GTK with `gtk_init`. This can also be covered by setting an init-flag which should be checked by almost every other module. The panic mentioned above mostly happens when perl6 code is called from C as a callback. The stack might not be interpreted completely at that moment.
+The other reason I want to start a new project is that after some time working with the native call interface. I came to the conclusion that Perl6 is not yet capable to return a proper message when mistakes are made by me e.g. spelling errors or using wrong types. Most of them end up in **MoarVM panic: Internal error: Unwound entire stack and missed handler**. Other times it ends in just a plain crash. I am very confident that this will be improved later but for the time being I had to improve the maintainability of this project by hiding the native stuff as much as possible. Although the error messages may be improved, some of the crashes are happening within GTK and cannot be captured by Perl6. One of those moments are the use of GTK calls without initializing GTK with `gtk_init`. This is solved by using an initialization flag which is checked in the `GtkMain` module. The module is referred to by `GObject` which almost all modules inherit from.
+
+The panic mentioned above mostly happens when perl6 code is called from C as a callback. The stack might not be interpreted completely at that moment hence the message.
 
 <!--
 There are some points I noticed in the `GTK::Simple` modules.
@@ -72,7 +75,6 @@ There are some points I noticed in the `GTK::Simple` modules.
 * When callbacks are defined in GTK, they can accept most of the time some user data to do something with it in the callback. GTK::Simple gives them the OpaquePointer type which renders them useless. Most of the time small Routines are used in place of the handler entry. The code used there can close over the variables you want to use and in that situation there is no problem. This changes when the Routines are defined in a separate sub because of the length or complexity of the code. The data can only be handed over to the Routine using the call interface. What type should I take then. I found out that all kinds can be used so I decided to take `CArray[Str]` to have the most flexible choice.
 
 * Next thought of mine is wrong: **Define original `g_signal_connect_object` function instead of changing the name into `g_signal_connect_wd`.** The problem is that in Perl6 the handlers signature is fixed when defining a callback for signals and that there are several types of callbacks possible in GTK widgets. Most of the handlers are having the same signature for a handler. E.g. a `clicked` event handler receives a widget and data. That's why the sub is called like that: `g_signal_connect_wd`. There are other signals using a different signature such as the gtk container `add` event. That one has 2 widgets and then data. So I added `g_signal_connect_wwd` to handle that one. Similar setups may follow.
--->
 
 These arguments will present some problems
 * How to store the native widget. This is a central object representing the widget for the class wherein it is created. It is used where widgets like labels, dialogs, frames, listboxes etc are used. Because it is just a pointer to a C object we do not need to build inheritance around this. Like in `GTK::Simple` I used a role for that, only not named after a GTK like class.
@@ -81,6 +83,7 @@ These arguments will present some problems
 * Not all calls have the widget on their first argument. That is solved by investigating the subroutines signature of which the first argument is a N-GObject or not.
 
 Not all of the GTK, GDK or Glib subroutines from the libraries will be covered because not everything is needed. Other reasons are that classes and many subs are deprecated. This package will support the 3.* version of GTK. There is already a 4.* version out but that is food for later thoughts. The root of the library will be GTK::V3 and can be separated later into a another package.
+-->
 
 # Synopsis
 
@@ -88,131 +91,60 @@ Not all of the GTK, GDK or Glib subroutines from the libraries will be covered b
 
 ## Gtk library
 
-* GTK::V3::Gtk::GtkAboutDialog at [Gnome developer][gtkaboutdialog] and [V3 pod doc](doc/GtkAboutDialog.pdf)
-
-* GTK::V3::Gtk::GtkBin at [Gnome developer][gtkbin] and [V3 pod doc](doc/GtkBin.pdf)
-
-* [GTK::V3::Gtk::GtkBuilder][gtkbuilder] is **GTK::V3::Glib::GObject**
-  * `new ( Bool :$empty )`
-  * `new ( Str:D :$filename )`
-  * `new ( Str:D :$string )`
-  * `add-gui ( Str:D :$filename! )`
-  * `add-gui ( Str:D :$string! )`
-  * `gtk_builder_new ( --> N-GObject )` [6]
-  * `[gtk_builder_]new_from_file ( Str $glade-ui --> N-GObject )`
-  * `[gtk_builder_]new_from_string ( Str $glade-ui, uint32 $length --> N-GObject )`
-  * `[gtk_builder_]add_from_file( Str $glade-ui, OpaquePointer $error --> int32 )`
-  * `[gtk_builder_]add_from_string ( Str $glade-ui, uint32 $size, OpaquePointer $error --> int32 )`
-  * `[gtk_builder_]get_object ( Str $object-id --> N-GObject )`
-  * `[gtk_builder_]get_type_from_name ( Str $type_name --> int32 )`
-
-* [GTK::V3::Gtk::GtkButton][gtkbutton] is **GTK::V3::Gtk::GtkBin**
-  * `new ( Str :$empty )`
-  * `new ( Str :$label )`
-  * `gtk_button_new ( --> N-GObject )`
-  * `[gtk_button_]new_with_label ( Str $label --> N-GObject )`
-  * `[gtk_button_]get_label ( --> Str )`
-  * `[gtk_button_]set_label ( Str $label )`
-
-* [GTK::V3::Gtk::GtkCheckButton][gtkcheckbutton] is **GTK::V3::Gtk::GtkToggleButton**
-  * `new ( Str :$empty )`
-  * `new ( Str :$label )`
-  * `gtk_toggle_button_new ( --> N-GObject )`
-  * `[gtk_toggle_button_]new_with_label ( Str $label --> N-GObject )`
-  * `[gtk_toggle_button_]get_active ( --> int32 )`
-  * `[gtk_toggle_button_]set_active ( int32 $active )`
-
-* [GTK::V3::Gtk::GtkContainer][gtkcontainer] is **GTK::V3::Gtk::GtkWidget**
-  * `gtk_container_add ( N-GObject $widget )` [9]
-  * `gtk_container_get_border_width ( --> int32 )`
-  * `gtk_container_get_children ( --> N-GList )`
-  * `gtk_container_set_border_width ( int32 $border_width )`
-
-* [GTK::V3::Gtk::GtkCssProvider][gtkcssprovider] is **GTK::V3::Glib::GObject**
-  * `gtk_css_provider_new ( --> N-GObject )`
-  * `[gtk_css_provider_]get_named ( Str $name, Str $variant --> N-GObject )`
-  * `[gtk_css_provider_]load_from_path ( Str $css-file, OpaquePointer)`
-
-* [GTK::V3::Gtk::GtkStyleContext][gtkstylecontext] is **GTK::V3::Glib::GObject**
-
-  * `[gtk_style_context_]add_provider_for_screen ( N-GObject $screen, int32 $provider, int32 $priority )`
-
-* [GTK::V3::Gtk::GtkDialog][gtkdialog] is **GTK::V3::Gtk::GtkWindow**
-
-* [GTK::V3::Gtk::GtkEntry][gtkentry] is **GTK::V3::Gtk::GtkWidget**
-
-* [GTK::V3::Gtk::GtkGrid][gtkgrid] is **GTK::V3::Gtk::GtkContainer**
-  * `new ( )`
-  <!--* `new ( N-GObject $grid )`-->
-  * `gtk_grid_attach ( N-GObject $child, Int $x, Int $y, Int $w, Int $h)`
-  * `gtk_grid_insert_row ( Int $position )`
-  * `gtk_grid_insert_column ( Int $position )`
-  * `gtk_grid_get_child_at ( UInt $left, UInt $top --> N-GObject )`
-  * `gtk_grid_set_row_spacing ( UInt $spacing )`
-
-* [GTK::V3::Gtk::GtkImage][gtkimage] is **GTK::V3::Gtk::GtkWidget**
-
-* [GTK::V3::Gtk::GtkImageMenuItem][gtkimagemenuitem] is **GTK::V3::Gtk::GtkMenuItem**
-
-* [GTK::V3::Gtk::GtkLabel][gtklabel] is **GTK::V3::Gtk::GtkWidget**
-  * `new ( Str :$text? )`
-  <!--* `new ( N-GObject $grid )`-->
-  * `gtk_label_get_text ( --> Str )`
-  * `gtk_label_set_text ( Str $str )`
-
-* [GTK::V3::Gtk::GtkListBox][gtklistbox] is **GTK::V3::Gtk::GtkContainer**
-
-* [GTK::V3::Gtk::GtkMain][gtkmain]
-
-* [GTK::V3::Gtk::GtkMenuItem][gtkmenuitem] is **GTK::V3::Gtk::GtkBin**
-
-* [GTK::V3::Gtk::GtkRadioButton][gtkradiobutton] is **GTK::V3::Gtk::GtkCheckbutton**
-
-* [GTK::V3::Gtk::GtkTextBuffer][gtktextbuffer] is **GTK::V3::Glib::GObject**
-
-* [GTK::V3::Gtk::GtkTextTagTable][gtktexttagtable] is **GTK::V3::Glib::GObject**
-
-* [GTK::V3::Gtk::GtkTextView][gtktextview] is **GTK::V3::Gtk::GtkContainer**
-
-* [GTK::V3::Gtk::GtkToggleButton][gtktogglebutton] is **GTK::V3::Gtk::GtkButton**
-
-* [GTK::V3::Gtk::GtkWidget][gtkwidget] is **GTK::V3::Glib::GInitiallyUnowned**
-
-* [GTK::V3::Gtk::GtkWindow][gtkwindow] is **GTK::V3::Gtk::GtkBin**
+| Pdf from pod | Link to Gnome Developer |
+|-------|--------------|-------------------------|
+| [GTK::V3::Gtk::GtkAboutDialog](doc/GtkAboutDialog.pdf) | [GtkAboutDialog.html][gtkaboutdialog]
+| [GTK::V3::Gtk::GtkBin](doc/GtkBin.pdf) | [GtkBin.html][gtkbin]
+| GTK::V3::Gtk::GtkBuilder |  [GtkBuilder.html][gtkbuilder]
+| GTK::V3::Gtk::GtkButton |  [GtkButton.html][gtkbutton]
+| GTK::V3::Gtk::GtkCheckButton |  [GtkCheckButton.html][gtkcheckbutton]
+| GTK::V3::Gtk::GtkContainer |  [GtkContainer.html][gtkcontainer]
+| GTK::V3::Gtk::GtkCssProvider |  [GtkCssProvider.html][gtkcssprovider]
+| GTK::V3::Gtk::GtkStyleContext |  [GtkStyleContext.html][gtkstylecontext]
+| GTK::V3::Gtk::GtkDialog |  [GtkDialog.html][gtkdialog]
+| GTK::V3::Gtk::GtkEntry |  [GtkEntry.html][gtkentry]
+| GTK::V3::Gtk::GtkFileChooser |  [GtkFileChooser.html][GtkFileChooser]
+| [GTK::V3::Gtk::GtkFileChooserDialog](doc/GtkFileChooserDialog.pdf) |  [GtkFileChooserDialog.html][GtkFileChooserDialog]
+| GTK::V3::Gtk::GtkFileFilter |  [GtkFileFilter.html][GtkFileFilter]
+| GTK::V3::Gtk::GtkGrid |  [GtkGrid.html][gtkgrid]
+| GTK::V3::Gtk::GtkImage |  [GtkImage.html][gtkimage]
+| GTK::V3::Gtk::GtkImageMenuItem |  [GtkImageMenuItem.html][gtkimagemenuitem]
+| GTK::V3::Gtk::GtkLabel |  [GtkLabel.html][gtklabel]
+| GTK::V3::Gtk::GtkListBox |  [GtkListBox.html][gtklistbox]
+| GTK::V3::Gtk::GtkMain |  [GtkMain.html][gtkmain]
+| GTK::V3::Gtk::GtkMenuItem |  [GtkMenuItem.html][gtkmenuitem]
+| GTK::V3::Gtk::GtkRadioButton |  [GtkRadioButton.html][gtkradiobutton]
+| GTK::V3::Gtk::GtkStyleContext |  [GtkStyleContext.html][GtkStyleContext]
+| GTK::V3::Gtk::GtkTextBuffer |  [GtkTextBuffer.html][gtktextbuffer]
+| GTK::V3::Gtk::GtkTextTagTable |  [GtkTextTagTable.html][gtktexttagtable] |
+| GTK::V3::Gtk::GtkTextView |  [GtkTextView.html][gtktextview]
+| GTK::V3::Gtk::GtkToggleButton |  [GtkToggleButton.html][gtktogglebutton]
+| GTK::V3::Gtk::GtkWidget |  [GtkWidget.html][gtkwidget]
+| GTK::V3::Gtk::GtkWindow |  [GtkWindow.html][gtkwindow]
 
 ## Gdk library
 
-* GTK::V3::Gdk::GdkDisplay is **GTK::V3::Glib::GObject**
-
-* GTK::V3::Gdk::GdkScreen is **GTK::V3::Glib::GObject**
-
-* GTK::V3::Gdk::GdkWindow is **GTK::V3::Glib::GObject**
+| Pdf from pod | Link to Gnome Developer |
+|-------|--------------|-------------------------|
+| GTK::V3::Gdk::GdkDisplay |  [Controls a set of GdkScreens and their associated input devices][GdkDisplay]
+| GTK::V3::Gdk::GdkScreen |  [Object representing a physical screen][GdkScreen]
+| GTK::V3::Gdk::GdkTypes |
+| GTK::V3::Gdk::GdkWindow |  [Windows][GdkWindow]
 
 ## Glib library
 
-<!-- * [GTK::V3::Glib::GError][gerror] -->
-
-* GTK::V3::Glib::GInitiallyUnowned is **GTK::V3::Glib::GObject**
-
-* [GTK::V3::Glib::GList][glist]
-
-* [GTK::V3::Glib::GSList][gslist]
-
-* [GTK::V3::Glib::GMain][gmain]
-
-* [GTK::V3::Glib::GObject][gobject]
-  * `class N-GObject`
-  * `CALL-ME ( N-GObject $widget? --> N-GObject )` [1]
-  * `FALLBACK ( $native-sub, |c )` [2]
-  * `new ( N-GObject :$widget )` [7]
-  * `new ( Str :$build-id )` [8]
-  * `native-gobject ( N-GObject $widget )`
-
-* [GTK::V3::Glib::GType][gtype]
-  * `[g_type_]name ( int32 $type --> Str )`
-  * `[g_type_]from_name ( Str --> int32 )`
-  * `[g_type_]parent ( int32 $type --> int32 )`
-  * `[g_type_]depth ( int32 $type --> uint32 )`
+| Pdf from pod | Link to Gnome Developer |
+|-------|--------------|-------------------------|
+| GTK::V3::Glib::GError |
+| GTK::V3::Glib::GFile |  [File and Directory Handling][GFile]
+| GTK::V3::Glib::GInitiallyUnowned |
+| GTK::V3::Glib::GInterface |
+| GTK::V3::Glib::GList |  [Doubly-Linked Lists][glist]
+| GTK::V3::Glib::GMain |  [The Main Event Loop][gmain]
+| GTK::V3::Glib::GObject  | [The base object type][gobject]
+| GTK::V3::Glib::GSList |  [Singly-Linked Lists][gslist]
+| GTK::V3::Glib::GType |  [1) Type Information][GType1], [2) Basic Types][GType2]
+| GTK::V3::Glib::GValue |  [1) Generic values][GValue1], [2) Parameters and Values][GValue2]
 
 ## Miscellaneous
 
@@ -285,37 +217,50 @@ Github account name: Github account MARTIMM
 [release]: https://github.com/MARTIMM/gtk-glade/blob/master/doc/CHANGES.md
 [logo]: doc/gtk-logo-100.png
 
+[gtkaboutdialog]: https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html
 [gtkbin]: https://developer.gnome.org/gtk3/stable/GtkBin.html
 [gtkbuilder]: https://developer.gnome.org/gtk3/stable/GtkBuilder.html
 [gtkbutton]: https://developer.gnome.org/gtk3/stable/GtkButton.html
-[gtktogglebutton]: https://developer.gnome.org/gtk3/stable/GtkToggleButton.html
 [gtkcheckbutton]: https://developer.gnome.org/gtk3/stable/GtkCheckButton.html
 [gtkcontainer]: https://developer.gnome.org/gtk3/stable/GtkContainer.html
-[gtkgrid]: https://developer.gnome.org/gtk3/stable/GtkGrid.html
-[gtklabel]: https://developer.gnome.org/gtk3/stable/GtkLabel.html
 [gtkcssprovider]: https://developer.gnome.org/gtk3/stable/GtkCssProvider.html
 [gtkdialog]: https://developer.gnome.org/gtk3/stable/GtkDialog.html
 [gtkentry]: https://developer.gnome.org/gtk3/stable/GtkEntry.html
+[GtkFileChooser]: https://developer.gnome.org/gtk3/stable/GtkFileChooser.html
+[GtkFileChooserDialog]: https://developer.gnome.org/gtk3/stable/GtkFileChooserDialog.html
+[GtkFileFilter]: https://developer.gnome.org/gtk3/stable/GtkFileFilter.html
+[gtkgrid]: https://developer.gnome.org/gtk3/stable/GtkGrid.html
 [gtkimage]: https://developer.gnome.org/gtk3/stable/GtkImage.html
 [gtkimagemenuitem]: https://developer.gnome.org/gtk3/stable/GtkImageMenuItem.html
+[gtklabel]: https://developer.gnome.org/gtk3/stable/GtkLabel.html
+[gtklistbox]: https://developer.gnome.org/gtk3/stable/GtkListBox.html
 [gtkmain]: https://developer.gnome.org/gtk3/stable/GtkMain.html
-[gtkwidget]: https://developer.gnome.org/gtk3/stable/GtkWidget.html
-[gtktextbuffer]: https://developer.gnome.org/gtk3/stable/GtkTextBuffer.html
 [gtkmenuitem]: https://developer.gnome.org/gtk3/stable/GtkMenuItem.html
+[gtkradiobutton]: https://developer.gnome.org/gtk3/stable/GtkRadioButton.html
+[GtkStyleContext]: https://developer.gnome.org/gtk3/stable/GtkStyleContext.html
+[gtktextbuffer]: https://developer.gnome.org/gtk3/stable/GtkTextBuffer.html
 [gtktexttagtable]: https://developer.gnome.org/gtk3/stable/GtkTextTagTable.html
 [gtktextview]: https://developer.gnome.org/gtk3/stable/GtkTextView.html
 [gtktogglebutton]: https://developer.gnome.org/gtk3/stable/GtkToggleButton.html
+[gtkwidget]: https://developer.gnome.org/gtk3/stable/GtkWidget.html
 [gtkwindow]: https://developer.gnome.org/gtk3/stable/GtkWindow.html
-[gtkaboutdialog]: https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html
 
-[gtkradiobutton]: https://developer.gnome.org/gtk3/stable/GtkRadioButton.html
+[GdkDisplay]: https://developer.gnome.org/gdk3/stable/GdkDisplay.html
+[GdkScreen]: https://developer.gnome.org/gdk3/stable/GdkScreen.html
+[GdkWindow]: https://developer.gnome.org/gdk3/stable/gdk3-Windows.html
 
-[gerror]:
-[gmain]:
-[gobject]:
-[gtype]:
-[glist]:
-[gslist]:
+[gerror]: https://developer.gnome.org/glib/stable/glib-Error-Reporting.html
+[GFile]: https://developer.gnome.org/gio/stable/GFile.html
+[GInitiallyUnowned]: https://developer.gnome.org/gtk3/stable/ch02.html
+[GInterface]: https://developer.gnome.org/gobject/stable/GTypeModule.html
+[glist]: https://developer.gnome.org/glib/stable/glib-Doubly-Linked-Lists.html
+[gmain]: https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html
+[gobject]: https://developer.gnome.org/gobject/stable/gobject-The-Base-Object-Type.html
+[gslist]: https://developer.gnome.org/glib/stable/glib-Singly-Linked-Lists.html
+[GType1]: https://developer.gnome.org/gobject/stable/gobject-Type-Information.html
+[GType2]: https://developer.gnome.org/glib/stable/glib-Basic-Types.html
+[GValue1]: https://developer.gnome.org/gobject/stable/gobject-Generic-values.html
+[GValue2]: https://developer.gnome.org/gobject/stable/gobject-Standard-Parameter-and-Value-Types.html
 
 <!--
 [todo]: https://github.com/MARTIMM/Library/blob/master/doc/TODO.md

@@ -8,7 +8,7 @@ use GTK::V3::Glib::GInterface;
 
 #-------------------------------------------------------------------------------
 # See /usr/include/glib-2.0/gio/gfile.h
-# https://developer.gnome.org/gtk3/stable/GFile.html
+# https://developer.gnome.org/gio/stable/GFile.html
 unit class GTK::V3::Glib::GFile:auth<github:MARTIMM>
   is GTK::V3::Glib::GInterface;
 

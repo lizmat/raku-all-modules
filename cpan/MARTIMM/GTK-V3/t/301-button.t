@@ -13,6 +13,10 @@ use GTK::V3::Gtk::GtkContainer;
 use GTK::V3::Gtk::GtkLabel;
 
 #-------------------------------------------------------------------------------
+# used later on in tests
+my GTK::V3::Gtk::GtkMain $main .= new;
+
+#-------------------------------------------------------------------------------
 subtest 'Button create', {
 
   my GTK::V3::Gtk::GtkButton $button1 .= new(:label('abc def'));
