@@ -1,0 +1,10 @@
+*.swl
+*.swm
+*.swn
+*.swo
+*.swp
+.precomp
+.gitignore
+archive
+scratch
+releases
