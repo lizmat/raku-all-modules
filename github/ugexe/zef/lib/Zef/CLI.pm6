@@ -116,7 +116,7 @@ package Zef::CLI {
         @wants .= map: *.&str2identity;
         my (:@paths, :@uris, :@identities) := @wants.classify: -> $wanted {
             $wanted ~~ /^[\. | \/]/                                           ?? <paths>
-                !! ?Zef::Identity($wanted)                                    ?? <identities>
+                !! ?Zef::Identity.new($wanted)                                ?? <identities>
                 !! (my $uri = Zef::Utils::URI($wanted) and !$uri.is-relative) ?? <uris>
                 !! abort("Don't understand identity: {$wanted}");
         }
@@ -360,7 +360,7 @@ package Zef::CLI {
         my @wants = ($identity,).map: *.&str2identity;
         my (:@paths, :@uris, :@identities) := @wants.classify: -> $wanted {
             $wanted ~~ /^[\. | \/]/                                           ?? <paths>
-                !! ?Zef::Identity($wanted)                                    ?? <identities>
+                !! ?Zef::Identity.new($wanted)                                ?? <identities>
                 !! (my $uri = Zef::Utils::URI($wanted) and !$uri.is-relative) ?? <uris>
                 !! abort("Don't understand identity: {$wanted}");
         }
@@ -699,8 +699,8 @@ package Zef::CLI {
 
     #| Detailed version information
     multi MAIN(Bool :$version where .so) {
-        say $*PERL.compiler.version < v2019.01
-            ?? 'Version detection requires rakudo v2019.01 or newer'
+        say $*PERL.compiler.version <= v2018.12
+            ?? 'Version detection requires a rakudo newer than v2018.12'
             !! ($VERSION // 'unknown');
 
         exit 0;
