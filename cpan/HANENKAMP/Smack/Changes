@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+v0.1.0	2019-03-03
+
+    * Adds caching of content when pulling it with the .raw-content or .content
+      methods.
+    * Fixed bugs in the t/001-request.t test
+
 v0.0.2	2019-03-01
 
     * Fix Smack module.

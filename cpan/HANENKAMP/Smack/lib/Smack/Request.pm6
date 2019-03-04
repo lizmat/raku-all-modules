@@ -73,8 +73,9 @@ method !parse-query {
     self!parse-urlencoded-string(%!env<QUERY_STRING>);
 }
 
+has $!_raw-content-cache;
 method raw-content(--> Blob) {
-    (await self.input.reduce(&infix:<~>)) // Blob.new
+    $!_raw-content-cache //= (await self.input.reduce(&infix:<~>)) // Blob.new
 }
 
 method content {
