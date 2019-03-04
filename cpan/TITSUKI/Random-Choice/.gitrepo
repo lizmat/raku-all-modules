@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/titsuki/p6-Random-Choice.git
+	branch = master
+	commit = 349de4717cafd21a3ef4b4f949194370e2088c52
+	parent = d1b2a8c837272d7d68a6c3a0168deecae4e526fb
+	cmdver = 0.3.1
