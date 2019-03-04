@@ -10,11 +10,16 @@ XDG::BaseDirectory - locate shared data and configuration
 
 =begin code
 
+    use XDG::BaseDirectory;
     my $bd = XDG::BaseDirectory.new
 
     for $bd.load-config-paths('mydomain.org', 'MyProg', 'Options') -> $d {
         say $d;
     }
+
+    # Directories can be made available as terms as well
+    use XDG::BaseDirectory :terms;
+    say config-home;
 
 =end code
 
@@ -34,7 +39,7 @@ methods that return a string path in that module return an L<IO::Path> here.
 
 =end pod
 
-class XDG::BaseDirectory:ver<0.0.9>:auth<github:jonathanstowe>:api<1.0> {
+class XDG::BaseDirectory:ver<0.0.10>:auth<github:jonathanstowe>:api<1.0> {
 
 =begin pod
 
@@ -273,4 +278,60 @@ take precedence over later ones.
         $resource;
     }
 }
+
+=begin pod
+
+=head2 Terms
+
+When XDG::BaseDirectory is C<use>d with the C<:terms> tag, the following
+properties of a generic XDG::BaseDirectory object are exported as eponymous
+terms:
+
+=item L<data-home>
+=item L<data-dirs>
+=item L<config-home>
+=item L<config-dirs>
+=item L<cache-home>
+=item L<runtime-dir>
+
+Example:
+
+=begin code
+
+    use XDG::BaseDirectory :terms;
+
+    say "Put config files into " ~ config-home ~ ", please.";
+
+=end code
+
+You can over-ride the default C<XDG::BaseDirectory> object used
+in these C<terms> by assigning to the dynanic variabled C<$*XDG>:
+
+=begin code
+
+   use XDG::BaseDirectory :terms;
+
+   my $*XDG = XDG::BaseDirectory.new( config-home => "foo".IO );
+
+   ....
+
+   say config-home; # -> "foo";
+
+=end code
+
+=end pod
+
+my  $XDG;
+
+my sub xdg-basedirectory( --> XDG::BaseDirectory ) {
+    $XDG //= ( $*XDG // XDG::BaseDirectory.new );
+}
+
+sub term:<data-home>   is export(:terms) { xdg-basedirectory.data-home   }
+sub term:<data-dirs>   is export(:terms) { xdg-basedirectory.data-dirs   }
+sub term:<config-home> is export(:terms) { xdg-basedirectory.config-home }
+sub term:<config-dirs> is export(:terms) { xdg-basedirectory.config-dirs }
+sub term:<cache-home>  is export(:terms) { xdg-basedirectory.cache-home  }
+sub term:<runtime-dir> is export(:terms) { xdg-basedirectory.runtime-dir }
+
 # vim: expandtab shiftwidth=4 ft=perl6

@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/jonathanstowe/XDG-BaseDirectory.git
+	remote = https://github.com/jonathanstowe/XDG-BaseDirectory.git
 	branch = master
-	commit = ea39f9dab101ad5eee174587a6d4256fc707c73c
-	parent = df097aa93d0453b3d693e3483f182ee116b690ac
+	commit = 6d6a043f38ce489433810d90d3e826688b96ceb5
+	parent = 6790880dc870482ef56815f77fcd84dc28923ec7
 	cmdver = 0.3.1

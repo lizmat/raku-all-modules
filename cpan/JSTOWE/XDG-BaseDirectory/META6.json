@@ -1,12 +1,12 @@
 {
   "name": "XDG::BaseDirectory",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "auth": "github:jonathanstowe",
   "api": "1.0",
   "description": "Implementation of the freedesktop.org XDG BaseDirectory specifications",
-  "source-url": "git://github.com/jonathanstowe/XDG-BaseDirectory.git",
+  "source-url": "https://github.com/jonathanstowe/XDG-BaseDirectory.git",
   "support": {
-    "source": "git://github.com/jonathanstowe/XDG-BaseDirectory.git",
+    "source": "https://github.com/jonathanstowe/XDG-BaseDirectory.git",
     "bugtracker": "https://github.com/jonathanstowe/XDG-BaseDirectory/issues"
   },
   "perl": "6.*",
@@ -33,5 +33,5 @@
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk"
   ],
-  "meta-version": "0"
+  "meta-version": "1"
 }

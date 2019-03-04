@@ -1,3 +1,5 @@
+v0.0.10 Sun  3 Mar 19:34:38 GMT 2019
+	* Add Terms for simple attributes (from Tobias Boege)
 v0.0.9  Mon 21 Jan 09:37:52 GMT 2019
     * Standardize the return declarations
     * Upload to CPAN

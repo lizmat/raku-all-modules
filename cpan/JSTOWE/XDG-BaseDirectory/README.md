@@ -17,6 +17,11 @@ specfication http://www.freedesktop.org/wiki/Specifications/basedir-spec/.
         say $d;
     }
 
+    # Directories can be made available as terms as well
+    use XDG::BaseDirectory :terms;
+
+    say config-home;
+
 ```
 
 ## Description
