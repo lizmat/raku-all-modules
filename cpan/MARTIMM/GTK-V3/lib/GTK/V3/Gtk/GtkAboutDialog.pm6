@@ -11,14 +11,14 @@ use v6;
 
 =head1 Synopsis
 
-  use GTK::V3::Gtk::GtkAboutDialog $about .= new(:empty);
+  my GTK::V3::Gtk::GtkAboutDialog $about .= new(:empty);
   $about.set-program-name('My-First-GTK-Program');
 
   # show the dialog
   $about.gtk-dialog-run;
 
   # when dialog buttons are pressed control returns here. Hide the dialog again
-  $about.gtk-widget-hide
+  $about.gtk-widget-hide;
 =end pod
 # ==============================================================================
 
@@ -35,30 +35,33 @@ use GTK::V3::Gtk::GtkDialog;
 unit class GTK::V3::Gtk::GtkAboutDialog:auth<github:MARTIMM>;
 also is GTK::V3::Gtk::GtkDialog;
 
-#-------------------------------------------------------------------------------
+# ==============================================================================
 =begin pod
 
 =head1 Types
 
 =head2 enum GtkLicense
 
-A series of names to set the license type. The following are defined;
-
-C<GTK_LICENSE_UNKNOWN>, C<GTK_LICENSE_CUSTOM>
-
-C<GTK_LICENSE_GPL_2_0>, C<GTK_LICENSE_GPL_3_0>, C<GTK_LICENSE_LGPL_2_1>, C<GTK_LICENSE_LGPL_3_0>
-
-C<GTK_LICENSE_BSD>
-
-C<GTK_LICENSE_MIT_X11>
-
-C<GTK_LICENSE_ARTISTIC>
-
-C<GTK_LICENSE_GPL_2_0_ONLY>, C<GTK_LICENSE_GPL_2_0_ONLY>,
-C<GTK_LICENSE_GPL_3_0_ONLY>,
-
-C<GTK_LICENSE_LGPL_2_1_ONLY>, C<GTK_LICENSE_LGPL_3_0_ONLY>, C<GTK_LICENSE_AGPL_3_0>, C<GTK_LICENSE_AGPL_3_0_ONLY>
-
+A series of names to set the license type.
+=begin table
+  License type | License
+  ==============|================
+  GTK_LICENSE_UNKNOWN | No license specified
+  GTK_LICENSE_CUSTOM | A license text is going to be specified by the developer
+  GTK_LICENSE_GPL_2_0 | The GNU General Public License, version 2.0 or later
+  GTK_LICENSE_GPL_3_0 | The GNU General Public License, version 3.0 or later
+  GTK_LICENSE_LGPL_2_1 | The GNU Lesser General Public License, version 2.1 or later
+	   GTK_LICENSE_LGPL_3_0 | The GNU Lesser General Public License, version 3.0 or later
+	  GTK_LICENSE_BSD | The BSD standard license
+  GTK_LICENSE_MIT_X11 | The MIT/X11 standard license
+  GTK_LICENSE_ARTISTIC | The Artistic License, version 2.0
+  GTK_LICENSE_GPL_2_0_ONLY | The GNU General Public License, version 2.0 only. Since 3.12.
+  GTK_LICENSE_GPL_3_0_ONLY | The GNU General Public License, version 3.0 only. Since 3.12.
+  GTK_LICENSE_LGPL_2_1_ONLY | The GNU Lesser General Public License, version 2.1 only. Since 3.12.
+  GTK_LICENSE_LGPL_3_0_ONLY | The GNU Lesser General Public License, version 3.0 only. Since 3.12.
+  GTK_LICENSE_AGPL_3_0 | The GNU Affero General Public License, version 3.0 or later. Since: 3.22.
+  GTK_LICENSE_AGPL_3_0_ONLY | The GNU Affero General Public License, version 3.0 only. Since: 3.22.27.
+=end table
 See C<gtk_about_dialog_get_license_type> for an example.
 =end pod
 
@@ -89,8 +92,6 @@ enum GtkLicense is export <
 =begin pod
 
 =head1 Methods
-
-All methods can be written with dashes or shortened by cutting the C<gtk_about_dialog_> part. After shortening, at least one dash or underscore must be left. See the synopsis above for an example. Below, this is shown with brackets in the headers.
 
 =head2 gtk_about_dialog_new
 

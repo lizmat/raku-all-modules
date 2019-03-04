@@ -1,5 +1,7 @@
 ## Release notes
 
+* 2019-03-02 0.7.3
+  * Documentation added and README changed
 * 2019-03-02 0.7.2
   * Documentation added and README changed
   * Native subs added
