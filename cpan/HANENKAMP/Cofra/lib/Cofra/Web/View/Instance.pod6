@@ -1,0 +1,53 @@
+=begin pod
+
+=head1 NAME
+
+Cofra::Web::View::Instance - an activated view class
+
+=head1 DESCRIPTION
+
+A view instance is the real work horse of the view.
+
+=head1 METHODS
+
+=head2 method view
+
+    has Cofra::Web::View $.view is required handles <web>
+
+This is a link back to the L<Cofra::Web::View> object that was activated to provide this instance.
+
+=head2 method request
+
+    has Cofra::Web::Request $.request is required
+
+This is the L<Cofra::Web::Request> to which the view is responding.
+
+=head2 method response
+
+    method response(--> Cofra::Web::Response:D)
+
+This method will return a L<Cofra::Web::Response> object the instance can work with.
+
+=head2 method redirect
+
+    method redirect(
+        $uri,
+        Bool :$created = False,
+        :$temporary = False
+        --> Cofra::Web::Response:D
+    )
+
+This will return the response object with the headers and status codes modified to perform an HTTP redirect to the C<$uri> given. The status code used will normally be C<301> for a permanent redirect. However, if C<:$created> is set to true, it will return a C<201> (which is handy for REST purists). And if C<:$temporary> is set to true, it will return a C<307>. In the process it will set the C<Location> header and set the body to be empty.
+
+=head2 method render
+
+    method render(|args --> Cofra::Web::Response:D)
+
+This method must be implemented by the view implementation to render the
+response as appropriate to that view. This is always the final step in creating
+a view. It may be the only step in creating a view. The details of interface
+beyond this method (or even what is passed to this method) are left as an
+exercise to the implementaiton. Having a single method name to call to finish
+the process, though, does make it consistent.
+
+=end pod

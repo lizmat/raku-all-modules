@@ -1,0 +1,21 @@
+=begin pod
+
+=head1 NAME
+
+Cofra::Web::View::JSON::Instance - the renderer for Cofra::Web::View::JSON
+
+=head1 DESCRIPTION
+
+This is the work horse for L<Cofra::Web::View::JSON>.
+
+=head1 METHODS
+
+=head2 method render
+
+    method render($content --> Cofra::Web::Response)
+
+This will serialize the given C<$content> into JSON formatted text using L<JSON::Fast>. Then, it will transform that text into bytes using a UTF-8 encoding. It attaches those bytes as the output, sets the C<Content-Type> to C<applicationjson; charset=utf8> and sets the C<Content-Length> to the byte length of the JSON output set in the body.
+
+Finally, it returns the response. Neat-o, eh?
+
+=end pod
