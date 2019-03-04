@@ -1,8 +1,6 @@
 
 unit module Archive::SimpleZip::Headers;
 
-use experimental :pack;
-
 # Compression types supported
 enum Zip-CM is export (
     Zip-CM-Store      => 0 ,
@@ -76,21 +74,20 @@ class Local-File-Header is export # does CustomeMarshaller
         $.version-needed-to-extract max=
             %Zip-CM-Min-Versions{$.compression-method} ;
 
-        my Blob $hdr ;
-        $hdr  = pack 'V', local-file-header-signature ;
+        my $header = buf8.allocate(30 + $.file-name.elems);
+        $header.write-uint32( 0, local-file-header-signature, LittleEndian);
+        $header.write-uint16( 4, $.version-needed-to-extract, LittleEndian);
+        $header.write-uint16( 6, $.general-purpose-bit-flag,  LittleEndian);
+        $header.write-uint16( 8, $.compression-method,        LittleEndian);
+        $header.write-uint32(10, $.last-mod-file-time,        LittleEndian);
+        $header.write-uint32(14, $.crc32,                     LittleEndian);
+        $header.write-uint32(18, $.compressed-size,           LittleEndian);
+        $header.write-uint32(22, $.uncompressed-size,         LittleEndian);
+        $header.write-uint16(26, $.file-name.elems,           LittleEndian);
+        $header.write-uint16(28, $.extra-field-length,        LittleEndian);
+        $header.subbuf-rw(30) = $.file-name;
 
-        $hdr ~= pack 'v', $.version-needed-to-extract   ; # 2 bytes
-        $hdr ~= pack 'v', $.general-purpose-bit-flag ;    # 2 bytes
-        $hdr ~= pack 'v', $.compression-method ;          # 2 bytes
-        $hdr ~= pack 'V', $.last-mod-file-time ;          # 2 bytes
-        $hdr ~= pack 'V', $.crc32 ;                       # 4 bytes
-        $hdr ~= pack 'V', $.compressed-size ;             # 4 bytes
-        $hdr ~= pack 'V', $.uncompressed-size ;           # 4 bytes
-        $hdr ~= pack 'v', $.file-name.elems;              # 2 bytes
-        $hdr ~= pack 'v', $.extra-field-length ;          # 2 bytes
-        $hdr ~= $.file-name ;
-
-        return $hdr ;
+        return $header;
     }
 
     method data-descriptor()
@@ -102,24 +99,25 @@ class Local-File-Header is export # does CustomeMarshaller
         #        uncompressed size               4 bytes    
 
         constant signature = 0x08074b50 ; # 4 bytes  (0x04034b50)
-        my Blob $hdr ;
-        $hdr  = pack 'V', signature ;
-        $hdr ~= pack 'V', $.crc32 ;                       # 4 bytes
-        $hdr ~= pack 'V', $.compressed-size ;             # 4 bytes
-        $hdr ~= pack 'V', $.uncompressed-size ;           # 4 bytes
 
-        return $hdr ;
+        my $header = buf8.allocate(16);
+        $header.write-uint32( 0, signature,           LittleEndian);
+        $header.write-uint32( 3, $.crc32,             LittleEndian);
+        $header.write-uint32( 7, $.compressed-size,   LittleEndian);
+        $header.write-uint32(11, $.uncompressed-size, LittleEndian);
+
+        return $header;
     }
 
 
     method crc-and-sizes()
     {
-        my Blob $hdr ;
-        $hdr  = pack 'V', $.crc32 ;                       # 4 bytes
-        $hdr ~= pack 'V', $.compressed-size ;             # 4 bytes
-        $hdr ~= pack 'V', $.uncompressed-size ;           # 4 bytes
+        my $header = buf8.allocate(12);
+        $header.write-uint32(0, $.crc32,             LittleEndian);
+        $header.write-uint32(3, $.compressed-size,   LittleEndian);
+        $header.write-uint32(7, $.uncompressed-size, LittleEndian);
 
-        return $hdr ;
+        return $header;
     }
 } 
 
@@ -153,16 +151,16 @@ class Central-Header-Directory is export
         #      .ZIP file comment length        2 bytes
         #      .ZIP file comment       (variable size)
 
-        my Blob $ecd ;
-        $ecd  = pack "V", 0x06054b50 ; #ZIP_END_CENTRAL_HDR_SIG ; # signature
-        $ecd ~= pack 'v', 0          ; # number of disk
-        $ecd ~= pack 'v', 0          ; # number of disk with central dir
-        $ecd ~= pack 'v', $!entries   ; # entries in central dir on this disk
-        $ecd ~= pack 'v', $!entries   ; # entries in central dir
-        $ecd ~= pack 'V', $!cd-len    ; # size of central dir
-        $ecd ~= pack 'V', $cd_offset ; # offset to start central dir
-        $ecd ~= pack 'v', $comment.elems ; # zipfile comment length
-        $ecd ~= $comment;
+        my $ecd = buf8.allocate(22 + $comment.elems);
+        $ecd.write-uint32( 0, 0x06054b50,     LittleEndian); #ZIP_END_CENTRAL_HDR_SIG ; # signature
+        $ecd.write-uint16( 4, 0,              LittleEndian); # number of disk
+        $ecd.write-uint16( 6, 0,              LittleEndian); # number of disk with central dir
+        $ecd.write-uint16( 8, $!entries,      LittleEndian); # entries in central dir on this disk
+        $ecd.write-uint16(10, $!entries,      LittleEndian); # entries in central dir
+        $ecd.write-uint32(12, $!cd-len,       LittleEndian); # size of central dir
+        $ecd.write-uint32(16, $cd_offset,     LittleEndian); # offset to start central dir
+        $ecd.write-uint16(20, $comment.elems, LittleEndian); # zipfile comment length
+        $ecd.subbuf-rw(22) = $comment;
 
         return $ecd;
     }
@@ -202,26 +200,25 @@ class Central-Header-Directory is export
         #        extra field (variable size)
         #        file comment (variable size)
         
-        my Blob $ctl ;
-
-        $ctl  = pack "V", 0x02014b50 ; # ZIP_CENTRAL_HDR_SIG ; # signature
-        $ctl ~= pack 'v', $hdr.version-made-by    ;          # version made by
-        $ctl ~= pack 'v', $hdr.version-needed-to-extract   ; # extract Version & OS
-        $ctl ~= pack 'v', $hdr.general-purpose-bit-flag ;    # 2 bytes
-        $ctl ~= pack 'v', $hdr.compression-method ;          # 2 bytes
-        $ctl ~= pack 'V', $hdr.last-mod-file-time ;          # 4 bytes
-        $ctl ~= pack 'V', $hdr.crc32 ;                       # 4 bytes
-        $ctl ~= pack 'V', $hdr.compressed-size ;             # 4 bytes
-        $ctl ~= pack 'V', $hdr.uncompressed-size ;           # 4 bytes
-        $ctl ~= pack 'v', $hdr.file-name.elems ;             # 2 bytes
-        $ctl ~= pack 'v', $hdr.extra-field-length ;          # 2 bytes
-        $ctl ~= pack 'v', $hdr.file-comment.elems ;          # 2 bytes
-        $ctl ~= pack 'v', 0                     ;            # 2 bytes
-        $ctl ~= pack 'v', $hdr.internal-file-attributes ;    # 2 bytes
-        $ctl ~= pack 'V', $hdr.external-file-attributes ;    # 4 bytes
-        $ctl ~= pack 'V', $offset ;                          # 4 bytes
-        $ctl ~= $hdr.file-name ;
-        $ctl ~= $hdr.file-comment ;
+        my $ctl = buf8.allocate(46 + $hdr.file-name.elems + $hdr.file-comment.elems);
+        $ctl.write-uint32( 0, 0x02014b50,                    LittleEndian);
+        $ctl.write-uint16( 4, $hdr.version-made-by,          LittleEndian);
+        $ctl.write-uint16( 6, $hdr.version-needed-to-extract,LittleEndian);
+        $ctl.write-uint16( 8, $hdr.general-purpose-bit-flag, LittleEndian);
+        $ctl.write-uint16(10, $hdr.compression-method,       LittleEndian);
+        $ctl.write-uint32(12, $hdr.last-mod-file-time,       LittleEndian);
+        $ctl.write-uint32(16, $hdr.crc32,                    LittleEndian);
+        $ctl.write-uint32(20, $hdr.compressed-size,          LittleEndian);
+        $ctl.write-uint32(24, $hdr.uncompressed-size,        LittleEndian);
+        $ctl.write-uint16(28, $hdr.file-name.elems,          LittleEndian);
+        $ctl.write-uint16(30, $hdr.extra-field-length,       LittleEndian);
+        $ctl.write-uint16(32, $hdr.file-comment.elems,       LittleEndian);
+        $ctl.write-uint16(34, 0,                             LittleEndian);
+        $ctl.write-uint16(36, $hdr.internal-file-attributes, LittleEndian);
+        $ctl.write-uint32(38, $hdr.external-file-attributes, LittleEndian);
+        $ctl.write-uint32(42, $offset,                       LittleEndian);
+        $ctl.subbuf-rw(46, $hdr.file-name.elems) = $hdr.file-name ;
+        $ctl.subbuf-rw(46 + $hdr.file-name.elems, $hdr.file-comment.elems) = $hdr.file-comment ;
 
         @!central-headers.push($ctl) ;
         $!cd-len += $ctl.elems ; 
