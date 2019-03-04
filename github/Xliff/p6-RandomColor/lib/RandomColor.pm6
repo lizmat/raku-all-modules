@@ -32,8 +32,13 @@ class RandomColor {
     self.loadColorBounds;
 
     my $oldSeed = $!seed;
+    my $seedCount = 0;
     for ^(%options<count> // 1) {
-      with $!seed { $!seed++  if $_ }
+      # Emulate javascript behavior.
+      with $!seed {
+        when Str        { $_ = $oldSeed ~ (1 x ++$seedCount)  }
+        when Int | Num  { $_ = $oldSeed + ++$seedCount        }
+      }
       my $h = self.pickHue(%options);
       my $s = self.pickSaturation($h, %options);
       my $v = self.pickBrightness($h, $s, %options);
@@ -56,8 +61,8 @@ class RandomColor {
     my ($sMin, $sMax) = ($saturationRange.min, $saturationRange.max);
     given %options<luminosity> {
       when 'bright' { $sMin = 55         }
-      when 'dark'   { $sMin = $sMax = 10 }
       when 'light'  { $sMax = 55         }
+      when 'dark'   { $sMin = $sMax = 10 }
     }
     self.randomWithin($sMin, $sMax);
   }
@@ -77,13 +82,15 @@ class RandomColor {
   method setFormat($hsv, %options) {
     do given %options<format> {
       when 'hsvarray'   { $hsv                             }
-      when 'hslarray'   { self.HSVtoHSL($hsv)              }
+      when   'hslarray'
+           | 'hslArray' { self.HSVtoHSL($hsv)              }
       when 'hsl'        { my $hsl = self.HSVtoHSL($hsv);
                           "hsl({ $hsl.join(', ') })"       }
       when 'hsla'       { my $hsl = self.HSVtoHSL($hsv);
                           my $a = %options<alpha> // rand;
                           "hsla({ $hsl.join(', ') }, $a)"  }
-      when 'rgbarray'   { self.HSVtoRGB($hsv)              }
+      when   'rgbarray'
+           | 'rgbArray' { self.HSVtoRGB($hsv)              }
       when 'rgb'        { my $rgb = self.HSVtoRGB($hsv);
                           "rgb({ $rgb.join(', ') })"       }
       when 'rgba'       { my $rgb = self.HSVtoRGB($hsv);
