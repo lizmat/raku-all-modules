@@ -190,7 +190,7 @@ multi sub MAIN(:$fork-module, :$force, :v(:$verbose)) {
     my $meta6 = @ecosystem.grep(*.<name> eq $fork-module)[0];
     my $module-url = $meta6<source-url> // $meta6<support>.source;
     my ($owner, $repo) = $module-url.split('/')[3,4];
-    $repo.subst-mutate(/'.git'$/, '');
+    $repo.=subst(/'.git'$/, '');
     my $repo-url = github-fork($owner, $repo);
     my $base-dir = git-clone($repo-url);
     note BOLD "Cloned repo ready in ⟨$base-dir⟩.";
@@ -277,7 +277,7 @@ multi sub MAIN(Str :$module, Bool :$issues!, Bool :$closed, Bool :$one-line, Boo
         !! local-module
     ).<owner repo>;
 
-    $repo.subst-mutate(/'.git'$/, '');
+    $repo.=subst(/'.git'$/, '');
     my @issues := github-get-issues($owner, $repo, :$closed);
 
     for @issues {
@@ -635,7 +635,7 @@ our sub fetch-ecosystem(:$verbose, :$cached) is export(:HELPER) {
     state $cache;
     return $cache.Slip if $cached && $cache.defined;
 
-    my $curl = Proc::Async.new('curl', '--silent', 'http://ecosystem-api.p6c.org/projects.json');
+    my $curl = Proc::Async.new('curl', '--silent', 'https://ecosystem-api.p6c.org/projects.json');
     my Promise $p;
     my $ecosystem-response;
     $curl.stdout.tap: { $ecosystem-response ~= .Str };
