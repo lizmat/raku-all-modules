@@ -1,5 +1,5 @@
 use v6;
-class HTML::Canvas::To::PDF:ver<0.0.2> {
+class HTML::Canvas::To::PDF:ver<0.0.3> {
 
     use HTML::Canvas:ver(v0.0.2+);
     use HTML::Canvas::Gradient;
@@ -35,10 +35,9 @@ class HTML::Canvas::To::PDF:ver<0.0.2> {
 
          use PDF::Font::Loader;
          method font-obj(:$cache!) {
-             my Str $font-path;
-             my $file = $.find-font;
              my $font-obj;
              try {
+                 my $file = $.find-font;
                  $font-obj = $cache.font{$file} //= PDF::Font::Loader.load-font: :$file;
                  CATCH {
                      default {

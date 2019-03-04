@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-pdf/HTML-Canvas-To-PDF-p6.git
 	branch = master
-	commit = 4aef1a6706be890982e2b71b0b1903375dcbb98c
-	parent = 04220a2f744727a2f18d0ef475d43869bfd8270b
+	commit = 96d8e87f34b054cb18b415b68c4fb4329ce6c64e
+	parent = fc884f396334b385fea0512bc74eb0e984aad794
 	cmdver = 0.3.1
