@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/perl6-Email-Address.git
 	branch = master
-	commit = 558962f781e7c5b7ee9e41b8d2d29d511b1ab95b
-	parent = 7804c603133ee3ed9f67b096e3e4046743da1ab7
+	commit = c08ca5a3f9f87a47119982715ff3e28eca9ff985
+	parent = 5f8d8e209aaaa7e9f169d1a73885205e0971036f
 	cmdver = 0.3.1
