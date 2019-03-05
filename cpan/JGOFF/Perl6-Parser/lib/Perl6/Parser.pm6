@@ -27,7 +27,7 @@ Perl6::Parser - Extract a Perl 6 AST from the NQP Perl 6 Parser
     #
     my @everything = $pt.to-list( $source );
 
-    # This will fire phasers such as BEGIN in existing code.
+    # This used to fire BEGIN and CHECK phasers, it no longer does so.
 
     # Use 'my $*PURE-PERL = True;' before parsing to enable an experimental
     # pure-Perl6 parser which will not execute phasers, but also won't install
@@ -47,7 +47,7 @@ This process B<will> be simplified and encapsulated in the near future, as refor
 
 I've added fairly extensive debugging documentation to the L<README.md> of this module, along with an internal L<DEBUGGING.pod> file talking about what you're seeing here, and why on B<earth> didn't I do it B<this> way? I have my reasons, but can be talked out of it with a good argument.
 
-Please B<please> note that this, out of necessity, does compile your Perl 6 code, which B<does> mean executing phasers such as C<BEGIN>. There may be a way to oerride this behavior, and if you have suggestions that don't involve rewriting the Perl 6 grammar as a standalone library (which would not be such a bad idea in general) then please let the author know.
+Please note that this does compile your code, but it takes the precaution of munging C<BEGIN> and C<CHECK> phasers into C<ENTER> instead so that it won't run at compile time.
 
 As it stands, the C<.parse> method returns a deeply-nested object representation of the Perl 6 code it's given. It handles the regex language, but not the other braided languages such as embedded blocks in strings. It will do so eventually, but for the moment I'm busy getting the grammar rules covered.
 
@@ -422,13 +422,119 @@ my role Validating {
 	}
 }
 
-class Perl6::Parser:ver<0.2.1> {
+my class CompleteIterator {
+	also does Iterator;
+
+	has Perl6::Element $.head;
+	has Bool $.is-done = False;
+
+	method pull-one {
+		if $.head.is-end {
+			if $.is-done {
+				return IterationEnd;
+			}
+			else {
+				$!is-done = True;
+				return $.head;
+			}
+		}
+		else {
+			my $elem = $.head;
+			$!head = $.head.next;
+			$elem;
+		}
+	}
+
+	method is-lazy { False }
+}
+
+my class TokenIterator {
+	also does Iterator;
+
+	has Perl6::Element $.head;
+	has Bool $.is-done = False;
+
+	method pull-one {
+		if $.head.is-end-leaf {
+			if $.is-done {
+				return IterationEnd;
+			}
+			else {
+				$!is-done = True;
+				return $.head;
+			}
+		}
+		else {
+			my $elem = $.head;
+			$!head = $.head.next;
+			$!head = $!head.next while !$.head.is-leaf;
+			$elem;
+		}
+	}
+
+	method is-lazy { False }
+}
+
+my class Munge-Phasers {
+	has @.munged-BEGIN;
+	has @.munged-CHECK;
+
+	method _munge-element( Perl6::Element $node ) {
+		return unless $node.^can( 'content' );
+
+		for @.munged-BEGIN -> $from {
+			next unless $node.from <= $from <= $node.to;
+			next unless $node.content.substr(
+				$from - $node.from, 'BEGIN'.chars
+			) eq 'ENTER';
+			$node.content.substr-rw(
+				$from - $node.from,
+				#$from,
+				'BEGIN'.chars
+			) = 'BEGIN';
+			last;
+		}
+		for @.munged-CHECK -> $from {
+			next unless $node.from <= $from <= $node.to;
+			next unless $node.content.substr(
+				$from - $node.from, 'CHECK'.chars
+			) eq 'ENTER';
+			$node.content.substr-rw(
+				$from - $node.from,
+				'CHECK'.chars
+			) = 'CHECK';
+			last;
+		}
+	}
+
+	method _munge-phasers( Perl6::Element $node ) {
+		self._munge-element( $node );
+
+		if $node.is-twig {
+			for $node.child.kv -> $index, $_ {
+				self._munge-phasers( $_ );
+			}
+		}
+	}
+
+	# Just in case we need to pass in parameters later on...
+	# sigh.
+	#
+	method munge-phasers( Perl6::Element $root ) {
+		return unless @.munged-BEGIN or @.munged-CHECK;
+		self._munge-phasers( $root );
+	}
+}
+
+class Perl6::Parser:ver<0.3.0> {
 	also does Debugging;
 	also does Testing;
 	also does Validating;
 	use nqp;
 
 	has $.factory = Perl6::Parser::Factory.new;
+	has @.munged-BEGIN;
+	has @.munged-CHECK;
 
 	# These could easily be a single method, but I'll separate them for
 	# testing purposes.
@@ -436,12 +542,26 @@ class Perl6::Parser:ver<0.2.1> {
 	method parse( Str $source ) {
 		my $*LINEPOSCACHE;
 		my $compiler := nqp::getcomp('perl6');
-		my $g := nqp::findmethod($compiler,'parsegrammar')($compiler);
+		my $g := nqp::findmethod(
+			$compiler,'parsegrammar'
+		)($compiler);
 		#$g.HOW.trace-on($g);
-		my $a := nqp::findmethod($compiler,'parseactions')($compiler);
+		my $a := nqp::findmethod(
+			$compiler,'parseactions'
+		)($compiler);
 
+		@.munged-BEGIN = ();
+		my $munged-source = $source;
+		$munged-source ~~ s:g{ 'BEGIN' } = 'ENTER';
+		for @( $/ ) -> $BEGIN {
+			@.munged-BEGIN.push: $BEGIN.from;
+		}
+		$munged-source ~~ s:g{ 'CHECK' } = 'ENTER';
+		for @( $/ ) -> $CHECK {
+			@.munged-CHECK.push: $CHECK.from;
+		}
 		my $parsed = $g.parse(
-			$source,
+			$munged-source,
 			:p( 0 ),
 			:actions( $a )
 		);
@@ -450,63 +570,15 @@ class Perl6::Parser:ver<0.2.1> {
 	}
 
 	method build-tree( Mu $parsed ) {
-		my $tree = $.factory.build( $parsed );
+		my $tree   = $.factory.build( $parsed );
+		my $munger = Munge-Phasers.new(
+			:munged-BEGIN( @.munged-BEGIN ),
+			:munged-CHECK( @.munged-CHECK ),
+		);
+		$munger.munge-phasers( $tree );
 		self.consistency-check( $tree ) if
 			$*CONSISTENCY-CHECK and %*ENV<AUTHOR>;
 		$tree
-	}
-
-	my class CompleteIterator {
-		also does Iterator;
-
-		has Perl6::Element $.head;
-		has Bool $.is-done = False;
-
-		method pull-one {
-			if $.head.is-end {
-				if $.is-done {
-					return IterationEnd;
-				}
-				else {
-					$!is-done = True;
-					return $.head;
-				}
-			}
-			else {
-				my $elem = $.head;
-				$!head = $.head.next;
-				$elem;
-			}
-		}
-
-		method is-lazy { False }
-	}
-
-	my class TokenIterator {
-		also does Iterator;
-
-		has Perl6::Element $.head;
-		has Bool $.is-done = False;
-
-		method pull-one {
-			if $.head.is-end-leaf {
-				if $.is-done {
-					return IterationEnd;
-				}
-				else {
-					$!is-done = True;
-					return $.head;
-				}
-			}
-			else {
-				my $elem = $.head;
-				$!head = $.head.next;
-				$!head = $!head.next while !$.head.is-leaf;
-				$elem;
-			}
-		}
-
-		method is-lazy { False }
 	}
 
 	method to-tree( Str $source ) {
