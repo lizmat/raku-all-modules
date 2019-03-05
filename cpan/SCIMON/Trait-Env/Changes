@@ -2,6 +2,9 @@ Revision history for Trait-Env
 
 {{$NEXT}}
 
+0.5.2  2019-03-04T11:51:00Z
+    - Stop using v6.c
+
 0.5.1  2018-09-05T08:57:20+01:00
     - Returned Trait::Env::Shared to provides as it's breaking builds
 

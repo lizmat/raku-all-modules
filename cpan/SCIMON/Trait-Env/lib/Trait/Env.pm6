@@ -1,9 +1,8 @@
-use v6.c;
-#no precompilation;
+use v6;
 
 my %EXPORT;
 
-module Trait::Env:ver<0.5.1>:auth<cpan:SCIMON> {
+module Trait::Env:ver<0.5.2>:auth<cpan:SCIMON> {
 
     use Trait::Env::Attribute;
     use Trait::Env::Variable;

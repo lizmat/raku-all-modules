@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 no precompilation;
 
 unit module Trait::Env::Attribute;

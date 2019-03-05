@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Scimon/p6-Trait-Env.git
 	branch = master
-	commit = f330b8f4a2934cd975df0c427e35de9ccbb354ea
-	parent = bebef9492ae669f6965df2c8b6e4cf38fc9d934b
+	commit = 75d0fbc2d6164bd495d6e343ae7ebce9226644a8
+	parent = 9f06dd9a75557f9a04df9a8129f31c7b139c00a6
 	cmdver = 0.3.1
