@@ -102,9 +102,9 @@ class Local-File-Header is export # does CustomeMarshaller
 
         my $header = buf8.allocate(16);
         $header.write-uint32( 0, signature,           LittleEndian);
-        $header.write-uint32( 3, $.crc32,             LittleEndian);
-        $header.write-uint32( 7, $.compressed-size,   LittleEndian);
-        $header.write-uint32(11, $.uncompressed-size, LittleEndian);
+        $header.write-uint32( 4, $.crc32,             LittleEndian);
+        $header.write-uint32( 8, $.compressed-size,   LittleEndian);
+        $header.write-uint32(12, $.uncompressed-size, LittleEndian);
 
         return $header;
     }
@@ -114,8 +114,8 @@ class Local-File-Header is export # does CustomeMarshaller
     {
         my $header = buf8.allocate(12);
         $header.write-uint32(0, $.crc32,             LittleEndian);
-        $header.write-uint32(3, $.compressed-size,   LittleEndian);
-        $header.write-uint32(7, $.uncompressed-size, LittleEndian);
+        $header.write-uint32(4, $.compressed-size,   LittleEndian);
+        $header.write-uint32(8, $.uncompressed-size, LittleEndian);
 
         return $header;
     }
