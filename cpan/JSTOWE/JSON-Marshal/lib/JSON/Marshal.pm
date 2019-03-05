@@ -57,7 +57,7 @@ above.
 
 use JSON::Name;
 
-module JSON::Marshal:ver<0.0.16>:auth<github:jonathanstowe>:api<1.0> {
+module JSON::Marshal:ver<0.0.17>:auth<github:jonathanstowe> {
 
     use JSON::Fast:ver(v0.4+);
 

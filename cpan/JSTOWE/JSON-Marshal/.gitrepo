@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/JSON-Marshal.git
 	branch = master
-	commit = 615467854024a9c9e2a520f03a3ededac727c0b9
-	parent = cc53e6d0753b94065666fcee8f5db5aa2256e677
+	commit = c40bec636cc5948932fa467841725c93e30db328
+	parent = 495a1e48efd0130a57c6364add61e93af06a9f82
 	cmdver = 0.3.1
