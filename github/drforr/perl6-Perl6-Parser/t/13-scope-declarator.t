@@ -4,7 +4,7 @@ use Test;
 use Perl6::Parser;
 
 use lib 't/lib';
-use Utils; # Get gensym-package
+use Utils;
 
 # The terms that get tested here are:
 #
@@ -26,51 +26,46 @@ use Utils; # Get gensym-package
 
 plan 2 * 4;
 
-my $pt = Perl6::Parser.new;
 my $*CONSISTENCY-CHECK = True;
-my $*FALL-THROUGH = True;
-my ( $source, $tree );
+my $*FALL-THROUGH      = True;
 
 for ( True, False ) -> $*PURE-PERL {
 	subtest {
-		$source = Q:to[_END_];
+		plan 2;
+
+		ok round-trips( Q:to[_END_] ), Q{no ws};
 		my$x
 		_END_
-		$tree = $pt.to-tree( $source );
-		is $pt.to-string( $tree ), $source, Q{no ws};
 
-		$source = Q:to[_END_];
+		ok round-trips( Q:to[_END_] ), Q{leading ws};
 		my     $x
 		_END_
-		$tree = $pt.to-tree( $source );
-		is $pt.to-string( $tree ), $source, Q{leading ws};
 
 		done-testing;
 	}, Q{my};
 
 	subtest {
-		$source = Q:to[_END_];
+		plan 2;
+
+		ok round-trips( Q:to[_END_] ), Q{no ws};
 		our$x
 		_END_
-		$tree = $pt.to-tree( $source );
-		is $pt.to-string( $tree ), $source, Q{no ws};
 
-		$source = Q:to[_END_];
+		ok round-trips( Q:to[_END_] ), Q{leading ws};
 		our     $x
 		_END_
-		$tree = $pt.to-tree( $source );
-		is $pt.to-string( $tree ), $source, Q{leading ws};
 
 		done-testing;
 	}, Q{our};
 
 	subtest {
 		subtest {
-			$source = gensym-package Q:to[_END_];
+			my $pp = Perl6::Parser.new;
+			my $source = gensym-package Q:to[_END_];
 			class %s{has$x}
 			_END_
-			$tree = $pt.to-tree( $source );
-			is $pt.to-string( $tree ), $source, Q{formatted};
+			my $tree = $pp.to-tree( $source );
+			is $pp.to-string( $tree ), $source, Q{formatted};
 			ok $tree.child[0].child[3].child[0] ~~
 				Perl6::Block::Enter, Q{enter brace};
 			ok $tree.child[0].child[3].child[2] ~~
@@ -79,11 +74,9 @@ for ( True, False ) -> $*PURE-PERL {
 			done-testing;
 		}, Q{no ws};
 
-		$source = gensym-package Q:to[_END_];
+		ok round-trips( gensym-package Q:to[_END_] ), Q{leading ws};
 		class %s{has     $x}
 		_END_
-		$tree = $pt.to-tree( $source );
-		is $pt.to-string( $tree ), $source, Q{leading ws};
 
 		done-testing;
 	}, Q{has};
@@ -95,8 +88,7 @@ for ( True, False ) -> $*PURE-PERL {
 	#
 	#	subtest {
 	#		$source = Q{class Foo is repr('CStruct'){HAS int $x}};
-	#		$tree = $pt.to-tree( $source );
-	#		is $pt.to-string( $tree ), $source, Q{formatted};
+	#		ok round-trips( $source ), Q{formatted};
 	#
 	#		done-testing;
 	#	}, Q{no ws};
@@ -105,8 +97,7 @@ for ( True, False ) -> $*PURE-PERL {
 	#		$source = Q:to[_END_];
 	#class Foo is repr( 'CStruct' ) { HAS int $x }
 	#_END_
-	#		$tree = $pt.to-tree( $source );
-	#		is $pt.to-string( $tree ), $source, Q{formatted};
+	#		ok round-trips( $source ), Q{formatted};
 	#
 	#		done-testing;
 	#	}, Q{leading ws};
@@ -117,17 +108,11 @@ for ( True, False ) -> $*PURE-PERL {
 	# XXX 'anon $x' is NIY
 
 	subtest {
-		plan 2;
+		plan 1;
 
-		$source = Q{state$x};
-		$tree = $pt.to-tree( $source );
-		is $pt.to-string( $tree ), $source, Q{no ws};
-
-		$source = Q:to[_END_];
+		ok round-trips( Q:to[_END_] ), Q{no ws};
 		state     $x
 		_END_
-		$tree = $pt.to-tree( $source );
-		is $pt.to-string( $tree ), $source, Q{leading ws};
 	}, Q{state};
 }
 
