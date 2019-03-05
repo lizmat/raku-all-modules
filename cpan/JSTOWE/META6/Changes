@@ -1,3 +1,5 @@
+v0.0.23		Mon  4 Mar 19:58:41 GMT 2019
+	* Remove :api adverb to appease older rakudo
 v0.0.22		Thu 14 Feb 20:24:03 GMT 2019
 	* Spring clean
 v0.0.21		Thu 17 Jan 20:50:14 GMT 2019

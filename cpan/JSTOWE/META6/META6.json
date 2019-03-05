@@ -1,6 +1,6 @@
 {
   "name": "META6",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "auth": "github:jonathanstowe",
   "api": "1.0",
   "description": "Work with Perl 6 META files",
