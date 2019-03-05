@@ -38,7 +38,7 @@ Of course it could be used in other modules for a similar purpose.
 
 
 
-module JSON::Name:ver<0.0.3>:auth<github:jonathanstowe>:api<1.0> {
+module JSON::Name:ver<0.0.4>:auth<github:jonathanstowe> {
     role NamedAttribute {
         has Str $.json-name is rw;
     }
