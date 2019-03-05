@@ -1,18 +1,28 @@
 {
+  "type": "layout",
   "children": [
     {
       "name": "META6.json",
       "type": "file"
     },
     {
+      "purpose": null,
       "children": [
+        {
+          "name": "004-terms.t",
+          "type": "file"
+        },
+        {
+          "name": "006-terms-dynamic.t",
+          "type": "file"
+        },
         {
           "type": "file",
           "name": "001-meta.t"
         },
         {
-          "type": "file",
-          "name": "003-basedirectory.t"
+          "name": "003-basedirectory.t",
+          "type": "file"
         },
         {
           "type": "file",
@@ -20,7 +30,6 @@
         }
       ],
       "type": "directory",
-      "purpose": null,
       "name": "t"
     },
     {
@@ -32,27 +41,26 @@
       "name": "README.md"
     },
     {
+      "name": "lib",
       "type": "directory",
       "children": [
         {
-          "name": "XDG",
           "purpose": null,
-          "type": "directory",
           "children": [
             {
               "type": "file",
               "name": "BaseDirectory.pm"
             }
-          ]
+          ],
+          "type": "directory",
+          "name": "XDG"
         }
       ],
-      "name": "lib",
       "purpose": null
     },
     {
       "type": "file",
       "name": "LICENCE"
     }
-  ],
-  "type": "layout"
+  ]
 }

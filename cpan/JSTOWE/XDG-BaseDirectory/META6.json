@@ -1,6 +1,6 @@
 {
   "name": "XDG::BaseDirectory",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "auth": "github:jonathanstowe",
   "api": "1.0",
   "description": "Implementation of the freedesktop.org XDG BaseDirectory specifications",
