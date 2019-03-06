@@ -1,5 +1,16 @@
 {{$NEXT}}
 
+v0.1.2	2019-03-05
+
+    * Fixing broken META
+    * Adding a META test
+
+v0.1.1	2019-03-04
+
+    * Removed some experimental packages that are not read and maybe never will
+      be because they were experimental. They were not finished and did not work.
+    * Adding a test to make sure all included modules at least compile.
+
 v0.1.0	2019-03-03
 
     * Adds caching of content when pulling it with the .raw-content or .content

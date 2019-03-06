@@ -1,5 +1,7 @@
 use v6;
 
+use Smack::Test;
+
 unit class Smack::Test::Server is Smack::Test;
 
 use Smack::Client;

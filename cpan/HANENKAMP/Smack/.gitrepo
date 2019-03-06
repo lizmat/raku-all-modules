@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/Smack.git
 	branch = master
-	commit = 44c15ec203697170bb95e0f6a3b0f7314cd93b02
-	parent = 8e0a79f550e6001283aeb4a8cc04109606cc9521
+	commit = c1b934f30d0f6ea8c4a0dee41437171df69ac076
+	parent = 4cdb8ad7fa4b338508d67b975b552296af3fcd27
 	cmdver = 0.3.1
