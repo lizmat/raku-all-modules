@@ -41,13 +41,13 @@ sub external-zip-works() returns Bool:D is export
 
     write-file-with-zip($outfile, $content)
         or return False;
-    
+
     my $got = pipe-in-from-unzip($outfile)
         or return False;
 
     return True
         if $content eq $got ;
-    
+
     diag "Uncompressed content is wrong, got[$got], expected[$content]";
     return False ;
 }
@@ -56,7 +56,7 @@ sub explain-failure($subname, @cmd, Proc $proc)
 {
     # caller not supported yet, so pass in the subname
     #diag caller.subname ~ " [@cmd] failed: $!, exitcode { $proc.exitcode }";
-    diag $subname ~ " [@cmd] failed, exitcode { $proc.exitcode }";
+    diag $subname ~ " [{@cmd}] failed, exitcode { $proc.exitcode }";
     diag "    out [{ $proc.out.slurp }]" if $proc.out ;
     diag "    err [{ $proc.err.slurp }]" if $proc.err;
 }
@@ -74,19 +74,23 @@ sub write-file-with-zip($file, $content, $options='-v')
     my @comp = $ZIP, '-q', $options, $file, $infile ;
     my $proc = run |@comp, :out, :err;
 
-    return True 
+    return True
         if $proc.exitcode == 0 ;
 
     explain-failure "write-file-with-zip", @comp, $proc ;
 
     return False ;
 }
-sub pipe-in-from-unzip($file, $name='') is export
+
+sub pipe-in-from-unzip($file, $name='', $options='') is export
 {
-    my @comp = $UNZIP, '-p', $file;
-    @comp.push($name) if $name ;
+    my @comp = $UNZIP ;
+    if $options { @comp.push($options) } else { @comp.push('-p') }
+    @comp.push: $file ;
+    @comp.push: $name if $name ;
+
     my $proc = run |@comp, :out :err ;
-    
+
     if $proc.exitcode == 0
     {
         return $proc.out.slurp but True;
@@ -96,12 +100,22 @@ sub pipe-in-from-unzip($file, $name='') is export
     return False ;
 }
 
+sub comment-from-unzip($filename) is export
+{
+    my $data = pipe-in-from-unzip($filename, '', '-z')
+        or return '';
+
+    $data.subst(/^Archive: \s+ $filename \n /, '');
+
+    return $data
+}
+
 sub test-with-unzip($file) is export
 {
     my @comp = $UNZIP, '-t', $file;
     say "Running [{ @comp }]";
-    my $proc = run |@comp ;
-    
+    my $proc = run |@comp, :out, :err ;
+
     return True
         if $proc.exitcode == 0 ;
 
@@ -109,14 +123,14 @@ sub test-with-unzip($file) is export
     return False ;
 }
 
-sub unzipToTempDir($file) 
+sub unzipToTempDir($file)
 {
     my $dir = tempdir(:unlink(True));
 
     my @comp = $UNZIP, '-d', $dir,  $file;
     say "Running [{ @comp }]";
     my $proc = run |@comp ;
-    
+
     return $dir
         if $proc.exitcode == 0 ;
 
@@ -125,7 +139,7 @@ sub unzipToTempDir($file)
 }
 
 
-#sub testWithFUnzip($file) 
+#sub testWithFUnzip($file)
 #{
 #    my $outfile = t-file;
 #
@@ -134,7 +148,7 @@ sub unzipToTempDir($file)
 #    if ( system("$comp -p $file >$outfile") == 0 )
 #    {
 #        $_[0] = slurp($outfile, :b);
-#        return 1 
+#        return 1
 #    }
 #
 #    diag "'$comp' failed: $?";
@@ -162,7 +176,7 @@ sub unzipToTempDir($file)
 #    my $outfile = t-file;
 #
 #    my $status = ( system("$ZIP -T $file >$outfile") == 0 ) ;
-#    
+#
 #    $_[0] = slurp($outfile, :b);
 #
 #    return $status ;
