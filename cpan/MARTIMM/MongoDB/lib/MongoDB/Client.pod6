@@ -321,9 +321,9 @@ when it applies.
 
 
 
-=head2 client-topology
+=head2 topology
 
-  method client-topology ( --> TopologyType ) {
+  method topology ( --> TopologyType ) {
 
 Return the topology of the set of servers represents. A table of types is shown
 next;
