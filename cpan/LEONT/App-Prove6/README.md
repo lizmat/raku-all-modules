@@ -17,6 +17,8 @@ Boolean options:
          --shuffle         Run the tests in random order.
          --ignore-exit     Ignore exit status from test scripts.
          --reverse         Run the tests in reverse order.
+    -q,  --quiet           Suppress some test output while running tests.
+    -Q,  --QUIET           Only print summary results.
          --timer           Print elapsed time after each test.
          --trap            Trap Ctrl-C and print summary on interrupt.
          --help            Display this help
@@ -24,8 +26,10 @@ Boolean options:
 
 Options that take arguments:
 
+    -I,  --incdir          Library paths to include.
     -e,  --exec            Interpreter to run the tests ('' for compiled
                            tests.)
+         --ext             Set the extensions for tests (default <t t6>)
          --harness         Define test harness to use.  See TAP::Harness.
          --reporter        Result reporter to use. See REPORTERS.
     -j,  --jobs            Run N test jobs in parallel (try 9.)
