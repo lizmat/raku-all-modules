@@ -205,7 +205,7 @@ multi method append ( Grid:D: :@rows! --> Grid:D ) {
 
   self = flat self, @rows;
 
-  $!rows += 1;
+  $!rows += +@rows div $!columns;
 
   self;
 
@@ -217,7 +217,7 @@ multi method append ( Grid:D: :@columns! --> Grid:D ) {
 
   self = flat self.rotor($!columns) Z @columns;
 
-  $!columns += 1;
+  $!columns += +@columns div $!rows;
 
   self;
 
@@ -232,7 +232,7 @@ multi method push ( Grid:D: :@rows! --> Grid:D ) {
 
   self = flat self, @rows;
 
-  $!rows += 1;
+  $!rows += +@rows div $!columns;
 
   self;
 
@@ -244,7 +244,7 @@ multi method push ( Grid:D: :@columns! --> Grid:D ) {
 
   self = flat self.rotor($!columns) Z @columns;
 
-  $!columns += 1;
+  $!columns += +@columns div $!rows;
 
   self;
 
@@ -259,7 +259,7 @@ multi method prepend ( Grid:D: :@rows! --> Grid:D ) {
 
   self = flat @rows, self;
 
-  $!rows += 1;
+  $!rows += +@rows div $!columns;
 
   self;
 
@@ -271,7 +271,7 @@ multi method prepend ( Grid:D: :@columns! --> Grid:D ) {
 
   self = flat @columns Z self.rotor($!columns);
 
-  $!columns += 1;
+  $!columns += +@columns div $!rows;
 
   self;
 
@@ -285,7 +285,7 @@ multi method unshift ( Grid:D: :@rows! --> Grid:D ) {
 
   self = flat @rows, self;
 
-  $!rows += 1;
+  $!rows += +@rows div $!columns;
 
   self;
 
@@ -297,7 +297,7 @@ multi method unshift ( Grid:D: :@columns! --> Grid:D ) {
 
   self = flat @columns Z self.rotor($!columns);
 
-  $!columns += 1;
+  $!columns += +@columns div $!rows;
 
   self;
 
@@ -420,11 +420,8 @@ submethod !subgrid( @indices, :$square = False ) {
 
   return @subgrid;
 
-  CATCH {
 
-    return Array;
-
-  }
+  CATCH { return Array }
 
 }
 
