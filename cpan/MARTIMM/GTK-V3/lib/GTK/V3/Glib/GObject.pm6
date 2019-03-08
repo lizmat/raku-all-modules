@@ -167,7 +167,7 @@ sub g_object_get_property (
   { * }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-our $gobject-debug = False;
+our $gobject-debug = False; # Type Bool;
 
 has N-GObject $!g-object;
 #has GTK::V3::Gtk::GtkMain $!main;
@@ -260,7 +260,7 @@ method fallback ( $native-sub is copy --> Callable ) {
 #-------------------------------------------------------------------------------
 submethod BUILD ( *%options ) {
 
-  note "GObject: {self}, ", %options if $gobject-debug;
+  note "\nGObject: {self}, ", %options if $gobject-debug;
 
   # Test if GTK is initialized
   my GTK::V3::Gtk::GtkMain $main .= new;
@@ -319,6 +319,7 @@ submethod BUILD ( *%options ) {
 #-------------------------------------------------------------------------------
 method debug ( Bool :$on ) {
   $gobject-debug = $on;
+  $X::GTK::V3::x-debug = $on;
 }
 
 #-------------------------------------------------------------------------------

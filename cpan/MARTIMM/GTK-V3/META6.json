@@ -1,7 +1,7 @@
 {
-  "description": "Interfacing Glade XML to Perl6",
+  "description": "Perl6 GTK Api Version 3",
   "name": "GTK::V3",
-  "version": "0.7.3",
+  "version": "0.8.1",
   "authors": [ "Marcel Timmerman"],
   "tags": [ "Gui", "Gtk"],
 
@@ -30,6 +30,8 @@
     "GTK::V3::Gtk::GtkBuilder": "lib/GTK/V3/Gtk/GtkBuilder.pm6",
     "GTK::V3::Gtk::GtkButton": "lib/GTK/V3/Gtk/GtkButton.pm6",
     "GTK::V3::Gtk::GtkCheckButton": "lib/GTK/V3/Gtk/GtkCheckButton.pm6",
+    "GTK::V3::Gtk::GtkComboBox": "lib/GTK/V3/Gtk/GtkComboBox.pm6",
+    "GTK::V3::Gtk::GtkComboBoxText": "lib/GTK/V3/Gtk/GtkComboBoxText.pm6",
     "GTK::V3::Gtk::GtkContainer": "lib/GTK/V3/Gtk/GtkContainer.pm6",
     "GTK::V3::Gtk::GtkCssProvider": "lib/GTK/V3/Gtk/GtkCssProvider.pm6",
     "GTK::V3::Gtk::GtkDialog": "lib/GTK/V3/Gtk/GtkDialog.pm6",

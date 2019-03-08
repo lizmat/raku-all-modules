@@ -1,7 +1,10 @@
 use v6;
 
+
 #-------------------------------------------------------------------------------
 class X::GTK::V3 is Exception {
+  our $x-debug = False; # Type Bool is set by GObject;
+
   has $.message;
 
   submethod BUILD ( Str:D :$!message ) { }
@@ -10,9 +13,9 @@ class X::GTK::V3 is Exception {
 #-------------------------------------------------------------------------------
 sub test-catch-exception ( Exception $e, Str $native-sub ) is export {
 
-#note "Error type: ", $e.WHAT;
-#note "Error message: ", $e.message;
-#note "Exception: ", $e;
+note "Error type: ", $e.WHAT if $X::GTK::V3::x-debug;
+note "Error message: ", $e.message if $X::GTK::V3::x-debug;
+note "\nThrown Exception:\n", $e if $X::GTK::V3::x-debug;
 
   given $e {
 
@@ -24,40 +27,29 @@ sub test-catch-exception ( Exception $e, Str $native-sub ) is export {
 #     Type check failed for return value
 
     # X::AdHoc
-    #when .message ~~ m:s/Cannot invoke this object/ {
-    #  die X::GTK::V3.new(
-    #    :message("Could not find native sub '$native-sub\(...\)'")
-    #  );
-    #}
-
-    # NotFound, triggered by getting signature from an Any
-    #when .message ~~ m:s/"No such method 'signature' for invocant of type 'Callable'"/ {
-    #  die X::GTK::V3.new(
-    #    :message("Could not find native sub '$native-sub\(...\)'")
-    #  );
-    #}
-
-    # X::AdHoc
     when .message ~~ m:s/Native call expected return type/ {
+      note "Wrong return type of native sub '$native-sub\(...\)'";
       die X::GTK::V3.new(
         :message("Wrong return type of native sub '$native-sub\(...\)'")
       );
+      #exit(1);
     }
 
-    # X::AdHoc
-    when .message ~~ m:s/will never work with declared signature/ {
+    # X::AdHoc, X::TypeCheck::Argument or some messages
+    when X::TypeCheck::Argument ||
+         .message ~~ m:s/will never work with declared signature/ ||
+         .message ~~ m:s/Type check failed in binding/ {
+      note .message;
       die X::GTK::V3.new(:message(.message));
-    }
-
-    when X::TypeCheck::Argument {
-      die X::GTK::V3.new(:message(.message));
+      #exit(1);
     }
 
     default {
+      note "Could not find native sub '$native-sub\(...\)'";
       die X::GTK::V3.new(
-#        :message(.message)
         :message("Could not find native sub '$native-sub\(...\)'")
       );
+      #exit(1);
     }
   }
 }
@@ -71,12 +63,13 @@ sub test-call ( Callable:D $found-routine, $gobject, |c --> Mu ) is export {
 
   if +$sig-params and
      $sig-params[0].type.^name ~~ m/^ ['GTK::V3::G' .*?]? 'N-G' / {
-#note "\ncall with widget: ", $gobject.gist, ', ', |c.gist;
+
+    note "$found-routine.gist()\( ", $gobject, ', ', |c, ');' if $X::GTK::V3::x-debug;
     $found-routine( $gobject, |c)
   }
 
   else {
-#note "\ncall without widget: ", |c.gist;
+    note "$found-routine\( ", |c, ');' if $X::GTK::V3::x-debug;
     $found-routine(|c)
   }
 }
