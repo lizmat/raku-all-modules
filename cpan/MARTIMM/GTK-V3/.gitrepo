@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/gtk-v3.git
 	branch = master
-	commit = 456e412bcde15b49a0b92fd1d0c2cc47d03e3d75
-	parent = 3a423cf2c02a778e383deffc61d31045dd1b729d
+	commit = 2774ead7d82eab0eef65b7bd7e2867bde005bb41
+	parent = 87ff627b8027966d6776b186905f2cd2130bbeb6
 	cmdver = 0.3.1

@@ -1,5 +1,8 @@
 ## Release notes
 
+* 2019-03-07 0.8.2
+  * The method register-signal() in class GOBject now returns a boolean. True when successful.
+
 * 2019-03-06 0.8.1
   * Readme not completely right for display on internet
 

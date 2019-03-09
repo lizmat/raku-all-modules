@@ -345,12 +345,14 @@ method register-signal (
   Int :$connect-flags = 0, Str :$target-widget-name,
   Str :$handler-type where * ~~ any(<wd wwd wsd>) = 'wd',
   *%user-options
+  --> Bool
 ) {
 
 #TODO use a hash to set all handler attributes in one go
 #note $handler-object.^methods;
 #note "register $handler-object $handler-name ($handler-type), options: ", %user-options;
 
+  my Bool $registered-successful = False;
   if ?$handler-object and $handler-object.^can($handler-name) {
 
     my %options = :widget(self), |%user-options;
@@ -394,15 +396,23 @@ method register-signal (
         OpaquePointer, $connect-flags
       );
     }
+
+    $registered-successful = True;
   }
 
+#`{{
   elsif ?$handler-object {
     #note "Handler $handler-name on $id object using $signal-name event not defined";
     note "Handler $handler-name not defined in {$handler-object.^name}";
+
   }
 
   else {
     note "Handler object is not defined";
 #    self.connect-object( 'clicked', $handler, OpaquePointer, $connect_flags);
   }
+}}
+
+
+  $registered-successful
 }
