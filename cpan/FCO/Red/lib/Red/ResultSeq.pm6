@@ -6,6 +6,7 @@ use Red::AST::Empty;
 use Red::AST::Value;
 use Red::AST::Update;
 use Red::AST::Delete;
+use Red::AST::Comment;
 use Red::Attr::Column;
 use Red::AST::Infixes;
 use Red::AST::Chained;
@@ -26,6 +27,26 @@ sub create-resultseq($rs-class-name, Mu \type) is export is raw {
     $rs-class
 }
 
+method create-comment-to-caller {
+    my %data;
+    %data<meth-name> = callframe(1).code.name;
+    given callframe(2) {
+        %data<file>  = .file;
+        %data<block> = .code.name;
+        %data<line>  = .line;
+    }
+    @!comments.push: Red::AST::Comment.new:
+        :msg(
+            &*RED-COMMENT-SQL
+                ?? &*RED-COMMENT-SQL.(|%data)
+                !! comment-sql(|%data)
+        )
+}
+
+sub comment-sql(:$meth-name, :$file, :$block, :$line) {
+    "method '$meth-name' called at: { $file } #{ $line }"
+}
+
 method of { $of }
 #method is-lazy { True }
 method cache {
@@ -34,16 +55,19 @@ method cache {
 
 has Red::AST::Chained $.chain handles <filter limit post order group table-list> .= new;
 has Red::AST          %.update;
+has Red::AST::Comment @.comments;
 
 method iterator {
     Red::ResultSeq::Iterator.new: :$.of, :$.ast, :&.post
 }
 
 method Seq {
+    self.create-comment-to-caller;
     Seq.new: self.iterator
 }
 
 method do-it(*%pars) {
+    self.create-comment-to-caller;
     self.clone(|%pars).Seq
 }
 
@@ -60,6 +84,7 @@ method transform-item(*%data) {
 }
 
 method grep(&filter)        {
+    self.create-comment-to-caller;
     my Red::AST $*RED-GREP-FILTER;
     my $filter = filter self.of;
     with $*RED-GREP-FILTER {
@@ -67,7 +92,10 @@ method grep(&filter)        {
     }
     self.where: $filter;
 }
-method first(&filter)       { self.grep(&filter).head }
+method first(&filter) {
+    self.create-comment-to-caller;
+    self.grep(&filter).head
+}
 
 sub hash-to-cond(%val) {
     my Red::AST $ast;
@@ -206,6 +234,7 @@ multi method create-map(*@ret where .all ~~ Red::AST, :filter(&)) {
 }
 
 method map(&filter) {
+    self.create-comment-to-caller;
     my Red::AST %next{Red::AST};
     my Red::AST %when{Red::AST};
     my %*UPDATE := %!update;
@@ -223,15 +252,18 @@ method map(&filter) {
 #}
 
 method sort(&order) {
+    self.create-comment-to-caller;
     my @order = order self.of;
     self.clone: :chain($!chain.clone: :@order)
 }
 
 method pick(Whatever) {
+    self.create-comment-to-caller;
     self.clone: :chain($!chain.clone: :order[Red::AST::Function.new: :func<random>])
 }
 
 method classify(&func, :&as = { $_ }) {
+    self.create-comment-to-caller;
     my $key   = func self.of;
     my $value = as   self.of;
     #self.clone(:group(func self.of)) but role :: { method of { Associative[$value.WHAT, Str] } }
@@ -239,18 +271,22 @@ method classify(&func, :&as = { $_ }) {
 }
 
 multi method head {
+    self.create-comment-to-caller;
     self.do-it(:1limit).head
 }
 
 multi method head(UInt:D $num) {
+    self.create-comment-to-caller;
     self.do-it(:limit(min $num, $.limit)).head: $num
 }
 
 method elems( --> Int()) {
+    self.create-comment-to-caller;
     self.create-map(Red::AST::Function.new: :func<count>, :args[ast-value *]).head
 }
 
 method Bool( --> Bool()) {
+    self.create-comment-to-caller;
     self.create-map(Red::AST::Gt.new: Red::AST::Function.new(:func<count>, :args[ast-value *]), ast-value 0).head
 }
 
@@ -264,28 +300,34 @@ method new-object(::?CLASS:D: *%pars) {
 }
 
 method create(::?CLASS:D: *%pars) {
+    self.create-comment-to-caller;
     $.of.^create: |%pars, |(.should-set with $.filter);
 }
 
 method delete(::?CLASS:D:) {
+    self.create-comment-to-caller;
     $*RED-DB.execute: Red::AST::Delete.new: $.of, $.filter
 }
 
 method save(::?CLASS:D:) {
+    self.create-comment-to-caller;
     $*RED-DB.execute: Red::AST::Update.new: :into($.table-list.head.^table), :values(%!update), :filter($.filter)
 }
 
 method union(::?CLASS:D: $other) {
+    self.create-comment-to-caller;
     my Red::AST $filter = self.ast.union: $other.ast;
     self.clone: :chain($!chain.clone: :$filter)
 }
 
 method intersect(::?CLASS:D: $other) {
+    self.create-comment-to-caller;
     my Red::AST $filter = self.ast.intersect: $other.ast;
     self.clone: :chain($!chain.clone: :$filter)
 }
 
 method minus(::?CLASS:D: $other) {
+    self.create-comment-to-caller;
     my Red::AST $filter = self.ast.minus: $other.ast;
     self.clone: :chain($!chain.clone: :$filter)
 }
@@ -294,6 +336,6 @@ method ast {
     if $.filter ~~ Red::AST::MultiSelect {
         $.filter
     } else {
-        Red::AST::Select.new: :$.of, :$.filter, :$.limit, :@.order, :@.table-list, :@.group;
+        Red::AST::Select.new: :$.of, :$.filter, :$.limit, :@.order, :@.table-list, :@.group, :@.comments;
     }
 }
