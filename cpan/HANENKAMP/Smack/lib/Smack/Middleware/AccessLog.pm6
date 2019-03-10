@@ -16,7 +16,7 @@ has %.char-handlers;
 
 my constant %formats = {
     common   => '%h %l %u %t "%r" %>s %b',
-    combined => '%h %l %u %t "%r" %>2 %b "${Referer}i" "%{User-agent}i"',
+    combined => '%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-agent}i"',
 };
 
 method configure(%env) {
@@ -35,17 +35,20 @@ method configure(%env) {
 
 method call(%env) {
     callsame() then-with-response -> $status, @headers, $entity {
-        my $cl = content-length(%env, $entity).Promise;
-        start {
-            my $content-length = await $cl;
+        my Promise $content-length-promise .= new;
+
+        $content-length-promise.then({
+            my $content-length = .result;
+
+            my $log-line = self.log-line($status, @headers, %env, :$content-length);
+            &.logger.($log-line);
+
             CATCH {
                 default { &.logger.($_) }
             }
-            my $log-line = self.log-line($status, @headers, %env, :$content-length);
-            &.logger.($log-line);
-        }
+        });
 
-        Nil
+        content-length(%env, $entity, $content-length-promise, :defer);
     }
 }
 
@@ -56,5 +59,5 @@ method log-line(Int() $status, @headers, %env, :$content-length, :$req-time, Dat
         $content-length,
         $req-time,
         $time,
-    );
+    ).chomp;
 }

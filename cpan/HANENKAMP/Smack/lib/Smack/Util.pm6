@@ -1,5 +1,10 @@
 use v6;
 
+# TODO Sterling's Truths for Life #124: Never write code in a module containing
+# “util” in the name.
+#
+# MOVE ALL OF THIS SOMEWHERE ELSE!
+
 unit module Smack::Util;
 
 use HTTP::Headers;
@@ -165,8 +170,35 @@ sub encode-html(Str() $str) returns Str is export {
     );
 }
 
-sub content-length(%env, Supply() $body) returns Supply is export {
-    $body.grep(Blob | Str)
-         .map({ stringify-encode($_, :%env).bytes })
-         .reduce(&infix:<+>);
+# TODO How do we prevent multiple runs of this going at the same time? Some sort
+# of cache in %env would help.
+sub content-length(%env, Supply() $body, Promise $p is rw, Bool :$defer = False) returns Supply is export {
+    $p .= new without $p;
+    my $v = $p.vow;
+
+    my $content-length = 0;
+
+    if $defer {
+        $body.do({
+            when Blob | Str {
+                $content-length += stringify-encode($_, :%env).bytes;
+            }
+        }).on-close({ $v.keep($content-length) });
+    }
+    else {
+        my @body-cache;
+
+        $body.act(
+            {
+                @body-cache.push: $_;
+
+                when Blob | Str {
+                    $content-length += stringify-encode($_, :%env).bytes;
+                }
+            },
+            done => { $v.keep($content-length) },
+        );
+
+        @body-cache.Supply;
+    }
 }

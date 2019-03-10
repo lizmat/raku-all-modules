@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+v0.2.0	2019-03-09
+
+    * Improve the content-length() function in Smack::Util so that it does not
+      consume the supply. Provides a :defer option to allow the response to the
+      calculation to be performed upon completion of the entity rather than
+      looping through the output twice.
+
 v0.1.2	2019-03-05
 
     * Fixing broken META

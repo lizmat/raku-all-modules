@@ -7,11 +7,11 @@ method configure(%config) { }
 method call(%env) { }
 
 # the to-app method is cached
-has $!app;
+has $!_app;
 method to-app() {
     my $self = self;
-    return $!app if $!app;
-    $!app = sub (%config --> Callable) {
+    return $!_app if $!_app;
+    $!_app = sub (%config --> Callable) {
         $self.configure(%config);
         sub (%env) { $self.call(%env) };
     }

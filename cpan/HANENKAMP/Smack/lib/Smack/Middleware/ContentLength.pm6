@@ -8,7 +8,7 @@ is Smack::Middleware;
 use Smack::Util;
 
 method call(%env) {
-    callsame() then-with-response -> $s, @h, $entity {
+    callsame() then-with-response -> $s, @h, $entity is copy {
         my $headers = response-headers(@h, :%env);
 
         if !status-with-no-entity-body($s)
@@ -16,7 +16,8 @@ method call(%env) {
             && !$headers.Transfer-Encoding
             && !$entity.live {
 
-            my $cl = content-length(%env, $entity).Promise;
+            my Promise $cl;
+            $entity = content-length(%env, $entity, $cl);
             my $content-length = await $cl;
 
             push @h, 'Content-Length' => $content-length;
