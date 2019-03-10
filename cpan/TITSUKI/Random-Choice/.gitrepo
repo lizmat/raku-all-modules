@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/titsuki/p6-Random-Choice.git
 	branch = master
-	commit = 349de4717cafd21a3ef4b4f949194370e2088c52
-	parent = d1b2a8c837272d7d68a6c3a0168deecae4e526fb
+	commit = 8d496fcbd4bdbe9af59c392d9570bef0bdb914ec
+	parent = ac517e237b3e02381fe382e9dfb428f826282074
 	cmdver = 0.3.1
