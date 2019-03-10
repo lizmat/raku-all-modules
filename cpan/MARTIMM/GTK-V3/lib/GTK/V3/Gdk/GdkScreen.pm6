@@ -2,8 +2,8 @@ use v6;
 use NativeCall;
 
 use GTK::V3::X;
-use GTK::V3::Glib::GObject;
 use GTK::V3::N::NativeLib;
+use GTK::V3::Glib::GObject;
 
 #-------------------------------------------------------------------------------
 # See /usr/include/gtk-3.0/gdk/gdkscreen.h

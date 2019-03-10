@@ -123,7 +123,7 @@ method FALLBACK ( $native-sub is copy, |c ) {
 
   my Callable $s;
   try { $s = &::($native-sub); }
-  try { $s = &::("g_type_$native-sub"); }
+  try { $s = &::("g_type_$native-sub") unless ?$s; }
 
   $s(|c)
 }

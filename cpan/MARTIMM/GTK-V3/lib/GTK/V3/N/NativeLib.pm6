@@ -1,5 +1,5 @@
 # This file is copied from the Gtk::Simple package. The reason to copy the file
-# is to remove dependency on that package because only 2 files can be used
+# is to remove dependency on that package because only this file is used
 
 # CHANGES:
 # 2019-01-11 none

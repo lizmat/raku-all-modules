@@ -3,153 +3,18 @@ use NativeCall;
 
 use GTK::V3::X;
 use GTK::V3::N::NativeLib;
+use GTK::V3::N::N-GObject;
 use GTK::V3::Gtk::GtkMain;
+use GTK::V3::Glib::GSignal;
 use GTK::V3::Glib::GValue;
+
+sub EXPORT { {
+    'N-GObject' => N-GObject,
+  }
+};
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 unit class GTK::V3::Glib::GObject:auth<github:MARTIMM>;
-
-#-------------------------------------------------------------------------------
-class N-GObject
-  is repr('CPointer')
-  is export
-  { }
-
-#-------------------------------------------------------------------------------
-enum GConnectFlags is export (
-  G_CONNECT_AFTER	        => 1,
-  G_CONNECT_SWAPPED	      => 1 +< 1
-);
-
-#-------------------------------------------------------------------------------
-# GSignal
-# Helper subs using the native calls
-#
-#`{{
-# original handler signature:
-#   &handler ( N-GObject $h_widget, OpaquePointer $h_data )
-# widget is inserted when second call to method is made and data is only
-# definable as an OpaquePointer so it can not give any data. This is also
-# inserted in second call. See GtkWidget.
-sub g_signal_connect_wd (
-  N-GObject $widget, Str $signal,
-  &handler ( N-GObject, OpaquePointer ), OpaquePointer
-) {
-  g_signal_connect_data_wd(
-    $widget, $signal, &handler, OpaquePointer, Any, 0
-  );
-}
-
-sub g_signal_connect_after_wd (
-  N-GObject $widget, Str $signal,
-  &handler ( N-GObject, OpaquePointer ), OpaquePointer
-) {
-  g_signal_connect_data_wd(
-    $widget, $signal, &handler, OpaquePointer, Any, G_CONNECT_AFTER
-  );
-}
-
-sub g_signal_connect_swapped_wd (
-  N-GObject $widget, Str $signal,
-  &handler ( N-GObject, OpaquePointer ), OpaquePointer
-) {
-  g_signal_connect_data_wd(
-    $widget, $signal, &handler, OpaquePointer, Any, G_CONNECT_SWAPPED
-  );
-}
-
-#-------------------------------------------------------------------------------
-# safe in threaded programs
-sub g_signal_connect_data_wd(
-  N-GObject $widget, Str $signal,
-  &handler ( N-GObject, OpaquePointer ), OpaquePointer $data,
-  OpaquePointer $destroy_data, int32 $connect_flags
-) returns int32
-  is native(&gobject-lib)
-  { * }
-
-sub g_signal_connect_data_wwd(
-  N-GObject $widget, Str $signal,
-  &handler ( N-GObject, N-GObject, OpaquePointer ), OpaquePointer $data,
-  OpaquePointer $destroy_data, int32 $connect_flags
-) returns int32
-  is native(&gobject-lib)
-  { * }
-}}
-
-# unsafe in threaded programs
-#sub g_signal_connect_object(
-#  N-GObject $widget, Str $signal, &handler ( N-GObject, OpaquePointer ),
-#  OpaquePointer, int32 $connect_flags
-#) returns uint32
-#  is native(&gobject-lib)
-#  { * }
-
-# unsafe in threaded programs
-sub g_signal_connect_object_wd(
-  N-GObject $widget, Str $signal, &handler ( N-GObject, OpaquePointer ),
-  OpaquePointer $data, int32 $connect_flags
-) returns uint32
-  is native(&gobject-lib)
-  is symbol('g_signal_connect_object')
-  { * }
-
-sub g_signal_connect_object_wwd(
-  N-GObject $widget, Str $signal, &handler (
-    N-GObject, N-GObject, OpaquePointer
-  ),
-  OpaquePointer, int32 $connect_flags
-) returns uint32
-  is native(&gobject-lib)
-  is symbol('g_signal_connect_object')
-  { * }
-
-sub g_signal_connect_object_wsd(
-  N-GObject $widget, Str $signal, &handler (
-    N-GObject, Str, OpaquePointer
-  ),
-  OpaquePointer, int32 $connect_flags
-) returns uint32
-  is native(&gobject-lib)
-  is symbol('g_signal_connect_object')
-  { * }
-
-#`{{
-# a GQuark is a guint32, $detail is a quark
-# See https://developer.gnome.org/glib/stable/glib-Quarks.html
-sub g_signal_emit (
-  N-GObject $instance, uint32 $signal_id, uint32 $detail,
-  N-GObject $widget, Str $data, Str $return-value is rw
-) is native(&gobject-lib)
-  { * }
-}}
-
-# Handlers above provided to the signal connect calls are having 2 arguments
-# a widget and data. So the provided extra arguments are then those 2
-# plus a return value
-sub g_signal_emit_by_name_wd (
-  # first two are obligatory by definition
-  N-GObject $instance, Str $detailed_signal,
-  # The rest depends on the handler defined when connecting
-  # There is no return value from the handler
-  N-GObject $widget, OpaquePointer
-) is native(&gobject-lib)
-  is symbol('g_signal_emit_by_name')
-  { * }
-
-sub g_signal_emit_by_name_wwd (
-  # first two are obligatory by definition
-  N-GObject $instance, Str $detailed_signal,
-  # The rest depends on the handler defined when connecting
-  # There is no return value from the handler
-  N-GObject $widget1, N-GObject $widget2, OpaquePointer
-) is native(&gobject-lib)
-  is symbol('g_signal_emit_by_name')
-  { * }
-
-sub g_signal_handler_disconnect( N-GObject $widget, int32 $handler_id)
-  is native(&gobject-lib)
-  { * }
 
 #-------------------------------------------------------------------------------
 sub g_object_unref ( N-GObject $object )
@@ -170,7 +35,7 @@ sub g_object_get_property (
 our $gobject-debug = False; # Type Bool;
 
 has N-GObject $!g-object;
-#has GTK::V3::Gtk::GtkMain $!main;
+has GTK::V3::Glib::GSignal $!g-signal;
 
 # type is GTK::V3::Gtk::GtkBuilder. Cannot load module because of circular dep.
 # attribute is set by GtkBuilder via set-builder(). There might be more than one
@@ -239,18 +104,26 @@ method FALLBACK ( $native-sub is copy, |c ) {
     }
   }
 
-#note "test-call of $native-sub: ", $s, ', ', $!g-object, ', ', |c.gist;
+  note "\ntest-call of $native-sub: ", $s.gist, ', ', $!g-object, ', ', |c.gist
+    if $gobject-debug;
   test-call( $s, $!g-object, |$params)
 }
 
 #-------------------------------------------------------------------------------
-method fallback ( $native-sub is copy --> Callable ) {
+method fallback ( $native-sub --> Callable ) {
 
   my Callable $s;
 
   try { $s = &::($native-sub); }
-  try { $s = &::("g_signal_$native-sub"); } unless ?$s;
   try { $s = &::("g_object_$native-sub"); } unless ?$s;
+
+  # Try to solve sub names from the GSignal class
+  unless ?$s {
+    $!g-signal .= new(:$!g-object);
+    note "GSignal look for $native-sub: ", $!g-signal if $gobject-debug;
+
+    $s = $!g-signal.FALLBACK( $native-sub, :return-sub-only);
+  }
 
   $s = callsame unless ?$s;
 
@@ -353,14 +226,17 @@ method register-signal (
 #note "register $handler-object $handler-name ($handler-type), options: ", %user-options;
 
   my Bool $registered-successful = False;
+
   if ?$handler-object and $handler-object.^can($handler-name) {
 
     my %options = :widget(self), |%user-options;
     %options<target-widget-name> = $target-widget-name if $target-widget-name;
 
     if $handler-type eq 'wd' {
+      $!g-signal .= new(:$!g-object);
+
 #note "set $handler-name ($handler-type), options: ", %user-options;
-      self.g-signal-connect-object-wd(
+      $!g-signal.connect-object-wd(
         $signal-name,
         -> $w, $d {
 #note "in callback, calling $handler-name ($handler-type), ", $handler-object;
@@ -372,7 +248,8 @@ method register-signal (
     }
 
     elsif $handler-type eq 'wwd' {
-      self.g-signal-connect-object-wwd(
+      $!g-signal .= new(:$!g-object);
+      $!g-signal.connect-object-wwd(
         $signal-name,
         -> $w1, $w2, $d {
 #note "in callback, calling $handler-name ($handler-type), ", $handler-object;
@@ -385,7 +262,8 @@ method register-signal (
     }
 
     else {
-      self.g-signal-connect-object-wsd(
+      $!g-signal .= new(:$!g-object);
+      $!g-signal.connect-object-wsd(
         $signal-name,
         -> $w, $s, $d {
 #note "in callback, calling $handler-name ($handler-type), ", $handler-object;

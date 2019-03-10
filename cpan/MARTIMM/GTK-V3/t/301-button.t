@@ -30,7 +30,7 @@ subtest 'Button create', {
   throws-like
     { $button1.get-label('xyz'); },
     X::GTK::V3, "wrong arguments",
-    :message('Calling gtk_button_get_label(GTK::V3::Glib::GObject::N-GObject, Str) will never work with declared signature (GTK::V3::Glib::GObject::N-GObject $widget --> Str)');
+    :message('Calling gtk_button_get_label(N-GObject, Str) will never work with declared signature (N-GObject $widget --> Str)');
 
   is $button1.get-label, 'abc def', 'text on button ok';
   $button1.set-label('xyz');
@@ -83,11 +83,12 @@ class X is GTK::V3::Gtk::GtkButton {
   }
 }
 
-#-------------------------------------------------------------------------------
 subtest 'Button connect and emit signal', {
 
   # register button signal
   my GTK::V3::Gtk::GtkButton $button .= new(:label('xyz'));
+#$button.debug(:on);
+
   my Array $data = [];
   $data[0] = 'Hello';
   $data[1] = 'World';

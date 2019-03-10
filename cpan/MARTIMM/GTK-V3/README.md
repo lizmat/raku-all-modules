@@ -148,6 +148,7 @@ A few measures are implemented to help a bit preventing problems;
 | GTK::V3::Glib::GList |  [Doubly-Linked Lists][glist]
 | GTK::V3::Glib::GMain |  [The Main Event Loop][gmain]
 | GTK::V3::Glib::GObject  | [The base object type][gobject]
+| GTK::V3::Glib::GSignal  | [The base object type][GSignal]
 | GTK::V3::Glib::GSList |  [Singly-Linked Lists][gslist]
 | GTK::V3::Glib::GType |  [1) Type Information][GType1], [2) Basic Types][GType2]
 | GTK::V3::Glib::GValue |  [1) Generic values][GValue1], [2) Parameters and Values][GValue2]
@@ -264,6 +265,7 @@ Github account name: **MARTIMM**
 [glist]: https://developer.gnome.org/glib/stable/glib-Doubly-Linked-Lists.html
 [gmain]: https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html
 [gobject]: https://developer.gnome.org/gobject/stable/gobject-The-Base-Object-Type.html
+[GSignal]: https://developer.gnome.org/gobject/stable/gobject-Signals.html
 [gslist]: https://developer.gnome.org/glib/stable/glib-Singly-Linked-Lists.html
 [GType1]: https://developer.gnome.org/gobject/stable/gobject-Type-Information.html
 [GType2]: https://developer.gnome.org/glib/stable/glib-Basic-Types.html

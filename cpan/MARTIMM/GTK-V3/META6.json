@@ -1,7 +1,7 @@
 {
   "description": "Perl6 GTK Api Version 3",
   "name": "GTK::V3",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "authors": [ "Marcel Timmerman"],
   "tags": [ "Gui", "Gtk"],
 
@@ -21,6 +21,7 @@
     "GTK::V3::Glib::GList": "lib/GTK/V3/Glib/GList.pm6",
     "GTK::V3::Glib::GMain": "lib/GTK/V3/Glib/GMain.pm6",
     "GTK::V3::Glib::GObject": "lib/GTK/V3/Glib/GObject.pm6",
+    "GTK::V3::Glib::GSignal": "lib/GTK/V3/Glib/GSignal.pm6",
     "GTK::V3::Glib::GSList": "lib/GTK/V3/Glib/GSList.pm6",
     "GTK::V3::Glib::GType": "lib/GTK/V3/Glib/GType.pm6",
     "GTK::V3::Glib::GValue": "lib/GTK/V3/Glib/GValue.pm6",
@@ -56,6 +57,7 @@
     "GTK::V3::Gtk::GtkWindow": "lib/GTK/V3/Gtk/GtkWindow.pm6",
 
     "GTK::V3::N::NativeLib": "lib/GTK/V3/N/NativeLib.pm6",
+    "GTK::V3::N::N-GObject": "lib/GTK/V3/N/N-GObject.pm6",
 
     "GTK::V3::X": "lib/GTK/V3/X.pm6"
   },

@@ -64,12 +64,14 @@ sub test-call ( Callable:D $found-routine, $gobject, |c --> Mu ) is export {
   if +$sig-params and
      $sig-params[0].type.^name ~~ m/^ ['GTK::V3::G' .*?]? 'N-G' / {
 
-    note "$found-routine.gist()\( ", $gobject, ', ', |c, ');' if $X::GTK::V3::x-debug;
+    note "\n[0] $found-routine.gist()\( ", $gobject, ', ', |c.perl, ');'
+      if $X::GTK::V3::x-debug;
     $found-routine( $gobject, |c)
   }
 
   else {
-    note "$found-routine\( ", |c, ');' if $X::GTK::V3::x-debug;
+    note "\n[1] $found-routine.gist()\( ", |c.perl, ');'
+      if $X::GTK::V3::x-debug;
     $found-routine(|c)
   }
 }

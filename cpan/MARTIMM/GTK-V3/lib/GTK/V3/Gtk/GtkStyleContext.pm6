@@ -26,13 +26,14 @@ sub gtk_style_context_new ( --> N-GObject )
   is native(&gtk-lib)
   { * }
 
-# special sub to cope with automatically inserted first argument caused by its
-# type, thinking that would be a GtkStyleContext type but it is a GdkScreen
-# type. Sometimes smart thinking goes the wrong way.
-sub gtk_style_context_add_provider_for_screen( N-GObject, |c ) {
-  hidden_gtk_style_context_add_provider_for_screen(|c);
+# special method to cope with automatically inserted first argument caused by
+# its type, thinking that would be a GtkStyleContext type but it is a GdkScreen
+# type. Sometimes smart thinking goes the wrong way. By having the argument list
+# as '|c' the first argument is not recognized and will be kept the same.
+sub gtk_style_context_add_provider_for_screen( |c ) {
+  __hidden__gtk_style_context_add_provider_for_screen(|c);
 }
-sub hidden_gtk_style_context_add_provider_for_screen (
+sub __hidden__gtk_style_context_add_provider_for_screen (
   N-GObject $screen, int32 $provider, int32 $priority
 ) is native(&gtk-lib)
   is symbol('gtk_style_context_add_provider_for_screen')
@@ -42,7 +43,7 @@ sub hidden_gtk_style_context_add_provider_for_screen (
 submethod BUILD ( *%options ) {
 
   # prevent creating wrong widgets
-  return unless self.^name eq 'GTK::V3::Gtk::GtkCssProvider';
+  return unless self.^name eq 'GTK::V3::Gtk::GtkStyleContext';
 
   if ? %options<empty> {
     self.native-gobject(gtk_style_context_new());

@@ -71,7 +71,7 @@ method FALLBACK ( $native-sub is copy, |c ) {
 
   my Callable $s;
   try { $s = &::($native-sub); }
-  try { $s = &::("g_slist_$native-sub"); }
+  try { $s = &::("g_slist_$native-sub") unless ?$s; }
 
   #test-call( $s, $!gslist, |c)
   $s( $!gslist, |c)
