@@ -22,11 +22,11 @@ enum Zip-GP-Flag is export (
 
 
 our %Zip-CM-Min-Versions = 
-            Zip-CM-Store         => 20,
-            Zip-CM-Deflate       => 20,
-            Zip-CM-Bzip2         => 46,
-            #Zip-CM-LZMA         => 63,
-            #Zip-CM-PPMD         => 63,
+            Zip-CM-Store.value   => 20,
+            Zip-CM-Deflate.value => 20,
+            Zip-CM-Bzip2.value   => 46,
+            #Zip-CM-LZMA.value   => 63,
+            #Zip-CM-PPMD.value   => 63,
             ;
 
 class Local-File-Header is export # does CustomeMarshaller
@@ -73,6 +73,10 @@ class Local-File-Header is export # does CustomeMarshaller
     {
         $.version-needed-to-extract max=
             %Zip-CM-Min-Versions{$.compression-method} ;
+
+        # hard-wired to unix for now
+        # can use $*KERNEL.name to get os
+        $.version-made-by = 0x300 + $.version-needed-to-extract;
 
         my $header = buf8.allocate(30 + $.file-name.elems);
         $header.write-uint32( 0, local-file-header-signature, LittleEndian);

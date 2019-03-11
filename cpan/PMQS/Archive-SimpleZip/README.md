@@ -12,10 +12,6 @@ use Archive::SimpleZip;
 # Create a zip file in filesystem
 my $obj = SimpleZip.new("mine.zip");
 
-# Create a zip file in memory
-my $blob = Blob.new();
-my $obj2 = SimpleZip.new($blob);
-
 # Add a file to the zip archive
 $obj.add("somefile.txt".IO);
 
@@ -42,5 +38,5 @@ Suggestions/patches are welcomed via github at
 
 Please see the LICENCE file in the distribution
 
-(C) Paul Marquess 2016
+(C) Paul Marquess 2016-2019
 

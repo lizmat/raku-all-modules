@@ -24,6 +24,7 @@ class SimpleZip is export
     has Instant                  $!now = DateTime.now.Instant;
     has Zip-CM                   $!default-method ;
     has Bool                     $!any-zip64 = False;
+
     # Defaults
     has Bool                     $!zip64 = False ;
     has Bool                     $.default-stream ;
@@ -45,12 +46,6 @@ class SimpleZip is export
         self.bless(:$zip-filehandle, :$filename, |c);
     }
 
-    multi method new(Blob $data, |c)
-    {
-        my IO::Blob $zip-filehandle .= new($data);
-        self.bless(:$zip-filehandle, |c);
-    }
-
     multi submethod BUILD(IO::Handle :$!zip-filehandle?, 
                           IO::Path   :$!filename?,
                           Str        :$!comment = "",
@@ -66,14 +61,18 @@ class SimpleZip is export
 
     multi method add(Str $string, |c)
     {
-        #say "add Str";
         my IO::Blob $fh .= new($string);
+        samewith($fh, |c);
+    }
+
+    multi method add(Blob $blob, |c)
+    {
+        my IO::Blob $fh .= new($blob);
         samewith($fh, |c);
     }
 
     multi method add(IO::Path $path, |c)
     {
-        #say "add IO";
         my IO::Handle $fh = open($path, :r, :bin);
         samewith($fh, :name(Str($path)), :time($path.modified), |c);
     }
@@ -94,14 +93,26 @@ class SimpleZip is export
 
         $hdr.last-mod-file-time = get-DOS-time($time);
         $hdr.compression-method = $method ;
-        if $canonical-name
-            { $hdr.file-name = make-canonical-name($name).encode }
-        else
-            { $hdr.file-name = $name.encode }
+
+        my Str $filename = $name ;
+        $filename = make-canonical-name($filename)
+            if $canonical-name ;
+
+        # Check if the filename or comment are not 7-bit ASCII
+        # If either is not, set the Language encoding bit
+        # in general purpose flags.
+        my Bool $high-bit = ( ? $filename.ords.first: * > 127 ) || 
+                            ( ? $comment.ords.first:  * > 127 );
+
+        $hdr.file-name = $filename.encode ;
+
         $hdr.file-comment = $comment.encode;
 
         $hdr.general-purpose-bit-flag +|= Zip-GP-Streaming-Mask 
             if $stream ;
+
+        $hdr.general-purpose-bit-flag +|= Zip-GP-Language-Encoding 
+            if $high-bit ;
 
         my $start-local-hdr = $!zip-filehandle.tell();
         my $local-hdr = $hdr.get();
@@ -207,15 +218,16 @@ class SimpleZip is export
     # Create a zip archive in filesystem
     my $obj = SimpleZip.new("mine.zip");
 
-    # Create a zip archive in memory
-    my $blob = Blob.new();
-    my $obj2 = SimpleZip.new($blob);
-
     # Add a file to the zip archive
     $obj.add("somefile.txt".IO);
 
     # Add a Blob/String to the zip archive
     $obj.add("payload data here", :name<data1>);
+    $obj.add(Blob.new([2,4,6]), :name<data1>);
+
+    # Drop a filehandle into the zip archive
+    my $handle = "some file".IO.open;
+    $obj.add($handle, :name<data2>);
 
     $obj.close();
 
@@ -235,11 +247,6 @@ Instantiate a SimpleZip object
 
 If the first parameter is a string or IO::Path the zip archive will be
 created in the filesystem.
-
-To create an in-memory zip archive the first parmameter must be a Blob.
-
-    my $archive = Blob.new;
-    my $zip = SimpleZip.new($archive);
 
 =head3 Options
 
@@ -327,7 +334,7 @@ this default.
 
 =head2 method add
 
-Used to add a file or blob to a Zip archive. The method expects one
+Used to add a file, string or blob to a Zip archive. The method expects one
 mandatory parameter and zero or more optional parameters.
 
 To add a file from the filesystem the first parameter must be of type
@@ -336,7 +343,7 @@ IO::Path
     # Add a file to the zip archive
     $zip.add("/tmp/fred".IO);
 
-To add a string/blob to 
+To add a string/blob to the archive
 
     # Add a string to the zip archive
     $zip.add("payload data here", :name<data1>);

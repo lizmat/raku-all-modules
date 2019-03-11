@@ -82,18 +82,27 @@ sub write-file-with-zip($file, $content, $options='-v')
     return False ;
 }
 
-sub pipe-in-from-unzip($file, $name='', $options='') is export
+sub pipe-in-from-unzip($file, $name='', :$options='', Bool :$binary=False) is export
 {
     my @comp = $UNZIP ;
     if $options { @comp.push($options) } else { @comp.push('-p') }
     @comp.push: $file ;
     @comp.push: $name if $name ;
 
-    my $proc = run |@comp, :out :err ;
+    my $proc;
+
+    if $binary
+        { $proc = run |@comp, :out :err :bin }
+    else
+        { $proc = run |@comp, :out :err }
 
     if $proc.exitcode == 0
     {
-        return $proc.out.slurp but True;
+        return $proc.out.slurp but True
+            if ! $binary;
+
+        return $proc.out.read ; 
+
     }
 
     explain-failure "pipe-in-from-unzip", @comp, $proc ;
@@ -102,7 +111,7 @@ sub pipe-in-from-unzip($file, $name='', $options='') is export
 
 sub comment-from-unzip($filename) is export
 {
-    my $data = pipe-in-from-unzip($filename, '', '-z')
+    my $data = pipe-in-from-unzip($filename, '', :options('-z'))
         or return '';
 
     $data.subst(/^Archive: \s+ $filename \n /, '');
