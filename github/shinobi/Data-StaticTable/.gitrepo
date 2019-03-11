@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/shinobi/Data-StaticTable.git
 	branch = master
-	commit = b09748609a9ab0740c78db7626c5243801e8febb
-	parent = 5bba3cafdeac1454449742a04bf25a9bcae9329e
+	commit = 919b94f2ba2c97cfa90ed7281e7e6d8333b0cdf9
+	parent = cbf52ff0c3e1bb023624b59f3ec5bb1dd778c688
 	cmdver = 0.3.1
