@@ -1,7 +1,7 @@
 {
     "name" : "DB",
 
-    "version" : "0.3",
+    "version" : "0.4",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-db.git",
 
@@ -17,7 +17,7 @@
         "DB::Mock"       : "lib/DB/Mock.pm6"
     },
 
-    "depends" : [ "Concurrent::Stack:ver<1.0>" ],
+    "depends" : [ "Concurrent::Stack" ],
 
     "description" : "Base roles for DB::* family of SQL Database modules",
 
