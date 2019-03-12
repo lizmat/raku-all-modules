@@ -1,7 +1,7 @@
 {
     "name" : "DB::MySQL",
 
-    "version" : "0.2",
+    "version" : "0.3",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-dbmysql.git",
 
@@ -18,7 +18,7 @@
         "DB::MySQL::Converter"  : "lib/DB/MySQL/Converter.pm6"
     },
 
-    "depends" : [ "DB:ver<0.3>", "NativeLibs", "NativeCall" ],
+    "depends" : [ "DB", "NativeLibs", "NativeCall", "JSON::Fast" ],
 
     "description" : "MySQL access for Perl6",
 
