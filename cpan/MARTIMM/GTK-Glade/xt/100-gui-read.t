@@ -1,17 +1,19 @@
 use v6;
-
-use GTK::Glade;
-#use GTK::Glade::NativeGtk :ALL;
-use GTK::Glade::Native::Gtk;
-use GTK::Glade::Native::Gtk::Main;
-use GTK::Glade::Native::Gtk::Widget;
-use GTK::Glade::Native::Gtk::Button;
-
+#use lib '../gtk-v3/lib';
 use Test;
 
-diag "\n";
+use GTK::Glade;
+
+use GTK::V3::Glib::GObject;
+
+use GTK::V3::Gtk::GtkMain;
+use GTK::V3::Gtk::GtkWidget;
+use GTK::V3::Gtk::GtkButton;
+use GTK::V3::Gtk::GtkLabel;
 
 #-------------------------------------------------------------------------------
+diag "\n";
+
 my $dir = 'xt/x';
 mkdir $dir unless $dir.IO ~~ :e;
 
@@ -116,58 +118,58 @@ $css-file.IO.spurt(Q:q:to/EOXML/);
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 class E is GTK::Glade::Engine {
-  #has Str $!t;
-  #submethod BUILD ( Str:D :$!t ) { note "T: $!t"; }
 
   #-----------------------------------------------------------------------------
-  method quit-program ( :$widget, :$data, :$object ) {
+  method quit-program ( :widget($button), :$target-widget-name ) {
     diag "quit-program called";
-    diag "Widget: " ~ $widget.perl if ?$widget;
-    diag "Data: " ~ $data.perl if ?$data;
-    diag "Object: " ~ $object.perl if ?$object;
+    diag "Widget: " ~ $button.perl;
+    diag "Target name: " ~ $target-widget-name.perl if ?$target-widget-name;
 
-    my Str $bn = gtk_widget_get_name($widget);
+    # in the glade design the name is not set and by default the type name
+    my Str $bn = $button.get-name;
     if $bn eq 'GtkButton' {
-      is gtk_button_get_label($widget), "Quit", "Label of quit button ok";
-      is $bn, 'GtkButton', "name of button is same as class name 'GtkButton'";
+      is $button.get-label, "Quit", "Label of quit button ok";
     }
 
     else {
       is $bn, 'GtkWindow', "name of button is same as class name 'GtkWindow'";
     }
 
-    gtk_main_quit();
+    self.glade-main-quit();
   }
 
   #-----------------------------------------------------------------------------
-  method hello-world1 ( :$widget, :$data, :$object ) {
-    is gtk_button_get_label($widget), "Button 1", "Label of button 1 ok";
+  method hello-world1 ( :widget($button), :$target-widget-name ) {
 
-    my Str $bn = gtk_widget_get_name($widget);
+    is $button.get-label, "Button 1", "Label of button 1 ok";
+
+    my Str $bn = $button.get-name;
     is $bn, 'GtkButton', "name of button is class name 'GtkButton'";
 
-    gtk_widget_set_name( $widget, "HelloWorld1Button");
-    $bn = gtk_widget_get_name($widget);
+    $button.set-name("HelloWorld1Button");
+    $bn = $button.get-name;
     is $bn, 'HelloWorld1Button', "name changed into 'HelloWorld1Button'";
 
-    # Change back to keep test ok for next press
-    gtk_widget_set_name( $widget, "GtkButton");
+    # Change back to keep test ok for next click of the button
+    $button.set-name("GtkButton");
   }
 
   #-----------------------------------------------------------------------------
-  method hello-world2 ( :$widget, :$data, :$object ) {
-    is gtk_button_get_label($widget), "Button 2", "Label of button 2 ok";
-    is gtk_button_get_label(self.glade-get-widget('button1')),
-       "Button 1", "Label of button 1 look up";
+  method hello-world2 ( :widget($button), :$target-widget-name ) {
+    is $button.get-label, "Button 2", "Label of button 2 ok";
   }
 }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 subtest 'Action object', {
   my E $engine .= new();
-  my GTK::Glade $a .= new( :$ui-file, :$css-file, :$engine);
-#  my GTK::Glade $a .= new( :$ui-file, :$engine);
-  isa-ok $a, GTK::Glade, 'type ok';
+
+  my GTK::Glade $gui .= new;
+  isa-ok $gui, GTK::Glade, 'type ok';
+  $gui.add-gui-file($ui-file);
+  $gui.add-css($css-file);
+  $gui.add-engine(E.new);
+  $gui.run;
 }
 
 #-------------------------------------------------------------------------------

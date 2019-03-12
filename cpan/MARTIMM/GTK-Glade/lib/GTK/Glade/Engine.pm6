@@ -1,81 +1,79 @@
 use v6;
-
 use NativeCall;
-use GTK::Glade::NativeGtk :ALL;
-use GTK::Glade::Native::Gtk;
-use GTK::Glade::Native::Gtk::Widget;
-use GTK::Glade::Native::Gtk::Builder;
+
+use GTK::V3::Gtk::GtkMain;
+use GTK::V3::Gtk::GtkTextIter;
+use GTK::V3::Gtk::GtkTextBuffer;
+use GTK::V3::Gtk::GtkTextView;
 
 #-------------------------------------------------------------------------------
 unit class GTK::Glade::Engine:auth<github:MARTIMM>;
 
-# Must be set before by GTK::Glade.
-has $.builder is rw;
-
-#-------------------------------------------------------------------------------
-method glade-start-iter ( $buffer ) {
-  my $iter_mem = CArray[int32].new;
-  $iter_mem[31] = 0; # Just need a blob of memory.
-  gtk_text_buffer_get_start_iter( $buffer, $iter_mem);
-  $iter_mem
-}
-
-#-------------------------------------------------------------------------------
-method glade-end-iter ( $buffer ) {
-  my $iter_mem = CArray[int32].new;
-  $iter_mem[16] = 0;
-  gtk_text_buffer_get_end_iter( $buffer, $iter_mem);
-  $iter_mem
-}
-
-#-------------------------------------------------------------------------------
-method glade-get-widget ( Str:D $id --> Any ) {
-  gtk_builder_get_object( $!builder, $id)
-}
+has GTK::V3::Gtk::GtkMain $!main;
+has GTK::V3::Gtk::GtkTextBuffer $!text-buffer;
+has GTK::V3::Gtk::GtkTextView $!text-view;
 
 #-------------------------------------------------------------------------------
 method glade-get-text ( Str:D $id --> Str ) {
 
-  my GtkWidget $widget = gtk_builder_get_object( $!builder, $id);
-  my $buffer = gtk_text_view_get_buffer($widget);
+  $!text-view .= new(:build-id($id));
+  $!text-buffer .= new(:widget($!text-view.get-buffer));
 
-  gtk_text_buffer_get_text(
-    $buffer, self.glade-start-iter($buffer), self.glade-end-iter($buffer), 1
-  )
+  my GTK::V3::Gtk::GtkTextIter $start .= new;
+  $!text-buffer.get-start-iter($start);
+  my GTK::V3::Gtk::GtkTextIter $end .= new;
+  $!text-buffer.get-end-iter($end);
+
+  $!text-buffer.get-text( $start, $end)
 }
 
 #-------------------------------------------------------------------------------
 method glade-set-text ( Str:D $id, Str:D $text ) {
 
-  my GtkWidget $widget = gtk_builder_get_object( $!builder, $id);
-  my $buffer = gtk_text_view_get_buffer($widget);
-  gtk_text_buffer_set_text( $buffer, $text, -1);
+  $!text-view .= new(:build-id($id));
+  $!text-buffer .= new(:widget($!text-view.get-buffer));
+  $!text-buffer.set-text( $text, $text.chars);
 }
 
 #-------------------------------------------------------------------------------
 method glade-add-text ( Str:D $id, Str:D $text is copy ) {
 
-  my GtkWidget $widget = gtk_builder_get_object( $!builder, $id);
-  my $buffer = gtk_text_view_get_buffer($widget);
+  $!text-view .= new(:build-id($id));
+  $!text-buffer .= new(:widget($!text-view.get-buffer));
 
-  $text = gtk_text_buffer_get_text(
-    $buffer, self.glade-start-iter($buffer), self.glade-end-iter($buffer), 1
-  ) ~ $text;
+  my GTK::V3::Gtk::GtkTextIter $start .= new;
+  $!text-buffer.get-start-iter($start);
+  my GTK::V3::Gtk::GtkTextIter $end .= new;
+  $!text-buffer.get-end-iter($end);
 
-  gtk_text_buffer_set_text( $buffer, $text, -1);
+  $text = $!text-buffer.get-text( $start, $end, 1) ~ $text;
+  $!text-buffer.set-text( $text, $text.chars);
 }
 
 #-------------------------------------------------------------------------------
 # Get the text and clear text field. Returns the original text
 method glade-clear-text ( Str:D $id --> Str ) {
 
-  my GtkWidget $widget = gtk_builder_get_object( $!builder, $id);
-  my $buffer = gtk_text_view_get_buffer($widget);
-  my Str $text = gtk_text_buffer_get_text(
-    $buffer, self.glade-start-iter($buffer), self.glade-end-iter($buffer), 1
-  );
+  $!text-view .= new(:build-id($id));
+  $!text-buffer .= new(:widget($!text-view.get-buffer));
 
-  gtk_text_buffer_set_text( $buffer, "", -1);
+  my GTK::V3::Gtk::GtkTextIter $start .= new;
+  $!text-buffer.get-start-iter($start);
+  my GTK::V3::Gtk::GtkTextIter $end .= new;
+  $!text-buffer.get-end-iter($end);
+
+  my Str $text = $!text-buffer.get-text( $start, $end, 1);
+  $!text-buffer.set-text( "", 0);
 
   $text
+}
+
+#-------------------------------------------------------------------------------
+method glade-main-level ( ) {
+  $!main.gtk-main-level;
+}
+
+#-------------------------------------------------------------------------------
+method glade-main-quit ( ) {
+  $!main.gtk-main-quit;
 }

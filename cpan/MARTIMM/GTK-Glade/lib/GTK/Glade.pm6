@@ -1,144 +1,122 @@
 use v6;
+# ==============================================================================
+=begin pod
+
+=TITLE class GTK::Glade
+
+=SUBTITLE
+
+  unit Gtk::Glade;
+
+=head1 Synopsis
+
+  use MyGui::MainEngine;
+  use MyGui::SecondEngine;
+  use GTK::Glade;
+
+  sub MAIN ( Str:D $glade-xml-file ) {
+    my GTK::Glade $gui .= new;
+    $gui.add-gui-file($glade-xml-file);
+    $gui.add-engine(MyGui::MainEngine.new);
+    $gui.add-engine(MyGui::SecondEngine.new);
+    $gui.run;
+  }
+
+=end pod
+# ==============================================================================
 use NativeCall;
 
 use XML::Actions;
 
-use GTK::Glade::NativeGtk :ALL;
-use GTK::Glade::Native::Gtk;
-use GTK::Glade::Native::Gdk;
-use GTK::Glade::Native::Gtk::Widget;
-use GTK::Glade::Native::Gtk::Builder;
-
+use GTK::Glade::X;
 use GTK::Glade::Engine;
 use GTK::Glade::Engine::Test;
 use GTK::Glade::Engine::Work;
 use GTK::Glade::Engine::PreProcess;
 
-#`{{
 #-------------------------------------------------------------------------------
-# Export all symbols and functions from GTK::Simple::Raw
-sub EXPORT {
-  my %export;
-  for GTK::Glade::NativeGtk::EXPORT::ALL::.kv -> $k,$v {
-    %export{$k} = $v;
-  }
+unit class GTK::Glade:auth<github:MARTIMM>;
 
-  %export;
+has Str $!modified-ui;
+has GTK::Glade::Engine::Work $!work;
+has XML::Actions $!actions;
+
+#-------------------------------------------------------------------------------
+=begin pod
+=head2 new
+
+  submethod BUILD ( )
+
+Initialize Glade interface.
+=end pod
+submethod BUILD ( ) {
+
+  $!work .= new;
 }
-}}
 
 #-------------------------------------------------------------------------------
-class X::GTK::Glade:auth<github:MARTIMM> is Exception {
-  has Str $.message;            # Error text and error code are data mostly
-#  has Str $.method;             # Method or routine name
-#  has Int $.line;               # Line number where Message is called
-#  has Str $.file;               # File in which that happened
+=begin pod
+=head2 add-gui-file
+
+  method add-gui-file ( Str $ui-file )
+
+Add an XML document saved by the glade user interface designer.
+=end pod
+method add-gui-file ( Str:D $ui-file where .IO ~~ :r ) {
+
+  # Prepare XML document for processing
+  $!actions .= new(:file($ui-file));
+
+  # Prepare Gtk Glade work for preprocessing. In this phase all missing
+  # ids on objects are generated and written back in the xml elements.
+  my GTK::Glade::Engine::PreProcess $pp .= new;
+  $!actions.process(:actions($pp));
+  $!modified-ui = $!actions.result;
+
+  $!work.glade-add-gui(:ui-string($!modified-ui));
 }
 
 #-------------------------------------------------------------------------------
-class GTK::Glade:auth<github:MARTIMM> {
+=begin pod
+=head2 add-engine
 
-  #-----------------------------------------------------------------------------
-  submethod BUILD (
-    Str :$ui-file, Str :$css-file, GTK::Glade::Engine:D :$engine,
-    GTK::Glade::Engine::Test :$test-setup
-  ) {
+  method add-engine ( GTK::Glade::Engine $engine )
 
-    die X::GTK::Glade.new(
-      :message("No suitable glade XML file: '$ui-file'")
-    ) unless ?$ui-file and $ui-file.IO ~~ :r;
+Add the user object where callback methods are defined.
+=end pod
+method add-engine ( GTK::Glade::Engine:D $engine ) {
 
-note "New ui file $ui-file";
+  $!work.glade-add-engine($engine);
+}
 
+#-------------------------------------------------------------------------------
+=begin pod
+=head2 add-css
 
-    # Prepare XML document for processing
-    my XML::Actions $actions .= new(:file($ui-file));
+  method add-css ( Str $css-file )
 
-    # Prepare Gtk Glade work for preprocessing. In this phase all missing
-    # ids on objects are generated and written back in the xml elements.
-    my GTK::Glade::Engine::PreProcess $pp .= new;
-    $actions.process(:actions($pp));
-    my Str $modified-ui = $actions.result;
-    my Str $toplevel-id = $pp.toplevel-id;
-    $pp = GTK::Glade::Engine::PreProcess;
+Add a css style file, This is a CSS-like input in order to style widgets. Classes and id's are definable in the glade interface designer. A few are reserved. You need to look up the documents for a particular widget to find that out. E.g. the button knows about the C<circular> and C<flat> classes (See also L<gnome developer docs|https://developer.gnome.org/gtk3/stable/GtkButton.html> section CSS nodes).
+=end pod
+method add-css ( Str:D $css-file where .IO ~~ :r ) {
 
-#    "modified-ui.glade".IO.spurt($modified-ui); # test dump for result
+  # Css can be added only after processing is done. There is a toplevel
+  # widget needed which is known afterwards.
+  $!work.glade-add-css($css-file);
+}
 
-    # Prepare Gtk Glade work for processing the glade XML
-    my GTK::Glade::Engine::Work $work .= new(:test(?$test-setup));
-    $work.glade-add-gui(:ui-string($modified-ui));
-#    $work.glade-add-gui(:ui-string("hoeperdepoep")); # test for failure
+#-------------------------------------------------------------------------------
+=begin pod
+=head2 run
 
-    # deallocate the glade XML string
-    $modified-ui = Str;
+  method run ( )
 
-    # Process the XML document creating the API to the UI
-    $actions.process(:actions($work));
+Run the glade design. It will enter the main loop and when interacting with the interface, events will call the callbacks defined in one of the added engines.
+=end pod
+method run ( GTK::Glade::Engine::Test :$test-setup ) {
 
-    # Css can be added only after processing is done. There is a toplevel
-    # widget needed which is known afterwards.
-    $work.glade-add-css(:$css-file);
+  # Process the XML document creating the API to the UI
+  $!actions.process(:actions($!work));
 
-    # Copy the builder object
-    $engine.builder = $work.builder;
-    $work.glade-run( :$engine, :$test-setup, :$toplevel-id);
-
-    #note $work.state-engine-data;
-  }
-
-#`{{
-  #-----------------------------------------------------------------------------
-  method !find-glade-file ( Str $ui-file is copy --> Str ) {
-
-    # return if readable
-    return $ui-file if ?$ui-file and $ui-file.IO ~~ :r;
-
-    my @tried-list = $ui-file,;
-
-note "Ui file '$ui-file' not found, $*PROGRAM-NAME";
-
-    my Str $program = $*PROGRAM-NAME.IO.basename;
-    $program ~~ s/\. <-[\.]>* $/.glade/;
-    $ui-file = %?RESOURCES{$program}.Str;
-note "Try '$program' from resources";
-    return $ui-file if ?$ui-file and $ui-file.IO ~~ :r;
-    @tried-list.push("Resources: $program");
-
-    $program ~~ s/\. glade $/.ui/;
-    $ui-file = %?RESOURCES{$program}.Str;
-note "Try '$program' from resources";
-    return $ui-file if ?$ui-file and $ui-file.IO ~~ :r;
-    @tried-list.push($program);
-
-    $ui-file = %?RESOURCES{"graphical-interface.glade"}.Str;
-note "Try 'graphical-interface.glade' from resources";
-    return $ui-file if ?$ui-file and $ui-file.IO ~~ :r;
-    @tried-list.push("graphical-interface.glade");
-
-
-    $program = $*PROGRAM-NAME.IO.basename;
-    $program ~~ s/\. <-[\.]>* $//;
-    note "Try 'graphical-interface.glade' from config directories $*HOME/.$program or $*HOME/.config/$program";
-
-    if "$*HOME/.$program".IO ~~ :d {
-      $ui-file = "$*HOME/.$program/graphical-interface.glade";
-note "Try '$ui-file'";
-      return $ui-file if ?$ui-file and $ui-file.IO ~~ :r;
-      @tried-list.push("Config: $ui-file");
-    }
-
-    elsif "$*HOME/.config/$program".IO ~~ :d {
-      $ui-file = "$*HOME/.config/$program/graphical-interface.glade";
-note "Try '$ui-file'";
-      return $ui-file if ?$ui-file and $ui-file.IO ~~ :r;
-      @tried-list.push($ui-file);
-    }
-
-    die X::GTK::Glade.new(
-      :message(
-        "No suitable glade XML file found. Tried " ~ @tried-list.join(', ')
-      )
-    );
-  }
-}}
+  # show user design and run main loop
+  $!work.glade-run(:$test-setup);
 }

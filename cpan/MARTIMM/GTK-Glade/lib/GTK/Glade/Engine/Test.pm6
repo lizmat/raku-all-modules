@@ -1,77 +1,98 @@
 use v6;
-
 use NativeCall;
-use GTK::Glade::NativeGtk :ALL;
-use GTK::Glade::Native::Gtk;
-use GTK::Glade::Native::Glib::GSignal;
-use GTK::Glade::Native::Gtk::Main;
-use GTK::Glade::Native::Gtk::Widget;
-use GTK::Glade::Native::Gtk::Builder;
+
 use GTK::Glade::Engine;
-#use GTK::Glade::Gdkkeysyms;
+
+use GTK::V3::Glib::GObject;
+use GTK::V3::Glib::GMain;
+use GTK::V3::Gtk::GtkMain;
+use GTK::V3::Gtk::GtkBuilder;
 
 #-------------------------------------------------------------------------------
 unit role GTK::Glade::Engine::Test:auth<github:MARTIMM> is GTK::Glade::Engine;
 
 # Must be set before by GTK::Glade::Engine::Work.glade-run().
-has $.builder is rw;
+has GTK::V3::Gtk::GtkBuilder $.builder is rw;
 
-
-has GtkWidget $!widget;
+has GTK::V3::Gtk::GtkMain $!main;
+has GTK::V3::Glib::GObject $!widget;
 has Str $!text;
+has Array $.steps;
 
+#-------------------------------------------------------------------------------
+# This method runs in a thread. Gui updates can be done using a context
+method prepare-and-run-tests ( ) {
 
-#-----------------------------------------------------------------------------
-# This method runs in a thread from where no gui updates may take place
-# https://stackoverflow.com/questions/30607429/gtk3-and-multithreading-replacing-deprecated-functions
-method run-tests (
-  GTK::Glade::Engine::Test:D $test-setup,
-#  Str:D $toplevel-id
-  --> Str
-) {
+  my Promise $p = start {
+    # wait for loop to start
+    sleep(1.1);
+
+    my GTK::V3::Glib::GMain $gmain .= new;
+    my $main-context = $gmain.context-get-thread-default;
+
+    $gmain.context-invoke(
+      $main-context,
+      -> $d {
+        self!run-tests;
+        0
+      },
+      OpaquePointer
+    );
+
+    'test done'
+  }
+
+  $!main.gtk_main();
+
+  await $p;
+  note $p.result;
+}
+
+#-------------------------------------------------------------------------------
+method !run-tests ( ) {
 
   my Int $executed-tests = 0;
 
-  if ?$test-setup and ?$test-setup.steps and $test-setup.steps ~~ Array {
-    $!widget = GtkWidget;
+  if $!steps.elems {
+
+    # clear data
+    $!widget = GTK::V3::Glib::GObject;
     $!text = Str;
 
-    for $test-setup.steps -> Pair $substep {
+    for @$!steps -> Pair $substep {
       note "    Substep: $substep.key() => ",
             $substep.value() ~~ Block ?? 'Code block' !! $substep.value();
 
       given $substep.key {
 
-        when 'set-widget' {
-          $!widget = gtk_builder_get_object( $!builder, $substep.value);
+        when 'native-gobject' {
+          my Str $id = $substep.value.key;
+          my Str $class = $substep.value.value;
+          require ::($class);
+          $!widget = ::($class).new(:build-id($id));
         }
 
         when 'emit-signal' {
           next unless ?$!widget;
-          my $result;
-          g_signal_emit_by_name(
-            $!widget, $substep.value, $!widget, "x", $result
-          );
+          $!widget.emit-by-name-wd( $substep.value, $!widget(), OpaquePointer);
         }
 
         when 'get-text' {
-          if ?$!widget and gtk_widget_get_has_window($!widget) {
-
-            my $buffer = gtk_text_view_get_buffer($!widget);
-            $!text = gtk_text_buffer_get_text(
-              $buffer, self.glade-start-iter($buffer),
-              self.glade-end-iter($buffer), 1
-            )
-          }
+          my GTK::V3::Gtk::GtkTextBuffer $buffer .= new(
+            :widget($!widget.get-buffer)
+          );
+          $!text = $buffer.get-text(
+            self.glade-start-iter($buffer), self.glade-end-iter($buffer), 1
+          );
+#            if ?$!widget and $!widget.get-has-window;
         }
 
         when 'set-text' {
-          if ?$!widget and gtk_widget_get_has_window($!widget) {
-
-            my $buffer = gtk_text_view_get_buffer($!widget);
-            #gtk_text_buffer_set_text( $buffer, $substep.value, -1);
-            gtk_text_buffer_set_text( $buffer, $substep.value, -1);
-          }
+          my GTK::V3::Gtk::GtkTextBuffer $buffer .= new(
+            :widget($!widget.get-buffer)
+          );
+          $buffer.set-text( $substep.value, $substep.value.chars);
+#            if ?$!widget and $!widget.get-has-window;
         }
 
         when 'do-test' {
@@ -87,19 +108,19 @@ method run-tests (
       }
 
 #note "LL 1a: ", gtk_main_level();
-      while gtk_events_pending() { gtk_main_iteration_do(False); }
+#      while gtk_events_pending() { gtk_main_iteration_do(False); }
 #note "LL 1b: ", gtk_main_level();
 
       # Stop when loop is exited
-      last unless gtk_main_level();
+      #last unless $!main.gtk-main-level();
     }
 
     # End the main loop
-    gtk_main_quit() if gtk_main_level();
-    while gtk_events_pending() { gtk_main_iteration_do(False); }
+    $!main.gtk-main-quit() if $!main.gtk-main-level();
+#    while gtk_events_pending() { gtk_main_iteration_do(False); }
   }
 
   note "    Done testing";
 
-  return ~(+($test-setup.steps) // 0);
+  return ~($!steps.elems // 0);
 }

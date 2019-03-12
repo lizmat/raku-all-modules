@@ -1,16 +1,17 @@
 use v6;
-
-use GTK::Glade;
-#use GTK::Glade::NativeGtk :ALL;
-use GTK::Glade::Native::Gtk;
-use GTK::Glade::Native::Gtk::Main;
-use GTK::Glade::Native::Gtk::Widget;
-
+#use lib '../gtk-v3/lib';
 use Test;
 
-diag "\n";
+use GTK::Glade;
+
+use GTK::V3::Gtk::GtkMain;
+use GTK::V3::Gtk::GtkWidget;
+use GTK::V3::Gtk::GtkButton;
+use GTK::V3::Gtk::GtkLabel;
 
 #-------------------------------------------------------------------------------
+diag "\n";
+
 my $dir = 'xt/x';
 mkdir $dir unless $dir.IO ~~ :e;
 
@@ -136,72 +137,41 @@ $file.IO.spurt(Q:q:to/EOXML/);
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 class E is GTK::Glade::Engine {
-  #has Str $!t;
-  #submethod BUILD ( Str:D :$!t ) { note "T: $!t"; }
 
   #-----------------------------------------------------------------------------
-  method exit-program ( :$widget, :$data, :$object ) {
+  method exit-program ( ) {
 
-    gtk_main_quit();
+    self.glade-main-quit();
   }
 
   #-----------------------------------------------------------------------------
-  method copy-text ( :$widget, :$data, :$object ) {
+  method copy-text ( :$widget ) {
+#$widget.debug(:on);
 
     my Str $text = self.glade-clear-text('inputTxt');
-note "Text: ", $text//'-';
     self.glade-add-text( 'outputTxt', $text);
-
-# Keep getting double free crashes using gtk_text_buffer_insert()
-#    gtk_text_buffer_insert(
-#      $buffer, self.end-iter($buffer), $text, -1 #$text.chars
-#    );
   }
 
   #-----------------------------------------------------------------------------
-  method clear-text ( :$widget, :$data, :$object ) {
+  method clear-text ( :$widget ) {
+#$widget.debug(:on);
 
     note self.glade-clear-text('outputTxt');
   }
-
-  #-----------------------------------------------------------------------------
-  #method insert-char ( :$widget, :$data, :$object ) {
-  #  note "Text inserted";
-  #}
-
-#`{{
-  #-----------------------------------------------------------------------------
-  # From Gtk::Simple
-  method !start-iter ( $buffer ) {
-    my $iter_mem = CArray[int32].new;
-    $iter_mem[31] = 0; # Just need a blob of memory.
-    gtk_text_buffer_get_start_iter( $buffer, $iter_mem);
-    $iter_mem
-  }
-
-  #-----------------------------------------------------------------------------
-  method !end-iter ( $buffer ) {
-    my $iter_mem = CArray[int32].new;
-    $iter_mem[16] = 0;
-    gtk_text_buffer_get_end_iter( $buffer, $iter_mem);
-    $iter_mem
-  }
-}}
 }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 subtest 'Action object', {
-  my E $engine .= new();
-  my GTK::Glade $a .= new( :ui-file($file), :$engine);
-  isa-ok $a, GTK::Glade, 'type ok';
 
-  #my A $w .= new();
-  #$a.process(:actions($w));
-  #ok $w.log-done, 'logging done';
+  my GTK::Glade $gui .= new;
+  isa-ok $gui, GTK::Glade, 'type ok';
+  $gui.add-gui-file($file);
+  $gui.add-engine(E.new);
+  $gui.run;
 }
 
 #-------------------------------------------------------------------------------
 done-testing;
 
-#unlink $file;
-#rmdir $dir;
+unlink $file;
+rmdir $dir;
