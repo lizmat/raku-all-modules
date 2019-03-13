@@ -1,0 +1,44 @@
+use Test;
+use Test::When <extended>;
+
+use DB::MySQL;
+
+plan 13;
+
+isa-ok my $m = DB::MySQL.new(), DB::MySQL, 'Create object';
+
+# Issue #2
+
+lives-ok { $m.execute('CREATE TABLE foo
+                       ( bar timestamp NULL default NULL ) engine=InnoDB') },
+    'create table';
+
+ok $m.execute('INSERT INTO foo (bar) VALUES (NULL)'), 'insert NULL';
+
+is $m.execute('SELECT bar FROM foo').value, DateTime, 'value is NULL';
+
+lives-ok { $m.execute('drop table foo') }, 'drop table';
+
+# Issue #3
+
+lives-ok { $m.execute('CREATE TABLE foo ( bar int unsigned ) engine=InnoDB') },
+    'create table';
+
+ok $m.execute('INSERT INTO foo (bar) VALUES (NULL)'), 'insert NULL';
+
+is $m.execute('SELECT bar FROM foo').value, Int, 'value is NULL';
+
+lives-ok { $m.execute('drop table foo') }, 'drop table';
+
+# Issue #4
+
+lives-ok { $m.execute('CREATE TABLE foo ( bar char(1) ) engine=InnoDB') },
+    'create table';
+
+ok $m.execute('INSERT INTO foo (bar) VALUES (NULL)'), 'insert NULL';
+
+is $m.execute('SELECT bar FROM foo').value, Str, 'value is NULL';
+
+lives-ok { $m.execute('drop table foo') }, 'drop table';
+
+done-testing;

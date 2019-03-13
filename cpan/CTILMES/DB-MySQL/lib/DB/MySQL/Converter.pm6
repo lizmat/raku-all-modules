@@ -77,140 +77,160 @@ my %types = Map.new: map( { +mysql-type::{.key} => .value },
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-Rat,
-        strvalue => &mysql-value-Rat
+        strvalue => &mysql-value-Rat,
+        nullvalue => Rat
     ),
     MYSQL_TYPE_TINY =>
     %(
         bufsize  => 1,
         buftype  => MYSQL_TYPE_TINY,
         binvalue => &mysql-value-int8,
-        strvalue => &mysql-value-Int
+        strvalue => &mysql-value-Int,
+        nullvalue => Int
     ),
     MYSQL_TYPE_SHORT =>
     %(
         bufsize  => 1,
         buftype  => MYSQL_TYPE_SHORT,
         binvalue => &mysql-value-int16,
-        strvalue => &mysql-value-Int
+        strvalue => &mysql-value-Int,
+        nullvalu => Int
     ),
     MYSQL_TYPE_LONG =>
     %(
         bufsize  => 4,
         buftype  => MYSQL_TYPE_LONGLONG,
         binvalue => &mysql-value-int32,
-        strvalue => &mysql-value-Int
+        strvalue => &mysql-value-Int,
+        nullvalue => Int
     ),
     MYSQL_TYPE_FLOAT =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-Num,
-        strvalue => &mysql-value-Num
+        strvalue => &mysql-value-Num,
+        nullvalue => Num
     ),
     MYSQL_TYPE_DOUBLE =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-Num,
-        strvalue => &mysql-value-Num
+        strvalue => &mysql-value-Num,
+        nullvalue => Num
     ),
     MYSQL_TYPE_NULL =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_NULL,
         binvalue => &mysql-value-Null,
-        strvalue => &mysql-value-Null
+        strvalue => &mysql-value-Null,
+        nullvalue => Any
     ),
     MYSQL_TYPE_TIMESTAMP =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-DateTime,
-        strvalue => &mysql-value-DateTime
+        strvalue => &mysql-value-DateTime,
+        nullvalue => DateTime
     ),
     MYSQL_TYPE_LONGLONG =>
     %(
         bufsize  => 8,
         buftype  => MYSQL_TYPE_LONGLONG,
         binvalue => &mysql-value-int64,
-        strvalue => &mysql-value-Int
+        strvalue => &mysql-value-Int,
+        nullvalue => Int
     ),
     MYSQL_TYPE_INT24 =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-Int,
-        strvalue => &mysql-value-Int
+        strvalue => &mysql-value-Int,
+        nullvalue => Int
     ),
     MYSQL_TYPE_DATE =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-Date,
-        strvalue => &mysql-value-Date
+        strvalue => &mysql-value-Date,
+        nullvalue => Date
     ),
     MYSQL_TYPE_DATETIME =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-DateTime,
-        strvalue => &mysql-value-DateTime
+        strvalue => &mysql-value-DateTime,
+        nullvalue => DateTime
     ),
     MYSQL_TYPE_YEAR =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-Int,
-        strvalue => &mysql-value-Int
+        strvalue => &mysql-value-Int,
+        nullvalue => Int
     ),
     MYSQL_TYPE_JSON =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-JSON,
-        strvalue => &mysql-value-JSON
+        strvalue => &mysql-value-JSON,
+        nullvalue => Any
     ),
     MYSQL_TYPE_NEWDECIMAL =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-Rat,
-        strvalue => &mysql-value-Rat
+        strvalue => &mysql-value-Rat,
+        nullvalue => Rat
     ),
     MYSQL_TYPE_TINY_BLOB =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_TINY_BLOB,
         binvalue => &mysql-value-Blob,
-        strvalue => &mysql-value-Blob
+        strvalue => &mysql-value-Blob,
+        nullvalue => Blob
     ),
     MYSQL_TYPE_MEDIUM_BLOB =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_MEDIUM_BLOB,
         binvalue => &mysql-value-Blob,
-        strvalue => &mysql-value-Blob
+        strvalue => &mysql-value-Blob,
+        nullvalue => Blob
     ),
     MYSQL_TYPE_LONG_BLOB =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_LONG_BLOB,
         binvalue => &mysql-value-Blob,
-        strvalue => &mysql-value-Blob
+        strvalue => &mysql-value-Blob,
+        nullvalue => Blob
     ),
     MYSQL_TYPE_BLOB =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_BLOB,
         binvalue => &mysql-value-Blob,
-        strvalue => &mysql-value-Blob
+        strvalue => &mysql-value-Blob,
+        nullvalue => Blob
     ),
     MYSQL_TYPE_STRING =>
     %(
         bufsize  => 0,
         buftype  => MYSQL_TYPE_STRING,
         binvalue => &mysql-value-Str,
-        strvalue => &mysql-value-Str
+        strvalue => &mysql-value-Str,
+        nullvalue => Str
     ),
 ));
 
@@ -221,7 +241,7 @@ class DB::MySQL::Converter
         with %types{$type} //
              %types{+mysql-type::{MYSQL_TYPE_STRING}}
         {
-            .<strvalue>($bufptr, $len)
+            $bufptr ?? .<strvalue>($bufptr, $len) !! .<nullvalue>
         }
     }
 
@@ -230,7 +250,7 @@ class DB::MySQL::Converter
         with %types{$type} //
              %types{+mysql-type::{MYSQL_TYPE_STRING}}
         {
-            .<binvalue>($bind.bufptr, $bind.len)
+            $bind.bufptr ?? .<binvalue>($bind.bufptr, $bind.len) !! .<nullvalue>
         }
     }
 
