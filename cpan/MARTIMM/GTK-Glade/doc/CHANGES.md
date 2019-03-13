@@ -1,6 +1,10 @@
 ## Release notes
 
-* 2019-02-06 0.8.0
+* 2019-03-11 0.8.2
+  * Improve test facility
+* 2019-03-10 0.8.1
+  * Modifications from GTK::V3
+* 2019-03-06 0.8.0
   * Changing glade interface to handle more engines, css and theme modules.
   * Added documentation for GTK::Glade
 * 2019-02-23 0.7.3

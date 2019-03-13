@@ -1,5 +1,5 @@
 use v6;
-#use lib '../gtk-v3/lib';
+use lib '../gtk-v3/lib';
 use Test;
 
 use GTK::Glade;
@@ -175,77 +175,103 @@ class T does GTK::Glade::Engine::Test {
   submethod BUILD ( ) {
     # Wait for start
     $!steps = [
-#      :wait(1.2),
+      :ignore-wait,
+      :step-wait(1.0),
+
+      # Set text of input widget
+      :set-text(
+        :widget-id<inputTxt>,
+        :widget-class<GTK::V3::Gtk::GtkTextView>,
+        :text("text voor invoer\n"),
+      ),
 
       # Test Copy button
-      :native-gobject(:inputTxt<GTK::V3::Gtk::GtkTextView>),
-      :do-test( {
-          isa-ok $!widget, GTK::V3::Gtk::GtkTextView;
-        }
+      :emit-signal(
+        :widget-id<copyBttn>,
+        :widget-class<GTK::V3::Gtk::GtkButton>,
+        :signal-name<clicked>,
       ),
-      :set-text("text voor invoer\n"),
-      :native-gobject(:copyBttn<GTK::V3::Gtk::GtkButton>),
-      :emit-signal<clicked>,
-#      :wait(1.0),
-      :native-gobject(:outputTxt<GTK::V3::Gtk::GtkTextView>),
-      :get-text,
+
+      # Check if text is copied to output widget
+      :get-text(
+        :widget-id<outputTxt>,
+        :widget-class<GTK::V3::Gtk::GtkTextView>,
+      ),
       :do-test( {
-          is $!text, "text voor invoer\n", 'Text found is same as input';
+          is $!test-value, "text voor invoer\n", 'Text found is same as input';
         }
       ),
 
       # Repeat test of Copy button
-      :native-gobject(:inputTxt<GTK::V3::Gtk::GtkTextView>),
-      :set-text("2e text\n"),
-      :native-gobject(:copyBttn<GTK::V3::Gtk::GtkButton>),
-      :emit-signal<clicked>,
-#      :wait(1.0),
-      :native-gobject(:outputTxt<GTK::V3::Gtk::GtkTextView>),
-      :get-text,
+      :set-text(
+        :widget-id<inputTxt>,
+        :widget-class<GTK::V3::Gtk::GtkTextView>,
+        :text("2e text\n"),
+      ),
+      :emit-signal(
+        :widget-id<copyBttn>,
+        :widget-class<GTK::V3::Gtk::GtkButton>,
+        :signal-name<clicked>,
+      ),
+      :get-text(
+        :widget-id<outputTxt>,
+        :widget-class<GTK::V3::Gtk::GtkTextView>,
+      ),
       :do-test( {
-          is $!text, "text voor invoer\n2e text\n",
+          is $!test-value, "text voor invoer\n2e text\n",
              'Text is appended properly';
         }
       ),
 
       # Test Clear button
-      :native-gobject(:clearBttn<GTK::V3::Gtk::GtkButton>),
-      :emit-signal<clicked>,
-#      :wait(1.0),
-      :native-gobject(:outputTxt<GTK::V3::Gtk::GtkTextView>),
-      :get-text,
+      :emit-signal(
+        :widget-id<clearBttn>,
+        :widget-class<GTK::V3::Gtk::GtkButton>,
+        :signal-name<clicked>,
+      ),
+      :get-text(
+        :widget-id<outputTxt>,
+        :widget-class<GTK::V3::Gtk::GtkTextView>,
+      ),
       :do-test( {
-          is $!text, "", 'Text is cleared';
+          is $!test-value, "", 'Text is cleared';
         }
       ),
 
       # Test Quit button
+      :get-main-level,
       :do-test( {
-          is self.glade-main-level, 1, 'loop level is 1';
+          is $!test-value, 1, 'loop level is 1';
         }
       ),
-      :native-gobject(:quitBttn<GTK::V3::Gtk::GtkButton>),
-      :emit-signal<clicked>,
-#      :wait(5.0),
+#      :debug,
+      :emit-signal(
+        :widget-id<quitBttn>,
+        :widget-class<GTK::V3::Gtk::GtkButton>,
+        :signal-name<clicked>,
+      ),
+#      :!debug,
+
+#      :wait(3.0),
+#      :get-main-level,
 #      :do-test( {
-#          is self.glade-main-level, 0, 'loop level is 0';
+#          is $!test-value, 0, 'loop level is 0';
 #        }
 #      ),
 
       # Stop tests
-#      :finish
+      :finish,
     ];
   }
 }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-subtest 'Action object', {
+#subtest 'Action object', {
   my GTK::Glade $gui .= new;
-  isa-ok $gui, GTK::Glade, 'type ok';
   $gui.add-gui-file($file);
   $gui.add-engine(E.new);
   $gui.run(:test-setup(T.new()));
-}
+#}
 
 #-------------------------------------------------------------------------------
 done-testing;

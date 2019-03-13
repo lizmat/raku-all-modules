@@ -1,31 +1,37 @@
 use v6;
+use Test;
 use NativeCall;
 
 use GTK::Glade::Engine;
 
 use GTK::V3::Glib::GObject;
 use GTK::V3::Glib::GMain;
+use GTK::V3::Gtk::GtkButton;
 use GTK::V3::Gtk::GtkMain;
 use GTK::V3::Gtk::GtkBuilder;
+use GTK::V3::Gtk::GtkTextIter;
 
 #-------------------------------------------------------------------------------
-unit role GTK::Glade::Engine::Test:auth<github:MARTIMM> is GTK::Glade::Engine;
+unit role GTK::Glade::Engine::Test:auth<github:MARTIMM>;
+also is GTK::Glade::Engine;
 
 # Must be set before by GTK::Glade::Engine::Work.glade-run().
 has GTK::V3::Gtk::GtkBuilder $.builder is rw;
 
 has GTK::V3::Gtk::GtkMain $!main;
-has GTK::V3::Glib::GObject $!widget;
-has Str $!text;
+#has GTK::V3::Glib::GObject $!widget;
+has Any $!test-value;
 has Array $.steps;
 
 #-------------------------------------------------------------------------------
 # This method runs in a thread. Gui updates can be done using a context
 method prepare-and-run-tests ( ) {
 
+  # run tests in a thread
   my Promise $p = start {
     # wait for loop to start
     sleep(1.1);
+    my $result;
 
     my GTK::V3::Glib::GMain $gmain .= new;
     my $main-context = $gmain.context-get-thread-default;
@@ -33,19 +39,21 @@ method prepare-and-run-tests ( ) {
     $gmain.context-invoke(
       $main-context,
       -> $d {
-        self!run-tests;
+        $result = self!run-tests;
         0
       },
       OpaquePointer
     );
 
-    'test done'
+    $result
   }
 
+  # the main loop on the main thread
   $!main.gtk_main();
 
+  # wait for the end and show result
   await $p;
-  note $p.result;
+  diag $p.result;
 }
 
 #-------------------------------------------------------------------------------
@@ -55,61 +63,95 @@ method !run-tests ( ) {
 
   if $!steps.elems {
 
-    # clear data
-    $!widget = GTK::V3::Glib::GObject;
-    $!text = Str;
+    my Bool $ignore-wait = False;
+    my $step-wait = 0.0;
 
     for @$!steps -> Pair $substep {
-      note "    Substep: $substep.key() => ",
-            $substep.value() ~~ Block ?? 'Code block' !! $substep.value();
+      if $substep.value() ~~ Block {
+        diag "substep: $substep.key() => Code block";
+      }
+
+      elsif $substep.value() ~~ List {
+        diag "substep: $substep.key() => ";
+        for @($substep.value()) -> $v {
+          diag "           $v.key() => $v.value()";
+        }
+      }
+
+      else {
+        diag "substep: $substep.key() => $substep.value()";
+      }
 
       given $substep.key {
-
-        when 'native-gobject' {
-          my Str $id = $substep.value.key;
-          my Str $class = $substep.value.value;
-          require ::($class);
-          $!widget = ::($class).new(:build-id($id));
-        }
-
         when 'emit-signal' {
-          next unless ?$!widget;
-          $!widget.emit-by-name-wd( $substep.value, $!widget(), OpaquePointer);
+          my Hash $ss = %(|$substep.value);
+          my Str $signal-name = $ss<signal-name> // 'clicked';
+          my $widget = self!get-widget($ss);
+          $widget.emit-by-name-wd( $signal-name, $widget, OpaquePointer);
         }
 
         when 'get-text' {
+          my Hash $ss = %(|$substep.value);
+          my $widget = self!get-widget($ss);
           my GTK::V3::Gtk::GtkTextBuffer $buffer .= new(
-            :widget($!widget.get-buffer)
+            :widget($widget.get-buffer)
           );
-          $!text = $buffer.get-text(
-            self.glade-start-iter($buffer), self.glade-end-iter($buffer), 1
-          );
-#            if ?$!widget and $!widget.get-has-window;
+
+          my GTK::V3::Gtk::GtkTextIter $start .= new;
+          $buffer.get-start-iter($start);
+          my GTK::V3::Gtk::GtkTextIter $end .= new;
+          $buffer.get-end-iter($end);
+
+          $!test-value = $buffer.get-text( $start, $end, 1);
         }
 
         when 'set-text' {
-          my GTK::V3::Gtk::GtkTextBuffer $buffer .= new(
-            :widget($!widget.get-buffer)
-          );
-          $buffer.set-text( $substep.value, $substep.value.chars);
-#            if ?$!widget and $!widget.get-has-window;
+          my Hash $ss = %(|$substep.value);
+          my Str $text = $ss<text>;
+          my $widget = self!get-widget($ss);
+
+          my $n-buffer = $widget.get-buffer;
+          my GTK::V3::Gtk::GtkTextBuffer $buffer .= new(:widget($n-buffer));
+          $buffer.set-text( $text, $text.chars);
+          $widget.queue-draw;
         }
 
         when 'do-test' {
           next unless $substep.value ~~ Block;
-
-          $substep.value()();
           $executed-tests++;
+          $substep.value()();
+        }
+
+        when 'get-main-level' {
+          $!test-value = $!main.gtk-main-level;
+        }
+
+        when 'step-wait' {
+          $step-wait = $substep.value();
+        }
+
+        when 'ignore-wait' {
+          $ignore-wait = ?$substep.value();
         }
 
         when 'wait' {
-          sleep $substep.value();
+          sleep $substep.value() unless $ignore-wait;
+        }
+
+        when 'debug' {
+          GTK::V3::Gtk::GtkButton.new(:empty).debug(:on($substep.value()));
+        }
+
+        when 'finish' {
+          last;
         }
       }
 
-#note "LL 1a: ", gtk_main_level();
-#      while gtk_events_pending() { gtk_main_iteration_do(False); }
-#note "LL 1b: ", gtk_main_level();
+      sleep($step-wait)
+        unless ( $substep.key eq 'wait' or $ignore-wait or $step-wait == 0.0 );
+
+      # make sure things get displayed
+      while $!main.gtk-events-pending() { $!main.iteration-do(False); }
 
       # Stop when loop is exited
       #last unless $!main.gtk-main-level();
@@ -117,10 +159,22 @@ method !run-tests ( ) {
 
     # End the main loop
     $!main.gtk-main-quit() if $!main.gtk-main-level();
-#    while gtk_events_pending() { gtk_main_iteration_do(False); }
+    while $!main.gtk-events-pending() { $!main.iteration-do(False); }
   }
 
-  note "    Done testing";
+  diag "Done testing";
 
-  return ~($!steps.elems // 0);
+  return "Nbr steps: {$!steps.elems // 0}, Nbr tests: $executed-tests";
+}
+
+#-------------------------------------------------------------------------------
+method !get-widget ( Hash $opts --> Any ) {
+  my Str:D $id = $opts<widget-id>;
+  my Str:D $class = $opts<widget-class>;
+
+  require ::($class);
+  my $widget = ::($class).new(:build-id($id));
+  is $widget.^name, $class, "Id '$id' of class $class found and initialized";
+
+  $widget
 }
