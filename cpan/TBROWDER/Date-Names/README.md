@@ -18,9 +18,6 @@ features compred to Version 1:
 
   - added class **Date::Names** for primary data access
 
-
-```
-
 SYNOPSIS
 ========
 
@@ -69,7 +66,7 @@ Other languages vary in capitalization depending on where
 the word or abbreviation is used or other factors. The
 names and abbreviations herein are in the most common form,
 but the user can always explicitly set the case by applying
-the Perl 6 routines **tc**, **uc**, or **lc** to the name or
+the Perl 6 routines **tclc**, **uc**, or **lc** to the name or
 abbreviation.
 
 Some of the abbreviations include an ending period since that is
@@ -156,8 +153,7 @@ is $dn.dow(1, 3), "Mon";  # ok, raw truncation on full names only
 is $dn.mon(1, 3), "Jan";  # ok, raw truncation on full named only
 ```
 
-The full API for the class constructor looks like this, but the names
-aren't all set in concrete yet (SUGGESTIONS WELCOME):
+The full API for the class constructor looks like this:
 
 ``` perl6
 enum Period <yes no keep-p>;

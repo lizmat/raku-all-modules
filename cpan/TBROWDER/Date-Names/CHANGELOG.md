@@ -1,3 +1,8 @@
+## [v2.0.2] - 2019-03-12
+- added META6.json intructions to CONTRIBUTING.md
+- fixed markdown formatting in README.md
+- API fixed
+
 ## [v2.0.1] - 2019-02-27
 - added missing names to META6.json
 

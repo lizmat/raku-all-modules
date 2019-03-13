@@ -22,5 +22,8 @@ To contribute a new language, do the following:
 
 + Add your new language code to @Date::Names::langs (in its place by alphabetical order).
 
++ Add your new language as a new line in the META6.json in the "provides" array. Watch comma
+  placement, and ensure the META6.json test works: perl6 -Ilib t/*meta*t.
+
 + Submit a pull request with your changes.
 
