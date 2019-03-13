@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/FCO/Red.git
 	branch = master
-	commit = 3252bbbc0d9b84f4db42f513a0d68fdef25bb41e
-	parent = b298465f51b58b03ce329d9cdc9fe3fbf91a2a45
+	commit = 6cb596c853ef3d752be8be25f84b64fec2ee0c5c
+	parent = ccac83a05a3914abaad169205787af737af0c4c6
 	cmdver = 0.3.1
