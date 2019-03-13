@@ -3,6 +3,7 @@ use NativeCall;
 
 use GTK::V3::X;
 use GTK::V3::N::NativeLib;
+use GTK::V3::Glib::GBoxed;
 
 #-------------------------------------------------------------------------------
 # See /usr/include/glib-2.0/glib/gvalue.h
@@ -11,6 +12,7 @@ use GTK::V3::N::NativeLib;
 # https://developer.gnome.org/gobject/stable/gobject-Standard-Parameter-and-Value-Types.html
 
 unit class GTK::V3::Glib::GValue:auth<github:MARTIMM>;
+also is GTK::V3::Glib::GBoxed;
 
 #-------------------------------------------------------------------------------
 class N-GValue is repr('CStruct') is export {
@@ -160,17 +162,13 @@ sub g_value_set_gtype ( N-GValue $value, int32 $v_gtype )
   { * }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-has N-GValue $!gvalue;
-
-#-------------------------------------------------------------------------------
 submethod BUILD ( *%options ) {
 
   # prevent creating wrong widgets
   return unless self.^name eq 'GTK::V3::Glib::GValue';
 
   if ? %options<init> {
-    $!gvalue .= new;
-    $!gvalue = g_value_init( $!gvalue, %options<init>);
+    self.native-gboxed(g_value_init( N-GValue.new, %options<init>));
   }
 
   elsif %options.keys.elems {
@@ -183,30 +181,11 @@ submethod BUILD ( *%options ) {
 }
 
 #-------------------------------------------------------------------------------
-#TODO destroy when overwritten?
-method CALL-ME ( N-GValue $gvalue? --> N-GValue ) {
-
-  if ?$gvalue {
-    $!gvalue = $gvalue;
-  }
-
-  $!gvalue
-}
-
-#-------------------------------------------------------------------------------
-method FALLBACK ( $native-sub is copy, |c ) {
-
-  CATCH { test-catch-exception( $_, $native-sub); }
-
-  $native-sub ~~ s:g/ '-' /_/ if $native-sub.index('-');
-  die X::GTK::V3.new(:message(
-      "Native sub name '$native-sub' made too short. Keep atleast one '-' or '_'."
-    )
-  ) unless $native-sub.index('_');
+method fallback ( $native-sub, |c ) {
 
   my Callable $s;
   try { $s = &::($native-sub); }
   try { $s = &::("g_value_$native-sub"); } unless ?$s;
 
-  $s( $!gvalue, |c);
+  $s
 }

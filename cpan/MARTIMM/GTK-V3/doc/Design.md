@@ -1,7 +1,104 @@
 [toc]
 
-# Classes and relations
-* Taken from [object hierarchy in GTK docs](https://developer.gnome.org/gtk3/stable/ch02.html) Here is described what is implemented.
+# Class hierargy
+* Below are diagrams of what is implemented. See also the [object hierarchy in GTK docs](https://developer.gnome.org/gtk3/stable/ch02.html).
+
+
+```plantuml
+@startmindmap
+scale 0.7
+
+title GTK Class hierary
+* GObject
+ * GInitiallyUnowned
+  * GtkWidget
+   * GtkMisc
+    * GtkEntry
+    * GtkImage
+    * GtkLabel
+   * GtkContainer
+    * ...
+
+  * GtkFileFilter
+
+ * GdkScreen
+ * GdkWindow
+ * GdkDisplay
+
+ * GtkBuilder
+ * GtkTextBuffer
+ * GtkCssProvider
+@endmindmap
+```
+
+```plantuml
+@startmindmap
+scale 0.7
+
+title GTK Class hierary at GtkContainer
+
+* GtkContainer
+ * GtkBin
+  * GtkButton
+   * GtkToggleButton
+    * GtkCheckButton
+     * GtkRadioButton
+
+  * GtkWindow
+   * GtkDialog
+    * GtkAboutDialog
+    * GtkFileChooserDialog
+
+  * GtkMenuItem
+   * GtkImageMenuItem
+
+ * GtkTextView
+@endmindmap
+```
+
+
+```plantuml
+@startmindmap
+scale 0.7
+title Interface classes
+* GInterface
+ * GFile
+ * GtkFileChooser
+
+@endmindmap
+```
+
+```plantuml
+@startmindmap
+scale 0.7
+title Wrapped structure classes
+* GBoxed
+ * GValue
+ * GtkTextIter
+
+@endmindmap
+```
+
+```plantuml
+@startmindmap
+scale 0.7
+title Standalone classes
+
+*_ .
+ * X
+ * GMain
+ * GList
+ * GSList
+ * GType
+ * GSignal
+ * GtkMain
+@endmindmap
+```
+
+
+
+
+<!-- Restjes ...
 
 ```plantuml
 scale 0.7
@@ -40,43 +137,4 @@ GtkMenuItem <|-- GtkImageMenuItem
 GInitiallyUnowned <|-- GtkFileFilter
 
 ```
-
-```plantuml
-scale 0.7
-hide members
-hide circle
-
-class X
-
-class GMain
-class GList
-class GType
-class GValue
-class GSList
-class GtkMain
-
-class GObject
-
-class GdkScreen
-class GdkDisplay
-class GdkWindow
-
-GObject <|- GdkScreen
-GObject <|-- GdkWindow
-GObject <|-- GdkDisplay
-
-GObject <|--- GtkBuilder
-GObject <|--- GtkTextBuffer
-GObject <|-- GtkCssProvider
-```
-
-
-```plantuml
-scale 0.7
-hide members
-hide circle
-
-GInterface <|-- GtkFileChooser
-GInterface <|-- GFile
-
-```
+-->

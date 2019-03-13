@@ -4,13 +4,13 @@ use NativeCall;
 use GTK::V3::N::NativeLib;
 use GTK::V3::Glib::GObject;
 use GTK::V3::Gtk::GtkMain;
-use GTK::V3::Gtk::GtkWidget;
+use GTK::V3::Gtk::GtkMisc;
 
 #-------------------------------------------------------------------------------
 # See /usr/include/gtk-3.0/gtk/gtklabel.h
 # https://developer.gnome.org/gtk3/stable/GtkLabel.html
 unit class GTK::V3::Gtk::GtkLabel:auth<github:MARTIMM>
-  is GTK::V3::Gtk::GtkWidget;
+  is GTK::V3::Gtk::GtkMisc;
 
 #-------------------------------------------------------------------------------
 sub gtk_label_new ( Str $text )

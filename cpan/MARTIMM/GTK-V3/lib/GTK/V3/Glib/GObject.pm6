@@ -88,14 +88,11 @@ method FALLBACK ( $native-sub is copy, |c ) {
 #    return;
 #  }
 
-  # prevent user mistakes to get a N-GObject instead of a GtkSomeThing object
+  # User convenience substitutions to get a native object instead of
+  # a GtkSomeThing or GlibSomeThing object
   my Array $params = [];
   for c.list -> $p {
-    if $p ~~ GTK::V3::Glib::GObject {
-      $params.push($p.native-gobject());
-    }
-
-    elsif $p ~~ GTK::V3::Glib::GValue {
+    if $p.^name ~~ m/^ 'GTK::V3::' [ Gtk || Gdk || Glib ] '::' / {
       $params.push($p());
     }
 
@@ -104,8 +101,8 @@ method FALLBACK ( $native-sub is copy, |c ) {
     }
   }
 
-  note "\ntest-call of $native-sub: ", $s.gist, ', ', $!g-object, ', ', |c.gist
-    if $gobject-debug;
+  #note "\ntest-call of $native-sub: ", $s.gist, ', ', $!g-object, ', ', |c.gist
+  #  if $gobject-debug;
   test-call( $s, $!g-object, |$params)
 }
 

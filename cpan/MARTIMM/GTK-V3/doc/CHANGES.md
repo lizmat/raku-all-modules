@@ -1,5 +1,10 @@
 ## Release notes
 
+* 2019-03-10 0.9.0
+  * Added GtkTextIter to get rid of trickery from GTK::Simple.
+  * Added GBoxed to gather methods used in child classes. At the moment GValue and GtkTextIter.
+  * Added GtkMisc for hierarchy completeness.
+
 * 2019-02-06 0.8.3
   * Bug fixes
 

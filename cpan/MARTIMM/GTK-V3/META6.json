@@ -1,7 +1,7 @@
 {
   "description": "Perl6 GTK Api Version 3",
   "name": "GTK::V3",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "authors": [ "Marcel Timmerman"],
   "tags": [ "Gui", "Gtk"],
 
@@ -14,6 +14,7 @@
     "GTK::V3::Gdk::GdkTypes": "lib/GTK/V3/Gdk/GdkTypes.pm6",
     "GTK::V3::Gdk::GdkWindow": "lib/GTK/V3/Gdk/GdkWindow.pm6",
 
+    "GTK::V3::Glib::GBoxed": "lib/GTK/V3/Glib/GBoxed.pm6",
     "GTK::V3::Glib::GError": "lib/GTK/V3/Glib/GError.pm6",
     "GTK::V3::Glib::GFile": "lib/GTK/V3/Glib/GFile.pm6",
     "GTK::V3::Glib::GInitiallyUnowned": "lib/GTK/V3/Glib/GInitiallyUnowned.pm6",
@@ -47,9 +48,11 @@
     "GTK::V3::Gtk::GtkListBox": "lib/GTK/V3/Gtk/GtkListBox.pm6",
     "GTK::V3::Gtk::GtkMain": "lib/GTK/V3/Gtk/GtkMain.pm6",
     "GTK::V3::Gtk::GtkMenuItem": "lib/GTK/V3/Gtk/GtkMenuItem.pm6",
+    "GTK::V3::Gtk::GtkMisc": "lib/GTK/V3/Gtk/GtkMisc.pm6",
     "GTK::V3::Gtk::GtkRadioButton": "lib/GTK/V3/Gtk/GtkRadioButton.pm6",
     "GTK::V3::Gtk::GtkStyleContext": "lib/GTK/V3/Gtk/GtkStyleContext.pm6",
     "GTK::V3::Gtk::GtkTextBuffer": "lib/GTK/V3/Gtk/GtkTextBuffer.pm6",
+    "GTK::V3::Gtk::GtkTextIter": "lib/GTK/V3/Gtk/GtkTextIter.pm6",
     "GTK::V3::Gtk::GtkTextTagTable": "lib/GTK/V3/Gtk/GtkTextTagTable.pm6",
     "GTK::V3::Gtk::GtkTextView": "lib/GTK/V3/Gtk/GtkTextView.pm6",
     "GTK::V3::Gtk::GtkToggleButton": "lib/GTK/V3/Gtk/GtkToggleButton.pm6",

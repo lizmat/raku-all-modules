@@ -5,10 +5,12 @@ use GTK::V3::X;
 use GTK::V3::N::NativeLib;
 use GTK::V3::Glib::GObject;
 use GTK::V3::Gtk::GtkTextTagTable;
+use GTK::V3::Gtk::GtkTextIter;
 
 #-------------------------------------------------------------------------------
 # See /usr/include/gtk-3.0/gtk/gtktextbuffer.h
 # https://developer.gnome.org/gtk3/stable/GtkTextBuffer.html
+# https://developer.gnome.org/gtk3/stable/TextWidget.html
 unit class GTK::V3::Gtk::GtkTextBuffer:auth<github:MARTIMM>
   is GTK::V3::Glib::GObject;
 
@@ -18,22 +20,22 @@ sub gtk_text_buffer_new ( N-GObject $text-tag-table )
   is native(&gtk-lib)
   { * }
 
+sub gtk_text_buffer_get_start_iter ( N-GObject $buffer, N-GTextIter $i )
+  is native(&gtk-lib)
+  { * }
+
+sub gtk_text_buffer_get_end_iter( N-GObject $buffer, N-GTextIter $i )
+  is native(&gtk-lib)
+  { * }
+
+sub gtk_text_buffer_set_text( N-GObject $buffer, Str $text, int32 $len )
+  is native(&gtk-lib)
+  { * }
+
 sub gtk_text_buffer_get_text (
-  N-GObject $buffer, CArray[int32] $start,
-  CArray[int32] $end, int32 $show_hidden
+  N-GObject $buffer, N-GTextIter $start, N-GTextIter $end,
+  int32 $include_hidden_chars
 ) returns Str
-  is native(&gtk-lib)
-  { * }
-
-sub gtk_text_buffer_get_start_iter ( N-GObject $buffer, CArray[int32] $i )
-  is native(&gtk-lib)
-  { * }
-
-sub gtk_text_buffer_get_end_iter(N-GObject $buffer, CArray[int32] $i)
-  is native(&gtk-lib)
-  { * }
-
-sub gtk_text_buffer_set_text(N-GObject $buffer, Str $text, int32 $len)
   is native(&gtk-lib)
   { * }
 
