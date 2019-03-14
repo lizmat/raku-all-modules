@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6steve/perl6-Math-Polygons.git
 	branch = master
-	commit = bb23cba23bc10afbc8e092945fdc2f640a279100
-	parent = 85e534ed1c914efe92a03ffac80a2848b46602ec
+	commit = b69e0add2c372fd02e74f4d5e3aee5c8aaf4d298
+	parent = 46292b8d7dcde05cd63a01cb0856046e1dc8afc3
 	cmdver = 0.3.1

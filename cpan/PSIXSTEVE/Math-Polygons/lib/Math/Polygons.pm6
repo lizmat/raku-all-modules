@@ -2,15 +2,13 @@ unit module Math::Polygons:ver<0.0.1>:auth<Steve Roe (p6steve@furnival.net)>;
 
 use Math::Polygons::Drawing;
 
-#use Physics::Measure;
-#use Physics::Measure::Lang;
+use Physics::Measure;
+use Physics::Measure::Lang;
 
 #require Physics::Measure;
 #require Physics::Measure::Lang;
-
-try require Physics::Measure;       say $!;
-try require Physics::Measure::Lang; say $!;
-
+#try require Physics::Measure;       say $!;
+#try require Physics::Measure::Lang; say $!;
 
 #|only doing Isosceles Triangles for now
 class Triangle is Polygon is export {
