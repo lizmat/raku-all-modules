@@ -1,13 +1,13 @@
 {
   "name": "Tinky",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "auth": "github:jonathanstowe",
   "api": "1.0",
   "description": "An Experimental Workflow / State Management toolit",
-  "source-url": "git://github.com/jonathanstowe/Tinky.git",
+  "source-url": "https://github.com/jonathanstowe/Tinky.git",
   "support": {
     "email": "jns+git@gellyfish.co.uk",
-    "source": "git://github.com/jonathanstowe/Tinky.git",
+    "source": "https://github.com/jonathanstowe/Tinky.git",
     "bugtracker": "https://github.com/jonathanstowe/Tinky/issues"
   },
   "perl": "6.*",

@@ -1,3 +1,5 @@
+v0.0.8		Wed 13 Mar 21:24:52 GMT 2019
+	*	Small change to support Tinky::DB
 v0.0.7		Tue 29 Jan 19:20:46 GMT 2019
     * Spring clean and upload to CPAN
 	* Support for sub-classes where some attributes aren't real lists

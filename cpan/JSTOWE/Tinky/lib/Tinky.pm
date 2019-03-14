@@ -727,7 +727,7 @@ current state on the object.
 
 =end pod
 
-module Tinky:ver<0.0.7>:auth<github:jonathanstowe>:api<1.0> {
+module Tinky:ver<0.0.8>:auth<github:jonathanstowe>:api<1.0> {
 
     # Stub here, definition below
     class State      { ... };
@@ -1018,7 +1018,7 @@ module Tinky:ver<0.0.7>:auth<github:jonathanstowe>:api<1.0> {
         has Supply $!leave-supply;
         multi method leave-supply( --> Supply )  {
             $!leave-supply //= do {
-                my @supplies = self.states.map(-> $state { $state.leave-supply.map(-> $value { $state, $value }) });
+                my @supplies = self.states.Seq.map(-> $state { $state.leave-supply.map(-> $value { $state, $value }) });
                 Supply.merge(@supplies);
             }
             $!leave-supply;
