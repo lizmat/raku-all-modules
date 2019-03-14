@@ -1,6 +1,10 @@
 Revision history for Term::Choose
 
 
+1.4.7   2019-03-13
+        - Don't bind return values of 'to-printwidth'
+        - Code refactoring
+
 1.4.6   2018-12-18
         - Bugfix 'meta_items'
 

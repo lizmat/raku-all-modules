@@ -35,7 +35,7 @@ sub to-printwidth( $str, Int $avail_w, Bool $dot=False, @cache? ) is export( :to
 }
 
 
-sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is copy ) is export( :line-fold ) {
+sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is copy ) is export( :line-fold ) { # init_tab + subseq_tab optional
     for $init_tab, $subseq_tab {
         if $_ { # .gist
             $_ = to-printwidth(

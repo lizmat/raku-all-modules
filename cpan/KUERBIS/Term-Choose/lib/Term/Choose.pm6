@@ -1,6 +1,6 @@
 use v6;
 
-unit class Term::Choose:ver<1.4.6>;
+unit class Term::Choose:ver<1.4.7>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -109,7 +109,7 @@ method !_prepare_new_copy_of_list {
             @promise.push: start {
                 do for $range[0] ..^ $range[1] -> $i {
                     if ! @!orig_list[$i].defined {
-                        my ( $str, $len ) := to-printwidth(
+                        my ( $str, $len ) = to-printwidth(
                             %!o<undef>.subst( / \t /,  ' ', :g ).subst( / \v+ /,  '  ', :g ).subst( / <:Cc+:Noncharacter_Code_Point+:Cs> /, '', :g ),
                             $!avail_w,
                             True,
@@ -118,7 +118,7 @@ method !_prepare_new_copy_of_list {
                         $i, $str, $len;
                     }
                     elsif @!orig_list[$i] eq '' {
-                        my ( $str, $len ) := to-printwidth(
+                        my ( $str, $len ) = to-printwidth(
                             %!o<empty>.subst( / \t /,  ' ', :g ).subst( / \v+ /,  '  ', :g ).subst( / <:Cc+:Noncharacter_Code_Point+:Cs> /, '', :g ),
                             $!avail_w,
                             True,
@@ -127,7 +127,7 @@ method !_prepare_new_copy_of_list {
                         $i, $str, $len;
                     }
                     else {
-                        my ( $str, $len ) := to-printwidth(
+                        my ( $str, $len ) = to-printwidth(
                             @!orig_list[$i].subst( / \t /,  ' ', :g ).subst( / \v+ /,  '  ', :g ).subst( / <:Cc+:Noncharacter_Code_Point+:Cs> /, '', :g ),
                             $!avail_w,
                             True,
@@ -219,7 +219,9 @@ method !_choose ( Int $multiselect, @!orig_list,
         return;
     }
     CATCH {
-        endwin();
+        if $!win {
+            endwin();
+        }
     }
     %!o = :$beep, :$include-highlighted, :$index, :$mouse, :$order, :$page, :$justify, :$layout, :$keep, :$ll, :$max-height,
           :$max-width, :$default, :$pad, :$lf, :$mark, :$meta-items, :$no-spacebar, :$info, :$prompt, :$empty, :$undef;
@@ -231,12 +233,12 @@ method !_choose ( Int $multiselect, @!orig_list,
     if %!o<ll> && %!o<ll> > $!term_w {
         return -2; #
     }
-    my Int $fast_page = 25;
+    my Int $fast_page = 25; #
     my Array $saved_pos;
     my Int $pressed;
 
     GET_KEY: loop {
-        my $key = getch();
+        my $ch = getch();
         my Int $new_term_w = getmaxx( $!win );
         my Int $new_term_h = getmaxy( $!win );
         if $new_term_w != $!term_w || $new_term_h != $!term_h {
@@ -250,23 +252,23 @@ method !_choose ( Int $multiselect, @!orig_list,
             self!_wr_first_screen( $multiselect );
             next GET_KEY;
         }
-        next GET_KEY if $key == ERR;
-        next GET_KEY if $key == 4294967295; # 2 ** 32 - 1
+        next GET_KEY if $ch == ERR;
+        next GET_KEY if $ch == 4294967295; # 2 ** 32 - 1
         if %*ENV<TC_RESET_AUTO_UP>:exists {
-            if $key == none( LINE_FEED, CARRIAGE_RETURN) && $key < 361 {
+            if $ch == none( LINE_FEED, CARRIAGE_RETURN) && $ch < 361 {
                 %*ENV<TC_RESET_AUTO_UP> = 1;
             }
         }
         my $page_step = 1;
-        if $key == KEY_IC {
+        if $ch == KEY_IC {
             $page_step = $fast_page if $!begin_p - $fast_page * $!avail_h >= 0;
-            $key = KEY_PPAGE;
+            $ch = KEY_PPAGE;
         }
-        elsif $key == KEY_DC {
+        elsif $ch == KEY_DC {
             $page_step = $fast_page if $!end_p + $fast_page * $!avail_h <= $!rc2idx.end;
-            $key = KEY_NPAGE;
+            $ch = KEY_NPAGE;
         }
-        if $saved_pos && $key != KEY_PPAGE && $key != CONTROL_B && $key != KEY_NPAGE && $key != CONTROL_F {
+        if $saved_pos && $ch != KEY_PPAGE && $ch != CONTROL_B && $ch != KEY_NPAGE && $ch != CONTROL_F {
             $saved_pos = Array;
         }
 
@@ -284,7 +286,7 @@ method !_choose ( Int $multiselect, @!orig_list,
         # On the other hand the index of the last row of the new list would be $!rc2idx.end
         # or the index of the last column in the first row would be $!rc2idx[0].end.
 
-        given $key {
+        given $ch {
             #when KEY_RESIZE {
             #}
             when KEY_DOWN | KEY_j {
@@ -781,31 +783,22 @@ method !_wr_screen {
 
 method !_wr_cell ( Int $row, Int $col ) {
     my Bool $is_current_pos = $row == $!p[R] && $col == $!p[C];
-    my Int $i = $!rc2idx[$row][$col];
-    if $!rc2idx.end == 0 && $!rc2idx[0].end > 0 {
-        my Int $lngth = 0;
+    my Int $i := $!rc2idx[$row][$col];
+    my Int $y := $row - $!begin_p + @!prompt_lines.elems;
+    attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
+    attron( A_REVERSE )             if $is_current_pos;
+    if $!rc2idx.end == 0 { # && $!rc2idx[0].end > 0 {
+        my Int $x = 0;
         if $col > 0 {
             for ^$col -> $c { #
-                $lngth += print-columns( @!list[ $!rc2idx[$row][$c] ] );
-                $lngth += %!o<pad>;
+                $x += print-columns( @!list[ $!rc2idx[$row][$c] ] );
+                $x += %!o<pad>;
             }
         }
-        attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
-        attron( A_REVERSE )             if $is_current_pos;
-        mvaddstr(
-            $row - $!begin_p + @!prompt_lines.elems,
-            $lngth,
-            @!list[$i]
-        );
+        mvaddstr( $y, $x, @!list[$i] );
     }
     else {
-        attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
-        attron( A_REVERSE )             if $is_current_pos;
-        mvaddstr(
-            $row - $!begin_p + @!prompt_lines.elems,
-            ( $!col_w + %!o<pad> ) * $col,
-            self!_pad_str_to_colwidth( $i )
-        );
+        mvaddstr( $y, ( $!col_w + %!o<pad> ) * $col, self!_pad_str_to_colwidth( $i ) );
     }
     attroff( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
     attroff( A_REVERSE )             if $is_current_pos;
