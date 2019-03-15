@@ -29,9 +29,9 @@ Synopsis
 ```perl6
 use LWP::Simple;
 
-my $content = get("https://perl6.org");
+my $content = LWP::Simple.get("https://perl6.org");
 
-my $response = post("https://somewhere.topo.st", { so => True }
+my $response = LWP::Simple.post("https://somewhere.topo.st", { so => True }
 ```
 
 
