@@ -8,6 +8,6 @@
     "description": "A grammar to parse subset of ASN.1",
     "resources": [],
     "perl": "6.c",
-    "version": "0.2",
+    "version": "0.3",
     "authors": ["Alexander Kiryuhin <alexander.kiryuhin@gmail.com>"]
 }

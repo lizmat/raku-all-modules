@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Altai-man/ASN-Grammar.git
 	branch = master
-	commit = a5371fae539fa2bdde51b34f4a1b38e615a2e0c0
-	parent = f40d7a442927cdbd61bb89f254ea937da7876827
+	commit = bfb41cdb6b9e3dad16766b1d2db087f21b59d2fa
+	parent = 201a63440af06479b56d62ee7c4754041c5deaa2
 	cmdver = 0.3.1

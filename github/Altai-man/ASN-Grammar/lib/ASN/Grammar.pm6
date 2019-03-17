@@ -136,7 +136,7 @@ class ASN::Result {
     }
     method builtin:sym<sequence-of>($/) { make ASN::RawType.new(:type('SEQUENCE OF'), params => {:of($<type>.made)}) }
     method builtin:sym<set>($/) { make ASN::RawType.new(:type('SET')) }
-    method builtin:sym<set-of>($/) { make ASN::RawType.new(:type('SET OF')) }
+    method builtin:sym<set-of>($/) { make ASN::RawType.new(:type('SET OF'), params => {:of($<type>.made)}) }
     method builtin:sym<choice>($/) {
         my $choice = $<element-type-list>.made.List;
         my %choices;
