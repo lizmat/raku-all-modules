@@ -1,20 +1,23 @@
 use v6.c;
 use Test;
 use P5getgrnam;
+%*ENV<RAKUDO_NO_DEPRECATIONS> = True;
 
-plan 18;
+plan 22;
 
 my int $groupid = +$*GROUP;
 ok $groupid > 0, 'did we get a group ID';
 
-my $groupname = getgrgid($groupid,:scalar);
+my $groupname = getgrgid(Scalar, $groupid);
 ok $groupname ~~ m/^ \w+ /, 'did we get a name';
+is getgrgid($groupid, :scalar), $groupname, 'did we get right name';
 
 my @result = getgrgid($groupid);
 is @result[0], $groupname, 'did we get the groupname in this struct by gid';
 is @result[2], $groupid,   'did we get the groupid in this struct by gid';
 ok @result[3] ~~ Str,      'did we get the members by gid';
 
+is getgrnam(Scalar, $groupname), $groupid, 'did we get the gid';
 is getgrnam($groupname, :scalar), $groupid, 'did we get the gid';
 @result = getgrnam($groupname);
 is @result[0], $groupname, 'did we get the groupname in this struct by name';
@@ -38,9 +41,11 @@ is $seen, 0, 'did we get the same number of entries the 2nd time';
 is endgrent, 1, 'did we return the undocumented 1';
 
 is-deeply getgrnam("thisnameshouldnotexist"), (), 'non-existing name';
+is getgrnam(Scalar, "thisnameshouldnotexist"), Nil, 'non-existing name scalar';
 is getgrnam("thisnameshouldnotexist", :scalar), Nil, 'non-existing name scalar';
 
 is-deeply getgrgid(9999), (), 'non-existing gid';
+is getgrgid(Scalar, 9999), Nil, 'non-existing name gid';
 is getgrgid(9999, :scalar), Nil, 'non-existing name gid';
 
 # vim: ft=perl6 expandtab sw=4

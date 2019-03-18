@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/P5getgrnam.git
 	branch = master
-	commit = 64d0f24d2b2b0f74234db852d2292ae5542c1dea
-	parent = be663aa2c8e6f77dfb6e2a33a4dd4eda19447903
+	commit = 6b93da0512e895d5e46f1a0afe60f704feac4aec
+	parent = ed414ab8be8f1f242fea4bd3a123bfdf35738b8a
 	cmdver = 0.3.1

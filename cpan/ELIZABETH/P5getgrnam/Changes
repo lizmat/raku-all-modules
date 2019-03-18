@@ -2,6 +2,10 @@ Revision history for P5getgrnam
 
 {{$NEXT}}
 
+0.0.6  2019-03-17T16:32:34+01:00
+    - Deprecate :scalar in favour of Scalar as first positional
+    - Update copyright year
+
 0.0.5  2018-05-20T13:07:47+02:00
     - Added original Perl 5 documentation
 

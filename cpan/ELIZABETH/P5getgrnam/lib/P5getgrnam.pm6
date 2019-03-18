@@ -1,63 +1,84 @@
 use v6.c;
 
-unit module P5getgrnam:ver<0.0.5>:auth<cpan:ELIZABETH>;
-
 use NativeCall;
 
+unit module P5getgrnam:ver<0.0.6>:auth<cpan:ELIZABETH>;
+
+# handling the result struct
 my class GrStruct is repr<CStruct> {
     has Str         $.gr_name;
     has Str         $.gr_passwd;
     has uint32      $.gr_gid;
     has CArray[Str] $.gr_mem;
 
-    multi method result(GrStruct:U: :$scalar) {
-        $scalar ?? Nil !! ()
-    }
-    multi method result(GrStruct:D: :$scalar, :$gid) {
-        if $scalar {
-            $gid ?? $.gr_gid !! $.gr_name
-        }
-        else {
-            my @members;
-            with $.gr_mem -> $members {
-                for 0..* {
-                    with $members[$_] -> $member {
-                        @members.push($member)
-                    }
-                    else {
-                        last
-                    }
+    multi method scalar(GrStruct:U:) { Nil }
+    multi method list(GrStruct:U:) { ()  }
+
+    multi method scalar(GrStruct:D: :$name) { $name ?? $.gr_name !! $.gr_gid }
+    multi method list(GrStruct:D:) {
+        my @members;
+        with $.gr_mem -> $members {
+            for 0..* {
+                with $members[$_] -> $member {
+                    @members.push($member)
+                }
+                else {
+                    last
                 }
             }
-            ($.gr_name,$.gr_passwd,$.gr_gid,@members.join(" "))
         }
+        ($.gr_name,$.gr_passwd,$.gr_gid,@members.join(" "))
     }
 }
 
-my sub getgrnam(Str() $name, :$scalar) is export {
-    sub _getgrnam(Str --> GrStruct) is native is symbol<getgrnam> {*}
-    _getgrnam($name).result(:$scalar, :gid($scalar))
-}
+# actual NativeCall interfaces
+sub _getgrnam(Str --> GrStruct) is native is symbol<getgrnam> {*}
+sub _getgrgid(uint32 $gid --> GrStruct) is native is symbol<getgrgid> {*}
+sub _getgrent(--> GrStruct) is native is symbol<getgrent> {*}
+sub _setgrent() is native is symbol<setgrent> {*}
+sub _endgrent() is native is symbol<endgrent> {*}
 
-my sub getgrgid(Int() $gid, :$scalar) is export {
-    sub _getgrgid(uint32 $gid --> GrStruct) is native is symbol<getgrgid> {*}
+# actual exported subs
+my proto sub getgrnam(|) is export {*}
+multi sub getgrnam(Scalar:U, Str() $name) { _getgrnam($name).scalar }
+multi sub getgrnam(Str() $name, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    _getgrnam($name).scalar
+}
+multi sub getgrnam(Str() $name) { _getgrnam($name).list }
+
+my proto sub getgrgid(|) is export {*}
+multi sub getgrgid(Scalar:U, Int() $gid) {
     my uint32 $ngid = $gid;
-    _getgrgid($ngid).result(:$scalar)
+    _getgrgid($ngid).scalar(:name)
+}
+multi sub getgrgid(Int() $gid, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    my uint32 $ngid = $gid;
+    _getgrgid($ngid).scalar(:name)
+}
+multi sub getgrgid(Int() $gid) {
+    my uint32 $ngid = $gid;
+    _getgrgid($ngid).list
 }
 
-my sub getgrent(:$scalar) is export {
-    sub _getgrent(--> GrStruct) is native is symbol<getgrent> {*}
-    _getgrent.result(:$scalar)
+my proto sub getgrent(|) is export {*}
+multi sub getgrent(Scalar:U) { _getgrent.scalar }
+multi sub getgrent(:$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    _getgrent.scalar
 }
+multi sub getgrent() { _getgrent.list }
 
-my sub setgrent(:$scalar) is export {
-    sub _setgrent() is native is symbol<setgrent> {*}
+my sub setgrent() is export {
     _setgrent;
     1;  # this is apparently what Perl 5 does, although not documented
 }
 
-my sub endgrent(:$scalar) is export {
-    sub _endgrent() is native is symbol<endgrent> {*}
+my sub endgrent() is export {
     _endgrent;
     1;  # this is apparently what Perl 5 does, although not documented
 }
@@ -115,7 +136,7 @@ Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 
