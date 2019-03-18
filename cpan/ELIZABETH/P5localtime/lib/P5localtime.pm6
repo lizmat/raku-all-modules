@@ -1,6 +1,6 @@
 use v6.c;
 
-unit module P5localtime:ver<0.0.5>:auth<cpan:ELIZABETH>;
+unit module P5localtime:ver<0.0.6>:auth<cpan:ELIZABETH>;
 
 use NativeCall;
 
@@ -17,12 +17,13 @@ my class TimeStruct is repr<CStruct> {
     has long  $.tm_gmtoff;
     has Str   $.tm_zone;
 
-    method result() {
+    method list() {
         ($.tm_sec, $.tm_min, $.tm_hour, $.tm_mday,  $.tm_mon, $.tm_year,
          $.tm_wday,$.tm_yday,$.tm_isdst,$.tm_gmtoff,$.tm_zone)
     }
 }
 
+# actual NativeCall interfaces
 my sub get-localtime(int64 is rw --> TimeStruct)
   is native is symbol<localtime> {*}
 my sub get-ctime(int64 is rw --> Str)
@@ -30,26 +31,36 @@ my sub get-ctime(int64 is rw --> Str)
 my sub get-gmtime(int64 is rw --> TimeStruct)
   is native is symbol<gmtime> {*}
 
-proto sub localtime(|) is export {*}
-multi sub localtime(:$scalar) { localtime(time, :$scalar) }
-multi sub localtime(Int() $time, :$scalar) {
-    my int64 $epoch = $time;  # must be a separate definition
-    $scalar
-      ?? get-ctime($epoch).chomp
-      !! get-localtime($epoch).result
+# actual exported subs
+my proto sub localtime(|) is export {*}
+multi sub localtime(Scalar:U, Int() $time = time) {
+    my int64 $epoch = $time;
+    get-ctime($epoch).chomp
+}
+multi sub localtime(Int() $time = time, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    localtime(Scalar, $time)
+}
+multi sub localtime(Int() $time = time) {
+    my int64 $epoch = $time;
+    get-localtime($epoch).list
 }
 
-proto sub gmtime(|) is export {*}
-multi sub gmtime(:$scalar) { gmtime(time, :$scalar) }
-multi sub gmtime(Int() $time, :$scalar) {
-    my int64 $epoch = $time;  # must be a separate definition
-    if $scalar {
-        $epoch -= get-localtime($epoch).tm_gmtoff;
-        get-ctime($epoch).chomp
-    }
-    else {
-        get-gmtime($epoch).result
-    }
+my proto sub gmtime(|) is export {*}
+multi sub gmtime(Scalar:U, Int() $time = time) {
+    my int64 $epoch = $time;
+    $epoch -= get-localtime($epoch).tm_gmtoff;
+    get-ctime($epoch).chomp
+}
+multi sub gmtime(Int() $time = time, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    gmtime(Scalar, $time)
+}
+multi sub gmtime(Int() $time = time) {
+    my int64 $epoch = $time;
+    get-gmtime($epoch).list
 }
 
 =begin pod
@@ -64,10 +75,10 @@ P5localtime - Implement Perl 5's localtime / gmtime built-ins
 
     #     0    1    2     3     4    5     6     7     8
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-    say localtime(time, :scalar);
+    say localtime(Scalar, time);
 
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday) = gmtime(time);
-    say gmtime(time, :scalar);
+    say gmtime(Scalar, time);
 
 =head1 DESCRIPTION
 
@@ -162,7 +173,7 @@ functions of Perl 5 as closely as possible.
 =head2 PORTING CAVEATS
 
 Since Perl 6 does not have a concept of scalar context, this must be mimiced
-by passing the C<:scalar> named parameter.
+by passing the C<Scalar> type as the first positional parameter.
 
 The implementation actually also returns the offset in GMT in seconds as
 element number 9, and the name of the timezone as element number 10, if
@@ -182,7 +193,7 @@ StackOverflow) for support in getting this to work.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

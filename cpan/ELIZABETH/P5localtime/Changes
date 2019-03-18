@@ -2,6 +2,10 @@ Revision history for P5localtime
 
 {{$NEXT}}
 
+0.0.6  2019-03-17T22:36:49+01:00
+    - Deprecate :scalar in favour of Scalar as first positional
+    - Update copyright year
+
 0.0.5  2018-08-03T13:34:21+02:00
     - Fixed test that would fail if day < 10
 

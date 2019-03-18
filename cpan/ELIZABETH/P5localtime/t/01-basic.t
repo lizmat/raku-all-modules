@@ -1,8 +1,9 @@
 use v6.c;
 use Test;
 use P5localtime;
+%*ENV<RAKUDO_NO_DEPRECATIONS> = True;
 
-plan 44;
+plan 48;
 
 ok defined(::('&localtime')),
   'is &localtime imported?';
@@ -37,9 +38,13 @@ sub ok-scalar-time($t, $type) {
       "is $type string correctly formatted";
 }
 
+ok-scalar-time localtime(Scalar), 'localtime string';
+ok-scalar-time    gmtime(Scalar), 'gmtime string';
 ok-scalar-time localtime(:scalar), 'localtime string';
 ok-scalar-time    gmtime(:scalar), 'gmtime string';
 
+ok-scalar-time localtime(Scalar, 1525034924), 'localtime(1525034924) string';
+ok-scalar-time    gmtime(Scalar, 1525034924), 'gmtime(1525034924) string';
 ok-scalar-time localtime(1525034924, :scalar), 'localtime(1525034924) string';
 ok-scalar-time    gmtime(1525034924, :scalar), 'gmtime(1525034924) string';
 

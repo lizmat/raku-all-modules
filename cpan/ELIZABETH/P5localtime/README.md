@@ -12,10 +12,10 @@ SYNOPSIS
 
     #     0    1    2     3     4    5     6     7     8
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-    say localtime(time, :scalar);
+    say localtime(Scalar, time);
 
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday) = gmtime(time);
-    say gmtime(time, :scalar);
+    say gmtime(Scalar, time);
 
 DESCRIPTION
 ===========
@@ -111,7 +111,7 @@ ORIGINAL PERL 5 DOCUMENTATION
 PORTING CAVEATS
 ---------------
 
-Since Perl 6 does not have a concept of scalar context, this must be mimiced by passing the `:scalar` named parameter.
+Since Perl 6 does not have a concept of scalar context, this must be mimiced by passing the `Scalar` type as the first positional parameter.
 
 The implementation actually also returns the offset in GMT in seconds as element number 9, and the name of the timezone as element number 10, if supported by the OS.
 
@@ -130,7 +130,7 @@ JJ Merelo, Jan-Olof Hendig, Tobias Leich, Timo Paulssen and Christoph (on StackO
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 
