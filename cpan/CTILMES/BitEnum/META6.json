@@ -1,0 +1,30 @@
+{
+    "name" : "BitEnum",
+
+    "version" : "0.1",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-bitenum.git",
+
+    "perl" : "6.*",
+
+    "tags" : [ "BITFIELDS", "ENUM" ],
+
+    "provides" : {
+        "BitEnum": "lib/BitEnum.pm6"
+    },
+
+    "depends" : [ ],
+
+    "description" : "Wrapper for Bitfields stored in an integer",
+
+    "test-depends" : [ "Test", "Test::When", "Test::META" ],
+
+    "license" : "Artistic-2.0",
+
+    "authors" : [ "Curt Tilmes <ctilmes@cpan.org>" ],
+
+    "support" : {
+      "source" : "https://github.com/CurtTilmes/perl6-bitenum.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-bitenum/issues"
+    }
+}

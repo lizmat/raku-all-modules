@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-bitenum.git
+	branch = master
+	commit = 7d1a4d253f7bdad6cc8b7873980904c361f63a13
+	parent = 62985c79318514a102af52388c33de067193b03d
+	cmdver = 0.3.1
