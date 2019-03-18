@@ -2,6 +2,10 @@ Revision history for P5chop
 
 {{$NEXT}}
 
+0.0.6  2019-03-17T22:48:06+01:00
+    - Introduce Scalar as first positional to indicate scalar context
+    - Update copyright year
+
 0.0.5  2018-05-22T20:03:08+02:00
     - Made sure we burn even more system CPU (to mitigate fails on Travis)
 

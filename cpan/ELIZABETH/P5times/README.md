@@ -12,6 +12,8 @@ SYNOPSIS
 
     ($user,$system,$cuser,$csystem) = times;
 
+    $user = times(Scalar);
+
 DESCRIPTION
 ===========
 
@@ -49,7 +51,7 @@ Source can be located at: https://github.com/lizmat/P5times . Comments and Pull 
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

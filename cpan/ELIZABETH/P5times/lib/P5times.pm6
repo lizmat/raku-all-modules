@@ -1,8 +1,15 @@
 use v6.c;
 
-unit module P5times:ver<0.0.5>:auth<cpan:ELIZABETH>;
+unit module P5times:ver<0.0.6>:auth<cpan:ELIZABETH>;
 
-sub times() is export {
+my proto sub times(|) is export {*}
+multi sub times(Scalar:U) {
+    use nqp;
+    nqp::getrusage(my int @rusage);
+    nqp::atpos_i(@rusage, nqp::const::RUSAGE_UTIME_SEC) * 1000000
+      + nqp::atpos_i(@rusage, nqp::const::RUSAGE_UTIME_MSEC)
+}
+multi sub times() {
     use nqp;
     nqp::getrusage(my int @rusage);
     (
@@ -26,6 +33,8 @@ P5times - Implement Perl 5's times() built-in
   use P5times; # exports times()
 
   ($user,$system,$cuser,$csystem) = times;
+
+  $user = times(Scalar);
 
 =head1 DESCRIPTION
 
@@ -60,7 +69,7 @@ Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

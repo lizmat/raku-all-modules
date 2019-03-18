@@ -1,11 +1,15 @@
 use v6.c;
 use Test;
 use P5times;
+%*ENV<RAKUDO_NO_DEPRECATIONS> = True;
 
-plan 10;
+plan 11;
 
 ok defined(::('&times')),       'is &times imported?';
 ok !defined(P5times::{'&times'}), 'is &times externally NOT accessible?';
+
+my $user = times(Scalar);
+ok $user > 0, 'did we get some user CPU';
 
 my ($user1,$system1,$cuser1,$csystem1) = times;
 ok $user1   > 0, 'did we get some user CPU';

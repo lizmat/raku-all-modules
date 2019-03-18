@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/P5times.git
 	branch = master
-	commit = b1048fee76315e0e52b0353749632c296a62bbef
-	parent = 75dee0f9d5952cc72f9297559ae6329c2a297456
+	commit = 30b1484e2fbc0688decdad50a5686fa2be42530a
+	parent = 5eb28fc79c3bc1d05d4c246ae143ad588fc44824
 	cmdver = 0.3.1
