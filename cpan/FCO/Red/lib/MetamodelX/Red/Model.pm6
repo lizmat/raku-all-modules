@@ -219,7 +219,14 @@ method all($obj)                    { $obj.^rs }
 
 method temp(|) is rw { $!temporary }
 
-method create-table(\model) {
+multi method create-table(\model, Bool :$if-not-exists where * === True) {
+    CATCH { when X::Red::Driver::Mapped::TableExists {
+        return False
+    }}
+    callwith model
+}
+
+multi method create-table(\model) {
     die X::Red::InvalidTableName.new: :table(model.^table)
     unless $*RED-DB.is-valid-table-name: model.^table;
     $*RED-DB.execute:
@@ -235,7 +242,8 @@ method create-table(\model) {
                     Red::AST::Pk.new: :columns[|.value]
                 },
             ],
-            |(:comment(Red::AST::TableComment.new: :msg(.Str), :table(model.^table)) with model.WHY)
+            |(:comment(Red::AST::TableComment.new: :msg(.Str), :table(model.^table)) with model.WHY);
+    True
 }
 
 multi method save($obj, Bool :$insert! where * == True) {
@@ -259,7 +267,11 @@ multi method save($obj) {
 }
 
 method create(\model, |pars) {
-    my $obj = model.new: |pars;
+    my %relationships := set %.relationships.keys>>.name>>.substr: 2;
+    my %pars = |pars.kv.map: -> $name, $val {
+        $name => %relationships{ $name } && $val !~~ model."$name"() ?? model."$name"().^create: |$val !! $val
+    }
+    my $obj = model.new: |%pars;
     my $data := $obj.^save(:insert).row;
     if model.^id.elems and $data.defined and not $data.elems {
         $obj = model.new: |$*RED-DB.execute(Red::AST::LastInsertedRow.new: model).row
