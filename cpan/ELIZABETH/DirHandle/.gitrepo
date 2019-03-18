@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/DirHandle.git
 	branch = master
-	commit = 1ab0c1a89e05c1989a72057ca23cee5499f575fc
-	parent = 9edd86c0b7a520dfb630ad1c98dd3262a15bffeb
+	commit = 8db7bb353ef5f10b8d41f2e5514677db464e0028
+	parent = 10d5e0ec4e218f55664ef8bc51e9f4fde6ad935b
 	cmdver = 0.3.1

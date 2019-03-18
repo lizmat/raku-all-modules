@@ -1,8 +1,8 @@
 use v6.c;
 
-use P5opendir;
+use P5opendir:ver<0.0.4>:auth<cpan:ELIZABETH>;
 
-class DirHandle:ver<0.0.1>:auth<cpan:ELIZABETH> {
+class DirHandle:ver<0.0.2>:auth<cpan:ELIZABETH> {
     has $.dirhandle;
 
     method new($path) {
@@ -21,8 +21,15 @@ class DirHandle:ver<0.0.1>:auth<cpan:ELIZABETH> {
         $result
     }
 
-    multi method read()        {                 readdir($!dirhandle,:scalar) }
-    multi method read(:$void!) { CALLERS::<$_> = readdir($!dirhandle,:scalar) }
+    multi method read(Mu:U) {
+        CALLERS::<$_> = readdir(Scalar, $!dirhandle)
+    }
+    multi method read(:$void!)
+        is DEPRECATED('Mu as first positional')
+    {
+        CALLERS::<$_> = readdir(Scalar, $!dirhandle)
+    }
+    multi method read() { readdir(Scalar, $!dirhandle) }
 
     method rewind()         { rewinddir($!dirhandle)       }
     method tell()           { telldir($!dirhandle)         }
@@ -58,7 +65,7 @@ pollution.
 =head1 PORTING CAVEATS
 
 Since Perl 6 does not have a concept like void context, one needs to specify
-a C<:void> named parameter with C<read> to mimic the behaviour of
+C<Mu> as the only positional parameter with C<read> to mimic the behaviour of
 C<DirHandle.read> of Perl 5 in void context.
 
 The Perl 5 version of C<DirHandle> for some mysterious reason does not
@@ -74,7 +81,7 @@ and Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

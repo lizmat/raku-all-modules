@@ -2,5 +2,10 @@ Revision history for DirHandle
 
 {{$NEXT}}
 
+0.0.2  2019-03-17T15:29:05+01:00
+    - Tighten dependencies to specific versions
+    - Deprecate :scalar in favour of Scalar as first positional
+    - Update copyright year
+
 0.0.1  2018-05-26T23:52:35+02:00
     - Initial version

@@ -26,7 +26,7 @@ The only objective benefit to using DirHandle is that it avoids namespace pollut
 PORTING CAVEATS
 ===============
 
-Since Perl 6 does not have a concept like void context, one needs to specify a `:void` named parameter with `read` to mimic the behaviour of `DirHandle.read` of Perl 5 in void context.
+Since Perl 6 does not have a concept like void context, one needs to specify `Mu` as the only positional parameter with `read` to mimic the behaviour of `DirHandle.read` of Perl 5 in void context.
 
 The Perl 5 version of `DirHandle` for some mysterious reason does not contain methods for performing a `telldir` or a `seekdir`. The Perl 6 version **does** contain equivalent methods `tell` and `seek`.
 
@@ -40,7 +40,7 @@ Source can be located at: https://github.com/lizmat/DirHandle . Comments and Pul
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 
