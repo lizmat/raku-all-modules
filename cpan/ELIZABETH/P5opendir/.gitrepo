@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/P5opendir.git
 	branch = master
-	commit = 49e8b04c70d86c51399fdd9d38b1672fa0781e64
-	parent = 83ca606d70e268742ec1034fe5a78aaa8cb8a6c1
+	commit = 7db42657383121d0a8d9f1d8e28e7fbbcce2ad28
+	parent = e1c9b8df5f7eed59a2a78bc82afcccfc598aa0fa
 	cmdver = 0.3.1

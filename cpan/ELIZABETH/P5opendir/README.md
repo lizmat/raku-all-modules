@@ -97,18 +97,18 @@ By default, `readdir` returns a list with all directory entries found.
 scalar context
 --------------
 
-In scalar context, `readdir` returns one directory entry at a time. Add the `:scalar` named variable to mimic this behaviour:
+In scalar context, `readdir` returns one directory entry at a time. Add `Scalar` as the first positional variable to mimic this behaviour:
 
-    while readdir($dh, :scalar) -> $entry {
+    while readdir(Scalar, $dh, :scalar) -> $entry {
         say "found $entry";
     }
 
 void context
 ------------
 
-In void context, `readdir` stores one directory entry at a time in `$_`. Add the `:void` named variable to mimic this behaviour:
+In void context, `readdir` stores one directory entry at a time in `$_`. Add `Mu` as the first positional variable to mimic this behaviour:
 
-    .say while readdir($dh, :void);
+    .say while readdir(Mu, $dh, :void);
 
 AUTHOR
 ======
@@ -120,7 +120,7 @@ Source can be located at: https://github.com/lizmat/P5opendir . Comments and Pul
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

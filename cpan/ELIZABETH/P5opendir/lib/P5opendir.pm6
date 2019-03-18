@@ -47,7 +47,7 @@ my class DIRHANDLE {
     method Str(--> Str:D) { $!path }
 }
 
-module P5opendir:ver<0.0.3>:auth<cpan:ELIZABETH> {
+module P5opendir:ver<0.0.4>:auth<cpan:ELIZABETH> {
 
     sub opendir(\handle, Str() $path) is export {
         my $success = True;
@@ -57,10 +57,20 @@ module P5opendir:ver<0.0.3>:auth<cpan:ELIZABETH> {
     }
 
     proto sub readdir(|) is export {*}
-    multi sub readdir(DIRHANDLE:D \handle, :$void!) {
+    multi sub readdir(Mu:U, DIRHANDLE:D \handle) {
         CALLERS::<$_> = handle.next
     }
-    multi sub readdir(DIRHANDLE:D \handle, :$scalar!) { handle.next }
+    multi sub readdir(DIRHANDLE:D \handle, :$void!)
+      is DEPRECATED('Mu as first positional')
+    {
+        CALLERS::<$_> = handle.next
+    }
+    multi sub readdir(Scalar:U, DIRHANDLE:D \handle) { handle.next }
+    multi sub readdir(DIRHANDLE:D \handle, :$scalar!)
+      is DEPRECATED('Scalar as first positional')
+    {
+        handle.next
+    }
     multi sub readdir(DIRHANDLE:D \handle) { handle.left }
 
     sub telldir(DIRHANDLE:D \handle) is export { handle.index }
@@ -163,19 +173,19 @@ By default, C<readdir> returns a list with all directory entries found.
 
 =head2 scalar context
 
-In scalar context, C<readdir> returns one directory entry at a time.  Add the
-C<:scalar> named variable to mimic this behaviour:
+In scalar context, C<readdir> returns one directory entry at a time.  Add
+C<Scalar> as the first positional variable to mimic this behaviour:
 
-    while readdir($dh, :scalar) -> $entry {
+    while readdir(Scalar, $dh, :scalar) -> $entry {
         say "found $entry";
     }
 
 =head2 void context
 
 In void context, C<readdir> stores one directory entry at a time in C<$_>.
-Add the C<:void> named variable to mimic this behaviour:
+Add C<Mu> as the first positional variable to mimic this behaviour:
 
-    .say while readdir($dh, :void);
+    .say while readdir(Mu, $dh, :void);
 
 =head1 AUTHOR
 
@@ -186,7 +196,7 @@ Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

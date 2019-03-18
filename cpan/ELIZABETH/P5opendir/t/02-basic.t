@@ -1,6 +1,7 @@
 use v6.c;
 use Test;
 use P5opendir;
+%*ENV<RAKUDO_NO_DEPRECATIONS> = True;
 
 plan 15;
 
@@ -12,7 +13,8 @@ is telldir($handle), 0, 'did the telldir work';
 is ~$handle, $dir, 'does it stringify correctly';
 
 my @files;
-@files.push(readdir($handle, :scalar)) for ^4;
+@files.push(readdir(Scalar, $handle)) for ^2;
+@files.push(readdir($handle, :scalar)) for ^2;
 is readdir($handle, :scalar), Nil, 'end reached';
 
 my $expected = '. .. 01-basic.t 02-basic.t';
@@ -25,7 +27,7 @@ is @entries.sort, $expected, 'did we get all entries';
 
 ok seekdir($handle,0), 'did the seekdir work';
 @entries = ();
-@entries.push($_) while readdir($handle, :void);
+@entries.push($_) while readdir(Mu, $handle);
 is @entries.sort, $expected, 'did we get all entries';
 
 ok rewinddir($handle), 'did the rewinddir work';
