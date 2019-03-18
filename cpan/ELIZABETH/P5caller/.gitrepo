@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/P5caller.git
 	branch = master
-	commit = 5b19acfbf0624b692acf2a525a985e182d6ade9d
-	parent = b964e861513a632f2a51c23a3a3da5047ff235b5
+	commit = 48db5a2b961a06239c1ffa5a1f94c35b9953378f
+	parent = a04c4eab444828991689cdd952ddcc78fcec9b70
 	cmdver = 0.3.1

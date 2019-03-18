@@ -2,6 +2,10 @@ Revision history for P5caller
 
 {{$NEXT}}
 
+0.0.6  2019-03-17T15:44:51+01:00
+    - Deprecate :scalar in favour of Scalar as first positional
+    - Update copyright year
+
 0.0.5  2018-05-20T00:15:17+02:00
     - add original Perl 5 documentation
     - slight tweak in the return logic

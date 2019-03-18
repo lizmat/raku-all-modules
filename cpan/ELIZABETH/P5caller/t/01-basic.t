@@ -1,8 +1,9 @@
 use v6.c;
 use Test;
 use P5caller;
+%*ENV<RAKUDO_NO_DEPRECATIONS> = True;
 
-plan 13;
+plan 14;
 
 ok defined(::('&caller')),          'is &caller imported?';
 ok !defined(P5caller::{'&caller'}), 'is &caller externally NOT accessible?';
@@ -19,6 +20,11 @@ sub bar {
     }
 }
 foo();
+
+sub BAZ() {
+    is caller(Scalar), 'GLOBAL', 'did we get the right package name';
+}
+BAZ();
 
 sub baz() {
     is caller(:scalar), 'GLOBAL', 'did we get the right package name';

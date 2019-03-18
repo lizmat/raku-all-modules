@@ -1,12 +1,24 @@
 use v6.c;
 
-unit module P5caller:ver<0.0.5>:auth<cpan:ELIZABETH>;
+unit module P5caller:ver<0.0.6>:auth<cpan:ELIZABETH>;
 
 proto sub caller(|) is export {*}
-multi sub caller(:$scalar              ) { backtrace(1, :$scalar)     }
-multi sub caller(Int() $down, :$scalar ) { backtrace($down, :$scalar) }
+multi sub caller(Scalar:U) { backtrace(1, True)     }
+multi sub caller(:$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    backtrace(1, True)
+}
+multi sub caller() { backtrace(1) }
+multi sub caller(Scalar:U, Int() $down) { backtrace($down, True) }
+multi sub caller(Int() $down, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    backtrace($down, True)
+}
+multi sub caller(Int() $down) { backtrace($down) }
 
-my sub backtrace($down is copy, :$scalar) {
+my sub backtrace($down is copy, $scalar?) {
     $down += 3;  # offset heuristic
     my $backtrace := Backtrace.new;
     my $index = 0;
@@ -137,7 +149,7 @@ Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 
