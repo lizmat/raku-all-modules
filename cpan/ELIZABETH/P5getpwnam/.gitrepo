@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/P5getpwnam.git
 	branch = master
-	commit = 8c0360e6054971b1308b7e722ba5f8b6aeb239ad
-	parent = 9ec5d024f03f22393275e2086012a13840b7794d
+	commit = 640c89571e2200d9b5d4b1535f662854707e0236
+	parent = da5f94bc1c71f4bfbaf953dde286130c4e1c8583
 	cmdver = 0.3.1

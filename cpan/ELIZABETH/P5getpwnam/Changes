@@ -2,6 +2,10 @@ Revision history for P5getpwnam
 
 {{$NEXT}}
 
+0.0.5  2019-03-17T21:40:27+01:00
+    - Deprecate :scalar in favour of Scalar as first positional
+    - Update copyright year
+
 0.0.4  2018-05-20T13:41:53+02:00
     - Added original Perl 5 documentation
 

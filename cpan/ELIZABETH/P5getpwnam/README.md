@@ -99,7 +99,7 @@ Source can be located at: https://github.com/lizmat/P5getpwnam . Comments and Pu
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 
