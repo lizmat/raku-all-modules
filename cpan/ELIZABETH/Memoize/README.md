@@ -30,7 +30,7 @@ Because pads / stashes are immutable at runtime and the way code can be wrapped 
 
 The CACHE\<MULTI> is a special version of CACHE\<MEMORY> that installs a thread-safe in memory storage, which is slower because of the required locking.
 
-Since Perl 6 does not have the concept of `scalar` versus `list` context, only one type of cache is used internally, as opposed to two different ones as in Perl 5. Many functions / modules of the CPAN Butterfly Plan accept a `:scalar` parameter to indicate the scalar context version of the called function is requested. Since this is a parameter like any other, it will be used to distinguish scalar vs list meaning by the default normalizer.
+Since Perl 6 does not have the concept of `scalar` versus `list` context, only one type of cache is used internally, as opposed to two different ones as in Perl 5. Many functions / modules of the CPAN Butterfly Plan accept a `Scalar` as the first positional parameter to indicate the scalar context version of the called function is requested. Since this is a parameter like any other, it will be used to distinguish scalar vs list meaning by the default normalizer.
 
 Therefore there are no separate `:SCALAR_CACHE` and `:LIST_CACHE` named parameters necessary anymore: instead a single `:CACHE` parameter is recognized, that only accepts either `'MEMORY'`, `'MULTI'` or an object that does the `Associative` role as a parameter (as there is no need for the `'FAULT'` and `'MERGE'` values anymore).
 
@@ -330,7 +330,7 @@ Source can be located at: https://github.com/lizmat/Memoize . Comments and Pull 
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

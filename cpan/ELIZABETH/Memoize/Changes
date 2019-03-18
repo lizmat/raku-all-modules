@@ -2,6 +2,10 @@ Revision history for Memoize
 
 {{$NEXT}}
 
+0.0.4  2019-03-17T22:59:52+01:00
+    - Update PORTING CAVEATS wrt use of Scalar to indicate scalar context
+    - Update copyright year
+
 0.0.3  2018-05-31T12:03:14+02:00
     - Some more pod fixes
 

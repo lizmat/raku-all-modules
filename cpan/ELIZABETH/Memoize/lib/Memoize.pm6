@@ -1,6 +1,6 @@
 use v6.c;
 
-module Memoize:ver<0.0.3>:auth<cpan:ELIZABETH> {
+module Memoize:ver<0.0.4>:auth<cpan:ELIZABETH> {
 
     # Role to be mixed in with given Callables.  Keeps the unwrap handle
     # available for unmemoizing.
@@ -167,9 +167,10 @@ locking.
 Since Perl 6 does not have the concept of C<scalar> versus C<list> context,
 only one type of cache is used internally, as opposed to two different ones
 as in Perl 5.  Many functions / modules of the CPAN Butterfly Plan accept a
-C<:scalar> parameter to indicate the scalar context version of the called
-function is requested.  Since this is a parameter like any other, it will
-be used to distinguish scalar vs list meaning by the default normalizer.
+C<Scalar> as the first positional parameter to indicate the scalar context
+version of the called function is requested.  Since this is a parameter like
+any other, it will be used to distinguish scalar vs list meaning by the
+default normalizer.
 
 Therefore there are no separate C<:SCALAR_CACHE> and C<:LIST_CACHE> named
 parameters necessary anymore: instead a single C<:CACHE> parameter is
@@ -595,7 +596,7 @@ Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

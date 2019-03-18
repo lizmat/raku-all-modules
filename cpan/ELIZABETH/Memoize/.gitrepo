@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/Memoize.git
 	branch = master
-	commit = 52f999b1baa7ff246aa90513b9587d42fc253e67
-	parent = 86f8cd17fd3202ace732b8fd95e36f135e8105e9
+	commit = 32b2e12537872bd29b827765929de507873678d7
+	parent = 15d4510b10868665f8d4d84efa3dd20bd5ab6572
 	cmdver = 0.3.1
