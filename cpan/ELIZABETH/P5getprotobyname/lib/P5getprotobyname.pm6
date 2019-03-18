@@ -1,6 +1,6 @@
 use v6.c;
 
-unit module P5getprotobyname:ver<0.0.2>:auth<cpan:ELIZABETH>;
+unit module P5getprotobyname:ver<0.0.3>:auth<cpan:ELIZABETH>;
 
 use NativeCall;
 
@@ -24,45 +24,70 @@ my class ProtoStruct is repr<CStruct> {
         @members
     }
 
-    multi method result(ProtoStruct:U: :$scalar) {
-        $scalar ?? Nil !! ()
+    multi method scalar(ProtoStruct:U: --> Nil) { }
+    multi method scalar(ProtoStruct:D: :$proto) {
+        $proto ?? $.p_proto !! $.p_name
     }
-    multi method result(ProtoStruct:D: :$scalar, :$proto) {
-        $scalar
-          ?? $proto
-            ?? $.p_proto
-            !! $.p_name
-          !! ($.p_name,HLLizeCArrayStr($.p_aliases).join(" "),$.p_proto)
+
+    multi method list(ProtoStruct:U:) { () }
+    multi method list(ProtoStruct:D:) {
+        ($.p_name,HLLizeCArrayStr($.p_aliases).join(" "),$.p_proto)
     }
 }
 
-my sub getprotobyname(Str() $name, :$scalar) is export {
-    sub _getprotobyname(Str --> ProtoStruct)
-      is native is symbol<getprotobyname> {*}
-    _getprotobyname($name).result(:$scalar, :proto($scalar))
-}
+# actual NativeCall interfaces
+sub _getprotobyname(Str --> ProtoStruct)
+  is native is symbol<getprotobyname> {*}
+sub _getprotobynumber(int32 --> ProtoStruct)
+  is native is symbol<getprotobynumber> {*}
+sub _getprotoent(--> ProtoStruct) is native is symbol<getprotoent> {*}
+sub _setprotoent(int32) is native is symbol<setprotoent> {*}
+sub _endprotoent() is native is symbol<endprotoent> {*}
 
-my sub getprotobynumber(Int:D $proto, :$scalar) is export {
-    sub _getprotobynumber(int32 --> ProtoStruct)
-      is native is symbol<getprotobynumber> {*}
+# actual exported subs
+my proto sub getprotobyname(|) is export {*}
+multi sub getprotobyname(Scalar:U, Str() $name) {
+    _getprotobyname($name).scalar(:proto)
+}
+multi sub getprotobyname(Str() $name, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    _getprotobyname($name).scalar(:proto)
+}
+multi sub getprotobyname(Str() $name) { _getprotobyname($name).list }
+
+my proto sub getprotobynumber(|) is export {*}
+multi sub getprotobynumber(Scalar:U, Int:D $proto) {
     my int32 $nproto = $proto;
-    _getprotobynumber($nproto).result(:$scalar)
+    _getprotobynumber($nproto).scalar
+}
+multi sub getprotobynumber(Int:D $proto, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    my int32 $nproto = $proto;
+    _getprotobynumber($nproto).scalar
+}
+multi sub getprotobynumber(Int:D $proto) {
+    my int32 $nproto = $proto;
+    _getprotobynumber($nproto).list
 }
 
-my sub getprotoent(:$scalar) is export {
-    sub _getprotoent(--> ProtoStruct) is native is symbol<getprotoent> {*}
-    _getprotoent.result(:$scalar)
+my proto sub getprotoent(|) is export {*}
+multi sub getprotoent(Scalar:U) { _getprotoent.scalar }
+multi sub getprotoent(:$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    _getprotoent.scalar
 }
+multi sub getprotoent() { _getprotoent.list }
 
-my sub setprotoent($stayopen, :$scalar) is export {
-    sub _setprotoent(int32) is native is symbol<setprotoent> {*}
+my sub setprotoent($stayopen) is export {
     my int32 $nstayopen = ?$stayopen;
     _setprotoent($nstayopen);
     1;  # this is apparently what Perl 5 does, although not documented
 }
 
-my sub endprotoent(:$scalar) is export {
-    sub _endprotoent() is native is symbol<endprotoent> {*}
+my sub endprotoent() is export {
     _endprotoent;
     1;  # this is apparently what Perl 5 does, although not documented
 }
@@ -125,7 +150,7 @@ Comments and Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

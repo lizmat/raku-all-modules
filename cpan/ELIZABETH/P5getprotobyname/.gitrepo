@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/P5getprotobyname.git
 	branch = master
-	commit = 3808712ea36984b525536b174e36a382fc929fa0
-	parent = a61b0d0d95d601984bdef2305558d6d9603e4c41
+	commit = 0a4585bbace9bb77602c11348e0fd1a831f41709
+	parent = 5bb7d8185834ce7774b18f574be730d10032838a
 	cmdver = 0.3.1

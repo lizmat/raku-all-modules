@@ -2,6 +2,10 @@ Revision history for P5getprotobyname
 
 {{$NEXT}}
 
+0.0.3  2019-03-17T21:24:49+01:00
+    - Deprecate :scalar in favour of Scalar as first positional
+    - Update copyright year
+
 0.0.2  2018-05-20T13:29:08+02:00
     - Added original Perl 5 documentation
 
