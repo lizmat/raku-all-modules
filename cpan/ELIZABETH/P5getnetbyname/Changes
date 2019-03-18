@@ -2,6 +2,10 @@ Revision history for P5getnetbyname
 
 {{$NEXT}}
 
+0.0.4  2019-03-17T21:07:20+01:00
+    - Deprecate :scalar in favour of Scalar as first positional
+    - Update copyright year
+
 0.0.3  2018-05-23T15:39:24+02:00
     - Fix order of naming of first/second parameter with getnetbyaddr
 

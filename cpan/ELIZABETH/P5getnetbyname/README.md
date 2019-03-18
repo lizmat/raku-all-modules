@@ -11,7 +11,7 @@ SYNOPSIS
     use P5getnetbyname;
     # exports getnetbyname, getnetbyaddr, getnetent, setnetent, endnetent
 
-    say getnetbyaddr(127, 2, :scalar);   # something akin to loopback
+    say getnetbyaddr(Scalar, 127, 2);   # something akin to loopback
 
     my @result_byname = getnetbyname("loopback");
 
@@ -53,7 +53,7 @@ Source can be located at: https://github.com/lizmat/P5getnetbyname . Comments an
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

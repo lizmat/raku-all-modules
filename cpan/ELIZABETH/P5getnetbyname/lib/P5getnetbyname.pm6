@@ -1,6 +1,6 @@
 use v6.c;
 
-unit module P5getnetbyname:ver<0.0.3>:auth<cpan:ELIZABETH>;
+unit module P5getnetbyname:ver<0.0.4>:auth<cpan:ELIZABETH>;
 
 use NativeCall;
 
@@ -25,43 +25,67 @@ my class NetStruct is repr<CStruct> {
         @members
     }
 
-    multi method result(NetStruct:U: :$scalar) {
-        $scalar ?? Nil !! ()
-    }
-    multi method result(NetStruct:D: :$scalar) {
-        $scalar
-          ?? $.n_name
-          !! ($.n_name,HLLizeCArrayStr($.n_aliases),$.n_addrtype,$.n_net)
+    multi method scalar(NetStruct:U: --> Nil) { }
+    multi method scalar(NetStruct:D:) { $.n_name }
+
+    multi method list(NetStruct:U:) { () }
+    multi method list(NetStruct:D:) {
+        ($.n_name,HLLizeCArrayStr($.n_aliases),$.n_addrtype,$.n_net)
     }
 }
 
-my sub getnetbyname(Str() $name, :$scalar) is export {
-    sub _getnetbyname(Str --> NetStruct) is native is symbol<getnetbyname> {*}
-    _getnetbyname($name).result(:$scalar)
-}
+# actual NativeCall interfaces
+sub _getnetbyname(Str --> NetStruct) is native is symbol<getnetbyname> {*}
+sub _getnetbyaddr(int32, uint32 --> NetStruct) is native is symbol<getnetbyaddr> {*}
+sub _getnetent(--> NetStruct) is native is symbol<getnetent> {*}
+sub _setnetent(int32) is native is symbol<setnetent> {*}
+sub _endnetent() is native is symbol<endnetent> {*}
 
-my sub getnetbyaddr(Int:D $net, Int:D $addrtype, :$scalar) is export {
-    sub _getnetbyaddr(int32, uint32 --> NetStruct)
-      is native is symbol<getnetbyaddr> {*}
+# actual exported subs
+my proto sub getnetbyname(|) is export {*}
+multi sub getnetbyname(Scalar:U, Str() $name) { _getnetbyname($name).scalar }
+multi sub getnetbyname(Str() $name, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    _getnetbyname($name).scalar
+}
+multi sub getnetbyname(Str() $name) { _getnetbyname($name).list }
+
+my proto sub getnetbyaddr(|) is export {*}
+multi sub getnetbyaddr(Scalar:U, Int:D $net, Int:D $addrtype) {
     my uint32 $nnet = $net;
     my int32 $naddrtype = $addrtype;
-    _getnetbyaddr($nnet,$naddrtype).result(:$scalar)
+    _getnetbyaddr($nnet,$naddrtype).scalar
+}
+multi sub getnetbyaddr(Int:D $net, Int:D $addrtype, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    my uint32 $nnet = $net;
+    my int32 $naddrtype = $addrtype;
+    _getnetbyaddr($nnet,$naddrtype).scalar
+}
+multi sub getnetbyaddr(Int:D $net, Int:D $addrtype) {
+    my uint32 $nnet = $net;
+    my int32 $naddrtype = $addrtype;
+    _getnetbyaddr($nnet,$naddrtype).list
 }
 
-my sub getnetent(:$scalar) is export {
-    sub _getnetent(--> NetStruct) is native is symbol<getnetent> {*}
-    _getnetent().result(:$scalar)
+my proto sub getnetent(|) is export {*}
+multi sub getnetent(Scalar:U) { _getnetent().scalar }
+multi sub getnetent(:$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    _getnetent().scalar
 }
+multi sub getnetent() { _getnetent().list }
 
-my sub setnetent($stayopen, :$scalar) is export {
-    sub _setnetent(int32) is native is symbol<setnetent> {*}
+my sub setnetent($stayopen) is export {
     my int32 $nstayopen = ?$stayopen;
     _setnetent($nstayopen);
     1;  # this is apparently what Perl 5 does, although not documented
 }
 
-my sub endnetent(:$scalar) is export {
-    sub _endnetent() is native is symbol<endnetent> {*}
+my sub endnetent() is export {
     _endnetent;
     1;  # this is apparently what Perl 5 does, although not documented
 }
@@ -77,7 +101,7 @@ P5getnetbyname - Implement Perl 5's getnetbyname() and associated built-ins
     use P5getnetbyname;
     # exports getnetbyname, getnetbyaddr, getnetent, setnetent, endnetent
 
-    say getnetbyaddr(127, 2, :scalar);   # something akin to loopback
+    say getnetbyaddr(Scalar, 127, 2);   # something akin to loopback
 
     my @result_byname = getnetbyname("loopback");
 
@@ -117,7 +141,7 @@ and Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 
