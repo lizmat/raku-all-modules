@@ -2,6 +2,10 @@ Revision history for P5getservbyname
 
 {{$NEXT}}
 
+0.0.4  2019-03-17T22:11:24+01:00
+    - Deprecate :scalar in favour of Scalar as first positional
+    - Update copyright year
+
 0.0.3  2018-05-21T12:53:11+02:00
     - Adapt test for darwin weirdness
 

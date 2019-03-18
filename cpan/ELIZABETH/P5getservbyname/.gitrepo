@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/P5getservbyname.git
 	branch = master
-	commit = 84412cc360c3c64b92fe8929b1ddecb02e168cea
-	parent = 29414fc52834bb305be80f2868afec3403e8f553
+	commit = f6f82d986665ce6e0a18f8351f5e98442a469dda
+	parent = 83899144e0d0fe78da5ffdd7d0bd767d17b1f3ed
 	cmdver = 0.3.1

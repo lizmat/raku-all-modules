@@ -1,8 +1,10 @@
 use v6.c;
 
-unit module P5getservbyname:ver<0.0.3>:auth<cpan:ELIZABETH>;
+unit module P5getservbyname:ver<0.0.4>:auth<cpan:ELIZABETH>;
 
 use NativeCall;
+
+sub be2le16(uint32 $value) { ($value +> 8) +| (($value +& 0xff) +< 8) }
 
 my class ServStruct is repr<CStruct> {
     has Str         $.s_name;
@@ -25,50 +27,73 @@ my class ServStruct is repr<CStruct> {
         @members
     }
 
-    sub be2le16(uint32 $value) {  # feels hacky, but appears to do the trick
-        ($value +> 8) +| (($value +& 0xff) +< 8)
+    multi method scalar(ServStruct:U: --> Nil) { }
+    multi method scalar(ServStruct:D: :$port) {
+        $port ?? be2le16($.s_port) !! $.s_name
     }
 
-    multi method result(ServStruct:U: :$scalar) {
-        $scalar ?? Nil !! ()
-    }
-    multi method result(ServStruct:D: :$scalar, :$port) {
-        $scalar
-          ?? $port
-            ?? be2le16($.s_port)
-            !! $.s_name
-          !! ($.s_name,HLLizeCArrayStr($.s_aliases).join(" "),
-              be2le16($.s_port),$.s_proto)
+    multi method list(ServStruct:U:) { () }
+    multi method list(ServStruct:D:) {
+        ($.s_name,HLLizeCArrayStr($.s_aliases).join(" "),
+          be2le16($.s_port),$.s_proto)
     }
 }
 
-my sub getservbyname(Str() $name, Str() $proto, :$scalar) is export {
-    sub _getservbyname(Str, Str --> ServStruct)
-      is native is symbol<getservbyname> {*}
-    _getservbyname($name,$proto).result(:$scalar, :port($scalar))
+# actual NativeCall interfaces
+sub _getservbyname(Str, Str --> ServStruct)
+  is native is symbol<getservbyname> {*}
+sub _getservbyport(int32, Str --> ServStruct)
+  is native is symbol<getservbyport> {*}
+sub _getservent(--> ServStruct) is native is symbol<getservent> {*}
+sub _setservent(int32) is native is symbol<setservent> {*}
+sub _endservent() is native is symbol<endservent> {*}
+
+# actual exported subs
+my proto sub getservbyname(|) is export {*}
+multi sub getservbyname(Scalar:U, Str() $name, Str() $proto) {
+    _getservbyname($name,$proto).scalar(:port)
+}
+multi sub getservbyname(Str() $name, Str() $proto, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    _getservbyname($name,$proto).scalar(:port)
+}
+multi sub getservbyname(Str() $name, Str() $proto) {
+    _getservbyname($name,$proto).list
 }
 
-my sub getservbyport(Int:D $port, Str() $proto, :$scalar) is export {
-    sub _getservbyport(int32, Str --> ServStruct)
-      is native is symbol<getservbyport> {*}
-    my int32 $nport = ($port +> 8) +| (($port +& 0xff) +< 8);
-    _getservbyport($nport,$proto).result(:$scalar)
+my proto sub getservbyport(|) is export {*}
+multi sub getservbyport(Scalar:U, Int:D $port, Str() $proto) {
+    my int32 $nport = be2le16($port);
+    _getservbyport($nport,$proto).scalar
+}
+multi sub getservbyport(Int:D $port, Str() $proto, :$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    my int32 $nport = be2le16($port);
+    _getservbyport($nport,$proto).scalar
+}
+multi sub getservbyport(Int:D $port, Str() $proto) {
+    my int32 $nport = be2le16($port);
+    _getservbyport($nport,$proto).list
 }
 
-my sub getservent(:$scalar) is export {
-    sub _getservent(--> ServStruct) is native is symbol<getservent> {*}
-    _getservent.result(:$scalar)
+my proto sub getservent(|) is export {*}
+multi sub getservent(Scalar:U) { _getservent.scalar }
+multi sub getservent(:$scalar!)
+  is DEPRECATED('Scalar as first positional')
+{
+    _getservent.scalar
 }
+multi sub getservent() { _getservent.list }
 
-my sub setservent($stayopen, :$scalar) is export {
-    sub _setservent(int32) is native is symbol<setservent> {*}
+my sub setservent($stayopen) is export {
     my int32 $nstayopen = ?$stayopen;
     _setservent($nstayopen);
     1;  # this is apparently what Perl 5 does, although not documented
 }
 
-my sub endservent(:$scalar) is export {
-    sub _endservent() is native is symbol<endservent> {*}
+my sub endservent() is export {
     _endservent;
     1;  # this is apparently what Perl 5 does, although not documented
 }
@@ -84,7 +109,7 @@ P5getservbyname - Implement Perl 5's getservbyname() and associated built-ins
     use P5getservbyname;
     # exports getservbyname, getservbyport, getservent, setservent, endservent
 
-    say getservbyport(25, "tcp", :scalar);   # "smtp"
+    say getservbyport(Scalar, 25, "tcp");   # "smtp"
 
     my @result_byname = getservbyname("smtp");
 
@@ -126,7 +151,7 @@ and Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 

@@ -11,7 +11,7 @@ SYNOPSIS
     use P5getservbyname;
     # exports getservbyname, getservbyport, getservent, setservent, endservent
 
-    say getservbyport(25, "tcp", :scalar);   # "smtp"
+    say getservbyport(Scalar, 25, "tcp");   # "smtp"
 
     my @result_byname = getservbyname("smtp");
 
@@ -55,7 +55,7 @@ Source can be located at: https://github.com/lizmat/P5getservbyname . Comments a
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 
