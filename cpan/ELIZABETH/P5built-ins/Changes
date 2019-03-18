@@ -2,6 +2,10 @@ Revision history for P5built-ins
 
 {{$NEXT}}
 
+0.0.22  2019-03-17T23:45:04+01:00
+    - Tighten up dependencies for updated P5* modules
+    - Update copyright year
+
 0.0.21  2018-06-01T13:00:28+02:00
     - Added support for abs cos crypt exp int log sin sqrt
     - Replace dependency of P5rand by P5math

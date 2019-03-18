@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/P5built-ins.git
 	branch = master
-	commit = b9e8b552b2d886f5e71bb03057b7033f37f5d643
-	parent = e29ee17e2cd1ee05b07f4c7b88a38dc2cc35a4fd
+	commit = beaf9374318e08b29c42c539530953340d4b37d2
+	parent = fd32e693725e333106bdf83274ddcb15b1feedc8
 	cmdver = 0.3.1

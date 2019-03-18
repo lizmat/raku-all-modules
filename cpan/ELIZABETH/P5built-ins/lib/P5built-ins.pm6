@@ -1,30 +1,30 @@
 use v6.c;
 
 my %export;
-module P5built-ins:ver<0.0.21>:auth<cpan:ELIZABETH> {
+module P5built-ins:ver<0.0.22>:auth<cpan:ELIZABETH> {
     use P5__FILE__;
-    use P5caller;
+    use P5caller:ver<0.0.6>:auth<cpan:ELIZABETH>;
     use P5chdir;
     use P5chomp;
     use P5chr;
-    use P5each;
     use P5defined;
+    use P5each;
     use P5fc;
     use P5fileno;
-    use P5getgrnam;
-    use P5getnetbyname;
-    use P5getprotobyname;
-    use P5getpwnam;
+    use P5getgrnam:ver<0.0.6>:auth<cpan:ELIZABETH>;
+    use P5getnetbyname:ver<0.0.4>:auth<cpan:ELIZABETH>;
     use P5getpriority;
-    use P5getservbyname;
+    use P5getprotobyname:ver<0.0.3>:auth<cpan:ELIZABETH>;
+    use P5getpwnam:ver<0.0.5>:auth<cpan:ELIZABETH>;
+    use P5getservbyname:ver<0.0.4>:auth<cpan:ELIZABETH>;
     use P5hex;
     use P5index;
     use P5lc;
     use P5lcfirst;
     use P5length;
-    use P5localtime;
+    use P5localtime:ver<0.0.6>:auth<cpan:ELIZABETH>;
     use P5math;
-    use P5opendir;
+    use P5opendir:ver<0.0.4>:auth<cpan:ELIZABETH>;
     use P5pack;
     use P5print;
     use P5push;
@@ -39,7 +39,7 @@ module P5built-ins:ver<0.0.21>:auth<cpan:ELIZABETH> {
     use P5study;
     use P5substr;
     use P5tie;
-    use P5times;
+    use P5times:ver<0.0.6>:auth<cpan:ELIZABETH>;
     use P5-X;
 
     # there must be a better way to do this, but this will work for now
@@ -132,7 +132,7 @@ Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018-2019 Elizabeth Mattijsen
 
 Re-imagined from Perl 5 as part of the CPAN Butterfly Plan.
 
