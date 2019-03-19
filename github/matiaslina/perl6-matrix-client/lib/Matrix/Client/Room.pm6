@@ -25,9 +25,30 @@ method !get-name() {
     $!name = $data<name>;
 }
 
-method name() {
-    unless $!name.so { self!get-name() }
+method joined-members {
+    my %data = from-json($.get("/joined_members").content);
+    %data<joined>
+}
+
+method name {
+    self!get-name;
+
     $!name
+}
+
+method fallback-name(--> Str) {
+    my @members = $.joined-members.kv.map(
+        -> $k, %v {
+            %v<display_name> // $k
+        }
+    );
+
+    $!name = do given @members.elems {
+        when 1 { @members.first }
+        when 2 { @members[0] ~ " and " ~ @members[1] }
+        when * > 2 { @members.first ~ " and {@members.elems - 1} others" }
+        default { "Empty room" }
+    };
 }
 
 method messages() {
@@ -66,7 +87,6 @@ method send-state(Str:D $event-type, :$state-key = "", *%args --> Str) {
     );
     from-json($res.content)<event_id>
 }
-
 
 method leave() {
     $.post('/leave')
