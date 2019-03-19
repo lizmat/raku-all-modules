@@ -218,6 +218,56 @@ method register-signal (
   --> Bool
 ) {
 
+#note $handler-object.^methods;
+#note "register $handler-object $handler-name ($handler-type), options: ", %user-options;
+
+  return False unless ?$handler-object && $handler-type ~~ any(<wd wwd wsd>);
+
+
+  my %options = :widget(self), |%user-options;
+  %options<target-widget-name> = $target-widget-name if $target-widget-name;
+
+  my Callable $handler;
+  if $handler-type eq 'wd' {
+    $handler = -> $w, $d {
+      $handler-object.?"$handler-name"( |%options, |%user-options);
+    }
+  }
+
+  elsif $handler-type eq 'wwd' {
+    $handler = -> $w1, $w2, $d {
+      $handler-object.?"$handler-name"(
+        :widget2($w2), |%options, |%user-options
+      );
+    }
+  }
+
+  else {
+    $handler = -> $w, $s, $d {
+      $handler-object.?"$handler-name"(
+        :string($s), |%options, |%user-options
+      );
+    }
+  }
+
+  $!g-signal .= new(:$!g-object);
+  $!g-signal."connect-object-$handler-type"(
+    $signal-name, $handler, OpaquePointer, $connect-flags
+  );
+
+  True
+}
+
+#`{{
+#-------------------------------------------------------------------------------
+method register-signal (
+  $handler-object, Str:D $handler-name, Str:D $signal-name,
+  Int :$connect-flags = 0, Str :$target-widget-name,
+  Str :$handler-type where * ~~ any(<wd wwd wsd>) = 'wd',
+  *%user-options
+  --> Bool
+) {
+
 #TODO use a hash to set all handler attributes in one go
 #note $handler-object.^methods;
 #note "register $handler-object $handler-name ($handler-type), options: ", %user-options;
@@ -291,3 +341,4 @@ method register-signal (
 
   $registered-successful
 }
+}}
