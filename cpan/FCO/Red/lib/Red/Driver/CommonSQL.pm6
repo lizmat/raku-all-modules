@@ -119,12 +119,17 @@ multi method translate(Red::AST::Comment $_, $context?) {
 
 method comment-starter { "--" }
 
+multi method translate(Red::AST::Select $ast, 'where') {
+    my ( :$key, :$value ) = self.translate($ast);
+    '( ' ~ $key ~ ' )' => $value // [];
+}
+
 multi method translate(Red::AST::Select $ast, $context?) {
     my @bind;
     my $sel    = do given $ast.of {
         when Red::Model {
             my $class = $_;
-            .^columns.keys.map({
+            .^columns.map({
                 my ($s, @b) := do given self.translate: (.column but role :: { method class { $class } }), "select" { .key, .value }
                 @bind.push: |@b;
                 $s
@@ -319,6 +324,15 @@ multi method translate(Red::AST::Cast $_, $context?) {
     }
 }
 
+multi method translate(Red::AST::Value $_ where .type ~~ Red::AST::Select, $context? ) {
+    my ( :$key, :$value ) = self.translate(.value, $context );
+    '( ' ~ $key ~ ' )' => $value ;
+}
+
+multi method translate(Red::AST::Value $_ where .type ~~ Positional, $context?) {
+    '( ' ~ .get-value.map( -> $v { '?' } ).join(', ') ~ ' )' => .get-value;
+}
+
 multi method translate(Red::AST::Value $_ where .type.HOW ~~ Metamodel::EnumHOW, $context?) {
     self.translate: ast-value(.get-value.Str), $context
 }
@@ -471,11 +485,13 @@ multi method inflate(Num $value, Instant  :$to!) { $to.from-posix: $value }
 multi method inflate(Str $value, DateTime :$to!) { $to.new: $value }
 multi method inflate(Num $value, Duration :$to!) { $to.new: $value }
 multi method inflate(Int $value, Duration :$to!) { $to.new: $value }
+multi method inflate(Str $value, Version :$to!) { $to.new: $value }
 
 multi method deflate(Instant  $value) { +$value }
 multi method deflate(DateTime $value) { ~$value }
 multi method deflate(Duration $value) { +$value }
 multi method deflate(Duration $value) { +$value }
+multi method deflate(Version  $value) { ~$value }
 
 multi method deflate($value) { $value }
 

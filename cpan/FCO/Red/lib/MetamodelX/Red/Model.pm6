@@ -18,15 +18,18 @@ use Red::AST::TableComment;
 use Red::AST::LastInsertedRow;
 use MetamodelX::Red::Dirtable;
 use MetamodelX::Red::Comparate;
+use MetamodelX::Red::Migration;
 use MetamodelX::Red::Relationship;
 use X::Red::Exceptions;
+use Red::Phaser;
 
 unit class MetamodelX::Red::Model is Metamodel::ClassHOW;
 also does MetamodelX::Red::Dirtable;
 also does MetamodelX::Red::Comparate;
+#also does MetamodelX::Red::Migration;
 also does MetamodelX::Red::Relationship;
 
-has %!columns{Attribute};
+has Attribute @!columns;
 has Red::Column %!references;
 has %!attr-to-column;
 has $.rs-class;
@@ -34,7 +37,7 @@ has @!constraints;
 has $.table;
 has Bool $!temporary;
 
-method column-names(|) { %!columns.keys>>.column>>.name }
+method column-names(|) { @!columns>>.column>>.name }
 
 method constraints(|) { @!constraints.unique.classify: *.key, :as{ .value } }
 
@@ -45,11 +48,17 @@ method as(Mu \type) { self.table: type }
 method orig(Mu \type) { type.WHAT }
 method rs-class-name(Mu \type) { "{type.^name}::ResultSeq" }
 method columns(|) is rw {
-    %!columns
+    @!columns
+}
+
+method migration-hash(\model --> Hash()) {
+    columns => @!columns>>.column>>.migration-hash,
+    name    => model.^table,
+    version => model.^ver // v0,
 }
 
 method id(Mu \type) {
-    %!columns.keys.grep(*.column.id).list
+    @!columns.grep(*.column.id).list
 }
 
 method id-values(Red::Model:D $model) {
@@ -165,7 +174,7 @@ method alias(Red::Model:U \type, Str $name = "{type.^name}_{$alias_num++}") {
         method as(|)    { camel-to-snake-case $name }
         method orig(|)  { type }
     }
-    for %!columns.keys -> $col {
+    for @!columns -> $col {
         my $new-col = Attribute.new:
             :name($col.name),
             :package(alias),
@@ -185,8 +194,8 @@ method alias(Red::Model:U \type, Str $name = "{type.^name}_{$alias_num++}") {
 }
 
 method add-column(::T Red::Model:U \type, Red::Attr::Column $attr) {
-    if %!columns ∌ $attr {
-        %!columns ∪= $attr;
+    if @!columns ∌ $attr {
+        @!columns.push: $attr;
         my $name = $attr.column.attr-name;
         with $attr.column.references {
             self.add-reference: $name, $attr.column
@@ -233,28 +242,39 @@ multi method create-table(\model) {
         Red::AST::CreateTable.new:
             :name(model.^table),
             :temp(model.^temp),
-            :columns[|model.^columns.keys.map(*.column)],
+            :columns[|model.^columns.map(*.column)],
             :constraints[
-                |@!constraints.unique.grep(*.key eq "unique").map({
-                    Red::AST::Unique.new: :columns[|.value]
-                }),
-                |@!constraints.grep(*.key eq "pk").map: {
-                    Red::AST::Pk.new: :columns[|.value]
-                },
+                |@!constraints.unique.map: {
+                    when .key ~~ "unique" {
+                        Red::AST::Unique.new: :columns[|.value]
+                    }
+                    when .key ~~ "pk" {
+                        Red::AST::Pk.new: :columns[|.value]
+                    }
+                }
             ],
             |(:comment(Red::AST::TableComment.new: :msg(.Str), :table(model.^table)) with model.WHY);
     True
 }
 
-multi method save($obj, Bool :$insert! where * == True) {
+method apply-row-phasers($obj, Mu:U $phase ) {
+    for $obj.^methods.grep($phase) -> $meth {
+        $obj.$meth();
+    }
+}
+multi method save($obj, Bool :$insert! where * == True, Bool :$from-create ) {
+    self.apply-row-phasers($obj, BeforeCreate) unless $from-create;
     my $ret := $*RED-DB.execute: Red::AST::Insert.new: $obj;
     $obj.^clean-up;
+    self.apply-row-phasers($obj, AfterCreate) unless $from-create;
     $ret
 }
 
 multi method save($obj, Bool :$update! where * == True) {
+    self.apply-row-phasers($obj, BeforeUpdate);
     my $ret := $*RED-DB.execute: Red::AST::Update.new: $obj;
     $obj.^clean-up;
+    self.apply-row-phasers($obj, AfterUpdate);
     $ret
 }
 
@@ -268,22 +288,44 @@ multi method save($obj) {
 
 method create(\model, |pars) {
     my %relationships := set %.relationships.keys>>.name>>.substr: 2;
-    my %pars = |pars.kv.map: -> $name, $val {
-        $name => %relationships{ $name } && $val !~~ model."$name"() ?? model."$name"().^create: |$val !! $val
+
+    my %pars;
+    my %positionals;
+    for pars.kv -> $name, $val {
+        my \attr-type = model.^attributes.first(*.name.substr(2) eq $name).type;
+        if %relationships{ $name } {
+            if $val ~~ Positional && attr-type ~~ Positional {
+                %positionals{$name} = $val
+            } elsif $val !~~ attr-type {
+                %pars{$name} = model."$name"().^create: |$val
+            } else {
+                %pars{$name} = $val
+            }
+        } else {
+            %pars{$name} = $val
+        }
     }
     my $obj = model.new: |%pars;
-    my $data := $obj.^save(:insert).row;
+    self.apply-row-phasers($obj, BeforeCreate);
+    my $data := $obj.^save(:insert, :from-create).row;
     if model.^id.elems and $data.defined and not $data.elems {
         $obj = model.new: |$*RED-DB.execute(Red::AST::LastInsertedRow.new: model).row
     } else {
         $obj = model.new: |$data
     }
     $obj.^clean-up;
+    for %positionals.kv -> $name, @val {
+        say $obj.^attributes.first(*.name.substr(2) eq "columns").get_value: $obj for @val;
+        $obj."$name"().create: |$_ for @val
+    }
+    self.apply-row-phasers($obj, AfterCreate);
     $obj
 }
 
 method delete(\model) {
-    $*RED-DB. execute: Red::AST::Delete.new: model
+    self.apply-row-phasers(model, BeforeDelete);
+    $*RED-DB. execute: Red::AST::Delete.new: model ;
+    self.apply-row-phasers(model, AfterDelete);
 }
 
 method load(Red::Model:U \model, |ids) {
