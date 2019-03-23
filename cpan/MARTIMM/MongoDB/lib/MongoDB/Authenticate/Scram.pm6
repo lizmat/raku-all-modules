@@ -9,7 +9,7 @@ use OpenSSL::Digest;
 #-------------------------------------------------------------------------------
 unit package MongoDB:auth<github:MARTIMM>;
 
-#-----------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # Class definition to do authentication with
 class Authenticate::Scram {
 
@@ -98,9 +98,12 @@ class Authenticate::Scram {
     }
   }
 
+#`{{
   #-----------------------------------------------------------------------------
   method error ( Str:D $message --> Str ) {
 
     error-message($message);
+    ''
   }
+}}
 }

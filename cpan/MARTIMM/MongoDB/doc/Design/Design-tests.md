@@ -4,55 +4,109 @@
 
 # Designing test cases
 
-This project contains a lot of different parts to focus on. Examples are Uri testing, reading, writing, server states, client topology, behavior of separate classes and the behavior as a whole. However, not all functions should be tested when a user is installing this software. This is because for example, several tests are designed to follow server behavior when shutting down or starting up while also reading or writing to that same server, amongst other things. Some of the edge cases might fail caused by race conditions. These cases might never be encountered under normal use and therefore not necessary to test while installing.
+This project contains a lot of different parts to focus on. Examples are Uri testing, reading, writing, server states, client topology, behavior of separate classes and the behavior as a whole.
+
+However, not all functions should be tested when a user is installing this software. This is because for example, several tests are designed to follow server behavior when shutting down or starting up while also reading or writing to that same server, amongst other things. Some of the edge cases might fail caused by race conditions. These cases might never be encountered under normal use and therefore not necessary to test while installing.
+
+The tests done on the user system are always as simple as possible with only one server setup. On the test servers the are always four servers. One for the simple cases, two for standalone combinations, three to test replica sets and four to test arbiters and sharding.
+
+
+## Test locations
+
+I've three test situations to my availability for which I get proper feedback.
+
+1) My developer system (a RedHat Fedora linux system on a 4 core with 8 threads)
+2) Travis-CI (an Ubuntu linux)
+3) Appveyor (a windows system)
+
+
+## Test servers
+
+I want to test the software against two server versions which are the minimum and maximum version of a server range I want to test. E.g. 3.6.9 and 4.0.5.
+
+* On test locations 2 and 3 above, both versions are tested because there is plenty of time to test. Also a broad spectrum of tests is tried. However, only the the installation tests are required to be successful and others may fail. The server version are downloaded in specific directories and used from there.
+* On the developer system I can choose whatever version I want to test and which tests.
+* The installation tests on the user system must be minimized to test only one server version and a minimum test set. The server executable will be provided in the resources of the package and taken from a downloaded archive to save space. Test against oldest server in the supported range.
+
 
 ## What to test
 
 There are several types of tests according to the wikipedia article [software testing][stest]. Here are some types of tests to say something about;
-* **Installation test:** _To assure that the system is installed correctly and working at actual customer's hardware_. This project has a set of day to day tests which are excecuted on the developer system (a RedHat Fedora linux system on a 4 core with 8 threads), Travis-CI (an Ubuntu linux) and Appveyor (a windows system) and of course the users system where it will be installed.
 
-* **Compatibility testing**. Compatibility with older perl6 version is not done because the language is still evolving very fast. Also this driver software is still not finished and therefore not compatible with older versions. This will happen after version 1.0.0. The mongodb servers are tested against the 2.6.* (and higher) and 3.* series of servers.
+1) **Installation test:** _To assure that the system is installed correctly and working at actual customer's hardware_. This part is mainly the task of the **Perl6** installation manager **zef**. It will download the software from a repository and if done, starts testing. When successful the software is installed at the proper locations. On the test servers **zef** is instructed to behave a bit differently so more tests can run and with different **MongoDB** servers.
 
-* **Smoke and sanity testing**. The installation tests serve this purpose.
+2) **Compatibility testing**.
 
-* **Functional testing**. Execution of all available tests.
+3) **Smoke and sanity testing**. The tests are started by the perl6 installation manager **zef**.
 
-* **Destructive testing**. There are tests to test exceptions when parts fail.
+4) **Functional testing**. Execution of all available tests.
 
-* **Software performance testing**. These are benchmark programs of parts of the system to be compared with later tests. This is not a part of the tests to install or tests on the Travis-CI and AppVeyor systems.
+5) **Destructive testing**. There are tests to test exceptions when parts fail.
 
-* **Security testing**. Sometime later there might come some tests to see if the driver is hackable. At this moment I'm quite a noob in this. The International Organization for Standardization (ISO) defines this as: _type of testing conducted to evaluate the degree to which a test item, and associated data and information, are protected so that unauthorised persons or systems cannot use, read or modify them, and authorized persons or systems are not denied access to them._
+6) **Software performance testing**. These are benchmark programs of parts of the system to be compared with later tests. This is not a part of the tests to install or tests on the Travis-CI and AppVeyor systems.
 
-### Normal day to day tests
+7) **Security testing**. Sometime later there might come some tests to see if the driver is hackable. At this moment I'm quite a noob in this. The International Organization for Standardization (ISO) defines this as: _type of testing conducted to evaluate the degree to which a test item, and associated data and information, are protected so that unauthorized persons or systems cannot use, read or modify them, and authorized persons or systems are not denied access to them._
+
+
+# Tests
+
+## Installation test
+* Installation on user system by **zef**. Only download on test servers.
+
+## Compatibility testing
+* Deprecation cycle tests on version of servers.
+* Tests of behavior of the software when newer mongodb servers are installed.
+
+## Smoke and sanity testing
 * Creating a database and collection.
 * Using method **find** from **MongoDB::Collection** to read.
 * Using method **run-command** from **MongoDB::Database** to read, write, update and delete etc.
 * Using method **run-command** to get information.
 
-* Simple class tests of classes not (too much) depending on each other like Uri, Logging etc.
+
 * Simple operations tests like create database and collection, read and write documents, substitutions, deletes and drop collections or databases.
 * More complex operations such as index juggling, mapping and information gathering.
 
-### Behavior and stress tests
-* **MongoDB::Client** and **MongoDB::Server** as well as **MongoDB::Monitor** behavior accessing mongodb servers when a URI is provided.
-* Driver behavior when a server goes down, starts up or changes state.
-* Topology and server states a driver can be in. These are held in the **MongoDB::Client** and **MongoDB::Server** objects.
-* Behavior tests are done against servers of different versions.
+## Functional testing
+* Basic tests
+  * MongoDB::URI
+  * MongoDB::Log
+* Behavior and stress tests
+  * MongoDB::Client and MongoDB::Server as well as MongoDB::Monitor behavior accessing mongodb servers when a URI is provided.
+  * Driver behavior when a server goes down, starts up or changes state.
+  * Topology and server states a driver can be in. These are held in the MongoDB::Client and MongoDB::Server objects.
+  * Behavior tests are done against servers of different versions.
+    * Server combinations
+      * Standalone
+      * Replica server tests.
+      * Sharding using mongos server.
+      * Accessing other server types such as arbiter.
+* All other tests
 
-### Other tests
-* Independent class tests like on Uri and logging.
+## Destructive testing
+* Test exceptions when no servers are found or are down
+* Test exceptions when server topology is wrong
+
+## Software performance testing
+This greatly depends where the servers are for the user but for these tests they are on the same system.
+* Tests how fast a MongoDB::Client object can connect
+  * Standalone server
+  * Replica server set
+  * Shard server
+* Tests how fast small and large documents are processed
+
+## Security testing
+* Secure server connection tests
 * Accounting tests.
 * Authentication tests.
-* Replica server tests.
-* Sharding using mongos server.
-* Accessing other server types such as arbiter.
+
 
 # Test setup
 ## The sandbox
 A sandbox is created to run the tests. Its purpose is to install servers there so the tests do not have to run on existing user servers. This makes it also possible to run commands which involve shutting down a server or starting it again. Also, creating a replica set will be possible. All kind of things you don't want to happen on your server.
 
 ## When and where to test
-The day to day tests are the tests placed in directory **./t**. The other tests are found in directories **./xt**. A wrapper is made to run the tests and return the results. It has the option to return success even when some tests had failed.
+The day to day tests are the tests placed in directory **./t**. The other tests are found in directories **./xt**. A wrapper is made to run the tests on the test servers and return the results. It has the option to return success even when some tests had failed.
 
 ### User install from ecosystem
 * Only day to day tests are done.
@@ -82,7 +136,7 @@ For the moment it is not yet possible for me to get the tests running...
 
 Test server table. In this table, the key name is saying something about the server used in the tests. This key is mentioned below in the test explanations below. There are also key combinations such as s1/authenticate which means that the particular server is started with additional options, in this case authentication is turned on.
 
-| Config key | Server version | Server type |
+| server key | Server version | Server type |
 |------------|----------------|-------------|
 | s1 | 3.* | mongod |
 
