@@ -1,0 +1,28 @@
+{
+  "name"        : "DB::Xoos",
+  "version"     : "0.0.13",
+  "perl"        : "6",
+  "description" : "An ORM, with support.",
+  "auth"        : "github:tony-o",
+  "authors"     : [ "Tony O'Dell" ],
+  "depends"     : ["DB"],
+  "test-depends": ["DB::SQLite", "DBIish"],
+  "license"     : "Artistic-2.0",
+  "provides"    : {
+    "DB::Xoos": "lib/DB/Xoos.pm6",
+    "DB::Xoos::DSN": "lib/DB/Xoos/DSN.pm6",
+    "DB::Xoos::Model": "lib/DB/Xoos/Model.pm6",
+    "DB::Xoos::MySQL": "lib/DB/Xoos/MySQL.pm6",
+    "DB::Xoos::MySQL::Searchable": "lib/DB/Xoos/MySQL/Searchable.pm6",
+    "DB::Xoos::Oracle": "lib/DB/Xoos/Oracle.pm6",
+    "DB::Xoos::Oracle::Searchable": "lib/DB/Xoos/Oracle/Searchable.pm6",
+    "DB::Xoos::Pg": "lib/DB/Xoos/Pg.pm6",
+    "DB::Xoos::Pg::Searchable": "lib/DB/Xoos/Pg/Searchable.pm6",
+    "DB::Xoos::Row": "lib/DB/Xoos/Row.pm6",
+    "DB::Xoos::SQLite": "lib/DB/Xoos/SQLite.pm6",
+    "DB::Xoos::SQLite::Searchable": "lib/DB/Xoos/SQLite/Searchable.pm6",
+    "DB::Xoos::Searchable": "lib/DB/Xoos/Searchable.pm6"
+  },
+  "tags": [ "ORM", "DB", "database", "model", "relational", "object", "relationship", "mapping"],
+  "source-url"  : "git://github.com/tony-o/perl6-xoo.git"
+} 

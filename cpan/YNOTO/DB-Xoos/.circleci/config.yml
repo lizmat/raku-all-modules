@@ -1,0 +1,23 @@
+defaults:
+  steps:
+    - checkout
+    - run: tagged_release
+version: 2
+jobs:
+  build:
+    docker:
+      - image: tonyodell/rakudo-nightly:latest
+    
+    working_directory: ~
+
+    steps:
+      - checkout
+      - run: 
+          name: install build deps
+          command: |
+              apt install -y libsqlite3-dev
+              zef install --deps-only .
+      - run:
+          name: test 
+          command: |
+              zef test .
