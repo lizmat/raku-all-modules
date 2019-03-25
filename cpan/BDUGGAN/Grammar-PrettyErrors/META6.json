@@ -1,0 +1,22 @@
+{
+    "name" : "Grammar::PrettyErrors",
+    "source-url" : "git://github.com/bduggan/p6-grammar-prettyerrors.git",
+    "perl" : "6.*",
+    "build-depends" : [ ],
+    "provides" : {
+        "Grammar::PrettyErrors" : "lib/Grammar/PrettyErrors.pm6"
+    },
+    "tags" : [
+            "parsing"
+        ],
+    "depends" : [
+      "Terminal::ANSIColor"
+    ],
+    "description" : "Generate pretty errors when your parse fails",
+    "test-depends" : [ ],
+    "version" : "0.0.1",
+    "license" : "Artistic-2.0",
+    "authors" : [
+        "Brian Duggan"
+    ]
+}

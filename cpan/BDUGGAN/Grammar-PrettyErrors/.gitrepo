@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bduggan/p6-grammar-prettyerrors.git
+	branch = master
+	commit = 1cef82b9b5569ba957400c7bf5ac62d0bdc56391
+	parent = b7ca2e3fb5fcd377f65cc8ae8c11391e1037c9d3
+	cmdver = 0.3.1
