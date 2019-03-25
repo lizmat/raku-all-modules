@@ -38,11 +38,5 @@ EOH
 }
 
 do-the-test(); # Use default values
-nok( ($*TMPDIR ~ "/" ~ $Pod::Load::precomp-dir).IO.d, "Directory has been removed" );
-$Pod::Load::precomp-dir= "my-precomp-dir/";
-diag( "Changing default values" );
-do-the-test(); # Use these new values.
-nok( ($*TMPDIR ~ "/" ~ $Pod::Load::precomp-dir).IO.d, "Directory has been removed" );
-
 
 done-testing;

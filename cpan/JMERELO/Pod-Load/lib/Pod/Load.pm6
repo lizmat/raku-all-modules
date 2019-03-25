@@ -1,11 +1,11 @@
 use v6.c;
-unit module Pod::Load:ver<0.4.0>;
+unit module Pod::Load:ver<0.5.1>;
 
 =begin pod
 
 =head1 NAME
 
-Pod::Load - Loads and compiles the Pod documentation of an external file
+Pod::Load - Loads and compiles the Pod documentation from a string or file.
 
 =head1 SYNOPSIS
 
@@ -15,7 +15,7 @@ Pod::Load - Loads and compiles the Pod documentation of an external file
     my $pod = load("file-with.pod6".IO);
     say $pod.perl; # Process it as a Pod
 
-    # Or use simply the file name
+    # Or use simply the file name (it should exist)
     my @pod = load("file-with.pod6");
     say .perl for @pod;
 
@@ -27,42 +27,41 @@ Pod::Load - Loads and compiles the Pod documentation of an external file
 
     say load( $string-with-pod ).perl;
 
-You can also reconfigure the global variables. However, if you change one you'll have to change the whole thing. N<In the future, I might come up with a better way of doing this...>
-
-    $Pod::Load::tmp-dir= "/tmp/my-precomp-dir/";
-    $Pod::Load::precomp-store = CompUnit::PrecompilationStore::File.new(prefix => $Pod::Load::tmp-dir.IO);
-    $Pod::Load::precomp = CompUnit::PrecompilationRepository::Default.new(store => $Pod::Load::precomp-store);
-
 =head1 DESCRIPTION
 
-Pod::Load is a module with a simple task: obtain the documentation of an external file in a standard, straighworward way. Its mechanism is inspired by L<C<Pod::To::BigPage>|https://github.com/perl6/perl6-pod-to-bigpage>, from where the code to use the cache is taken from.
+Pod::Load is a module with a simple task:
+obtaining the documentation of an external file in a standard,
+straighworward way. Its mechanism (using EVAL) is inspired by
+L<C<Pod::To::BigPage>|https://github.com/perl6/perl6-pod-to-bigpage>.
 
+=head1 CAVEATS
+
+The pod is obtained from the file or string via EVAL. That means that
+it's going to run what is actually there. If you don't want that to
+happen, strip all runnable code from the string (or file) before
+submitting it to this module.
+              
 =head1 AUTHOR
 
 JJ Merelo <jjmerelo@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 JJ Merelo
+Copyright 2018,2019 JJ Merelo
 
-This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
+This library is free software; you can redistribute it and/or modify
+                               it under the Artistic License 2.0. 
 
 =end pod
 
-use nqp;
-
-use Temp::Path;
-
-our $precomp-dir is export = 'perl6-pod-load';
-$*TMPDIR.add($precomp-dir);
-my $compiler-id = CompUnit::PrecompilationId.new-without-check($*PERL.compiler.id);
+use MONKEY-SEE-NO-EVAL;
 
 #| Loads a string, returns a Pod.
 multi sub load ( Str $string ) is export {
-    with make-temp-path {
-        .spurt: $string;
-        return load( .IO );
-    }
+    my $module-name = "m{rand}";
+    $module-name ~~ s/\.//;
+    my @pod = (EVAL ("module $module-name \{\n" ~ $string ~ "\}\n\$=pod"));
+    return @pod;
 }
 
 #| If it's an actual filename, loads a file and returns the pod
@@ -70,15 +69,7 @@ multi sub load( Str $file where .IO.e ) {
     return load( $file.IO );
 }
 
-#| Loads a IO::Path, returns a Pod. Taken from pod2onepage
+#| Loads a IO::Path, returns a Pod. (Originally) from pod2onepage
 multi sub load ( IO::Path $io ) is export {
-    my $file = $io.path;
-    my $id = nqp::sha1(~$file);
-    my $precomp-store = CompUnit::PrecompilationStore::File.new(prefix => $*TMPDIR.IO);
-    my $precomp  = CompUnit::PrecompilationRepository::Default.new(store => $precomp-store);
-    $precomp.precompile($io, $id, :force);
-    my $handle = $precomp.load($id)[0] // fail("Could not precompile $file for $!");
-    $precomp-store.delete-by-compiler($compiler-id);
-    return nqp::atkey($handle.unit,'$=pod');
-
+    return load($io.slurp);
 }

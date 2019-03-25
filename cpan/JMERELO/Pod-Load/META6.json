@@ -3,9 +3,7 @@
     "JJ Merelo"
   ],
   "build-depends" : [ ],
-  "depends" : [
-    "Temp::Path"
-  ],
+  "depends" : [],
   "description" : "Loads and compiles the Pod documentation of an external file",
   "license" : "Artistic-2.0",
   "name" : "Pod::Load",
@@ -20,5 +18,5 @@
   "source-url" : "https://github.com/JJ/p6-pod-load.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.4.0"
+  "version" : "0.5.1"
 }

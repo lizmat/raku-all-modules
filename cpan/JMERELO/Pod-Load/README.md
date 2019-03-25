@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/JJ/p6-pod-load.svg?branch=master)](https://travis-ci.com/JJ/p6-pod-load)
+[![Build Status](https://travis-ci.com/JJ/p6-pod-load.svg?branch=master)](https://travis-ci.com/JJ/p6-pod-load) [![Build status](https://ci.appveyor.com/api/projects/status/lq9rqjq6hljdfqw4?svg=true)](https://ci.appveyor.com/project/JJ/p6-pod-load)
 
 NAME
 ====
@@ -24,7 +24,7 @@ This ordinary paragraph introduces a code block:
 
 EOH
 
-say load( $string-with-pod ).perl;
+    say load( $string-with-pod ).perl;
 
 You can also reconfigure the global variables. However, if you change one you'll have to change the whole thing. In the future, I might come up with a better way of doing this...
 
@@ -43,7 +43,7 @@ JJ Merelo <jjmerelo@gmail.com>
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018 JJ Merelo
+Copyright 2018, 2019 JJ Merelo
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
