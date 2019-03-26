@@ -8,6 +8,9 @@ class PrettyError {
   has $.target;
   has $!report;
   has Bool $.colors = True;
+  has $.line = 0;
+  has $.column = 0;
+  has $.lastrule;
 
   method !generate-report($msg) {
     my @msg;
@@ -17,7 +20,7 @@ class PrettyError {
       @msg.push: $msg;
       return @msg;
     }
-    my $line-no = $.parsed.lines.elems;
+    my $line-no = $!line = $.parsed.lines.elems;
     my @lines = $.target.lines;
     my $first = ( ($line-no - 3) max 0 );
     my @near = @lines[ $first.. (($line-no + 3) min @lines-1) ];
@@ -30,8 +33,9 @@ class PrettyError {
     for @near {
       $i++;
       if $i==$line-no {
+        $!column = $error-position - $chars-so-far;
         @msg.push: color('bold yellow') ~ $i.fmt("%3d") ~ " │▶" ~ "$_" ~ color('reset');
-        @msg.push: "     " ~ '^'.indent($error-position - $chars-so-far);
+        @msg.push: "     " ~ '^'.indent($!column);
       } else {
         @msg.push: color('green') ~ $i.fmt("%3d") ~ " │ " ~ color('reset') ~ $_;
         $chars-so-far += .chars;
@@ -39,13 +43,14 @@ class PrettyError {
       }
     }
     @msg.push: "";
-    @msg.push: "Uh oh, something went wrong around line $line-no.\n";
+    @msg.push: "Uh oh, something went wrong around line $line-no.";
     @msg.push: "Unable to parse $*LASTRULE." if $*LASTRULE;
+    $!lastrule = ~$*LASTRULE;
     return @msg;
   }
 
   method report($msg = '') {
-    $!report //= self!generate-report($msg).join("\n");
+    $!report //= self!generate-report($msg).join("\n") ~ "\n";
     $!report;
   }
 }
@@ -81,7 +86,8 @@ role Grammar::PrettyErrors {
       my $colors = so (self.defined and self.colors);
       my $error = PrettyError.new(:$parsed,:$target,:$colors);
       $!error = $error if self.defined;
-      say $error.report($msg) unless self.defined && self.quiet;
+      my $report = $error.report($msg);
+      say $report unless self.defined && self.quiet;
   }
 
   method parse( $target, |c) {

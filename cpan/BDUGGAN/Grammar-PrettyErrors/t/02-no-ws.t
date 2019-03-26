@@ -21,6 +21,7 @@ is $g.error.report, q:to/MSG/, "nice report";
            ^
 
     Uh oh, something went wrong around line 1.
+    Unable to parse TOP.
     MSG
 
 $*ERR.^find_method('print').wrap: -> |c { }

@@ -3,7 +3,7 @@
 use Grammar::PrettyErrors;
 
 use Test;
-plan 3;
+plan 5;
 
 grammar G does Grammar::PrettyErrors {
   rule TOP {
@@ -24,4 +24,7 @@ is $g.error.report, q:to/MSG/, "nice report";
            ^
 
     Uh oh, something went wrong around line 1.
+    Unable to parse TOP.
     MSG
+is $g.error.line, 1, 'right line number';
+is $g.error.column, 2, 'right column';

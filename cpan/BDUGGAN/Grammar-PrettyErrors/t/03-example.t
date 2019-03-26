@@ -38,8 +38,8 @@ is @got, ["--errors--\n\x[1B][1;33m" ~ qq:to/X/; ], 'got colorful errors';
                       ^
 
 Uh oh, something went wrong around line 1.
-
 Unable to parse subject.
+
 X
 
 #vim: set syntax perl6
