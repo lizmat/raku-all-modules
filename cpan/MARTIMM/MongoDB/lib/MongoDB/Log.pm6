@@ -5,7 +5,7 @@ use Log::Async;
 
 my $logger;
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 package MongoDB:auth<github:MARTIMM> {
 
   enum MdbLoglevels << :Trace(TRACE) :Debug(DEBUG) :Info(INFO)
@@ -14,18 +14,18 @@ package MongoDB:auth<github:MARTIMM> {
 
   enum SendSetup < LOGOUTPUT LOGLEVEL LOGCODE >;
 
-  #----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   class Log is Log::Async {
 
     has Hash $!send-to-setup;
 
-    #--------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     submethod BUILD ( ) {
 
       $!send-to-setup = {};
     }
 
-    #--------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # add or overwrite a channel
     method add-send-to (
       Str:D $key, MdbLoglevels :$min-level = Info, Code :$code, :$to, Str :$pipe
@@ -54,11 +54,10 @@ package MongoDB:auth<github:MARTIMM> {
       self!start-send-to;
     }
 
-    #--------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # modify a channel
     method modify-send-to (
-      Str $key, :$level, Code :$code,
-      Any :$to is copy, Str :$pipe
+      Str $key, :$level, Code :$code, Any :$to is copy, Str :$pipe
     ) {
 
       # this can happen in some race conditions
@@ -73,8 +72,9 @@ package MongoDB:auth<github:MARTIMM> {
       # prepare array to replace for new values
       my Array $psto = $!send-to-setup{$key} // [];
 
-      # check if I/O channel is other than stdout or stderr. If so, close them.
-      if ?$psto[LOGOUTPUT]
+      # if :to is specified, the value from $psto must be replaced.
+      # check if I/O channel is other than stdout or stderr, if so, close them.
+      if $to and ?$psto[LOGOUTPUT]
          and !($psto[LOGOUTPUT] === $*OUT)
          and !($psto[LOGOUTPUT] === $*ERR) {
         $psto[LOGOUTPUT].close;
@@ -88,7 +88,7 @@ package MongoDB:auth<github:MARTIMM> {
       self!start-send-to;
     }
 
-    #--------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # drop channel
     method drop-send-to ( Str:D $key ) {
 
@@ -107,7 +107,7 @@ package MongoDB:auth<github:MARTIMM> {
       self!start-send-to;
     }
 
-    #--------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # drop all channel
     method drop-all-send-to ( ) {
 
@@ -120,7 +120,7 @@ package MongoDB:auth<github:MARTIMM> {
       $!send-to-setup = {};
     }
 
-    #--------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # start channels
     method !start-send-to ( ) {
 
@@ -143,28 +143,32 @@ package MongoDB:auth<github:MARTIMM> {
       }
     }
 
-    #--------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # send-to method
     multi method send-to ( IO::Handle:D $fh, Code:D :$code!, |args ) {
 
       $logger.add-tap( -> $m { $m<fh> = $fh; $code($m); }, |args);
     }
 
-    #--------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # overload log method
     method log (
       Str:D :$msg, Loglevels:D :$level,
       DateTime :$when = DateTime.now.utc,
-      Code :$code
+      Code :$code, Str :$file is copy, Str :$line
     ) {
+
+      # file is sourcefile of caller, get basename and drop extension
+      $file = $file.IO.basename;
+      $file ~~ s/ \. <-[\.]>* $//;
 
       my Hash $m;
       if ? $code {
-        $m = $code( :$msg, :$level, :$when);
+        $m = $code( :$msg, :$level, :$when, :$file, :$line);
       }
 
       else {
-        $m = { :$msg, :$level, :$when };
+        $m = { :$msg, :$level, :$when, :$file, :$line };
       }
 
 #note "\n$m";
@@ -180,10 +184,10 @@ package MongoDB:auth<github:MARTIMM> {
   }
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 $logger = MongoDB::Log.new();
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 class X::MongoDB is Exception {
   has Str $.message;            # Error text and error code are data mostly
   has Str $.method;             # Method or routine name
@@ -191,7 +195,8 @@ class X::MongoDB is Exception {
   has Str $.file;               # File in which that happened
 }
 
-#------------------------------------------------------------------------------
+#`{{
+#-------------------------------------------------------------------------------
 # preparations of code to be provided to log()
 sub search-callframe ( $type --> CallFrame ) {
 
@@ -220,7 +225,8 @@ sub search-callframe ( $type --> CallFrame ) {
       last;
     }
 
-    if ?$cf and $type ~~ Sub
+#note "Code block: ", $cf.code;
+    if ?$cf and $type ~~ Sub and ?$cf.code
        and $cf.code.name ~~ m/[trace|debug|info|warn|error|fatal] '-message'/ {
 
       last;
@@ -233,18 +239,21 @@ sub search-callframe ( $type --> CallFrame ) {
 
   $cf
 }
+}}
 
-#------------------------------------------------------------------------------
+#`{{
+#-------------------------------------------------------------------------------
 # log code with stack frames
 my Code $log-code-cf = sub (
   Str:D :$msg, Any:D :$level,
-  DateTime :$when = DateTime.now.utc
+  DateTime :$when = DateTime.now.utc,
+  Str :$file is copy, Str :$line is copy
   --> Hash
 ) {
   my CallFrame $cf;
   my Str $method = '';        # method or routine name
-  my Int $line = 0;           # line number where Message is called
-  my Str $file = '';          # file in which that happened
+#  my Int $line = 0;           # line number where Message is called
+#  my Str $file = '';          # file in which that happened
 
   $cf = search-callframe(Method);
   $cf = search-callframe(Submethod)     unless $cf.defined;
@@ -252,7 +261,7 @@ my Code $log-code-cf = sub (
   $cf = search-callframe(Block)         unless $cf.defined;
 
   if $cf.defined {
-    $line = $cf.line.Int // 1;
+    $line = $cf.line // '1';
     $file = $cf.file // '';
     $file ~~ s/$*CWD/\./;
     $method = $cf.code.name // '';
@@ -264,17 +273,19 @@ my Code $log-code-cf = sub (
     :$msg, :$level, :$when,
   )
 }
+}}
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # log code without stack frames
 my Code $log-code = sub (
   Str:D :$msg, Any:D :$level,
-  DateTime :$when = DateTime.now.utc
+  DateTime :$when = DateTime.now.utc,
+  Str :$file, Str :$line
   --> Hash
 ) {
   my Str $method = '';        # method or routine name
-  my Int $line = 0;           # line number where Message is called
-  my Str $file = '';          # file in which that happened
+#  my Int $line = 0;           # line number where Message is called
+#  my Str $file = '';          # file in which that happened
 
   hash(
     :thid($*THREAD.id),
@@ -283,39 +294,63 @@ my Code $log-code = sub (
   )
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 sub trace-message ( Str $msg ) is export {
-  $logger.log( :$msg, :level(MongoDB::Trace), :code($log-code));
+  my $cf = callframe(1);
+  $logger.log(
+    :$msg, :level(MongoDB::Trace), :code($log-code),
+    :file($cf.file), :line($cf.line)
+  );
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 sub debug-message ( Str $msg ) is export {
-  $logger.log( :$msg, :level(MongoDB::Debug), :code($log-code));
+  my $cf = callframe(1);
+  $logger.log(
+    :$msg, :level(MongoDB::Debug), :code($log-code),
+    :file($cf.file), :line($cf.line)
+  );
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 sub info-message ( Str $msg ) is export {
-  $logger.log( :$msg, :level(MongoDB::Info), :code($log-code));
+  my $cf = callframe(1);
+  $logger.log(
+    :$msg, :level(MongoDB::Info), :code($log-code),
+    :file($cf.file), :line($cf.line)
+  );
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 sub warn-message ( Str $msg ) is export {
-  $logger.log( :$msg, :level(MongoDB::Warn), :code($log-code-cf));
+  my $cf = callframe(1);
+  $logger.log(
+    :$msg, :level(MongoDB::Warn), :code($log-code),
+    :file($cf.file), :line($cf.line)
+  );
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 sub error-message ( Str $msg ) is export {
-  $logger.log( :$msg, :level(MongoDB::Error), :code($log-code-cf));
+  my $cf = callframe(1);
+  $logger.log(
+    :$msg, :level(MongoDB::Error), :code($log-code),
+    :file($cf.file), :line($cf.line)
+  );
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 sub fatal-message ( Str $msg ) is export {
-  $logger.log( :$msg, :level(MongoDB::Fatal), :code($log-code-cf));
+  my $cf = callframe(1);
+  $logger.log(
+    :$msg, :level(MongoDB::Fatal), :code($log-code),
+    :file($cf.file), :line($cf.line)
+  );
   sleep 0.5;
   die X::MongoDB.new( :message($msg));
 }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # preparations of code to be provided to send-to()
 # loglevels enum counts from 1 so 0 has placeholder PH0
 my Array $sv-lvls = [< PH0 T D I W E F>];
@@ -331,8 +366,8 @@ my Array $clr-lvls = [
 
 my Code $code = sub ( $m ) {
   my Str $dt-str = $m<when>.Str;
-  $dt-str ~~ s:g/ <[T]> / /;
-  $dt-str ~~ s:g/ <[Z]> //;
+  $dt-str ~~ s/ <[T]> / /;
+  $dt-str ~~ s/ \d\d <[Z]> $ //;
 
   my IO::Handle $fh = $m<fh>;
   if $fh ~~ any( $*OUT, $*ERR) {
@@ -341,11 +376,9 @@ my Code $code = sub ( $m ) {
 
   $fh.print( (
       [~] $dt-str,
-      ' [' ~ $sv-lvls[$m<level>] ~ ']',
-      ? $m<thid> ?? " $m<thid>.fmt('%2d')" !! '',
+      " [$sv-lvls[$m<level>]]",
+      "[$m<file>:$m<line>][$m<thid>]",
       ? $m<msg> ?? ": $m<msg>" !! '',
-      ? $m<file> ?? ". At $m<file>" !! '',
-      ? $m<line> ?? ':' ~ $m<line> !! '',
       ? $m<method> ?? " in $m<method>" ~ ($m<method> eq '<unit>' ?? '' !! '()')
                    !! '',
     )
@@ -355,26 +388,30 @@ my Code $code = sub ( $m ) {
   $fh.print("\n");
 };
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 sub add-send-to ( |c ) is export { $logger.add-send-to( |c, :$code); }
 sub modify-send-to ( |c ) is export { $logger.modify-send-to( |c, :$code); }
 sub drop-send-to ( |c ) is export { $logger.drop-send-to(|c); }
 sub drop-all-send-to ( ) is export { $logger.drop-all-send-to(); }
 
-#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 # activate some channels. Display messages only on error and fatal to the screen
 # and all messages of type info, warning, error and fatal to a file MongoDB.log
 add-send-to( 'screen', :to($*ERR), :min-level(MongoDB::MdbLoglevels::Error));
+
 if $*KERNEL.name eq 'linux' {
+  my $handle = 'MongoDB.mlog'.IO.open( :mode<wo>, :create, :append);
+  #my $handle = open 'MongoDB.log', :w, :append;
   add-send-to(
     'mongodb',
-    :pipe('sort >> MongoDB.log'),
+#    :pipe('sort >> MongoDB.log'),
+    :to($handle),
     :min-level(MongoDB::MdbLoglevels::Info)
   );
 }
 
 else {
-  my $handle = 'MongoDB.log'.IO.open( :mode<wo>, :create, :append);
+  my $handle = 'MongoDB.mlog'.IO.open( :mode<wo>, :create, :append);
   add-send-to(
     'mongodb', :to($handle), :min-level(MongoDB::MdbLoglevels::Info)
   );

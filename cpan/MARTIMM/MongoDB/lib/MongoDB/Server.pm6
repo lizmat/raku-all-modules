@@ -32,11 +32,16 @@ class Server {
   has Semaphore::ReadersWriters $!rw-sem;
   has Tap $!server-tap;
 
+  # Need a server id to distinguish between servers with the same name. This
+  # id is then used to (un)register the server with the Monitor object which
+  # is a singleton object.
+  has Str $.server-id;
+
   #-----------------------------------------------------------------------------
-  submethod BUILD (
-    ClientType:D :$!client,
-    Str:D :$server-name
-  ) {
+  submethod BUILD ( ClientType:D :$!client, Str:D :$server-name ) {
+
+    $!server-id = (rand * 1e10).Int.Str;
+    $!server-is-registered = False;
 
     # server status is unsetled
     $!server-sts-data = { :status(SS-NotSet), :!is-master, :error('') };
@@ -48,7 +53,6 @@ class Server {
     );
 
     $!sockets = Array[MongoDB::Server::Socket].new;
-    $!server-is-registered = False;
 
     # Save name and port of the server. Servername and port are always
     # 'hostname:port' format, even when ipv6. The port number is always
@@ -63,51 +67,12 @@ class Server {
 
     # Start monitoring
     my MongoDB::Server::Monitor $m .= instance;
-    $m.set-heartbeat($!client.uri-obj.options<heartbeatFrequencyMS>);
-    $m.register-server(self);
+    $m.register-server( self, $!client.uri-obj.options<heartbeatFrequencyMS>);
     $!server-is-registered = True;
 
-    # no need to catch exceptions. all is trapped in Wire. with failures
-    # a type object is returned
-    # do a firsttime connect and set status data
-    trace-message("Server {self.name} makes first contact request");
-    my BSON::Document $doc = self.raw-query(
-      'admin.$cmd', BSON::Document.new((isMaster => 1)), :!authenticate
-#      , :first-phase
-    );
-
-    trace-message("First contact result: " ~ ($doc//'-').perl);
-
-#TODO in a sub: later we do the same!
-#note "\n$*THREAD.id(): {($doc//'-').perl}";
-    if $doc.defined {
-      my $mdoc = $doc<documents>[0];
-      if $mdoc<ok> == 1e0 {
-        my ServerStatus $server-status;
-        my Bool $is-master;
-        ( $server-status, $is-master) = self!process-status($mdoc);
-        $!server-sts-data = {
-          :status($server-status), :$is-master, :error(''),
-          :max-wire-version($mdoc<maxWireVersion>.Int),
-          :min-wire-version($mdoc<minWireVersion>.Int),
-          :weighted-mean-rtt-ms(0),
-        }
-      }
-
-      else {
-        $!server-sts-data<error> = $mdoc<errmsg> // 'no error message';
-        $!server-sts-data<is-master> = False;
-        $!server-sts-data<status> = SS-Unknown;
-      }
-    }
-
-    else {
-      $!server-sts-data<error> = 'Server did not respond';
-      $!server-sts-data<is-master> = False;
-      $!server-sts-data<status> = SS-Unknown;
-    }
-
-    $!client.process-topology;
+    $!server-sts-data<error> = 'no error message';
+    $!server-sts-data<is-master> = False;
+    $!server-sts-data<status> = SS-Unknown;
   }
 
   #-----------------------------------------------------------------------------
@@ -120,8 +85,7 @@ class Server {
 #note "\n$*THREAD.id() In server, data from Monitor: ", ($monitor-data // {}).perl;
 
         # See also https://github.com/mongodb/specifications/blob/master/source/server-discovery-and-monitoring/server-discovery-and-monitoring.rst#parsing-an-ismaster-response
-        if $monitor-data<server-name> eq self.name {
-#        try {
+        if $monitor-data<server-id> == $!server-id {
 
           my Bool $is-master = False;
           my ServerStatus $server-status = SS-Unknown;
@@ -135,29 +99,35 @@ class Server {
             # test mongod server defined field ok for state of returned document
             # this is since newer servers return info about servers going down
             if ?$mdata and $mdata<ok>:exists and $mdata<ok> == 1e0 {
-#note "MData: $monitor-data.perl()";
               ( $server-status, $is-master) = self!process-status($mdata);
 
-              $!rw-sem.writer( 's-status', {
-                  $!server-sts-data = {
-                    :status($server-status), :$is-master, :error(''),
-                    :max-wire-version($mdata<maxWireVersion>.Int),
-                    :min-wire-version($mdata<minWireVersion>.Int),
-                    :weighted-mean-rtt-ms($monitor-data<weighted-mean-rtt-ms>),
-                  }
-                } # writer block
-              ); # writer
             } # if $mdata<ok> == 1e0
 
             else {
+              $server-status = SS-Unknown;
+              $is-master = False;
+              $mdata<maxWireVersion> = 0;
+              $mdata<minWireVersion> = 0;
+
               if ?$mdata and $mdata<ok>:!exists {
-                warn-message("Missing field in doc {$mdata.perl}");
+                warn-message("missing field in doc {$mdata.perl}");
               }
 
               else {
-                warn-message("Unknown error: {($mdata // '-').perl}");
+                warn-message("unknown error: {($mdata // '-').perl}");
               }
             }
+
+            $!rw-sem.writer( 's-status', {
+                $!server-sts-data = {
+                  :status($server-status), :$is-master, :error(''),
+                  :max-wire-version($mdata<maxWireVersion>.Int),
+                  :min-wire-version($mdata<minWireVersion>.Int),
+                  :weighted-mean-rtt-ms($monitor-data<weighted-mean-rtt-ms>),
+                }
+              } # writer block
+            ); # writer
+
           } # if $monitor-data<ok>
 
           # Server did not respond or returned an error
@@ -180,7 +150,7 @@ class Server {
           } # else
 
           # Set the status with the new value
-          info-message("Server status of {self.name()} is $server-status");
+          info-message("server status of {self.name()} is $server-status");
 
           # Let the client find the topology using all found servers
           # in the same rhythm as the heartbeat loop of the monitor
@@ -246,7 +216,6 @@ class Server {
   #-----------------------------------------------------------------------------
   # Make a tap on the Supply. Use act() for this so we are sure that only this
   # code runs whithout any other parrallel threads.
-  #
   method tap-monitor ( |c --> Tap ) {
 
     MongoDB::Server::Monitor.instance.get-supply.tap(|c);
@@ -270,8 +239,6 @@ class Server {
     # Use return value to see if authentication is needed.
     my Bool $created-anew = False;
 
-#note "$*THREAD.id() Get sock, authenticate = $authenticate";
-
     # Get a free socket entry
     my MongoDB::Server::Socket $found-socket;
 
@@ -287,7 +254,7 @@ class Server {
 
       if $socket.check {
         $socket = MongoDB::Server::Socket;
-        trace-message("Socket cleared for {self.name}");
+        trace-message("socket cleared for {self.name}");
       }
     }
 
@@ -300,7 +267,7 @@ class Server {
          and $socket.server.name eq self.name {
 
         $found-socket = $socket;
-        trace-message("Socket found for {self.name}");
+        trace-message("socket found for {self.name}");
 
         last;
       }
@@ -316,7 +283,7 @@ class Server {
           $found-socket = $socket .= new(:server(self));
           $created-anew = True;
           $slot-found = True;
-          trace-message("New socket inserted for {self.name}");
+          trace-message("new socket inserted for {self.name}");
         }
       }
 
@@ -325,18 +292,12 @@ class Server {
         $found-socket .= new(:server(self));
         $created-anew = True;
         $!sockets.push($found-socket);
-        trace-message("New socket created for {self.name}");
+        trace-message("new socket created for {self.name}");
       }
     }
 
     $!rw-sem.writer( 's-select', {$!sockets = $skts;});
 
-#TODO (from sockets) Sockets must initiate a handshake procedure when socket is opened. Perhaps
-#  not needed because the monitor is keeping touch and known the type of the
-#  server which is communicated to the Server and Client object
-#TODO When authentication is needed it must be done on every opened socket
-
-#TODO check must be made on autenticate flag only and determined from server
     # We can only authenticate when all 3 data are True and when the socket is
     # created.
     if $created-anew and $authenticate {
@@ -350,8 +311,8 @@ class Server {
             's-status', {$!server-sts-data<max-wire-version>}
           );
           $auth-mechanism = $max-version < 3 ?? 'MONGODB-CR' !! 'SCRAM-SHA-1';
-          trace-message("Wire version is $max-version");
-          trace-message("Authenticate with '$auth-mechanism'");
+          trace-message("wire version is $max-version");
+          trace-message("authenticate with '$auth-mechanism'");
         }
 
         $credential.auth-mechanism(:$auth-mechanism);
@@ -373,7 +334,7 @@ class Server {
 
             my $error = $sc.start-scram;
             if ?$error {
-              fatal-message("Authentication fail for $credential.username(): $error");
+              fatal-message("authentication fail for $credential.username(): $error");
             }
 
             else {
@@ -383,7 +344,7 @@ class Server {
 
           # Default in version 2.*
           when 'MONGODB-CR' {
-
+            fatal-message("MONGODB-CR authentication is not supported");
           }
 
           when 'MONGODB-X509' {
@@ -428,7 +389,7 @@ class Server {
       :server(self), :$authenticate
     );
 
-    ( $doc, $rtt // Duration.new(0));
+    ( $doc, $rtt // Duration.new(0))
   }
 
   #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -437,7 +398,6 @@ class Server {
     Str:D $full-collection-name, BSON::Document:D $query,
     Int :$number-to-skip = 0, Int :$number-to-return = 1,
     Bool :$authenticate = True
-#, Bool :$first-phase
     --> BSON::Document
   ) {
     # Be sure the server is still active
@@ -449,7 +409,7 @@ class Server {
       $full-collection-name, $query,
       :$number-to-skip, :$number-to-return,
       :server(self), :$authenticate
-    );
+    )
   }
 
   #-----------------------------------------------------------------------------
@@ -501,7 +461,7 @@ class Server {
       }
     );
 
-    trace-message("Sockets cleared");
+    trace-message("sockets cleared for $!server-name/$!server-id");
 
     $!client = Nil;
     $!sockets = Nil;

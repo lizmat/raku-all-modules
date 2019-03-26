@@ -39,6 +39,7 @@ class Wire {
   ) {
 
     $!server = $server;
+
     my MongoDB::Header $header .= new;
 
     # OR all flag values to get the integer flag, be sure it is at least 0x00.
@@ -54,9 +55,9 @@ class Wire {
         :$flags, :$number-to-skip, :$number-to-return
       );
 
-      $!socket = $server.get-socket(:$authenticate);
+      $!socket = $!server.get-socket(:$authenticate);
       if ! $!socket {
-        warn-message("server {$server.name} cleaned up");
+        warn-message("server {$!server.name} cleaned up");
         return BSON::Document;
       }
 
@@ -90,7 +91,8 @@ class Wire {
 
       # Catch all thrown exceptions and take out the server if needed
       CATCH {
-#note "$*THREAD.id() Error wire query: ", .WHAT, ', ', .message;
+#note "$*THREAD.id() Error wire query: ", .WHAT, "\n", .message;
+#note "Server: ", $!server;
         $!socket.close-on-fail if $!socket.defined;
 
         # Fatal messages from the program elsewhere
@@ -104,12 +106,12 @@ class Wire {
              .message ~~ m:s/Could not receive data from socket/ ||
              .message ~~ m:s/Connection reset by peer/ {
 
-          warn-message($server.name ~ ': ' ~ .message);
+          warn-message($!server.name ~ ': ' ~ .message);
         }
 
         # From BSON::Document
         when X::BSON {
-          error-message($server.name ~ ': ' ~ .message);
+          error-message($!server.name ~ ': ' ~ .message);
         }
 
         # If not one of the above errors, rethrow the error after showing
@@ -185,12 +187,12 @@ class Wire {
              .message ~~ m:s/Could not receive data from socket/ ||
              .message ~~ m:s/Connection reset by peer/ {
 
-          error-message(.message);
+          error-message($!server.name ~ ': ' ~ .message);
         }
 
         # From BSON::Document
         when X::BSON {
-          error-message(.message);
+          error-message($!server.name ~ ': ' ~ .message);
         }
 
         # If not one of the above errors, rethrow the error
@@ -253,12 +255,12 @@ class Wire {
              .message ~~ m:s/Could not receive data from socket/ ||
              .message ~~ m:s/Connection reset by peer/ {
 
-          error-message(.message);
+          error-message($!server.name ~ ': ' ~ .message);
         }
 
         # From BSON::Document
         when X::BSON {
-          error-message(.message);
+          error-message($!server.name ~ ': ' ~ .message);
         }
 
         # If not one of the above errors, rethrow the error

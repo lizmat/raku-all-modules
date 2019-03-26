@@ -104,7 +104,7 @@ class Server::Control {
     my MongoDB::Client $client .= new(:uri("mongodb://localhost:$port-number"));
     my MongoDB::Database $database = $client.database('admin');
 
-    # force needed to shutdown replcated servers
+    # force needed to shutdown replicated servers
     my BSON::Document $req .= new: ( shutdown => 1, force => True);
     my BSON::Document $doc = $database.run-command($req);
 
@@ -118,6 +118,7 @@ class Server::Control {
       warn-message("Error: $doc<errcode>, $doc<errmsg>");
     }
 
+    $client.cleanup;
     $stopped
 
 #`{{

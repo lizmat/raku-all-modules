@@ -12,14 +12,18 @@ use BSON::Document;
 
 #-------------------------------------------------------------------------------
 drop-send-to('mongodb');
+#my $handle = 'MongoDB.mlog'.IO.open( :mode<wo>, :create, :truncate);
+#modify-send-to( 'mongodb', :level(MongoDB::MdbLoglevels::Trace), :to($handle));
 drop-send-to('screen');
-#modify-send-to( 'screen', :level(MongoDB::MdbLoglevels::Debug));
+#modify-send-to( 'screen', :level(MongoDB::MdbLoglevels::Trace));
 
-info-message("Test $?FILE start");
+info-message("Test start");
 
 my MongoDB::Test-support $ts .= new;
 my @serverkeys = $ts.serverkeys.sort;
 my Int $p1 = $ts.server-control.get-port-number(@serverkeys[0]);
+
+#exit(0);
 
 #-------------------------------------------------------------------------------
 subtest "Client behaviour while shutdown and start server", {
@@ -37,7 +41,7 @@ subtest "Client behaviour while shutdown and start server", {
   # Bring server down to see what Client does...
   ok $ts.server-control.stop-mongod(@serverkeys[0]),
      "Server @serverkeys[0] is stopped";
-  sleep 1.0;
+  sleep 0.9;
 
   $server = $client.select-server;
   nok $server.defined, "Server is down";
@@ -45,7 +49,7 @@ subtest "Client behaviour while shutdown and start server", {
   # Bring server up again to see if the Client recovers...
   ok $ts.server-control.start-mongod(@serverkeys[0]),
      "Server @serverkeys[0] started";
-  sleep 1.0;
+  sleep 0.9;
 
   $server = $client.select-server;
   ok $server.defined, 'Server is defined';
@@ -110,7 +114,7 @@ subtest "Shutdown/restart server while inserting records", {
   );
 
   # Let it write at least once
-  sleep 2;
+  sleep 0.7;
 
   # Bring server down to see what Client does...
   info-message('shutdown server');
@@ -125,7 +129,7 @@ subtest "Shutdown/restart server while inserting records", {
   info-message('start server');
   ok $ts.server-control.start-mongod(@serverkeys[0]),
      "Server @serverkeys[0] started";
-  sleep 0.8;
+  sleep 1.0;
 
   # Wait for inserts to finish
   is $p.result, "8 records inserted", "8 records inserted";

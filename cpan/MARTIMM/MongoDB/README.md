@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.org/MARTIMM/mongo-perl6-driver.svg?branch=master)](https://travis-ci.org/MARTIMM/mongo-perl6-driver) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/jhp0p39sydufxmw7?svg=true)](https://ci.appveyor.com/project/MARTIMM/mongo-perl6-driver/branch/master) [![License](http://martimm.github.io/label/License-label.svg)](http://www.perlfoundation.org/artistic_license_2_0)
 
 ## Notes
-* There are some problems installing the package while testing is turned on. Please use `zef --/test install MongoDB` for the moment. One example cause can be that VPN is used locally. Some of the tests using ipv6 localhost addresses like mongodb://[::1]:56014 failed.
+* There is still no proper install for windows due to the lack of experience on that platform. There, one can get the software using both zef options `--/test` and `--/build`.
+* When a VPN is used ipv6 localhost addresses like mongodb://[::1] can fail. I have observed this with *expressvpn*.
 * While I had promised to support mongod versions 2.*, I've seen that version 2.6 is deprecated as of April 07, 2016 (Blog date from [here](https://www.mongodb.com/blog/post/mongodb-2-6-end-of-life)). That's already a long time ago. So I wanted to pull back my promises and only support the latest few versions of which the latest is already 4.0. Please take a note from here: [support policy mongo servers](https://www.mongodb.com/support-policy).
 * To narrow the support to just a few server versions will also slim down the driver software instead of having to test for all quirks and exceptions from older versions.
 * MONGODB-CR authentication will not be implemented anymore. This method was deprecated since 3.6 and removed from 4.0.

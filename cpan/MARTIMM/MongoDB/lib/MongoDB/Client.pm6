@@ -53,7 +53,7 @@ class Client {
     # In case of an assignement like $c .= new(...) $c should be cleaned first
     if self.defined and not $!cleanup-started {
 
-      warn-message('User client object still defined, will be cleaned first');
+      warn-message('user client object still defined, will be cleaned first');
       self.cleanup;
     }
 
@@ -77,7 +77,6 @@ class Client {
     # Initialize mutexes
     $!rw-sem .= new;
 #    $!rw-sem.debug = True;
-
     $!rw-sem.add-mutex-names(
       <servers todo topology>, :RWPatternType(C-RW-WRITERPRIO)
     );
@@ -87,7 +86,7 @@ class Client {
     $!uri = $uri;
     $!uri-obj .= new(:$!uri);
 
-    debug-message("Found {$!uri-obj.servers.elems} servers in uri");
+    debug-message("found {$!uri-obj.servers.elems} servers in uri");
 
     # Setup todo list with servers to be processed, Safety net not needed yet
     # because threads are not started.
@@ -100,8 +99,8 @@ class Client {
     $!background-discovery = Promise.start( {
 
         # counter to check if there are new servers added. if so, the counter
-        # is set to 0. if less then 5 the sleeptime is about a second. When count
-        # reaches max, the thread is stopped.
+        # is set to 0. if less then 5 the sleeptime is about a second. When
+        # count reaches max, the thread is stopped.
         my Int $changes-count = 0;
 
         # Used in debug message
@@ -117,7 +116,7 @@ class Client {
           # When there is no work take a nap! This sleeping period is the
           # moment we do not process the todo list. Start taking a nap for 1.1
           # sec.
-          if $changes-count < 20 {
+          if $changes-count < 10 {
             sleep 1.4;
           }
 
@@ -129,18 +128,21 @@ class Client {
 
           CATCH {
             default {
-               # Keep this .note in. It helps debugging when an error takes place
-               # The error will not be seen before the result of Promise is read
-               .note;
-               .rethrow;
+              # Keep this .note in. It helps debugging when an error takes place
+              # The error will not be seen before the result of Promise is read
+              .note;
+              .rethrow;
             }
           }
 
-          debug-message("One client processing cycle done after {(now - $t0) * 1000} ms");
+          debug-message(
+            "one client processing cycle done after " ~
+            ((now - $t0) * 1000).fmt('%.3f') ~ " ms"
+          );
         } while $!repeat-discovery-loop;
 
         debug-message("server discovery loop stopped");
-        'normal end of service';
+        'normal end of service'
       } # block
     ); # start
   } # method
@@ -156,7 +158,7 @@ class Client {
     # it repeatedly it will be able to change dynamicaly.
     #
     my TopologyType $topology = TT-Unknown;
-    my Hash $servers = $!rw-sem.reader( 'servers', {$!servers.clone;});
+    my Hash $servers = $!rw-sem.reader( 'servers', {%($!servers.kv;)});
     my Int $servers-count = 0;
 
     my Bool $found-standalone = False;
@@ -165,7 +167,9 @@ class Client {
 
     for $servers.keys -> $server-name {
 
-      my ServerStatus $status = $servers{$server-name}.get-status<status> // SS-Unknown;
+      my ServerStatus $status =
+         $servers{$server-name}.get-status<status> // SS-Unknown;
+      trace-message("status: $server-name, $status");
 
       given $status {
         when SS-Standalone {
@@ -252,7 +256,7 @@ class Client {
       );
     }
 
-    info-message("Client topology is $topology");
+    info-message("client topology is $topology");
   }
 
   #-----------------------------------------------------------------------------
@@ -318,6 +322,8 @@ class Client {
   # Request specific servername
   multi method select-server ( Str:D :$servername! --> MongoDB::Server ) {
 
+    self.process-topology;
+
     # record the server selection start time. used also in debug message
     my Instant $t0 = now;
 
@@ -346,14 +352,14 @@ class Client {
       sleep $!uri-obj.options<heartbeatFrequencyMS> / 1000.0;
     } while ((now - $t0) * 1000) < $!uri-obj.options<serverSelectionTimeoutMS>;
 
-    debug-message("Searched for {(now - $t0) * 1000} ms");
+    debug-message("searched for {((now - $t0) * 1000).fmt('%.3f')} ms");
 
     if ?$selected-server {
-      debug-message("Server '$selected-server.name()' selected");
+      debug-message("server '$selected-server.name()' selected");
     }
 
     else {
-      warn-message("No suitable server selected");
+      warn-message("no suitable server selected");
     }
 
     $selected-server;
@@ -367,6 +373,8 @@ class Client {
   #-----------------------------------------------------------------------------
   # Read/write concern selection
   multi method select-server ( --> MongoDB::Server ) {
+
+    self.process-topology;
 
     my MongoDB::Server $selected-server;
 
@@ -383,7 +391,9 @@ class Client {
 
       my MongoDB::Server @selected-servers = ();
       my Hash $servers = $!rw-sem.reader( 'servers', {$!servers.clone});
-      my TopologyType $topology = $!rw-sem.reader( 'topology', {$!topology-type});
+      my TopologyType $topology =
+         $!rw-sem.reader( 'topology', {$!topology-type});
+      trace-message("topology: $topology");
 
       given $topology {
         when TT-Single {
@@ -426,7 +436,7 @@ class Client {
       }
 
       # if no server selected but there are some in the array
-      if !$selected-server and +@selected-servers {
+      if $topology !~~ TT-Unknown and !$selected-server and +@selected-servers {
 
         # if only one server in array, take that one
         if @selected-servers.elems == 1 {
@@ -470,14 +480,14 @@ class Client {
 
     } while ((now - $t0) * 1000) < $!uri-obj.options<serverSelectionTimeoutMS>;
 
-    debug-message("Searched for {(now - $t0) * 1000} ms");
+    debug-message("searched for {((now - $t0) * 1000).fmt('%.3f')} ms");
 
     if ?$selected-server {
-      debug-message("Server '$selected-server.name()' selected");
+      debug-message("server '$selected-server.name()' selected");
     }
 
     else {
-      warn-message("No suitable server selected");
+      warn-message("no suitable server selected");
     }
 
     $selected-server;
@@ -501,7 +511,7 @@ class Client {
       $!repeat-discovery-loop = False;
 
       info-message(
-        'Server discovery stopped: ' ~ (
+        'server discovery stopped: ' ~ (
           $!background-discovery.status ~~ Broken
                          ?? $!background-discovery.cause
                          !! $!background-discovery.result
@@ -547,7 +557,7 @@ class Client {
       # check if a server name is popped from the todo stack
       if $server-name.defined {
 
-        trace-message("Processing server $server-name");
+        trace-message("processing server $server-name");
 
         # check if from discovery-loop. if so do the safe access
         my Bool $server-processed;
@@ -564,7 +574,7 @@ class Client {
 
         # Check if server was managed before
         if $server-processed {
-          trace-message("Server $server-name already managed");
+          trace-message("server $server-name already managed");
         }
 
         # new server
@@ -649,6 +659,6 @@ class Client {
     $!servers = Nil;
     $!todo-servers = Nil;
     $!rw-sem.rm-mutex-names(<servers todo topology>);
-    debug-message("Client destroyed after {(now - $t0)} sec");
+    debug-message("client destroyed after {(now - $t0)} sec");
   }
 }
