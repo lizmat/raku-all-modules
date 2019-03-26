@@ -127,31 +127,41 @@ multi sub MAIN(Bool :$check, Str :$meta6-file-name = 'META6.json',
     }
 }
 
-multi sub MAIN(Str :$new-module, Bool :$force, Bool :$skip-git, Bool :$skip-github, :$verbose, :$description = '') {
+multi sub MAIN(Str :$new-module, Bool :$force, Bool :$skip-git, Bool :$skip-github, :$skip-skeleton, Str :$prefix, :$verbose, :$description = '') {
     my $name = $new-module;
+    $prefix //= %cfg<create><prefix>;
+    my @tracked-files;
+    
     die RED "To create a module --new-module=<Module::Name::Here> is required." unless $name;
-    my $base-dir = %cfg<create><prefix> ~ $name.subst(:g, '::', '-').fc;
+    my $base-dir = $prefix ~ $name.subst(:g, '::', '-').fc;
     die RED "Directory ⟨$base-dir⟩ already exists, the --force needs to be with you." if $base-dir.IO.e && !$force;
     say BOLD "Creating new module $name under ⟨$base-dir⟩.";
     $base-dir.IO.mkdir or die RED "Cannot create ⟨$base-dir⟩: $!";
 
     pre-create-hook($base-dir);
+    unless $skip-skeleton {
 
-    for <lib t bin example> {
-        my $dir = $base-dir ~ '/' ~ .Str;
-        $dir.IO.mkdir or die RED "Cannot create ⟨$dir⟩: $!";
+        for <lib t bin example> {
+            my $dir = $base-dir ~ '/' ~ .Str;
+            $dir.IO.mkdir or die RED "Cannot create ⟨$dir⟩: $!";
+        }
+
+        create-readme($base-dir, $name);
+        create-meta-t($base-dir);
+        create-travis-yml($base-dir);
     }
 
-    create-readme($base-dir, $name);
-    create-meta-t($base-dir);
-    create-travis-yml($base-dir);
     create-gitignore($base-dir);
-    my @tracked-files =
-    copy-skeleton-files($base-dir)».IO».basename;
+    @tracked-files.append: '.gitignore';
 
-    @tracked-files.append: 'META6.json', 'README.md', '.travis.yml', '.gitignore', 't/meta.t';
+    unless $skip-skeleton {
+        @tracked-files.append: copy-skeleton-files($base-dir)».IO».basename;
 
-    MAIN(:create, :$name, :$base-dir, :$force, :$description);
+        @tracked-files.append: 'META6.json', 'README.md', '.travis.yml', 't/meta.t';
+
+        MAIN(:create, :$name, :$base-dir, :$force, :$description);
+    }
+
     git-create($base-dir, @tracked-files) unless $skip-git;
     github-create($base-dir) unless $skip-git && $skip-github;
     
