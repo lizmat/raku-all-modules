@@ -7,6 +7,8 @@ role ASNSequence {
 }
 
 role ASNSequenceOf[$type] {
+    has $.seq;
+
     method type { $type }
 }
 
@@ -22,6 +24,9 @@ role ASNChoice {
 
     method ASN-choice() {...}
     method ASN-value() { $!choice-value }
+
+    method key() { $!choice-value.key }
+    method value() { $!choice-value.value }
 
     method new($choice-value) { $?CLASS.bless(:$choice-value) }
 }

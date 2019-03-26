@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Altai-man/ASN-BER.git
 	branch = master
-	commit = 53fb50e916c1200bd77e8c5feff0bba1554ba69b
-	parent = d577b992ef955dda75475f373b77cf3dcc9c58d6
+	commit = fa1cc03cd34502c6c37b11454d942e5cdea6bd65
+	parent = 06e98c6e47f29a6e612b704cc420778bc2c4d8cb
 	cmdver = 0.3.1

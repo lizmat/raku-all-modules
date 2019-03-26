@@ -38,7 +38,7 @@ class ASN::Serializer {
 
     # NULL
     multi method serialize(ASN-Null, Int $index = 5, :$debug, :$mode) {
-        say "Encoding Null with indexx $index" if $debug;
+        say "Encoding Null with index $index" if $debug;
         self!pack($index, Buf.new);
     }
 
@@ -76,6 +76,8 @@ class ASN::Serializer {
                 %params<type> = ASN::Types::UTF8String;
             } elsif $attr ~~ ASN::Types::OctetString {
                 %params<type> = ASN::Types::OctetString;
+            } elsif $attr.type ~~ Positional {
+                %params<type> = $attr.type.of;
             }
             $res.push(self.serialize(ASNValue.new(|%params), :$debug, :$mode));
         }
@@ -83,12 +85,15 @@ class ASN::Serializer {
     }
 
     # SEQUENCE OF
-    multi method serialize(@sequence, Int $index is copy = 48, :$debug, :$mode) {
+    multi method serialize(ASNSequenceOf $sequence, Int $index is copy = 48, :$debug, :$mode) {
+        return Buf.new unless $sequence.seq.all ~~ .defined;
         $index += 32 unless $index ~~ 48|-1;
         say "Encoding SEQUENCE OF with index $index into:" if $debug;
-        my $res = do gather { my $type = @sequence.of;
-        take self.serialize($type ~~ ASN::StringWrapper ?? $type.new($_) !! $_, :$debug, :$mode) for @sequence };
-        self!pack($index, [~] $res);
+        my $type = $sequence.type;
+        my $res;
+        $res.push: self.serialize($_, :$debug, :$mode) for @($sequence.seq);
+        $res //= [Buf.new];
+        self!pack($index, [~] |$res);
     }
 
     # SET OF
@@ -109,15 +114,14 @@ class ASN::Serializer {
         return self.serialize($asn-node.type.new($value), |($_ + 128 with $asn-node.tag) :$debug, :$mode) if $value ~~ Str;
 
         if $value ~~ Positional {
-            $value = $value.map({
-                if $asn-node.type ~~ ASN::Types::UTF8String {
-                    ASN::Types::UTF8String.new($_);
-                } elsif $asn-node.type ~~ ASN::Types::OctetString {
-                    ASN::Types::OctetString.new($_);
+            my $seq = $value.map({
+                if $asn-node.type ~~ ASN::StringWrapper {
+                    $asn-node.type.new($_);
                 } else {
                     $_;
                 }
-            });
+            }).Array;
+            return self.serialize(ASNSequenceOf[$asn-node.type].new(:$seq), |($_ + 128 with $asn-node.tag), :$debug, :$mode);
         }
         self.serialize($value, |($_ + 128 with $asn-node.tag), :$debug, :$mode);
     }
