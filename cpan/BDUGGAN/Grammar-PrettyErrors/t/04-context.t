@@ -15,7 +15,7 @@ grammar G does Grammar::PrettyErrors {
 
 my $g = G.new(:quiet);
 
-$g.parse(q:to/X/);
+my $caught = $g.parse(q:to/X/);
 a
 a
 a

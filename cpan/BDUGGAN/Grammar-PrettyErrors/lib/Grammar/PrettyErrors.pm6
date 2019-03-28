@@ -3,7 +3,7 @@ unit module Grammar::PrettyErrors;
 
 use Terminal::ANSIColor;
 
-class PrettyError {
+class X::Grammar::PrettyError is Exception {
   has $.parsed;
   has $.target;
   has $!report;
@@ -53,6 +53,10 @@ class PrettyError {
     $!report //= self!generate-report($msg).join("\n") ~ "\n";
     $!report;
   }
+
+  method message {
+    $!report;
+  }
 }
 
 role Grammar::PrettyErrors {
@@ -81,21 +85,23 @@ role Grammar::PrettyErrors {
       self.report-error(self.target,$msg);
   }
 
-  multi method report-error($target,$msg) {
+  multi method report-error($target,$msg) is hidden-from-backtrace {
       my $parsed = $target.substr(0, $*HIGHWATER);
       my $colors = so (self.defined and self.colors);
-      my $error = PrettyError.new(:$parsed,:$target,:$colors);
+      my $error = X::Grammar::PrettyError.new(:$parsed,:$target,:$colors);
+      $error.report($msg);
       $!error = $error if self.defined;
-      my $report = $error.report($msg);
-      say $report unless self.defined && self.quiet;
+      $error;
   }
 
-  method parse( $target, |c) {
+  method parse( $target, |c) is hidden-from-backtrace {
       return self.new.parse($target, |c) without self;
       my $*HIGHWATER = 0;
       my $*LASTRULE;
       my $match = callsame;
-      self.report-error($target, "Parsing error.") unless $match;
-      return $match;
+      return $match if $match;
+      my $failure = self.report-error($target, "Parsing error.");
+      fail $failure unless $!quiet;
+      Nil;
   }
 }

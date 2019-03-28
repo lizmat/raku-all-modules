@@ -3,7 +3,7 @@
 use Test;
 use Grammar::PrettyErrors;
 
-plan 2;
+plan 3;
 
 grammar G does Grammar::PrettyErrors {
   rule TOP {
@@ -28,18 +28,15 @@ grammar G does Grammar::PrettyErrors {
 }
 
 my @got;
-my $wrapped = $*ERR.^find_method('print').wrap: -> $self, $str { @got.push($str) }
 my $parsed = G.new.parse('the quick brown flox jumped over the lazy fox');
-$*ERR.^find_method('print').unwrap($wrapped);
-
-nok $parsed, 'parse failed';
-is @got, ["--errors--\n\x[1B][1;33m" ~ qq:to/X/; ], 'got colorful errors';
+ok $parsed ~~ Failure, 'got a failure';
+nok so $parsed, 'is false';
+is $parsed.exception.message, ["--errors--\n\x[1B][1;33m" ~ qq:to/X/; ], 'got colorful errors';
   1 │▶the quick brown flox jumped over the lazy fox\x[1B][0m
                       ^
 
 Uh oh, something went wrong around line 1.
 Unable to parse subject.
-
 X
 
 #vim: set syntax perl6

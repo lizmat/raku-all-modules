@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bduggan/p6-grammar-prettyerrors.git
 	branch = master
-	commit = 6e79ddee387f883e822597206bf44a16b176d5c5
-	parent = b7d2fadb41d1db299c31339dd106c3a4e8d9aea7
+	commit = 8d8219d13c0864d412c0e0758395ab0e80a0aea1
+	parent = 64d826854817297dfdf9292ebb5c1f7f22338876
 	cmdver = 0.3.1

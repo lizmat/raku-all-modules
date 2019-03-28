@@ -9,5 +9,6 @@ grammar G does Grammar::PrettyErrors {
   token world { there }
 }
 
-#G.new.parse('hi here') orelse say 'failed';
-G.new.parse('hi here') orelse .exception.say;
+my $g = G.new(:quiet);
+$g.parse('hi here');
+say so $g.error.message ~~ /'hi'/;
