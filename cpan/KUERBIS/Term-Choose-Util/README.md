@@ -15,20 +15,14 @@ CONSTRUCTOR
 
 The constructor method `new` can be called with optional named arguments:
 
-        my $new = Term::Choose::Util.new( :mouse(1) )
-
-Additionally to the different options mentioned below one can pass the option *win* to the `new`-method. The option
-
-*win* expects as its value a WINDOW object - the return value of NCurses initscr. If set, the different methods use
-
-this global window instead of creating their own without calling endwin to restores the terminal before returning.
+        my $new = Term::Choose::Util.new( :mouse(1), ... )
 
 ROUTINES
 ========
 
 Values in brackets are default values.
 
-Options valid for all routines are
+### Options valid for all routines
 
   * mouse
 
@@ -42,7 +36,19 @@ A string placed on top of of the output.
 
   * prompt
 
-If set shows an additionally prompt line before the choices.
+If set shows an additionally prompt line before the list of choices.
+
+  * back
+
+Set the string for the `back` menu entry.
+
+Default: "<<".
+
+  * confirm
+
+Set the string for the `confirm` menu entry.
+
+Default: "`OK`".
 
 choose-a-dir
 ------------
@@ -55,13 +61,13 @@ To move around in the directory tree:
 
 - select a directory and press `Return` to enter in the selected directory.
 
-- choose the "up"-menu-entry ("`.. `") to move upwards.
+- choose the "up"-menu-entry (`..`) to move upwards.
 
-To return the current working-directory as the chosen directory choose "`= `".
+To return the current working-directory as the chosen directory choose "`OK`".
 
-The "back"-menu-entry ("`E<lt> `") causes `choose-a-dir` to return nothing.
+The "back"-menu-entry (ltlt) causes `choose-a-dir` to return nothing.
 
-It can be set the following options:
+Following options can be set:
 
   * dir
 
@@ -101,12 +107,14 @@ If enabled, hidden directories are added to the available directories.
 
 Values: 0,[1].
 
+  * [Options valid for all routines](#Options valid for all routines)
+
 choose-a-file
 -------------
 
         $chosen_file = choose-a-file( :layout(1), ... )
 
-Browse the directory tree like with `choose-a-dir`. Select "`E<gt>F`" to get the files of the current directory. To return the chosen file select "`= `".
+Browse the directory tree like with `choose-a-dir`. Select "gt`F`" to get the files of the current directory. To return the chosen file select "`OK`".
 
 See [choose-a-dir](#choose-a-dir) for the different options.
 
@@ -117,18 +125,18 @@ choose-dirs
 
 `choose-dirs` is similar to `choose-a-dir` but it is possible to return multiple directories.
 
-"`. `" adds the current directory to the list of chosen directories and "`= `" returns the chosen list of directories.
+"`++`" adds the current directory to the list of chosen directories and "`OK`" returns the chosen list of directories.
 
-The "back"-menu-entry ( "`E<lt> `" ) removes the last added directory. If the list of chosen directories is empty, "`E<lt> `" causes `choose-dirs` to return nothing.
+The "back"-menu-entry (ltlt) removes the last added directory. If the list of chosen directories is empty, "ltlt" causes `choose-dirs` to return nothing.
 
-`choose-dirs` uses the same option as `choose-a-dir`. The option *prompt* can be used to put empty lines between the header rows and the menu: an empty string ('') means no newline, a space (' ') one newline, a newline ("\n") two newlines.
+`choose-dirs` uses the same option as `choose-a-dir`. The option *prompt* can be used to put empty lines between the header rows and the menu: an empty string (`''`) means no newline, a space (`' '`) one newline, a newline (`\n`) two newlines.
 
 choose-a-number
 ---------------
 
-        my $number = choose-a-number( 5, :name<Testnumber> );
+        my $number = choose-a-number( 5, :name<Testnumber>, ... );
 
-This function lets you choose/compose a number (unsigned integer) which is returned.
+This function lets you choose/compose a number (unsigned integer) which is then returned.
 
 The fist argument - "digits" - is an integer and determines the range of the available numbers. For example setting the first argument to 6 would offer a range from 0 to 999999. If not set, it defaults to `7`.
 
@@ -136,30 +144,40 @@ The available options:
 
   * name
 
-Sets the name of the number seen in the prompt line.
+The string put in front of the build number seen in the prompt line.
 
-Default: empty string ("");
+Default: empty string (`''`);
+
+  * small-first
+
+Put the small number ranges on top.
+
+Values: [0],1.
 
   * thsd-sep
 
 Sets the thousands separator.
 
-Default: comma (,).
+Default: comma (`,`).
+
+  * [Options valid for all routines](#Options valid for all routines)
 
 choose-a-subset
 ---------------
 
-        $subset = choose-a-subset( @available_items, :layout( 1 ) )
+        $subset = choose-a-subset( @available_items, :layout( 1 ), ... )
 
 `choose-a-subset` lets you choose a subset from a list.
 
-The first argument is the list of choices. The following arguments are the options:
-
 The subset is returned as an array.
+
+The first argument is the list of choices.
+
+Options:
 
   * index
 
-If true, the index positions in the available list of the made choices is returned.
+If true, the made choices are returned as list-index positions.
 
   * justify
 
@@ -167,11 +185,25 @@ Elements in columns are left justified if set to 0, right justified if set to 1 
 
 Values: [0],1,2.
 
+  * keep_chosen
+
+If enabled, the chosen items are not removed from the available choices.
+
+Values: [0],1.
+
   * layout
 
 See the option *layout* in [Term::Choose](https://github.com/kuerbis/Term-Choose-p6).
 
 Values: 0,1,[2].
+
+  * mark
+
+Expects as its value a list of indexes. Elements corresponding to these indexes are preselected when `choose-a-subset` is called.
+
+  * name
+
+The value of *name* is a string. It is placed in front of the subset-info-output.
 
   * order
 
@@ -185,7 +217,33 @@ Values: 0,[1].
 
 *prefix* expects as its value a string. This string is put in front of the elements of the available list before printing. The chosen elements are returned without this *prefix*.
 
-The default value is "- " if the *layout* is 2 else the default is the empty string ("").
+The default value is "`- `" if the *layout* is 2 else the default is the empty string (`''`).
+
+  * sofar-begin
+
+The value of *sofar-begin* is a string.
+
+Subset-info-output: *sofar-begin* is placed between the *name* string and the chosen elements as soon as an element has been chosen.
+
+Default: empty
+
+  * sofar-separator
+
+The value of *sofar-separator* is a string.
+
+Subset-info-output: *sofar-separator* is placed between the chosen list elements.
+
+Default: `,`
+
+  * sofar-end
+
+The value of *sofar-end* is a string.
+
+Subset-info-output: as soon as elements have been chosen *sofar-end* if placed at the end of the chosen elements.
+
+Default: empty
+
+  * [Options valid for all routines](#Options valid for all routines)
 
 settings-menu
 -------------
@@ -202,7 +260,7 @@ settings-menu
             'attempts'       => 2
         );
 
-        settings-menu( @menu, %config );
+        settings-menu( @menu, %config, :1mouse, ... );
 
 The first argument is a list of lists. Each of the lists have three elements:
 
@@ -218,9 +276,9 @@ The second argument is a hash:
 
     the hash value (zero based index) sets the current value for the option.
 
-This hash is edited in place: the changes made by the user are saved as new current values.
+This hash is edited in place: the changes made by the user are saved in this hash.
 
-The following arguments can be the different options.
+The options are passed as named arguments. See [Options valid for all routines](#Options valid for all routines).
 
 When `settings-menu` is called, it displays for each list entry a row with the prompt string and the current value. It is possible to scroll through the rows. If a row is selected, the set and displayed value changes to the next. If the end of the list of the values is reached, it begins from the beginning of the list.
 

@@ -1,6 +1,19 @@
 Revision history for Term::Choose::Util
 
 
+1.2.3   2019-03-26
+        - Update META6.
+
+1.2.2   2019-03-26
+        - No changes.
+
+1.2.1   2019-03-26
+        - Update travis.
+
+1.2.0   2019-03-26
+        - From ncurses to ANSI escapes.
+        - Added documentation for new options.
+
 1.1.3   2019-02-28
         - New experimental options.
         - Renamed experimental options.
