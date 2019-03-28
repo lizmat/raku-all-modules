@@ -1,6 +1,13 @@
 Revision history for Term::Choose
 
 
+1.5.1   2019-03-26
+        - Update META6 and travis.
+
+1.5.0   2019-03-26
+        - From ncurses to ANSI escapes.
+        - Removed option 'page'; page count always enabled with more than one page.
+
 1.4.7   2019-03-13
         - Don't bind return values of 'to-printwidth'
         - Code refactoring

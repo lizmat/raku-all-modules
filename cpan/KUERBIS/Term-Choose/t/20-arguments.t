@@ -65,7 +65,7 @@ for @ge_2_int -> $key {
 
 
 
-my @int_0_2 = <justify layout>;
+my @int_0_2 = <justify layout clear-screen>;
 
 my @inval_int_0_2 = 3, |@inval_u_int;
 for @int_0_2 -> $key {
@@ -86,7 +86,7 @@ for @int_0_2 -> $key {
 
 
 
-my @int_0_1 = <beep index mouse order page>;
+my @int_0_1 = <beep index mouse order>;
 
 my @inval_int_0_1 = 2, 3, |@inval_u_int;
 for @int_0_1 -> $key {

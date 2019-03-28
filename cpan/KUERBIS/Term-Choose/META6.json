@@ -4,9 +4,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [
-    "NativeCall",
-    "NCurses",
-    "Terminal::WCWidth"
+    "Term::termios"
   ],
   "description" : "Choose items from a list interactively.",
   "license" : "Artistic-2.0",
@@ -15,7 +13,10 @@
   "provides" : {
     "Term::Choose" : "lib/Term/Choose.pm6",
     "Term::Choose::LineFold" : "lib/Term/Choose/LineFold.pm6",
-    "Term::Choose::NCursesAdd" : "lib/Term/Choose/NCursesAdd.pm6"
+    "Term::Choose::LineFold::CharWidthAmbiguousWide" : "lib/Term/Choose/LineFold/CharWidthAmbiguousWide.pm6",
+    "Term::Choose::LineFold::CharWidthDefault" : "lib/Term/Choose/LineFold/CharWidthDefault.pm6",
+    "Term::Choose::ReadKey" : "lib/Term/Choose/ReadKey.pm6",
+    "Term::Choose::Screen" : "lib/Term/Choose/Screen.pm6"
   },
   "resources" : [ ],
   "source-url" : "git://github.com/kuerbis/Term-Choose-p6.git",
@@ -27,5 +28,5 @@
   "test-depends" : [
     "Test"
   ],
-  "version" : "1.4.7"
+  "version" : "1.5.1"
 }

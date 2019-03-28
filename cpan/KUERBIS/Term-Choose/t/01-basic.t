@@ -2,8 +2,8 @@ use v6;
 use Test;
 plan 1;
 
-use Terminal::WCWidth;
+use Term::termios;
 
-pass "Terminal::WCWidth;";
+pass "Term::termios;";
 
 done-testing();

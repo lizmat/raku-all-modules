@@ -1,11 +1,38 @@
 use v6;
-unit class Term::Choose::LineFold;
+unit module Term::Choose::LineFold;
 
-use Terminal::WCWidth;
+use Term::Choose::LineFold::CharWidthDefault;
+
+
+my $table = table_char_width();
+
+my $cache = [];
+
+sub char_width( Int $ord_char ) {
+    my $min = 0;
+    my $mid;
+    my $max = $table.end;
+    if $ord_char < $table[0][0] || $ord_char > $table[$max][1] {
+        return 1;
+    }
+    while $max >= $min {
+        $mid = ( $min + $max ) div 2;
+        if $ord_char > $table[$mid][1] {
+            $min = $mid + 1;
+        }
+        elsif $ord_char < $table[$mid][0] {
+            $max = $mid - 1;
+        }
+        else {
+            return $table[$mid][2];
+        }
+    }
+    return 1;
+}
 
 
 sub to-printwidth( $str, Int $avail_w, Bool $dot=False, @cache? ) is export( :to-printwidth ) {
-    # no check if wcwidth returns -1 because no invalid characters (s:g/<:C>//)
+    # no check if char_width returns -1 because no invalid characters (s:g/<:C>//)
     my Int $width = 0;
     my @graph;
     for $str.NFC {
@@ -14,7 +41,7 @@ sub to-printwidth( $str, Int $avail_w, Bool $dot=False, @cache? ) is export( :to
             $w := @cache.AT-POS( $_ );
         }
         else {
-            $w := @cache.BIND-POS( $_, wcwidth( $_ ) );
+            $w := @cache.BIND-POS( $_, char_width( $_ ) );
         }
         if $width + $w > $avail_w {
             if $dot && $avail_w > 5 {
@@ -35,7 +62,7 @@ sub to-printwidth( $str, Int $avail_w, Bool $dot=False, @cache? ) is export( :to
 }
 
 
-sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is copy ) is export( :line-fold ) { # init_tab + subseq_tab optional
+sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is copy ) is export( :line-fold ) { # init_tab + subseq_tab optional + trim optional
     for $init_tab, $subseq_tab {
         if $_ { # .gist
             $_ = to-printwidth(
@@ -96,14 +123,14 @@ sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is cop
 
 
 sub print-columns( $str, @cache? ) returns Int is export( :print-columns ) {
-    # no check if wcwidth returns -1 because invalid characters removed
+    # no check if char_width returns -1 because invalid characters removed
     my Int $width = 0;
     for $str.NFC {
         if @cache.EXISTS-POS( $_ ) {
             $width = $width + @cache.AT-POS( $_ );
         }
         else {
-            $width = $width + @cache.BIND-POS( $_, wcwidth( $_ ) );
+            $width = $width + @cache.BIND-POS( $_, char_width( $_ ) );
         }
     }
     $width;

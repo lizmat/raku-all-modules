@@ -42,35 +42,31 @@ To browse through the available list-elements use the keys described below.
 
 If the items of the list don't fit on the screen, the user can scroll to the next (previous) page(s).
 
-If the window size is changed, the screen is rewritten.
+If the window size is changed, the screen is rewritten as soon as a key is pressed.
 
-How to choose the items is described for each method/function separately in [Routines](Routines).
+How to choose the items is described in [ROUTINES](#ROUTINES).
 
 Keys
 ----
 
   * the `Arrow` keys (or `h,j,k,l`) to move up and down or to move to the right and to the left,
 
-  * the `Tab` key (or `Ctrl-I`) to move forward, the `BackSpace` key (or `Ctrl-H` or `Shift-Tab`) to move backward,
+  * the `Tab` key (or `Ctrl-I`) to move forward, the `BackSpace` key (or `Ctrl-H`) to move backward,
 
   * the `PageUp` key (or `Ctrl-B`) to go back one page, the `PageDown` key (or `Ctrl-F`) to go forward one page,
 
-  * the `Insert` key to go back 25 pages, the `Delete` key to go forward 25 pages,
+  * the `Insert` key to go back 10 pages, the `Delete` key to go forward 10 pages,
 
   * the `Home` key (or `Ctrl-A`) to jump to the beginning of the list, the `End` key (or `Ctrl-E`) to jump to the end of the list.
 
 For the usage of `SpaceBar`, `Ctrl-SpaceBar`, `Return` and the `q`-key see [choose](#choose), [choose-multi](#choose-multi) and [pause](#pause).
 
-With *mouse* enabled use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel. The mouse wheel only works, if the ncurses library supports the extended mouse mode.
+With *mouse* enabled use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel. See [mouse](#mouse)
 
 CONSTRUCTOR
 ===========
 
 The constructor method `new` can be called with named arguments. For the valid options see [OPTIONS](#OPTIONS). Setting the options in `new` overwrites the default values for the instance.
-
-Additionally to the options mentioned below one can set the option [win](win). The opton [win](win) expects as its value a `WINDOW` object - the return value of [NCurses](NCurses) `initscr`.
-
-If set, `choose`, `choose-multi` and `pause` use this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
 
 ROUTINES
 ========
@@ -80,23 +76,25 @@ choose
 
 `choose` allows the user to choose one item from a list: the highlighted item is returned when `Return` is pressed.
 
-`choose` returns nothing if the `q` key or `Ctrl-D` is pressed.
+`choose` returns nothing if the `Ctrl-D` is pressed.
 
 choose-multi
 ------------
 
 The user can choose many items.
 
-To choose more than one item mark an item with the `SpaceBar`. `choose-multi` then returns the list of the marked items including the highlighted item.
+To choose an item mark the item with the `SpaceBar`. When `Return` is pressed `choose-multi` then returns the list of the marked items. If the option *include-highlighted* is set to `1`, the highlighted item is also returned.
+
+If `Return` is pressed with no marked items and [include-highlighted](#include-highlighted) is set to `2`, the highlighted item is returned.
 
 `Ctrl-SpaceBar` (or `Ctrl-@`) inverts the choices: marked items are unmarked and unmarked items are marked.
 
-`choose-multi` returns nothing if the `q` key or `Ctrl-D` is pressed.
+`choose-multi` returns nothing if the `Ctrl-D` is pressed.
 
 pause
 -----
 
-Nothing can be chosen, nothing is returned but the user can move around and read the output until closed with `Return`, `q` or `Ctrl-D`.
+Nothing can be chosen, nothing is returned but the user can move around and read the output until closed with `Return` or `Ctrl-D`.
 
 OUTPUT
 ======
@@ -105,11 +103,23 @@ For the output on the screen the elements of the list are copied and then modifi
 
 Modifications:
 
-If an element is not defined, the value from the option *undef* is assigned to the element. If an element holds an empty string, the value from the option *empty* is assigned to the element.
+  * If an element is not defined the value from the option *undef* is assigned to the element.
 
-White-spaces in elements are replaced with simple spaces: `$_ =~ s:g/\s/ /`. Invalid characers (Unicode character proterty `Other`) are removed: `$_=~ s:g/\p{C}//`.
+  * If an element holds an empty string the value from the option *empty* is assigned to the element.
 
-If the length (print columns) of an element is greater than the width of the screen the element is cut and three dots are attached.
+  * Tab characters in elements are replaces with a space.
+
+    $element =~ s/\t/ /g;
+
+  * Vertical spaces in elements are squashed to two spaces.
+
+    $element =~ s/\v+/\ \ /g;
+
+  * Code points from the ranges of control, surrogate and noncharacter are removed.
+
+    $element =~ s/[\p{Cc}\p{Noncharacter_Code_Point}\p{Cs}]//g;
+
+  * If the length (print columns) of an element is greater than the width of the screen the element is cut and three dots are attached.
 
 OPTIONS
 =======
@@ -122,6 +132,12 @@ Options which expect a number as their value expect integers.
 
 1 - on
 
+### clear_screen
+
+0 - off (default)
+
+1 - clears the screen before printing the choices
+
 ### default
 
 With the option *default* it can be selected an element, which will be highlighted as the default instead of the first element.
@@ -132,13 +148,21 @@ If the passed value is greater than the index of the last array element, the fir
 
 Allowed values: 0 or greater
 
-(default: undefined)
+(default: 0)
 
 ### empty
 
-Sets the string displayed on the screen instead an empty string.
+Sets the string displayed on the screen instead of an empty string.
 
 default: "ltemptygt"
+
+### hide_cursor
+
+0 - keep the terminals highlighting of the cursor position
+
+1 - hide the terminals highlighting of the cursor position (default)
+
+The control sequence `25` is used to hide the cursor.
 
 ### info
 
@@ -253,7 +277,9 @@ Allowed values: 2 or greater
 
 0 - no mouse (default)
 
-1 - mouse enabled
+1 - mouse enabled 
+
+To enable the mouse mode the control sequences `1003` and `1006` are used.
 
 ### order
 
@@ -269,12 +295,6 @@ Sets the number of whitespaces between columns. (default: 2)
 
 Allowed values: 0 or greater
 
-### page
-
-0 - off
-
-1 - print the page number on the bottom of the screen if there is more then one page. (default)
-
 ### prompt
 
 If *prompt* is undefined, a default prompt-string will be shown.
@@ -283,7 +303,7 @@ If the *prompt* value is an empty string (""), no prompt-line will be shown.
 
 ### undef
 
-Sets the string displayed on the screen instead an undefined element.
+Sets the string displayed on the screen instead of an undefined element.
 
 default: "ltundefgt"
 
@@ -326,20 +346,15 @@ multithreading
 
 `Term::Choose` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_THREADS`.
 
-The method `num-threads` returns the setting used by `Term::Choose`.
-
-libncurses
-----------
-
-The location of the used ncurses library can be specified by setting the environment variable `PERL6_NCURSES_LIB`. This will overwrite the default library location.
-
 REQUIREMENTS
 ============
 
-libncurses
-----------
+ANSI escape sequences
+---------------------
 
-`Term::Choose` requires `libncurses` to be installed. If the list elements contain wide characters it is required an approprirate ncurses library else wide character will break the output.
+ANSI escape sequences are used to move the cursor, to markt and highlight cells and to clear the screen.
+
+Some options use non-ANSI control sequences (*mouse* and *hide-cursor*).
 
 Monospaced font
 ---------------
@@ -361,7 +376,7 @@ Thanks to the people from [Perl-Community.de](http://www.perl-community.de), fro
 LICENSE AND COPYRIGHT
 =====================
 
-Copyright (C) 2016-2018 Matthäus Kiem.
+Copyright (C) 2016-2019 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
