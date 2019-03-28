@@ -1,18 +1,12 @@
 use v6;
-unit class Term::TablePrint:ver<1.3.2>;
-
-use NCurses;
-use Term::Choose::NCursesAdd;
+unit class Term::TablePrint:ver<1.4.2>;
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
+use Term::Choose::Screen   :ALL;
 use Term::Choose::Util     :insert-sep, :unicode-sprintf;
 
-
 has %!o;
-
-has WINDOW $.win;
-has Bool $!reset_win;
 
 subset Int_0_to_2 of Int where * == 0|1|2;
 subset Int_0_or_1 of Int where * == 0|1;
@@ -22,10 +16,11 @@ has UInt       $.min-col-width     = 30;
 has UInt       $.progress-bar      = 5_000;
 has UInt       $.tab-width         = 2;
 has Int_0_or_1 $.choose-columns    = 0;
-has Int_0_or_1 $.grid              = 0;
+has Int_0_or_1 $.grid              = 1;
 has Int_0_or_1 $.keep-header       = 1;
 has Int_0_or_1 $.mouse             = 0;
 has Int_0_or_1 $.squash-spaces     = 0;
+has Int_0_or_1 $.save-screen       = 0;     # documentation
 has Int_0_to_2 $.table-expand      = 1;
 has Str        $.decimal-separator = '.';
 has Str        $.prompt            = '';
@@ -34,40 +29,43 @@ has Str        $.undef             = '';
 has     @!orig_table;
 has Int @!w_heads;
 has     @!w_cols;
-has Int @!avail_w_cols;
 has     @!w_int;
 has     @!w_fract;
+has Int @!avail_w_cols;
 has Int @!rows_idx;
 has Int @!chosen_cols_idx;
 has     @!portions;
 
-has Int $!tab_w;
-has Str $!info_row;
-has Str $!thsd_sep = ',';
+has Int  $!tab_w;
+has Str  $!info_row;
+has Str  $!thsd_sep = ',';
 has Hash $!p_bar;
 
 has Term::Choose $!tc;
 
 
 method !_init_term {
-    if ! $!win {
-        $!reset_win = True;
-        my int32 constant LC_ALL = 6;
-        setlocale( LC_ALL, "" );
-        $!win = initscr();
+    hide-cursor();
+    if %!o<save-screen> {
+        save-screen;
     }
-    $!tc = Term::Choose.new( :win( $!win ), :mouse( %!o<mouse> ) );
+    clear;
+    $!tc = Term::Choose.new( :mouse( %!o<mouse> ), :0hide-cursor );
 }
 
+
 method !_end_term {
-    return if ! $!reset_win;
-    endwin();
+    if %!o<save-screen> {
+        restore-screen;
+    }
+    show-cursor();
 }
 
 
 sub print-table ( @orig_table, *%opt ) is export( :DEFAULT, :print-table ) {
     return Term::TablePrint.new().print-table( @orig_table, |%opt );
 }
+
 
 method print-table (
         @!orig_table,
@@ -80,16 +78,14 @@ method print-table (
         Int_0_or_1 :$keep-header       = $!keep-header,
         Int_0_or_1 :$mouse             = $!mouse,
         Int_0_or_1 :$squash-spaces     = $!squash-spaces,
+        Int_0_or_1 :$save-screen       = $!save-screen, # documentation  # alternate-screen
         Int_0_to_2 :$table-expand      = $!table-expand,
         Str        :$decimal-separator = $!decimal-separator,
         Str        :$prompt            = $!prompt,
         Str        :$undef             = $!undef,
     ) {
     %!o = :$max-rows, :$min-col-width, :$progress-bar, :$tab-width, :$choose-columns, :$grid, :$keep-header,
-          :$mouse, :$squash-spaces, :$table-expand, :$decimal-separator, :$prompt, :$undef;
-    CATCH {
-        endwin();
-    } 
+          :$mouse, :$squash-spaces, :$table-expand, :$decimal-separator, :$prompt, :$undef, :$save-screen;
     self!_init_term();
     if ! @!orig_table.elems {
         $!tc.pause( ( 'Close with ENTER', ), :prompt( '"print-table": Empty table!' ) );
@@ -169,8 +165,8 @@ method !_recursive_code {
     my Int $row_is_expanded = 0;
 
     loop {
-        if getmaxx( $!win ) != $term_w {
-            $term_w = getmaxx( $!win );
+        if $term_w != ( get-term-size )[0] + 1 {
+            $term_w = ( get-term-size )[0] + 1;
             self!_recursive_code();
             return;
         }
@@ -185,8 +181,14 @@ method !_recursive_code {
             $table,
             :prompt( @header.join: "\n" ), :ll( $table_w ), :default( $old_row ), :1index, :2layout
         );
-        return if ! $row.defined;
-        next   if $row < 0; # choose: ll + changed window size: returns -1; ll > term_width: returns -2
+        if ! $row.defined {
+            return;
+        }
+        if $row < 0 {
+            clear();
+            self!_init_progress_bar();
+            next;   # choose: ll + changed window size: returns -1;
+        }
         if ! %!o<table-expand> {
             return if $row == 0;
             next;
@@ -219,7 +221,7 @@ method !_recursive_code {
             $old_row = $row;
             $row_is_expanded = 1;
             if $!info_row && $row == $table.end {
-                $!tc.pause( ( 'Close', ), :prompt( $!info_row ), :mouse( %!o<mouse> ) );
+                $!tc.pause( ( 'Close', ), :prompt( $!info_row ) );
                 next;
             }
             if %!o<keep-header> {
@@ -235,6 +237,38 @@ method !_recursive_code {
         }
         %*ENV<TC_RESET_AUTO_UP>:delete;
     }
+}
+
+
+method !_print_single_table_row ( Int $row ) {
+    my Int $term_w = ( get-term-size )[0] + 1;
+    my Int $key_w = @!w_heads.max + 1; #
+    if $key_w > $term_w div 100 * 33 {
+        $key_w = $term_w div 100 * 33;
+    }
+    my Str $separator = ' : ';
+    my Int $sep_w = $separator.chars;
+    my $col_w = $term_w - ( $key_w + $sep_w + 1 ); #
+    my @lines = ' Close with ENTER';
+    for @!chosen_cols_idx -> $col {
+        my $col_name = ( @!orig_table[0][$col] // %!o<undef> );
+        if $col_name ~~ Buf {
+            $col_name = $col_name.gist;
+        }
+        $col_name.=subst( / \t /,  ' ', :g );
+        $col_name.=subst( / \v+ /,  '  ', :g );
+        $col_name.=subst( / <:Cc+:Noncharacter_Code_Point+:Cs> /, '', :g );
+        my Str $key = to-printwidth( $col_name, $key_w, False ).[0];
+        my $cell = @!orig_table[$row][$col];
+        my Str $sep = $separator;
+        @lines.push: ' ';
+        for line-fold( $cell, $col_w, '', '' ) -> $line {
+            @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, $line;
+            $key = '' if $key;
+             $sep = '' if $sep;
+        }
+    }
+    $!tc.pause( @lines, :prompt( '' ), :2layout );
 }
 
 
@@ -256,7 +290,7 @@ method !_copy_table ( $table ) {
                 do for @!chosen_cols_idx -> $col {
                     my $str = ( @!orig_table.AT-POS($row).AT-POS($col) // %!o<undef> );  # this is where the copying happens
                     if $str ~~ Buf {
-                        $str := $str.gist;
+                        $str = $str.gist;
                     }
                     if %!o<squash-spaces> {
                         $str.=subst( / ^ <:Space>+ /, '', :g );
@@ -293,7 +327,7 @@ method !_calc_col_width ( $table ) {
     my @w_cols[$size]  = ( 1 xx $size );
     my @w_int[$size]   = ( 0 xx $size );
     my @w_fract[$size] = ( 0 xx $size );
-    @!portions[0][0] = 1; # 0 already done: w_heads; set it back to 0 later
+    @!portions[0][0] = 1; # 0 already done: w_heads
     my $ds = %!o<decimal-separator>;
     my @promise;
     my $lock = Lock.new();
@@ -323,7 +357,7 @@ method !_calc_col_width ( $table ) {
                             }
                         }
                         else {
-                            my $width := print-columns( $table.AT-POS($row).AT-POS($col), @cache );
+                            my $width = print-columns( $table.AT-POS($row).AT-POS($col), @cache );
                             if $width > @w_cols.AT-POS($col) {
                                 @w_cols.BIND-POS( $col, $width );
                             }
@@ -345,8 +379,8 @@ method !_calc_col_width ( $table ) {
 
 
 method !_calc_avail_col_width( $table ) {
-    @!avail_w_cols  = @!w_cols;
-    my $term_w = getmaxx( $!win );
+    @!avail_w_cols = @!w_cols;
+    my $term_w = ( get-term-size )[0] + 1; # + 1 if not win32
     my Int $avail_w = $term_w - $!tab_w * @!avail_w_cols.end;
     my Int $sum = [+] @!avail_w_cols;
     if $sum < $avail_w {
@@ -380,14 +414,14 @@ method !_calc_avail_col_width( $table ) {
                     next;
                 }
                 if $mininum_w >= _minus_x_percent( @tmp_cols_w.AT-POS($i), $percent ) {
-                    @tmp_cols_w.BIND-POS( $i, $mininum_w );
+                    @tmp_cols_w[$i] = $mininum_w;
                 }
                 else {
-                    @tmp_cols_w.BIND-POS( $i, _minus_x_percent( @tmp_cols_w.AT-POS($i), $percent ) );
+                    @tmp_cols_w[$i] = _minus_x_percent( @tmp_cols_w[$i], $percent );
                 }
                 ++$count;
             }
-            $sum = [+] @tmp_cols_w;
+            $sum = @tmp_cols_w.sum;
             $mininum_w-- if $count == 0;
             #last MIN if $mininum_w == 0;
         }
@@ -495,37 +529,6 @@ method !_table_row_to_string( $table ) {
 }
 
 
-method !_print_single_table_row ( Int $row ) {
-    my Int $term_w = getmaxx( $!win );
-    my Int $key_w = @!w_heads.max + 1; #
-    if $key_w > $term_w div 100 * 33 {
-        $key_w = $term_w div 100 * 33;
-    }
-    my Str $separator = ' : ';
-    my Int $sep_w = $separator.chars;
-    my $col_w = $term_w - ( $key_w + $sep_w + 1 ); #
-    my @lines = ' Close with ENTER';
-    for @!chosen_cols_idx -> $col {
-        my $col_name = ( @!orig_table[0][$col] // %!o<undef> );
-        if $col_name ~~ Buf {
-            $col_name = $col_name.gist;
-        }
-        $col_name.=subst( / \t /,  ' ', :g );
-        $col_name.=subst( / \v+ /,  '  ', :g );
-        $col_name.=subst( / <:Cc+:Noncharacter_Code_Point+:Cs> /, '', :g );
-        my Str $key = to-printwidth( $col_name, $key_w, False ).[0];
-        my $cell = @!orig_table[$row][$col];
-        my Str $sep = $separator;
-        @lines.push: ' ';
-        for line-fold( $cell, $col_w, '', '' ) -> $line {
-            @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, $line;
-            $key = '' if $key;
-             $sep = '' if $sep;
-        }
-    }
-    $!tc.pause( @lines, :prompt( '' ), :2layout );
-}
-
 method !_choose_columns ( @avail_cols ) {
     my Str $init_prompt = 'Columns: ';
     my Str $ok = '-ok-';
@@ -534,9 +537,9 @@ method !_choose_columns ( @avail_cols ) {
     my @cols = @avail_cols.map( { $_ // %!o<undef> } );
 
     loop {
-        my Str @chosen_cols = @col_idxs.list ?? @cols[@col_idxs] !! '*';
+        my @chosen_cols = @col_idxs.list ?? @cols[@col_idxs] !! '*';
         my Str $prompt = $init_prompt ~ @chosen_cols.join: ', ';
-        my Str @choices = |@pre, |@cols;
+        my @choices = |@pre, |@cols;
         # Choose
         my Int @idx = $!tc.choose-multi( @choices, :prompt( $prompt ), :1index, :lf( 0, $init_prompt.chars ),
                                                    :meta-items( |^@pre ), :undef( '<<' ), :2include-highlighted );
@@ -557,7 +560,7 @@ method !_choose_columns ( @avail_cols ) {
 }
 
 method !_split_work_for_threads {
-    my Int $threads = Term::Choose.new.num-threads();
+    my Int $threads = num-threads();
     while $threads * 2 > @!rows_idx.elems {
         last if $threads == 1;
         $threads = $threads div 2;
@@ -571,10 +574,7 @@ method !_init_progress_bar {
     $!p_bar = {};
     my Int $count_cells = @!rows_idx.elems * @!chosen_cols_idx.elems;
     if %!o<progress-bar> && %!o<progress-bar> < $count_cells {
-        curs_set( 0 );
-        clear();
-        mvaddstr( 0, 0, 'Computing: ' );
-        nc_refresh();
+        print 'Computing: ';
         $!p_bar<times> = 3;
         if $count_cells / %!o<progress-bar> > 50 {
             $!p_bar<type> = 'multi';
@@ -591,7 +591,7 @@ method !_set_progress_bar {
     if ! $!p_bar<type> {
         return Int, Int;
     }
-    my Int $term_w = getmaxx( $!win );
+    my Int $term_w = ( get-term-size )[0] + 1;
     my Int $count;
     if $!p_bar<type> eq 'multi' {
         $!p_bar<fmt> = 'Computing: (' ~ $!p_bar<times>-- ~ ') [%s%s]';
@@ -611,10 +611,7 @@ method !_set_progress_bar {
 
 method !_update_progress_bar( Int $count ) { # sub
     my $multi = ( $count / ( $!p_bar{'total'} / $!p_bar<bar_w> ) ).ceiling;
-    #my $ext ~= ' ' ~ ( $multi * ( 100 / $!p_bar<bar_w> ) ).Int ~ "%";
-    clear();
-    mvaddstr( 0, 0, sprintf $!p_bar<fmt>, '=' x $multi, ' ' x $!p_bar<bar_w> - $multi );
-    nc_refresh();
+    print "\r" ~ sprintf( $!p_bar<fmt>, '=' x $multi, ' ' x $!p_bar<bar_w> - $multi );
 }
 
 method !_last_update_progress_bar( $count ) {
@@ -624,6 +621,7 @@ method !_last_update_progress_bar( $count ) {
     else {
         $!p_bar<so_far> = $count;
     }
+    print "\r";
 }
 
 method !_header_separator { 
@@ -723,17 +721,17 @@ Keys to move around:
 
 =item the C<PageUp> key (or C<Ctrl-B>) to go back one page, the C<PageDown> key (or C<Ctrl-F>) to go forward one page.
 
-=item the C<Insert> key to go back 25 pages, the C<Delete> key to go forward 25 pages.
+=item the C<Insert> key to go back 10 pages, the C<Delete> key to go forward 10 pages.
 
 =item the C<Home> key (or C<Ctrl-A>) to jump to the first row of the table, the C<End> key (or C<Ctrl-E>) to jump to the last
 row of the table.
 
-With I<format> set to C<0> the C<Return> key closes the table if the cursor is on the header row.
+With I<keep-header> set to C<0> the C<Return> key closes the table if the cursor is on the header row.
 
-If I<format> is enabled (set to C<1> or C<2>) and I<table-expand> is set to C<0>, the C<Return> key closes the table if the cursor is on
+If I<keep-header> is enabled (set to C<1> or C<2>) and I<table-expand> is set to C<0>, the C<Return> key closes the table if the cursor is on
 the first row.
 
-If I<format> and I<table-expand> are enabled and the cursor is on the first row, pressing C<Return> three times in
+If I<keep-header> and I<table-expand> are enabled and the cursor is on the first row, pressing C<Return> three times in
 succession closes the table. If I<table-expand> is set to C<1> and the cursor is auto-jumped to the first row, it is
 required only one C<Return> to close the table.
 
@@ -756,12 +754,6 @@ see option L</choose-columns>.
 
 The constructor method C<new> can be called with named arguments. For the valid options see L<#OPTIONS>. Setting the
 options in C<new> overwrites the default values for the instance.
-
-Additionally to the options mentioned below one can set the option L<win>. The opton L<win> expects as its value a
-C<WINDOW> object - the return value of L<NCurses> C<initscr>.
-
-If set, C<print-table> uses this global window instead of creating its own without calling C<endwin> to restores the
-terminal before returning.
 
 =head1 ROUTINES
 
@@ -791,12 +783,11 @@ C<SpaceBar> and the C<Return> key) until the user confirms with the I<-ok-> menu
 
 Default: 0
 
-=head2 decimal_separator
+=head2 decimal-separator
 
-Set the decimal separator. Numbers with a decimal separator are formatted as number if this option is set to the right
-value.
+If set, numbers use I<decimal-separator> as the decimal separator instead of the default decimal separator.
 
-Allowed values: a character with a print width of C<1>. If an invalid values is passed, I<decimal_separator> falls back
+Allowed values: a character with a print width of C<1>. If an invalid values is passed, I<decimal-separator> falls back
 to the default value.
 
 Default: . (dot)
@@ -881,7 +872,7 @@ If set to 0 the table is shown with no grid.
 
 =end code
 
-Default: 0
+Default: 1
 
 =head2 max-rows
 
@@ -965,20 +956,9 @@ Default: "" (empty string)
 =head2 multithreading
 
 C<Term::TablePrint> uses multithreading when preparing the list for the output; the number of threads to use can be set
-with the environment variable C<TC_NUM_THREADS>. To find out the setting of "number of treads" see
-L<Term::Choose>/ENVIRONMET.
-
-head2 libncurses
-
-The location of the used ncurses library can be specified by setting the environment variable C<PERL6_NCURSES_LIB>. This
-will overwrite the autodetected ncurses library location.
+with the environment variable C<TC_NUM_THREADS>.
 
 =head1 REQUIREMENTS
-
-=head2 libncurses
-
-Requires C<libncursesw> to be installed. If the list elements contain wide characters, it is required an approprirate
-ncurses library else wide character will break the output.
 
 =head2 Monospaced font
 
@@ -996,7 +976,7 @@ Matthäus Kiem <cuer2s@gmail.com>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2016-2018 Matthäus Kiem.
+Copyright 2016-2019 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

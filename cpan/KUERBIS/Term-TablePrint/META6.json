@@ -4,8 +4,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [
-    "NCurses",
-    "Term::Choose",
+    "Term::Choose:ver<1.5.1+>",
     "Term::Choose::Util"
   ],
   "description" : "Print a table to the terminal and browse it interactively.",
@@ -26,5 +25,5 @@
   "test-depends" : [
     "Test"
   ],
-  "version" : "1.3.2"
+  "version" : "1.4.2"
 }

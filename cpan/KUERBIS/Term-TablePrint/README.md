@@ -64,15 +64,15 @@ Keys to move around:
 
   * the `PageUp` key (or `Ctrl-B`) to go back one page, the `PageDown` key (or `Ctrl-F`) to go forward one page.
 
-  * the `Insert` key to go back 25 pages, the `Delete` key to go forward 25 pages.
+  * the `Insert` key to go back 10 pages, the `Delete` key to go forward 10 pages.
 
   * the `Home` key (or `Ctrl-A`) to jump to the first row of the table, the `End` key (or `Ctrl-E`) to jump to the last row of the table.
 
-With *format* set to `0` the `Return` key closes the table if the cursor is on the header row.
+With *keep-header* set to `0` the `Return` key closes the table if the cursor is on the header row.
 
-If *format* is enabled (set to `1` or `2`) and *table-expand* is set to `0`, the `Return` key closes the table if the cursor is on the first row.
+If *keep-header* is enabled (set to `1` or `2`) and *table-expand* is set to `0`, the `Return` key closes the table if the cursor is on the first row.
 
-If *format* and *table-expand* are enabled and the cursor is on the first row, pressing `Return` three times in succession closes the table. If *table-expand* is set to `1` and the cursor is auto-jumped to the first row, it is required only one `Return` to close the table.
+If *keep-header* and *table-expand* are enabled and the cursor is on the first row, pressing `Return` three times in succession closes the table. If *table-expand* is set to `1` and the cursor is auto-jumped to the first row, it is required only one `Return` to close the table.
 
 If the cursor is not on the first row:
 
@@ -88,10 +88,6 @@ CONSTRUCTOR
 ===========
 
 The constructor method `new` can be called with named arguments. For the valid options see [OPTIONS](#OPTIONS). Setting the options in `new` overwrites the default values for the instance.
-
-Additionally to the options mentioned below one can set the option [win](win). The opton [win](win) expects as its value a `WINDOW` object - the return value of [NCurses](NCurses) `initscr`.
-
-If set, `print-table` uses this global window instead of creating its own without calling `endwin` to restores the terminal before returning.
 
 ROUTINES
 ========
@@ -124,12 +120,12 @@ If *choose-columns* is set to 1, the user can choose which columns to print. Col
 
 Default: 0
 
-decimal_separator
+decimal-separator
 -----------------
 
-Set the decimal separator. Numbers with a decimal separator are formatted as number if this option is set to the right value.
+If set, numbers use *decimal-separator* as the decimal separator instead of the default decimal separator.
 
-Allowed values: a character with a print width of `1`. If an invalid values is passed, *decimal_separator* falls back to the default value.
+Allowed values: a character with a print width of `1`. If an invalid values is passed, *decimal-separator* falls back to the default value.
 
 Default: . (dot)
 
@@ -199,7 +195,7 @@ If set to 0 the table is shown with no grid.
         |                            |
         '----------------------------'
 
-Default: 0
+Default: 1
 
 max-rows
 --------
@@ -282,19 +278,10 @@ ENVIRONMET VARIABLES
 multithreading
 --------------
 
-`Term::TablePrint` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_THREADS`. To find out the setting of "number of treads" see [Term::Choose](Term::Choose)/ENVIRONMET.
-
-head2 libncurses
-
-The location of the used ncurses library can be specified by setting the environment variable `PERL6_NCURSES_LIB`. This will overwrite the autodetected ncurses library location.
+`Term::TablePrint` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_THREADS`.
 
 REQUIREMENTS
 ============
-
-libncurses
-----------
-
-Requires `libncursesw` to be installed. If the list elements contain wide characters, it is required an approprirate ncurses library else wide character will break the output.
 
 Monospaced font
 ---------------
@@ -314,7 +301,7 @@ Matthäus Kiem <cuer2s@gmail.com>
 LICENSE AND COPYRIGHT
 =====================
 
-Copyright 2016-2018 Matthäus Kiem.
+Copyright 2016-2019 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

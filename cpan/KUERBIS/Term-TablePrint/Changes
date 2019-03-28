@@ -1,6 +1,16 @@
 Revision history for Term::TablePrint
 
 
+1.4.2  2019-03-26
+        - Update META6.
+
+1.4.1  2019-03-26
+        - Cleanup.
+
+1.4.0  2019-03-26
+        - From ncurses to ANSI escapes.
+        - Bugfix: removed two bindings.
+
 1.3.2  2018-12-11
         - New options: "decimal-separator" and "squash-spaces"
         - Update string substitution
