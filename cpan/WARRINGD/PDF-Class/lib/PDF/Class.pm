@@ -85,6 +85,6 @@ class PDF::Class:ver<0.3.5>#:api<PDF-1.7>
     }
 
     my subset Pages of PDF::Class::Type where { .<Type> ~~ 'Pages' }; # autoloaded PDF::Pages
-    method Pages returns Pages handles <page add-page delete-page insert-page page-count page-index media-box crop-box bleed-box trim-box art-box core-font use-font> { self.Root.Pages }
+    method Pages returns Pages handles <page pages add-page delete-page insert-page page-count page-index media-box crop-box bleed-box trim-box art-box core-font use-font> { self.Root.Pages }
 
 }

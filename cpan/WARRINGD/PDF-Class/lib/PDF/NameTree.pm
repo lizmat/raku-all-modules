@@ -20,6 +20,7 @@ role PDF::NameTree
         has Bool $!realized;
         method !fetch($node, Str $key?) {
             with $node.Names -> $kv {
+                # leaf node
                 unless %!fetched{$node}++ {
                     for 0, 2 ...^ +$kv {
                         my $val = $kv[$_ + 1];
@@ -30,6 +31,7 @@ role PDF::NameTree
                 }
             }
             else {
+                # branch node
                 given $node.Kids -> $kids {
                     for 0 ..^ +$kids {
                         given $kids[$_] -> $kid {

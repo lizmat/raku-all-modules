@@ -1,8 +1,8 @@
 # PDF::Class
 
-PDF::Class provides a set of roles and classes that map to the internal structure of PDF documents; the aim being to make it easier to read, write and validate PDF files.
+PDF::Class provides a set of roles and classes that map to the internal structure of PDF documents; the aim being to make it easier to read, write valid PDF files.
 
-It assists with the construction of valid PDF documents, providing type-checking and the sometimes finicky serialization rules regarding objects.
+It assists with the construction of PDF documents, providing type-checking and the sometimes finicky serialization rules regarding objects.
 
 This is the base class for [PDF::API6](https://github.com/p6-pdf/PDF-API6).
 
@@ -99,7 +99,7 @@ with my PDF::AcroForm $acroform = $doc.catalog.AcroForm {
 
 In theory, we should always be able to use PDF::Class accessors for structured access and updating of PDF objects.
 
-In reality, a fair percentage of PDF files contain some issues (as reported by `pdf-checker.p6`) and PDF::Class itself
+In reality, a fair percentage of PDF files contain at least some conformance issues (as reported by `pdf-checker.p6`) and PDF::Class itself
 is under development.
 
 For these reasons it possible to bypass PDF::Class accessors; instead accessing hashes and arrays directly, giving raw access to the PDF data.
@@ -122,9 +122,6 @@ in the out put stream `:name<UseToes>`, rather than a string `'UseToes'`.
     # same again, bypassing type checking
     $doc<PageMode>  = :name<UseToes>;
 ```
-
-- If this this looks like something that PDF::Class should handle, please consider raising an issue or pull-request on the PDF::Class
-repository, ideally with sample PDF files and code demonstrating the problem and/or desired behaviour.
 
 ## Scripts in this Distribution
 
@@ -289,9 +286,12 @@ The PDF::Class module is under construction and not yet functionally complete.
 
 ## See also
 
+- [PDF::Lite](https://github.com/p6-pdf/PDF-ISO_32000-p6) - A Lite-weight alternative
+- [PDF::API6](https://github.com/p6-pdf/PDF-API6) - general purpose PDF manipulation, based on this
+module (PDF::Class)
 - [PDF::ISO_32000](https://github.com/p6-pdf/PDF-ISO_32000-p6) - A set of interface roles that have
 been mined from the PDF 32000 specification, e.g. ISO_32000::Catalog.
-- [PDF::API6](https://github.com/p6-pdf/PDF-API6) - general purpose PDF manipulation (under construction)
+
 ## Classes Quick Reference
 
 Class | Types | Accessors | Methods | Description | See Also
@@ -336,11 +336,13 @@ PDF::Field::Button | dict | DV(default-value), Opt, V(value) |  |  | ISO_32000::
 PDF::Field::Choice | dict | DV(default-value), I(indices), Opt, TI(top-index), V(value) |  |  | ISO_32000::Choice_field_additional
 PDF::Field::Signature | dict | Lock, SV(seed-value), V(value) | DV |  | ISO_32000::Signature_field
 PDF::Field::Text | dict | DV(default-value), MaxLen, V(value) |  |  | ISO_32000::Text_field_additional
+PDF::Filespec | dict | CI, DOS, Desc, EF(embedded-files), F(file-name), FS(file-system), ID, Mac, RF(related-files), Type(type), UF, Unix, V(volatile) |  |  |
 PDF::Font::CIDFont | dict | BaseFont, CIDSystemInfo, CIDToGIDMap, DW(default-width), DW2(default-width-and-height), FontDescriptor, Subtype, Type, W(widths), W2(heights) | font-obj, make-font, set-font-obj |  | ISO_32000::CIDFont
 PDF::Font::CIDFontType0 | dict | BaseFont, CIDSystemInfo, CIDToGIDMap, DW(default-width), DW2(default-width-and-height), FontDescriptor, Subtype, Type, W(widths), W2(heights) | font-obj, make-font, set-font-obj |  | ISO_32000::CIDFont
 PDF::Font::CIDFontType2 | dict | BaseFont, CIDSystemInfo, CIDToGIDMap, DW(default-width), DW2(default-width-and-height), FontDescriptor, Subtype, Type, W(widths), W2(heights) | font-obj, make-font, set-font-obj |  | ISO_32000::CIDFont
 PDF::Font::MMType1 | dict | BaseFont, Encoding, FirstChar, FontDescriptor, LastChar, Name, Subtype, ToUnicode, Type, Widths | font-obj, make-font, set-font-obj |  | ISO_32000::Type_1_Font
 PDF::Font::TrueType | dict | BaseFont, Encoding, FirstChar, FontDescriptor, LastChar, Name, Subtype, ToUnicode, Type, Widths | font-obj, make-font, set-font-obj | TrueType fonts - /Type /Font /Subtype TrueType see [PDF 32000 Section 9.6.3 TrueType Fonts] | ISO_32000::Type_1_Font
+PDF::FontDescriptor::CID | dict | CIDSet, FD, Lang, Style |  |  | 
 PDF::FontFile | stream | Length1, Length2, Length3, Metadata, Subtype |  |  | ISO_32000::Embedded_font_stream_additional
 PDF::FontStream | dict | Length1, Length2, Length3, Metadata |  |  | 
 PDF::Function::Exponential | stream | C0, C1, Domain, FunctionType, N, Range | calc, calculator | /FunctionType 2 - Exponential | ISO_32000::Type_2_Function ISO_32000::Function_common
@@ -348,7 +350,9 @@ PDF::Function::PostScript | stream | Domain, FunctionType, Range | calc, calcula
 PDF::Function::Sampled | stream | BitsPerSample, Decode, Domain, Encode, FunctionType, Order, Range, Size | calc, calculator | /FunctionType 0 - Sampled see [PDF 32000 Section 7.10.2 Type 0 (Sampled) Functions] | ISO_32000::Type_0_Function ISO_32000::Function_common
 PDF::Function::Stitching | stream | Bounds, Domain, Encode, FunctionType, Functions, Range | calc, calculator | /FunctionType 3 - Stitching see [PDF 32000 Section 7.4.10 Type 3 (Stitching) Functions] | ISO_32000::Type_3_Function ISO_32000::Function_common
 PDF::Group::Transparency | dict | CS(color-space), I(isolated), K(knockout), S, Type |  |  | ISO_32000::Transparency_group_additional ISO_32000::Group_Attributes_common
+PDF::ICCProfile | dict | Alternate, Metadata, N(num-colors), Range |  |  | 
 PDF::Image | stream | Alternates, BitsPerComponent, ColorSpace, Decode, Height, ID, ImageMask, Intent, Interpolate, Mask, Metadata, Name, OC(optional-content), OPI, SMask, SMaskInData, StructParent, Subtype, Type, Width | to-png |  | ISO_32000::Image
+PDF::Info | dict | Title, Author, CreationDate, Creator, Keywords, ModDate, Producer, Subject, Trapped  |  |  | 
 PDF::MCR | dict | MCID, Pg(page), Stm, StmOwn, Type |  |  | ISO_32000::Marked_content_reference
 PDF::Mask::Alpha | dict | BC(backdrop-color), G(transparency-group), S(subtype), TR(transfer-function), Type |  |  | ISO_32000::Soft-mask
 PDF::Mask::Luminosity | dict | BC(backdrop-color), G(transparency-group), S(subtype), TR(transfer-function), Type |  |  | ISO_32000::Soft-mask
@@ -366,6 +370,7 @@ PDF::Pages | dict | Count, CropBox, Kids, MediaBox, Parent, Resources, Rotate, T
 PDF::Pattern::Shading | dict | ExtGState, Matrix, PatternType, Shading, Type |  | /ShadingType 2 - Axial | ISO_32000::Type_2_Pattern
 PDF::Pattern::Tiling | stream | BBox, Matrix, PaintType, PatternType, Resources, TilingType, Type, XStep, YStep | canvas, contents, contents-parse, core-font, find-resource, finish, gfx, graphics, has-pre-gfx, height, images, new-gfx, pre-gfx, pre-graphics, render, resource-entry, resource-key, save-as-image, text, tiling-pattern, use-font, use-resource, width, xobject-form | /PatternType 1 - Tiling | ISO_32000::Type_1_Pattern
 PDF::Resources | dict | ColorSpace, ExtGState, Font, Pattern, ProcSet, Properties, Shading, XObject |  |  | ISO_32000::Resource
+PDF::Signature | dict | ByteRange, Cert, Changes, ContactInfo, Contents, Location, M(date-signed), Name, Prop_AuthTime, Prop_AuthType, Prop_Build, R, Reason, Reference, SubFilter, Type, V |  |  |
 PDF::Shading::Axial | dict | AntiAlias, BBox, Background, ColorSpace, Coords, Domain, Extend, Function, ShadingType |  | /ShadingType 2 - Axial | ISO_32000::Type_2_Shading ISO_32000::Shading_common
 PDF::Shading::Coons | stream | AntiAlias, BBox, Background, BitsPerComponent, BitsPerCoordinate, BitsPerFlag, ColorSpace, Decode, Function, ShadingType |  | /ShadingType 6 - Coons | ISO_32000::Type_6_Shading ISO_32000::Shading_common
 PDF::Shading::FreeForm | stream | AntiAlias, BBox, Background, BitsPerComponent, BitsPerCoordinate, BitsPerFlag, ColorSpace, Decode, Function, ShadingType |  | /ShadingType 4 - FreeForm | ISO_32000::Type_4_Shading ISO_32000::Shading_common
