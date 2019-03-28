@@ -127,7 +127,7 @@ multi sub MAIN(Bool :$check, Str :$meta6-file-name = 'META6.json',
     }
 }
 
-multi sub MAIN(Str :$new-module, Bool :$force, Bool :$skip-git, Bool :$skip-github, :$skip-skeleton, Str :$prefix, :$verbose, :$description = '') {
+multi sub MAIN(Str :$new-module, Bool :$force, Bool :$skip-git, Bool :$skip-github, :$skip-skeleton, Str :$prefix is copy, :$verbose, :$description = '') {
     my $name = $new-module;
     $prefix //= %cfg<create><prefix>;
     my @tracked-files;
