@@ -4,7 +4,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [
-    "Sparrowdo"
+    "Sparrow6"
   ],
   "description" : "Sparrowdo module to generate VSTS yaml build definition header",
   "license" : "NOASSERTION",
@@ -22,5 +22,5 @@
   },
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.0.7"
+  "version" : "0.1.0"
 }

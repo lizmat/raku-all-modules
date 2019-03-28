@@ -2,10 +2,7 @@ use v6;
 
 unit module Sparrowdo::VSTS::YAML::Build:ver<0.0.7>;
 
-use Sparrowdo;
-use Sparrowdo::Core::DSL::Template;
-use Sparrowdo::Core::DSL::File;
-use Sparrowdo::Core::DSL::Directory;
+use Sparrow6::DSL;
 
 our sub tasks (%args) {
 
@@ -16,9 +13,11 @@ our sub tasks (%args) {
   my $build-dir = %args<build-dir> || die "usage module_run '{ ::?MODULE.^name }' ,%(build-dir => dir)";
 
   directory-delete "$build-dir/files";
+
   directory-delete "$build-dir/.cache";
 
   directory "$build-dir/.cache";
+
   directory "$build-dir/files";
 
   my @demands = %args<demands> || [];

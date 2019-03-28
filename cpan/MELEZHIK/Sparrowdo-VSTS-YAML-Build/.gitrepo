@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/melezhik/sparrowdo-vsts-build.git
 	branch = master
-	commit = 5ee17332ed4b05ae6345f46648d5eae717bd3ef1
-	parent = 6078b80fbe3e57cf1dcd5e7a56bfeecc521a1b7d
+	commit = 9226544232fcc6ae01718652ebe041e6e60e6348
+	parent = afa5664f85f500b83aac10d0cefc114cd2f52d76
 	cmdver = 0.3.1
