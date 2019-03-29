@@ -31,7 +31,6 @@ multi method connect(Str:D $dsn, :%options) {
     ('user=' ~ %db-opts<user> if %db-opts<user>.defined),
     ('pass=' ~ %db-opts<password> if %db-opts<password>.defined);
 
-  say $conninfo;
   $db = DB::Pg.new(:$conninfo);
 
   self.connect(
