@@ -16,7 +16,6 @@
     "Acme::Cow::Frogs" : "lib/Acme/Cow/Frogs.pm6",
     "Acme::Cow::MechAndCow" : "lib/Acme/Cow/MechAndCow.pm6",
     "Acme::Cow::Stegosaurus" : "lib/Acme/Cow/Stegosaurus.pm6",
-    "Acme::Cow::Text" : "lib/Acme/Cow/Text.pm6",
     "Acme::Cow::TextBalloon" : "lib/Acme/Cow/TextBalloon.pm6",
     "Acme::Cow::TuxStab" : "lib/Acme/Cow/TuxStab.pm6"
   },
@@ -71,5 +70,5 @@
     "CPAN5"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.2"
+  "version" : "0.0.3"
 }

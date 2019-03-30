@@ -2,7 +2,7 @@ use v6.c;
 
 use Acme::Cow;
 
-unit class Acme::Cow::DragonAndCow:ver<0.0.2>:auth<cpan:ELIZABETH> is Acme::Cow;
+unit class Acme::Cow::DragonAndCow:ver<0.0.3>:auth<cpan:ELIZABETH> is Acme::Cow;
 
 my $dragon_and_cow = Q:to/EOC/;
 {$balloon}

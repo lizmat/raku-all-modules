@@ -1,15 +1,38 @@
 use v6.c;
 
-use Acme::Cow::Text:ver<0.0.1>:auth<cpan:ELIZABETH>;
-use Acme::Cow::TextBalloon:ver<0.0.1>:auth<cpan:ELIZABETH>;
+use Acme::Cow::TextBalloon:ver<0.0.3>:auth<cpan:ELIZABETH>;
 
-class Acme::Cow:ver<0.0.2>:auth<cpan:ELIZABETH>
-  does Acme::Cow::Text
-{
+class Acme::Cow:ver<0.0.3>:auth<cpan:ELIZABETH> {
     has  Str $.el   is rw = 'o';
     has  Str $.er   is rw = 'o';
     has  Str $.U    is rw = '  ';
     has  Str $.File;
+    has  Int $.over = 0;
+    has  Int $.wrap = 40;
+    has Bool $.fill = True;
+    has  Str $.mode = 'say';
+    has      @.text;
+
+    multi method over()             { $!over }
+    multi method over(Int() $!over) { $!over }
+
+    multi method wrap()             { $!wrap }
+    multi method wrap(Int() $!wrap) { $!wrap }
+
+    multi method fill()              { $!fill }
+    multi method fill(Bool() $!fill) { $!fill }
+
+    multi method think()    { $!mode = 'think' }
+    multi method think(*@_) { $!mode = 'think'; self.text(@_) }
+
+    multi method say()    { $!mode = 'say' }
+    multi method say(*@_) { $!mode = 'say'; self.text(@_) }
+
+    multi method text()    { @!text }
+    multi method text(@_)  { @!text = @_ }
+    multi method text(*@_) { @!text = @_ }
+
+    method print($handle = $*OUT) { $handle.print(self.as_string) }
 
     my $default-cow = q:to/EOC/;
     {$balloon}

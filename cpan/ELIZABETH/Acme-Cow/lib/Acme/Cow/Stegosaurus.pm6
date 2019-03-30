@@ -2,7 +2,7 @@ use v6.c;
 
 use Acme::Cow;
 
-unit class Acme::Cow::Stegosaurus:ver<0.0.2>:auth<cpan:ELIZABETH> is Acme::Cow;
+unit class Acme::Cow::Stegosaurus:ver<0.0.3>:auth<cpan:ELIZABETH> is Acme::Cow;
 
 my $stegosaurus = Q:to/EOC/;
 {$balloon}
