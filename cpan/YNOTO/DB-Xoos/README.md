@@ -17,15 +17,40 @@ Xoos is an ORM designed for convenience and ease of use, it is modeled after DBI
 * column validation hooks
 * YAML models (auto composed)
 * decouple SQL generation from Xoos::Searchable (this includes decoupling the SQL generation from the DB layer) - DB::Pg is intended to be used but epoll is not ported to OSX
+* dynamic model loading (Pg)
 
 ## todo
 
-* soft validation of model/table/relationships when model loads
 * prefetch relationships option (currently everything is prefetched)
 
 # Usage
 
 Below is a minimum viable model setup for your app.  Xoos does _not_ create the table for you, that is up to you.
+
+## autoloading models (only available in Pg at the moment)
+
+### lib/app.pm6
+```perl6
+use DB::Xoos::Pg;
+
+my DB::Xoos::Pg $d .=new;
+
+$d.connect('pg://xyyz/example', options => { :dynamic-loading });
+
+my $customer-model = $d.model('Customer');
+my $new-customer   = $customer-model.new-row;
+$new-customer.name('xyz co');
+$new-customer.rate(150);
+$new-customer.update; # runs an insert because this is a new row
+
+my $xyz = $customer-model.search({ name => { 'like' => '%xyz%' } }).first;
+$xyz.rate( $xyz.rate * 2 ); #twice the rate!
+$xyz.update; # UPDATEs the database
+
+my $xyz-orders = $xyz.orders.count;
+```
+
+## same example with model modules
 
 ### lib/app.pm6
 ```perl6

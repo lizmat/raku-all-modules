@@ -2,13 +2,15 @@ use DB::Xoos;
 unit class DB::Xoos::Pg does DB::Xoos;
 
 use DB::Xoos::DSN;
+use DB::Xoos::Pg::Dynamic;
 use DB::Pg;
 
 multi method connect(Any:D: :$db, :%options) {
   $!db     = $db;
   $!driver = 'Pg';
   $!prefix = %options<prefix> // '';
-  self.load-models(%options<model-dirs>//[]);
+  my %dynamic = %options<dynamic-loader> ?? generate-structure(:db-conn($db)) !! ();
+  self.load-models(%options<model-dirs>//[], :%dynamic);
 }
 
 multi method connect(Str:D $dsn, :%options) {
