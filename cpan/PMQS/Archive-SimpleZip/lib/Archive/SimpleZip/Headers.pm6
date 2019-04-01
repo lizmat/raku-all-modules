@@ -1,5 +1,5 @@
 
-unit module Archive::SimpleZip::Headers;
+unit module Archive::SimpleZip::Headers:ver<0.2.0>:auth<Paul Marquess (pmqs@cpan.org)>;;
 
 # Compression types supported
 enum Zip-CM is export (

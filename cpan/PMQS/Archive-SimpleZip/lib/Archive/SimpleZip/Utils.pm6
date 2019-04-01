@@ -1,5 +1,5 @@
 
-unit module Archive::SimpleZip::Utils;
+unit module Archive::SimpleZip::Utils:ver<0.2.0>:auth<Paul Marquess (pmqs@cpan.org)>;;
 
 need Compress::Zlib::Raw;
 use NativeCall;

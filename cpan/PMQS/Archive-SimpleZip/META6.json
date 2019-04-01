@@ -1,7 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Archive::SimpleZip",
-    "version" : "0.1.2",
+    "version" : "0.2.3",
     "description" : "Write Zip Files.",
     "authors" : [ "Paul Marquess <pmqs@cpan.org>" ],
     "tags" : [ "archive", "compression" ],

@@ -1,0 +1,23 @@
+    
+    
+0.2.0 10 March 2019
+
+    * Drop support for in-memory zip files. 
+      IO::Blob doesn't allow seekable writing to a blob at the moment.
+      Can reinstate when IO::Blob gets seek support.
+
+    * Drop use of "pack" - use buf8, write-uint16/32 instead
+
+    * Add version data to the .pm6 files
+    
+    * Include 2018.12 in .travis.yml
+
+    * More tests
+
+    * Set Language encoding bit when filename/comment not 7-bit ascii
+
+0.1.2 
+
+    * Checkpoint release to CPAN
+
+    * Dropped "use v6"

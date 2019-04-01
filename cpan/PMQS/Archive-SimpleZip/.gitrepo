@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/pmqs/Archive-SimpleZip.git
 	branch = master
-	commit = 9f06d908b0c2c7562b1cb8fd0a567633960ccbf9
-	parent = 269cafb6b506a55f0421aedfb691c5074f82304b
+	commit = 50ac4e0c876e95dbc167ecf295c52e3028662452
+	parent = 25a827762a287888d684ecc34fe22a47561fd770
 	cmdver = 0.3.1
