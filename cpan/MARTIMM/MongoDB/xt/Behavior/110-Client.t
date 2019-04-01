@@ -11,13 +11,14 @@ use BSON::Document;
 
 #------------------------------------------------------------------------------
 drop-send-to('mongodb');
+#my $handle = 'MongoDB.mlog'.IO.open( :mode<wo>, :create, :truncate);
+#modify-send-to( 'mongodb', :level(MongoDB::MdbLoglevels::Trace), :to($handle));
 drop-send-to('screen');
 #modify-send-to( 'screen', :level(MongoDB::MdbLoglevels::Debug));
-info-message("Test $?FILE start");
+info-message("Test start");
 
 my MongoDB::Test-support $ts .= new;
 
-#%*ENV<SERVERKEYS> = 's1,s2';
 my @serverkeys = $ts.serverkeys.sort;
 
 my Int $p1 = $ts.server-control.get-port-number(@serverkeys[0]);
@@ -104,6 +105,7 @@ subtest "Two equal standalone servers", {
     :uri("mongodb://$server-name1,$server-name2/?" ~  ~ @options.join('&'))
   );
 
+  sleep 0.7;
   $server = $client.select-server;
   nok $server.defined, 'No servers selected';
 

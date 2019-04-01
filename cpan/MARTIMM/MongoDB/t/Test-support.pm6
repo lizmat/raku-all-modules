@@ -11,6 +11,9 @@ use MongoDB::Client;
 
 use Config::TOML;
 
+constant MINVERSION is export = '3.6.9';
+constant MAXVERSION is export = '4.0.5';
+
 #-------------------------------------------------------------------------------
 class Test-support {
 
@@ -83,20 +86,6 @@ class Test-support {
 
     # if %*ENV<SERVERKEYS> is not set then take default server s1
     $h ?? $h !! %( s1 => self.get-connection(:server-key<s1>) )
-  }
-
-  #-----------------------------------------------------------------------------
-  method server-version ( DatabaseType $db --> Str ) {
-
-    my BSON::Document $doc = $db.run-command: (
-      serverStatus => 1,
-      repl => 0, metrics => 0, locks => 0, asserts => 0,
-      backgroundFlushing => 0, connections => 0, cursors => 0,
-      extra_info => 0, globalLock => 0, indexCounters => 0, network => 0,
-      opcounters => 0, opcountersRepl => 0, recordStats => 0
-    );
-
-    $doc<version>
   }
 
   #-----------------------------------------------------------------------------

@@ -15,13 +15,17 @@ drop-send-to('screen');
 info-message("Test $?FILE start");
 
 my MongoDB::Test-support $ts .= new;
+my @serverkeys = $ts.serverkeys.sort;
 
 # single server tests => one server key
 my Hash $clients = $ts.create-clients;
-my Str $skey = $clients.keys[0];
-#my Str $bin-path = $ts.server-control.get-binary-path( 'mongod', $skey);
+
 my MongoDB::Client $client = $clients{$clients.keys[0]};
 my MongoDB::Database $database = $client.database('test');
+
+my $p1 = $ts.server-control.get-port-number(@serverkeys[0]);
+my Str $server-version = $client.server-version("localhost:$p1");
+diag "Running tests for server version $server-version";
 
 # Create collection and insert data in it!
 my MongoDB::Collection $collection = $database.collection('cl1');

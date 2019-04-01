@@ -2,6 +2,13 @@
 
 See [semantic versioning](http://semver.org/). Please note point 4. on that page: ***Major version zero (0.y.z) is for initial development. Anything may change at any time. The public API should not be considered stable.***
 
+* 31-03-2019 0.43.8
+  * Test bugfixes and test design doc update
+* 29-03-2019 0.43.7
+  * Small changes due to the wrong interpretation of normalization in the  MongoDB servers. Should be changed later. Issue is already reported in 2016. To cope with this issue, only ASCII user names and passwords can be used safely. Furthermore prepped user names and passwords given by the SCRAM modules are ignored.
+  * Default authentication mechanism is now **SCRAM-SHA-1**.
+  * MongoDB server version is returned by `MongoDB::Client` method `server-version()`.
+
 * 25-03-2019 0.43.6
   * Revised Monitor and Server class. This class is a singleton class. Previously, the heartbeat was set by server registration which in turn was used on all servers. This is wrong. Secondly, a new Client with the same server used previously would not be registered because it was found in the set of servers in Monitor. To handle this, a waits structure is made where the shortest time was selected to wait and to send an `is-master` request to the selected server. The second problem is solved to generate a unique id for each server and use that id as a server indication in the Monitor.
 * 22-03-2019 0.43.5

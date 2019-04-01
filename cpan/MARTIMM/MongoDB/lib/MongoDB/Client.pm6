@@ -114,9 +114,8 @@ class Client {
           $changes-count = self!discover-servers ?? 0 !! $changes-count + 1;
 
           # When there is no work take a nap! This sleeping period is the
-          # moment we do not process the todo list. Start taking a nap for 1.1
-          # sec.
-          if $changes-count < 10 {
+          # moment we do not process the todo list.
+          if $changes-count < 7 {
             sleep 1.4;
           }
 
@@ -274,9 +273,7 @@ class Client {
     self!check-discovery-process;
 
     #! Wait until topology is set
-    until $!rw-sem.reader( 'topology', { $!topology-set }) {
-      sleep 0.5;
-    }
+    until $!rw-sem.reader( 'topology', { $!topology-set }) { sleep 0.5; }
 
     my Hash $h = $!rw-sem.reader(
       'servers', {
@@ -287,8 +284,30 @@ class Client {
     });
 
     my ServerStatus $sts = $h<status> // SS-Unknown;
-#    debug-message("server-status: '$server-name', $sts");
+    debug-message("server-status: '$server-name', $sts");
     $sts;
+  }
+
+  #-----------------------------------------------------------------------------
+  # Get the server version
+  method server-version ( Str:D $server-name --> Str ) {
+
+    self!check-discovery-process;
+
+    #! Wait until topology is set
+    until $!rw-sem.reader( 'topology', { $!topology-set }) { sleep 0.5; }
+
+    my BSON::Document $ss = $!rw-sem.reader(
+      'servers', {
+      my $x = $!servers{$server-name}:exists
+              ?? $!servers{$server-name}.server-state-info
+              !! {};
+      $x;
+    });
+
+    my Str $server-version = $ss<version>;
+    debug-message("server version: $server-version");
+    $server-version;
   }
 
   #-----------------------------------------------------------------------------

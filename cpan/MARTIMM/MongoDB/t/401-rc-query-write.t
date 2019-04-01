@@ -14,16 +14,19 @@ drop-send-to('screen');
 info-message("Test $?FILE start");
 
 my MongoDB::Test-support $ts .= new;
+my @serverkeys = $ts.serverkeys.sort;
 
 my Hash $clients = $ts.create-clients;
-my Str $skey = $clients.keys[0];
-#my Str $bin-path = $ts.server-control.get-binary-path( 'mongod', $skey);
 
 my MongoDB::Client $client = $clients{$clients.keys[0]};
 my MongoDB::Database $database = $client.database('test');
 my MongoDB::Database $db-admin = $client.database('admin');
 my BSON::Document $req;
 my BSON::Document $doc;
+
+my $p1 = $ts.server-control.get-port-number(@serverkeys[0]);
+my Str $server-version = $client.server-version("localhost:$p1");
+diag "Running tests for server version $server-version";
 
 # Drop database first, not checked for success.
 $database.run-command(BSON::Document.new: (dropDatabase => 1));

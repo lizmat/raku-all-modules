@@ -3,19 +3,11 @@
   "name": "MongoDB",
 
   "api": "0",
-  "version": "0.43.6",
+  "version": "0.43.8",
 
   "tags": [ "NoSQL", "database", "mongodb", "driver"],
 
   "authors": [ "Marcel Timmerman", "Paweł Pabian"],
-
-  "X-Mongo-Sources": [
-    "only oldest server version in resources, no mongos",
-    "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.6.9.tgz"
-  ],
-  "X-resources": [
-    "linux/mongod"
-  ],
 
   "source-url": "https://github.com/MARTIMM/mongo-perl6-driver.git",
   "perl": "6",
@@ -25,13 +17,10 @@
     "BSON",
     "Semaphore::ReadersWriters",
     "Config::DataLang::Refine",
-    "Auth::SCRAM",
-    "Base64",
-    "OpenSSL",
-    "URI::Escape",
-    "Unicode::PRECIS",
-    "Terminal::ANSIColor",
-    "Log::Async"
+    "Base64", "Digest::MD5",
+    "OpenSSL", "URI::Escape",
+    "Auth::SCRAM", "Unicode::PRECIS",
+    "Terminal::ANSIColor", "Log::Async"
   ],
   "test-depends": [ ],
   "build-depends": [ "HTTP::UserAgent", "Config::TOML" ],

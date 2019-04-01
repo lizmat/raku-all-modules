@@ -93,20 +93,36 @@ class Server::Control {
   }
 
   #-----------------------------------------------------------------------------
-  #method stop-mongod ( *@server-keys --> Bool ) {
-  method stop-mongod ( $server-key --> Bool ) {
+  # To stop a server in --auth mode, a username and password must be provided
+  # with a hostManager and clusterAdmin role on the admin database
+  method stop-mongod (
+    Str:D $server-key, Str :$username = '', Str :$password = ''
+    --> Bool
+  ) {
 
     my Bool $stopped = False;
     my Int $port-number = self.get-port-number($server-key);
 
     # shutdown can only be given to localhost or as an authenticated
     # user with proper rights
-    my MongoDB::Client $client .= new(:uri("mongodb://localhost:$port-number"));
+    my MongoDB::Client $client;
+    if ?$username and ?$password {
+      $client .= new(
+        :uri("mongodb://$username\:$password\@localhost:$port-number")
+      );
+    }
+
+    else {
+      $client .= new(:uri("mongodb://localhost:$port-number"));
+    }
+
     my MongoDB::Database $database = $client.database('admin');
 
     # force needed to shutdown replicated servers
     my BSON::Document $req .= new: ( shutdown => 1, force => True);
     my BSON::Document $doc = $database.run-command($req);
+
+    trace-message("shutdown result: {($doc//{}).perl}");
 
     # some versions just break off so doc can be undefined
     if !$doc or (?$doc and $doc<ok> ~~ 1e0) {
@@ -114,8 +130,12 @@ class Server::Control {
       debug-message('Command executed ok');
     }
 
+    elsif ?$doc {
+      warn-message("Error: $doc<code>, $doc<errmsg>");
+    }
+
     else {
-      warn-message("Error: $doc<errcode>, $doc<errmsg>");
+      warn-message("Error: other error");
     }
 
     $client.cleanup;

@@ -37,6 +37,9 @@ class Server {
   # is a singleton object.
   has Str $.server-id;
 
+  # Status of server
+  has BSON::Document $.server-state-info;
+
   #-----------------------------------------------------------------------------
   submethod BUILD ( ClientType:D :$!client, Str:D :$server-name ) {
 
@@ -73,6 +76,17 @@ class Server {
     $!server-sts-data<error> = 'no error message';
     $!server-sts-data<is-master> = False;
     $!server-sts-data<status> = SS-Unknown;
+
+    # get server status for this server
+    my BSON::Document $req .= new: (
+      :serverStatus(1), :asserts(0), :connections(0), :extra_info(0),
+      :globalLock(0), :locks(0), :logicalSessionRecordCache(0), :network(0),
+      :opLatencies(0), :opcounters(0), :opcountersRepl(0), :storageEngine(0),
+      :tcmalloc(0), :transactions(0), :wiredTiger(0), :mem(0), :metrics(0),
+    );
+    $!server-state-info = self.raw-query( 'admin.$cmd', $req, :!authenticate);
+    $!server-state-info = $!server-state-info<documents>[0];
+    trace-message("Server state info $!server-name, $!server-id: " ~ $!server-state-info.perl);
   }
 
   #-----------------------------------------------------------------------------
@@ -223,7 +237,7 @@ class Server {
 
   #-----------------------------------------------------------------------------
   # Search in the array for a closed Socket.
-  # By default authentiction is needed when user/password info is found in the
+  # By default authentication is needed when user/password info is found in the
   # uri data. Monitor however, does not need this and therefore monitor is
   # using raw-query with :!authenticate.
 
@@ -301,32 +315,48 @@ class Server {
     # We can only authenticate when all 3 data are True and when the socket is
     # created.
     if $created-anew and $authenticate {
-      my MongoDB::Authenticate::Credential $credential = $!client.uri-obj.credential;
+      my MongoDB::Authenticate::Credential $credential;
+      $credential = $!client.uri-obj.credential;
+
       if ?$credential.username and ?$credential.password {
 
         # get authentication mechanism
         my Str $auth-mechanism = $credential.auth-mechanism;
+        $auth-mechanism = 'SCRAM-SHA-1' unless ?$auth-mechanism;
+#`{{
         if not $auth-mechanism {
           my Int $max-version = $!rw-sem.reader(
             's-status', {$!server-sts-data<max-wire-version>}
           );
+#TODO
           $auth-mechanism = $max-version < 3 ?? 'MONGODB-CR' !! 'SCRAM-SHA-1';
           trace-message("wire version is $max-version");
           trace-message("authenticate with '$auth-mechanism'");
         }
-
+}}
         $credential.auth-mechanism(:$auth-mechanism);
+        trace-message("authenticate with '$auth-mechanism'");
 
         given $auth-mechanism {
 
           # Default in version 3.*
           when 'SCRAM-SHA-1' {
 
+            #`{{
+            https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#scram-sha-1
+
+            This document describes how SCRAM is implemented for mongodb. They
+            do not follow the rfc exact to the description therein (sic). So a
+            few things needed to be changed in this class.
+            }}
             my MongoDB::Authenticate::Scram $client-object .= new(
-              :$!client, :db-name($credential.auth-source)
+              :$!client, :db-name($credential.auth-source),
+              :username($credential.username),
+              :password($credential.password)
             );
 
             my Auth::SCRAM $sc .= new(
+              # These will be ignored when mangling is called
               :username($credential.username),
               :password($credential.password),
               :$client-object,
@@ -334,12 +364,19 @@ class Server {
 
             my $error = $sc.start-scram;
             if ?$error {
-              fatal-message("authentication fail for $credential.username(): $error");
+              fatal-message(
+                "authentication fail for $credential.username(): $error"
+              );
             }
 
             else {
               trace-message("$credential.username() authenticated");
             }
+          }
+
+          when 'SCRAM-SHA-256' {
+#TODO test for server version >= 4.0
+
           }
 
           # Default in version 2.*

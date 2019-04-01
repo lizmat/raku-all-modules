@@ -14,6 +14,7 @@ drop-send-to('screen');
 info-message("Test $?FILE start");
 
 my MongoDB::Test-support $ts .= new;
+my @serverkeys = $ts.serverkeys.sort;
 
 my BSON::Document $req;
 my BSON::Document $doc;
@@ -25,8 +26,9 @@ my MongoDB::Database $database = $client.database('test');
 my MongoDB::Database $db-admin = $client.database('admin');
 
 # get version to skip certain tests
-my Str $version = $ts.server-version($database);
-#note $version;
+my $p1 = $ts.server-control.get-port-number(@serverkeys[0]);
+my Str $server-version = $client.server-version("localhost:$p1");
+diag "Running tests for server version $server-version";
 
 # Drop database first then create new databases
 $req .= new: ( dropDatabase => 1 );
@@ -50,14 +52,7 @@ subtest "Database, create collection, drop", {
   like $doc<errmsg>, /:s already exists/, $doc<errmsg>;
 #TODO get all codes and test on code instead of messages to prevent changes
 # in mongod in future
-
-  if $version ~~ / '2.6.' \d+ / {
-    skip "No error code returned from 2.6.* server", 1;
-  }
-
-  else {
-    is $doc<code>, 48, 'error code 48';
-  }
+  is $doc<code>, 48, 'error code 48';
 }
 
 #-------------------------------------------------------------------------------

@@ -208,7 +208,8 @@ After some discussion with developers from MongoDB and the perl5 driver develope
 
 * Authentication and security
   * MONGODB-CR will not implemented because it is deprecated since 3.2 and removed in 4.0.
-  * SCRAM-SHA is implemented.
+  * SCRAM-SHA1 is implemented.
+  * SCRAM-SHA256
   * Kerberos
   * LDAP
   * TLS/SSL
@@ -241,6 +242,7 @@ and [Server Selection](https://www.mongodb.com/blog/post/server-selection-next-g
 
 * [Release notes](https://github.com/MARTIMM/mongo-perl6-driver/blob/master/doc/CHANGES.md)
 * [Bugs, todo, etc.](https://github.com/MARTIMM/mongo-perl6-driver/blob/master/doc/TODO.md)
+* [Test design document](https://github.com/MARTIMM/mongo-perl6-driver/blob/master/doc/Design/Design-tests.pdf)
 
 ### MongoDB documents
 
@@ -254,7 +256,7 @@ and [Server Selection](https://www.mongodb.com/blog/post/server-selection-next-g
 * [Create a User Administrator](http://docs.mongodb.org/manual/tutorial/add-user-administrator/)
 
 ### Driver specs
-* [server selection]( https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst)
+* [Server selection]( https://github.com/mongodb/specifications/blob/master/source/server-selection/server-selection.rst)
 
 ## INSTALLING THE MODULES
 

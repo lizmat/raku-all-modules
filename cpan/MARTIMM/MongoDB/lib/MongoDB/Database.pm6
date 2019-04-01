@@ -48,7 +48,10 @@ class Database {
   multi method run-command ( BSON::Document:D $command --> BSON::Document ) {
 
     debug-message("run command {$command.keys[0]}");
-    self!execute($command);
+    my BSON::Document $doc = self!execute($command);
+    debug-message("run command result ok: {($doc//{:ok('-')})<ok>}");
+
+    $doc
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -57,7 +60,10 @@ class Database {
 
     my BSON::Document $command .= new: $pairs;
     debug-message("run command {$command.keys[0]}");
-    self!execute($command);
+    my BSON::Document $doc = self!execute($command);
+    debug-message("run command result ok: {($doc//{:ok('-')})<ok>}");
+
+    $doc
   }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -71,6 +77,7 @@ class Database {
 
     my MongoDB::Cursor $c;
     my BSON::Document $doc = self!execute($command);
+
 #note "Cursor doc 1: ", $doc<cursor><firstBatch>.perl;
     if ? $doc<cursor><firstBatch> {
       $c .= new(
@@ -93,6 +100,7 @@ class Database {
 
     my MongoDB::Cursor $c;
     my BSON::Document $doc = self!execute($command);
+
 #note "Cursor doc 2: ", $doc<cursor>.perl;
     if ? $doc<cursor> {
       $c .= new(

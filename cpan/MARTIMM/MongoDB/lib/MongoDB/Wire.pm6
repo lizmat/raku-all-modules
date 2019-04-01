@@ -95,6 +95,11 @@ class Wire {
 #note "Server: ", $!server;
         $!socket.close-on-fail if $!socket.defined;
 
+        # Get this message further up
+        when .message ~~ m:s/Authentication failed/ {
+          .rethrow;
+        }
+
         # Fatal messages from the program elsewhere
         when X::MongoDB {
           # Already logged

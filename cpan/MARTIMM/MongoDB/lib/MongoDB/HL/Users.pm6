@@ -8,10 +8,18 @@ use Unicode::PRECIS::Identifier::UsernameCasePreserved;
 use Unicode::PRECIS::FreeForm::OpaqueString;
 
 #-------------------------------------------------------------------------------
+#`{{
+https://github.com/mongodb/specifications/blob/master/source/auth/auth.rst#scram-sha-1
+
+This document describes how SCRAM is implemented for mongodb. They do not
+follow the rfc exact to the description therein (sic). So a few things needed
+to be changed in this class.
+}}
+
+#-------------------------------------------------------------------------------
 unit package MongoDB:auth<hgithub:MARTIMM>;
 
-#-----------------------------------------------------------------------------
-#
+#-------------------------------------------------------------------------------
 class MongoDB::HL::Users {
 
   has MongoDB::Database $.database;
@@ -19,14 +27,14 @@ class MongoDB::HL::Users {
   has Int $.min-pw-length = MongoDB::C-PW-MIN-PW-LEN;
   has Int $.pw-attribs-code = MongoDB::C-PW-LOWERCASE;
 
-  #---------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   submethod BUILD ( MongoDB::Database :$database ) {
 
 #TODO validate name
     $!database = $database;
   }
 
-  #---------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   method set-pw-security (
     Int:D :$min-un-length where $_ >= 2,
     Int:D :$min-pw-length where $_ >= 2,
@@ -59,29 +67,26 @@ class MongoDB::HL::Users {
     $!min-un-length = $min-un-length;
   }
 
-  #---------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   # Create a user in the mongodb authentication database
-  #
   method create-user (
     Str:D $user, Str:D $password,
     List :$custom-data, Array :$roles,
 #      Int :timeout($wtimeout)
     --> BSON::Document
   ) {
+
     # Check if username is too short
-    #
     if $user.chars < $!min-un-length {
       fatal-message("Username too short, must be >= $!min-un-length");
     }
 
     # Check if password is too short
-    #
     elsif $password.chars < $!min-pw-length {
       fatal-message("Password too short, must be >= $!min-pw-length");
     }
 
     # Check if password answers to rule given by attribute code
-    #
     else {
       my Bool $pw-ok = False;
       given $!pw-attribs-code {
@@ -118,26 +123,28 @@ class MongoDB::HL::Users {
         unless $pw-ok;
     }
 
-#TODO normalization done here or on server? assume on server.
+#TODO normalization done by mongodb is wrong. An issue has been filed in 2016.
 #`{{}}
     # Normalize username and password
-    my Unicode::PRECIS::Identifier::UsernameCasePreserved $upi-ucp .= new;
-    my TestValue $tv-un = $upi-ucp.prepare($user);
-    fatal-message("Username $user not accepted") if $tv-un ~~ Bool;
-    info-message("Username '$user' accepted as '$tv-un'");
+    #my Unicode::PRECIS::Identifier::UsernameCasePreserved $upi-ucp .= new;
+    #my TestValue $tv-un = $upi-ucp.prepare($user);
+    #fatal-message("Username $user not accepted") if $tv-un ~~ Bool;
+    #info-message("Username '$user' accepted as '$tv-un'");
 
-    my Unicode::PRECIS::FreeForm::OpaqueString $upf-os .= new;
-    my TestValue $tv-pw = $upf-os.prepare($password);
-    fatal-message("Password not accepted") if $tv-pw ~~ Bool;
-    info-message("Password accepted");
+    #my Unicode::PRECIS::FreeForm::OpaqueString $upf-os .= new;
+    #my TestValue $tv-pw = $upf-os.prepare($password);
+    #fatal-message("Password not accepted") if $tv-pw ~~ Bool;
+    #info-message("Password accepted");
 
     # Create user where digestPassword is set false
     my BSON::Document $req .= new: (
-      createUser => $user,
-      pwd => md5(([~] $tv-un, ':mongo:', $tv-pw).encode)>>.fmt('%02x').join(''),
-      digestPassword => False
+      :createUser($user),
+#      :pwd(md5(("$tv-un\:mongo:$tv-pw").encode)>>.fmt('%02x').join('')),
+      :pwd($password),
+      :digestPassword,
+# version 4      :mechanisms([ "SCRAM-SHA-1", ]),
     );
-
+    trace-message("Create req: " ~ $req.perl);
 #`{{
     # Create user where digestPassword is set false
     my BSON::Document $req .= new: (
@@ -150,11 +157,10 @@ class MongoDB::HL::Users {
     $req<customData> = $custom-data if ?$custom-data;
 #      $req<writeConcern> = ( :j, :$wtimeout) if ?$wtimeout;
 
-    return $!database.run-command($req);
+    $!database.run-command($req)
   }
 
-  #---------------------------------------------------------------------------
-  #
+  #-----------------------------------------------------------------------------
   method update-user (
     Str:D $user, Str :$password,
     :$custom-data, Array :$roles,
@@ -162,10 +168,7 @@ class MongoDB::HL::Users {
     --> BSON::Document
   ) {
 
-    my BSON::Document $req .= new: (
-      updateUser => $user,
-      digestPassword => True
-    );
+    my BSON::Document $req .= new: ( :updateUser($user), :digestPassword);
 
     if ?$password {
       if $password.chars < $!min-pw-length {
@@ -224,7 +227,8 @@ class MongoDB::HL::Users {
 
         $req<pwd> = (Digest::MD5.md5_hex([~] $tv-un, ':mongo:', $tv-pw));
 }}
-        $req<pwd> = md5(([~] $user, ':mongo:', $password).encode)>>.fmt('%02x').join('');
+        $req<pwd> = $password;
+        #md5(([~] $user, ':mongo:', $password).encode)>>.fmt('%02x').join('');
       }
 
       else {
@@ -249,7 +253,6 @@ class MongoDB::HL::Users {
 #`{{
 
     #---------------------------------------------------------------------------
-    #
     method drop-user ( Str:D :$user, Int :timeout($wtimeout) --> Hash ) {
 
       my Pair @req = dropUser => $user;
@@ -270,7 +273,6 @@ class MongoDB::HL::Users {
     }
 
     #---------------------------------------------------------------------------
-    #
     method drop-all-users-from-database ( Int :timeout($wtimeout) --> Hash ) {
 
       my Pair @req = dropAllUsersFromDatabase => 1;
@@ -291,7 +293,6 @@ class MongoDB::HL::Users {
     }
 
     #---------------------------------------------------------------------------
-    #
     method grant-roles-to-user (
       Str:D :$user, Array:D :$roles, Int :timeout($wtimeout)
       --> Hash
@@ -316,7 +317,6 @@ class MongoDB::HL::Users {
     }
 
     #---------------------------------------------------------------------------
-    #
     method revoke-roles-from-user (
       Str:D :$user, Array:D :$roles, Int :timeout($wtimeout)
       --> Hash
@@ -341,7 +341,6 @@ class MongoDB::HL::Users {
     }
 
     #---------------------------------------------------------------------------
-    #
     method users-info (
       Str:D :$user,
       Bool :$show-credentials,
@@ -369,7 +368,6 @@ class MongoDB::HL::Users {
     }
 
     #---------------------------------------------------------------------------
-    #
     method get-users ( --> Hash ) {
 
       my Pair @req = usersInfo => 1;

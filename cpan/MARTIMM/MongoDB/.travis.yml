@@ -31,21 +31,41 @@ install:
 #  depth: 5
 
 script:
-  # Servers s1-s3 are running mongo binaries 3.6.9 versions
-  # Servers s4-s8 are running mongo binaries 4.0.5 versions
+  # Servers s1-s4 are running mongo binaries minimum versions
+  # Servers s5-s8 are running mongo binaries maximum versions
 
   #- xt/wrapper.pl6 xt/001-meta.t
 
-  - xt/wrapper.pl6 --serverkeys=s1 t    # /099* t/[2-5]* t/998*
-  - xt/wrapper.pl6 --serverkeys=s4 t    # /099* t/[2-5]* t/998*
+  # Installation test done by zef but starts next tests found in dir t
+  # Smoke tests done for installation. These must be successful
+  - xt/wrapper.pl6 --serverkeys=s1,s5 t/099*
+  - xt/wrapper.pl6 --serverkeys=s1 t/[2-5]*
+  - xt/wrapper.pl6 --serverkeys=s5 t/[2-5]*
+  - xt/wrapper.pl6 --serverkeys=s1,s5 t/998*
 
+#  - xt/wrapper.pl6 --serverkeys=s4 t    # /099* t/[2-5]* t/998*
+
+  # Compatibility testing
+
+  # Destructive testing
+  #- xt/wrapper.pl6 --serverkeys=s1,s2 --ignore t/099* xt/Behavior/1* t/998*
+  #- xt/wrapper.pl6 --serverkeys=s4,s5 --ignore t/099* xt/Behavior/1* t/998*
+
+  # Software performance testing
+
+  # Security testing, one server, min and max version
+  - xt/wrapper.pl6 --serverkeys=s1,s5 t/099*
+  - xt/wrapper.pl6 --serverkeys=s1 --ignore xt/Security/112-Client.t
+  - xt/wrapper.pl6 --serverkeys=s5 --ignore xt/Security/112-Client.t
+  - xt/wrapper.pl6 --serverkeys=s1,s5 t/998*
+#  - xt/wrapper.pl6 --serverkeys=s5 --ignore t/099* xt/Security/1* t/998*
+
+  # Functional testing
   - xt/wrapper.pl6 --ignore xt/Basic
 
-  - xt/wrapper.pl6 --serverkeys=s1,s2 --ignore t/099* xt/Behavior/1* t/998*
-  - xt/wrapper.pl6 --serverkeys=s4,s5 --ignore t/099* xt/Behavior/1* t/998*
-
-  - xt/wrapper.pl6 --serverkeys=s1,s2,s3 --ignore t/099* xt/Behavior/6* t/998*
-  - xt/wrapper.pl6 --serverkeys=s4,s5,s6 --ignore t/099* xt/Behavior/6* t/998*
+  # these test must be the last few because servers are changed
+  #- xt/wrapper.pl6 --serverkeys=s1,s2,s3 --ignore t/099* xt/Replica/6* t/998*
+  #- xt/wrapper.pl6 --serverkeys=s5,s6,s7 --ignore t/099* xt/Replica/6* t/998*
 
 
 #cache:

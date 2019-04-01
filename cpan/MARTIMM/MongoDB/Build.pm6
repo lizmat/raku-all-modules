@@ -154,7 +154,7 @@ method !build-sandbox ( ) {
 
     for 's1',*.succ ... 's8' -> $server-key {
       my Str $version =
-         $server-key lt 's4' ?? $!SERVER-VERSION-MIN !! $!SERVER-VERSION-MAX;
+         $server-key lt 's5' ?? $!SERVER-VERSION-MIN !! $!SERVER-VERSION-MAX;
 
       # add some directories
       my Str $server-dir = "$!sandbox/Server-$server-key";
