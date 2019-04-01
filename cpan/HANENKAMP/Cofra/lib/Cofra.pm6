@@ -1,6 +1,6 @@
 use v6;
 
-unit module Cofra:ver<0.0.1>:auth<github:zostay>;
+unit module Cofra:ver<0.0.2>:auth<github:zostay>;
 
 =begin pod
 
