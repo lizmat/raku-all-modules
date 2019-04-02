@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/CurtTilmes/perl6-dbsqlite.git
 	branch = master
-	commit = 5798e54be2f18c14ea33c4ec4c4e85fc5ccc5887
-	parent = 3a93f1b6b41c6e8a279aa4ede19cb926d7f1219e
+	commit = ff47fd300597d4fc3ec366610fda676c9155292e
+	parent = cbc75dfa8281a51070db488ace0716f67d0b902f
 	cmdver = 0.3.1
