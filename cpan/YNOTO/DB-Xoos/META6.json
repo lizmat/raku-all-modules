@@ -5,8 +5,8 @@
   "description" : "An ORM, with support.",
   "auth"        : "github:tony-o",
   "authors"     : [ "Tony O'Dell" ],
-  "depends"     : ["DB"],
-  "test-depends": ["DB::SQLite", "DBIish"],
+  "depends"     : ["DB", "DB::MySQL", "DB::Pg", "DBIish", "DB::Oracle", "DB::SQLite"],
+  "test-depends": ["DB::SQLite", "DB::MySQL", "DBIish", "DB::Pg", "DB::Oracle"],
   "license"     : "Artistic-2.0",
   "provides"    : {
     "DB::Xoos": "lib/DB/Xoos.pm6",
@@ -18,6 +18,7 @@
     "DB::Xoos::Oracle::Searchable": "lib/DB/Xoos/Oracle/Searchable.pm6",
     "DB::Xoos::Pg": "lib/DB/Xoos/Pg.pm6",
     "DB::Xoos::Pg::Searchable": "lib/DB/Xoos/Pg/Searchable.pm6",
+    "DB::Xoos::Pg::Dynamic": "lib/DB/Xoos/Pg/Dynamic.pm6",
     "DB::Xoos::Row": "lib/DB/Xoos/Row.pm6",
     "DB::Xoos::SQLite": "lib/DB/Xoos/SQLite.pm6",
     "DB::Xoos::SQLite::Searchable": "lib/DB/Xoos/SQLite/Searchable.pm6",
