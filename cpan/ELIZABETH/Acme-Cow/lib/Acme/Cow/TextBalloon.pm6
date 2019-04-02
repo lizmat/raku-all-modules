@@ -1,6 +1,6 @@
 use v6.c;
 
-class Acme::Cow::TextBalloon:ver<0.0.3>:auth<cpan:ELIZABETH> {
+class Acme::Cow::TextBalloon:ver<0.0.4>:auth<cpan:ELIZABETH> {
     has  Int $.over = 0;
     has  Int $.wrap = 40;
     has Bool $.fill = True;

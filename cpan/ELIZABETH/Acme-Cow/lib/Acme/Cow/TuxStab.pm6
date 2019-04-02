@@ -1,8 +1,8 @@
 use v6.c;
 
-use Acme::Cow;
+use Acme::Cow:auth<cpan:ELIZABETH>;
 
-unit class Acme::Cow::TuxStab:ver<0.0.3>:auth<cpan:ELIZABETH> is Acme::Cow;
+unit class Acme::Cow::TuxStab:ver<0.0.4>:auth<cpan:ELIZABETH> is Acme::Cow;
 
 my $tux_being_stabbed = Q:to/EOC/;
 {$balloon}

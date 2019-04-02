@@ -1,8 +1,8 @@
 use v6.c;
 
-use Acme::Cow;
+use Acme::Cow:auth<cpan:ELIZABETH>;
 
-unit class Acme::Cow::MechAndCow:ver<0.0.3>:auth<cpan:ELIZABETH> is Acme::Cow;
+unit class Acme::Cow::MechAndCow:ver<0.0.4>:auth<cpan:ELIZABETH> is Acme::Cow;
 
 my $mech_and_cow = Q:to/EOC/;
 {$balloon}

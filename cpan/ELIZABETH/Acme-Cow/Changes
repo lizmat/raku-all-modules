@@ -2,6 +2,9 @@ Revision history for Acme-Cow
 
 {{$NEXT}}
 
+0.0.4  2019-04-01T19:46:26+02:00
+    - Make sure subclasses use "our" Acme::Cow
+
 0.0.3  2019-03-29T14:44:42+01:00
     - Remove Acme::Cow::Text role, to more closely mimic Perl 5 version
 

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/Acme-Cow.git
 	branch = master
-	commit = 4630a1b1668b0c06a171ef2432fd00794af00588
-	parent = 0d921d1c7efbfdac7980456d37cd9867818145ac
+	commit = ef6b502a327e761c7f1adb503169a6735945ac0a
+	parent = 60a7093376c2f20246eadc524f65cedebd714d42
 	cmdver = 0.3.1

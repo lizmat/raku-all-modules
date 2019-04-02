@@ -1,8 +1,8 @@
 use v6.c;
 
-use Acme::Cow::TextBalloon:ver<0.0.3>:auth<cpan:ELIZABETH>;
+use Acme::Cow::TextBalloon:ver<0.0.4>:auth<cpan:ELIZABETH>;
 
-class Acme::Cow:ver<0.0.3>:auth<cpan:ELIZABETH> {
+class Acme::Cow:ver<0.0.4>:auth<cpan:ELIZABETH> {
     has  Str $.el   is rw = 'o';
     has  Str $.er   is rw = 'o';
     has  Str $.U    is rw = '  ';
