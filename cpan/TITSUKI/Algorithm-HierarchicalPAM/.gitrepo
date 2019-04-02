@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/titsuki/p6-Algorithm-HierarchicalPAM.git
+	branch = master
+	commit = 03a05fd52910afc80296dc6a0d403ac3becee74e
+	parent = 3bd7bd1790183352dd66c62783e59101d440ef7a
+	cmdver = 0.3.1

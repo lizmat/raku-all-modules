@@ -1,0 +1,9 @@
+/blib/
+/src/*.o
+/src/*.d
+/src/Makefile
+/.panda-work
+/resources/libraries/*.so
+/resources/libraries/*.dylib
+.precomp/
+/Algorithm-HierarchicalPAM-*
