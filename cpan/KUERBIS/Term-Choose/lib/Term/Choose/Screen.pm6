@@ -6,6 +6,8 @@ sub      clear is export( :ALL ) { print "\e[H\e[J" }
 sub clr-to-bot is export( :ALL ) { print "\e[0J"    }
 sub clr-to-eol is export( :ALL ) { print "\e[0K"    }
 
+sub beep is export( :ALL ) { print "\a" }
+
 sub    up ( $steps ) is export( :ALL ) { print "\e[{$steps}A" if $steps }
 sub  down ( $steps ) is export( :ALL ) { print "\e[{$steps}B" if $steps }
 sub right ( $steps ) is export( :ALL ) { print "\e[{$steps}C" if $steps }

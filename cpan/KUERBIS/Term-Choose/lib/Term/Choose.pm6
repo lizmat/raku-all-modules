@@ -1,6 +1,6 @@
 use v6;
 
-unit class Term::Choose:ver<1.5.1>;
+unit class Term::Choose:ver<1.5.2>;
 
 use Term::termios;
 
@@ -23,14 +23,14 @@ has Int_0_or_1       $.beep                 = 0;
 has Int_0_or_1       $.index                = 0;
 has Int_0_or_1       $.mouse                = 0;
 has Int_0_or_1       $.order                = 1;
-has Int_0_or_1       $.loop                 = 0; # documentation
+has Int_0_or_1       $.loop                 = 0; # privat
 has Int_0_or_1       $.hide-cursor          = 1;
-has Int_0_to_2       $.clear-screen         = 0; # documentation: 2 -> alternate screen
+has Int_0_to_2       $.clear-screen         = 0;
 has Int_0_to_2       $.include-highlighted  = 0;
 has Int_0_to_2       $.justify              = 0;
 has Int_0_to_2       $.layout               = 1;
 has Positive_Int     $.keep                 = 5;
-has Positive_Int     $.ll;
+has Positive_Int     $.ll;                       # privat
 has Positive_Int     $.max-height;
 has Int_2_or_greater $.max-width;
 has UInt             $.default              = 0;
@@ -57,8 +57,9 @@ has Int   $!term_h;
 has Int   $!avail_w;
 has Int   $!avail_h;
 has Int   $!col_w;
+has Int   $!col_w_plus;
 has Int   @!w_list;
-has Int   $!curr_layout;
+has Int   $!current_layout;
 has Int   $!rest;
 has Int   $!page_count;
 has Str   $!pp_row_fmt;
@@ -289,12 +290,12 @@ method !_mouse_info_to_key ( Int $abs_cursor_Y, Int $button, Int $abs_mouse_X, I
 
     COL: for ^$!rc2idx[$row] -> $col {
         my Int $end_this_col;
-        if $!rc2idx.end == 0 {
+        if $!current_layout == -1 {
             my $idx = $!rc2idx[$row][$col];
             $end_this_col = $end_prev_col + print-columns( @!list[$idx] ) + %!o<pad>;
         }
         else { #
-            $end_this_col = $end_prev_col + $!col_w + %!o<pad>;
+            $end_this_col = $end_prev_col + $!col_w_plus;
         }
         if $col == 0 {
             $end_this_col -= %!o<pad> div 2;
@@ -379,9 +380,6 @@ method !_choose ( Int $multiselect, @!orig_list,
     }
     self!_init_term();
     self!_wr_first_screen( $multiselect );
-    #if %!o<ll> && %!o<ll> > $!avail_w {
-    #    return -2; #
-    #}
     my $fast_page = 10;
     if $!page_count > 10_000 {
         $fast_page = 20;
@@ -644,7 +642,7 @@ method !_choose ( Int $multiselect, @!orig_list,
                     }
                 }
             }
-            when 'q' | '^D' { #  documentation
+            when 'q' | '^Q' {
                 self!_end_term();
                 return;
             }
@@ -750,7 +748,7 @@ method !_wr_first_screen ( Int $multiselect ) {
     if %!o<max-height> && %!o<max-height> < $!avail_h {
         $!avail_h = %!o<max-height>;
     }
-    $!curr_layout = %!o<layout>;
+    self!_current_layout();
     self!_list_index2rowcol();
     self!_set_pp_print_fmt;
     $!begin_p = 0;
@@ -784,7 +782,7 @@ method !_wr_first_screen ( Int $multiselect ) {
 
 method !_wr_screen {
     my @lines;
-    if $!rc2idx.elems == 1 {
+    if $!current_layout == -1 {
         my $row = 0;
         @lines = ( 0 .. $!rc2idx[$row].end ).map({
             $!marked[$row][$_]
@@ -811,7 +809,7 @@ method !_wr_screen {
         }
         if $!end_p == $!rc2idx.end && $!begin_p != 0 {
             if $!rc2idx[$!end_p].end < $!rc2idx[0].end {
-                @lines[@lines.end] ~= ' ' x ( $!col_w + %!o<pad> ) * ( $!rc2idx[0].end - $!rc2idx[$!end_p].end );
+                @lines[@lines.end] ~= ' ' x $!col_w_plus * ( $!rc2idx[0].end - $!rc2idx[$!end_p].end );
             }
             if $!end_p - $!begin_p < $!avail_h {
                 for ( $!end_p + 1 - $!begin_p ) ..^ $!avail_h {
@@ -843,7 +841,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         $escape := "\e[1;4m";
     }
     my Int $i := $!rc2idx[$row][$col];
-    if $!rc2idx.end == 0 {
+    if $!current_layout == -1 {
         my Int $x = 0;
         if $col > 0 {
             for ^$col -> $c {
@@ -865,12 +863,12 @@ method !_wr_cell ( Int $row, Int $col ) {
     else {
         if $escape {
             print
-                self!_goto( $row - $!begin_p, ( $!col_w + %!o<pad> ) * $col ) ~
+                self!_goto( $row - $!begin_p, $!col_w_plus * $col ) ~
                 $escape ~ self!_pad_str_to_colwidth( $i ) ~ "\e[0m";
         }
         else {
             print
-                self!_goto( $row - $!begin_p, ( $!col_w + %!o<pad> ) * $col ) ~
+                self!_goto( $row - $!begin_p, $!col_w_plus * $col ) ~
                 self!_pad_str_to_colwidth( $i );
         }
         $!i_col = $!i_col + $!col_w;
@@ -904,46 +902,57 @@ method !_goto( $newrow, $newcol ) {
     return $escape;
 }
 
-
-method !_list_index2rowcol {
-    $!rc2idx = [];
-    if $!col_w + %!o<pad> >= $!avail_w {
-        $!curr_layout = 2;
-    }
-    my Str $all_in_first_row = '';
-    if $!curr_layout == 0|1 {
-        for ^@!list -> $i {
-            $all_in_first_row ~= @!list[$i];
-            $all_in_first_row ~= ' ' x %!o<pad> if $i < @!list.end;
-            if print-columns( $all_in_first_row ) > $!avail_w {
-                $all_in_first_row = '';
+method !_current_layout {
+    my $all_in_first_row;
+    if %!o<layout> <= 1 && ! %!o<ll> {
+        my $firstrow_w = 0;
+        for ^@!list -> $idx {
+            $firstrow_w += @!w_list[$idx] + %!o<pad>;
+            if $firstrow_w - %!o<pad> > $!avail_w {
+                $firstrow_w = 0;
                 last;
             }
         }
+        $all_in_first_row = $firstrow_w;
     }
     if $all_in_first_row {
+        $!current_layout = -1;
+    }
+    elsif $!col_w >= $!avail_w {
+        $!current_layout = 3;
+        $!col_w = $!avail_w;
+    }
+    else {
+        $!current_layout = %!o<layout>;
+    }
+    $!col_w_plus = $!col_w + %!o<pad>;
+    # 'col_width_plus' no effects if layout == 3
+}
+
+method !_list_index2rowcol {
+    $!rc2idx = [];
+    if $!current_layout == -1 {
         $!rc2idx[0] = [ ^@!list ];
     }
-    elsif $!curr_layout == 2 {
+    elsif $!current_layout == 2 {
         for ^@!list -> $i {
             $!rc2idx[$i][0] = $i;
         }
     }
     else {
-        my Int $col_with_pad_w = $!col_w + %!o<pad>;
         my Int $tmp_avail_w = $!avail_w + %!o<pad>;
         # auto_format
-        if $!curr_layout == 1 {
+        if $!current_layout == 1 {
             my Int $tmc = @!list.elems div $!avail_h;
             $tmc++ if @!list.elems % $!avail_h;
-            $tmc *= $col_with_pad_w;
+            $tmc *= $!col_w_plus;
             if $tmc < $tmp_avail_w {
                 $tmc += ( ( $tmp_avail_w - $tmc ) / 1.5 ).Int;
                 $tmp_avail_w = $tmc;
             }
         }
         # order
-        my Int $cols_per_row = $tmp_avail_w div $col_with_pad_w || 1;
+        my Int $cols_per_row = $tmp_avail_w div $!col_w_plus || 1;
         $!rest = @!list.elems % $cols_per_row; #
         if %!o<order> == 1 {
             my Int $nr_of_rows = ( @!list.elems - 1 + $cols_per_row ) div $cols_per_row; #
@@ -986,7 +995,7 @@ method !_list_index2rowcol {
 
 
 method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
-    if $!curr_layout == 2 {
+    if $!current_layout == 2 {
         for $indexes.list -> $i {
             next if $i > @!list.end;
             $!marked[$i][0] = $yesno;
@@ -1118,7 +1127,7 @@ options in C<new> overwrites the default values for the instance.
 C<choose> allows the user to choose one item from a list: the highlighted item is returned when C<Return>
 is pressed.
 
-C<choose> returns nothing if the C<Ctrl-D> is pressed.
+C<choose> returns nothing if the C<q> or C<Ctrl-Q> is pressed.
 
 =head2 choose-multi
 
@@ -1132,12 +1141,12 @@ returned.
 
 C<Ctrl-SpaceBar> (or C<Ctrl-@>) inverts the choices: marked items are unmarked and unmarked items are marked.
 
-C<choose-multi> returns nothing if the C<Ctrl-D> is pressed.
+C<choose-multi> returns nothing if the C<q> or C<Ctrl-Q> is pressed.
 
 =head2 pause
 
-Nothing can be chosen, nothing is returned but the user can move around and read the output until closed with C<Return>
-or C<Ctrl-D>.
+Nothing can be chosen, nothing is returned but the user can move around and read the output until closed with C<Return>,
+C<q> or C<Ctrl-Q>.
 
 =head1 OUTPUT
 
@@ -1180,6 +1189,8 @@ Options which expect a number as their value expect integers.
 0 - off (default)
 
 1 - clears the screen before printing the choices
+
+2 - use the alternate screen (uses the control sequence C<1049>)
 
 =head3 default
 
@@ -1413,7 +1424,7 @@ the environment variable C<TC_NUM_THREADS>.
 
 ANSI escape sequences are used to move the cursor, to markt and highlight cells and to clear the screen.
 
-Some options use non-ANSI control sequences (I<mouse> and I<hide-cursor>).
+Some options use non-ANSI control sequences (I<mouse>, I<hide-cursor> and I<clear-screen> set to C<2>).
 
 =head2 Monospaced font
 

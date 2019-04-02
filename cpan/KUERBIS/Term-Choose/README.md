@@ -76,7 +76,7 @@ choose
 
 `choose` allows the user to choose one item from a list: the highlighted item is returned when `Return` is pressed.
 
-`choose` returns nothing if the `Ctrl-D` is pressed.
+`choose` returns nothing if the `q` or `Ctrl-Q` is pressed.
 
 choose-multi
 ------------
@@ -89,12 +89,12 @@ If `Return` is pressed with no marked items and [include-highlighted](#include-h
 
 `Ctrl-SpaceBar` (or `Ctrl-@`) inverts the choices: marked items are unmarked and unmarked items are marked.
 
-`choose-multi` returns nothing if the `Ctrl-D` is pressed.
+`choose-multi` returns nothing if the `q` or `Ctrl-Q` is pressed.
 
 pause
 -----
 
-Nothing can be chosen, nothing is returned but the user can move around and read the output until closed with `Return` or `Ctrl-D`.
+Nothing can be chosen, nothing is returned but the user can move around and read the output until closed with `Return`, `q` or `Ctrl-Q`.
 
 OUTPUT
 ======
@@ -137,6 +137,8 @@ Options which expect a number as their value expect integers.
 0 - off (default)
 
 1 - clears the screen before printing the choices
+
+2 - use the alternate screen (uses the control sequence `1049`)
 
 ### default
 
@@ -354,7 +356,7 @@ ANSI escape sequences
 
 ANSI escape sequences are used to move the cursor, to markt and highlight cells and to clear the screen.
 
-Some options use non-ANSI control sequences (*mouse* and *hide-cursor*).
+Some options use non-ANSI control sequences (*mouse*, *hide-cursor* and *clear-screen* set to `2`).
 
 Monospaced font
 ---------------

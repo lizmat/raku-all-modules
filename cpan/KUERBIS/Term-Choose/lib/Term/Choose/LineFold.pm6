@@ -62,17 +62,14 @@ sub to-printwidth( $str, Int $avail_w, Bool $dot=False, @cache? ) is export( :to
 }
 
 
-sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is copy ) is export( :line-fold ) { # init_tab + subseq_tab optional + trim optional
-    for $init_tab, $subseq_tab {
+sub line-fold( $str, Int $avail_w, Str $init-tab is copy = '', Str $subseq-tab is copy = '' ) is export( :line-fold ) {
+    for $init-tab, $subseq-tab {
         if $_ { # .gist
             $_ = to-printwidth(
                     $_.=subst( / \t /,  ' ', :g ).=subst( / \v+ /,  '  ', :g ).=subst( / <:Cc+:Noncharacter_Code_Point+:Cs> /, '', :g ),
                     $avail_w div 2,
                     False
                 ).[0];
-        }
-        else {
-            $_ = '';
         }
     }
     my $string = ( $str // '' );
@@ -81,14 +78,20 @@ sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is cop
     }
     $string.subst( / \t /, ' ', :g );
     $string.=subst( / <:Cc+:Noncharacter_Code_Point+:Cs> && \V /, '' , :g ); #
-    if $string !~~ / \R / && print-columns( $init_tab ~ $string ) <= $avail_w {
-        return $init_tab ~ $string;
+    if $string !~~ / \R / && print-columns( $init-tab ~ $string ) <= $avail_w {
+        return $init-tab ~ $string;
     }
     my Str @lines;
 
     for $string.lines -> $row {
-        my Str @words = $row.trim-trailing.split( / <?after \S > <?before \s > / );
-        my Str $line = $init_tab;
+        my Str @words;
+        if $row ~~ / \S / {
+            @words = $row.trim-trailing.split( / <?after \S > <?before \s > / );
+        }
+        else {
+            @words = $row;
+        }
+        my Str $line = $init-tab;
 
         for 0 .. @words.end -> $i {
             if print-columns( $line ~ @words[$i] ) <= $avail_w {
@@ -97,17 +100,17 @@ sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is cop
             else {
                 my Str $tmp;
                 if $i == 0 {
-                    $tmp = $init_tab ~ @words[$i];
+                    $tmp = $init-tab ~ @words[$i];
                 }
                 else {
                     @lines.push: $line;
-                    $tmp = $subseq_tab ~ @words[$i].subst( / ^ \s+ /, '' );
+                    $tmp = $subseq-tab ~ @words[$i].subst( / ^ \s+ /, '' );
                 }
                 $line = to-printwidth( $tmp, $avail_w, False ).[0];
                 my Str $remainder = $tmp.substr( $line.chars );
                 while $remainder.chars {
                     @lines.push( $line );
-                    $tmp = $subseq_tab ~ $remainder;
+                    $tmp = $subseq-tab ~ $remainder;
                     $line = to-printwidth( $tmp, $avail_w, False ).[0];
                     $remainder = $tmp.substr( $line.chars );
                 }

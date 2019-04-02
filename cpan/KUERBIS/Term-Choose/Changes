@@ -1,6 +1,12 @@
 Revision history for Term::Choose
 
 
+1.5.2   2019-04-02
+        - Use the alternate screen by setting 'clear-screen' to 2.
+        - 'line-fold': make init-tab and subseq-tab optional.
+        - 'line-fold': don't trim trailing spaces if a row contains only spaces.
+        - Quit choose: replaced 'Ctrl-D' with 'Ctrl-Q'.
+
 1.5.1   2019-03-26
         - Update META6 and travis.
 
