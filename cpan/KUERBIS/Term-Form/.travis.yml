@@ -1,0 +1,11 @@
+#branches:
+#  except:
+#    - gh-pages
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build zef
+  - zef install Term::termios
+  - zef install Term::Choose
+sudo: false

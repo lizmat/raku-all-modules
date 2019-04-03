@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/kuerbis/Term-Form-p6.git
+	branch = master
+	commit = 283511167dd75c29b4b771ca80c9473ce47c90f7
+	parent = cfa24323a48f41a5708dc894c79e10afce811a99
+	cmdver = 0.3.1

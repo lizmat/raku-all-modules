@@ -1,0 +1,24 @@
+{
+  "authors" : [
+    "kuerbis"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Term::termios",
+    "Term::Choose:ver<1.5.2+>"
+  ],
+  "description" : "Read lines from STDIN.",
+  "license" : "Artistic-2.0",
+  "name" : "Term::Form",
+  "perl" : "6.c",
+  "provides" : {
+    "Term::Form" : "lib/Term/Form.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/kuerbis/Term-Form-p6.git",
+  "tags" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "version" : "1.2.0"
+}
