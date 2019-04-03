@@ -1,6 +1,9 @@
 Revision history for Term::Choose::Util
 
 
+1.2.4   2019-04-02
+        - Use the alternate screen by setting the option 'clear-screen' to 2.
+
 1.2.3   2019-03-26
         - Update META6.
 

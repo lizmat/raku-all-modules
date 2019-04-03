@@ -1,8 +1,8 @@
 use v6;
-unit class Term::Choose::Util:ver<1.2.3>;
+unit class Term::Choose::Util:ver<1.2.4>;
 
 use Term::Choose;
-use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
+use Term::Choose::LineFold :to-printwidth, :print-columns;
 use Term::Choose::Screen   :ALL;
 
 has %!o;
@@ -11,8 +11,7 @@ subset Int_0_to_2 of Int where * == 0|1|2;
 subset Int_0_or_1 of Int where * == 0|1;
 
 
-#has Int_0_or_1 $.clear-screen   = 0;
-#has Int_0_or_1 $.hide-cursor    = 0;
+has Int_0_or_1 $.hide-cursor     = 1;
 has Int_0_or_1 $.index           = 0;
 has Int_0_or_1 $.mouse           = 0;
 has Int_0_or_1 $.order           = 1;
@@ -20,6 +19,7 @@ has Int_0_or_1 $.show-hidden     = 1;
 has Int_0_or_1 $.small-first     = 0;
 has Int_0_or_1 $.keep-chosen     = 0;
 has Int_0_or_1 $.all-by-default  = 0;   # documentation
+has Int_0_to_2 $.clear-screen    = 0;
 has Int_0_to_2 $.enchanted       = 1;
 has Int_0_to_2 $.justify         = 0;
 has Int_0_to_2 $.layout          = 1;
@@ -36,20 +36,38 @@ has Str        $.thsd-sep        = ',';
 has Str        $.back            = ' << ';
 has Str        $.confirm         = ' OK ';
 has Str        $.add-dir         = ' ++ ';
-has Str        $.up              = ' .. '; # documentation
+has Str        $.up              = ' .. ';
 has Str        $.choose-file     = ' >F ';
 
 has Term::Choose $!tc;
 
 
-method !_init_term ( $mouse ) {
+method !_init_term ( $clear-screen, $mouse, $hide-cursor ) {
     $!tc = Term::Choose.new( :$mouse, :1loop );
-    hide-cursor();
+    if $hide-cursor {
+        hide-cursor();
+    }
+    if $clear-screen == 2 {
+        save-screen;
+    }
+    if $clear-screen {
+        clear;
+    }
+    else {
+        clr-to-bot;
+    }
 }
 
-method !_end_term {
-    clr-to-bot();
-    show-cursor();
+method !_end_term ( $clear-screen, $hide-cursor ) {
+    if $clear-screen == 2 {
+        restore-screen;
+    }
+    else {
+        clr-to-bot();
+    }
+    if $hide-cursor {
+        show-cursor();
+    }
 }
 
 
@@ -59,22 +77,24 @@ sub _string_gist ( $_ ) { S:g/' '/\ / }
 sub choose-dirs ( *%opt ) is export( :DEFAULT, :choose-dirs ) { Term::Choose::Util.new().choose-dirs( |%opt ) }
 
 method choose-dirs (
-        Int_0_or_1 :$mouse          = $!mouse,
-        Int_0_or_1 :$order          = $!order,
-        Int_0_or_1 :$show-hidden    = $!show-hidden,
-        Int_0_or_1 :$enchanted      = $!enchanted,
-        Int_0_to_2 :$justify        = $!justify,
-        Int_0_to_2 :$layout         = $!layout,
-        Str        :$dir            = $!dir,
-        Str        :$info           = $!info,
-        Str        :$name           = $!name // 'New: ',
-        Str        :$prompt         = ' ',
-        Str        :$back           = $!back,
-        Str        :$confirm        = $!confirm,
-        Str        :$add-dir        = $!add-dir,
-        Str        :$up             = $!up,
+        Int_0_or_1 :$mouse        = $!mouse,
+        Int_0_or_1 :$order        = $!order,
+        Int_0_or_1 :$hide-cursor  = $!hide-cursor,
+        Int_0_or_1 :$show-hidden  = $!show-hidden,
+        Int_0_or_1 :$enchanted    = $!enchanted,
+        Int_0_to_2 :$clear-screen = $!clear-screen,
+        Int_0_to_2 :$justify      = $!justify,
+        Int_0_to_2 :$layout       = $!layout,
+        Str        :$dir          = $!dir,
+        Str        :$info         = $!info,
+        Str        :$name         = $!name // 'New: ',
+        Str        :$prompt       = ' ',
+        Str        :$back         = $!back,
+        Str        :$confirm      = $!confirm,
+        Str        :$add-dir      = $!add-dir,
+        Str        :$up           = $!up,
     ) {
-    self!_init_term( $mouse );
+    self!_init_term( $clear-screen, $mouse, $hide-cursor );
     my @chosen_dirs;
     my IO::Path $tmp_dir = $dir.IO;
     my IO::Path $previous = $tmp_dir;
@@ -94,7 +114,7 @@ method choose-dirs (
                 my $prompt = $tmp_dir.gist ~ ":\n" ~ $_;
                 $!tc.pause( [ 'Press ENTER to continue.' ], :$prompt );
                 if $tmp_dir.absolute eq '/' {
-                    self!_end_term();
+                    self!_end_term( $clear-screen, $hide-cursor );
                     return Empty;
                 }
                 $tmp_dir = $tmp_dir.dirname.IO;
@@ -117,12 +137,12 @@ method choose-dirs (
                 @chosen_dirs.pop;
                 next;
             }
-            self!_end_term();
+            self!_end_term( $clear-screen, $hide-cursor );
             return Empty;
         }
         $default = $enchanted ?? @pre.end !! 0;
         if $choice eq $confirm {
-            self!_end_term();
+            self!_end_term( $clear-screen, $hide-cursor );
             return @chosen_dirs;
         }
         elsif $choice eq $add-dir {
@@ -142,25 +162,27 @@ method choose-dirs (
 sub choose-a-dir ( *%opt ) is export( :DEFAULT, :choose-a-dir ) { Term::Choose::Util.new().choose-a-dir( |%opt ) } #  --> IO::Path
 
 method choose-a-dir (
-        Int_0_or_1 :$mouse          = $!mouse,
-        Int_0_or_1 :$order          = $!order,
-        Int_0_or_1 :$show-hidden    = $!show-hidden,
-        Int_0_or_1 :$enchanted      = $!enchanted,
-        Int_0_to_2 :$justify        = $!justify,
-        Int_0_to_2 :$layout         = $!layout,
-        Str        :$dir            = $!dir,
-        Str        :$info           = $!info,
-        Str        :$prompt         = $!prompt,
-        Str        :$name           = $!name // 'New: ',
-        Str        :$back           = $!back,
-        Str        :$confirm        = $!confirm,
-        Str        :$up             = $!up,
+        Int_0_or_1 :$mouse        = $!mouse,
+        Int_0_or_1 :$order        = $!order,
+        Int_0_or_1 :$hide-cursor  = $!hide-cursor,
+        Int_0_or_1 :$show-hidden  = $!show-hidden,
+        Int_0_or_1 :$enchanted    = $!enchanted,
+        Int_0_to_2 :$clear-screen = $!clear-screen,
+        Int_0_to_2 :$justify      = $!justify,
+        Int_0_to_2 :$layout       = $!layout,
+        Str        :$dir          = $!dir,
+        Str        :$info         = $!info,
+        Str        :$prompt       = $!prompt,
+        Str        :$name         = $!name // 'New: ',
+        Str        :$back         = $!back,
+        Str        :$confirm      = $!confirm,
+        Str        :$up           = $!up,
     ) { # --> IO::Path 
-    self!_init_term( $mouse );
+    self!_init_term( $clear-screen, $mouse, $hide-cursor );
     %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout,
           :$dir, :$info, :$prompt, :$name, :$back, :$confirm, :$up;
     my $chosen = self!_choose_a_path( 0 );
-    self!_end_term();
+    self!_end_term( $clear-screen, $hide-cursor );
     return $chosen;
 }
 
@@ -168,26 +190,28 @@ method choose-a-dir (
 sub choose-a-file    ( *%opt ) is export( :DEFAULT, :choose-a-file ) { Term::Choose::Util.new().choose-a-file( |%opt ) } #  --> IO::Path
 
 method choose-a-file (
-        Int_0_or_1 :$mouse          = $!mouse,
-        Int_0_or_1 :$order          = $!order,
-        Int_0_or_1 :$show-hidden    = $!show-hidden,
-        Int_0_or_1 :$enchanted      = $!enchanted,
-        Int_0_to_2 :$justify        = $!justify,
-        Int_0_to_2 :$layout         = $!layout,
-        Str        :$dir            = $!dir,
-        Str        :$info           = $!info,
-        Str        :$prompt         = $!prompt,
-        Str        :$name           = $!name // 'New: ',    # New file
-        Str        :$back           = $!back,
-        Str        :$confirm        = $!confirm,
-        Str        :$up             = $!up,
-        Str        :$choose-file    = $!choose-file,
+        Int_0_or_1 :$mouse        = $!mouse,
+        Int_0_or_1 :$order        = $!order,
+        Int_0_or_1 :$hide-cursor  = $!hide-cursor,
+        Int_0_or_1 :$show-hidden  = $!show-hidden,
+        Int_0_or_1 :$enchanted    = $!enchanted,
+        Int_0_to_2 :$clear-screen = $!clear-screen,
+        Int_0_to_2 :$justify      = $!justify,
+        Int_0_to_2 :$layout       = $!layout,
+        Str        :$dir          = $!dir,
+        Str        :$info         = $!info,
+        Str        :$prompt       = $!prompt,
+        Str        :$name         = $!name // 'New: ',    # New file
+        Str        :$back         = $!back,
+        Str        :$confirm      = $!confirm,
+        Str        :$up           = $!up,
+        Str        :$choose-file  = $!choose-file,
     ) { # --> IO::Path
-    self!_init_term( $mouse );
+    self!_init_term( $clear-screen, $mouse, $hide-cursor );
     %!o = :$mouse, :$order, :$show-hidden, :$enchanted, :$justify, :$layout, :$dir,
           :$info, :$prompt, :$name, :$back, :$confirm, :$up, :$choose-file;
     my $chosen = self!_choose_a_path( 1 );
-    self!_end_term();
+    self!_end_term( $clear-screen, $hide-cursor );
     return $chosen;
 }
 
@@ -212,7 +236,6 @@ method !_choose_a_path ( Int $is_a_file ) { #  --> IO::Path
                 my $prompt = $dir.gist ~ ":\n" ~ $_;
                 $!tc.pause( [ 'Press ENTER to continue.' ], :$prompt );
                 if $dir.Str eq '/' {
-                    #self!_end_term();
                     return Empty;
                 }
                 $dir = $dir.dirname.IO;
@@ -320,16 +343,18 @@ sub choose-a-number ( Int $digits = 7, *%opt ) is export( :DEFAULT, :choose-a-nu
 }
 
 method choose-a-number ( Int $digits = 7,
-        Int_0_or_1 :$mouse          = $!mouse,
-        Int_0_or_1 :$small-first    = $!small-first,
-        Str        :$info           = $!info,
-        Str        :$prompt         = $!prompt,
-        Str        :$name           = $!name // '', ##
-        Str        :$thsd-sep       = $!thsd-sep,
-        Str        :$back           = $!back,
-        Str        :$confirm        = $!confirm,
+        Int_0_or_1 :$mouse        = $!mouse,
+        Int_0_or_1 :$small-first  = $!small-first,
+        Int_0_or_1 :$hide-cursor  = $!hide-cursor,
+        Int_0_to_2 :$clear-screen = $!clear-screen,
+        Str        :$info         = $!info,
+        Str        :$prompt       = $!prompt,
+        Str        :$name         = $!name // '', ##
+        Str        :$thsd-sep     = $!thsd-sep,
+        Str        :$back         = $!back,
+        Str        :$confirm      = $!confirm,
     ) {
-    self!_init_term( $mouse );
+    self!_init_term( $clear-screen, $mouse, $hide-cursor );
     my Str $sep = $thsd-sep;
     my Int $longest = $digits + ( $sep eq '' ?? 0 !! ( $digits - 1 ) div 3 );
     my Str $tab     = '  -  ';
@@ -382,12 +407,12 @@ method choose-a-number ( Int $digits = 7,
                 next NUMBER;
             }
             else {
-                self!_end_term();
+                self!_end_term( $clear-screen, $hide-cursor );
                 return;
             }
         }
         elsif $range eq $tmp_confirm {
-            self!_end_term();
+            self!_end_term( $clear-screen, $hide-cursor );
             if ! $result.defined {
                 return;
             }
@@ -436,8 +461,10 @@ method choose-a-subset ( @list,
         Int_0_or_1 :$index           = $!index,
         Int_0_or_1 :$mouse           = $!mouse,
         Int_0_or_1 :$order           = $!order,
+        Int_0_or_1 :$hide-cursor     = $!hide-cursor,
         Int_0_or_1 :$keep-chosen     = $!keep-chosen,
         Int_0_or_1 :$all-by-default  = $!all-by-default,
+        Int_0_to_2 :$clear-screen    = $!clear-screen,
         Int_0_to_2 :$justify         = $!justify,
         Int_0_to_2 :$layout          = 2,
         List       :$mark            = $!mark,
@@ -452,7 +479,7 @@ method choose-a-subset ( @list,
         Str        :$confirm         = $!confirm,
 
     ) {
-    self!_init_term( $mouse );
+    self!_init_term( $clear-screen, $mouse, $hide-cursor );
     my Str $tmp_prefix  = $prefix // ( $layout == 2 ?? '- ' !! '' );
     my Str $tmp_confirm = $confirm;
     my Str $tmp_back    = $back;
@@ -497,7 +524,7 @@ method choose-a-subset ( @list,
                 ( $new_val, $new_idx ) = @bu.pop;
                 next;
             }
-            self!_end_term();
+            self!_end_term( $clear-screen, $hide-cursor );
             return;
         }
         @bu.push( [ [ |$new_val ], [ |$new_idx ] ] );
@@ -523,7 +550,7 @@ method choose-a-subset ( @list,
             if ! $new_idx.elems && $all-by-default {
                 $new_idx = [ 0 .. @list.end ];
             }
-            self!_end_term();
+            self!_end_term( $clear-screen, $hide-cursor );
             return $index ?? $new_idx !! [ @list[|$new_idx] ];
         }
     }
@@ -535,13 +562,15 @@ sub settings-menu ( @menu, %setup, *%opt ) is export( :DEFAULT, :settings-menu )
 }
 
 method settings-menu ( @menu, %setup,
-        Int_0_or_1 :$mouse   = $!mouse,
-        Str        :$info    = $!info,
-        Str        :$prompt  = 'Choose:',
-        Str        :$back    = $!back,
-        Str        :$confirm = $!confirm,
+        Int_0_or_1 :$mouse        = $!mouse,
+        Int_0_or_1 :$hide-cursor  = $!hide-cursor,
+        Int_0_to_2 :$clear-screen = $!clear-screen,
+        Str        :$info         = $!info,
+        Str        :$prompt       = 'Choose:',
+        Str        :$back         = $!back,
+        Str        :$confirm      = $!confirm,
     ) {
-    self!_init_term( $mouse );
+    self!_init_term( $clear-screen, $mouse, $hide-cursor );
     my Int $name_w = 0;
     my %new_setup;
     for @menu -> ( Str $key, Str $name, $ ) {
@@ -567,12 +596,12 @@ method settings-menu ( @menu, %setup,
             :prompt( @tmp.join: "\n" ), :1index, :2layout, :0justify, :undef( $back )
         );
         if ! $idx.defined {
-            self!_end_term();
+            self!_end_term( $clear-screen, $hide-cursor );
             return False; ###
         }
         my $choice = $choices[$idx];
         if ! $choice.defined {
-            self!_end_term();
+            self!_end_term( $clear-screen, $hide-cursor );
             return False; ###
         }
         elsif $choice eq $confirm {
@@ -582,7 +611,7 @@ method settings-menu ( @menu, %setup,
                 %setup{$key} = %new_setup{$key};
                 $change++;
             }
-            self!_end_term();
+            self!_end_term( $clear-screen, $hide-cursor );
             return $change.so; ###
         }
         my Str $key = @menu[$idx-@pre][0];
@@ -661,31 +690,45 @@ Values in brackets are default values.
 
 =head3 Options valid for all routines
 
-=item1 mouse
-
-Set to C<0> the mouse mode is disabled, set to C<1> the mouse mode is enabled.
-
-Values: [0], 1.
-
-=item1 info
-
-A string placed on top of of the output.
-
-=item1 prompt
-
-If set shows an additionally prompt line before the list of choices.
-
 =item1 back
 
 Set the string for the C<back> menu entry.
 
 Default: "<<".
 
+=item1 clear_screen
+
+If set to C<1>, the screen is cleared before printing the choices.
+
+If set to C<2>, the "alternate screen" is used (control sequence C<1049>).
+
+[0],1,2.
+
 =item1 confirm
 
 Set the string for the C<confirm> menu entry.
 
 Default: "C<OK>".
+
+=item1 hide-cursor
+
+The control sequence C<25> is used to hide the cursor.
+
+Values: 0,[1].
+
+=item1 info
+
+A string placed on top of of the output.
+
+=item1 mouse
+
+Set to C<0> the mouse mode is disabled, set to C<1> the mouse mode is enabled.
+
+Values: [0],1.
+
+=item1 prompt
+
+If set shows an additionally prompt line before the list of choices.
 
 =head2 choose-a-dir
 

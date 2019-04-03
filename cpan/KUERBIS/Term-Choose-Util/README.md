@@ -24,31 +24,45 @@ Values in brackets are default values.
 
 ### Options valid for all routines
 
-  * mouse
-
-Set to `0` the mouse mode is disabled, set to `1` the mouse mode is enabled.
-
-Values: [0], 1.
-
-  * info
-
-A string placed on top of of the output.
-
-  * prompt
-
-If set shows an additionally prompt line before the list of choices.
-
   * back
 
 Set the string for the `back` menu entry.
 
 Default: "<<".
 
+  * clear_screen
+
+If set to `1`, the screen is cleared before printing the choices.
+
+If set to `2`, the "alternate screen" is used (control sequence `1049`).
+
+[0],1,2.
+
   * confirm
 
 Set the string for the `confirm` menu entry.
 
 Default: "`OK`".
+
+  * hide-cursor
+
+The control sequence `25` is used to hide the cursor.
+
+Values: 0,[1].
+
+  * info
+
+A string placed on top of of the output.
+
+  * mouse
+
+Set to `0` the mouse mode is disabled, set to `1` the mouse mode is enabled.
+
+Values: [0],1.
+
+  * prompt
+
+If set shows an additionally prompt line before the list of choices.
 
 choose-a-dir
 ------------
