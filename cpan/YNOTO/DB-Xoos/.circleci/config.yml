@@ -16,7 +16,7 @@ jobs:
           name: install build deps
           command: |
               apt install -y libsqlite3-dev
-              zef install --deps-only .
+              zef install --force --deps-only .
       - run:
           name: test 
           command: |
