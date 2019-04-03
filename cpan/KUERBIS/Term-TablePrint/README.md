@@ -222,6 +222,13 @@ Set the *mouse* mode (see option `mouse` in [Term::Choose](https://github.com/ku
 
 Default: 0
 
+save-screen
+-----------
+
+If set to `1` the alternate screen is used (control sequence `1049`).
+
+Default: 0
+
 progress-bar
 ------------
 

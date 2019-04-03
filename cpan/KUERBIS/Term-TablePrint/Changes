@@ -1,15 +1,20 @@
 Revision history for Term::TablePrint
 
 
+1.4.3  2019-04-02
+        - Option 'save-screen': use the alternate screen
+        - Bugfix in 'Terminal window is not wide enough'
+        - Bufix in 'info_row' to printwidth
+
 1.4.2  2019-03-26
-        - Update META6.
+        - Update META6
 
 1.4.1  2019-03-26
-        - Cleanup.
+        - Cleanup
 
 1.4.0  2019-03-26
-        - From ncurses to ANSI escapes.
-        - Bugfix: removed two bindings.
+        - From ncurses to ANSI escapes
+        - Bugfix: removed two bindings
 
 1.3.2  2018-12-11
         - New options: "decimal-separator" and "squash-spaces"

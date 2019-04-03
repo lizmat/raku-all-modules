@@ -1,5 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<1.4.2>;
+unit class Term::TablePrint:ver<1.4.3>;
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
@@ -20,7 +20,7 @@ has Int_0_or_1 $.grid              = 1;
 has Int_0_or_1 $.keep-header       = 1;
 has Int_0_or_1 $.mouse             = 0;
 has Int_0_or_1 $.squash-spaces     = 0;
-has Int_0_or_1 $.save-screen       = 0;     # documentation
+has Int_0_or_1 $.save-screen       = 0;
 has Int_0_to_2 $.table-expand      = 1;
 has Str        $.decimal-separator = '.';
 has Str        $.prompt            = '';
@@ -78,7 +78,7 @@ method print-table (
         Int_0_or_1 :$keep-header       = $!keep-header,
         Int_0_or_1 :$mouse             = $!mouse,
         Int_0_or_1 :$squash-spaces     = $!squash-spaces,
-        Int_0_or_1 :$save-screen       = $!save-screen, # documentation  # alternate-screen
+        Int_0_or_1 :$save-screen       = $!save-screen,
         Int_0_to_2 :$table-expand      = $!table-expand,
         Str        :$decimal-separator = $!decimal-separator,
         Str        :$prompt            = $!prompt,
@@ -136,8 +136,11 @@ method !_recursive_code {
     self!_copy_table( $table );
     self!_calc_col_width( $table );
     my $term_w = self!_calc_avail_col_width( $table );
+    if ! $term_w {
+        return; #
+    }
     my Int $table_w = [+] |@!avail_w_cols, $!tab_w * @!avail_w_cols.end;
-    if ! $table_w { #
+    if ! $table_w {
         return;
     }
     self!_table_row_to_string( $table );
@@ -154,7 +157,7 @@ method !_recursive_code {
     }
     if $!info_row {
         if print-columns( $!info_row ) > $table_w {
-            $table.push: to-printwidth( $!info_row, $table_w - 3 ) ~ '...';
+            $table.push: to-printwidth( $!info_row, $table_w - 3 ).[0] ~ '...';
         }
         else {
             $table.push: $!info_row;
@@ -165,8 +168,8 @@ method !_recursive_code {
     my Int $row_is_expanded = 0;
 
     loop {
-        if $term_w != ( get-term-size )[0] + 1 {
-            $term_w = ( get-term-size )[0] + 1;
+        if $term_w != get-term-size().[0] + 1 {
+            $term_w = get-term-size().[0] + 1;
             self!_recursive_code();
             return;
         }
@@ -241,7 +244,7 @@ method !_recursive_code {
 
 
 method !_print_single_table_row ( Int $row ) {
-    my Int $term_w = ( get-term-size )[0] + 1;
+    my Int $term_w = get-term-size().[0] + 1;
     my Int $key_w = @!w_heads.max + 1; #
     if $key_w > $term_w div 100 * 33 {
         $key_w = $term_w div 100 * 33;
@@ -262,10 +265,10 @@ method !_print_single_table_row ( Int $row ) {
         my $cell = @!orig_table[$row][$col];
         my Str $sep = $separator;
         @lines.push: ' ';
-        for line-fold( $cell, $col_w, '', '' ) -> $line {
+        for line-fold( $cell, $col_w ) -> $line {
             @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, $line;
             $key = '' if $key;
-             $sep = '' if $sep;
+            $sep = '' if $sep;
         }
     }
     $!tc.pause( @lines, :prompt( '' ), :2layout );
@@ -380,7 +383,7 @@ method !_calc_col_width ( $table ) {
 
 method !_calc_avail_col_width( $table ) {
     @!avail_w_cols = @!w_cols;
-    my $term_w = ( get-term-size )[0] + 1; # + 1 if not win32
+    my $term_w = get-term-size().[0] + 1; # + 1 if not win32
     my Int $avail_w = $term_w - $!tab_w * @!avail_w_cols.end;
     my Int $sum = [+] @!avail_w_cols;
     if $sum < $avail_w {
@@ -591,7 +594,7 @@ method !_set_progress_bar {
     if ! $!p_bar<type> {
         return Int, Int;
     }
-    my Int $term_w = ( get-term-size )[0] + 1;
+    my Int $term_w = get-term-size().[0] + 1;
     my Int $count;
     if $!p_bar<type> eq 'multi' {
         $!p_bar<fmt> = 'Computing: (' ~ $!p_bar<times>-- ~ ') [%s%s]';
@@ -637,7 +640,8 @@ method !_header_separator {
 method !_print_term_not_wide_enough_message ( $table ) {
     my $prompt1 = 'Terminal window is not wide enough to print this table.';
     $!tc.pause( [ 'Press ENTER to show the column names.' ], :prompt( $prompt1 ) );
-    my Str $prompt2 = 'Reduce the number of columns".' ~ "\n" ~ 'Close with ENTER.';
+    #my Str $prompt2 = 'Reduce the number of columns".' ~ "\n" ~ 'Close with ENTER.';
+    my Str $prompt2 = 'Close with ENTER.';
     $!tc.pause( $table[0], :prompt( $prompt2 ) );
 }
 
@@ -895,6 +899,12 @@ Default: 30
 =head2 mouse
 
 Set the I<mouse> mode (see option C<mouse> in L<Term::Choose|https://github.com/kuerbis/Term-Choose-p6>).
+
+Default: 0
+
+=head2 save-screen
+
+If set to C<1> the alternate screen is used (control sequence C<1049>).
 
 Default: 0
 
