@@ -6,7 +6,7 @@
   "tags" : [ "linux", "utils", "signal" ],
   "authors" : [ "Cuong Manh Le <cuong.manhle@gmail.com>" ],
   "author" : "Cuong Manh Le <cuong.manhle@gmail.com>",
-  "auth" : "github:Gnouc",
+  "auth" : "github:cuonglm",
   "version" : "v0.0.3",
   "build-depends" : [ "panda" ],
   "test-depends" : [ "Test" ],
@@ -15,7 +15,7 @@
     "Linux::Process::SignalInfo" : "lib/Linux/Process/SignalInfo.pm"
   },
   "support" : {
-    "source" : "https://github.com/Gnouc/p6-linux-process-signalinfo.git"
+    "source" : "https://github.com/cuonglm/p6-linux-process-signalinfo.git"
   },
-  "source-url" : "https://github.com/Gnouc/p6-linux-process-signalinfo.git"
+  "source-url" : "https://github.com/cuonglm/p6-linux-process-signalinfo.git"
 }

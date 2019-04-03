@@ -6,7 +6,7 @@ constant %SIGNAL_ACTION = {
     SigCgt => 'Catched',
 };
 
-class Linux::Process::SignalInfo:ver<v0.0.2>:auth<github:Gnouc> {
+class Linux::Process::SignalInfo:ver<v0.0.2>:auth<github:cuonglm> {
 
     has Int $.pid is required;
     has %!signal_info;
