@@ -100,8 +100,11 @@ class ASN::Serializer {
     multi method serialize(ASNSetOf $set, Int $index = 49, :$debug, :$mode) {
         $index += 32 unless $index ~~ 49|-1;
         say "Encoding SET OF with index $index into:" if $debug;
-        my $res = do gather { take self.serialize($set.type ~~ ASN::StringWrapper ?? $set.type.new($_) !! $_, :$debug, :$mode) for $set.keys };
-        self!pack($index, [~] $res);
+        my $type = $set.type;
+        my $res;
+        $res.push: self.serialize($type ~~ ASN::StringWrapper ?? $type.new($_) !! $_, :$debug, :$mode) for $set.keys;
+        $res //= [Buf.new];
+        self!pack($index, [~] |$res);
     }
 
     # Common method to enforce custom traits for ASNValue value
