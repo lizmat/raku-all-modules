@@ -5,8 +5,8 @@
   "description" : "An ORM, with support.",
   "auth"        : "github:tony-o",
   "authors"     : [ "Tony O'Dell" ],
-  "depends"     : ["DB", "DB::MySQL", "DB::Pg", "DBIish", "DB::Oracle", "DB::SQLite"],
-  "test-depends": ["DB::SQLite", "DB::MySQL", "DBIish", "DB::Pg", "DB::Oracle"],
+  "depends"     : ["DB::MySQL", "DB::Pg", "DBIish", "DB::SQLite"],
+  "test-depends": [],
   "license"     : "Artistic-2.0",
   "provides"    : {
     "DB::Xoos": "lib/DB/Xoos.pm6",

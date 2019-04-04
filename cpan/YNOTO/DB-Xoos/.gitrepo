@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-xoo.git
 	branch = master
-	commit = c91f7d9a5d9b4abcf1dba8f14801e1be8794fe3f
-	parent = 9e7bfd2bb8f535d9e0c48b4e44754424b5370425
+	commit = 7cedea83f1b5e6ab43ef51aeb4d907cd308e5fb2
+	parent = 4bcd7a4f4f5dc288fc904be41fa9a006a7bd8c9e
 	cmdver = 0.3.1
