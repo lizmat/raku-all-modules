@@ -15,12 +15,12 @@
     "Smack"
   ],
   "tags": [
-    
+
   ],
   "meta-version": "0",
   "name": "Cofra",
   "build-depends": [
-    
+
   ],
   "version": "0.0.2",
   "perl": "6.c",
@@ -60,7 +60,9 @@
     "Cofra::Logger": "lib/Cofra/Logger.pm6",
     "Cofra::Logger::Screen": "lib/Cofra/Logger/Screen.pm6",
     "Cofra": "lib/Cofra.pm6",
-    "Cofra::AppObject": "lib/Cofra/AppObject.pm6"
+    "Cofra::AppObject": "lib/Cofra/AppObject.pm6",
+    "Cofra::Main": "lib/Cofra/Main.pm6",
+    "Cofra::Web::Main": "lib/Cofra/Web/Main.pm6"
   },
   "description": "Common objects framework for Perl 6",
   "license": "Artistic-2.0",
@@ -69,6 +71,6 @@
     "source": "git://github.com/zostay/Cofra.git"
   },
   "resources": [
-    
+
   ]
 }

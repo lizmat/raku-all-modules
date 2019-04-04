@@ -1,5 +1,11 @@
 use v6;
 
+# This resolves some weird Perl6 bug that otherwsise causes some members to
+# fail with the mysterious:
+#
+# Cannot invoke this object (REPR: Null; VMNull)
+no precompilation;
+
 use Cofra::Main;
 
 unit class Cofra::Web::Main is Cofra::Main;
@@ -36,9 +42,10 @@ has Str $.host = 'localhost';
 has Int $.port = 5000;
 
 has &.web-app is factory(anon method build-app {
+    my $web = $.web;
     sub (%env) {
         start {
-            [ 200, [ Content-Type => 'text/plain' ], 'Hello World' ];
+            $web.p6wapi-request-response-dispatch(%env);
         }
     }
 });

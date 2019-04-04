@@ -10,7 +10,8 @@ class TestApp is Cofra::App { }
 class TestApp::Biz::Foo is Cofra::Biz { }
 class TestApp::Biz::Bar is Cofra::Biz { }
 
-class TestApp::Cofra::Main is Cofra::Main {
+use Cofra::Singleton;
+class TestApp::Cofra::Main is Cofra::Main does Cofra::Singleton['testapp-main'] {
     use Cofra::IOC;
 
     has TestApp::Biz::Foo $.foo-biz is constructed;
@@ -24,7 +25,7 @@ class TestApp::Cofra::Main is Cofra::Main {
     method app-class { TestApp }
 }
 
-my $main = TestApp::Cofra::Main.new;
+my $main = TestApp::Cofra::Main.instance;
 ok $main.defined;
 isa-ok $main, Cofra::Main;
 

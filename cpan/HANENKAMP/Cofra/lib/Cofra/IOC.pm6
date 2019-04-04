@@ -310,4 +310,18 @@ After the lazy constructor is finished, this trait can be attached to the attrib
 
 Here the C<self> is the newly constructed object that will be assigned to the attribute. The C<$attribute> is the C<Attribute> being set and C<$name> is the name of the attribute with the sigils and twigils left off the front.
 
+=head1 CAVEATS
+
+This code mucks around in certain metamodel bits that have not gotten as much TLC for bug squashing as they need. As such, you might get mysterious errors when using this, especially the annoying:
+
+    Cannot invoke this object (REPR: Null; VMNull)
+
+This generally indicates that Rakudo has tried to swallow its own fist and choked on it. I recommend putting this pragma line at the top of your IOC classes if this happens to you:
+
+    no precompilation;
+
+Unfortunately, with that Rakudo will compile this code every time your program runs. It also means that whatever other optimizier and other bits that run only during precompilation won't run to break this code and cause inexplicable errors.
+
+The other alternative is to drop using IOC for whatever bits are causing Rakudo to die horrifically or track down the bugs and patch Rakudo. I'm not much of a language implementer myself, so while I did once patch Rakudo, I haven't really made a habit of it. I don't even know where to start in tracking down a bug like this and really, I don't have time. If I need to spend that time, I'll just switch languages or switch how I'm using this one.C<< </rant> >>
+
 =end pod

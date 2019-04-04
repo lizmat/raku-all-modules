@@ -3,6 +3,8 @@ use v6;
 use Test;
 
 use Cofra::App;
+use Smack::Runner;
+
 class TestApp is Cofra::App { }
 
 use Cofra::Biz;
@@ -13,8 +15,9 @@ use Cofra::Web::Controller;
 class TestApp::Web::Controller::Foo is Cofra::Web::Controller { }
 class TestApp::Web::Controller::Bar is Cofra::Web::Controller { }
 
+use Cofra::Singleton;
 use Cofra::Web::Main;
-class TestApp::Main is Cofra::Web::Main {
+class TestApp::Main is Cofra::Web::Main does Cofra::Singleton['testapp-main'] {
     use Cofra::IOC;
 
     has TestApp::Biz::Foo $.foo-biz is constructed;
@@ -43,7 +46,7 @@ class TestApp::Main is Cofra::Web::Main {
     });
 }
 
-my $main = TestApp::Main.new;
+my $main = TestApp::Main.instance;
 ok $main.defined;
 isa-ok $main, Cofra::Main;
 
@@ -73,5 +76,8 @@ ok $main.views.defined;
 isa-ok $main.views, Hash;
 isa-ok $main.views<JSON>, Cofra::Web::View::JSON;
 is $main.views<JSON>.web, $main.web;
+
+ok $main.web-server.defined;
+isa-ok $main.web-server, Smack::Runner;
 
 done-testing;

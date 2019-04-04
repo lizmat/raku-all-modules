@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/Cofra.git
 	branch = master
-	commit = 782af7bd0afeb2ab2f5b151c647c967f60116287
-	parent = 950b5d236b1d6e6659fa0ea4079a74a5314c5f3f
+	commit = d817449727cb41907b1d3440ca5583f0c3be4d95
+	parent = 34031a5a858cc6d9b0a8dc80d3e878451648a26c
 	cmdver = 0.3.1

@@ -18,4 +18,4 @@ has Cofra::App $.app is constructed(dep('app-class')) is construction-args({
     .app = self for %.bizzes.values;
 });
 
-method app-class(Cofra::Main:D:) { ... }
+method app-class(Cofra::Main:D:) { Cofra::App }
