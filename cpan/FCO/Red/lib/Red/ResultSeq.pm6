@@ -12,6 +12,7 @@ use Red::AST::Infixes;
 use Red::AST::Chained;
 use Red::AST::Function;
 use Red::AST::Select;
+use Red::ResultSeqSeq;
 use Red::AST::MultiSelect;
 use Red::ResultAssociative;
 use Red::ResultSeq::Iterator;
@@ -56,7 +57,7 @@ method cache is hidden-from-sql-commenting {
     List.from-iterator: self.iterator
 }
 
-has Red::AST::Chained $.chain handles <filter limit post order group table-list> .= new;
+has Red::AST::Chained $.chain handles <filter limit offset post order group table-list> .= new;
 has Red::AST          %.update;
 has Red::AST::Comment @.comments;
 
@@ -71,7 +72,7 @@ method Seq is hidden-from-sql-commenting {
 
 method do-it(*%pars) is hidden-from-sql-commenting {
     self.create-comment-to-caller;
-    self.clone(|%pars).Seq
+    self.clone(|%pars, :chain($!chain.clone: |%pars)).Seq
 }
 
 #multi method grep(::?CLASS: &filter) { nextwith :filter( filter self.of.^alias: "me" ) }
@@ -269,8 +270,7 @@ method classify(&func, :&as = { $_ }) is hidden-from-sql-commenting {
     self.create-comment-to-caller;
     my $key   = func self.of;
     my $value = as   self.of;
-    #self.clone(:group(func self.of)) but role :: { method of { Associative[$value.WHAT, Str] } }
-    Red::ResultAssociative[$value, $key].new: :$.filter, :rs(self)
+    Red::ResultAssociative[$value, $key].new: :rs(self)
 }
 
 multi method head is hidden-from-sql-commenting {
@@ -281,6 +281,11 @@ multi method head is hidden-from-sql-commenting {
 multi method head(UInt:D $num) is hidden-from-sql-commenting {
     self.create-comment-to-caller;
     self.do-it(:limit(min $num, $.limit)).head: $num
+}
+
+method from(UInt:D $num) is hidden-from-sql-commenting {
+    self.create-comment-to-caller;
+    self.clone: :chain($!chain.clone: :offset(($.offset // 0) + $num));
 }
 
 method elems( --> Int()) is hidden-from-sql-commenting {
@@ -300,6 +305,10 @@ method new-object(::?CLASS:D: *%pars) is hidden-from-sql-commenting {
         obj.^set-attr: $key, $val
     }
     obj
+}
+
+method batch(Int $size) {
+    Red::ResultSeqSeq.new: :rs(self), :$size
 }
 
 method create(::?CLASS:D: *%pars) is hidden-from-sql-commenting {
@@ -339,6 +348,6 @@ method ast(Bool :$sub-select) is hidden-from-sql-commenting {
     if $.filter ~~ Red::AST::MultiSelect {
         $.filter
     } else {
-        Red::AST::Select.new: :$.of, :$.filter, :$.limit, :@.order, :@.table-list, :@.group, :@.comments, :$sub-select;
+        Red::AST::Select.new: :$.of, :$.filter, :$.limit, :$.offset, :@.order, :@.table-list, :@.group, :@.comments, :$sub-select;
     }
 }
