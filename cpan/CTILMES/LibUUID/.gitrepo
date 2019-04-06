@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/CurtTilmes/perl6-libuuid.git
 	branch = master
-	commit = 15aa02fff48d8c22a3157d20c63ab09188435fd6
-	parent = d000d6767c09c0b0bc76d72f5e638fe52c23fbea
+	commit = ad602254eb811cc7ccd5acc5d56cfb5f03501231
+	parent = fc59c35ddb410e54405bbb38005d4fb2814d08c6
 	cmdver = 0.3.1

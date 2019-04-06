@@ -1,8 +1,8 @@
-use v6;
-
 use NativeCall;
+use NativeLibs:auth<github:salortiz>;
 
-my constant LIBUUID = 'uuid'; # libuuid.so
+my constant LIBUUID = NativeLibs::Searcher.at-runtime(
+   'uuid', 'uuid_generate', (1, Any));
 
 class UUID
 {
