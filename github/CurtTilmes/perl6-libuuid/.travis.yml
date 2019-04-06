@@ -9,6 +9,5 @@ perl6:
 sudo: true
 
 install:
-  - sudo apt-get install uuid-dev
   - rakudobrew build zef
   - zef install .
