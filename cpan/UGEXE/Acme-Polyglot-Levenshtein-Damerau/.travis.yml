@@ -1,0 +1,19 @@
+language: perl
+os:
+    - linux
+matrix:
+    fast_finish: true
+sudo: false
+before_install:
+    - git clone https://github.com/rakudo/rakudo.git $HOME/rakudo
+    - cd $HOME/rakudo
+    - perl Configure.pl $VM_OPTS --gen-nqp --gen-moar
+    - make install
+    - export PATH=$HOME/rakudo/install/bin:$PATH
+    - cd $TRAVIS_BUILD_DIR
+install:
+    - perl -v
+    - perl6 -v
+script:
+    - prove -v -e "perl -Ilib" t/
+    - prove -v -e "perl6 -Ilib" t/

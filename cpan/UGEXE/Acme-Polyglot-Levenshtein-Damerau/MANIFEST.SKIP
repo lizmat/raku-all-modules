@@ -1,0 +1,7 @@
+^.git/
+^.gitignore
+.tar.gz$
+^Makefile$
+MYMETA.*
+.SKIP$
+.precomp/

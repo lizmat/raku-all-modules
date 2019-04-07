@@ -1,0 +1,15 @@
+{
+    "perl"         : "6.*",
+    "name"         : "Acme::Polyglot::Levenshtein::Damerau",
+    "version"      : "0.1",
+    "description"  : "Polyglot Perl 5/6 damerau levenshtein algorithm module",
+    "auth"         : "github:ugexe",
+    "license"      : "Artistic-2.0",
+    "depends"      : [ ],
+    "test-depends" : [ "Test" ],
+    "provides" : {
+        "Acme::Polyglot::Levenshtein::Damerau": "lib/Acme/Polyglot/Levenshtein/Damerau.pm"
+    },
+    "source-url"  : "git://github.com/ugexe/Acme--Polyglot--Levenshtein--Damerau.git",
+    "tags" : [ "levenshtein", "damerau" ]
+}

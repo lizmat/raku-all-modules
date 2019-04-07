@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ugexe/Acme--Polyglot--Levenshtein--Damerau.git
+	branch = master
+	commit = ca09d353ae29afce6948cc568d20732b67af8c6f
+	parent = 90e80153a31787465d181b120e50024caa5cca0d
+	cmdver = 0.3.1
