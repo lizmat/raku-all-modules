@@ -172,7 +172,7 @@ class ASN::Result {
                 %params<optional> = True;
             }
         }
-        make ASN::RawType.new(:name(~$<id-string>), type => $inner.type, :%params);
+        make ASN::RawType.new(:name(~$<id-string>), type => $inner, :%params);
     }
 
     method tag($/) {
