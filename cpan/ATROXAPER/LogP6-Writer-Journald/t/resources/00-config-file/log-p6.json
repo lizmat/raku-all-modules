@@ -1,0 +1,58 @@
+{
+	"writers": [
+		{
+			"type": "custom",
+			"require": "LogP6::WriterConf::Journald",
+			"fqn-class": "LogP6::WriterConf::Journald",
+			"args": {
+				"name": "journald-1",
+				"pattern": "%level %msg",
+				"auto-exceptions": true,
+				"use-priority": true,
+				"use-code-file": true,
+				"use-code-line": true,
+				"use-code-func": true,
+				"use-mdc": true,
+				"systemd": {
+					"type": "custom",
+					"require": "Custom",
+					"fqn-class": "Custom::TestSystemd"
+				}
+			}
+		},
+		{
+			"type": "custom",
+			"require": "LogP6::WriterConf::Journald",
+			"fqn-class": "LogP6::WriterConf::Journald",
+			"args": {
+				"name": "journald-2",
+				"pattern": "%msg",
+				"use-priority": true,
+				"systemd": {
+					"type": "custom",
+					"require": "Custom",
+					"fqn-class": "Custom::TestSystemd"
+				}
+			}
+		}
+	],
+	"filters": [
+		{
+			"type": "std",
+			"name": "journald",
+			"level": "trace"
+		}
+	],
+	"cliches": [
+		{
+			"name": "journald-1",
+			"matcher": "journald-1",
+			"grooves": [ "journald-1", "journald" ]
+		},
+		{
+			"name": "journald-2",
+			"matcher": "journald-2",
+			"grooves": [ "journald-2", "journald" ]
+		}
+	]
+}
