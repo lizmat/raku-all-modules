@@ -109,7 +109,7 @@ class LogP6::Writer::Journald::Systemd::Native
 		&send31, &send32, &send33, &send34, &send35];
 
 	method send(*@fields) {
-		my $grep = @fields.grep(*.defined).List;
+		my $grep = @fields.grep(*.defined).List.head(35);;
 		@!send-array[$grep.elems](|$grep, Str);
 	}
 }

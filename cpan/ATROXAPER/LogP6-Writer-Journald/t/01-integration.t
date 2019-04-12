@@ -3,7 +3,7 @@ use NativeCall;
 use lib 'lib';
 use LogP6::Writer::Journald;
 
-plan 35;
+plan 37;
 
 sub systemd-exists() {
 	return False if $*DISTRO.is-win;
@@ -23,7 +23,7 @@ unless systemd-exists() {
 
 my LogP6::Writer::Journald::Systemd::Native $systemd .= new;
 my $args = ['MESSAGE=log-p6-writer-systemd-test', 'PRIORITY=4'];
-$args.push("PARAM_$_=value_$_") for 1..33;
+$args.push("PARAM_$_=value_$_") for 1..35;
 
 for 0..^$args.elems -> $elems {
 	lives-ok { $systemd.send(|$args[0..$elems]) }, "send with $elems elems";
