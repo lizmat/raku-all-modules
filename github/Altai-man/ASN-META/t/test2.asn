@@ -1,0 +1,14 @@
+WorldSchema
+
+DEFINITIONS IMPLICIT TAGS ::= BEGIN
+A ::= SEQUENCE {
+  b Filter
+}
+
+Filter ::= CHOICE {
+  and              [0] SET OF Filter,
+  or               [1] SET OF Filter,
+  not              [2] Filter,
+  number           [3] INTEGER
+}
+END

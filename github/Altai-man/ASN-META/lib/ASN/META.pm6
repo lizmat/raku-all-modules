@@ -2,6 +2,7 @@ use MONKEY-SEE-NO-EVAL;
 use nqp;
 use ASN::Types;
 use ASN::Grammar;
+use ASN::META::Types;
 
 my $builtin-types = set
         'BOOLEAN', 'INTEGER',
@@ -20,7 +21,7 @@ my $builtin-types = set
         'UniversalString', 'CHARATER STRING',
         'BMPString', 'CHOICE';
 
-my $complex-types = set 'ENUMERATED', 'SEQUENCE', 'SEQUENCE OF', 'SET', 'CHOICE', 'SET OF';
+my $complex-types = set 'ENUMERATED', 'SEQUENCE', 'SEQUENCE OF', 'SET', 'SET OF', 'CHOICE';
 
 my %simple-builtin-types = 'OCTET STRING' => Str,
         UTF8String => Str,
@@ -28,7 +29,44 @@ my %simple-builtin-types = 'OCTET STRING' => Str,
         INTEGER => Int,
         NULL => ASN-Null;
 
-multi sub compile-complex-builtin('ENUMERATED', $type, %POOL, $symbol-name) {
+my class RecursionStub {
+    has $.type;
+}
+
+my sub check-recursion(ASN::RawType $type, Str $name) {
+    with @*TYPE-STACK.grep(* eq $type.type).first {
+        # We have started to recurse!
+        # Let's replace the type with a stub
+        # and get a parent we have to update later
+        # to fix difference between stub and (later) non-stub types
+        my $parent = @*TYPE-STACK[*-2];
+        return ASNType.new(:$name, type => RecursionStub.new(type => $_), :$parent);
+    }
+    else {
+        unless $name (elem) $builtin-types {
+            @*TYPE-STACK.push: $name;
+        }
+        my $updated-type = compile-type($type, $name (elem) $builtin-types ?? '' !! $name);
+        unless $name (elem) $builtin-types {
+            @*TYPE-STACK.pop;
+        }
+        return $updated-type;
+    }
+}
+
+my sub resolve-recursion(ASNType $type, Str $name) {
+    # We need to re-do only recursive types
+    if $type.is-recursive {
+        my $def = $*TYPES.grep(*.name eq $name).first;
+        compile-complex-builtin('CHOICE', $def.type, $name);
+        with $type.parent {
+            $def = $*TYPES.grep(*.name eq $_).first;
+            compile-complex-builtin('SEQUENCE', $def.type, $_);
+        }
+    }
+}
+
+multi sub compile-complex-builtin('ENUMERATED', $type, $name) {
     # FIXME This is kind of a cheating
     # which uses imitation of what Rakudo does using nqp.
     # Rewriting using real Perl 6 is very welcome.
@@ -47,18 +85,18 @@ multi sub compile-complex-builtin('ENUMERATED', $type, %POOL, $symbol-name) {
         $key => $val
     }
 
-    my $new-enum = Metamodel::EnumHOW.new_type(name => $symbol-name, base_type => Int);
+    my $new-enum = Metamodel::EnumHOW.new_type(:$name, base_type => Int);
     $new-enum.^compose_repr;
     $new-enum = $new-enum but Enumeration;
     my %enum-values = (create_enum_value($new-enum, .key, .value) for $type.params<defs><>);
     $new-enum.^compose;
-    %POOL{.key} = ('ENUMERATED VALUE', .value) for %enum-values;
-    %POOL{$symbol-name} = ('ENUMERATED', $new-enum);
+    $*POOL.add(ASNType.new(name => .key, base-type => 'ENUM VALUE', type => .value)) for %enum-values;
+    $*POOL.add(ASNType.new(:$name, base-type => 'ENUMERATED', type => $new-enum));
 }
 
-multi sub compile-complex-builtin('SEQUENCE', $type, %POOL, $symbol-name) {
+multi sub compile-complex-builtin('SEQUENCE', $type, $name) {
     my $fields = $type.params<fields>;
-    my $new-type = Metamodel::ClassHOW.new_type(name => $symbol-name);
+    my $new-type = Metamodel::ClassHOW.new_type(:$name);
 
     # if has an application tag, apply it
     with $type.params<tag> {
@@ -74,25 +112,26 @@ multi sub compile-complex-builtin('SEQUENCE', $type, %POOL, $symbol-name) {
     $new-type.^add_method('ASN-order', method { @ASN-order });
 
     for @$fields -> $field {
-        # A type that will be assigned to field
         my $field-name = $field.name;
-        my $field-type-name = $field.type;
-        my $attribute-type = compile-type($field, %POOL,
+        my $field-type-name = $field.type.type;
+
+        # A type that will be assigned to field
+        my $attribute-type = check-recursion($field.type,
                 $field-type-name (elem) $builtin-types ??
-                        $field-name !!
+                $field-name !!
                 $field-type-name);
 
         # Create attribute's name and use it with type to create the attribute itself
         my $name = '$!' ~ S:g/(<[a..z]>)(<[A..Z]>)/$0-$1/.lc with $field-name;
-        my $attr = Attribute.new(:$name, type => $attribute-type[1], package => $new-type, :has_accessor);
+        my $attr = Attribute.new(:$name, type => $attribute-type.type, package => $new-type, :has_accessor);
 
         # Patch Str attribute with necessary roles
-        if $attribute-type[1] === Positional[Str] {
+        if $attribute-type.type === Positional[Str] {
             $attr does ASN::Types::OctetString;
         }
 
-        if $attribute-type[1] ~~ Str {
-            given $attribute-type[0] {
+        if $attribute-type.type ~~ Str {
+            given $attribute-type.base-type {
                 when 'OCTET STRING' {
                     $attr does ASN::Types::OctetString;
                 }
@@ -123,53 +162,64 @@ multi sub compile-complex-builtin('SEQUENCE', $type, %POOL, $symbol-name) {
 
     $new-type.^add_role(ASNSequence);
     $new-type.^compose;
-    %POOL{$symbol-name} = ('SEQUENCE', $new-type);
+
+    $*POOL.add(ASNType.new(
+            :$name, base-type => 'SEQUENCE',
+            type => $new-type));
 }
 
-multi sub compile-complex-builtin('SEQUENCE OF', $type, %POOL, $symbol-name) {
-    my $of-type = $type.params<of>;
+multi sub compile-complex-builtin('SEQUENCE OF', $type, $name) {
+    my $of-type-ref = $type.params<of>;
 
     with $type.params<tag> {
         if .class eq 'APPLICATION' {
-            my $new-type = Metamodel::ClassHOW.new_type(name => $symbol-name);
+            my $new-type = Metamodel::ClassHOW.new_type(:$name);
             my $tag-value = .value;
             $new-type.^add_method('ASN-tag-value', method { $tag-value });
-            if $of-type.type (elem) $builtin-types {
-                $new-type.^add_role(Positional[%simple-builtin-types{$of-type.type}]);
+            if $of-type-ref.type (elem) $builtin-types {
+                $new-type.^add_role(Positional[%simple-builtin-types{$of-type-ref.type}]);
             } else {
-                $new-type.^add_role(Positional[compile-type($of-type, %POOL, $of-type.type)[1]]);
+                $new-type.^add_role(Positional[check-recursion($of-type-ref, $of-type-ref.type).type]);
             }
             $new-type.^compose;
-            return %POOL{$symbol-name} = ('SEQUENCE OF', $new-type);
+            return $*POOL.add(ASNType.new(:$name, base-type => 'SEQUENCE OF', type => $new-type));
         }
     }
 
-    if $of-type.type (elem) $builtin-types {
-        if $of-type.type (elem) $complex-types {
-            my $bottom-type = compile-type($of-type, %POOL, $symbol-name ~ 'Bottom');
-            return %POOL{$symbol-name} = ('SEQUENCE OF', Positional[$bottom-type[1]]);
+    my $of-type;
+
+    if $of-type-ref.type (elem) $builtin-types {
+        if $of-type-ref.type (elem) $complex-types {
+            $of-type = check-recursion($of-type-ref, $name ~ 'Bottom').type;
         }
-        return %POOL{$symbol-name} = ('SEQUENCE OF', Positional[%simple-builtin-types{$of-type.type}]);
+        else {
+            $of-type = %simple-builtin-types{$of-type-ref.type};
+        }
     } else {
-        return %POOL{$symbol-name} = ('SEQUENCE OF', Positional[compile-type($of-type, %POOL, $of-type.type)[1]]);
+        $of-type = check-recursion($of-type-ref, $of-type-ref.type).type;
     }
+    $*POOL.add(ASNType.new(:$name, base-type => 'SEQUENCE OF', type => Positional[$of-type]));
 }
 
-multi sub compile-complex-builtin('SET OF', $type, %POOL, $symbol-name) {
-    my $of-type = $type.params<of>;
-    my $compile-type = compile-type($of-type, %POOL, $of-type.type);
-    if ($compile-type[1] === Str) {
-        if $compile-type[0] eq 'OCTET STRING' {
-            $compile-type = ($compile-type[0], ASN::Types::OctetString);
+multi sub compile-complex-builtin('SET OF', $type, $name) {
+    my $of-type-ref = $type.params<of>;
+    my $set-parameter = check-recursion($of-type-ref, $of-type-ref.type).clone;
+    if ($set-parameter.type === Str) {
+        if $set-parameter.base-type eq 'OCTET STRING' {
+            $set-parameter.type = ASN::Types::OctetString;
         }
     }
-    return %POOL{$symbol-name} = ('SET OF', ASNSetOf[$compile-type[1]]);
+    $*POOL.add(ASNType.new(
+            :$name, base-type => 'SET OF',
+            type => ASNSetOf[$set-parameter.type]));
 }
 
-multi sub compile-complex-builtin('CHOICE', $type, %POOL, $symbol-name) {
-    my $new-type := Metamodel::ClassHOW.new_type(name => $symbol-name);
+multi sub compile-complex-builtin('CHOICE', $type, $name) {
+    my $new-type := Metamodel::ClassHOW.new_type(:$name);
     my %choices;
+    my $parent;
     for $type.params<choices>.kv -> $key, $value {
+
         my ($tag, $real-value);
         if $value ~~ Pair {
             $tag = $value.key.value;
@@ -177,35 +227,39 @@ multi sub compile-complex-builtin('CHOICE', $type, %POOL, $symbol-name) {
         } else {
             $real-value = $value;
         }
-        my $compiled-option = compile-type(ASN::RawType.new(name => '', type => $real-value), %POOL, $key);
-
-        if $compiled-option[1] === Str {
-            if $compiled-option[0] eq 'OCTET STRING' {
-                $compiled-option = ($compiled-option[0], ASN::Types::OctetString);
-            }
+        # We can get a Str name if it is non-complex type and
+        # RawType if it is a complex type that was generated.
+        if $real-value !~~ ASN::RawType {
+            $real-value = ASN::RawType.new(name => $real-value, type => $real-value);
         }
 
-        %choices{$key} = $tag.defined ?? ($tag => $compiled-option[1]) !! $compiled-option[1];
-        %POOL{$value} = $compiled-option;
+        my $compiled-option = check-recursion($real-value, $real-value.type).clone;
+        if $compiled-option.type ~~ RecursionStub {
+            $parent = $compiled-option.parent;
+        };
+        if $compiled-option.type === Str {
+            if $compiled-option.base-type eq 'OCTET STRING' {
+                $compiled-option.type = ASN::Types::OctetString;
+            }
+        }
+        %choices{$key} = $tag.defined ?? ($tag => $compiled-option.type) !! $compiled-option.type;
     }
     my &method = method { %choices };
     $new-type.^add_method("ASN-choice", &method);
     $new-type.^add_role(ASNChoice);
     $new-type.^compose;
-    %POOL{$symbol-name} = ('CHOICE', $new-type);
-    ('CHOICE', $new-type);
+    my $is-recursive = $parent.defined;
+    $*POOL.add(ASNType.new(:$name, base-type => 'CHOICE', type => $new-type, :$parent, :$is-recursive));
 }
 
-sub compile-simple-builtin($type, %POOL, $symbol-name) {
-    # Sets a pair like ElementSize = ('OCTET STRING', Str);
-
+sub compile-simple-builtin($type, $name) {
     my $value-to-bind;
     with $type.params<tag> {
         #| In this case, we should not "flat" this symbol
         #| to built-in Perl 6 type, but rather create a wrapper
         #| with ASN-tag-value method implemented
         if .class eq 'APPLICATION' {
-            my $new-type = Metamodel::ClassHOW.new_type(name => $symbol-name);
+            my $new-type = Metamodel::ClassHOW.new_type(:$name);
             my $tag-value = .value;
             $new-type.^add_method('ASN-tag-value', method { $tag-value });
             if $type.type eq 'OCTET STRING' {
@@ -215,15 +269,17 @@ sub compile-simple-builtin($type, %POOL, $symbol-name) {
                 $new-type.^add_parent(%simple-builtin-types{$type.type});
             }
             $new-type.^compose;
-            $value-to-bind = ($type.type, $new-type);
+            $value-to-bind = ASNType.new(:$name, base-type => $type.type, type => $new-type);
         }
     }
 
-    $value-to-bind //= ($type.type, %simple-builtin-types{$type.type});
-    %POOL{$symbol-name} = $value-to-bind;
+    $value-to-bind //= ASNType.new(
+            :$name, base-type => $type.type,
+            type => %simple-builtin-types{$type.type});
+    $*POOL.add($value-to-bind);
 }
 
-sub compile-builtin-type($type, %POOL, $symbol-name) {
+sub compile-builtin-type($type, $symbol-name) {
     #| At this level, type isn't in a cache and has to be compiled
     #| This subroutine compiles a case where global or local name
     #| has to be associated with native ASN type
@@ -231,14 +287,14 @@ sub compile-builtin-type($type, %POOL, $symbol-name) {
 
     given $type.type -> $type-name {
         if $type-name (elem) $complex-types {
-            return compile-complex-builtin($type-name, $type, %POOL, $symbol-name);
+            return compile-complex-builtin($type-name, $type, $symbol-name);
         } else {
-            return compile-simple-builtin($type, %POOL, $symbol-name);
+            return compile-simple-builtin($type, $symbol-name);
         }
     }
 }
 
-sub compile-type($type, %POOL, $asn-name) {
+sub compile-type($type, $asn-name) {
     #| Number of cases is possible here
     #| * Type is already compiled
     #| * Type must be handled using a plugin
@@ -247,16 +303,20 @@ sub compile-type($type, %POOL, $asn-name) {
     #| We always title-case names:
     #| * Top-level names are being left as they are to be suitable for Perl 6 type
     #| * Inner-declared names are based on a field name, so have to be title-case to match the style
-    my $symbol-name = $asn-name.tc;
+    my $symbol-name = ($asn-name // '').tc;
 
     # Return if cached
-    return $_ with %POOL{$symbol-name};
+    with $*POOL.has($symbol-name) {
+        return $_;
+    }
+    orwith $type.name {
+        return $_ with $*POOL.has($_);
+    }
 
-    #| Try it we have a custom type implementation
-    with $*PLUGIN -> $plugin-code {
-        my $custom-type = EVAL $plugin-code;
-        if $custom-type.defined {
-            return %POOL{$symbol-name} = $custom-type;
+    #| Try if we have a custom type implementation
+    with $*PLUGIN {
+        with EVAL $_ {
+            return $*POOL.add($_);
         }
     }
 
@@ -267,34 +327,40 @@ sub compile-type($type, %POOL, $asn-name) {
     #| * bind: (field) -> Type (3)
     #| 1 demands us to simply return native type
     #| 2 and 3 demand us to either compile or get a type from cache and create type chain links
-
     if $type.type (elem) $builtin-types {
-        return compile-builtin-type($type, %POOL, $symbol-name);
+        return compile-builtin-type($type, $symbol-name);
     } else {
         # Check if custom is among types and reduce a link
         with $*TYPES.grep($type.type eq *.name).first {
             # Make a union of outer and inner type params
             my $params-union = (flat $type.params, .type.params).Hash;
             my $base-type = ASN::RawType.new(name => $asn-name, type => .type.type, params => $params-union);
-            return compile-type($base-type, %POOL, $asn-name);
+            return compile-type($base-type, $asn-name);
         } else {
             die "Encountered unknown type $type.type()";
         }
     }
 }
 
-sub compile-types(ASN::Module $ASN, %POOL) {
+sub compile-types(ASN::Module $ASN) {
     my $*TYPES = $ASN.types.grep(* ~~ ASN::TypeAssignment).List;
+    my @*FIRST-PASS-ATTRS;
+    my @*TYPE-STACK;
+    $*POOL.export;
     for @$*TYPES {
-        compile-type(.type, %POOL, .name) unless %POOL{.name}:exists;
+        @*TYPE-STACK.push: .name;
+        # Compile a type and resolve its possibly recursive parts
+        my $first-pass-type = compile-type(.type, .name);
+        @*TYPE-STACK = ();
+        resolve-recursion($first-pass-type, .name);
     }
 }
 
 sub EXPORT(*@params) {
-    my %POOL;
     my $keys = @params.Map;
     my $ASN = parse-ASN slurp $keys<file>;
     my $*PLUGIN = slurp($_) with $keys<plugin>;
-    compile-types($_, %POOL) with $ASN;
-    %POOL.map({.key => .value[1]}).Map;
+    my $*POOL = TypePool.new;
+    compile-types($_) with $ASN;
+    $*POOL.export.Map;
 }
