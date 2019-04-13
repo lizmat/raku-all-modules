@@ -21,6 +21,7 @@ has $.debug;
 has Lock    $!lock        = Lock.new;
 has Channel $!event-pipe  = Channel.new;
 has Channel $!socket-pipe = Channel.new;
+has Bool    $.autoprefix  = True;
 
 my &colored = (try require Terminal::ANSIColor) === Nil
      && sub (Str $s, $) { $s } ||
@@ -44,9 +45,12 @@ submethod BUILD (
     Str:D   :$userhost  = 'localhost',
     Str:D   :$userreal  = 'Perl6 IRC Client',
             :$channels  = ('#perl6',),
+    Bool:D  :$autoprefix = True,
 ) {
     @!filters = @$filters;
     @!plugins = @$plugins;
+    $!autoprefix = $autoprefix;
+
     my %servers = %$servers;
 
     my %all-conf = :$port,     :$password, :$host,     :$nick,     :$alias,
@@ -245,9 +249,7 @@ method !handle-event ($e) {
             when 'irc-privmsg-channel' | 'irc-notice-channel' {
                 my $nick    = $s.current-nick;
                 my @aliases = $s.alias;
-                if $e.text .= subst:
-                    /^ [ $nick | @aliases ] <[,:]> \s* /, ''
-                {
+                if $e.text ~~ s/^ [ $nick | @aliases ] <[,:]> \s*// {
                     take 'irc-addressed', ('irc-to-me' if $s.is-connected);
                 }
                 elsif $e.text ~~ / << [ $nick | @aliases ] >> /

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-IRC-Client.git
 	branch = master
-	commit = 590379beaaf8fbf525c9f14d0f34116ed20f6ea3
-	parent = cd7d409faf02b313146b9bfe5ac89942cb1e3398
+	commit = 3c6cebf9e394c6d51a8d2a49549ffae1427c5824
+	parent = 07a389357c4d81d6087bd3bd0ecd190216e530b5
 	cmdver = 0.3.1
