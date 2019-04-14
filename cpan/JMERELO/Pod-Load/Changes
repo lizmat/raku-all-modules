@@ -1,3 +1,7 @@
+2019-04-13  Juan J. merelo  <jmerelo@penny>
+
+	* lib/Pod/Load.pm6 (Pod): Fixes error with loading scripts; use v6 failed and besides the output at the end clashed with the module enclosure we use. 
+
 2019-03-24  Juan J. merelo  <jmerelo@penny>
 
 	* lib/Pod/Load.pm6 (Pod): This needed to put evaluation in a module just in case there's something in the namespace that could be repeated. Using a module with random name hides the variables, does not affect the POD.

@@ -4,7 +4,8 @@ use Pod::Load;
 
 constant %tests = { "test.pod6" => /extension/,
                     "class.pm6" => /Hello/,
-                    "multi.pod6" => /mortals/ };
+                    "multi.pod6" => /mortals/,
+                    "can.p6"     => /1/};
 
 sub do-the-test() {
     diag "Testing strings";

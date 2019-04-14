@@ -5,6 +5,6 @@
 /resources/*.so
 /resources/*.dylib
 .precomp/
-/Pod-Load-*
+/[Pp]od-[Ll]oad-*
 *.tgz
 *~

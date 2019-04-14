@@ -1,5 +1,5 @@
 use v6.c;
-unit module Pod::Load:ver<0.5.1>;
+unit module Pod::Load:ver<0.5.2>;
 
 =begin pod
 
@@ -50,7 +50,7 @@ JJ Merelo <jjmerelo@gmail.com>
 Copyright 2018,2019 JJ Merelo
 
 This library is free software; you can redistribute it and/or modify
-                               it under the Artistic License 2.0. 
+it under the Artistic License 2.0. 
 
 =end pod
 
@@ -59,8 +59,16 @@ use MONKEY-SEE-NO-EVAL;
 #| Loads a string, returns a Pod.
 multi sub load ( Str $string ) is export {
     my $module-name = "m{rand}";
+    my $copy = $string;
     $module-name ~~ s/\.//;
-    my @pod = (EVAL ("module $module-name \{\n" ~ $string ~ "\}\n\$=pod"));
+    $copy ~~ s/"use" \s+ "v6;"//;
+    my @pod;
+    if $copy ~~ /"="output/ {
+        my @chunks = $copy.split( /"="output/ );
+        @pod = (EVAL ("module $module-name \{\n" ~ @chunks[0] ~ "\}\n\$=pod;\n\n=output@chunks[1]"));
+    } else {
+        @pod = (EVAL ("module $module-name \{\n" ~ $copy ~ "\}\n\$=pod"));
+    }
     return @pod;
 }
 
