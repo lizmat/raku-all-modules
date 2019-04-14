@@ -5,9 +5,6 @@ use Random::Choice;
 lives-ok { choice(:p([0.5,0.2,0.3])) };
 lives-ok { choice(:size(5), :p([0.5,0.2,0.3])) };
 
-dies-ok { choice(:p([0.5,0.2,0.301])) };
-dies-ok { choice(:size(5), :p([0.5,0.2,0.301])) };
-
 is choice(:p([1.0])), 0, "Test unbiased dice";
 is choice(:size(5), :p([1.0])), 0 xx 5, "Test unbiased dice with size";
 

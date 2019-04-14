@@ -1,14 +1,17 @@
 use v6.c;
+use nqp;
 unit module Random::Choice:ver<0.0.5>:auth<cpan:TITSUKI>;
 
 my class AliasTable {
-    has @.prob;
-    has Int @.alias;
-    has Int $.n;
 
-    submethod BUILD(:@p where { abs(1 - sum(@p)) < 1e-3 }) {
+    has num @.prob;
+    has int @.alias;
+    has int $.n;
+
+    submethod BUILD(:@p) {
         $!n = +@p;
-        my @np = @p.map(* * $!n);
+        my num $total = Num(@p.sum);
+        my num @np = @p.map(-> $x { nqp::mul_n(nqp::div_n(Num($x),$total), $!n) });
         my (@large, @small);
         for ^@np -> $i {
             if @np[$i] < 1 {
@@ -23,7 +26,7 @@ my class AliasTable {
             my ($pg, $g) = @large.shift;
             @!prob[$l] = $pl;
             @!alias[$l] = $g;
-            $pg := $pg + $pl - 1;
+            $pg := $pg + $pl - 1e0;
             if $pg < 1 {
                 @small.push: ($pg, $g);
             } else {
@@ -33,12 +36,12 @@ my class AliasTable {
 
         while @large {
             my ($pg, $g) = @large.shift;
-            @!prob[$g] = 1;
+            @!prob[$g] = 1e0;
         }
 
         while @small {
             my ($pl, $l) = @small.shift;
-            @!prob[$l] = 1;
+            @!prob[$l] = 1e0;
         }
     }
 }
