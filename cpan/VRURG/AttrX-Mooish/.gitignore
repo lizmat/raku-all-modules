@@ -1,2 +1,4 @@
 .precomp/
+.idea/
 AttrX-Mooish-v*
+*.iml

@@ -23,7 +23,7 @@ my $m = META6.new(
         'AttrX::Mooish' => 'lib/AttrX/Mooish.pm6',
     },
     license        => 'Artistic-2.0',
-    production     => False,
+    production     => True,
 );
 
 print $m.to-json;
@@ -31,4 +31,3 @@ print $m.to-json;
 #my $m = META6.new(file => './META6.json');
 #$m<version description> = v0.0.2, 'Work with Perl 6 META files even better';
 #spurt('./META6.json', $m.to-json);
-
