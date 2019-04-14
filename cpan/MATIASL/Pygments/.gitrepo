@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/matiaslina/perl6-pygments.git
+	branch = master
+	commit = 4c21236e12cf8a4eb71380438f3dc940d8afd958
+	parent = 72209f76d5b0301aa1d8ff50de6974018623ccd3
+	cmdver = 0.3.1

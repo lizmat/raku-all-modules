@@ -1,0 +1,25 @@
+{
+  "authors" : [
+    "Matias Linares"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "Inline::Python"
+  ],
+  "description" : "Wrapper to python pygments library.",
+  "license" : "Artistic-2.0",
+  "name" : "Pygments",
+  "perl" : "6.c",
+  "provides" : {
+    "Pygments" : "lib/Pygments.pm6"
+  },
+  "resources" : [
+    "perl.py"
+  ],
+  "source-url" : "https://github.com/matiaslina/perl6-pygments.git",
+  "tags" : [ ],
+  "test-depends" : [
+    "Test::META"
+  ],
+  "version" : "0.0.1"
+}
