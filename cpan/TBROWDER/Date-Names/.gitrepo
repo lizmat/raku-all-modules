@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tbrowder/Date-Names-Perl6.git
 	branch = master
-	commit = c02f37f21cc15ef6d7480be25954d8ab398e512f
-	parent = 566607987ba46e747d834d8b02b3697476dee5d0
+	commit = d5bdc1eaa518a44958af42bfd36f25557c085de1
+	parent = e5622bff173d20e3caedc9a6e36f502c778489ef
 	cmdver = 0.3.1

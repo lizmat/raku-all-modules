@@ -6,7 +6,7 @@ Date::Names
 Module **Date::Names** - Provides month and weekday names for numbers (multilingual)
 
 This is Version 2 with significant differences and more
-features compred to Version 1:
+features compared to Version 1:
 
 + Changes:
 
@@ -191,6 +191,7 @@ $dn.show-all
 5. User chooses case of the output names [API complete, needs tests]
 6. User can choose raw truncation on a full name, if permitted by the language [API partially complete]
 7. User can choose to have a period or not for abbreviations [API complete, needs tests]
+8. Functions for entering three-char abbreviation of weekday or month name and returning its number
 
 ### Future features
 
