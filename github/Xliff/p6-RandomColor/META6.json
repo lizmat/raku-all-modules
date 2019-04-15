@@ -1,7 +1,7 @@
 {
     "depends": [],
     "description": "A port of the randomColor Javascript library for generating attractive random colors",
-    "version": "v0.1",
+    "version": "v0.11",
     "meta-version": "0",
     "license": "",
     "source-url": "https://github.com/Xliff/p6-RandomColor.git",
