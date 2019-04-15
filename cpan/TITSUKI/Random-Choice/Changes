@@ -2,6 +2,9 @@ Revision history for Random-Choice
 
 {{$NEXT}}
 
+0.0.6  2019-04-14T17:04:27+09:00
+    - Delete a where constraint; it checked whether the sum of given @p is one [#2]
+
 0.0.5  2019-03-09T15:44:58+09:00
     - Fix FAQ and benchmark result [a770be] [bed91b]
 

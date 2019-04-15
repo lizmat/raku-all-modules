@@ -1,6 +1,6 @@
 use v6.c;
 use nqp;
-unit module Random::Choice:ver<0.0.5>:auth<cpan:TITSUKI>;
+unit module Random::Choice:ver<0.0.6>:auth<cpan:TITSUKI>;
 
 my class AliasTable {
 
