@@ -69,7 +69,8 @@ class DB::MySQL::StatementResult does DB::MySQL::Result
             do for ^$!num-fields -> $i
             {
                 DB::MySQL::Converter.bind-value($!fields[$i].type,
-                                                $!result-bind[$i])
+                                                $!result-bind[$i],
+                                                null => ?$!result-bind.nulls[$i])
             }
         }
         else

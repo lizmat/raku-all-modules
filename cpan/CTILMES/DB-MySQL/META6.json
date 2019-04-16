@@ -1,7 +1,7 @@
 {
     "name" : "DB::MySQL",
 
-    "version" : "0.4",
+    "version" : "0.5",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-dbmysql.git",
 

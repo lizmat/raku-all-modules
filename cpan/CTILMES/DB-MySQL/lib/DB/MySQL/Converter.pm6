@@ -245,12 +245,14 @@ class DB::MySQL::Converter
         }
     }
 
-    method bind-value($type, MYSQL_BIND $bind)
+    method bind-value($type, MYSQL_BIND $bind, Bool :$null)
     {
         with %types{$type} //
              %types{+mysql-type::{MYSQL_TYPE_STRING}}
         {
-            $bind.bufptr ?? .<binvalue>($bind.bufptr, $bind.len) !! .<nullvalue>
+            ($bind.bufptr && !$null)
+                ?? .<binvalue>($bind.bufptr, $bind.len)
+                !! .<nullvalue>
         }
     }
 

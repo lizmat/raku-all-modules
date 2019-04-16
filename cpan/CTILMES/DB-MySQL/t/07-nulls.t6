@@ -3,7 +3,7 @@ use Test::When <extended>;
 
 use DB::MySQL;
 
-plan 13;
+plan 16;
 
 isa-ok my $m = DB::MySQL.new(), DB::MySQL, 'Create object';
 
@@ -17,6 +17,8 @@ ok $m.execute('INSERT INTO foo (bar) VALUES (NULL)'), 'insert NULL';
 
 is $m.execute('SELECT bar FROM foo').value, DateTime, 'value is NULL';
 
+is $m.query('select bar from foo').value, DateTime, 'value still NULL';
+
 lives-ok { $m.execute('drop table foo') }, 'drop table';
 
 # Issue #3
@@ -28,6 +30,8 @@ ok $m.execute('INSERT INTO foo (bar) VALUES (NULL)'), 'insert NULL';
 
 is $m.execute('SELECT bar FROM foo').value, Int, 'value is NULL';
 
+is $m.query('SELECT bar FROM foo').value, Int, 'value still NULL';
+
 lives-ok { $m.execute('drop table foo') }, 'drop table';
 
 # Issue #4
@@ -38,6 +42,8 @@ lives-ok { $m.execute('CREATE TABLE foo ( bar char(1) ) engine=InnoDB') },
 ok $m.execute('INSERT INTO foo (bar) VALUES (NULL)'), 'insert NULL';
 
 is $m.execute('SELECT bar FROM foo').value, Str, 'value is NULL';
+
+is $m.query('SELECT bar FROM foo').value, Str, 'value still NULL';
 
 lives-ok { $m.execute('drop table foo') }, 'drop table';
 

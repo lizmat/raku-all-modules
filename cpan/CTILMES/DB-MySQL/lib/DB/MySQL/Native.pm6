@@ -112,6 +112,8 @@ class MYSQL_BIND is repr('CStruct')
     method bufptr() { Pointer.new($!buffer) }
 
     method len() { nativecast(Pointer[uint64], Pointer.new($!length)).deref }
+
+    method is-null() { nativecast(Pointer[int8],$!is_null) }
 }
 
 class MYSQL_RES is repr('CPointer') {...}
