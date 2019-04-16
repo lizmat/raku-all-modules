@@ -19,7 +19,7 @@ Log::Syslog::Native - access to POSIX syslog facility
 
    my $logger = Log::Syslog::Native.new(facility => Log::Syslog::Native::Mail);
 
-   $logger->warning("Couldn't activate wormhole interface");
+   $logger.warning("Couldn't activate wormhole interface");
 
 =end code
 
@@ -75,7 +75,7 @@ your system, alter how and where the messages are logged to.
 
 =end pod
 
-class Log::Syslog::Native:ver<0.0.8>:auth<github:jonathanstowe>:api<1.0> {
+class Log::Syslog::Native:ver<0.0.9>:auth<github:jonathanstowe>:api<1.0> {
 
 =begin pod
 
@@ -344,6 +344,5 @@ Log to stderr as well
     submethod DESTROY {
         _closelog();
     }
-
 }
 # vim: expandtab shiftwidth=4 ft=perl6

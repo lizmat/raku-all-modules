@@ -1,7 +1,7 @@
 {
   "name": "Log::Syslog::Native",
   "auth": "github:jonathanstowe",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "api": "1.0",
   "description": "Provide logging to POSIX native syslog facility",
   "source-url": "git://github.com/jonathanstowe/Log-Syslog-Native.git",

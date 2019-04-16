@@ -4,6 +4,16 @@ Provide access to the Native syslog facility on Unix-like systems for Perl 6
 
 [![Build Status](https://travis-ci.org/jonathanstowe/Log-Syslog-Native.svg?branch=master)](https://travis-ci.org/jonathanstowe/Log-Syslog-Native)
 
+## Synopsis
+
+```perl6
+use Log::Syslog::Native;
+
+my $logger = Log::Syslog::Native.new(facility => Log::Syslog::Native::Mail);
+
+$logger.warning("Couldn't activate wormhole interface");
+```
+
 ## Description
 
 This provides a simple, perhaps naive,interface to the POSIX syslog facility
