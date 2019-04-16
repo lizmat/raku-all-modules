@@ -9,6 +9,8 @@ use v6;
   unit class GTK::V3::Gtk::GtkComboBoxText;
   also is GTK::V3::Gtk::GtkComboBox;
 
+=head2 GtkComboBoxText — A simple, text-only combo box
+
 =head1 Synopsis
 
   # Get a fully designed text combobox
@@ -158,11 +160,11 @@ sub gtk_combo_box_text_get_active_text ( N-GObject $combo_box )
 =begin pod
 =head2 new
 
-  multi submethod BUILD (:widget!)
+  multi submethod BUILD ( :$widget! )
 
 Create a simple text combobox using a native object from elsewhere. See also Gtk::V3::Glib::GObject.
 
-  multi submethod BUILD (:build-id!)
+  multi submethod BUILD ( Str :$build-id! )
 
 Create a simple text combobox using a native object from a builder. See also Gtk::V3::Glib::GObject.
 

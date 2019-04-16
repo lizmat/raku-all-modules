@@ -19,8 +19,8 @@ sub gtk_grid_new()
   is native(&gtk-lib)
   { * }
 
-sub gtk_grid_attach ( N-GObject $grid, N-GObject $child, int32 $x, int32 $y,
-  int32 $w, int32 $h
+sub gtk_grid_attach (
+  N-GObject $grid, N-GObject $child, int32 $x, int32 $y, int32 $w, int32 $h
 ) is native(&gtk-lib)
   { * }
 

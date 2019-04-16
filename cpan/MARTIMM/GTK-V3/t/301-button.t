@@ -74,6 +74,7 @@ subtest 'Button as container', {
 }
 
 #-------------------------------------------------------------------------------
+#TODO is it necessary to inherit
 class X is GTK::V3::Gtk::GtkButton {
 
   method click-handler ( :widget($button), Array :$user-data ) {

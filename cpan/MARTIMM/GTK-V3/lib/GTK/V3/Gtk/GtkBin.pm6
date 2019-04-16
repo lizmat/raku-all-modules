@@ -9,9 +9,11 @@ use v6;
   unit class GTK::V3::Gtk::GtkBin;
   also is GTK::V3::Gtk::GtkContainer;
 
+=head2 GtkBin — A container with just one child
+
 =head1 Synopsis
 
-The module GtkBin is not used directly but its methods can be used by its child modules. Below is an example using a C<GtkButton> which is a direct descendant of C<GtkBin>. Also, here it is also clear that a button is also a container which in principle can hold anything but by default a label. The method C<gtk-container-add()> comes from C<GtkContainer> and C<get-child()> comes from C<GtkBin>.
+The module GtkBin is not used directly but its methods can be used by its child modules. Below is an example using a C<GtkButton> which is a direct descendant of C<GtkBin>. Here it is also clear that a button is also a container which in principle can hold anything but by default it holds a label. The method C<gtk-container-add()> comes from C<GtkContainer> and C<get-child()> comes from C<GtkBin>.
 
   my GTK::V3::Gtk::GtkLabel $label .= new(:label<pqr>);
   my GTK::V3::Gtk::GtkButton $button .= new(:empty);
@@ -40,16 +42,14 @@ use GTK::V3::Gtk::GtkContainer;
 unit class GTK::V3::Gtk::GtkBin:auth<github:MARTIMM>;
 also is GTK::V3::Gtk::GtkContainer;
 
-#-------------------------------------------------------------------------------
+# ==============================================================================
 =begin pod
 
 =head1 Methods
 
-All methods can be written with dashes or shortened by cutting the C<gtk_bin_> part. After shortening, at least one dash or underscore must be left. Below, this is shown with brackets in the headers.
-
 =head2 [gtk_bin_] get_child
 
-  method gtk_about_dialog_new ( --> N-GObject )
+  method gtk_bin_get_child ( --> N-GObject )
 
 Gets the child of the GtkBin, or C<Any> if the bin contains no child widget.
 =end pod

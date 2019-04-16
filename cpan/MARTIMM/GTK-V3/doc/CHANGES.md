@@ -1,5 +1,10 @@
 ## Release notes
 
+* 2019-04-15 0.9.1
+  * Some subs are added to GOBject.
+  * Pod doc added for GObject, GtkBuilder, GtkButton, GtkCheckButton, GtkToggleButton, GtkWidget, GtkWindow.
+  * Remove GTK::V3::Glib::GFile. There was no direct use from other classes and in perl6 there are better ways to do IO.
+
 * 2019-03-10 0.9.0
   * Added GtkTextIter to get rid of trickery from GTK::Simple.
   * Added GBoxed to gather methods used in child classes. At the moment GValue and GtkTextIter.

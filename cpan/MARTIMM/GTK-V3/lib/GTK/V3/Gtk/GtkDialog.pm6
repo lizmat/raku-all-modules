@@ -9,6 +9,8 @@ use v6;
   unit class GTK::V3::Gtk::GtkDialog;
   also is GTK::V3::Gtk::GtkWindow;
 
+=head2 GtkDialog — Create popup windows
+
 =head1 Synopsis
 
   my GTK::V3::Gtk::GtkDialog $dialog .= new(:build-id<simple-dialog>);
@@ -115,15 +117,15 @@ sub gtk_dialog_response ( N-GObject $dialog, int32 $response_id )
 =begin pod
 =head2 new
 
-  multi submethod BUILD (:empty!)
+  multi submethod BUILD ( Bool :$empty! )
 
 Create an empty dialog
 
-  multi submethod BUILD (:widget!)
+  multi submethod BUILD ( :$widget! )
 
 Create a dialog using a native object from elsewhere. See also Gtk::V3::Glib::GObject.
 
-  multi submethod BUILD (:build-id!)
+  multi submethod BUILD ( Str :$build-id! )
 
 Create a dialog using a native object from a builder. See also Gtk::V3::Glib::GObject.
 

@@ -133,6 +133,7 @@ A few measures are implemented to help a bit preventing problems;
 | Pdf from pod | Link to Gnome Developer |
 |-------|--------------|-------------------------|
 | GTK::V3::Gdk::GdkDisplay |  [Controls a set of GdkScreens and their associated input devices][GdkDisplay]
+| GTK::V3::Gdk::GdkEvent |  [Device events][GdkEvent]
 | GTK::V3::Gdk::GdkScreen |  [Object representing a physical screen][GdkScreen]
 | GTK::V3::Gdk::GdkTypes |
 | GTK::V3::Gdk::GdkWindow |  [Windows][GdkWindow]
@@ -272,6 +273,7 @@ Github account name: **MARTIMM**
 [GValue1]: https://developer.gnome.org/gobject/stable/gobject-Generic-values.html
 [GValue2]: https://developer.gnome.org/gobject/stable/gobject-Standard-Parameter-and-Value-Types.html
 
+[GdkEvent]: https://developer.gnome.org/gdk3/stable/gdk3-Event-Structures.html
 <!--
 [todo]: https://github.com/MARTIMM/Library/blob/master/doc/TODO.md
 [man]: https://github.com/MARTIMM/Library/blob/master/doc/manual.pdf

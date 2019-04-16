@@ -9,6 +9,8 @@ use v6;
   unit class GTK::V3::Gtk::GtkAboutDialog;
   also is GTK::V3::Gtk::GtkDialog;
 
+=head2 GtkAboutDialog — Display information about an application
+
 =head1 Synopsis
 
   my GTK::V3::Gtk::GtkAboutDialog $about .= new(:empty);
@@ -517,15 +519,15 @@ sub gtk_about_dialog_add_credit_section (
 =begin pod
 =head2 new
 
-  multi submethod BUILD (:empty!)
+  multi submethod BUILD ( Bool :$empty! )
 
 Create an empty about dialog
 
-  multi submethod BUILD (:widget!)
+  multi submethod BUILD ( :$widget! )
 
 Create an about dialog using a native object from elsewhere. See also Gtk::V3::Glib::GObject.
 
-  multi submethod BUILD (:build-id!)
+  multi submethod BUILD ( Str :$build-id! )
 
 Create an about dialog using a native object from a builder. See also Gtk::V3::Glib::GObject.
 

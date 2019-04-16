@@ -9,6 +9,8 @@ use v6;
   unit class GTK::V3::Gtk::GtkComboBox;
   also is GTK::V3::Gtk::GtkBin;
 
+=head2 GtkComboBox — A widget used to choose from a list of items
+
 =head1 Synopsis
 
   # Get a fully designed combobox
@@ -54,6 +56,7 @@ sub gtk_combo_box_get_active ( N-GObject $combo_box )
 
 Sets the active item of combo_box to be the item at index. See also L<gnome developer docs|https://developer.gnome.org/gtk3/stable/GtkComboBox.html#gtk-combo-box-set-active>.
 =end pod
+#TODO automatic conversions of Int <-> int32/int64 etc.
 sub gtk_combo_box_set_active ( N-GObject $combo_box, int32 $index )
   is native(&gtk-lib)
   { * }
@@ -90,11 +93,11 @@ sub gtk_combo_box_set_active_id ( N-GObject $combo_box, Str $active_id )
 =begin pod
 =head2 new
 
-  multi submethod BUILD (:widget!)
+  multi submethod BUILD ( :$widget! )
 
 Create a combobox using a native object from elsewhere. See also Gtk::V3::Glib::GObject.
 
-  multi submethod BUILD (:build-id!)
+  multi submethod BUILD ( Str :$build-id! )
 
 Create a combobox using a native object from a builder. See also Gtk::V3::Glib::GObject.
 
@@ -104,7 +107,8 @@ submethod BUILD ( *%options ) {
   # prevent creating wrong widgets
   return unless self.^name eq 'GTK::V3::Gtk::GtkComboBox';
 
-  if ? %options<widget> || %options<build-id> {
+  #TODO %options.keys ~~ any(<widget build-id id name>) { ... }
+  if ? %options<widget> || ? %options<build-id> {
     # provided in GObject
   }
 

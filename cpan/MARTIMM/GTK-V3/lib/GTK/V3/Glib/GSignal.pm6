@@ -58,6 +58,7 @@ sub g_signal_connect_data_wd(
   OpaquePointer $destroy_data, int32 $connect_flags
 ) returns int32
   is native(&gobject-lib)
+  is symbol('g_signal_connect_data')
   { * }
 
 sub g_signal_connect_data_wwd(
@@ -66,6 +67,7 @@ sub g_signal_connect_data_wwd(
   OpaquePointer $destroy_data, int32 $connect_flags
 ) returns int32
   is native(&gobject-lib)
+  is symbol('g_signal_connect_data')
   { * }
 
 
