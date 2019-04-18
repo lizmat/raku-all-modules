@@ -14,9 +14,9 @@ OO::Plugin::Registry - to register 'em all!
 
 This module provides process-wide registration functionality for keeping track of various objects related to
 C<OO::Plugin> framework. Most of the needed functionality is provided via higher-level means by
-L<OO::Plugin|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md> and
-L<OO::Plugin::Manager|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manager.md> modules and
-described in L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md>.
+L<OO::Plugin|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin.md> and
+L<OO::Plugin::Manager|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manager.md> modules and
+described in L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md>.
 
 =head1 EXPORTS
 
@@ -244,7 +244,7 @@ other don't and thus they're a little bit faster.
 =head3 method pluggable-classes
 
 Returns all classes registered as pluggable. Consider the
-L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#pluggables> with
+L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#pluggables> with
 regard to I<strict> or I<loose> modes of operation of the plugin manger class.
 =end pod
 
@@ -516,10 +516,10 @@ class names.
 
 =head1 SEE ALSO
 
-L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md>,
-L<OO::Plugin|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md>
-L<OO::Plugin::Manager|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manager.md>,
-L<OO::Plugin::Class|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md>
+L<OO::Plugin::Manual|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md>,
+L<OO::Plugin|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin.md>
+L<OO::Plugin::Manager|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manager.md>,
+L<OO::Plugin::Class|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Class.md>
 
 =AUTHOR  Vadim Belman <vrurg@cpan.org>
 

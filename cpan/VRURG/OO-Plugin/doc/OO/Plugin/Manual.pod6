@@ -210,7 +210,7 @@ This will be covered in the section below.
 =head2 Writing A Plugin
 
 A plugin is an instance of a class inheriting from a C<Plugin> class defined in
-L<OO::Plugin::Class|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md> module. To reduce
+L<OO::Plugin::Class|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Class.md> module. To reduce
 the boilerplate and provide better readability of the code special class declarator C<plugin> is provided:
 
     plugin MyPlugin {
@@ -624,10 +624,10 @@ The outcome of applying the trait differs depending on wether the plugin manager
 the former case it will raise an error for any attempt to override an unpluggable class or attach a handler to an
 unpluggable method. In the latter case (which is the default) any class or method is considered pluggable and gets
 registed as such with
-L<OO::Plugin::Registry|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Registry.md>.
+L<OO::Plugin::Registry|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Registry.md>.
 
 A user can request a registry of pluggables from
-L<OO::Plugin::Registry|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Registry.md#method-pluggable-classes>.
+L<OO::Plugin::Registry|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Registry.md#method-pluggable-classes>.
 This information can be used, for example, to provide a plugin developer with the information about what objects are
 opened for "suggestions".
 
@@ -705,10 +705,10 @@ because it is wrongly spelled or because it wasn't requested by application code
 
 =head1 SEE ALSO
 
-L<OO::Plugin|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md>,
-L<OO::Plugin::Manager|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manager.md>,
-L<OO::Plugin::Class|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md>
-L<OO::Plugin::Registry|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Registry.md>
+L<OO::Plugin|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin.md>,
+L<OO::Plugin::Manager|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manager.md>,
+L<OO::Plugin::Class|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Class.md>
+L<OO::Plugin::Registry|https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Registry.md>
 
 =AUTHOR  Vadim Belman <vrurg@cpan.org>
 

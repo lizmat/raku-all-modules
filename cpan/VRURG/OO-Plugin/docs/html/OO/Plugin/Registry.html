@@ -62,7 +62,7 @@
 <h1 id="SYNOPSIS"><a class="u" href="#___top" title="go to top of document">SYNOPSIS</a></h1>
 <pre class="pod-block-code">Plugin::Registry.instance.plugin-names;     # list of all registered plugins</pre>
 <h1 id="DESCRIPTION"><a class="u" href="#___top" title="go to top of document">DESCRIPTION</a></h1>
-<p>This module provides process-wide registration functionality for keeping track of various objects related to <code>OO::Plugin</code> framework. Most of the needed functionality is provided via higher-level means by <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md">OO::Plugin</a> and <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a> modules and described in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>.</p>
+<p>This module provides process-wide registration functionality for keeping track of various objects related to <code>OO::Plugin</code> framework. Most of the needed functionality is provided via higher-level means by <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin.md">OO::Plugin</a> and <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a> modules and described in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>.</p>
 <h1 id="EXPORTS"><a class="u" href="#___top" title="go to top of document">EXPORTS</a></h1>
 <h2 id="class_Plugin::Registry"><a class="u" href="#___top" title="go to top of document">class Plugin::Registry</a></h2>
 <p>This class is a singleton and it provides the complete API of this module.</p>
@@ -94,7 +94,7 @@ $r.plugin-meta( {key1 =&gt; &quot;a2&quot;, key2 =&gt; &quot;b2&quot;}, Plugin1 
 </li>
 </ul>
 <h3 id="method_pluggable-classes"><a class="u" href="#___top" title="go to top of document">method pluggable-classes</a></h3>
-<p>Returns all classes registered as pluggable. Consider the <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#pluggables">OO::Plugin::Manual</a> with regard to <em>strict</em> or <em>loose</em> modes of operation of the plugin manger class.</p>
+<p>Returns all classes registered as pluggable. Consider the <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#pluggables">OO::Plugin::Manual</a> with regard to <em>strict</em> or <em>loose</em> modes of operation of the plugin manger class.</p>
 <h3 id="method_is-pluggable"><a class="u" href="#___top" title="go to top of document">method is-pluggable</a></h3>
 <ul><li><p><code>is-pluggable( Mu:U \class )</code> <code>is-pluggable( Str:D $class-fqn )</code></p>
 <p><em>True</em> if class is pluggable.</p>
@@ -175,7 +175,7 @@ $r.plugin-meta( {key1 =&gt; &quot;a2&quot;, key2 =&gt; &quot;b2&quot;}, Plugin1 
 <h3 id="method_inventory"><a class="u" href="#___top" title="go to top of document">method inventory</a></h3>
 <p>Returns a copy of inventory hash. It currently only has one key: <em>autogen-classs</em> which is a set of framework-generated class names.</p>
 <h1 id="SEE_ALSO"><a class="u" href="#___top" title="go to top of document">SEE ALSO</a></h1>
-<p><a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md">OO::Plugin</a> <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a></p>
+<p><a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin.md">OO::Plugin</a> <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manager.md">OO::Plugin::Manager</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a></p>
 <section><h1>AUTHOR</h1>
 <p>Vadim Belman &lt;vrurg@cpan.org&gt;</p>
 </section>

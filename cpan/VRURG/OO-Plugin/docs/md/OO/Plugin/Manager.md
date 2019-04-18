@@ -15,7 +15,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-Most of the description for the functionality of this module can be found in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md). Here we just cover the technical details and attributes/methods.
+Most of the description for the functionality of this module can be found in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md). Here we just cover the technical details and attributes/methods.
 
 TYPES
 =====
@@ -31,7 +31,7 @@ Constants defining where the user whants to have a particular plugin:
 
   * `plugLast` – in the end of the list
 
-Read about [sorting](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#sorting) in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md).
+Read about [sorting](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#sorting) in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md).
 
 ATTRIBUTES
 ==========
@@ -282,7 +282,7 @@ Initiate a callback named `$callback-name`. Passes `callback-params` to plugins'
 
 Method returns what callback handler requested to return.
 
-Read more in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#callbacks).
+Read more in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#callbacks).
 
 method cb
 ---------
@@ -298,7 +298,7 @@ Initiates an event named `$event-name` and passes `event-params` to all event ha
 
 Returns a `Promise` which will be kept upon this particular event is completely handled; i.e. when all event handlers are completed. The promise is resolved to an array of `Promise`s, one per each event handler been called.
 
-Read more in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#events).
+Read more in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#events).
 
 See also [`finish`](#routine-finish).
 
@@ -328,14 +328,14 @@ method class
 
 `class( MyClass )`
 
-One of the two key methods of this class. For a given class it creates a newly generated one with all `plug-class`es and method handlers applied. All the magic this framework provides with regard to extending application classes functionality through delegating to the plugins is only possible after calling this method. Read more in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#basics).
+One of the two key methods of this class. For a given class it creates a newly generated one with all `plug-class`es and method handlers applied. All the magic this framework provides with regard to extending application classes functionality through delegating to the plugins is only possible after calling this method. Read more in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#basics).
 
 method create
 -------------
 
 `create( MyClass, |constructor-params )`
 
-Creates a new instance for class `MyClass` with all the magic applied, as described for [method `class`](#class) and in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#basics). This method is what must be used in place of the standard `new`.
+Creates a new instance for class `MyClass` with all the magic applied, as described for [method `class`](#class) and in [OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#basics). This method is what must be used in place of the standard `new`.
 
 method finish
 -------------
@@ -345,7 +345,7 @@ This is the plugin manager finalization method. It must always be called before 
 SEE ALSO
 ========
 
-[OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md), [OO::Plugin](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md), [OO::Plugin::Class](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md) [OO::Plugin::Registry](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Registry.md),
+[OO::Plugin::Manual](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md), [OO::Plugin](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin.md), [OO::Plugin::Class](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Class.md) [OO::Plugin::Registry](https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Registry.md),
 
 AUTHOR
 ======

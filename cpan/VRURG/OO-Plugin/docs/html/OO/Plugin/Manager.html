@@ -69,7 +69,7 @@
 
 my $plugged-object = $mgr.create( MyClass, class-param =&gt; &quot;a value&quot; );</pre>
 <h1 id="DESCRIPTION"><a class="u" href="#___top" title="go to top of document">DESCRIPTION</a></h1>
-<p>Most of the description for the functionality of this module can be found in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>. Here we just cover the technical details and attributes/methods.</p>
+<p>Most of the description for the functionality of this module can be found in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>. Here we just cover the technical details and attributes/methods.</p>
 <h1 id="TYPES"><a class="u" href="#___top" title="go to top of document">TYPES</a></h1>
 <h2 id="enum_PlugPriority"><a class="u" href="#___top" title="go to top of document">enum <code>PlugPriority</code></a></h2>
 <p>Constants defining where the user whants to have a particular plugin:</p>
@@ -80,7 +80,7 @@ my $plugged-object = $mgr.create( MyClass, class-param =&gt; &quot;a value&quot;
 <li><p><code>plugLast</code> – in the end of the list</p>
 </li>
 </ul>
-<p>Read about <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#sorting">sorting</a> in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>.</p>
+<p>Read about <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#sorting">sorting</a> in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>.</p>
 <h1 id="ATTRIBUTES"><a class="u" href="#___top" title="go to top of document">ATTRIBUTES</a></h1>
 <h1>Attribute.new: When _True_ will print debug info to the console.</h1><h1>Attribute.new: The base namespace where to look for plugin modules. See @.namespaces below.</h1><h1>Attribute.new: Defines a list of namespaces within $.base attribute where to look from plugin modules. I.e. if set to the default &lt;Plugin Plugins&gt; then the manager will load modules from ::($.base)::Plugin or ::($.base)::Plugins.</h1><h1>Attribute.new: Callback to validate plugin. Allows the user code to check for plugin compatibility, for example. (Not implemented yet)</h1><h1>Attribute.new: In strict mode non-pluggable classes/methods cannot be overriden.</h1><h1>Attribute.new: Errors collected while loading plugin modules. List of hashes of form &#39;Module::Name&#39; =&gt; &quot;Error String&quot;.</h1><h1>Attribute.new: Indicates that the manager object has been initialized; i.e. method initialize() has been run.</h1><h1>Attribute.new: Number of simulatenous event handlers running. Default is 3</h1><h1>Attribute.new: Number of seconds for the dispatcher to wait for another event after processing one. Default 1 sec.</h1><h1 id="METHODS"><a class="u" href="#___top" title="go to top of document">METHODS</a></h1>
 <h2 id="method_normalize-name"><a class="u" href="#___top" title="go to top of document">method normalize-name</a></h2>
@@ -222,14 +222,14 @@ my $plugged-object = $mgr.create( MyClass, class-param =&gt; &quot;a value&quot;
 <p><code>callback( Str:D $callback-name, |callback-params )</code></p>
 <p>Initiate a callback named <code>$callback-name</code>. Passes <code>callback-params</code> to plugins&#39; callback handlers.</p>
 <p>Method returns what callback handler requested to return.</p>
-<p>Read more in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#callbacks">OO::Plugin::Manual</a>.</p>
+<p>Read more in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#callbacks">OO::Plugin::Manual</a>.</p>
 <h2 id="method_cb"><a class="u" href="#___top" title="go to top of document">method cb</a></h2>
 <p>Shortcut for <a href="#routine-callback"><code>callback</code></a>.</p>
 <h2 id="method_event"><a class="u" href="#___top" title="go to top of document">method event</a></h2>
 <p><code>event( Str:D $event-name, |event-params )</code></p>
 <p>Initiates an event named <code>$event-name</code> and passes <code>event-params</code> to all event handlers.</p>
 <p>Returns a <code>Promise</code> which will be kept upon this particular event is completely handled; i.e. when all event handlers are completed. The promise is resolved to an array of <code>Promise</code>s, one per each event handler been called.</p>
-<p>Read more in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#events">OO::Plugin::Manual</a>.</p>
+<p>Read more in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#events">OO::Plugin::Manual</a>.</p>
 <p>See also <a href="#routine-finish"><code>finish</code></a>.</p>
 <h2 id="method_has-plugin"><a class="u" href="#___top" title="go to top of document">method has-plugin</a></h2>
 <p><code>has-plugin( Str:D $plugin )</code></p>
@@ -245,14 +245,14 @@ my $plugged-object = $mgr.create( MyClass, class-param =&gt; &quot;a value&quot;
 <p>Returns unordered <code>Seq</code> of all enabled plugin FQNs.</p>
 <h2 id="method_class"><a class="u" href="#___top" title="go to top of document">method class</a></h2>
 <p><code>class( MyClass )</code></p>
-<p>One of the two key methods of this class. For a given class it creates a newly generated one with all <code>plug-class</code>es and method handlers applied. All the magic this framework provides with regard to extending application classes functionality through delegating to the plugins is only possible after calling this method. Read more in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#basics">OO::Plugin::Manual</a>.</p>
+<p>One of the two key methods of this class. For a given class it creates a newly generated one with all <code>plug-class</code>es and method handlers applied. All the magic this framework provides with regard to extending application classes functionality through delegating to the plugins is only possible after calling this method. Read more in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#basics">OO::Plugin::Manual</a>.</p>
 <h2 id="method_create"><a class="u" href="#___top" title="go to top of document">method create</a></h2>
 <p><code>create( MyClass, |constructor-params )</code></p>
-<p>Creates a new instance for class <code>MyClass</code> with all the magic applied, as described for <a href="#class">method <code>class</code></a> and in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md#basics">OO::Plugin::Manual</a>. This method is what must be used in place of the standard <code>new</code>.</p>
+<p>Creates a new instance for class <code>MyClass</code> with all the magic applied, as described for <a href="#class">method <code>class</code></a> and in <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md#basics">OO::Plugin::Manual</a>. This method is what must be used in place of the standard <code>new</code>.</p>
 <h2 id="method_finish"><a class="u" href="#___top" title="go to top of document">method finish</a></h2>
 <p>This is the plugin manager finalization method. It must always be called before application shutdown to ensure proper completion of all event handers possibly still running in the background.</p>
 <h1 id="SEE_ALSO"><a class="u" href="#___top" title="go to top of document">SEE ALSO</a></h1>
-<p><a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin.md">OO::Plugin</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a> <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.905/docs/md/OO/Plugin/Registry.md">OO::Plugin::Registry</a>,</p>
+<p><a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Manual.md">OO::Plugin::Manual</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin.md">OO::Plugin</a>, <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Class.md">OO::Plugin::Class</a> <a href="https://github.com/vrurg/Perl6-OO-Plugin/blob/v0.0.906/docs/md/OO/Plugin/Registry.md">OO::Plugin::Registry</a>,</p>
 <section><h1>AUTHOR</h1>
 <p>Vadim Belman &lt;vrurg@cpan.org&gt;</p>
 </section>
