@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/atroxaper/p6-LogP6-Writer-Journald.git
 	branch = master
-	commit = d3f671316e35ed1f60ab62934e25fc018c3cce31
-	parent = 079a222ff33d495ee2566202acbe28254aff1b36
+	commit = a146591f49bb82afc9fa188a9f21bc2012b481f9
+	parent = 4ce51c622e5aac45584b14c283be16267cdd6924
 	cmdver = 0.3.1

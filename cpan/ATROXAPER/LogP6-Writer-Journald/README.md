@@ -70,6 +70,7 @@ In `Perl 6`:
 
 ```perl6
 use LogP6 :configure;
+use LogP6::WriterConf::Journald;
 
 writer(LogP6::WriterConf::Journald.new(
   # name, pattern and auto-exceptions as in standard writer
