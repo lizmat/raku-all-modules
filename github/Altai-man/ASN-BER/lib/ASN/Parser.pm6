@@ -77,13 +77,13 @@ class ASN::Parser {
         $tag-to-be !~~ $tag;
     }
 
-    method !parse-sequence(Buf $input is rw, $type, $holder) {
+    method !parse-sequence(Buf $input is rw, $type, $holder, :$debug, :$mode) {
         while $input.elems != 0 {
-            self.get-tag($input);
+            my $tag = self.get-tag($input);
             my $len = self.get-length($input);
             my $piece-bytes = $input.subbuf(0, $len);
             $input .= subbuf($len);
-            $holder.push: self!post-process(self.parse($piece-bytes, $type));
+            $holder.push: self!post-process(self.parse($piece-bytes, $type, :$tag, :$debug, :$mode));
         }
         $holder;
     }
@@ -93,13 +93,14 @@ class ASN::Parser {
         my $of = $type.type;
         $of = Str if $of ~~ ASN::StringWrapper;
         my Positional[$of] $values = Array[$of].new;
-        self!parse-sequence($input, $type.type, $values);
+        self!parse-sequence($input, $type.type, $values, :$debug, :$mode);
         $values;
     }
 
     multi method parse(Buf $input is rw, ASNSetOf $type, :$debug, :$mode) {
+        note "Parsing ASNSetOf of $type.type().perl()" if $debug;
         my Array $set .= new;
-        self!parse-sequence($input, $type.type, $set);
+        self!parse-sequence($input, $type.type, $set, :$debug, :$mode);
         $type.new(|$set);
     }
 
@@ -118,7 +119,14 @@ class ASN::Parser {
 
         my $item = $choice.ASN-choice.grep({ (.value ~~ Pair ?? .value.key !! .value.ASN-tag-value) eq $item-index })[0];
         my $value-type = $item.value ~~ Pair ?? $item.value.value !! $item.value;
-        $choice.new(Pair.new($item.key, self.parse($input, $value-type, :$debug, :$mode)));
+
+        my $choice-index;
+        if $value-type ~~ ASNChoice {
+            $choice-index = self.get-tag($input);
+            my $length = self.get-length($input);
+        }
+
+        $choice.new(Pair.new($item.key, self.parse($input, $value-type, tag => $choice-index, :$debug, :$mode)));
     }
 
     multi method parse(Buf $input is rw, ASNValue $value, :$debug, :$mode) {
@@ -203,7 +211,7 @@ class ASN::Parser {
     multi method parse(Buf $input is rw, @positional, :$debug, :$mode) {
         my $type = @positional.of;
         my @temp;
-        self!parse-sequence($input, $type, @temp);
+        self!parse-sequence($input, $type, @temp, :$debug, :$mode);
         @positional.new(@temp);
     }
 
@@ -229,6 +237,7 @@ class ASN::Parser {
     }
 
     multi method parse(Buf $input is rw, Bool $bool, :$debug, :$mode) {
+        say "Parsing `{ $input[0] != 0 }` out of $input.perl()" if $debug;
         my $value = $input[0];
         return $value != 0;
     }

@@ -1,7 +1,7 @@
 use ASN::Types;
 
 class ASN::Serializer {
-# BOOLEAN
+    # BOOLEAN
     multi method serialize(Bool $bool, Int $index = 1, :$debug, :$mode) {
         say "Encoding Bool ($bool) with index $index" if $debug;
         self!pack($index, Buf.new($bool ?? 255 !! 0));
@@ -149,7 +149,12 @@ class ASN::Serializer {
         }
         $index += 32 unless $value ~~ $primitive-type;
 
-        my $inner = self.serialize($value, -1, :$debug, :$mode);
+        my $inner;
+        if $value ~~ ASNChoice {
+            $inner = self.serialize($value, :$debug, :$mode);
+        } else {
+            $inner = self.serialize($value, -1, :$debug, :$mode);
+        }
         say "Encoding ASNChoice by $description.perl() with value: $value.perl()" if $debug;
         Buf.new(|($index == -1 ?? () !! ($index, |self!calculate-len($inner))), |$inner);
     }
