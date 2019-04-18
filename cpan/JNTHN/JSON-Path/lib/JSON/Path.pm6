@@ -24,7 +24,6 @@ class JSON::Path {
         token command:sym<..>  { <sym> }
         token command:sym<[n]> {
             | '[' ~ ']' $<n>=[\d+]
-            | "['" ~ "']" $<n>=[\d+]
         }
         token command:sym<['']> {
             "['" ~ "']" $<key>=[<-[']>+]

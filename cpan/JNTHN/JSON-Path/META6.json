@@ -9,5 +9,5 @@
     "perl": "6.*",
     "test-depends": [],
     "build-depends": [],
-    "version": "1.5"
+    "version": "1.6"
 }

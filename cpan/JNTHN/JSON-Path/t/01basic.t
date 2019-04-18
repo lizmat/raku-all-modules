@@ -143,4 +143,19 @@ is-deeply $path10.paths($object).sort.list,
         ),
         'Expression terminating with .* returns expected paths';
 
+{
+    my $json = from-json q:to/JSON/;
+        {
+          "items" : {
+            "old"  : { "name" : "olditem" },
+            "2017" : { "name" : "item1"   },
+            "2018" : { "name" : "item2"   },
+            "2019" : { "name" : "item3"   }
+          }
+        }
+        JSON
+    my $jp = JSON::Path.new: ".items['2018'].name";
+    is-deeply $jp.values($json), ('item2',), 'Integer in key index not mis-compiled';
+}
+
 done-testing;
