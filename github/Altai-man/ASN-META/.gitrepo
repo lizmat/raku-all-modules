@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Altai-man/ASN-META.git
 	branch = master
-	commit = fe2b212d73bea8875a37e1580530513d65c5d5aa
-	parent = 6c59c52a8a682cab3768d09b115f8df1b9e27fd0
+	commit = e6940a6e222d833f25807100f6a5c82c313f9638
+	parent = 1434c72256be6ea6a4bc7648cd4afc2e1e95a89c
 	cmdver = 0.3.1

@@ -1,6 +1,10 @@
 WorldSchema
 
 DEFINITIONS IMPLICIT TAGS ::= BEGIN
+Top ::= SEQUENCE {
+  a A
+}
+
 A ::= SEQUENCE {
   b Filter
 }

@@ -34,17 +34,21 @@ my class RecursionStub {
 }
 
 my sub check-recursion(ASN::RawType $type, Str $name) {
-    with @*TYPE-STACK.grep(* eq $type.type).first {
+    with @*TYPE-STACK.grep(*.key eq $type.type).first {
         # We have started to recurse!
         # Let's replace the type with a stub
         # and get a parent we have to update later
         # to fix difference between stub and (later) non-stub types
-        my $parent = @*TYPE-STACK[*-2];
-        return ASNType.new(:$name, type => RecursionStub.new(type => $_), :$parent);
+        my @parent-list = @*TYPE-STACK;
+        return ASNType.new(:$name, type => RecursionStub.new(type => $_), :@parent-list);
     }
     else {
         unless $name (elem) $builtin-types {
-            @*TYPE-STACK.push: $name;
+            with $*TYPES.grep({.name eq $name}).first {
+                @*TYPE-STACK.push: $name.tc => $_.type;
+            } else {
+                @*TYPE-STACK.push: $name.tc => $type;
+            }
         }
         my $updated-type = compile-type($type, $name (elem) $builtin-types ?? '' !! $name);
         unless $name (elem) $builtin-types {
@@ -58,10 +62,11 @@ my sub resolve-recursion(ASNType $type, Str $name) {
     # We need to re-do only recursive types
     if $type.is-recursive {
         my $def = $*TYPES.grep(*.name eq $name).first;
-        compile-complex-builtin('CHOICE', $def.type, $name);
-        with $type.parent {
-            $def = $*TYPES.grep(*.name eq $_).first;
-            compile-complex-builtin('SEQUENCE', $def.type, $_);
+        compile-complex-builtin('CHOICE', $def.type, $name).type.ASN-choice;
+        for @($type.parent-list.reverse) -> $parent {
+            with $*POOL.has($parent.key) {
+                compile-complex-builtin(.base-type, $parent.value, $parent.key);
+            }
         }
     }
 }
@@ -217,9 +222,8 @@ multi sub compile-complex-builtin('SET OF', $type, $name) {
 multi sub compile-complex-builtin('CHOICE', $type, $name) {
     my $new-type := Metamodel::ClassHOW.new_type(:$name);
     my %choices;
-    my $parent;
+    my @parent-list;
     for $type.params<choices>.kv -> $key, $value {
-
         my ($tag, $real-value);
         if $value ~~ Pair {
             $tag = $value.key.value;
@@ -235,7 +239,7 @@ multi sub compile-complex-builtin('CHOICE', $type, $name) {
 
         my $compiled-option = check-recursion($real-value, $real-value.type).clone;
         if $compiled-option.type ~~ RecursionStub {
-            $parent = $compiled-option.parent;
+            @parent-list = $compiled-option.parent-list;
         };
         if $compiled-option.type === Str {
             if $compiled-option.base-type eq 'OCTET STRING' {
@@ -248,8 +252,8 @@ multi sub compile-complex-builtin('CHOICE', $type, $name) {
     $new-type.^add_method("ASN-choice", &method);
     $new-type.^add_role(ASNChoice);
     $new-type.^compose;
-    my $is-recursive = $parent.defined;
-    $*POOL.add(ASNType.new(:$name, base-type => 'CHOICE', type => $new-type, :$parent, :$is-recursive));
+    my $is-recursive = @parent-list.elems != 0;
+    $*POOL.add(ASNType.new(:$name, base-type => 'CHOICE', type => $new-type, :@parent-list, :$is-recursive));
 }
 
 sub compile-simple-builtin($type, $name) {
@@ -348,7 +352,7 @@ sub compile-types(ASN::Module $ASN) {
     my @*TYPE-STACK;
     $*POOL.export;
     for @$*TYPES {
-        @*TYPE-STACK.push: .name;
+        @*TYPE-STACK.push: .name.tc => .type;
         # Compile a type and resolve its possibly recursive parts
         my $first-pass-type = compile-type(.type, .name);
         @*TYPE-STACK = ();
