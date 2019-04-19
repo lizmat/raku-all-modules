@@ -1,3 +1,5 @@
+v0.0.13     Thu 18 Apr 14:33:10 BST 2019
+    * Pass through the :sorted-keys from to-json to JSON::Marshal
 v0.0.12		Mon  4 Mar 19:52:49 GMT 2019
 	* Remove :aoi adverb to apease the old rakudo
 v0.0.11		Thu 17 Jan 21:44:46 GMT 2019

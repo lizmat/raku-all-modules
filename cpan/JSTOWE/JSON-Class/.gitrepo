@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/jonathanstowe/JSON-Class.git
+	remote = https://github.com/jonathanstowe/JSON-Class.git
 	branch = master
-	commit = 691e59138925d9bfd9130abcabbe5b2d2913f5a4
-	parent = 16ba0502b36533b8bdfd80fa4e7d7c08cc629426
+	commit = 13b01e7c831d6c1dba4ebe1104c8c87711c4f72d
+	parent = c690cb2b8d77671b058134a6504bc188744c2036
 	cmdver = 0.3.1

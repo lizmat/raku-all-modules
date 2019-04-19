@@ -1,12 +1,12 @@
 {
   "name": "JSON::Class",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "auth": "github:jonathanstowe",
   "api": "1.0",
   "description": "role to provide simple serialisation/deserialisation of objects to/from JSON",
-  "source-url": "git://github.com/jonathanstowe/JSON-Class.git",
+  "source-url": "https://github.com/jonathanstowe/JSON-Class.git",
   "support": {
-    "source": "git://github.com/jonathanstowe/JSON-Class.git",
+    "source": "https://github.com/jonathanstowe/JSON-Class.git",
     "bugtracker": "https://github.com/jonathanstowe/JSON-Class/issues"
   },
   "perl": "6.*",

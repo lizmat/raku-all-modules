@@ -58,7 +58,7 @@ type for the target class then an exception may be thrown.
 
 =head2 method to-json
 
-    method to-json(Bool :$skip-null) returns Str
+    method to-json(Bool :$skip-null, Bool :$sorted-keys) returns Str
 
 Serialises the public attributes of the object to a JSON string that
 represents the object, this JSON can be fed to the L<from-json> of the
@@ -71,6 +71,10 @@ trait (defined by L<JSON::Marshal> ) to the traits you want to skip
 if they aren't defined (C<:json-skip> will still have the same effect
 though.)
 
+If the C<sorted-keys> adverb is provided this will eventually be passed
+to the JSON generation and will cause the keys in the JSON object to be
+sorted in the outpur.
+
 =end pod
 
 use JSON::Unmarshal;
@@ -80,7 +84,7 @@ my package EXPORT::DEFAULT {
     OUR::{'&trait_mod:<is>'} := &trait_mod:<is>;
 }
 
-role JSON::Class:ver<0.0.12>:auth<github:jonathanstowe> {
+role JSON::Class:ver<0.0.13>:auth<github:jonathanstowe> {
 
 
     method from-json(Str $json --> JSON::Class ) {
@@ -91,8 +95,8 @@ role JSON::Class:ver<0.0.12>:auth<github:jonathanstowe> {
         $ret;
     }
 
-    method to-json(Bool :$skip-null --> Str ) {
-        marshal(self, :$skip-null);
+    method to-json(Bool :$skip-null, Bool :$sorted-keys = False --> Str ) {
+        marshal(self, :$skip-null, :$sorted-keys);
     }
 }
 
