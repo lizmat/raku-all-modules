@@ -1,3 +1,5 @@
+v0.0.18     Thu 18 Apr 14:20:37 BST 2019
+    * Pass on the :sorted-keys to JSON::Fast::to-json
 v0.0.17		Mon  4 Mar 19:42:48 GMT 2019
 	* Remove :api from class module definition to appease ancient rakudo
 v0.0.16     Thu 17 Jan 09:36:04 GMT 2019

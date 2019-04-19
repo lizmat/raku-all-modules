@@ -1,6 +1,6 @@
 {
   "name": "JSON::Marshal",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "auth": "github:jonathanstowe",
   "api": "1.0",
   "description": "Simple serialisation of objects to JSON",

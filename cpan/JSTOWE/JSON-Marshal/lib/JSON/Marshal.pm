@@ -52,12 +52,15 @@ or Array who's values are those things. Alternatively the name of a method
 that will be called on the value, the return value being constrained as
 above.
 
+You can pass the adverb C<:sorted-keys> to C<marshal> which is in turn
+passed on to C<JSON::Fast> to cause the keys to be sorted before the JSON
+is created.
 
 =end pod
 
 use JSON::Name;
 
-module JSON::Marshal:ver<0.0.17>:auth<github:jonathanstowe> {
+module JSON::Marshal:ver<0.0.18>:auth<github:jonathanstowe> {
 
     use JSON::Fast:ver(v0.4+);
 
@@ -191,9 +194,9 @@ module JSON::Marshal:ver<0.0.17>:auth<github:jonathanstowe> {
         $rc;
     }
 
-    sub marshal(Any $obj, Bool :$skip-null --> Str ) is export {
+    sub marshal(Any $obj, Bool :$skip-null, Bool :$sorted-keys = False --> Str ) is export {
         my $ret = _marshal($obj, :$skip-null);
-        to-json($ret);
+        to-json($ret, :$sorted-keys);
     }
 }
 # vim: expandtab shiftwidth=4 ft=perl6

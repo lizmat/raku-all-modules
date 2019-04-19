@@ -37,5 +37,9 @@ is %json<inner><rat>, $outer.inner.rat, "inner class rat the same";
 is %json<inner><hash><A>, $outer.inner.hash<A>, "inner hash 1";
 is %json<inner><hash><B>, $outer.inner.hash<B>, "inner hash 2";
 
+lives-ok { $ret = marshal($outer, :sorted-keys) }, "marshal object with sorted keys";
+
+ok $ret ~~ /.*"bool".*"inner".*"int".*"str-array".*"string"/,  "keys are in the order expected";
+
 done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6
