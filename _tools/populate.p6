@@ -2,10 +2,10 @@ use v6;
 use JSON::Tiny;
 unit sub MAIN(Bool :$delete=True, Bool :$fetch=True, Bool :$ignore-errors);
 
-run <wget -O cpan.json https://modules.perl6.org/s/from:cpan/.json>
+run <wget -O cpan.json>, 'https://modules.perl6.org/s/from:cpan/.json'
     if $fetch;
 
-run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json'
+run <wget -O projects.json>, 'http://ecosystem-api.p6c.org/projects.json'
     if $fetch;
 
 my @cpan-projects = (from-json slurp 'cpan.json')<dists>.list;
@@ -67,7 +67,7 @@ for dir().grep(*.d).grep(*.basename eq none('_tools', '.git'))\ # source
         if $delete && $local.IO.e {
             say "Removing $local";
             use fatal;
-            try sink run 'git', 'rm', '-rf', $local;
+            try sink run <git rm -rf>, $local;
             $removed++;
         }
         else {
@@ -77,20 +77,20 @@ for dir().grep(*.d).grep(*.basename eq none('_tools', '.git'))\ # source
 }
 sub git-clone($url, $local) {
     if $ignore-errors {
-       my $proc = run 'git', 'subrepo', 'clone', '-f', $url, $local;
+       my $proc = run <git subrepo clone -f>, $url, $local;
        if $proc.exitcode {
-            run 'git', 'reset', 'HEAD';
-            run 'git', 'checkout', '.';
+            run <git reset HEAD>;
+            run <git checkout .>;
         }
     }
     else {
-        run 'git', 'subrepo', 'clone', '-f', $url, $local;
+        run <git subrepo clone -f>, $url, $local;
     }
 }
 
 if $removed {
-    try sink run 'git', 'commit', '-m', "Remove repos that no longer exist\n\n(This commit was automatically generated)";
+    try sink run <git commit -m>, "Remove repos that no longer exist\n\n(This commit was automatically generated)";
 }
 
-say "Done updating, now doing a repack to save space";
-run 'git', 'repack', '-Ad';
+say 'Done updating, now doing a repack to save space';
+run <git repack -Ad>;
