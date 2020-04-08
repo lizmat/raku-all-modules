@@ -5,7 +5,7 @@ unit sub MAIN(Bool :$delete=True, Bool :$fetch=True, Bool :$ignore-errors);
 run <wget -O cpan.json>, 'https://modules.perl6.org/s/from:cpan/.json'
     if $fetch;
 
-run <wget -O projects.json>, 'http://ecosystem-api.p6c.org/projects.json'
+run <wget -O projects.json>, 'https://ecosystem-api.p6c.org/projects.json'
     if $fetch;
 
 my @cpan-projects = (from-json slurp 'cpan.json')<dists>.list;
