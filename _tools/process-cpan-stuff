@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e # exit when any command fails
+
+local=$1
+project-url=$2
+
+git rm -rf -- "$local" || true
+mkdir -p -- "$local"
+wget -O - -- "$project-url" | tar --strip-components=1 -xz --directory "$local/"
+git add -f -- "$local"
+git commit -m "add or update $local"

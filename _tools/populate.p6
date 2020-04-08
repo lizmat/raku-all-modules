@@ -23,13 +23,8 @@ for @cpan-projects -> $project {
         note "Dist $local: URL $project<url> is not a HTTP(s) link to a tarball.";
         next;
     }
-    shell qq:to/EOF/;
-        git rm -rf $local || true
-        mkdir -p $local
-        wget -O - $project<url> | tar --strip-components=1 -xz --directory $local/
-        git add -f $local
-        git commit -m 'add or update $local'
-        EOF
+    run ‘_tools/process-cpan-stuff’, $local, $project<url>;
+    True
 }
 
 my $github-source = slurp 'projects.json';
