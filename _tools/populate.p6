@@ -1,3 +1,4 @@
+#!/usr/bin/env perl6
 use v6;
 use JSON::Tiny;
 unit sub MAIN(Bool :$delete=True, Bool :$fetch=True, Bool :$ignore-errors);
